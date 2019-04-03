@@ -1,6 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.springframework.social.wechat.autoconfigurer.WechatAutoConfiguration,\
-org.springframework.social.wechat.autoconfigurer.WechatMpAutoConfiguration,\
-org.springframework.social.google.config.boot.GoogleAutoConfiguration,\
-org.springframework.social.qq.autoconfigure.QQAutoConfiguration
