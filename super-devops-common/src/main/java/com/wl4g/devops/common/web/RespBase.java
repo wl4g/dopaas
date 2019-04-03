@@ -1,0 +1,198 @@
+package com.wl4g.devops.common.web;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+/**
+ * Generic Restful response base class
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2018年3月9日
+ * @since
+ */
+public class RespBase<T> implements Serializable {
+	private static final long serialVersionUID = 2647155468624590650L;
+
+	private RetCode code = RetCode.OK;
+	private String status; // Response status
+	private String message = code.getMsg();
+	private Map<String, T> data = new LinkedHashMap<>(4);
+
+	public RespBase() {
+		this(RetCode.OK);
+	}
+
+	public RespBase(RetCode retCode) {
+		this(retCode, null);
+	}
+
+	public RespBase(Map<String, T> data) {
+		this(null, data);
+	}
+
+	public RespBase(RetCode retCode, Map<String, T> data) {
+		this(retCode, null, data);
+	}
+
+	public RespBase(RetCode retCode, String message, Map<String, T> data) {
+		this(retCode, null, message, data);
+	}
+
+	public RespBase(RetCode retCode, String status, String message, Map<String, T> data) {
+		this.setCode(retCode);
+		this.setStatus(status);
+		this.setMessage(message != null ? message : this.code.getMsg());
+		this.setData(data);
+	}
+
+	public int getCode() {
+		return code.getCode();
+	}
+
+	public RespBase<T> setCode(RetCode retCode) {
+		this.code = retCode != null ? retCode : this.code;
+		return this;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public RespBase<T> setStatus(String status) {
+		if (status != null) {
+			this.status = status;
+		}
+		return this;
+	}
+
+	public String getMessage() {
+		return message == null ? code.getMsg() : message;
+	}
+
+	public RespBase<T> setMessage(String message) {
+		this.message = message != null ? message : this.message;
+		return this;
+	}
+
+	public Map<String, T> getData() {
+		return data;
+	}
+
+	public RespBase<T> setData(Map<String, T> data) {
+		data = data != null ? data : this.data;
+		if (this.data != null) {
+			this.data.putAll(data);
+		}
+		this.data = data;
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "{" + (code != null ? "code=" + code + ", " : "") + (message != null ? "message=" + message + ", " : "")
+				+ (data != null ? "data=" + data : "") + "}";
+	}
+
+	public static boolean isSuccess(RespBase<?> resp) {
+		return resp != null && RetCode.OK.getCode() == resp.getCode();
+	}
+
+	public static boolean eq(RespBase<?> resp, RetCode retCode) {
+		return resp != null && retCode.getCode() == resp.getCode();
+	}
+
+	/**
+	 * Response code definition
+	 * 
+	 * @author wangl.sir
+	 * @version v1.0 2019年1月10日
+	 * @since
+	 */
+	public static enum RetCode {
+
+		/**
+		 * Successfully<br/>
+		 * {@link HttpStatus.OK}
+		 */
+		OK(HttpStatus.OK.value(), "ok"),
+
+		/**
+		 * Parameter error<br/>
+		 * {@link HttpStatus.BAD_REQUEST}
+		 */
+		PARAM_ERR(HttpStatus.BAD_REQUEST.value(), "Parameter error"),
+
+		/**
+		 * Business constraints<br/>
+		 * {@link HttpStatus.NOT_IMPLEMENTED}
+		 */
+		BIZ_ERR(HttpStatus.EXPECTATION_FAILED.value(), "Business restricted"),
+
+		/**
+		 * Unauthenticated<br/>
+		 * {@link HttpStatus.UNAUTHORIZED}
+		 */
+		UNAUTHC(HttpStatus.UNAUTHORIZED.value(), "Unauthenticated"),
+
+		/**
+		 * Second Uncertified<br/>
+		 * {@link HttpStatus.PRECONDITION_FAILED}
+		 */
+		SECOND_UNAUTH(HttpStatus.PRECONDITION_FAILED.value(), "Second Uncertified"),
+
+		/**
+		 * Unauthorized<br/>
+		 * {@link HttpStatus.FORBIDDEN}
+		 */
+		UNAUTHZ(HttpStatus.FORBIDDEN.value(), "Unauthorized"),
+
+		/**
+		 * System abnormality<br/>
+		 * {@link HttpStatus.INTERNAL_SERVER_ERROR}
+		 */
+		SYS_ERR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Busy system, please try-again later");
+
+		private int code;
+		private String msg;
+
+		private RetCode(int code, String msg) {
+			this.code = code;
+			this.msg = msg;
+		}
+
+		public int getCode() {
+			return code;
+		}
+
+		public String getMsg() {
+			return msg;
+		}
+
+		/**
+		 * JACKSON映射枚举大小写不敏感处理
+		 * 
+		 * https://www.cnblogs.com/chyu/p/9177140.htmlhttps://www.cnblogs.com/chyu/p/9177140.html
+		 * 
+		 * @param value
+		 * @return
+		 */
+		@JsonCreator
+		public static RetCode get(String nameOrCode) {
+			String tmp = String.valueOf(nameOrCode);
+			for (RetCode v : values()) {
+				if (v.name().equalsIgnoreCase(tmp) || String.valueOf(v.getCode()).equalsIgnoreCase(tmp)) {
+					return v;
+				}
+			}
+			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
+		}
+
+	}
+
+}

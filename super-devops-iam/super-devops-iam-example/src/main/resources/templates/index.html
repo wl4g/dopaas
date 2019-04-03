@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>DevOps Iam Example Index</title>
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ 	<style>
+ 		#qrcode_show{position:relative;width:250px;height:270px;background:red;margin:-25% auto;box-shadow:#886868 1px 1px 18px;background:#6f82a5;display:none}
+ 	</style>
+</head>
+<body>
+	<div class="panel panel-default">
+		<div class="panel-heading" style="text-align:center;"><h4>Wecome to DevOps Iam Example !</h4></div>
+		<div class="panel-body">
+			<h4>Reference documents(Part I):</h4>
+			<ul class="list-group">
+			    <h5>Secondary authentication protection for sensitive API:</h5>
+			    <li class="list-group-item">
+			    	<button id="btn_sensitive_api">Click on me to request a sensitive background API</button>
+			    </li>
+			    <h5>API protection requiring access privileges:</h5>
+			    <li class="list-group-item">
+			    	<button id="btn_permit_api">Click on me to request an API controlled by privileged credentials</button>
+			    </li>
+			    <li class="list-group-item"></li>
+			    <li class="list-group-item"></li>
+			    <li class="list-group-item"></li>
+			    <li class="list-group-item"></li>
+			    <li class="list-group-item"></li>
+			    <li class="list-group-item"></li>
+			    <li class="list-group-item"></li>
+			</ul>
+		</div>
+		<div id="qrcode_show"></div>
+	</div>
+<script type="text/javascript">
+
+	//
+	// JQuery版实现样例：
+	//
+	$(function(){
+		$("#btn_sensitive_api").click(function(event){
+			// 如请求一个敏感的API
+			$.post("sensitiveApi", function(res){
+				if(res.code == 412){ // 未经二次认证的
+					// 打开授权页
+					window.open("sensitiveApi", "_blank", "modal=yes,width=700px,height=450px,resizable=no,left=320px,top=100px");
+					window.onmessage = function(e) { // 监听授权回调
+						var secondAuthCode = JSON.parse(e.data).secondAuthCode; // 获取授权码
+						console.log("Got授权码" + secondAuthCode);
+						// 再次请求敏感API
+						$.post("sensitiveApi?secondAuthCode="+secondAuthCode, function(res2){
+							console.log("重新请求结果：" + JSON.stringify(res2))
+						});
+					}
+				} else { // 无需二次认证的
+					console.log("请求成功！" + JSON.stringify(res));
+				}
+			});
+		});
+	});
+</script>
+</body>
+</html>

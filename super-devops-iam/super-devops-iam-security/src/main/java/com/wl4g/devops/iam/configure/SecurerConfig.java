@@ -1,0 +1,89 @@
+package com.wl4g.devops.iam.configure;
+
+import java.io.Serializable;
+
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
+/**
+ * Securer validation configuration properties
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年3月20日
+ * @since
+ */
+public class SecurerConfig implements Serializable {
+	private static final long serialVersionUID = -6194767776312196342L;
+
+	/**
+	 * Encryption hash digest algorithm candidate list, note that this candidate
+	 * list is ordered, the safe will calculate one of the hash algorithm to
+	 * encrypt.</br>
+	 * Note: Internal secure cipher algorithms factory definition. Note: Online
+	 * systems should not be easily modified, otherwise users created previously
+	 * will not be able to login properly.
+	 */
+	final private String[] hashAlgorithms;
+
+	/**
+	 * Hash private salt
+	 */
+	final private String privateSalt;
+
+	/**
+	 * Cryptic candidate algorithm
+	 */
+	final private Integer preCryptPoolSize;
+
+	/**
+	 * Cryptic candidate algorithm keyPairs expire-ms
+	 */
+	final private Long cryptosExpireMs;
+
+	/**
+	 * The validity period of the publicKey applied by the user who is ready to
+	 * login
+	 */
+	final private Long applyPubkeyExpireMs;
+
+	public SecurerConfig(String[] hashAlgorithms, String privateSalt, Integer preCryptPoolSize, Long cryptosExpireMs,
+			Long applyPubkeyExpireMs) {
+		Assert.isTrue((hashAlgorithms != null && hashAlgorithms.length > 0), "'hashAlgorithms' empty, please check configure");
+		Assert.hasText(privateSalt, "'privateSalt' empty, please check configure");
+		Assert.isTrue(preCryptPoolSize > 0, "'preCryptPoolSize' must be greater than 0, please check configure");
+		Assert.isTrue(cryptosExpireMs > 0, "'cryptosExpireMs' must be greater than 0, please check configure");
+		Assert.isTrue(applyPubkeyExpireMs > 30_000, "'applyPubkeyExpireMs' must be greater than 30000, please check configure");
+		this.hashAlgorithms = hashAlgorithms;
+		this.privateSalt = privateSalt;
+		this.preCryptPoolSize = preCryptPoolSize;
+		this.cryptosExpireMs = cryptosExpireMs;
+		this.applyPubkeyExpireMs = applyPubkeyExpireMs;
+	}
+
+	public String[] getHashAlgorithms() {
+		Assert.state(hashAlgorithms != null, "No configuration item 'hashAlgorithms' that is not empty is allowed");
+		return hashAlgorithms;
+	}
+
+	public String getPrivateSalt() {
+		Assert.state(!StringUtils.isEmpty(privateSalt), "No configuration item 'privateSalt' that is not empty is allowed");
+		return privateSalt;
+	}
+
+	public int getPreCryptPoolSize() {
+		Assert.state(preCryptPoolSize != null, "No configuration item 'preCryptSize' that is not empty is allowed");
+		return preCryptPoolSize;
+	}
+
+	public long getCryptosExpireMs() {
+		Assert.state(cryptosExpireMs != null, "No configuration item 'cryptosExpireMs' that is not empty is allowed");
+		return cryptosExpireMs;
+	}
+
+	public long getApplyPubkeyExpireMs() {
+		Assert.state(!StringUtils.isEmpty(applyPubkeyExpireMs),
+				"No configuration item 'applyPubkeyExpireMs' that is not empty is allowed");
+		return applyPubkeyExpireMs;
+	}
+
+}

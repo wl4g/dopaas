@@ -1,0 +1,56 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us 983708408@qq.com
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# #### Spring utility configuration. ####
+#
+spring:
+  mail:
+    protocol: smtp
+    #host: smtp.sina.com
+    #port: 465
+    #username: safec7782@sina.com
+    #password: safec7782
+
+    #host: smtp.anosi.cn
+    #port: 465
+    #username: syslog@anosi.cn
+    #password: Abc.cn123
+
+    host: smtp.exmail.qq.com
+    port: 465
+    username: syslog@7782.co
+    password: Sm#1234
+
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.auth: true
+      # Note: that you must display the settings ssl. enable, otherwise SSL is disabled by default in windows,
+      # but is turned on by default in linux, which will cause inconsistency.
+      mail.smtp.ssl.enable: true
+      mail.smtp.timeout: 15000
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      #mail.smtp.socketFactory.port: ${spring.mail.port}
+      #mail.smtp.socketFactory.fallback: false
+      #mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+
+# #### SMS configuration. ####
+sms:
+  aliyun:
+    product: Dysmsapi
+    domain: dysmsapi.aliyuncs.com
+    accessKeyId: LTAIyF0dussltest
+    accessKeySecret: kxk4jznkdKQG7rFZ9Ix4rx1h3Btest
+    #signName: XXX Platform
+    signName: XXX Platform
+    templateCode: SMS_140726862
+    defaultConnectTimeout: 10000
+    defaultReadTimeout: 10000

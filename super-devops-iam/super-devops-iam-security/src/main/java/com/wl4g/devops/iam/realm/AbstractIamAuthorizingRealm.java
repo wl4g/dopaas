@@ -1,0 +1,175 @@
+package com.wl4g.devops.iam.realm;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.validation.Validator;
+
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ResolvableType;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+
+import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+import com.wl4g.devops.iam.config.IamProperties;
+import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.handler.AuthenticationHandler;
+import com.wl4g.devops.iam.handler.CaptchaHandler;
+
+/**
+ * Multiple realm routing processing.
+ * {@link org.apache.shiro.authc.pam.ModularRealmAuthenticator#doMultiRealmAuthentication()}
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2018年11月27日
+ * @since
+ */
+public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken> extends AuthorizingRealm {
+
+	final protected Logger log = LoggerFactory.getLogger(getClass());
+
+	/**
+	 * IAM security context handler
+	 */
+	final protected ServerSecurityContext context;
+
+	/**
+	 * Credential matcher
+	 */
+	final protected IamBasedMatcher matcher;
+
+	/**
+	 * Validation
+	 */
+	@Autowired
+	protected Validator validator;
+
+	/**
+	 * Rest template
+	 */
+	@Autowired
+	protected RestTemplate restTemplate;
+
+	/**
+	 * IAM server configuration properties
+	 */
+	@Autowired
+	protected IamProperties config;
+
+	/**
+	 * IAM authentication handler
+	 */
+	@Autowired
+	protected AuthenticationHandler authHandler;
+
+	/**
+	 * IAM captcha handler
+	 */
+	@Autowired
+	protected CaptchaHandler captchaHandler;
+
+	/**
+	 * Delegate message source.
+	 */
+	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	protected DelegateBoundleMessageSource delegate;
+
+	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
+		Assert.notNull(manager, "'manager' must not be null");
+		Assert.notNull(matcher, "'matcher' must not be null");
+		this.context = manager.getServerSecurityContext();
+		this.matcher = matcher;
+	}
+
+	/**
+	 * {@link org.apache.shiro.authc.pam.ModularRealmAuthenticator#doMultiRealmAuthentication}
+	 */
+	@SuppressWarnings("unchecked")
+	@PostConstruct
+	@Override
+	protected void onInit() {
+		// Initialization.
+		super.onInit();
+		// Credentials matcher set.
+		super.setCredentialsMatcher(this.matcher);
+		// AuthenticationTokenClass set.
+		ResolvableType resolveType = ResolvableType.forClass(this.getClass());
+		super.setAuthenticationTokenClass(
+				(Class<? extends AuthenticationToken>) resolveType.getSuperType().getGeneric(0).resolve());
+	}
+
+	/**
+	 * Authenticates a user and retrieves its information.
+	 * 
+	 * @param token
+	 *            the authentication token
+	 * @throws AuthenticationException
+	 *             if there is an error during authentication.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+		try {
+			// Validation token.
+			this.validator.validate(token);
+
+			/*
+			 * Extension: can be used to check the parameter 'pre-grant-ticket'
+			 */
+
+			// Do get authentication
+			return this.doAuthenticationInfo((T) token);
+		} catch (Throwable e) {
+			throw new AuthenticationException(e);
+		}
+	}
+
+	protected abstract AuthenticationInfo doAuthenticationInfo(T token) throws AuthenticationException;
+
+	@Override
+	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
+		IamAuthenticationToken tk = (IamAuthenticationToken) token;
+
+		CredentialsMatcher matcher = this.getCredentialsMatcher();
+		if (matcher != null) {
+			if (!matcher.doCredentialsMatch(tk, info)) {
+				// not successful - throw an exception to indicate this:
+				String msg = this.delegate.getMessage("AbstractIamAuthorizingRealm.credential.mismatch",
+						new Object[] { token.getPrincipal() });
+				throw new IncorrectCredentialsException(msg);
+			}
+
+			/*
+			 * Check whether have permission to access the target
+			 * application(Check only when accessing applications).
+			 */
+			if (!StringUtils.isEmpty(tk.getFromAppName())) {
+				Assert.isTrue(!info.getPrincipals().isEmpty(),
+						String.format("login user info is empty. please check the configure. info: %s", info));
+				String principal = (String) info.getPrincipals().iterator().next();
+				this.authHandler.checkApplicationAccessAuthorized(principal, tk.getFromAppName());
+			}
+
+		} else {
+			throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
+					+ "credentials during authentication.  If you do not wish for credentials to be examined, you "
+					+ "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
+		}
+	}
+
+}

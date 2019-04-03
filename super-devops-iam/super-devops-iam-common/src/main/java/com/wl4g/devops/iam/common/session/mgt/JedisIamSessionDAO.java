@@ -1,0 +1,149 @@
+package com.wl4g.devops.iam.common.session.mgt;
+
+import java.io.Serializable;
+
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
+import org.apache.shiro.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
+
+import com.google.common.base.Charsets;
+import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.iam.common.session.mgt.support.ScanCursor;
+
+import redis.clients.jedis.ScanParams;
+
+/**
+ * Redis shiro session DAO.
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2018年11月28日
+ * @since
+ */
+public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSessionDAO {
+	final protected Logger log = LoggerFactory.getLogger(JedisIamSessionDAO.class);
+
+	/**
+	 * IAM properties
+	 */
+	final private AbstractIamProperties<? extends ParamProperties> config;
+
+	/**
+	 * Jedis cache manager.
+	 */
+	final private JedisCacheManager cacheManager;
+
+	public JedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config, JedisCacheManager cacheManager) {
+		Assert.notNull(config, "'config' must not be null");
+		Assert.notNull(cacheManager, "'cacheManager' must not be null");
+		this.config = config;
+		this.cacheManager = cacheManager;
+	}
+
+	@Override
+	public void update(final Session session) throws UnknownSessionException {
+		if (session == null || session.getId() == null) {
+			return;
+		}
+		// Get logged ID
+		// PrincipalCollection pc = (PrincipalCollection)
+		// session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+		// String principalId = pc != null ?
+		// pc.getPrimaryPrincipal().toString() : "";
+
+		if (log.isDebugEnabled()) {
+			log.debug("update {}", session.getId());
+		}
+
+		/**
+		 * Update session latest expiration time to timeout time
+		 */
+		this.cacheManager.getEnhancedCache(CACHE_SESSION).put(new EnhancedKey(session.getId(), session.getTimeout()), session);
+	}
+
+	@Override
+	public void delete(final Session session) {
+		if (session == null || session.getId() == null) {
+			return;
+		}
+
+		if (log.isDebugEnabled()) {
+			log.debug("delete {} ", session.getId());
+		}
+		this.cacheManager.getEnhancedCache(CACHE_SESSION).remove(new EnhancedKey(session.getId()));
+	}
+
+	@Override
+	public ScanCursor<IamSession> getActiveSessions(final int batchSize) {
+		return this.getActiveSessions(batchSize, null);
+	}
+
+	@Override
+	public ScanCursor<IamSession> getActiveSessions(final int batchSize, final Object principal) {
+		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
+		ScanParams params = new ScanParams().count(batchSize).match(match);
+		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), params) {
+		}.open();
+	}
+
+	@Override
+	public void removeActiveSession(Object principal) {
+		if (log.isDebugEnabled()) {
+			log.debug("removeActiveSession principal: {} ", principal);
+		}
+
+		ScanCursor<IamSession> cursor = this.getActiveSessions(200, principal).open();
+		while (cursor.hasNext()) {
+			delete(cursor.next());
+		}
+	}
+
+	@Override
+	protected Serializable doCreate(Session session) {
+		if (log.isDebugEnabled()) {
+			log.debug("doCreate {}", session.getId());
+		}
+		Serializable sessionId = this.generateSessionId(session);
+		this.assignSessionId(session, sessionId);
+		this.update(session);
+		return sessionId;
+	}
+
+	@Override
+	protected Session doReadSession(final Serializable sessionId) {
+		if (sessionId == null) {
+			return null;
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("doReadSession {}", sessionId);
+		}
+		return (Session) this.cacheManager.getEnhancedCache(CACHE_SESSION).get(new EnhancedKey(sessionId, IamSession.class));
+	}
+
+	@Override
+	public Session readSession(Serializable sessionId) throws UnknownSessionException {
+		if (log.isDebugEnabled()) {
+			log.debug("readSession {}", sessionId);
+		}
+		try {
+			return super.readSession(sessionId);
+		} catch (UnknownSessionException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public void assignSessionId(Session session, Serializable sessionId) {
+		((IamSession) session).setId((String) sessionId);
+	}
+
+}

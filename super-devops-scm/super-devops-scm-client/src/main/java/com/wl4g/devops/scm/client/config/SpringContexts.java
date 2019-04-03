@@ -1,0 +1,134 @@
+package com.wl4g.devops.scm.client.config;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.Assert;
+
+import com.wl4g.devops.scm.client.configure.RefreshBean;
+
+/**
+ * Spring context helper.<br/>
+ * The attributes of @ConfigurationProperties and @Value annotation are re
+ * injected, Reference:https://m.imooc.com/mip/article/37039<br/>
+ * https://blog.csdn.net/qq_28580959/article/details/60129329
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2018年10月19日
+ * @since
+ * @see org.springframework.cloud.context.properties.ConfigurationPropertiesRebinder<br/>
+ *      org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor<br/>
+ *      org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#populateBean
+ */
+public class SpringContexts implements ApplicationContextAware {
+
+	private ConfigurableApplicationContext applicationContext;
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		Assert.notNull(applicationContext, "object applicationContext is required; it must not be null.");
+		this.applicationContext = (ConfigurableApplicationContext) applicationContext;
+	}
+
+	public ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
+
+	public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {
+		return applicationContext.getAutowireCapableBeanFactory();
+	}
+
+	public DefaultListableBeanFactory getBeanFactory() {
+		return (DefaultListableBeanFactory) applicationContext.getBeanFactory();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getBean(String name) {
+		return (T) this.applicationContext.getBean(name);
+	}
+
+	public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException {
+		return this.getApplicationContext().getBeansWithAnnotation(RefreshBean.class);
+	}
+
+	/**
+	 * Register bean.
+	 * 
+	 * @param beanId
+	 *            ID of registered bean
+	 * @param className
+	 *            Bean's className, three ways of obtaining: <br/>
+	 *            1, direct writing, such as: com.mvc.entity.User.<br/>
+	 *            2, User.class.getName.<br/>
+	 *            3.user.getClass ().GetName ()
+	 */
+	public void registerBean(String beanId, String className) {
+		// Get the BeanDefinitionBuilder
+		BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(className);
+		// Get the BeanDefinition
+		AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+		// beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
+		// Register the bean
+		this.getBeanFactory().registerBeanDefinition(beanId, beanDefinition);
+	}
+
+	/**
+	 * Destruction instance method does not consider the inheritance and
+	 * dependency destruction of bean.
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws BeansException
+	 */
+	public void destoryBean(String beanName) {
+		AutowireCapableBeanFactory beanFactory = this.applicationContext.getAutowireCapableBeanFactory();
+		/*
+		 * The singleton and prototype modes are saved in the container, whereas
+		 * the latter is not saved in the container every time a new object is
+		 * created (equivalent to every new object) when a bean Factory. getBean
+		 * is called.
+		 */
+		Object bean = this.applicationContext.getBean(beanName);
+		if (bean != null && beanFactory.isSingleton(beanName)) {
+			beanFactory.destroyBean(bean);
+		}
+
+		// Remove definition from registry.
+		if (getBeanFactory().containsBeanDefinition(beanName)) {
+			this.getBeanFactory().removeBeanDefinition(beanName);
+		}
+
+	}
+
+	/**
+	 * Re-initialize bean
+	 * 
+	 * @param existingBean
+	 *            object of registered bean
+	 * @param beanId
+	 *            ID of registered bean
+	 * @see https://m.imooc.com/mip/article/37039<br/>
+	 *      https://blog.csdn.net/qq_28580959/article/details/60129329
+	 */
+	public void reinitializationBean(Object existingBean, String beanId) {
+		// All destruction methods defined by callback bean.
+		this.getAutowireCapableBeanFactory().destroyBean(existingBean);
+
+		// Re-infuse all @Value annotation attribute values from the current
+		// context.
+		this.getAutowireCapableBeanFactory().autowireBean(existingBean);
+
+		// Re-infuse all @ConfigurationProperties annotation attribute values
+		// from the current context.
+		this.getAutowireCapableBeanFactory().initializeBean(existingBean, beanId);
+	}
+
+}
