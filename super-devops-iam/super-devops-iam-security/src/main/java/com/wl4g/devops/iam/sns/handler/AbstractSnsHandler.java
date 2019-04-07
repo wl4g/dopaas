@@ -33,8 +33,8 @@ import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -95,9 +95,9 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	final protected ServerSecurityContext context;
 
 	/**
-	 * IAM security intercept
+	 * IAM security coprocessor
 	 */
-	final protected SecurityInterceptor interceptor;
+	final protected SecurityCoprocessor coprocessor;
 
 	/**
 	 * Redis's cache manger
@@ -108,21 +108,21 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
-	protected DelegateBoundleMessageSource delegate;
+	protected DelegateBundleMessageSource bundle;
 
 	public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext context, SecurityInterceptor intercept, JedisCacheManager cacheManager) {
+			ServerSecurityContext context, SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(snsConfig, "'snsConfig' must not be null");
 		Assert.notNull(connectFactory, "'connectFactory' must not be null");
 		Assert.notNull(context, "'context' must not be null");
-		Assert.notNull(intercept, "'intercept' must not be null");
+		Assert.notNull(coprocessor, "'coprocessor' must not be null");
 		Assert.notNull(cacheManager, "'cacheManager' must not be null");
 		this.config = config;
 		this.snsConfig = snsConfig;
 		this.connectFactory = connectFactory;
 		this.context = context;
-		this.interceptor = intercept;
+		this.coprocessor = coprocessor;
 		this.cacheManager = cacheManager;
 	}
 

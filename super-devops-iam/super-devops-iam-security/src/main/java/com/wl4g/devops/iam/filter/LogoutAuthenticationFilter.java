@@ -47,9 +47,9 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	}
 
 	@Override
-	protected LogoutAuthenticationToken createAuthenticationToken(String fromAppName, String redirectUrl,
+	protected LogoutAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return new LogoutAuthenticationToken(fromAppName, redirectUrl);
+		return new LogoutAuthenticationToken(remoteHost, fromAppName, redirectUrl);
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 	}
 
 	@Override
-	protected GeneralAuthenticationToken createAuthenticationToken(String fromAppName, String redirectUrl,
+	protected GeneralAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 		if (!RequestMethod.POST.name().equalsIgnoreCase(request.getMethod())) {
 			throw new HttpRequestMethodNotSupportedException(request.getMethod(), RequestMethod.POST.name());
@@ -50,7 +50,7 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 		String clientRef = WebUtils.getCleanParam(request, config.getParam().getClientRefName());
 		String captcha = WebUtils.getCleanParam(request, config.getParam().getCaptchaName());
 
-		return new GeneralAuthenticationToken(fromAppName, redirectUrl, username, password, clientRef, captcha);
+		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, password, clientRef, captcha);
 	}
 
 	@Override

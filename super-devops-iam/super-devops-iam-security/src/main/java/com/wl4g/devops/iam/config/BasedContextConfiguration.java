@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 
 /**
@@ -50,8 +50,8 @@ public class BasedContextConfiguration {
 	 */
 	@Bean(BEAN_DELEGATE_MESSAGE_SOURCE)
 	@ConditionalOnMissingBean
-	public DelegateBoundleMessageSource delegateBoundleMessageSource() {
-		return new DelegateBoundleMessageSource(getClass());
+	public DelegateBundleMessageSource delegateBundleMessageSource() {
+		return new DelegateBundleMessageSource(getClass());
 	}
 
 	//

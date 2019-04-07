@@ -17,9 +17,11 @@ package com.wl4g.devops.iam.realm;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.StringUtils;
 
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.SimpleParameter;
@@ -69,13 +71,22 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
 		// Get principal account information
-		IamAccountInfo account = this.context.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+		IamAccountInfo acc = this.context.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
-			log.debug("Get IamAccountInfo:{} by token:{}", account, token);
+			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
 		}
 
 		// To authenticationInfo
-		return new GeneralAuthenticationInfo(token.getPrincipal(), account.getStoredCredentials(), super.getName());
+		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
+			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
+		}
+
+		/*
+		 * Password is a string that may be set to empty.
+		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
+		 */
+		String storedCredentials = (acc != null) ? acc.getStoredCredentials() : StringUtils.EMPTY_STRING;
+		return new GeneralAuthenticationInfo(acc.getPrincipal(), storedCredentials, super.getName());
 	}
 
 	/**

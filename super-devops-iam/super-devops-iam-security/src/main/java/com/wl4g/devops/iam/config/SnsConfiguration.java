@@ -28,7 +28,7 @@ import java.util.List;
 import com.wl4g.devops.iam.annotation.SnsController;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 import com.wl4g.devops.iam.sns.BindConnection;
 import com.wl4g.devops.iam.sns.DefaultSocialConnectionFactory;
@@ -103,36 +103,36 @@ public class SnsConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext contextHandler, SecurityInterceptor intercept, JedisCacheManager cacheManager) {
-		return new LoginSnsHandler(config, snsConfig, connectFactory, contextHandler, intercept, cacheManager);
+			ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+		return new LoginSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
 	}
 
 	@Bean
 	public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityInterceptor intercept,
+			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
 			JedisCacheManager cacheManager) {
-		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, contextHandler, intercept, cacheManager);
+		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
 	}
 
 	@Bean
 	public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityInterceptor intercept,
+			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
 			JedisCacheManager cacheManager) {
-		return new BindingSnsHandler(config, snsConfig, connectFactory, contextHandler, intercept, cacheManager);
+		return new BindingSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
 	}
 
 	@Bean
 	public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityInterceptor intercept,
+			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
 			JedisCacheManager cacheManager) {
-		return new UnBindingSnsHandler(config, snsConfig, connectFactory, contextHandler, intercept, cacheManager);
+		return new UnBindingSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
 	}
 
 	@Bean
 	public SecondAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityInterceptor intercept,
+			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
 			JedisCacheManager cacheManager) {
-		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, contextHandler, intercept, cacheManager);
+		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
 	}
 
 	//

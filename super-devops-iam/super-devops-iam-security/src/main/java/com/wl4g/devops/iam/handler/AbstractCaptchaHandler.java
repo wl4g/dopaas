@@ -16,25 +16,32 @@
 package com.wl4g.devops.iam.handler;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.util.Assert;
+import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_CAPTCHA_FAILER;
 
+import com.google.common.base.Charsets;
 import com.wl4g.devops.common.exception.iam.CaptchaException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
 
 /**
@@ -68,7 +75,7 @@ public abstract class AbstractCaptchaHandler implements CaptchaHandler {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
-	protected DelegateBoundleMessageSource delegate;
+	protected DelegateBundleMessageSource bundle;
 
 	public AbstractCaptchaHandler(IamProperties config, JedisCacheManager cacheManager) {
 		Assert.notNull(config, "'config' must not be null");
@@ -78,26 +85,29 @@ public abstract class AbstractCaptchaHandler implements CaptchaHandler {
 	}
 
 	@Override
-	public void validate(String principal, String captchaRequest) throws CaptchaException {
+	public void validate(@NotNull List<String> conditions, String captchaReq) throws CaptchaException {
+		Assert.isTrue(!CollectionUtils.isEmpty(conditions), "Conditions must not be empty");
+
 		try {
-			if (!this.isEnabled(principal)) {
+			if (!isEnabled(conditions)) {
 				return; // not enabled
 			}
-			// Get store the text of session
-			Object capText = getSession().getAttribute(KEY_CAPTCHA_SESSION);
+
+			// Get store the text
+			Object capText = getCaptcha(false);
 			if (capText == null) {
-				throw new CaptchaException(
-						delegate.getMessage("AbstractCaptchaHandler.captcha.expired", new Object[] { captchaRequest }));
+				throw new CaptchaException(bundle.getMessage("AbstractCaptchaHandler.captcha.expired", captchaReq));
 			}
-			if (!String.valueOf(capText).equalsIgnoreCase(captchaRequest)) {
+
+			if (!isEqualCaptcha(capText, captchaReq)) {
 				if (log.isErrorEnabled()) {
-					log.error("Captcha mismatch. {} => {}", captchaRequest, capText);
+					log.error("Captcha mismatch. {} => {}", captchaReq, capText);
 				}
-				throw new CaptchaException(
-						delegate.getMessage("AbstractCaptchaHandler.captcha.mismatch", new Object[] { captchaRequest }));
+				throw new CaptchaException(bundle.getMessage("AbstractCaptchaHandler.captcha.mismatch", captchaReq));
 			}
+
 		} finally {
-			this.reset(false); // Reset-clean
+			reset(false); // Reset-clean
 		}
 	}
 
@@ -118,13 +128,10 @@ public abstract class AbstractCaptchaHandler implements CaptchaHandler {
 		response.setContentType("image/jpeg");
 
 		// Reset to create a new captcha
-		this.reset(true);
+		reset(true);
 
-		// Create the text for the image
-		String capText = this.getCaptcha();
-
-		// Output captcha image buffer.
-		this.out(response, capText);
+		// Create the text for the image and output captcha image buffer.
+		out(response, getCaptcha(true));
 	}
 
 	@Override
@@ -134,59 +141,94 @@ public abstract class AbstractCaptchaHandler implements CaptchaHandler {
 			// Create the text for the image
 			Assert.state(!StringUtils.isEmpty(capText = createText()), "'capText' must not be null");
 			// Store the text in the cache
-			this.getSession().setAttribute(KEY_CAPTCHA_SESSION, capText);
+			getSession().setAttribute(KEY_CAPTCHA_SESSION, capText);
 		}
+
 		return capText;
 	}
 
 	@Override
-	public Long accumulative(String principal, long value) {
-		// Cumulative with principal key
-		String cumulativeKey = this.getCumulativeKey(principal);
-		// Captcha failer cache
-		EnhancedCache cache = this.cacheManager.getEnhancedCache(CACHE_CAPTCHA_FAILER);
-		if (value < 0) { // Reset clearance
-			return (Long) cache.remove(new EnhancedKey(cumulativeKey));
+	public Long accumulative(@NotNull List<String> conditions, long value) {
+		Assert.isTrue(!CollectionUtils.isEmpty(conditions), "Conditions must not be empty");
+
+		// Cumulated maximum number of failures
+		long cumulatedMaxFailCount = 0;
+		for (String condit : conditions) {
+			// Captcha failer cache
+			EnhancedCache cache = cacheManager.getEnhancedCache(CACHE_CAPTCHA_FAILER);
+			// Reset cumulated
+			if (value <= 0) {
+				cumulatedMaxFailCount = Math.max(cumulatedMaxFailCount, (Long) cache.remove(new EnhancedKey(condit)));
+			}
+			// Positive increasing
+			else {
+				cumulatedMaxFailCount = Math.max(cumulatedMaxFailCount, cache.incrementGet(condit, value));
+			}
 		}
-		// Positive increasing
-		return cache.incrementGet(cumulativeKey, value);
+
+		return cumulatedMaxFailCount;
 	}
 
 	@Override
-	public Long getCumulative(String principal) {
-		Long cumulative = (Long) this.cacheManager.getEnhancedCache(CACHE_CAPTCHA_FAILER)
-				.get(new EnhancedKey(getCumulativeKey(principal), Long.class));
-		return (cumulative == null) ? 0 : cumulative;
+	public Long getCumulative(@NotBlank String condition) {
+		Long failCount = (Long) cacheManager.getEnhancedCache(CACHE_CAPTCHA_FAILER).get(new EnhancedKey(condition, Long.class));
+		return failCount == null ? 0 : failCount;
 	}
 
 	@Override
-	public void cancel(String principal) {
-		this.cacheManager.getEnhancedCache(CACHE_CAPTCHA_FAILER).remove(new EnhancedKey(getCumulativeKey(principal)));
+	public Long getCumulatives(@NotNull List<String> conditions) {
+		Assert.isTrue(!CollectionUtils.isEmpty(conditions), "Conditions must not be empty");
+
+		// Accumulated maximum number of failures
+		long cumulatedMaxFailCount = 0;
+		for (String condit : conditions) {
+			// Get count of failures by condition and take max
+			cumulatedMaxFailCount = Math.max(cumulatedMaxFailCount, getCumulative(condit));
+		}
+
+		return cumulatedMaxFailCount;
 	}
 
 	@Override
-	public boolean isEnabled(String principal) {
+	public void cancel(@NotNull List<String> conditions) {
+		Assert.isTrue(!CollectionUtils.isEmpty(conditions), "Conditions must not be empty");
+
+		EnhancedCache cache = cacheManager.getEnhancedCache(CACHE_CAPTCHA_FAILER);
+		conditions.forEach(condit -> {
+			try {
+				cache.remove(new EnhancedKey(condit));
+			} catch (Exception e) {
+				log.error("", e);
+			}
+		});
+	}
+
+	@Override
+	public boolean isEnabled(@NotNull List<String> conditions) {
+		Assert.isTrue(!CollectionUtils.isEmpty(conditions), "Conditions must not be empty");
+
 		// Captcha required attempts
-		int captchaMaxAttempts = this.config.getMatcher().getFailureCaptchaMaxAttempts();
-
-		Integer failedCount = (Integer) this.cacheManager.getEnhancedCache(CACHE_CAPTCHA_FAILER)
-				.get(new EnhancedKey(getCumulativeKey(principal), Integer.class));
-		failedCount = failedCount == null ? 0 : failedCount;
+		int captchaMaxAttempts = config.getMatcher().getFailureCaptchaMaxAttempts();
 
 		// If the number of failures exceeds the upper limit, captcha is
 		// enabled
-		return failedCount >= captchaMaxAttempts;
+		return getCumulatives(conditions) >= captchaMaxAttempts;
 	}
 
 	/**
-	 * Get captcha text value
+	 * Get stored captcha text value of session
 	 * 
+	 * @param assertion
 	 * @return
 	 */
-	private String getCaptcha() {
+	private String getCaptcha(boolean assertion) {
 		// Get already created text
 		String capText = (String) getSession().getAttribute(KEY_CAPTCHA_SESSION);
-		Assert.state(!StringUtils.isEmpty(capText), "'capText' must not be null");
+
+		if (assertion) {
+			Assert.state(!StringUtils.isEmpty(capText), "'capText' must not be null");
+		}
+
 		return capText;
 	}
 
@@ -200,14 +242,15 @@ public abstract class AbstractCaptchaHandler implements CaptchaHandler {
 	}
 
 	/**
-	 * Get cumulative counter key
+	 * Comparing whether the verification codes are equal
 	 * 
-	 * @param principal
+	 * @param capText
+	 * @param capReq
 	 * @return
 	 */
-	protected String getCumulativeKey(String principal) {
-		Assert.notNull(principal, "'principal' must not be null");
-		return principal;
+	protected boolean isEqualCaptcha(Object capText, Object capReq) {
+		return MessageDigest.isEqual(String.valueOf(capText).toLowerCase(Locale.ENGLISH).getBytes(Charsets.UTF_8),
+				String.valueOf(capReq).toLowerCase(Locale.ENGLISH).getBytes(Charsets.UTF_8));
 	}
 
 	/**

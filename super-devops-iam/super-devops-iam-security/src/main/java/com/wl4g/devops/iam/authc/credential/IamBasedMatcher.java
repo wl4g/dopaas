@@ -23,11 +23,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
-
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.handler.CaptchaHandler;
 
@@ -68,15 +67,15 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	protected IamCredentialsSecurer securer;
 
 	/**
-	 * IAM security interceptor
+	 * IAM security coprocessor
 	 */
 	@Autowired
-	protected SecurityInterceptor interceptor;
+	protected SecurityCoprocessor coprocessor;
 
 	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
-	protected DelegateBoundleMessageSource delegate;
+	protected DelegateBundleMessageSource bundle;
 
 }

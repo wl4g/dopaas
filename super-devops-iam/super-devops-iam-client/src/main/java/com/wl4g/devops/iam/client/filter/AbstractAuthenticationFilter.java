@@ -43,8 +43,7 @@ import com.wl4g.devops.iam.client.context.ClientSecurityContext;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
-import com.wl4g.devops.iam.common.context.SecurityListener;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.common.utils.Sessions;
@@ -97,14 +96,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final protected ClientSecurityContext context;
 
 	/**
-	 * Client security interceptor.
+	 * Client security Coprocessor.
 	 */
-	final protected SecurityInterceptor interceptor;
-
-	/**
-	 * Client security listener.
-	 */
-	final protected SecurityListener listener;
+	final protected SecurityCoprocessor coprocessor;
 
 	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under
@@ -113,16 +107,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final private EnhancedCache cache;
 
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityContext context,
-			SecurityInterceptor interceptor, SecurityListener listener, JedisCacheManager cacheManager) {
+			SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(context, "'context' must not be null");
-		Assert.notNull(interceptor, "'interceptor' must not be null");
-		Assert.notNull(listener, "'listener' must not be null");
+		Assert.notNull(coprocessor, "'interceptor' must not be null");
 		Assert.notNull(cacheManager, "'cacheManager' must not be null");
 		this.config = config;
 		this.context = context;
-		this.interceptor = interceptor;
-		this.listener = listener;
+		this.coprocessor = coprocessor;
 		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
 	}
 

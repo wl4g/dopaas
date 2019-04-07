@@ -29,8 +29,8 @@ public class LogoutAuthenticationToken extends AbstractIamAuthenticationToken {
 
 	private static final long serialVersionUID = 8587329689973009598L;
 
-	public LogoutAuthenticationToken(String fromAppName, String redirectUrl) {
-		super(fromAppName, redirectUrl);
+	public LogoutAuthenticationToken(final String remoteHost, final String fromAppName, final String redirectUrl) {
+		super(remoteHost, fromAppName, redirectUrl);
 	}
 
 	@Override

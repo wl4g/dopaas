@@ -31,7 +31,7 @@ public class QrcodeAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	}
 
 	@Override
-	protected QrcodeAuthenticationToken createAuthenticationToken(String fromAppName, String redirectUrl,
+	protected QrcodeAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		return null;

@@ -23,31 +23,7 @@ package com.wl4g.devops.iam.authc.credential.secure;
  * @since
  * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
  */
-public interface IamCredentialsSecurer {
-
-	/**
-	 * Encryption credentials
-	 * 
-	 * @param principal
-	 *            principal
-	 * @param credentials
-	 *            External input credentials
-	 * @return
-	 */
-	String signature(String principal, String credentials);
-
-	/**
-	 * Validation credentials
-	 * 
-	 * @param principal
-	 *            principal
-	 * @param credentials
-	 *            External input credentials
-	 * @param storedCredentials
-	 *            Database storage credentials
-	 * @return
-	 */
-	boolean validate(String principal, String credentials, String storedCredentials);
+public interface IamCredentialsSecurer extends CredentialsSecurer {
 
 	/**
 	 * Apply asymmetric algorithm secret public key
@@ -55,6 +31,8 @@ public interface IamCredentialsSecurer {
 	 * @param principal
 	 * @return
 	 */
-	String applySecretKey(String principal);
+	default String applySecretKey(String principal) {
+		throw new UnsupportedOperationException();
+	}
 
 }

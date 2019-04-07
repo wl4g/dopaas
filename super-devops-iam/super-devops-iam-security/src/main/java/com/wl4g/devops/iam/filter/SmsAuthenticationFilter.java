@@ -31,8 +31,8 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 	}
 
 	@Override
-	protected SmsAuthenticationToken createAuthenticationToken(String fromAppName, String redirectUrl, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	protected SmsAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		return null;
 	}

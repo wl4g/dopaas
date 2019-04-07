@@ -79,9 +79,9 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	}
 
 	@Override
-	protected IamAuthenticationToken createAuthenticationToken(String fromAppName, String redirectUrl, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		return new RootAuthenticationToken(fromAppName, redirectUrl);
+	protected IamAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return new RootAuthenticationToken(remoteHost, fromAppName, redirectUrl);
 	}
 
 	@Override

@@ -29,8 +29,7 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
-import com.wl4g.devops.iam.common.context.SecurityListener;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 
 /**
  * This filter validates the CAS service ticket to authenticate the user. It
@@ -55,9 +54,9 @@ import com.wl4g.devops.iam.common.context.SecurityListener;
 public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastCasAuthenticationToken> {
 	final public static String NAME = "rootFilter";
 
-	public ROOTAuthenticationFilter(IamClientProperties config, ClientSecurityContext context, SecurityInterceptor interceptor,
-			SecurityListener listener, JedisCacheManager cacheManager) {
-		super(config, context, interceptor, listener, cacheManager);
+	public ROOTAuthenticationFilter(IamClientProperties config, ClientSecurityContext context, SecurityCoprocessor coprocessor,
+			JedisCacheManager cacheManager) {
+		super(config, context, coprocessor, cacheManager);
 	}
 
 	/**

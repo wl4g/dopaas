@@ -16,8 +16,12 @@
 package com.wl4g.devops.iam.handler;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.wl4g.devops.common.exception.iam.CaptchaException;
 
@@ -34,21 +38,25 @@ public abstract interface CaptchaHandler {
 	/**
 	 * Check Front-end Verification Code
 	 * 
-	 * @param principal
-	 * @param requestCaptcha
+	 * @param conditions
+	 * @param captchaReq
 	 *            Submitted authentication code token
 	 * @throws CaptchaException
 	 */
-	void validate(String principal, String requestCaptcha) throws CaptchaException;
+	default void validate(@NotNull List<String> conditions, String captchaReq) throws CaptchaException {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * New apply and output a verification code
 	 * 
-	 * @param resp
+	 * @param response
 	 *            HttpServletResponse
 	 * @throws IOException
 	 */
-	void apply(HttpServletResponse resp) throws IOException;
+	default void apply(HttpServletResponse response) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Reset the captcah to indicate a new generation when create is true
@@ -57,38 +65,61 @@ public abstract interface CaptchaHandler {
 	 * @return Returns the currently valid captcha (if create = true, the newly
 	 *         generated value or the old value)
 	 */
-	String reset(boolean create);
+	default String reset(boolean create) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Number of cumulative processing (e.g. to limit the number of login
 	 * failures or the number of short messages sent by homologous IP requests)
 	 * 
-	 * @param principal
-	 * @param value
+	 * @param conditions
+	 *            e.g. Client remote IP and login username.
+	 * @param incrementBy
+	 *            Step increment value
 	 */
-	Long accumulative(String principal, long value);
+	default Long accumulative(@NotNull List<String> conditions, long incrementBy) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
-	 * Get the amount of accumulated processing
+	 * Get the cumulative number of failures for the specified condition
 	 * 
-	 * @param principal
+	 * @param condition
+	 *            e.g. Client remote IP or login username.
 	 */
-	Long getCumulative(String principal);
+	default Long getCumulative(@NotBlank String condition) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Gets the cumulative number of failures for the specified condition
+	 * 
+	 * @param conditions
+	 *            e.g. Client remote IP and login username.
+	 */
+	default Long getCumulatives(@NotNull List<String> conditions) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Cancel captcha validation
 	 * 
-	 * @param principal
+	 * @param conditions
 	 */
-	void cancel(String principal);
+	default void cancel(@NotNull List<String> conditions) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Check whether validation code is turned on
 	 * 
-	 * @param principal
+	 * @param conditions
 	 * @return Return true if the current login account name or principal needs
 	 *         to login with authentication number
 	 */
-	boolean isEnabled(String principal);
+	default boolean isEnabled(@NotNull List<String> conditions) {
+		throw new UnsupportedOperationException();
+	}
 
 }

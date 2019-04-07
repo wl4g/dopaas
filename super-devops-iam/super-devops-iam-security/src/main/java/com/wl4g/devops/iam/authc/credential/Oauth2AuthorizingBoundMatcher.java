@@ -45,7 +45,7 @@ public class Oauth2AuthorizingBoundMatcher extends IamBasedMatcher {
 					"Logon failed, because social account provider[%s], openId[%s], unionId[%s], from [%s] unbound system account",
 					tk.getSocial().getProvider(), tk.getSocial().getOpenId(), tk.getSocial().getUnionId(), tk.getHost()));
 		}
-		throw new NoSuchSocialBindException("Logon failed, because there is no system account bound yet");
+		throw new NoSuchSocialBindException(bundle.getMessage("Oauth2AuthorizingBoundMatcher.unbindReject"));
 	}
 
 }

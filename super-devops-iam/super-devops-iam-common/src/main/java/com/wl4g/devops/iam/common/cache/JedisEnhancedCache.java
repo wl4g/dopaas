@@ -55,10 +55,12 @@ public class JedisEnhancedCache implements EnhancedCache {
 		if (log.isDebugEnabled()) {
 			log.debug("Get key={}", key);
 		}
+
 		byte[] data = this.jedisCluster.get(key.getKey(name));
 		if (key.getDeserializer() != null) { // Using a custom deserializer
 			return key.getDeserializer().deserialize(data, key.getValueClass());
 		}
+
 		return ProtostuffUtils.deserialize(data, key.getValueClass());
 	}
 
@@ -141,19 +143,24 @@ public class JedisEnhancedCache implements EnhancedCache {
 	}
 
 	@Override
-	public Long timeToLive(EnhancedKey key) throws CacheException {
+	public Long timeToLive(EnhancedKey key, Object value) throws CacheException {
+		Assert.notNull(value, "TTL key is null, please check configure");
+		Assert.notNull(value, "TTL value is null, please check configure");
+
 		byte[] realKey = key.getKey(name);
 		// New create.
 		if (!this.jedisCluster.exists(realKey)) {
 			// key -> createTime
-			this.jedisCluster.set(realKey, String.valueOf(System.currentTimeMillis()).getBytes(Charsets.UTF_8));
+			this.jedisCluster.set(realKey, String.valueOf(value).getBytes(Charsets.UTF_8));
 		}
+
 		// Get last TTL expire
 		Long lastTTL = this.jedisCluster.ttl(realKey);
 		// Less than or equal to 0 means immediate expiration
 		if (key.isExpire()) {
 			this.jedisCluster.expire(realKey, key.getExpire());
 		}
+
 		return lastTTL;
 	}
 

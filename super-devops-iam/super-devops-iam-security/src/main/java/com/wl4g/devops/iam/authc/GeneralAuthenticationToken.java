@@ -48,9 +48,9 @@ public class GeneralAuthenticationToken extends UsernamePasswordToken
 
 	final private ClientRef clientRef;
 
-	public GeneralAuthenticationToken(final String fromAppName, final String redirectUrl, final String username,
-			final String password, String clientRef, final String captcha) {
-		super(username, password);
+	public GeneralAuthenticationToken(final String remoteHost, final String fromAppName, final String redirectUrl,
+			final String username, final String password, String clientRef, final String captcha) {
+		super(username, password, remoteHost);
 		this.fromAppName = fromAppName;
 		this.redirectUrl = redirectUrl;
 		this.clientRef = ClientRef.of(clientRef);

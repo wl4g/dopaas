@@ -22,9 +22,9 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.context.ServerSecurityInterceptor;
+import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
@@ -52,12 +52,12 @@ public abstract class AbstractAuthenticatorController extends BaseController {
 	 * IAM server security interceptor.
 	 */
 	@Autowired
-	protected ServerSecurityInterceptor interceptor;
+	protected ServerSecurityCoprocessor interceptor;
 
 	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
-	protected DelegateBoundleMessageSource delegate;
+	protected DelegateBundleMessageSource bundle;
 
 }

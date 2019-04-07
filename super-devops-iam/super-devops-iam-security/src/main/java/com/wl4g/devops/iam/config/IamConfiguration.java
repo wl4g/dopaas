@@ -43,16 +43,15 @@ import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.iam.common.context.SecurityListener;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.configure.DefaultSecurerConfigureAdapter;
 import com.wl4g.devops.iam.configure.SecurerConfigureAdapter;
-import com.wl4g.devops.iam.context.AnynothingSecurityInterceptor;
-import com.wl4g.devops.iam.context.AnynothingSecurityListener;
-import com.wl4g.devops.iam.context.ServerSecurityInterceptor;
+import com.wl4g.devops.iam.context.AnynothingSecurityCoprocessor;
+import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.filter.DingtalkAuthenticationFilter;
 import com.wl4g.devops.iam.filter.FacebookAuthenticationFilter;
@@ -515,14 +514,14 @@ public class IamConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ServerSecurityInterceptor securityInterceptor() {
-		return new AnynothingSecurityInterceptor();
+	public ServerSecurityCoprocessor securityInterceptor() {
+		return new AnynothingSecurityCoprocessor();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SecurityListener securityListener() {
-		return new AnynothingSecurityListener();
+	public SecurityCoprocessor securityCoprocessor() {
+		return new AnynothingSecurityCoprocessor();
 	}
 
 }

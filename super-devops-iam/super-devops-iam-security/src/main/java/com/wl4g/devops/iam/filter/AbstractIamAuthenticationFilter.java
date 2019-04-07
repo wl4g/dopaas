@@ -49,8 +49,7 @@ import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
-import com.wl4g.devops.iam.common.context.SecurityListener;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
@@ -113,16 +112,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected CaptchaHandler captchaHandler;
 
 	/**
-	 * IAM security interceptor
+	 * IAM security coprocessor
 	 */
 	@Autowired
-	protected SecurityInterceptor interceptor;
-
-	/**
-	 * IAM security listener
-	 */
-	@Autowired
-	protected SecurityListener listener;
+	protected SecurityCoprocessor coprocessor;
 
 	/**
 	 * JEDIS cache manager.
@@ -175,7 +168,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 * of restricting client IP white-list to prevent violent cracking of
 		 * large number of submission login requests.
 		 */
-		if (!interceptor.preAuthentication(this, request, response)) {
+		if (!coprocessor.preAuthentication(this, request, response)) {
 			throw new AccessPermissionDeniedException(String.format("Access permission denied for remote IP:%s",
 					WebUtils2.getHttpRemoteIpAddress(WebUtils.toHttp(request))));
 		}
@@ -183,13 +176,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Getting from source info
 		String fromAppName = this.getFromAppName(request);
 		String redirectUrl = this.getFromRedirectUrl(request);
+		// Client remote host
+		String remoteHost = WebUtils2.getHttpRemoteIpAddress((HttpServletRequest) request);
 
 		// Create authentication token
-		return this.createAuthenticationToken(fromAppName, redirectUrl, WebUtils.toHttp(request), WebUtils.toHttp(response));
+		return this.postCreateToken(remoteHost, fromAppName, redirectUrl, WebUtils.toHttp(request),
+				WebUtils.toHttp(response));
 	}
 
-	protected abstract T createAuthenticationToken(String fromAppName, String redirectUrl, HttpServletRequest request,
-			HttpServletResponse response) throws Exception;
+	protected abstract T postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
+			HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
@@ -202,30 +198,26 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			 * Save the token at the time of authentication, which can then be
 			 * used for extended logic usage.
 			 */
-			subject.getSession().setAttribute(KEY_AUTHC_TOKEN, token);
+			subject.getSession().setAttribute(KEY_AUTHC_TOKEN, tk);
 
 			// From source application
-			String fromAppName = this.getFromAppName(request);
-			// Request callback redirect URI
-			String successRedirectUrl = this.getFromRedirectUrl(request);
+			String fromAppName = getFromAppName(request);
 
-			if (!StringUtils.hasText(successRedirectUrl)) { // Using default?
-				// Determine login success default URL
-				successRedirectUrl = this.determineSuccessUrl(tk, subject, request, response);
-			}
+			// Callback success redirect URI
+			String successRedirectUrl = determineSuccessUrl(tk, subject, request, response); // prior
 			Assert.hasText(successRedirectUrl, "Check the successful login redirection URL configure");
 
 			// Granting ticket
 			String grantTicket = null;
 			if (StringUtils.hasText(fromAppName)) {
-				grantTicket = this.authHandler.loggedin(fromAppName, subject).getGrantTicket();
+				grantTicket = authHandler.loggedin(fromAppName, subject).getGrantTicket();
 			}
 
 			// Response JSON response.
 			if (isJSONResponse(request)) {
 				try {
 					// Make logged-in response message
-					String logged = this.makeLoggedResponse(request, grantTicket, successRedirectUrl);
+					String logged = makeLoggedResponse(request, grantTicket, successRedirectUrl);
 					if (log.isInfoEnabled()) {
 						log.info("Login success response:{}", logged);
 					}
@@ -257,7 +249,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			}
 
 			// Post-handling of login success
-			this.listener.onPostLoginSuccess(tk, subject, request, response);
+			coprocessor.postLoginSuccess(tk, subject, request, response);
 
 		} finally { // Clean-up
 			this.cleanup(token, subject, request, response);
@@ -282,8 +274,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			SessionBindings.bind(KEY_ERR_SESSION_SAVED, thw.getMessage());
 		}
 
-		// Determine login failure URL
-		String failureRedirectUrl = this.determineFailureUrl(tk, ae, request, response);
+		// Callback failure redirect URI
+		String failRedirectUrl = determineFailureUrl(tk, ae, request, response);
 
 		// Get binding parameters
 		Map queryParams = SessionBindings.getBindValue(KEY_REQ_AUTH_PARAMS);
@@ -291,7 +283,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Response JSON message
 		if (isJSONResponse(request)) {
 			try {
-				final String failed = this.makeFailedResponse(failureRedirectUrl, request, queryParams, thw);
+				final String failed = makeFailedResponse(failRedirectUrl, request, queryParams, thw);
 				if (log.isInfoEnabled()) {
 					log.info("Response unauthentication. {}", failed);
 				}
@@ -304,16 +296,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		else {
 			try {
 				if (log.isInfoEnabled()) {
-					log.info("Redirect to login: {}", failureRedirectUrl);
+					log.info("Redirect to login: {}", failRedirectUrl);
 				}
-				WebUtils.issueRedirect(request, response, failureRedirectUrl, queryParams, true);
+				WebUtils.issueRedirect(request, response, failRedirectUrl, queryParams, true);
 			} catch (IOException e1) {
 				log.error("Redirect to login failed.", e1);
 			}
 		}
 
 		// Post-handling of login failure
-		this.listener.onPostLoginFailure(tk, ae, request, response);
+		this.coprocessor.postLoginFailure(tk, ae, request, response);
 
 		// Redirection has been responded and no further execution is required.
 		return false;
@@ -358,7 +350,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	protected String getFromRedirectUrl(ServletRequest request) {
-		String redirectUrl = WebUtils.getCleanParam(request, config.getParam().getRedirectUrl()); // Priority
+		String redirectUrl = WebUtils.getCleanParam(request, config.getParam().getRedirectUrl()); // prerogative
 		return StringUtils.hasText(redirectUrl) ? redirectUrl
 				: SessionBindings.extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
 	}
@@ -433,7 +425,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@SuppressWarnings("rawtypes")
 	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map queryParams, Throwable thw) {
-		String errmsg = thw != null ? thw.getMessage() : "Not logged-in";
+		String errmsg = (thw != null && StringUtils.hasText(thw.getMessage())) ? thw.getMessage() : "No logged";
 		// Make message
 		return config.getStrategy().makeResponse(RetCode.UNAUTHC.getCode(), DEFAULT_UNAUTHC_STATUS, errmsg, failureRedirectUrl);
 	}
@@ -450,10 +442,17 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	private String determineSuccessUrl(IamAuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
-		String successUrl = this.context.determineLoginSuccessUrl(getSuccessUrl(), token, subject, request, response);
-		Assert.hasText(successUrl, "'successUrl' is empty, please check the configure");
-		WebUtils2.cleanURI(successUrl); // check
-		return successUrl;
+		// Callback success redirect URI
+		String successRedirectUrl = getFromRedirectUrl(request);
+		if (!StringUtils.hasText(successRedirectUrl)) {
+			successRedirectUrl = getSuccessUrl(); // fallback
+		}
+		// Determine success URL
+		successRedirectUrl = context.determineLoginSuccessUrl(successRedirectUrl, token, subject, request, response);
+
+		Assert.hasText(successRedirectUrl, "'successRedirectUrl' is empty, please check the configure");
+		WebUtils2.cleanURI(successRedirectUrl); // symbol check
+		return successRedirectUrl;
 	}
 
 	/**

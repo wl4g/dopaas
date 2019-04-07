@@ -21,7 +21,7 @@ import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
@@ -38,8 +38,8 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 public class BindingSnsHandler extends BasedBindSnsHandler {
 
 	public BindingSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext contextHandler, SecurityInterceptor intercept, JedisCacheManager cacheManager) {
-		super(config, snsConfig, connectFactory, contextHandler, intercept, cacheManager);
+			ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+		super(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
 	}
 
 	@Override

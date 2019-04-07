@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
@@ -83,7 +83,7 @@ public abstract class AbstractSnsController extends BaseController {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
-	protected DelegateBoundleMessageSource messages;
+	protected DelegateBundleMessageSource messages;
 
 	public AbstractSnsController(IamProperties config, SnsProperties snsConfig, DelegateSnsHandler delegate) {
 		Assert.notNull(delegate, "'delegateSnsHandlerFactory' must not be null");

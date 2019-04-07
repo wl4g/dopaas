@@ -33,11 +33,12 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * 
 	 * @param key
 	 *            Key that contains the actual EnhancedKey and expiration date
+	 * @param value
 	 * @return Returns the remaining valid time of this EnhancedKey before this
 	 *         setup
 	 * @throws CacheException
 	 */
-	Long timeToLive(final EnhancedKey key) throws CacheException;
+	Long timeToLive(final EnhancedKey key, Object value) throws CacheException;
 
 	/**
 	 * Get and add an atomic counter at the same time

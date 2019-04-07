@@ -41,8 +41,7 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
-import com.wl4g.devops.iam.common.context.SecurityListener;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.Sessions;
 
@@ -71,9 +70,9 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 
 	final protected RestTemplate restTemplate;
 
-	public LogoutAuthenticationFilter(IamClientProperties config, ClientSecurityContext context, SecurityInterceptor interceptor,
-			SecurityListener listener, JedisCacheManager cacheManager, RestTemplate restTemplate) {
-		super(config, context, interceptor, listener, cacheManager);
+	public LogoutAuthenticationFilter(IamClientProperties config, ClientSecurityContext context, SecurityCoprocessor coprocessor,
+			JedisCacheManager cacheManager, RestTemplate restTemplate) {
+		super(config, context, coprocessor, cacheManager);
 		Assert.notNull(restTemplate, "'restTemplate' must not be null");
 		this.restTemplate = restTemplate;
 	}
@@ -97,7 +96,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		}
 
 		// Execution listener
-		super.listener.onPreLogout(forced, request, response);
+		super.coprocessor.preLogout(forced, request, response);
 
 		/*
 		 * Post to remote logout

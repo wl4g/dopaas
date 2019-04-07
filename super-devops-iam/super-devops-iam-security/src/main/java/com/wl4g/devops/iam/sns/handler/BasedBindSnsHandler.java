@@ -28,7 +28,7 @@ import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.common.context.SecurityInterceptor;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -50,8 +50,8 @@ import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
 
 	public BasedBindSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext contextHandler, SecurityInterceptor intercept, JedisCacheManager cacheManager) {
-		super(config, snsConfig, connectFactory, contextHandler, intercept, cacheManager);
+			ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+		super(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
 	}
 
 	@Override

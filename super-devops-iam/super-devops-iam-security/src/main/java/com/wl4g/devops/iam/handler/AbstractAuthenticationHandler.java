@@ -27,8 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityListener;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 
@@ -76,13 +76,13 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	 * IAM security listener
 	 */
 	@Autowired
-	protected SecurityListener listener;
+	protected SecurityCoprocessor listener;
 
 	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
-	protected DelegateBoundleMessageSource delegate;
+	protected DelegateBundleMessageSource bundle;
 
 	public AbstractAuthenticationHandler(ServerSecurityContext context, RestTemplate restTemplate) {
 		Assert.notNull(context, "'context' must not be null");

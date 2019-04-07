@@ -122,9 +122,9 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	}
 
 	@Override
-	protected IamAuthenticationToken createAuthenticationToken(String fromAppName, String redirectUrl, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		return new AuthenticatorAuthenticationToken(fromAppName, redirectUrl);
+	protected IamAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return new AuthenticatorAuthenticationToken(remoteHost, fromAppName, redirectUrl);
 	}
 
 	@Override

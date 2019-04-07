@@ -134,7 +134,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
 		if (!this.context.isApplicationAccessAuthorized(principal, fromAppName)) {
 			throw new IllegalApplicationAccessException(
-					String.format("Unauthorized visitors:'%s' to application:'%s'", fromAppName, principal));
+					bundle.getMessage("GentralAuthenticationHandler.unaccessible", principal, fromAppName));
 		}
 	}
 
@@ -245,7 +245,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Subject subject = SecurityUtils.getSubject();
 
 		// Execution listener
-		super.listener.onPreLogout(forced, request, response);
+		super.listener.preLogout(forced, request, response);
 
 		// Represents all logged-out Tags
 		boolean logoutAll = false;

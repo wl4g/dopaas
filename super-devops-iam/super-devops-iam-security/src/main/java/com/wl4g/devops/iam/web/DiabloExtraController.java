@@ -36,6 +36,7 @@ import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.handler.CaptchaHandler;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.getFailConditions;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_CHECK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_CAPTCHA_APPLY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_LOCALE_APPLY;
@@ -43,6 +44,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_ERRR
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_USE_LOCALE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -65,7 +67,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 * IAM credentials securer
 	 */
 	@Autowired
-	protected IamCredentialsSecurer credentialsSecurer;
+	protected IamCredentialsSecurer securer;
 
 	/**
 	 * Initialization before login checks whether authentication code is
@@ -79,13 +81,16 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	public RespBase<String> check(@RequestParam String principal, HttpServletRequest request) {
 		RespBase<String> resp = new RespBase<>();
 		try {
+			// Get failure locker conditions
+			List<String> conditions = getFailConditions(WebUtils2.getHttpRemoteIpAddress(request), principal);
 			// Get the validation code enabled status
-			String enabled = this.captchaHandler.isEnabled(principal) ? "yes" : "no";
+			String enabled = captchaHandler.isEnabled(conditions) ? "yes" : "no";
 			resp.getData().put(config.getParam().getCaptchaEnabled(), enabled);
 
 			// Apply credentials encryption secret key
-			String secret = this.credentialsSecurer.applySecretKey(principal);
+			String secret = this.securer.applySecretKey(principal);
 			resp.getData().put(config.getParam().getSecret(), secret);
+
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(Exceptions.getRootCauses(e).getMessage());
@@ -115,7 +120,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
 	 * Apply locale.</br>
-	 * See:{@link com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource}
+	 * See:{@link com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource}
 	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
 	 * 
 	 * @param response

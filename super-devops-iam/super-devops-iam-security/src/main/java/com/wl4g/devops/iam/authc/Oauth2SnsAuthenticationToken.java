@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.authc;
 
 import org.apache.shiro.util.Assert;
-import org.hibernate.validator.constraints.NotBlank;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
@@ -40,17 +39,11 @@ public abstract class Oauth2SnsAuthenticationToken extends AbstractIamAuthentica
 	 */
 	final private SocialAuthorizeInfo social;
 
-	/**
-	 * Request client remote IP
-	 */
-	@NotBlank
-	final private String host;
-
-	public Oauth2SnsAuthenticationToken(String fromAppName, String redirectUrl, SocialAuthorizeInfo social, String host) {
-		super(fromAppName, redirectUrl);
+	public Oauth2SnsAuthenticationToken(final String fromAppName, final String redirectUrl, final SocialAuthorizeInfo social,
+			final String remoteHost) {
+		super(remoteHost, fromAppName, redirectUrl);
 		Assert.notNull(social, "'social' must not be null");
 		this.social = (social == null ? new SocialAuthorizeInfo() : social);
-		this.host = host;
 	}
 
 	@Override
@@ -68,13 +61,8 @@ public abstract class Oauth2SnsAuthenticationToken extends AbstractIamAuthentica
 	}
 
 	@Override
-	final public String getHost() {
-		return host;
-	}
-
-	@Override
 	public String toString() {
-		return "[social=" + social + ", host=" + host + "]";
+		return "[social=" + social + "]";
 	}
 
 }

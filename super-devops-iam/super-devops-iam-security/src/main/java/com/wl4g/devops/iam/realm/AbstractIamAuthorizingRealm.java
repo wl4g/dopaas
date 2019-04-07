@@ -38,7 +38,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.i18n.DelegateBoundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -102,7 +102,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
-	protected DelegateBoundleMessageSource delegate;
+	protected DelegateBundleMessageSource bundle;
 
 	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
 		Assert.notNull(manager, "'manager' must not be null");
@@ -121,9 +121,9 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 		// Initialization.
 		super.onInit();
 		// Credentials matcher set.
-		super.setCredentialsMatcher(this.matcher);
+		super.setCredentialsMatcher(matcher);
 		// AuthenticationTokenClass set.
-		ResolvableType resolveType = ResolvableType.forClass(this.getClass());
+		ResolvableType resolveType = ResolvableType.forClass(getClass());
 		super.setAuthenticationTokenClass(
 				(Class<? extends AuthenticationToken>) resolveType.getSuperType().getGeneric(0).resolve());
 	}
@@ -141,14 +141,14 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		try {
 			// Validation token.
-			this.validator.validate(token);
+			validator.validate(token);
 
 			/*
 			 * Extension: can be used to check the parameter 'pre-grant-ticket'
 			 */
 
 			// Do get authentication
-			return this.doAuthenticationInfo((T) token);
+			return doAuthenticationInfo((T) token);
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}
@@ -160,13 +160,12 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
-		CredentialsMatcher matcher = this.getCredentialsMatcher();
+		CredentialsMatcher matcher = getCredentialsMatcher();
 		if (matcher != null) {
 			if (!matcher.doCredentialsMatch(tk, info)) {
 				// not successful - throw an exception to indicate this:
-				String msg = this.delegate.getMessage("AbstractIamAuthorizingRealm.credential.mismatch",
-						new Object[] { token.getPrincipal() });
-				throw new IncorrectCredentialsException(msg);
+				throw new IncorrectCredentialsException(
+						bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch", token.getPrincipal()));
 			}
 
 			/*
@@ -177,7 +176,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 				Assert.isTrue(!info.getPrincipals().isEmpty(),
 						String.format("login user info is empty. please check the configure. info: %s", info));
 				String principal = (String) info.getPrincipals().iterator().next();
-				this.authHandler.checkApplicationAccessAuthorized(principal, tk.getFromAppName());
+				authHandler.checkApplicationAccessAuthorized(principal, tk.getFromAppName());
 			}
 
 		} else {

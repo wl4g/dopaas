@@ -30,7 +30,7 @@ import com.wl4g.devops.iam.configure.SecurerConfig;
  * @version v1.0 2019年1月16日
  * @since
  */
-public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerAdapter {
+public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport {
 
 	public DefaultCredentialsSecurer(SecurerConfig config, JedisCacheManager cacheManager) {
 		super(config, cacheManager);

@@ -15,6 +15,14 @@
  */
 package com.wl4g.devops.common.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.codec.binary.Hex;
+import org.springframework.util.StringUtils;
+
+import com.google.common.base.Charsets;
+
 /**
  * DevOps SCM Constants.
  * 
@@ -141,17 +149,17 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_TICKET_C = "ticket_c_";
 	/**
-	 * IAM server verification code failure counter cache name.
-	 */
-	final public static String CACHE_CAPTCHA_FAILER = "captcha_failer_";
-	/**
 	 * Login authentication related processing cache name.
 	 */
 	final public static String CACHE_SNSAUTH = "snsauth_";
 	/**
+	 * IAM server verification code failure counter cache name.
+	 */
+	final public static String CACHE_CAPTCHA_FAILER = "captcha_fail_";
+	/**
 	 * Login failure overrun, lock cache name.
 	 */
-	final public static String CACHE_MATCHER_LOCKER = "matcher_locker_";
+	final public static String CACHE_MATCHER_LOCKER = "matcher_lock_";
 	/**
 	 * Securer based cache name
 	 */
@@ -173,7 +181,14 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * The locale currently stored in the session.
 	 */
 	final public static String KEY_USE_LOCALE = "usageLocale";
-
+	/**
+	 * Limiter login failure prefix based on username.
+	 */
+	final public static String KEY_FAIL_LIMITER_USER_PREFIX = "u_";
+	/**
+	 * Limiter login failure prefix based on remote IP.
+	 */
+	final public static String KEY_FAIL_LIMITER_RIP_PREFIX = "rip_";
 	/**
 	 * Error information for saving iam-related operations to sessions.
 	 */
@@ -192,5 +207,31 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_C_BASE = "/internal";
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
+
+	//
+	// Definitions method's
+	//
+
+	/**
+	 * Failure locker keys.</br>
+	 * e.g. Client remote IP and login username.
+	 * 
+	 * @param remoteHost
+	 * @param principal
+	 * @return
+	 */
+	public static List<String> getFailConditions(String remoteHost, String principal) {
+		return new ArrayList<String>(2) {
+			private static final long serialVersionUID = -5976569540781454836L;
+			{
+				if (!StringUtils.isEmpty(principal)) {
+					add(KEY_FAIL_LIMITER_USER_PREFIX + principal);
+				}
+				if (!StringUtils.isEmpty(remoteHost)) {
+					add(KEY_FAIL_LIMITER_RIP_PREFIX + Hex.encodeHexString(remoteHost.getBytes(Charsets.UTF_8)));
+				}
+			}
+		};
+	}
 
 }

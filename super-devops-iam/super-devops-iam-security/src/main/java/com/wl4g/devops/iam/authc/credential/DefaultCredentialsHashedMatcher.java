@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
+import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
+
 /**
  * Default account credential matcher
  * 
@@ -30,8 +32,8 @@ public class DefaultCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
 	public boolean doCustomMatch(AuthenticationToken token, AuthenticationInfo info) {
-		return this.securer.validate((String) token.getPrincipal(), (String) token.getCredentials(),
-				(String) info.getCredentials());
+		CredentialsToken credentialsToken = new CredentialsToken((String) token.getPrincipal(), (String) token.getCredentials());
+		return this.securer.validate(credentialsToken, (String) info.getCredentials());
 	}
 
 }

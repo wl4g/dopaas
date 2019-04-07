@@ -62,11 +62,11 @@ public class FastCasTicketValidator extends AbstractBasedValidator<TicketValidat
 			 * See:i.w.DefaultAuthenticatorController#validate()
 			 */
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
-				throw new InvalidGrantTicketException(String.format("Remote validate error, %s", resp.getMessage()));
+				throw new InvalidGrantTicketException(resp.getMessage());
 			} else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
-				throw new IllegalApplicationAccessException(String.format("Remote validate error, %s", resp.getMessage()));
+				throw new IllegalApplicationAccessException(resp.getMessage());
 			}
-			throw new TicketValidateException(String.format("Remote validate error, %s", resp.getMessage()));
+			throw new TicketValidateException(resp.getMessage());
 		}
 
 		return resp.getData().get(KEY_TICKET_ASSERT);

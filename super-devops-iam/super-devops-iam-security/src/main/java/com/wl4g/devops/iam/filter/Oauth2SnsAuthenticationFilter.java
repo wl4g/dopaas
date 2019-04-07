@@ -26,7 +26,6 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
@@ -71,7 +70,7 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 	}
 
 	@Override
-	protected T createAuthenticationToken(String fromAppName, String redirectUrl, HttpServletRequest request,
+	protected T postCreateToken(String remoteHost, String fromAppName, String redirectUrl, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		String callbackId = WebUtils.getCleanParam(request, PARAM_SNS_CALLBACK_ID);
 		Assert.hasText(callbackId, String.format("'%s' must not be empty", PARAM_SNS_CALLBACK_ID));
@@ -84,11 +83,8 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 			SocialAuthorizeInfo info = (SocialAuthorizeInfo) cacheManager.getEnhancedCache(CACHE_SNSAUTH)
 					.get(new EnhancedKey(key, SocialAuthorizeInfo.class));
 
-			// Client address
-			String remoteAddr = WebUtils2.getHttpRemoteIpAddress(request);
-
 			// Create authentication token instance
-			return this.authenticationTokenConstructor.newInstance(fromAppName, redirectUrl, info, remoteAddr);
+			return this.authenticationTokenConstructor.newInstance(fromAppName, redirectUrl, info, remoteHost);
 		} finally { // Clean-up cache
 			this.cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(key));
 		}

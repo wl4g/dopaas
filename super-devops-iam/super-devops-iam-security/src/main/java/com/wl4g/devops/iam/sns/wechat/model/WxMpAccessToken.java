@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package com.wl4g.devops.iam.sns.wechat.model;
+
 //
 // import org.springframework.beans.BeanUtils;
 //

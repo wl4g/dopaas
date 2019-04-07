@@ -28,6 +28,11 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	private static final long serialVersionUID = 5483061935073949894L;
 
 	/**
+	 * Remote client host address
+	 */
+	final private String remoteHost;
+
+	/**
 	 * Source application name
 	 */
 	final private String fromAppName;
@@ -38,14 +43,20 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	final private String redirectUrl;
 
 	public AbstractIamAuthenticationToken() {
+		this.remoteHost = null;
 		this.fromAppName = null;
 		this.redirectUrl = null;
 	}
 
-	public AbstractIamAuthenticationToken(String fromAppName, String redirectUrl) {
-		super();
+	public AbstractIamAuthenticationToken(String remoteHost, String fromAppName, String redirectUrl) {
+		this.remoteHost = remoteHost;
 		this.fromAppName = fromAppName;
 		this.redirectUrl = redirectUrl;
+	}
+
+	@Override
+	public String getHost() {
+		return remoteHost;
 	}
 
 	@Override
