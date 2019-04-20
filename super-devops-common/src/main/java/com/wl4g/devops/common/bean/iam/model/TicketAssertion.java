@@ -21,9 +21,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
@@ -153,6 +153,7 @@ public final class TicketAssertion {
 		/** The unique identifier for this principal. */
 		@NotBlank
 		private String name;
+
 		/** Map of key/value pairs about this principal. */
 		private Map<String, Object> attributes = new HashMap<>(4);
 

@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.authc;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.authc.ClientRef;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -43,7 +43,6 @@ public class GeneralAuthenticationToken extends UsernamePasswordToken
 	 */
 	final private String redirectUrl;
 
-	@NotBlank
 	final private String captcha;
 
 	final private ClientRef clientRef;
@@ -59,7 +58,9 @@ public class GeneralAuthenticationToken extends UsernamePasswordToken
 
 	@Override
 	public Object getCredentials() {
-		return new String((char[]) super.getCredentials());
+		Object credentials = super.getCredentials();
+		Assert.notNull(credentials, "Credentials must not be null");
+		return new String((char[]) credentials);
 	}
 
 	@Override

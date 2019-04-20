@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.captcha.gif;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.springframework.util.Assert;
@@ -97,7 +98,8 @@ public abstract class Captcha {
 	 * 
 	 * @param os
 	 *            输出流
+	 * @throws IOException
 	 */
-	public abstract void out(OutputStream os);
+	public abstract void out(OutputStream os) throws IOException;
 
 }

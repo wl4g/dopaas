@@ -56,7 +56,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 			log.debug("Get key={}", key);
 		}
 
-		byte[] data = this.jedisCluster.get(key.getKey(name));
+		byte[] data = jedisCluster.get(key.getKey(name));
 		if (key.getDeserializer() != null) { // Using a custom deserializer
 			return key.getDeserializer().deserialize(data, key.getValueClass());
 		}
@@ -80,10 +80,10 @@ public class JedisEnhancedCache implements EnhancedCache {
 		}
 
 		String ret = null;
-		if (key.isExpire()) {
-			ret = this.jedisCluster.setex(key.getKey(name), key.getExpire(), data);
+		if (key.hasExpire()) {
+			ret = jedisCluster.setex(key.getKey(name), key.getExpire(), data);
 		} else {
-			ret = this.jedisCluster.set(key.getKey(name), data);
+			ret = jedisCluster.set(key.getKey(name), data);
 		}
 		return String.valueOf(ret).equalsIgnoreCase("nil") ? null : ret;
 	}
@@ -94,7 +94,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 		if (log.isDebugEnabled()) {
 			log.debug("Remove key={}", key);
 		}
-		return this.jedisCluster.del(key.getKey(name));
+		return jedisCluster.del(key.getKey(name));
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 		if (log.isDebugEnabled()) {
 			log.debug("Clear name={}", name);
 		}
-		this.jedisCluster.hdel(name);
+		jedisCluster.hdel(name);
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 		if (log.isDebugEnabled()) {
 			log.debug("Size name={}", name);
 		}
-		return this.jedisCluster.hlen(name).intValue();
+		return jedisCluster.hlen(name).intValue();
 	}
 
 	@Deprecated
@@ -119,7 +119,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 		// if (log.isDebugEnabled()) {
 		// log.debug("Keys name={}", name);
 		// }
-		// Set<byte[]> keys = this.jedisCluster.hkeys(name);
+		// Set<byte[]> keys = jedisCluster.hkeys(name);
 		// if (keys != null && !keys.isEmpty()) {
 		// return keys.stream().map(key -> new
 		// EnhancedKey(key)).collect(Collectors.toSet());
@@ -134,7 +134,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 		// if (log.isDebugEnabled()) {
 		// log.debug("Values name={}", name);
 		// }
-		// Collection<byte[]> vals = this.jedisCluster.hvals(name);
+		// Collection<byte[]> vals = jedisCluster.hvals(name);
 		// if (vals != null && !vals.isEmpty()) {
 		// return vals.stream().collect(Collectors.toList());
 		// }
@@ -149,39 +149,53 @@ public class JedisEnhancedCache implements EnhancedCache {
 
 		byte[] realKey = key.getKey(name);
 		// New create.
-		if (!this.jedisCluster.exists(realKey)) {
+		if (!jedisCluster.exists(realKey)) {
 			// key -> createTime
-			this.jedisCluster.set(realKey, String.valueOf(value).getBytes(Charsets.UTF_8));
+			jedisCluster.set(realKey, String.valueOf(value).getBytes(Charsets.UTF_8));
 		}
 
 		// Get last TTL expire
-		Long lastTTL = this.jedisCluster.ttl(realKey);
+		Long lastTTL = jedisCluster.ttl(realKey);
 		// Less than or equal to 0 means immediate expiration
-		if (key.isExpire()) {
-			this.jedisCluster.expire(realKey, key.getExpire());
+		if (key.hasExpire()) {
+			jedisCluster.expire(realKey, key.getExpire());
 		}
 
 		return lastTTL;
 	}
 
 	@Override
-	public Long incrementGet(String key) throws CacheException {
-		return this.jedisCluster.incr(EnhancedKey.toKeyBytes(name, key));
+	public Long incrementGet(EnhancedKey key) throws CacheException {
+		return incrementGet(key, 1);
 	}
 
 	@Override
-	public Long incrementGet(String key, long value) throws CacheException {
-		return this.jedisCluster.incrBy(EnhancedKey.toKeyBytes(name, key), value);
+	public Long incrementGet(EnhancedKey key, long incrBy) throws CacheException {
+		byte[] realKey = key.getKey(name);
+		// Increment
+		Long res = jedisCluster.incrBy(key.getKey(name), incrBy);
+		// Less than or equal to 0 means immediate expiration
+		if (key.hasExpire()) {
+			jedisCluster.expire(realKey, key.getExpire());
+		}
+		return res;
 	}
 
 	@Override
-	public Long decrementGet(String key) throws CacheException {
-		return this.jedisCluster.decr(EnhancedKey.toKeyBytes(name, key));
+	public Long decrementGet(EnhancedKey key) throws CacheException {
+		return decrementGet(key, 1);
 	}
 
 	@Override
-	public Long decrementGet(String key, long value) throws CacheException {
-		return this.jedisCluster.decrBy(EnhancedKey.toKeyBytes(name, key), value);
+	public Long decrementGet(EnhancedKey key, long decrBy) throws CacheException {
+		byte[] realKey = key.getKey(name);
+		// Decrement
+		Long res = jedisCluster.decr(realKey);
+		// Less than or equal to 0 means immediate expiration
+		if (key.hasExpire()) {
+			jedisCluster.expire(realKey, key.getExpire());
+		}
+		return res;
 	}
 
 }

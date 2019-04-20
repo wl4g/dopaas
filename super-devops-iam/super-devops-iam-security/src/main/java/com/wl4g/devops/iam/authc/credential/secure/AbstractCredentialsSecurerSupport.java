@@ -31,12 +31,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SECURER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_PUBKEY_INDEX;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_KEYPAIRS;
 
 import com.wl4g.devops.common.utils.CheckSums;
-import com.wl4g.devops.iam.authc.credential.secure.PairCryptos.KeySpecPair;
+import com.wl4g.devops.iam.authc.credential.secure.Cryptos.KeySpecPair;
+import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
@@ -72,7 +73,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Cryptic algorithm
 	 */
-	final protected PairCryptos crypto;
+	final protected Cryptos crypto;
 
 	/**
 	 * The 'private' part of the hash salt.
@@ -82,7 +83,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected DelegateBundleMessageSource bundle;
 
 	/**
@@ -102,7 +103,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		this.privateSalt = ByteSource.Util.bytes(config.getPrivateSalt());
 		this.config = config;
 		this.cacheManager = cacheManager;
-		this.crypto = PairCryptos.getInstance("RSA");
+		this.crypto = Cryptos.getInstance("RSA");
 		Assert.notNull(this.crypto, "'crypto' must not be null");
 	}
 
@@ -114,8 +115,13 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 			return delegate.signature(resolves(token));
 		}
 
+		// When the delegate is null, it is unresolved.
+		if (!token.isResolved()) {
+			token = resolves(token); // It is necessary to resolve
+		}
+
 		// Hashing signature
-		return doCredentialsHash(token.getPrincipal(), token.getCredentials(),
+		return doCredentialsHash(token,
 				(algorithm, source, salt, hashIters) -> new SimpleHash(algorithm, source, salt, hashIters));
 	}
 
@@ -141,19 +147,18 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	public String applySecretKey(@NotNull String principal) {
 		Assert.notNull(principal, "'principal' must not be null");
 
-		KeySpecPair[] keySpecPairs = this.getSecretKeyPairs();
+		KeySpecPair[] keySpecPairs = getSecretKeyPairs();
 		int index = (int) (Math.random() * keySpecPairs.length);
 		KeySpecPair keySpecPair = keySpecPairs[index];
 
 		// Save the applied keyPair to the cache
-		this.cacheManager.getEnhancedCache(CACHE_PUBKEY_INDEX).put(new EnhancedKey(principal, config.getApplyPubkeyExpireMs()),
-				index);
+		cacheManager.getEnhancedCache(CACHE_PUBKEY_INDEX).put(new EnhancedKey(principal, config.getApplyPubkeyExpireMs()), index);
 
 		if (log.isInfoEnabled()) {
-			log.info("Apply secret key is principal[{}], index[{}], publicKeyString[{}], privateKeyString[{}]", principal, index,
-					keySpecPair.getPublicKeyString(), keySpecPair.getPrivateKeyString());
+			log.info("Apply secret key is principal:{}, index:{}, publicKeyBase64String:{}, privateKeyBase64String:{}", principal,
+					index, keySpecPair.toPublicBase64String(), keySpecPair.toPrivateBase64String());
 		}
-		return keySpecPair.getPublicKeyString();
+		return keySpecPair.toPublicHexString();
 	}
 
 	/**
@@ -182,30 +187,29 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	protected abstract ByteSource getPublicSalt(@NotNull String principal);
 
 	/**
-	 * Execute hash
+	 * Execute hashing
 	 * 
-	 * @param principal
-	 * @param credentials
+	 * @param token
+	 *            Resolved parameter token
 	 * @param hasher
 	 * @return
 	 */
-	protected String doCredentialsHash(@NotNull String principal, @NotNull String credentials, @NotNull Hasher hasher) {
+	protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull Hasher hasher) {
 		// Merge salt
-		ByteSource salt = this.merge(this.privateSalt, getPublicSalt(principal));
-
+		ByteSource salt = merge(privateSalt, getPublicSalt(token.getPrincipal()));
 		if (log.isDebugEnabled()) {
-			log.debug("Merge salt. principal:[{}], salt:[{}]", principal, salt);
+			log.debug("Merge salt. principal:[{}], salt:[{}]", token.getPrincipal(), salt);
 		}
 
 		// Determine which hashing algorithm to use
-		final String[] hashAlgorithms = this.config.getHashAlgorithms();
+		final String[] hashAlgorithms = config.getHashAlgorithms();
 		final int size = hashAlgorithms.length;
 		final long index = CheckSums.crc32(salt.getBytes()) % size & (size - 1);
 		final String algorithm = hashAlgorithms[(int) index];
 		final int hashIters = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
 
 		// Hashing signature
-		return hasher.hashing(algorithm, ByteSource.Util.bytes(credentials), salt, hashIters).toHex();
+		return hasher.hashing(algorithm, ByteSource.Util.bytes(token.getCredentials()), salt, hashIters).toHex();
 	}
 
 	/**
@@ -216,19 +220,19 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
-		KeySpecPair keySpecPair = this.determineSecretKeySpecPair(token.getPrincipal());
+		KeySpecPair keySpecPair = determineSecretKeySpecPair(token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
-			String publicKeyString = keySpecPair.getPublicKeyString();
+			String publicBase64String = keySpecPair.toPublicHexString();
 			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
-			String privateKeyString = "Not output";
-
+			String privateBase64String = "Not output";
 			boolean output = true;
+
 			if (log.isDebugEnabled() || output) {
-				privateKeyString = keySpecPair.getPrivateKeyString();
-				log.debug(pattern, token.getPrincipal(), publicKeyString, privateKeyString);
+				privateBase64String = keySpecPair.toPrivateBase64String();
+				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			} else {
-				log.info(pattern, token.getPrincipal(), publicKeyString, privateKeyString);
+				log.info(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			}
 		}
 
@@ -244,16 +248,20 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	private KeySpecPair determineSecretKeySpecPair(@NotNull String principal) {
 		// Get the generated key pair
-		KeySpecPair[] keySpecPairs = this.getSecretKeyPairs();
+		KeySpecPair[] keySpecPairs = getSecretKeyPairs();
 
-		// Choose the best one from the candidate key pair
-		Integer index = (Integer) this.cacheManager.getEnhancedCache(CACHE_PUBKEY_INDEX)
-				.get(new EnhancedKey(principal, Integer.class));
-		if (index != null) {
-			return keySpecPairs[index];
+		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_INDEX);
+		try {
+			// Choose the best one from the candidate key pair
+			Integer index = (Integer) pubIdxCache.get(new EnhancedKey(principal, Integer.class));
+			if (index != null) {
+				return keySpecPairs[index];
+			}
+			throw new IllegalStateException(
+					String.format("The applied publicKey does not exist and may have expired. principal:[%s]", principal));
+		} finally { // Clean-up
+			pubIdxCache.remove(new EnhancedKey(principal));
 		}
-		throw new IllegalStateException(
-				String.format("The applied publicKey does not exist and may have expired. principal:[%s]", principal));
 	}
 
 	/**
@@ -263,12 +271,12 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @return
 	 */
 	private KeySpecPair[] getSecretKeyPairs() {
-		KeySpecPair[] keySpecPairs = (KeySpecPair[]) this.cacheManager.getEnhancedCache(CACHE_SECURER)
+		KeySpecPair[] keySpecPairs = (KeySpecPair[]) cacheManager.getEnhancedCache(CACHE_SECURER)
 				.get(new EnhancedKey(KEY_KEYPAIRS, KeySpecPair[].class));
 
 		if (keySpecPairs == null) {
 			// Create a list of newly generated key pairs
-			keySpecPairs = this.createKeyPairs();
+			keySpecPairs = createKeyPairs();
 		}
 		Assert.notEmpty(keySpecPairs, "'keyPairs' must not be empty");
 		return keySpecPairs;
@@ -285,11 +293,11 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 		// Generate keySpec pairs
 		for (int i = 0; i < config.getPreCryptPoolSize(); i++) {
-			keySpecPairs[i] = this.crypto.generateKeySpecPair();
+			keySpecPairs[i] = crypto.generateKeySpecPair();
 		}
 
 		// The key pairs of candidate asymmetric algorithms are valid.
-		this.cacheManager.getEnhancedCache(CACHE_SECURER).put(new EnhancedKey(KEY_KEYPAIRS, config.getCryptosExpireMs()),
+		cacheManager.getEnhancedCache(CACHE_SECURER).put(new EnhancedKey(KEY_KEYPAIRS, config.getCryptosExpireMs()),
 				keySpecPairs);
 
 		Assert.notEmpty(keySpecPairs, "'keySpecPairs' must not be empty");

@@ -33,8 +33,9 @@ import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import com.wl4g.devops.common.kit.access.IPAccessControl;
-import com.wl4g.devops.iam.authc.credential.DefaultCredentialsHashedMatcher;
+import com.wl4g.devops.iam.authc.credential.GeneralCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
+import com.wl4g.devops.iam.authc.credential.SmsCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.secure.DefaultCredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.authc.pam.ExceptionModularRealmAuthenticator;
@@ -69,8 +70,11 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.GentralAuthenticationHandler;
-import com.wl4g.devops.iam.handler.DefaultJdkRandomCaptchaHandler;
-import com.wl4g.devops.iam.handler.CaptchaHandler;
+import com.wl4g.devops.iam.handler.verification.DefaultJdkImgVerification;
+import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
+import com.wl4g.devops.iam.handler.verification.SmsVerification;
+import com.wl4g.devops.iam.handler.verification.SmsVerification.SmsHandleSender;
+import com.wl4g.devops.iam.handler.verification.Verification;
 import com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
@@ -86,15 +90,18 @@ import com.wl4g.devops.iam.realm.WechatAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatMpAuthorizingRealm;
 import com.wl4g.devops.iam.session.mgt.IamServerSessionManager;
 import com.wl4g.devops.iam.web.CentralAuthenticatorController;
+import com.wl4g.devops.iam.handler.verification.SmsVerification.PrintSmsHandleSender;
 
 public class IamConfiguration extends AbstractIamConfiguration {
 
-	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
-	final private static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
-	final private static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
+	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
+	final public static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
+	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
+	final public static String BEAN_GRAPH_VERIFICATION = "graphBasedVerification";
+	final public static String BEAN_SMS_VERIFICATION = "smsVerification";
 
 	// ==============================
-	// Shiro manager and filter's
+	// SHIRO manager and filter's
 	// ==============================
 
 	@Bean
@@ -143,17 +150,24 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	}
 
 	// ==============================
-	// Hashing matcher`s.
+	// Credentials hashing matcher`s.
 	// ==============================
 
 	@Bean
-	public DefaultCredentialsHashedMatcher defaultCredentialsHashedMatcher() {
-		return new DefaultCredentialsHashedMatcher();
+	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher(
+			@Qualifier(BEAN_GRAPH_VERIFICATION) Verification verification) {
+		return new GeneralCredentialsHashedMatcher(verification);
+	}
+
+	@Bean
+	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(@Qualifier(BEAN_SMS_VERIFICATION) Verification verification) {
+		return new SmsCredentialsHashedMatcher(verification);
 	}
 
 	@Bean(BEAN_OAUTH2_MATCHER)
-	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher() {
-		return new Oauth2AuthorizingBoundMatcher();
+	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher(
+			@Qualifier(BEAN_GRAPH_VERIFICATION) Verification verification) {
+		return new Oauth2AuthorizingBoundMatcher(verification);
 	}
 
 	// ==============================
@@ -382,19 +396,19 @@ public class IamConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GeneralAuthorizingRealm generalAuthorizingRealm(DefaultCredentialsHashedMatcher matcher, IamContextManager manager) {
+	public GeneralAuthorizingRealm generalAuthorizingRealm(GeneralCredentialsHashedMatcher matcher, IamContextManager manager) {
 		return new GeneralAuthorizingRealm(matcher, manager);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SmsAuthorizingRealm smsAuthorizingRealm(DefaultCredentialsHashedMatcher matcher, IamContextManager manager) {
+	public SmsAuthorizingRealm smsAuthorizingRealm(SmsCredentialsHashedMatcher matcher, IamContextManager manager) {
 		return new SmsAuthorizingRealm(matcher, manager);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(DefaultCredentialsHashedMatcher matcher, IamContextManager manager) {
+	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(GeneralCredentialsHashedMatcher matcher, IamContextManager manager) {
 		return new QrcodeAuthorizingRealm(matcher, manager);
 	}
 
@@ -480,7 +494,7 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	}
 
 	/**
-	 * {@link com.wl4g.devops.iam.captcha.config.KaptchaConfiguration#captchaHandler}
+	 * {@link com.wl4g.devops.iam.captcha.config.KaptchaConfiguration#verification}
 	 * {@link com.wl4g.devops.iam.captcha.handler.KaptchaCaptchaHandler}. <br/>
 	 * Notes for using `@ConditionalOnMissingBean': 1, `@Bean'method return
 	 * value type must be the type using `@Autowired' annotation; 2, or use
@@ -488,10 +502,22 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	 * 
 	 * @return
 	 */
+	@Bean(BEAN_GRAPH_VERIFICATION)
+	@ConditionalOnMissingBean
+	public GraphBasedVerification graphBasedVerification() {
+		return new DefaultJdkImgVerification();
+	}
+
+	@Bean(BEAN_SMS_VERIFICATION)
+	@ConditionalOnMissingBean
+	public SmsVerification smsVerification() {
+		return new SmsVerification();
+	}
+
 	@Bean
 	@ConditionalOnMissingBean
-	public CaptchaHandler captchaHandler(IamProperties config, JedisCacheManager cacheManager) {
-		return new DefaultJdkRandomCaptchaHandler(config, cacheManager);
+	public SmsHandleSender smsHandleSender() {
+		return new PrintSmsHandleSender();
 	}
 
 	// ==============================

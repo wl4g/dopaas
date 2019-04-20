@@ -19,39 +19,34 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.iam.captcha.handler.GifCaptchaHandler;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.config.IamConfiguration;
-import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.handler.CaptchaHandler;
-import com.wl4g.devops.iam.handler.DefaultJdkRandomCaptchaHandler;
+import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
+import com.wl4g.devops.iam.captcha.handler.GifVerification;
+import com.wl4g.devops.iam.handler.verification.DefaultJdkImgVerification;
+import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.devops.iam.captcha.enabled", matchIfMissing = false)
 public class KaptchaConfiguration {
 
 	/**
-	 * {@link DefaultJdkRandomCaptchaHandler}
-	 * {@link IamConfiguration#captchaHandler}
+	 * {@link DefaultJdkImgVerification} {@link IamConfiguration#captchaHandler}
 	 * 
 	 * @return
 	 */
-	@Bean
-	public CaptchaHandler captchaHandler(IamProperties config, JedisCacheManager cacheManager) {
-		return new GifCaptchaHandler(config, cacheManager);
+	@Bean(BEAN_GRAPH_VERIFICATION)
+	public GraphBasedVerification graphBasedVerification() {
+		return new GifVerification();
 	}
 
 	/**
-	 * {@link DefaultJdkRandomCaptchaHandler}
-	 * {@link IamConfiguration#captchaHandler}
+	 * {@link DefaultJdkImgVerification} {@link IamConfiguration#verification}
 	 * 
 	 * @return
 	 */
-	// @Bean
-	// public CaptchaHandler kaptchaCaptchaHandler(IamProperties config,
-	// JedisCacheManager cacheManager,
-	// DefaultKaptcha kaptchaProducer) {
-	// return new KaptchaCaptchaHandler(config, cacheManager, kaptchaProducer);
+	// @Bean(BEAN_GRAPH_VERIFICATION)
+	// public GraphBasedVerification graphBasedVerification(DefaultKaptcha
+	// kaptchaProducer) {
+	// return new KaptchaCaptchaHandler(kaptchaProducer);
 	// }
 
 	// @Bean

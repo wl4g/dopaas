@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.authc;
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 
 /**
- * Wechat authentication token
+ * WechatMp authentication token
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0

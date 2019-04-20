@@ -103,36 +103,32 @@ public class SnsConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
-		return new LoginSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
+			ServerSecurityContext context, SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+		return new LoginSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
-			JedisCacheManager cacheManager) {
-		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
+			SocialConnectionFactory connectFactory, ServerSecurityContext context, SecurityCoprocessor coprocessor) {
+		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
-			JedisCacheManager cacheManager) {
-		return new BindingSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
+			SocialConnectionFactory connectFactory, ServerSecurityContext context, SecurityCoprocessor coprocessor) {
+		return new BindingSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
-			JedisCacheManager cacheManager) {
-		return new UnBindingSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
+			SocialConnectionFactory connectFactory, ServerSecurityContext context, SecurityCoprocessor coprocessor) {
+		return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public SecondAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext contextHandler, SecurityCoprocessor coprocessor,
-			JedisCacheManager cacheManager) {
-		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, contextHandler, coprocessor, cacheManager);
+			SocialConnectionFactory connectFactory, ServerSecurityContext context, SecurityCoprocessor coprocessor) {
+		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	//

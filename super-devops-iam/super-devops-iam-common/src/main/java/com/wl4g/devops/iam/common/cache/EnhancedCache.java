@@ -47,17 +47,17 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long incrementGet(final String key) throws CacheException;
+	Long incrementGet(final EnhancedKey key) throws CacheException;
 
 	/**
 	 * Get and add an atomic counter at the same time
 	 * 
 	 * @param key
-	 * @param value
+	 * @param incrBy
 	 * @return
 	 * @throws CacheException
 	 */
-	Long incrementGet(final String key, long value) throws CacheException;
+	Long incrementGet(final EnhancedKey key, long incrBy) throws CacheException;
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
@@ -66,16 +66,16 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long decrementGet(final String key) throws CacheException;
+	Long decrementGet(final EnhancedKey key) throws CacheException;
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
 	 * 
 	 * @param key
-	 * @param value
+	 * @param decrBy
 	 * @return
 	 * @throws CacheException
 	 */
-	Long decrementGet(final String key, long value) throws CacheException;
+	Long decrementGet(final EnhancedKey key, long decrBy) throws CacheException;
 
 }

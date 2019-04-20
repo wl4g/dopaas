@@ -21,6 +21,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
+import com.wl4g.devops.iam.authc.SmsAuthenticationInfo;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
@@ -64,7 +65,7 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	 */
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
-		throw new UnsupportedOperationException();
+		return new SmsAuthenticationInfo(token.getPrincipal(), token.getCredentials(), getName());
 	}
 
 	/**

@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.captcha.gif;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.OutputStream;
 import com.wl4g.devops.iam.captcha.gif.Streams;
 import static com.wl4g.devops.iam.captcha.gif.Randoms.num;
@@ -45,7 +46,7 @@ public class GifCaptcha extends Captcha {
 	}
 
 	@Override
-	public void out(OutputStream os) {
+	public void out(OutputStream os) throws IOException {
 		try {
 			GifEncoder gifEncoder = new GifEncoder(); // gif编码类，这个利用了洋人写的编码类，所有类都在附件中
 			// 生成字符

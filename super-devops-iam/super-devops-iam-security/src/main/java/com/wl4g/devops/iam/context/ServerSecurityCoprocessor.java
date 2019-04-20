@@ -30,13 +30,24 @@ import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
 	/**
-	 * Call pre apply capcha
+	 * Before apply CAPTCHA handle
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	default boolean preApplyCapcha(ServletRequest request, ServletResponse response) {
+		return true;
+	}
+
+	/**
+	 * Before apply verify-code handle
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	default boolean preApplyVerify(ServletRequest request, ServletResponse response) {
 		return true;
 	}
 

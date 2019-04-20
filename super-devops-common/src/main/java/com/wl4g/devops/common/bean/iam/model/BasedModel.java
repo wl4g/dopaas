@@ -17,7 +17,8 @@ package com.wl4g.devops.common.bean.iam.model;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.utils.StringUtils2;

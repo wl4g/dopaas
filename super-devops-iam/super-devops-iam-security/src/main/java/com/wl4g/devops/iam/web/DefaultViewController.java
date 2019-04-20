@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,7 +72,7 @@ public class DefaultViewController extends BaseController {
 	/**
 	 * Delegate message source.
 	 */
-	@javax.annotation.Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected DelegateBundleMessageSource delegate;
 
 	/**

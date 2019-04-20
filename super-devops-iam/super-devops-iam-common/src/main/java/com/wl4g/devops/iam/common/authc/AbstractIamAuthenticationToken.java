@@ -43,7 +43,11 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	final private String redirectUrl;
 
 	public AbstractIamAuthenticationToken() {
-		this.remoteHost = null;
+		this(null);
+	}
+
+	public AbstractIamAuthenticationToken(String remoteHost) {
+		this.remoteHost = remoteHost;
 		this.fromAppName = null;
 		this.redirectUrl = null;
 	}

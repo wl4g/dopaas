@@ -34,7 +34,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -43,7 +43,6 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import com.wl4g.devops.iam.handler.CaptchaHandler;
 
 /**
  * Multiple realm routing processing.
@@ -93,15 +92,9 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	protected AuthenticationHandler authHandler;
 
 	/**
-	 * IAM captcha handler
-	 */
-	@Autowired
-	protected CaptchaHandler captchaHandler;
-
-	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected DelegateBundleMessageSource bundle;
 
 	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {

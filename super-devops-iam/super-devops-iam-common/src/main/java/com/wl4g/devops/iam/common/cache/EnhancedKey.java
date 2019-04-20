@@ -57,14 +57,14 @@ public class EnhancedKey {
 		this.valueClass = valueClass;
 	}
 
-	public EnhancedKey(Serializable key, long expire) {
-		this(key, (int) (expire / 1000));
+	public EnhancedKey(Serializable key, long expireMs) {
+		this(key, (int) (expireMs / 1000));
 	}
 
-	public EnhancedKey(Serializable key, int expire) {
+	public EnhancedKey(Serializable key, int expireSec) {
 		Assert.notNull(key, "'key' must not be null");
 		this.key = key.toString();
-		this.expire = expire;
+		this.expire = expireSec;
 	}
 
 	public byte[] getKey(String prefix) {
@@ -75,7 +75,7 @@ public class EnhancedKey {
 		return getKey(null);
 	}
 
-	public boolean isExpire() {
+	public boolean hasExpire() {
 		return (getExpire() != null && getExpire() >= 0);
 	}
 

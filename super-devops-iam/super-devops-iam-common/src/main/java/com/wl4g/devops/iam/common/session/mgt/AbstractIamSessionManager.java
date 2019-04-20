@@ -43,8 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
@@ -62,20 +62,20 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * Abstract IAM properties configuration
-	 */
-	final protected C config;
-
-	/**
 	 * Cache name
 	 */
 	final protected String cacheName;
 
 	/**
-	 * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
+	 * Abstract IAM properties configuration
+	 */
+	final protected C config;
+
+	/**
+	 * Enhanced cache manager.
 	 */
 	@Autowired
-	protected JedisCacheManager cacheManager;
+	protected EnhancedCacheManager cacheManager;
 
 	/**
 	 * IAM session DAO.

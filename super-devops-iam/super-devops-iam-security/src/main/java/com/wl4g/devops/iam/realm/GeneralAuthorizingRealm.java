@@ -86,7 +86,7 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
 		 */
 		String storedCredentials = (acc != null) ? acc.getStoredCredentials() : StringUtils.EMPTY_STRING;
-		return new GeneralAuthenticationInfo(acc.getPrincipal(), storedCredentials, super.getName());
+		return new GeneralAuthenticationInfo(acc.getPrincipal(), storedCredentials, getName());
 	}
 
 	/**

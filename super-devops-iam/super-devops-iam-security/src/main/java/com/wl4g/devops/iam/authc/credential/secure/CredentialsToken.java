@@ -1,6 +1,7 @@
 package com.wl4g.devops.iam.authc.credential.secure;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.util.Assert;
 
 /**

@@ -21,13 +21,13 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * Securer validation configuration properties
+ * Securer configuration properties
  * 
  * @author wangl.sir
  * @version v1.0 2019年3月20日
  * @since
  */
-public class SecurerConfig implements Serializable {
+public final class SecurerConfig implements Serializable {
 	private static final long serialVersionUID = -6194767776312196342L;
 
 	/**
@@ -75,27 +75,27 @@ public class SecurerConfig implements Serializable {
 		this.applyPubkeyExpireMs = applyPubkeyExpireMs;
 	}
 
-	public String[] getHashAlgorithms() {
+	final public String[] getHashAlgorithms() {
 		Assert.state(hashAlgorithms != null, "No configuration item 'hashAlgorithms' that is not empty is allowed");
 		return hashAlgorithms;
 	}
 
-	public String getPrivateSalt() {
+	final public String getPrivateSalt() {
 		Assert.state(!StringUtils.isEmpty(privateSalt), "No configuration item 'privateSalt' that is not empty is allowed");
 		return privateSalt;
 	}
 
-	public int getPreCryptPoolSize() {
+	final public int getPreCryptPoolSize() {
 		Assert.state(preCryptPoolSize != null, "No configuration item 'preCryptSize' that is not empty is allowed");
 		return preCryptPoolSize;
 	}
 
-	public long getCryptosExpireMs() {
+	final public long getCryptosExpireMs() {
 		Assert.state(cryptosExpireMs != null, "No configuration item 'cryptosExpireMs' that is not empty is allowed");
 		return cryptosExpireMs;
 	}
 
-	public long getApplyPubkeyExpireMs() {
+	final public long getApplyPubkeyExpireMs() {
 		Assert.state(!StringUtils.isEmpty(applyPubkeyExpireMs),
 				"No configuration item 'applyPubkeyExpireMs' that is not empty is allowed");
 		return applyPubkeyExpireMs;

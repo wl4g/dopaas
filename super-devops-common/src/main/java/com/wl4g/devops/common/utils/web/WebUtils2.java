@@ -102,7 +102,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 *            HTTP request
 	 * @return Real remote client IP
 	 */
-	public static String getHttpRemoteIpAddress(HttpServletRequest request) {
+	public static String getHttpRemoteAddr(HttpServletRequest request) {
 		for (String header : HEADER_REAL_IP) {
 			String ip = request.getHeader(header);
 			if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {

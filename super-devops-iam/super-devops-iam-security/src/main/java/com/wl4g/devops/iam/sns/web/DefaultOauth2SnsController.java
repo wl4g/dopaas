@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.sns.web;
 
 import org.apache.shiro.web.util.WebUtils;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
@@ -47,6 +46,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Default oauth2 social networking services controller

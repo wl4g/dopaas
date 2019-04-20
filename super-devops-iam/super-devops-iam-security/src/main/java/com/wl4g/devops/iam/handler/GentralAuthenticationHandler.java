@@ -102,7 +102,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 
 			// Application information
-			ApplicationInfo appInfo = this.context.getApplicationInfo(fromAppName);
+			ApplicationInfo appInfo = context.getApplicationInfo(fromAppName);
 			if (appInfo == null || !StringUtils.hasText(appInfo.getAppName())
 					|| !StringUtils.hasText(appInfo.getExtranetBaseUri())) {
 				throw new IllegalCallbackDomainException(
@@ -132,7 +132,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	public void checkApplicationAccessAuthorized(String principal, String fromAppName) {
 		Assert.hasText(principal, "'principal' must not be empty");
 		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
-		if (!this.context.isApplicationAccessAuthorized(principal, fromAppName)) {
+		if (!context.isApplicationAccessAuthorized(principal, fromAppName)) {
 			throw new IllegalApplicationAccessException(
 					bundle.getMessage("GentralAuthenticationHandler.unaccessible", principal, fromAppName));
 		}
@@ -154,17 +154,17 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		// Check grant ticket
-		this.checkGrantTicketValidited(subject, param);
+		checkGrantTicketValidited(subject, param);
 
 		// Check application access authorized
-		this.checkApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
+		checkApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
 
 		// Force clearance of last grant Ticket
 		/*
 		 * Synchronize with
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#validate#loggedin
 		 */
-		this.cacheManager.getCache(CACHE_TICKET_S).remove(new EnhancedKey(param.getTicket()));
+		cacheManager.getCache(CACHE_TICKET_S).remove(new EnhancedKey(param.getTicket()));
 		if (log.isDebugEnabled()) {
 			log.debug("Clean used grant ticket. [{}]", param.getTicket());
 		}
@@ -196,7 +196,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#logout<br/>
 		 * xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		String newGrantTicket = this.idGenerator.generateId(session).toString();
+		String newGrantTicket = idGenerator.generateId(session).toString();
 		if (log.isInfoEnabled()) {
 			log.info("New generate grant ticket. [{}]", newGrantTicket);
 		}
@@ -204,7 +204,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/*
 		 * Re-bind granting session => applications
 		 */
-		this.bindGrantingSession(session, fromAppName, newGrantTicket);
+		bindGrantingSession(session, fromAppName, newGrantTicket);
 
 		assertion.getAttributes().put(config.getParam().getGrantTicket(), newGrantTicket);
 		// Find authorized roles and permission information settings.
@@ -223,13 +223,13 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			Session session = subject.getSession(); // Session
 
 			// Generate grantTicket. Same: CAS/service-ticket
-			String initGrantTicket = this.idGenerator.generateId(session).toString();
+			String initGrantTicket = idGenerator.generateId(session).toString();
 			if (log.isInfoEnabled()) {
 				log.info("Generate init grantTicket:[{}] by name:[{}]", initGrantTicket, fromAppName);
 			}
 
 			// Initial bind granting session => applications
-			this.bindGrantingSession(session, fromAppName, initGrantTicket);
+			bindGrantingSession(session, fromAppName, initGrantTicket);
 
 			// Return redirection information
 			return new LoggedModel(initGrantTicket);
@@ -245,13 +245,13 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Subject subject = SecurityUtils.getSubject();
 
 		// Execution listener
-		super.listener.preLogout(forced, request, response);
+		coprocessor.preLogout(forced, request, response);
 
 		// Represents all logged-out Tags
 		boolean logoutAll = false;
 
 		// Get bind session grant information
-		GrantTicketInfo grantInfo = this.getGrantTicketSeesion(subject.getSession());
+		GrantTicketInfo grantInfo = getGrantTicketSeesion(subject.getSession());
 		if (log.isDebugEnabled()) {
 			log.debug("Get grant information bound the session is [{}]", grantInfo);
 		}
@@ -261,13 +261,13 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 * Query applications by bind session names
 			 */
 			Set<String> appNames = grantInfo.getApplications().keySet();
-			List<ApplicationInfo> apps = this.context.findApplicationInfo(appNames.toArray(new String[] {}));
+			List<ApplicationInfo> apps = context.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (apps == null || apps.isEmpty()) {
 				throw new IamException(String.format("Find application information is empty. %s", appNames));
 			}
 
 			// logout all
-			logoutAll = this.processLogoutAll(subject, grantInfo, apps);
+			logoutAll = processLogoutAll(subject, grantInfo, apps);
 		}
 
 		if (forced || logoutAll) {
@@ -300,8 +300,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 * Save authorized info to cache. See:
 			 * xx.iam.sns.handler.SecondAuthcSnsHandler#afterCallbackSet()
 			 */
-			SecondAuthcAssertion assertion = (SecondAuthcAssertion) this.cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE)
-					.get(ekey);
+			SecondAuthcAssertion assertion = (SecondAuthcAssertion) cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).get(ekey);
 			// Check assertion expired
 			if (assertion == null) {
 				assertion = new SecondAuthcAssertion(ExpiredAuthorized);
@@ -312,7 +311,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			if (log.isInfoEnabled()) {
 				log.info("Remove release second authentication info. key[{}]", new String(ekey.getKey()));
 			}
-			this.cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).remove(ekey);
+			cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).remove(ekey);
 		}
 	}
 
@@ -320,11 +319,11 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	public SessionValidationAssertion sessionValidate(SessionValidationAssertion assertion) {
 		Assert.hasText(assertion.getApplication(), "'application' cannot not be empty");
 
-		ScanCursor<IamSession> cursor = this.sessionDAO.getActiveSessions(DEFAULT_BATCH_SIZE);
+		ScanCursor<IamSession> cursor = sessionDAO.getActiveSessions(DEFAULT_BATCH_SIZE);
 		while (cursor.hasNext()) {
 			Session session = cursor.next();
 			// GrantTicket by session
-			GrantTicketInfo info = this.getGrantTicketSeesion(session);
+			GrantTicketInfo info = getGrantTicketSeesion(session);
 
 			if (info != null && info.hasApplications()) {
 				String savedGrantTicket = info.getApplications().get(assertion.getApplication());
@@ -366,7 +365,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/*
 		 * Synchronize with See:DefaultAuthenticationHandler#validate()
 		 */
-		GrantTicketInfo info = this.getGrantTicketSeesion(session);
+		GrantTicketInfo info = getGrantTicketSeesion(session);
 		if (info == null) {
 			info = new GrantTicketInfo();
 		}
@@ -395,8 +394,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#validate<br/>
 		 * xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		this.cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grantTicket, expireTime),
-				session.getId().toString());
+		cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grantTicket, expireTime), session.getId().toString());
 		if (log.isDebugEnabled()) {
 			log.debug("Init grantTicket[{}] of seesionId[{}] ", grantTicket, Sessions.getSessionId(session));
 		}
@@ -415,22 +413,17 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			throw new InvalidGrantTicketException(String.format("Invalid empty grant ticket '%s'", param.getTicket()));
 		}
 
-		// Get sessionId by grantTicket
-		Object sessionId = this.cacheManager.getEnhancedCache(CACHE_TICKET_S)
-				.get(new EnhancedKey(param.getTicket(), String.class));
-		if (log.isDebugEnabled()) {
-			log.debug("Get sessioinId:[{}] by grantTicket:[{}]", sessionId, param.getTicket());
-		}
-
 		// Get grant information
-		GrantTicketInfo info = this.getGrantTicketSeesion(subject.getSession());
+		GrantTicketInfo info = getGrantTicketSeesion(subject.getSession());
 		if (log.isDebugEnabled()) {
 			log.debug("Get grant information:{} by sessionId:{}", info, subject.getSession().getId().toString());
 		}
 
+		// Request fromAppName ticket => storedTicket
+		String storedTicket = info.getApplications().get(param.getApplication());
 		// Validation
-		if (!(subject.isAuthenticated() && info.getApplications().keySet().contains(param.getApplication())
-				&& !StringUtils2.isAnyEmpty(sessionId, subject.getPrincipal()))) {
+		if (!(StringUtils2.equals(storedTicket, param.getTicket()) && subject.isAuthenticated()
+				&& StringUtils2.isNotBlank((String) subject.getPrincipal()))) {
 			throw new InvalidGrantTicketException(String.format("Invalid grant ticket '%s'", param.getTicket()));
 		}
 	}
@@ -462,7 +455,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 			// Post remote client logout
 			try {
-				RespBase<LogoutModel> resp = this.restTemplate
+				RespBase<LogoutModel> resp = restTemplate
 						.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
 						}).getBody();
 				if (RespBase.isSuccess(resp)) {

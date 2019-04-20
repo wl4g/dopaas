@@ -62,7 +62,7 @@ spring: # Base configuration.
             second-auth-code: secondAuthCode
             funcId: function
           cache:
-            prefix: example_iam_
+            prefix: ${spring.application.name}
           session:
             global-session-timeout: 1500000
             session-validation-interval: 1500000

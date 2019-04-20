@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.web.util.WebUtils;
+
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
@@ -33,8 +35,10 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 	@Override
 	protected SmsAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		return null;
+		String action = WebUtils.getCleanParam(request, config.getParam().getSmsActionName());
+		String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
+		String verifyCode = WebUtils.getCleanParam(request, config.getParam().getVerifyCodeName());
+		return new SmsAuthenticationToken(remoteHost, action, principal, verifyCode);
 	}
 
 	@Override

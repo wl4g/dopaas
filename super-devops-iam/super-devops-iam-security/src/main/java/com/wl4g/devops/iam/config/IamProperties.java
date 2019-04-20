@@ -21,6 +21,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE
 import java.io.Serializable;
 
 import org.apache.shiro.util.Assert;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.common.utils.web.WebUtils2;
@@ -183,57 +184,100 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public static class MatcherProperties implements Serializable {
+	public static class MatcherProperties implements InitializingBean, Serializable {
 		private static final long serialVersionUID = -6194767776312196341L;
 
 		/**
 		 * Maximum attempt request login count limit
 		 */
-		private int failureLockedMaxAttempts = 5;
+		private int failFastMatchMaxAttempts = 10;
 
 		/**
-		 * Attempts to exceed the number of failures limit the number of waiting
-		 * seconds
+		 * Lock request waits for milliseconds after requesting authentication
+		 * failure.
 		 */
-		private long failureLockedDelay = 1 * 60 * 60 * 1000L;
+		private long failFastMatchDelay = 60 * 60 * 1000L;
 
 		/**
-		 * Verification code verification is required after how many failed
-		 * logins
+		 * Continuous match error begins the maximum attempt to enable the
+		 * verification code.
 		 */
-		private int failureCaptchaMaxAttempts = 3;
+		private int enabledCaptchaMaxAttempts = 3;
 
 		/**
-		 * Number of milliseconds of validation code expiration
+		 * Maximum number of consecutive attempts to request an graph
+		 * verification code.
+		 */
+		private int failFastCaptchaMaxAttempts = 20;
+
+		/**
+		 * The millisecond of lock wait after requesting CAPTCHA authentication
+		 * fails.
+		 */
+		private long failFastCaptchaDelay = 10 * 60 * 1000L;
+
+		/**
+		 * The graph verification code requesting the application expires in
+		 * milliseconds.
 		 */
 		private long captchaExpireMs = 1 * 60 * 1000L;
 
-		public int getFailureLockedMaxAttempts() {
-			return failureLockedMaxAttempts;
+		/**
+		 * Maximum number of consecutive requests for SMS verification code.
+		 */
+		private int failFastSmsMaxAttempts = 5;
+
+		/**
+		 * The millisecond of lock wait after requesting SMS dynamic password
+		 * authentication fails.
+		 */
+		private long failFastSmsDelay = 30 * 60 * 1000L;
+
+		/**
+		 * The SMS verification code requesting the application expires in
+		 * milliseconds.
+		 */
+		private long smsExpireMs = 5 * 60 * 1000L;
+
+		public int getFailFastMatchMaxAttempts() {
+			return failFastMatchMaxAttempts;
 		}
 
-		public void setFailureLockedMaxAttempts(int failureMaxAttempts) {
-			this.failureLockedMaxAttempts = failureMaxAttempts;
+		public void setFailFastMatchMaxAttempts(int failureMaxAttempts) {
+			Assert.isTrue(failureMaxAttempts > 0, "failureMaxAttempts code expiration time must be greater than 0");
+			this.failFastMatchMaxAttempts = failureMaxAttempts;
 		}
 
-		public long getFailureLockedDelay() {
-			return failureLockedDelay;
+		public long getFailFastMatchDelay() {
+			return failFastMatchDelay;
 		}
 
-		public void setFailureLockedDelay(long failureDelaySecond) {
-			this.failureLockedDelay = failureDelaySecond;
+		public void setFailFastMatchDelay(long failureDelaySecond) {
+			this.failFastMatchDelay = failureDelaySecond;
 		}
 
-		public int getFailureCaptchaMaxAttempts() {
-			return failureCaptchaMaxAttempts;
+		public int getEnabledCaptchaMaxAttempts() {
+			return enabledCaptchaMaxAttempts;
 		}
 
-		public void setFailureCaptchaMaxAttempts(int captchaRequiredAttempts) {
-			Assert.isTrue((captchaRequiredAttempts > 0 && captchaRequiredAttempts < this.getFailureLockedMaxAttempts()),
-					String.format(
-							"'captchaRequiredAttempts':%s should be must be greater than 0 or less than 'failureMaxAttempts':%s",
-							captchaRequiredAttempts, getFailureLockedMaxAttempts()));
-			this.failureCaptchaMaxAttempts = captchaRequiredAttempts;
+		public void setEnabledCaptchaMaxAttempts(int enabledCaptchaMaxAttempts) {
+			this.enabledCaptchaMaxAttempts = enabledCaptchaMaxAttempts;
+		}
+
+		public int getFailFastCaptchaMaxAttempts() {
+			return failFastCaptchaMaxAttempts;
+		}
+
+		public void setFailFastCaptchaMaxAttempts(int failFastCaptchaMaxAttempts) {
+			this.failFastCaptchaMaxAttempts = failFastCaptchaMaxAttempts;
+		}
+
+		public long getFailFastCaptchaDelay() {
+			return failFastCaptchaDelay;
+		}
+
+		public void setFailFastCaptchaDelay(long failFastCaptchaDelay) {
+			this.failFastCaptchaDelay = failFastCaptchaDelay;
 		}
 
 		public long getCaptchaExpireMs() {
@@ -243,6 +287,43 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		public void setCaptchaExpireMs(long captchaExpireMs) {
 			Assert.isTrue(captchaExpireMs > 0, "Verification code expiration time must be greater than 0");
 			this.captchaExpireMs = captchaExpireMs;
+		}
+
+		public int getFailFastSmsMaxAttempts() {
+			return failFastSmsMaxAttempts;
+		}
+
+		public void setFailFastSmsMaxAttempts(int captchaRequiredAttempts) {
+			// Assert.isTrue((captchaRequiredAttempts > 0 &&
+			// captchaRequiredAttempts < this.getFailFastMatchMaxAttempts()),
+			// String.format(
+			// "'captchaRequiredAttempts':%s should be must be greater than 0 or
+			// less than 'failureMaxAttempts':%s",
+			// captchaRequiredAttempts, getFailFastMatchMaxAttempts()));
+			this.failFastSmsMaxAttempts = captchaRequiredAttempts;
+		}
+
+		public long getFailFastSmsDelay() {
+			return failFastSmsDelay;
+		}
+
+		public void setFailFastSmsDelay(long failFastSmsDelay) {
+			this.failFastSmsDelay = failFastSmsDelay;
+		}
+
+		public long getSmsExpireMs() {
+			return smsExpireMs;
+		}
+
+		public void setSmsExpireMs(long smsExpireMs) {
+			this.smsExpireMs = smsExpireMs;
+		}
+
+		@Override
+		public void afterPropertiesSet() throws Exception {
+			// Assert.isTrue(getFailFastSmsMaxAttempts() <
+			// getFailFastMatchMaxAttempts(),
+			// "failVerifyMaxAttempts must be less than failLockMaxAttempts");
 		}
 
 	}
@@ -272,16 +353,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		private static final long serialVersionUID = 3258460473711285504L;
 
 		/**
-		 * Control whether the validation code key name is enabled
-		 */
-		private String captchaEnabled = "captchaEnabled";
-
-		/**
-		 * Encrypted public key requested before login returns key name
-		 */
-		private String secret = "secret";
-
-		/**
 		 * Account parameter name at login time of account password.
 		 */
 		private String principalName = "principal";
@@ -302,21 +373,15 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		 */
 		private String captchaName = "captcha";
 
-		public String getCaptchaEnabled() {
-			return captchaEnabled;
-		}
+		/**
+		 * Dynamic verification pass code key-name.
+		 */
+		private String verifyCodeName = "passcode";
 
-		public void setCaptchaEnabled(String captcha) {
-			this.captchaEnabled = captcha;
-		}
-
-		public String getSecret() {
-			return secret;
-		}
-
-		public void setSecret(String secret) {
-			this.secret = secret;
-		}
+		/**
+		 * Dynamic verification code operation action type parameter key-name.
+		 */
+		private String smsActionName = "action";
 
 		public String getPrincipalName() {
 			return principalName;
@@ -348,6 +413,22 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 		public void setCaptchaName(String loginCaptcha) {
 			this.captchaName = loginCaptcha;
+		}
+
+		public String getVerifyCodeName() {
+			return verifyCodeName;
+		}
+
+		public void setVerifyCodeName(String verifyCodeName) {
+			this.verifyCodeName = verifyCodeName;
+		}
+
+		public String getSmsActionName() {
+			return smsActionName;
+		}
+
+		public void setSmsActionName(String smsActionName) {
+			this.smsActionName = smsActionName;
 		}
 
 	}

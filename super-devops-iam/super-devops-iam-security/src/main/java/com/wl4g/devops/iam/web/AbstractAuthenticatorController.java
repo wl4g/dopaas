@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.web;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 
 import javax.annotation.Resource;
 
@@ -49,15 +49,15 @@ public abstract class AbstractAuthenticatorController extends BaseController {
 	protected AuthenticationHandler authHandler;
 
 	/**
-	 * IAM server security interceptor.
+	 * IAM server security coprocessor.
 	 */
 	@Autowired
-	protected ServerSecurityCoprocessor interceptor;
+	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected DelegateBundleMessageSource bundle;
 
 }

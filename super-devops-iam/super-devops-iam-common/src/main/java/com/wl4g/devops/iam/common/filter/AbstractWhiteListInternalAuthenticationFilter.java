@@ -81,7 +81,7 @@ public abstract class AbstractWhiteListInternalAuthenticationFilter extends Base
 	 * @return
 	 */
 	protected String getHttpRemoteIp(ServletRequest request) {
-		return WebUtils2.getHttpRemoteIpAddress(WebUtils.toHttp(request));
+		return WebUtils2.getHttpRemoteAddr(WebUtils.toHttp(request));
 	}
 
 }

@@ -21,13 +21,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class DateUtils {
+public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
 	public static final String UTC = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 	public static final String YMD_HMS = "yyyy-MM-dd HH:mm:ss";
 	public static final String YMD = "yyyy-MM-dd";
 
-	public static List<String> GetDates(String startDate, String endDate) throws Exception {
+	public static List<String> getDates(String startDate, String endDate) throws Exception {
 		Date d1 = new SimpleDateFormat(YMD).parse(startDate);// 定义起始日期
 		Date d2 = new SimpleDateFormat(YMD).parse(endDate);// 定义结束日期
 		Calendar dd = Calendar.getInstance();// 定义日期实例

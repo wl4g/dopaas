@@ -64,23 +64,23 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 		 * specification of getChain () method for default enhancements (because
 		 * Shiro does not implement it, this causes serious problems)
 		 */
-		IamShiroFilterFactoryBean shiroFilterFB = new IamShiroFilterFactoryBean();
-		shiroFilterFB.setSecurityManager(securityManager);
+		IamShiroFilterFactoryBean shiroFilter = new IamShiroFilterFactoryBean();
+		shiroFilter.setSecurityManager(securityManager);
 
 		/*
 		 * IAM server login page.(shiro default by "/login.jsp")
 		 */
-		shiroFilterFB.setLoginUrl(config.getLoginUri());
+		shiroFilter.setLoginUrl(config.getLoginUri());
 		// Default login success callback URL.
-		shiroFilterFB.setSuccessUrl(config.getSuccessUri());
+		shiroFilter.setSuccessUrl(config.getSuccessUri());
 		// IAM server 403 page URL
-		shiroFilterFB.setUnauthorizedUrl(config.getUnauthorizedUri());
+		shiroFilter.setUnauthorizedUrl(config.getUnauthorizedUri());
 
 		// Register define filters.
 		Map<String, Filter> filters = new HashMap<>();
 		// Register define filter mapping.
 		Map<String, String> filterChain = new HashMap<>();
-		this.actx.getBeansWithAnnotation(IamFilter.class).values().stream().forEach(filter -> {
+		actx.getBeansWithAnnotation(IamFilter.class).values().stream().forEach(filter -> {
 			String filterName = null, uriPertten = null;
 			if (filter instanceof NameableFilter) {
 				filterName = (String) ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(filter.getClass(), "getName"),
@@ -100,7 +100,7 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 			}
 		});
 		// Filter chain definition register
-		shiroFilterFB.setFilters(filters);
+		shiroFilter.setFilters(filters);
 
 		// Add external filter chain configuration
 		config.getFilterChain().forEach((uriPertten, filterName) -> {
@@ -110,9 +110,9 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 		});
 
 		// Filter chain mappings register
-		shiroFilterFB.setFilterChainDefinitionMap(filterChain);
+		shiroFilter.setFilterChainDefinitionMap(filterChain);
 
-		return shiroFilterFB;
+		return shiroFilter;
 	}
 
 	@Bean

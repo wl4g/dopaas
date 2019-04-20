@@ -34,9 +34,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public class RespBase<T> implements Serializable {
 	private static final long serialVersionUID = 2647155468624590650L;
 
-	private RetCode code = RetCode.OK;
+	private RetCode code;
 	private String status; // Response status
-	private String message = code.getMsg();
+	private String message;
 	private Map<String, T> data = new LinkedHashMap<>(4);
 
 	public RespBase() {
@@ -60,10 +60,10 @@ public class RespBase<T> implements Serializable {
 	}
 
 	public RespBase(RetCode retCode, String status, String message, Map<String, T> data) {
-		this.setCode(retCode);
-		this.setStatus(status);
-		this.setMessage(message != null ? message : this.code.getMsg());
-		this.setData(data);
+		setCode(retCode);
+		setStatus(status);
+		setMessage(message);
+		setData(data);
 	}
 
 	public int getCode() {

@@ -24,16 +24,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.common.utils.web.WebUtils2;
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
@@ -42,7 +42,7 @@ import com.wl4g.devops.iam.filter.ProviderSupports;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AFTER_CALLBACK_AGENT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
 import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.URI_BASE_MAPPING;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_PRIVIDER;
@@ -95,35 +95,33 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	final protected ServerSecurityContext context;
 
 	/**
-	 * IAM security coprocessor
+	 * IAM server security coprocessor
 	 */
-	final protected SecurityCoprocessor coprocessor;
+	@Autowired
+	protected ServerSecurityContext coprocessor;
 
 	/**
-	 * Redis's cache manger
+	 * Enhanced cache manager.
 	 */
-	final protected JedisCacheManager cacheManager;
+	@Autowired
+	protected EnhancedCacheManager cacheManager;
 
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected DelegateBundleMessageSource bundle;
 
 	public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext context, SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ServerSecurityContext context) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(snsConfig, "'snsConfig' must not be null");
 		Assert.notNull(connectFactory, "'connectFactory' must not be null");
 		Assert.notNull(context, "'context' must not be null");
-		Assert.notNull(coprocessor, "'coprocessor' must not be null");
-		Assert.notNull(cacheManager, "'cacheManager' must not be null");
 		this.config = config;
 		this.snsConfig = snsConfig;
 		this.connectFactory = connectFactory;
 		this.context = context;
-		this.coprocessor = coprocessor;
-		this.cacheManager = cacheManager;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

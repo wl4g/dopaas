@@ -15,8 +15,9 @@
  */
 package com.wl4g.devops.iam.client.authc;
 
+import javax.validation.constraints.NotBlank;
+
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
-import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * This class represents a token for a CAS authentication (service ticket + user

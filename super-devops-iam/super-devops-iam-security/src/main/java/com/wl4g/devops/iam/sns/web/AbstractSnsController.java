@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.sns.web;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 
 import javax.annotation.Resource;
 
@@ -77,12 +77,12 @@ public abstract class AbstractSnsController extends BaseController {
 	/**
 	 * Delegate SNS handler
 	 */
-	final DelegateSnsHandler delegate;
+	final protected DelegateSnsHandler delegate;
 
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected DelegateBundleMessageSource messages;
 
 	public AbstractSnsController(IamProperties config, SnsProperties snsConfig, DelegateSnsHandler delegate) {

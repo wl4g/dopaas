@@ -189,11 +189,13 @@ public class GifEncoder {
 	/**
 	 * Flushes any pending data and closes output file. If writing to an
 	 * OutputStream, the stream is not closed.
+	 * 
+	 * @throws IOException
 	 */
-	public boolean finish() {
+	public void finish() throws IOException {
 		if (!started)
-			return false;
-		boolean ok = true;
+			return;
+
 		started = false;
 		try {
 			out.write(0x3b); // gif trailer
@@ -202,10 +204,8 @@ public class GifEncoder {
 				out.close();
 			}
 		} catch (IOException e) {
-			ok = false;
+			throw e;
 		}
-
-		return ok;
 	}
 
 	public void reset() {

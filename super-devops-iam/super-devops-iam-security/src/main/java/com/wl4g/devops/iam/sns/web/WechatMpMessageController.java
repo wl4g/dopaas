@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.sns.web;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +37,7 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Annotation to enabled WechatMp controller configuration.<br/>

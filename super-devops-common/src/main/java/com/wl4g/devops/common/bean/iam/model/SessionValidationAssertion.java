@@ -18,7 +18,8 @@ package com.wl4g.devops.common.bean.iam.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;

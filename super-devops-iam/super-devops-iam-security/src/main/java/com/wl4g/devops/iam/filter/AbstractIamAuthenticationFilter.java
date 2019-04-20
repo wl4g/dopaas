@@ -42,13 +42,13 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKE
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
 
-import com.wl4g.devops.common.exception.iam.AccessPermissionDeniedException;
+import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
@@ -56,7 +56,6 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import com.wl4g.devops.iam.handler.CaptchaHandler;
 
 /**
  * Multiple channel login authentication submitted processing based filter
@@ -81,7 +80,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	final public static String KEY_REQ_AUTH_PARAMS = AbstractIamAuthenticationFilter.class.getSimpleName() + ".REQ_AUTH_PARAMS";
 
 	/**
-	 * Uri login submission base path for processing all shiro authentication
+	 * URI login submission base path for processing all shiro authentication
 	 * filters submitted by login
 	 */
 	final public static String URI_BASE_MAPPING = URI_LOGIN_SUBMISSION_BASE;
@@ -106,22 +105,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected AuthenticationHandler authHandler;
 
 	/**
-	 * IAM captcha handler
-	 */
-	@Autowired
-	protected CaptchaHandler captchaHandler;
-
-	/**
 	 * IAM security coprocessor
 	 */
 	@Autowired
 	protected SecurityCoprocessor coprocessor;
 
 	/**
-	 * JEDIS cache manager.
+	 * Enhanced cache manager.
 	 */
 	@Autowired
-	protected JedisCacheManager cacheManager;
+	protected EnhancedCacheManager cacheManager;
 
 	public AbstractIamAuthenticationFilter(IamContextManager manager) {
 		Assert.notNull(manager, "'manager' is null, please check configure");
@@ -150,7 +143,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 */
 		if (subject.isAuthenticated()) {
 			try {
-				this.onLoginSuccess(createToken(request, response), subject, request, response);
+				onLoginSuccess(createToken(request, response), subject, request, response);
 			} catch (Exception e) {
 				log.error("Logged-in auto redirect to other applications failed", e);
 			}
@@ -158,7 +151,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			return false;
 		}
 
-		return this.executeLogin(request, response);
+		return executeLogin(request, response);
 	}
 
 	@Override
@@ -169,23 +162,22 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 * large number of submission login requests.
 		 */
 		if (!coprocessor.preAuthentication(this, request, response)) {
-			throw new AccessPermissionDeniedException(String.format("Access permission denied for remote IP:%s",
-					WebUtils2.getHttpRemoteIpAddress(WebUtils.toHttp(request))));
+			throw new AccessRejectedException(
+					String.format("Access rejected for remote IP:%s", WebUtils2.getHttpRemoteAddr(WebUtils.toHttp(request))));
 		}
 
-		// Getting from source info
-		String fromAppName = this.getFromAppName(request);
-		String redirectUrl = this.getFromRedirectUrl(request);
 		// Client remote host
-		String remoteHost = WebUtils2.getHttpRemoteIpAddress((HttpServletRequest) request);
+		String remoteHost = WebUtils2.getHttpRemoteAddr((HttpServletRequest) request);
+		// From information
+		String fromAppName = getFromAppName(request);
+		String redirectUrl = getFromRedirectUrl(request);
 
 		// Create authentication token
-		return this.postCreateToken(remoteHost, fromAppName, redirectUrl, WebUtils.toHttp(request),
-				WebUtils.toHttp(response));
+		return postCreateToken(remoteHost, fromAppName, redirectUrl, WebUtils.toHttp(request), WebUtils.toHttp(response));
 	}
 
-	protected abstract T postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception;
+	protected abstract T postCreateToken(String remoteHost, String fromAppName, String redirectUrl, HttpServletRequest request,
+			HttpServletResponse response) throws Exception;
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
@@ -252,7 +244,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			coprocessor.postLoginSuccess(tk, subject, request, response);
 
 		} finally { // Clean-up
-			this.cleanup(token, subject, request, response);
+			cleanup(token, subject, request, response);
 		}
 
 		// Redirection has been responded and no further execution is required.
@@ -267,7 +259,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		Throwable thw = Exceptions.getRootCauses(ae);
 		if (thw != null) {
-			log.warn("On failure caused by: ", thw);
+			log.warn("On failure caused by: ", ae);
 			/*
 			 * See:i.w.DiabloExtraController#errReads()
 			 */
@@ -305,7 +297,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		// Post-handling of login failure
-		this.coprocessor.postLoginFailure(tk, ae, request, response);
+		coprocessor.postLoginFailure(tk, ae, request, response);
 
 		// Redirection has been responded and no further execution is required.
 		return false;
@@ -468,7 +460,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	private String determineFailureUrl(IamAuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
-		String loginUrl = this.context.determineLoginFailureUrl(getLoginUrl(), token, ae, request, response);
+		String loginUrl = context.determineLoginFailureUrl(getLoginUrl(), token, ae, request, response);
 		Assert.hasText(loginUrl, "'loginUrl' is empty, please check the configure");
 		WebUtils2.cleanURI(loginUrl); // check
 		return loginUrl;

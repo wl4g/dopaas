@@ -21,14 +21,15 @@ import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MESSAGE_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.handler.CaptchaHandler;
+import com.wl4g.devops.iam.handler.verification.Verification;
 
 /**
  * IAM based matcher
@@ -43,6 +44,11 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
+	 * IAM verification handler
+	 */
+	final protected Verification verification;
+
+	/**
 	 * Matcher configuration properties
 	 */
 	@Autowired
@@ -52,13 +58,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	 * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
 	 */
 	@Autowired
-	protected JedisCacheManager cacheManager;
-
-	/**
-	 * IAM captcha handler
-	 */
-	@Autowired
-	protected CaptchaHandler captchaHandler;
+	protected EnhancedCacheManager cacheManager;
 
 	/**
 	 * IAM credentials securer
@@ -67,7 +67,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	protected IamCredentialsSecurer securer;
 
 	/**
-	 * IAM security coprocessor
+	 * IAM security Coprocessor
 	 */
 	@Autowired
 	protected SecurityCoprocessor coprocessor;
@@ -75,7 +75,12 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	/**
 	 * Delegate message source.
 	 */
-	@Resource(name = BEAN_DELEGATE_MESSAGE_SOURCE)
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected DelegateBundleMessageSource bundle;
+
+	public IamBasedMatcher(Verification verification) {
+		Assert.notNull(verification, "Verification must not be null");
+		this.verification = verification;
+	}
 
 }

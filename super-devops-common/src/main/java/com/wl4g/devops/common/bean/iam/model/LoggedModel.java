@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.bean.iam.model;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 

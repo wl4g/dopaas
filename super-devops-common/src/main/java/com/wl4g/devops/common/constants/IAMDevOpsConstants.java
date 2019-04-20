@@ -120,15 +120,17 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * WeChat public platform social services receive message URI.
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
-	/** Based URI with extra needed captcha. */
+	/** Based URI with extra needed verification code etc. */
 	final public static String URI_S_EXT_BASE = "/ext";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
 	 */
 	final public static String URI_S_EXT_CHECK = "check";
-	/** URI for apply for captcha. */
+	/** URI for apply for CAPTCHA. */
 	final public static String URI_S_EXT_CAPTCHA_APPLY = "captcha-apply";
+	/** URI for apply for verify-code. */
+	final public static String URI_S_EXT_VERIFY_APPLY = "verifycode-apply";
 	/** URI for apply for locale. */
 	final public static String URI_S_EXT_LOCALE_APPLY = "locale-apply";
 	/**
@@ -153,13 +155,21 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_SNSAUTH = "snsauth_";
 	/**
-	 * IAM server verification code failure counter cache name.
+	 * IAM server matching CAPTCHA verification failure counter cache name.
 	 */
-	final public static String CACHE_CAPTCHA_FAILER = "captcha_fail_";
+	final public static String CACHE_FAILFAST_CAPTCHA_COUNTER = "captcha_counter_";
+	/**
+	 * IAM server matching SMS verification failure counter cache name.
+	 */
+	final public static String CACHE_FAILFAST_SMS_COUNTER = "sms_counter_";
+	/**
+	 * IAM server matching verification failure counter cache name.
+	 */
+	final public static String CACHE_FAILFAST_MATCH_COUNTER = "match_counter_";
 	/**
 	 * Login failure overrun, lock cache name.
 	 */
-	final public static String CACHE_MATCHER_LOCKER = "matcher_lock_";
+	final public static String CACHE_MATCH_LOCK = "matcher_lock_";
 	/**
 	 * Securer based cache name
 	 */
@@ -197,7 +207,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Delegate message source bean name.
 	 */
-	final public static String BEAN_DELEGATE_MESSAGE_SOURCE = "IamDelegateBoundleMessageSource";
+	final public static String BEAN_DELEGATE_MSG_SOURCE = "IamDelegateBoundleMessageSource";
 
 	//
 	// Client configuration.
@@ -213,14 +223,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	//
 
 	/**
-	 * Failure locker keys.</br>
-	 * e.g. Client remote IP and login username.
+	 * Safety limiting factor(e.g. Client remote IP and login user-name)
 	 * 
 	 * @param remoteHost
 	 * @param principal
 	 * @return
 	 */
-	public static List<String> getFailConditions(String remoteHost, String principal) {
+	public static List<String> lockFactors(String remoteHost, String principal) {
 		return new ArrayList<String>(2) {
 			private static final long serialVersionUID = -5976569540781454836L;
 			{
