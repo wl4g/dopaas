@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.wl4g.devops.iam.captcha.gif.Captcha;
 import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
 import com.wl4g.devops.iam.captcha.gif.Randoms;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 
 /**
@@ -33,6 +34,10 @@ import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
  * @since
  */
 public class GifVerification extends GraphBasedVerification {
+
+	public GifVerification(IamContextManager manager) {
+		super(manager);
+	}
 
 	@Override
 	protected String generateCode() {

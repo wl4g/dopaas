@@ -30,6 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 
 /**
@@ -56,6 +57,10 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 * Key name used to store authentication code to session
 	 */
 	final protected static String KEY_CAPTCHA_SESSION = GraphBasedVerification.class.getSimpleName() + ".VERIFYCODE";
+
+	public GraphBasedVerification(IamContextManager manager) {
+		super(manager);
+	}
 
 	/**
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(javax.servlet.http.HttpServletRequest, HttpServletResponse)}
