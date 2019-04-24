@@ -226,15 +226,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				 * needs to be redirected to the CAS client application, then
 				 * grantTicket is required.
 				 */
-				Map param = null;
+				Map params = null;
 				if (StringUtils.hasText(grantTicket)) {
-					param = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
+					params = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
 					if (log.isInfoEnabled()) {
-						log.info("Login success redirect to '{}', param:{}", successRedirectUrl, param);
+						log.info("Login success redirect to '{}', param:{}", successRedirectUrl, params);
 					}
 				}
 				try {
-					WebUtils.issueRedirect(request, response, successRedirectUrl, param, true);
+					WebUtils.issueRedirect(request, response, successRedirectUrl, params, true);
 				} catch (IOException e) {
 					log.error("Login success redirection failed", e);
 				}

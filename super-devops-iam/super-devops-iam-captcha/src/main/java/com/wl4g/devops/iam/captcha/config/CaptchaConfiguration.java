@@ -25,6 +25,7 @@ import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATIO
 //import com.google.code.kaptcha.util.Config;
 //import com.wl4g.devops.iam.captcha.handler.KaptchaVerification;
 import com.wl4g.devops.iam.captcha.handler.GifVerification;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.DefaultJdkImgVerification;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 
@@ -38,8 +39,8 @@ public class CaptchaConfiguration {
 	 * @return
 	 */
 	@Bean(BEAN_GRAPH_VERIFICATION)
-	public GraphBasedVerification graphBasedVerification() {
-		return new GifVerification();
+	public GraphBasedVerification graphBasedVerification(IamContextManager manager) {
+		return new GifVerification(manager);
 	}
 
 	// /**
@@ -49,8 +50,8 @@ public class CaptchaConfiguration {
 	// */
 	// @Bean(BEAN_GRAPH_VERIFICATION)
 	// public GraphBasedVerification graphBasedVerification(DefaultKaptcha
-	// kaptchaProducer) {
-	// return new KaptchaVerification(kaptchaProducer);
+	// kaptchaProducer, IamContextManager manager) {
+	// return new KaptchaVerification(kaptchaProducer, manager);
 	// }
 	//
 	// @Bean

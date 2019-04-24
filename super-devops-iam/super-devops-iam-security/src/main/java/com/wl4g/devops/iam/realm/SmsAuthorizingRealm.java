@@ -17,10 +17,14 @@ package com.wl4g.devops.iam.realm;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.StringUtils;
 
+import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.iam.authc.SmsAuthenticationInfo;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
@@ -65,7 +69,22 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	 */
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
-		return new SmsAuthenticationInfo(token.getPrincipal(), token.getCredentials(), getName());
+		// Get account by mobile phone
+		IamAccountInfo acc = context.getIamAccount(new SmsParameter((String) token.getPrincipal()));
+		if (log.isDebugEnabled()) {
+			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
+		}
+
+		// To authenticationInfo
+		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
+			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
+		}
+
+		/*
+		 * Password is a string that may be set to empty.
+		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
+		 */
+		return new SmsAuthenticationInfo(acc.getPrincipal(), token.getCredentials(), getName());
 	}
 
 	/**

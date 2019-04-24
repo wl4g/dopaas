@@ -504,14 +504,14 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean(BEAN_GRAPH_VERIFICATION)
 	@ConditionalOnMissingBean
-	public GraphBasedVerification graphBasedVerification() {
-		return new DefaultJdkImgVerification();
+	public GraphBasedVerification graphBasedVerification(IamContextManager manager) {
+		return new DefaultJdkImgVerification(manager);
 	}
 
 	@Bean(BEAN_SMS_VERIFICATION)
 	@ConditionalOnMissingBean
-	public SmsVerification smsVerification() {
-		return new SmsVerification();
+	public SmsVerification smsVerification(IamContextManager manager) {
+		return new SmsVerification(manager);
 	}
 
 	@Bean

@@ -87,9 +87,16 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	final public static String KEY_VERIFYCODE_CREATE = "verifyCodeCreateTime";
 
 	/**
-	 * SMS verification code validity period (milliseconds)
+	 * The number of milliseconds to wait after applying for an SMS dynamic
+	 * password (you can reapply).
+	 * 
 	 */
 	final public static String KEY_VERIFYCODE_DELAY = "verifyCodeDelayMs";
+
+	/**
+	 * The remaining milliseconds to wait to re-apply for SMS dynamic password
+	 */
+	final public static String KEY_VERIFYCODE_REMAIN_DELAY = "verifyCodeRemainDelayMs";
 
 	/**
 	 * Graphic verification handler
@@ -152,6 +159,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			if (verifyCode != null) {
 				resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getTimestamp()));
 				resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
+				resp.getData().put(KEY_VERIFYCODE_REMAIN_DELAY, String.valueOf(getRemainingSmsDelay(verifyCode)));
 			}
 
 		} catch (Exception e) {
@@ -284,6 +292,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
 			resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getTimestamp()));
 			resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
+			resp.getData().put(KEY_VERIFYCODE_REMAIN_DELAY, String.valueOf(getRemainingSmsDelay(verifyCode)));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -318,6 +327,18 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			log.error("Get error on session failed", e);
 		}
 		return resp;
+	}
+
+	/**
+	 * Get remaining SMS delay
+	 * 
+	 * @param verifyCode
+	 * @return
+	 */
+	private long getRemainingSmsDelay(VerifyCode verifyCode) {
+		// remainMs = NowTime - CreateTime - DelayTime
+		long now = System.currentTimeMillis();
+		return Math.max(now - verifyCode.getTimestamp() - config.getMatcher().getFailFastSmsDelay(), 0);
 	}
 
 }

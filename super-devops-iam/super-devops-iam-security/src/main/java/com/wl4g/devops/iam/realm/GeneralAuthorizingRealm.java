@@ -70,8 +70,8 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	 */
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
-		// Get principal account information
-		IamAccountInfo acc = this.context.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+		// Get account by loginId(user-name)
+		IamAccountInfo acc = context.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
 			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
 		}

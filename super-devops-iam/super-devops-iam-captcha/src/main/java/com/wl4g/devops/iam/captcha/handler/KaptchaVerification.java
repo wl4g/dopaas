@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.Assert;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 
 /**
@@ -38,7 +39,8 @@ public class KaptchaVerification extends GraphBasedVerification {
 
 	private DefaultKaptcha kaptchaProducer;
 
-	public KaptchaVerification(DefaultKaptcha kaptchaProducer) {
+	public KaptchaVerification(DefaultKaptcha kaptchaProducer, IamContextManager manager) {
+		super(manager);
 		Assert.notNull(kaptchaProducer, "'kaptchaProducer' must not be null");
 		this.kaptchaProducer = kaptchaProducer;
 	}

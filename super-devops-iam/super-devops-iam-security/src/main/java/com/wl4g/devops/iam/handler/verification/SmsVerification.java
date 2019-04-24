@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.handler.verification;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -29,6 +27,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
+
+import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 
 /**
@@ -64,6 +68,9 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	 */
 	final public static String PARAM_MOBILENUM = "mobileNum";
 
+	/**
+	 * SMS hander sender.
+	 */
 	@Autowired
 	private SmsHandleSender sender;
 
@@ -72,6 +79,10 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	 */
 	private Cumulator applyCumulator;
 
+	public SmsVerification(IamContextManager manager) {
+		super(manager);
+	}
+
 	@Override
 	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
 			throws IOException {
@@ -79,11 +90,14 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
+		// Sent parameters
+		Map<String, Object> params = determineParameters(request, getVerifyCode(true).getText());
+
 		// Create verify-code.
 		reset(true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
+		sender.doSend(params);
 	}
 
 	@Override
@@ -120,7 +134,13 @@ public class SmsVerification extends AbstractVerification implements Initializin
 			{
 				String mobileNum = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
 				put(PARAM_VERIFYCODE, verifyCode);
-				put(PARAM_MOBILENUM, MobileNumber.parse(mobileNum));
+
+				// Parsing mobile number.
+				MobileNumber mn = MobileNumber.parse(mobileNum);
+				// Check mobile available.
+				checkMobileAvailable(mn.getNumber());
+
+				put(PARAM_MOBILENUM, mn);
 			}
 		};
 	}
@@ -148,6 +168,23 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	public void afterPropertiesSet() throws Exception {
 		this.applyCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_SMS_COUNTER);
 		Assert.notNull(applyCumulator, "applyCumulator is null, please check configure");
+	}
+
+	/**
+	 * Check mobile number available.
+	 * 
+	 * @param mobile
+	 */
+	private void checkMobileAvailable(@NotNull long mobile) {
+		// Getting account information
+		IamAccountInfo acc = context.getIamAccount(new SmsParameter(String.valueOf(mobile)));
+
+		// Check mobile(user) available
+		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {
+			log.warn("Illegal users, because mobile phone number: {} corresponding users do not exist", mobile);
+			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", mobile));
+		}
+
 	}
 
 	/**
