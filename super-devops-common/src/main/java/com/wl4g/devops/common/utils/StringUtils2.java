@@ -46,10 +46,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 */
 	private final static String REGEX_IS_MAIL = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
 	/**
-	 * Mobile regular expression
-	 */
-	private final static String REGEX_IS_MOBILE = "^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$";
-	/**
 	 * Number regular expression
 	 */
 	private final static String REGEX_IS_NUMBER = "^[0-9]*$";
@@ -807,18 +803,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	public static boolean isIP(String str) {
 
 		return str.matches(REGEX_IS_IP);
-	}
-
-	/**
-	 * 是否为手机号码
-	 * 
-	 * @param str
-	 *            待验证字符串
-	 * @return 是否符合手机号格式
-	 */
-	public static boolean isMobile(final String str) {
-
-		return str.matches(REGEX_IS_MOBILE);
 	}
 
 	/**

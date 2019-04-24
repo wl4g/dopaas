@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.cache;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.util.Assert;
 
@@ -58,7 +59,7 @@ public class EnhancedKey {
 	}
 
 	public EnhancedKey(Serializable key, long expireMs) {
-		this(key, (int) (expireMs / 1000));
+		this(key, (int) TimeUnit.MILLISECONDS.toSeconds(expireMs));
 	}
 
 	public EnhancedKey(Serializable key, int expireSec) {
@@ -81,6 +82,13 @@ public class EnhancedKey {
 
 	public Integer getExpire() {
 		return expire;
+	}
+
+	public Long getExpireMs() {
+		if (hasExpire()) {
+			return TimeUnit.SECONDS.toMillis(getExpire());
+		}
+		return null;
 	}
 
 	public Class<?> getValueClass() {

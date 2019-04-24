@@ -106,11 +106,8 @@ public abstract class AbstractVerification implements Verification {
 	 * @param create
 	 */
 	protected void reset(boolean create) {
-		/* VerifyCodeWrap wrap = (VerifyCodeWrap) */ getSession().removeAttribute(storageSessionKey());
+		getSession().removeAttribute(storageSessionKey());
 		if (create) {
-			// Assert.state(!StringUtils.isEmpty(VerifyCodeWrap.extText(wrap)),
-			// "Clean-up verifyCode failure, because is empty");
-
 			// Store verify-code in the session
 			getSession().setAttribute(storageSessionKey(), new VerifyCode(generateCode()));
 		}

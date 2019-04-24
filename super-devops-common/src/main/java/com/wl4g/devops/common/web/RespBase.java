@@ -22,6 +22,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.wl4g.devops.common.utils.StringUtils2;
 
 /**
  * Generic Restful response base class
@@ -32,7 +33,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * @since
  */
 public class RespBase<T> implements Serializable {
-	private static final long serialVersionUID = 2647155468624590650L;
+	final private static long serialVersionUID = 2647155468624590650L;
+
+	/**
+	 * Default status value.
+	 */
+	final public static String DEFAULT_STATUS = "normal";
 
 	private RetCode code;
 	private String status; // Response status
@@ -61,7 +67,7 @@ public class RespBase<T> implements Serializable {
 
 	public RespBase(RetCode retCode, String status, String message, Map<String, T> data) {
 		setCode(retCode);
-		setStatus(status);
+		setStatus(StringUtils2.isEmpty(status) ? DEFAULT_STATUS : status);
 		setMessage(message);
 		setData(data);
 	}
@@ -114,6 +120,10 @@ public class RespBase<T> implements Serializable {
 				+ (data != null ? "data=" + data : "") + "}";
 	}
 
+	public static <T> RespBase<T> create() {
+		return new RespBase<T>();
+	}
+
 	public static boolean isSuccess(RespBase<?> resp) {
 		return resp != null && RetCode.OK.getCode() == resp.getCode();
 	}
@@ -148,6 +158,12 @@ public class RespBase<T> implements Serializable {
 		 * {@link HttpStatus.NOT_IMPLEMENTED}
 		 */
 		BIZ_ERR(HttpStatus.EXPECTATION_FAILED.value(), "Business restricted"),
+
+		/**
+		 * Business locked constraints<br/>
+		 * {@link HttpStatus.LOCKED}
+		 */
+		LOCKD_ERR(HttpStatus.LOCKED.value(), "Locked"),
 
 		/**
 		 * Unauthenticated<br/>

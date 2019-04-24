@@ -52,9 +52,9 @@ public class SmsAuthenticationToken extends AbstractIamAuthenticationToken {
 		super(remoteHost);
 		Assert.hasText(principal, "Dynamic principal must not be empty");
 		Assert.hasText(verifyCode, "Dynamic credentials must not be empty");
+		this.action = Action.of(action);
 		this.principal = principal;
 		this.verifyCode = verifyCode;
-		this.action = Action.of(action);
 	}
 
 	@Override

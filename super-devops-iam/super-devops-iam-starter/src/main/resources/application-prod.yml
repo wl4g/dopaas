@@ -51,12 +51,12 @@ spring:
       sns: # SNS configuration.
         oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
         wechat-mp:
-          app-id: wxa0ac2cc5308fprod
-          app-secret: c5328060db71870a58a43e04fab5prod
+          app-id: wxa0ac2cc5308f3a38
+          app-secret: c5328060db71870a58a43e04fab5d4f6
           redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechatmp/callback
         wechat:
-          app-id: wx162814f9191fprod
-          app-secret: 9f1d914629bd9820351fb73f51e7prod
+          app-id: wx162814f9191f9d9b
+          app-secret: 9f1d914629bd9820351fb73f51e70495
           redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechat/callback
           href: https://passport.wl4g.com${server.contextPath}/static/wx.css
         qq:

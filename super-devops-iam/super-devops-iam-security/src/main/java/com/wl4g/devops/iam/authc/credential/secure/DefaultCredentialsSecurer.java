@@ -20,7 +20,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.utils.CheckSums;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.configure.SecurerConfig;
 
 /**
@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.configure.SecurerConfig;
  */
 public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport {
 
-	public DefaultCredentialsSecurer(SecurerConfig config, JedisCacheManager cacheManager) {
+	public DefaultCredentialsSecurer(SecurerConfig config, EnhancedCacheManager cacheManager) {
 		super(config, cacheManager);
 	}
 

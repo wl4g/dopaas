@@ -31,7 +31,7 @@ public interface IamCredentialsSecurer extends CredentialsSecurer {
 	 * @param principal
 	 * @return
 	 */
-	default String applySecretKey(String principal) {
+	default String applySecret(String principal) {
 		throw new UnsupportedOperationException();
 	}
 

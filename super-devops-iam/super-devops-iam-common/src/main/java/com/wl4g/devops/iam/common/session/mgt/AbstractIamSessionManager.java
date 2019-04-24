@@ -100,7 +100,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		String sid = WebUtils.getCleanParam(request, config.getParam().getSid());
 
 		// Using SID mode sessions
-		if (this.safeCheckText(sid)) {
+		if (checkSafe(sid)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Using SID session by [{}]", sid);
 			}
@@ -121,7 +121,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 		// Using grantTicket mode sessions
 		String grantTicket = WebUtils.getCleanParam(request, config.getParam().getGrantTicket());
-		if (this.safeCheckText(grantTicket)) {
+		if (checkSafe(grantTicket)) {
 			/*
 			 * Synchronize with
 			 * See:iam.handler.DefaultAuthenticationHandler#loggedin()
@@ -130,7 +130,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			if (log.isDebugEnabled()) {
 				log.debug("Using grantTicket:[{}] sessionId:[{}]", grantTicket, sessionId);
 			}
-			if (this.safeCheckText(sessionId)) {
+			if (checkSafe(sessionId)) {
 				return sessionId;
 			} else {
 				log.warn("Get sessionId of grantTicket:[{}] is blank", grantTicket);
@@ -308,7 +308,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param str
 	 * @return
 	 */
-	protected boolean safeCheckText(String str) {
+	protected boolean checkSafe(String str) {
 		return StringUtils.hasText(str) && !str.equalsIgnoreCase("NULL");
 	}
 

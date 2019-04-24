@@ -120,7 +120,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 	@Override
 	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-		return this.createAuthenticationToken(WebUtils.toHttp(request), WebUtils.toHttp(response));
+		return createAuthenticationToken(WebUtils.toHttp(request), WebUtils.toHttp(response));
 	}
 
 	protected abstract T createAuthenticationToken(HttpServletRequest request, HttpServletResponse response) throws Exception;
@@ -153,16 +153,16 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * IamClientSessionManager#getSessionId
 		 */
 		long expiredMs = SessionBindings.getSeesionExpiredTime();
-		this.cache.put(new EnhancedKey(grantTicket, expiredMs), Sessions.getSessionId(subject));
+		cache.put(new EnhancedKey(grantTicket, expiredMs), Sessions.getSessionId(subject));
 
 		// Determine success URL
-		String successUrl = this.determineSuccessRedirectUrl(fToken, subject, request, response);
+		String successUrl = determineSuccessRedirectUrl(fToken, subject, request, response);
 
 		// JSON response
-		if (this.isJSONResponse(request)) {
+		if (isJSONResponse(request)) {
 			try {
 				// Make logged-in response message
-				String logged = this.makeLoggedResponse(request, successUrl);
+				String logged = makeLoggedResponse(request, successUrl);
 				if (log.isInfoEnabled()) {
 					log.info("Logged success response[{}]", logged);
 				}
@@ -196,7 +196,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 
 		// Failure redirect URL
-		String failureRedirectUrl = this.buildFailureRedirectUrl(cause, WebUtils.toHttp(request));
+		String failureRedirectUrl = buildFailureRedirectUrl(cause, WebUtils.toHttp(request));
 
 		/*
 		 * Only if the error is not authenticated, can it be redirected to the
@@ -206,9 +206,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 */
 		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
 			// Response JSON message
-			if (this.isJSONResponse(request)) {
+			if (isJSONResponse(request)) {
 				try {
-					final String failMsg = this.makeFailedResponse(failureRedirectUrl, cause);
+					final String failMsg = makeFailedResponse(failureRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
 						log.info("Failed response: {}", failMsg);
 					}
@@ -327,12 +327,12 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	private String determineSuccessRedirectUrl(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
-		String successUrl = this.getRememberUrl(WebUtils.toHttp(request));
+		String successUrl = getRememberUrl(WebUtils.toHttp(request));
 		if (successUrl == null) {
-			successUrl = this.config.getSuccessUri();
+			successUrl = config.getSuccessUri();
 		}
 		// Re-determine
-		successUrl = this.context.determineLoginSuccessUrl(successUrl, token, subject, request, response);
+		successUrl = context.determineLoginSuccessUrl(successUrl, token, subject, request, response);
 		// Check and cleaning success url
 		successUrl = WebUtils2.cleanURI(successUrl);
 		Assert.notNull(successUrl, "'successUrl' must not be null");
@@ -347,7 +347,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	private String getRememberUrl(HttpServletRequest request) {
 		// Use remember redirect
-		if (this.config.isUseRememberRedirect()) {
+		if (config.isUseRememberRedirect()) {
 			SavedRequest savedReq = WebUtils.getAndClearSavedRequest(request);
 			if (savedReq != null) {
 				// URL excluding redirection remember

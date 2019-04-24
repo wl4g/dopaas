@@ -30,7 +30,7 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	/**
 	 * Remote client host address
 	 */
-	final private String remoteHost;
+	final private String host;
 
 	/**
 	 * Source application name
@@ -47,20 +47,20 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	}
 
 	public AbstractIamAuthenticationToken(String remoteHost) {
-		this.remoteHost = remoteHost;
+		this.host = remoteHost;
 		this.fromAppName = null;
 		this.redirectUrl = null;
 	}
 
 	public AbstractIamAuthenticationToken(String remoteHost, String fromAppName, String redirectUrl) {
-		this.remoteHost = remoteHost;
+		this.host = remoteHost;
 		this.fromAppName = fromAppName;
 		this.redirectUrl = redirectUrl;
 	}
 
 	@Override
 	public String getHost() {
-		return remoteHost;
+		return host;
 	}
 
 	@Override

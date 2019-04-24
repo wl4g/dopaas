@@ -27,12 +27,9 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 
-import com.google.common.io.Resources;
-import com.wl4g.devops.common.utils.web.WebUtils2;
+import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 
 /**
@@ -44,22 +41,6 @@ import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
  * @since
  */
 public abstract class GraphBasedVerification extends AbstractVerification implements InitializingBean {
-
-	/**
-	 * Broken CAPTCHA bytes array stream.
-	 */
-	final public static byte[] BROKEN_CAPTCHA;
-
-	static {
-		try {
-			String classpath = GraphBasedVerification.class.getName();
-			int endIndex = classpath.length() - GraphBasedVerification.class.getSimpleName().length();
-			String brokenPath = classpath.substring(0, endIndex).replaceAll("\\.", "/") + "broken.jpg";
-			BROKEN_CAPTCHA = Resources.toByteArray(Resources.getResource(brokenPath));
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
-	}
 
 	/**
 	 * Matching attempts accumulator
@@ -136,13 +117,7 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		if (applyCumulatedCount >= failFastCaptchaMaxAttempts) {
 			log.warn("Apply for graph verification code too often, actual: {}, maximum: {}, factors: {}", applyCumulatedCount,
 					failFastCaptchaMaxAttempts, factors);
-
-			// Write default broken CAPTCHA
-			try {
-				WebUtils2.write(response, HttpStatus.OK.value(), MediaType.IMAGE_JPEG_VALUE, BROKEN_CAPTCHA);
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
+			throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
 		}
 	}
 
