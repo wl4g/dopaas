@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 
-public abstract interface IamAccountInfo extends Serializable {
+public interface IamAccountInfo extends Serializable {
 
 	/**
 	 * Get account principal name.
@@ -93,7 +93,7 @@ public abstract interface IamAccountInfo extends Serializable {
 		final private String principal;
 
 		public BasedParameter(String principal) {
-			Assert.notNull(principal, "'principal' must not be null");
+			Assert.hasText(principal, "'principal' must not be empty");
 			this.principal = principal;
 		}
 
@@ -114,6 +114,22 @@ public abstract interface IamAccountInfo extends Serializable {
 		private static final long serialVersionUID = -7501007252263127579L;
 
 		public SimpleParameter(String principal) {
+			super(principal);
+		}
+
+	}
+
+	/**
+	 * SMS dynamic password sign-in parameter definition
+	 * 
+	 * @author wangl.sir
+	 * @version v1.0 2019年1月8日
+	 * @since
+	 */
+	public static class SmsParameter extends BasedParameter {
+		private static final long serialVersionUID = -7501007252263557579L;
+
+		public SmsParameter(String principal) {
 			super(principal);
 		}
 
