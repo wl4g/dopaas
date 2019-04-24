@@ -157,7 +157,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
 			if (verifyCode != null) {
-				resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getTimestamp()));
+				resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getCreateTime()));
 				resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
 				resp.getData().put(KEY_VERIFYCODE_REMAIN_DELAY, String.valueOf(getRemainingSmsDelay(verifyCode)));
 			}
@@ -290,7 +290,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 * code (must exist).
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getTimestamp()));
+			resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getCreateTime()));
 			resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
 			resp.getData().put(KEY_VERIFYCODE_REMAIN_DELAY, String.valueOf(getRemainingSmsDelay(verifyCode)));
 
@@ -338,7 +338,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	private long getRemainingSmsDelay(VerifyCode verifyCode) {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
-		return Math.max(now - verifyCode.getTimestamp() - config.getMatcher().getFailFastSmsDelay(), 0);
+		return Math.max(now - verifyCode.getCreateTime() - config.getMatcher().getFailFastSmsDelay(), 0);
 	}
 
 }

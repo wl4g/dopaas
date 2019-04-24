@@ -136,16 +136,22 @@ public abstract class AbstractVerification implements Verification {
 	 */
 	protected VerifyCode getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCode wrap = (VerifyCode) getSession().getAttribute(storageSessionKey());
+		VerifyCode code = (VerifyCode) getSession().getAttribute(storageSessionKey());
 
 		// Assertion
-		if (wrap != null && !StringUtils.isEmpty(wrap.getText())) {
-			if (Math.abs(System.currentTimeMillis() - wrap.getTimestamp()) < getExpireMs()) { // Expired?
-				return wrap;
+		long now = System.currentTimeMillis();
+		if (code != null && !StringUtils.isBlank(code.getText())) {
+			if (Math.abs(now - code.getCreateTime()) < getExpireMs()) { // Expired?
+				return code;
 			}
-		} else if (assertion) {
+		}
+
+		if (assertion) {
+			log.warn("Assertion verify-code expired. now: {}, createTime: {}, expireMs: {}", now,
+					(code != null ? code.getCreateTime() : null), getExpireMs());
 			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
 		}
+
 		return null;
 	}
 
@@ -230,17 +236,17 @@ public abstract class AbstractVerification implements Verification {
 
 		private String text;
 
-		private Long timestamp;
+		private Long createTime;
 
 		public VerifyCode(String text) {
 			this(text, System.currentTimeMillis());
 		}
 
-		public VerifyCode(String text, Long timestamp) {
+		public VerifyCode(String text, Long createTime) {
 			Assert.hasText(text, "Verify-code text is empty, please check configure");
-			Assert.notNull(timestamp, "Timestamp is null, please check configure");
+			Assert.notNull(createTime, "CreateTime is null, please check configure");
 			this.text = text;
-			this.timestamp = timestamp;
+			this.createTime = createTime;
 		}
 
 		public String getText() {
@@ -251,21 +257,17 @@ public abstract class AbstractVerification implements Verification {
 			this.text = verifyText;
 		}
 
-		public Long getTimestamp() {
-			return timestamp;
+		public Long getCreateTime() {
+			return createTime;
 		}
 
-		public void setTimestamp(Long timestamp) {
-			this.timestamp = timestamp;
-		}
-
-		public static String extText(VerifyCode wrap) {
-			return wrap != null ? wrap.getText() : null;
+		public void setCreateTime(Long timestamp) {
+			this.createTime = timestamp;
 		}
 
 		@Override
 		public String toString() {
-			return "VerifyCodeWrap [verifyText=" + text + ", timestamp=" + timestamp + "]";
+			return "VerifyCodeWrap [verifyText=" + text + ", timestamp=" + createTime + "]";
 		}
 
 	}
