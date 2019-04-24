@@ -177,7 +177,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * The public key index by logged-in users
 	 */
-	final public static String CACHE_PUBKEY_INDEX = CACHE_SECURER + "pubkey_idx_";
+	final public static String CACHE_PUBKEY_IDX = CACHE_SECURER + "pubkey_idx_";
 
 	/**
 	 * The key of cache encryption key pairs

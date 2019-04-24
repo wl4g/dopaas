@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.handler.verification;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,7 +52,17 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	/**
 	 * Key name used to store authentication code to session
 	 */
-	final protected static String KEY_VERIFYCODE_SESSION = SmsVerification.class.getSimpleName() + ".VERIFYCODE";
+	final public static String KEY_VERIFYCODE_SESSION = SmsVerification.class.getSimpleName() + ".VERIFYCODE";
+
+	/**
+	 * SMS verification code parameter name,
+	 */
+	final public static String PARAM_VERIFYCODE = "code";
+
+	/**
+	 * Target phone number parameter name sent by SMS verification code.
+	 */
+	final public static String PARAM_MOBILENUM = "mobileNum";
 
 	@Autowired
 	private SmsHandleSender sender;
@@ -69,7 +83,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		reset(true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(getParameters(request, getVerifyCode(true).getText()));
+		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
 	}
 
 	@Override
@@ -88,17 +102,27 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		return config.getMatcher().getSmsExpireMs();
 	}
 
+	@Override
+	protected String generateCode() {
+		return RandomStringUtils.randomNumeric(6);
+	}
+
 	/**
-	 * Get SMS send parameters
+	 * Determine SMS send parameters
 	 * 
 	 * @param request
 	 * @param verifyCode
 	 * @return
 	 */
-	protected Map<String, Object> getParameters(HttpServletRequest request, String verifyCode) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("code", verifyCode);
-		return parameters;
+	protected Map<String, Object> determineParameters(HttpServletRequest request, String verifyCode) {
+		return new HashMap<String, Object>() {
+			private static final long serialVersionUID = 8964694616018054906L;
+			{
+				String mobileNum = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
+				put(PARAM_VERIFYCODE, verifyCode);
+				put(PARAM_MOBILENUM, MobileNumber.parse(mobileNum));
+			}
+		};
 	}
 
 	@Override
@@ -112,7 +136,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		long failFastSmsMaxAttempts = config.getMatcher().getFailFastSmsMaxAttempts();
 
 		// Accumulated number of apply
-		Long applyCumulatedCount = applyCumulator.accumulate(factors, 1, config.getMatcher().getFailFastSmsDelay());
+		Long applyCumulatedCount = applyCumulator.accumulate(factors, 1, config.getMatcher().getFailFastSmsMaxDelay());
 		if (applyCumulatedCount >= failFastSmsMaxAttempts) {
 			log.warn("Apply for SMS verification code too often, actual: {}, maximum: {}, factors: {}", applyCumulatedCount,
 					failFastSmsMaxAttempts, factors);
@@ -120,9 +144,6 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		}
 	}
 
-	/**
-	 * Initializing
-	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.applyCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_SMS_COUNTER);
@@ -163,6 +184,74 @@ public class SmsVerification extends AbstractVerification implements Initializin
 			log.info(">>>> Start Sent SMS verification >>>>", parameters);
 			log.info("SMS verification for : {}", parameters);
 			log.info("<<<< End Sent SMS verification <<<<");
+		}
+
+	}
+
+	/**
+	 * Mobile number parser.</br>
+	 * See:<a href=
+	 * "https://www.51-n.com/t-4274-1-1.html">https://www.51-n.com/t-4274-1-1.html</a>
+	 * 
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年4月22日
+	 * @since
+	 */
+	public static class MobileNumber implements Serializable {
+
+		private static final long serialVersionUID = 6285416806548742944L;
+
+		final private int countryCode;
+
+		final private long number;
+
+		private MobileNumber(int countryCode, long number) {
+			super();
+			this.countryCode = countryCode;
+			this.number = number;
+		}
+
+		public int getCountryCode() {
+			return countryCode;
+		}
+
+		public long getNumber() {
+			return number;
+		}
+
+		/**
+		 * Check and parse mobile number.</br>
+		 * 
+		 * <pre>
+		 * parse(null)   = false
+		 * parse("null")   = false
+		 * parse("")     = false
+		 * parse(" ")   = false
+		 * parse("123")  = false
+		 * parse("+08618112349876")  = true
+		 * parse("+8618112349876") = false
+		 * parse("+086181123498 6") = false
+		 * parse("08618112349876") = false
+		 * parse("+018112349876") = false
+		 * </pre>
+		 * 
+		 * @param number
+		 */
+		public static MobileNumber parse(String mobileNumString) {
+			Assert.isTrue((StringUtils.isNotBlank(mobileNumString) && mobileNumString.length() >= 15),
+					"Mobile number must be 15 digits long");
+			Assert.isTrue(StringUtils.startsWith(mobileNumString, "+"),
+					String.format("Mobile number '%s' must start with '+', e.g. +08618112349876", mobileNumString));
+			Assert.isTrue(StringUtils.isNumeric(mobileNumString.substring(1)),
+					String.format("Mobile number '%s' suffix exist non-numeric characters", mobileNumString));
+
+			return new MobileNumber(Integer.parseInt(mobileNumString.substring(1, 4)),
+					Long.parseLong(mobileNumString.substring(4)));
+		}
+
+		@Override
+		public String toString() {
+			return "MobileNumber [countryCode=" + countryCode + ", number=" + number + "]";
 		}
 
 	}

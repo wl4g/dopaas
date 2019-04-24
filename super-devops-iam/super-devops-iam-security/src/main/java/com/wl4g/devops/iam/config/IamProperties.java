@@ -223,19 +223,27 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		private long captchaExpireMs = 1 * 60 * 1000L;
 
 		/**
-		 * Maximum number of consecutive requests for SMS verification code.
+		 * Try to apply for the maximum number of SMS dynamic passwords multiple
+		 * times (it will be locked for a while after it is exceeded).
 		 */
-		private int failFastSmsMaxAttempts = 5;
+		private int failFastSmsMaxAttempts = 3;
 
 		/**
-		 * The millisecond of lock wait after requesting SMS dynamic password
-		 * authentication fails.
+		 * The length of time (in milliseconds) that will be locked after trying
+		 * to apply for the maximum number of SMS dynamic passwords multiple
+		 * times. Reference: failFastSmsMaxAttempts.
 		 */
-		private long failFastSmsDelay = 30 * 60 * 1000L;
+		private long failFastSmsMaxDelay = 30 * 60 * 1000L;
 
 		/**
-		 * The SMS verification code requesting the application expires in
-		 * milliseconds.
+		 * The number of milliseconds to wait after applying for an SMS dynamic
+		 * password (you can reapply).
+		 */
+		private long failFastSmsDelay = (long) (1.5 * 60 * 1000L);
+
+		/**
+		 * Apply for SMS dynamic password every time, valid for authentication
+		 * (milliseconds).
 		 */
 		private long smsExpireMs = 5 * 60 * 1000L;
 
@@ -301,6 +309,14 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 			// less than 'failureMaxAttempts':%s",
 			// captchaRequiredAttempts, getFailFastMatchMaxAttempts()));
 			this.failFastSmsMaxAttempts = captchaRequiredAttempts;
+		}
+
+		public long getFailFastSmsMaxDelay() {
+			return failFastSmsMaxDelay;
+		}
+
+		public void setFailFastSmsMaxDelay(long failFastSmsMaxDelay) {
+			this.failFastSmsMaxDelay = failFastSmsMaxDelay;
 		}
 
 		public long getFailFastSmsDelay() {

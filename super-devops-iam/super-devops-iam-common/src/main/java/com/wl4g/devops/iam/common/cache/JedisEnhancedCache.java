@@ -74,7 +74,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 
 		byte[] data = null;
 		if (key.getSerializer() != null) { // Using a custom serializer
-			return key.getSerializer().serialize(value);
+			data = key.getSerializer().serialize(value);
 		} else {
 			data = ProtostuffUtils.serialize(value);
 		}
@@ -196,6 +196,27 @@ public class JedisEnhancedCache implements EnhancedCache {
 			jedisCluster.expire(realKey, key.getExpire());
 		}
 		return res;
+	}
+
+	@Override
+	public boolean putIfAbsent(final EnhancedKey key, final Object value) {
+		Assert.notNull(key, "'key' must not be null");
+		Assert.notNull(value, "'value' must not be null");
+		if (log.isDebugEnabled()) {
+			log.debug("Put key={}, value={}", key, value);
+		}
+
+		byte[] data = null;
+		if (key.getSerializer() != null) { // Using a custom serializer
+			data = key.getSerializer().serialize(value);
+		} else {
+			data = ProtostuffUtils.serialize(value);
+		}
+
+		if (key.hasExpire()) {
+			return jedisCluster.set(key.getKey(name), data, NXXX, EXPX, key.getExpireMs()) != null;
+		}
+		return jedisCluster.setnx(key.getKey(name), data) != null;
 	}
 
 }

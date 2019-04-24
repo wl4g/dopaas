@@ -22,14 +22,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Charsets;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.common.utils.Exceptions;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -40,6 +46,7 @@ import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 
+import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.lockFactors;
@@ -75,9 +82,14 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	final public static String KEY_APPLY_SECRET = "secret";
 
 	/**
-	 * Timestamp field key name for creating authentication code
+	 * Apply SMS verification code to create a timestamp
 	 */
 	final public static String KEY_VERIFYCODE_CREATE = "verifyCodeCreateTime";
+
+	/**
+	 * SMS verification code validity period (milliseconds)
+	 */
+	final public static String KEY_VERIFYCODE_DELAY = "verifyCodeDelayMs";
 
 	/**
 	 * Graphic verification handler
@@ -101,16 +113,16 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 * Check the initial configuration. (e.g: whether to enable the verification
 	 * code etc)
 	 * 
-	 * @param principal
-	 *            It is empty when you log in for the first time (before
-	 *            entering the account)
 	 * @param request
 	 */
-	@GetMapping(URI_S_EXT_CHECK)
+	@RequestMapping(value = URI_S_EXT_CHECK, method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public RespBase<?> check(@RequestParam(required = false) String principal, HttpServletRequest request) {
-		RespBase<String> resp = new RespBase<>();
+	public RespBase<?> check(HttpServletRequest request) {
+		RespBase<String> resp = RespBase.create();
 		try {
+			// Login account number or mobile number(Optional)
+			String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
+
 			// Lock factors
 			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), principal);
 
@@ -126,7 +138,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 */
 			if (!StringUtils.isEmpty(principal)) {
 				// Apply credentials encryption secret key
-				String secret = securer.applySecretKey(principal);
+				String secret = securer.applySecret(principal);
 				resp.getData().put(KEY_APPLY_SECRET, secret);
 			}
 
@@ -139,6 +151,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
 			if (verifyCode != null) {
 				resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getTimestamp()));
+				resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
 			}
 
 		} catch (Exception e) {
@@ -160,10 +173,10 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 * 
 	 * @param response
 	 */
-	@GetMapping(URI_S_EXT_LOCALE_APPLY)
+	@RequestMapping(value = URI_S_EXT_LOCALE_APPLY, method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request) {
-		RespBase<Locale> resp = new RespBase<>();
+		RespBase<Locale> resp = RespBase.create();
 		try {
 			String lang = WebUtils.getCleanParam(request, config.getParam().getLanguage());
 			Assert.hasText(lang, String.format("'%s' must not be empty", config.getParam().getLanguage()));
@@ -187,17 +200,21 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	/**
 	 * Apply CAPTCHA graph stream.
 	 * 
+	 * @param request
 	 * @param response
 	 */
-	@GetMapping(URI_S_EXT_CAPTCHA_APPLY)
-	public void applyCaptcha(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = URI_S_EXT_CAPTCHA_APPLY, method = { RequestMethod.GET, RequestMethod.POST })
+	public void applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			if (!coprocessor.preApplyCapcha(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
 
+			// Login account number or mobile number(Optional)
+			String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
+
 			// Lock factors
-			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), null);
+			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
 			if (graphVerification.isEnabled(factors)) { // Enabled?
@@ -206,10 +223,26 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 				log.warn(
 						"Currently no captcha is required, it is recommended that the front end reduce invalid requests. factors: {}",
 						factors);
+				throw new IamException(String.format(
+						"Currently no captcha is required, it is recommended that the front end reduce invalid requests."));
 			}
 
 		} catch (Exception e) {
+			RespBase<?> resp = RespBase.create();
+			if (e instanceof IamException) {
+				resp.setCode(RetCode.BIZ_ERR);
+				if (e instanceof VerificationException) {
+					resp.setCode(RetCode.LOCKD_ERR);
+				}
+			} else {
+				resp.setCode(RetCode.SYS_ERR);
+			}
+			resp.setMessage(e.getMessage());
 			log.error("Failure to apply for captcha", e);
+
+			// Respond to the JSON message that failed to apply for the CAPTCHA
+			WebUtils2.write(response, HttpStatus.OK.value(), MediaType.APPLICATION_JSON_UTF8_VALUE,
+					JacksonUtils.toJSONString(resp).getBytes(Charsets.UTF_8));
 		}
 	}
 
@@ -219,22 +252,27 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 * @param request
 	 * @param response
 	 */
-	@GetMapping(URI_S_EXT_VERIFY_APPLY)
+	@RequestMapping(value = URI_S_EXT_VERIFY_APPLY, method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public RespBase<?> applyVerify(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<String> resp = new RespBase<>();
+		RespBase<String> resp = RespBase.create();
 		try {
 			if (!coprocessor.preApplyVerify(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
 
+			// Login account number or mobile number(Required)
+			String mobileName = config.getParam().getPrincipalName();
+			String mobileNumber = WebUtils.getCleanParam(request, mobileName);
+			parse(mobileNumber);
+
 			// Lock factors
-			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), null);
+			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), mobileNumber);
 
 			// Request CAPTCHA
 			String captcha = WebUtils.getCleanParam(request, config.getParam().getCaptchaName());
 			// Graph validation
-			graphVerification.validate(factors, captcha, true);
+			graphVerification.validate(factors, captcha, false);
 
 			// Apply SMS verify-code
 			smsVerification.apply(factors, request, response);
@@ -245,6 +283,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
 			resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getTimestamp()));
+			resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -267,7 +306,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	@GetMapping(URI_S_EXT_ERRREAD)
 	@ResponseBody
 	public RespBase<?> errReads(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<String> resp = new RespBase<>();
+		RespBase<String> resp = RespBase.create();
 		try {
 			// Get error message in session
 			String errmsg = SessionBindings.getBindValue(KEY_ERR_SESSION_SAVED, true);

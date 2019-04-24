@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.common.cache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
+import com.google.common.base.Charsets;
+
 /**
  * Enhanced implementation of Shiro cache support for automatic expiratio
  * 
@@ -27,6 +29,9 @@ import org.apache.shiro.cache.CacheException;
  * @since
  */
 public interface EnhancedCache extends Cache<EnhancedKey, Object> {
+
+	final static byte[] NXXX = "NX".getBytes(Charsets.UTF_8);
+	final static byte[] EXPX = "PX".getBytes(Charsets.UTF_8);
 
 	/**
 	 * Decay counter
@@ -77,5 +82,14 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @throws CacheException
 	 */
 	Long decrementGet(final EnhancedKey key, long decrBy) throws CacheException;
+
+	/**
+	 * Put(If not exist)
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public boolean putIfAbsent(final EnhancedKey key, final Object value);
 
 }

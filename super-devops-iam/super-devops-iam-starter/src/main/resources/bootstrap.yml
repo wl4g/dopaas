@@ -51,15 +51,19 @@ spring:
           authorizers: authorizers
           second-auth-code: secondAuthCode
           funcId: function
-          captcha-enabled: captchaEnabled
-          secret: secret
         strategy: # Authentication api interactive strategy configuration.
           response-template: '{"code":${code},"message":"${message}","status":"${status}","data":"${data}"}'
         matcher:
-          failure-captcha-max-attempts: 3
+          fail-fast-match-max-attempts: 10
+          fail-fast-match-delay: 3600000
+          enabled-captcha-max-attempts: 3
+          fail-fast-captcha-max-attempts: 20
+          fail-fast-captcha-delay: 600000
           captcha-expire-ms: 60000
-          failure-locked-max-attempts: 5
-          failure-locked-delay: 3600000
+          fail-fast-sms-max-attempts: 3
+          fail-fast-sms-max-delay: 1800000
+          fail-fast-sms-delay: 90000
+          sms-expire-ms: 300000
         cache:
           prefix: iam_
         session:
@@ -84,7 +88,7 @@ server:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto
     remoteIpHeader: x-forwarded-for
-    basedir: /usr/local/${spring.application.name}
+    basedir: /var/log/${spring.application.name}
     access-log-enabled: false
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds

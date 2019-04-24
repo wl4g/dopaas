@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
+//import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
 
@@ -190,7 +190,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			 * Save the token at the time of authentication, which can then be
 			 * used for extended logic usage.
 			 */
-			subject.getSession().setAttribute(KEY_AUTHC_TOKEN, tk);
+			// subject.getSession().setAttribute(KEY_AUTHC_TOKEN, tk);
 
 			// From source application
 			String fromAppName = getFromAppName(request);

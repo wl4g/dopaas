@@ -56,10 +56,10 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 
 		try {
 			// Check authentication login request parameters
-			this.authHandler.checkAuthenticateRequests(getFromAppName(request), getFromRedirectUrl(request));
+			authHandler.checkAuthenticateRequests(getFromAppName(request), getFromRedirectUrl(request));
 
 			// Binding request parameters
-			this.bindingRequestParameters(request, response);
+			bindingRequestParameters(request, response);
 
 		} catch (IllegalCallbackDomainException e) {
 			log.warn("Using default callback URI. cause by: {}", Exceptions.getMessage(e));
@@ -72,7 +72,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(), request, response)) {
 			try {
 				// No need to continue
-				return this.onLoginSuccess(createToken(request, response), subject, request, response);
+				return onLoginSuccess(createToken(request, response), subject, request, response);
 			} catch (Exception e) {
 				log.error("Logged-in auto redirect to other applications failed", e);
 			}

@@ -50,17 +50,46 @@
 				show: function(captchaUrl){ // 默认显示验证码实现
 					var img = CommonUtils.checkEmpty("signIn.captcha.img", settings.signIn.captcha.img);
 					var imgInput = CommonUtils.checkEmpty("signIn.captcha.input", settings.signIn.captcha.input);
-					$(imgInput).css({"display" : "inline"});
-					$(img).css({"display" : "inline"});
-					$(img).attr({"src": CommonUtils.checkEmpty("captchaUrl", captchaUrl)});
+					$(imgInput).css({"display" : "inline"}); // 可先显示验证码输入框
+
+					// 请求Captcha接口（返回img流，当被锁定时会返回json异常信息，例：message:您刷新太频繁，请稍后再试）
+					fetch(CommonUtils.checkEmpty("captchaUrl", captchaUrl))
+					.then((res) => {
+						var contentType = res.headers.get("Content-Type");
+						if(contentType.indexOf("image") >= 0){
+							return res.blob();
+						} else if (contentType.indexOf("application/json") >= 0){
+							return res.json();
+						}
+						throw Error("Unsupport media content-type '"+ contentType +"");
+					}).then(body => {
+						if(body instanceof Blob){
+							var imgObjURL = URL.createObjectURL(body);
+					    	$(img).attr("src", imgObjURL);
+						}
+						// data是非Blob类直接可断定已被锁定
+						else {
+							var msgName = CommonUtils.checkEmpty("definition.msgKey",settings.definition.msgKey);
+							var title = CommonUtils.isEmpty(body[msgName]) ? "您刷新频率过快，请稍后再试" : body[msgName];
+							$(img).attr("title", title);
+							// 失败降级回调
+							settings.signIn.captcha.onFallback(body[msgName]);
+						}
+						// 最好在img接口返回后再显示img标签，防止闪出破图
+						$(img).css({"display" : "inline"});
+					});
+				},
+				onFallback: function(errmsg){ // 加载captcha失败，降级回调（被锁定）
+					console.error(errmsg);
 				}
 			},
 			onSubmissionBefore: function(principal, plainPasswd, captcha){ // 默认提交之前回调实现
 				//throw "Unsupported errors, please implement to support login submission";
 				console.log("Prepare to submit login request. principal=" + principal + ", captcha=" + captcha);
+				return true;
 			},
-			onSuccess: function(principal){ // 登录成功回调
-				console.info("Sign in successful. " + principal);
+			onSuccess: function(principal, redirectUrl){ // 登录成功回调
+				console.info("Sign in successful. " + principal + ", " + redirectUrl);
 				return true;
 			},
 			onError: function(errmsg){ // 登录异常回调
@@ -246,7 +275,7 @@
 				var msgName = CommonUtils.checkEmpty("definition.msgKey",settings.definition.msgKey);
 				var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 				if(!CommonUtils.isEmpty(resp) && (resp[codeKey] != codeOkValue)){
-					settings.signIn.onError(resp[msgName]); // 登录失败回调
+					settings.signIn.onError(resp[msgName]); // 检查失败回调
 				} else {
 					var secretKey = CommonUtils.checkEmpty("definition.secretKey",settings.definition.secretKey);
 					var captchaEnabledKey = CommonUtils.checkEmpty("definition.captchaEnabledKey",settings.definition.captchaEnabledKey);
@@ -302,7 +331,9 @@
 						+ "&" + CommonUtils.checkEmpty("definition.captchaKey",settings.definition.captchaKey) + "=" + captcha
 						+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
 					// 执行登录请求之前回调
-					settings.signIn.onSubmissionBefore(principal, plainPasswd, captcha);
+					if(!settings.signIn.onSubmissionBefore(principal, plainPasswd, captcha)){
+						return;
+					}
 
 					// 提交账号登录请求
 					$.ajax({

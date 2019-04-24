@@ -18,6 +18,7 @@ package com.wl4g.devops.common.utils.web;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.bitwalker.useragentutils.Browser;
+import nl.bitwalker.useragentutils.BrowserType;
 import nl.bitwalker.useragentutils.DeviceType;
 import nl.bitwalker.useragentutils.UserAgent;
 
@@ -105,7 +106,7 @@ public class UserAgentUtils {
 	 */
 	public static boolean isBrowser(HttpServletRequest request) {
 		Browser br = getBrowser(request);
-		return (br != null && br.getBrowserType() != null);
+		return (br != null && br.getBrowserType() != null && br.getBrowserType() != BrowserType.UNKNOWN);
 	}
 
 	/**
@@ -116,7 +117,7 @@ public class UserAgentUtils {
 	 */
 	public static Browser getBrowser(HttpServletRequest request) {
 		UserAgent ua = getUserAgent(request);
-		return ua == null ? null : ua.getBrowser();
+		return (ua != null && ua.getBrowser() != null && ua.getBrowser() != Browser.UNKNOWN) ? ua.getBrowser() : null;
 	}
 
 	/**

@@ -134,11 +134,17 @@
 				img: document.getElementById("codeimg"), // 验证码显示IMG对象
 				input: document.getElementById("captcha_input"), // 验证码INPUT输入对象
 				enableOption: "captchaEnable", // 可选，控制当前是否启用验证码，默认:captchaEnable（与后台对应）
-				name: "captcha" // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
+				name: "captcha", // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
+				onFallback: function(errmsg){ // 验证码刷新降级处理（被锁定）
+					console.warn(errmsg);
+					// 加载默认破图
+					document.getElementById("codeimg").src = "static/broken.jpg";
+				}
 			},
 			// 提交之前
 			onSubmissionBefore: function(principal, plainPasswd, captcha){
 				console.log("准备提交登录....");
+				return true;
 			},
 			onSuccess: function(principal, redirectUrl){
 				console.log("登录成功!");
