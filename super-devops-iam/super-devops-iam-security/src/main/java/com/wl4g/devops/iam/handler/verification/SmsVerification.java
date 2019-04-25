@@ -86,18 +86,14 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	@Override
 	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
 			throws IOException {
-
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
-
-		// Sent parameters
-		Map<String, Object> params = determineParameters(request, getVerifyCode(true).getText());
 
 		// Create verify-code.
 		reset(true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(params);
+		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
 	}
 
 	@Override
