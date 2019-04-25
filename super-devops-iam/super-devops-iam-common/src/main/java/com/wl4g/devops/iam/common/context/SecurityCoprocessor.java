@@ -33,9 +33,9 @@ import org.apache.shiro.subject.Subject;
 public interface SecurityCoprocessor {
 
 	/**
-	 * Call pre before authentication, For example, the implementation of
-	 * restricting client IP white-list to prevent violent cracking of large
-	 * number of submission login requests.
+	 * Call pre authentication, For example, the implementation of restricting
+	 * client IP white-list to prevent violent cracking of large number of
+	 * submission login requests.
 	 * 
 	 * @param filter
 	 * @param request
@@ -47,25 +47,26 @@ public interface SecurityCoprocessor {
 	}
 
 	/**
-	 * Call post of login success
+	 * Call post of authenticating success
 	 * 
 	 * @param token
 	 * @param subject
 	 * @param request
 	 * @param response
 	 */
-	default void postLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) {
+	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
+			ServletResponse response) {
 	}
 
 	/**
-	 * Call post login failure
+	 * Call post authenticating failure
 	 * 
 	 * @param token
 	 * @param ae
 	 * @param request
 	 * @param response
 	 */
-	default void postLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
+	default void postAuthenticatingFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
 	}
 

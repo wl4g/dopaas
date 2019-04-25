@@ -36,7 +36,6 @@ import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.ExtraController;
@@ -46,6 +45,7 @@ import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 
+import static com.wl4g.devops.common.utils.web.WebUtils2.*;
 import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
@@ -131,7 +131,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
 
 			// Lock factors
-			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), principal);
+			List<String> factors = lockFactors(getHttpRemoteAddr(request), principal);
 
 			// Get the CAPTCHA enabled
 			String captchaEnabled = graphVerification.isEnabled(factors) ? "yes" : "no";
@@ -222,7 +222,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
 
 			// Lock factors
-			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), principal);
+			List<String> factors = lockFactors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
 			if (graphVerification.isEnabled(factors)) { // Enabled?
@@ -249,7 +249,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			log.error("Failure to apply for captcha", e);
 
 			// Respond to the JSON message that failed to apply for the CAPTCHA
-			WebUtils2.write(response, HttpStatus.OK.value(), MediaType.APPLICATION_JSON_UTF8_VALUE,
+			write(response, HttpStatus.OK.value(), MediaType.APPLICATION_JSON_UTF8_VALUE,
 					JacksonUtils.toJSONString(resp).getBytes(Charsets.UTF_8));
 		}
 	}
@@ -275,7 +275,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			parse(mobileNumber);
 
 			// Lock factors
-			List<String> factors = lockFactors(WebUtils2.getHttpRemoteAddr(request), mobileNumber);
+			List<String> factors = lockFactors(getHttpRemoteAddr(request), mobileNumber);
 
 			// Request CAPTCHA
 			String captcha = WebUtils.getCleanParam(request, config.getParam().getCaptchaName());
