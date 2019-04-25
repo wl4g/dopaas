@@ -15,17 +15,21 @@
  */
 package com.wl4g.devops.iam.common.session.mgt;
 
+import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE;
+import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID;
-import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_ID_SOURCE;
 
+import static java.lang.Boolean.TRUE;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
@@ -43,6 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.common.utils.StringUtils2;
+import com.wl4g.devops.common.utils.web.UserAgentUtils;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -100,28 +106,24 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		String sid = WebUtils.getCleanParam(request, config.getParam().getSid());
 
 		// Using SID mode sessions
-		if (checkSafe(sid)) {
+		if (checkSafeBlank(sid)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Using SID session by [{}]", sid);
 			}
 
-			// Whether to save SID to cookie or not, use this parameter in
-			// browser mode.
-			if (WebUtils.isTrue(request, config.getParam().getSidSaveCookie())) {
-				Cookie cookie = new SimpleCookie(super.getSessionIdCookie());
-				cookie.setValue(sid);
-				cookie.saveTo(WebUtils.toHttp(request), WebUtils.toHttp(response));
-			}
+			// Storage session token
+			storageTokenIfNecessary(request, response, sid);
+
 			// Set the current session state. (session sources and URL)
 			request.setAttribute(REFERENCED_SESSION_ID_SOURCE, URL_SESSION_ID_SOURCE);
 			request.setAttribute(REFERENCED_SESSION_ID, sid);
-			request.setAttribute(REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+			request.setAttribute(REFERENCED_SESSION_ID_IS_VALID, TRUE);
 			return sid;
 		}
 
 		// Using grantTicket mode sessions
 		String grantTicket = WebUtils.getCleanParam(request, config.getParam().getGrantTicket());
-		if (checkSafe(grantTicket)) {
+		if (checkSafeBlank(grantTicket)) {
 			/*
 			 * Synchronize with
 			 * See:iam.handler.DefaultAuthenticationHandler#loggedin()
@@ -130,7 +132,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			if (log.isDebugEnabled()) {
 				log.debug("Using grantTicket:[{}] sessionId:[{}]", grantTicket, sessionId);
 			}
-			if (checkSafe(sessionId)) {
+			if (checkSafeBlank(sessionId)) {
 				return sessionId;
 			} else {
 				log.warn("Get sessionId of grantTicket:[{}] is blank", grantTicket);
@@ -251,14 +253,6 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		}
 	}
 
-	public void stop(SessionKey key) {
-		try {
-			super.stop(key);
-		} catch (InvalidSessionException e) {
-			// Ignore exceptions
-		}
-	}
-
 	public void checkValid(SessionKey key) {
 		try {
 			super.checkValid(key);
@@ -295,6 +289,38 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		}
 	}
 
+	@Override
+	protected void onStart(Session session, SessionContext context) {
+		if (!WebUtils.isHttp(context)) {
+			throw new IllegalStateException(String.format("IAM currently only supports HTTP protocol family!"));
+		}
+
+		HttpServletRequest request = WebUtils.getHttpRequest(context);
+		HttpServletResponse response = WebUtils.getHttpResponse(context);
+		if (isSessionIdCookieEnabled()) {
+			if (StringUtils2.isEmpty(session.getId())) {
+				throw new IllegalArgumentException("sessionId cannot be null when persisting for subsequent requests.");
+			}
+
+			// Storage session token
+			storageTokenIfNecessary(request, response, session.getId().toString());
+
+		} else if (log.isDebugEnabled()) {
+			log.debug("Session ID cookie is disabled.  No cookie has been set for new session with id {}", session.getId());
+		}
+
+		request.removeAttribute(REFERENCED_SESSION_ID_SOURCE);
+		request.setAttribute(REFERENCED_SESSION_IS_NEW, TRUE);
+	}
+
+	public void stop(SessionKey key) {
+		try {
+			super.stop(key);
+		} catch (InvalidSessionException e) {
+			// Ignore exceptions
+		}
+	}
+
 	/**
 	 * Check whether the parameters are null in a safe way.<br/>
 	 * safeCheckText("null") == false<br/>
@@ -308,8 +334,37 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param str
 	 * @return
 	 */
-	protected boolean checkSafe(String str) {
+	protected boolean checkSafeBlank(String str) {
 		return StringUtils.hasText(str) && !str.equalsIgnoreCase("NULL");
+	}
+
+	/**
+	 * Storage session token(cookie)
+	 * 
+	 * @param request
+	 * @param response
+	 * @param sessionId
+	 */
+	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, String sessionId) {
+		boolean isBrowser = UserAgentUtils.isBrowser(WebUtils.toHttp(request));
+		/*
+		 * When a browser request or display specifies that cookies need to be
+		 * saved.
+		 */
+		if (isBrowser || WebUtils.isTrue(request, config.getParam().getSidSaveCookie())) {
+			Cookie cookie = new SimpleCookie(getSessionIdCookie());
+			cookie.setValue(sessionId);
+			cookie.saveTo(WebUtils.toHttp(request), WebUtils.toHttp(response));
+			if (log.isTraceEnabled()) {
+				log.trace("Set session ID cookie for session with id {}", sessionId);
+			}
+		} else {
+			/*
+			 * Addition customize security headers.
+			 */
+			WebUtils.toHttp(response).addHeader(getSessionIdCookie().getName(), sessionId);
+		}
+
 	}
 
 }
