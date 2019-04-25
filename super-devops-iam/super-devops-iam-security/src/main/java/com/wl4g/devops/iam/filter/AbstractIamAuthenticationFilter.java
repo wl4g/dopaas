@@ -241,7 +241,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			}
 
 			// Post-handling of login success
-			coprocessor.postLoginSuccess(tk, subject, request, response);
+			coprocessor.postAuthenticatingSuccess(tk, subject, request, response);
 
 		} finally { // Clean-up
 			cleanup(token, subject, request, response);
@@ -297,7 +297,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		// Post-handling of login failure
-		coprocessor.postLoginFailure(tk, ae, request, response);
+		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
 
 		// Redirection has been responded and no further execution is required.
 		return false;
