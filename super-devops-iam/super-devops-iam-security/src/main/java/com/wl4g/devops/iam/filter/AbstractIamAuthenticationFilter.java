@@ -24,6 +24,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wl4g.devops.common.exception.iam.AfterLoginSuccessException;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -143,7 +146,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 */
 		if (subject.isAuthenticated()) {
 			try {
-				onLoginSuccess(createToken(request, response), subject, request, response);
+				IamAuthenticationToken iamAuthenticationToken = createToken(request, response);
+				onLoginSuccess(iamAuthenticationToken, subject, request, response);
 			} catch (Exception e) {
 				log.error("Logged-in auto redirect to other applications failed", e);
 			}
@@ -243,7 +247,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Post-handling of login success
 			coprocessor.postAuthenticatingSuccess(tk, subject, request, response);
 
-		} finally { // Clean-up
+		}catch (RuntimeException re){
+			if(re instanceof AfterLoginSuccessException){
+				SessionBindings.bind(KEY_ERR_SESSION_SAVED, Exceptions.getRootCauses(re).getMessage());
+			}
+		}finally { // Clean-up
 			cleanup(token, subject, request, response);
 		}
 
