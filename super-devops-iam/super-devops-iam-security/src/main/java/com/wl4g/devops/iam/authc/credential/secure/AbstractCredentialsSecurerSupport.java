@@ -43,7 +43,7 @@ import com.wl4g.devops.iam.authc.credential.secure.Cryptos.KeySpecPair;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecurerConfig;
 
 /**
@@ -87,7 +87,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected DelegateBundleMessageSource bundle;
+	protected SessionDelegateMessageBundle bundle;
 
 	/**
 	 * IAM delegate credentials securer.

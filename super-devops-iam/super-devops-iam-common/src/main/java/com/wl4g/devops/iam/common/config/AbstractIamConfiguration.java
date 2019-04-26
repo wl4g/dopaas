@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.common.config;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -39,6 +40,7 @@ import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.core.IamFilterChainManager;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
@@ -55,8 +57,13 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	// ==============================
 
 	@Bean
+	public FilterChainManager filterChainManager() {
+		return new IamFilterChainManager();
+	}
+
+	@Bean
 	public ShiroFilterFactoryBean shiroFilter(AbstractIamProperties<? extends ParamProperties> config,
-			DefaultWebSecurityManager securityManager) {
+			DefaultWebSecurityManager securityManager, FilterChainManager chainManager) {
 		/*
 		 * Note: The purpose of using Iam Shiro FilterFactory Bean is to use Iam
 		 * Path Matching Filter Chain Resolver, while Iam Path Matching Filter
@@ -64,7 +71,7 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 		 * specification of getChain () method for default enhancements (because
 		 * Shiro does not implement it, this causes serious problems)
 		 */
-		IamShiroFilterFactoryBean shiroFilter = new IamShiroFilterFactoryBean();
+		IamShiroFilterFactoryBean shiroFilter = new IamShiroFilterFactoryBean(chainManager);
 		shiroFilter.setSecurityManager(securityManager);
 
 		/*

@@ -38,7 +38,7 @@ import com.google.common.io.ByteStreams;
 import com.wl4g.devops.common.kit.jvm.JVMRuntimeKit;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 
 /**
@@ -73,7 +73,7 @@ public class DefaultViewController extends BaseController {
 	 * Delegate message source.
 	 */
 	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected DelegateBundleMessageSource delegate;
+	protected SessionDelegateMessageBundle delegate;
 
 	/**
 	 * Reader view pages

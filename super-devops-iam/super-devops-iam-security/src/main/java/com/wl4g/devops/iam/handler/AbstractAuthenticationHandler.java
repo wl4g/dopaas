@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
-import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 
@@ -82,7 +82,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected DelegateBundleMessageSource bundle;
+	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractAuthenticationHandler(ServerSecurityContext context, RestTemplate restTemplate) {
 		Assert.notNull(context, "'context' must not be null");

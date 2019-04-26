@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * IAM request filter chain URI pattern resolver
+ * IAM request matching filter chain URI pattern resolver
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -62,7 +62,7 @@ public class IamPathMatchingFilterChainResolver extends PathMatchingFilterChainR
 		Assert.state(chainManager.hasChains(), "Shiro filter chain must be implemented");
 
 		// Current request URI
-		String requestURI = this.getPathWithinApplication(request);
+		String requestURI = getPathWithinApplication(request);
 
 		// Candidate matching pattern list.
 		List<String> candidateMatchingPatterns = new ArrayList<String>();
@@ -73,7 +73,7 @@ public class IamPathMatchingFilterChainResolver extends PathMatchingFilterChainR
 		 * FilterChainManager's requirements
 		 */
 		for (String registeredPattern : chainManager.getChainNames()) {
-			if (this.pathMatches(registeredPattern, requestURI)) {
+			if (pathMatches(registeredPattern, requestURI)) {
 				if (log.isTraceEnabled()) {
 					log.trace(String.format(
 							"Matched path pattern:[%s] for requestURI:[%s]. Utilizing corresponding filter chain...",
@@ -103,7 +103,7 @@ public class IamPathMatchingFilterChainResolver extends PathMatchingFilterChainR
 	 * </ul>
 	 * {@link org.springframework.util.AntPathMatcher.AntPatternComparator}
 	 */
-	protected final static class AntPatternComparator implements Comparator<String> {
+	private final static class AntPatternComparator implements Comparator<String> {
 		private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\{[^/]+?\\}");
 
 		private final String path;

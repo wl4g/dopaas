@@ -176,7 +176,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
 	 * Apply international locale.</br>
-	 * See:{@link com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource}
+	 * See:{@link com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle}
 	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
 	 * 
 	 * @param response
