@@ -34,7 +34,7 @@ import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -110,7 +110,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected DelegateBundleMessageSource bundle;
+	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
 			ServerSecurityContext context) {

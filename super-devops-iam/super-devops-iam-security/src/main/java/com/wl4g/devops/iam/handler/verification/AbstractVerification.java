@@ -37,7 +37,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -75,7 +75,7 @@ public abstract class AbstractVerification implements Verification {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected DelegateBundleMessageSource bundle;
+	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractVerification(IamContextManager manager) {
 		Assert.notNull(manager, "'manager' must not be null");

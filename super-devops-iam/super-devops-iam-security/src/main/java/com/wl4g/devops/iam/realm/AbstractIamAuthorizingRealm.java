@@ -38,7 +38,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.i18n.DelegateBundleMessageSource;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -95,7 +95,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected DelegateBundleMessageSource bundle;
+	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
 		Assert.notNull(manager, "'manager' must not be null");
