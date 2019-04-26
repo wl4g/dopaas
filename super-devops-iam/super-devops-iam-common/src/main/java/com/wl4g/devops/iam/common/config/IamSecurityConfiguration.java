@@ -23,11 +23,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -51,17 +53,17 @@ public class IamSecurityConfiguration {
 	//
 
 	@Bean
-	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
+	@ConditionalOnBean(CorsProperties.class)
 	public FilterRegistrationBean corsResolveSecurityFilter(CorsProperties config) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		// Merger transformation configuration
 		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toCorsConfiguration()));
 
 		// Register CORS filter
-		FilterRegistrationBean filterRegisBean = new FilterRegistrationBean(new CorsResolveSecurityFilter(source));
-		filterRegisBean.setEnabled(false);
-		filterRegisBean.addUrlPatterns("/**");
-		return filterRegisBean;
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(new CorsResolveSecurityFilter(source));
+		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 100);
+		filterBean.addUrlPatterns("/**");
+		return filterBean;
 	}
 
 	@Bean
@@ -75,12 +77,18 @@ public class IamSecurityConfiguration {
 	//
 
 	@Bean
-	@ConditionalOnProperty(name = "spring.web.xss.enabled", matchIfMissing = true)
+	@ConditionalOnBean(XssProperties.class)
 	public FilterRegistrationBean xssResolveSecurityFilter() {
-		FilterRegistrationBean filterRegisBean = new FilterRegistrationBean(new XSSResolveSecurityFilter());
-		filterRegisBean.setEnabled(false);
-		filterRegisBean.addUrlPatterns("/**");
-		return filterRegisBean;
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(new XSSResolveSecurityFilter());
+		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 101);
+		filterBean.addUrlPatterns("/**");
+		return filterBean;
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "spring.web.xss.enabled", matchIfMissing = true)
+	public XssProperties XssProperties() {
+		return new XssProperties();
 	}
 
 	/**
@@ -297,6 +305,18 @@ public class IamSecurityConfiguration {
 			}
 			return this;
 		}
+
+	}
+
+	/**
+	 * XSS configuration properties
+	 * 
+	 * @author wangl.sir
+	 * @version v1.0 2019年4月26日
+	 * @since
+	 */
+	@ConfigurationProperties(prefix = "spring.web.xss")
+	public static class XssProperties {
 
 	}
 
