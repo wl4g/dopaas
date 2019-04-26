@@ -19,6 +19,7 @@ import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.wl4g.devops.common.exception.iam.AfterLoginSuccessException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -55,7 +56,7 @@ public interface SecurityCoprocessor {
 	 * @param response
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) {
+			ServletResponse response) throws AfterLoginSuccessException {
 	}
 
 	/**
