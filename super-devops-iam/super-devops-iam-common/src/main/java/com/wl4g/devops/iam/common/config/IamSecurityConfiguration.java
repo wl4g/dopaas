@@ -53,6 +53,12 @@ public class IamSecurityConfiguration {
 	//
 
 	@Bean
+	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
+	public CorsProperties corsProperties() {
+		return new CorsProperties();
+	}
+
+	@Bean
 	@ConditionalOnBean(CorsProperties.class)
 	public FilterRegistrationBean corsResolveSecurityFilter(CorsProperties config) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -62,14 +68,12 @@ public class IamSecurityConfiguration {
 		// Register CORS filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(new CorsResolveSecurityFilter(source));
 		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 100);
-		filterBean.addUrlPatterns("/**");
+		/*
+		 * Cannot use '/*'or it will not be added to the container chain (only
+		 * '/**').
+		 */
+		filterBean.addUrlPatterns("/*");
 		return filterBean;
-	}
-
-	@Bean
-	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
-	public CorsProperties corsProperties() {
-		return new CorsProperties();
 	}
 
 	//
@@ -77,18 +81,22 @@ public class IamSecurityConfiguration {
 	//
 
 	@Bean
+	@ConditionalOnProperty(name = "spring.web.xss.enabled", matchIfMissing = true)
+	public XssProperties xssProperties() {
+		return new XssProperties();
+	}
+
+	@Bean
 	@ConditionalOnBean(XssProperties.class)
 	public FilterRegistrationBean xssResolveSecurityFilter() {
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(new XSSResolveSecurityFilter());
 		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 101);
-		filterBean.addUrlPatterns("/**");
+		/*
+		 * Cannot use '/*'or it will not be added to the container chain (only
+		 * '/**').
+		 */
+		filterBean.addUrlPatterns("/*");
 		return filterBean;
-	}
-
-	@Bean
-	@ConditionalOnProperty(name = "spring.web.xss.enabled", matchIfMissing = true)
-	public XssProperties XssProperties() {
-		return new XssProperties();
 	}
 
 	/**
