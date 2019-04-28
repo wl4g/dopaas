@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.common.exception.iam;
 
-import com.wl4g.devops.common.exception.DevOpsException;
-
-public class AfterLoginSuccessException extends DevOpsException {
+public class AfterAuthenticatSuccessException extends IamException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -25,7 +23,7 @@ public class AfterLoginSuccessException extends DevOpsException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public AfterLoginSuccessException() {
+	public AfterAuthenticatSuccessException() {
 		super();
 	}
 
@@ -38,7 +36,7 @@ public class AfterLoginSuccessException extends DevOpsException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public AfterLoginSuccessException(String message) {
+	public AfterAuthenticatSuccessException(String message) {
 		super(message);
 	}
 
@@ -59,7 +57,7 @@ public class AfterLoginSuccessException extends DevOpsException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public AfterLoginSuccessException(String message, Throwable cause) {
+	public AfterAuthenticatSuccessException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -77,7 +75,7 @@ public class AfterLoginSuccessException extends DevOpsException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public AfterLoginSuccessException(Throwable cause) {
+	public AfterAuthenticatSuccessException(Throwable cause) {
 		super(cause);
 	}
 

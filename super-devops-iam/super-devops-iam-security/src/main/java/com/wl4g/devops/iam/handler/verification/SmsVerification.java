@@ -15,16 +15,12 @@
  */
 package com.wl4g.devops.iam.handler.verification;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
+import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
+import com.wl4g.devops.common.exception.iam.AccessRejectedException;
+import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -36,13 +32,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
-import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
+import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
+
 
 /**
  * SMS verification code handler
@@ -134,7 +135,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 				// Parsing mobile number.
 				MobileNumber mn = MobileNumber.parse(mobileNum);
 				// Check mobile available.
-				checkMobileAvailable(mn.getNumber());
+				checkMobileAvailable(request,mn.getNumber());
 
 				put(PARAM_MOBILENUM, mn);
 			}
@@ -171,7 +172,12 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	 * 
 	 * @param mobile
 	 */
-	private void checkMobileAvailable(@NotNull long mobile) {
+	private void checkMobileAvailable(HttpServletRequest request,@NotNull long mobile) {
+		String action = WebUtils.getCleanParam(request, config.getParam().getSmsActionName());
+		//bind phone , needn't Check account exist
+		if(BIND==(SmsAuthenticationToken.Action.safeOf(action))){
+			return;
+		}
 		// Getting account information
 		IamAccountInfo acc = context.getIamAccount(new SmsParameter(String.valueOf(mobile)));
 

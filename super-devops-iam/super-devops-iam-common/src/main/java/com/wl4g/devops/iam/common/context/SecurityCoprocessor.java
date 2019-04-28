@@ -15,14 +15,15 @@
  */
 package com.wl4g.devops.iam.common.context;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import com.wl4g.devops.common.exception.iam.AfterLoginSuccessException;
+import com.wl4g.devops.common.exception.iam.AfterAuthenticatFailException;
+import com.wl4g.devops.common.exception.iam.AfterAuthenticatSuccessException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
+
+import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * IAM security coprocessor
@@ -56,7 +57,7 @@ public interface SecurityCoprocessor {
 	 * @param response
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) throws AfterLoginSuccessException {
+			ServletResponse response) throws AfterAuthenticatSuccessException {
 	}
 
 	/**
@@ -68,7 +69,7 @@ public interface SecurityCoprocessor {
 	 * @param response
 	 */
 	default void postAuthenticatingFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
-			ServletResponse response) {
+			ServletResponse response) throws AfterAuthenticatFailException {
 	}
 
 	/**
