@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.filter;
 
+
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.utils.Exceptions;
@@ -227,15 +228,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				}
 			}
 
-
-
 		} catch (IamException e) {
 			//after authentication success expetion
 			throw new AuthenticationException(e);
 		} finally { // Clean-up
 			cleanup(token, subject, request, response);
 		}
-
 		// Redirection has been responded and no further execution is required.
 		return false;
 	}
