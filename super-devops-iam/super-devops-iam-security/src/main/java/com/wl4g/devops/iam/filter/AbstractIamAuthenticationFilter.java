@@ -30,7 +30,6 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;

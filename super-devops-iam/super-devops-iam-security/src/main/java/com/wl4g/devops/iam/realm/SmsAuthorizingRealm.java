@@ -81,7 +81,8 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 		//if bind phone, needn't Check account exist
 		if (BIND != token.getAction()) {
 			principal = acc.getPrincipal();
-		} else if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {// To authenticationInfo
+		}
+		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {// To authenticationInfo
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}
 		/*
