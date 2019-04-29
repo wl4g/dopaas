@@ -29,19 +29,29 @@ import java.util.Map;
 
 import javax.servlet.Filter;
 
+import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
+import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
+import com.wl4g.devops.iam.common.filter.CorsResolveSecurityFilter;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
@@ -53,7 +63,7 @@ import redis.clients.jedis.JedisCluster;
 public abstract class AbstractIamConfiguration extends AbstractOptionalControllerConfiguration {
 
 	// ==============================
-	// Shiro manager and filter's
+	// S H I R O _ C O N F I G's.
 	// ==============================
 
 	@Bean
@@ -183,29 +193,25 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	}
 
 	// ==============================
-	// Authentication filter`s.
+	// A U T H E N T I C A T I O N _ C O N F I G's.
 	// ==============================
 
 	// ==============================
-	// Authentication filter`s registration
+	// A U T H E N T I C A T I O N _ R E G I S T R A T I O N _ C O N F I G's.
 	// Reference See: http://www.hillfly.com/2017/179.html
 	// org.apache.catalina.core.ApplicationFilterChain#internalDoFilter
 	// ==============================
 
 	// ==============================
-	// Authorizing realm`s
+	// A U T H O R I Z I N G _ R E A L M _ C O N F I G's.
 	// ==============================
 
 	// ==============================
-	// Configuration properties.
+	// A U T H E N T I C A T I O N _ H A N D L E R _ C O N F I G's.
 	// ==============================
 
 	// ==============================
-	// Authentication handler's
-	// ==============================
-
-	// ==============================
-	// IAM controller's
+	// I A M _ C O N T R O L L E R _ C O N F I G's.
 	// ==============================
 
 	@Bean
@@ -219,7 +225,95 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	}
 
 	// ==============================
-	// IAM Other's
+	// IAM security attacks protect's
+	// ==============================
+
+	//
+	// X X S _ I N T E R C E P T O R _ C O N F I G's.
+	//
+
+	@Bean
+	@ConditionalOnProperty(name = "spring.web.xss.enabled", matchIfMissing = true)
+	@ConfigurationProperties(prefix = "spring.web.xss")
+	public XssProperties xssProperties() {
+		return new XssProperties();
+	}
+
+	@Bean
+	@ConditionalOnBean(XssProperties.class)
+	public XssSecurityResolver xssSecurityResolver() {
+		return new XssSecurityResolver() {
+		};
+	}
+
+	@Bean
+	@ConditionalOnBean({ XssProperties.class, XssSecurityResolver.class })
+	public XssSecurityResolveInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
+		return new XssSecurityResolveInterceptor(config, resolver);
+	}
+
+	@Bean
+	@ConditionalOnBean(XssSecurityResolveInterceptor.class)
+	public AspectJExpressionPointcutAdvisor xssSecurityResolveAspectJPointcutAdvisor(XssProperties config,
+			XssSecurityResolveInterceptor advice) {
+		Assert.hasText(config.getExpression(), "'expression' of the xss security resolve AOP pointcut is emtpy.");
+		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
+		advisor.setExpression(config.getExpression());
+		advisor.setAdvice(advice);
+		return advisor;
+	}
+
+	//
+	// C O R S _ F I L T E R _ C O N F I G's.
+	//
+
+	@Bean
+	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
+	@ConfigurationProperties(prefix = "spring.web.cors")
+	public CorsProperties corsProperties() {
+		return new CorsProperties();
+	}
+
+	/**
+	 * The requirement for using the instruction is that the creation of
+	 * {@link CorsProperties} object beans must precede this</br>
+	 * e.g.
+	 * 
+	 * <pre>
+	 * &#64;Bean
+	 * public CorsProperties corsProperties() {
+	 * 	...
+	 * }
+	 * </pre>
+	 * 
+	 * <b style="color:red;font-size:40px">&nbsp;↑</b>
+	 * 
+	 * <pre>
+	 * &#64;Bean
+	 * &#64;ConditionalOnBean(CorsProperties.class)
+	 * public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
+	 * 	...
+	 * }
+	 * </pre>
+	 */
+	@Bean
+	@ConditionalOnBean(CorsProperties.class)
+	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		// Merger transformation configuration
+		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toCorsConfiguration()));
+
+		// Register CORS filter
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(new CorsResolveSecurityFilter(source));
+		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**').
+		filterBean.addUrlPatterns("/*");
+		return filterBean;
+	}
+
+	// ==============================
+	// IAM _ O T H E R _ C O N F I G's.
 	// ==============================
 
 }

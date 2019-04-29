@@ -11,17 +11,14 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web:
-    xss:
-      enabled: true # Defualt: true
-    cors:
-      enabled: true # Defualt: true
-      rules:
-        - path: /**
-          allowCredentials: true
-          allowsOrigins: '*'
-          allowsHeaders: '*'
-          allowsMethods: GET,POST,OPTION
+  web.cors:
+    enabled: true # Defualt: true
+    rules:
+      - path: /**
+        allowCredentials: true
+        allowsOrigins: '*'
+        allowsHeaders: '*'
+        allowsMethods: GET,POST,OPTION
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver

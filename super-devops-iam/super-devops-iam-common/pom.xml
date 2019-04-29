@@ -29,6 +29,16 @@
 			<version>${jedis.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr-runtime</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-spring</artifactId>
 			<version>${shiro-spring.version}</version>
@@ -69,6 +79,50 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- ProGuard confusion plug-in -->
+			<plugin>
+				<groupId>com.github.wvengen</groupId>
+				<artifactId>proguard-maven-plugin</artifactId>
+				<version>2.0.11</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>proguard</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<attach>true</attach>
+					<obfuscate>true</obfuscate>
+					<attachArtifactClassifier>pg</attachArtifactClassifier>
+					<proguardInclude>${basedir}/proguard.cfg</proguardInclude>
+					<options>
+						<option>-target 1.8</option>
+						<option>-dontshrink</option>
+						<option>-dontoptimize</option>
+						<option>-dontskipnonpubliclibraryclasses</option>
+						<option>-dontskipnonpubliclibraryclassmembers</option>
+						<option>-allowaccessmodification</option>
+						<option>-useuniqueclassmembernames</option>
+						<option>-keeppackagenames</option>
+						<option>-keepdirectories</option>
+						<option>-keepattributes
+							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
+						<option>-keepclassmembers public class * {void set*(***);***
+							get*();}</option>
+					</options>
+					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
+					<libs>
+						<lib>${java.home}/lib/rt.jar</lib>
+						<lib>${java.home}/lib/jsse.jar</lib>
+						<lib>${java.home}/lib/jce.jar</lib>
+					</libs>
+					<addMavenDescriptor>true</addMavenDescriptor>
+					<injar>classes</injar>
+					<outputDirectory>${project.build.directory}</outputDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

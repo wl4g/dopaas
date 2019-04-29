@@ -384,7 +384,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		/**
 		 * Internationalized language parameter name
 		 */
-		private String language = "lang";
+		private String i18nLang = "lang";
 
 		public String getSid() {
 			return sid;
@@ -498,12 +498,12 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.funcId = funcId;
 		}
 
-		public String getLanguage() {
-			return language;
+		public String getI18nLang() {
+			return i18nLang;
 		}
 
-		public void setLanguage(String locale) {
-			this.language = locale;
+		public void setI18nLang(String locale) {
+			this.i18nLang = locale;
 		}
 
 	}

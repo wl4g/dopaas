@@ -56,7 +56,7 @@ public class DefaultViewController extends BaseController {
 	/**
 	 * Default view page file cache buffer
 	 */
-	final private Map<String, byte[]> buffer = new ConcurrentHashMap<>();
+	final private Map<String, byte[]> bufferCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Resource loader
@@ -70,20 +70,20 @@ public class DefaultViewController extends BaseController {
 	private IamProperties config;
 
 	/**
-	 * Delegate message source.
+	 * Session delegate message source bundle.
 	 */
 	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle delegate;
+	protected SessionDelegateMessageBundle bundle;
 
 	/**
-	 * Reader view pages
+	 * Reader view files
 	 * 
 	 * @param filename
 	 * @param response
 	 */
 	@GetMapping(path = "{filename:.+}")
 	public void readerView(@PathVariable("filename") String filename, HttpServletResponse response) throws Exception {
-		this.responseFile(null, filename, response);
+		responseFile(null, filename, response);
 	}
 
 	/**
@@ -94,44 +94,40 @@ public class DefaultViewController extends BaseController {
 	 */
 	@GetMapping(path = URI_STATIC + "/{filename:.+}")
 	public void readerResource(@PathVariable("filename") String filename, HttpServletResponse response) throws Exception {
-		this.responseFile(URI_STATIC, filename, response);
+		responseFile(URI_STATIC, filename, response);
 	}
 
 	/**
 	 * Response file
 	 * 
-	 * @param path
+	 * @param basePath
 	 * @param filename
 	 * @param response
 	 * @throws Exception
 	 */
-	private void responseFile(String path, String filename, HttpServletResponse response) throws Exception {
+	protected void responseFile(String basePath, String filename, HttpServletResponse response) throws Exception {
 		Assert.notNull(filename, "'filename' must not be null");
-		path = path == null ? "" : path;
+		basePath = basePath == null ? "" : basePath;
 
 		// Get buffer cache
-		byte[] buffer = this.buffer.get(filename);
+		byte[] buffer = bufferCache.get(filename);
 
 		if (buffer == null) {
-			// Reload view file buffer
-			String location = new StringBuffer(config.getDefaultViewLoaderPath()).append(path).append("/").append(filename)
-					.toString();
-			Resource resource = this.loader.getResource(WebUtils2.cleanURI(location));
+			Resource resource = getResource(basePath, filename);
 			if (resource.exists()) {
 				if (log.isInfoEnabled()) {
-					log.info("Read file location:[{}]", location);
+					log.info("Read file url:[{}]", resource.getURL());
 				}
-
 				buffer = ByteStreams.toByteArray(resource.getInputStream());
-				/*
-				 * Caching is enabled when in non-debug mode
-				 */
+
+				// Caching is enabled when in non-debug mode.
 				if (!JVMRuntimeKit.isJVMDebuging()) {
-					this.buffer.put(filename, buffer);
+					bufferCache.put(filename, buffer);
 				}
-			} else { // Not found
-				this.write(response, HttpStatus.NOT_FOUND.value(), MediaType.TEXT_HTML_VALUE,
-						"Not Found".getBytes(Charsets.UTF_8));
+			}
+			// Not found
+			else {
+				write(response, HttpStatus.NOT_FOUND.value(), MediaType.TEXT_HTML_VALUE, "Not Found".getBytes(Charsets.UTF_8));
 				return;
 			}
 		}
@@ -139,7 +135,20 @@ public class DefaultViewController extends BaseController {
 		// Response file buffer
 		String contentType = StringUtils.endsWithIgnoreCase(filename, "HTML") ? MediaType.TEXT_HTML_VALUE
 				: MediaType.TEXT_PLAIN_VALUE;
-		this.write(response, HttpStatus.OK.value(), contentType, buffer);
+		write(response, HttpStatus.OK.value(), contentType, buffer);
+	}
+
+	/**
+	 * Load resource file
+	 * 
+	 * @param basePath
+	 * @param filename
+	 * @return
+	 */
+	protected Resource getResource(String basePath, String filename) {
+		String location = new StringBuffer(config.getDefaultViewLoaderPath()).append(basePath).append("/").append(filename)
+				.toString();
+		return loader.getResource(WebUtils2.cleanURI(location));
 	}
 
 }
