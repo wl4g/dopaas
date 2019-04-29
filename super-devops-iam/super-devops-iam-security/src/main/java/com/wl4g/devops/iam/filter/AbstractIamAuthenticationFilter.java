@@ -449,9 +449,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			ServletResponse response) {
 		//Callback fail redirect URI
 		String failRedirectUrl = getFromRedirectUrl(request);
-		if (!StringUtils.hasText(failRedirectUrl)) {
-			failRedirectUrl = getLoginUrl(); // fallback
+
+		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen infinite redirection.
+		if(this instanceof AuthenticatorAuthenticationFilter || !StringUtils.hasText(failRedirectUrl)){
+			failRedirectUrl = getLoginUrl();
 		}
+
 		String loginUrl = context.determineLoginFailureUrl(failRedirectUrl, token, ae, request, response);
 		Assert.hasText(loginUrl, "'loginUrl' is empty, please check the configure");
 		WebUtils2.cleanURI(loginUrl); // check
