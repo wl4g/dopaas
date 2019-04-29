@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.exception;
 
 /**
- * DevOps client exception
+ * DevOps based exception
  * 
  * 
  * @author Wangl.sir <983708408@qq.com>
@@ -24,7 +24,7 @@ package com.wl4g.devops.common.exception;
  * @date 2018年4月11日
  * @since
  */
-public class DevOpsException extends RuntimeException {
+public abstract class DevOpsException extends RuntimeException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**

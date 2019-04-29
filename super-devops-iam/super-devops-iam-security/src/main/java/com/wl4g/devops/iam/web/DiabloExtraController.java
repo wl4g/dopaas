@@ -19,11 +19,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.util.Assert;
-import org.apache.shiro.web.util.WebUtils;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +33,6 @@ import com.google.common.base.Charsets;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.common.utils.Exceptions;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.ExtraController;
@@ -44,11 +41,13 @@ import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
-
-import static com.wl4g.devops.common.utils.web.WebUtils2.*;
 import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCauseMessage;
+import static com.wl4g.devops.common.utils.web.WebUtils2.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.lockFactors;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_CHECK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_CAPTCHA_APPLY;
@@ -128,7 +127,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 		RespBase<String> resp = RespBase.create();
 		try {
 			// Login account number or mobile number(Optional)
-			String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
+			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 
 			// Lock factors
 			List<String> factors = lockFactors(getHttpRemoteAddr(request), principal);
@@ -168,7 +167,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(Exceptions.getRootCauses(e).getMessage());
+			resp.setMessage(getRootCauses(e).getMessage());
 			log.error("Failure to initial check", e);
 		}
 		return resp;
@@ -186,10 +185,12 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	public RespBase<?> applyLocale(HttpServletRequest request) {
 		RespBase<Locale> resp = RespBase.create();
 		try {
-			String lang = WebUtils.getCleanParam(request, config.getParam().getLanguage());
-			Assert.hasText(lang, String.format("'%s' must not be empty", config.getParam().getLanguage()));
+			String lang = getCleanParam(request, config.getParam().getI18nLang());
 
-			Locale locale = new Locale(lang);
+			Locale locale = request.getLocale(); // default lang
+			if (!StringUtils.isEmpty(lang)) {
+				locale = new Locale(lang); // determine lang
+			}
 			SessionBindings.bind(KEY_USE_LOCALE, locale);
 
 			resp.getData().put(KEY_USE_LOCALE, locale);
@@ -199,7 +200,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(Exceptions.getRootCauseMessage(e));
+			resp.setMessage(getRootCauseMessage(e));
 			log.error("Failure to apply for locale", e);
 		}
 		return resp;
@@ -219,7 +220,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			}
 
 			// Login account number or mobile number(Optional)
-			String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
+			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 
 			// Lock factors
 			List<String> factors = lockFactors(getHttpRemoteAddr(request), principal);
@@ -227,12 +228,12 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			// Apply CAPTCHA
 			if (graphVerification.isEnabled(factors)) { // Enabled?
 				graphVerification.apply(factors, request, response);
-			} else { // Invalid request
-				log.warn(
-						"Currently no captcha is required, it is recommended that the front end reduce invalid requests. factors: {}",
-						factors);
-				throw new IamException(String.format(
-						"Currently no captcha is required, it is recommended that the front end reduce invalid requests."));
+			}
+			// Invalid request
+			else {
+				String errmsg = "Currently no captcha is required, it is recommended that the front end reduce invalid requests";
+				log.warn("{} factors: {}", errmsg, factors);
+				throw new IamException(String.format("%s", errmsg));
 			}
 
 		} catch (Exception e) {
@@ -245,12 +246,11 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(e.getMessage());
+			resp.setMessage(getRootCauseMessage(e));
 			log.error("Failure to apply for captcha", e);
 
 			// Respond to the JSON message that failed to apply for the CAPTCHA
-			write(response, HttpStatus.OK.value(), MediaType.APPLICATION_JSON_UTF8_VALUE,
-					JacksonUtils.toJSONString(resp).getBytes(Charsets.UTF_8));
+			write(response, HttpStatus.OK.value(), APPLICATION_JSON_UTF8_VALUE, toJSONString(resp).getBytes(Charsets.UTF_8));
 		}
 	}
 
@@ -271,14 +271,14 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 			// Login account number or mobile number(Required)
 			String mobileName = config.getParam().getPrincipalName();
-			String mobileNumber = WebUtils.getCleanParam(request, mobileName);
+			String mobileNumber = getCleanParam(request, mobileName);
 			parse(mobileNumber);
 
 			// Lock factors
 			List<String> factors = lockFactors(getHttpRemoteAddr(request), mobileNumber);
 
 			// Request CAPTCHA
-			String captcha = WebUtils.getCleanParam(request, config.getParam().getCaptchaName());
+			String captcha = getCleanParam(request, config.getParam().getCaptchaName());
 			// Graph validation
 			graphVerification.validate(factors, captcha, false);
 
@@ -300,7 +300,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(e.getMessage());
+			resp.setMessage(getRootCauseMessage(e));
 			log.error("Failure to apply for sms verify-code", e);
 		}
 		return resp;
@@ -320,10 +320,12 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			// Get error message in session
 			String errmsg = SessionBindings.getBindValue(KEY_ERR_SESSION_SAVED, true);
 			errmsg = StringUtils.isEmpty(errmsg) ? "" : errmsg;
+
 			resp.getData().put(KEY_ERR_SESSION_SAVED, errmsg);
+
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(Exceptions.getRootCauses(e).getMessage());
+			resp.setMessage(getRootCauseMessage(e));
 			log.error("Get error on session failed", e);
 		}
 		return resp;
