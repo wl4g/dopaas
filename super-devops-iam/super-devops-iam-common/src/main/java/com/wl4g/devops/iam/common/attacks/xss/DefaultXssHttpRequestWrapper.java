@@ -1,5 +1,7 @@
 package com.wl4g.devops.iam.common.attacks.xss;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -10,6 +12,9 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.wl4g.devops.iam.common.attacks.xss.html.HTMLParser;
+import com.wl4g.devops.iam.common.attacks.xss.html.XSSFilter;
 
 /**
  * Default XSS HttpServlet request wrapper
@@ -143,15 +148,14 @@ public class DefaultXssHttpRequestWrapper extends XssHttpRequestWrapper {
 			// value = StringEscapeUtils.unescapeXml((String) value);
 
 			try {
-				// StringReader reader = new StringReader((String) value);
-				// StringWriter writer = new StringWriter();
-				//
-				// HTMLParser.process(reader, writer, new XSSFilter(), true);
-				//
-				// return (O) writer.toString();
+				StringReader reader = new StringReader((String) value);
+				StringWriter writer = new StringWriter();
+				HTMLParser.process(reader, writer, new XSSFilter(), true);
+				return (O) writer.toString();
+			} catch (NullPointerException ex) {
 				return (O) value;
 			} catch (Exception ex) {
-				throw new IllegalStateException(String.format("Solving possible XSS data failure for: %s ", value), ex);
+				throw new IllegalArgumentException(String.format("Solving possible XSS data failure for: %s ", value), ex);
 			}
 		}
 

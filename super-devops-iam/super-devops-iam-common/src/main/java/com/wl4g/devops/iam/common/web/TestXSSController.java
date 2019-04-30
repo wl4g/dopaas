@@ -26,7 +26,7 @@ import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@org.springframework.stereotype.Controller
+//@org.springframework.stereotype.Controller
 @RequestMapping("/test/")
 public class TestXSSController extends BaseController {
 

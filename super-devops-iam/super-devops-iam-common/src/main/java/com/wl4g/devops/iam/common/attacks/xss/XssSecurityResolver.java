@@ -1,7 +1,9 @@
 package com.wl4g.devops.iam.common.attacks.xss;
 
-import javax.servlet.ServletRequestWrapper;
+import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.springframework.web.util.HtmlUtils;
 
@@ -17,10 +19,15 @@ public interface XssSecurityResolver {
 	/**
 	 * Perform parsing to convert XSS attack strings to safe strings.
 	 * 
+	 * @param method
+	 *            Current method of parsing XSS
+	 * @param index
+	 *            Parameter number of the current method for parsing XSS
 	 * @param value
+	 *            The parameter value of the current method of parsing XSS
 	 * @return
 	 */
-	default String doResolve(String value) {
+	default String doResolve(final Object target, final Method method, final int index, final String value) {
 		return HtmlUtils.htmlEscape(value, "UTF-8");
 	}
 
@@ -30,7 +37,7 @@ public interface XssSecurityResolver {
 	 * @param request
 	 * @return
 	 */
-	default ServletRequestWrapper newXssSecurityHttpRequestWrapper(HttpServletRequest request) {
+	default HttpServletRequestWrapper newXssHttpRequestWrapper(HttpServletRequest request) {
 		return new DefaultXssHttpRequestWrapper(request);
 	}
 

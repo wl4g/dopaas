@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.aop;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.util.HtmlUtils;
 
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
@@ -64,9 +64,11 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 	@Override
 	public Object invoke(MethodInvocation invc) throws Throwable {
 		try {
+			Object target = invc.getThis();
+			Method md = invc.getMethod();
+
 			// Type or method exist @UnsafeXss ignore?
-			if (invc.getThis().getClass().isAnnotationPresent(UnsafeXss.class)
-					|| invc.getMethod().isAnnotationPresent(UnsafeXss.class)) {
+			if (target.getClass().isAnnotationPresent(UnsafeXss.class) || md.isAnnotationPresent(UnsafeXss.class)) {
 				return invc.proceed();
 			}
 
@@ -77,7 +79,7 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 						continue;
 
 					// Parameter ignore?
-					for (Annotation[] anns : invc.getMethod().getParameterAnnotations()) {
+					for (Annotation[] anns : md.getParameterAnnotations()) {
 						for (Annotation an : anns) {
 							if (an.annotationType() == UnsafeXss.class) {
 								continue next;
@@ -89,9 +91,9 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 					args[i] = processHttpRequestIfNecessary(args[i]);
 
 					if (args[i] instanceof String) {
-						args[i] = stringXssEncode((String) args[i]);
+						args[i] = stringXssEncode(target, md, i, (String) args[i]);
 					} else {
-						objectXssEnode(args[i]);
+						objectXssEnode(target, md, i, args[i]);
 					}
 				}
 			}
@@ -105,21 +107,28 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 	/**
 	 * String argument XSS encoding.
 	 * 
+	 * @param target
+	 * @param method
+	 * @param index
 	 * @param argument
+	 * @return
 	 */
-	private String stringXssEncode(String argument) {
+	private String stringXssEncode(final Object target, final Method method, final int index, final String argument) {
 		if (StringUtils.isBlank(argument)) {
 			return argument;
 		}
-		return HtmlUtils.htmlEscape(argument);
+		return resolver.doResolve(target, method, index, argument);
 	}
 
 	/**
 	 * Object argument XSS encoding.
 	 * 
+	 * @param target
+	 * @param method
+	 * @param index
 	 * @param argument
 	 */
-	private void objectXssEnode(final Object argument) {
+	private void objectXssEnode(final Object target, final Method method, final int index, final Object argument) {
 		if (argument == null)
 			return;
 
@@ -127,7 +136,7 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 			ReflectionUtils.makeAccessible(fcField);
 			String fv = (String) fcField.get(argument);
 			if (fv != null) {
-				fcField.set(argument, resolver.doResolve(fv));
+				fcField.set(argument, resolver.doResolve(target, method, index, (String) argument));
 			}
 		}, ffFiled -> {
 			return String.class.isAssignableFrom(ffFiled.getType()) && !Modifier.isFinal(ffFiled.getModifiers())
@@ -150,9 +159,9 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 			/*
 			 * Wrapping request with resolved XSS security.
 			 */
-			wrap.setRequest(resolver.newXssSecurityHttpRequestWrapper((HttpServletRequest) wrap.getRequest()));
+			wrap.setRequest(resolver.newXssHttpRequestWrapper((HttpServletRequest) wrap.getRequest()));
 		} else if (argument instanceof HttpServletRequest) {
-			argument = resolver.newXssSecurityHttpRequestWrapper((HttpServletRequest) argument);
+			argument = resolver.newXssHttpRequestWrapper((HttpServletRequest) argument);
 		}
 
 		return argument;
