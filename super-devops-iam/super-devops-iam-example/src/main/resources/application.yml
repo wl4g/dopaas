@@ -15,6 +15,10 @@ spring:
 #  resources.static-locations: classpath:/static/
   profiles:
     include: common,util
+  web.xss:
+    enabled: true # Defualt: true
+    expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
+                execution(* com.wl4g.devops.iam.example.*.*Controller.*(..))
   freemarker:
     request-context-attribute: req
     suffix: .html

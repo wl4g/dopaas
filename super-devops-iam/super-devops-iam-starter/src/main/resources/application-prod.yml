@@ -59,7 +59,7 @@ spring:
           app-id: wx162814f9191f9d9b
           app-secret: 9f1d914629bd9820351fb73f51e70495
           redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechat/callback
-          href: https://passport.wl4g.com${server.contextPath}/static/wx.css
+          href: https://static.wl4g.com:2443/iam/static/wx.css
         qq:
           app-id: 101542056
           app-secret: 46b2ba9fa24c2b973abc64ec898db3b4

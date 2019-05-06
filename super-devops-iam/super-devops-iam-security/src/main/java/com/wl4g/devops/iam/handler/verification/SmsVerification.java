@@ -44,7 +44,6 @@ import java.util.Map;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
 
-
 /**
  * SMS verification code handler
  * 
@@ -135,7 +134,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 				// Parsing mobile number.
 				MobileNumber mn = MobileNumber.parse(mobileNum);
 				// Check mobile available.
-				checkMobileAvailable(request,mn.getNumber());
+				checkMobileAvailable(request, mn.getNumber());
 
 				put(PARAM_MOBILENUM, mn);
 			}
@@ -172,10 +171,10 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	 * 
 	 * @param mobile
 	 */
-	private void checkMobileAvailable(HttpServletRequest request,@NotNull long mobile) {
+	private void checkMobileAvailable(HttpServletRequest request, @NotNull long mobile) {
 		String action = WebUtils.getCleanParam(request, config.getParam().getSmsActionName());
-		//bind phone , needn't Check account exist
-		if(BIND==(SmsAuthenticationToken.Action.safeOf(action))){
+		// bind phone , needn't Check account exist
+		if (BIND == (SmsAuthenticationToken.Action.safeOf(action))) {
 			return;
 		}
 		// Getting account information

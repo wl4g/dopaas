@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.example.handler.TestSecondAuthenticateHandler;
 import com.wl4g.devops.iam.example.service.ExampleService;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/public/")
 public class ExampleController {
 	final private static Logger log = LoggerFactory.getLogger(ExampleController.class);
 

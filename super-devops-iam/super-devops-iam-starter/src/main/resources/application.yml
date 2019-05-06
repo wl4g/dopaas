@@ -16,7 +16,7 @@ spring:
   web.xss:
     enabled: true # Defualt: true
     expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
-                execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..))
+                execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..)) or
                 execution(* com.wl4g.devops.iam.*.*Controller.*(..))
 #  freemarker:
 #    request-context-attribute: req

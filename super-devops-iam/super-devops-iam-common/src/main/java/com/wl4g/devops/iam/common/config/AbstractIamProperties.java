@@ -262,10 +262,10 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		final public static String PLACEHOLDER_MSG = "${message}";
 		final public static String PLACEHOLDER_DATA = "${data}";
 
-		final public static String DEFAULT_AUTHC_STATUS = "Authenticated";
-		final public static String DEFAULT_UNAUTHC_STATUS = "Unauthenticated";
-		final public static String DEFAULT_AUTHC_READY_STATUS = "AuthenticatingReady";
-		final public static String DEFAULT_SECOND_AUTHC_STATUS = "SecondAuthenticated";
+		final public static String DEFAULT_AUTHC_STATUS = "Certified";
+		final public static String DEFAULT_UNAUTHC_STATUS = "Uncertified";
+		final public static String DEFAULT_AUTHC_READY_STATUS = "certificateReady";
+		final public static String DEFAULT_SECOND_AUTHC_STATUS = "SecondCertifies";
 
 		final public static String DEFAULT_RESP_JSON_TPL = "{\"code\":" + PLACEHOLDER_CODE + ",\"message\":\"" + PLACEHOLDER_MSG
 				+ "\",\"status\":\"" + PLACEHOLDER_STATUS + "\",\"data\":\"" + PLACEHOLDER_DATA + "\"}";
