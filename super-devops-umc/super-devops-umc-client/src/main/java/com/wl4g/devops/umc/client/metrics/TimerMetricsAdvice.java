@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.exception.DevOpsException;
+import com.wl4g.devops.common.exception.umc.UmcException;
 import com.wl4g.devops.umc.client.indicator.TimeoutsHealthIndicator;
 
 /**
@@ -72,7 +72,7 @@ public class TimerMetricsAdvice extends AbstractMetricsAdvice {
 
 			return res;
 		} catch (Throwable e) {
-			throw new DevOpsException(e);
+			throw new UmcException(e);
 		}
 	}
 
