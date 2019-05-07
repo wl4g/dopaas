@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils;
+package com.wl4g.devops.common.utils.codec;
 
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
