@@ -30,6 +30,6 @@ java -Dservpids=19767,32374 -Ddebug -jar shell-cli-master-executable.jar
 ```
 
 #### Features
-> Press TAB key to complete automatically
-> Built-in command: clear/cls、exit/ex/quit/qu、history/his、stacktrace/st、help
+- Press TAB key to complete automatically
+- Built-in command: clear/cls、exit/ex/quit/qu、history/his、stacktrace/st、help
 	

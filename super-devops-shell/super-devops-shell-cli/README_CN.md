@@ -31,6 +31,6 @@ java -Dservpids=19767,32374 -Ddebug -jar shell-cli-master-executable.jar
 ```
 
 #### 特性
-> 按TAB键自动补全
-> 内置命令: clear/cls、exit/ex/quit/qu、history/his、stacktrace/st、help
+- 按TAB键自动补全
+- 内置命令: clear/cls、exit/ex/quit/qu、history/his、stacktrace/st、help
 
