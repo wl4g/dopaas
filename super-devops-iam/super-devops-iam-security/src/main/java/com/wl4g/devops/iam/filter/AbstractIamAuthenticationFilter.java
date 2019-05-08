@@ -15,22 +15,6 @@
  */
 package com.wl4g.devops.iam.filter;
 
-
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
-import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.utils.Exceptions;
-import com.wl4g.devops.common.utils.web.WebUtils2;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
-import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
-import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
-import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
-import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -50,12 +34,27 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+import com.wl4g.devops.common.exception.iam.AccessRejectedException;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.utils.Exceptions;
+import com.wl4g.devops.common.utils.web.WebUtils2;
+import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
+import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.devops.iam.common.utils.SessionBindings;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+import com.wl4g.devops.iam.config.IamProperties;
+import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.handler.AuthenticationHandler;
+import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
+//import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
-
-//import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 
 /**
  * Multiple channel login authentication submitted processing based filter
@@ -168,9 +167,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	@Override
 	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response)
 			throws Exception {
-		IamAuthenticationToken tk = (IamAuthenticationToken) token;
-
 		try {
+			IamAuthenticationToken tk = (IamAuthenticationToken) token;
+
 			/*
 			 * Save the token at the time of authentication, which can then be
 			 * used for extended logic usage.
@@ -229,11 +228,14 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			}
 
 		} catch (IamException e) {
-			//after authentication success expetion
+			// Convert to authentication exception before it can be intercepted.
+			// See:org.apache.shiro.web.filter.authc.AuthenticatingFilter#executeLogin
 			throw new AuthenticationException(e);
-		} finally { // Clean-up
+		} finally {
+			// Clean-up
 			cleanup(token, subject, request, response);
 		}
+
 		// Redirection has been responded and no further execution is required.
 		return false;
 	}
@@ -386,7 +388,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		// Make message
-		return config.getStrategy().makeResponse(RetCode.OK.getCode(), DEFAULT_AUTHC_STATUS, "Authentication Success", url);
+		return config.getStrategy().makeResponse(OK.getCode(), DEFAULT_AUTHC_STATUS, "Authentication success", url);
 	}
 
 	/**
@@ -404,9 +406,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@SuppressWarnings("rawtypes")
 	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map queryParams, Throwable thw) {
-		String errmsg = (thw != null && StringUtils.hasText(thw.getMessage())) ? thw.getMessage() : "Authentication Fail";
+		String errmsg = (thw != null && StringUtils.hasText(thw.getMessage())) ? thw.getMessage() : "Authentication fail";
 		// Make message
-		return config.getStrategy().makeResponse(RetCode.UNAUTHC.getCode(), DEFAULT_UNAUTHC_STATUS, errmsg, failureRedirectUrl);
+		return config.getStrategy().makeResponse(UNAUTHC.getCode(), DEFAULT_UNAUTHC_STATUS, errmsg, failureRedirectUrl);
 	}
 
 	/**
@@ -447,11 +449,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	private String determineFailureUrl(IamAuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
-		//Callback fail redirect URI
+		// Callback fail redirect URI
 		String failRedirectUrl = getFromRedirectUrl(request);
 
-		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen infinite redirection.
-		if(this instanceof AuthenticatorAuthenticationFilter || !StringUtils.hasText(failRedirectUrl)){
+		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may
+		// redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen
+		// infinite redirection.
+		if (this instanceof AuthenticatorAuthenticationFilter || !StringUtils.hasText(failRedirectUrl)) {
 			failRedirectUrl = getLoginUrl();
 		}
 

@@ -65,8 +65,10 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	/**
 	 * Authenticates a user and retrieves its information.
 	 *
-	 * @param token the authentication token
-	 * @throws AuthenticationException if there is an error during authentication.
+	 * @param token
+	 *            the authentication token
+	 * @throws AuthenticationException
+	 *             if there is an error during authentication.
 	 */
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
@@ -75,16 +77,21 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 		if (log.isDebugEnabled()) {
 			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
 		}
-		// Get current account
-		String principal = (String) SecurityUtils.getSubject().getPrincipal();
-		// If bind or unbind phone,set principal of current account
-		if (LOGIN == token.getAction() && acc != null) {
+
+		String principal = null; // Current login principal
+
+		// If the operation is not logged-in, Princial is the currently
+		// logged-in subject.
+		if (LOGIN != token.getAction()) {
+			principal = (String) SecurityUtils.getSubject().getPrincipal();
+		}
+
+		// Actions are unbind or login, account information is required.
+		if (BIND != token.getAction()) {
+			assertAccountInfo(acc, token);
 			principal = acc.getPrincipal();
 		}
-		// If not bind phone, Check account exist
-		if (BIND != token.getAction() && (acc == null || !StringUtils.hasText(acc.getPrincipal()))) {// To authenticationInfo
-			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
-		}
+
 		/*
 		 * Password is a string that may be set to empty.
 		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
@@ -96,13 +103,26 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	 * Retrieves the AuthorizationInfo for the given principals (the CAS
 	 * previously authenticated user : id + attributes).
 	 *
-	 * @param principals the primary identifying principals of the AuthorizationInfo
-	 *                   that should be retrieved.
+	 * @param principals
+	 *            the primary identifying principals of the AuthorizationInfo
+	 *            that should be retrieved.
 	 * @return the AuthorizationInfo associated with this principals.
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Assertion account information
+	 * 
+	 * @param acc
+	 * @param token
+	 */
+	private void assertAccountInfo(IamAccountInfo acc, SmsAuthenticationToken token) {
+		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
+			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
+		}
 	}
 
 }

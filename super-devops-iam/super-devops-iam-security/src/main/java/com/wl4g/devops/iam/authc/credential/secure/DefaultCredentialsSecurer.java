@@ -19,7 +19,7 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.CheckSums;
+import com.wl4g.devops.common.utils.codec.CheckSums;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.configure.SecurerConfig;
 

@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 对象操作工具类, 继承org.apache.commons.lang3.ObjectUtils类
+ * Object manipulation tool class
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
 
 	/**
-	 * 注解到对象复制，只复制能匹配上的方法。
+	 * Annotate to object copying, only copy the methods that match.
 	 * 
 	 * @param annotation
 	 * @param object
@@ -66,7 +66,7 @@ public abstract class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
 	}
 
 	/**
-	 * 序列化对象
+	 * Serialized object
 	 * 
 	 * @param object
 	 * @return
@@ -104,7 +104,7 @@ public abstract class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
 	}
 
 	/**
-	 * 反序列化对象
+	 * Deserialized object
 	 * 
 	 * @param bytes
 	 * @return

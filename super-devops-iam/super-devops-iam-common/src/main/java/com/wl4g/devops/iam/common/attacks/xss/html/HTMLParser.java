@@ -216,7 +216,7 @@ public class HTMLParser {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String value = "<html><body>the content ... end <script>alert('fuck')</script></body></html>";
+		String value = "<html><head><meta/></head><body>the content ... end <script>alert('fuck')</script></body></html>";
 		StringReader reader = new StringReader(value);
 		StringWriter writer = new StringWriter();
 		HTMLParser.process(reader, writer, new XSSFilter(), true);

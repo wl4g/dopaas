@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.exception.DevOpsException;
+import com.wl4g.devops.common.exception.umc.UmcException;
 
 /**
  * It can be used to monitor the execution time of any method it is called.<br/>
@@ -53,7 +53,7 @@ public class CounterMetricsAdvice extends AbstractMetricsAdvice {
 			this.counterService.increment(getMetricName(invocation));
 			return invocation.proceed();
 		} catch (Throwable e) {
-			throw new DevOpsException(e);
+			throw new UmcException(e);
 		}
 	}
 
