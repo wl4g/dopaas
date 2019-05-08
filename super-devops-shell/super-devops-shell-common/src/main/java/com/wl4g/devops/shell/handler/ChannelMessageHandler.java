@@ -29,7 +29,7 @@ import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.utils.Assert;
 
 /**
- * Shell handler
+ * Shell message handler
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月2日

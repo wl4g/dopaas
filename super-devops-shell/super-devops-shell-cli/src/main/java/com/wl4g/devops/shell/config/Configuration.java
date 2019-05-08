@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.shell.config;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -34,31 +33,16 @@ import com.wl4g.devops.shell.utils.Assert;
  * @since
  */
 @XmlRootElement(name = "configuration")
-public class Configuration implements Serializable {
+public class Configuration extends AbstractConfiguration {
 
 	final private static long serialVersionUID = -24798955162679115L;
 
 	final public static String DEFAULT_CONFIG = "default-config.xml";
 
 	/**
-	 * Listening server socket port
-	 */
-	private int port = 14002;
-
-	/**
 	 * Listening server socket bind address
 	 */
 	private String server = "127.0.0.1";
-
-	public int getPort() {
-		Assert.isTrue(port > 1024, String.format("listening port must greater than 1024, actual is %s", port));
-		return port;
-	}
-
-	public void setPort(int port) {
-		Assert.isTrue(port > 1024, String.format("listening port must greater than 1024, actual is %s", port));
-		this.port = port;
-	}
 
 	public String getServer() {
 		Assert.hasText(server, "server is emtpy, please check configure");

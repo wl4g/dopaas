@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.shell.runner;
 
-import static java.lang.System.out;
-import static java.lang.System.err;
+import static java.lang.System.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -50,6 +50,7 @@ import com.wl4g.devops.shell.config.DynamicCompleter;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.utils.Assert;
+import com.wl4g.devops.shell.utils.LineUtils;
 
 /**
  * Abstract shell component runner
@@ -59,6 +60,23 @@ import com.wl4g.devops.shell.utils.Assert;
  * @since
  */
 public abstract class AbstractRunner extends AbstractActuator implements Runner {
+
+	/**
+	 * The PID used to get the set target service, that is, the server that the
+	 * current shell client will connect to (because the same computer may start
+	 * many different shell services)
+	 */
+	final public static String ARG_SERV_PIDS = "servpids";
+
+	/**
+	 * IBid, note that this priority is higher than ARG_SERV_PIDS
+	 */
+	final public static String ARG_SERV_POINT = "servpoint";
+
+	/**
+	 * Enable debugging
+	 */
+	final public static String ARG_DEBUG = "debug";
 
 	/**
 	 * Shell configuration
@@ -80,6 +98,11 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 */
 	private ClientHandler client;
 
+	/**
+	 * Current process exception statcktrace as strings.
+	 */
+	private String stacktraceAsString;
+
 	public AbstractRunner(Configuration config, AttributedString attributed) {
 		super(getSingle());
 		Assert.notNull(config, "configuration is null, please check configure");
@@ -96,7 +119,12 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		}
 
 		// Initialization
-		initialize();
+		try {
+			initialize();
+		} catch (Throwable t) {
+			printErr(EMPTY, t);
+			shutdown(EMPTY);
+		}
 	}
 
 	public ShellBeanRegistry getRegistry() {
@@ -116,11 +144,31 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 			closeQuietly();
 
 			// Gracefully halt
-			System.exit(0);
+			exit(0);
 
 		} catch (Throwable e) {
-			err.println(String.format("Shutdown failure. %s", getStackTrace(e)));
+			printErr("Shutdown failure.", e);
 		}
+	}
+
+	/**
+	 * Print exceptions
+	 * 
+	 * @param th
+	 * @param details
+	 */
+	public void printErr(String abnormal, Throwable th) {
+		this.stacktraceAsString = getStackTrace(th);
+		err.println(String.format("%s %s", abnormal, getRootCauseMessage(th)));
+	}
+
+	/**
+	 * Get last abnormal stacktrace string
+	 * 
+	 * @return
+	 */
+	public String getLastStacktrace() {
+		return this.stacktraceAsString;
 	}
 
 	/**
@@ -200,6 +248,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 				throw new IllegalStateException(errmsg);
 			}
 		}
+
 		this.lineReader.setVariable(HISTORY_FILE, file.getAbsolutePath());
 	}
 
@@ -219,13 +268,114 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 			}
 
 			if (create) {
-				Socket s = new Socket(config.getServer(), config.getPort());
-				client = new ClientHandler(registry, s, result -> {
+				Object[] point = determineServPoint();
+				out.print(String.format("Connecting to %s:%s ... ", point[0], point[1]));
+
+				Socket s = new Socket((String) point[0], (int) point[1]);
+				client = new ClientHandler(this, s, result -> {
 					out.println(result);
 					return null;
 				}).starting();
 			}
 		}
+
+	}
+
+	/**
+	 * Determine the corresponding server port (identified by PID) of the
+	 * current client
+	 * 
+	 * @return
+	 */
+	private Object[] determineServPoint() {
+		String servPids = getProperty(ARG_SERV_PIDS);
+		String servPoint = getProperty(ARG_SERV_POINT);
+		boolean isDebug = getProperty(ARG_DEBUG) != null;
+
+		if (isBlank(servPids) && isBlank(servPoint)) {
+			throw new IllegalArgumentException(String.format(
+					"JVM startup argument -D%s(e.g. -D%s=8080) and -D%s(e.g. -D%s=19701,19702) must be one of the two, and only -D%s are adopted when both exist",
+					ARG_SERV_POINT, ARG_SERV_POINT, ARG_SERV_PIDS, ARG_SERV_PIDS, ARG_SERV_POINT));
+		}
+
+		//
+		// Direct use of specified point.</br>
+		// Can be used to connect to remote service console.
+		//
+		if (isNotBlank(servPoint)) {
+			Assert.isTrue(contains(servPoint, ":") && servPoint.length() > 8,
+					String.format("Invalid server point. e.g. -D%s=10.0.0.11", ARG_SERV_POINT));
+			String[] parts = servPoint.split(":");
+			Assert.isTrue(isNumeric(parts[1]), String.format("Invalid server port is %s", servPoint));
+			int port = Integer.parseInt(parts[1]);
+			Assert.isTrue((port > 1024 && port < 65535),
+					String.format("Server port must be between 1024 and 65535, actual is %s", servPoint));
+			return new Object[] { parts[0], port };
+		}
+
+		//
+		// Obtain port according to PIDS.</br>
+		// Can only be used to connect to the local service console.
+		//
+
+		Assert.isTrue(IS_OS_LINUX || IS_OS_UNIX, "Not support operation system!");
+		int _servPort = -1;
+		StringBuffer debug = new StringBuffer("Scanning local serv listen port ...");
+		try {
+			ok: for (String pid : trimToEmpty(servPids).replaceAll(" ", ",").split(",")) {
+				/**
+				 * <pre>
+				 * sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+				 *  0: 00000000:1F68 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 3098188 1 ffff92b4f1ee8f80 100 0 0 10 0                   
+				 *  1: 00000000:1F6A 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 3094334 1 ffff92b508321740 100 0 0 10 0
+				 * </pre>
+				 */
+				String catline = String.format("cat /proc/%s/net/tcp", pid);
+				if (isDebug) {
+					debug.append(String.format("\nPID: <%s> %s \n", pid, catline));
+				}
+
+				String result = LineUtils.execAsString(catline);
+				if (isBlank(result)) {
+					err.println(String.format("Unable to follow up on PIDS (%s) to get information about bound ports", pid));
+				}
+
+				// Find legal local port by PID
+				List<String> infos = Arrays.asList(result.split("\n"));
+				for (int i = 1; i < infos.size(); i++) {
+					String info = infos.get(i).trim();
+					String[] parts = info.split(" ");
+					String localAddr = parts[1];
+					String localPortHex = localAddr.split(":")[1];
+					int localPort = Integer.parseInt(localPortHex, 16);
+					if (isDebug) {
+						debug.append(String.format("\t%s    => :%s\n", info, localPort));
+					}
+					// Check whether it is within the range of port listen by
+					// the server.
+					if (config.getBeginPort() < localPort && localPort < config.getEndPort()) {
+						if (isDebug) {
+							debug.append(String.format("Successful extracted for : %s\n", localPort));
+						}
+						_servPort = localPort;
+						break ok;
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+
+		if (isDebug) {
+			out.println(debug.toString());
+		}
+		if (_servPort < 0) {
+			throw new IllegalStateException(
+					String.format("Unable to connect, failed to find remote service port. target PIDS: '%s'", servPids));
+		}
+
+		return new Object[] { config.getServer(), _servPort };
 	}
 
 	/**
@@ -247,12 +397,18 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	class ClientHandler extends ChannelMessageHandler {
 
 		/**
+		 * Line process runner.
+		 */
+		final private AbstractRunner runner;
+
+		/**
 		 * Boot boss thread
 		 */
 		private Thread boss;
 
-		public ClientHandler(ShellBeanRegistry registry, Socket client, Function<String, Object> function) {
-			super(registry, client, function);
+		public ClientHandler(AbstractRunner runner, Socket client, Function<String, Object> function) {
+			super(runner.getRegistry(), client, function);
+			this.runner = runner;
 		}
 
 		@Override
@@ -280,9 +436,10 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					}
 
 				} catch (SocketException e) {
+					boss.interrupt();
 					close();
 				} catch (Throwable e) {
-					err.println(String.format("%s", getStackTrace(e)));
+					runner.printErr(EMPTY, e);
 				}
 			}
 		}

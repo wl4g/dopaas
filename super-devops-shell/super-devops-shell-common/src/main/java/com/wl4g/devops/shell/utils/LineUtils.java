@@ -17,8 +17,15 @@ package com.wl4g.devops.shell.utils;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.LinkedList;
+
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
 
 /**
  * Shell command line tools
@@ -29,25 +36,37 @@ import java.util.List;
  */
 public abstract class LineUtils {
 
+	final public static Charset UTF_8 = Charset.forName("UTF-8");
+
 	/**
 	 * Resolve source commands
 	 * 
 	 * @param args
 	 * @return
 	 */
-	public static List<String> parse(String line) {
-		List<String> commands = new ArrayList<>();
-		if (isBlank(line)) {
+	public static LinkedList<String> parse(String line) {
+		String[] args = String.valueOf(line).trim().split(" ");
+		return parse(args);
+	}
+
+	/**
+	 * Resolve source commands
+	 * 
+	 * @param args
+	 * @return
+	 */
+	public static LinkedList<String> parse(String[] args) {
+		LinkedList<String> commands = new LinkedList<>();
+		if (args == null || args.length == 0) {
 			return commands;
 		}
 
-		String[] arr = String.valueOf(line).trim().split(" ");
-		if (arr != null && arr.length > 0) {
-			commands.add(arr[0]); // Main opt
-			for (int i = 1; i < arr.length; i++) {
-				commands.add(arr[i].trim());
-				if (i < (arr.length - 1)) {
-					String value = arr[i + 1].trim();
+		if (args != null && args.length > 0) {
+			commands.add(args[0]); // Main opt
+			for (int i = 1; i < args.length; i++) {
+				commands.add(args[i].trim());
+				if (i < (args.length - 1)) {
+					String value = args[i + 1].trim();
 					if (!startsWith(value, "-")) {
 						commands.add(value);
 						++i;
@@ -61,6 +80,51 @@ public abstract class LineUtils {
 		}
 
 		return commands;
+	}
+
+	/**
+	 * Execution shell commands
+	 * 
+	 * @param line
+	 * @return
+	 */
+	public static String execAsString(String line) {
+		return execAsString(line, 30 * 1000, "UTF-8");
+	}
+
+	/**
+	 * Execution shell commands
+	 * 
+	 * @param line
+	 * @param timeout
+	 * @param charset
+	 * @return
+	 */
+	public static String execAsString(String line, long timeout, String charset) {
+		// Standard output
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		// Error output
+		ByteArrayOutputStream err = new ByteArrayOutputStream();
+		CommandLine commandline = CommandLine.parse(line);
+		DefaultExecutor exec = new DefaultExecutor();
+		exec.setExitValues(null);
+		// Timeout
+		ExecuteWatchdog watch = new ExecuteWatchdog(timeout);
+		exec.setWatchdog(watch);
+		PumpStreamHandler handler = new PumpStreamHandler(out, err);
+		exec.setStreamHandler(handler);
+		try {
+			exec.execute(commandline);
+			// Different operating systems should pay attention to coding,
+			// otherwise the results will be scrambled.
+			String error = err.toString(charset);
+			if (isNotBlank(error)) {
+				throw new IllegalStateException(error.toString());
+			}
+			return out.toString(charset);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
@@ -79,6 +143,7 @@ public abstract class LineUtils {
 	public static void main(String[] args) {
 		System.out.println(parse("add1 -a 11 -b "));
 		System.out.println(parse(" ").size());
+		System.out.println(execAsString("cmd.exe /p /h C:\\Document"));
 	}
 
 }

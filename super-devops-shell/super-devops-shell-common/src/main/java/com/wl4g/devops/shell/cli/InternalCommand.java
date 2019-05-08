@@ -83,6 +83,16 @@ public abstract class InternalCommand {
 	 */
 	final public static String INTERNAL_CLS = "cls";
 
+	/**
+	 * Default long stacktrace method suffix.
+	 */
+	final public static String INTERNAL_STACKTRACE = "stacktrace";
+
+	/**
+	 * Default short stacktrace method suffix.
+	 */
+	final public static String INTERNAL_ST = "st";
+
 	final private static List<String> CMDS = new ArrayList<>();
 
 	static {

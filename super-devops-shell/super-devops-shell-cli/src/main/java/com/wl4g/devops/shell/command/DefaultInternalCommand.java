@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.shell.command;
 
+import static java.lang.System.*;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -38,6 +39,13 @@ import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
 import static com.wl4g.devops.shell.utils.ResultFormatter.getUsageFormat;
 
+/**
+ * Default internal command.
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年5月8日
+ * @since
+ */
 public class DefaultInternalCommand extends InternalCommand {
 
 	/**
@@ -51,7 +59,7 @@ public class DefaultInternalCommand extends InternalCommand {
 	final protected DefaultBeanRegistry registry;
 
 	/**
-	 * Abstract runner
+	 * Line process runner.
 	 */
 	final protected AbstractRunner runner;
 
@@ -59,6 +67,11 @@ public class DefaultInternalCommand extends InternalCommand {
 		Assert.notNull(runner, "runner is null, please check configure");
 		this.runner = runner;
 		this.registry = (DefaultBeanRegistry) runner.getRegistry();
+	}
+
+	@ShellMethod(keys = { INTERNAL_STACKTRACE, INTERNAL_ST }, group = "Default internal group", help = "Exit current process")
+	public void stacktrace() {
+		err.println(runner.getLastStacktrace());
 	}
 
 	@ShellMethod(keys = { INTERNAL_QUIT, INTERNAL_QU, INTERNAL_EXIT,
