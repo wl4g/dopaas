@@ -32,5 +32,10 @@ java -Dservpids=19767,32374 -Ddebug -jar shell-cli-master-executable.jar
 
 ## 特性
 - 按TAB键自动补全
-- 内置命令: clear/cls、exit/ex/quit/qu、history/his、stacktrace/st、help
-
+- Ctrl+A 光标跳至行首、Ctrl+E 光标跳至行尾、Ctrl+C 退出控制台（遵循GNU）
+- 内置命令: 
+- - clear/cls    清理控制台
+- - exit/ex/quit/qu    退出控制台
+- - history/his    查看历史命令（持久文件：$USER_HOME/.devops/shell/history）
+- - stacktrace/st    查看上一次异常的堆栈信息（若有）
+- - help/he    使用帮助，如：help、help add、add --help、add --he 其中add为一个计算和的命令

@@ -31,5 +31,12 @@ java -Dservpids=19767,32374 -Ddebug -jar shell-cli-master-executable.jar
 
 ## Features
 - Press TAB key to complete automatically
-- Built-in command: clear/cls、exit/ex/quit/qu、history/his、stacktrace/st、help
+- Ctrl+A cursor jumps to the beginning of the line, Ctrl+E cursor jumps to the end of the line, Ctrl+C exits the console (follow GNU)
+- Built-in commands:
+- - clear/cls    Cleaning console
+- - exit/ex/quit/qu    Exit console
+- - history/his    View the history command (persistent file: $USER_HOME/.devops/shell/history)
+- - stacktrace/st    View stack information for the last exception (if any)
+- - help/he    Use help, for example: help, help add, add --help, add --he, where add is a 
+command for computing sum
 	
