@@ -1,4 +1,4 @@
-	shell-cli 它是一个基于SpringCloud服务的开源命令行工具，运行方式类似于spark-shell。
+Shell-cli 它是一个基于SpringCloud服务的开源命令行工具，运行方式类似于spark-shell。
 
 English version goes [here](README_EN.md).
 
@@ -19,7 +19,7 @@ English version goes [here](README_EN.md).
 java -Dservport=60120 -jar shell-cli-master-executable.jar
 ```
 
-	在上面的命令中-dservpoint=10.0.0.160:60120表示要连接的SpringCloud服务侦听地址和端口。
+在上面的命令中-dservpoint=10.0.0.160:60120表示要连接的SpringCloud服务侦听地址和端口。
 
 ##### 方式二（适用于本地模式，通常作为应用服务的内置控制台使用）:
 	

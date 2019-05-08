@@ -1,4 +1,4 @@
-	Shell-cli is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.
+Shell-cli is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.
 
 [中文说明/中文文档](README_CN.md)
 
