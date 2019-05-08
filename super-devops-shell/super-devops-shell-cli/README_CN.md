@@ -6,8 +6,8 @@ English version goes [here](README_EN.md).
 
 #### 源码编译
 ```
-	cd super-devops-shell
-	mvn clean install -DskipTests 
+cd super-devops-shell
+mvn clean install -DskipTests 
 ```
 
 #### 启动

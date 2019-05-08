@@ -6,8 +6,8 @@ Shell-cli is an open source command-line tool based on spring cloud service, whi
 
 #### Source code compilation
 ```
-	cd super-devops-shell
-	mvn clean install -DskipTests 
+cd super-devops-shell
+mvn clean install -DskipTests 
 ```
 
 ##### Way1(For client mode, usually temporarily used to connect application services):
