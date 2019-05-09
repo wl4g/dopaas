@@ -18,6 +18,7 @@ package com.wl4g.devops.shell.runner;
 import static java.lang.System.err;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.config.Configuration;
@@ -40,6 +41,7 @@ public class InteractiveRunner extends AbstractRunner {
 
 	@Override
 	public void run(String[] args) {
+		// Listening console input.
 		while (true) {
 			String line = null;
 			try {

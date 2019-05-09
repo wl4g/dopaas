@@ -1,7 +1,7 @@
-![mahua](http://mahua.jser.me/mahua-logo.jpg)
-## Super-DevOps(Easy Super DevOps Platform)
+![DevSecOps](http://mahua.jser.me/mahua-logo.jpg)
+# Super-DevOps(Easy Super DevOps Platform)
 
-##### (1) 工程模块说明
+## 工程模块说明
     super-devops-ci       Continuous integration(持续集成系统, 软件持续集成、构建发布)
     super-devops-common   Common(公共模块, 包括bean/utils等)
     super-devops-scm      Soft configuration management(软件应用配置管理系统, 在线配置中心源热刷新)
@@ -14,4 +14,6 @@
     super-devops-vcs      Version control system(版本控制系统, 软件安装包版本管理)
     super-devops-view     Front view(前端页面视图, html页面)
 
-#### (2)
+## 文档
+- [IAM支持文档](super-devops-iam/README.md)
+- [Shell cli支持文档](super-devops-shell/super-devops-shell-cli/README_EN.md)
