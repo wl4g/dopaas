@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.shell.config;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -28,14 +27,9 @@ import org.springframework.util.Assert;
  * @version v1.0 2019年5月1日
  * @since
  */
-public class ShellProperties implements Serializable {
+public class ShellProperties extends AbstractConfiguration {
 
 	private static final long serialVersionUID = -24798955162679115L;
-
-	/**
-	 * Listening server socket port
-	 */
-	private int port = 14002;
 
 	/**
 	 * listening TCP backlog
@@ -51,15 +45,6 @@ public class ShellProperties implements Serializable {
 	 * Submission executors
 	 */
 	private int concurrently = 2;
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		Assert.isTrue(port > 1024, String.format("listening port must greater than 1024, actual is %s", port));
-		this.port = port;
-	}
 
 	public int getBacklog() {
 		return backlog;
