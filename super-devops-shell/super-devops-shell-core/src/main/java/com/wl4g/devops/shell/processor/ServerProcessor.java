@@ -18,6 +18,7 @@ package com.wl4g.devops.shell.processor;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -89,11 +90,19 @@ public class ServerProcessor extends AbstractProcessor implements ApplicationRun
 		if (running.compareAndSet(false, true)) {
 			Assert.state(ss == null, "server socket already listen ?");
 
-			ss = new ServerSocket(config.getPort(), config.getBacklog(), config.getInetBindAddr());
+			int bindPort = -1;
+			for (int retryPort = config.getBeginPort(); retryPort <= config.getEndPort(); retryPort++) {
+				try {
+					ss = new ServerSocket(retryPort, config.getBacklog(), config.getInetBindAddr());
+					bindPort = retryPort;
+					break;
+				} catch (BindException e) {
+				}
+			}
 			ss.setSoTimeout(0); // Infinite timeout
 
 			if (log.isInfoEnabled()) {
-				log.info("Sheller started on port(s): {}", config.getPort());
+				log.info("Shell Console started on port(s): {}", bindPort);
 			}
 			this.boss = new Thread(this);
 			this.boss.start();
