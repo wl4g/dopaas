@@ -138,6 +138,14 @@ public abstract class DevTool {
 	}
 
 	/**
+	 * rollback
+	 */
+	public String rollback() throws Exception{
+		String command = "ssh "+envConfig.getTargetHost()+" \"mv "+envConfig.getTargetPath()+"_bak"+" "+envConfig.getTargetPath()+"\"";
+		return run(command);
+	}
+
+	/**
 	 * stop
 	 */
 	public String stop(String command) throws Exception{

@@ -89,7 +89,7 @@ public class ConnectLinuxCommand {
 			// if result blank, get error msg
 			if (StringUtils.isBlank(result)) {
 				result = processStdout(session.getStderr(), DEFAULTCHARTSET);
-				throw new RuntimeException("execute fail result="+result);
+				//throw new RuntimeException("execute fail result="+result);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

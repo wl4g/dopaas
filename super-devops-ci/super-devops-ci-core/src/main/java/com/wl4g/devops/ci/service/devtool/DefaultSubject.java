@@ -48,13 +48,13 @@ public class DefaultSubject extends DevTool {
 			scp(path+childrenSubjectConfig.getPath()+"/target/"+childrenSubjectConfig.getTarName(),envConfig.getTargetHost(),envConfig.getTargetPath());
 
 			//stop server
-			//stop(childrenSubjectConfig.getAlias());
+			stop(childrenSubjectConfig.getAlias());
 
 			//decompression the	tar package
 			tar(envConfig.getTargetHost(),envConfig.getTargetPath(),childrenSubjectConfig.getTarName());
 
 			//restart server
-			//start(childrenSubjectConfig.getAlias());
+			start(childrenSubjectConfig.getAlias(),childrenSubjectConfig.getTarName());
 		}
 		log.info("Done");
 	}
@@ -62,13 +62,20 @@ public class DefaultSubject extends DevTool {
 
 
 	public String stop(String module) throws Exception{
-		String command = "sc "+module+" stop";
-		return super.stop(command);
+		String command = "for i in `jps|grep "+module+" |awk '{print $1}' `; do kill -9 $i ; done;";
+		try {
+			ConnectLinuxCommand.execute(envConfig.getTargetHost(),command);
+		}catch (Exception e){
+
+		}
+		return null;
+
 	}
 
-	public String start(String module) throws Exception{
-		String command = "sc "+module+" start";
-		return super.start(command);
+	public String start(String module,String targetName) throws Exception{
+		String command = "nohup java -Djava.ext.dirs=/root/webapps/dataflux-oper-master-bin/libs  -cp /root/webapps/dataflux-oper-master-bin/libs/datafluxOper.jar com.cn7782.devops.DatafluxOper >/dev/null  &   ";
+		//String command = "sc "+module+" start";
+		return ConnectLinuxCommand.execute(envConfig.getTargetHost(),command);
 	}
 
 

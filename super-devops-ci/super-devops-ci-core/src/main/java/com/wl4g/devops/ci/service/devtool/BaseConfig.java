@@ -29,7 +29,7 @@ public class BaseConfig {
 
 
 	static{
-		String json = ReadFile("/env-config.json");//前面两行是读取文件
+		String json = ReadFile("/env-config.json");//read from json file
 		BaseConfig baseConfig  = JSON.parseObject(json,BaseConfig.class);
 
 		BaseConfig.gitBasePath = baseConfig.getGitBasePath();
