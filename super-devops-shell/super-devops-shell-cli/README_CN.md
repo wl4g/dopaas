@@ -31,6 +31,7 @@ java -Dservpids=19767,32374 -Ddebug -jar shell-cli-master-executable.jar
 ```
 
 ## 特性
+
 - 按TAB键自动补全
 - Ctrl+A 光标跳至行首、Ctrl+E 光标跳至行尾、Ctrl+C 退出控制台（遵循GNU）
 - 内置命令: 
