@@ -1,0 +1,28 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us 983708408@qq.com
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#
+# #### Spring common utility configuration. ####
+#
+spring:
+  web:
+    remote: # RestTemplate configuration.
+      read-timeout: 20000
+      connect-timeout: 6000
+      max-response-size: 10485760
+      sslProperties: # SSL configuration.
+        key-cert-chain-file: 
+        key-file: 
+        ciphers: # Supported algorithms(Make sure to sync this list with JdkSslEngineFactory)
+          - ECDHE-RSA-AES128-SHA
+          - ECDHE-RSA-AES256-SHA
+          - AES128-SHA
+          - AES256-SHA
+          - DES-CBC3-SHA
