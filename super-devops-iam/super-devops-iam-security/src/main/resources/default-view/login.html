@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8" />
+  <title>IAM Default Login Page</title>
+  <style type="text/css">
+	*{margin:0;padding:0}
+	body{height:100%}
+	a{text-decoration:none;font-size:13px;color:#1D5494}
+	a:hover{text-decoration:underline;cursor:pointer;}
+	#top{width:1349px;height:73px}
+	#img_logo{}
+	#img5{margin:0 0 0 700px}
+	#content_1 img{width:100%;height:100%}
+	#content{margin:0 auto;margin-top:20px;width:1008px;height:429px}
+	#content-left{width:520px;height:400px;margin:28px 0 0 20px;float:left;position:relative;left:192px;}
+	#content-right{float:left;margin:30px 0 0 80px;border-radius:5px;background:white;color:#99CEFD;box-shadow:0px 0px 20px #f3e3e3}
+	#content-right:hover{color:#99CEFD;box-shadow:0px 0px 20px #99CEFD}
+	#login_pass:hover{text-decoration:underline;}
+	#con-top{width:284px;height:35px;padding:15px 0 0 40px;border-top-left-radius:5px;border-top-right-radius:5px}
+	#con-top a{color:#999999;font-size:16px}
+	#con-top a:hover{text-decoration:none;color:#333333}
+	#login_scan_pass{margin:5px 0 0 20px;font-size:12px;color:#000000;position:relative;left:30px;height:254px;}
+	#login_scan_panel{margin:35px 0 0 20px;font-size:12px;color:#000000;display:none}
+	#pic{margin-top:30px}
+	pre{color:#A0A0A0}
+	span a{color:#3481CF;text-decoration:none}
+	span a:hover{text-decoration:underline}
+	#text{color:#000;padding:0 0 0 70px;margin-top:-5px}
+	#text a{color:#A0A0A0;text-decoration:none}
+	.text1{width:204px;height:44px}
+	.text2{margin:10px 0 0 0}
+	.text4{width:130px;height:38px;margin:10px 0 0 0}
+	.text3{margin-top:-32px;margin-left:115px}
+	#checkbox{margin:20px 0 0 0}
+	.con-foot{color:#a6cbec;font-size:8px}
+	#iam_submit{margin:0 0 0 0;width:246px;height:40px;border:0;border-radius:5px;font-size:18px;color:#fff;background-color:#077fe9}
+	#con-but a{color:#225592}
+	#foot{font-size:12px;margin-top:40px;margin-left:0px;background:#297ecb;text-align:center}
+	.icon-user{position:absolute;z-index:5;margin-top:15px;background-image:url(static/user.png);background-repeat:no-repeat;background-position:12px 0px;width:40px;height:35px}
+	.icon-pass{position:absolute;z-index:5;margin-top:25px;background-image:url(static/password.png);background-repeat:no-repeat;background-position:12px 0px;width:40px;height:35px}
+	.icon-code{position:absolute;left:0；z-index:5;margin-top:25px;width:40px;height:35px}
+  	#err_tip{position:relative;width:310px;background:#fdf5f5;margin:0 auto;text-align:center;font-size:14px;color:#dc5151c7;font-weight:600;border-radius:2px;z-index:100;;display:none}
+  </style>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="static/iam-1.2.1.min.js"></script>
+  <script type="text/javascript">
+	  function changeTab(showId, hideId){
+		$("#"+showId).show();
+		$("#"+hideId).hide();
+	  };
+  </script>
+ </head>
+	 <body>
+	  <div id="wrap" style="background-image:url('static/bg2.png');">
+	  <div id="top">
+		<img id="img_logo" src="static/logo.png" />
+		<img id="img5" src="static/balloon3.png" />
+	  </div>
+	  <div id="content" >
+	  <div id="content-left" style="position:relative;left:-192px;">
+		<!-- <img id="img_bg" src="static/bg1.png" /> -->
+	  </div>
+	  <div id="content-right" style="position:relative;width:350px;height:395px;top:-72px;background:white;left:-50px;">
+		<div id="con-top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<span id="login_pass" onclick="changeTab('login_scan_pass','login_scan_panel')" style="font-size:14px;cursor:pointer;">账号登录</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+			<span id="login_scan" style="font-size:14px;cursor:default;">扫码登录</span>
+		</div>
+		<div id="err_tip"></div>
+		<div id="login_scan_pass">
+			<form action="#">
+			<div>
+				<i class="icon-user"></i>
+				<input id="user_name" class="text1" name="username" style="border: 1px solid #dad2d2;padding-left:40px;border-radius:2px 2px 2px 2px;" maxlength=40>
+			</div>
+			<div>
+				<i class="icon-pass"></i>
+				<input id="password" class="text1 text2" style="border: 1px solid #dad2d2;padding-left:40px;border-radius:2px 2px 2px 2px;" name="password" type="password" maxlength=30><br />
+			</div>
+			<div id="captcha_panel">
+				<i class="icon-code"></i>
+				<input id="captcha_input" class="text4" name="captcha" maxlength=5 style="border:1px solid #dad2d2;padding-left:20px;border-radius:2px 2px 2px 2px;">
+	      		<img id="codeimg" name="codeimg" border=0 style="padding:0 0 5px 0;position:relative;top:18px;margin-left:5px;width:100px;height:35px;cursor:pointer;" title="看不清可单击图片刷新">
+			</div>
+			<br />
+			<input id="iam_submit" type="button" style="cursor:pointer;" value="登录"><br /><br /><br />					
+			</form>
+		</div>
+		<div id="login_scan_panel">
+			<div id="content-left1">
+				<div id="qrcode_show" style="position:relative;left:30px;top:-48px;width:280px;height:255px;"></div>
+			</div>
+		</div>
+		<div style="position:relative;margin-top:-30px;left:18px;">
+			<span style="text-decoration: line-through;margin-left: 40px;color: #efefef;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+			<span class="con-foot">其他方式登录</span>
+		<span style="text-decoration: line-through;color: #efefef;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+		</div>
+		<div style="margin-top:15px;margin-left:10px;">
+			<img id="wechat" style="cursor:pointer;margin-left:70px;" src="static/wx.png" style="margin-left: 65px;">
+			<img id="qq" style="cursor:pointer;margin-left:48px;" src="static/qq.png" style="margin-left: 50px;">
+			<img id="sina" style="cursor:pointer;margin-left:52px;" src="static/sina.png" style="margin-left: 50px;">
+		</div>
+	  </div>
+	</div>
+	  <div id="foot" style="height:50px;line-height:45px;">
+	  	©2019 ~ 2035 Iam（Identity Authentication and Access Recognition System） 
+	  </div>
+	</div>
+<script type="text/javascript">
+	// IAM认证服务based URI
+	//var iamBaseURI = "http://passport.anjiancloud.test/sso";
+	//var iamBaseURI = "http://passport.wl4g.com/sso";
+	//var iamBaseURI = "http://passport.wl4g.com/devops-iam";
+	var iamBaseURI = "http://localhost:14040/devops-iam";
+
+	// 引用IAM SDK插件，处理SNS授权操作
+	(function(){
+	  window.IAM.config({
+		baseUri: iamBaseURI, // IAM认证服务接口的基础URI
+		// 定义获取账号名函数
+		getPrincipal: function(){ // 必填，获取填写的登录用户名
+			return document.getElementById("user_name").value;
+		},
+		getCredential: function(){ // 可选，获取填写的登录用户密码，which=which_login时必填
+			return document.getElementById("password").value;
+		},
+		// 登录认证配置
+		signIn: {
+			submission: document.getElementById("iam_submit"), // 登录提交点击对象（支持非表单提交）
+			// 定义验证码显示面板配置
+			captcha: {
+				img: document.getElementById("codeimg"), // 验证码显示IMG对象
+				input: document.getElementById("captcha_input"), // 验证码INPUT输入对象
+				enableOption: "captchaEnable", // 可选，控制当前是否启用验证码，默认:captchaEnable（与后台对应）
+				name: "captcha", // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
+				onFallback: function(errmsg){ // 验证码刷新降级处理（被锁定）
+					console.warn(errmsg);
+					// 加载默认破图
+					document.getElementById("codeimg").src = "static/broken.jpg";
+				}
+			},
+			// 提交之前
+			onSubmissionBefore: function(principal, plainPasswd, captcha){
+				console.log("准备提交登录....");
+				return true;
+			},
+			onSuccess: function(principal, redirectUrl){
+				console.log("登录成功!");
+				return true; // 返回false会阻止自动调整
+			},
+			onError: function(errmsg){
+				console.error("登录失败. " + errmsg);
+				errTips(); // 加载err_tip
+			}
+		},
+		// SNS授权配置
+		sns: {
+			// 定义必须的请求参数
+			required: {
+				which: function(){ // 执行操作类型，必须：当使用登录功能时值填"login",当使用绑定功能时值填"bind"
+					return "login";
+				},
+				//refreshUrl: "" // SNS回调后重定向刷新的URL，可选，which=login时传空
+			},
+			// 定义内嵌授权页面配置
+			qrcodePanel: {
+				src: document.getElementById("qrcode_show"),
+				width: "250",
+				height: "260"
+			},
+			// 定义新开的TAB授权页的配置
+			pagePanel: {
+				"width": "800px",
+				"height": "500px",
+				"left": "250px",
+				"top": "100px"
+			},
+			// 定义支持的社交网络服务商配置
+			provider: {
+				"qq": { // 服务商名(需与后台对应, 可选：qq/wechat/sina/github/google/dingtalk/twitter/facebook等)
+					panelType: "pagePanel", // 使用新开TAB页的方式渲染授权页面
+					src: document.getElementById("qq") // 绑定QQ授权点击事件源
+				},
+				"wechat": { // 服务商名(需与后台对应, 可选：qq/wechat/sina/github/google/dingtalk/twitter/facebook等)
+					panelType: "qrcodePanel", // 使用内嵌的方式渲染扫码授权页面
+					src: document.getElementById("wechat") // 绑定Wechat授权点击事件源
+				}
+			},
+			// 点击SNS服务商授权请求之前回调事件
+			onBefore: function(provider, panelType){
+				if(provider == 'wechat'){ // 只有微信等扫码登录时，才切换tab
+					changeTab('login_scan_panel','login_scan_pass');
+				}
+				// 执行后续逻辑，返回false会阻止继续
+				return true;
+			}
+		}
+	  }).snsAuth().generalAuth();
+	})();
+</script>
+<script type="text/javascript">
+	// 监听panelType为pagePanel类型的SNS授权回调
+	(function(){
+		window.onmessage = function(e){
+			window.location.href = JSON.parse(e.data).refresh_url;
+		}
+	})();
+</script>
+<script type="text/javascript">
+	// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
+	function errTips(){
+		var url = iamBaseURI + "/ext/errread";
+		$.ajax({
+			url: url,
+			//xhrFields: {
+			//	withCredentials: true // 跨域调用时，必须设置才会发送cookie
+		    //},
+			success: function(res){
+				//console.log(res);
+				var errmsg = res.data["errorTipsInfo"];
+				if(errmsg != null && errmsg.length > 0){
+					$("#err_tip").text(errmsg).show().delay(8000).hide(100);
+				}
+			}
+		});
+	};
+	errTips();
+</script>
+</body>
+</html>
