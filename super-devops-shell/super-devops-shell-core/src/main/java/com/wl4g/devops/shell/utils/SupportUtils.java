@@ -32,7 +32,6 @@ public abstract class SupportUtils {
 			}
 			return false;
 		});
-
 	}
 
 }

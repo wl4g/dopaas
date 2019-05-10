@@ -49,7 +49,7 @@ public abstract class BeanUtils2 extends BeanUtils {
 			ignoreCache.put(clazz, (ignores = _ignores));
 		}
 
-		// Bean copys
+		// Bean copy
 		BeanUtils.copyProperties(source, target, ignores.toArray(new String[] {}));
 	}
 
