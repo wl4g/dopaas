@@ -137,7 +137,7 @@ public abstract class AbstractActuator implements Actuator {
 		List<Object> args = new ArrayList<>();
 
 		tm.getParameters().forEach(parameter -> {
-			// See:xx.shell.registry.TargetMethodWrapper#ensureInitialize
+			// See:TargetMethodWrapper#initialize
 			try {
 				// To javaBean parameter
 				if (!parameter.baseType()) {
