@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.wl4g.devops.common.utils.StringUtils2;
+import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.common.utils.serialize.ObjectUtils;
 
 import redis.clients.jedis.JedisCluster;
