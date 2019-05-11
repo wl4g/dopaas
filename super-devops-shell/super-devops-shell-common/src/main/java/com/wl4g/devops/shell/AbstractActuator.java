@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.shell;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +23,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.apache.commons.beanutils.BeanUtilsBean2;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import static com.wl4g.devops.shell.utils.Types.*;
+import static com.wl4g.devops.shell.utils.ReflectionUtils2.*;
+import com.wl4g.devops.shell.utils.ReflectionUtils2.FieldCallback2;
+import com.wl4g.devops.shell.utils.ReflectionUtils2.FieldFilter2;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
@@ -116,7 +119,7 @@ public abstract class AbstractActuator implements Actuator {
 		 * Commands to javaBean map and validate protected. </br>
 		 * (javaBean.fieldName or params.index(native type))->value
 		 */
-		Map<String, String> beanMap = new HashMap<>();
+		final Map<String, String> beanMap = new HashMap<>();
 		for (int i = 0; i < commands.size() - 1; i++) {
 			if (i % 2 == 0) {
 				// Input opt
@@ -142,7 +145,21 @@ public abstract class AbstractActuator implements Actuator {
 				// To javaBean parameter
 				if (!parameter.baseType()) {
 					Object paramBean = parameter.getParamType().newInstance();
-					BeanUtilsBean2.getInstance().populate(paramBean, beanMap);
+
+					// Recursive full traversal deserialization.
+					doWithFullFields(paramBean, new FieldFilter2() {
+						@Override
+						public boolean match(Object attach, Field f, Object property) {
+							return beanMap.containsKey(f.getName());
+						}
+					}, new FieldCallback2() {
+						@Override
+						public void doWith(Object attach, Field f, Object property)
+								throws IllegalArgumentException, IllegalAccessException {
+							f.setAccessible(true);
+							f.set(attach, baseConvert(beanMap.get(f.getName()), f.getType()));
+						}
+					});
 					args.add(paramBean);
 				}
 				// [MARK1]: To native parameter
