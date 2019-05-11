@@ -34,7 +34,7 @@ public abstract class SupportUtils {
 				public boolean match(Field f, Object targetProperty, Object sourceProperty) {
 					if (isBaseType(f.getType())) {
 						int mod = f.getModifiers();
-						return f.getAnnotation(ShellOption.class) == null && isSafetyModifier(mod);
+						return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(mod);
 					}
 					return false;
 				}
