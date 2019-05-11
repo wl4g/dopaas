@@ -140,7 +140,7 @@ public abstract class AbstractActuator implements Actuator {
 			// See:xx.shell.registry.TargetMethodWrapper#ensureInitialize
 			try {
 				// To javaBean parameter
-				if (!parameter.isNativeType()) {
+				if (!parameter.baseType()) {
 					Object paramBean = parameter.getParamType().newInstance();
 					BeanUtilsBean2.getInstance().populate(paramBean, beanMap);
 					args.add(paramBean);
@@ -161,7 +161,7 @@ public abstract class AbstractActuator implements Actuator {
 					}
 					Assert.hasText(value,
 							String.format("Argument option: '-%s' or long option: '--%s' is required", opt.opt(), opt.lopt()));
-					args.add(simpleConvert(value, parameter.getParamType()));
+					args.add(baseConvert(value, parameter.getParamType()));
 				}
 
 			} catch (Throwable e) {
@@ -180,7 +180,7 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	protected void validateArguments(TargetMethodWrapper tm, Map<String, String> beanMap) {
 		tm.getParameters().forEach(parameter -> {
-			if (parameter.isNativeType()) {
+			if (parameter.baseType()) {
 				return; // See:[MARK1][TargetMethodWrapper.MARK0]
 			}
 

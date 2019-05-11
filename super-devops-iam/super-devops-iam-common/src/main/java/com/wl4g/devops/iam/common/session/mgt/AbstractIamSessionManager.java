@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.common.utils.StringUtils2;
+import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.common.utils.web.UserAgentUtils;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;

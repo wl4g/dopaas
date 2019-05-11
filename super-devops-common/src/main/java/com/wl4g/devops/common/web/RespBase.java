@@ -22,7 +22,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.wl4g.devops.common.utils.StringUtils2;
+import com.wl4g.devops.common.utils.lang.StringUtils2;
 
 /**
  * Generic Restful response base class

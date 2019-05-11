@@ -16,22 +16,28 @@
 package com.wl4g.devops.iam.common.aop;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import static java.lang.reflect.Modifier.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.Aspect;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
 
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.ReflectionUtils.*;
+import org.springframework.util.Assert;
+
+import static com.wl4g.devops.common.utils.bean.BeanUtils2.*;
+import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.config.XssProperties;
@@ -64,11 +70,11 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 	@Override
 	public Object invoke(MethodInvocation invc) throws Throwable {
 		try {
-			Object target = invc.getThis();
+			Object controller = invc.getThis();
 			Method md = invc.getMethod();
 
 			// Type or method exist @UnsafeXss ignore?
-			if (target.getClass().isAnnotationPresent(UnsafeXss.class) || md.isAnnotationPresent(UnsafeXss.class)) {
+			if (controller.getClass().isAnnotationPresent(UnsafeXss.class) || md.isAnnotationPresent(UnsafeXss.class)) {
 				return invc.proceed();
 			}
 
@@ -87,13 +93,18 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 						}
 					}
 
+					// Parameter declared type ignore?
+					if (args[i].getClass().isAnnotationPresent(UnsafeXss.class)) {
+						continue next;
+					}
+
 					// Processing HttpServlet request(if necessary)
 					args[i] = processHttpRequestIfNecessary(args[i]);
 
 					if (args[i] instanceof String) {
-						args[i] = stringXssEncode(target, md, i, (String) args[i]);
+						args[i] = stringXssEncode(controller, md, i, (String) args[i]);
 					} else {
-						objectXssEnode(target, md, i, args[i]);
+						objectXssEnode(controller, md, i, args[i]);
 					}
 				}
 			}
@@ -107,42 +118,52 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 	/**
 	 * String argument XSS encoding.
 	 * 
-	 * @param target
+	 * @param controller
 	 * @param method
 	 * @param index
 	 * @param argument
 	 * @return
 	 */
-	private String stringXssEncode(final Object target, final Method method, final int index, final String argument) {
-		if (StringUtils.isBlank(argument)) {
+	private String stringXssEncode(final Object controller, final Method method, final int index, final String argument) {
+		if (isBlank(argument)) {
 			return argument;
 		}
-		return resolver.doResolve(target, method, index, argument);
+		return resolver.doResolve(controller, method, index, argument);
 	}
 
 	/**
 	 * Object argument XSS encoding.
 	 * 
-	 * @param target
+	 * @param controller
 	 * @param method
 	 * @param index
 	 * @param argument
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
-	private void objectXssEnode(final Object target, final Method method, final int index, final Object argument) {
-		if (argument == null)
+	private void objectXssEnode(final Object controller, final Method method, final int index, final Object argument)
+			throws IllegalArgumentException, IllegalAccessException {
+		if (argument == null || ServletRequest.class.isAssignableFrom(argument.getClass())
+				|| ServletResponse.class.isAssignableFrom(argument.getClass()))
 			return;
 
-		ReflectionUtils.doWithFields(argument.getClass(), fcField -> {
-			ReflectionUtils.makeAccessible(fcField);
-			Object fieldValue = fcField.get(argument);
-			if (fieldValue != null) {
-				fcField.set(argument, resolver.doResolve(target, method, index, (String) fieldValue));
+		copyFullProperties(argument, argument, new FieldFilter() {
+			@Override
+			public boolean match(Field f, Object targetProperty, Object sourceProperty) {
+				Class<?> clazz = f.getType();
+				int mod = f.getModifiers();
+				return String.class.isAssignableFrom(clazz) && !isFinal(mod) && !isStatic(mod) && !isTransient(mod)
+						&& !isNative(mod) && !isVolatile(mod) && !isSynchronized(mod);
 			}
-		}, ffFiled -> {
-			return String.class.isAssignableFrom(ffFiled.getType()) && !Modifier.isFinal(ffFiled.getModifiers())
-					&& !Modifier.isStatic(ffFiled.getModifiers()) && !Modifier.isTransient(ffFiled.getModifiers())
-					&& !Modifier.isNative(ffFiled.getModifiers()) && !Modifier.isVolatile(ffFiled.getModifiers())
-					&& !Modifier.isSynchronized(ffFiled.getModifiers());
+		}, new FieldCopyer() {
+			@Override
+			public void doCopy(Object target, Field tf, Field sf, Object targetPropertyValue, Object sourcePropertyValue)
+					throws IllegalArgumentException, IllegalAccessException {
+				if (targetPropertyValue != null) {
+					makeAccessible(tf);
+					tf.set(target, resolver.doResolve(controller, method, index, (String) targetPropertyValue));
+				}
+			}
 		});
 
 	}

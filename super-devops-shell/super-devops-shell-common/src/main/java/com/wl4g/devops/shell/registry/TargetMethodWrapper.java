@@ -32,7 +32,7 @@ import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 import com.wl4g.devops.shell.utils.Assert;
-import static com.wl4g.devops.shell.utils.Reflections.*;
+import static com.wl4g.devops.shell.utils.ReflectionUtils2.*;
 import static com.wl4g.devops.shell.utils.Types.*;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
 
@@ -162,7 +162,7 @@ public class TargetMethodWrapper implements Serializable {
 			ShellOption opt = findShellOption(paramAnnos[i]);
 
 			// Native type parameter must be annotated with @ShellOption?
-			if (nativeType(paramType)) {
+			if (isBaseType(paramType)) {
 				Assert.state(opt != null, String.format(
 						"Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", method, i));
 			}
@@ -171,7 +171,7 @@ public class TargetMethodWrapper implements Serializable {
 			TargetParameter parameter = new TargetParameter(getMethod(), paramType, opt, i);
 
 			// Native field?
-			if (nativeType(paramType)) { // String,long,double...?
+			if (isBaseType(paramType)) { // String,long,double...?
 				Assert.hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", getMethod()));
 				Assert.hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", getMethod()));
 				Assert.isTrue(isAlpha(opt.opt().substring(0, 1)),
@@ -259,7 +259,7 @@ public class TargetMethodWrapper implements Serializable {
 			this.index = index;
 
 			// Assertion shell option.
-			if (isNativeType()) {
+			if (baseType()) {
 				Assert.state(shOpt != null,
 						String.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption",
 								getMethod(), getIndex()));
@@ -291,8 +291,8 @@ public class TargetMethodWrapper implements Serializable {
 			return attributes;
 		}
 
-		public boolean isNativeType() {
-			return nativeType(getParamType());
+		public boolean baseType() {
+			return isBaseType(getParamType());
 		}
 
 	}

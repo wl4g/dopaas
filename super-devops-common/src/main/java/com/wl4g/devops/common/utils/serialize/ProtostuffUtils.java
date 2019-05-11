@@ -44,7 +44,7 @@ import org.springframework.objenesis.ObjenesisStd;
  * @version v1.0 2019年1月11日
  * @since
  */
-public class ProtostuffUtils {
+public abstract class ProtostuffUtils {
 
 	/**
 	 * Class sets requiring serialization/deserialization using wrapper classes

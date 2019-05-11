@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.common.utils.reflect;
 
+import static java.lang.reflect.Modifier.isFinal;
+import static java.lang.reflect.Modifier.isNative;
+import static java.lang.reflect.Modifier.isStatic;
+import static java.lang.reflect.Modifier.isSynchronized;
+import static java.lang.reflect.Modifier.isTransient;
+import static java.lang.reflect.Modifier.isVolatile;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -29,8 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.wl4g.devops.common.utils.reflect.Types.*;
+
 /**
- * Simple utility class for working with the reflection API and handling
+ * Enhanced utility class for working with the reflection API and handling
  * reflection exceptions.
  *
  * <p>
@@ -42,9 +51,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Costin Leau
  * @author Sam Brannen
  * @author Chris Beams
- * @since 1.2.2 org.springframework.util.ReflectionUtils
+ * @since 1.2.2 {@link org.springframework.util.ReflectionUtils}
  */
-public abstract class ReflectUtil {
+public abstract class ReflectionUtils2 {
 
 	/**
 	 * Naming prefix for CGLIB-renamed methods.
@@ -52,9 +61,7 @@ public abstract class ReflectUtil {
 	 * @see #isCglibRenamedMethod
 	 */
 	private static final String CGLIB_RENAMED_METHOD_PREFIX = "CGLIB$";
-
 	private static final Method[] NO_METHODS = {};
-
 	private static final Field[] NO_FIELDS = {};
 
 	/**
@@ -102,7 +109,7 @@ public abstract class ReflectUtil {
 		if (clazz == null) {
 			throw new IllegalArgumentException("Class must not be null");
 		}
-		if (name != null || type != null) {
+		if (!(name != null || type != null)) {
 			throw new IllegalArgumentException("Either name or type of the field must be specified");
 		}
 		Class<?> searchType = clazz;
@@ -694,6 +701,16 @@ public abstract class ReflectUtil {
 	}
 
 	/**
+	 * Assert whether the two types are compatible
+	 * 
+	 * @return
+	 */
+	public static boolean isCompatibleType(Class<?> clazz1, Class<?> clazz2) {
+		assert (clazz1 != null && clazz2 != null);
+		return clazz1.isAssignableFrom(clazz2) || clazz2.isAssignableFrom(clazz1);
+	}
+
+	/**
 	 * This variant retrieves {@link Class#getDeclaredMethods()} from a local
 	 * cache in order to avoid the JVM's SecurityManager check and defensive
 	 * array copying. In addition, it also includes Java 8 default methods from
@@ -818,7 +835,7 @@ public abstract class ReflectUtil {
 	 * @return the cached array of fields
 	 * @see Class#getDeclaredFields()
 	 */
-	private static Field[] getDeclaredFields(Class<?> clazz) {
+	public static Field[] getDeclaredFields(Class<?> clazz) {
 		if (clazz == null) {
 			throw new IllegalArgumentException("Class must not be null");
 		}
@@ -957,5 +974,128 @@ public abstract class ReflectUtil {
 			return (!method.isBridge() && method.getDeclaringClass() != Object.class);
 		}
 	};
+
+	//
+	// Enhanced reflections utility
+	//
+
+	/**
+	 * Enhanced callback optionally used to filter fields to be operated on by a
+	 * field callback.
+	 * 
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年5月11日
+	 * @since
+	 */
+	public static interface FieldFilter2 {
+
+		/**
+		 * Filter operations using the given field.
+		 * 
+		 * @param attach
+		 * @param f
+		 * @param propertyValue
+		 * @return
+		 */
+		boolean match(Object attach, Field f, Object propertyValue);
+	}
+
+	/**
+	 * Enhanced callback interface invoked on each field in the hierarchy.
+	 * 
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年5月11日
+	 * @since
+	 */
+	public static interface FieldCallback2 {
+
+		/**
+		 * Use the given field copy operation.
+		 * 
+		 * @param attach
+		 * @param f
+		 * @param property
+		 * @throws IllegalAccessException
+		 * @throws IllegalArgumentException
+		 */
+		void doWith(Object attach, Field f, Object property) throws IllegalArgumentException, IllegalAccessException;
+	}
+
+	/**
+	 * Call a given recursive callback (including all fields of the current
+	 * type) for all fields in the target class, and go up into the class
+	 * hierarchy to get all declared fields.</br>
+	 * Note: It will contain property fields for all parent and superclass
+	 * classes
+	 * 
+	 * @param obj
+	 * @param ff
+	 * @param fc
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public static void doWithFullFields(Object obj, FieldFilter2 ff, FieldCallback2 fc)
+			throws IllegalArgumentException, IllegalAccessException {
+		if (obj == null || ff == null || fc == null) {
+			throw new IllegalArgumentException("Object and field filter, field callback must not be null");
+		}
+
+		Class<?> cls = obj.getClass();
+		do {
+			doWithDeepFields(cls, obj, ff, fc);
+		} while ((cls = cls.getSuperclass()) != Object.class);
+	}
+
+	/**
+	 * Call a given recursive callback (including all fields of the current
+	 * type) for all fields in the target class, and go up into the class
+	 * hierarchy to get all declared fields.</br>
+	 * Note: Attribute fields of parent and superclass are not included
+	 * 
+	 * @param hierarchyClass
+	 *            hierarchy Class
+	 * @param obj
+	 * @param ff
+	 * @param fc
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public static void doWithDeepFields(Class<?> hierarchyClass, Object obj, FieldFilter2 ff, FieldCallback2 fc)
+			throws IllegalArgumentException, IllegalAccessException {
+		if (hierarchyClass == null || ff == null || fc == null) {
+			throw new IllegalArgumentException("Hierarchy class and field filter, field callback must not be null");
+		}
+		if (obj == null) {
+			return;
+		}
+
+		// Recursive traversal matching and processing
+		for (Field f : getDeclaredFields(hierarchyClass)) {
+			f.setAccessible(true);
+			Object propertyValue = f.get(obj);
+
+			if (isBaseType(f.getType())) { // Based type?
+				// Filter matching property
+				if (ff.match(obj, f, propertyValue)) {
+					if (fc != null) {
+						fc.doWith(obj, f, propertyValue);
+					}
+				}
+			} else {
+				doWithDeepFields(f.getType(), propertyValue, ff, fc);
+			}
+		}
+
+	}
+
+	/**
+	 * Check for generic security identifiers
+	 * 
+	 * @param mod
+	 * @return
+	 */
+	public static boolean isSafetyModifier(int mod) {
+		return !(isFinal(mod) || isStatic(mod) || isTransient(mod) || isNative(mod) || isVolatile(mod) || isSynchronized(mod));
+	}
 
 }

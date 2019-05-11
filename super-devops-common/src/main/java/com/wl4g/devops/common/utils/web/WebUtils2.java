@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.common.utils.StringUtils2;
+import com.wl4g.devops.common.utils.lang.StringUtils2;
 
 /**
  * WEB tools

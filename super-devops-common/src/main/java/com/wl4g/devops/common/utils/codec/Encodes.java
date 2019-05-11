@@ -27,8 +27,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import com.wl4g.devops.common.utils.Exceptions;
 
 /**
- * 封装各种格式的编码解码工具类. 1.Commons-Codec的 hex/base64 编码 2.自制的base62 编码
- * 3.Commons-Lang的xml/html escape 4.JDK提供的URLEncoder
+ * Encapsulation of various formats of encoding and decoding tools class. </br>
+ * 1. Commons-Codec hex/base64 encoding</br>
+ * 2. Self-made base62 encoding </br>
+ * 3. Commons-Lang xml/html escape</br>
+ * 4. URLEncoder provided by JDK
  * 
  * @author calvin
  * @version 2013-01-15

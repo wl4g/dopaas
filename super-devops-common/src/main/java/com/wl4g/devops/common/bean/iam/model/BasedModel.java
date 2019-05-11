@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.StringUtils2;
+import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 
 public class BasedModel implements Serializable {

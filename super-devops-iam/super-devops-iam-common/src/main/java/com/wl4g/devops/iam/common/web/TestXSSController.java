@@ -41,7 +41,10 @@ public class TestXSSController extends BaseController {
 
 	/**
 	 * e.g.
-	 * http://localhost:14040/devops-iam/test/xss2?name=<script>alert("fuck")</script>
+	 * 
+	 * <pre>
+	 * http://localhost:14040/devops-iam/test/xss2?name=&lt;script&gt;alert("fuck")&lt;/script&gt;
+	 * </pre>
 	 * 
 	 * @param name
 	 * @param request

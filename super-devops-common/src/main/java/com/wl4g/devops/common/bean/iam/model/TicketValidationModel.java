@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.bean.iam.model;
 
-import com.wl4g.devops.common.utils.StringUtils2;
+import com.wl4g.devops.common.utils.lang.StringUtils2;
 
 public final class TicketValidationModel extends BasedModel {
 	private static final long serialVersionUID = 1383145313778896117L;

@@ -15,8 +15,11 @@
  */
 package com.wl4g.devops.common.utils.reflect;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Java class type processing tool
@@ -30,35 +33,43 @@ public abstract class Types {
 	/**
 	 * Local base non-customized wrap classes.
 	 */
-	final private static Collection<Class<?>> nativeClasses = new ArrayList<>();
+	final private static Collection<Class<?>> nativeClasses = new ArrayList<Class<?>>() {
+		private static final long serialVersionUID = -4726036260392327337L;
+		{
+			add(int.class);
+			add(long.class);
+			add(double.class);
+			add(float.class);
+			add(byte.class);
+			add(String.class);
+			add(Integer.class);
+			add(Long.class);
+			add(Double.class);
+			add(Float.class);
+			add(Byte.class);
+			add(Class.class);
+			add(Enum.class);
+			add(Date.class);
+			add(URI.class);
+			add(Locale.class);
+		}
+	};
 
 	/**
 	 * Local base non-customized wrap classes packages.
 	 */
-	final private static Collection<String> nativePackages = new ArrayList<>();
-
-	static {
-		nativeClasses.add(int.class);
-		nativeClasses.add(long.class);
-		nativeClasses.add(double.class);
-		nativeClasses.add(float.class);
-		nativeClasses.add(byte.class);
-		nativeClasses.add(String.class);
-		nativeClasses.add(Integer.class);
-		nativeClasses.add(Long.class);
-		nativeClasses.add(Double.class);
-		nativeClasses.add(Float.class);
-		nativeClasses.add(Byte.class);
-		nativeClasses.add(Class.class);
-
-		nativePackages.add("com.sun.");
-		nativePackages.add("sun.");
-		nativePackages.add("java.");
-		nativePackages.add("javax.");
-		nativePackages.add("jdk.");
-		nativePackages.add("javafx.");
-		nativePackages.add("oracle.");
-	}
+	final private static Collection<String> nativePackages = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add("com.sun.");
+			add("sun.");
+			add("java.");
+			add("javax.");
+			add("jdk.");
+			add("javafx.");
+			add("oracle.");
+		}
+	};
 
 	/**
 	 * Is native non-customized wrapp classes type?
@@ -66,7 +77,7 @@ public abstract class Types {
 	 * @param clazz
 	 * @return
 	 */
-	public static boolean nativeType(Class<?> clazz) {
+	public final static boolean isBaseType(Class<?> clazz) {
 		return clazz.isPrimitive() || nativeClasses.contains(clazz) || nativePackages.contains(clazz.getName());
 	}
 
@@ -78,9 +89,9 @@ public abstract class Types {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T simpleConvert(String value, Class<T> clazz) {
+	public final static <T> T baseConvert(String value, Class<T> clazz) {
 		Object object = null;
-		if (nativeType(clazz)) {
+		if (isBaseType(clazz)) {
 			if (clazz == int.class || clazz == Integer.class) {
 				object = Integer.valueOf(value);
 			} else if (clazz == long.class || clazz == Long.class) {

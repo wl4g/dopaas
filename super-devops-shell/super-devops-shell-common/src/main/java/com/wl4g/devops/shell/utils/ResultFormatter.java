@@ -27,6 +27,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 
+import static com.wl4g.devops.shell.utils.Types.*;
 import com.wl4g.devops.shell.annotation.PropertyDescription;
 
 /**
@@ -99,7 +100,7 @@ public class ResultFormatter {
 				Object value = f.get(object);
 				PropertyDescription desc = f.getAnnotation(PropertyDescription.class);
 				if (desc != null) { // Filter property
-					if (Types.nativeType(f.getType())) {
+					if (isBaseType(f.getType())) {
 						resultSet.add(new ValueWrap(fname, value, desc.value()));
 					} else
 						extractFlatBean(f.getType(), resultSet);

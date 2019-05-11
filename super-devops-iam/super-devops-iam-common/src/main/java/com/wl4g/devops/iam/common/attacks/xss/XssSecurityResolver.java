@@ -27,7 +27,7 @@ public interface XssSecurityResolver {
 	 *            The parameter value of the current method of parsing XSS
 	 * @return
 	 */
-	default String doResolve(final Object target, final Method method, final int index, final String value) {
+	default String doResolve(final Object controller, final Method method, final int index, final String value) {
 		return HtmlUtils.htmlEscape(value, "UTF-8");
 	}
 
