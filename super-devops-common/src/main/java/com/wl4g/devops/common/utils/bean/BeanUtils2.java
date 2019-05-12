@@ -30,6 +30,27 @@ public abstract class BeanUtils2 extends BeanUtils {
 	 *            Source object
 	 * @param ff
 	 *            Field filter
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public static void copyFullProperties(Object target, Object source, FieldFilter ff)
+			throws IllegalArgumentException, IllegalAccessException {
+		copyFullProperties(target, source, ff, new FieldCopyer() {
+		});
+	}
+
+	/**
+	 * Calls the given callback on all fields of the target class, recursively
+	 * running the class hierarchy up to copy all declared fields.</br>
+	 * It will contain all the fields defined by all parent or superclasses. At
+	 * the same time, the target and the source object must be compatible.
+	 * 
+	 * @param target
+	 *            The target object to copy to
+	 * @param source
+	 *            Source object
+	 * @param ff
+	 *            Field filter
 	 * @param fc
 	 *            Customizable copyer
 	 * @throws IllegalArgumentException
@@ -97,15 +118,15 @@ public abstract class BeanUtils2 extends BeanUtils {
 
 			// If the source is not null and the target is null, the source can
 			// be assigned directly to the target.
-			if (targetPropertyValue == null) {
+			if (targetPropertyValue == null) { // [MARK1]
 				if (fc != null) {
-					fc.doCopy(target, tf, sf, targetPropertyValue, sourcePropertyValue);
+					fc.doCopy(target, tf, sf, sourcePropertyValue);
 				}
 			} else if (isBaseType(tf.getType())) { // Based type?
-				// Filter matching property
-				if (sourcePropertyValue != null && ff.match(tf, targetPropertyValue, sourcePropertyValue)) {
+				// [MARK2] Filter matching property
+				if (sourcePropertyValue != null && ff.match(tf, sourcePropertyValue)) {
 					if (fc != null) {
-						fc.doCopy(target, tf, sf, targetPropertyValue, sourcePropertyValue);
+						fc.doCopy(target, tf, sf, sourcePropertyValue);
 					}
 				}
 			} else {
@@ -129,11 +150,12 @@ public abstract class BeanUtils2 extends BeanUtils {
 		 * Filter operations using the given field.
 		 * 
 		 * @param f
-		 * @param targetProperty
-		 * @param sourceProperty
+		 * @param sourcePropertyValue
+		 *            The value of the attributes of the source bean. </br>
+		 *            See:[MARK1|MARK2]
 		 * @return
 		 */
-		default public boolean match(Field f, Object targetProperty, Object sourceProperty) {
+		default public boolean match(Field f, Object sourcePropertyValue) {
 			return true;
 		}
 	}
@@ -150,18 +172,20 @@ public abstract class BeanUtils2 extends BeanUtils {
 		/**
 		 * Use the given field copy operation.
 		 * 
-		 * @param target
+		 * @param targetAttach
 		 * @param tf
 		 * @param sf
-		 * @param targetPropertyValue
 		 * @param sourcePropertyValue
+		 *            The value of the attributes of the source bean
 		 * @throws IllegalAccessException
 		 * @throws IllegalArgumentException
 		 */
-		default public void doCopy(Object target, Field tf, Field sf, Object targetPropertyValue, Object sourcePropertyValue)
+		default public void doCopy(Object targetAttach, Field tf, Field sf, Object sourcePropertyValue)
 				throws IllegalArgumentException, IllegalAccessException {
-			tf.setAccessible(true);
-			tf.set(target, sourcePropertyValue);
+			if (sourcePropertyValue != null) {
+				tf.setAccessible(true);
+				tf.set(targetAttach, sourcePropertyValue);
+			}
 		}
 	}
 
