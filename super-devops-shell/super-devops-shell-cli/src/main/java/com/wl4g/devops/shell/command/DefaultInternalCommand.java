@@ -132,14 +132,10 @@ public class DefaultInternalCommand extends InternalCommand {
 				}
 				// Processing for e.g. add --help
 				else {
-					// Help options
+					// Help options(group name dict sort)
 					Map<String, HelpGroupWrapper> helpGroup = new TreeMap<>(new Comparator<String>() {
 						@Override
 						public int compare(String o1, String o2) {
-							// Default built-in commands group rank first.
-							if (equalsAnyIgnoreCase(DEFAULT_GROUP, o1, o2)) {
-								return 1;
-							}
 							return o1.compareTo(o2);
 						}
 					});
@@ -160,16 +156,12 @@ public class DefaultInternalCommand extends InternalCommand {
 						helpGroup.put(sm.group(), wrap);
 					}
 
+					// Move default commands to first place
+					HelpGroupWrapper defaultWrap = helpGroup.remove(DEFAULT_GROUP);
+					appendHelpAsString(DEFAULT_GROUP, defaultWrap, helpString);
+
 					// Group options print
-					helpGroup.forEach((group, wrap) -> {
-						helpString.append("\n----- " + group + " -----\n\n");
-						wrap.getHelpMethods().forEach(hm -> {
-							helpString.append(getUsageFormat(hm.getArgname(), hm.getOptions(), hm.getHelp()));
-							if (!hm.getOptions().getOptions().isEmpty()) {
-								helpString.append("\n");
-							}
-						});
-					});
+					helpGroup.forEach((group, wrap) -> appendHelpAsString(group, defaultWrap, helpString));
 				}
 
 			}
@@ -178,6 +170,23 @@ public class DefaultInternalCommand extends InternalCommand {
 		} finally {
 			lineCache.remove();
 		}
+	}
+
+	/**
+	 * Append help as strings.
+	 * 
+	 * @param group
+	 * @param wrap
+	 * @param helpString
+	 */
+	private void appendHelpAsString(String group, HelpGroupWrapper wrap, StringBuffer helpString) {
+		helpString.append("\n----- " + group + " -----\n\n");
+		wrap.getHelpMethods().forEach(hm -> {
+			helpString.append(getUsageFormat(hm.getArgname(), hm.getOptions(), hm.getHelp()));
+			if (!hm.getOptions().getOptions().isEmpty()) {
+				helpString.append("\n");
+			}
+		});
 	}
 
 	/**
