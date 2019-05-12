@@ -161,7 +161,7 @@ public class DefaultInternalCommand extends InternalCommand {
 					appendHelpAsString(DEFAULT_GROUP, defaultWrap, helpString);
 
 					// Group options print
-					helpGroup.forEach((group, wrap) -> appendHelpAsString(group, defaultWrap, helpString));
+					helpGroup.forEach((group, wrap) -> appendHelpAsString(group, wrap, helpString));
 				}
 
 			}
