@@ -19,19 +19,20 @@ import static com.wl4g.devops.shell.utils.Types.*;
 public abstract class SupportUtils {
 
 	/**
-	 * All attribute values of beans filled with the same class.
+	 * Execute a copy from the source object to the target object. Note that it
+	 * will deeply recurse all parent or superclass and application property
+	 * fields, and only contain fields annotated with {@link ShellOption}
 	 * 
 	 * @param target
 	 *            target the target bean
 	 * @param source
 	 *            the source bean
 	 */
-	public static <T> void copyOptionBean(T target, T source) {
-
+	public static <T> void copyOptionsProperties(T target, T source) {
 		try {
 			copyFullProperties(target, source, new FieldFilter() {
 				@Override
-				public boolean match(Field f, Object targetProperty, Object sourceProperty) {
+				public boolean match(Field f, Object sourcePropertyValue) {
 					if (isBaseType(f.getType())) {
 						int mod = f.getModifiers();
 						return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(mod);

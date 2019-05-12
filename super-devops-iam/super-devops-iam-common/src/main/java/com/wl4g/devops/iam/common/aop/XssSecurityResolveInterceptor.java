@@ -149,7 +149,7 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 
 		copyFullProperties(argument, argument, new FieldFilter() {
 			@Override
-			public boolean match(Field f, Object targetProperty, Object sourceProperty) {
+			public boolean match(Field f, Object sourceProperty) {
 				Class<?> clazz = f.getType();
 				int mod = f.getModifiers();
 				return String.class.isAssignableFrom(clazz) && !isFinal(mod) && !isStatic(mod) && !isTransient(mod)
@@ -157,11 +157,11 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 			}
 		}, new FieldCopyer() {
 			@Override
-			public void doCopy(Object target, Field tf, Field sf, Object targetPropertyValue, Object sourcePropertyValue)
+			public void doCopy(Object target, Field tf, Field sf, Object sourcePropertyValue)
 					throws IllegalArgumentException, IllegalAccessException {
-				if (targetPropertyValue != null) {
+				if (sourcePropertyValue != null) {
 					makeAccessible(tf);
-					tf.set(target, resolver.doResolve(controller, method, index, (String) targetPropertyValue));
+					tf.set(target, resolver.doResolve(controller, method, index, (String) sourcePropertyValue));
 				}
 			}
 		});
