@@ -18,8 +18,6 @@ package com.wl4g.devops.common.utils.bean;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,6 +25,8 @@ import java.util.Map;
 
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+
+import static com.wl4g.devops.common.utils.reflect.Types.*;
 
 /**
  * Bean and Map Convert.
@@ -37,30 +37,6 @@ import org.springframework.util.ReflectionUtils;
  * @since
  */
 public final class BeanMapConvert {
-	final private static Collection<Class<?>> nativeClasss = new ArrayList<>();
-	final private static Collection<String> nativePackage = new ArrayList<>();
-
-	static {
-		nativeClasss.add(int.class);
-		nativeClasss.add(long.class);
-		nativeClasss.add(double.class);
-		nativeClasss.add(float.class);
-		nativeClasss.add(byte.class);
-		nativeClasss.add(String.class);
-		nativeClasss.add(Integer.class);
-		nativeClasss.add(Long.class);
-		nativeClasss.add(Double.class);
-		nativeClasss.add(Float.class);
-		nativeClasss.add(Byte.class);
-		nativeClasss.add(Class.class);
-		nativePackage.add("com.sun.");
-		nativePackage.add("sun.");
-		nativePackage.add("java.");
-		nativePackage.add("javax.");
-		nativePackage.add("jdk.");
-		nativePackage.add("javafx.");
-		nativePackage.add("oracle.");
-	}
 
 	private Object bean;
 
@@ -79,10 +55,10 @@ public final class BeanMapConvert {
 	}
 
 	public Map<String, Object> getBeanMap() {
-		return Collections.unmodifiableMap(getDeepBeanMap(null, this.getObject(), new LinkedHashMap<String, Object>()));
+		return Collections.unmodifiableMap(doWithDeepFields(null, this.getObject(), new LinkedHashMap<String, Object>()));
 	}
 
-	private Map<String, Object> getDeepBeanMap(String memberOfParent, Object obj, Map<String, Object> ret) {
+	private Map<String, Object> doWithDeepFields(String memberOfParent, Object obj, Map<String, Object> properties) {
 		Assert.notNull(obj, "The obj argument must be null");
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
@@ -92,17 +68,17 @@ public final class BeanMapConvert {
 				// Filter class property
 				if (!memberName.equals("class")) {
 					Object value = ReflectionUtils.invokeMethod(property.getReadMethod(), obj);
-					if (isNativeClass(property.getPropertyType())) {
-						ret.put(links(memberOfParent, memberName), value);
+					if (isBaseType(property.getPropertyType())) {
+						properties.put(link(memberOfParent, memberName), value);
 					} else {
-						this.getDeepBeanMap(memberName, value, ret);
+						this.doWithDeepFields(memberName, value, properties);
 					}
 				}
 			}
 		} catch (Throwable e) {
 			throw new IllegalStateException(e);
 		}
-		return ret;
+		return properties;
 	}
 
 	public Object getObject() {
@@ -134,15 +110,11 @@ public final class BeanMapConvert {
 		return uri.toString();
 	}
 
-	private static String links(String memberOfParent, String memberName) {
+	private static String link(String memberOfParent, String memberName) {
 		if (memberOfParent != null && !memberOfParent.equalsIgnoreCase("null")) {
 			return memberOfParent + "." + memberName;
 		}
 		return memberName;
-	}
-
-	private static boolean isNativeClass(Class<?> clazz) {
-		return nativeClasss.contains(clazz) || nativePackage.contains(clazz.getName());
 	}
 
 }

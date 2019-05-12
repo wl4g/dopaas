@@ -999,10 +999,10 @@ public abstract class ReflectionUtils2 {
 		 * 
 		 * @param attach
 		 * @param f
-		 * @param property
+		 * @param propertyValue
 		 * @return
 		 */
-		boolean match(Object attach, Field f, Object property);
+		boolean match(Object attach, Field f, Object propertyValue);
 	}
 
 	/**
@@ -1041,8 +1041,8 @@ public abstract class ReflectionUtils2 {
 	 */
 	public static void doWithFullFields(Object obj, FieldFilter2 ff, FieldCallback2 fc)
 			throws IllegalArgumentException, IllegalAccessException {
-		if (ff == null || obj == null) {
-			throw new IllegalArgumentException("Object and field filter must not be null");
+		if (obj == null || ff == null || fc == null) {
+			throw new IllegalArgumentException("Object and field filter, field callback must not be null");
 		}
 
 		Class<?> cls = obj.getClass();
@@ -1067,8 +1067,8 @@ public abstract class ReflectionUtils2 {
 	 */
 	public static void doWithDeepFields(Class<?> hierarchyClass, Object obj, FieldFilter2 ff, FieldCallback2 fc)
 			throws IllegalArgumentException, IllegalAccessException {
-		if (ff == null) {
-			throw new IllegalArgumentException("Field filter must not be null");
+		if (hierarchyClass == null || ff == null || fc == null) {
+			throw new IllegalArgumentException("Hierarchy class and field filter, field callback must not be null");
 		}
 		if (obj == null) {
 			return;
@@ -1077,18 +1077,18 @@ public abstract class ReflectionUtils2 {
 		// Recursive traversal matching and processing
 		for (Field f : getDeclaredFields(hierarchyClass)) {
 			f.setAccessible(true);
-			Object property = f.get(obj);
+			Object propertyValue = f.get(obj);
 
-			if (isBaseType(f.getType())) { // Based type?
+			// Base or general collection type?
+			if (isBaseType(f.getType()) || isGeneralSetType(f.getType())) {
 				// Filter matching property
-				int mod = f.getModifiers();
-				if (ff.match(obj, f, property) && isSafetyModifier(mod)) {
+				if (ff.match(obj, f, propertyValue)) {
 					if (fc != null) {
-						fc.doWith(obj, f, property);
+						fc.doWith(obj, f, propertyValue);
 					}
 				}
 			} else {
-				doWithDeepFields(f.getType(), property, ff, fc);
+				doWithDeepFields(f.getType(), propertyValue, ff, fc);
 			}
 		}
 

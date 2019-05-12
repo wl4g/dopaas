@@ -32,6 +32,7 @@ import com.wl4g.devops.shell.utils.ReflectionUtils2.FieldFilter2;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
+import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
 import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
 import com.wl4g.devops.shell.utils.ResultFormatter;
@@ -139,7 +140,7 @@ public abstract class AbstractActuator implements Actuator {
 		// Method arguments
 		List<Object> args = new ArrayList<>();
 
-		tm.getParameters().forEach(parameter -> {
+		for (TargetParameter parameter : tm.getParameters()) {
 			// See: TargetMethodWrapper#initialize
 			try {
 				// To javaBean parameter
@@ -184,7 +185,7 @@ public abstract class AbstractActuator implements Actuator {
 			} catch (Throwable e) {
 				throw new IllegalStateException(e);
 			}
-		});
+		}
 
 		return args.toArray();
 	}

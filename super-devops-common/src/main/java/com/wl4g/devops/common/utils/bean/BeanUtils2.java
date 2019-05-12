@@ -122,7 +122,9 @@ public abstract class BeanUtils2 extends BeanUtils {
 				if (fc != null) {
 					fc.doCopy(target, tf, sf, sourcePropertyValue);
 				}
-			} else if (isBaseType(tf.getType())) { // Based type?
+			}
+			// Base or general collection type?
+			else if (isBaseType(tf.getType()) || isGeneralSetType(tf.getType())) {
 				// [MARK2] Filter matching property
 				if (sourcePropertyValue != null && ff.match(tf, sourcePropertyValue)) {
 					if (fc != null) {

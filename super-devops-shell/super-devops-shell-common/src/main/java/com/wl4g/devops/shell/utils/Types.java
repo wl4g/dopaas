@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Java class type processing tool
@@ -79,6 +80,17 @@ public abstract class Types {
 	 */
 	public final static boolean isBaseType(Class<?> clazz) {
 		return clazz.isPrimitive() || nativeClasses.contains(clazz) || nativePackages.contains(clazz.getName());
+	}
+
+	/**
+	 * Is general collection classes type?</br>
+	 * Contains: Map,Collection,Array
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public final static boolean isGeneralSetType(Class<?> clazz) {
+		return Map.class.isAssignableFrom(clazz) || Collection.class.isAssignableFrom(clazz) || clazz.isArray();
 	}
 
 	/**
