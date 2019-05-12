@@ -95,7 +95,7 @@ public abstract class BeanUtils2 extends BeanUtils {
 				sourcePropertyValue = sf.get(source);
 			}
 
-			// If the source is not null and the target is empty, the source can
+			// If the source is not null and the target is null, the source can
 			// be assigned directly to the target.
 			if (targetPropertyValue == null) {
 				if (fc != null) {

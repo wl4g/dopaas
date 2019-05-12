@@ -140,8 +140,8 @@ public class ResultFormatter {
 
 		HelpFormatter fmt = new HelpFormatter();
 		fmt.setSyntaxPrefix("Usage: ");
-		String hit = (options != null && !options.getOptions().isEmpty()) ? "<[OPTIONS ...]> <VALUE>" : EMPTY;
-		fmt.printHelp(pw, 160, String.format("%s %s  %s", argname, hit, help), null, options, 2, fmt.getDescPadding(), null,
+		String hit = (options != null && !options.getOptions().isEmpty()) ? "[OPTIONS ...]" : EMPTY;
+		fmt.printHelp(pw, 128, String.format("%s %s\n  %s", argname, hit, help), null, options, 2, fmt.getDescPadding(), null,
 				false);
 		pw.flush();
 
