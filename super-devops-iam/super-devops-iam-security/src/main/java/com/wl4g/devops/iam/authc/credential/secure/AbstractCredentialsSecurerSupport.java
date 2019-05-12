@@ -37,8 +37,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SECURER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_PUBKEY_IDX;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_KEYPAIRS;
+import static com.wl4g.devops.common.utils.codec.CheckSums.*;
 
-import com.wl4g.devops.common.utils.codec.CheckSums;
 import com.wl4g.devops.iam.authc.credential.secure.Cryptos.KeySpecPair;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -213,7 +213,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		// Determine which hashing algorithm to use
 		final String[] hashAlgorithms = config.getHashAlgorithms();
 		final int size = hashAlgorithms.length;
-		final long index = CheckSums.crc32(salt.getBytes()) % size & (size - 1);
+		final long index = crc32(salt.getBytes()) % size & (size - 1);
 		final String algorithm = hashAlgorithms[(int) index];
 		final int hashIters = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
 
