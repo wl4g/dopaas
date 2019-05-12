@@ -19,18 +19,18 @@ import java.io.Serializable;
 
 import com.wl4g.devops.shell.annotation.PropertyDescription;
 
-public class AdditionResult implements Serializable {
+public class SumResult implements Serializable {
 
 	private static final long serialVersionUID = -3398687888016885699L;
 
 	@PropertyDescription("Addition sum")
 	private int sum;
 
-	public AdditionResult() {
+	public SumResult() {
 		super();
 	}
 
-	public AdditionResult(int sum) {
+	public SumResult(int sum) {
 		super();
 		this.sum = sum;
 	}

@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.shell.service;
 
-import com.wl4g.devops.shell.bean.AdditionArgument;
-import com.wl4g.devops.shell.bean.AdditionResult;
+import com.wl4g.devops.shell.bean.SumArgument;
+import com.wl4g.devops.shell.bean.SumResult;
 
 public interface ExampleService {
 
-	AdditionResult add(AdditionArgument add);
+	SumResult add(SumArgument add);
 
 }
