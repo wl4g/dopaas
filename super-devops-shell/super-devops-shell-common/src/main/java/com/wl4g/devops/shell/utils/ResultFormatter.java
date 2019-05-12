@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import static com.wl4g.devops.shell.utils.Types.*;
 import com.wl4g.devops.shell.annotation.PropertyDescription;
@@ -119,7 +119,7 @@ public class ResultFormatter {
 	 * @return
 	 */
 	public final static String getUsageFormat(String argname, Options options) {
-		return getUsageFormat(argname, options, StringUtils.EMPTY);
+		return getUsageFormat(argname, options, EMPTY);
 	}
 
 	/**
@@ -133,15 +133,15 @@ public class ResultFormatter {
 	public final static String getUsageFormat(String argname, Options options, String help) {
 		Assert.hasText(argname, "Argname is empty");
 		Assert.notNull(options, String.format("No command: '%s' args options", argname));
-		help = StringUtils.trimToEmpty(help);
+		help = trimToEmpty(help);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		PrintWriter pw = new PrintWriter(out);
 
 		HelpFormatter fmt = new HelpFormatter();
 		fmt.setSyntaxPrefix("Usage: ");
-		String hit = (options != null && !options.getOptions().isEmpty()) ? "<[OPTIONS ...]> <VALUE>" : "[NO OPTIONS]";
-		fmt.printHelp(pw, 128, String.format("%s %s  %s", argname, hit, help), null, options, 2, fmt.getDescPadding(), null,
+		String hit = (options != null && !options.getOptions().isEmpty()) ? "<[OPTIONS ...]> <VALUE>" : EMPTY;
+		fmt.printHelp(pw, 160, String.format("%s %s  %s", argname, hit, help), null, options, 2, fmt.getDescPadding(), null,
 				false);
 		pw.flush();
 
