@@ -151,7 +151,9 @@ public abstract class AbstractActuator implements Actuator {
 					doWithFullFields(paramBean, new FieldFilter2() {
 						@Override
 						public boolean match(Object attach, Field f, Object property) {
-							return beanMap.containsKey(f.getName());
+							// [MARK3], See:[SupportUtils.MARK0]
+							int mod = f.getModifiers();
+							return beanMap.containsKey(f.getName()) && isSafetyModifier(mod);
 						}
 					}, new FieldCallback2() {
 						@Override
