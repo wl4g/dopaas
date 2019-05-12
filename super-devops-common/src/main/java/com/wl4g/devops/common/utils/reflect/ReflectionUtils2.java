@@ -1074,7 +1074,8 @@ public abstract class ReflectionUtils2 {
 			f.setAccessible(true);
 			Object propertyValue = f.get(obj);
 
-			if (isBaseType(f.getType())) { // Based type?
+			// Base or general collection type?
+			if (isBaseType(f.getType()) || isGeneralSetType(f.getType())) {
 				// Filter matching property
 				if (ff.match(obj, f, propertyValue)) {
 					if (fc != null) {
