@@ -2,12 +2,10 @@ package com.wl4g.devops.shell.utils;
 
 import java.lang.reflect.Field;
 
-import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldCopyer;
 import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.*;
 import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
-import static com.wl4g.devops.shell.utils.Types.*;
 
 /**
  * Shell CLI server support utility tools
@@ -33,13 +31,10 @@ public abstract class SupportUtils {
 			copyFullProperties(target, source, new FieldFilter() {
 				@Override
 				public boolean match(Field f, Object sourcePropertyValue) {
-					if (isBaseType(f.getType())) {
-						int mod = f.getModifiers();
-						return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(mod);
-					}
-					return false;
+					// [MARK0], See:[AbstractActuator.MARK3]
+					int mod = f.getModifiers();
+					return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(mod);
 				}
-			}, new FieldCopyer() {
 			});
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new IllegalStateException(e);
