@@ -18,11 +18,12 @@ package com.wl4g.devops.shell.command;
 import static java.lang.System.*;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.commons.cli.Options;
 import org.jline.terminal.Terminal;
@@ -49,6 +50,11 @@ import static com.wl4g.devops.shell.utils.ResultFormatter.getUsageFormat;
 public class DefaultInternalCommand extends InternalCommand {
 
 	/**
+	 * Default internal commands.
+	 */
+	final public static String DEFAULT_GROUP = "Default Internal Commands";
+
+	/**
 	 * Current read line strings.
 	 */
 	final private static ThreadLocal<String> lineCache = new InheritableThreadLocal<>();
@@ -70,13 +76,13 @@ public class DefaultInternalCommand extends InternalCommand {
 		Assert.notNull(registry, "Registry must not be null");
 	}
 
-	@ShellMethod(keys = { INTERNAL_STACKTRACE, INTERNAL_ST }, group = "Default internal group", help = "Exit current process")
+	@ShellMethod(keys = { INTERNAL_STACKTRACE, INTERNAL_ST }, group = DEFAULT_GROUP, help = "Exit current process")
 	public void stacktrace() {
 		err.println(runner.getLastStacktrace());
 	}
 
 	@ShellMethod(keys = { INTERNAL_QUIT, INTERNAL_QU, INTERNAL_EXIT,
-			INTERNAL_EX }, group = "Default internal group", help = "Exit current process")
+			INTERNAL_EX }, group = DEFAULT_GROUP, help = "Exit current process")
 	public void exit() {
 		runner.shutdown(EMPTY);
 	}
@@ -85,15 +91,14 @@ public class DefaultInternalCommand extends InternalCommand {
 	 * See:<a href=
 	 * "https://github.com/jline/jline3/issues/183">https://github.com/jline/jline3/issues/183</a>
 	 */
-	@ShellMethod(keys = { INTERNAL_CLEAR, INTERNAL_CLS }, group = "Default internal group", help = "Clean up console history")
+	@ShellMethod(keys = { INTERNAL_CLEAR, INTERNAL_CLS }, group = DEFAULT_GROUP, help = "Clean up console history")
 	public void clear() {
 		Terminal terminal = runner.getLineReader().getTerminal();
 		terminal.puts(Capability.clear_screen);
 		terminal.flush();
 	}
 
-	@ShellMethod(keys = { INTERNAL_HISTORY,
-			INTERNAL_HIS }, group = "Default internal group", help = "View commands execution history")
+	@ShellMethod(keys = { INTERNAL_HISTORY, INTERNAL_HIS }, group = DEFAULT_GROUP, help = "View commands execution history")
 	public String history() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
 
@@ -111,8 +116,7 @@ public class DefaultInternalCommand extends InternalCommand {
 	 * 
 	 * @return
 	 */
-	@ShellMethod(keys = { INTERNAL_HELP,
-			INTERNAL_HE }, group = "Default internal group", help = "View supported commands help information")
+	@ShellMethod(keys = { INTERNAL_HELP, INTERNAL_HE }, group = DEFAULT_GROUP, help = "View supported commands help information")
 	public String help() {
 		try {
 			StringBuffer helpString = new StringBuffer();
@@ -129,7 +133,16 @@ public class DefaultInternalCommand extends InternalCommand {
 				// Processing for e.g. add --help
 				else {
 					// Help options
-					Map<String, HelpGroupWrapper> helpGroup = new HashMap<>();
+					Map<String, HelpGroupWrapper> helpGroup = new TreeMap<>(new Comparator<String>() {
+						@Override
+						public int compare(String o1, String o2) {
+							// Default built-in commands group rank first.
+							if (equalsAnyIgnoreCase(DEFAULT_GROUP, o1, o2)) {
+								return 1;
+							}
+							return o1.compareTo(o2);
+						}
+					});
 
 					// Transform to group options
 					for (Entry<String, HelpOptions> ent : registry.getHelpOptions().entrySet()) { // [MARK0]
