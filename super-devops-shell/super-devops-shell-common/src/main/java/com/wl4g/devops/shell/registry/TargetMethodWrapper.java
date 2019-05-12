@@ -29,6 +29,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
+import com.wl4g.devops.shell.cli.HelpOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 import com.wl4g.devops.shell.utils.Assert;
@@ -179,9 +180,9 @@ public class TargetMethodWrapper implements Serializable {
 				Assert.isTrue(isAlpha(opt.lopt().substring(0, 1)), String
 						.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), getMethod()));
 
-				boolean required = isBlank(opt.defaultValue());
 				// See:[com.wl4g.devops.shell.command.DefaultInternalCommand.MARK0]
-				Option option = new Option(opt.opt(), opt.lopt(), required, opt.help());
+				Option option = new HelpOption(opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
+
 				// [MARK0] Native type parameter field name is null
 				// See:[AbstractActuator.MARK3]
 				parameter.getAttributes().put(option, null);
