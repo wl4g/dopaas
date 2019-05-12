@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 
-public class AdditionArgument implements Serializable {
+public class SumArgument implements Serializable {
 
 	private static final long serialVersionUID = -90377698662015272L;
 
@@ -29,11 +29,11 @@ public class AdditionArgument implements Serializable {
 	@ShellOption(opt = "b", lopt = "add2", help = "被加数（默认：1）", defaultValue = "1")
 	private int add2;
 
-	public AdditionArgument() {
+	public SumArgument() {
 		super();
 	}
 
-	public AdditionArgument(int add1, int add2) {
+	public SumArgument(int add1, int add2) {
 		super();
 		this.add1 = add1;
 		this.add2 = add2;

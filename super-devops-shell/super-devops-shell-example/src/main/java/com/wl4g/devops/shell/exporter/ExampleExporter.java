@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
-import com.wl4g.devops.shell.bean.AdditionArgument;
-import com.wl4g.devops.shell.bean.AdditionResult;
+import com.wl4g.devops.shell.bean.SumArgument;
+import com.wl4g.devops.shell.bean.SumResult;
 import com.wl4g.devops.shell.service.ExampleService;
 
 @ShellComponent
@@ -34,15 +34,15 @@ public class ExampleExporter {
 	@Autowired
 	private ExampleService exampleService;
 
-	@ShellMethod(keys = { "add" }, group = "Example command", help = "Addition (Shell method using java bean parameters)")
-	public AdditionResult add(AdditionArgument add) {
-		return exampleService.add(add);
+	@ShellMethod(keys = { "sum" }, group = "Example command", help = "Summation (Shell method using java bean parameters)")
+	public SumResult sum(SumArgument arg) {
+		return exampleService.add(arg);
 	}
 
-	@ShellMethod(keys = { "add1" }, group = "Example command", help = "Addition (Shell method using native parameters)")
-	public AdditionResult add1(@ShellOption(opt = "a", lopt = "add1", help = "加数") int a,
+	@ShellMethod(keys = { "sum2" }, group = "Example command", help = "Summation (Shell method using native parameters)")
+	public SumResult sum2(@ShellOption(opt = "a", lopt = "add1", help = "加数") int a,
 			@ShellOption(opt = "b", lopt = "add2", help = "被加数（默认：1）", defaultValue = "1") int b) {
-		return exampleService.add(new AdditionArgument(a, b));
+		return exampleService.add(new SumArgument(a, b));
 	}
 
 }
