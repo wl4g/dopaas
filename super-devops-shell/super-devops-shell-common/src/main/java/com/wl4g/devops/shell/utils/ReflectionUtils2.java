@@ -21,7 +21,6 @@ import static java.lang.reflect.Modifier.isStatic;
 import static java.lang.reflect.Modifier.isSynchronized;
 import static java.lang.reflect.Modifier.isTransient;
 import static java.lang.reflect.Modifier.isVolatile;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -40,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.cli.Option;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
+import com.wl4g.devops.shell.cli.HelpOption;
 
 import static com.wl4g.devops.shell.utils.Types.*;
 
@@ -1128,12 +1128,12 @@ public abstract class ReflectionUtils2 {
 		try {
 			for (Field f : clazz.getDeclaredFields()) {
 				String fname = f.getName();
-				ShellOption sp = f.getAnnotation(ShellOption.class);
+				ShellOption opt = f.getAnnotation(ShellOption.class);
 
 				// Filter class property
-				if (!fname.equals("class") && sp != null) {
+				if (!fname.equals("class") && opt != null) {
 					if (isBaseType(f.getType())) {
-						Option option = new Option(sp.opt(), sp.lopt(), isBlank(sp.defaultValue()), sp.help());
+						Option option = new HelpOption(opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
 						attributes.put(option, fname);
 					} else {
 						extFlatParams(f.getType(), attributes);
