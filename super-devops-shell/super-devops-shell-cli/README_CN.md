@@ -16,10 +16,10 @@ mvn clean install -DskipTests
 指定服务端的端口，然后作为客户端运行：
 
 ```
-java -Dservport=60120 -jar shell-cli-master-executable.jar
+java -Dservpoint=60120 -jar shell-cli-master-executable.jar
 ```
 
-在上面的命令中-dservpoint=10.0.0.160:60120表示要连接的SpringCloud服务侦听地址和端口。
+在上面的命令中-Dservpoint=10.0.0.160:60120表示要连接的SpringCloud服务侦听地址和端口。
 
 ### 方式二:（适用于本地模式，通常作为应用服务的内置控制台使用）
 	
