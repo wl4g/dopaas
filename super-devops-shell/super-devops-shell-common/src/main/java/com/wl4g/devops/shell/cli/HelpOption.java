@@ -16,6 +16,10 @@
 package com.wl4g.devops.shell.cli;
 
 import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.commons.cli.Option;
 
 /**
@@ -32,13 +36,24 @@ public class HelpOption extends Option {
 		super(opt, longOpt, hasArg, description);
 	}
 
-	public HelpOption(String opt, String longOpt, String defaultValue, String description) throws IllegalArgumentException {
-		super(opt, longOpt, true, description);
+	public HelpOption(Class<?> paramType, String opt, String longOpt, String defaultValue, String description)
+			throws IllegalArgumentException {
+		super(opt, longOpt, true, null);
 		setRequired(isBlank(defaultValue));
 		if (!isRequired()) {
 			setArgName("default=" + defaultValue);
 		} else {
 			setArgName("required");
+		}
+
+		// [MARK0]: Special example hints are required for list/set/array and
+		// map types. See:com.wl4g.devops.shell.utils.Types#simpleSetConvert
+		if (Collection.class.isAssignableFrom(paramType) || paramType.isArray()) {
+			setDescription(String.format("%s\t(e.g. arg1 --list x1,x2... )", description));
+		} else if (Map.class.isAssignableFrom(paramType)) {
+			setDescription(String.format("%s\t(e.g. arg1 --map x1=y1,x2=y2... )", description));
+		} else {
+			setDescription(description);
 		}
 	}
 
