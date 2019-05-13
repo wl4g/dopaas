@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 import org.slf4j.Logger;
@@ -220,7 +219,6 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					try {
 						Thread.sleep(200L);
 					} catch (InterruptedException e) {
-						log.error(EMPTY, e);
 					}
 				}
 			}
