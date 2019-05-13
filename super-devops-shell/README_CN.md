@@ -46,7 +46,7 @@ java -Dservpids=19767,32374 -Dprompt=console -jar shell-cli-master-executable.ja
 - exit/ex/quit/qu    退出控制台
 - history/his    查看历史命令（持久文件：$USER_HOME/.devops/shell/history）
 - stacktrace/st    查看上一次异常的堆栈信息（若有）
-- help/he    使用帮助，如：help、help add、add --help、add --he 其中add为一个计算和的命令
+- help/he    使用帮助，用法如：help/help sumTest/sumTest --help/sumTest --he/  其中 sumTest 为一个求和的测试命令
 
 ## 自定义命令
 
