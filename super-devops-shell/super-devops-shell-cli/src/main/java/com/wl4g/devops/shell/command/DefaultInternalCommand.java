@@ -181,6 +181,8 @@ public class DefaultInternalCommand extends InternalCommand {
 	 * @param helpString
 	 */
 	private void appendHelp(String group, HelpGroupWrapper wrap, StringBuffer helpString) {
+		Assert.state(wrap != null, "Internal error, help group is null, please check the server's log");
+
 		helpString.append("\n----- " + group + " -----\n\n");
 		for (HelpMethod hm : wrap.getHelpMethods()) {
 			helpString.append(getHelpFormat(hm.getArgname(), hm.getOptions(), hm.getHelp()));
@@ -192,6 +194,7 @@ public class DefaultInternalCommand extends InternalCommand {
 				helpString.append("\n");
 			}
 		}
+
 	}
 
 	/**
