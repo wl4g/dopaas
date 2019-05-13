@@ -478,7 +478,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					try {
 						Thread.sleep(200L);
 					} catch (InterruptedException e) {
-						runner.printErr(EMPTY, e);
 					}
 				}
 			}
