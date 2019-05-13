@@ -159,6 +159,7 @@ public abstract class LineUtils {
 		StringBuffer newLine = new StringBuffer();
 		String args[] = split(line, " ");
 
+		// e.g. arg1 -l x1, x2 -m a1=b1, a2 = b2 -p aa1=bb1,aa2= bb2 -s x3, , x4
 		if (args.length > 2) {
 			for (String arg : args) {
 				if (startsWith(arg, "-")) {
@@ -170,7 +171,7 @@ public abstract class LineUtils {
 				}
 			}
 		}
-		// help mycmd/mycmd --help
+		// e.g. help mycmd/mycmd --help
 		else {
 			newLine.append(line);
 		}
