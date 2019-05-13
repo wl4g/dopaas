@@ -50,5 +50,5 @@ command for computing sum
 
 ## Custom commands
 
-(For example, see:)[super-devops-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java]
+(For example, see:)[super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java]
 	
