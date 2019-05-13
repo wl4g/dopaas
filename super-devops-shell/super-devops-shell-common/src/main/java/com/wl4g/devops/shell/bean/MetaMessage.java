@@ -21,36 +21,36 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
- * Commands message
+ * Meta config/commands message
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月4日
  * @since
  */
-public class CommandMessage extends Message {
+public class MetaMessage extends Message {
 	private static final long serialVersionUID = -8574315246731909685L;
 
 	/**
 	 * Shell component target methods
 	 */
-	final private Map<String, TargetMethodWrapper> registed = new ConcurrentHashMap<>(16);
+	final private Map<String, TargetMethodWrapper> registedMethods = new ConcurrentHashMap<>(16);
 
-	public CommandMessage() {
+	public MetaMessage() {
 	}
 
-	public CommandMessage(Map<String, TargetMethodWrapper> wrapper) {
+	public MetaMessage(Map<String, TargetMethodWrapper> wrapper) {
 		if (wrapper != null) {
-			this.registed.putAll(wrapper);
+			this.registedMethods.putAll(wrapper);
 		}
 	}
 
-	public Map<String, TargetMethodWrapper> getRegisted() {
-		return registed;
+	public Map<String, TargetMethodWrapper> getRegistedMethods() {
+		return registedMethods;
 	}
 
 	@Override
 	public String toString() {
-		return "CommandMessage [wrapper=" + registed + "]";
+		return "CommandMessage [wrapper=" + registedMethods + "]";
 	}
 
 }

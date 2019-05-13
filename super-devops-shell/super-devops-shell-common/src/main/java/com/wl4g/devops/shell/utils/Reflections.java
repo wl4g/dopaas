@@ -289,7 +289,7 @@ public abstract class Reflections {
 				if (isSafetyModifier(f.getModifiers()) && opt != null) {
 					// MARK1, See:[AbstractActuator.MARK5]
 					if (isBaseType(f.getType()) || isGeneralSetType(f.getType())) {
-						Option option = new HelpOption(opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
+						Option option = new HelpOption(f.getType(), opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
 						attributes.put(option, fname);
 					} else {
 						extFlatParams(f.getType(), attributes);

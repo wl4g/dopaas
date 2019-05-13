@@ -20,7 +20,6 @@ import static org.apache.commons.lang3.StringUtils.*;
 import com.wl4g.devops.shell.config.Configuration;
 
 import org.jline.reader.UserInterruptException;
-import org.jline.utils.AttributedString;
 
 /**
  * Interactive shell component runner
@@ -31,8 +30,8 @@ import org.jline.utils.AttributedString;
  */
 public class InteractiveRunner extends AbstractRunner {
 
-	public InteractiveRunner(Configuration config, AttributedString attributed) {
-		super(config, attributed);
+	public InteractiveRunner(Configuration config) {
+		super(config);
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class InteractiveRunner extends AbstractRunner {
 			String line = null;
 			try {
 				// Read line
-				line = lineReader.readLine(attributed.toAnsi(lineReader.getTerminal()));
+				line = lineReader.readLine(getAttributed().toAnsi(lineReader.getTerminal()));
 
 				// Submission processing
 				if (isNotBlank(line)) {
@@ -52,6 +51,12 @@ public class InteractiveRunner extends AbstractRunner {
 				shutdown(line);
 			} catch (Throwable e) {
 				printErr(EMPTY, e);
+			} finally {
+				try {
+					Thread.sleep(200L);
+				} catch (InterruptedException e) {
+					printErr(EMPTY, e);
+				}
 			}
 		}
 	}

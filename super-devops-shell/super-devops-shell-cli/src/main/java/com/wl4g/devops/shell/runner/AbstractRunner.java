@@ -44,7 +44,7 @@ import static com.wl4g.devops.shell.utils.LineUtils.*;
 import static com.wl4g.devops.shell.annotation.ShellOption.*;
 import com.wl4g.devops.shell.command.DefaultInternalCommand;
 import com.wl4g.devops.shell.AbstractActuator;
-import com.wl4g.devops.shell.bean.CommandMessage;
+import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
@@ -77,19 +77,24 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	final public static String ARG_SERV_POINT = "servpoint";
 
 	/**
+	 * Commands prompt string.
+	 */
+	final public static String ARG_PROMPT = "prompt";
+
+	/**
 	 * Enable debugging
 	 */
 	final public static boolean DEBUG = System.getProperty("debug") != null;
 
 	/**
+	 * Attributed string
+	 */
+	final public static AttributedString DEFAULT_ATTRIBUTED = new AttributedString("console> ");
+
+	/**
 	 * Shell configuration
 	 */
 	final protected Configuration config;
-
-	/**
-	 * Attributed string
-	 */
-	final protected AttributedString attributed;
 
 	/**
 	 * Line reader
@@ -106,16 +111,14 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 */
 	private String stacktraceAsString;
 
-	public AbstractRunner(Configuration config, AttributedString attributed) {
+	public AbstractRunner(Configuration config) {
 		super(getSingle());
 		Assert.notNull(config, "configuration is null, please check configure");
-		Assert.notNull(attributed, "attributedString is null, please check configure");
 		this.config = config;
-		this.attributed = attributed;
 
 		// Build lineReader
 		try {
-			this.lineReader = LineReaderBuilder.builder().appName("DevOps Shell").completer(new DynamicCompleter(getSingle()))
+			this.lineReader = LineReaderBuilder.builder().appName("DevOps Shell Cli").completer(new DynamicCompleter(getSingle()))
 					.terminal(TerminalBuilder.terminal()).build();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
@@ -224,6 +227,16 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	}
 
 	/**
+	 * Get line attributed.
+	 * 
+	 * @return
+	 */
+	protected AttributedString getAttributed() {
+		String prompt = getProperty(ARG_PROMPT);
+		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(String.format("%s> ", prompt));
+	}
+
+	/**
 	 * Initialization runner
 	 */
 	private void initialize() {
@@ -232,7 +245,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 		// Initialize remote register commands
 		try {
-			submit(new CommandMessage());
+			submit(new MetaMessage());
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
@@ -451,9 +464,9 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 						function.apply(result.getContent());
 					}
 					// Merge remote target methods commands
-					else if (input instanceof CommandMessage) {
-						CommandMessage cmd = (CommandMessage) input;
-						getSingle().merge(cmd.getRegisted());
+					else if (input instanceof MetaMessage) {
+						MetaMessage meta = (MetaMessage) input;
+						getSingle().merge(meta.getRegistedMethods());
 					}
 
 				} catch (SocketException e) {
@@ -461,6 +474,12 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					close();
 				} catch (Throwable e) {
 					runner.printErr(EMPTY, e);
+				} finally {
+					try {
+						Thread.sleep(200L);
+					} catch (InterruptedException e) {
+						runner.printErr(EMPTY, e);
+					}
 				}
 			}
 		}

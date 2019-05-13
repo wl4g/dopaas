@@ -168,6 +168,7 @@ public abstract class Types {
 					throw new IllegalStateException(String.format("No support bean class field type: %s", fieldClazz));
 				}
 
+				// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
 				for (String ele : split(trimToEmpty(value), ",")) {
 					if (isNotBlank(ele)) {
 						String[] kv = split(trimToEmpty(ele), "=");
@@ -190,6 +191,7 @@ public abstract class Types {
 					throw new IllegalStateException(String.format("No support bean class field type: %s", fieldClazz));
 				}
 
+				// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
 				for (String ele : split(trimToEmpty(value), ",")) {
 					if (isNotBlank(ele)) {
 						set.add(ele);

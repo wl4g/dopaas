@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.shell.bean.CommandMessage;
+import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
@@ -200,9 +201,9 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 						result = new ResultMessage(function.apply(line.getLine()).toString());
 					}
 					// Request registed commands
-					else if (input instanceof CommandMessage) {
+					else if (input instanceof MetaMessage) {
 						// Write registed target methods commands
-						result = new CommandMessage(registry.getTargetMethods());
+						result = new MetaMessage(registry.getTargetMethods());
 					}
 
 					// Echo
@@ -212,8 +213,15 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 						}
 						writeAndFlush(result);
 					}
+
 				} catch (Throwable th) {
 					handleThorws(th);
+				} finally {
+					try {
+						Thread.sleep(200L);
+					} catch (InterruptedException e) {
+						log.error(EMPTY, e);
+					}
 				}
 			}
 		}

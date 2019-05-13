@@ -28,11 +28,12 @@ java -Dservpoint=60120 -jar shell-cli-master-executable.jar
 的端口（默认匹配范围60100-60200）
 
 ```
-java -Dservpids=19767,32374 -jar shell-cli-master-executable.jar 
+java -Dservpids=19767,32374 -Dprompt=console -jar shell-cli-master-executable.jar 
 ```
+
 上面的命令中 -Dservpids 表示要连接的SpringCloud服务的进程号列表，它会依据pids在本地自动查找服务的端口，然后建立连接.
 若没有报未找到pids的服务端的端口（通常都不会报此错误），则可以尝试增加-Ddebug参数调试，或者直接使用上述 [方式一](#方式一) 
-（-Dservpoint） 显示指定服务端点。
+（-Dservpoint） 显示指定服务端点，其中使用 -Dprompt 来设置shell控制台的命令行提示符。
 
 ## 特性
 
