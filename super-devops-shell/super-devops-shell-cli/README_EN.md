@@ -14,10 +14,10 @@ mvn clean install -DskipTests
 Specify the port of the service, and then run directly as a client:
 
 ```
-java -Dservport=10.0.0.160:60120 -jar shell-cli-master-executable.jar
+java -Dservpoint=10.0.0.160:60120 -jar shell-cli-master-executable.jar
 ```
 	
-In the above command - Dservpoint = 10.0.0.160:60120 indicates the Spring Cloud service 
+In the above command -Dservpoint=10.0.0.160:60120 indicates the Spring Cloud service 
 listening address and port to connect to.
 
 ### Way2:(For local mode, usually used as a built-in console for application services)
