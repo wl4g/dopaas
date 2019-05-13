@@ -51,11 +51,6 @@ public class InteractiveRunner extends AbstractRunner {
 				shutdown(line);
 			} catch (Throwable e) {
 				printErr(EMPTY, e);
-			} finally {
-				try {
-					Thread.sleep(200L);
-				} catch (InterruptedException e) {
-				}
 			}
 		}
 	}
