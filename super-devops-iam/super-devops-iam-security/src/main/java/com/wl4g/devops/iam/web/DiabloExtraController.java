@@ -15,20 +15,6 @@
  */
 package com.wl4g.devops.iam.web;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.google.common.base.Charsets;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
@@ -41,28 +27,34 @@ import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
-import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
-import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
-import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCauseMessage;
-import static com.wl4g.devops.common.utils.web.WebUtils2.*;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.lockFactors;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_CHECK;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_CAPTCHA_APPLY;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_VERIFY_APPLY;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_LOCALE_APPLY;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_ERRREAD;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_USE_LOCALE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCauseMessage;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
+import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
+import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+
 /**
  * IAM DIABLO extra controller
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月22日
  * @since
@@ -88,7 +80,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	/**
 	 * The number of milliseconds to wait after applying for an SMS dynamic
 	 * password (you can reapply).
-	 * 
+	 *
 	 */
 	final public static String KEY_VERIFYCODE_DELAY = "verifyCodeDelayMs";
 
@@ -118,7 +110,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	/**
 	 * Check the initial configuration. (e.g: whether to enable the verification
 	 * code etc)
-	 * 
+	 *
 	 * @param request
 	 */
 	@RequestMapping(value = URI_S_EXT_CHECK, method = { RequestMethod.GET, RequestMethod.POST })
@@ -177,7 +169,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 * Apply international locale.</br>
 	 * See:{@link com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle}
 	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
-	 * 
+	 *
 	 * @param response
 	 */
 	@RequestMapping(value = URI_S_EXT_LOCALE_APPLY, method = { RequestMethod.GET, RequestMethod.POST })
@@ -208,7 +200,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
 	 * Apply CAPTCHA graph stream.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -256,7 +248,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
 	 * Apply verification code
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -308,7 +300,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
 	 * Read the error message stored in the current session.
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -333,7 +325,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
 	 * Get remaining SMS delay
-	 * 
+	 *
 	 * @param verifyCode
 	 * @return
 	 */

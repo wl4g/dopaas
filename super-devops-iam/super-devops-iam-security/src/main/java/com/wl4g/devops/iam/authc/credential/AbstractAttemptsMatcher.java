@@ -15,29 +15,27 @@
  */
 package com.wl4g.devops.iam.authc.credential;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.util.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
-
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_MATCH_LOCK;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.lockFactors;
-
+import com.wl4g.devops.common.constants.IAMDevOpsConstants;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.handler.verification.Cumulators;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import com.wl4g.devops.iam.handler.verification.Verification;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.util.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.iam.handler.verification.GraphBasedVerification.FailCountWrapper;
 
 /**
  * Abstract custom attempts credential matcher
@@ -133,6 +131,8 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	protected Long postFailureProcess(String principal, List<String> factors) {
 		// Mathing failure count accumulative increment by 1
 		Long cumulatedMaxFailCount = matchCumulator.accumulate(factors, 1, config.getMatcher().getFailFastMatchDelay());
+		// add fail count into session
+		postFailCountAdd();
 		if (log.isInfoEnabled()) {
 			log.info("Principal {} matched failure accumulative limiter factor {}, cumulatedMaxFailCount {}", principal, factors,
 					cumulatedMaxFailCount);
@@ -265,6 +265,17 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		matchCumulator.destroy(factors);
 		applyCaptchaCumulator.destroy(factors);
 		applySmsCumulator.destroy(factors);
+	}
+
+	private void postFailCountAdd() {
+		Session session = SecurityUtils.getSubject().getSession();
+		FailCountWrapper failCountWrapper = null != session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) ?
+				(FailCountWrapper) session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) :
+				new FailCountWrapper(0);
+		failCountWrapper.setCount(failCountWrapper.getCount() + 1);
+		failCountWrapper.setCreateTime(System.currentTimeMillis());
+		log.info("session:loginFailTimes=" + failCountWrapper.getCount());
+		session.setAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME, failCountWrapper);
 	}
 
 }
