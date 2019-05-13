@@ -31,13 +31,15 @@ import static com.wl4g.devops.shell.utils.Types.*;
 import com.wl4g.devops.shell.annotation.PropertyDescription;
 
 /**
- * Result formatter
+ * Standard formatter
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月2日
  * @since
  */
-public class ResultFormatter {
+public class StandardFormatter {
+
+	final public static Charset UTF_8 = Charset.forName("UTF-8");
 
 	private Object object;
 
@@ -45,19 +47,19 @@ public class ResultFormatter {
 
 	private int cellRow;
 
-	public ResultFormatter(Object object) {
+	public StandardFormatter(Object object) {
 		Assert.notNull(object, "object must not be null");
 		this.object = object;
 		this.hasAttribute = true;
 		this.cellRow = 2;
 	}
 
-	public ResultFormatter hasAttribute(boolean hasAttribute) {
+	public StandardFormatter hasAttribute(boolean hasAttribute) {
 		this.hasAttribute = hasAttribute;
 		return this;
 	}
 
-	public ResultFormatter cellRow(int cellRow) {
+	public StandardFormatter cellRow(int cellRow) {
 		this.cellRow = cellRow;
 		return this;
 	}
@@ -118,8 +120,8 @@ public class ResultFormatter {
 	 * @param options
 	 * @return
 	 */
-	public final static String getUsageFormat(String argname, Options options) {
-		return getUsageFormat(argname, options, EMPTY);
+	public static String getHelpFormat(String argname, Options options) {
+		return getHelpFormat(argname, options, EMPTY);
 	}
 
 	/**
@@ -128,9 +130,10 @@ public class ResultFormatter {
 	 * @param argname
 	 * @param options
 	 * @param help
+	 * @param lastLine
 	 * @return
 	 */
-	public final static String getUsageFormat(String argname, Options options, String help) {
+	public static String getHelpFormat(String argname, Options options, String help) {
 		Assert.hasText(argname, "Argname is empty");
 		Assert.notNull(options, String.format("No command: '%s' args options", argname));
 		help = trimToEmpty(help);
@@ -145,7 +148,7 @@ public class ResultFormatter {
 				false);
 		pw.flush();
 
-		return new String(out.toByteArray(), Charset.forName("UTF-8"));
+		return new String(out.toByteArray(), UTF_8);
 	}
 
 	/**

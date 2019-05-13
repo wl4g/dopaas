@@ -36,7 +36,7 @@ public class HelpOption extends Option {
 		super(opt, longOpt, true, description);
 		setRequired(isBlank(defaultValue));
 		if (!isRequired()) {
-			setArgName("default:" + defaultValue);
+			setArgName("default=" + defaultValue);
 		} else {
 			setArgName("required");
 		}
