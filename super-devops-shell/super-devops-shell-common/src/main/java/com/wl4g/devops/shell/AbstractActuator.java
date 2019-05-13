@@ -26,16 +26,16 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import static com.wl4g.devops.shell.utils.Types.*;
-import static com.wl4g.devops.shell.utils.ReflectionUtils2.*;
-import com.wl4g.devops.shell.utils.ReflectionUtils2.FieldCallback2;
-import com.wl4g.devops.shell.utils.ReflectionUtils2.FieldFilter2;
+import static com.wl4g.devops.shell.utils.Reflections.*;
+import com.wl4g.devops.shell.utils.Reflections.FieldCallback;
+import com.wl4g.devops.shell.utils.Reflections.FieldFilter;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
 import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
-import com.wl4g.devops.shell.utils.ResultFormatter;
+import com.wl4g.devops.shell.utils.StandardFormatter;
 
 /**
  * Abstract shell component actuator
@@ -92,15 +92,15 @@ public abstract class AbstractActuator implements Actuator {
 		// line argument is required.
 		if (!tm.getParameters().isEmpty()) {
 			if (commands == null || commands.isEmpty()) {
-				return ResultFormatter.getUsageFormat(mainArg, tm.getOptions());
+				return StandardFormatter.getHelpFormat(mainArg, tm.getOptions());
 			}
 		}
 
-		// Resolve method parameters
-		Object[] args = resolveArguments(commands, tm);
-
-		// Invocation
 		try {
+			// Resolve method parameters
+			Object[] args = resolveArguments(commands, tm);
+
+			// Invocation
 			return tm.getMethod().invoke(tm.getTarget(), args);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -113,9 +113,13 @@ public abstract class AbstractActuator implements Actuator {
 	 * @param commands
 	 * @param tm
 	 * @return
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InstantiationException
 	 * @throws Exception
 	 */
-	protected Object[] resolveArguments(List<String> commands, TargetMethodWrapper tm) {
+	protected Object[] resolveArguments(List<String> commands, TargetMethodWrapper tm)
+			throws IllegalArgumentException, IllegalAccessException, InstantiationException {
 		/*
 		 * Commands to javaBean map and validate protected. </br>
 		 * (javaBean.fieldName or params.index(native type))->value
@@ -142,51 +146,54 @@ public abstract class AbstractActuator implements Actuator {
 
 		for (TargetParameter parameter : tm.getParameters()) {
 			// See: TargetMethodWrapper#initialize
-			try {
-				// To javaBean parameter
-				if (!parameter.baseType()) {
-					Object paramBean = parameter.getParamType().newInstance();
+			// To javaBean parameter
+			if (!parameter.notBeanType()) {
+				Object paramBean = parameter.getParamType().newInstance();
 
-					// Recursive full traversal deserialization.
-					doWithFullFields(paramBean, new FieldFilter2() {
-						@Override
-						public boolean match(Object attach, Field f, Object property) {
-							// [MARK3], See:[SupportUtils.MARK0]
-							int mod = f.getModifiers();
-							return beanMap.containsKey(f.getName()) && isSafetyModifier(mod);
-						}
-					}, new FieldCallback2() {
-						@Override
-						public void doWith(Object attach, Field f, Object property)
-								throws IllegalArgumentException, IllegalAccessException {
-							f.setAccessible(true);
-							f.set(attach, baseConvert(beanMap.get(f.getName()), f.getType()));
-						}
-					});
-					args.add(paramBean);
-				}
-				// [MARK1]: To native parameter
-				else {
-					ShellOption opt = parameter.getShellOption();
-
-					// Mathing argument value
-					Optional<Entry<String, String>> val = beanMap.entrySet().stream().filter(arg -> {
-						return equalsAny(arg.getKey(), opt.opt(), opt.lopt());
-					}).findFirst();
-
-					// Default value
-					String value = opt.defaultValue();
-					if (val.isPresent()) {
-						value = val.get().getValue();
+				// Recursive full traversal De-serialization.
+				doWithFullFields(paramBean, new FieldFilter() {
+					@Override
+					public boolean match(Object attach, Field f, Object property) {
+						// [MARK4], See:[ShellUtils.MARK0]
+						int mod = f.getModifiers();
+						return beanMap.containsKey(f.getName()) && isSafetyModifier(mod);
 					}
-					Assert.hasText(value,
-							String.format("Argument option: '-%s' or long option: '--%s' is required", opt.opt(), opt.lopt()));
-					args.add(baseConvert(value, parameter.getParamType()));
-				}
+				}, new FieldCallback() {
+					@Override
+					public void doWith(Object attach, Field f, Object property)
+							throws IllegalArgumentException, IllegalAccessException {
+						// [MARK5], See:[Reflections.MARK1]
+						Class<?> fCls = f.getType();
+						Object value = baseAndSimpleSetConvert(beanMap.get(f.getName()), fCls);
+						Assert.notNull(value,
+								String.format("No support bean class: %s, field type: %s", attach.getClass(), fCls));
 
-			} catch (Throwable e) {
-				throw new IllegalStateException(e);
+						f.setAccessible(true);
+						f.set(attach, value);
+					}
+				});
+
+				args.add(paramBean);
 			}
+			// [MARK1]: To native parameter
+			else {
+				ShellOption opt = parameter.getShellOption();
+
+				// Mathing argument value
+				Optional<Entry<String, String>> val = beanMap.entrySet().stream().filter(arg -> {
+					return equalsAny(arg.getKey(), opt.opt(), opt.lopt());
+				}).findFirst();
+
+				// Default value
+				String value = opt.defaultValue();
+				if (val.isPresent()) {
+					value = val.get().getValue();
+				}
+				Assert.hasText(value,
+						String.format("Argument option: '-%s' or long option: '--%s' is required", opt.opt(), opt.lopt()));
+				args.add(baseAndSimpleSetConvert(value, parameter.getParamType()));
+			}
+
 		}
 
 		return args.toArray();
@@ -200,7 +207,7 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	protected void validateArguments(TargetMethodWrapper tm, Map<String, String> beanMap) {
 		tm.getParameters().forEach(parameter -> {
-			if (parameter.baseType()) {
+			if (parameter.notBeanType()) {
 				return; // See:[MARK1][TargetMethodWrapper.MARK0]
 			}
 

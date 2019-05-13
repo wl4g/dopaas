@@ -33,9 +33,10 @@ import com.wl4g.devops.shell.cli.HelpOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 import com.wl4g.devops.shell.utils.Assert;
-import static com.wl4g.devops.shell.utils.ReflectionUtils2.*;
+import static com.wl4g.devops.shell.utils.Reflections.*;
 import static com.wl4g.devops.shell.utils.Types.*;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
+import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 
 /**
  * Shell component target method wrapper
@@ -162,23 +163,13 @@ public class TargetMethodWrapper implements Serializable {
 			Class<?> paramType = paramTypes[i];
 			ShellOption opt = findShellOption(paramAnnos[i]);
 
-			// Native type parameter must be annotated with @ShellOption?
-			if (isBaseType(paramType)) {
-				Assert.state(opt != null, String.format(
-						"Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", method, i));
-			}
-
 			// Wrap target method parameter
 			TargetParameter parameter = new TargetParameter(getMethod(), paramType, opt, i);
 
-			// Native field?
-			if (isBaseType(paramType)) { // String,long,double...?
-				Assert.hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", getMethod()));
-				Assert.hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", getMethod()));
-				Assert.isTrue(isAlpha(opt.opt().substring(0, 1)),
-						String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.opt(), getMethod()));
-				Assert.isTrue(isAlpha(opt.lopt().substring(0, 1)), String
-						.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), getMethod()));
+			// Base type parameter?
+			// (String,long,double... or List,Set,Map,Properties...)
+			if (notBeanType(paramType)) { // MARK4
+				validateParamShellOption(opt, getMethod(), i);
 
 				// See:[com.wl4g.devops.shell.command.DefaultInternalCommand.MARK0]
 				Option option = new HelpOption(opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
@@ -187,7 +178,7 @@ public class TargetMethodWrapper implements Serializable {
 				// See:[AbstractActuator.MARK3]
 				parameter.getAttributes().put(option, null);
 			}
-			// Java bean?
+			// Java bean parameter?
 			else {
 				extFullParams(paramType, parameter.getAttributes());
 			}
@@ -210,6 +201,24 @@ public class TargetMethodWrapper implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Validate shell option.
+	 * 
+	 * @param opt
+	 * @param m
+	 * @param index
+	 */
+	private void validateParamShellOption(ShellOption opt, Method m, int index) {
+		Assert.state(opt != null, String
+				.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", m, index));
+		Assert.hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", m));
+		Assert.hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", m));
+		Assert.isTrue(isAlpha(opt.opt().substring(0, 1)),
+				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.opt(), m));
+		Assert.isTrue(isAlpha(opt.lopt().substring(0, 1)),
+				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), m));
 	}
 
 	/**
@@ -260,7 +269,7 @@ public class TargetMethodWrapper implements Serializable {
 			this.index = index;
 
 			// Assertion shell option.
-			if (baseType()) {
+			if (notBeanType()) {
 				Assert.state(shOpt != null,
 						String.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption",
 								getMethod(), getIndex()));
@@ -292,8 +301,12 @@ public class TargetMethodWrapper implements Serializable {
 			return attributes;
 		}
 
-		public boolean baseType() {
-			return isBaseType(getParamType());
+		public boolean notBeanType() {
+			return notBeanType(getParamType());
+		}
+
+		public static boolean notBeanType(Class<?> paramType) {
+			return isBaseType(paramType) || isGeneralSetType(paramType);
 		}
 
 	}
