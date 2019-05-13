@@ -49,4 +49,4 @@ java -Dservpids=19767,32374 -jar shell-cli-master-executable.jar
 
 ## 自定义命令
 
-[完整示例见](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java)
+[完整示例](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java)
