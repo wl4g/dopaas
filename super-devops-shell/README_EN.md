@@ -45,10 +45,9 @@ to add the -Ddebug parameter debugging, or directly use [Way1](#Way1) (-Dservpoi
 - exit/ex/quit/qu    Exit console
 - history/his    View the history command (persistent file: $USER_HOME/.devops/shell/history)
 - stacktrace/st    View stack information for the last exception (if any)
-- help/he    Use help, for example: help, help add, add --help, add --he, where add is a 
-command for computing sum
+- help/he    Use help, such as: help/help sumTest/sumTest --help/sumTest --he/ where sumTest is a summation test command
 
 ## Custom commands
 
-[For example](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java)
+[For perfect example](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java)
 	
