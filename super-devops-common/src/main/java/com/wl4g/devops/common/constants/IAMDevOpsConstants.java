@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.common.constants;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.base.Charsets;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.util.StringUtils;
 
-import com.google.common.base.Charsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * DevOps SCM Constants.
@@ -200,6 +200,14 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String KEY_FAIL_LIMITER_RIP_PREFIX = "rip_";
 	/**
+	 * Login Fail Time.
+	 */
+	final public static String GRAPH_VERIFY_FAIL_TIME = "graphVerfiyFailTime";
+	/**
+	 * Verfiy get Time.
+	 */
+	final public static String GRAPH_VERIFY_GET_TIME = "graphVerfiyGetTime";
+	/**
 	 * Error information for saving iam-related operations to sessions.
 	 */
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
@@ -237,7 +245,8 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 					add(KEY_FAIL_LIMITER_USER_PREFIX + principal);
 				}
 				if (!StringUtils.isEmpty(remoteHost)) {
-					add(KEY_FAIL_LIMITER_RIP_PREFIX + Hex.encodeHexString(remoteHost.getBytes(Charsets.UTF_8)));
+					//add(KEY_FAIL_LIMITER_RIP_PREFIX + Hex.encodeHexString(remoteHost.getBytes(Charsets.UTF_8)));
+					add(KEY_FAIL_LIMITER_RIP_PREFIX + Hex.encodeHexString(UUID.randomUUID().toString().replaceAll("-", "").getBytes(Charsets.UTF_8)));
 				}
 			}
 		};
