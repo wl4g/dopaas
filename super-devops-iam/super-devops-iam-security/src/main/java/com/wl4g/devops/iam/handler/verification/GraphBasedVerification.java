@@ -15,23 +15,25 @@
  */
 package com.wl4g.devops.iam.handler.verification;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
+import com.wl4g.devops.common.constants.IAMDevOpsConstants;
+import com.wl4g.devops.common.exception.iam.VerificationException;
+import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
-import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
 
 /**
  * Abstract graphic verification code handler
@@ -63,7 +65,7 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	}
 
 	/**
-	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(javax.servlet.http.HttpServletRequest, HttpServletResponse)}
+	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
 	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
@@ -90,16 +92,28 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		write(response, getVerifyCode(true).getText());
 	}
 
-	@Override
-	public boolean isEnabled(@NotNull List<String> factors) {
+	@Override public boolean isEnabled(@NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
 
 		// Enabled CAPTCHA max attempts
 		int enabledCaptchaMaxAttempts = config.getMatcher().getEnabledCaptchaMaxAttempts();
 
+		Session session = SecurityUtils.getSubject().getSession();
+		FailCountWrapper failCountWrapper = null != session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) ?
+				(FailCountWrapper) session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) :
+				null;
+
 		// If the number of failures exceeds the upper limit, verification is
 		// enabled
-		return matchCumulator.getCumulatives(factors) >= enabledCaptchaMaxAttempts;
+		log.info("" + matchCumulator.getCumulatives(factors));
+		if (matchCumulator.getCumulatives(factors) >= enabledCaptchaMaxAttempts) {
+			return true;
+		}
+		if (null != failCountWrapper && failCountWrapper.getCount() >= enabledCaptchaMaxAttempts
+				&& failCountWrapper.getCreateTime() + config.getMatcher().getFailFastMatchDelay() >= System.currentTimeMillis()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -117,9 +131,23 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 			@NotNull List<String> factors) {
 		long failFastCaptchaMaxAttempts = config.getMatcher().getFailFastCaptchaMaxAttempts();
 
+
+		Session session = SecurityUtils.getSubject().getSession();
+		FailCountWrapper failCountWrapper = null!=session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_GET_TIME)?
+				(FailCountWrapper)session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_GET_TIME):new FailCountWrapper(0);
+		failCountWrapper.setCount(failCountWrapper.getCount()+1);
+		failCountWrapper.setCreateTime(System.currentTimeMillis());
+		log.info("session:graph verify get times="+failCountWrapper.getCount());
+		session.setAttribute(IAMDevOpsConstants.GRAPH_VERIFY_GET_TIME,failCountWrapper);
+
 		// Accumulated number of apply
 		Long applyCumulatedCount = applyCumulator.accumulate(factors, 1, config.getMatcher().getFailFastCaptchaDelay());
 		if (applyCumulatedCount >= failFastCaptchaMaxAttempts) {
+			log.warn("Apply for graph verification code too often, actual: {}, maximum: {}, factors: {}", applyCumulatedCount,
+					failFastCaptchaMaxAttempts, factors);
+			throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
+		}
+		if(failCountWrapper.getCount()>=failFastCaptchaMaxAttempts&&failCountWrapper.getCreateTime()+config.getMatcher().getFailFastCaptchaDelay()>=System.currentTimeMillis()){
 			log.warn("Apply for graph verification code too often, actual: {}, maximum: {}, factors: {}", applyCumulatedCount,
 					failFastCaptchaMaxAttempts, factors);
 			throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
@@ -144,6 +172,46 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		this.applyCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_CAPTCHA_COUNTER);
 		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
 		Assert.notNull(applyCumulator, "applyCumulator is null, please check configure");
+	}
+
+	public static class FailCountWrapper implements Serializable {
+		private static final long serialVersionUID = -7643664591972701966L;
+
+		private Integer count;
+
+		private Long createTime;
+
+		public FailCountWrapper(Integer count) {
+			this(count, System.currentTimeMillis());
+		}
+
+		public FailCountWrapper(Integer count, Long createTime) {
+			Assert.notNull(count, "fail count is null, please check configure");
+			Assert.notNull(createTime, "CreateTime is null, please check configure");
+			this.count = count;
+			this.createTime = createTime;
+		}
+
+		public Integer getCount() {
+			return count;
+		}
+
+		public void setCount(Integer count) {
+			this.count = count;
+		}
+
+		public Long getCreateTime() {
+			return createTime;
+		}
+
+		public void setCreateTime(Long timestamp) {
+			this.createTime = timestamp;
+		}
+
+		@Override public String toString() {
+			return "FailCountWrapper [failCount=" + count + ", timestamp=" + createTime + "]";
+		}
+
 	}
 
 }
