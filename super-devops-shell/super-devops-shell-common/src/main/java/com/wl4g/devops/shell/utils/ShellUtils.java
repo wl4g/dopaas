@@ -2,10 +2,8 @@ package com.wl4g.devops.shell.utils;
 
 import java.lang.reflect.Field;
 
-import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
 import com.wl4g.devops.shell.annotation.ShellOption;
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.*;
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
+import static com.wl4g.devops.shell.utils.Reflections.*;
 
 /**
  * Shell CLI server support utility tools
@@ -14,7 +12,7 @@ import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
  * @version v1.0 2019年5月10日
  * @since
  */
-public abstract class SupportUtils {
+public abstract class ShellUtils extends BeanUtils2 {
 
 	/**
 	 * Execute a copy from the source object to the target object. Note that it
@@ -31,7 +29,7 @@ public abstract class SupportUtils {
 			copyFullProperties(target, source, new FieldFilter() {
 				@Override
 				public boolean match(Field f, Object sourcePropertyValue) {
-					// [MARK0], See:[AbstractActuator.MARK3]
+					// [MARK0], See:[AbstractActuator.MARK4]
 					int mod = f.getModifiers();
 					return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(mod);
 				}

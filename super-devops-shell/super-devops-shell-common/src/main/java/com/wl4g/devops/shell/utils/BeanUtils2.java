@@ -1,9 +1,9 @@
-package com.wl4g.devops.common.utils.bean;
+package com.wl4g.devops.shell.utils;
 
 import java.lang.reflect.Field;
 
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
-import static com.wl4g.devops.common.utils.reflect.Types.*;
+import static com.wl4g.devops.shell.utils.Reflections.*;
+import static com.wl4g.devops.shell.utils.Types.*;
 
 /**
  * Enhanced static convenience methods for JavaBeans: for instantiating beans,
@@ -108,7 +108,7 @@ public abstract class BeanUtils2 {
 
 		// Recursive traversal matching and processing
 		Class<?> sourceClass = source.getClass();
-		for (Field tf : getDeclaredFields(hierarchyClass)) {
+		for (Field tf : hierarchyClass.getDeclaredFields()) {
 			tf.setAccessible(true);
 			Object targetPropertyValue = tf.get(target); // See:[MARK0]
 

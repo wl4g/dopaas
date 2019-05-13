@@ -29,6 +29,7 @@ import org.apache.commons.cli.Options;
 import org.jline.terminal.Terminal;
 import org.jline.utils.InfoCmp.Capability;
 
+import static org.apache.commons.lang3.SystemUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -38,7 +39,7 @@ import com.wl4g.devops.shell.config.DefaultBeanRegistry;
 import com.wl4g.devops.shell.runner.AbstractRunner;
 import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
-import static com.wl4g.devops.shell.utils.ResultFormatter.getUsageFormat;
+import static com.wl4g.devops.shell.utils.StandardFormatter.getHelpFormat;
 
 /**
  * Default internal command.
@@ -128,7 +129,7 @@ public class DefaultInternalCommand extends InternalCommand {
 				if (commands.size() > 1) {
 					String argname = commands.get(1);
 					Options options = registry.getHelpOptions().get(argname);
-					helpString.append(getUsageFormat(argname, options));
+					helpString.append(getHelpFormat(argname, options));
 				}
 				// Processing for e.g. add --help
 				else {
@@ -158,10 +159,10 @@ public class DefaultInternalCommand extends InternalCommand {
 
 					// Move default commands to first place
 					HelpGroupWrapper defaultWrap = helpGroup.remove(DEFAULT_GROUP);
-					appendHelpAsString(DEFAULT_GROUP, defaultWrap, helpString);
+					appendHelp(DEFAULT_GROUP, defaultWrap, helpString);
 
 					// Group options print
-					helpGroup.forEach((group, wrap) -> appendHelpAsString(group, wrap, helpString));
+					helpGroup.forEach((group, wrap) -> appendHelp(group, wrap, helpString));
 				}
 
 			}
@@ -179,14 +180,18 @@ public class DefaultInternalCommand extends InternalCommand {
 	 * @param wrap
 	 * @param helpString
 	 */
-	private void appendHelpAsString(String group, HelpGroupWrapper wrap, StringBuffer helpString) {
+	private void appendHelp(String group, HelpGroupWrapper wrap, StringBuffer helpString) {
 		helpString.append("\n----- " + group + " -----\n\n");
-		wrap.getHelpMethods().forEach(hm -> {
-			helpString.append(getUsageFormat(hm.getArgname(), hm.getOptions(), hm.getHelp()));
+		for (HelpMethod hm : wrap.getHelpMethods()) {
+			helpString.append(getHelpFormat(hm.getArgname(), hm.getOptions(), hm.getHelp()));
+			// Optimize: Printing default commands does not require line feeds.
+			if (equalsIgnoreCase(group, DEFAULT_GROUP)) {
+				helpString.delete(helpString.length() - LINE_SEPARATOR.length(), helpString.length());
+			}
 			if (!hm.getOptions().getOptions().isEmpty()) {
 				helpString.append("\n");
 			}
-		});
+		}
 	}
 
 	/**
