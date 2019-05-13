@@ -52,7 +52,7 @@ public class ExampleExporter {
 	}
 
 	/**
-	 * $> setTest -l x1,x2 -s x3,x4
+	 * $> setTest -l 1,2 -s x3,x4
 	 */
 	@ShellMethod(keys = { "setTest" }, group = "Example command", help = "Direct set parameter injection testing")
 	public String setTest(@ShellOption(opt = "s", lopt = "set", help = "Set<String>类型参数字段") Set<String> set1,
