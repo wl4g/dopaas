@@ -157,15 +157,22 @@ public abstract class LineUtils {
 	private static String repairLineSpace(String line) {
 		line = trimToEmpty(line);
 		StringBuffer newLine = new StringBuffer();
+		String args[] = split(line, " ");
 
-		for (String arg : split(line, " ")) {
-			if (startsWith(arg, "-")) {
-				newLine.append(" ");
-				newLine.append(arg);
-				newLine.append(" ");
-			} else {
-				newLine.append(arg);
+		if (args.length > 2) {
+			for (String arg : args) {
+				if (startsWith(arg, "-")) {
+					newLine.append(" ");
+					newLine.append(arg);
+					newLine.append(" ");
+				} else {
+					newLine.append(arg);
+				}
 			}
+		}
+		// help mycmd/mycmd --help
+		else {
+			newLine.append(line);
 		}
 
 		return newLine.toString();
