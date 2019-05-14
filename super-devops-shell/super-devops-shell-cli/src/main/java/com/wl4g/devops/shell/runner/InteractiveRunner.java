@@ -66,8 +66,6 @@ public class InteractiveRunner extends AbstractRunner {
 						// Check wait timeout
 						if ((System.currentTimeMillis() - begin) >= TIMEOUT) {
 							throw new ProcessTimeoutException(String.format("Processing command timeout: %s", line));
-						} else {
-							System.out.println("aaaaaaaaaaaaaaaaa");
 						}
 					}
 
