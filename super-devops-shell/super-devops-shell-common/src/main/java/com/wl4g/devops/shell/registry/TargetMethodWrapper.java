@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
-import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -165,18 +164,18 @@ public class TargetMethodWrapper implements Serializable {
 
 		for (int i = 0; i < paramTypes.length; i++) {
 			Class<?> paramType = paramTypes[i];
-			ShellOption opt = findShellOption(paramAnnos[i]);
+			ShellOption shOpt = findShellOption(paramAnnos[i]);
 
 			// Wrap target method parameter
-			TargetParameter parameter = new TargetParameter(getMethod(), paramType, opt, i);
+			TargetParameter parameter = new TargetParameter(getMethod(), paramType, shOpt, i);
 
 			// Base type parameter?
 			// (String,long,double... or List,Set,Map,Properties...)
 			if (simpleType(paramType)) { // MARK4
-				validateShellOption(opt, getMethod(), i);
+				validateShellOption(shOpt, getMethod(), i);
 
 				// See:[com.wl4g.devops.shell.command.DefaultInternalCommand.MARK0]
-				Option option = new HelpOption(paramType, opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
+				Option option = new HelpOption(paramType, shOpt.opt(), shOpt.lopt(), shOpt.defaultValue(), shOpt.help());
 
 				// [MARK0] Native type parameter field name is null
 				// See:[AbstractActuator.MARK3]
@@ -329,25 +328,27 @@ public class TargetMethodWrapper implements Serializable {
 		}
 
 		private final void validateOption(Option option) {
-			// ShellOption(opt)
-			String shOpt = (shellOption == null) ? EMPTY : shellOption.opt();
-			Assert.state(!StringUtils.equals(shOpt, option.getOpt()),
-					String.format(
-							"Repeatedly defined @ShellOption short option: '%s', parameter index: %s, paramType: %s, method: '%s'",
-							option.getOpt(), getIndex(), getParamType(), getMethod()));
+			// // ShellOption(opt)
+			// String shOpt = (shellOption == null) ? EMPTY : shellOption.opt();
+			// Assert.state(!StringUtils.equals(shOpt, option.getOpt()),
+			// String.format(
+			// "Repeatedly defined @ShellOption short option: '%s', parameter
+			// index: %s, paramType: %s, method: '%s'",
+			// option.getOpt(), getIndex(), getParamType(), getMethod()));
+			// // ShellOption(longOpt)
+			// String shlOpt = (shellOption == null) ? EMPTY :
+			// shellOption.opt();
+			// Assert.state(!StringUtils.equals(shlOpt, option.getOpt()),
+			// String.format(
+			// "Repeatedly defined @ShellOption long option: '%s', parameter
+			// index: %s, paramType: %s, method: '%s'",
+			// option.getLongOpt(), getIndex(), getParamType(), getMethod()));
 
 			// Option(opt)
 			List<String> opts = getAttributes().keySet().stream().map(op -> op.getOpt()).collect(Collectors.toList());
 			Assert.state(!opts.contains(option.getOpt()),
 					String.format("Repeatedly defined short option: '%s', parameter index: %s, paramType: %s, method: '%s'",
 							option.getOpt(), getIndex(), getParamType(), getMethod()));
-
-			// ShellOption(longOpt)
-			String shlOpt = (shellOption == null) ? EMPTY : shellOption.opt();
-			Assert.state(!StringUtils.equals(shlOpt, option.getOpt()),
-					String.format(
-							"Repeatedly defined @ShellOption long option: '%s', parameter index: %s, paramType: %s, method: '%s'",
-							option.getLongOpt(), getIndex(), getParamType(), getMethod()));
 
 			// Option(longOpt)
 			List<String> lOpts = getAttributes().keySet().stream().map(op -> op.getLongOpt()).collect(Collectors.toList());
