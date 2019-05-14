@@ -191,16 +191,14 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 					// To a string command line
 					Object input = new ObjectInputStream(_in).readObject();
-
 					if (log.isInfoEnabled()) {
-						log.info("CLI receive: {}", input);
+						log.info("<= {}", input);
 					}
 
 					// Submit line
 					if (input instanceof LineMessage) {
 						LineMessage line = (LineMessage) input;
-						// Processing
-						result = new ResultMessage(line.getProcessId(), function.apply(line.getLine()).toString());
+						result = new ResultMessage(function.apply(line.getLine()).toString());
 					}
 					// Request registed commands
 					else if (input instanceof MetaMessage) {
@@ -211,7 +209,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					// Echo
 					if (result != null) {
 						if (log.isInfoEnabled()) {
-							log.info("CLI processed: {}", result);
+							log.info("=> {}", result);
 						}
 						writeAndFlush(result);
 					}

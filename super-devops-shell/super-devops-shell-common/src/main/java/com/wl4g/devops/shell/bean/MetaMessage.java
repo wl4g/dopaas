@@ -50,7 +50,7 @@ public class MetaMessage extends Message {
 
 	@Override
 	public String toString() {
-		return "MetaMessage [registedMethods=" + registedMethods + "]";
+		return "MetaMessage [registedMethods=" + registedMethods + ", toString()=" + super.toString() + "]";
 	}
 
 }

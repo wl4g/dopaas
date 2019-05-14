@@ -17,10 +17,6 @@ package com.wl4g.devops.shell.bean;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
-import com.wl4g.devops.shell.utils.Assert;
-
 /**
  * Shell transport message
  * 
@@ -30,28 +26,5 @@ import com.wl4g.devops.shell.utils.Assert;
  */
 public abstract class Message implements Serializable {
 	private static final long serialVersionUID = 771621623867420464L;
-
-	private Integer processId;
-
-	public Message() {
-		super();
-	}
-
-	public Message(Integer processId) {
-		Assert.notNull(processId, "processId must not be null");
-		this.processId = processId;
-	}
-
-	public Integer getProcessId() {
-		return processId;
-	}
-
-	public void setProcessId(Integer msgId) {
-		this.processId = msgId;
-	}
-
-	public final static Integer nextProcessId() {
-		return Integer.parseInt(RandomStringUtils.randomNumeric(8));
-	}
 
 }

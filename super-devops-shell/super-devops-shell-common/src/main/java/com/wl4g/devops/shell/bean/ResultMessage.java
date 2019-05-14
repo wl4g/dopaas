@@ -29,14 +29,18 @@ public class ResultMessage extends Message {
 
 	final private String content;
 
-	public ResultMessage(int processId, String content) {
-		super(processId);
+	public ResultMessage(String content) {
 		Assert.hasText(content, "Content must not be empty");
 		this.content = content;
 	}
 
 	public String getContent() {
 		return content;
+	}
+
+	@Override
+	public String toString() {
+		return "ResultMessage [content=" + content + ", toString()=" + super.toString() + "]";
 	}
 
 }

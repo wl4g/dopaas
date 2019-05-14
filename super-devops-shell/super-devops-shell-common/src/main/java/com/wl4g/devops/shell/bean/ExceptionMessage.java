@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.shell.bean;
 
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import com.wl4g.devops.shell.utils.Assert;
 
 /**
@@ -36,6 +37,11 @@ public class ExceptionMessage extends Message {
 
 	public Throwable getThrowable() {
 		return throwable;
+	}
+
+	@Override
+	public String toString() {
+		return "ExceptionMessage [throwable=" + getRootCauseMessage(throwable) + ", toString()=" + super.toString() + "]";
 	}
 
 }
