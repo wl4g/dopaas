@@ -30,7 +30,6 @@ public class LineMessage extends Message {
 	final private String line;
 
 	public LineMessage(String line) {
-		super(nextProcessId());
 		Assert.hasText(line, "line must not be empty");
 		this.line = line;
 	}
@@ -41,7 +40,7 @@ public class LineMessage extends Message {
 
 	@Override
 	public String toString() {
-		return "LineMessage [line=" + line + "]";
+		return "LineMessage [line=" + line + ", toString()=" + super.toString() + "]";
 	}
 
 }
