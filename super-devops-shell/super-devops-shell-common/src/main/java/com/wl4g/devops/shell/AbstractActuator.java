@@ -35,7 +35,6 @@ import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
 import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
-import com.wl4g.devops.shell.utils.StandardFormatter;
 
 /**
  * Abstract shell component actuator
@@ -88,14 +87,6 @@ public abstract class AbstractActuator implements Actuator {
 		Assert.isTrue(registry.contains(mainArg), String.format("'%s': command not found", mainArg));
 		TargetMethodWrapper tm = registry.getTargetMethods().get(mainArg);
 
-		// When the shell method parameter list is not empty, the command
-		// line argument is required.
-		if (commands == null || commands.isEmpty()) {
-			if (!tm.getParameters().isEmpty()) {
-				return StandardFormatter.getHelpFormat(mainArg, tm.getOptions());
-			}
-		}
-
 		try {
 			// Resolve method parameters
 			Object[] args = resolveArguments(commands, tm);
@@ -120,21 +111,25 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	protected Object[] resolveArguments(List<String> commands, TargetMethodWrapper tm)
 			throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+		Assert.notNull(tm, "Error, Should targetMethodWrapper not be null?");
+
 		/*
 		 * Commands to javaBean map and validate protected. </br>
 		 * (javaBean.fieldName or params.index(native type))->value
 		 */
 		final Map<String, String> beanMap = new HashMap<>();
-		for (int i = 0; i < commands.size() - 1; i++) {
-			if (i % 2 == 0) {
-				// Input opt
-				String argname = commands.get(i);
-				Assert.hasText(argname, String.format("Unable to get parameter name, i:%s", i));
-				// Value(May be empty) See:[MARK3]
-				String value = commands.get(i + 1);
+		if (commands != null && !commands.isEmpty()) {
+			for (int i = 0; i < commands.size() - 1; i++) {
+				if (i % 2 == 0) {
+					// Input opt
+					String argname = commands.get(i);
+					Assert.hasText(argname, String.format("Unable to get parameter name, i:%s", i));
+					// Value(May be empty) See:[MARK3]
+					String value = commands.get(i + 1);
 
-				// Convert and save
-				beanMap.put(convertIfNecessary(argname, tm), value);
+					// Convert and save
+					beanMap.put(convertIfNecessary(argname, tm), value);
+				}
 			}
 		}
 
