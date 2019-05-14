@@ -30,7 +30,8 @@ import org.apache.commons.cli.Option;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.cli.HelpOption;
-
+import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
+import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 import static com.wl4g.devops.shell.utils.Types.*;
 
 /**
@@ -265,10 +266,10 @@ public abstract class Reflections {
 	 * @param clazz
 	 * @param attributes
 	 */
-	public static void extFullParams(Class<?> clazz, Map<Option, String> attributes) {
+	public static void extFullParams(Class<?> clazz, TargetParameter parameter) {
 		Class<?> cls = clazz;
 		do {
-			extFlatParams(cls, attributes);
+			extFlatParams(cls, parameter);
 		} while ((cls = cls.getSuperclass()) != null);
 	}
 
@@ -278,22 +279,28 @@ public abstract class Reflections {
 	 * @param clazz
 	 * @param attributes
 	 */
-	public static void extFlatParams(Class<?> clazz, Map<Option, String> attributes) {
+	public static void extFlatParams(Class<?> clazz, TargetParameter parameter) {
 		Assert.notNull(clazz, "The paramClazz must be null");
 		try {
 			for (Field f : clazz.getDeclaredFields()) {
+				Class<?> ftype = f.getType();
 				String fname = f.getName();
-				ShellOption opt = f.getAnnotation(ShellOption.class);
 
-				// Filter class property
-				if (isSafetyModifier(f.getModifiers()) && opt != null) {
-					// MARK1, See:[AbstractActuator.MARK5]
-					if (isBaseType(f.getType()) || isGeneralSetType(f.getType())) {
-						Option option = new HelpOption(f.getType(), opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
-						attributes.put(option, fname);
-					} else {
-						extFlatParams(f.getType(), attributes);
+				ShellOption opt = f.getAnnotation(ShellOption.class);
+				if (simpleType(ftype)) { // [MARK1],See:[AbstractActuator.MARK5]
+					// Filter unsafe field.
+					if (opt != null) {
+						if (isSafetyModifier(f.getModifiers())) {
+							Option option = new HelpOption(ftype, opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
+							parameter.addAttribute(option, fname);
+						} else {
+							System.err.println(String.format(
+									"WARNINGS: Although the @%s annotation option has been used, it has not been registered in the parameter list because field: '%s' has modifiers final/static/transient/volatile/native/synchronized, etc.",
+									ShellOption.class.getSimpleName(), f));
+						}
 					}
+				} else {
+					extFlatParams(ftype, parameter);
 				}
 			}
 		} catch (Throwable e) {

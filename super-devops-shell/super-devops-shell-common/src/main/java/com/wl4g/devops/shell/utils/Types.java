@@ -48,11 +48,13 @@ public abstract class Types {
 	final private static Collection<Class<?>> nativeClasses = new ArrayList<Class<?>>() {
 		private static final long serialVersionUID = -4726036260392327337L;
 		{
+			add(boolean.class);
 			add(int.class);
 			add(long.class);
 			add(double.class);
 			add(float.class);
 			add(byte.class);
+			add(Boolean.class);
 			add(String.class);
 			add(Integer.class);
 			add(Long.class);

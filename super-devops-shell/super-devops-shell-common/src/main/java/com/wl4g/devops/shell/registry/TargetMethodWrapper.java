@@ -19,12 +19,16 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.lang3.StringUtils;
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -155,7 +159,7 @@ public class TargetMethodWrapper implements Serializable {
 
 		// Parameter types
 		Class<?>[] paramTypes = getMethod().getParameterTypes();
-		Assert.isTrue(paramAnnos.length == paramTypes.length,
+		Assert.state(paramAnnos.length == paramTypes.length,
 				String.format("Error, method:%s parameter types length:%s parameter annotations:%s", getMethod(),
 						paramTypes.length, paramAnnos.length));
 
@@ -168,19 +172,24 @@ public class TargetMethodWrapper implements Serializable {
 
 			// Base type parameter?
 			// (String,long,double... or List,Set,Map,Properties...)
-			if (notBeanType(paramType)) { // MARK4
-				validateParamShellOption(opt, getMethod(), i);
+			if (simpleType(paramType)) { // MARK4
+				validateShellOption(opt, getMethod(), i);
 
 				// See:[com.wl4g.devops.shell.command.DefaultInternalCommand.MARK0]
 				Option option = new HelpOption(paramType, opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
 
 				// [MARK0] Native type parameter field name is null
 				// See:[AbstractActuator.MARK3]
-				parameter.getAttributes().put(option, null);
+				parameter.addAttribute(option, null);
 			}
 			// Java bean parameter?
 			else {
-				extFullParams(paramType, parameter.getAttributes());
+				extFullParams(paramType, parameter);
+			}
+
+			// Check parameters(options) repeat register.
+			for (TargetParameter p : parameters) {
+				parameter.getAttributes().keySet().forEach(option -> p.validateOption(option));
 			}
 
 			parameters.add(parameter);
@@ -210,7 +219,7 @@ public class TargetMethodWrapper implements Serializable {
 	 * @param m
 	 * @param index
 	 */
-	private void validateParamShellOption(ShellOption opt, Method m, int index) {
+	private void validateShellOption(ShellOption opt, Method m, int index) {
 		Assert.state(opt != null, String
 				.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", m, index));
 		Assert.hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", m));
@@ -247,7 +256,8 @@ public class TargetMethodWrapper implements Serializable {
 		final transient private int index;
 
 		/**
-		 * Method parameter shell option annotation
+		 * Method parameter shell option annotation.</br>
+		 * Annotation for basic type parameters.
 		 */
 		final private ShellOption shellOption;
 
@@ -269,7 +279,7 @@ public class TargetMethodWrapper implements Serializable {
 			this.index = index;
 
 			// Assertion shell option.
-			if (notBeanType()) {
+			if (simpleType()) {
 				Assert.state(shOpt != null,
 						String.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption",
 								getMethod(), getIndex()));
@@ -297,16 +307,53 @@ public class TargetMethodWrapper implements Serializable {
 			return index;
 		}
 
-		public Map<Option, String> getAttributes() {
-			return attributes;
+		public final Map<Option, String> getAttributes() {
+			return Collections.unmodifiableMap(attributes);
 		}
 
-		public boolean notBeanType() {
-			return notBeanType(getParamType());
+		public final TargetParameter addAttribute(Option option, String fieldName) {
+			validateOption(option);
+
+			Assert.state(attributes.putIfAbsent(option, fieldName) == null,
+					String.format("Repeatedly defined shell parameter index: %s, paramType: %s, option: '%s', method: '%s'",
+							getIndex(), getParamType(), option, getMethod()));
+			return this;
 		}
 
-		public static boolean notBeanType(Class<?> paramType) {
+		public boolean simpleType() {
+			return simpleType(getParamType());
+		}
+
+		public static boolean simpleType(Class<?> paramType) {
 			return isBaseType(paramType) || isGeneralSetType(paramType);
+		}
+
+		private final void validateOption(Option option) {
+			// ShellOption(opt)
+			String shOpt = (shellOption == null) ? EMPTY : shellOption.opt();
+			Assert.state(!StringUtils.equals(shOpt, option.getOpt()),
+					String.format(
+							"Repeatedly defined @ShellOption short option: '%s', parameter index: %s, paramType: %s, method: '%s'",
+							option.getOpt(), getIndex(), getParamType(), getMethod()));
+
+			// Option(opt)
+			List<String> opts = getAttributes().keySet().stream().map(op -> op.getOpt()).collect(Collectors.toList());
+			Assert.state(!opts.contains(option.getOpt()),
+					String.format("Repeatedly defined short option: '%s', parameter index: %s, paramType: %s, method: '%s'",
+							option.getOpt(), getIndex(), getParamType(), getMethod()));
+
+			// ShellOption(longOpt)
+			String shlOpt = (shellOption == null) ? EMPTY : shellOption.opt();
+			Assert.state(!StringUtils.equals(shlOpt, option.getOpt()),
+					String.format(
+							"Repeatedly defined @ShellOption long option: '%s', parameter index: %s, paramType: %s, method: '%s'",
+							option.getLongOpt(), getIndex(), getParamType(), getMethod()));
+
+			// Option(longOpt)
+			List<String> lOpts = getAttributes().keySet().stream().map(op -> op.getLongOpt()).collect(Collectors.toList());
+			Assert.state(!lOpts.contains(option.getLongOpt()),
+					String.format("Repeatedly defined long option: '%s', parameter index: %s, paramType: %s, method: '%s'",
+							option.getLongOpt(), getIndex(), getParamType(), getMethod()));
 		}
 
 	}
