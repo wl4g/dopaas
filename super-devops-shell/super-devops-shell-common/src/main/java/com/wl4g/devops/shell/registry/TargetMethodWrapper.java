@@ -175,7 +175,8 @@ public class TargetMethodWrapper implements Serializable {
 				validateShellOption(shOpt, getMethod(), i);
 
 				// See:[com.wl4g.devops.shell.command.DefaultInternalCommand.MARK0]
-				Option option = new HelpOption(paramType, shOpt.opt(), shOpt.lopt(), shOpt.defaultValue(), shOpt.help());
+				Option option = new HelpOption(paramType, shOpt.opt(), shOpt.lopt(), shOpt.defaultValue(), shOpt.required(),
+						shOpt.help());
 
 				// [MARK0] Native type parameter field name is null
 				// See:[AbstractActuator.MARK3]

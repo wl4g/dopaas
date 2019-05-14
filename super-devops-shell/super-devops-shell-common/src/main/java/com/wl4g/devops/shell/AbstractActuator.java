@@ -189,7 +189,7 @@ public abstract class AbstractActuator implements Actuator {
 				if (val.isPresent()) {
 					value = val.get().getValue();
 				}
-				Assert.hasText(value,
+				Assert.isTrue(isBlank(value) && opt.required(),
 						String.format("Argument option: '-%s' or long option: '--%s' is required", opt.opt(), opt.lopt()));
 				args.add(baseAndSimpleSetConvert(value, parameter.getParamType()));
 			}
