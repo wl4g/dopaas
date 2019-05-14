@@ -26,7 +26,7 @@ public class SumArgument implements Serializable {
 	@ShellOption(opt = "a", lopt = "add1", help = "Add number")
 	private int add1;
 
-	@ShellOption(opt = "b", lopt = "add2", help = "Added number (default: 1)", defaultValue = "1")
+	@ShellOption(opt = "b", lopt = "add2", help = "Added number", defaultValue = "1")
 	private int add2;
 
 	public SumArgument() {

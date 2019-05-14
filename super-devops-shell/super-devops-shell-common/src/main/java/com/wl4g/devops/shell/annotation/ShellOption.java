@@ -47,7 +47,7 @@ public @interface ShellOption {
 	String lopt();
 
 	/**
-	 * Default values for shell option argument.
+	 * Default value for shell option argument.
 	 */
 	String defaultValue() default "";
 
