@@ -15,7 +15,7 @@ mvn clean install -DskipTests
 Specify the port of the service, and then run directly as a client:
 
 ```
-java -Dservpoint=10.0.0.160:60120 -jar shell-cli-master-executable.jar
+java -Dservpoint=10.0.0.160:60120 -Dtimeout=5000 -jar shell-cli-master-executable.jar
 ```
 	
 In the above command -Dservpoint=10.0.0.160:60120 indicates the Spring Cloud service 
@@ -28,13 +28,15 @@ scans the ports that match all the locally monitored ports of the PID process (d
 range 60100-60200)
 
 ```
-java -Dservpids=19767,32374 -Dprompt=console -Ddebug -jar shell-cli-master-executable.jar 
+java -Dservpids=19767,32374 -Dprompt=console -Dtimeout=5000 -Ddebug -jar shell-cli-master-executable.jar 
 ```
 
 In the above command, -Dservpids represents a list of process numbers for the SpringCloud service to be connected,
 which automatically finds the port of the service locally based on PIDs and establishes the connection.
 If the port of the PIDs server is not reported to have been found (usually this error is not reported), you can try
-to add the -Ddebug parameter debugging, or directly use [Way1](#Way1) (-Dservpoint) to display the specified service endpoint. Where -Dprompt is used to set the command line prompt of the shell console.
+to add the -Ddebug parameter debugging, or directly use [Way1](#Way1) (-Dservpoint) to display the specified service
+endpoint. Where -Dprompt is used to set the command line prompt of the shell console, -Dtimeout specifies the time-out 
+for waiting results to return (Default:10_000ms).
 
 ## Features
 - Press TAB key to complete automatically
