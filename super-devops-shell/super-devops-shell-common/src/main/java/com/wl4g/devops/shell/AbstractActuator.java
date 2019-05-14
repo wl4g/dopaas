@@ -147,7 +147,7 @@ public abstract class AbstractActuator implements Actuator {
 		for (TargetParameter parameter : tm.getParameters()) {
 			// See: TargetMethodWrapper#initialize
 			// To javaBean parameter
-			if (!parameter.notBeanType()) {
+			if (!parameter.simpleType()) {
 				Object paramBean = parameter.getParamType().newInstance();
 
 				// Recursive full traversal De-serialization.
@@ -207,7 +207,7 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	protected void validateArguments(TargetMethodWrapper tm, Map<String, String> beanMap) {
 		tm.getParameters().forEach(parameter -> {
-			if (parameter.notBeanType()) {
+			if (parameter.simpleType()) {
 				return; // See:[MARK1][TargetMethodWrapper.MARK0]
 			}
 

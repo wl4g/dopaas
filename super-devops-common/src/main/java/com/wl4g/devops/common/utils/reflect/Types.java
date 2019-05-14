@@ -15,10 +15,7 @@
  */
 package com.wl4g.devops.common.utils.reflect;
 
-import static java.lang.reflect.Modifier.isAbstract;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.split;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static java.lang.reflect.Modifier.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -33,8 +30,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 /**
- * Java class type processing tool
+ * Java class type processing tool.</br>
+ * See: {@link com.wl4g.devops.common.utils.reflect.Types}
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年11月10日
@@ -48,11 +48,13 @@ public abstract class Types {
 	final private static Collection<Class<?>> nativeClasses = new ArrayList<Class<?>>() {
 		private static final long serialVersionUID = -4726036260392327337L;
 		{
+			add(boolean.class);
 			add(int.class);
 			add(long.class);
 			add(double.class);
 			add(float.class);
 			add(byte.class);
+			add(Boolean.class);
 			add(String.class);
 			add(Integer.class);
 			add(Long.class);
@@ -168,6 +170,7 @@ public abstract class Types {
 					throw new IllegalStateException(String.format("No support bean class field type: %s", fieldClazz));
 				}
 
+				// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
 				for (String ele : split(trimToEmpty(value), ",")) {
 					if (isNotBlank(ele)) {
 						String[] kv = split(trimToEmpty(ele), "=");
@@ -190,6 +193,7 @@ public abstract class Types {
 					throw new IllegalStateException(String.format("No support bean class field type: %s", fieldClazz));
 				}
 
+				// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
 				for (String ele : split(trimToEmpty(value), ",")) {
 					if (isNotBlank(ele)) {
 						set.add(ele);
