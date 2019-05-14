@@ -232,7 +232,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	@Override
 	protected void postProcessResult(Object result) {
 		// Notify for wait liner
-		wakeupReader();
+		wakeup();
 
 		if (result != null && isNotBlank(result.toString())) {
 			out.println(result);
@@ -250,20 +250,22 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	}
 
 	/**
-	 * Notify for wait lineReader .
+	 * Wait for lineReader. </br>
+	 * {@link AbstractRunner#wakeup()}
 	 * 
 	 * @throws InterruptedException
 	 */
-	protected void waitReader() throws InterruptedException {
+	protected void waitForResponse() throws InterruptedException {
 		synchronized (lock) {
 			lock.wait(TIMEOUT);
 		}
 	}
 
 	/**
-	 * Notify for wait lineReader .
+	 * Notify for wait lineReader. </br>
+	 * {@link AbstractRunner#waitForResponse()}
 	 */
-	protected void wakeupReader() {
+	protected void wakeup() throws IllegalMonitorStateException {
 		synchronized (lock) {
 			lock.notifyAll();
 		}
@@ -495,16 +497,16 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					}
 					// Exception-callback
 					else if (input instanceof ExceptionMessage) {
-						// Notify for wait liner
-						wakeupReader();
+						// Wakeup for lineReader
+						wakeup();
 
 						ExceptionMessage ex = (ExceptionMessage) input;
 						runner.printErr(EMPTY, ex.getThrowable());
 					}
 					// Result callback
 					else if (input instanceof ResultMessage) {
-						// Notify for wait liner
-						wakeupReader();
+						// Wakeup for lineReader
+						wakeup();
 
 						// After process
 						ResultMessage result = (ResultMessage) input;
