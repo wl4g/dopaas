@@ -23,20 +23,20 @@ import java.util.Set;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 
-public class ChaosTypeArgument implements Serializable {
+public class MixedArgument implements Serializable {
 
 	private static final long serialVersionUID = -90377698662015272L;
 
-	@ShellOption(opt = "m", lopt = "map", help = "Map类型参数字段")
+	@ShellOption(opt = "m", lopt = "map", help = "Map<String, Integer> type argument")
 	private Map<String, Integer> map;
 
-	@ShellOption(opt = "p", lopt = "prop", help = "Properties类型参数字段")
+	@ShellOption(opt = "p", lopt = "prop", help = "Properties type argument")
 	private Properties properties;
 
-	@ShellOption(opt = "l", lopt = "list", help = "List类型参数字段")
+	@ShellOption(opt = "l", lopt = "list", help = "List<String> type argument")
 	private List<String> list;
 
-	@ShellOption(opt = "s", lopt = "set", help = "Set类型参数字段")
+	@ShellOption(opt = "s", lopt = "set", help = "Set<String> type argument")
 	private Set<String> set;
 
 	public Map<String, Integer> getMap() {

@@ -92,6 +92,9 @@ public abstract class Types {
 	 * @return
 	 */
 	public static boolean isBaseType(Class<?> clazz) {
+		if (clazz == null) {
+			return false;
+		}
 		return clazz.isPrimitive() || nativeClasses.contains(clazz) || nativePackages.contains(clazz.getName());
 	}
 
@@ -103,6 +106,9 @@ public abstract class Types {
 	 * @return
 	 */
 	public static boolean isGeneralSetType(Class<?> clazz) {
+		if (clazz == null) {
+			return false;
+		}
 		return Map.class.isAssignableFrom(clazz) || Collection.class.isAssignableFrom(clazz) || clazz.isArray();
 	}
 
@@ -114,7 +120,7 @@ public abstract class Types {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T baseConvert(String value, Class<T> clazz) {
+	public static <T> T convertToBase(String value, Class<T> clazz) {
 		Object object = null;
 		if (isBaseType(clazz)) {
 			if (clazz == int.class || clazz == Integer.class) {
@@ -140,7 +146,7 @@ public abstract class Types {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Object simpleSetConvert(String value, Class<?> fieldClazz) {
+	public static Object convertToSimpleSet(String value, Class<?> fieldClazz) {
 		if (!isGeneralSetType(fieldClazz)) {
 			return null;
 		}
@@ -220,11 +226,11 @@ public abstract class Types {
 	 * @param fieldClazz
 	 * @return
 	 */
-	public static Object baseAndSimpleSetConvert(String value, Class<?> fieldClazz) {
+	public static Object convertToBaseAndSimpleSet(String value, Class<?> fieldClazz) {
 		if (isBaseType(fieldClazz)) {
-			return baseConvert(value, fieldClazz);
+			return convertToBase(value, fieldClazz);
 		} else if (isGeneralSetType(fieldClazz)) {
-			return simpleSetConvert(value, fieldClazz);
+			return convertToSimpleSet(value, fieldClazz);
 		}
 		return null;
 	}

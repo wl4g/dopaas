@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
-import com.wl4g.devops.shell.bean.ChaosTypeArgument;
+import com.wl4g.devops.shell.bean.MixedArgument;
 import com.wl4g.devops.shell.bean.SumArgument;
 import com.wl4g.devops.shell.bean.SumResult;
 import com.wl4g.devops.shell.service.ExampleService;
@@ -38,16 +38,20 @@ public class ExampleExporter {
 	@Autowired
 	private ExampleService exampleService;
 
-	@ShellMethod(keys = {
-			"sumTest" }, group = "Example command", help = "This is an example method of summation. The parameter list is not the base type.")
+	/**
+	 * $> sumTest -a 1 -b 123
+	 */
+	@ShellMethod(keys = "sumTest", group = "Example command", help = "This is an example method of summation. The parameter list is not the base type.")
 	public SumResult sumTest(SumArgument arg) {
 		return exampleService.add(arg);
 	}
 
-	@ShellMethod(keys = {
-			"sumTest2" }, group = "Example command", help = "This is an example method of summation. The parameter list is the basic type.")
-	public SumResult sum2Test(@ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
-			@ShellOption(opt = "b", lopt = "add2", help = "Added number (default: 1)", defaultValue = "1") int b) {
+	/**
+	 * $> sumTest2 -a 1 -b 123
+	 */
+	@ShellMethod(keys = "sumTest2", group = "Example command", help = "This is an example method of summation. The parameter list is the basic type.")
+	public SumResult sumTest2(@ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
+			@ShellOption(opt = "b", lopt = "add2", help = "Added number", defaultValue = "1") int b) {
 		return exampleService.add(new SumArgument(a, b));
 	}
 
@@ -64,7 +68,7 @@ public class ExampleExporter {
 	 * $> mixedTest -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4
 	 */
 	@ShellMethod(keys = { "mixedTest" }, group = "Example command", help = "Mixed set type parameter injection testing")
-	public String mixedTest(ChaosTypeArgument arg) {
+	public String mixedTest(MixedArgument arg) {
 		return "Bean field mixed set parameter injection test results: " + arg.toString();
 	}
 

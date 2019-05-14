@@ -26,12 +26,6 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.cli.Option;
-
-import com.wl4g.devops.shell.annotation.ShellOption;
-import com.wl4g.devops.shell.cli.HelpOption;
-import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
-import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 import static com.wl4g.devops.shell.utils.Types.*;
 
 /**
@@ -258,55 +252,6 @@ public abstract class Reflections {
 	 */
 	public static boolean isSafetyModifier(int mod) {
 		return !(isFinal(mod) || isStatic(mod) || isTransient(mod) || isNative(mod) || isVolatile(mod) || isSynchronized(mod));
-	}
-
-	/**
-	 * Extract deep full property to map.
-	 * 
-	 * @param clazz
-	 * @param attributes
-	 */
-	public static void extFullParams(Class<?> clazz, TargetParameter parameter) {
-		Class<?> cls = clazz;
-		do {
-			extFlatParams(cls, parameter);
-		} while ((cls = cls.getSuperclass()) != null);
-	}
-
-	/**
-	 * Extract flat class property to map
-	 * 
-	 * @param clazz
-	 * @param attributes
-	 */
-	public static void extFlatParams(Class<?> clazz, TargetParameter parameter) {
-		Assert.notNull(clazz, "The paramClazz must be null");
-		try {
-			for (Field f : clazz.getDeclaredFields()) {
-				Class<?> ftype = f.getType();
-				String fname = f.getName();
-
-				ShellOption opt = f.getAnnotation(ShellOption.class);
-				if (simpleType(ftype)) { // [MARK1],See:[AbstractActuator.MARK5]
-					// Filter unsafe field.
-					if (opt != null) {
-						if (isSafetyModifier(f.getModifiers())) {
-							Option option = new HelpOption(ftype, opt.opt(), opt.lopt(), opt.defaultValue(), opt.required(),
-									opt.help());
-							parameter.addAttribute(option, fname);
-						} else {
-							System.err.println(String.format(
-									"WARNINGS: Although the @%s annotation option has been used, it has not been registered in the parameter list because field: '%s' has modifiers final/static/transient/volatile/native/synchronized, etc.",
-									ShellOption.class.getSimpleName(), f));
-						}
-					}
-				} else {
-					extFlatParams(ftype, parameter);
-				}
-			}
-		} catch (Throwable e) {
-			throw new IllegalStateException(e);
-		}
 	}
 
 }

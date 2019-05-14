@@ -90,8 +90,8 @@ public abstract class AbstractActuator implements Actuator {
 
 		// When the shell method parameter list is not empty, the command
 		// line argument is required.
-		if (!tm.getParameters().isEmpty()) {
-			if (commands == null || commands.isEmpty()) {
+		if (commands == null || commands.isEmpty()) {
+			if (!tm.getParameters().isEmpty()) {
 				return StandardFormatter.getHelpFormat(mainArg, tm.getOptions());
 			}
 		}
@@ -138,9 +138,6 @@ public abstract class AbstractActuator implements Actuator {
 			}
 		}
 
-		// Validate arguments(if required)
-		validateArguments(tm, beanMap);
-
 		// Method arguments
 		List<Object> args = new ArrayList<>();
 
@@ -154,20 +151,27 @@ public abstract class AbstractActuator implements Actuator {
 				doWithFullFields(paramBean, new FieldFilter() {
 					@Override
 					public boolean match(Object attach, Field f, Object property) {
-						// [MARK4], See:[ShellUtils.MARK0]
-						int mod = f.getModifiers();
-						return beanMap.containsKey(f.getName()) && isSafetyModifier(mod);
+						// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
+						return isSafetyModifier(f.getModifiers());
 					}
 				}, new FieldCallback() {
 					@Override
 					public void doWith(Object attach, Field f, Object property)
 							throws IllegalArgumentException, IllegalAccessException {
-						// [MARK5], See:[Reflections.MARK1]
-						Class<?> fCls = f.getType();
-						Object value = baseAndSimpleSetConvert(beanMap.get(f.getName()), fCls);
-						Assert.notNull(value,
-								String.format("No support bean class: %s, field type: %s", attach.getClass(), fCls));
 
+						ShellOption shOpt = f.getDeclaredAnnotation(ShellOption.class);
+						Assert.notNull(shOpt, "Error, Should shellOption not be null?");
+						Object value = beanMap.get(f.getName());
+						if (value == null) {
+							value = shOpt.defaultValue();
+						}
+
+						// Validate argument(if required)
+						if (shOpt.required() && !beanMap.containsKey(f.getName()) && isBlank(shOpt.defaultValue())) {
+							throw new IllegalArgumentException(
+									String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
+						}
+						value = convertToBaseAndSimpleSet((String) value, f.getType());
 						f.setAccessible(true);
 						f.set(attach, value);
 					}
@@ -175,51 +179,31 @@ public abstract class AbstractActuator implements Actuator {
 
 				args.add(paramBean);
 			}
-			// [MARK1]: To native parameter
+			// [MARK1]: To native parameter, See:[TargetParameter.MARK7]
 			else {
-				ShellOption opt = parameter.getShellOption();
-
+				ShellOption shOpt = parameter.getShellOption();
 				// Mathing argument value
-				Optional<Entry<String, String>> val = beanMap.entrySet().stream().filter(arg -> {
-					return equalsAny(arg.getKey(), opt.opt(), opt.lopt());
-				}).findFirst();
+				Optional<Entry<String, String>> val = beanMap.entrySet().stream()
+						.filter(arg -> equalsAny(arg.getKey(), shOpt.opt(), shOpt.lopt())).findFirst();
 
 				// Default value
-				String value = opt.defaultValue();
+				String value = shOpt.defaultValue();
 				if (val.isPresent()) {
 					value = val.get().getValue();
 				}
-				Assert.isTrue(isBlank(value) && opt.required(),
-						String.format("Argument option: '-%s' or long option: '--%s' is required", opt.opt(), opt.lopt()));
-				args.add(baseAndSimpleSetConvert(value, parameter.getParamType()));
+
+				// Validate argument(if required)
+				if (shOpt.required() && !beanMap.containsKey(shOpt.opt()) && !beanMap.containsKey(shOpt.lopt())
+						&& isBlank(shOpt.defaultValue())) {
+					throw new IllegalArgumentException(
+							String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
+				}
+				args.add(convertToBaseAndSimpleSet(value, parameter.getParamType()));
 			}
 
 		}
 
 		return args.toArray();
-	}
-
-	/**
-	 * Validate arguments(if required)
-	 * 
-	 * @param tm
-	 * @param beanMap
-	 */
-	protected void validateArguments(TargetMethodWrapper tm, Map<String, String> beanMap) {
-		tm.getParameters().forEach(parameter -> {
-			if (parameter.simpleType()) {
-				return; // See:[MARK1][TargetMethodWrapper.MARK0]
-			}
-
-			// [MARK3]: Just verify the bean type parameter
-			parameter.getAttributes().forEach((option, fname) -> {
-				if (option.hasArg()) { // required?
-					// javaBean.fieldName
-					Assert.hasText(beanMap.get(fname),
-							String.format("option: -%s, --%s cannot be empty", option.getOpt(), option.getLongOpt()));
-				}
-			});
-		});
 	}
 
 	/**

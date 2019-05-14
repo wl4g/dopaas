@@ -20,6 +20,8 @@ import java.util.Map;
 
 import org.apache.commons.cli.Option;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 /**
  * Help option.</br>
  * 
@@ -30,13 +32,17 @@ import org.apache.commons.cli.Option;
 public class HelpOption extends Option {
 	private static final long serialVersionUID = 1950613325131445963L;
 
+	final private String defaultValue;
+
 	public HelpOption(String opt, String longOpt, boolean hasArg, String description) throws IllegalArgumentException {
 		super(opt, longOpt, hasArg, description);
+		this.defaultValue = EMPTY;
 	}
 
 	public HelpOption(Class<?> paramType, String opt, String longOpt, String defaultValue, boolean required, String description)
 			throws IllegalArgumentException {
 		super(opt, longOpt, true, null);
+		this.defaultValue = defaultValue;
 		setRequired(required);
 		if (!isRequired()) {
 			setArgName("default=" + defaultValue);
@@ -53,6 +59,10 @@ public class HelpOption extends Option {
 		} else {
 			setDescription(description);
 		}
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
 	}
 
 }
