@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.shell.cli;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -36,10 +34,10 @@ public class HelpOption extends Option {
 		super(opt, longOpt, hasArg, description);
 	}
 
-	public HelpOption(Class<?> paramType, String opt, String longOpt, String defaultValue, String description)
+	public HelpOption(Class<?> paramType, String opt, String longOpt, String defaultValue, boolean required, String description)
 			throws IllegalArgumentException {
 		super(opt, longOpt, true, null);
-		setRequired(isBlank(defaultValue));
+		setRequired(required);
 		if (!isRequired()) {
 			setArgName("default=" + defaultValue);
 		} else {

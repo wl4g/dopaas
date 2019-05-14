@@ -291,7 +291,8 @@ public abstract class Reflections {
 					// Filter unsafe field.
 					if (opt != null) {
 						if (isSafetyModifier(f.getModifiers())) {
-							Option option = new HelpOption(ftype, opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
+							Option option = new HelpOption(ftype, opt.opt(), opt.lopt(), opt.defaultValue(), opt.required(),
+									opt.help());
 							parameter.addAttribute(option, fname);
 						} else {
 							System.err.println(String.format(
