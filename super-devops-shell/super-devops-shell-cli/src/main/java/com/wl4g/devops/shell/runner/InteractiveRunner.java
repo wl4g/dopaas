@@ -17,7 +17,10 @@ package com.wl4g.devops.shell.runner;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import java.io.IOException;
+
 import com.wl4g.devops.shell.config.Configuration;
+import com.wl4g.devops.shell.exception.ProcessTimeoutException;
 
 import org.jline.reader.UserInterruptException;
 
@@ -36,21 +39,48 @@ public class InteractiveRunner extends AbstractRunner {
 
 	@Override
 	public void run(String[] args) {
-		// Listening console input.
-		while (true) {
-			String line = null;
-			try {
-				// Read line
-				line = lineReader.readLine(getAttributed().toAnsi(lineReader.getTerminal()));
+		synchronized (lock) {
+			while (true) { // Listening console input.
+				Thread worker = null;
+				String line = null;
+				try {
+					// Read line
+					line = lineReader.readLine(getAttributed().toAnsi(lineReader.getTerminal()));
 
-				// Submission processing
-				if (isNotBlank(line)) {
-					submit(line);
+					// Submission processing
+					if (isNotBlank(line)) {
+						final String _line = line;
+						worker = new Thread(() -> {
+							try {
+								submit(_line);
+							} catch (IOException e) {
+								throw new IllegalStateException(e);
+							}
+						});
+						worker.start();
+						long begin = System.currentTimeMillis();
+
+						// Wait for lineReader.
+						waitReader();
+
+						// Check wait timeout
+						if ((System.currentTimeMillis() - begin) >= TIMEOUT) {
+							throw new ProcessTimeoutException(String.format("Processing command timeout: %s", line));
+						} else {
+							System.out.println("aaaaaaaaaaaaaaaaa");
+						}
+					}
+
+				} catch (UserInterruptException e) {
+					shutdown(line);
+				} catch (Throwable e) {
+					printErr(EMPTY, e);
+				} finally {
+					if (worker != null) {
+						worker.interrupt();
+						worker = null;
+					}
 				}
-			} catch (UserInterruptException e) {
-				shutdown(line);
-			} catch (Throwable e) {
-				printErr(EMPTY, e);
 			}
 		}
 	}
