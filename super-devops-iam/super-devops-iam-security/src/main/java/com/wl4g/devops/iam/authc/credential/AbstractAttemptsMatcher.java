@@ -19,6 +19,7 @@ import com.wl4g.devops.common.constants.IAMDevOpsConstants;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.handler.verification.Cumulators;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import com.wl4g.devops.iam.handler.verification.Verification;
@@ -32,7 +33,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.handler.verification.GraphBasedVerification.FailCountWrapper;
@@ -132,7 +136,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		// Mathing failure count accumulative increment by 1
 		Long cumulatedMaxFailCount = matchCumulator.accumulate(factors, 1, config.getMatcher().getFailFastMatchDelay());
 		// add fail count into session
-		postFailCountAdd();
+		postFailCountAdd(principal);
 		if (log.isInfoEnabled()) {
 			log.info("Principal {} matched failure accumulative limiter factor {}, cumulatedMaxFailCount {}", principal, factors,
 					cumulatedMaxFailCount);
@@ -157,6 +161,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		// Clean all locker(if exists)
 		factors.forEach(factor -> {
+			log.info("lockCache.remove="+factor);
 			try {
 				lockCache.remove(new EnhancedKey(factor));
 			} catch (Exception e) {
@@ -204,9 +209,10 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			 * No previous locks, If the number of failures is exceeded, no
 			 * login is allowed.
 			 */
-			if (cumulated > matchLockMaxAttempts) {
+			if (cumulatedMax > matchLockMaxAttempts) {
 				factorLock = true;
 			}
+			log.info("assertAccountLocked--factor="+factor+",cumulated="+cumulated+",matchLockMaxAttempts="+matchLockMaxAttempts+",cumulatedMax="+cumulatedMax+",lock="+lock+",factorLock="+factorLock);
 
 			/*
 			 * If lockout is required at present, Update decay counter time
@@ -265,17 +271,55 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		matchCumulator.destroy(factors);
 		applyCaptchaCumulator.destroy(factors);
 		applySmsCumulator.destroy(factors);
+		// remove fail session record
+		destroySession();
 	}
 
-	private void postFailCountAdd() {
-		Session session = SecurityUtils.getSubject().getSession();
-		FailCountWrapper failCountWrapper = null != session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) ?
-				(FailCountWrapper) session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) :
+	/**
+	 *  if auth fail , add fail count into session
+	 */
+	private void postFailCountAdd(String account) {
+		FailCountWrapper failCountWrapper = null != SessionBindings.getBindValue(GRAPH_VERIFY_FAIL_TIME) ?
+				(FailCountWrapper) SessionBindings.getBindValue(GRAPH_VERIFY_FAIL_TIME) :
 				new FailCountWrapper(0);
 		failCountWrapper.setCount(failCountWrapper.getCount() + 1);
 		failCountWrapper.setCreateTime(System.currentTimeMillis());
 		log.info("session:loginFailTimes=" + failCountWrapper.getCount());
-		session.setAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME, failCountWrapper);
+		SessionBindings.bind(GRAPH_VERIFY_FAIL_TIME, failCountWrapper);
+
+		//add fail account
+		Set<String> accounts = SessionBindings.getBindValue(AUTH_FAIL_ACCOUNT);
+		if(null==accounts){
+			accounts = new HashSet<>();
+		}
+		accounts.add(KEY_FAIL_LIMITER_USER_PREFIX + account);
+		SessionBindings.bind(AUTH_FAIL_ACCOUNT, accounts);
+
+	}
+
+	/**
+	 * remove fail session record
+	 */
+	private void destroySession(){
+		SessionBindings.unbind(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME);
+		SessionBindings.unbind(IAMDevOpsConstants.GRAPH_VERIFY_GET_TIME);
+		Set<String> accounts = SessionBindings.getBindValue(AUTH_FAIL_ACCOUNT);
+		if(null!=accounts){
+			List<String> factors = new ArrayList<>(accounts);
+			matchCumulator.destroy(factors);
+			applyCaptchaCumulator.destroy(factors);
+			applySmsCumulator.destroy(factors);
+			factors.forEach(factor -> {
+				log.info("lockCache.remove="+factor);
+				try {
+					lockCache.remove(new EnhancedKey(factor));
+				} catch (Exception e) {
+					log.error("", e);
+				}
+			});
+		}
+
+
 	}
 
 }
