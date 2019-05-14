@@ -89,7 +89,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	/**
 	 * Enable debugging
 	 */
-	final public static long TIMEOUT = Long.parseLong(System.getProperty("timeout", "5000"));
+	final public static long TIMEOUT = Long.parseLong(System.getProperty("timeout", "10000"));
 
 	/**
 	 * Attributed string
