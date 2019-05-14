@@ -39,8 +39,9 @@ java -Dservpids=19767,32374 -Dprompt=console -Dtimeout=5000 -jar shell-cli-maste
 ## 特性
 
 - 按TAB键自动补全
-- Ctrl+A 光标跳至行首、Ctrl+E 光标跳至行尾、Ctrl+C 退出控制台（遵循GNU）
+实战：
 ![tab自动补全](use_tab.jpg)
+- Ctrl+A 光标跳至行首、Ctrl+E 光标跳至行尾、Ctrl+C 退出控制台（遵循GNU）
 
 ## 内置命令 
 - clear/cls    清理控制台
@@ -48,6 +49,7 @@ java -Dservpids=19767,32374 -Dprompt=console -Dtimeout=5000 -jar shell-cli-maste
 - history/his    查看历史命令（持久文件：$USER_HOME/.devops/shell/history）
 - stacktrace/st    查看上一次异常的堆栈信息（若有）
 - help/he    使用帮助，用法如：help/help sumTest/sumTest --help/sumTest --he/  其中 sumTest 为一个求和的测试命令
+实战：
 ![help帮助](use_help.jpg)
 
 ## 自定义命令

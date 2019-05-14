@@ -40,8 +40,9 @@ for waiting results to return (Default:10_000ms).
 
 ## Features
 - Press TAB key to complete automatically
-- Ctrl+A cursor jumps to the beginning of the line, Ctrl+E cursor jumps to the end of the line, Ctrl+C exits the console (follow GNU)
+Actual combat:
 ![tab complete](use_tab.jpg)
+- Ctrl+A cursor jumps to the beginning of the line, Ctrl+E cursor jumps to the end of the line, Ctrl+C exits the console (follow GNU)
 
 ## Built-in commands:
 - clear/cls    Cleaning console
@@ -49,6 +50,7 @@ for waiting results to return (Default:10_000ms).
 - history/his    View the history command (persistent file: $USER_HOME/.devops/shell/history)
 - stacktrace/st    View stack information for the last exception (if any)
 - help/he    Use help, such as: help/help sumTest/sumTest --help/sumTest --he/ where sumTest is a summation test command
+Actual combat:
 ![help](use_help.jpg)
 
 ## Custom commands
