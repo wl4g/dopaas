@@ -60,8 +60,8 @@ public class InteractiveRunner extends AbstractRunner {
 						worker.start();
 						long begin = System.currentTimeMillis();
 
-						// Wait for lineReader.
-						waitReader();
+						// Wait for response.
+						waitForResponse();
 
 						// Check wait timeout
 						if ((System.currentTimeMillis() - begin) >= TIMEOUT) {
