@@ -54,6 +54,9 @@ import com.wl4g.devops.shell.registry.ShellBeanRegistry;
  */
 public class EmbeddedServerProcessor extends AbstractProcessor implements ApplicationRunner, Runnable {
 
+	/**
+	 * Current server running status.
+	 */
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	/**
@@ -189,15 +192,15 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					// To a string command line
 					Object input = new ObjectInputStream(_in).readObject();
 
-					if (log.isDebugEnabled()) {
-						log.debug("Receving input: {}", input);
+					if (log.isInfoEnabled()) {
+						log.info("CLI receive: {}", input);
 					}
 
 					// Submit line
 					if (input instanceof LineMessage) {
 						LineMessage line = (LineMessage) input;
 						// Processing
-						result = new ResultMessage(function.apply(line.getLine()).toString());
+						result = new ResultMessage(line.getProcessId(), function.apply(line.getLine()).toString());
 					}
 					// Request registed commands
 					else if (input instanceof MetaMessage) {
@@ -207,8 +210,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 					// Echo
 					if (result != null) {
-						if (log.isDebugEnabled()) {
-							log.debug("Processing result: {}", result);
+						if (log.isInfoEnabled()) {
+							log.info("CLI processed: {}", result);
 						}
 						writeAndFlush(result);
 					}
@@ -217,7 +220,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					handleThorws(th);
 				} finally {
 					try {
-						Thread.sleep(200L);
+						Thread.sleep(100L);
 					} catch (InterruptedException e) {
 					}
 				}

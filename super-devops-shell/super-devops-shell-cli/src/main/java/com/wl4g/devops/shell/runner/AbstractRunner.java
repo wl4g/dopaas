@@ -87,6 +87,11 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	final public static boolean DEBUG = System.getProperty("debug") != null;
 
 	/**
+	 * Enable debugging
+	 */
+	final public static long TIMEOUT = Long.parseLong(System.getProperty("timeout", "5000"));
+
+	/**
 	 * Attributed string
 	 */
 	final public static AttributedString DEFAULT_ATTRIBUTED = new AttributedString("console> ");
@@ -100,6 +105,11 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * Line reader
 	 */
 	final protected LineReader lineReader;
+
+	/**
+	 * Response wait lock.
+	 */
+	final protected Object lock = new Object();
 
 	/**
 	 * Shell client handler
@@ -221,6 +231,9 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 	@Override
 	protected void postProcessResult(Object result) {
+		// Notify for wait liner
+		wakeupReader();
+
 		if (result != null && isNotBlank(result.toString())) {
 			out.println(result);
 		}
@@ -234,6 +247,26 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	protected AttributedString getAttributed() {
 		String prompt = getProperty(ARG_PROMPT);
 		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(String.format("%s> ", prompt));
+	}
+
+	/**
+	 * Notify for wait lineReader .
+	 * 
+	 * @throws InterruptedException
+	 */
+	protected void waitReader() throws InterruptedException {
+		synchronized (lock) {
+			lock.wait(TIMEOUT);
+		}
+	}
+
+	/**
+	 * Notify for wait lineReader .
+	 */
+	protected void wakeupReader() {
+		synchronized (lock) {
+			lock.notifyAll();
+		}
 	}
 
 	/**
@@ -455,18 +488,27 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					// Read a string command process result
 					Object input = new ObjectInputStream(_in).readObject();
 
-					if (input instanceof ExceptionMessage) { // Exception-callback
+					// Merge remote target methods commands
+					if (input instanceof MetaMessage) {
+						MetaMessage meta = (MetaMessage) input;
+						getSingle().merge(meta.getRegistedMethods());
+					}
+					// Exception-callback
+					else if (input instanceof ExceptionMessage) {
+						// Notify for wait liner
+						wakeupReader();
+
 						ExceptionMessage ex = (ExceptionMessage) input;
 						runner.printErr(EMPTY, ex.getThrowable());
 					}
-					if (input instanceof ResultMessage) { // Result callback
+					// Result callback
+					else if (input instanceof ResultMessage) {
+						// Notify for wait liner
+						wakeupReader();
+
+						// After process
 						ResultMessage result = (ResultMessage) input;
 						function.apply(result.getContent());
-					}
-					// Merge remote target methods commands
-					else if (input instanceof MetaMessage) {
-						MetaMessage meta = (MetaMessage) input;
-						getSingle().merge(meta.getRegistedMethods());
 					}
 
 				} catch (SocketException e) {
@@ -476,7 +518,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					runner.printErr(EMPTY, e);
 				} finally {
 					try {
-						Thread.sleep(200L);
+						Thread.sleep(50L);
 					} catch (InterruptedException e) {
 					}
 				}

@@ -29,7 +29,8 @@ public class ResultMessage extends Message {
 
 	final private String content;
 
-	public ResultMessage(String content) {
+	public ResultMessage(int processId, String content) {
+		super(processId);
 		Assert.hasText(content, "Content must not be empty");
 		this.content = content;
 	}
