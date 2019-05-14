@@ -226,7 +226,7 @@ public abstract class Types {
 	 * @param fieldClazz
 	 * @return
 	 */
-	public static Object convertToBaseAndSimpleSet(String value, Class<?> fieldClazz) {
+	public static Object convertToBaseOrSimpleSet(String value, Class<?> fieldClazz) {
 		if (isBaseType(fieldClazz)) {
 			return convertToBase(value, fieldClazz);
 		} else if (isGeneralSetType(fieldClazz)) {

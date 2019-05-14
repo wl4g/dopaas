@@ -166,7 +166,7 @@ public abstract class AbstractActuator implements Actuator {
 							throw new IllegalArgumentException(
 									String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
 						}
-						value = convertToBaseAndSimpleSet((String) value, f.getType());
+						value = convertToBaseOrSimpleSet((String) value, f.getType());
 						f.setAccessible(true);
 						f.set(attach, value);
 					}
@@ -193,7 +193,7 @@ public abstract class AbstractActuator implements Actuator {
 					throw new IllegalArgumentException(
 							String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
 				}
-				args.add(convertToBaseAndSimpleSet(value, parameter.getParamType()));
+				args.add(convertToBaseOrSimpleSet(value, parameter.getParamType()));
 			}
 
 		}
