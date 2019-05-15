@@ -1,7 +1,5 @@
 package com.wl4g.devops.shell.utils;
 
-import java.lang.reflect.Field;
-
 import com.wl4g.devops.shell.annotation.ShellOption;
 import static com.wl4g.devops.shell.utils.Reflections.*;
 
@@ -25,8 +23,7 @@ public abstract class ShellUtils extends BeanUtils2 {
 	 *            the source bean
 	 */
 	public static <T> void copyOptionsProperties(T target, T source) {
-		copyOptionsProperties(target, source, new FieldCopyer() {
-		});
+		copyOptionsProperties(target, source, DEFAULT_FIELD_COPYER);
 	}
 
 	/**
@@ -43,12 +40,9 @@ public abstract class ShellUtils extends BeanUtils2 {
 	 */
 	public static <T> void copyOptionsProperties(T target, T source, FieldCopyer fc) {
 		try {
-			copyFullProperties(target, source, new FieldFilter() {
-				@Override
-				public boolean match(Field f, Object sourcePropertyValue) {
-					// [MARK0], See:[AbstractActuator.MARK4]
-					return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(f.getModifiers());
-				}
+			copyFullProperties(target, source, (f, sourcePropertyValue) -> {
+				// [MARK0], See:[AbstractActuator.MARK4]
+				return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(f.getModifiers());
 			}, fc);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new IllegalStateException(e);
