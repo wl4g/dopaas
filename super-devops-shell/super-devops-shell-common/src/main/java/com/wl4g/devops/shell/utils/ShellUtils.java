@@ -25,15 +25,31 @@ public abstract class ShellUtils extends BeanUtils2 {
 	 *            the source bean
 	 */
 	public static <T> void copyOptionsProperties(T target, T source) {
+		copyOptionsProperties(target, source, new FieldCopyer() {
+		});
+	}
+
+	/**
+	 * Execute a copy from the source object to the target object. Note that it
+	 * will deeply recurse all parent or superclass and application property
+	 * fields, and only contain fields annotated with {@link ShellOption}
+	 * 
+	 * @param target
+	 *            target the target bean
+	 * @param source
+	 *            the source bean
+	 * @param fc
+	 *            Customizable copyer
+	 */
+	public static <T> void copyOptionsProperties(T target, T source, FieldCopyer fc) {
 		try {
 			copyFullProperties(target, source, new FieldFilter() {
 				@Override
 				public boolean match(Field f, Object sourcePropertyValue) {
 					// [MARK0], See:[AbstractActuator.MARK4]
-					int mod = f.getModifiers();
-					return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(mod);
+					return f.getAnnotation(ShellOption.class) != null && isSafetyModifier(f.getModifiers());
 				}
-			});
+			}, fc);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new IllegalStateException(e);
 		}
