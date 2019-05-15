@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.shell;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +26,6 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import static com.wl4g.devops.shell.utils.Types.*;
 import static com.wl4g.devops.shell.utils.Reflections.*;
-import com.wl4g.devops.shell.utils.Reflections.FieldCallback;
-import com.wl4g.devops.shell.utils.Reflections.FieldFilter;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
@@ -143,33 +140,25 @@ public abstract class AbstractActuator implements Actuator {
 				Object paramBean = parameter.getParamType().newInstance();
 
 				// Recursive full traversal De-serialization.
-				doWithFullFields(paramBean, new FieldFilter() {
-					@Override
-					public boolean match(Object attach, Field f, Object property) {
-						// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
-						return isSafetyModifier(f.getModifiers());
+				doWithFullFields(paramBean, (attach, f, property) -> {
+					// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
+					return isSafetyModifier(f.getModifiers());
+				}, (attach, f, property) -> {
+					ShellOption shOpt = f.getDeclaredAnnotation(ShellOption.class);
+					Assert.notNull(shOpt, "Error, Should shellOption not be null?");
+					Object value = beanMap.get(f.getName());
+					if (value == null) {
+						value = shOpt.defaultValue();
 					}
-				}, new FieldCallback() {
-					@Override
-					public void doWith(Object attach, Field f, Object property)
-							throws IllegalArgumentException, IllegalAccessException {
 
-						ShellOption shOpt = f.getDeclaredAnnotation(ShellOption.class);
-						Assert.notNull(shOpt, "Error, Should shellOption not be null?");
-						Object value = beanMap.get(f.getName());
-						if (value == null) {
-							value = shOpt.defaultValue();
-						}
-
-						// Validate argument(if required)
-						if (shOpt.required() && !beanMap.containsKey(f.getName()) && isBlank(shOpt.defaultValue())) {
-							throw new IllegalArgumentException(
-									String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
-						}
-						value = convertToBaseOrSimpleSet((String) value, f.getType());
-						f.setAccessible(true);
-						f.set(attach, value);
+					// Validate argument(if required)
+					if (shOpt.required() && !beanMap.containsKey(f.getName()) && isBlank(shOpt.defaultValue())) {
+						throw new IllegalArgumentException(
+								String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
 					}
+					value = convertToBaseOrSimpleSet((String) value, f.getType());
+					f.setAccessible(true);
+					f.set(attach, value);
 				});
 
 				args.add(paramBean);
@@ -177,7 +166,7 @@ public abstract class AbstractActuator implements Actuator {
 			// [MARK1]: To native parameter, See:[TargetParameter.MARK7]
 			else {
 				ShellOption shOpt = parameter.getShellOption();
-				// Mathing argument value
+				// Matching argument value
 				Optional<Entry<String, String>> val = beanMap.entrySet().stream()
 						.filter(arg -> equalsAny(arg.getKey(), shOpt.opt(), shOpt.lopt())).findFirst();
 

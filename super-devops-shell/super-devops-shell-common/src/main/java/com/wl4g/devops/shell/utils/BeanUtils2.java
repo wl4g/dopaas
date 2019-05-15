@@ -33,8 +33,7 @@ public abstract class BeanUtils2 {
 	 */
 	public static void copyFullProperties(Object target, Object source, FieldFilter ff)
 			throws IllegalArgumentException, IllegalAccessException {
-		copyFullProperties(target, source, ff, new FieldCopyer() {
-		});
+		copyFullProperties(target, source, ff, DEFAULT_FIELD_COPYER);
 	}
 
 	/**
@@ -160,9 +159,7 @@ public abstract class BeanUtils2 {
 		 *            See:[MARK1|MARK2]
 		 * @return
 		 */
-		default public boolean match(Field f, Object sourcePropertyValue) {
-			return true;
-		}
+		boolean match(Field f, Object sourcePropertyValue);
 	}
 
 	/**
@@ -185,14 +182,33 @@ public abstract class BeanUtils2 {
 		 * @throws IllegalAccessException
 		 * @throws IllegalArgumentException
 		 */
-		default public void doCopy(Object targetAttach, Field tf, Field sf, Object sourcePropertyValue)
+		void doCopy(Object targetAttach, Field tf, Field sf, Object sourcePropertyValue)
+				throws IllegalArgumentException, IllegalAccessException;
+	}
+
+	/**
+	 * Default field filter.
+	 */
+	final public static FieldFilter DEFAULT_FIELD_FILTER = new FieldFilter() {
+		@Override
+		public boolean match(Field f, Object sourcePropertyValue) {
+			return true;
+		}
+	};
+
+	/**
+	 * Default field copyer.
+	 */
+	final public static FieldCopyer DEFAULT_FIELD_COPYER = new FieldCopyer() {
+		@Override
+		public void doCopy(Object targetAttach, Field tf, Field sf, Object sourcePropertyValue)
 				throws IllegalArgumentException, IllegalAccessException {
 			if (sourcePropertyValue != null) {
 				tf.setAccessible(true);
 				tf.set(targetAttach, sourcePropertyValue);
 			}
 		}
-	}
+	};
 
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
 		B b1 = new B();
@@ -208,9 +224,14 @@ public abstract class BeanUtils2 {
 		a2.b = b2;
 
 		System.out.println(a1);
+
 		copyFullProperties(a1, a2, new FieldFilter() {
-		}, new FieldCopyer() {
+			@Override
+			public boolean match(Field f, Object sourcePropertyValue) {
+				return true;
+			}
 		});
+
 		System.out.println(a1);
 
 		System.out.println("=================");
@@ -225,9 +246,14 @@ public abstract class BeanUtils2 {
 		c3.cc = "c33";
 
 		System.out.println(a3);
+
 		copyFullProperties(a3, c3, new FieldFilter() {
-		}, new FieldCopyer() {
+			@Override
+			public boolean match(Field f, Object sourcePropertyValue) {
+				return true;
+			}
 		});
+
 		System.out.println(a3);
 
 		System.out.println("=================");
