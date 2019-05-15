@@ -32,6 +32,9 @@ import static org.apache.commons.lang3.StringUtils.*;
 public class HelpOption extends Option {
 	private static final long serialVersionUID = 1950613325131445963L;
 
+	/**
+	 * Shell option default value.
+	 */
 	final private String defaultValue;
 
 	public HelpOption(String opt, String longOpt, boolean hasArg, String description) throws IllegalArgumentException {
