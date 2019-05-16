@@ -30,7 +30,7 @@ import com.google.common.base.Charsets;
 import com.wl4g.devops.common.bean.scm.model.PreReleaseModel;
 import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseInstance;
 import com.wl4g.devops.common.exception.scm.ConfigureReleaseZkSetException;
-import com.wl4g.devops.common.utils.ScmUtils;
+import com.wl4g.devops.scm.common.utils.ScmUtils;
 import com.wl4g.devops.scm.release.ConfigSourceReleaser;
 
 /**

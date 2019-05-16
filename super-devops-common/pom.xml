@@ -103,41 +103,6 @@
 			<artifactId>spring-cloud-context</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- Spring Cloud(zookeeper) -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>io.netty</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>io.reactivex</groupId>
-					<artifactId>rxjava</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.netflix.*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.netflix.ribbon</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-netflix-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-starter-archaius</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<!-- Zookeeper(Curator) -->
 		<dependency>
 			<groupId>org.apache.curator</groupId>
