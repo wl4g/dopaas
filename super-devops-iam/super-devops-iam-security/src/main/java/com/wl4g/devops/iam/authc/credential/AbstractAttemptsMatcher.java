@@ -15,18 +15,16 @@
  */
 package com.wl4g.devops.iam.authc.credential;
 
-import com.wl4g.devops.common.constants.IAMDevOpsConstants;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
 import com.wl4g.devops.iam.handler.verification.Cumulators;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import com.wl4g.devops.iam.handler.verification.Verification;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -35,7 +33,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.iam.handler.verification.GraphBasedVerification.FailCountWrapper;
 
 /**
  * Abstract custom attempts credential matcher
@@ -56,6 +53,11 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * Attempts accumulator
 	 */
 	private Cumulator matchCumulator;
+
+	/**
+	 * Apply CAPTCHA attempts accumulator.(Session-based)
+	 */
+	private Cumulator sessionMatchCumulator;
 
 	/**
 	 * Attempts CAPTCHA accumulator
@@ -129,16 +131,18 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * @return
 	 */
 	protected Long postFailureProcess(String principal, List<String> factors) {
-		// Mathing failure count accumulative increment by 1
-		Long cumulatedMaxFailCount = matchCumulator.accumulate(factors, 1, config.getMatcher().getFailFastMatchDelay());
-		// add fail count into session
-		postFailCountAdd();
+		// Cumulative increment of cache matching count by 1
+		long matchCountMax = matchCumulator.accumulate(factors, 1);
+
+		// Cumulative Increase of Session Matching Count by 1
+		long sessioinMatchCountMax = sessionMatchCumulator.accumulate(factors, 1);
+
 		if (log.isInfoEnabled()) {
-			log.info("Principal {} matched failure accumulative limiter factor {}, cumulatedMaxFailCount {}", principal, factors,
-					cumulatedMaxFailCount);
+			log.info("Principal {} matched failure accumulative limiter matchCountMax: {}, sessioinMatchCountMax: {}, factor: {}",
+					principal, matchCountMax, sessioinMatchCountMax, factors);
 		}
 
-		return cumulatedMaxFailCount;
+		return matchCountMax;
 	}
 
 	/**
@@ -149,7 +153,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	protected void postSuccessProcess(String principal, List<String> factors) {
 		// Destroy all cumulators
-		destroyAllCumulators(factors);
+		destroyCumulators(factors);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Principal {} matched success, cleaning factors: {}", principal, factors);
@@ -245,37 +249,38 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		MatcherProperties matcher = config.getMatcher();
 		this.lockCache = cacheManager.getEnhancedCache(CACHE_MATCH_LOCK);
-		this.matchCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_MATCH_COUNTER);
-		this.applyCaptchaCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_CAPTCHA_COUNTER);
-		this.applySmsCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_SMS_COUNTER);
+
+		this.matchCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
+				matcher.getFailFastMatchDelay());
+
+		this.applyCaptchaCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
+				matcher.getFailFastCaptchaDelay());
+
+		this.applySmsCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+				matcher.getFailFastSmsMaxDelay());
+
+		this.sessionMatchCumulator = Cumulators.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
+				matcher.getFailFastMatchDelay());
 
 		Assert.notNull(lockCache, "lockCache is null, please check configure");
 		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
 		Assert.notNull(applyCaptchaCumulator, "applyCaptchaCumulator is null, please check configure");
 		Assert.notNull(applySmsCumulator, "applySmsCumulator is null, please check configure");
+		Assert.notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
 	}
 
 	/**
-	 * Destroy verification cumulator all
+	 * Destroy verification accumulators all.
 	 * 
 	 * @param factors
 	 */
-	private void destroyAllCumulators(@NotNull List<String> factors) {
+	private void destroyCumulators(@NotNull List<String> factors) {
 		matchCumulator.destroy(factors);
 		applyCaptchaCumulator.destroy(factors);
 		applySmsCumulator.destroy(factors);
-	}
-
-	private void postFailCountAdd() {
-		Session session = SecurityUtils.getSubject().getSession();
-		FailCountWrapper failCountWrapper = null != session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) ?
-				(FailCountWrapper) session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) :
-				new FailCountWrapper(0);
-		failCountWrapper.setCount(failCountWrapper.getCount() + 1);
-		failCountWrapper.setCreateTime(System.currentTimeMillis());
-		log.info("session:loginFailTimes=" + failCountWrapper.getCount());
-		session.setAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME, failCountWrapper);
+		sessionMatchCumulator.destroy(factors);
 	}
 
 }

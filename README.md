@@ -15,5 +15,5 @@
     super-devops-view     Front view(前端页面视图, html页面)
 
 ## 文档
-- [IAM支持文档](super-devops-iam/README.md)
-- [Shell cli支持文档](super-devops-shell/README_EN.md)
+- [IAM Doc](super-devops-iam/README.md)
+- [Shell Doc](super-devops-shell/README.md)
