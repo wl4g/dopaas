@@ -15,12 +15,11 @@
  */
 package com.wl4g.devops.iam.handler.verification;
 
-import com.wl4g.devops.common.constants.IAMDevOpsConstants;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
@@ -29,11 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
-
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
 
 /**
  * Abstract graphic verification code handler
@@ -53,7 +48,17 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	/**
 	 * Apply CAPTCHA attempts accumulator
 	 */
-	private Cumulator applyCumulator;
+	private Cumulator applyCaptchaCumulator;
+
+	/**
+	 * Apply CAPTCHA attempts accumulator.(Session-based)
+	 */
+	private Cumulator sessionMatchCumulator;
+
+	/**
+	 * Apply CAPTCHA attempts accumulator.(Session-based)
+	 */
+	private Cumulator sessionApplyCaptchaCumulator;
 
 	/**
 	 * Key name used to store authentication code to session
@@ -92,27 +97,33 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		write(response, getVerifyCode(true).getText());
 	}
 
-	@Override public boolean isEnabled(@NotNull List<String> factors) {
+	@Override
+	public boolean isEnabled(@NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-
-		// Enabled CAPTCHA max attempts
 		int enabledCaptchaMaxAttempts = config.getMatcher().getEnabledCaptchaMaxAttempts();
 
-		Session session = SecurityUtils.getSubject().getSession();
-		FailCountWrapper failCountWrapper = null != session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) ?
-				(FailCountWrapper) session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_FAIL_TIME) :
-				null;
+		// Cumulative number of matches based on cache, If the number of
+		// failures exceeds the upper limit, verification is enabled
+		Long matchCount = matchCumulator.getCumulatives(factors);
+		if (log.isInfoEnabled()) {
+			log.info("Logon match count: {}, factors: {}", matchCount, factors);
+		}
+		// Login matching failures exceed the upper limit.
+		if (matchCount >= enabledCaptchaMaxAttempts) {
+			return true;
+		}
 
-		// If the number of failures exceeds the upper limit, verification is
-		// enabled
-		log.info("" + matchCumulator.getCumulatives(factors));
-		if (matchCumulator.getCumulatives(factors) >= enabledCaptchaMaxAttempts) {
+		// Cumulative number of matches based on session.
+		long sessionMatchCount = sessionMatchCumulator.getCumulatives(factors);
+		if (log.isInfoEnabled()) {
+			log.info("Logon session match count: {}, factors: {}", sessionMatchCount, factors);
+		}
+
+		// Graphic verify-code apply over the upper limit.
+		if (sessionMatchCount >= enabledCaptchaMaxAttempts) {
 			return true;
 		}
-		if (null != failCountWrapper && failCountWrapper.getCount() >= enabledCaptchaMaxAttempts
-				&& failCountWrapper.getCreateTime() + config.getMatcher().getFailFastMatchDelay() >= System.currentTimeMillis()) {
-			return true;
-		}
+
 		return false;
 	}
 
@@ -129,29 +140,31 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	@Override
 	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
 			@NotNull List<String> factors) {
-		long failFastCaptchaMaxAttempts = config.getMatcher().getFailFastCaptchaMaxAttempts();
+		int failFastCaptchaMaxAttempts = config.getMatcher().getFailFastCaptchaMaxAttempts();
 
-
-		Session session = SecurityUtils.getSubject().getSession();
-		FailCountWrapper failCountWrapper = null!=session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_GET_TIME)?
-				(FailCountWrapper)session.getAttribute(IAMDevOpsConstants.GRAPH_VERIFY_GET_TIME):new FailCountWrapper(0);
-		failCountWrapper.setCount(failCountWrapper.getCount()+1);
-		failCountWrapper.setCreateTime(System.currentTimeMillis());
-		log.info("session:graph verify get times="+failCountWrapper.getCount());
-		session.setAttribute(IAMDevOpsConstants.GRAPH_VERIFY_GET_TIME,failCountWrapper);
-
-		// Accumulated number of apply
-		Long applyCumulatedCount = applyCumulator.accumulate(factors, 1, config.getMatcher().getFailFastCaptchaDelay());
-		if (applyCumulatedCount >= failFastCaptchaMaxAttempts) {
-			log.warn("Apply for graph verification code too often, actual: {}, maximum: {}, factors: {}", applyCumulatedCount,
+		// Cumulative number of applications based on caching.
+		long applyCaptchaCount = applyCaptchaCumulator.accumulate(factors, 1);
+		if (log.isInfoEnabled()) {
+			log.info("Check graph verify-code apply, for apply count : {}", applyCaptchaCount);
+		}
+		if (applyCaptchaCount >= failFastCaptchaMaxAttempts) {
+			log.warn("Too many times to apply for graph verify-code, actual: {}, maximum: {}, factors: {}", applyCaptchaCount,
 					failFastCaptchaMaxAttempts, factors);
 			throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
 		}
-		if(failCountWrapper.getCount()>=failFastCaptchaMaxAttempts&&failCountWrapper.getCreateTime()+config.getMatcher().getFailFastCaptchaDelay()>=System.currentTimeMillis()){
-			log.warn("Apply for graph verification code too often, actual: {}, maximum: {}, factors: {}", applyCumulatedCount,
-					failFastCaptchaMaxAttempts, factors);
+
+		// Cumulative number of applications based on session
+		long sessionApplyCaptchaCount = sessionApplyCaptchaCumulator.accumulate(factors, 1);
+		if (log.isInfoEnabled()) {
+			log.info("Check graph verify-code apply, for session apply count : {}", sessionApplyCaptchaCount);
+		}
+		// Exceeding the limit
+		if (sessionApplyCaptchaCount >= failFastCaptchaMaxAttempts) {
+			log.warn("Too many times to apply for session graph verify-code, actual: {}, maximum: {}, factors: {}",
+					sessionApplyCaptchaCount, failFastCaptchaMaxAttempts, factors);
 			throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
 		}
+
 	}
 
 	/**
@@ -168,50 +181,21 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.matchCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_MATCH_COUNTER);
-		this.applyCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_CAPTCHA_COUNTER);
+		MatcherProperties matcher = config.getMatcher();
+		this.matchCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
+				matcher.getFailFastMatchDelay());
+		this.applyCaptchaCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
+				matcher.getFailFastCaptchaDelay());
+
+		this.sessionMatchCumulator = Cumulators.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
+				matcher.getFailFastMatchDelay());
+		this.sessionApplyCaptchaCumulator = Cumulators.newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
+				matcher.getFailFastCaptchaDelay());
+
 		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
-		Assert.notNull(applyCumulator, "applyCumulator is null, please check configure");
-	}
-
-	public static class FailCountWrapper implements Serializable {
-		private static final long serialVersionUID = -7643664591972701966L;
-
-		private Integer count;
-
-		private Long createTime;
-
-		public FailCountWrapper(Integer count) {
-			this(count, System.currentTimeMillis());
-		}
-
-		public FailCountWrapper(Integer count, Long createTime) {
-			Assert.notNull(count, "fail count is null, please check configure");
-			Assert.notNull(createTime, "CreateTime is null, please check configure");
-			this.count = count;
-			this.createTime = createTime;
-		}
-
-		public Integer getCount() {
-			return count;
-		}
-
-		public void setCount(Integer count) {
-			this.count = count;
-		}
-
-		public Long getCreateTime() {
-			return createTime;
-		}
-
-		public void setCreateTime(Long timestamp) {
-			this.createTime = timestamp;
-		}
-
-		@Override public String toString() {
-			return "FailCountWrapper [failCount=" + count + ", timestamp=" + createTime + "]";
-		}
-
+		Assert.notNull(applyCaptchaCumulator, "applyCumulator is null, please check configure");
+		Assert.notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
+		Assert.notNull(sessionApplyCaptchaCumulator, "sessionApplyCumulator is null, please check configure");
 	}
 
 }
