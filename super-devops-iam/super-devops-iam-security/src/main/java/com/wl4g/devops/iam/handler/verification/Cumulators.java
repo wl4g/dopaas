@@ -250,7 +250,7 @@ public abstract class Cumulators {
 				SessionLimitCounter counter = getBindValue(getActualSessionKey(factor));
 				// Non-exist or expired?
 				if (counter == null || isExpired(counter.getCreate())) {
-					bind(sessionKey, (counter = new SessionLimitCounter(0L))); // Initialize
+					bind(getActualSessionKey(factor), (counter = new SessionLimitCounter(0L))); // Initialize
 				}
 				// Positive or negative growth
 				cumulatedMax = Math.max(cumulatedMax, counter.getCumulator().addAndGet(incrBy));
