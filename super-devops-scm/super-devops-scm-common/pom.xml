@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-scm-core</artifactId>
+	<artifactId>super-devops-scm-common</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps SCM Core</name>
+	<name>Super DevOps SCM Common</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -14,22 +14,52 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<springcloud-zookeeper-discovery.version>1.2.2.RELEASE</springcloud-zookeeper-discovery.version>
+		<druid.version>1.0.26</druid.version>
+		<mysql.version>5.1.21</mysql.version>
+		<pagehelper.version>4.1.6</pagehelper.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-support</artifactId>
+			<artifactId>super-devops-common</artifactId>
 			<version>master</version>
 		</dependency>
+		<!-- Spring Cloud(zookeeper) -->
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-scm-dao</artifactId>
-			<version>master</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-scm-common</artifactId>
-			<version>master</version>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+			<version>${springcloud-zookeeper-discovery.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.reactivex</groupId>
+					<artifactId>rxjava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.netflix.*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.netflix.ribbon</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-netflix-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-archaius</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>

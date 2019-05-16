@@ -18,7 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
+			<artifactId>super-devops-scm-common</artifactId>
 			<version>master</version>
 			<scope>compile</scope>
 			<exclusions>
