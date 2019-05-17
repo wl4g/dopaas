@@ -1,10 +1,10 @@
 package com.wl4g.devops.rest;
 
-import com.alibaba.fastjson.JSONObject;
-import com.wl4g.devops.ci.service.devtool.BaseConfig;
-import com.wl4g.devops.ci.service.devtool.DefaultSubject;
-import com.wl4g.devops.ci.service.devtool.DevTool;
-import com.wl4g.devops.ci.service.devtool.EnvConfig;
+import com.wl4g.devops.ci.devtool.BaseConfig;
+import com.wl4g.devops.ci.devtool.DefaultSubject;
+import com.wl4g.devops.ci.devtool.DevTool;
+import com.wl4g.devops.ci.devtool.EnvConfig;
+import com.wl4g.devops.common.bean.ci.dto.HookInfo;
 import com.wl4g.devops.common.web.BaseController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,34 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class DevController extends BaseController {
 
 
-
-
 	/**
 	 * for gitlab webkook
 	 */
 	@RequestMapping("hook")
-	public void hook(@RequestBody JSONObject jsonObject) throws Exception{
-		log.info(jsonObject.toString());
-
-		//Analysis json
-		String ref = jsonObject.getString("ref");
-		String branchName = ref.substring(11);
-
-		JSONObject repository = jsonObject.getJSONObject("repository");
-		if(null==repository){
-			return;
-		}
-		String url = repository.getString("git_http_url");
-		String projectName = repository.getString("name");
+	public void hook(@RequestBody HookInfo hookInfo) throws Exception{
+		String branchName = hookInfo.getBranchName();
+		String url = hookInfo.getRepository().getGitHttpUrl();
+		String projectName = hookInfo.getRepository().getName();
 		log.info("activity hook,projectName="+projectName+" branchName="+branchName+" url="+url);
-
-
 		DevTool devTool = getDevTool(projectName,branchName,url);
 		if(null==devTool){
 			log.error("not suppost now");
 			return;
 		}
-
 		//excu
 		devTool.excu();
 
