@@ -13,7 +13,7 @@ import com.wl4g.devops.shell.runner.RunnerBuilder;
 public class ShellBootstrap {
 
 	public static void main(String[] args) {
-		RunnerBuilder.builder().provider(InteractiveRunner.class).prompt("> ").build().run(args);
+		RunnerBuilder.builder().provider(InteractiveRunner.class).build().run(args);
 	}
 
 }

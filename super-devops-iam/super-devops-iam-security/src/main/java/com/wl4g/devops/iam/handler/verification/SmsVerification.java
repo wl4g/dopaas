@@ -77,7 +77,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	/**
 	 * Attempts SMS accumulator
 	 */
-	private Cumulator applyCumulator;
+	private Cumulator applySmsCumulator;
 
 	public SmsVerification(IamContextManager manager) {
 		super(manager);
@@ -152,9 +152,9 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		long failFastSmsMaxAttempts = config.getMatcher().getFailFastSmsMaxAttempts();
 
 		// Accumulated number of apply
-		Long applyCumulatedCount = applyCumulator.accumulate(factors, 1, config.getMatcher().getFailFastSmsMaxDelay());
-		if (applyCumulatedCount >= failFastSmsMaxAttempts) {
-			log.warn("Apply for SMS verification code too often, actual: {}, maximum: {}, factors: {}", applyCumulatedCount,
+		Long applySmsCount = applySmsCumulator.accumulate(factors, 1);
+		if (applySmsCount >= failFastSmsMaxAttempts) {
+			log.warn("Apply for SMS verification code too often, actual: {}, maximum: {}, factors: {}", applySmsCount,
 					failFastSmsMaxAttempts, factors);
 			throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 		}
@@ -162,8 +162,9 @@ public class SmsVerification extends AbstractVerification implements Initializin
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.applyCumulator = Cumulators.newCumulator(cacheManager, CACHE_FAILFAST_SMS_COUNTER);
-		Assert.notNull(applyCumulator, "applyCumulator is null, please check configure");
+		this.applySmsCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+				config.getMatcher().getFailFastSmsMaxDelay());
+		Assert.notNull(applySmsCumulator, "applyCumulator is null, please check configure");
 	}
 
 	/**

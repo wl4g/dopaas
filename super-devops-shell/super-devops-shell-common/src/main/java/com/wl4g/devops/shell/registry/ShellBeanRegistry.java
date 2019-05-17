@@ -85,7 +85,7 @@ public abstract class ShellBeanRegistry implements Serializable {
 	 * @param tm
 	 */
 	private void register0(String mainOpt, TargetMethodWrapper tm) {
-		Assert.state(registry.putIfAbsent(mainOpt, tm) == null, String.format("Repeatedly defined shell methods: %s", mainOpt));
+		Assert.state(registry.putIfAbsent(mainOpt, tm) == null, String.format("Repeatedly defined shell method: '%s'", mainOpt));
 	}
 
 }

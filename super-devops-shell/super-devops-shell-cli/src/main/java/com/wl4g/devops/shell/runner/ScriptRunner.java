@@ -15,15 +15,10 @@
  */
 package com.wl4g.devops.shell.runner;
 
-import org.jline.utils.AttributedString;
-
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.wl4g.devops.shell.config.Configuration;
-
 import static java.lang.System.err;
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import org.apache.commons.lang3.StringUtils;
+import com.wl4g.devops.shell.config.Configuration;
 
 /**
  * Script shell component runner
@@ -34,8 +29,8 @@ import static java.lang.System.err;
  */
 public class ScriptRunner extends AbstractRunner {
 
-	public ScriptRunner(Configuration config, AttributedString attributed) {
-		super(config, attributed);
+	public ScriptRunner(Configuration config) {
+		super(config);
 	}
 
 	@Override

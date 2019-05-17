@@ -40,7 +40,7 @@ public class LineMessage extends Message {
 
 	@Override
 	public String toString() {
-		return "LineMessage [line=" + line + "]";
+		return "LineMessage [line=" + line + ", toString()=" + super.toString() + "]";
 	}
 
 }

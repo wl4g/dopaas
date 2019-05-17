@@ -44,7 +44,7 @@ import static com.wl4g.devops.shell.utils.LineUtils.*;
 import static com.wl4g.devops.shell.annotation.ShellOption.*;
 import com.wl4g.devops.shell.command.DefaultInternalCommand;
 import com.wl4g.devops.shell.AbstractActuator;
-import com.wl4g.devops.shell.bean.CommandMessage;
+import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
@@ -77,9 +77,24 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	final public static String ARG_SERV_POINT = "servpoint";
 
 	/**
+	 * Commands prompt string.
+	 */
+	final public static String ARG_PROMPT = "prompt";
+
+	/**
 	 * Enable debugging
 	 */
 	final public static boolean DEBUG = System.getProperty("debug") != null;
+
+	/**
+	 * Enable debugging
+	 */
+	final public static long TIMEOUT = Long.parseLong(System.getProperty("timeout", "10000"));
+
+	/**
+	 * Attributed string
+	 */
+	final public static AttributedString DEFAULT_ATTRIBUTED = new AttributedString("console> ");
 
 	/**
 	 * Shell configuration
@@ -87,14 +102,14 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	final protected Configuration config;
 
 	/**
-	 * Attributed string
-	 */
-	final protected AttributedString attributed;
-
-	/**
 	 * Line reader
 	 */
 	final protected LineReader lineReader;
+
+	/**
+	 * Response wait lock.
+	 */
+	final protected Object lock = new Object();
 
 	/**
 	 * Shell client handler
@@ -106,16 +121,14 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 */
 	private String stacktraceAsString;
 
-	public AbstractRunner(Configuration config, AttributedString attributed) {
+	public AbstractRunner(Configuration config) {
 		super(getSingle());
 		Assert.notNull(config, "configuration is null, please check configure");
-		Assert.notNull(attributed, "attributedString is null, please check configure");
 		this.config = config;
-		this.attributed = attributed;
 
 		// Build lineReader
 		try {
-			this.lineReader = LineReaderBuilder.builder().appName("DevOps Shell").completer(new DynamicCompleter(getSingle()))
+			this.lineReader = LineReaderBuilder.builder().appName("DevOps Shell Cli").completer(new DynamicCompleter(getSingle()))
 					.terminal(TerminalBuilder.terminal()).build();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
@@ -218,8 +231,43 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 	@Override
 	protected void postProcessResult(Object result) {
+		// Notify for wait liner
+		wakeup();
+
 		if (result != null && isNotBlank(result.toString())) {
 			out.println(result);
+		}
+	}
+
+	/**
+	 * Get line attributed.
+	 * 
+	 * @return
+	 */
+	protected AttributedString getAttributed() {
+		String prompt = getProperty(ARG_PROMPT);
+		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(String.format("%s> ", prompt));
+	}
+
+	/**
+	 * Wait for lineReader. </br>
+	 * {@link AbstractRunner#wakeup()}
+	 * 
+	 * @throws InterruptedException
+	 */
+	protected void waitForResponse() throws InterruptedException {
+		synchronized (lock) {
+			lock.wait(TIMEOUT);
+		}
+	}
+
+	/**
+	 * Notify for wait lineReader. </br>
+	 * {@link AbstractRunner#waitForResponse()}
+	 */
+	protected void wakeup() throws IllegalMonitorStateException {
+		synchronized (lock) {
+			lock.notifyAll();
 		}
 	}
 
@@ -232,7 +280,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 		// Initialize remote register commands
 		try {
-			submit(new CommandMessage());
+			submit(new MetaMessage());
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
@@ -442,18 +490,27 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					// Read a string command process result
 					Object input = new ObjectInputStream(_in).readObject();
 
-					if (input instanceof ExceptionMessage) { // Exception-callback
+					// Merge remote target methods commands
+					if (input instanceof MetaMessage) {
+						MetaMessage meta = (MetaMessage) input;
+						getSingle().merge(meta.getRegistedMethods());
+					}
+					// Exception-callback
+					else if (input instanceof ExceptionMessage) {
+						// Wakeup for lineReader
+						wakeup();
+
 						ExceptionMessage ex = (ExceptionMessage) input;
 						runner.printErr(EMPTY, ex.getThrowable());
 					}
-					if (input instanceof ResultMessage) { // Result callback
+					// Result callback
+					else if (input instanceof ResultMessage) {
+						// Wakeup for lineReader
+						wakeup();
+
+						// After process
 						ResultMessage result = (ResultMessage) input;
 						function.apply(result.getContent());
-					}
-					// Merge remote target methods commands
-					else if (input instanceof CommandMessage) {
-						CommandMessage cmd = (CommandMessage) input;
-						getSingle().merge(cmd.getRegisted());
 					}
 
 				} catch (SocketException e) {
@@ -461,6 +518,11 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					close();
 				} catch (Throwable e) {
 					runner.printErr(EMPTY, e);
+				} finally {
+					try {
+						Thread.sleep(50L);
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 		}

@@ -199,14 +199,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Limiter login failure prefix based on remote IP.
 	 */
 	final public static String KEY_FAIL_LIMITER_RIP_PREFIX = "rip_";
-	/**
-	 * Login Fail Time.
-	 */
-	final public static String GRAPH_VERIFY_FAIL_TIME = "graphVerfiyFailTime";
-	/**
-	 * Verfiy get Time.
-	 */
-	final public static String GRAPH_VERIFY_GET_TIME = "graphVerfiyGetTime";
+
 	/**
 	 * Login Fail account.
 	 */
@@ -249,8 +242,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 					add(KEY_FAIL_LIMITER_USER_PREFIX + principal);
 				}
 				if (!StringUtils.isEmpty(remoteHost)) {
-					//add(KEY_FAIL_LIMITER_RIP_PREFIX + Hex.encodeHexString(remoteHost.getBytes(Charsets.UTF_8)));
-					add(KEY_FAIL_LIMITER_RIP_PREFIX + Hex.encodeHexString(UUID.randomUUID().toString().replaceAll("-", "").getBytes(Charsets.UTF_8)));
+					// add(KEY_FAIL_LIMITER_RIP_PREFIX +
+					// Hex.encodeHexString(remoteHost.getBytes(Charsets.UTF_8)));
+					add(KEY_FAIL_LIMITER_RIP_PREFIX
+							+ Hex.encodeHexString(UUID.randomUUID().toString().replaceAll("-", "").getBytes(Charsets.UTF_8)));
 				}
 			}
 		};

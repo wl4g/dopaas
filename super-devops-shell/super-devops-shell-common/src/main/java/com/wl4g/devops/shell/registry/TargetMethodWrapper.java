@@ -17,14 +17,18 @@ package com.wl4g.devops.shell.registry;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -33,9 +37,10 @@ import com.wl4g.devops.shell.cli.HelpOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 import com.wl4g.devops.shell.utils.Assert;
-import static com.wl4g.devops.shell.utils.ReflectionUtils2.*;
+import static com.wl4g.devops.shell.utils.Reflections.*;
 import static com.wl4g.devops.shell.utils.Types.*;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
+import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 
 /**
  * Shell component target method wrapper
@@ -129,7 +134,7 @@ public class TargetMethodWrapper implements Serializable {
 	 */
 	public String getSureParamName(String argname) {
 		for (TargetParameter parameter : getParameters()) {
-			for (Entry<Option, String> attr : parameter.getAttributes().entrySet()) {
+			for (Entry<HelpOption, String> attr : parameter.getAttributes().entrySet()) {
 				Option option = attr.getKey();
 				if (equalsAny(argname, option.getOpt(), option.getLongOpt())) {
 					// See:[MARK0][AbstractActuator.MARK3]
@@ -154,42 +159,38 @@ public class TargetMethodWrapper implements Serializable {
 
 		// Parameter types
 		Class<?>[] paramTypes = getMethod().getParameterTypes();
-		Assert.isTrue(paramAnnos.length == paramTypes.length,
+		Assert.state(paramAnnos.length == paramTypes.length,
 				String.format("Error, method:%s parameter types length:%s parameter annotations:%s", getMethod(),
 						paramTypes.length, paramAnnos.length));
 
 		for (int i = 0; i < paramTypes.length; i++) {
 			Class<?> paramType = paramTypes[i];
-			ShellOption opt = findShellOption(paramAnnos[i]);
-
-			// Native type parameter must be annotated with @ShellOption?
-			if (isBaseType(paramType)) {
-				Assert.state(opt != null, String.format(
-						"Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", method, i));
-			}
+			ShellOption shOpt = findShellOption(paramAnnos[i]);
 
 			// Wrap target method parameter
-			TargetParameter parameter = new TargetParameter(getMethod(), paramType, opt, i);
+			TargetParameter parameter = new TargetParameter(getMethod(), paramType, shOpt, i);
 
-			// Native field?
-			if (isBaseType(paramType)) { // String,long,double...?
-				Assert.hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", getMethod()));
-				Assert.hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", getMethod()));
-				Assert.isTrue(isAlpha(opt.opt().substring(0, 1)),
-						String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.opt(), getMethod()));
-				Assert.isTrue(isAlpha(opt.lopt().substring(0, 1)), String
-						.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), getMethod()));
+			// Base type parameter?
+			// (String,long,double... or List,Set,Map,Properties...)
+			if (simpleType(paramType)) { // MARK4
+				validateShellOption(shOpt, getMethod(), i);
 
 				// See:[com.wl4g.devops.shell.command.DefaultInternalCommand.MARK0]
-				Option option = new HelpOption(opt.opt(), opt.lopt(), opt.defaultValue(), opt.help());
+				HelpOption option = new HelpOption(paramType, shOpt.opt(), shOpt.lopt(), shOpt.defaultValue(), shOpt.required(),
+						shOpt.help());
 
 				// [MARK0] Native type parameter field name is null
 				// See:[AbstractActuator.MARK3]
-				parameter.getAttributes().put(option, null);
+				parameter.addAttribute(option, null);
 			}
-			// Java bean?
+			// Java bean parameter?
 			else {
-				extFullParams(paramType, parameter.getAttributes());
+				populateDeepFields(paramType, parameter);
+			}
+
+			// Check parameters(options) repeat register.
+			for (TargetParameter p : parameters) {
+				parameter.getAttributes().keySet().forEach(option -> p.validateOption(option));
 			}
 
 			parameters.add(parameter);
@@ -210,6 +211,24 @@ public class TargetMethodWrapper implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Validate shell option.
+	 * 
+	 * @param opt
+	 * @param m
+	 * @param index
+	 */
+	private void validateShellOption(ShellOption opt, Method m, int index) {
+		Assert.state(opt != null, String
+				.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", m, index));
+		Assert.hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", m));
+		Assert.hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", m));
+		Assert.isTrue(isAlpha(opt.opt().substring(0, 1)),
+				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.opt(), m));
+		Assert.isTrue(isAlpha(opt.lopt().substring(0, 1)),
+				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), m));
 	}
 
 	/**
@@ -238,20 +257,22 @@ public class TargetMethodWrapper implements Serializable {
 		final transient private int index;
 
 		/**
-		 * Method parameter shell option annotation
+		 * Method parameter shell option annotation.</br>
+		 * Annotation for basic type parameters.
 		 */
 		final private ShellOption shellOption;
 
 		/**
 		 * Method parameter attributes
 		 */
-		final private Map<Option, String> attributes = new HashMap<>(4);
+		final private Map<HelpOption, String> attributes = new HashMap<>(4);
 
 		public TargetParameter(Method method, Class<?> paramType, ShellOption shOpt, int index) {
 			this(method, paramType, index, shOpt, null);
 		}
 
-		public TargetParameter(Method method, Class<?> paramType, int index, ShellOption shOpt, Map<Option, String> attributes) {
+		public TargetParameter(Method method, Class<?> paramType, int index, ShellOption shOpt,
+				Map<HelpOption, String> attributes) {
 			Assert.notNull(method, "Method type is null, please check configure");
 			Assert.notNull(paramType, "Parameter type is null, please check configure");
 			Assert.isTrue(index >= 0, "Parameter index greater or equal to 0, please check configure");
@@ -260,7 +281,7 @@ public class TargetMethodWrapper implements Serializable {
 			this.index = index;
 
 			// Assertion shell option.
-			if (baseType()) {
+			if (simpleType()) { // [MARK7]
 				Assert.state(shOpt != null,
 						String.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption",
 								getMethod(), getIndex()));
@@ -288,12 +309,89 @@ public class TargetMethodWrapper implements Serializable {
 			return index;
 		}
 
-		public Map<Option, String> getAttributes() {
-			return attributes;
+		public final Map<HelpOption, String> getAttributes() {
+			return Collections.unmodifiableMap(attributes);
 		}
 
-		public boolean baseType() {
-			return isBaseType(getParamType());
+		public final TargetParameter addAttribute(HelpOption option, String fieldName) {
+			validateOption(option);
+
+			Assert.state(attributes.putIfAbsent(option, fieldName) == null,
+					String.format("Repeatedly defined shell parameter index: %s, paramType: %s, option: '%s', method: '%s'",
+							getIndex(), getParamType(), option, getMethod()));
+			return this;
+		}
+
+		private void validateOption(HelpOption option) {
+			// Option(opt)
+			List<String> opts = getAttributes().keySet().stream().map(op -> op.getOpt()).collect(Collectors.toList());
+			Assert.state(!opts.contains(option.getOpt()),
+					String.format("Repeatedly defined short option: '%s', parameter index: %s, paramType: %s, method: '%s'",
+							option.getOpt(), getIndex(), getParamType(), getMethod()));
+
+			// Option(longOpt)
+			List<String> lOpts = getAttributes().keySet().stream().map(op -> op.getLongOpt()).collect(Collectors.toList());
+			Assert.state(!lOpts.contains(option.getLongOpt()),
+					String.format("Repeatedly defined long option: '%s', parameter index: %s, paramType: %s, method: '%s'",
+							option.getLongOpt(), getIndex(), getParamType(), getMethod()));
+		}
+
+		public boolean simpleType() {
+			return simpleType(getParamType());
+		}
+
+		public static boolean simpleType(Class<?> paramType) {
+			return isBaseType(paramType) || isGeneralSetType(paramType);
+		}
+
+		/**
+		 * Extract deep full propertys to targetParameter.
+		 * 
+		 * @param clazz
+		 * @param attributes
+		 */
+		public static void populateDeepFields(Class<?> clazz, TargetParameter parameter) {
+			Class<?> cls = clazz;
+			do {
+				extractHierarchyFields(cls, parameter);
+			} while ((cls = cls.getSuperclass()) != null);
+		}
+
+		/**
+		 * Extract hierarchy propertys to targetParameter
+		 * 
+		 * @param clazz
+		 * @param attributes
+		 */
+		private static void extractHierarchyFields(Class<?> clazz, TargetParameter parameter) {
+			Assert.notNull(clazz, "The paramClazz must be null");
+			try {
+				for (Field f : clazz.getDeclaredFields()) {
+					Class<?> ftype = f.getType();
+					String fname = f.getName();
+
+					ShellOption opt = f.getAnnotation(ShellOption.class);
+					if (simpleType(ftype)) {
+						// Filter unsafe field.
+						if (opt != null) {
+							// [MARK1],See:[AbstractActuator.MARK4]
+							if (isSafetyModifier(f.getModifiers())) {
+								HelpOption option = new HelpOption(ftype, opt.opt(), opt.lopt(), opt.defaultValue(),
+										opt.required(), opt.help());
+								parameter.addAttribute(option, fname);
+							} else {
+								System.err.println(String.format(
+										"WARNINGS: Although the @%s annotation option has been used, it has not been registered in the parameter list because field: '%s' has modifiers final/static/transient/volatile/native/synchronized, etc.",
+										ShellOption.class.getSimpleName(), f));
+							}
+						}
+					} else {
+						extractHierarchyFields(ftype, parameter);
+					}
+				}
+			} catch (Throwable e) {
+				throw new IllegalStateException(e);
+			}
 		}
 
 	}

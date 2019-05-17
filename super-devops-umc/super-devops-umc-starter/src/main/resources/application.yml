@@ -13,7 +13,7 @@
 spring:
   resources.static-locations: classpath:/static/
   profiles:
-    include: common,util,admin
+    include: common,support,util,admin
 
 # Mybatis configuration.
 mybatis:

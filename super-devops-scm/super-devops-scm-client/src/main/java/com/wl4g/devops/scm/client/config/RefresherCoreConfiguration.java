@@ -34,7 +34,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import com.wl4g.devops.common.bean.scm.model.BaseModel;
 import com.wl4g.devops.common.constants.SCMDevOpsConstants;
-import com.wl4g.devops.common.utils.ScmUtils;
 import com.wl4g.devops.scm.client.annotation.ScmController;
 import com.wl4g.devops.scm.client.annotation.EnabledScmClient;
 import com.wl4g.devops.scm.client.annotation.EnabledScmWatchTask;
@@ -46,6 +45,7 @@ import com.wl4g.devops.scm.client.configure.refresh.ConfigureBeanRefresher;
 import com.wl4g.devops.scm.client.configure.watch.TaskRefreshWatcher;
 import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
 import com.wl4g.devops.scm.client.web.SCMClientController;
+import com.wl4g.devops.scm.common.utils.ScmUtils;
 
 /**
  * DevOps bootstrap configure configuration.<br/>

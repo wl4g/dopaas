@@ -1,9 +1,9 @@
-package com.wl4g.devops.common.utils.bean;
+package com.wl4g.devops.shell.utils;
 
 import java.lang.reflect.Field;
 
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
-import static com.wl4g.devops.common.utils.reflect.Types.*;
+import static com.wl4g.devops.shell.utils.Reflections.*;
+import static com.wl4g.devops.shell.utils.Types.*;
 
 /**
  * Enhanced static convenience methods for JavaBeans: for instantiating beans,

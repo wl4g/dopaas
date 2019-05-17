@@ -38,4 +38,9 @@ public class ResultMessage extends Message {
 		return content;
 	}
 
+	@Override
+	public String toString() {
+		return "ResultMessage [content=" + content + ", toString()=" + super.toString() + "]";
+	}
+
 }

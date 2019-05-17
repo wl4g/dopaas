@@ -23,10 +23,10 @@ public class SumArgument implements Serializable {
 
 	private static final long serialVersionUID = -90377698662015272L;
 
-	@ShellOption(opt = "a", lopt = "add1", help = "加数")
+	@ShellOption(opt = "a", lopt = "add1", help = "Add number")
 	private int add1;
 
-	@ShellOption(opt = "b", lopt = "add2", help = "被加数（默认：1）", defaultValue = "1")
+	@ShellOption(opt = "b", lopt = "add2", help = "Added number", defaultValue = "1")
 	private int add2;
 
 	public SumArgument() {

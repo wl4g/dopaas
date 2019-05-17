@@ -15,15 +15,26 @@
  */
 package com.wl4g.devops.shell.utils;
 
+import static java.lang.reflect.Modifier.*;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
- * Java class type processing tool
+ * Java class type processing tool.</br>
+ * See: {@link com.wl4g.devops.common.utils.reflect.Types}
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年11月10日
@@ -37,11 +48,13 @@ public abstract class Types {
 	final private static Collection<Class<?>> nativeClasses = new ArrayList<Class<?>>() {
 		private static final long serialVersionUID = -4726036260392327337L;
 		{
+			add(boolean.class);
 			add(int.class);
 			add(long.class);
 			add(double.class);
 			add(float.class);
 			add(byte.class);
+			add(Boolean.class);
 			add(String.class);
 			add(Integer.class);
 			add(Long.class);
@@ -73,12 +86,15 @@ public abstract class Types {
 	};
 
 	/**
-	 * Is native non-customized wrapp classes type?
+	 * Is native non-customized wrap classes type?
 	 * 
 	 * @param clazz
 	 * @return
 	 */
-	public final static boolean isBaseType(Class<?> clazz) {
+	public static boolean isBaseType(Class<?> clazz) {
+		if (clazz == null) {
+			return false;
+		}
 		return clazz.isPrimitive() || nativeClasses.contains(clazz) || nativePackages.contains(clazz.getName());
 	}
 
@@ -89,19 +105,22 @@ public abstract class Types {
 	 * @param clazz
 	 * @return
 	 */
-	public final static boolean isGeneralSetType(Class<?> clazz) {
+	public static boolean isGeneralSetType(Class<?> clazz) {
+		if (clazz == null) {
+			return false;
+		}
 		return Map.class.isAssignableFrom(clazz) || Collection.class.isAssignableFrom(clazz) || clazz.isArray();
 	}
 
 	/**
-	 * Java simple type conversion
+	 * Java base type conversion
 	 * 
 	 * @param value
 	 * @param clazz
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public final static <T> T baseConvert(String value, Class<T> clazz) {
+	public static <T> T convertToBase(String value, Class<T> clazz) {
 		Object object = null;
 		if (isBaseType(clazz)) {
 			if (clazz == int.class || clazz == Integer.class) {
@@ -117,6 +136,139 @@ public abstract class Types {
 			}
 		}
 		return (T) object;
+	}
+
+	/**
+	 * Java general collection type conversion
+	 * 
+	 * @param value
+	 * @param fieldClazz
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Object convertToSimpleSet(String value, Class<?> fieldClazz) {
+		if (!isGeneralSetType(fieldClazz)) {
+			return null;
+		}
+
+		// Check general types.(Only support generics as basic types (including
+		// String, int, integer, long...))
+		Class<?>[] generalTypes = getGeneralTypes(fieldClazz);
+		if (generalTypes != null) {
+			for (Class<?> gt : generalTypes) {
+				if (!isBaseType(gt) && gt != Object.class) {
+					throw new IllegalStateException(
+							String.format("No support bean class field type: %s, general type: %s", fieldClazz, gt));
+				}
+			}
+		}
+
+		Object object = null;
+		try {
+			if (Map.class.isAssignableFrom(fieldClazz)) {
+				Map map = null;
+				if (!isInstantiatable(fieldClazz)) {
+					map = (Map) fieldClazz.newInstance();
+				} else if (Map.class.isAssignableFrom(fieldClazz)) {
+					map = (Map) new HashMap<>();
+				}
+				if (map == null) {
+					throw new IllegalStateException(String.format("No support bean class field type: %s", fieldClazz));
+				}
+
+				// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
+				for (String ele : split(trimToEmpty(value), ",")) {
+					if (isNotBlank(ele)) {
+						String[] kv = split(trimToEmpty(ele), "=");
+						if (kv.length >= 2) {
+							map.put(kv[0], kv[1]);
+						}
+					}
+				}
+				object = map;
+			} else if (fieldClazz.isArray() || Collection.class.isAssignableFrom(fieldClazz)) {
+				Collection set = null;
+				if (!isInstantiatable(fieldClazz)) {
+					set = (Collection) fieldClazz.newInstance();
+				} else if (List.class.isAssignableFrom(fieldClazz)) {
+					set = (Collection) new ArrayList<>();
+				} else if (Set.class.isAssignableFrom(fieldClazz)) {
+					set = (Collection) new HashSet<>();
+				}
+				if (set == null) {
+					throw new IllegalStateException(String.format("No support bean class field type: %s", fieldClazz));
+				}
+
+				// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
+				for (String ele : split(trimToEmpty(value), ",")) {
+					if (isNotBlank(ele)) {
+						set.add(ele);
+					}
+				}
+
+				if (fieldClazz.isArray()) {
+					object = set.toArray();
+				} else {
+					object = set;
+				}
+			}
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+		return object;
+	}
+
+	/**
+	 * Java base and general collection type conversion
+	 * 
+	 * @param value
+	 * @param fieldClazz
+	 * @return
+	 */
+	public static Object convertToBaseOrSimpleSet(String value, Class<?> fieldClazz) {
+		if (isBaseType(fieldClazz)) {
+			return convertToBase(value, fieldClazz);
+		} else if (isGeneralSetType(fieldClazz)) {
+			return convertToSimpleSet(value, fieldClazz);
+		}
+		return null;
+	}
+
+	/**
+	 * Is it possible to instantiate classes directly (such as abstract classes,
+	 * interfaces can't)
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static boolean isInstantiatable(Class<?> clazz) {
+		return clazz.isInterface() && isAbstract(clazz.getModifiers());
+	}
+
+	/**
+	 * Get general types.
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static Class<?>[] getGeneralTypes(Class<?> clazz) {
+		if (clazz == null) {
+			return null;
+		}
+
+		ParameterizedType paramType = (ParameterizedType) clazz.getGenericSuperclass();
+		if (paramType != null) {
+			Type[] types = paramType.getActualTypeArguments();
+			if (types != null) {
+				Class<?>[] cls = new Class<?>[types.length];
+				for (int i = 0; i < types.length; i++) {
+					cls[i] = (Class<?>) types[i];
+				}
+				return cls;
+			}
+		}
+		return null;
 	}
 
 }
