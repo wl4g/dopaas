@@ -48,7 +48,7 @@ public abstract class LineUtils {
 		if (isBlank(line)) {
 			return new LinkedList<>();
 		}
-		String[] args = line.trim().split(" ");
+		String[] args = split(repairLineSpace(line), " ");
 		return parse(args);
 	}
 
@@ -143,10 +143,49 @@ public abstract class LineUtils {
 		return argname;
 	}
 
+	/**
+	 * Repair input line.</br>
+	 * 
+	 * <pre>
+	 * e.g. arg1 -l x1, x2 -m a1=b1, a2 = b2 -p aa1=bb1,aa2= bb2 -s x3, , x4 </br>
+	 * =>  arg1 -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,,x4
+	 * </pre>
+	 * 
+	 * @param line
+	 * @return
+	 */
+	private static String repairLineSpace(String line) {
+		line = trimToEmpty(line);
+		StringBuffer newLine = new StringBuffer();
+		String args[] = split(line, " ");
+
+		// e.g. arg1 -l x1, x2 -m a1=b1, a2 = b2 -p aa1=bb1,aa2= bb2 -s x3, , x4
+		if (args.length > 2) {
+			for (String arg : args) {
+				if (startsWith(arg, "-")) {
+					newLine.append(" ");
+					newLine.append(arg);
+					newLine.append(" ");
+				} else {
+					newLine.append(arg);
+				}
+			}
+		}
+		// e.g. help mycmd/mycmd --help
+		else {
+			newLine.append(line);
+		}
+
+		return newLine.toString();
+	}
+
 	public static void main(String[] args) {
-		System.out.println(parse("add1 -a 11 -b "));
-		System.out.println(parse(" ").size());
-		System.out.println(execAsString("cmd.exe /p /h C:\\Document"));
+		// System.out.println(parse("add1 -a 11 -b "));
+		// System.out.println(parse(" ").size());
+		// System.out.println(execAsString("cmd.exe /p /h C:\\Document"));
+		String s = "arg1 -l x1, x2 -m a1=b1, a2 = b2 -p aa1=bb1,aa2= bb2 -s x3, , x4 ";
+		System.out.println(repairLineSpace(s));
+		System.out.println(parse(s));
 	}
 
 }

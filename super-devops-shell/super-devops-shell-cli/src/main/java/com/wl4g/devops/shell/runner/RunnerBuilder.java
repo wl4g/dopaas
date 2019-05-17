@@ -17,7 +17,6 @@ package com.wl4g.devops.shell.runner;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
-import org.jline.utils.AttributedString;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -35,8 +34,6 @@ public abstract class RunnerBuilder {
 
 	private String conf;
 
-	private AttributedString attributed;
-
 	private Class<? extends Runner> provider;
 
 	private RunnerBuilder() {
@@ -50,18 +47,6 @@ public abstract class RunnerBuilder {
 	public RunnerBuilder config(String conf) {
 		Assert.hasText(conf, "conf is empty, please check configure");
 		this.conf = conf;
-		return this;
-	}
-
-	public RunnerBuilder prompt(String prompt) {
-		Assert.hasText(prompt, "prompt is empty, please check configure");
-		this.attributed = new AttributedString(prompt);
-		return this;
-	}
-
-	public RunnerBuilder attributed(AttributedString attributed) {
-		Assert.notNull(attributed, "attributed is null, please check configure");
-		this.attributed = attributed;
 		return this;
 	}
 
@@ -80,8 +65,8 @@ public abstract class RunnerBuilder {
 			Assert.notNull(provider, "provider is null, please check configure");
 			Assert.notNull(config, "config is null, please check configure");
 
-			Constructor<? extends Runner> constr = provider.getConstructor(Configuration.class, AttributedString.class);
-			return constr.newInstance(new Object[] { config, attributed });
+			Constructor<? extends Runner> constr = provider.getConstructor(Configuration.class);
+			return constr.newInstance(new Object[] { config });
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}

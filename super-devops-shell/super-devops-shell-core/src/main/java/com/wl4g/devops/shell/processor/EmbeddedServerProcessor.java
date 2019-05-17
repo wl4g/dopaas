@@ -37,7 +37,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.shell.bean.CommandMessage;
+import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
@@ -54,6 +54,9 @@ import com.wl4g.devops.shell.registry.ShellBeanRegistry;
  */
 public class EmbeddedServerProcessor extends AbstractProcessor implements ApplicationRunner, Runnable {
 
+	/**
+	 * Current server running status.
+	 */
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	/**
@@ -188,32 +191,36 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 					// To a string command line
 					Object input = new ObjectInputStream(_in).readObject();
-
-					if (log.isDebugEnabled()) {
-						log.debug("Receving input: {}", input);
+					if (log.isInfoEnabled()) {
+						log.info("<= {}", input);
 					}
 
 					// Submit line
 					if (input instanceof LineMessage) {
 						LineMessage line = (LineMessage) input;
-						// Processing
 						result = new ResultMessage(function.apply(line.getLine()).toString());
 					}
 					// Request registed commands
-					else if (input instanceof CommandMessage) {
+					else if (input instanceof MetaMessage) {
 						// Write registed target methods commands
-						result = new CommandMessage(registry.getTargetMethods());
+						result = new MetaMessage(registry.getTargetMethods());
 					}
 
 					// Echo
 					if (result != null) {
-						if (log.isDebugEnabled()) {
-							log.debug("Processing result: {}", result);
+						if (log.isInfoEnabled()) {
+							log.info("=> {}", result);
 						}
 						writeAndFlush(result);
 					}
+
 				} catch (Throwable th) {
 					handleThorws(th);
+				} finally {
+					try {
+						Thread.sleep(100L);
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 		}
