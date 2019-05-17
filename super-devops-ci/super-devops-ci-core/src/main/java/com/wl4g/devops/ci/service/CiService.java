@@ -15,9 +15,9 @@ public interface CiService {
 
 	List<AppGroup> grouplist();
 
-	public List<Environment> environmentlist(String groupId);
+	List<Environment> environmentlist(String groupId);
 
-	public List<AppInstance> instancelist(AppInstance appInstance);
+	List<AppInstance> instancelist(AppInstance appInstance);
 
 
 
