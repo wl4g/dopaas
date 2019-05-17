@@ -97,10 +97,6 @@ public abstract class Cumulators {
 			throw new UnsupportedOperationException();
 		}
 
-		default long accumulate(String principal,@NotNull List<String> factors, long incrBy) {
-			throw new UnsupportedOperationException();
-		}
-
 		/**
 		 * Get the cumulative number of failures for the specified condition
 		 * 
@@ -252,7 +248,7 @@ public abstract class Cumulators {
 		}
 
 		@Override
-		public long accumulate(String principal,@NotNull List<String> factors, long incrBy) {
+		public long accumulate(@NotNull List<String> factors, long incrBy) {
 			// Accumulated maximum number of failures
 			long cumulatedMax = 0;
 			for (String factor : factors) {
@@ -264,15 +260,6 @@ public abstract class Cumulators {
 				// Positive or negative growth
 				cumulatedMax = Math.max(cumulatedMax, counter.getCumulator().addAndGet(incrBy));
 			}
-
-			//fail account in this session
-			Set<String> accounts = SessionBindings.getBindValue(AUTH_FAIL_ACCOUNT);
-			if(null==accounts){
-				accounts = new HashSet<>();
-			}
-			accounts.add(KEY_FAIL_LIMITER_USER_PREFIX + principal);
-			SessionBindings.bind(AUTH_FAIL_ACCOUNT, accounts);
-
 			return cumulatedMax;
 		}
 
