@@ -10,6 +10,8 @@ public class Project extends BaseBean implements Serializable {
 
     private String projectName;
 
+    private String gitUrl;
+
     private Integer appGroupId;
 
     private String tarPath;
@@ -36,5 +38,13 @@ public class Project extends BaseBean implements Serializable {
 
     public void setTarPath(String tarPath) {
         this.tarPath = tarPath;
+    }
+
+    public String getGitUrl() {
+        return gitUrl;
+    }
+
+    public void setGitUrl(String gitUrl) {
+        this.gitUrl = gitUrl;
     }
 }

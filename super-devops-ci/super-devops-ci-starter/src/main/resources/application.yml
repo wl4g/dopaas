@@ -30,3 +30,8 @@ mybatis:
   configLocation: mybatis/mybatis-config.xml
   mapperLocations: classpath:mybatis/mapper/*Mapper.xml
   typeAliasesPackage: com.wl4g.devops.common.bean.*,com.wl4g.devops.common.bean.*.*
+
+devconf:
+  gitBasePath: /Users/vjay/gittest
+  gitAccount: root
+  gitPassword: 12345678

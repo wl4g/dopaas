@@ -2,6 +2,8 @@ package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 
+import java.util.List;
+
 public interface TaskDetailDao {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,7 @@ public interface TaskDetailDao {
     int updateByPrimaryKeyWithBLOBs(TaskDetail record);
 
     int updateByPrimaryKey(TaskDetail record);
+
+    List<TaskDetail> getDetailByTaskId(Integer id);
+
 }

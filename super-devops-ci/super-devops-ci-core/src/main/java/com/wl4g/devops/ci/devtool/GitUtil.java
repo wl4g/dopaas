@@ -21,7 +21,7 @@ public class GitUtil {
 
 
 	@Autowired
-	private BaseConfig baseConfig;
+	private DevConfig baseConfig;
 
 
 	/**
@@ -36,7 +36,7 @@ public class GitUtil {
 			Git git = Git.cloneRepository()
 					.setURI(remoteUrl)
 					.setDirectory(path)
-					.setCredentialsProvider(BaseConfig.cp)
+					.setCredentialsProvider(DevConfig.getCp())
 					.call();
 			log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
 		} catch (Exception e) {
@@ -56,7 +56,7 @@ public class GitUtil {
 			Git git = Git.cloneRepository()
 					.setURI(remoteUrl)
 					.setDirectory(path)
-					.setCredentialsProvider(BaseConfig.cp)
+					.setCredentialsProvider(DevConfig.getCp())
 					.setBranch(branchName)
 					.call();
 			log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
@@ -93,7 +93,7 @@ public class GitUtil {
 						.call();
 			}
 			//pull -- get newest code
-			git.pull().setCredentialsProvider(BaseConfig.cp).call();
+			git.pull().setCredentialsProvider(DevConfig.getCp()).call();
 			log.info("checkout branch success;branchName="+branchName+" localPath="+localPath);
 		} catch (Exception e) {
 			e.printStackTrace();

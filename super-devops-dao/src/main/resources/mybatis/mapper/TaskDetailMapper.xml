@@ -169,4 +169,13 @@
       update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="getDetailByTaskId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from ci_task_detail
+    where task_id = #{id,jdbcType=INTEGER}
+  </select>
 </mapper>
