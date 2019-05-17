@@ -2,6 +2,8 @@ package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.TriggerDetail;
 
+import java.util.List;
+
 public interface TriggerDetailDao {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,8 @@ public interface TriggerDetailDao {
     int updateByPrimaryKeySelective(TriggerDetail record);
 
     int updateByPrimaryKey(TriggerDetail record);
+
+    int deleteByTriggerId(Integer id);
+
+    List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
 }

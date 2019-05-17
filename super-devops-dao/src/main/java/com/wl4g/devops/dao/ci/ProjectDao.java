@@ -1,6 +1,9 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.scm.CustomPage;
+
+import java.util.List;
 
 public interface ProjectDao {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +17,8 @@ public interface ProjectDao {
     int updateByPrimaryKeySelective(Project record);
 
     int updateByPrimaryKey(Project record);
+
+    List<Project> list(CustomPage customPage);
+
+    Project getByProjectName(String projectName);
 }

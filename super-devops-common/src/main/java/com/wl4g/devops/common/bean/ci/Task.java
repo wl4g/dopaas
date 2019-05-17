@@ -21,6 +21,10 @@ public class Task extends BaseBean implements Serializable {
 
     private Integer parentId;
 
+    private String command;
+
+    private Integer tarType;
+
     private String result;
 
     public Integer getType() {
@@ -77,5 +81,21 @@ public class Task extends BaseBean implements Serializable {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public Integer getTarType() {
+        return tarType;
+    }
+
+    public void setTarType(Integer tarType) {
+        this.tarType = tarType;
     }
 }

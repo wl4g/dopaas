@@ -1,5 +1,8 @@
-package com.wl4g.devops.ci.devtool;
+package com.wl4g.devops.ci.subject;
 
+import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
+import com.wl4g.devops.ci.devtool.GitUtil;
+import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -8,14 +11,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
 @Component
-public abstract class DevTool {
-	final protected Logger log = LoggerFactory.getLogger(DevTool.class);
+public abstract class BaseSubject {
+	final protected Logger log = LoggerFactory.getLogger(BaseSubject.class);
 
 	//branch name
 	protected String branch;
@@ -23,15 +27,17 @@ public abstract class DevTool {
 	protected String path;
 	//branch url
 	protected String url;
-	//target server host
-	//protected String targetHost;
-	//target server path
-	//protected String targetPath;
+	//project alias
+	protected String alias;
+	// for example:/super-devops-iam-security/target/demo.tar
+	protected String tarPath;
+	//tarName,for example : demo.tar / demo.jar
+	protected String tarName;
+	//instances
+	protected List<AppInstance> instances;
 
-	protected EnvConfig envConfig;
 
-
-	public DevTool(){
+	public BaseSubject(){
 
 	}
 
@@ -124,50 +130,46 @@ public abstract class DevTool {
 	/**
 	 * unzip
 	 */
-	public String tar(String targetHost,String targetPath,String targetName) throws Exception{
+	public String tar(String targetHost,String userName,String targetPath,String targetName) throws Exception{
 		String command = "tar -xvf "+targetPath+"/"+targetName+" -C "+targetPath;
-		return ConnectLinuxCommand.execute(targetHost,command);
+		return ConnectLinuxCommand.execute(targetHost,userName,command);
 	}
 
 	/**
 	 * bakcUp
 	 */
-	public String backUp() throws Exception{
-		String command = "ssh "+envConfig.getTargetHost()+" \"cp "+envConfig.getTargetPath()+" "+envConfig.getTargetPath()+"_bak"+"\"";
-		return run(command);
+	public String backUp(String targetHost,String targetPath) throws Exception{
+		//String command = "ssh "+targetHost+" \"cp "+targetPath+" "+targetPath+"_bak"+"\"";
+		//return run(command);
+		//TODO
+		return null;
 	}
 
 	/**
 	 * rollback
 	 */
 	public String rollback() throws Exception{
-		String command = "ssh "+envConfig.getTargetHost()+" \"mv "+envConfig.getTargetPath()+"_bak"+" "+envConfig.getTargetPath()+"\"";
-		return run(command);
+		//TODO
+		return null;
 	}
 
 	/**
 	 * stop
 	 */
-	public String stop(String command) throws Exception{
-		command = "ssh "+envConfig.getTargetHost()+" \""+command+"\"";
-		return run(command);
+	public String stop(String targetHost,String userName,String targetPath,String targetName) throws Exception{
+		//TODO
+		String command = "";
+		return ConnectLinuxCommand.execute(targetHost,userName,command);
 
 	}
 
 	/**
 	 * start
 	 */
-	public String start(String command) throws Exception{
-		command = "ssh "+envConfig.getTargetHost()+" \""+command+"\"";
-		return run(command);
-	}
-
-	/**
-	 * restart
-	 */
-	public String restart(String command) throws Exception{
-		command = "ssh "+envConfig.getTargetHost()+" \""+command+"\"";
-		return run(command);
+	public String start(String targetHost,String userName,String targetPath,String targetName) throws Exception{
+		//TODO
+		String command = "";
+		return ConnectLinuxCommand.execute(targetHost,userName,command);
 	}
 
 
@@ -195,4 +197,35 @@ public abstract class DevTool {
 		this.url = url;
 	}
 
+	public List<AppInstance> getInstances() {
+		return instances;
+	}
+
+	public void setInstances(List<AppInstance> instances) {
+		this.instances = instances;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public String getTarName() {
+		return tarName;
+	}
+
+	public void setTarName(String tarName) {
+		this.tarName = tarName;
+	}
+
+	public String getTarPath() {
+		return tarPath;
+	}
+
+	public void setTarPath(String tarPath) {
+		this.tarPath = tarPath;
+	}
 }

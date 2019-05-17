@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Project" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="git_url" property="gitUrl" jdbcType="VARCHAR" />
     <result column="app_group_id" property="appGroupId" jdbcType="INTEGER" />
     <result column="tar_path" property="tarPath" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -14,7 +15,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_name, app_group_id, tar_path, remark, del_flag, create_date, create_by, 
+    id, project_name, git_url, app_group_id, tar_path, remark, del_flag, create_date, create_by,
     update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -28,11 +29,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project" >
-    insert into ci_project (id, project_name, app_group_id, 
+    insert into ci_project (id, project_name,git_url, app_group_id,
       tar_path, remark, del_flag, 
       create_date, create_by, update_date, 
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{appGroupId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR},#{gitUrl,jdbcType=VARCHAR}, #{appGroupId,jdbcType=INTEGER},
       #{tarPath,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR})
@@ -45,6 +46,9 @@
       </if>
       <if test="projectName != null" >
         project_name,
+      </if>
+      <if test="gitUrl != null" >
+        git_url,
       </if>
       <if test="appGroupId != null" >
         app_group_id,
@@ -78,6 +82,9 @@
       <if test="projectName != null" >
         #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="gitUrl != null" >
+        #{gitUrl,jdbcType=VARCHAR},
+      </if>
       <if test="appGroupId != null" >
         #{appGroupId,jdbcType=INTEGER},
       </if>
@@ -110,6 +117,9 @@
       <if test="projectName != null" >
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="gitUrl != null" >
+        git_url = #{gitUrl,jdbcType=VARCHAR},
+      </if>
       <if test="appGroupId != null" >
         app_group_id = #{appGroupId,jdbcType=INTEGER},
       </if>
@@ -140,6 +150,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Project" >
     update ci_project
     set project_name = #{projectName,jdbcType=VARCHAR},
+      git_url = #{gitUrl,jdbcType=VARCHAR},
       app_group_id = #{appGroupId,jdbcType=INTEGER},
       tar_path = #{tarPath,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -150,4 +161,18 @@
       update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_project
+    limit ${(customPage.pageNum -1) * customPage.pageSize}, ${customPage.pageSize}
+  </select>
+
+  <select id="getByProjectName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_project
+    where project_name = #{projectName,jdbcType=VARCHAR}
+  </select>
 </mapper>

@@ -1,9 +1,9 @@
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,6 +19,10 @@ public interface CiService {
 
 	List<AppInstance> instancelist(AppInstance appInstance);
 
+	Trigger getTriggerByProjectAndBranch(Integer projectId,String branchName);
+
+
+	void hook(String projectName,String branchName,String url);
 
 
 }

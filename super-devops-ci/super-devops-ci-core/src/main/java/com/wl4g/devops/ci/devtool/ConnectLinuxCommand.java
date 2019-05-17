@@ -22,14 +22,8 @@ public class ConnectLinuxCommand {
 	 * @param command
 	 * @return
 	 */
-	public static String execute(String ip,String command) throws Exception{
-		String userName = null;
+	public static String execute(String ip,String userName,String command) throws Exception{
 		Connection conn = null;
-		if(ip.contains("@")){
-			String[] a = ip.split("@");
-			userName = a[0];
-			ip = a[1];
-		}
 		try {
 			boolean flag = false;
 			conn = new Connection(ip);

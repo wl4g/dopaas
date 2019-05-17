@@ -9,6 +9,8 @@
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
     <result column="sha" property="sha" jdbcType="VARCHAR" />
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="tar_type" property="tarType" jdbcType="INTEGER" />
+    <result column="command" property="command" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="CHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
@@ -20,7 +22,7 @@
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, type, project_id, status, branch_name, sha, parent_id, remark, del_flag, create_date, 
+    id, type, project_id, status, branch_name, sha, parent_id,tar_type,command, remark, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <sql id="Blob_Column_List" >
@@ -41,12 +43,12 @@
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     insert into ci_task (id, type, project_id, 
       status, branch_name, sha, 
-      parent_id, remark, del_flag, 
+      parent_id, tar_type,command,remark, del_flag,
       create_date, create_by, update_date, 
       update_by, result)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{sha,jdbcType=VARCHAR}, 
-      #{parentId,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, 
+      #{parentId,jdbcType=INTEGER},#{tarType,jdbcType=INTEGER},#{command,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR})
   </insert>
@@ -73,6 +75,12 @@
       </if>
       <if test="parentId != null" >
         parent_id,
+      </if>
+      <if test="tarType != null" >
+        tar_type,
+      </if>
+      <if test="command != null" >
+        command,
       </if>
       <if test="remark != null" >
         remark,
@@ -118,6 +126,12 @@
       <if test="parentId != null" >
         #{parentId,jdbcType=INTEGER},
       </if>
+      <if test="tarType != null" >
+        #{tarType,jdbcType=INTEGER},
+      </if>
+      <if test="command != null" >
+        #{command,jdbcType=VARCHAR},
+      </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
@@ -162,6 +176,12 @@
       <if test="parentId != null" >
         parent_id = #{parentId,jdbcType=INTEGER},
       </if>
+      <if test="tarType != null" >
+        tar_type = #{tarType,jdbcType=INTEGER},
+      </if>
+      <if test="command != null" >
+        command = #{command,jdbcType=VARCHAR},
+      </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
@@ -194,6 +214,8 @@
       branch_name = #{branchName,jdbcType=VARCHAR},
       sha = #{sha,jdbcType=VARCHAR},
       parent_id = #{parentId,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=INTEGER},
+      command = #{command,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -211,6 +233,8 @@
       branch_name = #{branchName,jdbcType=VARCHAR},
       sha = #{sha,jdbcType=VARCHAR},
       parent_id = #{parentId,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=INTEGER},
+      command = #{command,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -219,4 +243,11 @@
       update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_task
+    limit ${(customPage.pageNum -1) * customPage.pageSize}, ${customPage.pageSize}
+  </select>
 </mapper>

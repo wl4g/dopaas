@@ -1,6 +1,9 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.scm.CustomPage;
+
+import java.util.List;
 
 public interface TaskDao {
     int deleteByPrimaryKey(Integer id);
@@ -16,4 +19,6 @@ public interface TaskDao {
     int updateByPrimaryKeyWithBLOBs(Task record);
 
     int updateByPrimaryKey(Task record);
+
+    List<Task> list(CustomPage customPage);
 }

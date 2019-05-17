@@ -1,6 +1,9 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.scm.CustomPage;
+
+import java.util.List;
 
 /**
  * @author vjay
@@ -14,6 +17,12 @@ public interface ProjectService {
 	int update(Project project);
 
 	int deleteById(Integer id);
+
+	int removeById(Integer id);
+
+	List<Project> list(CustomPage customPage);
+
+
 
 
 }

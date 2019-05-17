@@ -126,4 +126,17 @@
       update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <delete id="deleteByTriggerId" parameterType="java.lang.Integer" >
+    delete from ci_trigger_detail
+    where trigger_id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <select id="getDetailByTriggerId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_trigger_detail
+    where trigger_id = #{triggerId,jdbcType=INTEGER}
+  </select>
+
 </mapper>

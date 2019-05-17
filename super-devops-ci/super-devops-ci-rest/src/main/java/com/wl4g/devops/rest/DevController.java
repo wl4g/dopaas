@@ -1,11 +1,9 @@
 package com.wl4g.devops.rest;
 
-import com.wl4g.devops.ci.devtool.BaseConfig;
-import com.wl4g.devops.ci.devtool.DefaultSubject;
-import com.wl4g.devops.ci.devtool.DevTool;
-import com.wl4g.devops.ci.devtool.EnvConfig;
+import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.common.bean.ci.dto.HookInfo;
 import com.wl4g.devops.common.web.BaseController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DevController extends BaseController {
 
+	@Autowired
+	private CiService ciService;
+
 
 	/**
 	 * for gitlab webkook
@@ -28,37 +29,31 @@ public class DevController extends BaseController {
 		String url = hookInfo.getRepository().getGitHttpUrl();
 		String projectName = hookInfo.getRepository().getName();
 		log.info("activity hook,projectName="+projectName+" branchName="+branchName+" url="+url);
-		DevTool devTool = getDevTool(projectName,branchName,url);
-		if(null==devTool){
-			log.error("not suppost now");
-			return;
-		}
-		//excu
-		devTool.excu();
-
+		//BaseSubject baseSubject = getDevTool(projectName,branchName,url);
+		ciService.hook(projectName,branchName,url);
 	}
 
 	/**
 	 * for web
 	 */
-	@RequestMapping("pkg")
+	/*@RequestMapping("pkg")
 	public void pkg(String projectName,String url,String branch,String targetHost,String targetPath) throws Exception{
-		EnvConfig envConfig = BaseConfig.getEnvConfig(projectName+"_"+branch);
-		DevTool devTool = new DefaultSubject(BaseConfig.gitBasePath+"/"+projectName,url,branch,envConfig);
+		EnvConfig envConfig = DevConfig.getEnvConfig(projectName+"_"+branch);
+		BaseSubject baseSubject = new TarSubject(DevConfig.gitBasePath+"/"+projectName,url,branch,envConfig);
 		//excu
-		devTool.excu();
-	}
+		baseSubject.excu();
+	}*/
 
 
-	private DevTool getDevTool(String projectName,String branchName,String url){
+	/*private BaseSubject getDevTool(String projectName, String branchName, String url){
 		//TODO for test
 		projectName = "safecloud-devops";
 		branchName = "master";
 		url = "http://code.anjiancloud.owner:8443/devops-team/safecloud-devops.git";
 
 
-		DevTool devTool = null;
-		EnvConfig envConfig = BaseConfig.getEnvConfig(projectName+"_"+branchName);
+		BaseSubject baseSubject = null;
+		EnvConfig envConfig = DevConfig.getEnvConfig(projectName+"_"+branchName);
 		if (envConfig==null){
 			return null;
 		}
@@ -66,14 +61,14 @@ public class DevController extends BaseController {
 		if(false){//TODO
 
 		}else{//default devtool
-			devTool = new DefaultSubject(BaseConfig.gitBasePath+"/"+projectName,url,branchName,envConfig);
+			baseSubject = new TarSubject(DevConfig.gitBasePath+"/"+projectName,url,branchName,envConfig);
 		}
 
 		//TODO just for test
 		//devTool = new TestSubject("/Users/vjay/gittest/super-devops","https://github.com/xburnerair00/super-devops.git","master","root@safecloud-test","/root/hwjtest/super-devops");
 
-		return devTool;
-	}
+		return baseSubject;
+	}*/
 
 
 
