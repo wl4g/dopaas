@@ -20,3 +20,41 @@ spring:
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
 
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      url: jdbc:mysql://safecloud-test:3306/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      username: gzsm
+      password: sm7782*321
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall
+      log-slow-sql: true
+
+
+
+# Redis configuration.
+redis:
+  passwd: zzx!@#$%
+  connect-timeout: 10000
+  max-attempts: 10
+  # Redis's cluster nodes.
+  nodes:
+  - book-cloud:6379
+  - book-cloud:6380
+  - book-cloud:6381
+  - book-cloud:7380
+  - book-cloud:7380
+  - book-cloud:7381
+

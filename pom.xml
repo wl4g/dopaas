@@ -9,6 +9,7 @@
 	<modules>
 		<!-- <module>super-devops-ci</module> -->
 		<module>super-devops-common</module>
+		<module>super-devops-dao</module>
 		<module>super-devops-shell</module>
 		<module>super-devops-support</module>
 		<!-- <module>super-devops-scm</module> -->
