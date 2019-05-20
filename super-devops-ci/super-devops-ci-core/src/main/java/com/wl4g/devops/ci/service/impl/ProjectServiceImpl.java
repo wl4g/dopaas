@@ -5,6 +5,7 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.BaseBean;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-05-17 10:24:00
  */
+@Service
 public class ProjectServiceImpl implements ProjectService {
 
     private ProjectDao projectDao;
