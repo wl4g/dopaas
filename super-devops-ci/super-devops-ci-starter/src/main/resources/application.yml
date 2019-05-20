@@ -33,5 +33,7 @@ mybatis:
 
 devconf:
   gitBasePath: /Users/vjay/gittest
-  gitAccount: root
-  gitPassword: 12345678
+  gitAccount: heweijie
+  gitPassword: hwj13535248668
+  bakPath: /Users/vjay/gittest/bak
+  linkPath: /usr/local

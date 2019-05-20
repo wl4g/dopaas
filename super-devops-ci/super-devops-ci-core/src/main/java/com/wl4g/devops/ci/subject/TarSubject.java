@@ -36,29 +36,36 @@ public class TarSubject extends BaseSubject {
 		}else{
 			clone(path,url,branch);
 		}
+
 		//build
 		build(path);
+
+		//backup in local
+		bakLocal(path+"/"+tarPath);
 
 		//scp to server
 		for(AppInstance instance : instances){
 
-			//scp to server
-			scp(path+"/"+tarPath,instance.getServerAccount()+"@"+instance.getHost(),instance.getWebappsPath());
+			//scp to server  and  tar
+			//scp(path+"/"+tarPath,instance.getServerAccount()+"@"+instance.getHost(),instance.getWebappsPath());
+			scpAndTar(path+"/"+tarPath,instance.getServerAccount()+"@"+instance.getHost(),instance.getServerAccount(),instance.getWebappsPath());
 
 			//stop server
-			stop(instance.getHost(),instance.getServerAccount(),alias);
+			//stop(instance.getHost(),instance.getServerAccount(),alias);
+			reLink(instance.getHost(),instance.getWebappsPath(),instance.getServerAccount(),path+"/"+tarPath);
 
 			//decompression the	tar package
-			tar(instance.getHost(),instance.getServerAccount(),instance.getWebappsPath(),tarName);
+			//tar(instance.getHost(),instance.getServerAccount(),instance.getWebappsPath(),tarName);
 
 			//restart server
-			start(instance.getHost(),instance.getServerAccount(),alias,tarName);
+			restart(instance.getHost(),instance.getServerAccount());
+			//start(instance.getHost(),instance.getServerAccount(),alias,tarName);
 		}
 		log.info("Done");
 	}
 
-	public String stop(String host,String userName,String module) throws Exception{
-		String command = "for i in `jps|grep "+module+" |awk '{print $1}' `; do kill -9 $i ; done;";
+	public String restart(String host,String userName) throws Exception{
+		String command = "su "+alias+";"+"sc "+alias+" restart;";
 		try {
 			ConnectLinuxCommand.execute(host,userName,command);
 		}catch (Exception e){

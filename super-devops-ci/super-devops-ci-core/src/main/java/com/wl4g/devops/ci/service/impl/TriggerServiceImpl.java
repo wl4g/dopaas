@@ -8,6 +8,7 @@ import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-05-17 11:07:00
  */
+@Service
 public class TriggerServiceImpl implements TriggerService {
 
     @Autowired

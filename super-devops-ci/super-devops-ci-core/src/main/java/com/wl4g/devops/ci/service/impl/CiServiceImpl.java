@@ -1,23 +1,23 @@
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.devtool.CiConstant;
 import com.wl4g.devops.ci.devtool.DevConfig;
 import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.ci.subject.BaseSubject;
 import com.wl4g.devops.ci.subject.JarSubject;
 import com.wl4g.devops.ci.subject.TarSubject;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.ci.TriggerDetail;
+import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
+import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +45,9 @@ public class CiServiceImpl implements CiService {
 
 	@Autowired
 	private ProjectDao projectDao;
+
+	@Autowired
+	private TaskService taskService;
 
 
 
@@ -77,10 +80,11 @@ public class CiServiceImpl implements CiService {
 		return trigger;
 	}
 
+
 	public void hook(String projectName,String branchName,String url){
 		Project project = projectDao.getByProjectName(projectName);
-		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
-		String alias = appGroup.getName();
+		//AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
+		//String alias = appGroup.getName();
 		Trigger trigger = getTriggerByProjectAndBranch(project.getId(),branchName);
 
 		List<AppInstance> instances = new ArrayList<>();
@@ -89,26 +93,56 @@ public class CiServiceImpl implements CiService {
 			instances.add(instance);
 		}
 
-		BaseSubject subject = getSubject(trigger.getTarType(),devConfig.getGitBasePath()+"/"+projectName, url, branchName, alias,project.getTarPath(),instances);
+		//TODO get sha
+		String sha = null;
+
+		Task task = taskService.createTask(project,instances,CiDevOpsConstants.TASK_TYPE_TRIGGER,CiDevOpsConstants.TASK_STATUS_CREATE,branchName,sha,null,null,trigger.getTarType());
+		BaseSubject subject = getSubject(task);
 
 		try {
+			////update task--running
+			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_RUNNING);
+			//TODO excu
 			subject.excu();
+			//update task--success
+			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_SUCCESS);
 		} catch (Exception e) {
+			//update task--fail
+			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_FAIL);
 			e.printStackTrace();
 		}
+
 	}
 
 	private BaseSubject getSubject(int tarType,String path, String url, String branch, String alias,String tarPath,List<AppInstance> instances){
 		switch(tarType){
-			case CiConstant.TAR_TYPE_TAR :
+			case CiDevOpsConstants.TAR_TYPE_TAR :
 				return new TarSubject(path, url, branch, alias,tarPath,instances);
-			case CiConstant.TAR_TYPE_JAR :
+			case CiDevOpsConstants.TAR_TYPE_JAR :
 				return new JarSubject(path, url, branch, alias,tarPath,instances);
-			case CiConstant.TAR_TYPE_OTHER :
+			case CiDevOpsConstants.TAR_TYPE_OTHER :
 				//return new OtherSubject();
 			default :
 				throw new RuntimeException("unsuppost type:"+tarType);
 		}
+	}
+
+
+	public BaseSubject getSubject(Task task){
+		Assert.notNull(task,"task can not be null");
+		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
+		Assert.notNull(project,"project can not be null");
+		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
+		Assert.notNull(appGroup,"appGroup can not be null");
+
+		List<TaskDetail> taskDetails = taskService.getDetailByTaskId(task.getId());
+		Assert.notNull(taskDetails,"taskDetails can not be null");
+		List<AppInstance> instances = new ArrayList<>();
+		for(TaskDetail taskDetail : taskDetails){
+			AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
+			instances.add(instance);
+		}
+		return getSubject(task.getTarType(),devConfig.getGitBasePath()+"/"+project.getProjectName(),project.getGitUrl(),task.getBranchName(),appGroup.getName(),project.getTarPath(),instances);
 	}
 
 

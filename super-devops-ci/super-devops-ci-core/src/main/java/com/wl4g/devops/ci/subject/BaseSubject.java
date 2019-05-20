@@ -1,8 +1,10 @@
 package com.wl4g.devops.ci.subject;
 
 import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
+import com.wl4g.devops.ci.devtool.DevConfig;
 import com.wl4g.devops.ci.devtool.GitUtil;
 import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,6 +39,8 @@ public abstract class BaseSubject {
 	//instances
 	protected List<AppInstance> instances;
 
+	//now
+	protected Date now = new Date();
 
 	public BaseSubject(){
 
@@ -120,8 +125,6 @@ public abstract class BaseSubject {
 	 * @throws Exception
 	 */
 	public String scp(String path,String targetHost,String targetPath) throws Exception{
-		//String checkPath = "ssh "+targetHost+" \"mkdir -p "+targetPath+"\"";
-		//run(checkPath);
 		String command = "scp -r "+path+" "+targetHost+":"+targetPath;
 		return run(command);
 
@@ -135,15 +138,57 @@ public abstract class BaseSubject {
 		return ConnectLinuxCommand.execute(targetHost,userName,command);
 	}
 
+
 	/**
-	 * bakcUp
+	 * bak local + scp + rename
 	 */
-	public String backUp(String targetHost,String targetPath) throws Exception{
-		//String command = "ssh "+targetHost+" \"cp "+targetPath+" "+targetPath+"_bak"+"\"";
-		//return run(command);
-		//TODO
-		return null;
+	public String scpAndTar(String path,String targetHost,String userName,String targetPath) throws Exception{
+		String result = scpToTmp(path,targetHost);
+		result += tarToTmp(targetHost,userName,path);
+		result += moveToTarPath(targetHost,userName,path,targetPath);
+		return result;
 	}
+
+	public String reLink(String targetHost,String targetPath,String userName,String path) throws Exception{
+		String command = "ln -snf "+targetPath+"/"+subPacknameWithOutPostfix(path)+getDateTimeStr()+" "+DevConfig.linkPath+"/"+alias+"-current";
+		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	}
+
+
+	/**
+	 * scpToTmp
+	 */
+	public String scpToTmp(String path,String targetHost) throws Exception{
+		String command = "scp -r "+path+" "+targetHost+":/tmp";
+		return run(command);
+	}
+
+	/**
+	 * unzip in tmp
+	 */
+	public String tarToTmp(String targetHost,String userName,String path) throws Exception{
+		String command = "tar -xvf /tmp"+"/"+subPackname(path);
+		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	}
+
+	/**
+	 * move to tar path
+	 */
+	public String moveToTarPath(String targetHost,String userName,String path,String targetPath)throws Exception{
+		String command = "mv /tmp"+"/"+subPacknameWithOutPostfix(path)+" "+targetPath+"/"+subPacknameWithOutPostfix(path)+getDateTimeStr();
+		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	}
+
+
+	/**
+	 * local back up
+	 */
+	public String bakLocal(String path) throws Exception{
+		checkPath(DevConfig.bakPath);
+		String command = "cp -Rf "+path +" "+ DevConfig.bakPath+subPackname(path)+getDateTimeStr();
+		return run(command);
+	}
+
 
 	/**
 	 * rollback
@@ -156,9 +201,7 @@ public abstract class BaseSubject {
 	/**
 	 * stop
 	 */
-	public String stop(String targetHost,String userName,String targetPath,String targetName) throws Exception{
-		//TODO
-		String command = "";
+	public String stop(String targetHost,String userName,String command) throws Exception{
 		return ConnectLinuxCommand.execute(targetHost,userName,command);
 
 	}
@@ -166,10 +209,37 @@ public abstract class BaseSubject {
 	/**
 	 * start
 	 */
-	public String start(String targetHost,String userName,String targetPath,String targetName) throws Exception{
-		//TODO
-		String command = "";
+	public String start(String targetHost,String userName,String command) throws Exception{
 		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	}
+
+	/**
+	 * restart
+	 */
+	public String restart(String targetHost,String userName,String command) throws Exception{
+		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	}
+
+
+	public String getDateTimeStr(){
+		return DateUtils.formatDate(now,DateUtils.YMDHMS);
+	}
+
+	public String subPackname(String path){
+		String[] a = path.split("/");
+		return a[a.length-1];
+	}
+
+	public String subPacknameWithOutPostfix(String path){
+		String a = subPackname(path);
+		return a.substring(0,a.lastIndexOf("."));
+	}
+
+	public void checkPath(String path){
+		File file = new File(path);
+		if(!file.exists()) {
+			file.mkdirs();
+		}
 	}
 
 

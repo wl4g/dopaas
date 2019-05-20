@@ -20,6 +20,10 @@ public class DevConfig {
 
 	public static String gitPassword;
 
+	public static String bakPath;
+
+	public static String linkPath;
+
 	private static CredentialsProvider cp;
 
 	public String getGitBasePath() {
@@ -53,6 +57,19 @@ public class DevConfig {
 		return cp;
 	}
 
+	public static String getBakPath() {
+		return bakPath;
+	}
 
+	public void setBakPath(String bakPath) {
+		DevConfig.bakPath = bakPath;
+	}
 
+	public static String getLinkPath() {
+		return linkPath;
+	}
+
+	public void setLinkPath(String linkPath) {
+		DevConfig.linkPath = linkPath;
+	}
 }

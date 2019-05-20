@@ -82,6 +82,7 @@ public class GitUtil {
 				}
 			}
 			if(exist){//if exist --checkout
+
 				git.checkout().setName(branchName).call();
 			}else{//if not exist --checkout and create local branch
 				git.checkout()
@@ -142,6 +143,12 @@ public class GitUtil {
 				git.close();
 			}
 		}
+	}
+
+
+	private static String getBranchName(String ref){
+		//ref.substring(11);
+		return null;
 	}
 
 
