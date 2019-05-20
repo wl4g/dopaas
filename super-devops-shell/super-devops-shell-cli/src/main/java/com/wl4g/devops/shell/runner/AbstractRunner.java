@@ -23,7 +23,6 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -53,7 +52,6 @@ import com.wl4g.devops.shell.config.DynamicCompleter;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.utils.Assert;
-import com.wl4g.devops.shell.utils.LineUtils;
 
 /**
  * Abstract shell component runner
@@ -65,11 +63,11 @@ import com.wl4g.devops.shell.utils.LineUtils;
 public abstract class AbstractRunner extends AbstractActuator implements Runner {
 
 	/**
-	 * The PID used to get the set target service, that is, the server that the
-	 * current shell client will connect to (because the same computer may start
-	 * many different shell services)
+	 * Used to get the name of the set target service (that is, the server that
+	 * the current shell client will connect to) (because the same computer may
+	 * start many different shell services)
 	 */
-	final public static String ARG_SERV_PIDS = "servpids";
+	final public static String ARG_SERV_NAME = "servname";
 
 	/**
 	 * IBid, note that this priority is higher than ARG_SERV_PIDS
@@ -84,12 +82,12 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	/**
 	 * Enable debugging
 	 */
-	final public static boolean DEBUG = System.getProperty("debug") != null;
+	final public static boolean DEBUG = getProperty("debug") != null;
 
 	/**
 	 * Enable debugging
 	 */
-	final public static long TIMEOUT = Long.parseLong(System.getProperty("timeout", "10000"));
+	final public static long TIMEOUT = Long.parseLong(getProperty("timeout", "10000"));
 
 	/**
 	 * Attributed string
@@ -122,7 +120,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	private String stacktraceAsString;
 
 	public AbstractRunner(Configuration config) {
-		super(getSingle());
+		super(config, getSingle());
 		Assert.notNull(config, "configuration is null, please check configure");
 		this.config = config;
 
@@ -336,7 +334,17 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					out.print(String.format("Connecting to %s:%s ... \n", point[0], point[1]));
 				}
 
-				Socket s = new Socket((String) point[0], (int) point[1]);
+				Socket s = null;
+				try {
+					s = new Socket((String) point[0], (int) point[1]);
+				} catch (IOException e) {
+					String errmsg = String.format(
+							"Connecting to '%s' failure, check that the service application is started or the name is correct!",
+							getProperty(ARG_SERV_NAME));
+					err.println(errmsg);
+					throw new IllegalStateException(errmsg, e);
+				}
+
 				client = new ClientHandler(this, s, result -> {
 					out.println(result);
 					return null;
@@ -353,13 +361,13 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * @return
 	 */
 	private Object[] determineServPoint() {
-		String servPids = getProperty(ARG_SERV_PIDS);
+		String servName = getProperty(ARG_SERV_NAME);
 		String servPoint = getProperty(ARG_SERV_POINT);
 
-		if (isBlank(servPids) && isBlank(servPoint)) {
+		if (isBlank(servName) && isBlank(servPoint)) {
 			throw new IllegalArgumentException(String.format(
-					"JVM startup argument -D%s(e.g. -D%s=8080) and -D%s(e.g. -D%s=19701,19702) must be one of the two, and only -D%s are adopted when both exist",
-					ARG_SERV_POINT, ARG_SERV_POINT, ARG_SERV_PIDS, ARG_SERV_PIDS, ARG_SERV_POINT));
+					"JVM startup argument -D%s(e.g. -D%s=8080) and -D%s(e.g. -D%s=myapp1) must be one of the two, and only -D%s are adopted when both exist",
+					ARG_SERV_POINT, ARG_SERV_POINT, ARG_SERV_NAME, ARG_SERV_NAME, ARG_SERV_POINT));
 		}
 
 		//
@@ -382,65 +390,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		// Can only be used to connect to the local service console.
 		//
 
-		Assert.isTrue(IS_OS_LINUX || IS_OS_UNIX, "Not support operation system!");
-		int _servPort = -1;
-		StringBuffer debug = new StringBuffer("Scanning local serv listen port ...");
-		try {
-			ok: for (String pid : trimToEmpty(servPids).replaceAll(" ", ",").split(",")) {
-				/**
-				 * <pre>
-				 * sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
-				 *  0: 00000000:1F68 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 3098188 1 ffff92b4f1ee8f80 100 0 0 10 0                   
-				 *  1: 00000000:1F6A 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 3094334 1 ffff92b508321740 100 0 0 10 0
-				 * </pre>
-				 */
-				String catline = String.format("cat /proc/%s/net/tcp", pid);
-				if (DEBUG) {
-					debug.append(String.format("\nPID: <%s> %s \n", pid, catline));
-				}
-
-				String result = LineUtils.execAsString(catline);
-				if (isBlank(result)) {
-					err.println(String.format("Unable to follow up on PIDS (%s) to get information about bound ports", pid));
-				}
-
-				// Find legal local port by PID
-				List<String> infos = Arrays.asList(result.split("\n"));
-				for (int i = 1; i < infos.size(); i++) {
-					String info = infos.get(i).trim();
-					String[] parts = info.split(" ");
-					String localAddr = parts[1];
-					String localPortHex = localAddr.split(":")[1];
-					int localPort = Integer.parseInt(localPortHex, 16);
-					if (DEBUG) {
-						debug.append(String.format("\t%s    => :%s\n", info, localPort));
-					}
-					// Check whether it is within the range of port listen by
-					// the server.
-					if (config.getBeginPort() <= localPort && localPort <= config.getEndPort()) {
-						if (DEBUG) {
-							debug.append(String.format("Successful extracted for : %s\n", localPort));
-						}
-						_servPort = localPort;
-						break ok;
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-
-		if (DEBUG) {
-			out.println(debug.toString());
-		}
-		if (_servPort < 0) {
-			throw new IllegalStateException(String.format(
-					"Unable to connect, failed to find remote service port. target PIDS: '%s'\n More See: https://github.com/wl4g/super-devops/blob/master/super-devops-shell/super-devops-shell-cli/README_EN.md",
-					servPids));
-		}
-
-		return new Object[] { config.getServer(), _servPort };
+		return new Object[] { config.getServer(), ensureDetermineServPort(servName) };
 	}
 
 	/**
