@@ -40,10 +40,14 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	 */
 	final protected ShellProperties config;
 
-	public AbstractProcessor(ShellProperties config, ShellBeanRegistry registry) {
-		super(registry);
+	final protected String appName;
+
+	public AbstractProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
+		super(config, registry);
 		Assert.notNull(config, "config must not be null");
+		Assert.hasText(appName, "appName must not be null");
 		this.config = config;
+		this.appName = appName;
 	}
 
 }

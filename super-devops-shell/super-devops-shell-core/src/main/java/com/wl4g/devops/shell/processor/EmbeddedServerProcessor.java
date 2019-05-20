@@ -18,7 +18,6 @@ package com.wl4g.devops.shell.processor;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -74,8 +73,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 	 */
 	private Thread boss;
 
-	public EmbeddedServerProcessor(ShellProperties config, ShellBeanRegistry registry) {
-		super(config, registry);
+	public EmbeddedServerProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
+		super(config, appName, registry);
 		this.worker = Executors.newFixedThreadPool(config.getConcurrently(), new ThreadFactory() {
 			final private AtomicInteger counter = new AtomicInteger(0);
 
@@ -94,20 +93,14 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 		if (running.compareAndSet(false, true)) {
 			Assert.state(ss == null, "server socket already listen ?");
 
-			int bindPort = -1;
-			for (int retryPort = config.getBeginPort(); retryPort <= config.getEndPort(); retryPort++) {
-				try {
-					ss = new ServerSocket(retryPort, config.getBacklog(), config.getInetBindAddr());
-					bindPort = retryPort;
-					break;
-				} catch (BindException e) {
-				}
-			}
-			ss.setSoTimeout(0); // Infinite timeout
+			int bindPort = ensureDetermineServPort(appName);
 
+			ss = new ServerSocket(bindPort, config.getBacklog(), config.getInetBindAddr());
+			ss.setSoTimeout(0); // Infinite timeout
 			if (log.isInfoEnabled()) {
 				log.info("Shell Console started on port(s): {}", bindPort);
 			}
+
 			this.boss = new Thread(this);
 			this.boss.start();
 		}
