@@ -30,7 +30,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-iam-dao</artifactId>
+			<artifactId>super-devops-dao</artifactId>
 			<version>master</version>
 			<scope>compile</scope>
 		</dependency>
