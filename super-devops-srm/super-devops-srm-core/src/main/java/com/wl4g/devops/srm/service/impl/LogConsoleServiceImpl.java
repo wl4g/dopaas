@@ -20,7 +20,7 @@ import com.wl4g.devops.common.bean.srm.Querycriteria;
 import com.wl4g.devops.common.bean.srm.RequestBean;
 import com.wl4g.devops.common.bean.srm.Storage;
 import com.wl4g.devops.common.constants.SRMDevOpsConstants;
-import com.wl4g.devops.srm.dao.LogDao;
+import com.wl4g.devops.srm.handler.LogHandler;
 import com.wl4g.devops.srm.service.LogConsoleService;
 import com.wl4g.devops.common.utils.DateUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -46,7 +46,7 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 public class LogConsoleServiceImpl implements LogConsoleService {
 
 	@Resource
-	private LogDao logDao;
+	private LogHandler logHandler;
 
 	@Override
 	public Object consoleLog(RequestBean requestBean) throws Exception {
@@ -119,7 +119,7 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 		searchRequest.source(sourceBuilder);
 		System.out.println(searchRequest.toString());
 		List<String> list = new ArrayList<>();
-		List<Log> logList = logDao.findAll(searchRequest);
+		List<Log> logList = logHandler.findAll(searchRequest);
 		for (Log log : logList) {
 			list.add(log.getMessage());
 		}

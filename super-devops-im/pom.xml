@@ -7,9 +7,8 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps IM</name>
 	<modules>
-		<module>super-devops-im-dao</module>
-		<module>super-devops-im-rest</module>
 		<module>super-devops-im-core</module>
+		<module>super-devops-im-rest</module>
 		<module>super-devops-im-starter</module>
 	</modules>
 	<properties>
