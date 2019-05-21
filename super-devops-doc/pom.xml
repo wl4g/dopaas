@@ -7,7 +7,6 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps Doc</name>
 	<modules>
-		<module>super-devops-doc-dao</module>
 		<module>super-devops-doc-rest</module>
 		<module>super-devops-doc-core</module>
 		<module>super-devops-doc-starter</module>
