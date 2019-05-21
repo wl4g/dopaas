@@ -83,11 +83,17 @@ public class CiServiceImpl implements CiService {
 
 	public void hook(String projectName,String branchName,String url){
 		Project project = projectDao.getByProjectName(projectName);
-		Assert.notNull(project,"project not found, please config first");
+		if(null == project){
+			return;
+		}
+		//Assert.notNull(project,"project not found, please config first");
 		//AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
 		//String alias = appGroup.getName();
 		Trigger trigger = getTriggerByProjectAndBranch(project.getId(),branchName);
-		Assert.notNull(trigger,"trigger not found, please config first");
+		if(null == trigger){
+			return;
+		}
+		//Assert.notNull(trigger,"trigger not found, please config first");
 
 		List<AppInstance> instances = new ArrayList<>();
 		for(TriggerDetail triggerDetail : trigger.getTriggerDetails()){

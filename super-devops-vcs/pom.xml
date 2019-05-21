@@ -7,7 +7,6 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps VCS</name>
 	<modules>
-		<module>super-devops-vcs-dao</module>
 		<module>super-devops-vcs-rest</module>
 		<module>super-devops-vcs-core</module>
 		<module>super-devops-vcs-starter</module>

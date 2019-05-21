@@ -8,7 +8,6 @@
 	<name>Super DevOps UMC</name>
 	<modules>
 		<module>super-devops-umc-client</module>
-		<module>super-devops-umc-dao</module>
 		<module>super-devops-umc-example</module>
 		<module>super-devops-umc-rest</module>
 		<module>super-devops-umc-core</module>

@@ -26,7 +26,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-doc-dao</artifactId>
+			<artifactId>super-devops-dao</artifactId>
 			<version>master</version>
 		</dependency>
 		<!-- Database -->

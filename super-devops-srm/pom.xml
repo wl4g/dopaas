@@ -8,7 +8,6 @@
 	<name>Super DevOps SRM</name>
 	<modules>
 		<!-- <module>super-devops-srm-client</module> -->
-		<module>super-devops-srm-dao</module>
 		<module>super-devops-srm-rest</module>
 		<module>super-devops-srm-core</module>
 		<module>super-devops-srm-starter</module>

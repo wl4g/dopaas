@@ -11,7 +11,6 @@
 		<module>super-devops-iam-captcha</module>
 		<module>super-devops-iam-common</module>
 		<module>super-devops-iam-core</module>
-		<module>super-devops-iam-dao</module>
 		<module>super-devops-iam-example</module>
 		<module>super-devops-iam-rest</module>
 		<module>super-devops-iam-security</module>
