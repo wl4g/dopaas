@@ -7,7 +7,6 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps CI</name>
 	<modules>
-		<module>super-devops-ci-dao</module>
 		<module>super-devops-ci-rest</module>
 		<module>super-devops-ci-core</module>
 		<module>super-devops-ci-starter</module>

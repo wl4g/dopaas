@@ -32,6 +32,11 @@ public class AppInstance extends BaseBean {
 	private String opsIds = "1"; // 运维者userIds（逗号分隔）
 	private String versionId; // 版本id
 
+	//20190517add
+	private String webappsPath;//项目部署路径
+	private String serverAccount;//登录账号
+
+
 	public Long getGroupId() {
 		return groupId;
 	}
@@ -86,5 +91,21 @@ public class AppInstance extends BaseBean {
 
 	public void setVersionId(String versionId) {
 		this.versionId = versionId;
+	}
+
+	public String getWebappsPath() {
+		return webappsPath;
+	}
+
+	public void setWebappsPath(String webappsPath) {
+		this.webappsPath = webappsPath;
+	}
+
+	public String getServerAccount() {
+		return serverAccount;
+	}
+
+	public void setServerAccount(String serverAccount) {
+		this.serverAccount = serverAccount;
 	}
 }
