@@ -15,11 +15,13 @@
  */
 package com.wl4g.devops.shell;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.CRC32;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -27,6 +29,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static com.wl4g.devops.shell.utils.Types.*;
 import static com.wl4g.devops.shell.utils.Reflections.*;
 import com.wl4g.devops.shell.annotation.ShellOption;
+import com.wl4g.devops.shell.config.AbstractConfiguration;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
@@ -47,9 +50,16 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	final protected ShellBeanRegistry registry;
 
-	public AbstractActuator(ShellBeanRegistry registry) {
+	/**
+	 * Shell configuration
+	 */
+	final protected AbstractConfiguration config;
+
+	public AbstractActuator(AbstractConfiguration config, ShellBeanRegistry registry) {
 		Assert.notNull(registry, "Registry must not be null");
+		Assert.notNull(config, "Registry must not be null");
 		this.registry = registry;
+		this.config = config;
 	}
 
 	@Override
@@ -220,6 +230,25 @@ public abstract class AbstractActuator implements Actuator {
 		List<String> commands = LineUtils.parse(line);
 		Assert.notEmpty(commands, "Commands must not be empty");
 		return commands;
+	}
+
+	/**
+	 * Ensure resolve server listen port.
+	 * 
+	 * @param appName
+	 * @return
+	 */
+	protected int ensureDetermineServPort(String appName) {
+		Assert.hasLength(appName, "appName must not be empty");
+
+		CRC32 crc32 = new CRC32();
+		crc32.update(trimToEmpty(appName).getBytes(Charset.forName("UTF-8")));
+		int mod = config.getEndPort() - config.getBeginPort();
+		int servPort = (int) (config.getBeginPort() + (crc32.getValue() % mod & (mod - 1)));
+		// out.println(String.format("Shell acceptor (%s - %s), sign(%s), listen
+		// port(%s)", config.getBeginPort(),
+		// config.getEndPort(), crc32.getValue(), servPort));
+		return servPort;
 	}
 
 }

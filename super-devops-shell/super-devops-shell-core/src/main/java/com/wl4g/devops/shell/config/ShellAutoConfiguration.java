@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.shell.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -43,8 +44,9 @@ public class ShellAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public EmbeddedServerProcessor embeddedServerProcessor(ShellProperties config, AnnotationBeanRegistry registry) {
-		return new EmbeddedServerProcessor(config, registry);
+	public EmbeddedServerProcessor embeddedServerProcessor(@Value("${spring.application.name}") String appName,
+			ShellProperties config, AnnotationBeanRegistry registry) {
+		return new EmbeddedServerProcessor(config, appName, registry);
 	}
 
 }
