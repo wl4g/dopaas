@@ -83,15 +83,18 @@ public class CiServiceImpl implements CiService {
 
 	public void hook(String projectName,String branchName,String url){
 		Project project = projectDao.getByProjectName(projectName);
+		Assert.notNull(project,"project not found, please config first");
 		//AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
 		//String alias = appGroup.getName();
 		Trigger trigger = getTriggerByProjectAndBranch(project.getId(),branchName);
+		Assert.notNull(trigger,"trigger not found, please config first");
 
 		List<AppInstance> instances = new ArrayList<>();
 		for(TriggerDetail triggerDetail : trigger.getTriggerDetails()){
 			AppInstance instance = appGroupDao.getAppInstance(triggerDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
+		Assert.notEmpty(instances,"instances not found, please config first");
 
 		//TODO get sha
 		String sha = null;
@@ -102,8 +105,8 @@ public class CiServiceImpl implements CiService {
 		try {
 			////update task--running
 			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_RUNNING);
-			//TODO excu
-			subject.excu();
+			//TODO exec
+			subject.exec();
 			//update task--success
 			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_SUCCESS);
 		} catch (Exception e) {
@@ -114,12 +117,12 @@ public class CiServiceImpl implements CiService {
 
 	}
 
-	private BaseSubject getSubject(int tarType,String path, String url, String branch, String alias,String tarPath,List<AppInstance> instances){
+	private BaseSubject getSubject(int tarType,String path, String url, String branch, String alias,String tarPath,List<AppInstance> instances,List<TaskDetail> taskDetails){
 		switch(tarType){
 			case CiDevOpsConstants.TAR_TYPE_TAR :
-				return new TarSubject(path, url, branch, alias,tarPath,instances);
+				return new TarSubject(path, url, branch, alias,tarPath,instances,taskDetails);
 			case CiDevOpsConstants.TAR_TYPE_JAR :
-				return new JarSubject(path, url, branch, alias,tarPath,instances);
+				return new JarSubject(path, url, branch, alias,tarPath,instances,taskDetails);
 			case CiDevOpsConstants.TAR_TYPE_OTHER :
 				//return new OtherSubject();
 			default :
@@ -142,7 +145,7 @@ public class CiServiceImpl implements CiService {
 			AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
-		return getSubject(task.getTarType(),devConfig.getGitBasePath()+"/"+project.getProjectName(),project.getGitUrl(),task.getBranchName(),appGroup.getName(),project.getTarPath(),instances);
+		return getSubject(task.getTarType(),devConfig.getGitBasePath()+"/"+project.getProjectName(),project.getGitUrl(),task.getBranchName(),appGroup.getName(),project.getTarPath(),instances,taskDetails);
 	}
 
 

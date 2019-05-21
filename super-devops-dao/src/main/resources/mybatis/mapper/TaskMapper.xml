@@ -52,12 +52,10 @@
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Task" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Task" useGeneratedKeys="true" keyProperty="id">
     insert into ci_task
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
+
       <if test="type != null" >
         type,
       </if>
@@ -105,9 +103,7 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
+
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
       </if>

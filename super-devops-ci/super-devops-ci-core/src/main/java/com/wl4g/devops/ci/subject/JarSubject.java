@@ -1,6 +1,7 @@
 package com.wl4g.devops.ci.subject;
 
 import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
+import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +18,20 @@ public class JarSubject extends BaseSubject {
 
 	}
 
-	public JarSubject(String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances){
+	public JarSubject(String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,List<TaskDetail> taskDetails){
 		super.path = path;
 		super.url = url;
 		super.branch = branch;
 		super.alias = alias;
 		super.tarPath = tarPath;
 		super.instances = instances;
+		super.taskDetails = taskDetails;
 		String[] a = tarPath.split("/");
 		super.tarName = a[a.length-1];
 	}
 
 	@Override
-	public void excu() throws Exception{
+	public void exec() throws Exception{
 		//chekcout
 		if(checkGitPahtExist()){
 			checkOut(path,branch);

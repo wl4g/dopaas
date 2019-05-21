@@ -39,7 +39,7 @@ public abstract class DateUtils extends org.apache.commons.lang3.time.DateUtils 
 	final public static String UTC = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 	final public static String YMD_HMS = "yyyy-MM-dd HH:mm:ss";
 	final public static String YMD = "yyyy-MM-dd";
-	final public static String YMDHMS = "yyyyMMddHHmmss";
+	final public static String YMDHM = "yyyyMMddHHmm";
 
 	public static List<String> getDates(String startDate, String endDate) throws Exception {
 		Date d1 = new SimpleDateFormat(YMD).parse(startDate);// 定义起始日期

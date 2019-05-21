@@ -19,7 +19,8 @@ public class HookInfo {
 
 	public void setRef(String ref) {
 		this.ref = ref;
-		this.branchName = ref.substring(11);
+		String[] a = ref.split("/");
+		this.branchName = a[a.length-1];
 	}
 
 	public String getBranchName() {

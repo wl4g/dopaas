@@ -3,6 +3,7 @@ package com.wl4g.devops.ci.subject;
 import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
 import com.wl4g.devops.ci.devtool.DevConfig;
 import com.wl4g.devops.ci.devtool.GitUtil;
+import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import org.slf4j.Logger;
@@ -38,6 +39,8 @@ public abstract class BaseSubject {
 	protected String tarName;
 	//instances
 	protected List<AppInstance> instances;
+	//taskDetails
+	protected List<TaskDetail> taskDetails;
 
 	//now
 	protected Date now = new Date();
@@ -49,7 +52,7 @@ public abstract class BaseSubject {
 	/**
 	 * hook
 	 */
-	abstract public void excu() throws Exception;
+	abstract public void exec() throws Exception;
 
 	/**
 	 * exce command
@@ -143,14 +146,14 @@ public abstract class BaseSubject {
 	 * bak local + scp + rename
 	 */
 	public String scpAndTar(String path,String targetHost,String userName,String targetPath) throws Exception{
-		String result = scpToTmp(path,targetHost);
+		String result = scpToTmp(path,userName+"@"+targetHost);
 		result += tarToTmp(targetHost,userName,path);
 		result += moveToTarPath(targetHost,userName,path,targetPath);
 		return result;
 	}
 
 	public String reLink(String targetHost,String targetPath,String userName,String path) throws Exception{
-		String command = "ln -snf "+targetPath+"/"+subPacknameWithOutPostfix(path)+getDateTimeStr()+" "+DevConfig.linkPath+"/"+alias+"-current";
+		String command = "ln -snf "+targetPath+"/"+replaceMaster(subPacknameWithOutPostfix(path))+getDateTimeStr()+" "+DevConfig.linkPath+"/"+alias+"-current";
 		return ConnectLinuxCommand.execute(targetHost,userName,command);
 	}
 
@@ -167,7 +170,7 @@ public abstract class BaseSubject {
 	 * unzip in tmp
 	 */
 	public String tarToTmp(String targetHost,String userName,String path) throws Exception{
-		String command = "tar -xvf /tmp"+"/"+subPackname(path);
+		String command = "tar -xvf /tmp"+"/"+subPackname(path)+" -C /tmp";
 		return ConnectLinuxCommand.execute(targetHost,userName,command);
 	}
 
@@ -175,7 +178,7 @@ public abstract class BaseSubject {
 	 * move to tar path
 	 */
 	public String moveToTarPath(String targetHost,String userName,String path,String targetPath)throws Exception{
-		String command = "mv /tmp"+"/"+subPacknameWithOutPostfix(path)+" "+targetPath+"/"+subPacknameWithOutPostfix(path)+getDateTimeStr();
+		String command = "mv /tmp"+"/"+subPacknameWithOutPostfix(path)+" "+targetPath+"/"+replaceMaster(subPacknameWithOutPostfix(path))+getDateTimeStr();
 		return ConnectLinuxCommand.execute(targetHost,userName,command);
 	}
 
@@ -185,7 +188,7 @@ public abstract class BaseSubject {
 	 */
 	public String bakLocal(String path) throws Exception{
 		checkPath(DevConfig.bakPath);
-		String command = "cp -Rf "+path +" "+ DevConfig.bakPath+subPackname(path)+getDateTimeStr();
+		String command = "cp -Rf "+path +" "+ DevConfig.bakPath+"/"+subPackname(path)+getDateTimeStr();
 		return run(command);
 	}
 
@@ -222,8 +225,11 @@ public abstract class BaseSubject {
 
 
 	public String getDateTimeStr(){
-		return DateUtils.formatDate(now,DateUtils.YMDHMS);
+		String str = DateUtils.formatDate(now,DateUtils.YMDHM);
+		str  = str.substring(2,str.length());
+		return str;
 	}
+
 
 	public String subPackname(String path){
 		String[] a = path.split("/");
@@ -235,13 +241,16 @@ public abstract class BaseSubject {
 		return a.substring(0,a.lastIndexOf("."));
 	}
 
+	public String replaceMaster(String str){
+		return str.replaceAll("master-","");
+	}
+
 	public void checkPath(String path){
 		File file = new File(path);
 		if(!file.exists()) {
 			file.mkdirs();
 		}
 	}
-
 
 	public String getBranch() {
 		return branch;
