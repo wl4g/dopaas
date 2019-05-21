@@ -62,6 +62,7 @@ public class GitUtil {
 			log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
 		} catch (Exception e) {
 			log.info(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -99,6 +100,7 @@ public class GitUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("checkout branch fail;branchName="+branchName+" localPath="+localPath);
+			throw new RuntimeException(e);
 		} finally {
 			if (git != null) {
 				git.close();
