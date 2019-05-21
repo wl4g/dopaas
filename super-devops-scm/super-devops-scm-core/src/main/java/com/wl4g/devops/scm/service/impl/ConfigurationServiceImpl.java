@@ -21,10 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.ConfigurationDao;
+import com.wl4g.devops.dao.scm.HistoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.wl4g.devops.common.bean.scm.*;
@@ -33,9 +35,6 @@ import com.wl4g.devops.common.bean.scm.model.PreReleaseModel;
 import com.wl4g.devops.common.bean.scm.model.ReportModel;
 import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseMeta;
-import com.wl4g.devops.scm.dao.AppGroupDao;
-import com.wl4g.devops.scm.dao.ConfigurationDao;
-import com.wl4g.devops.scm.dao.HistoryDao;
 import com.wl4g.devops.scm.service.ConfigServerService;
 import com.wl4g.devops.scm.service.ConfigurationService;
 

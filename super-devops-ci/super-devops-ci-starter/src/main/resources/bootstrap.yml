@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: devops-ic
+  application.name: devops-ci
   profiles:
     active: test
   cloud: # Spring cloud configuration.
