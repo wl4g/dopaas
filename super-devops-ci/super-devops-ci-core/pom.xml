@@ -14,7 +14,6 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<druid.version>1.0.26</druid.version>
 		<mysql.version>5.1.21</mysql.version>
 		<pagehelper.version>4.1.6</pagehelper.version>
 	</properties>
@@ -24,22 +23,18 @@
 			<artifactId>super-devops-support</artifactId>
 			<version>master</version>
 		</dependency>
+		<!--<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-shell-core</artifactId>
+			<version>master</version>
+		</dependency>-->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-ci-dao</artifactId>
+			<artifactId>super-devops-dao</artifactId>
 			<version>master</version>
 		</dependency>
-		<!-- Database -->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid</artifactId>
-			<version>${druid.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.version}</version>
-		</dependency>
+
+
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
@@ -50,6 +45,31 @@
 			<artifactId>pagehelper</artifactId>
 			<version>${pagehelper.version}</version>
 		</dependency>
+
+		<!-- fastjson -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.56</version>
+		</dependency>
+
+		<!-- ssh2 -->
+		<dependency>
+			<groupId>ch.ethz.ganymed</groupId>
+			<artifactId>ganymed-ssh2</artifactId>
+			<version>262</version>
+		</dependency>
+
+		<!-- jgit -->
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>5.3.1.201904271842-r</version>
+		</dependency>
+
+
+
+
 	</dependencies>
 	<build>
 		<plugins>

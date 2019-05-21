@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.common.utils;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * Date utility
@@ -39,6 +39,7 @@ public abstract class DateUtils extends org.apache.commons.lang3.time.DateUtils 
 	final public static String UTC = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 	final public static String YMD_HMS = "yyyy-MM-dd HH:mm:ss";
 	final public static String YMD = "yyyy-MM-dd";
+	final public static String YMDHM = "yyyyMMddHHmm";
 
 	public static List<String> getDates(String startDate, String endDate) throws Exception {
 		Date d1 = new SimpleDateFormat(YMD).parse(startDate);// 定义起始日期

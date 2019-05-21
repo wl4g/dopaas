@@ -18,11 +18,10 @@ package com.wl4g.devops.scm.service.impl;
 import java.util.List;
 
 import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.wl4g.devops.scm.dao.AppGroupDao;
 import com.wl4g.devops.scm.service.AppGroupService;
 
 @Service

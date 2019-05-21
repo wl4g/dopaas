@@ -9,7 +9,6 @@
 	<modules>
 		<module>super-devops-scm-client</module>
 		<module>super-devops-scm-common</module>
-		<module>super-devops-scm-dao</module>
 		<module>super-devops-scm-example</module>
 		<module>super-devops-scm-rest</module>
 		<module>super-devops-scm-core</module>

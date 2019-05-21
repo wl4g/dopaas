@@ -201,6 +201,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_FAIL_LIMITER_RIP_PREFIX = "rip_";
 
 	/**
+	 * Login Fail account.
+	 */
+	final public static String AUTH_FAIL_ACCOUNT = "authFailAccount";
+	/**
 	 * Error information for saving iam-related operations to sessions.
 	 */
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";

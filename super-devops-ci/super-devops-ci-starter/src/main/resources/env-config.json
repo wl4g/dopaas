@@ -1,0 +1,37 @@
+{
+  "gitBasePath":"/Users/vjay/gittest",
+  "gitAccount":"heweijie",
+  "gitPassword":"hwj13535248668",
+  "env":[
+    {
+      "name":"safecloud-devops_develop",
+      "targetHost":"root@10.0.0.10",
+      "targetPath":"/root/webapps",
+      "child":[
+        {
+          "path":"/safecloud-devops-dataflux-oper",
+          "tarName":"dataflux-oper-master-bin.tar",
+          "alias":"DatafluxOper"
+        },
+        {
+          "path":"/safecloud-devops-hadoop-oper",
+          "tarName":"hadoop-oper-master-bin.tar",
+          "alias":"hadoop"
+        }
+      ]
+    },
+    {
+      "name":"safecloud-devops_master",
+      "targetHost":"root@10.0.0.10",
+      "targetPath":"/root/webapps",
+      "child":[
+        {
+          "path":"/safecloud-devops-dataflux-oper",
+          "tarName":"dataflux-oper-master-bin.tar",
+          "alias":"DatafluxOper"
+        }
+
+      ]
+    }
+  ]
+}

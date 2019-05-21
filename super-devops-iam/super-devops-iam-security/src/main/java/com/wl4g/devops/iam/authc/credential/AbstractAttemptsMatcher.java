@@ -18,7 +18,8 @@ package com.wl4g.devops.iam.authc.credential;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
+import com.wl4g.devops.iam.common.utils.SessionBindings;
+import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.handler.verification.Cumulators;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import com.wl4g.devops.iam.handler.verification.Verification;
@@ -30,7 +31,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
@@ -131,6 +135,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * @return
 	 */
 	protected Long postFailureProcess(String principal, List<String> factors) {
+
 		// Cumulative increment of cache matching count by 1
 		long matchCountMax = matchCumulator.accumulate(factors, 1);
 
@@ -141,6 +146,15 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			log.info("Principal {} matched failure accumulative limiter matchCountMax: {}, sessioinMatchCountMax: {}, factor: {}",
 					principal, matchCountMax, sessioinMatchCountMax, factors);
 		}
+
+		//fail account in this session
+		Set<String> accounts = SessionBindings.getBindValue(AUTH_FAIL_ACCOUNT);
+		if(null==accounts){
+			accounts = new HashSet<>();
+		}
+
+		accounts.add(KEY_FAIL_LIMITER_USER_PREFIX + principal);
+		SessionBindings.bind(AUTH_FAIL_ACCOUNT, accounts);
 
 		return matchCountMax;
 	}
@@ -161,6 +175,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		// Clean all locker(if exists)
 		factors.forEach(factor -> {
+			log.info("lockCache.remove="+factor);
 			try {
 				lockCache.remove(new EnhancedKey(factor));
 			} catch (Exception e) {
@@ -208,9 +223,10 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			 * No previous locks, If the number of failures is exceeded, no
 			 * login is allowed.
 			 */
-			if (cumulated > matchLockMaxAttempts) {
+			if (cumulatedMax > matchLockMaxAttempts) {
 				factorLock = true;
 			}
+			log.info("assertAccountLocked--factor="+factor+",cumulated="+cumulated+",matchLockMaxAttempts="+matchLockMaxAttempts+",cumulatedMax="+cumulatedMax+",lock="+lock+",factorLock="+factorLock);
 
 			/*
 			 * If lockout is required at present, Update decay counter time
@@ -249,7 +265,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		MatcherProperties matcher = config.getMatcher();
+		IamProperties.MatcherProperties matcher = config.getMatcher();
 		this.lockCache = cacheManager.getEnhancedCache(CACHE_MATCH_LOCK);
 
 		this.matchCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
@@ -281,6 +297,24 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		applyCaptchaCumulator.destroy(factors);
 		applySmsCumulator.destroy(factors);
 		sessionMatchCumulator.destroy(factors);
+
+		//remove fail account in this session 
+		Set<String> accounts = SessionBindings.getBindValue(AUTH_FAIL_ACCOUNT);
+		if(null!=accounts){
+			List<String> factors2 = new ArrayList<>(accounts);
+			matchCumulator.destroy(factors2);
+			applyCaptchaCumulator.destroy(factors2);
+			applySmsCumulator.destroy(factors2);
+			factors2.forEach(factor -> {
+				log.info("lockCache.remove="+factor);
+				try {
+					lockCache.remove(new EnhancedKey(factor));
+				} catch (Exception e) {
+					log.error("", e);
+				}
+			});
+		}
 	}
+
 
 }
