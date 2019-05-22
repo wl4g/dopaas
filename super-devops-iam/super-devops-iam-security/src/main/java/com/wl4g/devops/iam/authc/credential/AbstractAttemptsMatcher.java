@@ -147,12 +147,12 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		}
 
 		// Record all accounts that have failed to log in in this session.
-		List<String> failPrincipalFactors = getBindValue(KEY_LOGINFAIL_ACCOUNTS);
+		List<String> failPrincipalFactors = getBindValue(KEY_FAIL_PRINCIPAL_FACTORS);
 		if (null == failPrincipalFactors) {
 			failPrincipalFactors = new ArrayList<>();
 		}
 		failPrincipalFactors.add(createPrincipalFactor(principal));
-		bind(KEY_LOGINFAIL_ACCOUNTS, failPrincipalFactors);
+		bind(KEY_FAIL_PRINCIPAL_FACTORS, failPrincipalFactors);
 
 		return matchCountMax;
 	}
@@ -298,7 +298,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		sessionMatchCumulator.destroy(factors);
 
 		// Unlock all accounts that have failed to log in this session.
-		List<String> failPrincipalFactors = getBindValue(KEY_LOGINFAIL_ACCOUNTS);
+		List<String> failPrincipalFactors = getBindValue(KEY_FAIL_PRINCIPAL_FACTORS);
 		if (null != failPrincipalFactors) {
 			matchCumulator.destroy(failPrincipalFactors);
 			applyCaptchaCumulator.destroy(failPrincipalFactors);
