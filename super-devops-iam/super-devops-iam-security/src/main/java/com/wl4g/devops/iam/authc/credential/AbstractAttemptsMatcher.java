@@ -147,12 +147,12 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		}
 
 		// Record all accounts that have failed to log in in this session.
-		List<String> failPrincipalFactors = getBindValue(KEY_LOGINFAIL_ACCOUNTS);
+		List<String> failPrincipalFactors = getBindValue(KEY_FAIL_PRINCIPAL_FACTORS);
 		if (null == failPrincipalFactors) {
 			failPrincipalFactors = new ArrayList<>();
 		}
 		failPrincipalFactors.add(createPrincipalFactor(principal));
-		bind(KEY_LOGINFAIL_ACCOUNTS, failPrincipalFactors);
+		bind(KEY_FAIL_PRINCIPAL_FACTORS, failPrincipalFactors);
 
 		return matchCountMax;
 	}
@@ -172,10 +172,12 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		}
 
 		// Clean all locker(if exists)
-		factors.forEach(factor -> {
-			log.info("lockCache.remove=" + factor);
+		factors.forEach(f -> {
 			try {
-				lockCache.remove(new EnhancedKey(factor));
+				if (log.isInfoEnabled()) {
+					log.info("Remove lock factor: {}", f);
+				}
+				lockCache.remove(new EnhancedKey(f));
 			} catch (Exception e) {
 				log.error("", e);
 			}
@@ -224,8 +226,11 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			if (cumulatedMax > matchLockMaxAttempts) {
 				factorLock = true;
 			}
-			log.info("assertAccountLocked--factor=" + factor + ",cumulated=" + cumulated + ",matchLockMaxAttempts="
-					+ matchLockMaxAttempts + ",cumulatedMax=" + cumulatedMax + ",lock=" + lock + ",factorLock=" + factorLock);
+			if (log.isTraceEnabled()) {
+				log.trace(
+						"assertAccountLocked()=> factor:{}, cumulated: {}, matchLockMaxAttempts: {}, cumulatedMax: {}, lock: {}, factorLock: {}",
+						factor, cumulated, matchLockMaxAttempts, cumulatedMax, lock, factorLock);
+			}
 
 			/*
 			 * If lockout is required at present, Update decay counter time
@@ -298,16 +303,17 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		sessionMatchCumulator.destroy(factors);
 
 		// Unlock all accounts that have failed to log in this session.
-		List<String> failPrincipalFactors = getBindValue(KEY_LOGINFAIL_ACCOUNTS);
+		List<String> failPrincipalFactors = getBindValue(KEY_FAIL_PRINCIPAL_FACTORS);
 		if (null != failPrincipalFactors) {
 			matchCumulator.destroy(failPrincipalFactors);
 			applyCaptchaCumulator.destroy(failPrincipalFactors);
 			applySmsCumulator.destroy(failPrincipalFactors);
 
+			// Cleanup lock factors.
 			failPrincipalFactors.forEach(f -> {
 				try {
 					if (log.isInfoEnabled()) {
-						log.info("Remove history failure principal factor: {}", f);
+						log.info("Remove past.failure principal factor: {}", f);
 					}
 					lockCache.remove(new EnhancedKey(f));
 				} catch (Exception e) {
