@@ -28,10 +28,13 @@ import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.bean.MixedArgument;
 import com.wl4g.devops.shell.bean.SumArgument;
 import com.wl4g.devops.shell.bean.SumResult;
+import com.wl4g.devops.shell.processor.ShellConsoles;
 import com.wl4g.devops.shell.service.ExampleService;
 
 @ShellComponent
 public class ExampleConsole {
+
+	final public static String GROUP_NAME = "Example commands";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -39,37 +42,64 @@ public class ExampleConsole {
 	private ExampleService exampleService;
 
 	/**
-	 * $> sumTest -a 1 -b 123
+	 * $> sum -a 1 -b 123
 	 */
-	@ShellMethod(keys = "sumTest", group = "Example command", help = "This is an example method of summation. The parameter list is not the base type.")
-	public SumResult sumTest(SumArgument arg) {
+	@ShellMethod(keys = "sum", group = GROUP_NAME, help = "This is an example method of summation. The parameter list is not the base type.")
+	public SumResult sum(SumArgument arg) {
 		return exampleService.add(arg);
 	}
 
 	/**
-	 * $> sumTest2 -a 1 -b 123
+	 * $> sum2 -a 1 -b 123
 	 */
-	@ShellMethod(keys = "sumTest2", group = "Example command", help = "This is an example method of summation. The parameter list is the basic type.")
-	public SumResult sumTest2(@ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
+	@ShellMethod(keys = "sum2", group = GROUP_NAME, help = "This is an example method of summation. The parameter list is the basic type.")
+	public SumResult sum2(@ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
 			@ShellOption(opt = "b", lopt = "add2", help = "Added number", defaultValue = "1") int b) {
 		return exampleService.add(new SumArgument(a, b));
 	}
 
 	/**
-	 * $> setTest -l 1,2 -s x3,x4
+	 * $> set -l 1,2 -s x3,x4
 	 */
-	@ShellMethod(keys = { "setTest" }, group = "Example command", help = "Direct set parameter injection testing")
-	public String setTest(@ShellOption(opt = "s", lopt = "set", help = "Set<String>类型参数字段") Set<String> set1,
-			@ShellOption(opt = "l", lopt = "list", help = "List<Integer>类型参数字段") List<Integer> list) {
+	@ShellMethod(keys = "set", group = GROUP_NAME, help = "Direct set parameter injection testing")
+	public String set(@ShellOption(opt = "s", lopt = "set", help = "Set<String> type argument field") Set<String> set1,
+			@ShellOption(opt = "l", lopt = "list", help = "List<Integer> type argument field") List<Integer> list) {
 		return "Direct mixed set parameter injection results: set=" + set1 + ", list=" + list;
 	}
 
 	/**
-	 * $> mixedTest -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4
+	 * $> mixed -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4
 	 */
-	@ShellMethod(keys = { "mixedTest" }, group = "Example command", help = "Mixed set type parameter injection testing")
-	public String mixedTest(MixedArgument arg) {
+	@ShellMethod(keys = "mixed", group = GROUP_NAME, help = "Mixed set type parameter injection testing")
+	public String mixed(MixedArgument arg) {
 		return "Bean field mixed set parameter injection test results: " + arg.toString();
+	}
+
+	/**
+	 * $> sum -a 1 -b 123
+	 */
+	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that can output logs in real time.")
+	public String logs(
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "10", help = "Input parameters (number of messages)") int num) {
+
+		// Used to simulate an asynchronous task, constantly outputting logs
+		new Thread(() -> {
+			for (int i = 1; i <= num; i++) {
+				String message = "This is the " + i + "th line message...";
+				log.info("Example log write => {}", message);
+
+				ShellConsoles.write(message);
+
+				try {
+					Thread.sleep(1500L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}).start();
+
+		return "Output has been successfully completed!";
 	}
 
 }

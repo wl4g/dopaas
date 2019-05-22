@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +94,9 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 		if (running.compareAndSet(false, true)) {
 			Assert.state(ss == null, "server socket already listen ?");
 
-			int bindPort = ensureDetermineServPort(appName);
+			int bindPort = ensureDetermineServPort(getAppName());
 
-			ss = new ServerSocket(bindPort, config.getBacklog(), config.getInetBindAddr());
+			ss = new ServerSocket(bindPort, getConfig().getBacklog(), getConfig().getInetBindAddr());
 			ss.setSoTimeout(0); // Infinite timeout
 			if (log.isInfoEnabled()) {
 				log.info("Shell Console started on port(s): {}", bindPort);
@@ -145,9 +146,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					log.debug("On accept socket: {}", s);
 				}
 
-				worker.submit(new ShellHandler(registry, s, line -> {
-					return process(line); // Processing
-				}).starting());
+				// Processing
+				worker.submit(putClient(new ShellHandler(registry, s, line -> process(line)).starting()));
 
 			} catch (Throwable e) {
 				log.warn("Shell boss thread shutdown. cause: {}", getStackTrace(e));
@@ -232,6 +232,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 			} else {
 				try {
 					String errmsg = getRootCauseMessage(th);
+					errmsg = isBlank(errmsg) ? getMessage(th) : errmsg;
 					if (log.isWarnEnabled()) {
 						log.warn("{}", errmsg);
 					}
