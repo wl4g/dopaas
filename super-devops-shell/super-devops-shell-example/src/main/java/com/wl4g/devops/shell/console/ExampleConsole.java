@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.exporter;
+package com.wl4g.devops.shell.console;
 
 import java.util.List;
 import java.util.Set;
@@ -31,7 +31,7 @@ import com.wl4g.devops.shell.bean.SumResult;
 import com.wl4g.devops.shell.service.ExampleService;
 
 @ShellComponent
-public class ExampleExporter {
+public class ExampleConsole {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
