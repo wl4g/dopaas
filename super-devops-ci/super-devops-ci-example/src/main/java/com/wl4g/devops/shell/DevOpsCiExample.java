@@ -13,29 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops;
+package com.wl4g.devops.shell;
 
-import com.wl4g.devops.shell.annotation.EnabledShellServer;
-import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.logging.LoggingSystem;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+import com.wl4g.devops.shell.annotation.EnabledShellServer;
 
 @EnabledShellServer
-@EnableDiscoveryClient
-@MapperScan("com.wl4g.devops.dao.*")
-@SpringBootApplication(exclude={ DataSourceAutoConfiguration.class})
-public class DevOpsCi {
-
-	static {
-		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
-	}
+@SpringBootApplication
+public class DevOpsCiExample {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DevOpsCi.class, args);
+		SpringApplication.run(DevOpsCiExample.class, args);
 	}
 
 }

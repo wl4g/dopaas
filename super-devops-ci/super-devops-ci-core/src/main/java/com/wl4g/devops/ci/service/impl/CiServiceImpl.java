@@ -81,6 +81,37 @@ public class CiServiceImpl implements CiService {
 	}
 
 
+	@Override
+	public void createTask(String appGroupName,String branchName,List<String> instanceIds){
+		AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
+		Assert.notNull(appGroup,"not found this app");
+		Project project = projectDao.getByAppGroupId(appGroup.getId());
+		Assert.notNull(appGroup,"not found this app");
+
+		List<AppInstance> instances = new ArrayList<>();
+		for(String instanceId : instanceIds){
+			AppInstance instance = appGroupDao.getAppInstance(instanceId);
+			instances.add(instance);
+		}
+		Task task = taskService.createTask(project,instances,CiDevOpsConstants.TASK_TYPE_TRIGGER,CiDevOpsConstants.TASK_STATUS_CREATE,branchName,null,null,null,CiDevOpsConstants.TAR_TYPE_TAR);
+		BaseSubject subject = getSubject(task);
+
+		try {
+			////update task--running
+			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_RUNNING);
+			//TODO exec
+			subject.exec();
+			//update task--success
+			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_SUCCESS);
+		} catch (Exception e) {
+			//update task--fail
+			taskService.updateTaskStatus(task.getId(),CiDevOpsConstants.TASK_STATUS_FAIL);
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
+
 	public void hook(String projectName,String branchName,String url){
 		Project project = projectDao.getByProjectName(projectName);
 		if(null == project){

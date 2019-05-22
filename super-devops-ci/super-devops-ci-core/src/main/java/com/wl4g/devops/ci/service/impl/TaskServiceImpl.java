@@ -52,6 +52,7 @@ public class TaskServiceImpl implements TaskService {
         task.setParentId(parentId);
         task.setCommand(command);
         task.setTarType(tarType);
+        task.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
         taskDao.insertSelective(task);
         for(AppInstance instance : instances){
             TaskDetail taskDetail = new TaskDetail();

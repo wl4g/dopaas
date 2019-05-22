@@ -227,6 +227,7 @@ public abstract class BaseSubject {
 	public String getDateTimeStr(){
 		String str = DateUtils.formatDate(now,DateUtils.YMDHM);
 		str  = str.substring(2,str.length());
+		str = "-v"+str;
 		return str;
 	}
 
