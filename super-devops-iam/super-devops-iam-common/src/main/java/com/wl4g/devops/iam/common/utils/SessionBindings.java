@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.common.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.util.Assert;
 
@@ -106,7 +105,7 @@ public abstract class SessionBindings extends Sessions {
 	@SuppressWarnings("unchecked")
 	public static <T> T getBindValue(String sessionKey) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
-		return (T) SecurityUtils.getSubject().getSession().getAttribute(sessionKey);
+		return (T) getSession().getAttribute(sessionKey);
 	}
 
 	/**
@@ -165,7 +164,7 @@ public abstract class SessionBindings extends Sessions {
 	 */
 	public static void bind(String sessionKey, Object value) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
-		SecurityUtils.getSubject().getSession().setAttribute(sessionKey, value);
+		getSession().setAttribute(sessionKey, value);
 	}
 
 	/**
@@ -176,7 +175,7 @@ public abstract class SessionBindings extends Sessions {
 	 */
 	public static boolean unbind(String sessionKey) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
-		return SecurityUtils.getSubject().getSession().removeAttribute(sessionKey) != null;
+		return getSession().removeAttribute(sessionKey) != null;
 	}
 
 }
