@@ -373,7 +373,7 @@
 	</select>
 
 	<select id="instancelist" parameterType="appInstance" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port FROM  cf_app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.ip,a.port FROM  cf_app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="envId != null and envId != ''">
@@ -442,5 +442,16 @@
 			and a.id=#{id}
 		</if>
 		</where>
+	</select>
+
+	<select id="getAppGroupByName" resultType="appGroup">
+		select a.* FROM cf_app_group a
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				and a.name=#{name}
+			</if>
+		</where>
+		limit 1
 	</select>
 </mapper>
