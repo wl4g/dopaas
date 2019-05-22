@@ -3,6 +3,7 @@ package com.wl4g.devops.ci.subject;
 import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
 import com.wl4g.devops.ci.devtool.DevConfig;
 import com.wl4g.devops.ci.devtool.GitUtil;
+import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
@@ -10,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +39,12 @@ public abstract class BaseSubject {
 	protected List<AppInstance> instances;
 	//taskDetails
 	protected List<TaskDetail> taskDetails;
+	//projectId
+	protected Integer projectId;
+
+
+	//service
+	protected DependencyService dependencyService;
 
 	//now
 	protected Date now = new Date();
@@ -58,29 +62,7 @@ public abstract class BaseSubject {
 	 * exce command
 	 */
 	public String run(String command) throws Exception {
-		log.info("exce command:"+command);
-		Process p = Runtime.getRuntime().exec(command);
-		InputStream is = p.getInputStream();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		p.waitFor();
-		//print
-		StringBuffer result = new StringBuffer();
-		String s = null;
-		while ((s = reader.readLine()) != null) {
-			result.append(s).append("\n");
-		}
-		log.info(result.toString());
-		if (p.exitValue() != 0) {
-
-			InputStream er = p.getErrorStream();
-			BufferedReader erReader = new BufferedReader(new InputStreamReader(er));
-			while ((s = erReader.readLine()) != null) {
-				result.append(s).append("\n");
-			}
-			//exce fail
-			throw new RuntimeException("exce command fail,command="+command+"\n cause:"+result.toString());
-		}
-		return result.toString();
+		return ConnectLinuxCommand.run(command);
 	}
 
 	/**
@@ -307,5 +289,21 @@ public abstract class BaseSubject {
 
 	public void setTarPath(String tarPath) {
 		this.tarPath = tarPath;
+	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
+	}
+
+	public DependencyService getDependencyService() {
+		return dependencyService;
+	}
+
+	public void setDependencyService(DependencyService dependencyService) {
+		this.dependencyService = dependencyService;
 	}
 }

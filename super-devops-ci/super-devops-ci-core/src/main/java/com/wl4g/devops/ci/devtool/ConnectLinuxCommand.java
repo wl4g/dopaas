@@ -17,6 +17,36 @@ public class ConnectLinuxCommand {
 
 
 	/**
+	 * local run
+	 */
+	public static String run(String command) throws Exception {
+		logger.info("exce command:"+command);
+		Process p = Runtime.getRuntime().exec(command);
+		InputStream is = p.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		p.waitFor();
+		//print
+		StringBuffer result = new StringBuffer();
+		String s = null;
+		while ((s = reader.readLine()) != null) {
+			result.append(s).append("\n");
+		}
+		logger.info(result.toString());
+		if (p.exitValue() != 0) {
+
+			InputStream er = p.getErrorStream();
+			BufferedReader erReader = new BufferedReader(new InputStreamReader(er));
+			while ((s = erReader.readLine()) != null) {
+				result.append(s).append("\n");
+			}
+			//exce fail
+			throw new RuntimeException("exce command fail,command="+command+"\n cause:"+result.toString());
+		}
+		return result.toString();
+	}
+
+
+	/**
 	 *
 	 * @param ip
 	 * @param command

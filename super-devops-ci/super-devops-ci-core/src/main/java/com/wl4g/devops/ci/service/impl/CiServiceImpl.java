@@ -2,6 +2,7 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.devtool.DevConfig;
 import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.ci.subject.BaseSubject;
 import com.wl4g.devops.ci.subject.JarSubject;
@@ -48,6 +49,9 @@ public class CiServiceImpl implements CiService {
 
 	@Autowired
 	private TaskService taskService;
+
+	@Autowired
+	private DependencyService dependencyService;
 
 
 
@@ -154,10 +158,10 @@ public class CiServiceImpl implements CiService {
 
 	}
 
-	private BaseSubject getSubject(int tarType,String path, String url, String branch, String alias,String tarPath,List<AppInstance> instances,List<TaskDetail> taskDetails){
+	private BaseSubject getSubject(int projectId,int tarType,String path, String url, String branch, String alias,String tarPath,List<AppInstance> instances,List<TaskDetail> taskDetails){
 		switch(tarType){
 			case CiDevOpsConstants.TAR_TYPE_TAR :
-				return new TarSubject(path, url, branch, alias,tarPath,instances,taskDetails);
+				return new TarSubject(dependencyService,projectId,path, url, branch, alias,tarPath,instances,taskDetails);
 			case CiDevOpsConstants.TAR_TYPE_JAR :
 				return new JarSubject(path, url, branch, alias,tarPath,instances,taskDetails);
 			case CiDevOpsConstants.TAR_TYPE_OTHER :
@@ -182,7 +186,7 @@ public class CiServiceImpl implements CiService {
 			AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
-		return getSubject(task.getTarType(),devConfig.getGitBasePath()+"/"+project.getProjectName(),project.getGitUrl(),task.getBranchName(),appGroup.getName(),project.getTarPath(),instances,taskDetails);
+		return getSubject(task.getProjectId(),task.getTarType(),devConfig.getGitBasePath()+"/"+project.getProjectName(),project.getGitUrl(),task.getBranchName(),appGroup.getName(),project.getTarPath(),instances,taskDetails);
 	}
 
 
