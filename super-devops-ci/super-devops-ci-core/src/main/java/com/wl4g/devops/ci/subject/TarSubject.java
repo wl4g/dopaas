@@ -2,6 +2,8 @@ package com.wl4g.devops.ci.subject;
 
 import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
 import com.wl4g.devops.ci.devtool.TarThreadTask;
+import com.wl4g.devops.ci.service.DependencyService;
+import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,8 @@ public class TarSubject extends BaseSubject {
 
 	}
 
-	public TarSubject(String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails){
+	public TarSubject(DependencyService dependencyService,Integer projectId,String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails){
+
 		super.path = path;
 		super.url = url;
 		super.branch = branch;
@@ -29,11 +32,15 @@ public class TarSubject extends BaseSubject {
 		super.taskDetails = taskDetails;
 		String[] a = tarPath.split("/");
 		super.tarName = a[a.length-1];
+		super.projectId = projectId;
+
+		//service
+		super.dependencyService = dependencyService;
 	}
 
 	@Override
 	public void exec() throws Exception{
-		//chekcout
+		/*//chekcout
 		if(checkGitPahtExist()){
 			checkOut(path,branch);
 		}else{
@@ -41,7 +48,10 @@ public class TarSubject extends BaseSubject {
 		}
 
 		//build
-		build(path);
+		build(path);*/
+		Dependency dependency = new Dependency();
+		dependency.setProjectId(projectId);
+		dependencyService.build(dependency,branch);
 
 		//backup in local
 		bakLocal(path+"/"+tarPath);
