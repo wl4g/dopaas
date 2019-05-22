@@ -19,6 +19,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.CRC32;
@@ -242,7 +243,7 @@ public abstract class AbstractActuator implements Actuator {
 		Assert.hasLength(appName, "appName must not be empty");
 
 		CRC32 crc32 = new CRC32();
-		crc32.update(trimToEmpty(appName).getBytes(Charset.forName("UTF-8")));
+		crc32.update(trimToEmpty(appName).toUpperCase(Locale.ENGLISH).getBytes(Charset.forName("UTF-8")));
 		int mod = config.getEndPort() - config.getBeginPort();
 		int servPort = (int) (config.getBeginPort() + (crc32.getValue() % mod & (mod - 1)));
 		// out.println(String.format("Shell acceptor (%s - %s), sign(%s), listen

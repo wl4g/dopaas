@@ -447,16 +447,14 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					}
 					// Exception-callback
 					else if (input instanceof ExceptionMessage) {
-						// Wakeup for lineReader
-						wakeup();
+						wakeup(); // Wakeup for lineReader
 
 						ExceptionMessage ex = (ExceptionMessage) input;
 						runner.printErr(EMPTY, ex.getThrowable());
 					}
 					// Result callback
 					else if (input instanceof ResultMessage) {
-						// Wakeup for lineReader
-						wakeup();
+						wakeup(); // Wakeup for lineReader
 
 						// After process
 						ResultMessage result = (ResultMessage) input;
