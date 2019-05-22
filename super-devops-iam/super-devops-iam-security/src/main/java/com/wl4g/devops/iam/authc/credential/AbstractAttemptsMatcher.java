@@ -18,11 +18,14 @@ package com.wl4g.devops.iam.authc.credential;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.handler.verification.Cumulators;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import com.wl4g.devops.iam.handler.verification.Verification;
+import static com.wl4g.devops.iam.common.utils.Securitys.*;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
@@ -32,11 +35,7 @@ import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
 /**
  * Abstract custom attempts credential matcher
@@ -84,7 +83,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		String principal = (String) tk.getPrincipal();
 
 		// Fail limiter factor keys
-		List<String> factors = lockFactors(tk.getHost(), principal);
+		List<String> factors = createFactors(tk.getHost(), principal);
 		Assert.notEmpty(factors, "'factors' must not be empty");
 
 		Long cumulatedMaxFailCount = 0L;
@@ -139,7 +138,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		// Cumulative increment of cache matching count by 1
 		long matchCountMax = matchCumulator.accumulate(factors, 1);
 
-		// Cumulative Increase of Session Matching Count by 1
+		// Cumulative increase of session matching count by 1
 		long sessioinMatchCountMax = sessionMatchCumulator.accumulate(factors, 1);
 
 		if (log.isInfoEnabled()) {
@@ -147,14 +146,13 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 					principal, matchCountMax, sessioinMatchCountMax, factors);
 		}
 
-		//fail account in this session
-		Set<String> accounts = SessionBindings.getBindValue(AUTH_FAIL_ACCOUNT);
-		if(null==accounts){
-			accounts = new HashSet<>();
+		// Record all accounts that have failed to log in in this session.
+		List<String> failPrincipalFactors = getBindValue(KEY_LOGINFAIL_ACCOUNTS);
+		if (null == failPrincipalFactors) {
+			failPrincipalFactors = new ArrayList<>();
 		}
-
-		accounts.add(KEY_FAIL_LIMITER_USER_PREFIX + principal);
-		SessionBindings.bind(AUTH_FAIL_ACCOUNT, accounts);
+		failPrincipalFactors.add(createPrincipalFactor(principal));
+		bind(KEY_LOGINFAIL_ACCOUNTS, failPrincipalFactors);
 
 		return matchCountMax;
 	}
@@ -175,7 +173,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		// Clean all locker(if exists)
 		factors.forEach(factor -> {
-			log.info("lockCache.remove="+factor);
+			log.info("lockCache.remove=" + factor);
 			try {
 				lockCache.remove(new EnhancedKey(factor));
 			} catch (Exception e) {
@@ -226,7 +224,8 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			if (cumulatedMax > matchLockMaxAttempts) {
 				factorLock = true;
 			}
-			log.info("assertAccountLocked--factor="+factor+",cumulated="+cumulated+",matchLockMaxAttempts="+matchLockMaxAttempts+",cumulatedMax="+cumulatedMax+",lock="+lock+",factorLock="+factorLock);
+			log.info("assertAccountLocked--factor=" + factor + ",cumulated=" + cumulated + ",matchLockMaxAttempts="
+					+ matchLockMaxAttempts + ",cumulatedMax=" + cumulatedMax + ",lock=" + lock + ",factorLock=" + factorLock);
 
 			/*
 			 * If lockout is required at present, Update decay counter time
@@ -298,23 +297,24 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		applySmsCumulator.destroy(factors);
 		sessionMatchCumulator.destroy(factors);
 
-		//remove fail account in this session 
-		Set<String> accounts = SessionBindings.getBindValue(AUTH_FAIL_ACCOUNT);
-		if(null!=accounts){
-			List<String> factors2 = new ArrayList<>(accounts);
-			matchCumulator.destroy(factors2);
-			applyCaptchaCumulator.destroy(factors2);
-			applySmsCumulator.destroy(factors2);
-			factors2.forEach(factor -> {
-				log.info("lockCache.remove="+factor);
+		// Unlock all accounts that have failed to log in this session.
+		List<String> failPrincipalFactors = getBindValue(KEY_LOGINFAIL_ACCOUNTS);
+		if (null != failPrincipalFactors) {
+			matchCumulator.destroy(failPrincipalFactors);
+			applyCaptchaCumulator.destroy(failPrincipalFactors);
+			applySmsCumulator.destroy(failPrincipalFactors);
+
+			failPrincipalFactors.forEach(f -> {
 				try {
-					lockCache.remove(new EnhancedKey(factor));
+					if (log.isInfoEnabled()) {
+						log.info("Remove history failure principal factor: {}", f);
+					}
+					lockCache.remove(new EnhancedKey(f));
 				} catch (Exception e) {
 					log.error("", e);
 				}
 			});
 		}
 	}
-
 
 }

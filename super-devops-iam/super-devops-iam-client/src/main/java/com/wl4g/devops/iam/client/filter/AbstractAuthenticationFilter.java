@@ -152,7 +152,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * Binding grantTicket => sessionId. Synchronize with
 		 * IamClientSessionManager#getSessionId
 		 */
-		long expiredMs = SessionBindings.getSeesionExpiredTime();
+		long expiredMs = SessionBindings.getSessionExpiredTime();
 		cache.put(new EnhancedKey(grantTicket, expiredMs), Sessions.getSessionId(subject));
 
 		// Determine success URL

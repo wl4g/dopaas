@@ -37,7 +37,7 @@ public abstract class Sessions {
 	 * @param create
 	 * @return
 	 */
-	public static Session getSeesion() {
+	public static Session getSession() {
 		return SecurityUtils.getSubject().getSession(true);
 	}
 
@@ -47,7 +47,7 @@ public abstract class Sessions {
 	 * @param create
 	 * @return
 	 */
-	public static Session getSeesion(boolean create) {
+	public static Session getSession(boolean create) {
 		return SecurityUtils.getSubject().getSession(create);
 	}
 
@@ -88,8 +88,8 @@ public abstract class Sessions {
 	 *            Shiro session
 	 * @return Current remaining expired milliseconds of the session
 	 */
-	public static long getSeesionExpiredTime() {
-		return getSeesionExpiredTime(getSeesion());
+	public static long getSessionExpiredTime() {
+		return getSessionExpiredTime(getSession());
 	}
 
 	/**
@@ -99,7 +99,7 @@ public abstract class Sessions {
 	 *            Shiro session
 	 * @return Current remaining expired milliseconds of the session
 	 */
-	public static long getSeesionExpiredTime(Session session) {
+	public static long getSessionExpiredTime(Session session) {
 		Assert.notNull(session, "'session' must not be null");
 		long now = System.currentTimeMillis();
 		long lastTime = session.getLastAccessTime().getTime();

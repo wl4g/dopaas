@@ -16,20 +16,8 @@
 package com.wl4g.devops.iam.web;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
-import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.iam.annotation.ExtraController;
-import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
-import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
-import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
-import com.wl4g.devops.iam.handler.verification.SmsVerification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,6 +29,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 
+import com.wl4g.devops.common.exception.iam.AccessRejectedException;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.iam.VerificationException;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.iam.annotation.ExtraController;
+import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
+import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
+import com.wl4g.devops.iam.handler.verification.SmsVerification;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
+import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCauseMessage;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
@@ -50,6 +50,7 @@ import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATIO
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
 import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 /**
@@ -122,7 +123,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 
 			// Lock factors
-			List<String> factors = lockFactors(getHttpRemoteAddr(request), principal);
+			List<String> factors = createFactors(getHttpRemoteAddr(request), principal);
 
 			// Get the CAPTCHA enabled
 			String captchaEnabled = graphVerification.isEnabled(factors) ? "yes" : "no";
@@ -134,7 +135,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 * request parameter 'principal' will not be empty, you need to
 			 * generate 'secret'.
 			 */
-			if (!StringUtils.isEmpty(principal)) {
+			if (isNotBlank(principal)) {
 				// Apply credentials encryption secret key
 				String secret = securer.applySecret(principal);
 				resp.getData().put(KEY_APPLY_SECRET, secret);
@@ -180,10 +181,10 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			String lang = getCleanParam(request, config.getParam().getI18nLang());
 
 			Locale locale = request.getLocale(); // default lang
-			if (!StringUtils.isEmpty(lang)) {
+			if (isNotBlank(lang)) {
 				locale = new Locale(lang); // determine lang
 			}
-			SessionBindings.bind(KEY_USE_LOCALE, locale);
+			bind(KEY_USE_LOCALE, locale);
 
 			resp.getData().put(KEY_USE_LOCALE, locale);
 		} catch (Exception e) {
@@ -215,7 +216,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 
 			// Lock factors
-			List<String> factors = lockFactors(getHttpRemoteAddr(request), principal);
+			List<String> factors = createFactors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
 			if (graphVerification.isEnabled(factors)) { // Enabled?
@@ -267,7 +268,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			parse(mobileNumber);
 
 			// Lock factors
-			List<String> factors = lockFactors(getHttpRemoteAddr(request), mobileNumber);
+			List<String> factors = createFactors(getHttpRemoteAddr(request), mobileNumber);
 
 			// Request CAPTCHA
 			String captcha = getCleanParam(request, config.getParam().getCaptchaName());
@@ -310,11 +311,10 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 		RespBase<String> resp = RespBase.create();
 		try {
 			// Get error message in session
-			String errmsg = SessionBindings.getBindValue(KEY_ERR_SESSION_SAVED, true);
-			errmsg = StringUtils.isEmpty(errmsg) ? "" : errmsg;
+			String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
+			errmsg = isBlank(errmsg) ? "" : errmsg;
 
 			resp.getData().put(KEY_ERR_SESSION_SAVED, errmsg);
-
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(getRootCauseMessage(e));
