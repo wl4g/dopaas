@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface TriggerService {
 
-    int insert(Trigger trigger,Integer [] instanceIds);
+    int insert(Trigger trigger, Integer[] instanceIds);
 
-    int update(Trigger trigger,Integer [] instanceIds);
+    int update(Trigger trigger, Integer[] instanceIds);
 
     int delete(Integer id);
 
@@ -25,7 +25,6 @@ public interface TriggerService {
     List<Trigger> list(CustomPage customPage);
 
     List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
-
 
 
 }

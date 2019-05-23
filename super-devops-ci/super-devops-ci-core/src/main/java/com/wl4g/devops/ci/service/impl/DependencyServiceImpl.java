@@ -20,7 +20,7 @@ import java.util.List;
  * @date 2019-05-22 11:39:00
  */
 @Service
-public class DependencyServiceImpl implements DependencyService{
+public class DependencyServiceImpl implements DependencyService {
 
     @Autowired
     private DependencyDao dependencyDao;
@@ -33,36 +33,36 @@ public class DependencyServiceImpl implements DependencyService{
 
 
     @Override
-    public void build(Dependency dependency,String branch) throws Exception{
+    public void build(Dependency dependency, String branch) throws Exception {
 
         Integer projectId = dependency.getProjectId();
 
-        List<Dependency> dependencies =  dependencyDao.getParentsByProjectId(projectId);
-        if(dependencies!=null&&dependencies.size()>0){
-            for(Dependency dep : dependencies){
+        List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
+        if (dependencies != null && dependencies.size() > 0) {
+            for (Dependency dep : dependencies) {
                 String br = dep.getParentBranch();
-                build(new Dependency(dep.getParentId()), StringUtils.isBlank(br)?branch:br);
+                build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
             }
         }
 
         //TODO build
         Project project = projectDao.selectByPrimaryKey(projectId);
-        String path = devConfig.getGitBasePath()+"/"+project.getProjectName();
-        if(checkGitPahtExist(path)){
-            GitUtil.checkout(path,branch);
-        }else{
-            GitUtil.clone(project.getGitUrl(),path,branch);
+        String path = devConfig.getGitBasePath() + "/" + project.getProjectName();
+        if (checkGitPahtExist(path)) {
+            GitUtil.checkout(path, branch);
+        } else {
+            GitUtil.clone(project.getGitUrl(), path, branch);
         }
         //install
         install(path);
 
     }
 
-    public boolean checkGitPahtExist(String path) throws Exception{
-        File file = new File(path+"/.git");
-        if(file.exists()){
+    public boolean checkGitPahtExist(String path) throws Exception {
+        File file = new File(path + "/.git");
+        if (file.exists()) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -71,9 +71,9 @@ public class DependencyServiceImpl implements DependencyService{
     /**
      * build (maven)
      */
-    public String install(String path) throws Exception{
-        String command = "mvn -f "+path+"/pom.xml clean install -Dmaven.test.skip=true";
-        return ConnectLinuxCommand.run(command);
+    public String install(String path) throws Exception {
+        String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
+        return ConnectLinuxCommand.runLocal(command);
     }
 
 
