@@ -3,60 +3,59 @@ package com.wl4g.devops.common.bean.ci;
 import com.wl4g.devops.common.bean.scm.BaseBean;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 public class Trigger extends BaseBean implements Serializable {
 
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
-    private Integer projectId;
+	private Integer projectId;
 
-    private String branchName;
+	private String branchName;
 
-    private String command;
+	private String command;
 
-    private Integer tarType;
+	private Integer tarType;
 
-    private List<TriggerDetail> triggerDetails;
+	private List<TriggerDetail> triggerDetails;
 
-    public Integer getProjectId() {
-        return projectId;
-    }
+	public Integer getProjectId() {
+		return projectId;
+	}
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
+	}
 
-    public String getBranchName() {
-        return branchName;
-    }
+	public String getBranchName() {
+		return branchName;
+	}
 
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
-    }
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
 
-    public String getCommand() {
-        return command;
-    }
+	public String getCommand() {
+		return command;
+	}
 
-    public void setCommand(String command) {
-        this.command = command;
-    }
+	public void setCommand(String command) {
+		this.command = command;
+	}
 
-    public Integer getTarType() {
-        return tarType;
-    }
+	public Integer getTarType() {
+		return tarType;
+	}
 
-    public void setTarType(Integer tarType) {
-        this.tarType = tarType;
-    }
+	public void setTarType(Integer tarType) {
+		this.tarType = tarType;
+	}
 
-    public List<TriggerDetail> getTriggerDetails() {
-        return triggerDetails;
-    }
+	public List<TriggerDetail> getTriggerDetails() {
+		return triggerDetails;
+	}
 
-    public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
-        this.triggerDetails = triggerDetails;
-    }
+	public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
+		this.triggerDetails = triggerDetails;
+	}
 }

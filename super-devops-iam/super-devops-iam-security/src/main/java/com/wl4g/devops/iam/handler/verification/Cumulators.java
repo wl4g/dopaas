@@ -15,25 +15,18 @@
  */
 package com.wl4g.devops.iam.handler.verification;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.AUTH_FAIL_ACCOUNT;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_FAIL_LIMITER_USER_PREFIX;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
-
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.iam.common.utils.SessionBindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 
@@ -318,7 +311,7 @@ public abstract class Cumulators {
 		 * @return
 		 */
 		private boolean isExpired(long createTime) {
-			return (System.currentTimeMillis() - createTime) <= expireMs;
+			return (System.currentTimeMillis() - createTime) >= expireMs;
 		}
 
 		/**

@@ -37,6 +37,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static org.apache.commons.lang3.SystemUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
+import static com.wl4g.devops.shell.bean.LineResultState.*;
 import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
 import static com.wl4g.devops.shell.utils.LineUtils.*;
@@ -46,9 +47,11 @@ import com.wl4g.devops.shell.AbstractActuator;
 import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
+import com.wl4g.devops.shell.bean.LineResultState;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.Configuration;
 import com.wl4g.devops.shell.config.DynamicCompleter;
+import com.wl4g.devops.shell.exception.ProcessTimeoutException;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.utils.Assert;
@@ -177,12 +180,21 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	}
 
 	/**
-	 * Get last abnormal stacktrace string
+	 * Get last abnormal stack-trace string
 	 * 
 	 * @return
 	 */
 	public String getLastStacktrace() {
 		return this.stacktraceAsString;
+	}
+
+	/**
+	 * Client handler.
+	 * 
+	 * @return
+	 */
+	public ClientHandler getClient() {
+		return client;
 	}
 
 	/**
@@ -196,18 +208,16 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		ensureClient();
 
 		if (message instanceof String) {
-			// Exec internal commands
 			String line = (String) message;
 			List<String> cmds = parse(line);
 			if (!cmds.isEmpty()) {
 				// $> [help|clear|history...]
-				if (registry.contains(cmds.get(0))) {
+				if (registry.contains(cmds.get(0))) { // Internal commands?
 					DefaultInternalCommand.senseLine(line);
-					// Processing
 					process(line);
 					return;
 				}
-				// [MARK0] $> add --help
+				// help command? [MARK0] $> add --help
 				else if (cmds.size() > 1
 						&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
 
@@ -215,7 +225,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					line = clean(INTERNAL_HELP) + " " + cmds.get(0);
 					// Set current line
 					DefaultInternalCommand.senseLine(line);
-					// Processing
 					process(line);
 					return;
 				}
@@ -223,6 +232,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 			// Submission remote commands line
 			client.writeAndFlush(new LineMessage(line));
+			client.state = REQ;
 		} else
 			client.writeAndFlush(message);
 	}
@@ -248,20 +258,32 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	}
 
 	/**
-	 * Wait for lineReader. </br>
+	 * Wait for completed. </br>
 	 * {@link AbstractRunner#wakeup()}
 	 * 
+	 * @param line
 	 * @throws InterruptedException
 	 */
-	protected void waitForResponse() throws InterruptedException {
+	protected void waitForCompleted(String line) throws InterruptedException {
 		synchronized (lock) {
-			lock.wait(TIMEOUT);
+			long begin = currentTimeMillis();
+
+			do {
+				// Guidance stream data returns until complete.
+				lock.wait(TIMEOUT);
+			} while (client.state == RESP_WAIT); // yet-completed?
+
+			// Check wait timeout
+			if (client.state == NONCE && (currentTimeMillis() - begin) >= TIMEOUT) {
+				throw new ProcessTimeoutException(String.format("Execute the timeout command: %s", line));
+			}
+
 		}
 	}
 
 	/**
 	 * Notify for wait lineReader. </br>
-	 * {@link AbstractRunner#waitForResponse()}
+	 * {@link AbstractRunner#waitForComplished()}
 	 */
 	protected void wakeup() throws IllegalMonitorStateException {
 		synchronized (lock) {
@@ -318,6 +340,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * 
 	 * @throws IOException
 	 */
+	@SuppressWarnings("resource")
 	private void ensureClient() throws IOException {
 		synchronized (this) {
 			boolean create = false;
@@ -395,8 +418,10 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 	/**
 	 * Quietly client close
+	 * 
+	 * @throws IOException
 	 */
-	private void closeQuietly() {
+	private void closeQuietly() throws IOException {
 		if (client != null) {
 			client.close();
 		}
@@ -415,6 +440,11 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		 * Line process runner.
 		 */
 		final private AbstractRunner runner;
+
+		/**
+		 * Mark the current request processing status
+		 */
+		private LineResultState state = INIT;
 
 		/**
 		 * Boot boss thread
@@ -447,25 +477,34 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					}
 					// Exception-callback
 					else if (input instanceof ExceptionMessage) {
-						// Wakeup for lineReader
-						wakeup();
+						wakeup(); // Wake-up lineReader
 
 						ExceptionMessage ex = (ExceptionMessage) input;
 						runner.printErr(EMPTY, ex.getThrowable());
 					}
 					// Result callback
 					else if (input instanceof ResultMessage) {
-						// Wakeup for lineReader
-						wakeup();
-
 						// After process
 						ResultMessage result = (ResultMessage) input;
+
+						// Wake up the waiting thread when the response is
+						// complete.
+						state = result.getState();
+						if (state == NONCE || state == FINISH) {
+							wakeup(); // Wake-up lineReader
+						}
+
+						// Callback processing
 						function.apply(result.getContent());
 					}
 
 				} catch (SocketException e) {
 					boss.interrupt();
-					close();
+					try {
+						close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				} catch (Throwable e) {
 					runner.printErr(EMPTY, e);
 				} finally {

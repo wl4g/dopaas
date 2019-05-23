@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
+import static com.wl4g.devops.shell.processor.ShellConsoles.*;
 import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
@@ -93,9 +95,9 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 		if (running.compareAndSet(false, true)) {
 			Assert.state(ss == null, "server socket already listen ?");
 
-			int bindPort = ensureDetermineServPort(appName);
+			int bindPort = ensureDetermineServPort(getAppName());
 
-			ss = new ServerSocket(bindPort, config.getBacklog(), config.getInetBindAddr());
+			ss = new ServerSocket(bindPort, getConfig().getBacklog(), getConfig().getInetBindAddr());
 			ss.setSoTimeout(0); // Infinite timeout
 			if (log.isInfoEnabled()) {
 				log.info("Shell Console started on port(s): {}", bindPort);
@@ -145,9 +147,9 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					log.debug("On accept socket: {}", s);
 				}
 
-				worker.submit(new ShellHandler(registry, s, line -> {
-					return process(line); // Processing
-				}).starting());
+				// Processing
+				ShellHandler handler = registerClient(new ShellHandler(registry, s, line -> process(line)));
+				worker.submit(handler.starting());
 
 			} catch (Throwable e) {
 				log.warn("Shell boss thread shutdown. cause: {}", getStackTrace(e));
@@ -172,7 +174,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 		@Override
 		public ChannelMessageHandler starting() {
-			run(); // Running
+			// Running
+			run();
 			return this;
 		}
 
@@ -191,11 +194,15 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					// Submit line
 					if (input instanceof LineMessage) {
 						LineMessage line = (LineMessage) input;
-						result = new ResultMessage(function.apply(line.getLine()).toString());
+						// Processing
+						Object ret = function.apply(line.getLine());
+						if (ret != null) {
+							result = new ResultMessage(getState(), ret.toString());
+						}
 					}
-					// Request registed commands
+					// Request register commands
 					else if (input instanceof MetaMessage) {
-						// Write registed target methods commands
+						// Target methods
 						result = new MetaMessage(registry.getTargetMethods());
 					}
 
@@ -228,10 +235,15 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				if (log.isWarnEnabled()) {
 					log.warn("Disconnect for client: {}", client);
 				}
-				close();
+				try {
+					close();
+				} catch (IOException e) {
+					log.error("Close failure.", e);
+				}
 			} else {
 				try {
 					String errmsg = getRootCauseMessage(th);
+					errmsg = isBlank(errmsg) ? getMessage(th) : errmsg;
 					if (log.isWarnEnabled()) {
 						log.warn("{}", errmsg);
 					}

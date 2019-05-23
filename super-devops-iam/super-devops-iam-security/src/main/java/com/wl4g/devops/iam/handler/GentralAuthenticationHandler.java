@@ -186,7 +186,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx...client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo
 		 * Grant term of validity(end date).
 		 */
-		long expiredMs = SessionBindings.getSeesionExpiredTime(session);
+		long expiredMs = SessionBindings.getSessionExpiredTime(session);
 		calendar.add(Calendar.MILLISECOND, (int) expiredMs);
 		assertion.setValidUntilDate(calendar.getTime());
 
@@ -383,7 +383,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		// Get session expire time
-		long expireTime = SessionBindings.getSeesionExpiredTime(session);
+		long expireTime = SessionBindings.getSessionExpiredTime(session);
 		if (log.isDebugEnabled()) {
 			log.debug("Get session Id:[{}] expire time:[{}]", session.getId(), expireTime);
 		}
