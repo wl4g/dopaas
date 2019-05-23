@@ -147,7 +147,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				}
 
 				// Processing
-				worker.submit(putClient(new ShellHandler(registry, s, line -> process(line)).starting()));
+				ShellHandler handler = putClient(new ShellHandler(registry, s, line -> process(line)));
+				worker.submit(handler.starting());
 
 			} catch (Throwable e) {
 				log.warn("Shell boss thread shutdown. cause: {}", getStackTrace(e));

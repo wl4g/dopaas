@@ -24,11 +24,13 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.wl4g.devops.shell.bean.LineResultState.*;
+import static com.wl4g.devops.shell.processor.AbstractProcessor.*;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 
 /**
- * Shell console utiliy tools.
+ * Shell console utility tools.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
@@ -39,19 +41,37 @@ public abstract class ShellConsoles {
 	final private static Logger log = LoggerFactory.getLogger(ShellConsoles.class);
 
 	/**
-	 * Manually output messages to the client console.
+	 * Manually output simple string message to the client console.
 	 * 
 	 * @param message
 	 */
 	public static void write(String message) {
-		ChannelMessageHandler currentClient = AbstractProcessor.getClient();
-		if (currentClient != null) {
+		write(new ResultMessage(message));
+	}
+
+	/**
+	 * Manually output stream message to the client console.
+	 * 
+	 * @param message
+	 */
+	public static void writeStream(boolean completed, String message) {
+		write(new ResultMessage(completed ? FINISH : RESP_WAIT, message));
+	}
+
+	/**
+	 * Write result message
+	 * 
+	 * @param message
+	 */
+	public static void write(ResultMessage message) {
+		ChannelMessageHandler client = getClient();
+		if (client != null) {
 			try {
-				currentClient.writeAndFlush(new ResultMessage(message));
+				client.writeAndFlush(message);
 			} catch (IOException e) {
 				String errmsg = getRootCauseMessage(e);
 				errmsg = isBlank(errmsg) ? getMessage(e) : errmsg;
-				log.error("Echo failure causes by: {}", errmsg);
+				log.error("=> {}", errmsg);
 			}
 		}
 	}

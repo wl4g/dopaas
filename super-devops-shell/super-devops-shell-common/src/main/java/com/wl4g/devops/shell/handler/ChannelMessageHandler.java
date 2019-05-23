@@ -38,12 +38,22 @@ import com.wl4g.devops.shell.utils.Assert;
 public abstract class ChannelMessageHandler implements Runnable {
 
 	/**
+	 * Start file descriptor.
+	 */
+	// final public static String BEGIN_EOF = "<<EOF>";
+
+	/**
+	 * End file descriptor.
+	 */
+	// final public static String EOF = "EOF";
+
+	/**
 	 * Currently running?
 	 */
 	final protected AtomicBoolean running = new AtomicBoolean(false);
 
 	/**
-	 * Local shell componment registry.
+	 * Local shell component registry.
 	 */
 	final protected ShellBeanRegistry registry;
 
@@ -58,12 +68,12 @@ public abstract class ChannelMessageHandler implements Runnable {
 	final protected Function<String, Object> function;
 
 	/**
-	 * Inputstream
+	 * Input stream
 	 */
 	protected InputStream _in;
 
 	/**
-	 * Outstream
+	 * Out stream
 	 */
 	protected OutputStream _out;
 

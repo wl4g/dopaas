@@ -88,7 +88,12 @@ public class ExampleConsole {
 				String message = "This is the " + i + "th line message...";
 				log.info("Example log write => {}", message);
 
-				ShellConsoles.write(message);
+				// Before completion, the client will always be in a waiting
+				// state.
+				boolean completed = (i < num); // Competed?
+
+				// Output stream message
+				ShellConsoles.writeStream(completed, message);
 
 				try {
 					Thread.sleep(1500L);
