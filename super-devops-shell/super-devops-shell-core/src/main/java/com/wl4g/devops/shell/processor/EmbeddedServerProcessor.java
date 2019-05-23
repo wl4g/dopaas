@@ -225,6 +225,13 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 			}
 		}
 
+		@Override
+		public void close() throws IOException {
+			cleanup(); // Prevent ThreadLocal Memory Leakage
+
+			super.close();
+		}
+
 		/**
 		 * Handling throws
 		 * 
