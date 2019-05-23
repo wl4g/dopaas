@@ -38,7 +38,6 @@ public class ResultMessage extends Message {
 
 	public ResultMessage(LineResultState state, String content) {
 		Assert.notNull(state, "State must not be empty");
-		Assert.hasText(content, "Content must not be empty");
 		this.state = state;
 		this.content = content;
 	}

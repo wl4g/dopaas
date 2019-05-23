@@ -37,6 +37,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
+import static com.wl4g.devops.shell.processor.ShellConsoles.*;
 import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
@@ -193,11 +194,15 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					// Submit line
 					if (input instanceof LineMessage) {
 						LineMessage line = (LineMessage) input;
-						result = new ResultMessage(function.apply(line.getLine()).toString());
+						// Processing
+						Object ret = function.apply(line.getLine());
+						if (ret != null) {
+							result = new ResultMessage(getState(), ret.toString());
+						}
 					}
-					// Request registed commands
+					// Request register commands
 					else if (input instanceof MetaMessage) {
-						// Write registed target methods commands
+						// Target methods
 						result = new MetaMessage(registry.getTargetMethods());
 					}
 

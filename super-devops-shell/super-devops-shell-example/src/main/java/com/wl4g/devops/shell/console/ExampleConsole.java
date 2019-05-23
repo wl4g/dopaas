@@ -80,15 +80,15 @@ public class ExampleConsole {
 	 */
 	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that can output logs in real time.")
 	public String logs(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "10", help = "Input parameters (number of messages)") int num) {
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Input parameters (number of messages)") int num) {
+
+		// Open the flow message output, and the client will always be
+		// blocked waiting until ShellConsoles.end() is called.
+		ShellConsoles.begin();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
 			try {
-				// Open the flow message output, and the client will always be
-				// blocked waiting until ShellConsoles.end() is called.
-				ShellConsoles.begin();
-
 				for (int i = 1; i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					log.info("Example log write => {}", message);
@@ -102,9 +102,8 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-			} finally {
 				ShellConsoles.write("Print successfully completed!");
-
+			} finally {
 				// Must end, and must be after ShellConsoles.begin()
 				ShellConsoles.end();
 			}
