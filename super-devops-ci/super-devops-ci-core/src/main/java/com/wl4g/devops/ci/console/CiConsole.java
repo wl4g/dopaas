@@ -9,6 +9,7 @@ import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
+import com.wl4g.devops.shell.processor.ShellConsoles;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,69 +30,79 @@ public class CiConsole {
 
     @ShellMethod(keys = "dev", group = "Ci command",
             help = "devlop")
-    public String devlop(BuildArgument argument){
+    public String devlop(BuildArgument argument) {
         String appGroupName = argument.getAppGroupName();
         List<String> instances = argument.getInstances();
         String branchName = argument.getBranchName();
-        try {
-            ciService.createTask(appGroupName,branchName,instances);
-        }catch (Exception e){
-            return "create task fail";
-        }
-
-        return "create task success";
+        //try add console return
+        ShellConsoles.begin();
+        // Used to simulate an asynchronous task, constantly outputting logs
+        new Thread(() -> {
+            try {
+                // Output stream message
+                ShellConsoles.write("task begin");
+                ciService.createTask(appGroupName, branchName, instances);
+                ShellConsoles.write("task end");
+            } catch (Exception e) {
+                ShellConsoles.write("task fail");
+            } finally {
+                // Must end, and must be after ShellConsoles.begin()
+                ShellConsoles.end();
+            }
+        }).start();
+        return "create task";
     }
 
 
     @ShellMethod(keys = "list", group = "Ci command",
             help = "get list ")
-    public String list(InstanceListArgument argument){
+    public String list(InstanceListArgument argument) {
         StringBuffer result = new StringBuffer();
 
-        String appGroupName =  argument.getAppGroupName();
+        String appGroupName = argument.getAppGroupName();
         String envName = argument.getEnvName();
-        if(StringUtils.isBlank(appGroupName)){
-            List<AppGroup> apps =  appGroupDao.grouplist();
+        if (StringUtils.isBlank(appGroupName)) {
+            List<AppGroup> apps = appGroupDao.grouplist();
             result.append("apps:\n");
-            for(AppGroup appGroup : apps){
-                result.append(appGroup.getName()+"\n");
+            for (AppGroup appGroup : apps) {
+                result.append(appGroup.getName() + "\n");
             }
-        }else{
+        } else {
             AppGroup app = appGroupDao.getAppGroupByName(appGroupName);
-            if(null==app){
+            if (null == app) {
                 return "AppGroup not exist";
             }
 
             List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
-            if(StringUtils.isBlank(envName)){
-                if(null==environments){
+            if (StringUtils.isBlank(envName)) {
+                if (null == environments) {
                     return "the project has not env yet,please config it";
                 }
-                for(Environment environment : environments){
-                    result = getInstance(result,environment.getId(),environment.getName());
+                for (Environment environment : environments) {
+                    result = getInstance(result, environment.getId(), environment.getName());
                 }
-            }else{
+            } else {
                 Integer envId = null;
-                for(Environment environment : environments){
-                    if(environment.getName().equals(envName)){
+                for (Environment environment : environments) {
+                    if (environment.getName().equals(envName)) {
                         envId = environment.getId();
                         break;
                     }
                 }
-                if(null==envId){
+                if (null == envId) {
                     return "env name is wrong";
                 }
                 AppInstance appInstance = new AppInstance();
                 appInstance.setEnvId(envId.toString());
-                List<AppInstance>instances = appGroupDao.instancelist(appInstance);
-                if(null==instances||instances.size()<1){
+                List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+                if (null == instances || instances.size() < 1) {
                     return "none";
                 }
-                result.append(envName+":");
-                result.append("\t"+instances.get(0).getId()+"\t"+instances.get(0).getIp()+":"+instances.get(0).getHost()+"\t\t"+instances.get(0).getRemark()+"\n");
-                for(int i=1;i<instances.size();i++){
+                result.append(envName + ":");
+                result.append("\t" + instances.get(0).getId() + "\t" + instances.get(0).getIp() + ":" + instances.get(0).getHost() + "\t\t" + instances.get(0).getRemark() + "\n");
+                for (int i = 1; i < instances.size(); i++) {
                     AppInstance instance = instances.get(i);
-                    result.append("\t\t"+instance.getId()+"\t"+instance.getIp()+":"+instance.getHost()+"\t\t"+instance.getRemark()+"\n");
+                    result.append("\t\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getHost() + "\t\t" + instance.getRemark() + "\n");
                 }
             }
 
@@ -100,18 +111,18 @@ public class CiConsole {
     }
 
 
-    private StringBuffer getInstance(StringBuffer result,Integer envId,String envName){
+    private StringBuffer getInstance(StringBuffer result, Integer envId, String envName) {
         AppInstance appInstance = new AppInstance();
         appInstance.setEnvId(envId.toString());
-        List<AppInstance>instances = appGroupDao.instancelist(appInstance);
-        if(null==instances||instances.size()<1){
+        List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+        if (null == instances || instances.size() < 1) {
             return result;
         }
-        result.append(envName+":");
-        result.append("\t"+instances.get(0).getId()+"\t"+instances.get(0).getIp()+":"+instances.get(0).getPort()+"\t\t"+instances.get(0).getRemark()+"\n");
-        for(int i=1;i<instances.size();i++){
+        result.append(envName + ":");
+        result.append("\t" + instances.get(0).getId() + "\t" + instances.get(0).getIp() + ":" + instances.get(0).getPort() + "\t\t" + instances.get(0).getRemark() + "\n");
+        for (int i = 1; i < instances.size(); i++) {
             AppInstance instance = instances.get(i);
-            result.append("\t\t"+instance.getId()+"\t"+instance.getIp()+":"+instance.getPort()+"\t\t"+instance.getRemark()+"\n");
+            result.append("\t\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getPort() + "\t\t" + instance.getRemark() + "\n");
         }
         return result;
     }

@@ -39,8 +39,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Task createTask(Project project, List<AppInstance> instances,int type,int status,String branchName,String sha
-            ,Integer parentId,String command,Integer tarType){
+    public Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha
+            , Integer parentId, String command, Integer tarType) {
 
         Task task = new Task();
         task.preInsert();
@@ -54,7 +54,7 @@ public class TaskServiceImpl implements TaskService {
         task.setTarType(tarType);
         task.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
         taskDao.insertSelective(task);
-        for(AppInstance instance : instances){
+        for (AppInstance instance : instances) {
             TaskDetail taskDetail = new TaskDetail();
             taskDetail.preInsert();
             taskDetail.setTaskId(task.getId());
@@ -66,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void updateTaskStatus(int taskId,int status){
+    public void updateTaskStatus(int taskId, int status) {
         Task task = new Task();
         task.preUpdate();
         task.setId(taskId);
@@ -75,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void updateTaskDetailStatus(int taskDetailId,int status){
+    public void updateTaskDetailStatus(int taskDetailId, int status) {
         TaskDetail taskDetail = new TaskDetail();
         taskDetail.preUpdate();
         taskDetail.setId(taskDetailId);

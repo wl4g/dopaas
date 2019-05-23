@@ -11,10 +11,10 @@ import java.io.Serializable;
 public class InstanceListArgument implements Serializable {
     private static final long serialVersionUID = -90377698662015272L;
 
-    @ShellOption(opt = "p", lopt = "app", help = "app name",required = false)
+    @ShellOption(opt = "p", lopt = "app", help = "app name", required = false)
     private String appGroupName;
 
-    @ShellOption(opt = "e", lopt = "env", help = "env name" ,required = false)
+    @ShellOption(opt = "e", lopt = "env", help = "env name", required = false)
     private String envName;
 
     public String getAppGroupName() {
