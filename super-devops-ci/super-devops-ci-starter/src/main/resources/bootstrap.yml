@@ -30,7 +30,7 @@ spring:
 
 # ### Server configuration. ###
 server:
-  port: 8080
+  port: 14047
   #address: 0.0.0.0
   sessionTimeout: 30
   contextPath: /${spring.application.name}
