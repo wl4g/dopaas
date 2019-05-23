@@ -73,9 +73,10 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	 * @param client
 	 * @return
 	 */
-	protected static ChannelMessageHandler putClient(ChannelMessageHandler client) {
+	@SuppressWarnings("unchecked")
+	protected static <T extends ChannelMessageHandler> T putClient(ChannelMessageHandler client) {
 		clientCache.set(client);
-		return client;
+		return (T) client;
 	}
 
 	/**
