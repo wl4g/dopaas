@@ -84,27 +84,34 @@ public class ExampleConsole {
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
-			for (int i = 1; i <= num; i++) {
-				String message = "This is the " + i + "th line message...";
-				log.info("Example log write => {}", message);
+			try {
+				// Open the flow message output, and the client will always be
+				// blocked waiting until ShellConsoles.end() is called.
+				ShellConsoles.begin();
 
-				// Before completion, the client will always be in a waiting
-				// state.
-				boolean completed = (i < num); // Competed?
+				for (int i = 1; i <= num; i++) {
+					String message = "This is the " + i + "th message!";
+					log.info("Example log write => {}", message);
 
-				// Output stream message
-				ShellConsoles.writeStream(completed, message);
+					// Output stream message
+					ShellConsoles.write(message);
 
-				try {
-					Thread.sleep(1500L);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					try {
+						Thread.sleep(1500L);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
+			} finally {
+				ShellConsoles.write("Print successfully completed!");
 
+				// Must end, and must be after ShellConsoles.begin()
+				ShellConsoles.end();
 			}
+
 		}).start();
 
-		return "Output has been successfully completed!";
+		return "Task 'Print-Log' starting up ...";
 	}
 
 }

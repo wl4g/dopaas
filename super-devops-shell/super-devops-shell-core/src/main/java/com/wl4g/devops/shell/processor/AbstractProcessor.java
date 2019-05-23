@@ -68,15 +68,25 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	}
 
 	/**
-	 * Store current client handler.
+	 * Register current client handler.
 	 * 
 	 * @param client
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected static <T extends ChannelMessageHandler> T putClient(ChannelMessageHandler client) {
+	protected <T extends ChannelMessageHandler> T registerClient(ChannelMessageHandler client) {
 		clientCache.set(client);
 		return (T) client;
+	}
+
+	/**
+	 * Cleanup current client handler.
+	 * 
+	 * @param client
+	 * @return
+	 */
+	protected void cleanup() {
+		clientCache.remove();
 	}
 
 	/**

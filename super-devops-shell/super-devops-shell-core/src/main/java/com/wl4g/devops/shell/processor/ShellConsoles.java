@@ -19,6 +19,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -26,6 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.shell.bean.LineResultState.*;
 import static com.wl4g.devops.shell.processor.AbstractProcessor.*;
+
+import com.wl4g.devops.shell.bean.LineResultState;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 
@@ -36,44 +39,56 @@ import com.wl4g.devops.shell.handler.ChannelMessageHandler;
  * @version v1.0 2019年5月22日
  * @since
  */
-public abstract class ShellConsoles {
+public abstract class ShellConsoles implements Closeable {
 
 	final private static Logger log = LoggerFactory.getLogger(ShellConsoles.class);
+
+	/**
+	 * Mark whether the console output stream of the current thread is complete.
+	 */
+	final private static ThreadLocal<Boolean> completedCache = new InheritableThreadLocal<>();
 
 	/**
 	 * Manually output simple string message to the client console.
 	 * 
 	 * @param message
 	 */
-	public static void write(String message) {
-		write(new ResultMessage(message));
-	}
-
-	/**
-	 * Manually output stream message to the client console.
-	 * 
-	 * @param message
-	 */
-	public static void writeStream(boolean completed, String message) {
-		write(new ResultMessage(completed ? FINISH : RESP_WAIT, message));
-	}
-
-	/**
-	 * Write result message
-	 * 
-	 * @param message
-	 */
-	public static void write(ResultMessage message) {
+	public final static void write(String message) {
 		ChannelMessageHandler client = getClient();
-		if (client != null) {
+		if (client != null && client.isActive()) {
 			try {
-				client.writeAndFlush(message);
+				LineResultState state = NONCE;
+				Boolean completed = completedCache.get();
+				if (completed != null) {
+					state = completed ? FINISH : RESP_WAIT;
+				}
+				client.writeAndFlush(new ResultMessage(state, message));
+
 			} catch (IOException e) {
 				String errmsg = getRootCauseMessage(e);
 				errmsg = isBlank(errmsg) ? getMessage(e) : errmsg;
 				log.error("=> {}", errmsg);
 			}
 		}
+	}
+
+	/**
+	 * Manually open data flow message transaction output.
+	 */
+	public final static void begin() {
+		completedCache.set(false);
+	}
+
+	/**
+	 * Manually end data flow message transaction output.
+	 */
+	public final static void end() {
+		completedCache.set(true);
+	}
+
+	@Override
+	public void close() throws IOException {
+		end();
 	}
 
 }

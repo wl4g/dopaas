@@ -147,7 +147,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				}
 
 				// Processing
-				ShellHandler handler = putClient(new ShellHandler(registry, s, line -> process(line)));
+				ShellHandler handler = registerClient(new ShellHandler(registry, s, line -> process(line)));
 				worker.submit(handler.starting());
 
 			} catch (Throwable e) {
@@ -173,7 +173,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 		@Override
 		public ChannelMessageHandler starting() {
-			run(); // Running
+			// Running
+			run();
 			return this;
 		}
 
@@ -229,7 +230,11 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				if (log.isWarnEnabled()) {
 					log.warn("Disconnect for client: {}", client);
 				}
-				close();
+				try {
+					close();
+				} catch (IOException e) {
+					log.error("Close failure.", e);
+				}
 			} else {
 				try {
 					String errmsg = getRootCauseMessage(th);
