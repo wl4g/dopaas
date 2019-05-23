@@ -15,14 +15,6 @@
  */
 package com.wl4g.devops.common.constants;
 
-import com.google.common.base.Charsets;
-import org.apache.commons.codec.binary.Hex;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 /**
  * DevOps SCM Constants.
  * 
@@ -201,9 +193,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_FAIL_LIMITER_RIP_PREFIX = "rip_";
 
 	/**
-	 * Login Fail account.
+	 * Used for record all accounts that have failed to log in in this session.
 	 */
-	final public static String AUTH_FAIL_ACCOUNT = "authFailAccount";
+	final public static String KEY_FAIL_PRINCIPAL_FACTORS = "pastFailAccounts";
+
 	/**
 	 * Error information for saving iam-related operations to sessions.
 	 */
@@ -222,33 +215,5 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_C_BASE = "/internal";
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
-
-	//
-	// Definitions method's
-	//
-
-	/**
-	 * Safety limiting factor(e.g. Client remote IP and login user-name)
-	 * 
-	 * @param remoteHost
-	 * @param principal
-	 * @return
-	 */
-	public static List<String> lockFactors(String remoteHost, String principal) {
-		return new ArrayList<String>(2) {
-			private static final long serialVersionUID = -5976569540781454836L;
-			{
-				if (!StringUtils.isEmpty(principal)) {
-					add(KEY_FAIL_LIMITER_USER_PREFIX + principal);
-				}
-				if (!StringUtils.isEmpty(remoteHost)) {
-					// add(KEY_FAIL_LIMITER_RIP_PREFIX +
-					// Hex.encodeHexString(remoteHost.getBytes(Charsets.UTF_8)));
-					add(KEY_FAIL_LIMITER_RIP_PREFIX
-							+ Hex.encodeHexString(UUID.randomUUID().toString().replaceAll("-", "").getBytes(Charsets.UTF_8)));
-				}
-			}
-		};
-	}
 
 }

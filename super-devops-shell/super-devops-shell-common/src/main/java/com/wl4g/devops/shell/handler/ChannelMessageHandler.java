@@ -17,6 +17,8 @@ package com.wl4g.devops.shell.handler;
 
 import static java.lang.System.err;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -35,7 +37,17 @@ import com.wl4g.devops.shell.utils.Assert;
  * @version v1.0 2019年5月2日
  * @since
  */
-public abstract class ChannelMessageHandler implements Runnable {
+public abstract class ChannelMessageHandler implements Runnable, Closeable {
+
+	/**
+	 * Start file descriptor.
+	 */
+	// final public static String BEGIN_EOF = "<<EOF>";
+
+	/**
+	 * End file descriptor.
+	 */
+	// final public static String EOF = "EOF";
 
 	/**
 	 * Currently running?
@@ -43,7 +55,7 @@ public abstract class ChannelMessageHandler implements Runnable {
 	final protected AtomicBoolean running = new AtomicBoolean(false);
 
 	/**
-	 * Local shell componment registry.
+	 * Local shell component registry.
 	 */
 	final protected ShellBeanRegistry registry;
 
@@ -58,12 +70,12 @@ public abstract class ChannelMessageHandler implements Runnable {
 	final protected Function<String, Object> function;
 
 	/**
-	 * Inputstream
+	 * Input stream
 	 */
 	protected InputStream _in;
 
 	/**
-	 * Outstream
+	 * Out stream
 	 */
 	protected OutputStream _out;
 
@@ -119,7 +131,8 @@ public abstract class ChannelMessageHandler implements Runnable {
 	/**
 	 * Disconnect client socket
 	 */
-	public void close() {
+	@Override
+	public void close() throws IOException {
 		if (running.compareAndSet(true, false)) {
 			if (client != null && !client.isClosed()) {
 				try {

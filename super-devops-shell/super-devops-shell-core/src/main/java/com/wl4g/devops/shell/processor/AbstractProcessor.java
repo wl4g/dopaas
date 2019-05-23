@@ -22,6 +22,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.shell.AbstractActuator;
 import com.wl4g.devops.shell.config.ShellProperties;
+import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 
 /**
@@ -33,14 +34,22 @@ import com.wl4g.devops.shell.registry.ShellBeanRegistry;
  */
 public abstract class AbstractProcessor extends AbstractActuator implements DisposableBean {
 
+	/**
+	 * Accept socket client handlers.
+	 */
+	final private static ThreadLocal<ChannelMessageHandler> clientCache = new InheritableThreadLocal<>();
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Shell properties configuration
 	 */
-	final protected ShellProperties config;
+	final private ShellProperties config;
 
-	final protected String appName;
+	/**
+	 * Spring application name.
+	 */
+	final private String appName;
 
 	public AbstractProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
 		super(config, registry);
@@ -48,6 +57,46 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 		Assert.hasText(appName, "appName must not be null");
 		this.config = config;
 		this.appName = appName;
+	}
+
+	public ShellProperties getConfig() {
+		return config;
+	}
+
+	public String getAppName() {
+		return appName;
+	}
+
+	/**
+	 * Register current client handler.
+	 * 
+	 * @param client
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T extends ChannelMessageHandler> T registerClient(ChannelMessageHandler client) {
+		clientCache.set(client);
+		return (T) client;
+	}
+
+	/**
+	 * Cleanup current client handler.
+	 * 
+	 * @param client
+	 * @return
+	 */
+	protected void cleanup() {
+		clientCache.remove();
+	}
+
+	/**
+	 * Get current client handler
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	static <T extends ChannelMessageHandler> T getClient() {
+		return (T) clientCache.get();
 	}
 
 }
