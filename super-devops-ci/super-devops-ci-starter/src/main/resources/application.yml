@@ -37,3 +37,4 @@ devconf:
   gitPassword: hwj13535248668
   bakPath: /Users/vjay/gittest/bak
   linkPath: /usr/local
+  rsaKey: 03DE18C2FC4E605F

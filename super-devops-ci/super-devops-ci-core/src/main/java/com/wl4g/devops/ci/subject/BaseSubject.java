@@ -7,6 +7,7 @@ import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
+import com.wl4g.devops.common.utils.codec.AES;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,8 @@ public abstract class BaseSubject {
 
 	//service
 	protected DependencyService dependencyService;
+	//config
+	protected DevConfig devConfig;
 
 	//now
 	protected Date now = new Date();
@@ -63,6 +66,18 @@ public abstract class BaseSubject {
 	 */
 	public String run(String command) throws Exception {
 		return ConnectLinuxCommand.run(command);
+	}
+
+	/**
+	 * exce command
+	 */
+	public String execute(String targetHost,String userName,String command,String rsa) throws Exception {
+
+		String rsaKey = devConfig.rsaKey;
+		AES aes = new AES(rsaKey);
+		char[] rsaReal = aes.decrypt(rsa).toCharArray();
+
+		return ConnectLinuxCommand.execute(targetHost,userName,command,rsaReal);
 	}
 
 	/**
@@ -116,52 +131,45 @@ public abstract class BaseSubject {
 	}
 
 	/**
-	 * unzip
-	 */
-	public String tar(String targetHost,String userName,String targetPath,String targetName) throws Exception{
-		String command = "tar -xvf "+targetPath+"/"+targetName+" -C "+targetPath;
-		return ConnectLinuxCommand.execute(targetHost,userName,command);
-	}
-
-
-	/**
 	 * bak local + scp + rename
 	 */
-	public String scpAndTar(String path,String targetHost,String userName,String targetPath) throws Exception{
-		String result = scpToTmp(path,userName+"@"+targetHost);
-		result += tarToTmp(targetHost,userName,path);
-		result += moveToTarPath(targetHost,userName,path,targetPath);
+	public String scpAndTar(String path,String targetHost,String userName,String targetPath,String rsa) throws Exception{
+		String result = mkdirs(targetHost,userName,"/home/"+userName+"/tmp",rsa);
+		result += scpToTmp(path,userName+"@"+targetHost,userName);
+		result += tarToTmp(targetHost,userName,path,rsa);
+		result += mkdirs(targetHost,userName,targetPath,rsa);
+		result += moveToTarPath(targetHost,userName,path,targetPath,rsa);
 		return result;
 	}
 
-	public String reLink(String targetHost,String targetPath,String userName,String path) throws Exception{
-		String command = "ln -snf "+targetPath+"/"+replaceMaster(subPacknameWithOutPostfix(path))+getDateTimeStr()+" "+DevConfig.linkPath+"/"+alias+"-current";
-		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	public String reLink(String targetHost,String targetPath,String userName,String path,String rsa) throws Exception{
+		String command = "ln -snf "+targetPath+"/"+replaceMaster(subPacknameWithOutPostfix(path))+getDateTimeStr()+" "+DevConfig.linkPath+"/"+alias+"-package/"+alias+"-current";
+		return execute(targetHost,userName,command,rsa);
 	}
 
 
 	/**
 	 * scpToTmp
 	 */
-	public String scpToTmp(String path,String targetHost) throws Exception{
-		String command = "scp -r "+path+" "+targetHost+":/tmp";
+	public String scpToTmp(String path,String targetHost,String userName) throws Exception{
+		String command = "scp -r "+path+" "+targetHost+":/home/"+userName+"/tmp";
 		return run(command);
 	}
 
 	/**
 	 * unzip in tmp
 	 */
-	public String tarToTmp(String targetHost,String userName,String path) throws Exception{
-		String command = "tar -xvf /tmp"+"/"+subPackname(path)+" -C /tmp";
-		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	public String tarToTmp(String targetHost,String userName,String path,String rsa) throws Exception{
+		String command = "tar -xvf /home/"+userName+"/tmp"+"/"+subPackname(path)+" -C /home/"+userName+"/tmp";
+		return execute(targetHost,userName,command,rsa);
 	}
 
 	/**
 	 * move to tar path
 	 */
-	public String moveToTarPath(String targetHost,String userName,String path,String targetPath)throws Exception{
-		String command = "mv /tmp"+"/"+subPacknameWithOutPostfix(path)+" "+targetPath+"/"+replaceMaster(subPacknameWithOutPostfix(path))+getDateTimeStr();
-		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	public String moveToTarPath(String targetHost,String userName,String path,String targetPath,String rsa)throws Exception{
+		String command = "mv /home/"+userName+"/tmp"+"/"+subPacknameWithOutPostfix(path)+" "+targetPath+"/"+replaceMaster(subPacknameWithOutPostfix(path))+getDateTimeStr();
+		return execute(targetHost,userName,command,rsa);
 	}
 
 
@@ -176,6 +184,14 @@ public abstract class BaseSubject {
 
 
 	/**
+	 * mkdir
+	 */
+	public String mkdirs(String targetHost,String userName,String path,String rsa) throws Exception{
+		String command = "mkdir -p "+path;
+		return execute(targetHost,userName,command,rsa);
+	}
+
+	/**
 	 * rollback
 	 */
 	public String rollback() throws Exception{
@@ -186,23 +202,23 @@ public abstract class BaseSubject {
 	/**
 	 * stop
 	 */
-	public String stop(String targetHost,String userName,String command) throws Exception{
-		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	public String stop(String targetHost,String userName,String command,String rsa) throws Exception{
+		return execute(targetHost,userName,command,rsa);
 
 	}
 
 	/**
 	 * start
 	 */
-	public String start(String targetHost,String userName,String command) throws Exception{
-		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	public String start(String targetHost,String userName,String command,String rsa) throws Exception{
+		return execute(targetHost,userName,command,rsa);
 	}
 
 	/**
 	 * restart
 	 */
-	public String restart(String targetHost,String userName,String command) throws Exception{
-		return ConnectLinuxCommand.execute(targetHost,userName,command);
+	public String restart(String targetHost,String userName,String command,String rsa) throws Exception{
+		return execute(targetHost,userName,command,rsa);
 	}
 
 
@@ -305,5 +321,13 @@ public abstract class BaseSubject {
 
 	public void setDependencyService(DependencyService dependencyService) {
 		this.dependencyService = dependencyService;
+	}
+
+	public DevConfig getDevConfig() {
+		return devConfig;
+	}
+
+	public void setDevConfig(DevConfig devConfig) {
+		this.devConfig = devConfig;
 	}
 }

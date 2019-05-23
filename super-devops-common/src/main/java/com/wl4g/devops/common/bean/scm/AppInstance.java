@@ -33,8 +33,9 @@ public class AppInstance extends BaseBean {
 	private String versionId; // 版本id
 
 	//20190517add
-	private String webappsPath;//项目部署路径
+	private String basePath;//项目部署路径
 	private String serverAccount;//登录账号
+	private String sshRsa;
 
 
 	public Long getGroupId() {
@@ -93,12 +94,20 @@ public class AppInstance extends BaseBean {
 		this.versionId = versionId;
 	}
 
-	public String getWebappsPath() {
-		return webappsPath;
+	public String getBasePath() {
+		return basePath;
 	}
 
-	public void setWebappsPath(String webappsPath) {
-		this.webappsPath = webappsPath;
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
+	}
+
+	public String getSshRsa() {
+		return sshRsa;
+	}
+
+	public void setSshRsa(String sshRsa) {
+		this.sshRsa = sshRsa;
 	}
 
 	public String getServerAccount() {

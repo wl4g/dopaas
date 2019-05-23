@@ -5,7 +5,6 @@ import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.ci.subject.BaseSubject;
-import com.wl4g.devops.ci.subject.JarSubject;
 import com.wl4g.devops.ci.subject.TarSubject;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.scm.AppGroup;
@@ -117,6 +116,8 @@ public class CiServiceImpl implements CiService {
 
 
 	public void hook(String projectName,String branchName,String url){
+		//TODO just for test
+		projectName = "safecloud-devops-datachecker";
 		Project project = projectDao.getByProjectName(projectName);
 		if(null == project){
 			return;
@@ -161,9 +162,9 @@ public class CiServiceImpl implements CiService {
 	private BaseSubject getSubject(int projectId,int tarType,String path, String url, String branch, String alias,String tarPath,List<AppInstance> instances,List<TaskDetail> taskDetails){
 		switch(tarType){
 			case CiDevOpsConstants.TAR_TYPE_TAR :
-				return new TarSubject(dependencyService,projectId,path, url, branch, alias,tarPath,instances,taskDetails);
+				return new TarSubject(dependencyService,devConfig,projectId,path, url, branch, alias,tarPath,instances,taskDetails);
 			case CiDevOpsConstants.TAR_TYPE_JAR :
-				return new JarSubject(path, url, branch, alias,tarPath,instances,taskDetails);
+				//return new JarSubject(path, url, branch, alias,tarPath,instances,taskDetails);
 			case CiDevOpsConstants.TAR_TYPE_OTHER :
 				//return new OtherSubject();
 			default :

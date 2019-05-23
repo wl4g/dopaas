@@ -24,6 +24,8 @@ public class DevConfig {
 
 	public static String linkPath;
 
+	public static String rsaKey;
+
 	private static CredentialsProvider cp;
 
 	public String getGitBasePath() {
@@ -71,5 +73,13 @@ public class DevConfig {
 
 	public void setLinkPath(String linkPath) {
 		DevConfig.linkPath = linkPath;
+	}
+
+	public static String getRsaKey() {
+		return rsaKey;
+	}
+
+	public void setRsaKey(String rsaKey) {
+		DevConfig.rsaKey = rsaKey;
 	}
 }
