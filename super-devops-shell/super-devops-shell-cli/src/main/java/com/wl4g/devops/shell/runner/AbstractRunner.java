@@ -340,6 +340,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * 
 	 * @throws IOException
 	 */
+	@SuppressWarnings("resource")
 	private void ensureClient() throws IOException {
 		synchronized (this) {
 			boolean create = false;
@@ -417,8 +418,10 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 	/**
 	 * Quietly client close
+	 * 
+	 * @throws IOException
 	 */
-	private void closeQuietly() {
+	private void closeQuietly() throws IOException {
 		if (client != null) {
 			client.close();
 		}
@@ -483,7 +486,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					else if (input instanceof ResultMessage) {
 						// After process
 						ResultMessage result = (ResultMessage) input;
-						System.out.println(result);
 
 						// Wake up the waiting thread when the response is
 						// complete.
@@ -498,7 +500,11 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 				} catch (SocketException e) {
 					boss.interrupt();
-					close();
+					try {
+						close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				} catch (Throwable e) {
 					runner.printErr(EMPTY, e);
 				} finally {
