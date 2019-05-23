@@ -38,7 +38,8 @@ public class InteractiveRunner extends AbstractRunner {
 
 	@Override
 	public void run(String[] args) {
-		while (true) { // Listening console input.
+		// Listening console input.
+		while (true) {
 			Thread worker = null;
 			String line = null;
 			try {

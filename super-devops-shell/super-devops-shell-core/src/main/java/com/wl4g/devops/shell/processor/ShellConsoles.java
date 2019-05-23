@@ -15,9 +15,8 @@
  */
 package com.wl4g.devops.shell.processor;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -57,13 +56,7 @@ public abstract class ShellConsoles implements Closeable {
 		ChannelMessageHandler client = getClient();
 		if (client != null && client.isActive()) {
 			try {
-				LineResultState state = NONCE;
-				Boolean completed = completedCache.get();
-				if (completed != null) {
-					state = completed ? FINISH : RESP_WAIT;
-				}
-				client.writeAndFlush(new ResultMessage(state, message));
-
+				client.writeAndFlush(new ResultMessage(getState(), message));
 			} catch (IOException e) {
 				String errmsg = getRootCauseMessage(e);
 				errmsg = isBlank(errmsg) ? getMessage(e) : errmsg;
@@ -73,10 +66,23 @@ public abstract class ShellConsoles implements Closeable {
 	}
 
 	/**
+	 * Has the circulation channel been opened?
+	 * 
+	 * @return
+	 */
+	public final static boolean isBegin() {
+		Boolean completed = completedCache.get();
+		return completed != null && !completed;
+	}
+
+	/**
 	 * Manually open data flow message transaction output.
 	 */
 	public final static void begin() {
 		completedCache.set(false);
+
+		// Output start mark
+		write(EMPTY);
 	}
 
 	/**
@@ -84,6 +90,31 @@ public abstract class ShellConsoles implements Closeable {
 	 */
 	public final static void end() {
 		completedCache.set(true);
+
+		// Output end mark
+		write(EMPTY);
+	}
+
+	/**
+	 * Has the circulation channel been closed?
+	 * 
+	 * @return
+	 */
+	public final static boolean isClose() {
+		Boolean completed = completedCache.get();
+		return completed != null && completed;
+	}
+
+	/**
+	 * Get the current channel status
+	 */
+	public final static LineResultState getState() {
+		LineResultState state = NONCE;
+		Boolean completed = completedCache.get();
+		if (completed != null) {
+			state = completed ? FINISH : RESP_WAIT;
+		}
+		return state;
 	}
 
 	@Override
