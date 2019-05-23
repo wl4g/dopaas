@@ -37,11 +37,11 @@ public class DependencyServiceImpl implements DependencyService{
 
         Integer projectId = dependency.getProjectId();
 
-        List<Dependency> parents =  dependencyDao.getParentsByProjectId(projectId);
-        if(parents!=null||parents.size()>0){
-            for(Dependency parent : parents){
-                String br = parent.getParentBranch();
-                build(parent, StringUtils.isBlank(br)?branch:br);
+        List<Dependency> dependencies =  dependencyDao.getParentsByProjectId(projectId);
+        if(dependencies!=null&&dependencies.size()>0){
+            for(Dependency dep : dependencies){
+                String br = dep.getParentBranch();
+                build(new Dependency(dep.getParentId()), StringUtils.isBlank(br)?branch:br);
             }
         }
 

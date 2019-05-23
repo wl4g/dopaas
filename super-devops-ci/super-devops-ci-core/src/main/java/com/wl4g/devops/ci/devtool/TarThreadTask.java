@@ -20,13 +20,15 @@ public class TarThreadTask extends Thread {
 	private String tarPath;
 	private TaskService taskService;
 	private Integer taskDetailId;
+	private String alias;
 
-	public TarThreadTask(TarSubject tarSubject, String path, AppInstance instance, String tarPath, List<TaskDetail> taskDetails) {
+	public TarThreadTask(TarSubject tarSubject, String path, AppInstance instance, String tarPath, List<TaskDetail> taskDetails,String alias) {
 		taskService = ApplicationContextProvider.getBean(TaskService.class);
 		this.tarSubject = tarSubject;
 		this.path = path;
 		this.instance = instance;
 		this.tarPath = tarPath;
+		this.alias = alias;
 		Assert.notNull(taskDetails,"taskDetails can not be null");
 		for(TaskDetail taskDetail : taskDetails){
 			if(taskDetail.getInstanceId().intValue()==instance.getId().intValue()){
@@ -47,11 +49,11 @@ public class TarThreadTask extends Thread {
 			//update status
 			taskService.updateTaskDetailStatus(taskDetailId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 			//scp to tmp,rename,move to webapps
-			tarSubject.scpAndTar(path+"/"+tarPath,instance.getHost(),instance.getServerAccount(),instance.getWebappsPath());
+			tarSubject.scpAndTar(path+tarPath,instance.getHost(),instance.getServerAccount(),instance.getBasePath()+"/"+alias+"-package",instance.getSshRsa());
 			//change link
-			tarSubject.reLink(instance.getHost(),instance.getWebappsPath(),instance.getServerAccount(),path+"/"+tarPath);
+			tarSubject.reLink(instance.getHost(),instance.getBasePath()+"/"+alias+"-package",instance.getServerAccount(),path+tarPath,instance.getSshRsa());
 			//restart
-			tarSubject.restart(instance.getHost(),instance.getServerAccount());
+			tarSubject.restart(instance.getHost(),instance.getServerAccount(),instance.getSshRsa());
 			//update status
 			taskService.updateTaskDetailStatus(taskDetailId, CiDevOpsConstants.TASK_STATUS_SUCCESS);
 		} catch (Exception e) {

@@ -1,6 +1,6 @@
 package com.wl4g.devops.ci.subject;
 
-import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
+import com.wl4g.devops.ci.devtool.DevConfig;
 import com.wl4g.devops.ci.devtool.TarThreadTask;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.common.bean.ci.Dependency;
@@ -21,7 +21,7 @@ public class TarSubject extends BaseSubject {
 
 	}
 
-	public TarSubject(DependencyService dependencyService,Integer projectId,String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails){
+	public TarSubject(DependencyService dependencyService, DevConfig devConfig, Integer projectId, String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails){
 
 		super.path = path;
 		super.url = url;
@@ -36,6 +36,8 @@ public class TarSubject extends BaseSubject {
 
 		//service
 		super.dependencyService = dependencyService;
+		//devConfig
+		super.devConfig = devConfig;
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class TarSubject extends BaseSubject {
 		dependencyService.build(dependency,branch);
 
 		//backup in local
-		bakLocal(path+"/"+tarPath);
+		bakLocal(path+tarPath);
 
 		//scp to server
 		/*for(AppInstance instance : instances){
@@ -72,26 +74,23 @@ public class TarSubject extends BaseSubject {
 		}*/
 		//scp to server
 		for(AppInstance instance : instances){
-			Thread thread = new TarThreadTask(this,path,instance,tarPath,taskDetails);
+			Thread thread = new TarThreadTask(this,path,instance,tarPath,taskDetails,alias);
 			thread.start();
 			thread.join();
 		}
 		log.info("Done");
 	}
 
-	public String restart(String host,String userName) throws Exception{
-		String command = "sudo -u "+alias+" sc "+alias+" restart;";
-
-		ConnectLinuxCommand.execute(host,userName,command);
-
-		return null;
+	public String restart(String host,String userName,String rsa) throws Exception{
+		String command =  "sc "+alias+" restart;";
+		return execute(host,userName,command,rsa);
 
 	}
 
-	public String start(String host,String userName,String module,String targetName) throws Exception{
+	/*public String start(String host,String userName,String module,String targetName) throws Exception{
 		String command = "nohup java -Djava.ext.dirs=/root/webapps/dataflux-oper-master-bin/libs  -cp /root/webapps/dataflux-oper-master-bin/libs/datafluxOper.jar com.cn7782.devops.DatafluxOper >/dev/null  &   ";
 		//String command = "sc "+module+" start";
 		return ConnectLinuxCommand.execute(host,userName,command);
-	}
+	}*/
 
 }

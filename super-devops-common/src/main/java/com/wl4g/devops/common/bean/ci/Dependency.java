@@ -15,6 +15,13 @@ public class Dependency extends BaseBean implements Serializable {
 
     private String parentBranch;
 
+    public Dependency() {
+
+    }
+
+    public Dependency(Integer projectId) {
+        this.projectId = projectId;
+    }
 
     public Integer getId() {
         return id;
