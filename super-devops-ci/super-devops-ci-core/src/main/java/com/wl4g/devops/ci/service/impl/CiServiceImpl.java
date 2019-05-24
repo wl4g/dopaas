@@ -145,7 +145,7 @@ public class CiServiceImpl implements CiService {
         String sha = null;
 
         // Output stream message
-        ShellConsoleHolder.writeQuietly("task begin");
+        ShellConsoleHolder.printfQuietly("task begin");
         Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER, CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
         BaseSubject subject = getSubject(task);
 

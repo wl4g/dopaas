@@ -61,7 +61,7 @@ public class GitUtil {
                     .setBranch(branchName)
                     .call();
             log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
-            ShellConsoleHolder.writeQuietly("Cloning from " + remoteUrl + " to " + git.getRepository());
+            ShellConsoleHolder.printfQuietly("Cloning from " + remoteUrl + " to " + git.getRepository());
         } catch (Exception e) {
             log.info(e.getMessage());
             throw new RuntimeException(e);
@@ -99,11 +99,11 @@ public class GitUtil {
             //pull -- get newest code
             git.pull().setCredentialsProvider(DevConfig.getCp()).call();
             log.info("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
-            ShellConsoleHolder.writeQuietly("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
+            ShellConsoleHolder.printfQuietly("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("checkout branch fail;branchName=" + branchName + " localPath=" + localPath);
-            ShellConsoleHolder.writeQuietly("checkout branch fail;branchName=" + branchName + " localPath=" + localPath);
+            ShellConsoleHolder.printfQuietly("checkout branch fail;branchName=" + branchName + " localPath=" + localPath);
             throw new RuntimeException(e);
         } finally {
             if (git != null) {

@@ -37,19 +37,20 @@ public class CiConsole {
         List<String> instances = argument.getInstances();
         String branchName = argument.getBranchName();
         //try add console return
-        ShellConsoleHolder.beginQuietly();
+
         // Used to simulate an asynchronous task, constantly outputting logs
         new Thread(() -> {
             try {
                 // Output stream message
-                ShellConsoleHolder.writeQuietly("task begin");
+                ShellConsoleHolder.begin();
+                ShellConsoleHolder.printfQuietly("task begin");
                 ciService.createTask(appGroupName, branchName, instances);
-                ShellConsoleHolder.writeQuietly("task success");
+                ShellConsoleHolder.printfQuietly("task success");
             } catch (Exception e) {
-                ShellConsoleHolder.writeQuietly("task fail");
+                ShellConsoleHolder.printfQuietly("task fail");
             } finally {
                 // Must end, and must be after ShellConsoles.begin()
-                ShellConsoleHolder.endQuietly();
+                ShellConsoleHolder.end();
             }
         }).start();
 
