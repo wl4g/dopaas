@@ -15,21 +15,21 @@
  */
 package com.wl4g.devops.shell.console;
 
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.bean.MixedArgument;
 import com.wl4g.devops.shell.bean.SumArgument;
 import com.wl4g.devops.shell.bean.SumResult;
-import com.wl4g.devops.shell.processor.ShellContext;
 import com.wl4g.devops.shell.service.ExampleService;
 import com.wl4g.devops.shell.utils.ShellConsoleHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.Set;
 
 @ShellComponent
 public class ExampleConsole {
@@ -80,8 +80,7 @@ public class ExampleConsole {
 	 */
 	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that can output logs in real time.")
 	public String logs(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Input parameters (number of messages)") int num,
-			ShellContext context) {
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Input parameters (number of messages)") int num) {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
@@ -97,11 +96,11 @@ public class ExampleConsole {
 					// Print stream message
 					ShellConsoleHolder.printf(message);
 
-					/*try {
-						//Thread.sleep(1500L);
+					try {
+						Thread.sleep(1500L);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
-					}*/
+					}
 				}
 				ShellConsoleHolder.printf("Print successfully completed!");
 			} finally {
