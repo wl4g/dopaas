@@ -92,7 +92,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * @param message
 	 * @throws IOException
 	 */
-	public void writeAndFlush(Object message) throws IOException {
+	public synchronized void writeAndFlush(Object message) throws IOException {
 		Assert.notNull(message, "message is null, please check configure");
 		ObjectOutputStream out = new ObjectOutputStream(_out);
 		out.writeObject(message);
@@ -114,7 +114,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * 
 	 * @return
 	 */
-	public boolean isActive() {
+	public synchronized boolean isActive() {
 		return client.isConnected() && !client.isClosed() && !client.isInputShutdown() && !client.isOutputShutdown();
 	}
 
@@ -122,7 +122,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * Disconnect client socket
 	 */
 	@Override
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		if (running.compareAndSet(true, false)) {
 			if (client != null && !client.isClosed()) {
 				try {
