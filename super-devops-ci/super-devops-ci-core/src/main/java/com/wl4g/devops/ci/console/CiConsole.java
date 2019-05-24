@@ -39,20 +39,18 @@ public class CiConsole {
         //try add console return
 
         // Used to simulate an asynchronous task, constantly outputting logs
-        new Thread(() -> {
-            try {
-                // Output stream message
-                ShellConsoleHolder.begin();
-                ShellConsoleHolder.printfQuietly("task begin");
-                ciService.createTask(appGroupName, branchName, instances);
-                ShellConsoleHolder.printfQuietly("task success");
-            } catch (Exception e) {
-                ShellConsoleHolder.printfQuietly("task fail");
-            } finally {
-                // Must end, and must be after ShellConsoles.begin()
-                ShellConsoleHolder.end();
-            }
-        }).start();
+        try {
+            // Output stream message
+            ShellConsoleHolder.begin();
+            ShellConsoleHolder.printfQuietly("task begin");
+            ciService.createTask(appGroupName, branchName, instances);
+            ShellConsoleHolder.printfQuietly("task success");
+        } catch (Exception e) {
+            ShellConsoleHolder.printfQuietly("task fail");
+        } finally {
+            // Must end, and must be after ShellConsoles.begin()
+            ShellConsoleHolder.end();
+        }
 
         return "task done";
     }
