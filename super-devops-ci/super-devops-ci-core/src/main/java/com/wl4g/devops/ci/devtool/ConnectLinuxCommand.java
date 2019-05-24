@@ -1,10 +1,6 @@
 package com.wl4g.devops.ci.devtool;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.SCPClient;
-import ch.ethz.ssh2.Session;
-import ch.ethz.ssh2.StreamGobbler;
-import com.wl4g.devops.shell.processor.ShellConsoles;
+import ch.ethz.ssh2.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -161,7 +157,6 @@ public class ConnectLinuxCommand {
                 File file = new File(localFile);
                 SCPClient scpClient = conn.createSCPClient();
                 //scpClient.put(localFile,file.length()-1, remoteTargetDirectory,"0744");
-                
             } else {
                 logger.error("login fail!");
                 throw new RuntimeException("login fail");
@@ -172,6 +167,41 @@ public class ConnectLinuxCommand {
             if (null != conn) {
                 conn.close();
             }
+        }
+    }
+
+    /**
+     * 上传文件到服务器
+     * @param f 文件对象
+     * @param length 文件大小
+     * @param remoteTargetDirectory 上传路径
+     * @param mode 默认为null
+     */
+    public void uploadFile(String ip, String userName,char[] rsa,File f, String remoteTargetDirectory, String mode) {
+        Connection connection = null;
+        try {
+            connection = new Connection(ip);
+            connection.connect();
+            boolean isAuthenticated = connection.authenticateWithPassword(name,password);
+            if(!isAuthenticated){
+                System.out.println("连接建立失败");
+                return ;
+            }
+            SCPClient scpClient = new SCPClient(connection);
+            SCPOutputStream os = scpClient.put(f.getName(),f.length(),remoteTargetDirectory,mode);
+            byte[] b = new byte[4096];
+            FileInputStream fis = new FileInputStream(f);
+            int i;
+            while ((i = fis.read(b)) != -1) {
+                os.write(b, 0, i);
+            }
+            os.flush();
+            fis.close();
+            os.close();
+            connection.close();
+            System.out.println("upload ok");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -316,9 +346,11 @@ public class ConnectLinuxCommand {
         try {
             conn.connect();// connect
             boolean flag = conn.authenticateWithPublicKey("datachecker", ase.toCharArray(), null);
-            execute(conn, ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc datachecker restart");
+            //execute(conn, ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc datachecker restart");
             if (flag) {
                 logger.debug("login success！");
+                SCPClient scpClient = conn.createSCPClient();
+                scpClient.setCharset("");
             } else {
                 logger.error("login fail!");
             }
