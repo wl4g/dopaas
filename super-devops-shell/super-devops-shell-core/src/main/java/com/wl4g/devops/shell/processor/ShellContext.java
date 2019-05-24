@@ -93,8 +93,9 @@ public class ShellContext implements InternalInjectable {
 	 * Manually output simple string message to the client console.
 	 * 
 	 * @param message
+	 * @throws IllegalStateException
 	 */
-	public void write(String message) {
+	public void write(String message) throws IllegalStateException {
 		ChannelMessageHandler client = getClient();
 		if (client != null && client.isActive()) {
 			try {
@@ -105,6 +106,8 @@ public class ShellContext implements InternalInjectable {
 				log.error("=> {}", errmsg);
 			}
 		}
+
+		throw new IllegalStateException("The current console channel may be closed!");
 	}
 
 }
