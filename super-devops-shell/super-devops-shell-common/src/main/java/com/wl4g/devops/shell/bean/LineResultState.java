@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.shell.bean;
 
+/**
+ * Line result message state
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年5月24日
+ * @since
+ */
 public enum LineResultState {
 
 	NONCE,
@@ -25,6 +32,6 @@ public enum LineResultState {
 
 	RESP_WAIT,
 
-	FINISH;
+	FINISHED;
 
 }
