@@ -105,9 +105,10 @@ public class ShellContext implements InternalInjectable {
 				errmsg = isBlank(errmsg) ? getMessage(e) : errmsg;
 				log.error("=> {}", errmsg);
 			}
+		} else {
+			throw new IllegalStateException("The current console channel may be closed!");
 		}
 
-		throw new IllegalStateException("The current console channel may be closed!");
 	}
 
 }
