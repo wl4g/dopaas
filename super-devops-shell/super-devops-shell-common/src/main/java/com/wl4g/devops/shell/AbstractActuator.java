@@ -97,13 +97,13 @@ public abstract class AbstractActuator implements Actuator {
 
 		try {
 			// Resolve method parameters
-			Object[] args = resolveArguments(commands, tm);
+			List<Object> args = resolveArguments(commands, tm);
 
 			// PreProcessing
 			preProcessParameters(tm, args);
 
 			// Invocation
-			return tm.getMethod().invoke(tm.getTarget(), args);
+			return tm.getMethod().invoke(tm.getTarget(), args.toArray());
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -120,7 +120,7 @@ public abstract class AbstractActuator implements Actuator {
 	 * @throws InstantiationException
 	 * @throws Exception
 	 */
-	protected Object[] resolveArguments(List<String> commands, TargetMethodWrapper tm)
+	protected List<Object> resolveArguments(List<String> commands, TargetMethodWrapper tm)
 			throws IllegalArgumentException, IllegalAccessException, InstantiationException {
 		Assert.notNull(tm, "Error, Should targetMethodWrapper not be null?");
 
@@ -201,7 +201,7 @@ public abstract class AbstractActuator implements Actuator {
 
 		}
 
-		return args.toArray();
+		return args;
 	}
 
 	/**
@@ -210,7 +210,7 @@ public abstract class AbstractActuator implements Actuator {
 	 * @param tm
 	 * @param args
 	 */
-	protected void preProcessParameters(TargetMethodWrapper tm, Object[] args) {
+	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
 
 	}
 
