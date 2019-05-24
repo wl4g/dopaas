@@ -1,6 +1,7 @@
 package com.wl4g.devops.ci.devtool;
 
 import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 import com.wl4g.devops.shell.processor.ShellConsoles;
@@ -53,6 +54,7 @@ public class ConnectLinuxCommand {
      * run in local
      */
     public static String runLocal(String cmd) throws Exception {
+        logger.info("command:"+cmd);
         StringBuffer sb = new StringBuffer();
         StringBuffer se = new StringBuffer();
 
@@ -130,8 +132,8 @@ public class ConnectLinuxCommand {
             if (flag) {
                 logger.debug("login success！");
                 String result = execute(conn, command);
-                logger.info(result);
-                ShellConsoles.write(result);
+                //logger.info(result);
+                //ShellConsoles.write(result);
                 return result;
             } else {
                 logger.error("login fail!");
@@ -145,6 +147,36 @@ public class ConnectLinuxCommand {
             }
         }
     }
+
+
+    public static void uploadFile(String ip, String userName,char[] rsa,String localFile,String remoteTargetDirectory) throws IOException {
+        Connection conn = null;
+        try {
+            boolean flag = false;
+            conn = new Connection(ip);
+            conn.connect();// connect
+            flag = conn.authenticateWithPublicKey(userName, rsa, null);
+            if (flag) {
+                logger.debug("login success！");
+                File file = new File(localFile);
+                SCPClient scpClient = conn.createSCPClient();
+                //scpClient.put(localFile,file.length()-1, remoteTargetDirectory,"0744");
+                
+            } else {
+                logger.error("login fail!");
+                throw new RuntimeException("login fail");
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (null != conn) {
+                conn.close();
+            }
+        }
+    }
+
+
+
 
     /**
      * @Title: login
@@ -170,7 +202,7 @@ public class ConnectLinuxCommand {
      * @Title: execute
      */
     private static String execute(Connection conn, String cmd) {
-        logger.info("command=" + cmd);
+        //logger.info("command=" + cmd);
         String result = "";
         Session session = null;
         try {
@@ -204,6 +236,8 @@ public class ConnectLinuxCommand {
             String line = null;
             while ((line = br.readLine()) != null) {
                 buffer.append(line + "\n");
+                logger.info(line);
+                ShellConsoles.write(line);
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
