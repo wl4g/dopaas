@@ -46,6 +46,7 @@ import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
+import com.wl4g.devops.shell.utils.ShellConsoleHolder;
 
 /**
  * Socket server shell processor
@@ -168,6 +169,9 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 		// Get shellContext
 		ShellContext context = getClient().getContext();
+
+		// Default initialize
+		ShellConsoleHolder.bind(context);
 
 		// Overwrite parameters
 		if (index < args.size()) {
