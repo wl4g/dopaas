@@ -75,8 +75,8 @@ public class ShellContext implements InternalInjectable {
 	public final void begin() {
 		this.state = RESP_WAIT;
 
-		// Output start mark
-		write(EMPTY);
+		// Print start mark
+		printf(EMPTY);
 	}
 
 	/**
@@ -85,8 +85,8 @@ public class ShellContext implements InternalInjectable {
 	public final void end() {
 		this.state = FINISHED;
 
-		// Output end mark
-		write(EMPTY);
+		// Print end mark
+		printf(EMPTY);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class ShellContext implements InternalInjectable {
 	 * @param message
 	 * @throws IllegalStateException
 	 */
-	public void write(String message) throws IllegalStateException {
+	public void printf(String message) throws IllegalStateException {
 		ChannelMessageHandler client = getClient();
 		if (client != null && client.isActive()) {
 			try {

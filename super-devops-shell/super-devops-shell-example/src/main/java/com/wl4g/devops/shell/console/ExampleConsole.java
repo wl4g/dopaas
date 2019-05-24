@@ -94,8 +94,8 @@ public class ExampleConsole {
 					String message = "This is the " + i + "th message!";
 					log.info("Example log write => {}", message);
 
-					// Output stream message
-					context.write(message);
+					// Print stream message
+					context.printf(message);
 
 					try {
 						Thread.sleep(1500L);
@@ -103,7 +103,7 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-				context.write("Print successfully completed!");
+				context.printf("Print successfully completed!");
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
 				context.end();
