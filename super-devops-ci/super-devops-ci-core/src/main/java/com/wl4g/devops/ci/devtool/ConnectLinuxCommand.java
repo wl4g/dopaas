@@ -137,6 +137,7 @@ public class ConnectLinuxCommand {
                 throw new RuntimeException("login fail");
             }
         } catch (Exception e) {
+            ShellConsoleHolder.writeQuietly("exce fail:" + command+"\n"+e.getMessage());
             throw e;
         } finally {
             if (null != conn) {
@@ -248,7 +249,7 @@ public class ConnectLinuxCommand {
                 session.close();
             }
         }
-        logger.info(result);
+        //logger.info(result);
         return result;
     }
 
