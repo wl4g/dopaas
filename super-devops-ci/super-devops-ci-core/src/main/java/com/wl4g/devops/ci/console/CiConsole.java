@@ -10,6 +10,7 @@ import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellConsoles;
+import com.wl4g.devops.shell.processor.ShellContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @ShellComponent
 public class CiConsole {
 
+
     @Autowired
     private AppGroupDao appGroupDao;
 
@@ -30,12 +32,12 @@ public class CiConsole {
 
     @ShellMethod(keys = "dev", group = "Ci command",
             help = "devlop")
-    public String devlop(BuildArgument argument) {
+    public String devlop(BuildArgument argument, ShellContext context) {
         String appGroupName = argument.getAppGroupName();
         List<String> instances = argument.getInstances();
         String branchName = argument.getBranchName();
         //try add console return
-        ShellConsoles.begin();
+        context.begin();
         // Used to simulate an asynchronous task, constantly outputting logs
         new Thread(() -> {
             try {
