@@ -41,7 +41,7 @@ import com.wl4g.devops.shell.registry.InternalInjectable;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class ShellContext implements InternalInjectable {
+public final class ShellContext implements InternalInjectable {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -49,7 +49,7 @@ public class ShellContext implements InternalInjectable {
 	final private ShellHandler client;
 
 	/** Line result message state. */
-	private LineResultState state;
+	private volatile LineResultState state;
 
 	public ShellContext(ShellHandler client) {
 		this(client, NONCE);
@@ -72,7 +72,7 @@ public class ShellContext implements InternalInjectable {
 	/**
 	 * Manually open data flow message transaction output.
 	 */
-	public final void begin() {
+	public synchronized void begin() {
 		this.state = RESP_WAIT;
 
 		// Print start mark
@@ -82,7 +82,7 @@ public class ShellContext implements InternalInjectable {
 	/**
 	 * Manually end data flow message transaction output.
 	 */
-	public final void end() {
+	public synchronized void end() {
 		this.state = FINISHED;
 
 		// Print end mark
@@ -95,7 +95,7 @@ public class ShellContext implements InternalInjectable {
 	 * @param message
 	 * @throws IllegalStateException
 	 */
-	public void printf(String message) throws IllegalStateException {
+	public synchronized void printf(String message) throws IllegalStateException {
 		ChannelMessageHandler client = getClient();
 		if (client != null && client.isActive()) {
 			try {
