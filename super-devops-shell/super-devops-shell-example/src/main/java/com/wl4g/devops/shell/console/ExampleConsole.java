@@ -96,13 +96,9 @@ public class ExampleConsole {
 					// Print stream message
 					ShellConsoleHolder.printf(message);
 
-					try {
-						Thread.sleep(1500L);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
 				}
 				ShellConsoleHolder.printf("Print successfully completed!");
+
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
 				ShellConsoleHolder.end();
