@@ -55,7 +55,21 @@ public abstract class ShellConsoleHolder {
 	 * @return
 	 */
 	public static ShellContext getContext() {
-		return contextCache.get();
+		return getContext(false);
+	}
+
+	/**
+	 * Got bind shell context.
+	 * 
+	 * @param assertion
+	 * @return
+	 */
+	public static ShellContext getContext(boolean assertion) {
+		ShellContext context = contextCache.get();
+		if (assertion && context == null) {
+			throw new IllegalStateException("The context object was not retrieved. first use bind()");
+		}
+		return context;
 	}
 
 	/**
