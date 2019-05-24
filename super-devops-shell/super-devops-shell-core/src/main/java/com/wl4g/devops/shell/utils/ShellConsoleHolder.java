@@ -16,6 +16,7 @@
 package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.shell.processor.ShellContext;
+
 import static com.wl4g.devops.shell.bean.LineResultState.RESP_WAIT;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
@@ -55,7 +56,21 @@ public abstract class ShellConsoleHolder {
 	 * @return
 	 */
 	public static ShellContext getContext() {
-		return contextCache.get();
+		return getContext(false);
+	}
+
+	/**
+	 * Got bind shell context.
+	 * 
+	 * @param assertion
+	 * @return
+	 */
+	public static ShellContext getContext(boolean assertion) {
+		ShellContext context = contextCache.get();
+		if (assertion && context == null) {
+			throw new IllegalStateException("The context object was not retrieved. first use bind()");
+		}
+		return context;
 	}
 
 	/**
@@ -89,6 +104,34 @@ public abstract class ShellConsoleHolder {
 		}
 
 		context.write(message);
+	}
+
+	/**
+	 * Manually open data flow message transaction output.
+	 */
+	public static void beginQuietly() {
+		getContext().begin();
+	}
+
+	/**
+	 * Manually open data flow message transaction output.
+	 */
+	public static void begin() {
+		getContext(true).begin();
+	}
+
+	/**
+	 * Manually end data flow message transaction output.
+	 */
+	public static void endQuietly() {
+		getContext().end();
+	}
+
+	/**
+	 * Manually end data flow message transaction output.
+	 */
+	public static void end() {
+		getContext(true).end();
 	}
 
 }
