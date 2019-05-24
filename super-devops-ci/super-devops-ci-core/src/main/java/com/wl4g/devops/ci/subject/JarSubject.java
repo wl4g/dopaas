@@ -1,18 +1,10 @@
 package com.wl4g.devops.ci.subject;
 
-import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
-import com.wl4g.devops.common.bean.scm.AppInstance;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-
 /**
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-@Component
-public class JarSubject extends BaseSubject {
+/*public class JarSubject extends BaseSubject {
 
 	public JarSubject(){
 
@@ -45,7 +37,7 @@ public class JarSubject extends BaseSubject {
 		for(AppInstance instance : instances){
 
 			//scp to server
-			scp(path+"/"+tarPath,instance.getServerAccount()+"@"+instance.getHost(),instance.getWebappsPath());
+			scp(path+"/"+tarPath,instance.getServerAccount()+"@"+instance.getHost(),instance.getBasePath());
 
 			//stop server
 			stop(instance.getHost(),instance.getServerAccount(),alias);
@@ -73,4 +65,4 @@ public class JarSubject extends BaseSubject {
 		return ConnectLinuxCommand.execute(host,userName,command);
 	}
 
-}
+}*/

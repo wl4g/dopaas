@@ -21,4 +21,7 @@ public interface ProjectDao {
     List<Project> list(CustomPage customPage);
 
     Project getByProjectName(String projectName);
+
+    Project getByAppGroupId(Integer appGrouPId);
+
 }

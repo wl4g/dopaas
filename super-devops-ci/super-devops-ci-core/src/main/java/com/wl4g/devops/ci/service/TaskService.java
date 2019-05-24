@@ -21,10 +21,9 @@ public interface TaskService {
     Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha
             , Integer parentId, String command, Integer tarType);
 
-    void updateTaskStatus(int taskId,int status);
+    void updateTaskStatus(int taskId, int status);
 
-    void updateTaskDetailStatus(int taskDetailId,int status);
-
+    void updateTaskDetailStatus(int taskDetailId, int status);
 
 
 }
