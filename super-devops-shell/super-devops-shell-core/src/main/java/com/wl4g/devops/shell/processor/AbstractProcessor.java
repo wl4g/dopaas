@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.shell.processor;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -28,7 +26,6 @@ import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
-import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
 
 /**
  * Abstract shell component processor
@@ -82,16 +79,15 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	protected int findParameterTypeIndex(TargetMethodWrapper tm, Class<?> clazz) {
 		int index = -1, i = 0;
 
-		List<TargetParameter> parameters = tm.getParameters();
-		for (TargetParameter tp : parameters) {
-			++i;
-			if (tp.getParamType() == clazz) {
-				Assert.state(index < 0,
-						String.format(
-								"Find more than one parameter of the same type. make sure that the same type parameter is unique. Method: %s, parameter: %s",
-								tp.getMethod(), clazz));
+		for (Class<?> cls : tm.getMethod().getParameterTypes()) {
+			if (cls == clazz) {
+				String errmsg = String.format(
+						"Find more than one parameter of the same type. make sure that the same type parameter is unique. Method: %s, parameter: %s",
+						tm.getMethod(), clazz);
+				Assert.state(index < 0, errmsg);
 				index = i;
 			}
+			++i;
 		}
 
 		return index;

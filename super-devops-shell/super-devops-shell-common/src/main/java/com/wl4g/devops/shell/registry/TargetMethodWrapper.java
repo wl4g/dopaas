@@ -164,6 +164,12 @@ public class TargetMethodWrapper implements Serializable {
 
 		for (int i = 0; i < paramTypes.length; i++) {
 			Class<?> paramType = paramTypes[i];
+			// Eliminate built-in injection parameters to prevent dead
+			// cycle.
+			if (InternalInjectable.class.isAssignableFrom(paramType)) {
+				continue;
+			}
+
 			ShellOption shOpt = findShellOption(paramAnnos[i]);
 
 			// Wrap target method parameter
@@ -367,6 +373,12 @@ public class TargetMethodWrapper implements Serializable {
 			try {
 				for (Field f : clazz.getDeclaredFields()) {
 					Class<?> ftype = f.getType();
+					// Eliminate built-in injection parameters to prevent dead
+					// cycle.
+					if (InternalInjectable.class.isAssignableFrom(ftype)) {
+						continue;
+					}
+
 					String fname = f.getName();
 
 					if (simpleType(ftype)) {
@@ -385,10 +397,7 @@ public class TargetMethodWrapper implements Serializable {
 										ShellOption.class.getSimpleName(), f));
 							}
 						}
-					}
-					// Eliminate built-in injection parameters to prevent dead
-					// cycle.
-					else if (InternalInjectable.class.isAssignableFrom(ftype)) {
+					} else {
 						extractHierarchyFields(ftype, parameter);
 					}
 				}

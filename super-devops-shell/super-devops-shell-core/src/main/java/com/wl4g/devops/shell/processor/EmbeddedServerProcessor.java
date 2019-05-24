@@ -21,7 +21,6 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +28,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import static java.util.Arrays.*;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -152,6 +150,10 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 				// Processing
 				ShellHandler handler = bind(new ShellHandler(registry, s, line -> process(line)));
+
+				// The worker thread may not be the parent thread of Runnable,
+				// so you need to display bind to the thread in the afternoon
+				// again.
 				worker.submit(() -> bind(handler).run());
 
 			} catch (Throwable e) {
@@ -161,16 +163,18 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 	}
 
 	@Override
-	protected void preProcessParameters(TargetMethodWrapper tm, Object[] args) {
+	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
 		int index = findParameterTypeIndex(tm, ShellContext.class);
 
 		// Get shellContext
 		ShellContext context = getClient().getContext();
 
 		// Overwrite parameters
-		List<Object> _args = new ArrayList<>(asList(args));
-		_args.add(index, context);
-		args = _args.toArray();
+		if (index < args.size()) {
+			args.add(index, context);
+		} else {
+			args.add(context);
+		}
 	}
 
 	/**
