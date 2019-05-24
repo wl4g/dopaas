@@ -25,6 +25,6 @@ import java.io.Serializable;
  * @since
  */
 public abstract class Message implements Serializable {
-	private static final long serialVersionUID = 771621623867420464L;
+	private static final long serialVersionUID = 771621623117425564L;
 
 }
