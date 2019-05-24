@@ -29,6 +29,6 @@ import com.wl4g.devops.shell.config.ShellAutoConfiguration;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Import({ ShellAutoConfiguration.class })
-public @interface EnabledShellServer {
+public @interface EnableShellServer {
 
 }

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.shell.processor;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -23,7 +25,10 @@ import org.springframework.util.Assert;
 import com.wl4g.devops.shell.AbstractActuator;
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.registry.TargetMethodWrapper;
+import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
 
 /**
  * Abstract shell component processor
@@ -37,7 +42,7 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	/**
 	 * Accept socket client handlers.
 	 */
-	final private static ThreadLocal<ChannelMessageHandler> clientCache = new InheritableThreadLocal<>();
+	final private ThreadLocal<ChannelMessageHandler> clientContext = new InheritableThreadLocal<>();
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -68,15 +73,50 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	}
 
 	/**
+	 * Find parameter type index.
+	 * 
+	 * @param tm
+	 * @param clazz
+	 * @return
+	 */
+	protected int findParameterTypeIndex(TargetMethodWrapper tm, Class<?> clazz) {
+		int index = -1, i = 0;
+
+		List<TargetParameter> parameters = tm.getParameters();
+		for (TargetParameter tp : parameters) {
+			++i;
+			if (tp.getParamType() == clazz) {
+				Assert.state(index < 0,
+						String.format(
+								"Find more than one parameter of the same type. make sure that the same type parameter is unique. Method: %s, parameter: %s",
+								tp.getMethod(), clazz));
+				index = i;
+			}
+		}
+
+		return index;
+	}
+
+	/**
 	 * Register current client handler.
 	 * 
 	 * @param client
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends ChannelMessageHandler> T registerClient(ChannelMessageHandler client) {
-		clientCache.set(client);
+	protected <T extends ShellHandler> T bind(ChannelMessageHandler client) {
+		clientContext.set(client);
 		return (T) client;
+	}
+
+	/**
+	 * Get current client handler
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T extends ShellHandler> T getClient() {
+		return (T) clientContext.get();
 	}
 
 	/**
@@ -86,17 +126,7 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	 * @return
 	 */
 	protected void cleanup() {
-		clientCache.remove();
-	}
-
-	/**
-	 * Get current client handler
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	static <T extends ChannelMessageHandler> T getClient() {
-		return (T) clientCache.get();
+		clientContext.remove();
 	}
 
 }

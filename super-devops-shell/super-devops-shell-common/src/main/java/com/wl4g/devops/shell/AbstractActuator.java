@@ -99,6 +99,9 @@ public abstract class AbstractActuator implements Actuator {
 			// Resolve method parameters
 			Object[] args = resolveArguments(commands, tm);
 
+			// PreProcessing
+			preProcessParameters(tm, args);
+
 			// Invocation
 			return tm.getMethod().invoke(tm.getTarget(), args);
 		} catch (Exception e) {
@@ -202,7 +205,17 @@ public abstract class AbstractActuator implements Actuator {
 	}
 
 	/**
-	 * Post invocation result prcessing
+	 * Preprocess parameters.
+	 * 
+	 * @param tm
+	 * @param args
+	 */
+	protected void preProcessParameters(TargetMethodWrapper tm, Object[] args) {
+
+	}
+
+	/**
+	 * Post invocation result processing.
 	 * 
 	 * @param result
 	 */

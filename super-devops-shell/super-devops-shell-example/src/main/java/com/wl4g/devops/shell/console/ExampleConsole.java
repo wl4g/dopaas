@@ -28,7 +28,7 @@ import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.bean.MixedArgument;
 import com.wl4g.devops.shell.bean.SumArgument;
 import com.wl4g.devops.shell.bean.SumResult;
-import com.wl4g.devops.shell.processor.ShellConsoles;
+import com.wl4g.devops.shell.processor.ShellContext;
 import com.wl4g.devops.shell.service.ExampleService;
 
 @ShellComponent
@@ -80,11 +80,12 @@ public class ExampleConsole {
 	 */
 	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that can output logs in real time.")
 	public String logs(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Input parameters (number of messages)") int num) {
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Input parameters (number of messages)") int num,
+			ShellContext context) {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
-		ShellConsoles.begin();
+		context.begin();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
@@ -94,7 +95,7 @@ public class ExampleConsole {
 					log.info("Example log write => {}", message);
 
 					// Output stream message
-					ShellConsoles.write(message);
+					context.write(message);
 
 					try {
 						Thread.sleep(1500L);
@@ -102,10 +103,10 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-				ShellConsoles.write("Print successfully completed!");
+				context.write("Print successfully completed!");
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
-				ShellConsoles.end();
+				context.end();
 			}
 
 		}).start();
