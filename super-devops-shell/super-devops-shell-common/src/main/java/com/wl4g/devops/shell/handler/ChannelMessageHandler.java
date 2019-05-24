@@ -15,20 +15,16 @@
  */
 package com.wl4g.devops.shell.handler;
 
-import static java.lang.System.err;
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.utils.Assert;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
-import com.wl4g.devops.shell.utils.Assert;
+import static java.lang.System.err;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 
 /**
  * Shell message handler
@@ -92,7 +88,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * @param message
 	 * @throws IOException
 	 */
-	public void writeAndFlush(Object message) throws IOException {
+	public synchronized void writeAndFlush(Object message) throws IOException {
 		Assert.notNull(message, "message is null, please check configure");
 		ObjectOutputStream out = new ObjectOutputStream(_out);
 		out.writeObject(message);
