@@ -165,20 +165,23 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 	@Override
 	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
-		int index = findParameterTypeIndex(tm, ShellContext.class);
-
 		// Get shellContext
 		ShellContext context = getClient().getContext();
 
 		// Default initialize
 		ShellConsoleHolder.bind(context);
 
-		// Overwrite parameters
-		if (index < args.size()) {
-			args.add(index, context);
-		} else {
-			args.add(context);
+		// Find ShellContext parameter index
+		int index = findParameterTypeIndex(tm, ShellContext.class);
+		if (index >= 0) {
+			// Overwrite parameters
+			if (index < args.size()) {
+				args.add(index, context);
+			} else {
+				args.add(context);
+			}
 		}
+
 	}
 
 	/**
