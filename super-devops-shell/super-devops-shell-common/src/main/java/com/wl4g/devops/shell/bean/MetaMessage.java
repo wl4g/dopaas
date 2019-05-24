@@ -28,7 +28,7 @@ import com.wl4g.devops.shell.registry.TargetMethodWrapper;
  * @since
  */
 public class MetaMessage extends Message {
-	private static final long serialVersionUID = -8574315246731909685L;
+	private static final long serialVersionUID = -8574315248835509685L;
 
 	/**
 	 * Shell component target methods
