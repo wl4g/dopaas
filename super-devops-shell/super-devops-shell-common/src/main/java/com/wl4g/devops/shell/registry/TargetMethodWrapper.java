@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
-
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -165,6 +164,12 @@ public class TargetMethodWrapper implements Serializable {
 
 		for (int i = 0; i < paramTypes.length; i++) {
 			Class<?> paramType = paramTypes[i];
+			// Eliminate built-in injection parameters to prevent dead
+			// cycle.
+			if (InternalInjectable.class.isAssignableFrom(paramType)) {
+				continue;
+			}
+
 			ShellOption shOpt = findShellOption(paramAnnos[i]);
 
 			// Wrap target method parameter
@@ -368,10 +373,17 @@ public class TargetMethodWrapper implements Serializable {
 			try {
 				for (Field f : clazz.getDeclaredFields()) {
 					Class<?> ftype = f.getType();
+					// Eliminate built-in injection parameters to prevent dead
+					// cycle.
+					if (InternalInjectable.class.isAssignableFrom(ftype)) {
+						continue;
+					}
+
 					String fname = f.getName();
 
-					ShellOption opt = f.getAnnotation(ShellOption.class);
 					if (simpleType(ftype)) {
+						ShellOption opt = f.getAnnotation(ShellOption.class);
+
 						// Filter unsafe field.
 						if (opt != null) {
 							// [MARK1],See:[AbstractActuator.MARK4]

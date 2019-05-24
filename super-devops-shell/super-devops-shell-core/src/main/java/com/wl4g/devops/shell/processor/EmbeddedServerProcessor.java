@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -37,7 +38,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import static com.wl4g.devops.shell.processor.ShellConsoles.*;
 import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
@@ -45,6 +45,7 @@ import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
  * Socket server shell processor
@@ -148,12 +149,31 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				}
 
 				// Processing
-				ShellHandler handler = registerClient(new ShellHandler(registry, s, line -> process(line)));
-				worker.submit(handler.starting());
+				ShellHandler handler = bind(new ShellHandler(registry, s, line -> process(line)));
+
+				// The worker thread may not be the parent thread of Runnable,
+				// so you need to display bind to the thread in the afternoon
+				// again.
+				worker.submit(() -> bind(handler).run());
 
 			} catch (Throwable e) {
 				log.warn("Shell boss thread shutdown. cause: {}", getStackTrace(e));
 			}
+		}
+	}
+
+	@Override
+	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
+		int index = findParameterTypeIndex(tm, ShellContext.class);
+
+		// Get shellContext
+		ShellContext context = getClient().getContext();
+
+		// Overwrite parameters
+		if (index < args.size()) {
+			args.add(index, context);
+		} else {
+			args.add(context);
 		}
 	}
 
@@ -168,15 +188,16 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 		final protected Logger log = LoggerFactory.getLogger(getClass());
 
+		/** Shell context */
+		final ShellContext context;
+
 		public ShellHandler(ShellBeanRegistry registry, Socket client, Function<String, Object> function) {
 			super(registry, client, function);
+			this.context = new ShellContext(this);
 		}
 
-		@Override
-		public ChannelMessageHandler starting() {
-			// Running
-			run();
-			return this;
+		public ShellContext getContext() {
+			return context;
 		}
 
 		@Override
@@ -197,7 +218,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 						// Processing
 						Object ret = function.apply(line.getLine());
 						if (ret != null) {
-							result = new ResultMessage(getState(), ret.toString());
+							result = new ResultMessage(context.getState(), ret.toString());
 						}
 					}
 					// Request register commands
@@ -227,7 +248,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 		@Override
 		public void close() throws IOException {
-			cleanup(); // Prevent ThreadLocal Memory Leakage
+			cleanup(); // Prevent threadContext memory leakage
 
 			super.close();
 		}

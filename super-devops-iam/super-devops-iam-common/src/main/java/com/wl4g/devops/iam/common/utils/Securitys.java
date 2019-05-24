@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
 /**
- * IAM securiy utiliy tools.
+ * IAM security utility tools.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月21日
@@ -50,10 +50,11 @@ public abstract class Securitys {
 
 				String hostFactor = createHostFactor(remoteHost);
 				if (isNotBlank(hostFactor)) {
-					// add(hostFactor);
+					add(hostFactor);
 
 					// for test::
-					add(KEY_FAIL_LIMITER_RIP_PREFIX + System.currentTimeMillis());
+					// add(KEY_FAIL_LIMITER_RIP_PREFIX +
+					// System.currentTimeMillis());
 				}
 			}
 		};

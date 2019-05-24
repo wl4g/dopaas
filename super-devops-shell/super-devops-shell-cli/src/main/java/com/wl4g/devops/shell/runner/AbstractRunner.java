@@ -490,7 +490,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 						// Wake up the waiting thread when the response is
 						// complete.
 						state = result.getState();
-						if (state == NONCE || state == FINISH) {
+						if (state == NONCE || state == FINISHED) {
 							wakeup(); // Wake-up lineReader
 						}
 

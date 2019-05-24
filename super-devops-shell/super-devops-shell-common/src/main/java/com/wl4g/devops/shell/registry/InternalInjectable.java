@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell;
+package com.wl4g.devops.shell.registry;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import com.wl4g.devops.shell.annotation.EnableShellServer;
-
-@EnableShellServer
-@SpringBootApplication
-public class DevOpsShellExample {
-
-	public static void main(String[] args) {
-		SpringApplication.run(DevOpsShellExample.class, args);
-	}
+/**
+ * Built-in injectable parameters, such as ShellContext.</br>
+ * {@link TargetParameter#extractHierarchyFields}
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年5月24日
+ * @since
+ */
+public interface InternalInjectable {
 
 }
