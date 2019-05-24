@@ -15,24 +15,22 @@
  */
 package com.wl4g.devops.shell.processor;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-
-import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
-
-import static com.wl4g.devops.shell.bean.LineResultState.*;
-
 import com.wl4g.devops.shell.bean.LineResultState;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
 import com.wl4g.devops.shell.registry.InternalInjectable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import java.io.IOException;
+
+import static com.wl4g.devops.shell.bean.LineResultState.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 /**
  * Shell handler context
@@ -76,7 +74,7 @@ public final class ShellContext implements InternalInjectable {
 		this.state = RESP_WAIT;
 
 		// Print start mark
-		printf(EMPTY);
+		printf("abc");
 	}
 
 	/**

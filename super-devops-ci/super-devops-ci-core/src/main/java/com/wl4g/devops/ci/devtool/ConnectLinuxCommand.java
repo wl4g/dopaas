@@ -20,7 +20,7 @@ public class ConnectLinuxCommand {
      */
 	/*public static String run(String command) throws Exception {
 		logger.info("exce command:"+command);
-		ShellConsoleHolder.writeQuietly("exce command:"+command);
+		ShellConsoleHolder.printfQuietly("exce command:"+command);
 		Process p = Runtime.getRuntime().exec(command);
 		InputStream is = p.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -31,7 +31,7 @@ public class ConnectLinuxCommand {
 		while ((s = reader.readLine()) != null) {
 			result.append(s).append("\n");
 			logger.info(s);
-			ShellConsoleHolder.writeQuietly(s);
+			ShellConsoleHolder.printfQuietly(s);
 		}
 		if (p.exitValue() != 0) {
 			InputStream er = p.getErrorStream();
@@ -39,7 +39,7 @@ public class ConnectLinuxCommand {
 			while ((s = erReader.readLine()) != null) {
 				result.append(s).append("\n");
 				logger.info(s);
-				ShellConsoleHolder.writeQuietly(s);
+				ShellConsoleHolder.printfQuietly(s);
 			}
 			//exce fail
 			throw new RuntimeException("exce command fail,command="+command+"\n cause:"+result.toString());
@@ -62,12 +62,12 @@ public class ConnectLinuxCommand {
         while ((line = br.readLine()) != null) {
             sb.append(line).append("\n");
             logger.info(line);
-            ShellConsoleHolder.writeQuietly(line);
+            ShellConsoleHolder.printfQuietly(line);
         }
         while ((line = be.readLine()) != null) {
             se.append(line).append("\n");
             logger.info(line);
-            ShellConsoleHolder.writeQuietly(line);
+            ShellConsoleHolder.printfQuietly(line);
         }
         String result = sb.toString();
         String resulterror = se.toString();
@@ -119,7 +119,7 @@ public class ConnectLinuxCommand {
      */
     public static String execute(String ip, String userName, String command, char[] rsa) throws Exception {
         logger.info("exce command:" + command);
-        ShellConsoleHolder.writeQuietly("exce command:" + command);
+        ShellConsoleHolder.printfQuietly("exce command:" + command);
         Connection conn = null;
         try {
             boolean flag = false;
@@ -130,14 +130,14 @@ public class ConnectLinuxCommand {
                 logger.debug("login success！");
                 String result = execute(conn, command);
                 //logger.info(result);
-                //ShellConsoleHolder.writeQuietly(result);
+                //ShellConsoleHolder.printfQuietly(result);
                 return result;
             } else {
                 logger.error("login fail!");
                 throw new RuntimeException("login fail");
             }
         } catch (Exception e) {
-            ShellConsoleHolder.writeQuietly("exce fail:" + command+"\n"+e.getMessage());
+            ShellConsoleHolder.printfQuietly("exce fail:" + command+"\n"+e.getMessage());
             throw e;
         } finally {
             if (null != conn) {
@@ -155,7 +155,7 @@ public class ConnectLinuxCommand {
      */
     public static void uploadFile(String ip, String userName,char[] rsa,File f, String remoteTargetDirectory) {
         logger.info("upload file begin: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
-        ShellConsoleHolder.writeQuietly("upload file: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+        ShellConsoleHolder.printfQuietly("upload file: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
         Connection conn = null;
         SCPOutputStream os = null;
         FileInputStream fis = null;
@@ -176,14 +176,14 @@ public class ConnectLinuxCommand {
                 }
                 os.flush();
                 logger.info("upload file success: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
-                ShellConsoleHolder.writeQuietly("upload file success: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+                ShellConsoleHolder.printfQuietly("upload file success: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
             } else {
                 logger.error("login fail!");
                 throw new RuntimeException("login fail");
             }
         } catch (IOException e) {
             logger.error("upload file fail: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
-            ShellConsoleHolder.writeQuietly("upload file fail: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+            ShellConsoleHolder.printfQuietly("upload file fail: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
             e.printStackTrace();
             throw new RuntimeException(e.getCause());
         }finally {
@@ -265,7 +265,7 @@ public class ConnectLinuxCommand {
             while ((line = br.readLine()) != null) {
                 buffer.append(line + "\n");
                 logger.info(line);
-                ShellConsoleHolder.writeQuietly(line);
+                ShellConsoleHolder.printfQuietly(line);
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
