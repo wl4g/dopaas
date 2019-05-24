@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
-
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -370,8 +369,9 @@ public class TargetMethodWrapper implements Serializable {
 					Class<?> ftype = f.getType();
 					String fname = f.getName();
 
-					ShellOption opt = f.getAnnotation(ShellOption.class);
 					if (simpleType(ftype)) {
+						ShellOption opt = f.getAnnotation(ShellOption.class);
+
 						// Filter unsafe field.
 						if (opt != null) {
 							// [MARK1],See:[AbstractActuator.MARK4]
@@ -385,7 +385,10 @@ public class TargetMethodWrapper implements Serializable {
 										ShellOption.class.getSimpleName(), f));
 							}
 						}
-					} else {
+					}
+					// Eliminate built-in injection parameters to prevent dead
+					// cycle.
+					else if (InternalInjectable.class.isAssignableFrom(ftype)) {
 						extractHierarchyFields(ftype, parameter);
 					}
 				}

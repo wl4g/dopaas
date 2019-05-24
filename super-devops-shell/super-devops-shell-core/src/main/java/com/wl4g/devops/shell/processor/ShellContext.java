@@ -32,6 +32,7 @@ import com.wl4g.devops.shell.bean.LineResultState;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
+import com.wl4g.devops.shell.registry.InternalInjectable;
 
 /**
  * Shell handler context
@@ -40,7 +41,7 @@ import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class ShellContext {
+public class ShellContext implements InternalInjectable {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
