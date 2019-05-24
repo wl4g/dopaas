@@ -78,7 +78,7 @@ public abstract class ShellConsoleHolder {
 	 * 
 	 * @param message
 	 */
-	public static void writeQuietly(String message) {
+	public static void printfQuietly(String message) {
 		ShellContext context = getContext();
 		if (context != null && context.getState() == RESP_WAIT) {
 			try {
@@ -109,22 +109,8 @@ public abstract class ShellConsoleHolder {
 	/**
 	 * Manually open data flow message transaction output.
 	 */
-	public static void beginQuietly() {
-		getContext().begin();
-	}
-
-	/**
-	 * Manually open data flow message transaction output.
-	 */
 	public static void begin() {
 		getContext(true).begin();
-	}
-
-	/**
-	 * Manually end data flow message transaction output.
-	 */
-	public static void endQuietly() {
-		getContext().end();
 	}
 
 	/**
