@@ -109,15 +109,15 @@ public abstract class ShellConsoleHolder {
 	/**
 	 * Manually open data flow message transaction output.
 	 */
-	public static void begin() {
-		getContext(true).begin();
+	public static void open() {
+		getContext(true).open();
 	}
 
 	/**
 	 * Manually end data flow message transaction output.
 	 */
-	public static void end() {
-		getContext(true).end();
+	public static void close() {
+		getContext(true).close();
 	}
 
 }
