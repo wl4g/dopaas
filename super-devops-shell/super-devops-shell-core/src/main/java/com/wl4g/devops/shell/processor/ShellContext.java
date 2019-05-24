@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import static com.wl4g.devops.shell.bean.LineResultState.*;
@@ -39,7 +40,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @version v1.0 2019年5月24日
  * @since
  */
-public final class ShellContext implements InternalInjectable {
+public final class ShellContext implements InternalInjectable, Closeable {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -70,7 +71,7 @@ public final class ShellContext implements InternalInjectable {
 	/**
 	 * Manually open data flow message transaction output.
 	 */
-	public synchronized void begin() {
+	public synchronized void open() {
 		this.state = RESP_WAIT;
 
 		// Print start mark
@@ -80,7 +81,8 @@ public final class ShellContext implements InternalInjectable {
 	/**
 	 * Manually end data flow message transaction output.
 	 */
-	public synchronized void end() {
+	@Override
+	public synchronized void close() {
 		this.state = FINISHED;
 
 		// Print end mark

@@ -1,9 +1,9 @@
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.devtool.ConnectLinuxCommand;
-import com.wl4g.devops.ci.devtool.DevConfig;
-import com.wl4g.devops.ci.devtool.GitUtil;
+import com.wl4g.devops.ci.config.DevConfig;
 import com.wl4g.devops.ci.service.DependencyService;
+import com.wl4g.devops.ci.utils.SSHTools;
+import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.dao.ci.DependencyDao;
@@ -22,59 +22,56 @@ import java.util.List;
 @Service
 public class DependencyServiceImpl implements DependencyService {
 
-    @Autowired
-    private DependencyDao dependencyDao;
+	@Autowired
+	private DependencyDao dependencyDao;
 
-    @Autowired
-    private DevConfig devConfig;
+	@Autowired
+	private DevConfig devConfig;
 
-    @Autowired
-    private ProjectDao projectDao;
+	@Autowired
+	private ProjectDao projectDao;
 
+	@Override
+	public void build(Dependency dependency, String branch) throws Exception {
 
-    @Override
-    public void build(Dependency dependency, String branch) throws Exception {
+		Integer projectId = dependency.getProjectId();
 
-        Integer projectId = dependency.getProjectId();
+		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
+		if (dependencies != null && dependencies.size() > 0) {
+			for (Dependency dep : dependencies) {
+				String br = dep.getParentBranch();
+				build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
+			}
+		}
 
-        List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
-        if (dependencies != null && dependencies.size() > 0) {
-            for (Dependency dep : dependencies) {
-                String br = dep.getParentBranch();
-                build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
-            }
-        }
+		// TODO build
+		Project project = projectDao.selectByPrimaryKey(projectId);
+		String path = devConfig.getGitBasePath() + "/" + project.getProjectName();
+		if (checkGitPahtExist(path)) {
+			GitUtils.checkout(path, branch);
+		} else {
+			GitUtils.clone(project.getGitUrl(), path, branch);
+		}
+		// install
+		install(path);
 
-        //TODO build
-        Project project = projectDao.selectByPrimaryKey(projectId);
-        String path = devConfig.getGitBasePath() + "/" + project.getProjectName();
-        if (checkGitPahtExist(path)) {
-            GitUtil.checkout(path, branch);
-        } else {
-            GitUtil.clone(project.getGitUrl(), path, branch);
-        }
-        //install
-        install(path);
+	}
 
-    }
+	public boolean checkGitPahtExist(String path) throws Exception {
+		File file = new File(path + "/.git");
+		if (file.exists()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    public boolean checkGitPahtExist(String path) throws Exception {
-        File file = new File(path + "/.git");
-        if (file.exists()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /**
-     * build (maven)
-     */
-    public String install(String path) throws Exception {
-        String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-        return ConnectLinuxCommand.runLocal(command);
-    }
-
+	/**
+	 * build (maven)
+	 */
+	public String install(String path) throws Exception {
+		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
+		return SSHTools.runLocal(command);
+	}
 
 }

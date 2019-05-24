@@ -84,7 +84,7 @@ public class ExampleConsole {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
-		ShellConsoleHolder.begin();
+		ShellConsoleHolder.open();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
@@ -101,7 +101,7 @@ public class ExampleConsole {
 
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
-				ShellConsoleHolder.end();
+				ShellConsoleHolder.close();
 			}
 
 		}).start();

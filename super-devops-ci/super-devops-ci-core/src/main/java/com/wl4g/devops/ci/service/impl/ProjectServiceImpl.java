@@ -16,37 +16,36 @@ import java.util.List;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-    private ProjectDao projectDao;
+	private ProjectDao projectDao;
 
-    @Override
-    public int insert(Project project) {
-        project.preInsert();
-        return projectDao.insert(project);
-    }
+	@Override
+	public int insert(Project project) {
+		project.preInsert();
+		return projectDao.insert(project);
+	}
 
-    @Override
-    public int update(Project project) {
-        project.preUpdate();
-        return projectDao.updateByPrimaryKeySelective(project);
-    }
+	@Override
+	public int update(Project project) {
+		project.preUpdate();
+		return projectDao.updateByPrimaryKeySelective(project);
+	}
 
-    @Override
-    public int deleteById(Integer id) {
-        Project project = new Project();
-        project.preUpdate();
-        project.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        return projectDao.updateByPrimaryKeySelective(project);
-    }
+	@Override
+	public int deleteById(Integer id) {
+		Project project = new Project();
+		project.preUpdate();
+		project.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		return projectDao.updateByPrimaryKeySelective(project);
+	}
 
-    @Override
-    public int removeById(Integer id) {
-        return projectDao.deleteByPrimaryKey(id);
-    }
+	@Override
+	public int removeById(Integer id) {
+		return projectDao.deleteByPrimaryKey(id);
+	}
 
-    @Override
-    public List<Project> list(CustomPage customPage) {
-        return projectDao.list(customPage);
-    }
-
+	@Override
+	public List<Project> list(CustomPage customPage) {
+		return projectDao.list(customPage);
+	}
 
 }
