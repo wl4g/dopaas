@@ -9,8 +9,8 @@ import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.processor.ShellConsoles;
 import com.wl4g.devops.shell.processor.ShellContext;
+import com.wl4g.devops.shell.utils.ShellConsoleHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,23 +33,27 @@ public class CiConsole {
     @ShellMethod(keys = "dev", group = "Ci command",
             help = "devlop")
     public String devlop(BuildArgument argument, ShellContext context) {
+        ShellConsoleHolder.bind(context);
+
+
         String appGroupName = argument.getAppGroupName();
         List<String> instances = argument.getInstances();
         String branchName = argument.getBranchName();
         //try add console return
+
         context.begin();
         // Used to simulate an asynchronous task, constantly outputting logs
         new Thread(() -> {
             try {
                 // Output stream message
-                ShellConsoles.write("task begin");
+                ShellConsoleHolder.writeQuietly("task begin");
                 ciService.createTask(appGroupName, branchName, instances);
-                ShellConsoles.write("task end");
+                ShellConsoleHolder.writeQuietly("task end");
             } catch (Exception e) {
-                ShellConsoles.write("task fail");
+                ShellConsoleHolder.writeQuietly("task fail");
             } finally {
                 // Must end, and must be after ShellConsoles.begin()
-                ShellConsoles.end();
+                ShellConsoleHolder.getContext().end();
             }
         }).start();
         return "create task";

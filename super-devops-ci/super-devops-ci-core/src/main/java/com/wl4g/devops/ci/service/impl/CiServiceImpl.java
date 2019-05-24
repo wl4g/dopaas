@@ -15,7 +15,7 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
-import com.wl4g.devops.shell.processor.ShellConsoles;
+import com.wl4g.devops.shell.utils.ShellConsoleHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -145,7 +145,7 @@ public class CiServiceImpl implements CiService {
         String sha = null;
 
         // Output stream message
-        ShellConsoles.write("task begin");
+        ShellConsoleHolder.writeQuietly("task begin");
         Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER, CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
         BaseSubject subject = getSubject(task);
 
