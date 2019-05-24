@@ -40,16 +40,6 @@ import com.wl4g.devops.shell.utils.Assert;
 public abstract class ChannelMessageHandler implements Runnable, Closeable {
 
 	/**
-	 * Start file descriptor.
-	 */
-	// final public static String BEGIN_EOF = "<<EOF>";
-
-	/**
-	 * End file descriptor.
-	 */
-	// final public static String EOF = "EOF";
-
-	/**
 	 * Currently running?
 	 */
 	final protected AtomicBoolean running = new AtomicBoolean(false);
