@@ -82,7 +82,7 @@ public abstract class ShellConsoleHolder {
 		ShellContext context = getContext();
 		if (context != null && context.getState() == RESP_WAIT) {
 			try {
-				context.write(message);
+				context.printf(message);
 			} catch (Exception e) {
 				log.warn("Write error => {}", getRootCauseMessage(e));
 			}
@@ -90,11 +90,11 @@ public abstract class ShellConsoleHolder {
 	}
 
 	/**
-	 * Output message to client console
+	 * Print message to client console
 	 * 
 	 * @param message
 	 */
-	public static void write(String message) {
+	public static void printf(String message) {
 		ShellContext context = getContext();
 		if (context == null) {
 			throw new IllegalStateException("The context object was not retrieved. first use bind()");
@@ -103,7 +103,7 @@ public abstract class ShellConsoleHolder {
 			throw new IllegalStateException("The current console channel may be closed!");
 		}
 
-		context.write(message);
+		context.printf(message);
 	}
 
 	/**
