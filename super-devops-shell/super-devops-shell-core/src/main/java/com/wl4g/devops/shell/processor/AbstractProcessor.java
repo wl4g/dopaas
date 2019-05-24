@@ -23,7 +23,9 @@ import org.springframework.util.Assert;
 import com.wl4g.devops.shell.AbstractActuator;
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
  * Abstract shell component processor
@@ -37,7 +39,7 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	/**
 	 * Accept socket client handlers.
 	 */
-	final private static ThreadLocal<ChannelMessageHandler> clientCache = new InheritableThreadLocal<>();
+	final private ThreadLocal<ChannelMessageHandler> clientContext = new InheritableThreadLocal<>();
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -68,15 +70,49 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	}
 
 	/**
+	 * Find parameter type index.
+	 * 
+	 * @param tm
+	 * @param clazz
+	 * @return
+	 */
+	protected int findParameterTypeIndex(TargetMethodWrapper tm, Class<?> clazz) {
+		int index = -1, i = 0;
+
+		for (Class<?> cls : tm.getMethod().getParameterTypes()) {
+			if (cls == clazz) {
+				String errmsg = String.format(
+						"Find more than one parameter of the same type. make sure that the same type parameter is unique. Method: %s, parameter: %s",
+						tm.getMethod(), clazz);
+				Assert.state(index < 0, errmsg);
+				index = i;
+			}
+			++i;
+		}
+
+		return index;
+	}
+
+	/**
 	 * Register current client handler.
 	 * 
 	 * @param client
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends ChannelMessageHandler> T registerClient(ChannelMessageHandler client) {
-		clientCache.set(client);
+	protected <T extends ShellHandler> T bind(ChannelMessageHandler client) {
+		clientContext.set(client);
 		return (T) client;
+	}
+
+	/**
+	 * Get current client handler
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T extends ShellHandler> T getClient() {
+		return (T) clientContext.get();
 	}
 
 	/**
@@ -86,17 +122,7 @@ public abstract class AbstractProcessor extends AbstractActuator implements Disp
 	 * @return
 	 */
 	protected void cleanup() {
-		clientCache.remove();
-	}
-
-	/**
-	 * Get current client handler
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	static <T extends ChannelMessageHandler> T getClient() {
-		return (T) clientCache.get();
+		clientContext.remove();
 	}
 
 }

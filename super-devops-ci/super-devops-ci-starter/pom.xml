@@ -14,6 +14,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<final.name>ci</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -21,10 +22,9 @@
 			<artifactId>super-devops-ci-rest</artifactId>
 			<version>master</version>
 		</dependency>
-
 	</dependencies>
 	<build>
-		<finalName>devops-ci</finalName>
+		<finalName>${final.name}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -61,7 +61,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<finalName>${parent.artifactId}-${project.version}-bin</finalName>
+					<finalName>${final.name}-${project.version}-bin</finalName>
 					<!-- not append assembly id in release file name -->
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
