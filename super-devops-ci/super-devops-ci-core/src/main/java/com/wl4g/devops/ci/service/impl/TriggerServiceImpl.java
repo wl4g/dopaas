@@ -28,15 +28,15 @@ public class TriggerServiceImpl implements TriggerService {
 
     @Override
     @Transactional
-    public int insert(Trigger trigger,Integer [] instanceIds) {
+    public int insert(Trigger trigger, Integer[] instanceIds) {
         trigger.preInsert();
         int result = triggerDao.insert(trigger);
         int triggerId = trigger.getId();
-        if(null==instanceIds){
+        if (null == instanceIds) {
             throw new RuntimeException("instance can not be null");
         }
 
-        for(Integer instanceId : instanceIds){
+        for (Integer instanceId : instanceIds) {
             TriggerDetail triggerDetail = new TriggerDetail();
             triggerDetail.setInstanceId(instanceId);
             triggerDetail.preInsert();
@@ -49,16 +49,16 @@ public class TriggerServiceImpl implements TriggerService {
 
     @Override
     @Transactional
-    public int update(Trigger trigger,Integer [] instanceIds) {
+    public int update(Trigger trigger, Integer[] instanceIds) {
         trigger.preUpdate();
         int result = triggerDao.updateByPrimaryKeySelective(trigger);
         int triggerId = trigger.getId();
-        if(null==instanceIds){
+        if (null == instanceIds) {
             return result;
         }
 
         triggerDetailDao.deleteByTriggerId(triggerId);
-        for(Integer instanceId : instanceIds){
+        for (Integer instanceId : instanceIds) {
             TriggerDetail triggerDetail = new TriggerDetail();
             triggerDetail.setInstanceId(instanceId);
             triggerDetail.preInsert();

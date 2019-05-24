@@ -69,8 +69,9 @@
 			<result column="i.updateDate" property="updateDate" jdbcType="TIMESTAMP" />
 			<result column="i.delFlag" property="delFlag" jdbcType="INTEGER" />
 			<result column="i.envId" property="envId" jdbcType="VARCHAR" />
-			<result column="i.webappsPath" property="webappsPath" jdbcType="VARCHAR" />
+			<result column="i.basePath" property="basePath" jdbcType="VARCHAR" />
 			<result column="i.serverAccount" property="serverAccount" jdbcType="VARCHAR" />
+			<result column="i.sshRsa" property="sshRsa" jdbcType="VARCHAR" />
 		</collection>
 	</resultMap>
 
@@ -373,7 +374,7 @@
 	</select>
 
 	<select id="instancelist" parameterType="appInstance" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port FROM  cf_app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.ip,a.port FROM  cf_app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="envId != null and envId != ''">
@@ -386,7 +387,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.webapps_path as "webappsPath",a.server_account as "serverAccount" FROM  cf_app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.base_path as "basePath",a.server_account as "serverAccount",a.ssh_rsa as "sshRsa" FROM  cf_app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">
@@ -442,5 +443,16 @@
 			and a.id=#{id}
 		</if>
 		</where>
+	</select>
+
+	<select id="getAppGroupByName" resultType="appGroup">
+		select a.* FROM cf_app_group a
+		<where>
+			a.del_flag = 0
+			<if test="name != null and name != ''">
+				and a.name=#{name}
+			</if>
+		</where>
+		limit 1
 	</select>
 </mapper>
