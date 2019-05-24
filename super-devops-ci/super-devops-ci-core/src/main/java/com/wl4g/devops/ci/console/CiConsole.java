@@ -32,7 +32,6 @@ public class CiConsole {
 
     @ShellMethod(keys = "dev", group = "Ci command", help = "devlop")
     public String devlop(BuildArgument argument, ShellContext context) {
-        ShellConsoleHolder.bind(context);
 
         String appGroupName = argument.getAppGroupName();
         List<String> instances = argument.getInstances();
@@ -59,7 +58,7 @@ public class CiConsole {
 
     @ShellMethod(keys = "list", group = "Ci command",
             help = "get list ")
-    public String list(InstanceListArgument argument) {
+    public String list(InstanceListArgument argument,ShellContext context) {
         StringBuffer result = new StringBuffer();
 
         String appGroupName = argument.getAppGroupName();

@@ -134,9 +134,13 @@ public abstract class BaseSubject {
      */
     public String scpAndTar(String path, String targetHost, String userName, String targetPath, String rsa) throws Exception {
         String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa);
+        //scp
         scpToTmp(path, targetHost, userName,rsa);
+        //tar
         result += tarToTmp(targetHost, userName, path, rsa);
-        result += mkdirs(targetHost, userName, targetPath, rsa);
+        //mkdir--real app path
+        //result += mkdirs(targetHost, userName, targetPath, rsa);
+        //move
         result += moveToTarPath(targetHost, userName, path, targetPath, rsa);
         return result;
     }
