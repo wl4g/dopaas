@@ -30,18 +30,15 @@ public class CiConsole {
     @Autowired
     private CiService ciService;
 
-    @ShellMethod(keys = "dev", group = "Ci command",
-            help = "devlop")
+    @ShellMethod(keys = "dev", group = "Ci command", help = "devlop")
     public String devlop(BuildArgument argument, ShellContext context) {
         ShellConsoleHolder.bind(context);
-
 
         String appGroupName = argument.getAppGroupName();
         List<String> instances = argument.getInstances();
         String branchName = argument.getBranchName();
         //try add console return
-
-        context.begin();
+        ShellConsoleHolder.beginQuietly();
         // Used to simulate an asynchronous task, constantly outputting logs
         new Thread(() -> {
             try {
@@ -53,7 +50,7 @@ public class CiConsole {
                 ShellConsoleHolder.writeQuietly("task fail");
             } finally {
                 // Must end, and must be after ShellConsoles.begin()
-                ShellConsoleHolder.getContext().end();
+                ShellConsoleHolder.endQuietly();
             }
         }).start();
         return "create task";
