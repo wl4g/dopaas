@@ -26,7 +26,7 @@ import com.wl4g.devops.shell.utils.Assert;
  * @since
  */
 public class ResultMessage extends Message {
-	private static final long serialVersionUID = -8574315246731909685L;
+	private static final long serialVersionUID = -8574311246731909685L;
 
 	final private LineResultState state;
 
