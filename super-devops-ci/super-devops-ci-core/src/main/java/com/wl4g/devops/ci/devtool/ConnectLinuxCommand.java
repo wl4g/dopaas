@@ -1,6 +1,7 @@
 package com.wl4g.devops.ci.devtool;
 
 import ch.ethz.ssh2.*;
+import com.wl4g.devops.shell.utils.ShellConsoleHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -19,7 +20,7 @@ public class ConnectLinuxCommand {
      */
 	/*public static String run(String command) throws Exception {
 		logger.info("exce command:"+command);
-		ShellConsoles.write("exce command:"+command);
+		ShellConsoleHolder.writeQuietly("exce command:"+command);
 		Process p = Runtime.getRuntime().exec(command);
 		InputStream is = p.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -30,7 +31,7 @@ public class ConnectLinuxCommand {
 		while ((s = reader.readLine()) != null) {
 			result.append(s).append("\n");
 			logger.info(s);
-			ShellConsoles.write(s);
+			ShellConsoleHolder.writeQuietly(s);
 		}
 		if (p.exitValue() != 0) {
 			InputStream er = p.getErrorStream();
@@ -38,7 +39,7 @@ public class ConnectLinuxCommand {
 			while ((s = erReader.readLine()) != null) {
 				result.append(s).append("\n");
 				logger.info(s);
-				ShellConsoles.write(s);
+				ShellConsoleHolder.writeQuietly(s);
 			}
 			//exce fail
 			throw new RuntimeException("exce command fail,command="+command+"\n cause:"+result.toString());
@@ -61,12 +62,12 @@ public class ConnectLinuxCommand {
         while ((line = br.readLine()) != null) {
             sb.append(line).append("\n");
             logger.info(line);
-            ShellConsoles.write(line);
+            ShellConsoleHolder.writeQuietly(line);
         }
         while ((line = be.readLine()) != null) {
             se.append(line).append("\n");
             logger.info(line);
-            ShellConsoles.write(line);
+            ShellConsoleHolder.writeQuietly(line);
         }
         String result = sb.toString();
         String resulterror = se.toString();
@@ -118,7 +119,7 @@ public class ConnectLinuxCommand {
      */
     public static String execute(String ip, String userName, String command, char[] rsa) throws Exception {
         logger.info("exce command:" + command);
-        ShellConsoles.write("exce command:" + command);
+        ShellConsoleHolder.writeQuietly("exce command:" + command);
         Connection conn = null;
         try {
             boolean flag = false;
@@ -129,34 +130,8 @@ public class ConnectLinuxCommand {
                 logger.debug("login success！");
                 String result = execute(conn, command);
                 //logger.info(result);
-                //ShellConsoles.write(result);
+                //ShellConsoleHolder.writeQuietly(result);
                 return result;
-            } else {
-                logger.error("login fail!");
-                throw new RuntimeException("login fail");
-            }
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            if (null != conn) {
-                conn.close();
-            }
-        }
-    }
-
-
-    public static void uploadFile(String ip, String userName,char[] rsa,String localFile,String remoteTargetDirectory) throws IOException {
-        Connection conn = null;
-        try {
-            boolean flag = false;
-            conn = new Connection(ip);
-            conn.connect();// connect
-            flag = conn.authenticateWithPublicKey(userName, rsa, null);
-            if (flag) {
-                logger.debug("login success！");
-                File file = new File(localFile);
-                SCPClient scpClient = conn.createSCPClient();
-                //scpClient.put(localFile,file.length()-1, remoteTargetDirectory,"0744");
             } else {
                 logger.error("login fail!");
                 throw new RuntimeException("login fail");
@@ -177,31 +152,53 @@ public class ConnectLinuxCommand {
      * @param remoteTargetDirectory 上传路径
      * @param mode 默认为null
      */
-    public void uploadFile(String ip, String userName,char[] rsa,File f, String remoteTargetDirectory, String mode) {
-        Connection connection = null;
+    public static void uploadFile(String ip, String userName,char[] rsa,File f, String remoteTargetDirectory) {
+        logger.info("upload file begin: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+        ShellConsoleHolder.writeQuietly("upload file: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+        Connection conn = null;
+        SCPOutputStream os = null;
+        FileInputStream fis = null;
         try {
-            connection = new Connection(ip);
-            connection.connect();
-            boolean isAuthenticated = connection.authenticateWithPassword(name,password);
-            if(!isAuthenticated){
-                System.out.println("连接建立失败");
-                return ;
+            boolean flag = false;
+            conn = new Connection(ip);
+            conn.connect();
+            flag = conn.authenticateWithPublicKey(userName, rsa, null);
+            if (flag) {
+                logger.debug("login success！");
+                SCPClient scpClient = new SCPClient(conn);
+                os = scpClient.put(f.getName(),f.length(),remoteTargetDirectory,"0744");
+                byte[] b = new byte[4096];
+                fis = new FileInputStream(f);
+                int i;
+                while ((i = fis.read(b)) != -1) {
+                    os.write(b, 0, i);
+                }
+                os.flush();
+                logger.info("upload file success: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+                ShellConsoleHolder.writeQuietly("upload file success: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+            } else {
+                logger.error("login fail!");
+                throw new RuntimeException("login fail");
             }
-            SCPClient scpClient = new SCPClient(connection);
-            SCPOutputStream os = scpClient.put(f.getName(),f.length(),remoteTargetDirectory,mode);
-            byte[] b = new byte[4096];
-            FileInputStream fis = new FileInputStream(f);
-            int i;
-            while ((i = fis.read(b)) != -1) {
-                os.write(b, 0, i);
-            }
-            os.flush();
-            fis.close();
-            os.close();
-            connection.close();
-            System.out.println("upload ok");
         } catch (IOException e) {
+            logger.error("upload file fail: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
+            ShellConsoleHolder.writeQuietly("upload file fail: "+f.getAbsolutePath()+" to "+remoteTargetDirectory);
             e.printStackTrace();
+            throw new RuntimeException(e.getCause());
+        }finally {
+            try {
+                if(null!=fis){
+                    fis.close();
+                }
+                if(null!=os){
+                    os.close();
+                }
+                if(null!=conn){
+                    conn.close();
+                }
+            }catch (Exception e){
+
+            }
         }
     }
 
@@ -267,7 +264,7 @@ public class ConnectLinuxCommand {
             while ((line = br.readLine()) != null) {
                 buffer.append(line + "\n");
                 logger.info(line);
-                ShellConsoles.write(line);
+                ShellConsoleHolder.writeQuietly(line);
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -342,23 +339,22 @@ public class ConnectLinuxCommand {
                 "jKoQ6kaFTPaSST4kWNoXxNWvBDjarOriPa//St+l5fsEjfhjF1CfCS5aKvKfIwmP\n" +
                 "jZss7kAharoCjXmxdyqPBEjJPHMts7d93olfGDGCvFrZnEfuD+zUcmU=\n" +
                 "-----END RSA PRIVATE KEY-----";
-        Connection conn = new Connection("10.0.0.161");
+        /*Connection conn = new Connection("10.0.0.161");
         try {
             conn.connect();// connect
             boolean flag = conn.authenticateWithPublicKey("datachecker", ase.toCharArray(), null);
             //execute(conn, ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc datachecker restart");
             if (flag) {
                 logger.debug("login success！");
-                SCPClient scpClient = conn.createSCPClient();
-                scpClient.setCharset("");
+                uploadFile("10.0.0.161","datachecker",ase.toCharArray(),new File("/Users/vjay/gittest/safecloud-devops-datachecker/boot/target/datachecker-master-bin.tar"),"/home/ci/tmp");
             } else {
                 logger.error("login fail!");
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
-
+        uploadFile("10.0.0.10","root",ase.toCharArray(),new File("/Users/vjay/gittest/safecloud-devops-datachecker/boot/target/datachecker-master-bin.tar"),"/root/tmp");
     }
 
 

@@ -134,7 +134,7 @@ public abstract class BaseSubject {
      */
     public String scpAndTar(String path, String targetHost, String userName, String targetPath, String rsa) throws Exception {
         String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa);
-        result += scpToTmp(path, targetHost, userName,rsa);
+        scpToTmp(path, targetHost, userName,rsa);
         result += tarToTmp(targetHost, userName, path, rsa);
         result += mkdirs(targetHost, userName, targetPath, rsa);
         result += moveToTarPath(targetHost, userName, path, targetPath, rsa);
@@ -150,13 +150,12 @@ public abstract class BaseSubject {
     /**
      * scpToTmp
      */
-    public String scpToTmp(String path, String targetHost, String userName,String rsa) throws Exception {
+    public void scpToTmp(String path, String targetHost, String userName,String rsa) throws Exception {
         //String command = "scp -r " + path + " " + targetHost + ":/home/" + userName + "/tmp";
         String rsaKey = devConfig.rsaKey;
         AES aes = new AES(rsaKey);
         char[] rsaReal = aes.decrypt(rsa).toCharArray();
-        ConnectLinuxCommand.uploadFile(targetHost,userName,rsaReal,path,"/home/" + userName + "/tmp");
-        return "";
+        ConnectLinuxCommand.uploadFile(targetHost,userName,rsaReal,new File(path),"/home/" + userName + "/tmp");
     }
 
     /**
