@@ -503,7 +503,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 						e1.printStackTrace();
 					}
 				} catch (Throwable e) {
-
 					runner.printErr(EMPTY, e);
 				} finally {
 					try {
