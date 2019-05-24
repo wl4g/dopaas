@@ -95,7 +95,7 @@ public final class ShellContext implements InternalInjectable {
 	 * @param message
 	 * @throws IllegalStateException
 	 */
-	public synchronized void printf(String message) throws IllegalStateException {
+	public void printf(String message) throws IllegalStateException {
 		ChannelMessageHandler client = getClient();
 		if (client != null && client.isActive()) {
 			try {
