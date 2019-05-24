@@ -11,65 +11,75 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@ConfigurationProperties(prefix="devconf")
+@ConfigurationProperties(prefix = "devconf")
 public class DevConfig {
 
-	public static String gitBasePath;
+    public static String gitBasePath;
 
-	public static String gitAccount;
+    public static String gitAccount;
 
-	public static String gitPassword;
+    public static String gitPassword;
 
-	public static String bakPath;
+    public static String bakPath;
 
-	public static String linkPath;
+    public static String linkPath;
 
-	private static CredentialsProvider cp;
+    public static String rsaKey;
 
-	public String getGitBasePath() {
-		return gitBasePath;
-	}
+    private static CredentialsProvider cp;
 
-	public void setGitBasePath(String gitBasePath) {
-		this.gitBasePath = gitBasePath;
-	}
+    public String getGitBasePath() {
+        return gitBasePath;
+    }
 
-	public String getGitAccount() {
-		return gitAccount;
-	}
+    public void setGitBasePath(String gitBasePath) {
+        this.gitBasePath = gitBasePath;
+    }
 
-	public void setGitAccount(String gitAccount) {
-		this.gitAccount = gitAccount;
-	}
+    public String getGitAccount() {
+        return gitAccount;
+    }
 
-	public String getGitPassword() {
-		return gitPassword;
-	}
+    public void setGitAccount(String gitAccount) {
+        this.gitAccount = gitAccount;
+    }
 
-	public void setGitPassword(String gitPassword) {
-		this.gitPassword = gitPassword;
-	}
+    public String getGitPassword() {
+        return gitPassword;
+    }
 
-	public static CredentialsProvider getCp() {
-		if(null==cp){
-			cp = new UsernamePasswordCredentialsProvider(gitAccount,gitPassword);
-		}
-		return cp;
-	}
+    public void setGitPassword(String gitPassword) {
+        this.gitPassword = gitPassword;
+    }
 
-	public static String getBakPath() {
-		return bakPath;
-	}
+    public static CredentialsProvider getCp() {
+        if (null == cp) {
+            cp = new UsernamePasswordCredentialsProvider(gitAccount, gitPassword);
+        }
+        return cp;
+    }
 
-	public void setBakPath(String bakPath) {
-		DevConfig.bakPath = bakPath;
-	}
+    public static String getBakPath() {
+        return bakPath;
+    }
 
-	public static String getLinkPath() {
-		return linkPath;
-	}
+    public void setBakPath(String bakPath) {
+        DevConfig.bakPath = bakPath;
+    }
 
-	public void setLinkPath(String linkPath) {
-		DevConfig.linkPath = linkPath;
-	}
+    public static String getLinkPath() {
+        return linkPath;
+    }
+
+    public void setLinkPath(String linkPath) {
+        DevConfig.linkPath = linkPath;
+    }
+
+    public static String getRsaKey() {
+        return rsaKey;
+    }
+
+    public void setRsaKey(String rsaKey) {
+        DevConfig.rsaKey = rsaKey;
+    }
 }

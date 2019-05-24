@@ -175,4 +175,11 @@
     from ci_project
     where project_name = #{projectName,jdbcType=VARCHAR}
   </select>
+
+  <select id="getByAppGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_project
+    where app_group_id = #{appGroupId,jdbcType=INTEGER}
+  </select>
 </mapper>

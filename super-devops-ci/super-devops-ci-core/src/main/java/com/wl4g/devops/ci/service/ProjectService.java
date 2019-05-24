@@ -12,17 +12,15 @@ import java.util.List;
 public interface ProjectService {
 
 
-	int insert(Project project);
+    int insert(Project project);
 
-	int update(Project project);
+    int update(Project project);
 
-	int deleteById(Integer id);
+    int deleteById(Integer id);
 
-	int removeById(Integer id);
+    int removeById(Integer id);
 
-	List<Project> list(CustomPage customPage);
-
-
+    List<Project> list(CustomPage customPage);
 
 
 }

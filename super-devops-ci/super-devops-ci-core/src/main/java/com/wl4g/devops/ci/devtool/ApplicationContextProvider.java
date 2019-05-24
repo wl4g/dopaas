@@ -45,7 +45,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      * 通过class获取Bean.
      *
      * @param clazz
-     * @param       <T>
+     * @param <T>
      * @return
      */
     public static <T> T getBean(Class<T> clazz) {
@@ -57,7 +57,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      *
      * @param name
      * @param clazz
-     * @param       <T>
+     * @param <T>
      * @return
      */
     public static <T> T getBean(String name, Class<T> clazz) {

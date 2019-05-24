@@ -30,6 +30,9 @@ public class CiDevOpsConstants {
     //回滚触发
     public static final int TASK_TYPE_ROLLBACK = 3;
 
+    public static final int TASK_ENABLE_STATUS = 1;
+    public static final int TASK_DISABLE_STATUS = 0;
+
 
 
 
