@@ -15,7 +15,19 @@
  */
 package com.wl4g.devops.shell.runner;
 
-import static java.lang.System.*;
+import com.wl4g.devops.shell.AbstractActuator;
+import com.wl4g.devops.shell.bean.*;
+import com.wl4g.devops.shell.command.DefaultInternalCommand;
+import com.wl4g.devops.shell.config.Configuration;
+import com.wl4g.devops.shell.config.DynamicCompleter;
+import com.wl4g.devops.shell.exception.ProcessTimeoutException;
+import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.utils.Assert;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.AttributedString;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,34 +39,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
-import org.jline.reader.LineReader;
-import static org.jline.reader.LineReader.*;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.AttributedString;
-
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import static org.apache.commons.lang3.SystemUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
+import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
 import static com.wl4g.devops.shell.bean.LineResultState.*;
+import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HE;
+import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HELP;
 import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
-import static com.wl4g.devops.shell.cli.InternalCommand.*;
-import static com.wl4g.devops.shell.utils.LineUtils.*;
-import static com.wl4g.devops.shell.annotation.ShellOption.*;
-import com.wl4g.devops.shell.command.DefaultInternalCommand;
-import com.wl4g.devops.shell.AbstractActuator;
-import com.wl4g.devops.shell.bean.MetaMessage;
-import com.wl4g.devops.shell.bean.ExceptionMessage;
-import com.wl4g.devops.shell.bean.LineMessage;
-import com.wl4g.devops.shell.bean.LineResultState;
-import com.wl4g.devops.shell.bean.ResultMessage;
-import com.wl4g.devops.shell.config.Configuration;
-import com.wl4g.devops.shell.config.DynamicCompleter;
-import com.wl4g.devops.shell.exception.ProcessTimeoutException;
-import com.wl4g.devops.shell.handler.ChannelMessageHandler;
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
-import com.wl4g.devops.shell.utils.Assert;
+import static com.wl4g.devops.shell.utils.LineUtils.clean;
+import static com.wl4g.devops.shell.utils.LineUtils.parse;
+import static java.lang.System.*;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
+import static org.jline.reader.LineReader.HISTORY_FILE;
 
 /**
  * Abstract shell component runner
@@ -506,6 +503,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 						e1.printStackTrace();
 					}
 				} catch (Throwable e) {
+
 					runner.printErr(EMPTY, e);
 				} finally {
 					try {

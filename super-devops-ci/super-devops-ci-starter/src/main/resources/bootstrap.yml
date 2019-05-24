@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: devops-ci
+  application.name: ci
   profiles:
     active: test
   cloud: # Spring cloud configuration.
@@ -30,7 +30,7 @@ spring:
 
 # ### Server configuration. ###
 server:
-  port: 8080
+  port: 14047
   #address: 0.0.0.0
   sessionTimeout: 30
   contextPath: /${spring.application.name}

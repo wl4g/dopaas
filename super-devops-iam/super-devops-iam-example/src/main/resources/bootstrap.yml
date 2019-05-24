@@ -13,7 +13,7 @@
 # loaded at initialization, so configurations other than bootstrap.yml cannot be used at initialization.
 #
 spring: # Base configuration.
-  application.name: devops-iam-example
+  application.name: iam-example
   profiles:
     active: test
   cloud: # Spring cloud configuration.
