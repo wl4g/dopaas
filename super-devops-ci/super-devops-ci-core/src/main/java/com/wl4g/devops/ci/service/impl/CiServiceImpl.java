@@ -93,7 +93,7 @@ public class CiServiceImpl implements CiService {
         Assert.notNull(appGroup, "not found this app");
         Project project = projectDao.getByAppGroupId(appGroup.getId());
         Assert.notNull(appGroup, "not found this app");
-
+        Assert.notEmpty(instanceIds, "instanceIds can not be null");
         List<AppInstance> instances = new ArrayList<>();
         for (String instanceId : instanceIds) {
             AppInstance instance = appGroupDao.getAppInstance(instanceId);
