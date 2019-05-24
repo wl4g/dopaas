@@ -44,7 +44,7 @@ public class CiConsole {
                 // Output stream message
                 ShellConsoleHolder.writeQuietly("task begin");
                 ciService.createTask(appGroupName, branchName, instances);
-                ShellConsoleHolder.writeQuietly("task end");
+                ShellConsoleHolder.writeQuietly("task success");
             } catch (Exception e) {
                 ShellConsoleHolder.writeQuietly("task fail");
             } finally {
@@ -52,7 +52,8 @@ public class CiConsole {
                 ShellConsoleHolder.endQuietly();
             }
         }).start();
-        return "create task";
+
+        return "task done";
     }
 
 
