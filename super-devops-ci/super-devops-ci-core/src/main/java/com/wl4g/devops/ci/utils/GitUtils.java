@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.shell.utils.ShellConsoleHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,9 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * Git utility tools.
+ * 
+ * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-06 09:54:00
  */
@@ -36,34 +40,41 @@ public class GitUtils {
 	public static final Logger log = LoggerFactory.getLogger(GitUtils.class);
 
 	/**
-	 * clone
+	 * Clone
 	 */
-	public static void clone(String remoteUrl, String localPath) throws IOException {
+	public static void clone(CredentialsProvider credentials, String remoteUrl, String localPath) throws IOException {
 		File path = new File(localPath);
 		if (!path.exists()) {
 			path.mkdirs();
 		}
+
 		try {
-			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(DeployProperties.getCredentials())
-					.call();
-			log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
+			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(credentials).call();
+
+			if (log.isInfoEnabled()) {
+				log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
+			}
 		} catch (Exception e) {
 			log.info(e.getMessage());
 		}
 	}
 
 	/**
-	 * clone
+	 * Clone
 	 */
-	public static void clone(String remoteUrl, String localPath, String branchName) throws IOException {
+	public static void clone(CredentialsProvider credentials, String remoteUrl, String localPath, String branchName)
+			throws IOException {
 		File path = new File(localPath);
 		if (!path.exists()) {
 			path.mkdirs();
 		}
 		try {
-			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(DeployProperties.getCredentials())
+			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(credentials)
 					.setBranch(branchName).call();
-			log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
+			if (log.isInfoEnabled()) {
+				log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
+			}
+
 			ShellConsoleHolder.printfQuietly("Cloning from " + remoteUrl + " to " + git.getRepository());
 		} catch (Exception e) {
 			log.info(e.getMessage());
@@ -72,9 +83,9 @@ public class GitUtils {
 	}
 
 	/**
-	 * checkout and pull
+	 * Checkout and pull
 	 */
-	public static void checkout(String localPath, String branchName) {
+	public static void checkout(CredentialsProvider credentials, String localPath, String branchName) {
 		String projectURL = localPath + "/.git";
 		Git git = null;
 		try {
@@ -88,20 +99,22 @@ public class GitUtils {
 				}
 			}
 			if (exist) {// if exist --checkout
-
 				git.checkout().setName(branchName).call();
 			} else {// if not exist --checkout and create local branch
 				git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
 						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
 			}
 			// pull -- get newest code
-			git.pull().setCredentialsProvider(DeployProperties.getCredentials()).call();
-			log.info("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
+			git.pull().setCredentialsProvider(credentials).call();
+
+			if (log.isInfoEnabled()) {
+				log.info("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
+			}
 			ShellConsoleHolder.printfQuietly("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("checkout branch fail;branchName=" + branchName + " localPath=" + localPath);
-			ShellConsoleHolder.printfQuietly("checkout branch fail;branchName=" + branchName + " localPath=" + localPath);
+			String errmsg = String.format("checkout branch failure. branchName=%s, localPath=%s", branchName, localPath);
+			ShellConsoleHolder.printfQuietly(errmsg);
+			log.error(errmsg, e);
 			throw new RuntimeException(e);
 		} finally {
 			if (git != null) {
@@ -111,7 +124,7 @@ public class GitUtils {
 	}
 
 	/**
-	 * del branch
+	 * Delete branch
 	 */
 	public static void delbranch(String localPath, String branchName) {
 		String projectURL = localPath + "/.git";
@@ -129,7 +142,7 @@ public class GitUtils {
 	}
 
 	/**
-	 * get local branch list
+	 * Get local branch list
 	 */
 	public static void branchlist(String localPath) {
 		String projectURL = localPath + "/.git";
@@ -149,7 +162,7 @@ public class GitUtils {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// git远程url地址
 		// String url =
 		// "http://code.anjiancloud.owner/devops-team/safecloud-devops.git";
@@ -158,16 +171,14 @@ public class GitUtils {
 		// String url = "https://github.com/wl4g/super-devops.git";
 		String url = "http://code.anjiancloud.owner:8443/biz-team/android-team/portal-for-android.git";
 		String localPath = "/Users/vjay/gittest/super-devops";
-		//
 		String branchName = "master";
-		try {
-			GitUtils.clone(url, localPath);
-			GitUtils.checkout(localPath, branchName);
-			// GitUtils.delbranch(localPath,branchName);
-			GitUtils.branchlist(localPath);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		CredentialsProvider cp = new UsernamePasswordCredentialsProvider("", "");
+		GitUtils.clone(cp, url, localPath);
+		GitUtils.checkout(cp, localPath, branchName);
+
+		// GitUtils.delbranch(localPath,branchName);
+		GitUtils.branchlist(localPath);
 	}
 
 }

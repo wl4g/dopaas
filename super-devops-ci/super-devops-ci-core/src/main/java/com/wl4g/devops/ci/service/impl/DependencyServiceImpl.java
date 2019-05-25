@@ -31,6 +31,9 @@ import java.io.File;
 import java.util.List;
 
 /**
+ * Dependency service implements
+ * 
+ * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-22 11:39:00
  */
@@ -38,17 +41,16 @@ import java.util.List;
 public class DependencyServiceImpl implements DependencyService {
 
 	@Autowired
-	private DependencyDao dependencyDao;
+	private DeployProperties config;
 
 	@Autowired
-	private DeployProperties devConfig;
+	private DependencyDao dependencyDao;
 
 	@Autowired
 	private ProjectDao projectDao;
 
 	@Override
 	public void build(Dependency dependency, String branch) throws Exception {
-
 		Integer projectId = dependency.getProjectId();
 
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
@@ -59,17 +61,17 @@ public class DependencyServiceImpl implements DependencyService {
 			}
 		}
 
-		// TODO build
+		// build
 		Project project = projectDao.selectByPrimaryKey(projectId);
-		String path = devConfig.getGitBasePath() + "/" + project.getProjectName();
+		String path = config.getGitBasePath() + "/" + project.getProjectName();
 		if (checkGitPahtExist(path)) {
-			GitUtils.checkout(path, branch);
+			GitUtils.checkout(config.getCredentials(), path, branch);
 		} else {
-			GitUtils.clone(project.getGitUrl(), path, branch);
+			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
 		}
-		// install
-		install(path);
 
+		// install
+		mvnInstall(path);
 	}
 
 	public boolean checkGitPahtExist(String path) throws Exception {
@@ -84,7 +86,7 @@ public class DependencyServiceImpl implements DependencyService {
 	/**
 	 * build (maven)
 	 */
-	public String install(String path) throws Exception {
+	public String mvnInstall(String path) throws Exception {
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
 		return SSHTools.runLocal(command);
 	}
