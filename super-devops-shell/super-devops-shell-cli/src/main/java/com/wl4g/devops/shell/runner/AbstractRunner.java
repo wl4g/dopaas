@@ -200,39 +200,42 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * @param line
 	 * @throws IOException
 	 */
-	protected void submit(Object message) throws IOException {
-		// Ensure client
-		ensureClient();
+	protected void submit(Object message) {
+		try {
+			// Ensure client
+			ensureClient();
+			if (message instanceof String) {
+				String line = (String) message;
+				List<String> cmds = parse(line);
+				if (!cmds.isEmpty()) {
+					// $> [help|clear|history...]
+					if (registry.contains(cmds.get(0))) { // Internal commands?
+						DefaultInternalCommand.senseLine(line);
+						process(line);
+						return;
+					}
+					// help command? [MARK0] $> add --help
+					else if (cmds.size() > 1
+							&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
 
-		if (message instanceof String) {
-			String line = (String) message;
-			List<String> cmds = parse(line);
-			if (!cmds.isEmpty()) {
-				// $> [help|clear|history...]
-				if (registry.contains(cmds.get(0))) { // Internal commands?
-					DefaultInternalCommand.senseLine(line);
-					process(line);
-					return;
+						// Equivalent to: '$> help add'
+						line = clean(INTERNAL_HELP) + " " + cmds.get(0);
+						// Set current line
+						DefaultInternalCommand.senseLine(line);
+						process(line);
+						return;
+					}
 				}
-				// help command? [MARK0] $> add --help
-				else if (cmds.size() > 1
-						&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
 
-					// Equivalent to: '$> help add'
-					line = clean(INTERNAL_HELP) + " " + cmds.get(0);
-					// Set current line
-					DefaultInternalCommand.senseLine(line);
-					process(line);
-					return;
-				}
+				// Submission remote commands line
+				client.writeAndFlush(new LineMessage(line));
+				client.state = RUNNING;
+			} else {
+				client.writeAndFlush(message);
+				client.state = RUNNING;
 			}
-
-			// Submission remote commands line
-			client.writeAndFlush(new LineMessage(line));
-			client.state = RUNNING;
-		} else {
-			client.writeAndFlush(message);
-			client.state = RUNNING;
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -254,11 +257,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		this.registry.register(new DefaultInternalCommand(this));
 
 		// Initialize remote register commands
-		try {
-			submit(new MetaMessage());
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
+		submit(new MetaMessage());
 
 		// Set history persist file
 		File file = new File(USER_HOME + "/.devops/shell/history");

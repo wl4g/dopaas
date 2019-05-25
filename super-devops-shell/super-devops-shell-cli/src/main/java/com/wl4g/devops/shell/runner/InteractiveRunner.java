@@ -17,16 +17,18 @@ package com.wl4g.devops.shell.runner;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.wl4g.devops.shell.bean.ExceptionMessage;
+import com.wl4g.devops.shell.bean.InterruptMessage;
 import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.Configuration;
 import static com.wl4g.devops.shell.bean.RunState.*;
 import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
-import static java.lang.System.out;
+import static com.wl4g.devops.shell.handler.ChannelMessageHandler.BEGIN_EOF;
+import static com.wl4g.devops.shell.handler.ChannelMessageHandler.EOF;
+import static java.lang.System.*;
 
 import org.jline.reader.UserInterruptException;
 
@@ -41,6 +43,12 @@ public class InteractiveRunner extends AbstractRunner {
 
 	final private AtomicBoolean completed = new AtomicBoolean(true);
 
+	private Thread worker;
+
+	private String line;
+
+	private long sentTime = 0L;
+
 	public InteractiveRunner(Configuration config) {
 		super(config);
 	}
@@ -48,17 +56,14 @@ public class InteractiveRunner extends AbstractRunner {
 	@Override
 	public void run(String[] args) {
 		while (true) {
-			Thread worker = null;
 			try {
-				String line = lineReader.readLine(getPrompt());
-				if (isNotBlank(line) && completed.get()) {
+				line = lineReader.readLine(getPrompt());
+
+				if (isNotBlank(line) && isComplated()) {
 					// Submission processing
 					worker = new Thread(() -> {
-						try {
-							submit(line);
-						} catch (IOException e) {
-							throw new IllegalStateException(e);
-						}
+						sentTime = currentTimeMillis();
+						submit(line);
 					});
 					worker.start();
 
@@ -66,7 +71,14 @@ public class InteractiveRunner extends AbstractRunner {
 					waitForCompleted(line);
 				}
 			} catch (UserInterruptException e) {
-				shutdown();
+				// When there is no unfinished task, the console is interrupted.
+				if (isComplated()) {
+					shutdown();
+				} else {
+					// When there is an unfinished task, the interrupt task
+					// signal is sent.
+					submit(new InterruptMessage());
+				}
 			} catch (Throwable e) {
 				printErr(EMPTY, e);
 			} finally {
@@ -81,6 +93,8 @@ public class InteractiveRunner extends AbstractRunner {
 
 	@Override
 	protected void postProcessResult(Object result) {
+		sentTime = currentTimeMillis();
+
 		// Merge remote target methods commands
 		if (result instanceof MetaMessage) {
 			MetaMessage meta = (MetaMessage) result;
@@ -97,12 +111,14 @@ public class InteractiveRunner extends AbstractRunner {
 
 			// Wake-up the waiting thread when the response is
 			// completed.
-			if (ret.getState() == NONCE || ret.getState() == FINISHED) {
+			if (ret.getState() == NONCE || ret.getState() == COMPLATED) {
 				wakeup();
 			}
 
 			// Print server result message.
-			out.println(ret.getContent());
+			if (!equalsAny(ret.getContent(), BEGIN_EOF, EOF)) {
+				out.println(ret.getContent());
+			}
 		} else {
 			wakeup(); // Wake-up lineReader
 		}
@@ -140,6 +156,16 @@ public class InteractiveRunner extends AbstractRunner {
 	 */
 	private String getPrompt() {
 		return completed.get() ? getAttributed().toAnsi(lineReader.getTerminal()) : EMPTY;
+	}
+
+	/**
+	 * Gets the current execution return completion status (waiting for
+	 * expiration also indicates completion)
+	 * 
+	 * @return
+	 */
+	private boolean isComplated() {
+		return completed.get() || (currentTimeMillis() - sentTime) >= TIMEOUT;
 	}
 
 }

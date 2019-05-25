@@ -30,7 +30,7 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
-import com.wl4g.devops.shell.utils.ShellConsoleHolder;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -119,7 +119,7 @@ public class CiServiceImpl implements CiService {
 		try {
 			//// update task--running
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
-			// TODO exec
+			// exec
 			provider.execute();
 			// update task--success
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
@@ -132,7 +132,7 @@ public class CiServiceImpl implements CiService {
 	}
 
 	public void hook(String projectName, String branchName, String url) {
-		// TODO just for test
+		// just for test
 		// projectName = "safecloud-devops-datachecker";
 		Project project = projectDao.getByProjectName(projectName);
 		if (null == project) {
@@ -155,20 +155,22 @@ public class CiServiceImpl implements CiService {
 		}
 		Assert.notEmpty(instances, "instances not found, please config first");
 
-		// TODO get sha
+		// get sha
 		String sha = null;
 
-		// Output stream message
-		ShellConsoleHolder.printfQuietly("task begin");
+		// Print to client
+		ShellContextHolder.printfQuietly("task begin");
 		Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
 		BasedDeployProvider provider = getDeployProvider(task);
 
 		try {
-			//// update task--running
+			// update task--running
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
-			// TODO exec
+
+			// exec
 			provider.execute();
+
 			// update task--success
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
 		} catch (Exception e) {

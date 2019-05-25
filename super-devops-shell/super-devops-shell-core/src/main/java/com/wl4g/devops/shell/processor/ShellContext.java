@@ -16,8 +16,8 @@
 package com.wl4g.devops.shell.processor;
 
 import com.wl4g.devops.shell.bean.RunState;
-import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
 import com.wl4g.devops.shell.registry.InternalInjectable;
 import org.slf4j.Logger;
@@ -27,9 +27,9 @@ import org.springframework.util.Assert;
 import java.io.Closeable;
 import java.io.IOException;
 
+import static com.wl4g.devops.shell.handler.ChannelMessageHandler.*;
 import static com.wl4g.devops.shell.bean.RunState.*;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -49,6 +49,9 @@ public final class ShellContext implements InternalInjectable, Closeable {
 
 	/** Line result message state. */
 	private volatile RunState state;
+
+	/** Event listenter */
+	private EventListener eventListener;
 
 	public ShellContext(ShellHandler client) {
 		this(client, NONCE);
@@ -75,7 +78,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		this.state = RUNNING_WAIT;
 
 		// Print start mark
-		printf(EMPTY);
+		printf(BEGIN_EOF);
 	}
 
 	/**
@@ -83,10 +86,10 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 */
 	@Override
 	public synchronized void close() {
-		this.state = FINISHED;
+		this.state = COMPLATED;
 
 		// Print end mark
-		printf(EMPTY);
+		printf(EOF);
 	}
 
 	/**
@@ -96,6 +99,10 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * @throws IllegalStateException
 	 */
 	public void printf(String message) throws IllegalStateException {
+		if (getState() != RUNNING_WAIT && !equalsAny(message, BEGIN_EOF, EOF)) {
+			throw new IllegalStateException("The shell is not printable in the afternoon, has it not been opened or closed?");
+		}
+
 		ChannelMessageHandler client = getClient();
 		if (client != null && client.isActive()) {
 			try {
@@ -109,6 +116,32 @@ public final class ShellContext implements InternalInjectable, Closeable {
 			throw new IllegalStateException("The current console channel may be closed!");
 		}
 
+	}
+
+	/**
+	 * Output quietly message to client console
+	 * 
+	 * @param message
+	 */
+	public void printfQuietly(String message) {
+		try {
+			printf(message);
+		} catch (Exception e) {
+			log.warn("Printf error. cause: {}", getRootCauseMessage(e));
+		}
+	}
+
+	public EventListener getEventListener() {
+		return eventListener;
+	}
+
+	public void setEventListener(EventListener eventListener) {
+		Assert.notNull(eventListener, "eventListener must not be null");
+		this.eventListener = eventListener;
+	}
+
+	public static interface EventListener {
+		void onInterrupt();
 	}
 
 }

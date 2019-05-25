@@ -32,6 +32,6 @@ public enum RunState {
 
 	RUNNING_WAIT,
 
-	FINISHED;
+	COMPLATED;
 
 }
