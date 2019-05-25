@@ -41,7 +41,7 @@ public class ExceptionMessage extends Message {
 
 	@Override
 	public String toString() {
-		return "ExceptionMessage [throwable=" + getRootCauseMessage(throwable) + ", toString()=" + super.toString() + "]";
+		return getRootCauseMessage(throwable);
 	}
 
 }

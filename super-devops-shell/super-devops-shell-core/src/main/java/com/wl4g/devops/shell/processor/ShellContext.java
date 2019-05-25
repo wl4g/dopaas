@@ -75,7 +75,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		this.state = RUNNING_WAIT;
 
 		// Print start mark
-		printf("abc");
+		printf(EMPTY);
 	}
 
 	/**

@@ -18,8 +18,15 @@ package com.wl4g.devops.shell.runner;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.wl4g.devops.shell.bean.ExceptionMessage;
+import com.wl4g.devops.shell.bean.MetaMessage;
+import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.Configuration;
+import static com.wl4g.devops.shell.bean.RunState.*;
+import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
+import static java.lang.System.out;
 
 import org.jline.reader.UserInterruptException;
 
@@ -32,26 +39,23 @@ import org.jline.reader.UserInterruptException;
  */
 public class InteractiveRunner extends AbstractRunner {
 
+	final private AtomicBoolean completed = new AtomicBoolean(true);
+
 	public InteractiveRunner(Configuration config) {
 		super(config);
 	}
 
 	@Override
 	public void run(String[] args) {
-		// Listening console input.
 		while (true) {
 			Thread worker = null;
-			String line = null;
 			try {
-				// Read line
-				line = lineReader.readLine(getAttributed().toAnsi(lineReader.getTerminal()));
-
-				// Submission processing
-				if (isNotBlank(line)) {
-					final String _line = line;
+				String line = lineReader.readLine(getPrompt());
+				if (isNotBlank(line) && completed.get()) {
+					// Submission processing
 					worker = new Thread(() -> {
 						try {
-							submit(_line);
+							submit(line);
 						} catch (IOException e) {
 							throw new IllegalStateException(e);
 						}
@@ -61,9 +65,8 @@ public class InteractiveRunner extends AbstractRunner {
 					// Wait completed.
 					waitForCompleted(line);
 				}
-
 			} catch (UserInterruptException e) {
-				shutdown(line);
+				shutdown();
 			} catch (Throwable e) {
 				printErr(EMPTY, e);
 			} finally {
@@ -73,6 +76,70 @@ public class InteractiveRunner extends AbstractRunner {
 				}
 			}
 		}
+
+	}
+
+	@Override
+	protected void postProcessResult(Object result) {
+		// Merge remote target methods commands
+		if (result instanceof MetaMessage) {
+			MetaMessage meta = (MetaMessage) result;
+			getSingle().merge(meta.getRegistedMethods());
+		} else if (result instanceof ExceptionMessage) {
+			ExceptionMessage ex = (ExceptionMessage) result;
+			printErr(EMPTY, ex.getThrowable());
+		}
+
+		if (result instanceof ResultMessage) {
+			ResultMessage ret = (ResultMessage) result;
+			// Update printf state
+			// setState(ret.getState());
+
+			// Wake-up the waiting thread when the response is
+			// completed.
+			if (ret.getState() == NONCE || ret.getState() == FINISHED) {
+				wakeup();
+			}
+
+			// Print server result message.
+			out.println(ret.getContent());
+		} else {
+			wakeup(); // Wake-up lineReader
+		}
+
+		// Print local string message
+		if (result instanceof CharSequence) {
+			out.println(result);
+		}
+
+	}
+
+	/**
+	 * Wait for completed. </br>
+	 * {@link AbstractRunner#wakeup()}
+	 * 
+	 * @param line
+	 * @throws InterruptedException
+	 */
+	private void waitForCompleted(String line) {
+		completed.set(false);
+	}
+
+	/**
+	 * Wakeup for wait lineReader. </br>
+	 * {@link AbstractRunner#waitForComplished()}
+	 */
+	private void wakeup() {
+		completed.set(true);
+	}
+
+	/**
+	 * Get the current status prompt.
+	 * 
+	 * @return
+	 */
+	private String getPrompt() {
+		return completed.get() ? getAttributed().toAnsi(lineReader.getTerminal()) : EMPTY;
 	}
 
 }
