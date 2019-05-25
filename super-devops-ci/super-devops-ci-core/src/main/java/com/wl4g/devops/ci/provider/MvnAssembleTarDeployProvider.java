@@ -34,10 +34,10 @@ import java.util.List;
  */
 public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 
-	public MvnAssembleTarDeployProvider(DependencyService dependencyService, DeployProperties devConfig, Integer projectId,
+	public MvnAssembleTarDeployProvider(DependencyService dependencyService, DeployProperties config, Integer projectId,
 			String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,
 			List<TaskDetail> taskDetails) {
-		super(dependencyService, devConfig, projectId, path, url, branch, alias, tarPath, instances, taskDetails);
+		super(dependencyService, config, projectId, path, url, branch, alias, tarPath, instances, taskDetails);
 	}
 
 	@Override

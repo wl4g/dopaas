@@ -48,7 +48,7 @@ import java.util.Map;
 public class CiServiceImpl implements CiService {
 
 	@Autowired
-	private DeployProperties devConfig;
+	private DeployProperties config;
 
 	@Autowired
 	private AppGroupDao appGroupDao;
@@ -183,7 +183,7 @@ public class CiServiceImpl implements CiService {
 			String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
 		switch (tarType) {
 		case CiDevOpsConstants.TAR_TYPE_TAR:
-			return new MvnAssembleTarDeployProvider(dependencyService, devConfig, projectId, path, url, branch, alias, tarPath,
+			return new MvnAssembleTarDeployProvider(dependencyService, config, projectId, path, url, branch, alias, tarPath,
 					instances, taskDetails);
 		case CiDevOpsConstants.TAR_TYPE_JAR:
 			// return new JarSubject(path, url, branch,
@@ -209,9 +209,8 @@ public class CiServiceImpl implements CiService {
 			AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
-		return getDeployProvider(task.getProjectId(), task.getTarType(),
-				devConfig.getGitBasePath() + "/" + project.getProjectName(), project.getGitUrl(), task.getBranchName(),
-				appGroup.getName(), project.getTarPath(), instances, taskDetails);
+		return getDeployProvider(task.getProjectId(), task.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
+				project.getGitUrl(), task.getBranchName(), appGroup.getName(), project.getTarPath(), instances, taskDetails);
 	}
 
 }

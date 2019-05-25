@@ -27,30 +27,30 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  */
 public class DeployProperties {
 
-	public static String gitBasePath;
+	private String gitBasePath;
 
-	public static String gitUsername;
+	private String gitUsername;
 
-	public static String gitPassword;
+	private String gitPassword;
 
-	public static String backupPath;
+	private String backupPath;
 
-	public static String linkPath;
+	private String linkPath;
 
-	public static String rsaKey;
+	private String rsaKey;
 
 	//
 	// Temporary
 	//
 
-	private static CredentialsProvider credentials;
+	private CredentialsProvider credentials;
 
 	public String getGitBasePath() {
 		return gitBasePath;
 	}
 
 	public void setGitBasePath(String gitBasePath) {
-		DeployProperties.gitBasePath = gitBasePath;
+		this.gitBasePath = gitBasePath;
 	}
 
 	public String getGitUsername() {
@@ -58,7 +58,7 @@ public class DeployProperties {
 	}
 
 	public void setGitUsername(String gitAccount) {
-		DeployProperties.gitUsername = gitAccount;
+		this.gitUsername = gitAccount;
 	}
 
 	public String getGitPassword() {
@@ -66,34 +66,34 @@ public class DeployProperties {
 	}
 
 	public void setGitPassword(String gitPassword) {
-		DeployProperties.gitPassword = gitPassword;
+		this.gitPassword = gitPassword;
 	}
 
-	public static String getBackupPath() {
+	public String getBackupPath() {
 		return backupPath;
 	}
 
 	public void setBackupPath(String bakPath) {
-		DeployProperties.backupPath = bakPath;
+		this.backupPath = bakPath;
 	}
 
-	public static String getLinkPath() {
+	public String getLinkPath() {
 		return linkPath;
 	}
 
 	public void setLinkPath(String linkPath) {
-		DeployProperties.linkPath = linkPath;
+		this.linkPath = linkPath;
 	}
 
-	public static String getRsaKey() {
+	public String getRsaKey() {
 		return rsaKey;
 	}
 
 	public void setRsaKey(String rsaKey) {
-		DeployProperties.rsaKey = rsaKey;
+		this.rsaKey = rsaKey;
 	}
 
-	public static CredentialsProvider getCredentials() {
+	public CredentialsProvider getCredentials() {
 		if (null == credentials) {
 			credentials = new UsernamePasswordCredentialsProvider(gitUsername, gitPassword);
 		}

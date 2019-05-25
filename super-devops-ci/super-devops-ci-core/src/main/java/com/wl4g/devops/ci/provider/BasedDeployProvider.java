@@ -40,6 +40,8 @@ import java.util.List;
 public abstract class BasedDeployProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	final protected DeployProperties config;
+
 	// branch name
 	private String branch;
 	// branch path
@@ -60,13 +62,13 @@ public abstract class BasedDeployProvider {
 	private Integer projectId;
 	// service
 	private DependencyService dependencyService;
-	// config
-	private DeployProperties devConfig;
+
 	// now
 	private Date now = new Date();
 
-	public BasedDeployProvider(DependencyService dependencyService, DeployProperties devConfig, Integer projectId, String path,
+	public BasedDeployProvider(DependencyService dependencyService, DeployProperties config, Integer projectId, String path,
 			String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
+		this.config = config;
 		this.path = path;
 		this.url = url;
 		this.branch = branch;
@@ -74,14 +76,12 @@ public abstract class BasedDeployProvider {
 		this.tarPath = tarPath;
 		this.instances = instances;
 		this.taskDetails = taskDetails;
+
 		String[] a = tarPath.split("/");
 		this.tarName = a[a.length - 1];
-		this.projectId = projectId;
 
-		// service
+		this.projectId = projectId;
 		this.dependencyService = dependencyService;
-		// devConfig
-		this.devConfig = devConfig;
 	}
 
 	/**
@@ -101,7 +101,7 @@ public abstract class BasedDeployProvider {
 	 */
 	public String execute(String targetHost, String userName, String command, String rsa) throws Exception {
 
-		String rsaKey = DeployProperties.getRsaKey();
+		String rsaKey = config.getRsaKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
 
@@ -124,14 +124,14 @@ public abstract class BasedDeployProvider {
 	 * clone
 	 */
 	public void clone(String path, String url, String branch) throws Exception {
-		GitUtils.clone(url, path, branch);
+		GitUtils.clone(config.getCredentials(), url, path, branch);
 	}
 
 	/**
 	 * checkOut
 	 */
 	public void checkOut(String path, String branch) throws Exception {
-		GitUtils.checkout(path, branch);
+		GitUtils.checkout(config.getCredentials(), path, branch);
 	}
 
 	/**
@@ -178,7 +178,7 @@ public abstract class BasedDeployProvider {
 
 	public String relink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
 		String command = "ln -snf " + targetPath + "/" + replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr() + " "
-				+ DeployProperties.linkPath + "/" + alias + "-package/" + alias + "-current";
+				+ config.getLinkPath() + "/" + alias + "-package/" + alias + "-current";
 		return execute(targetHost, userName, command, rsa);
 	}
 
@@ -188,7 +188,7 @@ public abstract class BasedDeployProvider {
 	public void scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
 		// String command = "scp -r " + path + " " + targetHost + ":/home/" +
 		// userName + "/tmp";
-		String rsaKey = DeployProperties.getRsaKey();
+		String rsaKey = config.getRsaKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
 		SSHTools.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
@@ -215,8 +215,8 @@ public abstract class BasedDeployProvider {
 	 * local back up
 	 */
 	public String backupLocal(String path) throws Exception {
-		checkPath(DeployProperties.backupPath);
-		String command = "cp -Rf " + path + " " + DeployProperties.backupPath + "/" + subPackname(path) + getDateTimeStr();
+		checkPath(config.getBackupPath());
+		String command = "cp -Rf " + path + " " + config.getBackupPath() + "/" + subPackname(path) + getDateTimeStr();
 		return run(command);
 	}
 
@@ -355,14 +355,6 @@ public abstract class BasedDeployProvider {
 
 	public void setDependencyService(DependencyService dependencyService) {
 		this.dependencyService = dependencyService;
-	}
-
-	public DeployProperties getDevConfig() {
-		return devConfig;
-	}
-
-	public void setDevConfig(DeployProperties devConfig) {
-		this.devConfig = devConfig;
 	}
 
 	public List<TaskDetail> getTaskDetails() {
