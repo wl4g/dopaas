@@ -17,45 +17,48 @@ package com.wl4g.devops.ci.config;
 
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
- * @author vjay
- * @date 2019-05-08 09:51:00
+ * Deployments configuration properties.
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月25日
+ * @since
  */
-@Component
-@ConfigurationProperties(prefix = "devconf")
-public class DevConfig {
+public class DeployProperties {
 
 	public static String gitBasePath;
 
-	public static String gitAccount;
+	public static String gitUsername;
 
 	public static String gitPassword;
 
-	public static String bakPath;
+	public static String backupPath;
 
 	public static String linkPath;
 
 	public static String rsaKey;
 
-	private static CredentialsProvider cp;
+	//
+	// Temporary
+	//
+
+	private static CredentialsProvider credentials;
 
 	public String getGitBasePath() {
 		return gitBasePath;
 	}
 
 	public void setGitBasePath(String gitBasePath) {
-		DevConfig.gitBasePath = gitBasePath;
+		DeployProperties.gitBasePath = gitBasePath;
 	}
 
-	public String getGitAccount() {
-		return gitAccount;
+	public String getGitUsername() {
+		return gitUsername;
 	}
 
-	public void setGitAccount(String gitAccount) {
-		DevConfig.gitAccount = gitAccount;
+	public void setGitUsername(String gitAccount) {
+		DeployProperties.gitUsername = gitAccount;
 	}
 
 	public String getGitPassword() {
@@ -63,22 +66,15 @@ public class DevConfig {
 	}
 
 	public void setGitPassword(String gitPassword) {
-		DevConfig.gitPassword = gitPassword;
+		DeployProperties.gitPassword = gitPassword;
 	}
 
-	public static CredentialsProvider getCp() {
-		if (null == cp) {
-			cp = new UsernamePasswordCredentialsProvider(gitAccount, gitPassword);
-		}
-		return cp;
+	public static String getBackupPath() {
+		return backupPath;
 	}
 
-	public static String getBakPath() {
-		return bakPath;
-	}
-
-	public void setBakPath(String bakPath) {
-		DevConfig.bakPath = bakPath;
+	public void setBackupPath(String bakPath) {
+		DeployProperties.backupPath = bakPath;
 	}
 
 	public static String getLinkPath() {
@@ -86,7 +82,7 @@ public class DevConfig {
 	}
 
 	public void setLinkPath(String linkPath) {
-		DevConfig.linkPath = linkPath;
+		DeployProperties.linkPath = linkPath;
 	}
 
 	public static String getRsaKey() {
@@ -94,6 +90,14 @@ public class DevConfig {
 	}
 
 	public void setRsaKey(String rsaKey) {
-		DevConfig.rsaKey = rsaKey;
+		DeployProperties.rsaKey = rsaKey;
 	}
+
+	public static CredentialsProvider getCredentials() {
+		if (null == credentials) {
+			credentials = new UsernamePasswordCredentialsProvider(gitUsername, gitPassword);
+		}
+		return credentials;
+	}
+
 }

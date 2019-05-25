@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.provider;
 
-import com.wl4g.devops.ci.config.DevConfig;
+import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.task.MvnAssembleTarDeployTask;
 import com.wl4g.devops.common.bean.ci.Dependency;
@@ -34,8 +34,9 @@ import java.util.List;
  */
 public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 
-	public MvnAssembleTarDeployProvider(DependencyService dependencyService, DevConfig devConfig, Integer projectId, String path,
-			String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
+	public MvnAssembleTarDeployProvider(DependencyService dependencyService, DeployProperties devConfig, Integer projectId,
+			String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,
+			List<TaskDetail> taskDetails) {
 		super(dependencyService, devConfig, projectId, path, url, branch, alias, tarPath, instances, taskDetails);
 	}
 

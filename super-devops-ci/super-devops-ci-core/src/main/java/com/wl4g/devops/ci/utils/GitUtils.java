@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.devops.ci.config.DevConfig;
+import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.shell.utils.ShellConsoleHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
@@ -44,7 +44,8 @@ public class GitUtils {
 			path.mkdirs();
 		}
 		try {
-			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(DevConfig.getCp()).call();
+			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(DeployProperties.getCredentials())
+					.call();
 			log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
 		} catch (Exception e) {
 			log.info(e.getMessage());
@@ -60,7 +61,7 @@ public class GitUtils {
 			path.mkdirs();
 		}
 		try {
-			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(DevConfig.getCp())
+			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(DeployProperties.getCredentials())
 					.setBranch(branchName).call();
 			log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
 			ShellConsoleHolder.printfQuietly("Cloning from " + remoteUrl + " to " + git.getRepository());
@@ -94,7 +95,7 @@ public class GitUtils {
 						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
 			}
 			// pull -- get newest code
-			git.pull().setCredentialsProvider(DevConfig.getCp()).call();
+			git.pull().setCredentialsProvider(DeployProperties.getCredentials()).call();
 			log.info("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
 			ShellConsoleHolder.printfQuietly("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
 		} catch (Exception e) {

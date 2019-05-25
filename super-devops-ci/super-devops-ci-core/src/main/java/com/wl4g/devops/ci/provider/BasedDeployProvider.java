@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.provider;
 
-import com.wl4g.devops.ci.config.DevConfig;
+import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.SSHTools;
 import com.wl4g.devops.ci.utils.GitUtils;
@@ -61,11 +61,11 @@ public abstract class BasedDeployProvider {
 	// service
 	private DependencyService dependencyService;
 	// config
-	private DevConfig devConfig;
+	private DeployProperties devConfig;
 	// now
 	private Date now = new Date();
 
-	public BasedDeployProvider(DependencyService dependencyService, DevConfig devConfig, Integer projectId, String path,
+	public BasedDeployProvider(DependencyService dependencyService, DeployProperties devConfig, Integer projectId, String path,
 			String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
 		this.path = path;
 		this.url = url;
@@ -101,7 +101,7 @@ public abstract class BasedDeployProvider {
 	 */
 	public String execute(String targetHost, String userName, String command, String rsa) throws Exception {
 
-		String rsaKey = DevConfig.getRsaKey();
+		String rsaKey = DeployProperties.getRsaKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
 
@@ -176,9 +176,9 @@ public abstract class BasedDeployProvider {
 		return result;
 	}
 
-	public String reLink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
+	public String relink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
 		String command = "ln -snf " + targetPath + "/" + replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr() + " "
-				+ DevConfig.linkPath + "/" + alias + "-package/" + alias + "-current";
+				+ DeployProperties.linkPath + "/" + alias + "-package/" + alias + "-current";
 		return execute(targetHost, userName, command, rsa);
 	}
 
@@ -188,7 +188,7 @@ public abstract class BasedDeployProvider {
 	public void scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
 		// String command = "scp -r " + path + " " + targetHost + ":/home/" +
 		// userName + "/tmp";
-		String rsaKey = DevConfig.getRsaKey();
+		String rsaKey = DeployProperties.getRsaKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
 		SSHTools.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
@@ -215,8 +215,8 @@ public abstract class BasedDeployProvider {
 	 * local back up
 	 */
 	public String backupLocal(String path) throws Exception {
-		checkPath(DevConfig.bakPath);
-		String command = "cp -Rf " + path + " " + DevConfig.bakPath + "/" + subPackname(path) + getDateTimeStr();
+		checkPath(DeployProperties.backupPath);
+		String command = "cp -Rf " + path + " " + DeployProperties.backupPath + "/" + subPackname(path) + getDateTimeStr();
 		return run(command);
 	}
 
@@ -357,11 +357,11 @@ public abstract class BasedDeployProvider {
 		this.dependencyService = dependencyService;
 	}
 
-	public DevConfig getDevConfig() {
+	public DeployProperties getDevConfig() {
 		return devConfig;
 	}
 
-	public void setDevConfig(DevConfig devConfig) {
+	public void setDevConfig(DeployProperties devConfig) {
 		this.devConfig = devConfig;
 	}
 

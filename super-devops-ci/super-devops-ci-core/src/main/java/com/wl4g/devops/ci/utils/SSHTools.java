@@ -19,7 +19,7 @@ import ch.ethz.ssh2.*;
 
 import com.google.common.base.Charsets;
 import com.wl4g.devops.shell.utils.ShellConsoleHolder;
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.*;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -58,7 +58,7 @@ public class SSHTools {
 		}
 		String result = sb.toString();
 		String resulterror = se.toString();
-		if (StringUtils.isNotBlank(resulterror)) {
+		if (isNotBlank(resulterror)) {
 			result += resulterror;
 			throw new RuntimeException("exce command fail,command=" + cmd + "\n cause:" + result.toString());
 		}
@@ -69,15 +69,15 @@ public class SSHTools {
 	/**
 	 * execute with local rsa file
 	 *
-	 * @param ip
+	 * @param host
 	 * @param command
 	 * @return
 	 */
-	public static String execute(String ip, String userName, String command) throws Exception {
+	public static String execute(String host, String userName, String command) throws Exception {
 		Connection conn = null;
 		try {
 			boolean flag = false;
-			conn = new Connection(ip);
+			conn = new Connection(host);
 			conn.connect();// connect
 			String userHome = System.getProperties().getProperty("user.home");
 			flag = conn.authenticateWithPublicKey(userName, new File(userHome + "/.ssh/id_rsa"), null);
@@ -97,18 +97,13 @@ public class SSHTools {
 		}
 	}
 
-	/**
-	 * @param ip
-	 * @param command
-	 * @return
-	 */
-	public static String execute(String ip, String userName, String command, char[] rsa) throws Exception {
+	public static String execute(String host, String userName, String command, char[] rsa) throws Exception {
 		log.info("exce command:" + command);
 		ShellConsoleHolder.printfQuietly("exce command:" + command);
 		Connection conn = null;
 		try {
 			boolean flag = false;
-			conn = new Connection(ip);
+			conn = new Connection(host);
 			conn.connect();// connect
 			flag = conn.authenticateWithPublicKey(userName, rsa, null);
 			if (flag) {
@@ -132,7 +127,7 @@ public class SSHTools {
 	}
 
 	/**
-	 * 上传文件到服务器
+	 * Upload execuable package to server
 	 * 
 	 * @param f
 	 *            文件对象
@@ -143,15 +138,16 @@ public class SSHTools {
 	 * @param mode
 	 *            默认为null
 	 */
-	public static void uploadFile(String ip, String userName, char[] rsa, File f, String remoteTargetDirectory) {
+	public static void uploadFile(String host, String userName, char[] rsa, File f, String remoteTargetDirectory) {
 		log.info("upload file begin: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
+
 		ShellConsoleHolder.printfQuietly("upload file: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
 		Connection conn = null;
 		SCPOutputStream os = null;
 		FileInputStream fis = null;
 		try {
 			boolean flag = false;
-			conn = new Connection(ip);
+			conn = new Connection(host);
 			conn.connect();
 			flag = conn.authenticateWithPublicKey(userName, rsa, null);
 			if (flag) {
@@ -188,24 +184,26 @@ public class SSHTools {
 					conn.close();
 				}
 			} catch (Exception e) {
-
 			}
 		}
 	}
 
 	private static String execute(Connection conn, String cmd) {
 		// logger.info("command=" + cmd);
-		String result = "";
+
+		String result = EMPTY;
 		Session session = null;
 		try {
-			session = conn.openSession();// open session
-			session.execCommand(cmd);// execute
-			result = processStdout(session.getStdout());
+			session = conn.openSession();
+			session.execCommand(cmd); // execute
+
+			result = printf(session.getStdout());
+
 			// if result blank, get error msg
-			if (StringUtils.isBlank(result)) {
-				result = processStdout(session.getStderr());
-				// throw new RuntimeException("execute fail result="+result);
+			if (isBlank(result)) {
+				result = printf(session.getStderr());
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -213,11 +211,12 @@ public class SSHTools {
 				session.close();
 			}
 		}
+
 		// logger.info(result);
 		return result;
 	}
 
-	private static String processStdout(InputStream in) {
+	private static String printf(InputStream in) {
 		StringBuffer buffer = new StringBuffer();
 		InputStream stdout = new StreamGobbler(in);
 
@@ -232,8 +231,6 @@ public class SSHTools {
 
 				ShellConsoleHolder.printfQuietly(line);
 			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
