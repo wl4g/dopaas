@@ -246,6 +246,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 */
 	protected AttributedString getAttributed() {
 		String prompt = getProperty(ARG_PROMPT);
+		prompt = isBlank(prompt) ? getProperty(ARG_SERV_NAME) : prompt;
 		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(String.format("%s> ", prompt));
 	}
 
@@ -316,8 +317,8 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					s = new Socket((String) point[0], (int) point[1]);
 				} catch (IOException e) {
 					String errmsg = String.format(
-							"Connecting to '%s' failure, check that the service application is started or the name is correct!",
-							getProperty(ARG_SERV_NAME));
+							"Connecting to '%s' failure, check that the service(%s) application is started or the name is correct!",
+							getProperty(ARG_SERV_NAME), point[1]);
 					printErr(errmsg, e);
 					throw new IllegalStateException(errmsg, e);
 				}

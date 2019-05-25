@@ -19,6 +19,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-shell-cli</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-shell-core</artifactId>
 			<version>master</version>
 		</dependency>
