@@ -40,13 +40,15 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ExceptionMessage;
+import com.wl4g.devops.shell.bean.InterruptMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.processor.ShellContext.EventListener;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
-import com.wl4g.devops.shell.utils.ShellConsoleHolder;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 
 /**
  * Socket server shell processor
@@ -79,6 +81,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 	public EmbeddedServerProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
 		super(config, appName, registry);
+
 		this.worker = Executors.newFixedThreadPool(config.getConcurrently(), new ThreadFactory() {
 			final private AtomicInteger counter = new AtomicInteger(0);
 
@@ -90,6 +93,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				return t;
 			}
 		});
+
 	}
 
 	@Override
@@ -169,7 +173,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 		ShellContext context = getClient().getContext();
 
 		// Default initialize
-		ShellConsoleHolder.bind(context);
+		ShellContextHolder.bind(context);
 
 		// Find ShellContext parameter index
 		int index = findParameterTypeIndex(tm, ShellContext.class);
@@ -228,10 +232,18 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 							result = new ResultMessage(context.getState(), ret.toString());
 						}
 					}
-					// Request register commands
+					// Request register message
 					else if (input instanceof MetaMessage) {
 						// Target methods
 						result = new MetaMessage(registry.getTargetMethods());
+					}
+					// Request interrupt message
+					else if (input instanceof InterruptMessage) {
+						// Execution event.
+						EventListener listener = context.getEventListener();
+						if (listener != null) {
+							listener.onInterrupt();
+						}
 					}
 
 					// Echo

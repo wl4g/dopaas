@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.utils;
 import ch.ethz.ssh2.*;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.shell.utils.ShellConsoleHolder;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 import static org.apache.commons.lang3.StringUtils.*;
 import org.apache.log4j.Logger;
 
@@ -67,7 +67,7 @@ public abstract class SSHTool extends ShellTool {
 
 	public static String execute(String host, String userName, String command, char[] rsa) throws Exception {
 		log.info("exce command:" + command);
-		ShellConsoleHolder.printfQuietly("exce command:" + command);
+		ShellContextHolder.printfQuietly("exce command:" + command);
 		Connection conn = null;
 		try {
 			boolean flag = false;
@@ -85,7 +85,7 @@ public abstract class SSHTool extends ShellTool {
 				throw new RuntimeException("login fail");
 			}
 		} catch (Exception e) {
-			ShellConsoleHolder.printfQuietly("exce fail:" + command + "\n" + e.getMessage());
+			ShellContextHolder.printfQuietly("exce fail:" + command + "\n" + e.getMessage());
 			throw e;
 		} finally {
 			if (null != conn) {
@@ -109,7 +109,7 @@ public abstract class SSHTool extends ShellTool {
 	public static void uploadFile(String host, String userName, char[] rsa, File f, String remoteTargetDirectory) {
 		log.info("upload file begin: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
 
-		ShellConsoleHolder.printfQuietly("upload file: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
+		ShellContextHolder.printfQuietly("upload file: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
 		Connection conn = null;
 		SCPOutputStream os = null;
 		FileInputStream fis = null;
@@ -130,14 +130,14 @@ public abstract class SSHTool extends ShellTool {
 				}
 				os.flush();
 				log.info("upload file success: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
-				ShellConsoleHolder.printfQuietly("upload file success: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
+				ShellContextHolder.printfQuietly("upload file success: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
 			} else {
 				log.error("login fail!");
 				throw new RuntimeException("login fail");
 			}
 		} catch (IOException e) {
 			log.error("upload file fail: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
-			ShellConsoleHolder.printfQuietly("upload file fail: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
+			ShellContextHolder.printfQuietly("upload file fail: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
 			e.printStackTrace();
 			throw new RuntimeException(e.getCause());
 		} finally {
@@ -197,7 +197,7 @@ public abstract class SSHTool extends ShellTool {
 				buffer.append(line);
 				buffer.append("\n");
 
-				ShellConsoleHolder.printfQuietly(line);
+				ShellContextHolder.printfQuietly(line);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

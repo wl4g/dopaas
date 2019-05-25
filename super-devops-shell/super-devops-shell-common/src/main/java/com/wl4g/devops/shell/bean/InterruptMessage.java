@@ -15,33 +15,14 @@
  */
 package com.wl4g.devops.shell.bean;
 
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import com.wl4g.devops.shell.utils.Assert;
-
 /**
- * Exception result message
+ * Client user interrupt commands message
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月4日
  * @since
  */
-public class ExceptionMessage extends Message {
-	private static final long serialVersionUID = -8574315277731909685L;
-
-	final private Throwable throwable;
-
-	public ExceptionMessage(Throwable throwable) {
-		Assert.notNull(throwable, "throwable must not be null");
-		this.throwable = throwable;
-	}
-
-	public Throwable getThrowable() {
-		return throwable;
-	}
-
-	@Override
-	public String toString() {
-		return "ExceptionMessage: " + getRootCauseMessage(throwable);
-	}
+public class InterruptMessage extends Message {
+	private static final long serialVersionUID = -8574318886731906685L;
 
 }

@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
 
-import com.wl4g.devops.shell.utils.ShellConsoleHolder;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 
 /**
  * Shell utility tools.
@@ -52,12 +52,12 @@ public abstract class ShellTool {
 		while ((line = br.readLine()) != null) {
 			sb.append(line).append("\n");
 			log.info(line);
-			ShellConsoleHolder.printfQuietly(line);
+			ShellContextHolder.printfQuietly(line);
 		}
 		while ((line = be.readLine()) != null) {
 			se.append(line).append("\n");
 			log.info(line);
-			ShellConsoleHolder.printfQuietly(line);
+			ShellContextHolder.printfQuietly(line);
 		}
 
 		String result = sb.toString();

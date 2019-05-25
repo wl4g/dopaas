@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.devops.shell.utils.ShellConsoleHolder;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
@@ -75,7 +75,7 @@ public class GitUtils {
 				log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
 			}
 
-			ShellConsoleHolder.printfQuietly("Cloning from " + remoteUrl + " to " + git.getRepository());
+			ShellContextHolder.printfQuietly("Cloning from " + remoteUrl + " to " + git.getRepository());
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			throw new RuntimeException(e);
@@ -110,10 +110,10 @@ public class GitUtils {
 			if (log.isInfoEnabled()) {
 				log.info("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
 			}
-			ShellConsoleHolder.printfQuietly("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
+			ShellContextHolder.printfQuietly("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
 		} catch (Exception e) {
 			String errmsg = String.format("checkout branch failure. branchName=%s, localPath=%s", branchName, localPath);
-			ShellConsoleHolder.printfQuietly(errmsg);
+			ShellContextHolder.printfQuietly(errmsg);
 			log.error(errmsg, e);
 			throw new RuntimeException(e);
 		} finally {

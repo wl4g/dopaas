@@ -27,7 +27,7 @@ import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellContext;
-import static com.wl4g.devops.shell.utils.ShellConsoleHolder.*;
+import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
@@ -69,7 +69,7 @@ public class BackendConsole {
 			// Open console printer.
 			open();
 
-			// Print client console
+			// Print to client
 			printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
 
 			// Create async task
