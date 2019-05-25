@@ -31,40 +31,8 @@ import java.io.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class SSHTools {
-	final private static Logger log = Logger.getLogger(SSHTools.class);
-
-	/**
-	 * run in local
-	 */
-	public static String runLocal(String cmd) throws Exception {
-		log.info("command:" + cmd);
-		StringBuffer sb = new StringBuffer();
-		StringBuffer se = new StringBuffer();
-
-		Process ps = Runtime.getRuntime().exec(cmd);
-		BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-		BufferedReader be = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
-		String line;
-		while ((line = br.readLine()) != null) {
-			sb.append(line).append("\n");
-			log.info(line);
-			ShellConsoleHolder.printfQuietly(line);
-		}
-		while ((line = be.readLine()) != null) {
-			se.append(line).append("\n");
-			log.info(line);
-			ShellConsoleHolder.printfQuietly(line);
-		}
-		String result = sb.toString();
-		String resulterror = se.toString();
-		if (isNotBlank(resulterror)) {
-			result += resulterror;
-			throw new RuntimeException("exce command fail,command=" + cmd + "\n cause:" + result.toString());
-		}
-
-		return result;
-	}
+public abstract class SSHTool extends ShellTool {
+	final private static Logger log = Logger.getLogger(SSHTool.class);
 
 	/**
 	 * execute with local rsa file

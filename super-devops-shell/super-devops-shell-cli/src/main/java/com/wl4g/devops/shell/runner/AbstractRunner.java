@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
-import static com.wl4g.devops.shell.bean.LineResultState.*;
+import static com.wl4g.devops.shell.bean.RunState.*;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HE;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HELP;
 import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
@@ -229,7 +229,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 			// Submission remote commands line
 			client.writeAndFlush(new LineMessage(line));
-			client.state = REQ;
+			client.state = RUNNING;
 		} else
 			client.writeAndFlush(message);
 	}
@@ -268,7 +268,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 			do {
 				// Guidance stream data returns until complete.
 				lock.wait(TIMEOUT);
-			} while (client.state == RESP_WAIT); // yet-completed?
+			} while (client.state == RUNNING_WAIT); // yet-completed?
 
 			// Check wait timeout
 			if (client.state == NONCE && (currentTimeMillis() - begin) >= TIMEOUT) {
@@ -441,7 +441,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		/**
 		 * Mark the current request processing status
 		 */
-		private LineResultState state = INIT;
+		private RunState state = READY;
 
 		/**
 		 * Boot boss thread

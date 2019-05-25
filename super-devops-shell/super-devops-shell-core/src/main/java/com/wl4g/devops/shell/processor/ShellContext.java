@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.processor;
 
-import com.wl4g.devops.shell.bean.LineResultState;
+import com.wl4g.devops.shell.bean.RunState;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
 import java.io.Closeable;
 import java.io.IOException;
 
-import static com.wl4g.devops.shell.bean.LineResultState.*;
+import static com.wl4g.devops.shell.bean.RunState.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
@@ -48,19 +48,19 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	final private ShellHandler client;
 
 	/** Line result message state. */
-	private volatile LineResultState state;
+	private volatile RunState state;
 
 	public ShellContext(ShellHandler client) {
 		this(client, NONCE);
 	}
 
-	public ShellContext(ShellHandler client, LineResultState state) {
+	public ShellContext(ShellHandler client, RunState state) {
 		Assert.notNull(client, "Client must not be null");
 		this.client = client;
 		this.state = state;
 	}
 
-	public LineResultState getState() {
+	public RunState getState() {
 		return state;
 	}
 
@@ -72,7 +72,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * Manually open data flow message transaction output.
 	 */
 	public synchronized void open() {
-		this.state = RESP_WAIT;
+		this.state = RUNNING_WAIT;
 
 		// Print start mark
 		printf("abc");

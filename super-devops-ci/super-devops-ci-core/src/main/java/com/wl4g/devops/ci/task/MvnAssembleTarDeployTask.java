@@ -16,10 +16,8 @@
 package com.wl4g.devops.ci.task;
 
 import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
-import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.utils.context.SpringContextHolder;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 import org.slf4j.Logger;
@@ -35,23 +33,21 @@ import java.util.List;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class MvnAssembleTarDeployTask implements Runnable {
+public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	private MvnAssembleTarDeployProvider provider;
 	private String path;
-	private AppInstance instance;
 	private String tarPath;
-	private TaskService taskService;
 	private Integer taskDetailId;
 	private String alias;
 
 	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, String path, AppInstance instance, String tarPath,
 			List<TaskDetail> taskDetails, String alias) {
-		this.taskService = SpringContextHolder.getBean(TaskService.class);
+		super(instance);
+
 		this.provider = provider;
 		this.path = path;
-		this.instance = instance;
 		this.tarPath = tarPath;
 		this.alias = alias;
 		Assert.notNull(taskDetails, "taskDetails can not be null");

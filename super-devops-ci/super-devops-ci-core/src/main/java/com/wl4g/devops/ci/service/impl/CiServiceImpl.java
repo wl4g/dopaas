@@ -120,7 +120,7 @@ public class CiServiceImpl implements CiService {
 			//// update task--running
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
 			// TODO exec
-			provider.exec();
+			provider.execute();
 			// update task--success
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
 		} catch (Exception e) {
@@ -168,7 +168,7 @@ public class CiServiceImpl implements CiService {
 			//// update task--running
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
 			// TODO exec
-			provider.exec();
+			provider.execute();
 			// update task--success
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
 		} catch (Exception e) {

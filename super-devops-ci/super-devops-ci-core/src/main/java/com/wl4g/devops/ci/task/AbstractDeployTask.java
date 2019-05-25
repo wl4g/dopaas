@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.bean;
+package com.wl4g.devops.ci.task;
+
+import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.utils.context.SpringContextHolder;
 
 /**
- * Line result message state
+ * Abstract deployments task.
  * 
- * @author wangl.sir
- * @version v1.0 2019年5月24日
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月25日
  * @since
  */
-public enum LineResultState {
+public abstract class AbstractDeployTask implements Runnable {
 
-	NONCE,
+	final protected AppInstance instance;
+	final protected TaskService taskService;
 
-	INIT,
-
-	REQ,
-
-	RESP_WAIT,
-
-	FINISHED;
+	public AbstractDeployTask(AppInstance instance) {
+		super();
+		this.instance = instance;
+		this.taskService = SpringContextHolder.getBean(TaskService.class);
+	}
 
 }

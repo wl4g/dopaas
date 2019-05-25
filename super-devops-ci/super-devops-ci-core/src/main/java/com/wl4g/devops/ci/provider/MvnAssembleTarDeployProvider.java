@@ -41,7 +41,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 	}
 
 	@Override
-	public void exec() throws Exception {
+	public void execute() throws Exception {
 		/*
 		 * //chekcout if(checkGitPahtExist()){ checkOut(path,branch); }else{
 		 * clone(path,url,branch); }
@@ -82,9 +82,8 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 	}
 
 	public String restart(String host, String userName, String rsa) throws Exception {
-		// String command = "sc "+alias+" restart;";
 		String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc " + getAlias() + " restart";
-		return execute(host, userName, command, rsa);
+		return doExecute(host, userName, command, rsa);
 	}
 
 }
