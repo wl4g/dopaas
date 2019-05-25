@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.utils.SSHTools;
+import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -88,7 +88,7 @@ public class DependencyServiceImpl implements DependencyService {
 	 */
 	public String mvnInstall(String path) throws Exception {
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-		return SSHTools.runLocal(command);
+		return SSHTool.exec(command);
 	}
 
 }

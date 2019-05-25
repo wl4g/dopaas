@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.bean;
 
-import static com.wl4g.devops.shell.bean.LineResultState.*;
+import static com.wl4g.devops.shell.bean.RunState.*;
 import com.wl4g.devops.shell.utils.Assert;
 
 /**
@@ -28,7 +28,7 @@ import com.wl4g.devops.shell.utils.Assert;
 public class ResultMessage extends Message {
 	private static final long serialVersionUID = -8574311246731909685L;
 
-	final private LineResultState state;
+	final private RunState state;
 
 	final private String content;
 
@@ -36,13 +36,13 @@ public class ResultMessage extends Message {
 		this(NONCE, content);
 	}
 
-	public ResultMessage(LineResultState state, String content) {
+	public ResultMessage(RunState state, String content) {
 		Assert.notNull(state, "State must not be empty");
 		this.state = state;
 		this.content = content;
 	}
 
-	public LineResultState getState() {
+	public RunState getState() {
 		return state;
 	}
 

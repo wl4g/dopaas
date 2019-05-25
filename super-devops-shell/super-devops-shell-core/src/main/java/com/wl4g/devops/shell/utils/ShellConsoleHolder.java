@@ -17,7 +17,7 @@ package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.shell.processor.ShellContext;
 
-import static com.wl4g.devops.shell.bean.LineResultState.RESP_WAIT;
+import static com.wl4g.devops.shell.bean.RunState.RUNNING_WAIT;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public abstract class ShellConsoleHolder {
 	 */
 	public static void printfQuietly(String message) {
 		ShellContext context = getContext();
-		if (context != null && context.getState() == RESP_WAIT) {
+		if (context != null && context.getState() == RUNNING_WAIT) {
 			try {
 				context.printf(message);
 			} catch (Exception e) {
@@ -99,7 +99,7 @@ public abstract class ShellConsoleHolder {
 		if (context == null) {
 			throw new IllegalStateException("The context object was not retrieved. first use bind()");
 		}
-		if (context.getState() != RESP_WAIT) {
+		if (context.getState() != RUNNING_WAIT) {
 			throw new IllegalStateException("The current console channel may be closed!");
 		}
 

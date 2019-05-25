@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.provider;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.utils.SSHTools;
+import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
@@ -40,31 +40,63 @@ import java.util.List;
 public abstract class BasedDeployProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	/** Deployments properties configuration. */
 	final protected DeployProperties config;
 
-	// branch name
-	private String branch;
-	// branch path
-	private String path;
-	// branch url
-	private String url;
-	// project alias
-	private String alias;
-	// for example:/super-devops-iam-security/target/demo.tar
-	private String tarPath;
-	// tarName,for example : demo.tar / demo.jar
-	private String tarName;
-	// instances
-	private List<AppInstance> instances;
-	// taskDetails
-	private List<TaskDetail> taskDetails;
-	// projectId
-	private Integer projectId;
-	// service
-	private DependencyService dependencyService;
+	/**
+	 * branch name
+	 */
+	final private String branch;
 
-	// now
-	private Date now = new Date();
+	/**
+	 * branch path
+	 */
+	final private String path;
+
+	/**
+	 * branch url
+	 */
+	final private String url;
+
+	/**
+	 * project alias
+	 */
+	final private String alias;
+
+	/**
+	 * for example:/super-devops-iam-security/target/demo.tar
+	 */
+	final private String tarPath;
+
+	/**
+	 * tarName,for example : demo.tar / demo.jar
+	 */
+	final private String tarName;
+
+	/**
+	 * instances
+	 */
+	final private List<AppInstance> instances;
+
+	/**
+	 * taskDetails
+	 */
+	final private List<TaskDetail> taskDetails;
+
+	/**
+	 * ProjectId
+	 */
+	final private Integer projectId;
+
+	/**
+	 * service
+	 */
+	final private DependencyService dependencyService;
+
+	/**
+	 * now
+	 */
+	final private Date now = new Date();
 
 	public BasedDeployProvider(DependencyService dependencyService, DeployProperties config, Integer projectId, String path,
 			String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
@@ -84,28 +116,17 @@ public abstract class BasedDeployProvider {
 		this.dependencyService = dependencyService;
 	}
 
-	/**
-	 * hook
-	 */
-	abstract public void exec() throws Exception;
+	public abstract void execute() throws Exception;
 
 	/**
 	 * exce command
 	 */
-	public String run(String command) throws Exception {
-		return SSHTools.runLocal(command);
-	}
-
-	/**
-	 * exce command
-	 */
-	public String execute(String targetHost, String userName, String command, String rsa) throws Exception {
-
+	public String doExecute(String targetHost, String userName, String command, String rsa) throws Exception {
 		String rsaKey = config.getRsaKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
 
-		return SSHTools.execute(targetHost, userName, command, rsaReal);
+		return SSHTool.execute(targetHost, userName, command, rsaReal);
 	}
 
 	/**
@@ -141,7 +162,7 @@ public abstract class BasedDeployProvider {
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
 		// String command = "mvn -f /Users/vjay/gittest/jianzutest clean install
 		// -Dmaven.test.skip=true";
-		return run(command);
+		return SSHTool.exec(command);
 	}
 
 	/**
@@ -156,8 +177,7 @@ public abstract class BasedDeployProvider {
 	 */
 	public String scp(String path, String targetHost, String targetPath) throws Exception {
 		String command = "scp -r " + path + " " + targetHost + ":" + targetPath;
-		return run(command);
-
+		return SSHTool.exec(command);
 	}
 
 	/**
@@ -179,7 +199,7 @@ public abstract class BasedDeployProvider {
 	public String relink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
 		String command = "ln -snf " + targetPath + "/" + replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr() + " "
 				+ config.getLinkPath() + "/" + alias + "-package/" + alias + "-current";
-		return execute(targetHost, userName, command, rsa);
+		return doExecute(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -191,7 +211,7 @@ public abstract class BasedDeployProvider {
 		String rsaKey = config.getRsaKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
-		SSHTools.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
+		SSHTool.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
 	}
 
 	/**
@@ -199,7 +219,7 @@ public abstract class BasedDeployProvider {
 	 */
 	public String tarToTmp(String targetHost, String userName, String path, String rsa) throws Exception {
 		String command = "tar -xvf /home/" + userName + "/tmp" + "/" + subPackname(path) + " -C /home/" + userName + "/tmp";
-		return execute(targetHost, userName, command, rsa);
+		return doExecute(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -208,7 +228,7 @@ public abstract class BasedDeployProvider {
 	public String moveToTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
 		String command = "mv /home/" + userName + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
 				+ replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr();
-		return execute(targetHost, userName, command, rsa);
+		return doExecute(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -217,7 +237,7 @@ public abstract class BasedDeployProvider {
 	public String backupLocal(String path) throws Exception {
 		checkPath(config.getBackupPath());
 		String command = "cp -Rf " + path + " " + config.getBackupPath() + "/" + subPackname(path) + getDateTimeStr();
-		return run(command);
+		return SSHTool.exec(command);
 	}
 
 	/**
@@ -225,7 +245,7 @@ public abstract class BasedDeployProvider {
 	 */
 	public String mkdirs(String targetHost, String userName, String path, String rsa) throws Exception {
 		String command = "mkdir -p " + path;
-		return execute(targetHost, userName, command, rsa);
+		return doExecute(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -239,22 +259,21 @@ public abstract class BasedDeployProvider {
 	 * stop
 	 */
 	public String stop(String targetHost, String userName, String command, String rsa) throws Exception {
-		return execute(targetHost, userName, command, rsa);
-
+		return doExecute(targetHost, userName, command, rsa);
 	}
 
 	/**
 	 * start
 	 */
 	public String start(String targetHost, String userName, String command, String rsa) throws Exception {
-		return execute(targetHost, userName, command, rsa);
+		return doExecute(targetHost, userName, command, rsa);
 	}
 
 	/**
 	 * restart
 	 */
 	public String restart(String targetHost, String userName, String command, String rsa) throws Exception {
-		return execute(targetHost, userName, command, rsa);
+		return doExecute(targetHost, userName, command, rsa);
 	}
 
 	public String getDateTimeStr() {
@@ -289,80 +308,40 @@ public abstract class BasedDeployProvider {
 		return branch;
 	}
 
-	public void setBranch(String branch) {
-		this.branch = branch;
-	}
-
 	public String getPath() {
 		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
 	}
 
 	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
 	public List<AppInstance> getInstances() {
 		return instances;
-	}
-
-	public void setInstances(List<AppInstance> instances) {
-		this.instances = instances;
 	}
 
 	public String getAlias() {
 		return alias;
 	}
 
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-
 	public String getTarName() {
 		return tarName;
-	}
-
-	public void setTarName(String tarName) {
-		this.tarName = tarName;
 	}
 
 	public String getTarPath() {
 		return tarPath;
 	}
 
-	public void setTarPath(String tarPath) {
-		this.tarPath = tarPath;
-	}
-
 	public Integer getProjectId() {
 		return projectId;
-	}
-
-	public void setProjectId(Integer projectId) {
-		this.projectId = projectId;
 	}
 
 	public DependencyService getDependencyService() {
 		return dependencyService;
 	}
 
-	public void setDependencyService(DependencyService dependencyService) {
-		this.dependencyService = dependencyService;
-	}
-
 	public List<TaskDetail> getTaskDetails() {
 		return taskDetails;
-	}
-
-	public void setTaskDetails(List<TaskDetail> taskDetails) {
-		this.taskDetails = taskDetails;
 	}
 
 }
