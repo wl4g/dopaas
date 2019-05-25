@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.config.DevConfig;
+import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.SSHTools;
 import com.wl4g.devops.ci.utils.GitUtils;
@@ -41,7 +41,7 @@ public class DependencyServiceImpl implements DependencyService {
 	private DependencyDao dependencyDao;
 
 	@Autowired
-	private DevConfig devConfig;
+	private DeployProperties devConfig;
 
 	@Autowired
 	private ProjectDao projectDao;

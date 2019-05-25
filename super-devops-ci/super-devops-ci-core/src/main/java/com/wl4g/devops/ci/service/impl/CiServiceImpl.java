@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.config.DevConfig;
+import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.provider.BasedDeployProvider;
 import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.ci.service.CiService;
@@ -48,7 +48,7 @@ import java.util.Map;
 public class CiServiceImpl implements CiService {
 
 	@Autowired
-	private DevConfig devConfig;
+	private DeployProperties devConfig;
 
 	@Autowired
 	private AppGroupDao appGroupDao;

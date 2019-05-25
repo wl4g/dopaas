@@ -19,8 +19,8 @@ import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.common.utils.context.SpringContextHolder;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ import java.util.List;
 public class MvnAssembleTarDeployTask implements Runnable {
 	private Logger log = LoggerFactory.getLogger(getClass());
 
-	private MvnAssembleTarDeployProvider mvnTarProvider;
+	private MvnAssembleTarDeployProvider provider;
 	private String path;
 	private AppInstance instance;
 	private String tarPath;
@@ -46,10 +46,10 @@ public class MvnAssembleTarDeployTask implements Runnable {
 	private Integer taskDetailId;
 	private String alias;
 
-	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider tarSubject, String path, AppInstance instance, String tarPath,
+	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, String path, AppInstance instance, String tarPath,
 			List<TaskDetail> taskDetails, String alias) {
-		taskService = SpringContextHolder.getBean(TaskService.class);
-		this.mvnTarProvider = tarSubject;
+		this.taskService = SpringContextHolder.getBean(TaskService.class);
+		this.provider = provider;
 		this.path = path;
 		this.instance = instance;
 		this.tarPath = tarPath;
@@ -57,7 +57,8 @@ public class MvnAssembleTarDeployTask implements Runnable {
 		Assert.notNull(taskDetails, "taskDetails can not be null");
 		for (TaskDetail taskDetail : taskDetails) {
 			if (taskDetail.getInstanceId().intValue() == instance.getId().intValue()) {
-				taskDetailId = taskDetail.getId();
+				this.taskDetailId = taskDetail.getId();
+				break;
 			}
 		}
 	}
@@ -65,35 +66,35 @@ public class MvnAssembleTarDeployTask implements Runnable {
 	@Override
 	public void run() {
 		if (log.isInfoEnabled()) {
-			log.info("scp thread is starting!");
+			log.info("Deploy task is starting ...");
 		}
 		Assert.notNull(taskDetailId, "taskDetailId can not be null");
 		try {
-			// update status
-			taskService.updateTaskDetailStatus(taskDetailId, CiDevOpsConstants.TASK_STATUS_RUNNING);
+			// Update status
+			taskService.updateTaskDetailStatus(taskDetailId, TASK_STATUS_RUNNING);
 
 			// scp to tmp,rename,move to webapps
-			mvnTarProvider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(),
+			provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(),
 					instance.getBasePath() + "/" + alias + "-package", instance.getSshRsa());
 
 			// change link
-			mvnTarProvider.reLink(instance.getHost(), instance.getBasePath() + "/" + alias + "-package",
-					instance.getServerAccount(), path + tarPath, instance.getSshRsa());
+			provider.relink(instance.getHost(), instance.getBasePath() + "/" + alias + "-package", instance.getServerAccount(),
+					path + tarPath, instance.getSshRsa());
 
 			// restart
-			mvnTarProvider.restart(instance.getHost(), instance.getServerAccount(), instance.getSshRsa());
+			provider.restart(instance.getHost(), instance.getServerAccount(), instance.getSshRsa());
 
 			// update status
-			taskService.updateTaskDetailStatus(taskDetailId, CiDevOpsConstants.TASK_STATUS_SUCCESS);
+			taskService.updateTaskDetailStatus(taskDetailId, TASK_STATUS_SUCCESS);
 
 		} catch (Exception e) {
 			log.error("scp thread error");
-			taskService.updateTaskDetailStatus(taskDetailId, CiDevOpsConstants.TASK_STATUS_FAIL);
+			taskService.updateTaskDetailStatus(taskDetailId, TASK_STATUS_FAIL);
 			throw new RuntimeException(e);
 		}
 
 		if (log.isInfoEnabled()) {
-			log.info("scp thread is finish!");
+			log.info("Deploy task is finished!");
 		}
 	}
 
