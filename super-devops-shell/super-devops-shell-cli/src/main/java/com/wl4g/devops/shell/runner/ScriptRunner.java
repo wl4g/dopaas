@@ -40,7 +40,7 @@ public class ScriptRunner extends AbstractRunner {
 			submit(line);
 		} catch (Throwable e) {
 			err.println(getStackTrace(e));
-			shutdown(line);
+			shutdown();
 		}
 	}
 
