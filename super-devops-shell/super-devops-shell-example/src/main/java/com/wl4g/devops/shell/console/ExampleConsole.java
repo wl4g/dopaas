@@ -113,7 +113,8 @@ public class ExampleConsole {
 	 */
 	@ShellMethod(keys = "logs2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
 	public String logs2(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Total number of printed items") int num) {
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Total number of printed items(default:5)") int num,
+			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(default:100ms)") long sleep) {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
@@ -129,6 +130,12 @@ public class ExampleConsole {
 
 					// Print stream message
 					ShellContextHolder.printf(message);
+
+					try {
+						Thread.sleep(sleep);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				ShellContextHolder.printf("Print finished!");
 

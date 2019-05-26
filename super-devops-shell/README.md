@@ -24,7 +24,7 @@ listening address and port to connect to.
 Specify the name of the service and then run directly as a client (for local mode, usually as a built-in console for application services).
 
 ```
-java -Dservname=devopsShellExample -Dprompt=console -Dtimeout=5000 -jar shell-cli-master-executable.jar 
+java -Dservname=shell-example -Dprompt=console -Dxdebug -Dtimeout=5000 -jar shell-cli-master-executable.jar 
 ```
 
 In the above command, the -Dservname represents the Spring Cloud application name on the server side 
