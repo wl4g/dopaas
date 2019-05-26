@@ -17,8 +17,6 @@ package com.wl4g.devops.shell.runner;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.InterruptMessage;
 import com.wl4g.devops.shell.bean.MetaMessage;
@@ -41,12 +39,16 @@ import org.jline.reader.UserInterruptException;
  */
 public class InteractiveRunner extends AbstractRunner {
 
-	final private AtomicBoolean completed = new AtomicBoolean(true);
+	/** Mark the current processing completion status. */
+	private volatile boolean completed = true;
 
-	private Thread worker;
+	/** Current processing tasks. */
+	private Thread task;
 
+	/** Current processing command line strings. */
 	private String line;
 
+	/** Record command send timestamp, waiting for timeout processing. */
 	private long sentTime = 0L;
 
 	public InteractiveRunner(Configuration config) {
@@ -61,11 +63,11 @@ public class InteractiveRunner extends AbstractRunner {
 
 				if (isNotBlank(line) && isComplated()) {
 					// Submission processing
-					worker = new Thread(() -> {
+					task = new Thread(() -> {
 						sentTime = currentTimeMillis();
 						submit(line);
 					});
-					worker.start();
+					task.start();
 
 					// Wait completed.
 					waitForCompleted(line);
@@ -77,14 +79,14 @@ public class InteractiveRunner extends AbstractRunner {
 				} else {
 					// When there is an unfinished task, the interrupt task
 					// signal is sent.
-					submit(new InterruptMessage());
+					submit(new InterruptMessage(true));
 				}
 			} catch (Throwable e) {
 				printErr(EMPTY, e);
 			} finally {
-				if (worker != null) {
-					worker.interrupt();
-					worker = null;
+				if (task != null) {
+					task.interrupt();
+					task = null;
 				}
 			}
 		}
@@ -138,7 +140,10 @@ public class InteractiveRunner extends AbstractRunner {
 	 * @throws InterruptedException
 	 */
 	private void waitForCompleted(String line) {
-		completed.set(false);
+		if (DEBUG) {
+			out.println(String.format("waitForCompleted: %s, completed: %s", this, completed));
+		}
+		completed = false;
 	}
 
 	/**
@@ -146,7 +151,10 @@ public class InteractiveRunner extends AbstractRunner {
 	 * {@link AbstractRunner#waitForComplished()}
 	 */
 	private void wakeup() {
-		completed.set(true);
+		if (DEBUG) {
+			out.println(String.format("Wakeup: %s, completed: %s", this, completed));
+		}
+		completed = true;
 	}
 
 	/**
@@ -155,7 +163,10 @@ public class InteractiveRunner extends AbstractRunner {
 	 * @return
 	 */
 	private String getPrompt() {
-		return completed.get() ? getAttributed().toAnsi(lineReader.getTerminal()) : EMPTY;
+		if (DEBUG) {
+			out.println(String.format("getPrompt: %s, completed: %s", this, completed));
+		}
+		return completed ? getAttributed().toAnsi(lineReader.getTerminal()) : EMPTY;
 	}
 
 	/**
@@ -165,7 +176,7 @@ public class InteractiveRunner extends AbstractRunner {
 	 * @return
 	 */
 	private boolean isComplated() {
-		return completed.get() || (currentTimeMillis() - sentTime) >= TIMEOUT;
+		return completed || (currentTimeMillis() - sentTime) >= TIMEOUT;
 	}
 
 }
