@@ -53,4 +53,4 @@ java -Dservname=shell-example -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-ma
 
 ## 自定义命令
 
-[完整示例](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java)
+[完整示例](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleConsole.java)
