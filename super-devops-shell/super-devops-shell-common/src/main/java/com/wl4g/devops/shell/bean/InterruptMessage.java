@@ -23,6 +23,22 @@ package com.wl4g.devops.shell.bean;
  * @since
  */
 public class InterruptMessage extends Message {
-	private static final long serialVersionUID = -8574318886731906685L;
+	private static final long serialVersionUID = -5574318886731906685L;
+
+	final private boolean force;
+
+	public InterruptMessage(boolean force) {
+		super();
+		this.force = force;
+	}
+
+	public boolean isForce() {
+		return force;
+	}
+
+	@Override
+	public String toString() {
+		return "InterruptMessage [force=" + force + "]";
+	}
 
 }
