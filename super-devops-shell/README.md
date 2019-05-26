@@ -33,10 +33,13 @@ endpoint with -Dservpoint, where -Dprompt is used to set the command line prompt
 the time-out for waiting results to return (default: 10_000ms), and can print debugging information using -Dxdebug.
 
 ## Features
-![tab auto-completion](shots/use_tab.jpg)
 - Ctrl+A cursor jumps to the beginning of the line, Ctrl+E cursor jumps to the end of the line, Ctrl+C exits the console (follow GNU)
+![tab auto-completion](shots/use_tab.jpg)
+- Connect use serverpoint
 ![Connect use serverpoint](shots/use_servpoint.jpg)
+- help
 ![help](shots/use_help.jpg)
+- Forced interruption of tasks running
 ![Forced interruption of tasks running](shots/force_interrupt.jpg)
 
 ## Built-in commands:
