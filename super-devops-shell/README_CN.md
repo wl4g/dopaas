@@ -35,10 +35,13 @@ java -Dservname=shell-example -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-ma
 
 ## 特性
 
-![tab自动补全](shots/use_tab.jpg)
 - Ctrl+A 光标跳至行首、Ctrl+E 光标跳至行尾、Ctrl+C 退出控制台（遵循GNU）
+![tab自动补全](shots/use_tab.jpg)
+- 使用serverpoint连接
 ![使用serverpoint连接](shots/use_servpoint.jpg)
+- help帮助
 ![help帮助](shots/use_help.jpg)
+- 強制中断运行中的任务
 ![強制中断运行中的任务](shots/force_interrupt.jpg)
 
 ## 内置命令 
