@@ -82,11 +82,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	/**
 	 * Enable debugging
 	 */
-	final public static boolean DEBUG = getProperty("debug") != null;
-
-	/**
-	 * Enable debugging
-	 */
 	final public static long TIMEOUT = Long.parseLong(getProperty("timeout", "10000"));
 
 	/**
@@ -434,11 +429,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					}
 				} catch (Throwable e) {
 					runner.printErr(EMPTY, e);
-				} finally {
-					try {
-						Thread.sleep(50L);
-					} catch (InterruptedException e) {
-					}
 				}
 			}
 		}

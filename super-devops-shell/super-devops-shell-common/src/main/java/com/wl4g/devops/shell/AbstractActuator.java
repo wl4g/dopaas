@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.Optional;
+import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -45,6 +46,11 @@ import com.wl4g.devops.shell.utils.LineUtils;
  * @since
  */
 public abstract class AbstractActuator implements Actuator {
+
+	/**
+	 * Enable shell console debug.
+	 */
+	final public static boolean DEBUG = getProperty("xdebug") != null;
 
 	/**
 	 * Shell handler bean registry
@@ -254,15 +260,18 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	protected int ensureDetermineServPort(String appName) {
 		Assert.hasLength(appName, "appName must not be empty");
+		String origin = trimToEmpty(appName).toUpperCase(Locale.ENGLISH);
 
 		CRC32 crc32 = new CRC32();
-		crc32.update(trimToEmpty(appName).toUpperCase(Locale.ENGLISH).getBytes(Charset.forName("UTF-8")));
+		crc32.update(origin.getBytes(Charset.forName("UTF-8")));
 		int mod = config.getEndPort() - config.getBeginPort();
-		int servPort = (int) (config.getBeginPort() + (crc32.getValue() % mod & (mod - 1)));
-		// out.println(String.format("Shell acceptor (%s - %s), sign(%s), listen
-		// port(%s)", config.getBeginPort(),
-		// config.getEndPort(), crc32.getValue(), servPort));
-		return servPort;
+		int servport = (int) (config.getBeginPort() + (crc32.getValue() % mod & (mod - 1)));
+
+		if (DEBUG) {
+			out.println(String.format("Shell servports (%s ~ %s), origin(%s), sign(%s), determine(%s)", config.getBeginPort(),
+					config.getEndPort(), origin, crc32.getValue(), servport));
+		}
+		return servport;
 	}
 
 }

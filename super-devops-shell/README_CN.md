@@ -25,7 +25,7 @@ java -Dservpoint=60120 -Dprompt=console -Dtimeout=5000 -jar shell-cli-master-exe
 指定服务的名称，然后直接作为客户端运行（适用于本地模式，通常作为应用服务的内置控制台使用）。
 
 ```
-java -Dservname=devopsShellExample -Dprompt=console -Dtimeout=5000 -jar shell-cli-master-executable.jar
+java -Dservname=shell-example -Dprompt=console -Dtimeout=5000 -Dxdebug -jar shell-cli-master-executable.jar
 ```
 
 上面的命令中 -Dservname 表示服务端SpringCloud应用名称（对应spring.application.name），它会依据servname在本地自动查找服务端口建立连接（注意大小写）.
