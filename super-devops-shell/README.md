@@ -51,5 +51,5 @@ the time-out for waiting results to return (default: 10_000ms), and can print de
 
 ## Custom commands
 
-[For perfect example](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleExporter.java)
+[For perfect example](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/exporter/ExampleConsole.java)
 	
