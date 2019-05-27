@@ -202,6 +202,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 		/** Shell context */
 		final ShellContext context;
 
+		private Thread task;
+
 		public ShellHandler(ShellBeanRegistry registry, Socket client, Function<String, Object> function) {
 			super(registry, client, function);
 			this.context = new ShellContext(this);
@@ -215,47 +217,57 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 		public void run() {
 			while (running.get() && isActive()) {
 				try {
-					Object result = null;
-
 					// To a string command line
 					Object input = new ObjectInputStream(_in).readObject();
 					if (log.isInfoEnabled()) {
 						log.info("<= {}", input);
 					}
 
-					// Submit line
-					if (input instanceof LineMessage) {
-						LineMessage line = (LineMessage) input;
-						// Processing
-						Object ret = function.apply(line.getLine());
-						if (ret != null) {
-							result = new ResultMessage(context.getState(), ret.toString());
+					// Asynchronous commit execution
+					task = new Thread(() -> {
+						Object result = null;
+						// Submit line
+						if (input instanceof LineMessage) {
+							LineMessage line = (LineMessage) input;
+							// Processing
+							Object ret = function.apply(line.getLine());
+							if (ret != null) {
+								result = new ResultMessage(context.getState(), ret.toString());
+							}
 						}
-					}
-					// Request register message
-					else if (input instanceof MetaMessage) {
-						// Target methods
-						result = new MetaMessage(registry.getTargetMethods());
-					}
-					// Request interrupt message
-					else if (input instanceof InterruptMessage) {
-						// Execution event.
-						EventListener listener = context.getEventListener();
-						if (listener != null) {
-							listener.onInterrupt();
+						// Request register message
+						else if (input instanceof MetaMessage) {
+							// Target methods
+							result = new MetaMessage(registry.getTargetMethods());
 						}
-					}
+						// Request interrupt message
+						else if (input instanceof InterruptMessage) {
+							// Execution event.
+							EventListener listener = context.getEventListener();
+							if (listener != null) {
+								listener.onInterrupt();
+							}
+						}
 
-					// Echo
-					if (result != null) {
-						if (log.isInfoEnabled()) {
-							log.info("=> {}", result);
+						if (result != null) { // Echo
+							if (log.isInfoEnabled()) {
+								log.info("=> {}", result);
+							}
+							try {
+								writeAndFlush(result);
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							}
 						}
-						writeAndFlush(result);
-					}
+					});
+					task.start();
 
 				} catch (Throwable th) {
 					handleThorws(th);
+					if (task != null) {
+						task.interrupt();
+						task = null;
+					}
 				} finally {
 					try {
 						Thread.sleep(100L);
