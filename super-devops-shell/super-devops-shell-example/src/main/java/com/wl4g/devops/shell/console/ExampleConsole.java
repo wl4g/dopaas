@@ -17,6 +17,7 @@ package com.wl4g.devops.shell.console;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ import com.wl4g.devops.shell.bean.MixedArgument;
 import com.wl4g.devops.shell.bean.SumArgument;
 import com.wl4g.devops.shell.bean.SumResult;
 import com.wl4g.devops.shell.service.ExampleService;
-import com.wl4g.devops.shell.utils.ShellConsoleHolder;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 
 @ShellComponent
 public class ExampleConsole {
@@ -76,37 +77,78 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * $> sum -a 1 -b 123
+	 * $> logs -n 100
 	 */
-	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that can output logs in real time.")
+	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is not supported)")
 	public String logs(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Input parameters (number of messages)") int num) {
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Total number of printed items") int num) {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
-		ShellConsoleHolder.begin();
+		ShellContextHolder.open();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
 			try {
 				for (int i = 1; i <= num; i++) {
 					String message = "This is the " + i + "th message!";
-					log.info("Example log write => {}", message);
+					System.out.println(message);
 
 					// Print stream message
-					ShellConsoleHolder.printf(message);
-
+					ShellContextHolder.printf(message);
 				}
-				ShellConsoleHolder.printf("Print successfully completed!");
+				ShellContextHolder.printf("Print successfully completed!");
 
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
-				ShellConsoleHolder.end();
+				ShellContextHolder.close();
 			}
-
 		}).start();
 
-		return "Task 'Print-Log' starting up ...";
+		return "Logs printer starting-up ...";
+	}
+
+	/**
+	 * $> logs2 -n 100
+	 */
+	@ShellMethod(keys = "logs2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
+	public String logs2(
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Total number of printed items(default:5)") int num,
+			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(default:100ms)") long sleep) {
+
+		// Open the flow message output, and the client will always be
+		// blocked waiting until ShellConsoles.end() is called.
+		ShellContextHolder.open();
+
+		// Used to simulate an asynchronous task, constantly outputting logs
+		AtomicBoolean running = new AtomicBoolean(true);
+		new Thread(() -> {
+			try {
+				for (int i = 1; running.get() && i <= num; i++) {
+					String message = "This is the " + i + "th message!";
+					System.out.println(message);
+
+					// Print stream message
+					ShellContextHolder.printf(message);
+
+					try {
+						Thread.sleep(sleep);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				ShellContextHolder.printf("Print finished!");
+
+			} finally {
+				// Must end, and must be after ShellConsoles.begin()
+				ShellContextHolder.close();
+			}
+		}).start();
+
+		// Interrupt listener
+		ShellContextHolder.getContext().setEventListener(() -> running.set(false));
+
+		return "Logs printer starting-up ...";
 	}
 
 }

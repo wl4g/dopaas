@@ -17,7 +17,6 @@ package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.shell.processor.ShellContext;
 
-import static com.wl4g.devops.shell.bean.LineResultState.RESP_WAIT;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 import org.slf4j.Logger;
@@ -30,9 +29,9 @@ import org.slf4j.LoggerFactory;
  * @version v1.0 2019年5月24日
  * @since
  */
-public abstract class ShellConsoleHolder {
+public abstract class ShellContextHolder {
 
-	final private static Logger log = LoggerFactory.getLogger(ShellConsoleHolder.class);
+	final private static Logger log = LoggerFactory.getLogger(ShellContextHolder.class);
 
 	/** Shell context cache. */
 	final private static ThreadLocal<ShellContext> contextCache = new InheritableThreadLocal<>();
@@ -80,11 +79,11 @@ public abstract class ShellConsoleHolder {
 	 */
 	public static void printfQuietly(String message) {
 		ShellContext context = getContext();
-		if (context != null && context.getState() == RESP_WAIT) {
+		if (context != null) {
 			try {
-				context.printf(message);
+				context.printfQuietly(message);
 			} catch (Exception e) {
-				log.warn("Write error => {}", getRootCauseMessage(e));
+				log.warn("Print error. cause: {}", getRootCauseMessage(e));
 			}
 		}
 	}
@@ -96,28 +95,22 @@ public abstract class ShellConsoleHolder {
 	 */
 	public static void printf(String message) {
 		ShellContext context = getContext();
-		if (context == null) {
-			throw new IllegalStateException("The context object was not retrieved. first use bind()");
-		}
-		if (context.getState() != RESP_WAIT) {
-			throw new IllegalStateException("The current console channel may be closed!");
-		}
-
+		Assert.notNull(context, "The context object was not retrieved. first use bind()");
 		context.printf(message);
 	}
 
 	/**
 	 * Manually open data flow message transaction output.
 	 */
-	public static void begin() {
-		getContext(true).begin();
+	public static void open() {
+		getContext(true).open();
 	}
 
 	/**
 	 * Manually end data flow message transaction output.
 	 */
-	public static void end() {
-		getContext(true).end();
+	public static void close() {
+		getContext(true).close();
 	}
 
 }

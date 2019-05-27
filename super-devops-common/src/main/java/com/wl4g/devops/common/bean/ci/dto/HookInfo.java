@@ -1,11 +1,12 @@
 package com.wl4g.devops.common.bean.ci.dto;
 
-/** get from hook's info
+/**
+ * get from hook's info
+ * 
  * @author vjay
  * @date 2019-05-14 17:04:00
  */
 public class HookInfo {
-
 
 	private String ref;
 
@@ -20,7 +21,7 @@ public class HookInfo {
 	public void setRef(String ref) {
 		this.ref = ref;
 		String[] a = ref.split("/");
-		this.branchName = a[a.length-1];
+		this.branchName = a[a.length - 1];
 	}
 
 	public String getBranchName() {
@@ -39,7 +40,7 @@ public class HookInfo {
 		this.repository = repository;
 	}
 
-	public class Repository{
+	public class Repository {
 
 		private String name;
 
@@ -61,6 +62,5 @@ public class HookInfo {
 			this.gitHttpUrl = git_http_url;
 		}
 	}
-
 
 }

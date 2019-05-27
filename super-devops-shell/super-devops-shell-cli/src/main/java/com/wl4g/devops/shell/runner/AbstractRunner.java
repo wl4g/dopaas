@@ -15,15 +15,6 @@
  */
 package com.wl4g.devops.shell.runner;
 
-import com.wl4g.devops.shell.AbstractActuator;
-import com.wl4g.devops.shell.bean.*;
-import com.wl4g.devops.shell.command.DefaultInternalCommand;
-import com.wl4g.devops.shell.config.Configuration;
-import com.wl4g.devops.shell.config.DynamicCompleter;
-import com.wl4g.devops.shell.exception.ProcessTimeoutException;
-import com.wl4g.devops.shell.handler.ChannelMessageHandler;
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
-import com.wl4g.devops.shell.utils.Assert;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.TerminalBuilder;
@@ -38,15 +29,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+import static java.lang.System.*;
 
+import com.wl4g.devops.shell.AbstractActuator;
+import com.wl4g.devops.shell.bean.*;
+import com.wl4g.devops.shell.command.DefaultInternalCommand;
+import com.wl4g.devops.shell.config.Configuration;
+import com.wl4g.devops.shell.config.DynamicCompleter;
+import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.utils.Assert;
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
-import static com.wl4g.devops.shell.bean.LineResultState.*;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HE;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HELP;
-import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
+import static com.wl4g.devops.shell.config.DefaultBeanRegistry.*;
 import static com.wl4g.devops.shell.utils.LineUtils.clean;
 import static com.wl4g.devops.shell.utils.LineUtils.parse;
-import static java.lang.System.*;
+import static com.wl4g.devops.shell.bean.RunState.*;
+
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -78,11 +78,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * Commands prompt string.
 	 */
 	final public static String ARG_PROMPT = "prompt";
-
-	/**
-	 * Enable debugging
-	 */
-	final public static boolean DEBUG = getProperty("debug") != null;
 
 	/**
 	 * Enable debugging
@@ -126,7 +121,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 		// Build lineReader
 		try {
-			this.lineReader = LineReaderBuilder.builder().appName("DevOps Shell Cli").completer(new DynamicCompleter(getSingle()))
+			this.lineReader = LineReaderBuilder.builder().appName("Devops Shell Cli").completer(new DynamicCompleter(getSingle()))
 					.terminal(TerminalBuilder.terminal()).build();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
@@ -137,7 +132,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 			initialize();
 		} catch (Throwable t) {
 			printErr(EMPTY, t);
-			shutdown(EMPTY);
+			shutdown();
 		}
 	}
 
@@ -150,7 +145,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	}
 
 	@Override
-	public void shutdown(String line) {
+	public void shutdown() {
 		try {
 			out.println("Shutting down, bye...");
 
@@ -200,47 +195,42 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * @param line
 	 * @throws IOException
 	 */
-	protected void submit(Object message) throws IOException {
-		// Ensure client
-		ensureClient();
+	protected void submit(Object message) {
+		try {
+			// Ensure client
+			ensureClient();
+			if (message instanceof String) {
+				String line = (String) message;
+				List<String> cmds = parse(line);
+				if (!cmds.isEmpty()) {
+					// $> [help|clear|history...]
+					if (registry.contains(cmds.get(0))) { // Internal commands?
+						DefaultInternalCommand.senseLine(line);
+						process(line);
+						return;
+					}
+					// help command? [MARK0] $> add --help
+					else if (cmds.size() > 1
+							&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
 
-		if (message instanceof String) {
-			String line = (String) message;
-			List<String> cmds = parse(line);
-			if (!cmds.isEmpty()) {
-				// $> [help|clear|history...]
-				if (registry.contains(cmds.get(0))) { // Internal commands?
-					DefaultInternalCommand.senseLine(line);
-					process(line);
-					return;
+						// Equivalent to: '$> help add'
+						line = clean(INTERNAL_HELP) + " " + cmds.get(0);
+						// Set current line
+						DefaultInternalCommand.senseLine(line);
+						process(line);
+						return;
+					}
 				}
-				// help command? [MARK0] $> add --help
-				else if (cmds.size() > 1
-						&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
 
-					// Equivalent to: '$> help add'
-					line = clean(INTERNAL_HELP) + " " + cmds.get(0);
-					// Set current line
-					DefaultInternalCommand.senseLine(line);
-					process(line);
-					return;
-				}
+				// Submission remote commands line
+				client.writeAndFlush(new LineMessage(line));
+				client.state = RUNNING;
+			} else {
+				client.writeAndFlush(message);
+				client.state = RUNNING;
 			}
-
-			// Submission remote commands line
-			client.writeAndFlush(new LineMessage(line));
-			client.state = REQ;
-		} else
-			client.writeAndFlush(message);
-	}
-
-	@Override
-	protected void postProcessResult(Object result) {
-		// Notify for wait liner
-		wakeup();
-
-		if (result != null && isNotBlank(result.toString())) {
-			out.println(result);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -251,41 +241,8 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 */
 	protected AttributedString getAttributed() {
 		String prompt = getProperty(ARG_PROMPT);
+		prompt = isBlank(prompt) ? getProperty(ARG_SERV_NAME) : prompt;
 		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(String.format("%s> ", prompt));
-	}
-
-	/**
-	 * Wait for completed. </br>
-	 * {@link AbstractRunner#wakeup()}
-	 * 
-	 * @param line
-	 * @throws InterruptedException
-	 */
-	protected void waitForCompleted(String line) throws InterruptedException {
-		synchronized (lock) {
-			long begin = currentTimeMillis();
-
-			do {
-				// Guidance stream data returns until complete.
-				lock.wait(TIMEOUT);
-			} while (client.state == RESP_WAIT); // yet-completed?
-
-			// Check wait timeout
-			if (client.state == NONCE && (currentTimeMillis() - begin) >= TIMEOUT) {
-				throw new ProcessTimeoutException(String.format("Execute the timeout command: %s", line));
-			}
-
-		}
-	}
-
-	/**
-	 * Notify for wait lineReader. </br>
-	 * {@link AbstractRunner#waitForComplished()}
-	 */
-	protected void wakeup() throws IllegalMonitorStateException {
-		synchronized (lock) {
-			lock.notifyAll();
-		}
 	}
 
 	/**
@@ -296,11 +253,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		this.registry.register(new DefaultInternalCommand(this));
 
 		// Initialize remote register commands
-		try {
-			submit(new MetaMessage());
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
+		submit(new MetaMessage());
 
 		// Set history persist file
 		File file = new File(USER_HOME + "/.devops/shell/history");
@@ -359,16 +312,13 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					s = new Socket((String) point[0], (int) point[1]);
 				} catch (IOException e) {
 					String errmsg = String.format(
-							"Connecting to '%s' failure, check that the service application is started or the name is correct!",
-							getProperty(ARG_SERV_NAME));
-					err.println(errmsg);
+							"Connecting to '%s' failure, check that the service(%s) application is started or the name is correct!",
+							getProperty(ARG_SERV_NAME), point[1]);
+					printErr(errmsg, e);
 					throw new IllegalStateException(errmsg, e);
 				}
 
-				client = new ClientHandler(this, s, result -> {
-					out.println(result);
-					return null;
-				}).starting();
+				client = new ClientHandler(this, s, result -> null).starting();
 			}
 		}
 
@@ -439,14 +389,14 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		final private AbstractRunner runner;
 
 		/**
-		 * Mark the current request processing status
-		 */
-		private LineResultState state = INIT;
-
-		/**
 		 * Boot boss thread
 		 */
 		private Thread boss;
+
+		/**
+		 * Mark the current request processing status
+		 */
+		private RunState state = READY;
 
 		public ClientHandler(AbstractRunner runner, Socket client, Function<String, Object> function) {
 			super(runner.getRegistry(), client, function);
@@ -467,51 +417,28 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					// Read a string command process result
 					Object input = new ObjectInputStream(_in).readObject();
 
-					// Merge remote target methods commands
-					if (input instanceof MetaMessage) {
-						MetaMessage meta = (MetaMessage) input;
-						getSingle().merge(meta.getRegistedMethods());
-					}
-					// Exception-callback
-					else if (input instanceof ExceptionMessage) {
-						wakeup(); // Wake-up lineReader
-
-						ExceptionMessage ex = (ExceptionMessage) input;
-						runner.printErr(EMPTY, ex.getThrowable());
-					}
-					// Result callback
-					else if (input instanceof ResultMessage) {
-						// After process
-						ResultMessage result = (ResultMessage) input;
-
-						// Wake up the waiting thread when the response is
-						// complete.
-						state = result.getState();
-						if (state == NONCE || state == FINISHED) {
-							wakeup(); // Wake-up lineReader
-						}
-
-						// Callback processing
-						function.apply(result.getContent());
-					}
+					// Post process
+					postProcessResult(input);
 
 				} catch (SocketException e) {
 					boss.interrupt();
 					try {
 						close();
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						runner.printErr(EMPTY, e);
 					}
 				} catch (Throwable e) {
-
 					runner.printErr(EMPTY, e);
-				} finally {
-					try {
-						Thread.sleep(50L);
-					} catch (InterruptedException e) {
-					}
 				}
 			}
+		}
+
+		public RunState getState() {
+			return state;
+		}
+
+		public void setState(RunState state) {
+			this.state = state;
 		}
 
 	}
