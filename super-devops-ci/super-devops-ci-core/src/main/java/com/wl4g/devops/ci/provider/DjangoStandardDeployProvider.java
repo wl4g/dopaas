@@ -15,12 +15,10 @@
  */
 package com.wl4g.devops.ci.provider;
 
-import java.util.List;
-
-import com.wl4g.devops.ci.config.DeployProperties;
-import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
+
+import java.util.List;
 
 /**
  * Django standard deployments provider.
@@ -31,10 +29,10 @@ import com.wl4g.devops.common.bean.scm.AppInstance;
  */
 public class DjangoStandardDeployProvider extends BasedDeployProvider {
 
-	public DjangoStandardDeployProvider(DependencyService dependencyService, DeployProperties config, Integer projectId,
+	public DjangoStandardDeployProvider( Integer projectId,
 			String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,
 			List<TaskDetail> taskDetails) {
-		super(dependencyService, config, projectId, path, url, branch, alias, tarPath, instances, taskDetails);
+		super(projectId, path, url, branch, alias, tarPath, instances, taskDetails);
 	}
 
 	@Override

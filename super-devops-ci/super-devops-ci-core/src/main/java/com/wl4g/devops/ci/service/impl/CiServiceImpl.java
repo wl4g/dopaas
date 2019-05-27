@@ -185,7 +185,7 @@ public class CiServiceImpl implements CiService {
 			String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
 		switch (tarType) {
 		case CiDevOpsConstants.TAR_TYPE_TAR:
-			return new MvnAssembleTarDeployProvider(dependencyService, config, projectId, path, url, branch, alias, tarPath,
+			return new MvnAssembleTarDeployProvider(projectId, path, url, branch, alias, tarPath,
 					instances, taskDetails);
 		case CiDevOpsConstants.TAR_TYPE_JAR:
 			// return new JarSubject(path, url, branch,

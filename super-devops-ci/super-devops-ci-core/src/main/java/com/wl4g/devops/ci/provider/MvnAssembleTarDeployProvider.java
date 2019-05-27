@@ -15,12 +15,11 @@
  */
 package com.wl4g.devops.ci.provider;
 
-import com.wl4g.devops.ci.config.DeployProperties;
-import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.task.MvnAssembleTarDeployTask;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 
 import java.util.List;
 
@@ -34,10 +33,10 @@ import java.util.List;
  */
 public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 
-	public MvnAssembleTarDeployProvider(DependencyService dependencyService, DeployProperties config, Integer projectId,
+	public MvnAssembleTarDeployProvider( Integer projectId,
 			String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,
 			List<TaskDetail> taskDetails) {
-		super(dependencyService, config, projectId, path, url, branch, alias, tarPath, instances, taskDetails);
+		super( projectId, path, url, branch, alias, tarPath, instances, taskDetails);
 	}
 
 	@Override
@@ -48,9 +47,11 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 		 * 
 		 * //build build(path);
 		 */
+
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProjectId());
-		getDependencyService().build(dependency, getBranch());
+
+		getDependencyService().build(running,dependency, getBranch());
 
 		// backup in local
 		backupLocal(getPath() + getTarPath());
@@ -73,11 +74,14 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 		 */
 		// scp to server
 		for (AppInstance instance : getInstances()) {
-			Runnable task = new MvnAssembleTarDeployTask(this, getPath(), instance, getTarPath(), getTaskDetails(), getAlias());
+			Runnable task = new MvnAssembleTarDeployTask(this, getPath(), instance, getTarPath(), getTaskDetails(), getAlias(),running);
 			Thread thread = new Thread(task);
 			thread.start();
 			thread.join();
 		}
+
+		ShellContextHolder.getContext().setEventListener(() -> running.set(false));
+
 		log.info("Done");
 	}
 

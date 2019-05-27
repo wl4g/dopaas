@@ -5,7 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
+@Component
+@Lazy(false)
 public class SpringContextHolder implements ApplicationContextAware, DisposableBean {
 	final private static Logger logger = LoggerFactory.getLogger(SpringContextHolder.class);
 
@@ -15,6 +19,7 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	 * Implement the ApplicationContextAware interface, injecting the Context
 	 * into a static variable.
 	 */
+	@Override
 	public void setApplicationContext(ApplicationContext actx) {
 		logger.debug("Inject the ApplicationContext into the SpringContextHolder:" + actx);
 		if (applicationContext != null) {
