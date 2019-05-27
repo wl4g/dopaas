@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.function.Function;
 
-import org.apache.log4j.Logger;
-
-import com.wl4g.devops.shell.utils.ShellContextHolder;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Shell utility tools.
@@ -69,5 +69,45 @@ public abstract class ShellTool {
 
 		return result;
 	}
+
+
+	public static String exec(String cmd, Function<String,Boolean> callback) throws Exception {
+		if (log.isInfoEnabled()) {
+			log.info("Execution native command for '{}'" + cmd);
+		}
+
+		StringBuffer sb = new StringBuffer();
+		StringBuffer se = new StringBuffer();
+
+		Process ps = Runtime.getRuntime().exec(cmd);
+		BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+		BufferedReader be = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
+		String line;
+		while ((line = br.readLine()) != null) {
+			if(callback!=null){
+				if(callback.apply(line)){
+					throw new InterruptedException("Force stop");
+				}
+			}
+			sb.append(line).append("\n");
+			log.info(line);
+			ShellContextHolder.printfQuietly(line);
+		}
+		while ((line = be.readLine()) != null) {
+			se.append(line).append("\n");
+			log.info(line);
+			ShellContextHolder.printfQuietly(line);
+		}
+
+		String result = sb.toString();
+		String resulterror = se.toString();
+		if (isNotBlank(resulterror)) {
+			result += resulterror;
+			throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + result.toString());
+		}
+
+		return result;
+	}
+
 
 }

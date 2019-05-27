@@ -17,18 +17,20 @@ package com.wl4g.devops.ci.provider;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.ci.utils.GitUtils;
+import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.common.utils.context.SpringContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Based executable provider.
@@ -93,14 +95,17 @@ public abstract class BasedDeployProvider {
 	 */
 	final private DependencyService dependencyService;
 
+
+	protected AtomicBoolean running = null;
+
 	/**
 	 * now
 	 */
 	final private Date now = new Date();
 
-	public BasedDeployProvider(DependencyService dependencyService, DeployProperties config, Integer projectId, String path,
+	public BasedDeployProvider( Integer projectId, String path,
 			String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
-		this.config = config;
+		this.config = SpringContextHolder.getBean(DeployProperties.class);
 		this.path = path;
 		this.url = url;
 		this.branch = branch;
@@ -113,7 +118,9 @@ public abstract class BasedDeployProvider {
 		this.tarName = a[a.length - 1];
 
 		this.projectId = projectId;
-		this.dependencyService = dependencyService;
+		this.dependencyService = SpringContextHolder.getBean(DependencyService.class);
+
+		running = new AtomicBoolean(true);
 	}
 
 	public abstract void execute() throws Exception;

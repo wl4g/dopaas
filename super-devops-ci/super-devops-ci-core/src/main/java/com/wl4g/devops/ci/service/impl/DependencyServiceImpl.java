@@ -17,18 +17,20 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.ci.utils.GitUtils;
+import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Dependency service implements
@@ -50,14 +52,15 @@ public class DependencyServiceImpl implements DependencyService {
 	private ProjectDao projectDao;
 
 	@Override
-	public void build(Dependency dependency, String branch) throws Exception {
+	public void build(AtomicBoolean running, Dependency dependency, String branch) throws Exception {
+
 		Integer projectId = dependency.getProjectId();
 
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
 		if (dependencies != null && dependencies.size() > 0) {
 			for (Dependency dep : dependencies) {
 				String br = dep.getParentBranch();
-				build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
+				build(running,new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
 			}
 		}
 
@@ -71,7 +74,7 @@ public class DependencyServiceImpl implements DependencyService {
 		}
 
 		// install
-		mvnInstall(path);
+		mvnInstall(path,running);
 	}
 
 	public boolean checkGitPahtExist(String path) throws Exception {
@@ -86,9 +89,12 @@ public class DependencyServiceImpl implements DependencyService {
 	/**
 	 * build (maven)
 	 */
-	public String mvnInstall(String path) throws Exception {
+	public String mvnInstall(String path,AtomicBoolean running) throws Exception {
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-		return SSHTool.exec(command);
+		return SSHTool.exec(command,line -> {
+			ShellContextHolder.getContext().setEventListener(() -> running.set(false));
+			return null;
+		});
 	}
 
 }
