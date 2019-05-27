@@ -90,10 +90,10 @@ public class DependencyServiceImpl implements DependencyService {
 	 * build (maven)
 	 */
 	public String mvnInstall(String path,AtomicBoolean running) throws Exception {
+		ShellContextHolder.getContext().setEventListener(() -> running.set(false));
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
 		return SSHTool.exec(command,line -> {
-			ShellContextHolder.getContext().setEventListener(() -> running.set(false));
-			return null;
+			return running.get();
 		});
 	}
 

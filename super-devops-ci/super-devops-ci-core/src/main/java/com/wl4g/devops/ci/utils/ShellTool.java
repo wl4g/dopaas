@@ -85,7 +85,7 @@ public abstract class ShellTool {
 		String line;
 		while ((line = br.readLine()) != null) {
 			if(callback!=null){
-				if(callback.apply(line)){
+				if(!callback.apply(line)){
 					throw new InterruptedException("Force stop");
 				}
 			}
