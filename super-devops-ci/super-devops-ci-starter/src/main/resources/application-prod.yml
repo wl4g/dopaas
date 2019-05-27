@@ -19,7 +19,7 @@ spring:
         allowsOrigins: '*'
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
-
+  # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -42,7 +42,6 @@ spring:
       filters: stat,wall
       log-slow-sql: true
 
-
 # Redis configuration.
 redis:
   passwd: zzx!@#$%
@@ -56,3 +55,13 @@ redis:
   - web-node1:6380
   - web-node1:6380
   - web-node1:6381
+
+# Deploy git configuration.
+deploy:
+  git-username: heweijie
+  git-password: hwj13535248668
+  git-base-path: /Users/vjay/gittest
+  backup-path: /Users/vjay/gittest/bak
+  link-path: /usr/local
+  rsa-key: 03DE18C2FC4E605F
+

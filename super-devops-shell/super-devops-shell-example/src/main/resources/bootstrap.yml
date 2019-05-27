@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: devopsShellExample
+  application.name: shell-example
   profiles:
     active: test
 
