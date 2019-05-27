@@ -61,8 +61,8 @@ public class InteractiveRunner extends AbstractRunner {
 			try {
 				line = lineReader.readLine(getPrompt());
 
-				// Debugging mode input E simulates interrupt events
-				if (DEBUG && "E".equals(line)) {
+				// Debugging mode input 'E' simulates interrupt events
+				if (DEBUG && "E".equals(trimToEmpty(line))) {
 					throw new UserInterruptException(line);
 				}
 
