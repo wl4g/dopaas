@@ -23,8 +23,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -64,9 +66,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 	 */
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
-	/**
-	 * Executor service
-	 */
+	/** Execution worker */
 	final private ExecutorService worker;
 
 	/**
@@ -82,18 +82,18 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 	public EmbeddedServerProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
 		super(config, appName, registry);
 
-		this.worker = Executors.newFixedThreadPool(config.getConcurrently(), new ThreadFactory() {
-			final private AtomicInteger counter = new AtomicInteger(0);
+		this.worker = new ThreadPoolExecutor(1, config.getMaxClients(), 0, TimeUnit.SECONDS, new LinkedBlockingDeque<>(64),
+				new ThreadFactory() {
+					final private AtomicInteger counter = new AtomicInteger(0);
 
-			@Override
-			public Thread newThread(Runnable r) {
-				String prefix = EmbeddedServerProcessor.class.getSimpleName() + "-" + counter.incrementAndGet();
-				Thread t = new Thread(r, prefix);
-				t.setDaemon(true);
-				return t;
-			}
-		});
-
+					@Override
+					public Thread newThread(Runnable r) {
+						String prefix = EmbeddedServerProcessor.class.getSimpleName() + "-" + counter.incrementAndGet();
+						Thread t = new Thread(r, prefix);
+						t.setDaemon(true);
+						return t;
+					}
+				});
 	}
 
 	@Override
@@ -159,7 +159,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				// The worker thread may not be the parent thread of Runnable,
 				// so you need to display bind to the thread in the afternoon
 				// again.
-				worker.submit(() -> bind(handler).run());
+				worker.execute(() -> bind(handler).run());
 
 			} catch (Throwable e) {
 				log.warn("Shell boss thread shutdown. cause: {}", getStackTrace(e));
@@ -202,11 +202,26 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 		/** Shell context */
 		final ShellContext context;
 
-		private Thread task;
+		/** Execution worker */
+		final private ExecutorService worker;
 
 		public ShellHandler(ShellBeanRegistry registry, Socket client, Function<String, Object> function) {
 			super(registry, client, function);
 			this.context = new ShellContext(this);
+
+			this.worker = new ThreadPoolExecutor(1, getConfig().getConcurrently(), 0, TimeUnit.SECONDS,
+					new LinkedBlockingDeque<>(64), new ThreadFactory() {
+						final private AtomicInteger counter = new AtomicInteger(0);
+
+						@Override
+						public Thread newThread(Runnable r) {
+							String prefix = ShellHandler.class.getSimpleName() + "-" + counter.incrementAndGet();
+							Thread t = new Thread(r, prefix);
+							t.setDaemon(true);
+							return t;
+						}
+					});
+
 		}
 
 		public ShellContext getContext() {
@@ -223,51 +238,54 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 						log.info("<= {}", input);
 					}
 
-					// Asynchronous commit execution
-					task = new Thread(() -> {
-						Object result = null;
-						// Submit line
-						if (input instanceof LineMessage) {
-							LineMessage line = (LineMessage) input;
-							// Processing
-							Object ret = function.apply(line.getLine());
-							if (ret != null) {
-								result = new ResultMessage(context.getState(), ret.toString());
-							}
+					Object result = null;
+					// Register message
+					if (input instanceof MetaMessage) {
+						// Target methods
+						result = new MetaMessage(registry.getTargetMethods());
+					}
+					// Interrupt message
+					else if (input instanceof InterruptMessage) {
+						// Execution event.
+						EventListener listener = context.getEventListener();
+						if (listener != null) {
+							listener.onInterrupt();
+							continue;
 						}
-						// Request register message
-						else if (input instanceof MetaMessage) {
-							// Target methods
-							result = new MetaMessage(registry.getTargetMethods());
-						}
-						// Request interrupt message
-						else if (input instanceof InterruptMessage) {
-							// Execution event.
-							EventListener listener = context.getEventListener();
-							if (listener != null) {
-								listener.onInterrupt();
-							}
-						}
-
-						if (result != null) { // Echo
-							if (log.isInfoEnabled()) {
-								log.info("=> {}", result);
-							}
+					}
+					// Commands message
+					else if (input instanceof LineMessage) {
+						LineMessage line = (LineMessage) input;
+						// Resolve that client input cannot be received during
+						// blocking execution.
+						worker.execute(() -> {
 							try {
-								writeAndFlush(result);
-							} catch (IOException e) {
-								throw new RuntimeException(e);
+								Object ret = function.apply(line.getLine());
+								if (ret != null) {
+									if (log.isInfoEnabled()) {
+										log.info("=> {}", ret);
+									}
+									writeAndFlush(new ResultMessage(context.getState(), ret.toString()));
+								}
+							} catch (Throwable e) {
+								handleThorws(e);
 							}
+						});
+					}
+
+					if (result != null) { // Echo
+						if (log.isInfoEnabled()) {
+							log.info("=> {}", result);
 						}
-					});
-					task.start();
+						try {
+							writeAndFlush(result);
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					}
 
 				} catch (Throwable th) {
 					handleThorws(th);
-					if (task != null) {
-						task.interrupt();
-						task = null;
-					}
 				} finally {
 					try {
 						Thread.sleep(100L);
