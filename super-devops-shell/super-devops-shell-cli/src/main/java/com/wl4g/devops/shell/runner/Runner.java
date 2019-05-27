@@ -26,9 +26,7 @@ public interface Runner {
 
 	/**
 	 * Shutdown
-	 * 
-	 * @param line
 	 */
-	void shutdown(String line);
+	void shutdown();
 
 }

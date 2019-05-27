@@ -6,6 +6,30 @@
 	<version>master</version>
 	<packaging>pom</packaging>
 	<name>Super DevOps</name>
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git@github.com:wl4g/super-devops.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/super-devops.git</developerConnection>
+		<url>https://github.com/wl4g/super-devops</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>wangl01</id>
+			<name>wanglsir</name>
+			<email>wanglsir@gmail.com,983708408@qq.com</email>
+		</developer>
+		<developer>
+			<id>xburnerair00</id>
+			<name>xburnerair00</name>
+			<email>xburnerair00@163.com</email>
+		</developer>
+	</developers>
 	<modules>
 		<module>super-devops-ci</module>
 		<module>super-devops-common</module>
@@ -13,7 +37,7 @@
 		<module>super-devops-shell</module>
 		<module>super-devops-support</module>
 		<module>super-devops-scm</module>
-		<!--<module>super-devops-srm</module>-->
+		<!--<module>super-devops-srm</module> -->
 		<!-- <module>super-devops-doc</module> -->
 		<module>super-devops-iam</module>
 		<!-- <module>super-devops-im</module> -->
@@ -28,9 +52,12 @@
 	</properties>
 	<repositories>
 		<repository>
-			<id>nexus-senior-plugin</id>
-			<name>Team Nexus jar Repository</name>
-			<url>http://47.107.57.204/m2-repository/</url>
+			<id>central</id>
+			<name>aliyun</name>
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>spring-snapshots</id>

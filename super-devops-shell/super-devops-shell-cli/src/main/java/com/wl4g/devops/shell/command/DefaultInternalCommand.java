@@ -85,7 +85,7 @@ public class DefaultInternalCommand extends InternalCommand {
 	@ShellMethod(keys = { INTERNAL_QUIT, INTERNAL_QU, INTERNAL_EXIT,
 			INTERNAL_EX }, group = DEFAULT_GROUP, help = "Exit current process")
 	public void exit() {
-		runner.shutdown(EMPTY);
+		runner.shutdown();
 	}
 
 	/**
