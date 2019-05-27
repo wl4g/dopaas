@@ -13,37 +13,61 @@ mvn clean install -DskipTests
 ## 配置
 
 ### 配置文件
-指定服务的端口，然后以客户端运行（适用于客户端模式，通常临时用于连接应用服务使用）：
+配置在application-test.yml
 
+- git-username是登录git的账号
+- git-password是登录git的密码
+- git-base-path是存放git项目的路径
+- backup-path是每次发布前的备份路径
+- link-path是项目软连接地址
+- rsa-key是用来加解密私钥的
 ```
-java -Dservpoint=127.0.0.1:60103 -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-master-executable.jar
+# Deploy git configuration.
+deploy:
+  git-username: heweijie
+  git-password: hwj13535248668
+  git-base-path: /home/ci/git
+  backup-path: /home/ci/git/bak
+  link-path: /usr/local
+  rsa-key: 03DE18C2FC4E605F
 ```
 
-在上面的命令中 -Dservpoint 表示要连接的SpringBoot/Cloud服务侦听地址和端口。
+### 数据库
+数据库在devops
+- app_group表
+![app_group表](shots/app_group.png)
+- instance表
+![instance表](shots/instance.png)
+- project表
+![project表](shots/project.png)
+- trigger表
+![trigger表](shots/trigger.png)
+- trigger_detail表
+![trigger_detail表](shots/trigger_detail.png)
 
-### 方式二
-指定服务的名称，然后直接作为客户端运行（适用于本地模式，通常作为应用服务的内置控制台使用）。
 
+## 启动
+可当作spring boot项目启动
+sc ci start
+
+## 控制台 
+
+#### 进入控制台
 ```
-java -Dservname=shell-example -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-master-executable.jar
+sc ci shell
 ```
+#### 控制台命令
+- 查找实例id
+```
+list -a 项目名 -e 环境名
+```
+- 部署项目
+```
+deploy -a 项目名 -I 实例id -b 分支名
+实例id可多个，用","分割
+例如：
+deploy -a datachecker -I 64 -b master
+```
+- 过程中支持Ctrl+C强制退出
 
-上面的命令中 -Dservname 表示服务端SpringBoot/Cloud应用名称（对应spring.application.name），它会依据servname在本地自动查
-找服务端口建立连接（注意大小写）.也可使用 [方式一](#方式一) 以-Dservpoint 来显示指定服务端点，其中使用 -Dprompt 来设置shell
-控制台的命令行提示符，-Dtimeout 指定等待结果返回超时时间（默认:10_000ms），还可使用-Dxdebug打印调试信息。
 
-
-## 特性
-
-
-
-## 内置命令 
-- clear/cls    清理控制台
-- exit/ex/quit/qu    退出控制台
-- history/his    查看历史命令（持久文件：$USER_HOME/.devops/shell/history）
-- stacktrace/st    查看上一次异常的堆栈信息（若有）
-- help/he    使用帮助，用法如：help/help sumTest/sumTest --help/sumTest --he/  其中 sumTest 为一个求和的测试命令
-
-## 自定义命令
-
-[完整示例](super-devops-shell-example/src/main/java/com/wl4g/devops/shell/console/ExampleConsole.java)
