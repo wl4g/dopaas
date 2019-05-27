@@ -32,11 +32,10 @@ public class AppInstance extends BaseBean {
 	private String opsIds = "1"; // 运维者userIds（逗号分隔）
 	private String versionId; // 版本id
 
-	//20190517add
-	private String basePath;//项目部署路径
-	private String serverAccount;//登录账号
+	// 20190517add
+	private String basePath;// 项目部署路径
+	private String serverAccount;// 登录账号
 	private String sshRsa;
-
 
 	public Long getGroupId() {
 		return groupId;

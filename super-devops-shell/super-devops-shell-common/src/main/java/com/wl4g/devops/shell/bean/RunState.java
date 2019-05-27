@@ -22,16 +22,16 @@ package com.wl4g.devops.shell.bean;
  * @version v1.0 2019年5月24日
  * @since
  */
-public enum LineResultState {
+public enum RunState {
 
 	NONCE,
 
-	INIT,
+	READY,
 
-	REQ,
+	RUNNING,
 
-	RESP_WAIT,
+	RUNNING_WAIT,
 
-	FINISHED;
+	COMPLATED;
 
 }

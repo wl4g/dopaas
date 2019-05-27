@@ -59,7 +59,7 @@ public class StandardSecurityHandlerContext implements ServerSecurityContext {
 	public ApplicationInfo getApplicationInfo(String appName) {
 		// For devops-iam-example.
 		ApplicationInfo appInfo = new ApplicationInfo(appName, "localhost");
-		appInfo.setIntranetBaseUri("http://localhost:14041/devops-iam-example");
+		appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 		return appInfo;
 	}
 
