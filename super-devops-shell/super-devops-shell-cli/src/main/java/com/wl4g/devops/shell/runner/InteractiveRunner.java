@@ -24,7 +24,7 @@ import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.Configuration;
 import static com.wl4g.devops.shell.bean.RunState.*;
 import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
-import static com.wl4g.devops.shell.handler.ChannelMessageHandler.BEGIN_EOF;
+import static com.wl4g.devops.shell.handler.ChannelMessageHandler.BEOF;
 import static com.wl4g.devops.shell.handler.ChannelMessageHandler.EOF;
 import static java.lang.System.*;
 
@@ -123,7 +123,7 @@ public class InteractiveRunner extends AbstractRunner {
 			}
 
 			// Print server result message.
-			if (!equalsAny(ret.getContent(), BEGIN_EOF, EOF)) {
+			if (!equalsAny(ret.getContent(), BEOF, EOF)) {
 				out.println(ret.getContent());
 			}
 		} else {
