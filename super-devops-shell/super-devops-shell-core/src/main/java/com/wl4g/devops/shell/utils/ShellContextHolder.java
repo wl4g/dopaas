@@ -17,11 +17,6 @@ package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.shell.processor.ShellContext;
 
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Shell console utility tools.
  * 
@@ -30,8 +25,6 @@ import org.slf4j.LoggerFactory;
  * @since
  */
 public abstract class ShellContextHolder {
-
-	final private static Logger log = LoggerFactory.getLogger(ShellContextHolder.class);
 
 	/** Shell context cache. */
 	final private static ThreadLocal<ShellContext> contextCache = new InheritableThreadLocal<>();
@@ -73,18 +66,26 @@ public abstract class ShellContextHolder {
 	}
 
 	/**
-	 * Output quietly message to client console
+	 * Print quietly message to client console
 	 * 
 	 * @param message
 	 */
 	public static void printfQuietly(String message) {
 		ShellContext context = getContext();
 		if (context != null) {
-			try {
-				context.printfQuietly(message);
-			} catch (Exception e) {
-				log.warn("Print error. cause: {}", getRootCauseMessage(e));
-			}
+			context.printfQuietly(message);
+		}
+	}
+
+	/**
+	 * Print quietly throwable message to client console
+	 * 
+	 * @param message
+	 */
+	public static void printfQuietly(Throwable th) {
+		ShellContext context = getContext();
+		if (context != null) {
+			context.printfQuietly(th);
 		}
 	}
 

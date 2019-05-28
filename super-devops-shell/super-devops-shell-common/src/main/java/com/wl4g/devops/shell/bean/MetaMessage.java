@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
- * Meta config/commands message
+ * Meta configuration/commands message
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月4日
