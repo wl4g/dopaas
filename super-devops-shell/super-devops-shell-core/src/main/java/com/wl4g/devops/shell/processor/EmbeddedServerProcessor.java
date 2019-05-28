@@ -49,7 +49,6 @@ import com.wl4g.devops.shell.bean.InterruptMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.ShellProperties;
-import com.wl4g.devops.shell.exception.TooManyConnectionsException;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.processor.ShellContext.EventListener;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
@@ -154,11 +153,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 				// Check many connections.
 				if (workers.size() >= getConfig().getMaxClients()) {
-					String errmsg = String.format("There are too many parallel shell connections. maximum: %s, actual: %s",
-							getConfig().getMaxClients(), workers.size());
-					log.warn(errmsg);
-					// Print error message.
-					ChannelMessageHandler.writeAndFlush(s.getOutputStream(), new TooManyConnectionsException(errmsg));
+					log.warn(String.format("There are too many parallel shell connections. maximum: %s, actual: %s",
+							getConfig().getMaxClients(), workers.size()));
 					s.close();
 					continue;
 				}

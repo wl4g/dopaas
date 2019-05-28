@@ -17,6 +17,8 @@ package com.wl4g.devops.shell.runner;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import java.io.IOException;
+
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.InterruptMessage;
 import com.wl4g.devops.shell.bean.MetaMessage;
@@ -70,7 +72,7 @@ public class InteractiveRunner extends AbstractRunner {
 					// Submission processing
 					task = new Thread(() -> {
 						sentTime = currentTimeMillis();
-						submit(line);
+						submitLine(line);
 					});
 					task.start();
 
@@ -81,10 +83,11 @@ public class InteractiveRunner extends AbstractRunner {
 				// When there is no unfinished task, the console is interrupted.
 				if (isComplated()) {
 					shutdown();
-				} else {
-					// When there is an unfinished task, the interrupt task
-					// signal is sent.
-					submit(new InterruptMessage(true));
+				}
+				// When there is an unfinished task, the interrupt task
+				// signal is sent.
+				else {
+					submitLine(new InterruptMessage(true));
 				}
 			} catch (Throwable e) {
 				printErr(EMPTY, e);
@@ -180,6 +183,19 @@ public class InteractiveRunner extends AbstractRunner {
 	 */
 	private boolean isComplated() {
 		return completed || (currentTimeMillis() - sentTime) >= TIMEOUT;
+	}
+
+	/**
+	 * Submit line commands
+	 * 
+	 * @param message
+	 */
+	private void submitLine(Object message) {
+		try {
+			submit(message);
+		} catch (IOException e) {
+			printErr(EMPTY, e);
+		}
 	}
 
 }
