@@ -181,11 +181,11 @@ public class CiServiceImpl implements CiService {
 
     }
 
-    private BasedDeployProvider getDeployProvider(int projectId, int tarType, String path, String url, String branch,
-                                                  String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
+    private BasedDeployProvider getDeployProvider(Project project, int tarType, String path, String branch,
+                                                  String alias, List<AppInstance> instances, List<TaskDetail> taskDetails) {
         switch (tarType) {
             case CiDevOpsConstants.TAR_TYPE_TAR:
-                return new MvnAssembleTarDeployProvider(projectId, path, url, branch, alias, tarPath,
+                return new MvnAssembleTarDeployProvider(project, path, branch, alias,
                         instances, taskDetails);
             case CiDevOpsConstants.TAR_TYPE_JAR:
                 // return new JarSubject(path, url, branch,
@@ -211,8 +211,8 @@ public class CiServiceImpl implements CiService {
             AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
             instances.add(instance);
         }
-        return getDeployProvider(task.getProjectId(), task.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
-                project.getGitUrl(), task.getBranchName(), appGroup.getName(), project.getTarPath(), instances, taskDetails);
+        return getDeployProvider(project, task.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
+                 task.getBranchName(), appGroup.getName(), instances, taskDetails);
     }
 
 }

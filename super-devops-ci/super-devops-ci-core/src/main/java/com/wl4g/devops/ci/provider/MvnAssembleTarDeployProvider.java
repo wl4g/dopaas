@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.provider;
 
 import com.wl4g.devops.ci.task.MvnAssembleTarDeployTask;
 import com.wl4g.devops.common.bean.ci.Dependency;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
@@ -33,10 +34,10 @@ import java.util.List;
  */
 public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 
-    public MvnAssembleTarDeployProvider(Integer projectId,
-                                        String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,
+    public MvnAssembleTarDeployProvider(Project project,
+                                        String path, String branch, String alias, List<AppInstance> instances,
                                         List<TaskDetail> taskDetails) {
-        super(projectId, path, url, branch, alias, tarPath, instances, taskDetails);
+        super(project, path, branch, alias, instances, taskDetails);
     }
 
     @Override
@@ -49,12 +50,12 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
          */
 
         Dependency dependency = new Dependency();
-        dependency.setProjectId(getProjectId());
+        dependency.setProjectId(getProject().getId());
 
         getDependencyService().build(running, dependency, getBranch());
 
         // backup in local
-        backupLocal(getPath() + getTarPath());
+        backupLocal(getPath() + getProject().getTarPath());
 
         // scp to server
         /*
@@ -74,7 +75,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
          */
         // scp to server
         for (AppInstance instance : getInstances()) {
-            Runnable task = new MvnAssembleTarDeployTask(this, getPath(), instance, getTarPath(), getTaskDetails(), getAlias(), running);
+            Runnable task = new MvnAssembleTarDeployTask(this,getProject(), getPath(), instance, getProject().getTarPath(), getTaskDetails(), getAlias(), running);
             Thread thread = new Thread(task);
             thread.start();
             thread.join();

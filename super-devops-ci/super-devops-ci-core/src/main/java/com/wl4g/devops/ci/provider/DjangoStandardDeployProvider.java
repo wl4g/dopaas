@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.provider;
 
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 
@@ -22,22 +23,22 @@ import java.util.List;
 
 /**
  * Django standard deployments provider.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
 public class DjangoStandardDeployProvider extends BasedDeployProvider {
 
-	public DjangoStandardDeployProvider( Integer projectId,
-			String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,
-			List<TaskDetail> taskDetails) {
-		super(projectId, path, url, branch, alias, tarPath, instances, taskDetails);
-	}
+    public DjangoStandardDeployProvider(Project project,
+                                        String path, String branch, String alias, List<AppInstance> instances,
+                                        List<TaskDetail> taskDetails) {
+        super(project, path, branch, alias, instances, taskDetails);
+    }
 
-	@Override
-	public void execute() throws Exception {
+    @Override
+    public void execute() throws Exception {
 
-	}
+    }
 
 }

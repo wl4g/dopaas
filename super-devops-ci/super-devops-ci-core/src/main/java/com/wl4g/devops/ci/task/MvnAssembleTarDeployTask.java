@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.task;
 
 import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.slf4j.Logger;
@@ -44,9 +45,9 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 	private String alias;
 	private AtomicBoolean running;
 
-	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, String path, AppInstance instance, String tarPath,
-			List<TaskDetail> taskDetails, String alias,AtomicBoolean running) {
-		super(instance);
+	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, Project project, String path, AppInstance instance, String tarPath,
+									List<TaskDetail> taskDetails, String alias, AtomicBoolean running) {
+		super(instance,project);
 
 		this.provider = provider;
 		this.path = path;
@@ -76,11 +77,11 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 			// scp to tmp,rename,move to webapps
 			if(!running.get())throw new RuntimeException("force stop");
 			provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(),
-					instance.getBasePath() + "/" + alias + "-package", instance.getSshRsa());
+					project.getParentAppHome() , instance.getSshRsa());
 
 			// change link
 			if(!running.get())throw new RuntimeException("force stop");
-			provider.relink(instance.getHost(), instance.getBasePath() + "/" + alias + "-package", instance.getServerAccount(),
+			provider.relink(instance.getHost(), project.getParentAppHome(), instance.getServerAccount(),
 					path + tarPath, instance.getSshRsa());
 
 			// restart

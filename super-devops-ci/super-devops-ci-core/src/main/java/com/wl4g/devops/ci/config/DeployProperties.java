@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -35,9 +36,9 @@ public class DeployProperties {
 
 	private String backupPath;
 
-	private String linkPath;
+	//private String linkPath;
 
-	private String rsaKey;
+	private String cipherKey;
 
 	//
 	// Temporary
@@ -46,6 +47,9 @@ public class DeployProperties {
 	private CredentialsProvider credentials;
 
 	public String getGitBasePath() {
+		if(StringUtils.isBlank(gitBasePath)){
+			gitBasePath = System.getProperties().getProperty("user.home")+"/git";
+		}
 		return gitBasePath;
 	}
 
@@ -70,6 +74,9 @@ public class DeployProperties {
 	}
 
 	public String getBackupPath() {
+		if(StringUtils.isBlank(backupPath)){
+			backupPath = System.getProperties().getProperty("user.home")+"/git/bak";
+		}
 		return backupPath;
 	}
 
@@ -77,20 +84,12 @@ public class DeployProperties {
 		this.backupPath = bakPath;
 	}
 
-	public String getLinkPath() {
-		return linkPath;
+	public String getCipherKey() {
+		return cipherKey;
 	}
 
-	public void setLinkPath(String linkPath) {
-		this.linkPath = linkPath;
-	}
-
-	public String getRsaKey() {
-		return rsaKey;
-	}
-
-	public void setRsaKey(String rsaKey) {
-		this.rsaKey = rsaKey;
+	public void setCipherKey(String cipherKey) {
+		this.cipherKey = cipherKey;
 	}
 
 	public CredentialsProvider getCredentials() {
@@ -99,5 +98,6 @@ public class DeployProperties {
 		}
 		return credentials;
 	}
+
 
 }
