@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.exception;
 
-public class ProcessTimeoutException extends RuntimeException {
+public class TooManyConnectionsException extends RuntimeException {
 	private static final long serialVersionUID = 515355075449844111L;
 
 	/**
@@ -23,7 +23,7 @@ public class ProcessTimeoutException extends RuntimeException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public ProcessTimeoutException() {
+	public TooManyConnectionsException() {
 		super();
 	}
 
@@ -36,7 +36,7 @@ public class ProcessTimeoutException extends RuntimeException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public ProcessTimeoutException(String message) {
+	public TooManyConnectionsException(String message) {
 		super(message);
 	}
 
@@ -57,7 +57,7 @@ public class ProcessTimeoutException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ProcessTimeoutException(String message, Throwable cause) {
+	public TooManyConnectionsException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +75,7 @@ public class ProcessTimeoutException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ProcessTimeoutException(Throwable cause) {
+	public TooManyConnectionsException(Throwable cause) {
 		super(cause);
 	}
 
@@ -96,7 +96,8 @@ public class ProcessTimeoutException extends RuntimeException {
 	 *
 	 * @since 1.7
 	 */
-	protected ProcessTimeoutException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	protected TooManyConnectionsException(String message, Throwable cause, boolean enableSuppression,
+			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
