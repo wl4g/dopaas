@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.shell.processor;
 
+import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.RunState;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.bean.Message;
@@ -36,135 +37,143 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
 
 /**
  * Shell handler context
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年5月24日
  * @since
  */
 public final class ShellContext implements InternalInjectable, Closeable {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/** Shell handler client. */
-	final private ShellHandler client;
+    /**
+     * Shell handler client.
+     */
+    final private ShellHandler client;
 
-	/** Line result message state. */
-	private volatile RunState state;
+    /**
+     * Line result message state.
+     */
+    private volatile RunState state;
 
-	/** Event Listener */
-	private EventListener eventListener;
+    /**
+     * Event Listener
+     */
+    private EventListener eventListener;
 
-	public ShellContext(ShellHandler client) {
-		this(client, NONCE);
-	}
+    public ShellContext(ShellHandler client) {
+        this(client, NONCE);
+    }
 
-	public ShellContext(ShellHandler client, RunState state) {
-		Assert.notNull(client, "Client must not be null");
-		this.client = client;
-		this.state = state;
-	}
+    public ShellContext(ShellHandler client, RunState state) {
+        Assert.notNull(client, "Client must not be null");
+        this.client = client;
+        this.state = state;
+    }
 
-	public RunState getState() {
-		return state;
-	}
+    public RunState getState() {
+        return state;
+    }
 
-	public ShellHandler getClient() {
-		return client;
-	}
+    public ShellHandler getClient() {
+        return client;
+    }
 
-	/**
-	 * Open console stream channel.
-	 */
-	public synchronized void open() {
-		this.state = RUNNING_WAIT;
+    /**
+     * Open console stream channel.
+     */
+    public synchronized void open() {
+        this.state = RUNNING_WAIT;
 
-		// Print start mark
-		printf(BEOF);
-	}
+        // Print start mark
+        printf(BEOF);
+    }
 
-	/**
-	 * End console stream channel.
-	 */
-	@Override
-	public synchronized void close() {
-		this.state = COMPLATED;
+    /**
+     * End console stream channel.
+     */
+    @Override
+    public synchronized void close() {
+        this.state = COMPLATED;
 
-		// Print end mark
-		printf(EOF);
-	}
+        // Print end mark
+        printf(EOF);
+    }
 
-	/**
-	 * Print message to the client console.
-	 * 
-	 * @param message
-	 * @throws IllegalStateException
-	 */
-	public void printf(Object message) throws IllegalStateException {
-		Assert.notNull(message, "Printf message must not be null.");
-		Assert.isTrue((message instanceof Message || message instanceof CharSequence),
-				String.format("Unsupported print message types: %s", message.getClass()));
+    /**
+     * Print message to the client console.
+     *
+     * @param message
+     * @throws IllegalStateException
+     */
+    public void printf(Object message) throws IllegalStateException {
+        Assert.notNull(message, "Printf message must not be null.");
+        Assert.isTrue((message instanceof Message || message instanceof CharSequence || message instanceof Throwable),
+                String.format("Unsupported print message types: %s", message.getClass()));
 
-		// Channel state check
-		if (getState() != RUNNING_WAIT && !equalsAny(message.toString(), BEOF, EOF)) {
-			throw new IllegalStateException("The shell is not printable in the afternoon, has it not been opened or closed?");
-		}
+        // Channel state check
+        if (getState() != RUNNING_WAIT && !equalsAny(message.toString(), BEOF, EOF)) {
+            throw new IllegalStateException("The shell is not printable in the afternoon, has it not been opened or closed?");
+        }
 
-		ChannelMessageHandler client = getClient();
-		if (client != null && client.isActive()) {
-			try {
-				if (message instanceof CharSequence) {
-					client.writeAndFlush(new ResultMessage(getState(), message.toString()));
-				} else {
-					client.writeAndFlush(message);
-				}
-			} catch (IOException e) {
-				String errmsg = getRootCauseMessage(e);
-				errmsg = isBlank(errmsg) ? getMessage(e) : errmsg;
-				log.error("=> {}", errmsg);
-			}
-		} else {
-			throw new IllegalStateException("The current console channel may be closed!");
-		}
+        ChannelMessageHandler client = getClient();
+        if (client != null && client.isActive()) {
+            try {
+                if (message instanceof CharSequence) {
+                    client.writeAndFlush(new ResultMessage(getState(), message.toString()));
+                } else if (message instanceof Throwable) {
+                    client.writeAndFlush(new ExceptionMessage((Throwable) message));
+                } else {
+                    client.writeAndFlush(message);
+                }
+            } catch (IOException e) {
+                String errmsg = getRootCauseMessage(e);
+                errmsg = isBlank(errmsg) ? getMessage(e) : errmsg;
+                log.error("=> {}", errmsg);
+            }
+        } else {
+            throw new IllegalStateException("The current console channel may be closed!");
+        }
 
-	}
+    }
 
-	/**
-	 * Print quietly message to client console
-	 * 
-	 * @param message
-	 */
-	public void printfQuietly(String message) {
-		try {
-			printf(message);
-		} catch (Exception e) {
-			log.warn("Printf error. cause: {}", getRootCauseMessage(e));
-		}
-	}
+    /**
+     * Print quietly message to client console
+     *
+     * @param message
+     */
+    public void printfQuietly(String message) {
+        try {
+            printf(message);
+        } catch (Exception e) {
+            log.warn("Printf error. cause: {}", getRootCauseMessage(e));
+        }
+    }
 
-	/**
-	 * Print quietly throwable message to client console
-	 * 
-	 * @param message
-	 */
-	public void printfQuietly(Throwable th) {
-		try {
-			printf(th);
-		} catch (Exception e) {
-			log.warn("Printf error. cause: {}", getRootCauseMessage(e));
-		}
-	}
+    /**
+     * Print quietly throwable message to client console
+     *
+     * @param message
+     */
+    public void printfQuietly(Throwable th) {
+        try {
+            printf(th);
+        } catch (Exception e) {
+            log.warn("Printf error. cause: {}", getRootCauseMessage(e));
+        }
+    }
 
-	public EventListener getEventListener() {
-		return eventListener;
-	}
+    public EventListener getEventListener() {
+        return eventListener;
+    }
 
-	public void setEventListener(EventListener eventListener) {
-		Assert.notNull(eventListener, "eventListener must not be null");
-		this.eventListener = eventListener;
-	}
+    public void setEventListener(EventListener eventListener) {
+        Assert.notNull(eventListener, "eventListener must not be null");
+        this.eventListener = eventListener;
+    }
 
-	public static interface EventListener {
-		void onInterrupt();
-	}
+    public static interface EventListener {
+        void onInterrupt();
+    }
 
 }
