@@ -17,3 +17,4 @@
 ## 文档
 - [IAM Doc](super-devops-iam/README.md)
 - [Shell Doc](super-devops-shell/README.md)
+- [CI Doc](super-devops-ci/README.md)
