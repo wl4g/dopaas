@@ -25,11 +25,18 @@ import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellContext;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import redis.clients.jedis.JedisCluster;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.CI_LOCK;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_TIME;
 import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
+import static com.wl4g.devops.shell.utils.ShellContextHolder.printfQuietly;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -50,6 +57,8 @@ public class BackendConsole {
 
 	@Autowired
 	private CiService ciService;
+	@Autowired
+	private JedisCluster jedisCluster;
 
 	/**
 	 * Execution deployments
@@ -63,23 +72,30 @@ public class BackendConsole {
 		List<String> instances = argument.getInstances();
 		String branchName = argument.getBranchName();
 
+		// Open console printer.
+		open();
+		Lock lock = new SimpleRedisLockManager(jedisCluster).getLock(CI_LOCK, LOCK_TIME, TimeUnit.MINUTES );
+
 		try {
-			// Open console printer.
-			open();
+			if(lock.tryLock()){
 
-			// Print to client
-			printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
+				// Print to client
+				printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
 
-			// Create async task
-			ciService.createTask(appGroupName, branchName, instances);
+				// Create async task
+				ciService.createTask(appGroupName, branchName, instances);
 
-			printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
+				printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
+			}else{
+				printfQuietly("One Task is running ,Please try again later");
+			}
 
 		} catch (Exception e) {
 			printfQuietly(e);
 		} finally {
 			// Close console printer.
 			close();
+			lock.unlock();
 		}
 
 		return "Deployment task finished!";
