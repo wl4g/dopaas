@@ -95,11 +95,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * @throws IOException
 	 */
 	public synchronized void writeAndFlush(Object message) throws IOException {
-		Assert.notNull(message, "message is null, please check configure");
-		ObjectOutputStream out = new ObjectOutputStream(_out);
-		out.writeObject(message);
-		out.flush();
-		_out.flush();
+		writeAndFlush(_out, message);
 	}
 
 	/**
@@ -150,6 +146,51 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 				}
 			}
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((client == null) ? 0 : client.getRemoteSocketAddress().toString().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChannelMessageHandler other = (ChannelMessageHandler) obj;
+		if (client == null) {
+			if (other.client != null)
+				return false;
+		} else if (!client.getRemoteSocketAddress().toString().equals(other.client.getRemoteSocketAddress().toString()))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "ChannelMessageHandler [client=" + client.getRemoteSocketAddress().toString() + "]";
+	}
+
+	/**
+	 * Write and flush echo to client
+	 * 
+	 * @param out
+	 * @param message
+	 * @throws IOException
+	 */
+	public static void writeAndFlush(OutputStream out, Object message) throws IOException {
+		Assert.notNull(message, "message is null, please check configure");
+		ObjectOutputStream _out = new ObjectOutputStream(out);
+		_out.writeObject(message);
+		_out.flush();
+		out.flush();
 	}
 
 }
