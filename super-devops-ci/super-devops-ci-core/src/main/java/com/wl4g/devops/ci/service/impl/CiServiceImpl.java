@@ -34,6 +34,7 @@ import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import redis.clients.jedis.JedisCluster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +68,9 @@ public class CiServiceImpl implements CiService {
 
     @Autowired
     private DependencyService dependencyService;
+
+    @Autowired
+    private JedisCluster jedisCluster;
 
     @Override
     public List<AppGroup> grouplist() {
@@ -102,8 +106,9 @@ public class CiServiceImpl implements CiService {
 
     @Override
     public void createTask(String appGroupName, String branchName, List<String> instanceIds) {
-        AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
 
+
+        AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
         Assert.notNull(appGroup, String.format("not found this app: %s",appGroupName));
         Project project = projectDao.getByAppGroupId(appGroup.getId());
         Assert.notNull(appGroup, String.format("not found this app: %s",appGroupName));
