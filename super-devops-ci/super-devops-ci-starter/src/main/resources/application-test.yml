@@ -60,8 +60,5 @@ redis:
 deploy:
   git-username: heweijie
   git-password: hwj13535248668
-  git-base-path: /Users/vjay/gittest
-  backup-path: /Users/vjay/gittest/bak
-  link-path: /usr/local
-  rsa-key: 03DE18C2FC4E605F
+  cipher-key: 03DE18C2FC4E605F
 

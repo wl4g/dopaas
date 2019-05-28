@@ -1,158 +1,182 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.ci.ProjectDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Project" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
-    <result column="git_url" property="gitUrl" jdbcType="VARCHAR" />
-    <result column="app_group_id" property="appGroupId" jdbcType="INTEGER" />
-    <result column="tar_path" property="tarPath" jdbcType="VARCHAR" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
-    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
-    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
-    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.ci.ProjectDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Project">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="git_url" jdbcType="VARCHAR" property="gitUrl" />
+    <result column="app_group_id" jdbcType="INTEGER" property="appGroupId" />
+    <result column="tar_path" jdbcType="VARCHAR" property="tarPath" />
+    <result column="parent_app_home" jdbcType="VARCHAR" property="parentAppHome" />
+    <result column="link_app_home" jdbcType="VARCHAR" property="linkAppHome" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    id, project_name, git_url, app_group_id, tar_path, remark, del_flag, create_date, create_by,
-    update_date, update_by
+  <sql id="Base_Column_List">
+    id, project_name, git_url, app_group_id, tar_path, parent_app_home, link_app_home,
+    remark, del_flag, create_date, create_by, update_date, update_by
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
     <include refid="Base_Column_List" />
     from ci_project
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from ci_project
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project" >
-    insert into ci_project (id, project_name,git_url, app_group_id,
-      tar_path, remark, del_flag, 
-      create_date, create_by, update_date, 
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project">
+    insert into ci_project (id, project_name, git_url,
+      app_group_id, tar_path, parent_app_home,
+      link_app_home, remark, del_flag,
+      create_date, create_by, update_date,
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR},#{gitUrl,jdbcType=VARCHAR}, #{appGroupId,jdbcType=INTEGER},
-      #{tarPath,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{gitUrl,jdbcType=VARCHAR},
+      #{appGroupId,jdbcType=INTEGER}, #{tarPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
+      #{linkAppHome,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+      #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Project" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Project">
     insert into ci_project
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         id,
       </if>
-      <if test="projectName != null" >
+      <if test="projectName != null">
         project_name,
       </if>
-      <if test="gitUrl != null" >
+      <if test="gitUrl != null">
         git_url,
       </if>
-      <if test="appGroupId != null" >
+      <if test="appGroupId != null">
         app_group_id,
       </if>
-      <if test="tarPath != null" >
+      <if test="tarPath != null">
         tar_path,
       </if>
-      <if test="remark != null" >
+      <if test="parentAppHome != null">
+        parent_app_home,
+      </if>
+      <if test="linkAppHome != null">
+        link_app_home,
+      </if>
+      <if test="remark != null">
         remark,
       </if>
-      <if test="delFlag != null" >
+      <if test="delFlag != null">
         del_flag,
       </if>
-      <if test="createDate != null" >
+      <if test="createDate != null">
         create_date,
       </if>
-      <if test="createBy != null" >
+      <if test="createBy != null">
         create_by,
       </if>
-      <if test="updateDate != null" >
+      <if test="updateDate != null">
         update_date,
       </if>
-      <if test="updateBy != null" >
+      <if test="updateBy != null">
         update_by,
       </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="projectName != null" >
+      <if test="projectName != null">
         #{projectName,jdbcType=VARCHAR},
       </if>
-      <if test="gitUrl != null" >
+      <if test="gitUrl != null">
         #{gitUrl,jdbcType=VARCHAR},
       </if>
-      <if test="appGroupId != null" >
+      <if test="appGroupId != null">
         #{appGroupId,jdbcType=INTEGER},
       </if>
-      <if test="tarPath != null" >
+      <if test="tarPath != null">
         #{tarPath,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null" >
+      <if test="parentAppHome != null">
+        #{parentAppHome,jdbcType=VARCHAR},
+      </if>
+      <if test="linkAppHome != null">
+        #{linkAppHome,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="delFlag != null" >
+      <if test="delFlag != null">
         #{delFlag,jdbcType=CHAR},
       </if>
-      <if test="createDate != null" >
+      <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null" >
+      <if test="createBy != null">
         #{createBy,jdbcType=VARCHAR},
       </if>
-      <if test="updateDate != null" >
+      <if test="updateDate != null">
         #{updateDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateBy != null" >
+      <if test="updateBy != null">
         #{updateBy,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Project" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Project">
     update ci_project
-    <set >
-      <if test="projectName != null" >
+    <set>
+      <if test="projectName != null">
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
-      <if test="gitUrl != null" >
+      <if test="gitUrl != null">
         git_url = #{gitUrl,jdbcType=VARCHAR},
       </if>
-      <if test="appGroupId != null" >
+      <if test="appGroupId != null">
         app_group_id = #{appGroupId,jdbcType=INTEGER},
       </if>
-      <if test="tarPath != null" >
+      <if test="tarPath != null">
         tar_path = #{tarPath,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null" >
+      <if test="parentAppHome != null">
+        parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
+      </if>
+      <if test="linkAppHome != null">
+        link_app_home = #{linkAppHome,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="delFlag != null" >
+      <if test="delFlag != null">
         del_flag = #{delFlag,jdbcType=CHAR},
       </if>
-      <if test="createDate != null" >
+      <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null" >
+      <if test="createBy != null">
         create_by = #{createBy,jdbcType=VARCHAR},
       </if>
-      <if test="updateDate != null" >
+      <if test="updateDate != null">
         update_date = #{updateDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateBy != null" >
+      <if test="updateBy != null">
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Project" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Project">
     update ci_project
     set project_name = #{projectName,jdbcType=VARCHAR},
       git_url = #{gitUrl,jdbcType=VARCHAR},
       app_group_id = #{appGroupId,jdbcType=INTEGER},
       tar_path = #{tarPath,jdbcType=VARCHAR},
+      parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
+      link_app_home = #{linkAppHome,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -162,21 +186,22 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+
+  <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from ci_project
     limit ${(customPage.pageNum -1) * customPage.pageSize}, ${customPage.pageSize}
   </select>
 
-  <select id="getByProjectName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="getByProjectName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from ci_project
     where project_name = #{projectName,jdbcType=VARCHAR}
   </select>
 
-  <select id="getByAppGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="getByAppGroupId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from ci_project
