@@ -56,7 +56,9 @@ public abstract class SystemUtils extends org.apache.commons.lang3.SystemUtils {
 		try {
 			HOST_SERIAL = localMacString();
 			String packagePath = SystemUtils.class.getProtectionDomain().getCodeSource().getLocation().toString();
-			APP_SERIAL = Hex.encodeHexString(new String(HOST_SERIAL + packagePath).getBytes(Charset.forName("UTF-8")));
+			APP_SERIAL = new StringBuffer(HOST_SERIAL).append("-")
+					.append(Hex.encodeHexString((HOST_SERIAL + packagePath).getBytes(Charset.forName("UTF-8")))).substring(16, 26)
+					.toString();
 			PROCESS_ID = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
 			PROCESS_SERIAL = APP_SERIAL + "-" + PROCESS_ID;
 		} catch (Exception e) {
