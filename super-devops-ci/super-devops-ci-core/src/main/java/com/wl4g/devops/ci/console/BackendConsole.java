@@ -31,7 +31,6 @@ import java.util.List;
 
 import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 
 /**
  * CI/CD console point
@@ -77,7 +76,7 @@ public class BackendConsole {
 			printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
 
 		} catch (Exception e) {
-			printfQuietly(String.format("Deployments failure. cause by: %s", getStackTrace(e)));
+			printfQuietly(e);
 		} finally {
 			// Close console printer.
 			close();
