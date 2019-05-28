@@ -31,7 +31,7 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 
 /**
- * Jedis cluster factory bean.
+ * JEDIS cluster factory bean.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
