@@ -250,7 +250,6 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 						EventListener listener = context.getEventListener();
 						if (listener != null) {
 							listener.onInterrupt();
-							continue;
 						}
 					}
 					// Commands message
@@ -277,11 +276,7 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 						if (log.isInfoEnabled()) {
 							log.info("=> {}", result);
 						}
-						try {
-							writeAndFlush(result);
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						}
+						writeAndFlush(result);
 					}
 
 				} catch (Throwable th) {
