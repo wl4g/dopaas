@@ -42,17 +42,15 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 	private String path;
 	private String tarPath;
 	private Integer taskDetailId;
-	private String alias;
 	private AtomicBoolean running;
 
 	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, Project project, String path, AppInstance instance, String tarPath,
-									List<TaskDetail> taskDetails, String alias, AtomicBoolean running) {
+									List<TaskDetail> taskDetails, AtomicBoolean running) {
 		super(instance,project);
 
 		this.provider = provider;
 		this.path = path;
 		this.tarPath = tarPath;
-		this.alias = alias;
 		this.running = running;
 		Assert.notNull(taskDetails, "taskDetails can not be null");
 		for (TaskDetail taskDetail : taskDetails) {
