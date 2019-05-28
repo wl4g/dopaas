@@ -17,16 +17,12 @@ mvn clean install -DskipTests
 
 - git-username是登录git的账号
 - git-password是登录git的密码
-- git-base-path是存放git项目的路径(默认用户目录下的git)
-- backup-path是每次发布前的备份路径(默认用户目录下的git/bak)
 - cipher-key是用来加解密私钥的
 ```
 # Deploy git configuration.
 deploy:
   git-username: heweijie
   git-password: hwj13535248668
-  # git-base-path: /home/ci/git
-  # backup-path: /home/ci/git/bak
   cipher-key: 03DE18C2FC4E605F
 ```
 
@@ -78,5 +74,6 @@ deploy -a datachecker -I 64 -b master
 勾选Push events
 点击 Add webhook 保存
 ```
+![gitlab01](shots/gitlab01.png)
 
 
