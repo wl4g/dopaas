@@ -30,10 +30,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import com.google.common.collect.Lists;
 
 /**
- * 字符串工具类, 继承org.apache.commons.lang3.StringUtils类
+ * String tool class, inheriting the org.apache.commons.lang3.StringUtils class
  * 
- * @author ThinkGem
- * @version 2013-05-22
+ * @author wangl.sir
+ * @version v1.0 2017年5月28日
+ * @since
  */
 public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils {
 
