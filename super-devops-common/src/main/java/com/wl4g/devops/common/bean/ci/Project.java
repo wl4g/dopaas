@@ -16,6 +16,10 @@ public class Project extends BaseBean implements Serializable {
 
 	private String tarPath;
 
+	private String parentAppHome;
+
+	private String linkAppHome;
+
 	public String getProjectName() {
 		return projectName;
 	}
@@ -46,5 +50,21 @@ public class Project extends BaseBean implements Serializable {
 
 	public void setGitUrl(String gitUrl) {
 		this.gitUrl = gitUrl;
+	}
+
+	public String getParentAppHome() {
+		return parentAppHome;
+	}
+
+	public void setParentAppHome(String parentAppHome) {
+		this.parentAppHome = parentAppHome;
+	}
+
+	public String getLinkAppHome() {
+		return linkAppHome;
+	}
+
+	public void setLinkAppHome(String linkAppHome) {
+		this.linkAppHome = linkAppHome;
 	}
 }

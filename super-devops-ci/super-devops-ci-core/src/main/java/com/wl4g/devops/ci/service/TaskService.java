@@ -20,6 +20,7 @@ import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-05-17 11:43:00
  */
+@Component
 public interface TaskService {
 
 	List<Task> list(CustomPage customPage);

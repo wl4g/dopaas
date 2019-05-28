@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.ci.console;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
 import com.wl4g.devops.ci.service.CiService;
@@ -27,12 +25,12 @@ import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellContext;
-import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
-
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+
+import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * CI/CD console point
@@ -78,7 +76,7 @@ public class BackendConsole {
 			printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
 
 		} catch (Exception e) {
-			printfQuietly(String.format("Deployments failure. cause by: %s", getStackTrace(e)));
+			printfQuietly(e);
 		} finally {
 			// Close console printer.
 			close();
@@ -139,10 +137,10 @@ public class BackendConsole {
 				}
 				result.append(envName + ":");
 				result.append("\t" + instances.get(0).getId() + "\t" + instances.get(0).getIp() + ":" + instances.get(0).getHost()
-						+ "\t\t" + instances.get(0).getRemark() + "\n");
+						+ "\t" + instances.get(0).getRemark() + "\n");
 				for (int i = 1; i < instances.size(); i++) {
 					AppInstance instance = instances.get(i);
-					result.append("\t\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getHost() + "\t\t"
+					result.append("\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getHost() + "\t"
 							+ instance.getRemark() + "\n");
 				}
 			}
@@ -168,10 +166,10 @@ public class BackendConsole {
 		}
 		result.append(envName + ":");
 		result.append("\t" + instances.get(0).getId() + "\t" + instances.get(0).getIp() + ":" + instances.get(0).getPort()
-				+ "\t\t" + instances.get(0).getRemark() + "\n");
+				+ "\t" + instances.get(0).getRemark() + "\n");
 		for (int i = 1; i < instances.size(); i++) {
 			AppInstance instance = instances.get(i);
-			result.append("\t\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getPort() + "\t\t"
+			result.append("\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getPort() + "\t"
 					+ instance.getRemark() + "\n");
 		}
 		return result;

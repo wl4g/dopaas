@@ -15,18 +15,18 @@
  */
 package com.wl4g.devops.ci.provider;
 
-import com.wl4g.devops.ci.config.DeployProperties;
-import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.task.MvnAssembleTarDeployTask;
 import com.wl4g.devops.common.bean.ci.Dependency;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
 
 import java.util.List;
 
 /**
  * Maven assemble tar provider.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:28:00
@@ -34,56 +34,61 @@ import java.util.List;
  */
 public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 
-	public MvnAssembleTarDeployProvider(DependencyService dependencyService, DeployProperties config, Integer projectId,
-			String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances,
-			List<TaskDetail> taskDetails) {
-		super(dependencyService, config, projectId, path, url, branch, alias, tarPath, instances, taskDetails);
-	}
+    public MvnAssembleTarDeployProvider(Project project,
+                                        String path, String branch, String alias, List<AppInstance> instances,
+                                        List<TaskDetail> taskDetails) {
+        super(project, path, branch, alias, instances, taskDetails);
+    }
 
-	@Override
-	public void execute() throws Exception {
-		/*
-		 * //chekcout if(checkGitPahtExist()){ checkOut(path,branch); }else{
-		 * clone(path,url,branch); }
-		 * 
-		 * //build build(path);
-		 */
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getProjectId());
-		getDependencyService().build(dependency, getBranch());
+    @Override
+    public void execute() throws Exception {
+        /*
+         * //chekcout if(checkGitPahtExist()){ checkOut(path,branch); }else{
+         * clone(path,url,branch); }
+         *
+         * //build build(path);
+         */
 
-		// backup in local
-		backupLocal(getPath() + getTarPath());
+        Dependency dependency = new Dependency();
+        dependency.setProjectId(getProject().getId());
 
-		// scp to server
-		/*
-		 * for(AppInstance instance : instances){ //scp to server and tar
-		 * //scp(path+"/"+tarPath,instance.getServerAccount()+"@"+instance.
-		 * getHost(),instance.getWebappsPath());
-		 * scpAndTar(path+"/"+tarPath,instance.getHost(),instance.
-		 * getServerAccount(),instance.getWebappsPath()); //stop server
-		 * //stop(instance.getHost(),instance.getServerAccount(),alias);
-		 * reLink(instance.getHost(),instance.getWebappsPath(),instance.
-		 * getServerAccount(),path+"/"+tarPath); //decompression the tar package
-		 * //tar(instance.getHost(),instance.getServerAccount(),instance.
-		 * getWebappsPath(),tarName); //restart server
-		 * restart(instance.getHost(),instance.getServerAccount());
-		 * //start(instance.getHost(),instance.getServerAccount(),alias,tarName)
-		 * ; }
-		 */
-		// scp to server
-		for (AppInstance instance : getInstances()) {
-			Runnable task = new MvnAssembleTarDeployTask(this, getPath(), instance, getTarPath(), getTaskDetails(), getAlias());
-			Thread thread = new Thread(task);
-			thread.start();
-			thread.join();
-		}
-		log.info("Done");
-	}
+        getDependencyService().build(running, dependency, getBranch());
 
-	public String restart(String host, String userName, String rsa) throws Exception {
-		String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc " + getAlias() + " restart";
-		return doExecute(host, userName, command, rsa);
-	}
+        // backup in local
+        backupLocal(getPath() + getProject().getTarPath());
+
+        // scp to server
+        /*
+         * for(AppInstance instance : instances){ //scp to server and tar
+         * //scp(path+"/"+tarPath,instance.getServerAccount()+"@"+instance.
+         * getHost(),instance.getWebappsPath());
+         * scpAndTar(path+"/"+tarPath,instance.getHost(),instance.
+         * getServerAccount(),instance.getWebappsPath()); //stop server
+         * //stop(instance.getHost(),instance.getServerAccount(),alias);
+         * reLink(instance.getHost(),instance.getWebappsPath(),instance.
+         * getServerAccount(),path+"/"+tarPath); //decompression the tar package
+         * //tar(instance.getHost(),instance.getServerAccount(),instance.
+         * getWebappsPath(),tarName); //restart server
+         * restart(instance.getHost(),instance.getServerAccount());
+         * //start(instance.getHost(),instance.getServerAccount(),alias,tarName)
+         * ; }
+         */
+        // scp to server
+        for (AppInstance instance : getInstances()) {
+            Runnable task = new MvnAssembleTarDeployTask(this,getProject(), getPath(), instance, getProject().getTarPath(), getTaskDetails(), getAlias(), running);
+            Thread thread = new Thread(task);
+            thread.start();
+            thread.join();
+        }
+
+        ShellContextHolder.getContext().setEventListener(() -> running.set(false));
+
+        log.info("Done");
+    }
+
+    public String restart(String host, String userName, String rsa) throws Exception {
+        String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc " + getAlias() + " restart";
+        return doExecute(host, userName, command, rsa);
+    }
 
 }
