@@ -1,4 +1,4 @@
-Shell Cli 它是一个基于SpringBoot/Cloud服务的开源命令行工具，运行方式类似于spark-shell。
+ci 项目
 
 English version goes [here](README.md).
 
@@ -17,19 +17,17 @@ mvn clean install -DskipTests
 
 - git-username是登录git的账号
 - git-password是登录git的密码
-- git-base-path是存放git项目的路径
-- backup-path是每次发布前的备份路径
-- link-path是项目软连接地址
-- rsa-key是用来加解密私钥的
+- git-base-path是存放git项目的路径(默认用户目录下的git)
+- backup-path是每次发布前的备份路径(默认用户目录下的git/bak)
+- cipher-key是用来加解密私钥的
 ```
 # Deploy git configuration.
 deploy:
   git-username: heweijie
   git-password: hwj13535248668
-  git-base-path: /home/ci/git
-  backup-path: /home/ci/git/bak
-  link-path: /usr/local
-  rsa-key: 03DE18C2FC4E605F
+  # git-base-path: /home/ci/git
+  # backup-path: /home/ci/git/bak
+  cipher-key: 03DE18C2FC4E605F
 ```
 
 ### 数据库
@@ -69,5 +67,16 @@ deploy -a 项目名 -I 实例id -b 分支名
 deploy -a datachecker -I 64 -b master
 ```
 - 过程中支持Ctrl+C强制退出
+
+
+##钩子配置 
+- 先去数据库把必要配置配好
+- 到gitlab修改相关配置
+```
+到对应项目下的setting-->Integrations
+设置URL：如：http://localhost:8080/ci/hook
+勾选Push events
+点击 Add webhook 保存
+```
 
 

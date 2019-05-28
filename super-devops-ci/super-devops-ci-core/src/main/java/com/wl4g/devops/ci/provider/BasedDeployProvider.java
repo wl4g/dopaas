@@ -19,6 +19,7 @@ import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
@@ -60,7 +61,7 @@ public abstract class BasedDeployProvider {
     /**
      * branch url
      */
-    final private String url;
+    //final private String url;
 
     /**
      * project alias
@@ -70,7 +71,7 @@ public abstract class BasedDeployProvider {
     /**
      * for example:/super-devops-iam-security/target/demo.tar
      */
-    final private String tarPath;
+    //final private String tarPath;
 
     /**
      * tarName,for example : demo.tar / demo.jar
@@ -90,7 +91,7 @@ public abstract class BasedDeployProvider {
     /**
      * ProjectId
      */
-    final private Integer projectId;
+    //final private Integer projectId;
 
     /**
      * service
@@ -100,26 +101,26 @@ public abstract class BasedDeployProvider {
 
     protected AtomicBoolean running = null;
 
+    final private Project project;
+
     /**
      * now
      */
     final private Date now = new Date();
 
-    public BasedDeployProvider(Integer projectId, String path,
-                               String url, String branch, String alias, String tarPath, List<AppInstance> instances, List<TaskDetail> taskDetails) {
+    public BasedDeployProvider(Project project, String path,
+                                String branch, String alias, List<AppInstance> instances, List<TaskDetail> taskDetails) {
         this.config = SpringContextHolder.getBean(DeployProperties.class);
         this.path = path;
-        this.url = url;
         this.branch = branch;
         this.alias = alias;
-        this.tarPath = tarPath;
         this.instances = instances;
         this.taskDetails = taskDetails;
 
-        String[] a = tarPath.split("/");
+        String[] a = project.getTarPath().split("/");
         this.tarName = a[a.length - 1];
 
-        this.projectId = projectId;
+        this.project = project;
         this.dependencyService = SpringContextHolder.getBean(DependencyService.class);
 
         running = new AtomicBoolean(true);
@@ -131,7 +132,7 @@ public abstract class BasedDeployProvider {
      * exce command
      */
     public String doExecute(String targetHost, String userName, String command, String rsa) throws Exception {
-        String rsaKey = config.getRsaKey();
+        String rsaKey = config.getCipherKey();
         AES aes = new AES(rsaKey);
         char[] rsaReal = aes.decrypt(rsa).toCharArray();
 
@@ -204,7 +205,7 @@ public abstract class BasedDeployProvider {
 
     public String relink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
         String command = "ln -snf " + targetPath + "/" + replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr() + " "
-                + config.getLinkPath() + "/" + alias + "-package/" + alias + "-current";
+                + project.getLinkAppHome();
         return doExecute(targetHost, userName, command, rsa);
     }
 
@@ -214,7 +215,7 @@ public abstract class BasedDeployProvider {
     public void scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
         // String command = "scp -r " + path + " " + targetHost + ":/home/" +
         // userName + "/tmp";
-        String rsaKey = config.getRsaKey();
+        String rsaKey = config.getCipherKey();
         AES aes = new AES(rsaKey);
         char[] rsaReal = aes.decrypt(rsa).toCharArray();
         SSHTool.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
@@ -318,10 +319,6 @@ public abstract class BasedDeployProvider {
         return path;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
     public List<AppInstance> getInstances() {
         return instances;
     }
@@ -334,14 +331,6 @@ public abstract class BasedDeployProvider {
         return tarName;
     }
 
-    public String getTarPath() {
-        return tarPath;
-    }
-
-    public Integer getProjectId() {
-        return projectId;
-    }
-
     public DependencyService getDependencyService() {
         return dependencyService;
     }
@@ -350,4 +339,7 @@ public abstract class BasedDeployProvider {
         return taskDetails;
     }
 
+    public Project getProject() {
+        return project;
+    }
 }

@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.task;
 
 import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.context.SpringContextHolder;
 
@@ -29,11 +30,13 @@ import com.wl4g.devops.common.utils.context.SpringContextHolder;
 public abstract class AbstractDeployTask implements Runnable {
 
 	final protected AppInstance instance;
+	final protected Project project;
 	final protected TaskService taskService;
 
-	public AbstractDeployTask(AppInstance instance) {
+	public AbstractDeployTask(AppInstance instance,Project project) {
 		super();
 		this.instance = instance;
+		this.project = project;
 		this.taskService = SpringContextHolder.getBean(TaskService.class);
 	}
 
