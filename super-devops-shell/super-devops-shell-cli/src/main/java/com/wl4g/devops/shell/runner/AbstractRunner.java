@@ -420,7 +420,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					postProcessResult(input);
 
 				} catch (SocketException | EOFException e) {
-					err.print("Server connection closed!");
+					err.println("Connection tunnel closed!");
 					boss.interrupt();
 					try {
 						close();
