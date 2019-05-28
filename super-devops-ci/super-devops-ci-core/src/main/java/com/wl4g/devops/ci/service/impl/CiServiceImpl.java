@@ -103,10 +103,11 @@ public class CiServiceImpl implements CiService {
     @Override
     public void createTask(String appGroupName, String branchName, List<String> instanceIds) {
         AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
-        Assert.notNull(appGroup, "not found this app");
+
+        Assert.notNull(appGroup, String.format("not found this app: %s",appGroupName));
         Project project = projectDao.getByAppGroupId(appGroup.getId());
-        Assert.notNull(appGroup, "not found this app");
-        Assert.notEmpty(instanceIds, "instanceIds can not be null");
+        Assert.notNull(appGroup, String.format("not found this app: %s",appGroupName));
+        Assert.notEmpty(instanceIds, "instanceIds find empty list,Please check the instanceId");
         List<AppInstance> instances = new ArrayList<>();
         for (String instanceId : instanceIds) {
             AppInstance instance = appGroupDao.getAppInstance(instanceId);
