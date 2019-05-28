@@ -48,7 +48,7 @@ public class InteractiveRunner extends AbstractRunner {
 	/** Current processing command line strings. */
 	private String line;
 
-	/** Record command send timestamp, waiting for timeout processing. */
+	/** Record command send time-stamp, waiting for timeout processing. */
 	private long sentTime = 0L;
 
 	public InteractiveRunner(Configuration config) {
@@ -61,7 +61,7 @@ public class InteractiveRunner extends AbstractRunner {
 			try {
 				line = lineReader.readLine(getPrompt());
 
-				// Debugging mode input 'E' simulates interrupt events
+				// Debug-mode input 'E' simulates interrupt events
 				if (DEBUG && "E".equals(trimToEmpty(line))) {
 					throw new UserInterruptException(line);
 				}
@@ -113,8 +113,6 @@ public class InteractiveRunner extends AbstractRunner {
 
 		if (result instanceof ResultMessage) {
 			ResultMessage ret = (ResultMessage) result;
-			// Update printf state
-			// setState(ret.getState());
 
 			// Wake-up the waiting thread when the response is
 			// completed.
@@ -152,7 +150,7 @@ public class InteractiveRunner extends AbstractRunner {
 	}
 
 	/**
-	 * Wakeup for wait lineReader. </br>
+	 * Wake-up for wait lineReader. </br>
 	 * {@link AbstractRunner#waitForComplished()}
 	 */
 	private void wakeup() {

@@ -21,7 +21,10 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
@@ -46,6 +49,7 @@ import com.wl4g.devops.shell.bean.InterruptMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.ShellProperties;
+import com.wl4g.devops.shell.exception.TooManyConnectionsException;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.processor.ShellContext.EventListener;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
@@ -66,8 +70,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 	 */
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
-	/** Execution worker */
-	final private ExecutorService worker;
+	/** Execution workers */
+	final private ConcurrentMap<ShellHandler, Thread> workers = new ConcurrentHashMap<>();
 
 	/**
 	 * Server sockets
@@ -81,19 +85,6 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 	public EmbeddedServerProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
 		super(config, appName, registry);
-
-		this.worker = new ThreadPoolExecutor(1, config.getMaxClients(), 0, TimeUnit.SECONDS, new LinkedBlockingDeque<>(64),
-				new ThreadFactory() {
-					final private AtomicInteger counter = new AtomicInteger(0);
-
-					@Override
-					public Thread newThread(Runnable r) {
-						String prefix = EmbeddedServerProcessor.class.getSimpleName() + "-" + counter.incrementAndGet();
-						Thread t = new Thread(r, prefix);
-						t.setDaemon(true);
-						return t;
-					}
-				});
 	}
 
 	@Override
@@ -109,7 +100,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				log.info("Shell Console started on port(s): {}", bindPort);
 			}
 
-			this.boss = new Thread(this);
+			this.boss = new Thread(this, getClass().getSimpleName() + "-boss");
+			this.boss.setDaemon(true);
 			this.boss.start();
 		}
 	}
@@ -136,7 +128,14 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 			}
 
 			try {
-				worker.shutdownNow();
+				Iterator<ShellHandler> it = workers.keySet().iterator();
+				while (it.hasNext()) {
+					ShellHandler h = it.next();
+					Thread t = workers.get(h);
+					t.interrupt();
+					t = null;
+					it.remove();
+				}
 			} catch (Exception e) {
 				log.error("Closing worker failure", e);
 			}
@@ -150,7 +149,18 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				// Receiving client socket(blocking)
 				Socket s = ss.accept();
 				if (log.isDebugEnabled()) {
-					log.debug("On accept socket: {}", s);
+					log.debug("On accept socket: {}, maximum: {}, actual: {}", s, getConfig().getMaxClients(), workers.size());
+				}
+
+				// Check many connections.
+				if (workers.size() >= getConfig().getMaxClients()) {
+					String errmsg = String.format("There are too many parallel shell connections. maximum: %s, actual: %s",
+							getConfig().getMaxClients(), workers.size());
+					log.warn(errmsg);
+					// Print error message.
+					ChannelMessageHandler.writeAndFlush(s.getOutputStream(), new TooManyConnectionsException(errmsg));
+					s.close();
+					continue;
 				}
 
 				// Processing
@@ -159,7 +169,10 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				// The worker thread may not be the parent thread of Runnable,
 				// so you need to display bind to the thread in the afternoon
 				// again.
-				worker.execute(() -> bind(handler).run());
+				Thread channel = new Thread(() -> bind(handler).run(), getClass().getSimpleName() + "-channel-" + workers.size());
+				channel.setDaemon(true);
+				workers.put(handler, channel);
+				channel.start();
 
 			} catch (Throwable e) {
 				log.warn("Shell boss thread shutdown. cause: {}", getStackTrace(e));
@@ -215,13 +228,12 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 						@Override
 						public Thread newThread(Runnable r) {
-							String prefix = ShellHandler.class.getSimpleName() + "-" + counter.incrementAndGet();
+							String prefix = ShellHandler.class.getSimpleName() + "-channel-worker-" + counter.incrementAndGet();
 							Thread t = new Thread(r, prefix);
 							t.setDaemon(true);
 							return t;
 						}
 					});
-
 		}
 
 		public ShellContext getContext() {
@@ -292,9 +304,21 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 
 		@Override
 		public void close() throws IOException {
-			cleanup(); // Prevent threadContext memory leakage
+			// Prevent threadContext memory leakage.
+			cleanup();
 
+			// Close the current socket
 			super.close();
+
+			// Clear the current channel
+			Thread t = workers.remove(this);
+			if (t != null) {
+				t.interrupt();
+				t = null;
+			}
+			if (log.isDebugEnabled()) {
+				log.debug("Remove shellHandler: {}, actual: {}", this, workers.size());
+			}
 		}
 
 		/**
