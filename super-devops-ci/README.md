@@ -17,16 +17,12 @@ config on application-test.yml
 
 - git-username is the account to log in to Git
 - git-password is the password to log on to Git
-- git-base-path is the path where git projects are stored (git in the default user directory)
-- Backup-path is the backup path before each release (git/bak in the default user directory)
 - cipher-key is used to encrypt and decrypt private keys
 ```
 # Deploy git configuration.
 deploy:
   git-username: heweijie
   git-password: hwj13535248668
-  # git-base-path: /home/ci/git
-  # backup-path: /home/ci/git/bak
   cipher-key: 03DE18C2FC4E605F
 ```
 
@@ -78,5 +74,6 @@ Set the URL: for example: http://localhost:8080/ci/hook
 Check Push events
 Click Add webhook to save
 ```
+![gitlab01](shots/gitlab01.png)
 
 
