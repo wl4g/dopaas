@@ -50,4 +50,9 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_ENABLE_STATUS = 1;
 	public static final int TASK_DISABLE_STATUS = 0;
 
+
+	//lock
+	public static final String CI_LOCK = "CI_LOCK";
+	public static final int LOCK_TIME = 10;
+
 }

@@ -75,7 +75,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
          */
         // scp to server
         for (AppInstance instance : getInstances()) {
-            Runnable task = new MvnAssembleTarDeployTask(this,getProject(), getPath(), instance, getProject().getTarPath(), getTaskDetails(), getAlias(), running);
+            Runnable task = new MvnAssembleTarDeployTask(this,getProject(), getPath(), instance, getProject().getTarPath(), getTaskDetails(), running);
             Thread thread = new Thread(task);
             thread.start();
             thread.join();
