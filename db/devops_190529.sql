@@ -11,7 +11,7 @@
  Target Server Version : 50633
  File Encoding         : 65001
 
- Date: 29/05/2019 11:11:20
+ Date: 29/05/2019 16:19:09
 */
 
 SET NAMES utf8mb4;
@@ -75,7 +75,7 @@ INSERT INTO `cf_app_environment` VALUES (35, 9, 'prod', 'base生产正式环境'
 INSERT INTO `cf_app_environment` VALUES (36, 41, 'test', 'test', 1, '2018-11-06 13:57:37', 1, '2018-11-06 13:57:37', 0);
 INSERT INTO `cf_app_environment` VALUES (37, 42, 'ajy', '安监云测试环境', 1, '2018-11-09 15:46:09', 1, '2018-11-09 15:46:09', 0);
 INSERT INTO `cf_app_environment` VALUES (38, 43, 'test', 'test', 1, '2018-11-16 15:56:58', 1, '2018-11-16 15:56:58', 0);
-INSERT INTO `cf_app_environment` VALUES (39, 62, 'test', 'test', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `cf_app_environment` VALUES (39, 63, 'test', 'test', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
 COMMIT;
 
 -- ----------------------------
