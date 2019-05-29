@@ -25,9 +25,9 @@ import org.apache.shiro.web.util.WebUtils;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
+import com.wl4g.devops.iam.client.context.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 
 /**
  * IAM client authenticator authentication filter
@@ -41,7 +41,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	final public static String NAME = "authenticatorFilter";
 
 	public AuthenticatorAuthenticationFilter(IamClientProperties config, ClientSecurityContext context,
-			SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		super(config, context, coprocessor, cacheManager);
 	}
 

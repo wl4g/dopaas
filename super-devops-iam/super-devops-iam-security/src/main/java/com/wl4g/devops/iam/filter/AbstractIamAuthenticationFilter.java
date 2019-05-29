@@ -41,12 +41,12 @@ import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
@@ -104,10 +104,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected AuthenticationHandler authHandler;
 
 	/**
-	 * IAM security coprocessor
+	 * IAM server security processor
 	 */
 	@Autowired
-	protected SecurityCoprocessor coprocessor;
+	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
 	 * Enhanced cache manager.

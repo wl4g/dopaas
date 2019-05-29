@@ -43,6 +43,7 @@ import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateProcessor;
 import com.wl4g.devops.iam.client.context.AnynothingSecurityCoprocessor;
 import com.wl4g.devops.iam.client.context.AnynothingSecurityContext;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
+import com.wl4g.devops.iam.client.context.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.InternalWhiteListClientAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter;
@@ -51,7 +52,6 @@ import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
@@ -103,14 +103,13 @@ public class IamClientConfiguration extends AbstractIamConfiguration {
 
 	@Bean(BEAN_AUTH_FILTER)
 	public AuthenticatorAuthenticationFilter authenticatorAuthenticationFilter(IamClientProperties config,
-			ClientSecurityContext context, SecurityCoprocessor coprocessor, SecurityCoprocessor listener,
-			JedisCacheManager cacheManager) {
+			ClientSecurityContext context, ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		return new AuthenticatorAuthenticationFilter(config, context, coprocessor, cacheManager);
 	}
 
 	@Bean(BEAN_ROOT_FILTER)
 	public ROOTAuthenticationFilter rootAuthenticationFilter(IamClientProperties config, ClientSecurityContext context,
-			SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		return new ROOTAuthenticationFilter(config, context, coprocessor, cacheManager);
 	}
 
@@ -123,7 +122,7 @@ public class IamClientConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public LogoutAuthenticationFilter logoutAuthenticationFilter(IamClientProperties config, ClientSecurityContext context,
-			SecurityCoprocessor coprocessor, JedisCacheManager cacheManager, RestTemplate restTemplate) {
+			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager, RestTemplate restTemplate) {
 		return new LogoutAuthenticationFilter(config, context, coprocessor, cacheManager, restTemplate);
 	}
 
@@ -225,7 +224,7 @@ public class IamClientConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public SecurityCoprocessor anynothingSecurityCoprocessor() {
+	public ClientSecurityCoprocessor anynothingSecurityCoprocessor() {
 		return new AnynothingSecurityCoprocessor();
 	}
 

@@ -44,7 +44,6 @@ import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
@@ -546,7 +545,7 @@ public class IamConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SecurityCoprocessor securityCoprocessor() {
+	public ServerSecurityCoprocessor securityCoprocessor() {
 		return new AnynothingSecurityCoprocessor();
 	}
 
