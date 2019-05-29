@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.ci.task;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.AppInstance;
@@ -28,12 +31,13 @@ import com.wl4g.devops.common.utils.context.SpringContextHolder;
  * @since
  */
 public abstract class AbstractDeployTask implements Runnable {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	final protected AppInstance instance;
 	final protected Project project;
 	final protected TaskService taskService;
 
-	public AbstractDeployTask(AppInstance instance,Project project) {
+	public AbstractDeployTask(AppInstance instance, Project project) {
 		super();
 		this.instance = instance;
 		this.project = project;

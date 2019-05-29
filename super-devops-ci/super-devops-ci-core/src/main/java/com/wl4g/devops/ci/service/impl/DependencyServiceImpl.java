@@ -24,13 +24,13 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Dependency service implements
@@ -52,15 +52,14 @@ public class DependencyServiceImpl implements DependencyService {
 	private ProjectDao projectDao;
 
 	@Override
-	public void build(AtomicBoolean running, Dependency dependency, String branch) throws Exception {
-
+	public void build(Dependency dependency, String branch) throws Exception {
 		Integer projectId = dependency.getProjectId();
 
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
 		if (dependencies != null && dependencies.size() > 0) {
 			for (Dependency dep : dependencies) {
 				String br = dep.getParentBranch();
-				build(running,new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
+				build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
 			}
 		}
 
@@ -73,11 +72,11 @@ public class DependencyServiceImpl implements DependencyService {
 			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
 		}
 
-		// install
-		mvnInstall(path,running);
+		// Install
+		mvnInstall(path);
 	}
 
-	public boolean checkGitPahtExist(String path) throws Exception {
+	private boolean checkGitPahtExist(String path) throws Exception {
 		File file = new File(path + "/.git");
 		if (file.exists()) {
 			return true;
@@ -87,14 +86,12 @@ public class DependencyServiceImpl implements DependencyService {
 	}
 
 	/**
-	 * build (maven)
+	 * Building (maven)
 	 */
-	public String mvnInstall(String path,AtomicBoolean running) throws Exception {
-		ShellContextHolder.getContext().setEventListener(() -> running.set(false));
+	private String mvnInstall(String path) throws Exception {
+		// Execution mvn
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-		return SSHTool.exec(command,line -> {
-			return running.get();
-		});
+		return SSHTool.exec(command, inlog -> ShellContextHolder.isInterruptIfNecessary());
 	}
 
 }

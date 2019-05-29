@@ -114,4 +114,29 @@ public abstract class ShellContextHolder {
 		getContext(true).close();
 	}
 
+	/**
+	 * Are you currently in an interrupt state? (if the current thread does not
+	 * open the shell channel, it will return false, that is, uninterrupted)
+	 * 
+	 * @return
+	 */
+	public static boolean isInterruptIfNecessary() {
+		ShellContext context = getContext();
+		return context != null ? context.isInterruptIfNecessary() : false;
+	}
+
+	/**
+	 * Asserting whether the current shell execution task has been interrupted
+	 * is similar to JDK thread. </br>
+	 * (only valid for task threads created by the current shell channel, which
+	 * is thread-safe)
+	 * 
+	 * @throws InterruptedException
+	 */
+	public static void assertInterruptIfNecessary() throws InterruptedException {
+		if (isInterruptIfNecessary()) {
+			throw new InterruptedException(String.format("Task that interrupted!"));
+		}
+	}
+
 }
