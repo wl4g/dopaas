@@ -108,8 +108,12 @@ public abstract class AbstractVerification implements Verification {
 			}
 
 		} finally {
-			reset(false); // Reset or create
+			postValidateFinallySet();
 		}
+	}
+
+	protected void postValidateFinallySet(){
+		reset(false); // Reset or create
 	}
 
 	/**
