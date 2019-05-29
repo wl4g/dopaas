@@ -148,6 +148,9 @@ public class BackendConsole {
 				if (null == instances || instances.size() < 1) {
 					return "none";
 				}
+				result.append("--------------------------------------------------\n");
+				result.append("\tEnvironment: <").append(envName).append(">:\n");
+				result.append("\t\t[ID]    [HostAndPort]        [description]\n");
 				for (int i = 0; i < instances.size()&&i<50; i++) {
 					if(StringUtils.isBlank(r)||StringUtils.isNotBlank(r)&&pattern.matcher(instances.get(i).getIp()+":"+instances.get(i).getPort()).matches()) {
 						appendInstance(result, instances.get(i));
