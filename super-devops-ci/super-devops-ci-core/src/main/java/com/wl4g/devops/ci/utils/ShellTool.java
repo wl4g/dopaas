@@ -58,7 +58,7 @@ public abstract class ShellTool {
 		while ((inlog = blog.readLine()) != null) {
 			if (callback != null) {
 				if (!callback.apply(inlog)) {
-					throw new InterruptedException("Force stop");
+					throw new InterruptedException("Commands force interrupted!");
 				}
 			}
 			slog.append(inlog).append("\n");

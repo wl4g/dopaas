@@ -91,7 +91,7 @@ public class DependencyServiceImpl implements DependencyService {
 	private String mvnInstall(String path) throws Exception {
 		// Execution mvn
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-		return SSHTool.exec(command, inlog -> ShellContextHolder.isInterruptIfNecessary());
+		return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary());
 	}
 
 }
