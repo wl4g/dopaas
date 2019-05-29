@@ -16,11 +16,13 @@
 package com.wl4g.devops.ci.utils;
 
 import com.wl4g.devops.shell.utils.ShellContextHolder;
-import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.function.Function;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -32,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @since
  */
 public abstract class ShellTool {
-	final private static Logger log = Logger.getLogger(ShellTool.class);
+	final private static Logger log = LoggerFactory.getLogger(ShellTool.class);
 
 	/**
 	 * Execute commands in local
@@ -43,7 +45,7 @@ public abstract class ShellTool {
 
 	public static String exec(String cmd, Function<String, Boolean> callback) throws Exception {
 		if (log.isInfoEnabled()) {
-			log.info("Execution native command for '{}'" + cmd);
+			log.info("Execution native command for '{}'", cmd);
 		}
 
 		StringBuffer slog = new StringBuffer();
