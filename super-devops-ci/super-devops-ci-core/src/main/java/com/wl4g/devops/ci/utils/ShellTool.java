@@ -32,82 +32,51 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @since
  */
 public abstract class ShellTool {
-    final private static Logger log = Logger.getLogger(ShellTool.class);
+	final private static Logger log = Logger.getLogger(ShellTool.class);
 
-    /**
-     * Execute commands in local
-     */
-    public static String exec(String cmd) throws Exception {
-        if (log.isInfoEnabled()) {
-            log.info("Execution native command for '{}'" + cmd);
-        }
+	/**
+	 * Execute commands in local
+	 */
+	public static String exec(String cmd) throws Exception {
+		return exec(cmd, null);
+	}
 
-        StringBuffer sb = new StringBuffer();
-        StringBuffer se = new StringBuffer();
+	public static String exec(String cmd, Function<String, Boolean> callback) throws Exception {
+		if (log.isInfoEnabled()) {
+			log.info("Execution native command for '{}'" + cmd);
+		}
 
-        Process ps = Runtime.getRuntime().exec(cmd);
-        BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-        BufferedReader be = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
-        String line;
-        while ((line = br.readLine()) != null) {
-            sb.append(line).append("\n");
-            log.info(line);
-            ShellContextHolder.printfQuietly(line);
-        }
-        while ((line = be.readLine()) != null) {
-            se.append(line).append("\n");
-            log.info(line);
-            ShellContextHolder.printfQuietly(line);
-        }
+		StringBuffer slog = new StringBuffer();
+		StringBuffer serr = new StringBuffer();
 
-        String result = sb.toString();
-        String resulterror = se.toString();
-        if (isNotBlank(resulterror)) {
-            result += resulterror;
-            throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + result.toString());
-        }
+		Process ps = Runtime.getRuntime().exec(cmd);
+		BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+		BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
+		String inlog;
+		while ((inlog = blog.readLine()) != null) {
+			if (callback != null) {
+				if (!callback.apply(inlog)) {
+					throw new InterruptedException("Force stop");
+				}
+			}
+			slog.append(inlog).append("\n");
+			log.info(inlog);
+			ShellContextHolder.printfQuietly(inlog);
+		}
+		while ((inlog = berr.readLine()) != null) {
+			serr.append(inlog).append("\n");
+			log.info(inlog);
+			ShellContextHolder.printfQuietly(inlog);
+		}
 
-        return result;
-    }
+		String log = slog.toString();
+		String err = serr.toString();
+		if (isNotBlank(err)) {
+			log += err;
+			throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + log.toString());
+		}
 
-
-    public static String exec(String cmd, Function<String, Boolean> callback) throws Exception {
-        if (log.isInfoEnabled()) {
-            log.info("Execution native command for '{}'" + cmd);
-        }
-
-        StringBuffer sb = new StringBuffer();
-        StringBuffer se = new StringBuffer();
-
-        Process ps = Runtime.getRuntime().exec(cmd);
-        BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-        BufferedReader be = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
-        String line;
-        while ((line = br.readLine()) != null) {
-            if (callback != null) {
-                if (!callback.apply(line)) {
-                    throw new InterruptedException("Force stop");
-                }
-            }
-            sb.append(line).append("\n");
-            log.info(line);
-            ShellContextHolder.printfQuietly(line);
-        }
-        while ((line = be.readLine()) != null) {
-            se.append(line).append("\n");
-            log.info(line);
-            ShellContextHolder.printfQuietly(line);
-        }
-
-        String result = sb.toString();
-        String resulterror = se.toString();
-        if (isNotBlank(resulterror)) {
-            result += resulterror;
-            throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + result.toString());
-        }
-
-        return result;
-    }
-
+		return log;
+	}
 
 }

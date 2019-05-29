@@ -50,7 +50,6 @@ import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
-import com.wl4g.devops.shell.processor.ShellContext.EventListener;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
@@ -254,11 +253,8 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 					}
 					// Interrupt message
 					else if (input instanceof InterruptMessage) {
-						// Execution event.
-						EventListener listener = context.getEventListener();
-						if (listener != null) {
-							listener.onInterrupt();
-						}
+						// Execution events.
+						context.getEventListeners().forEach(listener -> listener.onInterrupt());
 					}
 					// Commands message
 					else if (input instanceof LineMessage) {

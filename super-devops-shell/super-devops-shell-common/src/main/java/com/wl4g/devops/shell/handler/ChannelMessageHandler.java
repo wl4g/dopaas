@@ -36,10 +36,10 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
  */
 public abstract class ChannelMessageHandler implements Runnable, Closeable {
 
-	/** Begin eof */
-	final public static String BEOF = "<<EOF>";
+	/** Begin of file */
+	final public static String BOF = "<<EOF>";
 
-	/** End eof */
+	/** End of file */
 	final public static String EOF = "EOF";
 
 	/**

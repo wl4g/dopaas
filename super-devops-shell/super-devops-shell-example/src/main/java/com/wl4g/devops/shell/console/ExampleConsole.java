@@ -17,7 +17,6 @@ package com.wl4g.devops.shell.console;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,11 +119,9 @@ public class ExampleConsole {
 		// blocked waiting until ShellConsoles.end() is called.
 		ShellContextHolder.open();
 
-		// Used to simulate an asynchronous task, constantly outputting logs
-		AtomicBoolean running = new AtomicBoolean(true);
 		new Thread(() -> {
 			try {
-				for (int i = 1; running.get() && i <= num; i++) {
+				for (int i = 1; !ShellContextHolder.isInterruptIfNecessary() && i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					System.out.println(message);
 
@@ -144,9 +141,6 @@ public class ExampleConsole {
 				ShellContextHolder.close();
 			}
 		}).start();
-
-		// Interrupt listener
-		ShellContextHolder.getContext().setEventListener(() -> running.set(false));
 
 		return "Logs printer starting-up ...";
 	}

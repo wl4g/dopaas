@@ -32,6 +32,8 @@ public enum RunState {
 
 	RUNNING_WAIT,
 
+	INTERRUPTED,
+
 	COMPLATED;
 
 }
