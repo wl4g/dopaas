@@ -23,9 +23,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://safecloud-test:3306/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      url: jdbc:mysql://safecloud-test:30601/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
       username: gzsm
-      password: sm7782*321
+      password: gzsm@%#jh?
       initial-size: 10
       max-active: 100
       min-idle: 10
