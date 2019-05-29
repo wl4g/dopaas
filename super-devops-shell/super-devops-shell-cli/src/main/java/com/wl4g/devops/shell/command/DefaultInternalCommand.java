@@ -128,8 +128,8 @@ public class DefaultInternalCommand extends InternalCommand {
 				// Processing for e.g. help add
 				if (commands.size() > 1) {
 					String argname = commands.get(1);
-					Options options = registry.getHelpOptions().get(argname);
-					helpString.append(getHelpFormat(argname, options));
+					HelpOptions hopts = registry.getHelpOptions().get(argname);
+					helpString.append(getHelpFormat(argname, hopts, hopts.getShellMethod().help()));
 				}
 				// Processing for e.g. add --help
 				else {

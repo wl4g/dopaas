@@ -131,7 +131,8 @@ public abstract class LineUtils {
 	}
 
 	/**
-	 * Clean opt `--argname` or `-x` to argname(x)
+	 * Clean opt.</br>
+	 * '--arg1' or '-x' => x
 	 * 
 	 * @param argname
 	 * @return
