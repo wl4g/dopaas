@@ -119,7 +119,7 @@ public class BackendConsole {
             List<AppGroup> apps = appGroupDao.grouplist();
             for (AppGroup appGroup : apps) {
                 appendApp(result, appGroup, r);
-                result.append("\n\n");
+                result.append("\n");
             }
         } else {
             AppGroup app = appGroupDao.getAppGroupByName(appGroupName);
@@ -127,6 +127,9 @@ public class BackendConsole {
                 return "AppGroup not exist";
             }
             List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
+            if (null == environments || environments.size()<=0) {
+                return "no one env";
+            }
             if (isBlank(envName)) {
                 for (Environment environment : environments) {
                     appendEnv(result, environment, r);
@@ -148,14 +151,13 @@ public class BackendConsole {
                 if (null == instances || instances.size() < 1) {
                     return "none";
                 }
-                result.append("--------------------------------------------------\n");
-                result.append("\tEnvironment: <").append(envName).append(">:\n");
-                result.append("\t\t[ID]    [HostAndPort]        [description]\n");
+                result.append(" ----- <"+envName+"> -----\n");
+                result.append("\t[ID]    [HostAndPort]          [description]\n");
                 for (int i = 0; i < instances.size() && i < 50; i++) {
                     if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r) && pattern.matcher(instances.get(i).getIp() + ":" + instances.get(i).getPort()).matches()) {
                         appendInstance(result, instances.get(i));
                         if (i == 49) {
-                            result.append("\t\t......");
+                            result.append("\t......");
                         }
                     }
                 }
@@ -167,10 +169,10 @@ public class BackendConsole {
 
     private StringBuffer appendApp(StringBuffer result, AppGroup appGroup, String r) {
         List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
-        if (environments.size() <= 0) {
+        if (environments == null||environments.size() <= 0) {
             return result;
         }
-        result.append("Application name <").append(appGroup.getName()).append(">:\n");
+        result.append(" <").append(appGroup.getName()).append(">:\n");
         for (int i = 0; i < environments.size(); i++) {
             appendEnv(result, environments.get(i), r);
         }
@@ -182,19 +184,18 @@ public class BackendConsole {
         appInstance.setEnvId(environment.getId().toString());
         List<AppInstance> instances = appGroupDao.instancelist(appInstance);
 
-        if (instances.size() <= 0) {
+        if (null == instances ||instances.size() <= 0) {
             return result;
         }
-        result.append("--------------------------------------------------\n");
-        result.append("\tEnvironment: <").append(environment.getName()).append(">:\n");
-        result.append("\t\t[ID]    [HostAndPort]        [description]\n");
+        result.append(" ----- <"+environment.getName()+"> -----\n");
+        result.append("\t[ID]    [HostAndPort]          [description]\n");
 
         Pattern pattern = Pattern.compile(r);
         for (int i = 0; i < instances.size() && i < 50; i++) {
             if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r) && pattern.matcher(instances.get(i).getIp() + ":" + instances.get(i).getPort()).matches()) {
                 appendInstance(result, instances.get(i));
                 if (i == 49) {
-                    result.append("\t\t......");
+                    result.append("\t......");
                 }
             }
         }
@@ -202,8 +203,8 @@ public class BackendConsole {
     }
 
     private StringBuffer appendInstance(StringBuffer result, AppInstance instance) {
-        result.append("\t\t").append(formatCell(instance.getId().toString(), 8))
-                .append(formatCell((instance.getIp() + ":" + instance.getPort()), 21))
+        result.append("\t").append(formatCell(instance.getId().toString(), 8))
+                .append(formatCell((instance.getIp() + ":" + instance.getPort()), 23))
                 .append(instance.getRemark()).append("\n");
         return result;
     }
