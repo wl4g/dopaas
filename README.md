@@ -14,7 +14,7 @@
     super-devops-vcs      Version control system(版本控制系统, 软件安装包版本管理)
     super-devops-view     Front view(前端页面视图, html页面)
 
-## 文档
+## 详细文档
 - [IAM Doc](super-devops-iam/README.md)
 - [Shell Doc](super-devops-shell/README.md)
 - [CI Doc](super-devops-ci/README.md)
