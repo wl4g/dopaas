@@ -49,177 +49,176 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @ShellComponent
 public class BackendConsole {
 
-	final public static String GROUP = "Devops CI/CD console commands";
+    final public static String GROUP = "Devops CI/CD console commands";
 
-	@Autowired
-	private AppGroupDao appGroupDao;
+    @Autowired
+    private AppGroupDao appGroupDao;
 
-	@Autowired
-	private CiService ciService;
+    @Autowired
+    private CiService ciService;
 
-	@Autowired
-	private SimpleRedisLockManager lockManager;
+    @Autowired
+    private SimpleRedisLockManager lockManager;
 
-	/**
-	 * Execution deployments
-	 *
-	 * @param argument
-	 * @return
-	 */
-	@ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
-	public String deploy(BuildArgument argument) {
-		String appGroupName = argument.getAppGroupName();
-		List<String> instances = argument.getInstances();
-		String branchName = argument.getBranchName();
+    /**
+     * Execution deployments
+     *
+     * @param argument
+     * @return
+     */
+    @ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
+    public String deploy(BuildArgument argument) {
+        String appGroupName = argument.getAppGroupName();
+        List<String> instances = argument.getInstances();
+        String branchName = argument.getBranchName();
 
-		// Open console printer.
-		open();
+        // Open console printer.
+        open();
 
-		Lock lock = lockManager.getLock(CI_LOCK, LOCK_TIME, TimeUnit.MINUTES);
-		try {
-			if (lock.tryLock()) {
-				// Print to client
-				printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
+        Lock lock = lockManager.getLock(CI_LOCK, LOCK_TIME, TimeUnit.MINUTES);
+        try {
+            if (lock.tryLock()) {
+                // Print to client
+                printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
 
-				// Create async task
-				ciService.createTask(appGroupName, branchName, instances);
+                // Create async task
+                ciService.createTask(appGroupName, branchName, instances);
 
-				printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
-			} else {
-				printfQuietly("One Task is running ,Please try again later");
-			}
+                printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
+            } else {
+                printfQuietly("One Task is running ,Please try again later");
+            }
 
-		} catch (Exception e) {
-			printfQuietly(e);
-		} finally {
-			// Close console printer.
-			close();
-			lock.unlock();
-		}
+        } catch (Exception e) {
+            printfQuietly(e);
+        } finally {
+            // Close console printer.
+            close();
+            lock.unlock();
+        }
 
-		return "Deployment task finished!";
-	}
+        return "Deployment task finished!";
+    }
 
-	/**
-	 * Got application groups list.
-	 *
-	 * @param argument
-	 * @param context
-	 * @return
-	 */
-	@ShellMethod(keys = "list", group = GROUP, help = "Get a list of application information")
-	public String list(InstanceListArgument argument) {
-		StringBuffer result = new StringBuffer();
+    /**
+     * Got application groups list.
+     *
+     * @param argument
+     * @param context
+     * @return
+     */
+    @ShellMethod(keys = "list", group = GROUP, help = "Get a list of application information")
+    public String list(InstanceListArgument argument) {
+        StringBuffer result = new StringBuffer();
 
-		String appGroupName = argument.getAppGroupName();
-		String envName = argument.getEnvName();
-		String r = argument.getAnyInstants();
-		Pattern pattern = Pattern.compile(r);
-		if (isBlank(appGroupName)) {
-			List<AppGroup> apps = appGroupDao.grouplist();
-			for (AppGroup appGroup : apps) {
-				appendApp(result,appGroup,r);
-				result.append("\n\n");
-			}
-		} else {
-			AppGroup app = appGroupDao.getAppGroupByName(appGroupName);
-			if (null == app) {
-				return "AppGroup not exist";
-			}
-			List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
-			if (isBlank(envName)) {
-				for (Environment environment : environments) {
-					appendEnv(result,environment,r);
-				}
-			} else {
-				Integer envId = null;
-				for (Environment environment : environments) {
-					if (environment.getName().equals(envName)) {
-						envId = environment.getId();
-						break;
-					}
-				}
-				if (null == envId) {
-					return "env name is wrong";
-				}
-				AppInstance appInstance = new AppInstance();
-				appInstance.setEnvId(envId.toString());
-				List<AppInstance> instances = appGroupDao.instancelist(appInstance);
-				if (null == instances || instances.size() < 1) {
-					return "none";
-				}
-				result.append("--------------------------------------------------\n");
-				result.append("\tEnvironment: <").append(envName).append(">:\n");
-				result.append("\t\t[ID]    [HostAndPort]        [description]\n");
-				for (int i = 0; i < instances.size()&&i<50; i++) {
-					if(StringUtils.isBlank(r)||StringUtils.isNotBlank(r)&&pattern.matcher(instances.get(i).getIp()+":"+instances.get(i).getPort()).matches()) {
-						appendInstance(result, instances.get(i));
-						if (i == 49) {
-							result.append("\t\t......");
-						}
-					}
-				}
-			}
-		}
-		return result.toString();
-	}
-
-
-	private  StringBuffer appendApp(StringBuffer result,AppGroup appGroup,String r){
-		List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
-		if(environments.size()<=0){
-			return result;
-		}
-		result.append("Application name <").append(appGroup.getName()).append(">:\n");
-		for(int i = 0;i<environments.size();i++){
-			appendEnv(result,environments.get(i),r);
-		}
-		return result;
-	}
-
-	private StringBuffer appendEnv(StringBuffer result,Environment environment,String r) {
-		AppInstance appInstance = new AppInstance();
-		appInstance.setEnvId(environment.getId().toString());
-		List<AppInstance> instances = appGroupDao.instancelist(appInstance);
-
-		if(instances.size()<=0){
-			return result;
-		}
-		result.append("--------------------------------------------------\n");
-		result.append("\tEnvironment: <").append(environment.getName()).append(">:\n");
-		result.append("\t\t[ID]    [HostAndPort]        [description]\n");
-
-		Pattern pattern = Pattern.compile(r);
-		for (int i = 0; i < instances.size()&&i<50; i++) {
-			if(StringUtils.isBlank(r)||StringUtils.isNotBlank(r)&&pattern.matcher(instances.get(i).getIp()+":"+instances.get(i).getPort()).matches()) {
-				appendInstance(result,instances.get(i));
-				if (i==49) {
-					result.append("\t\t......");
-				}
-			}
-		}
-		return result;
-	}
-
-	private StringBuffer appendInstance(StringBuffer result,AppInstance instance){
-		result.append("\t\t").append(formatCell(instance.getId().toString(),8))
-				.append(formatCell((instance.getIp()+":"+instance.getPort()),21))
-				.append(instance.getRemark()).append("\n");
-		return result;
-	}
+        String appGroupName = argument.getAppGroupName();
+        String envName = argument.getEnvName();
+        String r = argument.getAnyInstants();
+        Pattern pattern = Pattern.compile(r);
+        if (isBlank(appGroupName)) {
+            List<AppGroup> apps = appGroupDao.grouplist();
+            for (AppGroup appGroup : apps) {
+                appendApp(result, appGroup, r);
+                result.append("\n\n");
+            }
+        } else {
+            AppGroup app = appGroupDao.getAppGroupByName(appGroupName);
+            if (null == app) {
+                return "AppGroup not exist";
+            }
+            List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
+            if (isBlank(envName)) {
+                for (Environment environment : environments) {
+                    appendEnv(result, environment, r);
+                }
+            } else {
+                Integer envId = null;
+                for (Environment environment : environments) {
+                    if (environment.getName().equals(envName)) {
+                        envId = environment.getId();
+                        break;
+                    }
+                }
+                if (null == envId) {
+                    return "env name is wrong";
+                }
+                AppInstance appInstance = new AppInstance();
+                appInstance.setEnvId(envId.toString());
+                List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+                if (null == instances || instances.size() < 1) {
+                    return "none";
+                }
+                result.append("--------------------------------------------------\n");
+                result.append("\tEnvironment: <").append(envName).append(">:\n");
+                result.append("\t\t[ID]    [HostAndPort]        [description]\n");
+                for (int i = 0; i < instances.size() && i < 50; i++) {
+                    if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r) && pattern.matcher(instances.get(i).getIp() + ":" + instances.get(i).getPort()).matches()) {
+                        appendInstance(result, instances.get(i));
+                        if (i == 49) {
+                            result.append("\t\t......");
+                        }
+                    }
+                }
+            }
+        }
+        return result.toString();
+    }
 
 
+    private StringBuffer appendApp(StringBuffer result, AppGroup appGroup, String r) {
+        List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
+        if (environments.size() <= 0) {
+            return result;
+        }
+        result.append("Application name <").append(appGroup.getName()).append(">:\n");
+        for (int i = 0; i < environments.size(); i++) {
+            appendEnv(result, environments.get(i), r);
+        }
+        return result;
+    }
 
-	private String formatCell(String text ,int width){
-		if(text!=null&&text.length()<width){
-			StringBuffer space = new StringBuffer();
-			for(int i = 0;i<width-text.length();i++){
-				space.append(" ");
-			}
-			text = text+space.toString();
-		}
-		return text;
-	}
+    private StringBuffer appendEnv(StringBuffer result, Environment environment, String r) {
+        AppInstance appInstance = new AppInstance();
+        appInstance.setEnvId(environment.getId().toString());
+        List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+
+        if (instances.size() <= 0) {
+            return result;
+        }
+        result.append("--------------------------------------------------\n");
+        result.append("\tEnvironment: <").append(environment.getName()).append(">:\n");
+        result.append("\t\t[ID]    [HostAndPort]        [description]\n");
+
+        Pattern pattern = Pattern.compile(r);
+        for (int i = 0; i < instances.size() && i < 50; i++) {
+            if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r) && pattern.matcher(instances.get(i).getIp() + ":" + instances.get(i).getPort()).matches()) {
+                appendInstance(result, instances.get(i));
+                if (i == 49) {
+                    result.append("\t\t......");
+                }
+            }
+        }
+        return result;
+    }
+
+    private StringBuffer appendInstance(StringBuffer result, AppInstance instance) {
+        result.append("\t\t").append(formatCell(instance.getId().toString(), 8))
+                .append(formatCell((instance.getIp() + ":" + instance.getPort()), 21))
+                .append(instance.getRemark()).append("\n");
+        return result;
+    }
+
+
+    private String formatCell(String text, int width) {
+        if (text != null && text.length() < width) {
+            StringBuffer space = new StringBuffer();
+            for (int i = 0; i < width - text.length(); i++) {
+                space.append(" ");
+            }
+            text = text + space.toString();
+        }
+        return text;
+    }
 
 
 }
