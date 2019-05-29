@@ -33,6 +33,9 @@ public class InstanceListArgument implements Serializable {
 	@ShellOption(opt = "e", lopt = "env", help = "The environment of the application to be deployed", required = false)
 	private String envName;
 
+	@ShellOption(opt = "r", lopt = "showRegex", help = "Regular expressions that show only the required instants", required = false)
+	private String anyInstants;
+
 	public String getAppGroupName() {
 		return appGroupName;
 	}
@@ -47,5 +50,13 @@ public class InstanceListArgument implements Serializable {
 
 	public void setEnvName(String envName) {
 		this.envName = envName;
+	}
+
+	public String getAnyInstants() {
+		return anyInstants;
+	}
+
+	public void setAnyInstants(String anyInstants) {
+		this.anyInstants = anyInstants;
 	}
 }

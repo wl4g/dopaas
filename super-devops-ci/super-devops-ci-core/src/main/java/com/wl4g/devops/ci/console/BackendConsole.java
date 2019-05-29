@@ -24,7 +24,6 @@ import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.processor.ShellContext;
 import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.JedisCluster;
@@ -36,7 +35,6 @@ import java.util.concurrent.locks.Lock;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.CI_LOCK;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_TIME;
 import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
-import static com.wl4g.devops.shell.utils.ShellContextHolder.printfQuietly;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -109,30 +107,27 @@ public class BackendConsole {
      * @return
      */
     @ShellMethod(keys = "list", group = GROUP, help = "Get a list of application information")
-    public String list(InstanceListArgument argument, ShellContext context) {
+    public String list(InstanceListArgument argument) {
         StringBuffer result = new StringBuffer();
 
         String appGroupName = argument.getAppGroupName();
         String envName = argument.getEnvName();
+        String r = argument.getAnyInstants();
         if (isBlank(appGroupName)) {
             List<AppGroup> apps = appGroupDao.grouplist();
-            result.append("apps:\n");
             for (AppGroup appGroup : apps) {
-                result.append(appGroup.getName() + "\n");
+                appendApp(result,appGroup);
+                result.append("\n\n");
             }
         } else {
             AppGroup app = appGroupDao.getAppGroupByName(appGroupName);
             if (null == app) {
                 return "AppGroup not exist";
             }
-
             List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
             if (isBlank(envName)) {
-                if (null == environments) {
-                    return "the project has not env yet,please config it";
-                }
                 for (Environment environment : environments) {
-                    result = appandInstance(result, environment.getId(), environment.getName());
+                    appendEnv(result,environment);
                 }
             } else {
                 Integer envId = null;
@@ -151,44 +146,58 @@ public class BackendConsole {
                 if (null == instances || instances.size() < 1) {
                     return "none";
                 }
-                result.append(envName + ":");
-                result.append("\t" + instances.get(0).getId() + "\t" + instances.get(0).getIp() + ":" + instances.get(0).getHost()
-                        + "\t" + instances.get(0).getRemark() + "\n");
-                for (int i = 1; i < instances.size(); i++) {
-                    AppInstance instance = instances.get(i);
-                    result.append("\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getHost() + "\t"
-                            + instance.getRemark() + "\n");
+                for (int i = 1; i < instances.size()&&i<50; i++) {
+                    appendInstance(result,instances.get(i));
+                    if (i==49) {
+                        result.append("\t\t......");
+                    }
                 }
             }
-
         }
         return result.toString();
     }
 
-    /**
-     * Append instance information
-     *
-     * @param result
-     * @param envId
-     * @param envName
-     * @return
-     */
-    private StringBuffer appandInstance(StringBuffer result, Integer envId, String envName) {
-        AppInstance appInstance = new AppInstance();
-        appInstance.setEnvId(envId.toString());
-        List<AppInstance> instances = appGroupDao.instancelist(appInstance);
-        if (null == instances || instances.size() < 1) {
+
+    private  StringBuffer appendApp(StringBuffer result,AppGroup appGroup){
+        List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
+        if(environments.size()<=0){
             return result;
         }
-        result.append(envName + ":");
-        result.append("\t" + instances.get(0).getId() + "\t" + instances.get(0).getIp() + ":" + instances.get(0).getPort()
-                + "\t" + instances.get(0).getRemark() + "\n");
-        for (int i = 1; i < instances.size(); i++) {
-            AppInstance instance = instances.get(i);
-            result.append("\t" + instance.getId() + "\t" + instance.getIp() + ":" + instance.getPort() + "\t"
-                    + instance.getRemark() + "\n");
+        result.append("Application name <").append(appGroup.getName()).append(">:\n");
+        for(int i = 0;i<environments.size();i++){
+            appendEnv(result,environments.get(i));
         }
         return result;
     }
+
+    private StringBuffer appendEnv(StringBuffer result,Environment environment) {
+        AppInstance appInstance = new AppInstance();
+        appInstance.setEnvId(environment.getId().toString());
+        List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+
+        if(instances.size()<=0){
+            return result;
+        }
+
+        result.append("--------------------------------------------------\n");
+        result.append("\tEnvironment: <").append(environment.getName()).append(">:\n");
+        result.append("\t\t[ID]\t[HostAndPort]\t[description]\n");
+
+        for (int i = 1; i < instances.size()&&i<50; i++) {
+            appendInstance(result,instances.get(i));
+            if (i==49) {
+                result.append("\t\t......");
+            }
+        }
+        return result;
+    }
+
+    private StringBuffer appendInstance(StringBuffer result,AppInstance instance){
+        result.append("\t\t").append(instance.getId()).append("\t")
+                .append(instance.getIp()).append(":").append(instance.getPort()).append("\t")
+                .append(instance.getRemark()).append("\n");
+        return result;
+    }
+
 
 }

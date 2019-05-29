@@ -392,6 +392,9 @@
 			<if test="id != null and id != ''">
 				and a.id=#{id}
 			</if>
+			<if test="ip != null and ip != ''">
+				and (a.ip like "%#{ip}%" or a.remark like "%%#{ip}%")
+			</if>
 		</where>
 	</select>
      <update id="deleteInstance" parameterType="appInstance">
