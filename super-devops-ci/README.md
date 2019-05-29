@@ -53,7 +53,7 @@ sc ci shell
 #### Console command
 - Find instance ID
 ```
-list -a <appName> -e <environment>
+list -a <appName> -e <environment> -r<regular expression>
 ```
 - deploy
 ```
