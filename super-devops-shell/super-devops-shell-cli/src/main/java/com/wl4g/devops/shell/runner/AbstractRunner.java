@@ -20,6 +20,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -195,43 +196,41 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * @param line
 	 * @throws IOException
 	 */
-	protected void submit(Object message) {
-		try {
-			// Ensure client
-			ensureClient();
-			if (message instanceof String) {
-				String line = (String) message;
-				List<String> cmds = parse(line);
-				if (!cmds.isEmpty()) {
-					// $> [help|clear|history...]
-					if (registry.contains(cmds.get(0))) { // Internal commands?
-						DefaultInternalCommand.senseLine(line);
-						process(line);
-						return;
-					}
-					// help command? [MARK0] $> add --help
-					else if (cmds.size() > 1
-							&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
+	protected void submit(Object message) throws IOException {
+		// Ensure client
+		ensureClient();
 
-						// Equivalent to: '$> help add'
-						line = clean(INTERNAL_HELP) + " " + cmds.get(0);
-						// Set current line
-						DefaultInternalCommand.senseLine(line);
-						process(line);
-						return;
-					}
+		if (message instanceof String) {
+			String line = (String) message;
+			List<String> cmds = parse(line);
+			if (!cmds.isEmpty()) {
+				// $> [help|clear|history...]
+				if (registry.contains(cmds.get(0))) { // Internal commands?
+					DefaultInternalCommand.senseLine(line);
+					process(line);
+					return;
 				}
+				// help command? [MARK0] $> add --help
+				else if (cmds.size() > 1
+						&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
 
-				// Submission remote commands line
-				client.writeAndFlush(new LineMessage(line));
-				client.state = RUNNING;
-			} else {
-				client.writeAndFlush(message);
-				client.state = RUNNING;
+					// Equivalent to: '$> help add'
+					line = clean(INTERNAL_HELP) + " " + cmds.get(0);
+					// Set current line
+					DefaultInternalCommand.senseLine(line);
+					process(line);
+					return;
+				}
 			}
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
+
+			// Submission remote commands line
+			client.writeAndFlush(new LineMessage(line));
+			client.state = RUNNING;
+		} else {
+			client.writeAndFlush(message);
+			client.state = RUNNING;
 		}
+
 	}
 
 	/**
@@ -247,8 +246,10 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 	/**
 	 * Initialization runner
+	 * 
+	 * @throws IOException
 	 */
-	private void initialize() {
+	private void initialize() throws IOException {
 		// Register commands
 		this.registry.register(new DefaultInternalCommand(this));
 
@@ -311,11 +312,9 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 				try {
 					s = new Socket((String) point[0], (int) point[1]);
 				} catch (IOException e) {
-					String errmsg = String.format(
-							"Connecting to '%s' failure, check that the service(%s) application is started or the name is correct!",
-							getProperty(ARG_SERV_NAME), point[1]);
-					printErr(errmsg, e);
-					throw new IllegalStateException(errmsg, e);
+					String errmsg = String.format("Connecting to '%s'(%s) failure! cause by: %s", getProperty(ARG_SERV_NAME),
+							point[1], getRootCauseMessage(e));
+					throw new IllegalStateException(errmsg);
 				}
 
 				client = new ClientHandler(this, s, result -> null).starting();
@@ -412,7 +411,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 		@Override
 		public void run() {
-			while (!boss.isInterrupted()) {
+			while (!boss.isInterrupted() && isActive()) {
 				try {
 					// Read a string command process result
 					Object input = new ObjectInputStream(_in).readObject();
@@ -420,7 +419,8 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					// Post process
 					postProcessResult(input);
 
-				} catch (SocketException e) {
+				} catch (SocketException | EOFException e) {
+					err.println("Connection tunnel closed!");
 					boss.interrupt();
 					try {
 						close();

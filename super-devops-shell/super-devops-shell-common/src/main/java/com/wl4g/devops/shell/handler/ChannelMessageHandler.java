@@ -20,6 +20,7 @@ import com.wl4g.devops.shell.utils.Assert;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -95,7 +96,14 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * @throws IOException
 	 */
 	public synchronized void writeAndFlush(Object message) throws IOException {
-		writeAndFlush(_out, message);
+		Assert.notNull(message, "Message is null, please check configure");
+		if (!isActive()) {
+			throw new SocketException("No socket active!");
+		}
+		ObjectOutputStream out = new ObjectOutputStream(_out);
+		out.writeObject(message);
+		out.flush();
+		_out.flush();
 	}
 
 	/**
@@ -112,8 +120,8 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * 
 	 * @return
 	 */
-	public synchronized boolean isActive() {
-		return client.isConnected() && !client.isClosed() && !client.isInputShutdown() && !client.isOutputShutdown();
+	public boolean isActive() {
+		return client.isConnected() && !client.isClosed();
 	}
 
 	/**
@@ -176,21 +184,6 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	@Override
 	public String toString() {
 		return "ChannelMessageHandler [client=" + client.getRemoteSocketAddress().toString() + "]";
-	}
-
-	/**
-	 * Write and flush echo to client
-	 * 
-	 * @param out
-	 * @param message
-	 * @throws IOException
-	 */
-	public static void writeAndFlush(OutputStream out, Object message) throws IOException {
-		Assert.notNull(message, "message is null, please check configure");
-		ObjectOutputStream _out = new ObjectOutputStream(out);
-		_out.writeObject(message);
-		_out.flush();
-		out.flush();
 	}
 
 }
