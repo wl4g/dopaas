@@ -129,12 +129,8 @@ public class SimpleRedisLockManager {
 		public void unlock() {
 			String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 			Object res = jedisCluster.eval(script, Collections.singletonList(name), Collections.singletonList(processId));
-			if (SUCCESS.equals(res)) {
-				String errmsg = String.format("Unlock failure '%s'", processId);
-				// throw new IllegalMonitorStateException(errmsg);
-				if (log.isWarnEnabled()) {
-					log.warn(errmsg);
-				}
+			if (!SUCCESS.equals(res)) {
+				log.warn(String.format("Unlock failure '%s'", processId));
 			}
 		}
 
