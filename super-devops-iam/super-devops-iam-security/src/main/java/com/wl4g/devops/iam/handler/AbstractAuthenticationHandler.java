@@ -27,10 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
 
 /**
  * Abstract IAM authentication handler.
@@ -73,10 +73,10 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	protected EnhancedCacheManager cacheManager;
 
 	/**
-	 * IAM security coprocessor
+	 * IAM server security processor
 	 */
 	@Autowired
-	protected SecurityCoprocessor coprocessor;
+	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
 	 * Delegate message source.

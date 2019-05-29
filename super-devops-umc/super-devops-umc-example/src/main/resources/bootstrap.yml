@@ -17,20 +17,8 @@ spring: # Base configuration.
   profiles:
     active: test
   cloud: # Spring cloud configuration.
-    zookeeper:
-      connect-string: book-cloud:2181
-      discovery:
-        root: /application
-        enabled: true
-        register: true
-        # See: o.s.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties
-        # o.s.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration
-        metadata:
-          # See: d.c.boot.admin.discovery.DefaultServiceInstanceConverter.getHealthUrl()
-          management.context-path: /${spring.application.name}
-          health.path: health
     # Devops monitor(metrics) configuration.
-    devops: 
+    devops:
       metrics: # Metrics configuration.
         counter:
           enable: true

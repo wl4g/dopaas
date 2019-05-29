@@ -40,10 +40,10 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
+import com.wl4g.devops.iam.client.context.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.common.utils.Sessions;
@@ -96,9 +96,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final protected ClientSecurityContext context;
 
 	/**
-	 * Client security Coprocessor.
+	 * Client security processor.
 	 */
-	final protected SecurityCoprocessor coprocessor;
+	final protected ClientSecurityCoprocessor coprocessor;
 
 	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under
@@ -107,7 +107,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final private EnhancedCache cache;
 
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityContext context,
-			SecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(context, "'context' must not be null");
 		Assert.notNull(coprocessor, "'interceptor' must not be null");
@@ -133,11 +133,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	@Override
 	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response)
 			throws Exception {
-		FastCasAuthenticationToken fToken = (FastCasAuthenticationToken) token;
-		Assert.notNull(fToken.getCredentials(), "token.credentials(grant ticket) must not be null");
+		FastCasAuthenticationToken ftoken = (FastCasAuthenticationToken) token;
+		Assert.notNull(ftoken.getCredentials(), "token.credentials(grant ticket) must not be null");
 
 		// Grant ticket
-		String grantTicket = (String) fToken.getCredentials();
+		String grantTicket = (String) ftoken.getCredentials();
 
 		/*
 		 * Binding session => grantTicket. Synchronize with
@@ -156,7 +156,10 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		cache.put(new EnhancedKey(grantTicket, expiredMs), Sessions.getSessionId(subject));
 
 		// Determine success URL
-		String successUrl = determineSuccessRedirectUrl(fToken, subject, request, response);
+		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
+
+		// Post-handling of login success
+		coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response);
 
 		// JSON response
 		if (isJSONResponse(request)) {
@@ -197,6 +200,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 		// Failure redirect URL
 		String failureRedirectUrl = buildFailureRedirectUrl(cause, WebUtils.toHttp(request));
+
+		// Post-handling of login failure
+		coprocessor.postAuthenticatingFailure(token, ae, request, response);
 
 		/*
 		 * Only if the error is not authenticated, can it be redirected to the
