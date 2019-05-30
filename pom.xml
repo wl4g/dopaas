@@ -6,6 +6,12 @@
 	<version>master</version>
 	<packaging>pom</packaging>
 	<name>Super DevOps</name>
+	<url>https://super-devops.wl4g.com</url>
+	<description>A very lightweight DevSecOps full-featured platform for the entire software lifecycle</description>
+	<organization>
+		<name>Wanglsir</name>
+		<url>https://blog.wl4g.com/super-devops</url>
+	</organization>
 	<licenses>
 		<license>
 			<name>Apache License Version 2.0</name>
@@ -21,8 +27,8 @@
 	</scm>
 	<developers>
 		<developer>
-			<id>wangl01</id>
-			<name>wanglsir</name>
+			<id>Wangl01</id>
+			<name>Wanglsir</name>
 			<email>wanglsir@gmail.com,983708408@qq.com</email>
 			<roles>
 				<role>owner</role>
