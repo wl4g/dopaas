@@ -53,12 +53,12 @@ public class ZookeeperRefreshWatcher extends AbstractRefreshWatcher implements T
 	public void doStart() {
 		try {
 			// If there is no path, create as a container.
-			this.context.createContainers(this.path);
+			context.createContainers(path);
 
 			// Start path value-change listener.
-			this.treeCache = TreeCache.newBuilder(this.context, this.path).build();
-			this.treeCache.getListenable().addListener(this);
-			this.treeCache.start();
+			treeCache = TreeCache.newBuilder(context, path).build();
+			treeCache.getListenable().addListener(this);
+			treeCache.start();
 
 			// no race condition since
 			// ZookeeperAutoConfiguration.curatorFramework
@@ -85,7 +85,7 @@ public class ZookeeperRefreshWatcher extends AbstractRefreshWatcher implements T
 		if (eventType == NODE_ADDED || eventType == NODE_UPDATED) {
 			ChildData data = event.getData();
 			if (data != null) {
-				super.doExecute(this, data.getData(), this.getEventDesc(event));
+				super.doExecute(this, data.getData(), getEventDesc(event));
 			}
 		}
 	}

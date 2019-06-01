@@ -18,18 +18,18 @@ package com.wl4g.devops.scm.client.configure.refresh;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.scm.client.config.InstanceProperties;
+import com.wl4g.devops.scm.client.config.InstanceConfig;
 import com.wl4g.devops.scm.client.config.RetryProperties;
-import com.wl4g.devops.scm.client.config.SpringContexts;
 import com.wl4g.devops.scm.client.configure.RefreshBeanRegistry;
+import com.wl4g.devops.scm.client.configure.ContainerContextBeanFactory;
 
 public class ConfigureBeanRefresher extends AbstractBeanRefresher {
 
-	private SpringContexts context;
+	private ContainerContextBeanFactory context;
 
 	public ConfigureBeanRefresher(String baseUri, RestTemplate restTemplate, RetryProperties retryProps,
-			InstanceProperties intanceProps, ConfigurableEnvironment environment, RefreshBeanRegistry registry,
-			SpringContexts context) {
+			InstanceConfig intanceProps, ConfigurableEnvironment environment, RefreshBeanRegistry registry,
+			ContainerContextBeanFactory context) {
 		super(baseUri, restTemplate, retryProps, intanceProps, environment, registry);
 		this.context = context;
 	}

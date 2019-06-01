@@ -22,16 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.common.utils.AopUtils;
-import com.wl4g.devops.scm.client.config.SpringContexts;
 
 public class DefaultRefreshBeanRegistry implements RefreshBeanRegistry {
 	final private static long serialVersionUID = 2389115852129467732L;
 
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
-	private SpringContexts context;
+	private ContainerContextBeanFactory context;
 
-	public DefaultRefreshBeanRegistry(SpringContexts context) {
+	public DefaultRefreshBeanRegistry(ContainerContextBeanFactory context) {
 		super();
 		this.context = context;
 	}

@@ -50,12 +50,12 @@ public abstract class AbstractRefreshWatcher implements InitializingBean, Dispos
 	private BeanRefresher refresher;
 
 	public AbstractRefreshWatcher() {
-		this.executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+		executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
 			final private AtomicInteger counter = new AtomicInteger(0);
 
 			@Override
 			public Thread newThread(Runnable r) {
-				String name = "devops-refresher-" + this.counter.incrementAndGet();
+				String name = "devopsScmRefreshWatch-" + counter.incrementAndGet();
 				return new Thread(r, name);
 			}
 		});
@@ -63,8 +63,8 @@ public abstract class AbstractRefreshWatcher implements InitializingBean, Dispos
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (this.running.compareAndSet(false, true)) {
-			this.doStart();
+		if (running.compareAndSet(false, true)) {
+			doStart();
 		} else {
 			throw new IllegalStateException("Already started watcher.");
 		}
@@ -74,18 +74,18 @@ public abstract class AbstractRefreshWatcher implements InitializingBean, Dispos
 
 	@Override
 	public void destroy() throws Exception {
-		if (this.running.compareAndSet(true, false)) {
-			this.close();
+		if (running.compareAndSet(true, false)) {
+			close();
 		}
 	}
 
 	protected void doExecute(Object source, byte value[], String eventDesc) {
-		this.executor.submit(() -> {
+		executor.submit(() -> {
 			try {
-				if (this.isPayload(value)) {
+				if (isPayload(value)) {
 					String releaseMeta = new String(value, Charsets.UTF_8);
 					// Do refresh.
-					this.refresher.refresh(ReleaseMeta.of(releaseMeta));
+					refresher.refresh(ReleaseMeta.of(releaseMeta));
 				} else {
 					if (log.isInfoEnabled()) {
 						log.info("Zk listening empty payload. source: {}", source);
