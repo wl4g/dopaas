@@ -61,9 +61,10 @@ import com.wl4g.devops.common.exception.scm.NoChangedConfigurationException;
 import com.wl4g.devops.common.exception.scm.ReportRetriesCountOutException;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.scm.client.config.InstanceProperties;
+import com.wl4g.devops.scm.client.config.InstanceConfig;
 import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.configure.RefreshBeanRegistry;
+import static com.wl4g.devops.scm.client.configure.refresh.ScmBootstrapPropertySourceLocator.*;
 
 public abstract class AbstractBeanRefresher implements BeanRefresher {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -75,13 +76,13 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 
 	private String baseUri;
 	private RestTemplate restTemplate;
-	private InstanceProperties intanceProps;
+	private InstanceConfig intanceProps;
 	private ConfigurableEnvironment environment;
 	private RetryProperties retryProps;
 	private RefreshBeanRegistry registry;
 
 	public AbstractBeanRefresher(String baseUri, RestTemplate restTemplate, RetryProperties retryProps,
-			InstanceProperties intanceProps, ConfigurableEnvironment environment, RefreshBeanRegistry registry) {
+			InstanceConfig intanceProps, ConfigurableEnvironment environment, RefreshBeanRegistry registry) {
 		super();
 		this.baseUri = baseUri;
 		this.restTemplate = restTemplate;
@@ -252,15 +253,14 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 
 		// Matching bootstrap property sources.
 		List<PropertySource<?>> devopsSources = bootstrapSources.getPropertySources().stream()
-				.filter(source -> String.valueOf(source.getName()).equals(ScmPropertySourceLocator.devOpsPropertySource))
-				.collect(Collectors.toList());
+				.filter(source -> String.valueOf(source.getName()).equals(SCM_PROPERTY_SOURCE)).collect(Collectors.toList());
 
 		if (!devopsSources.isEmpty()) {
 			Assert.isTrue(devopsSources.size() == 1, "This expression: 'devopsPropertySource.size() == 1' must be true");
 			return (CompositePropertySource) devopsSources.get(0);
 		}
 
-		return new CompositePropertySource(ScmPropertySourceLocator.devOpsPropertySource);
+		return new CompositePropertySource(SCM_PROPERTY_SOURCE);
 	}
 
 	protected abstract Object doRefreshToTarget(String beanId, Object bean);
@@ -345,8 +345,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 		}
 
 		// Get current release property-source.
-		CompositePropertySource curDevopsSource = release
-				.convertCompositePropertySource(ScmPropertySourceLocator.devOpsPropertySource);
+		CompositePropertySource curDevopsSource = release.convertCompositePropertySource(SCM_PROPERTY_SOURCE);
 		// Get configuration devops property-source.
 		CompositePropertySource envDevopsSource = this.getDevOpsConfigurablePropertySource();
 
@@ -357,7 +356,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 			/*
 			 * Note: When the client starts initialization, if the update of
 			 * remote configuration source fails, the property Sources
-			 * corresponding to `devOpsPropertySource'are empty.
+			 * corresponding to `SCM_PROPERTY_SOURCE'are empty.
 			 */
 			if (!envDevopsSource.getPropertySources().isEmpty()) {
 				if (envDevopsSource.getPropertySources().contains(matcheSource)) {

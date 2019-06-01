@@ -23,13 +23,13 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 /**
- * Wrapper annotation to enable DevOps configuration.
+ * Wrapper annotation to enable DevOps watcher task configuration.
  *
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@ConditionalOnProperty(value = "spring.cloud.devops.scm.client.enabled", matchIfMissing = false)
-public @interface EnabledScmClient {
+@ConditionalOnProperty(value = "spring.cloud.devops.scm.client.watcher.enabled", matchIfMissing = false)
+public @interface EnableScmWatchTask {
 
 }

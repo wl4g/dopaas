@@ -17,11 +17,18 @@ package com.wl4g.devops.scm.client.configure.refresh;
 
 import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseMeta;
 
+/**
+ * Bean refresher
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2018年11月1日
+ * @since
+ */
 public interface BeanRefresher {
 
 	/**
 	 * {@link com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher}
-	 * {@link com.wl4g.devops.scm.client.configure.watch.TaskRefreshWatcher}
+	 * {@link com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher}
 	 * 
 	 * @param releaseMeta
 	 *            release meta information.

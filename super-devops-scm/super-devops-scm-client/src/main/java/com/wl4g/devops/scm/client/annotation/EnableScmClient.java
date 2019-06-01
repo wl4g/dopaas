@@ -20,13 +20,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.context.annotation.Import;
+
+import com.wl4g.devops.scm.client.config.RefresherAutoConfiguration;
+
 /**
- * Wrapper annotation to enable DevOps SCM controller configuration.
+ * SCM annotation to enable configuration.
  *
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
-public @interface ScmController {
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Import({ RefresherAutoConfiguration.class })
+public @interface EnableScmClient {
 
 }
