@@ -46,7 +46,7 @@ import com.fasterxml.jackson.annotation.JsonFormat.Value;
  *      org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor<br/>
  *      org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#populateBean
  */
-public class ContainerContextBeanFactory implements ApplicationContextAware {
+public class AutowireContextBeanFactory implements ApplicationContextAware {
 
 	private ConfigurableApplicationContext applicationContext;
 

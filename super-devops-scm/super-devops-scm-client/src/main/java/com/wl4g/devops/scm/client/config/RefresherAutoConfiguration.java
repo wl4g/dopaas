@@ -34,7 +34,7 @@ import com.wl4g.devops.scm.client.annotation.EnableScmWatchZk;
 import com.wl4g.devops.scm.client.configure.BeanCurrentlyConfiguringInterceptor;
 import com.wl4g.devops.scm.client.configure.DefaultRefreshBeanRegistry;
 import com.wl4g.devops.scm.client.configure.RefreshBeanRegistry;
-import com.wl4g.devops.scm.client.configure.ContainerContextBeanFactory;
+import com.wl4g.devops.scm.client.configure.AutowireContextBeanFactory;
 import com.wl4g.devops.scm.client.configure.refresh.ConfigureBeanRefresher;
 import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
 import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
@@ -76,17 +76,17 @@ public class RefresherAutoConfiguration extends AbstractOptionalControllerConfig
 	@Bean
 	public ConfigureBeanRefresher configureBeanRefresher(@Value(BASE_URI) String baseUri, RestTemplate restTemplate,
 			RetryProperties retryProps, InstanceConfig instanceProps, RefreshBeanRegistry registry,
-			ContainerContextBeanFactory context, ConfigurableEnvironment environment) {
+			AutowireContextBeanFactory context, ConfigurableEnvironment environment) {
 		return new ConfigureBeanRefresher(baseUri, restTemplate, retryProps, instanceProps, environment, registry, context);
 	}
 
 	@Bean
-	public ContainerContextBeanFactory springContextHolder() {
-		return new ContainerContextBeanFactory();
+	public AutowireContextBeanFactory springContextHolder() {
+		return new AutowireContextBeanFactory();
 	}
 
 	@Bean
-	public DefaultRefreshBeanRegistry refreshBeanRegistry(ContainerContextBeanFactory context) {
+	public DefaultRefreshBeanRegistry refreshBeanRegistry(AutowireContextBeanFactory context) {
 		return new DefaultRefreshBeanRegistry(context);
 	}
 

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.scm.client.configure.refresh;
 
+import org.springframework.core.env.CompositePropertySource;
+
 import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseMeta;
 
 /**
@@ -36,5 +38,7 @@ public interface BeanRefresher {
 	void refresh(ReleaseMeta releaseMeta);
 
 	boolean isBeanCurrentlyInConfigure(Object bean);
+
+	CompositePropertySource getScmConfigurablePropertySource();
 
 }

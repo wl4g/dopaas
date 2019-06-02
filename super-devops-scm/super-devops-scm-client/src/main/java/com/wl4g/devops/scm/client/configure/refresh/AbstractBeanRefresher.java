@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.common.utils.AopUtils;
@@ -65,18 +65,28 @@ import com.wl4g.devops.scm.client.config.InstanceConfig;
 import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.configure.RefreshBeanRegistry;
 import static com.wl4g.devops.scm.client.configure.refresh.ScmBootstrapPropertySourceLocator.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
+/**
+ * Abstract bean refresher
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月1日
+ * @since
+ */
 public abstract class AbstractBeanRefresher implements BeanRefresher {
+	final private static String CIPHER_PREFIX = "{cipher}";
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Names of beans that are currently in configure */
 	final private ConcurrentMap<Class<?>, Object> beanCurrentlyInConfigure = new ConcurrentHashMap<>(1);
-	final private static String CIPHER_PREFIX = "{cipher}";
+
 	final private AtomicInteger counter = new AtomicInteger(0); // Retry-counter.
 
 	private String baseUri;
 	private RestTemplate restTemplate;
-	private InstanceConfig intanceProps;
+	private InstanceConfig intanceConfig;
 	private ConfigurableEnvironment environment;
 	private RetryProperties retryProps;
 	private RefreshBeanRegistry registry;
@@ -87,20 +97,20 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 		this.baseUri = baseUri;
 		this.restTemplate = restTemplate;
 		this.retryProps = retryProps;
-		this.intanceProps = intanceProps;
+		this.intanceConfig = intanceProps;
 		this.environment = environment;
 		this.registry = registry;
 		Assert.notNull(this.baseUri, "`baseUri` is not allowed to be null.");
 		Assert.notNull(this.restTemplate, "`restTemplate` is not allowed to be null.");
-		Assert.notNull(this.intanceProps, "`instanceProperties` is not allowed to be null.");
+		Assert.notNull(this.intanceConfig, "`instanceProperties` is not allowed to be null.");
 		Assert.notNull(this.retryProps, "`retryProperties` is not allowed to be null.");
 		Assert.notNull(this.environment, "`environment` is not allowed to be null.");
 	}
 
 	public String getOrAddConfigVersion(String newVersion) {
-		String oldVersion = this.environment.getProperty("spring.config.version");
+		String oldVersion = environment.getProperty("spring.config.version");
 
-		if (!StringUtils.isEmpty(newVersion)) {
+		if (!isEmpty(newVersion)) {
 			for (Iterator<PropertySource<?>> it = environment.getPropertySources().iterator(); it.hasNext();) {
 				PropertySource<?> source = it.next();
 				if (source instanceof MapPropertySource) {
@@ -132,26 +142,26 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 			 * configuration source does not need to be refreshed manually to
 			 * bean when the container initializes.
 			 */
-			this.checkBeanRefresh();
+			checkBeanRefresh();
 
 			// 1.2 Check target-version.
 			Assert.notNull(targetReleaseMeta, "This 'targetReleaseMeta' must not be null");
 			targetReleaseMeta.validation(true, true);
 
 			// 1.3 Get target configuration.
-			ReleaseModel release = this.getRemoteReleaseConfig(targetReleaseMeta);
+			ReleaseModel release = getRemoteReleaseConfig(targetReleaseMeta);
 
 			// 1.4 Check configuration to match current environment.
-			this.checkReleaseConfigMatched(release, targetReleaseMeta);
+			checkReleaseConfigMatched(release, targetReleaseMeta);
 
 			// 1.3 Copy configuration information to report.
 			report.setApplication(release.getApplication());
 			report.setProfile(release.getProfile());
 			report.setReleaseMeta(targetReleaseMeta);
-			report.setInstance(intanceProps.getBindInstance());
+			report.setInstance(intanceConfig.getBindInstance());
 
 			// 1.4 Process refresh all.
-			ReportModel refreshed = this.doRefresh(release, targetReleaseMeta);
+			ReportModel refreshed = doRefresh(release, targetReleaseMeta);
 			refreshedMark = true; // Refreshed
 
 			// 1.5 Copy configuration and report information.
@@ -173,9 +183,9 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 		// 1.6 Report refresh change result.
 		if (refreshedMark) {
 			try {
-				this.doReportWithRefreshed(report);
+				doReportWithRefreshed(report);
 			} catch (Exception e) {
-				log.error("Report refreshed failure. retry:{} {} {}", this.counter.get(), ExceptionUtils.getRootCauseMessage(e),
+				log.error("Report refreshed failure. retry:{} {} {}", counter.get(), ExceptionUtils.getRootCauseMessage(e),
 						report);
 			}
 		}
@@ -184,11 +194,11 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 
 	public ReleaseModel getRemoteReleaseConfig(ReleaseMeta targetReleaseMeta) {
 		// Get pull release URL.
-		String uri = this.baseUri + SCMDevOpsConstants.URI_S_BASE + "/" + SCMDevOpsConstants.URI_S_SOURCE_GET;
+		String uri = baseUri + SCMDevOpsConstants.URI_S_BASE + "/" + SCMDevOpsConstants.URI_S_SOURCE_GET;
 
 		// Create request bean.
-		GetReleaseModel req = new GetReleaseModel(intanceProps.getApplicationName(), intanceProps.getProfilesActive(),
-				targetReleaseMeta, intanceProps.getBindInstance());
+		GetReleaseModel req = new GetReleaseModel(intanceConfig.getApplicationName(), intanceConfig.getProfilesActive(),
+				targetReleaseMeta, intanceConfig.getBindInstance());
 
 		// Bean to map.
 		String params = new BeanMapConvert(req).toUriParmaters();
@@ -197,7 +207,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 			log.debug("Get remote release config url: {}", url);
 		}
 
-		RespBase<ReleaseModel> resp = this.restTemplate
+		RespBase<ReleaseModel> resp = restTemplate
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<ReleaseModel>>() {
 				}).getBody();
 		if (!RespBase.isSuccess(resp)) {
@@ -241,35 +251,37 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 
 	@Override
 	public boolean isBeanCurrentlyInConfigure(Object bean) {
-		Object curVal = this.beanCurrentlyInConfigure.get(bean.getClass());
+		Object curVal = beanCurrentlyInConfigure.get(bean.getClass());
 		return (curVal != null && (curVal.equals(bean) || (curVal instanceof Set && ((Set<?>) curVal).contains(bean))));
 	}
 
-	public CompositePropertySource getDevOpsConfigurablePropertySource() {
+	@Override
+	public CompositePropertySource getScmConfigurablePropertySource() {
 		// Get bootstrap CompositePropertySource.
-		CompositePropertySource bootstrapSources = (CompositePropertySource) this.environment.getPropertySources()
+		CompositePropertySource bootstrapSources = (CompositePropertySource) environment.getPropertySources()
 				.get(PropertySourceBootstrapConfiguration.BOOTSTRAP_PROPERTY_SOURCE_NAME);
 		Assert.notNull(bootstrapSources, "Spring cloud 'bootstrapProperties' property source must not be null.");
 
 		// Matching bootstrap property sources.
 		List<PropertySource<?>> devopsSources = bootstrapSources.getPropertySources().stream()
-				.filter(source -> String.valueOf(source.getName()).equals(SCM_PROPERTY_SOURCE)).collect(Collectors.toList());
+				.filter(source -> String.valueOf(source.getName()).equals(SCM_REFRESH_PROPERTY_SOURCE))
+				.collect(Collectors.toList());
 
 		if (!devopsSources.isEmpty()) {
 			Assert.isTrue(devopsSources.size() == 1, "This expression: 'devopsPropertySource.size() == 1' must be true");
 			return (CompositePropertySource) devopsSources.get(0);
 		}
 
-		return new CompositePropertySource(SCM_PROPERTY_SOURCE);
+		return new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 	}
 
 	protected abstract Object doRefreshToTarget(String beanId, Object bean);
 
 	private void doReportWithRefreshed(ReportModel report) {
-		int cur = this.counter.incrementAndGet();
+		int cur = counter.incrementAndGet();
 
 		// Define URL.
-		String url = this.baseUri + SCMDevOpsConstants.URI_S_BASE + "/" + SCMDevOpsConstants.URI_S_REPORT_POST;
+		String url = baseUri + SCMDevOpsConstants.URI_S_BASE + "/" + SCMDevOpsConstants.URI_S_REPORT_POST;
 		if (log.isDebugEnabled()) {
 			log.debug("Report refreshed... {} => {}", report, url);
 		}
@@ -278,10 +290,10 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 			// Report refresh change result.
 			report.validation(true, true);
 
-			RespBase<?> ack = this.restTemplate.postForObject(url, report, RespBase.class);
+			RespBase<?> ack = restTemplate.postForObject(url, report, RespBase.class);
 			if (RespBase.isSuccess(ack)) {
 				// Reset
-				this.counter.set(0);
+				counter.set(0);
 				if (log.isInfoEnabled()) {
 					log.info("Report refreshed successfully. {}", ack);
 				}
@@ -291,7 +303,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 
 		} catch (Exception e) {
 			log.warn("Report refreshed failure. retry:{} {}", cur, ExceptionUtils.getRootCauseMessage(e));
-			if (cur < this.retryProps.getMaxAttempts()) {
+			if (cur < retryProps.getMaxAttempts()) {
 				new Thread(() -> {
 					try {
 						Thread.sleep(retryProps.getRandomSleepPeriod());
@@ -300,11 +312,11 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 					}
 
 					// Recursive retry
-					this.doReportWithRefreshed(report);
+					doReportWithRefreshed(report);
 				}).start();
 
 			} else {
-				this.counter.set(0); // Reset
+				counter.set(0); // Reset
 				throw new ReportRetriesCountOutException(
 						String.format("Maximum number of retries exceeded: %s", retryProps.getMaxAttempts()));
 			}
@@ -314,19 +326,19 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 
 	private ReportModel doRefresh(ReleaseModel release, ReleaseMeta targetReleaseMeta) {
 		// 1.1 Resolvers cipher resource.
-		this.resolvesCipherSource(release);
+		resolvesCipherSource(release);
 
 		// 2.1 Add release-configuration to environment.
-		this.addConfigToEnvironment(release);
+		addConfigToEnvironment(release);
 
 		// Define final configure-result.
 		ReportModel result = new ReportModel();
 		// 2.2 Refresh configure bean all.
-		this.registry.getRefreshBeans().forEach((beanId, obj) -> {
+		registry.getRefreshBeans().forEach((beanId, obj) -> {
 			// 2.2.1 Get before target real object.
 			Object bean = AopUtils.getTarget(obj);
 			// 2.2.2 Configure release of bean.
-			List<RefreshedMemberDefine> members = this.configure(beanId, bean, release);
+			List<RefreshedMemberDefine> members = configure(beanId, bean, release);
 			// 2.2.3 To wrapper.
 			RefreshedBeanDefine ret = new RefreshedBeanDefine(beanId, bean.getClass().getName(), members);
 			result.getDetails().add(ret);
@@ -341,13 +353,13 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 	private void addConfigToEnvironment(ReleaseModel release) {
 		// 1.1 Add configuration to environment.
 		if (log.isTraceEnabled()) {
-			log.trace("Add configuration to environment ...");
+			log.trace("Add configuration to environment ... {}", release);
 		}
 
 		// Get current release property-source.
-		CompositePropertySource curDevopsSource = release.convertCompositePropertySource(SCM_PROPERTY_SOURCE);
+		CompositePropertySource curDevopsSource = release.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 		// Get configuration devops property-source.
-		CompositePropertySource envDevopsSource = this.getDevOpsConfigurablePropertySource();
+		CompositePropertySource envDevopsSource = getScmConfigurablePropertySource();
 
 		for (PropertySource<?> source : curDevopsSource.getPropertySources()) {
 			// Matching DevOps property sources and get matched configuration
@@ -356,7 +368,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 			/*
 			 * Note: When the client starts initialization, if the update of
 			 * remote configuration source fails, the property Sources
-			 * corresponding to `SCM_PROPERTY_SOURCE'are empty.
+			 * corresponding to `SCM_REFRESH_PROPERTY_SOURCE'are empty.
 			 */
 			if (!envDevopsSource.getPropertySources().isEmpty()) {
 				if (envDevopsSource.getPropertySources().contains(matcheSource)) {
@@ -370,9 +382,9 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 						log.debug("Add configuration source to environment. before-devOpsSources: {}, after-devOpsSources: {}",
 								envDevopsSource, source);
 					}
-
-				} else {
-					// Get print info.
+				}
+				// Get print info.
+				else {
 					List<String> envNames = Arrays.asList(envDevopsSource.getPropertyNames());
 					throw new MismatchedConfigurationException(
 							String.format("Invalid matching configuration source, release.source: %s, environment.sources: %s",
@@ -381,7 +393,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 			}
 
 			// Add propertySource to environment(devopsPropertySources).
-			// Reference:com.wl4g.devops.client.configure.refresh.DevOpsPropertySourceLocator#locate
+			// See:refresh.DevOpsPropertySourceLocator#locate
 			envDevopsSource.addFirstPropertySource(source);
 		}
 
@@ -394,20 +406,20 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 		List<RefreshedMemberDefine> members = new ArrayList<>();
 
 		// 1.1 Before change fields set.
-		this.beforeChangeHandle(members, before, beanId);
+		beforeChangeHandle(members, before, beanId);
 
 		// 1.2 Restart bean's life cycle.
-		Object after = AopUtils.getTarget(this.doRefreshToTarget(beanId, before));
+		Object after = AopUtils.getTarget(doRefreshToTarget(beanId, before));
 
 		// 1.3 After handle configuration changes.
-		this.afterChangeHandle(members, after, beanId);
+		afterChangeHandle(members, after, beanId);
 
 		return members;
 	}
 
 	private void beforeChangeHandle(List<RefreshedMemberDefine> members, Object before, String beanId) {
 		// 1.1 Set the lock that is currently configuring bean.
-		this.beanCurrentlyInConfigure.putIfAbsent(before.getClass(), before);
+		beanCurrentlyInConfigure.putIfAbsent(before.getClass(), before);
 
 		Field[] fields = before.getClass().getDeclaredFields();
 		// 1.2 Get fields value of release before.
@@ -417,8 +429,8 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 			}
 
 			// 1.3 Get field property name.
-			String propertyName = this.getPropertyName(before, f);
-			if (StringUtils.isEmpty(propertyName)) {
+			String propertyName = getPropertyName(before, f);
+			if (isEmpty(propertyName)) {
 				continue; // Avoid of unrelated fields.
 			}
 
@@ -430,7 +442,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 
 	private void afterChangeHandle(List<RefreshedMemberDefine> members, Object after, String beanId) {
 		// 1.1 Release the lock that is currently configuring bean.
-		this.beanCurrentlyInConfigure.remove(after.getClass(), after);
+		beanCurrentlyInConfigure.remove(after.getClass(), after);
 
 		// 1.2 Record changed members.
 		for (RefreshedMemberDefine member : members) {
@@ -471,7 +483,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 		}
 
 		// 1.3 Get real property name of placeholder.
-		return this.extractPlaceholder(propertyName);
+		return extractPlaceholder(propertyName);
 	}
 
 	private String extractPlaceholder(String placeholder) {
@@ -493,25 +505,25 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 		targetReleaseMeta.validation(true, true);
 
 		// 1.2 Check base information.
-		if (!String.valueOf(release.getApplication()).equals(intanceProps.getApplicationName())) {
+		if (!StringUtils.equals(release.getApplication(), intanceConfig.getApplicationName())) {
 			throw new MismatchedConfigurationException(String.format("Mismatched config application, expected: %s, actual: %s",
-					intanceProps.getApplicationName(), release.getApplication()));
+					intanceConfig.getApplicationName(), release.getApplication()));
 		}
-		if (!String.valueOf(release.getProfile()).equals(intanceProps.getProfilesActive())) {
+		if (!StringUtils.equals(release.getProfile(), intanceConfig.getProfilesActive())) {
 			throw new MismatchedConfigurationException(String.format("Mismatched config profile, expected: %s, actual: %s",
-					intanceProps.getProfilesActive(), release.getProfile()));
+					intanceConfig.getProfilesActive(), release.getProfile()));
 		}
 
 		// 1.3 Check configuration actual version is not request target version.
-		if (!String.valueOf(targetReleaseMeta.getVersion()).equals(String.valueOf(release.getReleaseMeta().getVersion()))) {
+		if (!StringUtils.equals(targetReleaseMeta.getVersion(), release.getReleaseMeta().getVersion())) {
 			throw new MismatchedConfigurationException(
 					String.format("Mismatched request target version, expected: %s, actual: %s", targetReleaseMeta.getVersion(),
 							release.getReleaseMeta().getVersion()));
 		}
 
 		// 1.4 Check configuration version no-change.
-		String oldVersion = this.getOrAddConfigVersion(release.getReleaseMeta().getVersion());
-		if (String.valueOf(oldVersion).equals(release.getReleaseMeta().getVersion())) {
+		String oldVersion = getOrAddConfigVersion(release.getReleaseMeta().getVersion());
+		if (StringUtils.equals(oldVersion, release.getReleaseMeta().getVersion())) {
 			throw new NoChangedConfigurationException(
 					String.format("Current environment source version used is: %s, target version: %s", oldVersion,
 							release.getReleaseMeta().getVersion()));
@@ -520,7 +532,7 @@ public abstract class AbstractBeanRefresher implements BeanRefresher {
 	}
 
 	private void checkBeanRefresh() {
-		Assert.notNull(this.registry, "`refreshBeanRegistry` is not allowed to be null.");
+		Assert.notNull(registry, "`refreshBeanRegistry` is not allowed to be null.");
 	}
 
 }

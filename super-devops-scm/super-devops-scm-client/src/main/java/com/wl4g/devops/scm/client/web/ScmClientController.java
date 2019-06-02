@@ -32,7 +32,7 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseModel.ReleasePropertySource;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.scm.client.configure.refresh.AbstractBeanRefresher;
+import com.wl4g.devops.scm.client.configure.refresh.BeanRefresher;
 
 /**
  * https://blog.csdn.net/cml_blog/article/details/78411312
@@ -46,9 +46,9 @@ import com.wl4g.devops.scm.client.configure.refresh.AbstractBeanRefresher;
 @com.wl4g.devops.scm.client.annotation.ScmClientController
 public class ScmClientController extends BaseController {
 
-	private AbstractBeanRefresher refresher;
+	private BeanRefresher refresher;
 
-	public ScmClientController(AbstractBeanRefresher refresher) {
+	public ScmClientController(BeanRefresher refresher) {
 		super();
 		this.refresher = refresher;
 	}
@@ -80,18 +80,18 @@ public class ScmClientController extends BaseController {
 	@GetMapping(value = URI_C_LATEST)
 	public RespBase<?> latest() {
 		if (log.isInfoEnabled()) {
-			log.info("Get configure latest ...");
+			log.info("Got config latest ...");
 		}
 
 		RespBase<List<ReleasePropertySource>> resp = new RespBase<>();
 		try {
-			// Get current environment devops property source.
+			// Got current environment scm property sources.
 			resp.getData().put(KEY_ENV_SOURCES, getEnvironmentPropertySources());
 		} catch (Exception e) {
 			String errmsg = ExceptionUtils.getRootCauseMessage(e);
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(errmsg);
-			log.error("Get latest configuration failure. {}", errmsg);
+			log.error("Got latest config failure. {}", errmsg);
 		}
 
 		return resp;
@@ -99,7 +99,7 @@ public class ScmClientController extends BaseController {
 
 	private List<ReleasePropertySource> getEnvironmentPropertySources() {
 		List<ReleasePropertySource> sources = new ArrayList<>();
-		refresher.getDevOpsConfigurablePropertySource().getPropertySources()
+		refresher.getScmConfigurablePropertySource().getPropertySources()
 				.forEach(source -> sources.add(ReleasePropertySource.build((MapPropertySource) source)));
 		return sources;
 	}

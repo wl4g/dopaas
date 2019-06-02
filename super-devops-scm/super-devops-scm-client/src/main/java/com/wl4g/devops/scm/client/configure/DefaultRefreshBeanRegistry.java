@@ -23,34 +23,41 @@ import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.common.utils.AopUtils;
 
+/**
+ * Default refresh bean registry
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年6月1日
+ * @since
+ */
 public class DefaultRefreshBeanRegistry implements RefreshBeanRegistry {
 	final private static long serialVersionUID = 2389115852129467732L;
 
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
-	private ContainerContextBeanFactory context;
+	private AutowireContextBeanFactory contextBeanFactory;
 
-	public DefaultRefreshBeanRegistry(ContainerContextBeanFactory context) {
+	public DefaultRefreshBeanRegistry(AutowireContextBeanFactory contextBeanFactory) {
 		super();
-		this.context = context;
+		this.contextBeanFactory = contextBeanFactory;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// Post registration handle.
-		this.postRegistrationHandle();
-
 		// Print refresh scope bean.
-		this.context.getBeansWithAnnotation(RefreshBean.class).values().stream().forEach(obj -> {
+		contextBeanFactory.getBeansWithAnnotation(RefreshBean.class).values().stream().forEach(obj -> {
 			log.info("@RefreshScope: {}", AopUtils.getTargetClass(obj).getName());
 		});
+
+		// Post registr set.
+		postRegistrProcessSet();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getRefreshBean(Class<?> clazz) {
 		// Get @RefreshConfig bean.
-		Map<String, Object> beanMap = this.context.getBeansWithAnnotation(RefreshBean.class);
+		Map<String, Object> beanMap = contextBeanFactory.getBeansWithAnnotation(RefreshBean.class);
 		// Save to refresh registry of bean.
 		if (beanMap != null) {
 			for (Object obj : beanMap.values()) {
@@ -66,7 +73,7 @@ public class DefaultRefreshBeanRegistry implements RefreshBeanRegistry {
 	@Override
 	public <T> T getRefreshBean(String beanId) {
 		// Get @RefreshConfig bean.
-		Map<String, Object> beanMap = this.context.getBeansWithAnnotation(RefreshBean.class);
+		Map<String, Object> beanMap = contextBeanFactory.getBeansWithAnnotation(RefreshBean.class);
 		// Save to refresh registry of bean.
 		if (beanMap != null) {
 			for (String beanId0 : beanMap.keySet()) {
@@ -80,11 +87,11 @@ public class DefaultRefreshBeanRegistry implements RefreshBeanRegistry {
 
 	@Override
 	public Map<String, Object> getRefreshBeans() {
-		Map<String, Object> beans = this.context.getBeansWithAnnotation(RefreshBean.class);
+		Map<String, Object> beans = contextBeanFactory.getBeansWithAnnotation(RefreshBean.class);
 		return beans == null ? Collections.emptyMap() : beans;
 	}
 
-	private void postRegistrationHandle() {
+	private void postRegistrProcessSet() {
 
 	}
 

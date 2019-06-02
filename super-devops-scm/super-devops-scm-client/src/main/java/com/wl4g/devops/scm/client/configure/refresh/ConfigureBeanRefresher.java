@@ -21,23 +21,30 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.devops.scm.client.config.InstanceConfig;
 import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.configure.RefreshBeanRegistry;
-import com.wl4g.devops.scm.client.configure.ContainerContextBeanFactory;
+import com.wl4g.devops.scm.client.configure.AutowireContextBeanFactory;
 
+/**
+ * Configure bean refresher
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年6月1日
+ * @since
+ */
 public class ConfigureBeanRefresher extends AbstractBeanRefresher {
 
-	private ContainerContextBeanFactory context;
+	private AutowireContextBeanFactory contextBeanFactory;
 
 	public ConfigureBeanRefresher(String baseUri, RestTemplate restTemplate, RetryProperties retryProps,
 			InstanceConfig intanceProps, ConfigurableEnvironment environment, RefreshBeanRegistry registry,
-			ContainerContextBeanFactory context) {
+			AutowireContextBeanFactory context) {
 		super(baseUri, restTemplate, retryProps, intanceProps, environment, registry);
-		this.context = context;
+		this.contextBeanFactory = context;
 	}
 
 	@Override
 	protected synchronized Object doRefreshToTarget(String beanId, Object bean) {
 		// Re-initialization of solution to attribute injection.
-		this.context.reinitializationBean(bean, beanId);
+		contextBeanFactory.reinitializationBean(bean, beanId);
 		return bean;
 	}
 

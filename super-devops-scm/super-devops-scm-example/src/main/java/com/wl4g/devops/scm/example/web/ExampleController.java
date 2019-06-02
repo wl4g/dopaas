@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.devops.scm.example.service.ExampleService;
+import com.wl4g.devops.scm.example.service.ExampleService2;
 
 @RestController
 @RequestMapping("/")
@@ -31,18 +32,35 @@ public class ExampleController {
 	@Autowired
 	private ExampleService exampleService;
 
+	@Autowired
+	private ExampleService2 exampleService2;
+
 	@RequestMapping("start")
 	public String start() {
-		log.info("Request starting... " + exampleService);
+		log.info("ExampleService Request starting... " + exampleService);
 		this.exampleService.start();
-		return "Started";
+		return "ExampleService Started";
 	}
 
 	@RequestMapping("stop")
 	public String stop() {
-		log.info("Request stoping... ");
+		log.info("ExampleService Request stoping... ");
 		this.exampleService.stop();
-		return "Stoped";
+		return "ExampleService Stoped";
+	}
+
+	@RequestMapping("start2")
+	public String start2() {
+		log.info("ExampleService2 Request starting... " + exampleService);
+		this.exampleService2.start();
+		return "ExampleService2 Started";
+	}
+
+	@RequestMapping("stop2")
+	public String stop2() {
+		log.info("ExampleService2 Request stoping... ");
+		this.exampleService2.stop();
+		return "ExampleService2 Stoped";
 	}
 
 }
