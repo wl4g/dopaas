@@ -41,7 +41,7 @@ import com.wl4g.devops.scm.client.config.RetryProperties;
  */
 public class ScmBootstrapPropertySourceLocator implements PropertySourceLocator {
 
-	final public static String SCM_PROPERTY_SOURCE = "_DevOpsScmPropertySource_";
+	final public static String SCM_REFRESH_PROPERTY_SOURCE = "_DevOpsScmPropertySource_";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -63,7 +63,7 @@ public class ScmBootstrapPropertySourceLocator implements PropertySourceLocator 
 		 * Define composite property source.
 		 * See:configure.refresh.AbstractBeanRefresher#addConfigToEnvironment()
 		 */
-		CompositePropertySource composite = new CompositePropertySource(SCM_PROPERTY_SOURCE); // By-default
+		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
 				// 1.1 Get remote latest property-sources(version/releaseId is
@@ -74,7 +74,7 @@ public class ScmBootstrapPropertySourceLocator implements PropertySourceLocator 
 				refresher.resolvesCipherSource(config);
 
 				// 1.3 Add configuration to environment.
-				composite = config.convertCompositePropertySource(SCM_PROPERTY_SOURCE);
+				composite = config.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 
 			} catch (Exception e) {
 				log.error("SCM bootstrap config refresh failed. cause by: {}", ExceptionUtils.getRootCauseMessage(e));

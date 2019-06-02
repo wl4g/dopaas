@@ -16,7 +16,6 @@
 package com.wl4g.devops.scm.client.configure;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -51,7 +50,7 @@ public class BeanCurrentlyConfiguringInterceptor {
 	}
 
 	@Around("pointcut()")
-	public Object advice(ProceedingJoinPoint joinPoint) throws Throwable {
+	public Object intercept(ProceedingJoinPoint joinPoint) throws Throwable {
 		try {
 			Object target = joinPoint.getTarget();
 
