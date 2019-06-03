@@ -27,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpServerErrorException;
 import static org.springframework.util.StringUtils.*;
 
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.scm.client.config.InstanceInfo;
@@ -106,10 +107,11 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 					String.format("Could not locate PropertySource and the fail fast property is set, failing %s", errmsg),
 					error);
 		}
-		log.warn("Could not locate PropertySource: "
-				+ (errmsg == null ? error == null ? "label not found" : error.getMessage() : errmsg));
-		return null;
 
+		log.warn("<<<<<<<<!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>");
+		log.warn("Could not locate remote PropertySource failure! {} causes by:{}", getRootCauseMessage(error), errmsg);
+		log.warn("<<<<<<<<!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>");
+		return null;
 	}
 
 }

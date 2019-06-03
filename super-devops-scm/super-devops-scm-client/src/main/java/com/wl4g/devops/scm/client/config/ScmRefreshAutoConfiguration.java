@@ -18,14 +18,12 @@ package com.wl4g.devops.scm.client.config;
 import java.lang.annotation.Annotation;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.cloud.logging.LoggingRebinder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo;
@@ -33,8 +31,6 @@ import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.annotation.EnableScmWatchTask;
 import com.wl4g.devops.scm.client.annotation.EnableScmWatchZk;
-import com.wl4g.devops.scm.client.configure.DefaultBootstrapPropertySourceLocator;
-import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
 import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
@@ -53,35 +49,7 @@ import com.wl4g.devops.scm.common.utils.ScmUtils;
  * @since {@link de.codecentric.boot.admin.web.PrefixHandlerMapping}
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
-public class ScmBootstrapAutoConfiguration extends AbstractOptionalControllerConfiguration {
-
-	final public static String BASE_URI = "${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/scm}";
-
-	//
-	// SCM foundation's
-	//
-
-	@Bean
-	public InstanceInfo instanceConfig(Environment environment) {
-		return new InstanceInfo(environment);
-	}
-
-	@Bean
-	public ScmClientProperties scmClientProperties(Environment environment) {
-		return new ScmClientProperties(environment);
-	}
-
-	@Bean
-	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig,
-			InstanceInfo info) {
-		return new DefaultBootstrapPropertySourceLocator(config, retryConfig, info);
-	}
-
-	@Bean
-	@ConfigurationProperties(prefix = "spring.cloud.devops.scm.client.retry")
-	public RetryProperties retryProperties() {
-		return new RetryProperties();
-	}
+public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
 	//
 	// Refresher's
