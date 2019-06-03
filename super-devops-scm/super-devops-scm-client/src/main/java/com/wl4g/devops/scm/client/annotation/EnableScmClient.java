@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.devops.scm.client.config.ScmBootstrapAutoConfiguration;
+import com.wl4g.devops.scm.client.config.ScmRefreshAutoConfiguration;
 
 /**
  * SCM annotation to enable configuration.
@@ -32,7 +32,7 @@ import com.wl4g.devops.scm.client.config.ScmBootstrapAutoConfiguration;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@Import({ ScmBootstrapAutoConfiguration.class })
+@Import({ ScmRefreshAutoConfiguration.class })
 @EnableDiscoveryClient
 public @interface EnableScmClient {
 

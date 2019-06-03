@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import com.google.common.base.Charsets;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 
 /**
@@ -81,8 +83,7 @@ public abstract class AbstractRefreshWatcher implements InitializingBean, Dispos
 		executor.execute(() -> {
 			try {
 				if (isPayload(data)) {
-					// ReleaseMeta releaseMeta = ReleaseMeta.of(new
-					// String(value, Charsets.UTF_8));
+					ReleaseMeta meta = ReleaseMeta.of(new String(data, Charsets.UTF_8));
 					// Do refresh.
 					refresher.refresh();
 				} else {
