@@ -274,14 +274,14 @@
 		INNER JOIN cf_app_group g ON g.id = i.group_id
 		INNER JOIN cf_version_detail vd ON vd.version_id = i.version_id
 		<where>
-			AND g.`name` = #{application}
+			AND g.`name` = #{group}
 			AND e.`name` = #{profile}
-			<if test="releaseMeta != null
-				and releaseMeta.releaseId != null and releaseMeta.releaseId != 'null' and releaseMeta.releaseId != ''
-				and releaseMeta.version != null and releaseMeta.version != 'null' and releaseMeta.version != ''">
+			<if test="meta != null
+				and meta.releaseId != null and meta.releaseId != 'null' and meta.releaseId != ''
+				and meta.version != null and meta.version != 'null' and meta.version != ''">
 
-				AND rh.id = #{releaseMeta.releaseId}
-				AND rh.version_id = #{releaseMeta.version}
+				AND rh.id = #{meta.releaseId}
+				AND rh.version_id = #{meta.version}
 			</if>
 			<if test="instance != null">
 				AND i.`host` = #{instance.host}
@@ -307,11 +307,11 @@
 				AND i.`host` = #{instance.host}
 				AND i.`port` = #{instance.port}
 			</if>
-			<if test="releaseMeta.version != null and releaseMeta.version != ''">
-				AND i.version_id = #{releaseMeta.version}
+			<if test="meta.version != null and meta.version != ''">
+				AND i.version_id = #{meta.version}
 			</if>
-			<if test="releaseMeta.releaseId != null and releaseMeta.releaseId != ''">
-				AND rd.release_id = #{releaseMeta.releaseId}
+			<if test="meta.releaseId != null and meta.releaseId != ''">
+				AND rd.release_id = #{meta.releaseId}
 			</if>
 		</where>
 	</update>

@@ -23,6 +23,8 @@ import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 
+import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+
 import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_ADDED;
 import static org.apache.curator.framework.recipes.cache.TreeCacheEvent.Type.NODE_UPDATED;
 
@@ -41,7 +43,8 @@ public class ZookeeperRefreshWatcher extends AbstractRefreshWatcher implements T
 	private CuratorFramework context;
 	private TreeCache treeCache;
 
-	public ZookeeperRefreshWatcher(String path, CuratorFramework context) {
+	public ZookeeperRefreshWatcher(ScmContextRefresher refresher, String path, CuratorFramework context) {
+		super(refresher);
 		if (!path.startsWith("/")) {
 			path = "/" + path;
 		}
@@ -78,7 +81,7 @@ public class ZookeeperRefreshWatcher extends AbstractRefreshWatcher implements T
 	@Override
 	public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
 		if (log.isDebugEnabled()) {
-			log.debug("Zk watch event. {}", event);
+			log.debug("Zk watch event for : {}", event);
 		}
 
 		TreeCacheEvent.Type eventType = event.getType();
@@ -90,7 +93,7 @@ public class ZookeeperRefreshWatcher extends AbstractRefreshWatcher implements T
 		}
 	}
 
-	public String getEventDesc(TreeCacheEvent event) {
+	private String getEventDesc(TreeCacheEvent event) {
 		StringBuilder out = new StringBuilder();
 		out.append("type=").append(event.getType());
 		out.append(", path=").append(event.getData().getPath());

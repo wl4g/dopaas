@@ -7,12 +7,12 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps SCM</name>
 	<modules>
-		<module>super-devops-scm-client</module>
 		<module>super-devops-scm-common</module>
-		<module>super-devops-scm-example</module>
-		<module>super-devops-scm-rest</module>
+		<module>super-devops-scm-config</module>
 		<module>super-devops-scm-core</module>
 		<module>super-devops-scm-starter</module>
+		<module>super-devops-scm-client</module>
+		<module>super-devops-scm-example</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

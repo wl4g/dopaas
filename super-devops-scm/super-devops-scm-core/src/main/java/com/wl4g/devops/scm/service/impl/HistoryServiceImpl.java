@@ -16,14 +16,14 @@
 package com.wl4g.devops.scm.service.impl;
 
 import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.bean.scm.model.PreReleaseModel;
-import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseInstance;
-import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseMeta;
+import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
+import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.AppGroupService;
-import com.wl4g.devops.scm.service.ConfigServerService;
 import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class HistoryServiceImpl implements HistoryService {
 	@Autowired
 	private AppGroupDao appGroupDao;
 	@Autowired
-	private ConfigServerService configServerService;
+	private ConfigContextHandler configServerService;
 	@Autowired
 	private AppGroupService appGroupService;
 
@@ -164,11 +164,11 @@ public class HistoryServiceImpl implements HistoryService {
 			releaseInstance.setPort(instance.getPort());
 			instances.add(releaseInstance);
 		}
-		PreReleaseModel preRelease = new PreReleaseModel();
-		preRelease.setApplication(appGroup.getName());
+		PreRelease preRelease = new PreRelease();
+		preRelease.setGroup(appGroup.getName());
 		preRelease.setProfile(envName);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
-		preRelease.setReleaseMeta(meta);
+		preRelease.setMeta(meta);
 		preRelease.setInstances(instances);
 		this.configServerService.release(preRelease);
 	}

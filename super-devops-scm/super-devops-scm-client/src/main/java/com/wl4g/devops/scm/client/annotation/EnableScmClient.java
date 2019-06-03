@@ -20,9 +20,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.devops.scm.client.config.RefresherAutoConfiguration;
+import com.wl4g.devops.scm.client.config.ScmBootstrapAutoConfiguration;
 
 /**
  * SCM annotation to enable configuration.
@@ -31,7 +32,8 @@ import com.wl4g.devops.scm.client.config.RefresherAutoConfiguration;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@Import({ RefresherAutoConfiguration.class })
+@Import({ ScmBootstrapAutoConfiguration.class })
+@EnableDiscoveryClient
 public @interface EnableScmClient {
 
 }

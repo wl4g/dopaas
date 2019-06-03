@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+
 /**
  * Timing refresh watcher
  * 
@@ -27,6 +29,10 @@ import org.springframework.scheduling.annotation.Scheduled;
  * @since
  */
 public class TimingRefreshWatcher extends AbstractRefreshWatcher implements Runnable {
+
+	public TimingRefreshWatcher(ScmContextRefresher refresher) {
+		super(refresher);
+	}
 
 	@Override
 	protected void doStart() {

@@ -16,8 +16,8 @@
 package com.wl4g.devops.dao.scm;
 
 import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.bean.scm.model.GetReleaseModel;
-import com.wl4g.devops.common.bean.scm.model.ReportModel;
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ public interface ConfigurationDao {
 
 	public List<VersionContentBean> selectVersion(int id);
 
-	public ConfigSourceBean findSource(GetReleaseModel getRelease);
+	public ConfigSourceBean findSource(GetRelease get);
 
-	public void updateReleaseDetail(ReportModel report);
+	public void updateReleaseDetail(ReportInfo report);
 }

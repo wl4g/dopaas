@@ -30,12 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.bean.scm.model.GetReleaseModel;
-import com.wl4g.devops.common.bean.scm.model.PreReleaseModel;
-import com.wl4g.devops.common.bean.scm.model.ReportModel;
-import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseInstance;
-import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseMeta;
-import com.wl4g.devops.scm.service.ConfigServerService;
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
 
 /**
@@ -57,7 +57,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private AppGroupDao appGroupDao;
 	@Autowired
-	private ConfigServerService configServerService;
+	private ConfigContextHandler configServerService;
 
 	@Override
 	public void configure(VersionOfDetail vd) {
@@ -139,11 +139,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 		// Request configuration source send to client.
 		//
-		PreReleaseModel preRelease = new PreReleaseModel();
-		preRelease.setApplication(appGroup.getName());
+		PreRelease preRelease = new PreRelease();
+		preRelease.setGroup(appGroup.getName());
 		preRelease.setProfile(envName);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
-		preRelease.setReleaseMeta(meta);
+		preRelease.setMeta(meta);
 		preRelease.setInstances(instances);
 		this.configServerService.release(preRelease);
 	}
@@ -176,12 +176,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public ConfigSourceBean findSource(GetReleaseModel getRelease) {
+	public ConfigSourceBean findSource(GetRelease getRelease) {
 		return this.configurationDao.findSource(getRelease);
 	}
 
 	@Override
-	public void updateReleaseDetail(ReportModel report) {
+	public void updateReleaseDetail(ReportInfo report) {
 		this.configurationDao.updateReleaseDetail(report);
 	}
 

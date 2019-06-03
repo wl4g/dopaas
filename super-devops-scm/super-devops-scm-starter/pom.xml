@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-scm-rest</artifactId>
+			<artifactId>super-devops-scm-core</artifactId>
 			<version>master</version>
 		</dependency>
 	</dependencies>
