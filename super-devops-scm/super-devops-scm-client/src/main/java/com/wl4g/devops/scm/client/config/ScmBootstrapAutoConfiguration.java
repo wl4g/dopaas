@@ -15,21 +15,35 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.Netty4ClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
+import java.lang.annotation.Annotation;
 
-import com.wl4g.devops.scm.client.configure.refresh.ScmBootstrapPropertySourceLocator;
+import org.apache.curator.framework.CuratorFramework;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.cloud.context.scope.refresh.RefreshScope;
+import org.springframework.cloud.logging.LoggingRebinder;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo;
+import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.scm.annotation.ScmEndpoint;
+import com.wl4g.devops.scm.client.annotation.EnableScmWatchTask;
+import com.wl4g.devops.scm.client.annotation.EnableScmWatchZk;
+import com.wl4g.devops.scm.client.configure.DefaultBootstrapPropertySourceLocator;
+import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
+import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
+import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
+import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
+import com.wl4g.devops.scm.common.utils.ScmUtils;
 
 /**
- * SCM bootstrap auto configuration.</br>
- * Spring Cloud loads bootstrap.yml preferentially, which means that other
+ * SCM refresh auto configuration.</br>
+ * Note: Spring Cloud loads bootstrap.yml preferentially, which means that other
  * configurationfiles are not # loaded at initialization, so configurations
  * other than bootstrap.yml cannot be used at initialization.
  * 
@@ -39,42 +53,101 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmBootstrapPropertySourceLo
  * @since {@link de.codecentric.boot.admin.web.PrefixHandlerMapping}
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
-public class ScmBootstrapAutoConfiguration {
-	final public static String BASE_URI = "${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/devops}";
+public class ScmBootstrapAutoConfiguration extends AbstractOptionalControllerConfiguration {
+
+	final public static String BASE_URI = "${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/scm}";
+
+	//
+	// SCM foundation's
+	//
 
 	@Bean
-	@ConditionalOnMissingBean
-	public ClientHttpRequestFactory netty4ClientHttpRequestFactory() {
-		// SimpleClientHttpRequestFactory
-		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		factory.setReadTimeout(5000);
-		factory.setConnectTimeout(5000);
-		factory.setMaxResponseSize(1024 * 1024 * 10);
-		return factory;
+	public InstanceInfo instanceConfig(Environment environment) {
+		return new InstanceInfo(environment);
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	public RestTemplate scmClientRestTemplate(ClientHttpRequestFactory factory) {
-		return new RestTemplate(factory);
+	public ScmClientProperties scmClientProperties(Environment environment) {
+		return new ScmClientProperties(environment);
 	}
 
 	@Bean
-	public ScmBootstrapPropertySourceLocator devOpsPropertySourceLocator(@Value(BASE_URI) String baseUri,
-			RestTemplate restTemplate, RetryProperties retryProps, InstanceConfig instanceProps, Environment environment) {
-		return new ScmBootstrapPropertySourceLocator(baseUri, restTemplate, instanceProps, (ConfigurableEnvironment) environment,
-				retryProps);
-	}
-
-	@Bean
-	public InstanceConfig instanceConfig(Environment environment) {
-		return new InstanceConfig(environment);
+	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig,
+			InstanceInfo info) {
+		return new DefaultBootstrapPropertySourceLocator(config, retryConfig, info);
 	}
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.devops.scm.client.retry")
 	public RetryProperties retryProperties() {
 		return new RetryProperties();
+	}
+
+	//
+	// Refresher's
+	//
+
+	/**
+	 * See:{@link RefreshAutoConfiguration#contextRefresher()}
+	 * 
+	 * @param context
+	 * @param scope
+	 * @return
+	 */
+	@Bean
+	public ContextRefresher contextRefresher(ConfigurableApplicationContext context, RefreshScope scope) {
+		return new ScmContextRefresher(context, scope);
+	}
+
+	/**
+	 * See:{@link RefreshAutoConfiguration#loggingRebinder()}
+	 * 
+	 * @param context
+	 * @param scope
+	 * @return
+	 */
+	@Bean
+	public LoggingRebinder loggingRebinder() {
+		return new ScmLoggingRebinder();
+	}
+
+	@Bean("taskRefreshWatcher")
+	@EnableScmWatchTask
+	public TimingRefreshWatcher timingRefreshWatcher(ScmContextRefresher refresher) {
+		return new TimingRefreshWatcher(refresher);
+	}
+
+	@Bean("zookeeperRefreshWatcher")
+	@EnableScmWatchZk
+	public ZookeeperRefreshWatcher zookeeperRefreshWatcher(CuratorFramework curator, ScmContextRefresher refresher,
+			InstanceInfo config) {
+		String path = ScmUtils.genZkConfigPath(new GenericInfo(config.getAppName(), config.getProfilesActive()),
+				config.getBindInstance());
+		return new ZookeeperRefreshWatcher(refresher, path, curator);
+	}
+
+	//
+	// Endpoint's
+	//
+
+	@Bean
+	public com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint scmClientController(ScmContextRefresher refresher) {
+		return new com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint(refresher);
+	}
+
+	@Bean
+	public PrefixHandlerMapping scmClientPrefixHandlerMapping() {
+		return super.createPrefixHandlerMapping();
+	}
+
+	@Override
+	protected String getMappingPrefix() {
+		return URI_C_BASE;
+	}
+
+	@Override
+	protected Class<? extends Annotation> annotationClass() {
+		return ScmEndpoint.class;
 	}
 
 }

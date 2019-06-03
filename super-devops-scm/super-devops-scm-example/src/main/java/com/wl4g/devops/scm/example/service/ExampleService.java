@@ -28,13 +28,11 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.scm.client.configure.RefreshBean;
-
 @Service
-// @org.springframework.cloud.context.config.annotation.RefreshScope
-@RefreshBean
+@RefreshScope
 @ConfigurationProperties(prefix = "example")
 public class ExampleService implements InitializingBean, DisposableBean, Closeable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());

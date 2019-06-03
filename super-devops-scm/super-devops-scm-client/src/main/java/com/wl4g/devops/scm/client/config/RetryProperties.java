@@ -1,11 +1,11 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2014-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,39 +13,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.wl4g.devops.scm.client.config;
 
-import java.io.Serializable;
+/**
+ * Retryable properties
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年6月2日
+ * @since
+ */
+public class RetryProperties {
 
-public class RetryProperties implements Serializable {
-	private static final long serialVersionUID = -3652519510077023579L;
+	/**
+	 * Initial retry interval in milliseconds.
+	 */
+	long initialInterval = 1000;
 
-	private long minPeriod = 3_000L;
-	private long maxPeriod = 8_000L;
-	private int maxAttempts = 4;
+	/**
+	 * Multiplier for next interval.
+	 */
+	double multiplier = 1.1;
 
-	public long getRandomSleepPeriod() {
-		return (long) (Math.random() * this.getMaxPeriod() + this.getMinPeriod());
+	/**
+	 * Maximum interval for backoff.
+	 */
+	long maxInterval = 2000;
+
+	/**
+	 * Maximum number of attempts.
+	 */
+	int maxAttempts = 6;
+
+	public long getInitialInterval() {
+		return this.initialInterval;
 	}
 
-	public long getMinPeriod() {
-		return minPeriod;
+	public void setInitialInterval(long initialInterval) {
+		this.initialInterval = initialInterval;
 	}
 
-	public void setMinPeriod(long minPeriod) {
-		this.minPeriod = minPeriod;
+	public double getMultiplier() {
+		return this.multiplier;
 	}
 
-	public long getMaxPeriod() {
-		return maxPeriod;
+	public void setMultiplier(double multiplier) {
+		this.multiplier = multiplier;
 	}
 
-	public void setMaxPeriod(long maxPeriod) {
-		this.maxPeriod = maxPeriod;
+	public long getMaxInterval() {
+		return this.maxInterval;
+	}
+
+	public void setMaxInterval(long maxInterval) {
+		this.maxInterval = maxInterval;
 	}
 
 	public int getMaxAttempts() {
-		return maxAttempts;
+		return this.maxAttempts;
 	}
 
 	public void setMaxAttempts(int maxAttempts) {

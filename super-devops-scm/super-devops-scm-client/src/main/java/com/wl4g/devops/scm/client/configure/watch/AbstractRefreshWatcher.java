@@ -17,8 +17,9 @@ package com.wl4g.devops.scm.client.configure.watch;
 
 import java.io.Closeable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,11 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.base.Charsets;
-import com.wl4g.devops.common.bean.scm.model.BaseModel.ReleaseMeta;
-import com.wl4g.devops.scm.client.configure.refresh.BeanRefresher;
+import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 
 /**
  * Abstract refresh watcher.
@@ -44,26 +42,26 @@ import com.wl4g.devops.scm.client.configure.refresh.BeanRefresher;
 public abstract class AbstractRefreshWatcher implements InitializingBean, DisposableBean, Closeable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 	final protected AtomicBoolean running = new AtomicBoolean(false);
-	final private ExecutorService executor;
+	final protected ExecutorService executor;
+	final protected ScmContextRefresher refresher;
 
-	@Autowired
-	private BeanRefresher refresher;
+	public AbstractRefreshWatcher(ScmContextRefresher refresher) {
+		this.refresher = refresher;
 
-	public AbstractRefreshWatcher() {
-		executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
-			final private AtomicInteger counter = new AtomicInteger(0);
-
-			@Override
-			public Thread newThread(Runnable r) {
-				String name = "devopsScmRefreshWatch-" + counter.incrementAndGet();
-				return new Thread(r, name);
-			}
+		// Initialize executor
+		final AtomicInteger counter = new AtomicInteger(0);
+		this.executor = new ThreadPoolExecutor(1, 2, 0, TimeUnit.SECONDS, new LinkedBlockingDeque<>(16), r -> {
+			String name = "scmRefreshWatch-" + counter.incrementAndGet();
+			Thread t = new Thread(r, name);
+			t.setDaemon(true);
+			return t;
 		});
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (running.compareAndSet(false, true)) {
+			// Do actual
 			doStart();
 		} else {
 			throw new IllegalStateException("Already started watcher.");
@@ -79,13 +77,14 @@ public abstract class AbstractRefreshWatcher implements InitializingBean, Dispos
 		}
 	}
 
-	protected void doExecute(Object source, byte value[], String eventDesc) {
-		executor.submit(() -> {
+	protected void doExecute(Object source, byte data[], String eventDesc) {
+		executor.execute(() -> {
 			try {
-				if (isPayload(value)) {
-					String releaseMeta = new String(value, Charsets.UTF_8);
+				if (isPayload(data)) {
+					// ReleaseMeta releaseMeta = ReleaseMeta.of(new
+					// String(value, Charsets.UTF_8));
 					// Do refresh.
-					refresher.refresh(ReleaseMeta.of(releaseMeta));
+					refresher.refresh();
 				} else {
 					if (log.isInfoEnabled()) {
 						log.info("Zk listening empty payload. source: {}", source);
