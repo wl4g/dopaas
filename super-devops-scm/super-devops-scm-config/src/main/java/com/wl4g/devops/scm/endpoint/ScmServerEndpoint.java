@@ -15,23 +15,22 @@
  */
 package com.wl4g.devops.scm.endpoint;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.constants.SCMDevOpsConstants;
+import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.common.web.BaseController;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
 @ScmEndpoint
@@ -96,9 +95,9 @@ public class ScmServerEndpoint extends BaseController {
 	}
 
 	/* for test */ // @PostMapping(value = URL_CONF_RELEASE)
-	public RespBase<?> release(@Validated @RequestBody PreRelease req, BindingResult bind) {
+	public RespBase<?> release(@Validated @RequestBody PreRelease pre, BindingResult bind) {
 		if (log.isInfoEnabled()) {
-			log.info("Releasing... {}, bind: {}", req, bind);
+			log.info("Releasing... {}, bind: {}", pre, bind);
 		}
 
 		RespBase<?> resp = new RespBase<>();
@@ -107,7 +106,7 @@ public class ScmServerEndpoint extends BaseController {
 			resp.setMessage(bind.toString());
 		} else {
 			// Invoke release.
-			handler.release(req);
+			handler.release(pre);
 		}
 
 		return resp;

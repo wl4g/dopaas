@@ -15,27 +15,27 @@
  */
 package com.wl4g.devops.scm.client.configure;
 
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.wl4g.devops.common.bean.scm.model.GenericInfo;
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
+import com.wl4g.devops.common.constants.SCMDevOpsConstants;
+import com.wl4g.devops.common.exception.scm.ScmException;
+import com.wl4g.devops.common.utils.bean.BeanMapConvert;
+import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.scm.client.config.InstanceInfo;
+import com.wl4g.devops.scm.client.config.RetryProperties;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.config.ScmClientProperties.*;
+import com.wl4g.devops.scm.client.enviroment.ScmEnvironment;
+import com.wl4g.devops.scm.client.enviroment.ScmPropertySource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -47,12 +47,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.scm.client.config.InstanceInfo;
-import com.wl4g.devops.scm.client.config.RetryProperties;
-import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.config.ScmClientProperties.Credentials;
-import com.wl4g.devops.scm.client.enviroment.ScmEnvironment;
-import com.wl4g.devops.scm.client.enviroment.ScmPropertySource;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 
 /**
  * Abstract SCM application context initializer instructions.</br>
@@ -75,6 +74,11 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 	final protected RetryProperties retryConfig;
 
 	final protected InstanceInfo info;
+
+	final private static String CIPHER_PREFIX = "{cipher}";
+
+	@Value("${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/devops}")
+	String baseUri;
 
 	public ScmPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig, InstanceInfo info) {
 		Assert.notNull(config, "Scm client properties must not be null");
@@ -157,6 +161,67 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		}
 
 		return null;
+	}
+
+
+
+
+	public ReleaseMessage getRemoteReleaseConfig(GenericInfo.ReleaseMeta targetReleaseMeta) {
+		// Get pull release URL.
+		String uri = this.baseUri + SCMDevOpsConstants.URI_S_BASE + "/" + SCMDevOpsConstants.URI_S_SOURCE_GET;
+
+		// Create request bean.
+		GetRelease req = new GetRelease(info.getAppName(), info.getProfilesActive(),
+				targetReleaseMeta, info.getBindInstance());
+
+		// Bean to map.
+		String params = new BeanMapConvert(req).toUriParmaters();
+		String url = uri + "?" + params;
+		if (log.isDebugEnabled()) {
+			log.debug("Get remote release config url: {}", url);
+		}
+
+		RespBase<ReleaseMessage> resp = this.restTemplate
+				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
+				}).getBody();
+		if (!RespBase.isSuccess(resp)) {
+			throw new ScmException(String.format("Get remote source error. %s, %s", url, resp.getMessage()));
+		}
+
+		// Get release payload
+		ReleaseMessage release = resp.getData().get(SCMDevOpsConstants.KEY_RELEASE);
+		Assert.notNull(release, "'releaseMessage' is required, it must not be null");
+		release.validation(true, true);
+
+		if (log.isDebugEnabled()) {
+			log.debug("Get remote release config : {}", release);
+		}
+		return release;
+	}
+
+
+	public void resolvesCipherSource(ReleaseMessage release) {
+		if (log.isTraceEnabled()) {
+			log.trace("Resolver cipher configuration propertySource ...");
+		}
+
+		for (ReleaseMessage.ReleasePropertySource ps : release.getPropertySources()) {
+			ps.getSource().forEach((key, value) -> {
+				String cipher = String.valueOf(value);
+				if (cipher.startsWith(CIPHER_PREFIX)) {
+					try {
+						String plain = new AES().decrypt(cipher.substring(CIPHER_PREFIX.length()));
+						ps.getSource().put(key, plain);
+
+						if (log.isDebugEnabled()) {
+							log.debug("Decryption property-key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
+						}
+					} catch (Exception e) {
+						throw new ScmException("Cipher decryption error.", e);
+					}
+				}
+			});
+		}
 	}
 
 	protected void addAuthorizationToken(ScmClientProperties configClientProperties, HttpHeaders httpHeaders, String username,

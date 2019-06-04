@@ -15,26 +15,21 @@
  */
 package com.wl4g.devops.scm.client.configure;
 
-import java.util.HashMap;
-import java.util.Map;
 
-import org.springframework.core.annotation.Order;
-import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.HttpServerErrorException;
-import static org.springframework.util.StringUtils.*;
-
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
+import com.wl4g.devops.common.bean.scm.model.GenericInfo;
+import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
 import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.enviroment.ScmEnvironment;
-import com.wl4g.devops.scm.client.enviroment.ScmPropertySource;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.env.CompositePropertySource;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
+
+import static com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
+
 
 /**
  * SCM application context initializer instructions.</br>
@@ -48,6 +43,9 @@ import com.wl4g.devops.scm.client.enviroment.ScmPropertySource;
 @Order(0)
 public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLocator {
 
+	final public static String devOpsPropertySource = "_devOpsPropertySource";
+
+
 	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig, InstanceInfo info) {
 		super(config, retryConfig, info);
 	}
@@ -55,7 +53,7 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public PropertySource<?> locate(Environment environment) {
-		if (log.isInfoEnabled()) {
+		/*if (log.isInfoEnabled()) {
 			log.info("SCM bootstrap config is enabled for environment {}", environment);
 		}
 
@@ -112,6 +110,40 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 		log.warn("Could not locate remote PropertySource failure! {} causes by:{}", getRootCauseMessage(error), errmsg);
 		log.warn("<<<<<<<<!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>");
 		return null;
+	}*/
+
+
+		if (log.isInfoEnabled()) {
+			log.info("DevOps bootstrap config is enabled for environment {}", environment);
+		}
+
+		/*
+		 * Define composite property source. {@link
+		 * com.wl4g.devops.scm.client.configure.refresh.AbstractBeanRefresher#
+		 * addConfigToEnvironment()}
+		 */
+		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
+		if (environment instanceof ConfigurableEnvironment) {
+			try {
+				// 1.1 Get remote latest property-sources(version/releaseId is
+				// null).
+				ReleaseMessage config = this.getRemoteReleaseConfig(new GenericInfo.ReleaseMeta());
+
+				// 1.2 Resolves cipher resource.
+				this.resolvesCipherSource(config);
+
+				// 1.3 Add configuration to environment.
+				composite = config.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
+
+			} catch (Exception e) {
+				log.error("DevOps bootstrap config refresh failed. {}", ExceptionUtils.getRootCauseMessage(e));
+			}
+		}
+
+		// When you refresh the configuration source, you need to clean it up.
+		// See:com.wl4g.devops.client.configure.refresh.AbstractBeanRefresher.addConfigToEnvironment()
+		return composite;
 	}
+
 
 }
