@@ -1,17 +1,16 @@
 package com.wl4g.devops.scm.example.service;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ExampleService2 implements InitializingBean, DisposableBean, Closeable {
 
@@ -19,6 +18,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 
 	@Value("#{'${example.firstName:unname}'.toUpperCase()}-${random.int(1000)}")
 	private String firstName;
+
 	private String lastName;
 
 	private AtomicBoolean running = new AtomicBoolean(false);
