@@ -33,7 +33,7 @@ spring: # Base configuration.
     devops: 
       scm.client: # SCM client configuration.
         enabled: true
-        base-uri: http://127.0.0.1:18081/devops-scm
+        base-uri: http://127.0.0.1:14043/scm
         retry:
           min-period: 3000
           max-period: 8000

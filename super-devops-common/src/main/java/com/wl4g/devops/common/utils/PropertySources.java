@@ -44,7 +44,7 @@ public abstract class PropertySources {
 	}
 
 	public static enum Type {
-		YAML(new YamlResolverHandle()), PROPS(new PropertiesResolverHandle());
+		YML(new YamlResolverHandle()),YAML(new YamlResolverHandle()), PROPS(new PropertiesResolverHandle());
 
 		private ResolverHandle handle;
 

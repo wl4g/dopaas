@@ -15,25 +15,21 @@
  */
 package com.wl4g.devops.scm.example.service;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Service;
 
-@Service
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+/*@Service
 @RefreshScope
-@ConfigurationProperties(prefix = "example")
+@ConfigurationProperties(prefix = "example")*/
 public class ExampleService implements InitializingBean, DisposableBean, Closeable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -42,6 +38,7 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 	 */
 	@Value("#{'${example.firstName:unname}'.toUpperCase()}-${random.int(1000)}")
 	private String firstName; // 用于测试@Value注解
+
 	private String lastName; // 用于测试@ConfigurationProperties注解
 
 	private AtomicBoolean running = new AtomicBoolean(false);
@@ -60,6 +57,7 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 	@PreDestroy
 	public void destroy1() {
 		System.out.println("ExampleService destroy1()..." + this);
+		running.compareAndSet(true,false);
 	}
 
 	@Override
