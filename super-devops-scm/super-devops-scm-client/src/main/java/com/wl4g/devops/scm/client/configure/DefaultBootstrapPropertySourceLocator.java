@@ -73,9 +73,9 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 				composite = config.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 
 			} catch (Exception e) {
-				log.warn("<<<<<<<<!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>");
-				log.warn("Could not locate remote PropertySource failure! {} causes by:{}", getRootCauseMessage(e));
-				log.warn("<<<<<<<<!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>");
+				log.warn("-----------------------------------------");
+				log.warn("Could not locate remote PropertySource! {} causes by:{}", getRootCauseMessage(e));
+				log.warn("-----------------------------------------");
 			}
 		}
 
