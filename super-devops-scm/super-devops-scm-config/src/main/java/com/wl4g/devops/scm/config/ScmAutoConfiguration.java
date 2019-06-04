@@ -9,6 +9,7 @@ import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.context.NothingConfigSourceHandler;
+import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.DefaultConfigSourcePublisher;
 
@@ -32,7 +33,12 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguratio
 	//
 
 	@Bean
-	public PrefixHandlerMapping scmControllerPrefixHandlerMapping() {
+	public ScmServerEndpoint scmServerEnndpoint() {
+		return new ScmServerEndpoint();
+	}
+
+	@Bean
+	public PrefixHandlerMapping scmServerEndpointPrefixHandlerMapping() {
 		return createPrefixHandlerMapping();
 	}
 
