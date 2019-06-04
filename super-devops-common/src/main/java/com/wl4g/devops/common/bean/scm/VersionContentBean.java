@@ -56,7 +56,7 @@ public class VersionContentBean extends BaseBean {
 
 	public static enum FileType {
 
-		YAML(1), PROP(2);
+		YML(1), PROP(2),YAML(3);
 
 		private int value;
 
