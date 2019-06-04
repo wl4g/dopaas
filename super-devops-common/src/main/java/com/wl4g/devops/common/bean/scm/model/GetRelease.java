@@ -15,11 +15,10 @@
  */
 package com.wl4g.devops.common.bean.scm.model;
 
-import javax.validation.constraints.NotNull;
-
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import javax.validation.constraints.NotNull;
 
 public class GetRelease extends GenericInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
@@ -31,13 +30,13 @@ public class GetRelease extends GenericInfo {
 		super();
 	}
 
-	public GetRelease(String application, String profile, ReleaseMeta releaseMeta, ReleaseInstance instance) {
-		super(application, profile, releaseMeta);
+	public GetRelease(String group, String profile, ReleaseMeta releaseMeta, ReleaseInstance instance) {
+		super(group, profile, releaseMeta);
 		this.setInstance(instance);
 	}
 
-	public GetRelease(String application, String profile, ReleaseInstance instance) {
-		super(application, profile, null);
+	public GetRelease(String group, String profile, ReleaseInstance instance) {
+		super(group, profile, null);
 		this.setInstance(instance);
 	}
 
