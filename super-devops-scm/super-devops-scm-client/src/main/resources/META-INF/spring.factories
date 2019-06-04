@@ -1,3 +1,4 @@
 # Bootstrap Configuration
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-com.wl4g.devops.scm.client.config.ScmBootstrapConfiguration
+com.wl4g.devops.scm.client.config.ScmBootstrapConfiguration,\
+com.wl4g.devops.scm.client.config.DiscoveryServiceBootstrapConfiguration
