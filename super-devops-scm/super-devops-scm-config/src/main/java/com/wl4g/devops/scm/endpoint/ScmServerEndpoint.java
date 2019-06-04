@@ -29,19 +29,21 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.common.web.BaseController;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
+@ScmEndpoint
 public class ScmServerEndpoint extends BaseController {
 
 	@Autowired
 	private ConfigContextHandler handler;
 
 	@GetMapping(value = URI_S_SOURCE_GET)
-	public RespBase<ReleaseMessage> getSourceConfig(@Validated GetRelease req, BindingResult bind) {
+	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req, BindingResult bind) {
 		if (log.isInfoEnabled()) {
-			log.info("Get config-source request: {}, bind: {}", req, bind);
+			log.info("Get config-source... {}, bind: {}", req, bind);
 		}
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
@@ -93,7 +95,7 @@ public class ScmServerEndpoint extends BaseController {
 		return resp;
 	}
 
-	/* for test */ // @PostMapping(value = DevOpsConstants.URL_CONF_RELEASE)
+	/* for test */ // @PostMapping(value = URL_CONF_RELEASE)
 	public RespBase<?> release(@Validated @RequestBody PreRelease req, BindingResult bind) {
 		if (log.isInfoEnabled()) {
 			log.info("Releasing... {}, bind: {}", req, bind);
