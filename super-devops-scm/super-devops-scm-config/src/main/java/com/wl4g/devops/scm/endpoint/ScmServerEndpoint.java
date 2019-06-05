@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.constants.SCMDevOpsConstants;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -42,7 +41,7 @@ public class ScmServerEndpoint extends BaseController {
 	@GetMapping(value = URI_S_SOURCE_GET)
 	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req, BindingResult bind) {
 		if (log.isInfoEnabled()) {
-			log.info("Get config-source... {}, bind: {}", req, bind);
+			log.info("Get config source... {}, bind: {}", req, bind);
 		}
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
@@ -51,7 +50,7 @@ public class ScmServerEndpoint extends BaseController {
 				resp.setCode(RetCode.PARAM_ERR);
 				resp.setMessage(bind.toString());
 			} else {
-				// Get adminServer source configuration.
+				// AdminServer source configuration.
 				ReleaseMessage release = handler.findSource(req);
 				resp.getData().put(KEY_RELEASE, release);
 			}
@@ -62,15 +61,15 @@ public class ScmServerEndpoint extends BaseController {
 		}
 
 		if (log.isInfoEnabled()) {
-			log.info("Get config-source response: {}", resp);
+			log.info("Got config response: {}", resp);
 		}
 		return resp;
 	}
 
 	@PostMapping(value = URI_S_REPORT_POST)
-	public RespBase<?> report(@Validated @RequestBody ReportInfo req, BindingResult bind) {
+	public RespBase<?> report(@Validated @RequestBody ReportInfo report, BindingResult bind) {
 		if (log.isInfoEnabled()) {
-			log.info("Report request: {}, bind: {}", req, bind);
+			log.info("Report: {}, bind: {}", report, bind);
 		}
 
 		RespBase<?> resp = new RespBase<>();
@@ -80,7 +79,7 @@ public class ScmServerEndpoint extends BaseController {
 				resp.setMessage(bind.toString());
 			} else {
 				// Post to adminServer report-message.
-				handler.report(req);
+				handler.report(report);
 			}
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

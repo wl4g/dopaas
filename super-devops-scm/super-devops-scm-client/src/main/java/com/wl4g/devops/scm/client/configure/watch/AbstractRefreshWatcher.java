@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
-import com.google.common.base.Charsets;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 
 /**
@@ -44,15 +43,16 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 public abstract class AbstractRefreshWatcher implements InitializingBean, DisposableBean, Closeable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 	final protected AtomicBoolean running = new AtomicBoolean(false);
-	final protected ExecutorService executor;
+	final protected ExecutorService worker;
 	final protected ScmContextRefresher refresher;
 
 	public AbstractRefreshWatcher(ScmContextRefresher refresher) {
+		Assert.notNull(refresher, "Refresher must not be null");
 		this.refresher = refresher;
 
 		// Initialize executor
 		final AtomicInteger counter = new AtomicInteger(0);
-		this.executor = new ThreadPoolExecutor(1, 2, 0, TimeUnit.SECONDS, new LinkedBlockingDeque<>(16), r -> {
+		this.worker = new ThreadPoolExecutor(1, 2, 0, TimeUnit.SECONDS, new LinkedBlockingDeque<>(16), r -> {
 			String name = "scmRefreshWatch-" + counter.incrementAndGet();
 			Thread t = new Thread(r, name);
 			t.setDaemon(true);
@@ -80,10 +80,11 @@ public abstract class AbstractRefreshWatcher implements InitializingBean, Dispos
 	}
 
 	protected void doExecute(Object source, byte data[], String eventDesc) {
-		executor.execute(() -> {
+		worker.execute(() -> {
 			try {
 				if (isPayload(data)) {
-					ReleaseMeta meta = ReleaseMeta.of(new String(data, Charsets.UTF_8));
+					// ReleaseMeta meta = ReleaseMeta.of(new String(data,
+					// Charsets.UTF_8));
 					// Do refresh.
 					refresher.refresh();
 				} else {

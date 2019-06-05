@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,30 +33,37 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySourc
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 
 /**
- * https://blog.csdn.net/cml_blog/article/details/78411312
+ * See:<a href=
+ * "https://blog.csdn.net/cml_blog/article/details/78411312">https://blog.csdn.net/cml_blog/article/details/78411312</a>
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年10月9日
  * @since
  */
-@ResponseBody
-@com.wl4g.devops.scm.annotation.ScmEndpoint
+@ScmEndpoint
 public class ScmClientEndpoint extends BaseController {
 
-	private ScmContextRefresher refresher;
+	final Environment environment;
 
-	public ScmClientEndpoint(ScmContextRefresher refresher) {
+	final private ScmContextRefresher refresher;
+
+	public ScmClientEndpoint(Environment environment, ScmContextRefresher refresher) {
+		Assert.notNull(environment, "Environment must not be null");
+		Assert.notNull(refresher, "ContextRefresher must not be null");
+		this.environment = environment;
 		this.refresher = refresher;
 	}
 
 	@PostMapping(value = URI_C_REFRESH)
-	public RespBase<?> refresh(@RequestParam("releaseMeta") ReleaseMeta releaseMeta, BindingResult bind) {
+	@ResponseBody
+	public RespBase<?> refresh(@RequestParam("releaseMeta") ReleaseMeta meta, BindingResult bind) {
 		if (log.isInfoEnabled()) {
-			log.info("Post configure refresh ...");
+			log.info("Post configure refresh ... {}", meta);
 		}
 
 		RespBase<?> resp = new RespBase<>();
@@ -76,6 +85,7 @@ public class ScmClientEndpoint extends BaseController {
 	}
 
 	@GetMapping(value = URI_C_LATEST)
+	@ResponseBody
 	public RespBase<?> latest() {
 		if (log.isInfoEnabled()) {
 			log.info("Got config latest ...");
@@ -100,6 +110,7 @@ public class ScmClientEndpoint extends BaseController {
 		//
 		// TODO
 		//
+
 		return sources;
 	}
 
