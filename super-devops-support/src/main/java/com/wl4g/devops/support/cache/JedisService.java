@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.common.utils.serialize.ObjectUtils;
+import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -46,8 +47,8 @@ public class JedisService {
 	}
 
 	public String get(final String key) {
-		return (String) doInRedis((JedisCluster jedisCluster) -> {
-			String value = jedisCluster.get(key);
+		return (String) doInRedis(cluster -> {
+			String value = cluster.get(key);
 			value = StringUtils2.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
 			if (log.isDebugEnabled())
 				log.debug("get {} = {}", key, value);
@@ -55,23 +56,13 @@ public class JedisService {
 		});
 	}
 
-	public Object getObject(final String key) {
-		return doInRedis((JedisCluster jedisCluster) -> {
-			Object value = toObject(jedisCluster.get(getBytesKey(key)));
-			if (log.isDebugEnabled()) {
-				log.debug("getObject {} = {}", key, value);
-			}
-			return value;
-		});
-	}
-
 	public String set(final String key, final String value, final int cacheSeconds) {
-		return (String) doInRedis((JedisCluster jedisCluster) -> {
+		return (String) doInRedis(cluster -> {
 			String result = null;
 			if (cacheSeconds != 0) {
-				result = jedisCluster.setex(key, cacheSeconds, value);
+				result = cluster.setex(key, cacheSeconds, value);
 			} else {
-				result = jedisCluster.set(key, value);
+				result = cluster.set(key, value);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("set {} = {}", key, value);
@@ -81,11 +72,42 @@ public class JedisService {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> T getObjectT(final String key, Class<T> clazz) {
+		return (T) doInRedis(cluster -> {
+			T value = ProtostuffUtils.deserialize(cluster.get(getBytesKey(key)), clazz);
+			if (log.isDebugEnabled()) {
+				log.debug("getObjectT {} = {}", key, value);
+			}
+			return value;
+		});
+	}
+
+	public <T> String setObjectT(final String key, final T value, final int cacheSeconds) {
+		return (String) doInRedis(cluster -> {
+			String result = cluster.setex(getBytesKey(key), cacheSeconds, ProtostuffUtils.serialize(value));
+			if (log.isDebugEnabled()) {
+				log.debug("setObjectT {} = {}", key, value);
+			}
+			return result;
+		});
+	}
+
+	public Object getObject(final String key) {
+		return doInRedis(cluster -> {
+			Object value = toObject(cluster.get(getBytesKey(key)));
+			if (log.isDebugEnabled()) {
+				log.debug("getObject {} = {}", key, value);
+			}
+			return value;
+		});
+	}
+
 	public String setObject(final String key, final Object value, final int cacheSeconds) {
-		return (String) doInRedis((JedisCluster jedisCluster) -> {
-			String result = jedisCluster.set(getBytesKey(key), toBytes(value));
+		return (String) doInRedis(cluster -> {
+			String result = cluster.set(getBytesKey(key), toBytes(value));
 			if (cacheSeconds != 0) {
-				jedisCluster.expire(key, cacheSeconds);
+				cluster.expire(key, cacheSeconds);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("setObject {} = {}", key, value);
@@ -96,8 +118,8 @@ public class JedisService {
 
 	@SuppressWarnings("unchecked")
 	public List<String> getList(final String key) {
-		return (List<String>) doInRedis((JedisCluster jedisCluster) -> {
-			List<String> value = jedisCluster.lrange(key, 0, -1);
+		return (List<String>) doInRedis(cluster -> {
+			List<String> value = cluster.lrange(key, 0, -1);
 			if (log.isDebugEnabled()) {
 				log.debug("getList {} = {}", key, value);
 			}
@@ -107,9 +129,9 @@ public class JedisService {
 
 	@SuppressWarnings("unchecked")
 	public List<Object> getObjectList(final String key) {
-		return (List<Object>) doInRedis((JedisCluster jedisCluster) -> {
+		return (List<Object>) doInRedis(cluster -> {
 			List<Object> value = Lists.newArrayList();
-			List<byte[]> list = jedisCluster.lrange(getBytesKey(key), 0, -1);
+			List<byte[]> list = cluster.lrange(getBytesKey(key), 0, -1);
 			for (byte[] bs : list) {
 				value.add(toObject(bs));
 			}
@@ -118,10 +140,10 @@ public class JedisService {
 	}
 
 	public Long setList(final String key, final List<String> value, final int cacheSeconds) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
-			Long result = jedisCluster.rpush(key, value.toArray(new String[] {}));
+		return (Long) doInRedis(cluster -> {
+			Long result = cluster.rpush(key, value.toArray(new String[] {}));
 			if (cacheSeconds > 0) {
-				jedisCluster.expire(key, cacheSeconds);
+				cluster.expire(key, cacheSeconds);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("setList {} = {}", key, value);
@@ -131,7 +153,7 @@ public class JedisService {
 	}
 
 	public Long setObjectList(final String key, final List<Object> value, final int cacheSeconds) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
 			if (value != null && !value.isEmpty()) {
 				byte[][] members = new byte[value.size()][0];
@@ -140,10 +162,10 @@ public class JedisService {
 					members[i] = toBytes(o);
 					++i;
 				}
-				result = jedisCluster.sadd(getBytesKey(key), members);
+				result = cluster.sadd(getBytesKey(key), members);
 			}
 			if (cacheSeconds != 0) {
-				jedisCluster.expire(key, cacheSeconds);
+				cluster.expire(key, cacheSeconds);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("setObjectList {} = {}", key, value);
@@ -153,8 +175,8 @@ public class JedisService {
 	}
 
 	public Long listAdd(final String key, final String... value) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
-			Long result = jedisCluster.rpush(key, value);
+		return (Long) doInRedis(cluster -> {
+			Long result = cluster.rpush(key, value);
 			if (log.isDebugEnabled())
 				log.debug("listAdd {} = {}", key, value);
 			return result;
@@ -162,7 +184,7 @@ public class JedisService {
 	}
 
 	public Long listObjectAdd(final String key, final Object... value) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
 			if (value != null && value.length != 0) {
 				byte[][] members = new byte[value.length][0];
@@ -171,7 +193,7 @@ public class JedisService {
 					members[i] = this.toBytes(o);
 					++i;
 				}
-				result = jedisCluster.rpush(getBytesKey(key), members);
+				result = cluster.rpush(getBytesKey(key), members);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("listObjectAdd {} = {}", key, value);
@@ -182,9 +204,9 @@ public class JedisService {
 
 	@SuppressWarnings("unchecked")
 	public Set<String> getSet(final String key) {
-		return (Set<String>) doInRedis((JedisCluster jedisCluster) -> {
+		return (Set<String>) doInRedis(cluster -> {
 
-			Set<String> value = jedisCluster.smembers(key);
+			Set<String> value = cluster.smembers(key);
 			if (log.isDebugEnabled())
 				log.debug("getSet {} = {}", key, value);
 			return value;
@@ -194,10 +216,10 @@ public class JedisService {
 
 	@SuppressWarnings("unchecked")
 	public <T> Set<T> getObjectSet(final String key) {
-		return (Set<T>) doInRedis((JedisCluster jedisCluster) -> {
+		return (Set<T>) doInRedis(cluster -> {
 
 			Set<T> value = Sets.newHashSet();
-			Set<byte[]> set = jedisCluster.smembers(getBytesKey(key));
+			Set<byte[]> set = cluster.smembers(getBytesKey(key));
 			for (byte[] bs : set) {
 				value.add((T) toObject(bs));
 			}
@@ -210,12 +232,12 @@ public class JedisService {
 	}
 
 	public Long setSet(final String key, final Set<String> value, final int cacheSeconds) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
 			if (value != null && !value.isEmpty())
-				result = jedisCluster.sadd(key, value.toArray(new String[] {}));
+				result = cluster.sadd(key, value.toArray(new String[] {}));
 			if (cacheSeconds != 0)
-				jedisCluster.expire(key, cacheSeconds);
+				cluster.expire(key, cacheSeconds);
 			if (log.isDebugEnabled())
 				log.debug("setSet {} = {}", key, value);
 			return result;
@@ -235,7 +257,7 @@ public class JedisService {
 	 * @return
 	 */
 	public Long setObjectSet(final String key, final Set<Object> value, final int cacheSeconds) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
 			if (value != null && !value.isEmpty()) {
 				byte[][] members = new byte[value.size()][0];
@@ -244,10 +266,10 @@ public class JedisService {
 					members[i] = this.toBytes(o);
 					++i;
 				}
-				result = this.jedisCluster.sadd(getBytesKey(key), members);
+				result = cluster.sadd(getBytesKey(key), members);
 			}
 			if (cacheSeconds != 0)
-				this.jedisCluster.expire(key, cacheSeconds);
+				cluster.expire(key, cacheSeconds);
 
 			if (log.isDebugEnabled()) {
 				log.debug("setObjectSet {} = {}", key, value);
@@ -267,11 +289,11 @@ public class JedisService {
 	 */
 	public Long setSetAdd(final String key, final String... value) {
 
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 
 			Long result = 0L;
 			if (value != null && value.length != 0)
-				result = jedisCluster.sadd(key, value);
+				result = cluster.sadd(key, value);
 			if (log.isDebugEnabled()) {
 				log.debug("setSetAdd {} = {}", key, value);
 			}
@@ -290,7 +312,7 @@ public class JedisService {
 	 * @return
 	 */
 	public Long setSetObjectAdd(final String key, final Object... value) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
 			if (value != null && value.length != 0) {
 				byte[][] members = new byte[value.length][0];
@@ -299,7 +321,7 @@ public class JedisService {
 					members[i] = toBytes(o);
 					++i;
 				}
-				result = jedisCluster.sadd(getBytesKey(key), members);
+				result = cluster.sadd(getBytesKey(key), members);
 			}
 			log.debug("setSetObjectAdd {} = {}", key, value);
 			return result;
@@ -315,10 +337,10 @@ public class JedisService {
 	 * @return
 	 */
 	public Long delSetMember(final String key, final String... members) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
 			if (members != null && members.length != 0)
-				result = jedisCluster.srem(key, members);
+				result = cluster.srem(key, members);
 			if (log.isDebugEnabled()) {
 				log.debug("delSetMember {}", key);
 			}
@@ -335,7 +357,7 @@ public class JedisService {
 	 * @return
 	 */
 	public Long delSetObjectMember(final String key, final Object... members) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
 			if (members != null && members.length != 0) {
 				byte[][] members0 = new byte[members.length][0];
@@ -344,7 +366,7 @@ public class JedisService {
 					members0[i] = toBytes(o);
 					++i;
 				}
-				result = jedisCluster.srem(getBytesKey(key), members0);
+				result = cluster.srem(getBytesKey(key), members0);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("delSetMember {}", key);
@@ -362,8 +384,8 @@ public class JedisService {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getMap(final String key) {
-		return (Map<String, String>) doInRedis((JedisCluster jedisCluster) -> {
-			Map<String, String> value = jedisCluster.hgetAll(key);
+		return (Map<String, String>) doInRedis(cluster -> {
+			Map<String, String> value = cluster.hgetAll(key);
 			if (log.isDebugEnabled()) {
 				log.debug("getMap {} = {}", key, value);
 			}
@@ -380,9 +402,9 @@ public class JedisService {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getObjectMap(final String key) {
-		return (Map<String, Object>) doInRedis((JedisCluster jedisCluster) -> {
+		return (Map<String, Object>) doInRedis(cluster -> {
 			Map<String, Object> value = Maps.newHashMap();
-			Map<byte[], byte[]> map = jedisCluster.hgetAll(getBytesKey(key));
+			Map<byte[], byte[]> map = cluster.hgetAll(getBytesKey(key));
 			for (Map.Entry<byte[], byte[]> e : map.entrySet()) {
 				value.put(StringUtils2.toString(e.getKey()), toObject(e.getValue()));
 			}
@@ -405,10 +427,10 @@ public class JedisService {
 	 * @return
 	 */
 	public String setMap(final String key, final Map<String, String> value, final int cacheSeconds) {
-		return (String) doInRedis((JedisCluster jedisCluster) -> {
-			String result = jedisCluster.hmset(key, value);
+		return (String) doInRedis(cluster -> {
+			String result = cluster.hmset(key, value);
 			if (cacheSeconds != 0) {
-				jedisCluster.expire(key, cacheSeconds);
+				cluster.expire(key, cacheSeconds);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("setMap {} = {}", key, value);
@@ -429,14 +451,14 @@ public class JedisService {
 	 * @return
 	 */
 	public String setObjectMap(final String key, final Map<String, Object> value, final int cacheSeconds) {
-		return (String) doInRedis((JedisCluster jedisCluster) -> {
+		return (String) doInRedis(cluster -> {
 			Map<byte[], byte[]> map = Maps.newHashMap();
 			for (Map.Entry<String, Object> e : value.entrySet()) {
 				map.put(getBytesKey(e.getKey()), toBytes(e.getValue()));
 			}
-			String result = jedisCluster.hmset(getBytesKey(key), (Map<byte[], byte[]>) map);
+			String result = cluster.hmset(getBytesKey(key), (Map<byte[], byte[]>) map);
 			if (cacheSeconds != 0) {
-				jedisCluster.expire(key, cacheSeconds);
+				cluster.expire(key, cacheSeconds);
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("setObjectMap {} = {}", key, value);
@@ -455,8 +477,8 @@ public class JedisService {
 	 * @return
 	 */
 	public String mapPut(final String key, final Map<String, String> value) {
-		return (String) doInRedis((JedisCluster jedisCluster) -> {
-			String result = jedisCluster.hmset(key, value);
+		return (String) doInRedis(cluster -> {
+			String result = cluster.hmset(key, value);
 			if (log.isDebugEnabled()) {
 				log.debug("mapPut {} = {}", key, value);
 			}
@@ -474,13 +496,13 @@ public class JedisService {
 	 * @return
 	 */
 	public String mapObjectPut(final String key, final Map<String, Object> value) {
-		return (String) doInRedis((JedisCluster jedisCluster) -> {
+		return (String) doInRedis(cluster -> {
 			String result = null;
 			Map<byte[], byte[]> map = Maps.newHashMap();
 			for (Map.Entry<String, Object> e : value.entrySet()) {
 				map.put(getBytesKey(e.getKey()), toBytes(e.getValue()));
 			}
-			result = jedisCluster.hmset(getBytesKey(key), map);
+			result = cluster.hmset(getBytesKey(key), map);
 			if (log.isDebugEnabled()) {
 				log.debug("mapObjectPut {} = {}", key, value);
 			}
@@ -498,8 +520,8 @@ public class JedisService {
 	 * @return
 	 */
 	public Long mapRemove(final String key, final String mapKey) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
-			Long result = jedisCluster.hdel(key, mapKey);
+		return (Long) doInRedis(cluster -> {
+			Long result = cluster.hdel(key, mapKey);
 			if (log.isDebugEnabled()) {
 				log.debug("mapRemove {}  {}", key, mapKey);
 			}
@@ -508,8 +530,8 @@ public class JedisService {
 	}
 
 	public Long mapObjectRemove(final String key, final String mapKey) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
-			Long result = jedisCluster.hdel(getBytesKey(key), getBytesKey(mapKey));
+		return (Long) doInRedis(cluster -> {
+			Long result = cluster.hdel(getBytesKey(key), getBytesKey(mapKey));
 			if (log.isDebugEnabled()) {
 				log.debug("mapObjectRemove {}  {}", key, mapKey);
 			}
@@ -518,8 +540,8 @@ public class JedisService {
 	}
 
 	public Boolean mapExists(final String key, final String mapKey) {
-		return (Boolean) doInRedis((JedisCluster jedisCluster) -> {
-			Boolean result = jedisCluster.hexists(key, mapKey);
+		return (Boolean) doInRedis(cluster -> {
+			Boolean result = cluster.hexists(key, mapKey);
 			if (log.isDebugEnabled()) {
 				log.debug("mapObjectExists {}  {}", key, mapKey);
 			}
@@ -529,8 +551,8 @@ public class JedisService {
 	}
 
 	public Boolean mapObjectExists(final String key, final String mapKey) {
-		return (Boolean) doInRedis((JedisCluster jedisCluster) -> {
-			Boolean result = jedisCluster.hexists(getBytesKey(key), getBytesKey(mapKey));
+		return (Boolean) doInRedis(cluster -> {
+			Boolean result = cluster.hexists(getBytesKey(key), getBytesKey(mapKey));
 			if (log.isDebugEnabled()) {
 				log.debug("mapObjectExists {}  {}", key, mapKey);
 			}
@@ -540,8 +562,8 @@ public class JedisService {
 	}
 
 	public Long del(final String key) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
-			Long result = jedisCluster.del(key);
+		return (Long) doInRedis(cluster -> {
+			Long result = cluster.del(key);
 			if (log.isDebugEnabled()) {
 				log.debug("del {}", key);
 			}
@@ -551,9 +573,9 @@ public class JedisService {
 	}
 
 	public Long delObject(final String key) {
-		return (Long) doInRedis((JedisCluster jedisCluster) -> {
+		return (Long) doInRedis(cluster -> {
 
-			long result = jedisCluster.del(getBytesKey(key));
+			long result = cluster.del(getBytesKey(key));
 			if (log.isDebugEnabled()) {
 				log.debug("delObject {}", key);
 			}
@@ -563,9 +585,9 @@ public class JedisService {
 	}
 
 	public Boolean exists(final String key) {
-		return (Boolean) doInRedis((JedisCluster jedisCluster) -> {
+		return (Boolean) doInRedis(cluster -> {
 
-			Boolean result = jedisCluster.exists(key);
+			Boolean result = cluster.exists(key);
 			if (log.isDebugEnabled())
 				log.debug("exists {}", key);
 			return result;
@@ -574,8 +596,8 @@ public class JedisService {
 	}
 
 	public Boolean existsObject(final String key) {
-		return (Boolean) doInRedis((JedisCluster jedisCluster) -> {
-			boolean result = jedisCluster.exists(getBytesKey(key));
+		return (Boolean) doInRedis(cluster -> {
+			boolean result = cluster.exists(getBytesKey(key));
 			if (log.isDebugEnabled()) {
 				log.debug("existsObject {}", key);
 			}
