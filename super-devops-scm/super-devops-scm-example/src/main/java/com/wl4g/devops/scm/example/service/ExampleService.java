@@ -20,6 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -27,9 +30,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/*@Service
+@Service
 @RefreshScope
-@ConfigurationProperties(prefix = "example")*/
+@ConfigurationProperties(prefix = "example")
 public class ExampleService implements InitializingBean, DisposableBean, Closeable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -93,6 +96,14 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	private synchronized void createThread() {
