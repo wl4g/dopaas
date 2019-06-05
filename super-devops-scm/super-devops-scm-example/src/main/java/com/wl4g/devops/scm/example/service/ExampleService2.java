@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -16,7 +15,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Value("#{'${example.firstName:unname}'.toUpperCase()}-${random.int(1000)}")
+	//@Value("#{'${example.firstName:unname}'.toUpperCase()}-${random.int(1000)}")
 	private String firstName;
 
 	private String lastName;
@@ -37,6 +36,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 	@PreDestroy
 	public void destroy1() {
 		System.out.println("ExampleService2 @PreDestroy..." + this);
+		running.compareAndSet(true,false);
 	}
 
 	@Override
@@ -72,6 +72,14 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	private synchronized void createThread() {
