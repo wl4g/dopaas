@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.cloud.logging.LoggingRebinder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo;
@@ -35,6 +36,7 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
 import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
 import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
+import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
 import com.wl4g.devops.scm.common.utils.ScmUtils;
 
 /**
@@ -99,12 +101,12 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 	//
 
 	@Bean
-	public com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint scmClientController(ScmContextRefresher refresher) {
-		return new com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint(refresher);
+	public ScmClientEndpoint scmClientController(Environment environment, ScmContextRefresher refresher) {
+		return new ScmClientEndpoint(environment, refresher);
 	}
 
 	@Bean
-	public PrefixHandlerMapping scmClientPrefixHandlerMapping() {
+	public PrefixHandlerMapping scmClientEndpointPrefixHandlerMapping() {
 		return super.createPrefixHandlerMapping();
 	}
 

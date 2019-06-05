@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,16 +163,12 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		return null;
 	}
 
-
-
-
 	public ReleaseMessage getRemoteReleaseConfig(GenericInfo.ReleaseMeta targetReleaseMeta) {
 		// Get pull release URL.
 		String uri = this.baseUri + SCMDevOpsConstants.URI_S_BASE + "/" + SCMDevOpsConstants.URI_S_SOURCE_GET;
 
 		// Create request bean.
-		GetRelease req = new GetRelease(info.getAppName(), info.getProfilesActive(),
-				targetReleaseMeta, info.getBindInstance());
+		GetRelease req = new GetRelease(info.getAppName(), info.getProfilesActive(), targetReleaseMeta, info.getBindInstance());
 
 		// Bean to map.
 		String params = new BeanMapConvert(req).toUriParmaters();
@@ -198,7 +194,6 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		}
 		return release;
 	}
-
 
 	public void resolvesCipherSource(ReleaseMessage release) {
 		if (log.isTraceEnabled()) {
