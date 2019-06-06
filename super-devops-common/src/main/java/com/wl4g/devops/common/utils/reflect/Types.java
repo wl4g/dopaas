@@ -167,7 +167,7 @@ public abstract class Types {
 		try {
 			if (Map.class.isAssignableFrom(fieldClazz)) {
 				Map map = null;
-				if (!isInstantiatable(fieldClazz)) {
+				if (isInstantiatable(fieldClazz)) {
 					map = (Map) fieldClazz.newInstance();
 				} else if (Map.class.isAssignableFrom(fieldClazz)) {
 					map = (Map) new HashMap<>();
@@ -188,7 +188,7 @@ public abstract class Types {
 				object = map;
 			} else if (fieldClazz.isArray() || Collection.class.isAssignableFrom(fieldClazz)) {
 				Collection set = null;
-				if (!isInstantiatable(fieldClazz)) {
+				if (isInstantiatable(fieldClazz)) {
 					set = (Collection) fieldClazz.newInstance();
 				} else if (List.class.isAssignableFrom(fieldClazz)) {
 					set = (Collection) new ArrayList<>();
@@ -243,7 +243,7 @@ public abstract class Types {
 	 * @return
 	 */
 	public static boolean isInstantiatable(Class<?> clazz) {
-		return clazz.isInterface() && isAbstract(clazz.getModifiers());
+		return !clazz.isInterface() && !isAbstract(clazz.getModifiers()) && !isNative(clazz.getModifiers());
 	}
 
 	/**
