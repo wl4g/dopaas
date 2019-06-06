@@ -15,8 +15,18 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import java.lang.annotation.Annotation;
-
+import com.wl4g.devops.common.bean.scm.model.GenericInfo;
+import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.scm.annotation.ScmEndpoint;
+import com.wl4g.devops.scm.client.annotation.EnableScmWatchTask;
+import com.wl4g.devops.scm.client.annotation.EnableScmWatchZk;
+import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
+import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
+import com.wl4g.devops.scm.client.configure.watch.TokenRefreshWatcher;
+import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
+import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
+import com.wl4g.devops.scm.common.utils.ScmUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;
@@ -26,18 +36,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo;
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.client.annotation.EnableScmWatchTask;
-import com.wl4g.devops.scm.client.annotation.EnableScmWatchZk;
-import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
-import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
-import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
-import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
-import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
-import com.wl4g.devops.scm.common.utils.ScmUtils;
+import java.lang.annotation.Annotation;
+
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
 
 /**
  * SCM refresh auto configuration.</br>
@@ -94,6 +95,15 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 		String path = ScmUtils.genZkConfigPath(new GenericInfo(config.getAppName(), config.getProfilesActive()),
 				config.getBindInstance());
 		return new ZookeeperRefreshWatcher(refresher, path, curator);
+	}
+
+	@Bean("tokenRefreshWatcher")
+	@EnableScmWatchZk
+	public TokenRefreshWatcher tokenRefreshWatcher(CuratorFramework curator, ScmContextRefresher refresher,
+												   InstanceInfo config) {
+		String path = ScmUtils.genMetaPath(new GenericInfo(config.getAppName(), config.getProfilesActive()),
+				config.getBindInstance());
+		return new TokenRefreshWatcher(refresher, path, curator);
 	}
 
 	//

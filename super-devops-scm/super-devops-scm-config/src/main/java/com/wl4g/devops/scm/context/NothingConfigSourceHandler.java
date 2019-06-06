@@ -43,4 +43,9 @@ public class NothingConfigSourceHandler implements ConfigContextHandler {
 		log.info("Config source release: {}", pre);
 	}
 
+	@Override
+	public void refreshMeta(boolean focus) {
+		log.info("Refresh Meta");
+	}
+
 }

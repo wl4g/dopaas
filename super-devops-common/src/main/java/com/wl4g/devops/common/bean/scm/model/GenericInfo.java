@@ -15,16 +15,14 @@
  */
 package com.wl4g.devops.common.bean.scm.model;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.net.HostAndPort;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import com.google.common.net.HostAndPort;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 public class GenericInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
@@ -46,6 +44,8 @@ public class GenericInfo implements Serializable {
 	 */
 	@NotNull
 	private ReleaseMeta meta = new ReleaseMeta();
+
+
 
 	public GenericInfo() {
 		super();
@@ -81,6 +81,7 @@ public class GenericInfo implements Serializable {
 			this.profile = profile;
 		}
 	}
+
 
 	public ReleaseMeta getMeta() {
 		return meta;
