@@ -37,7 +37,21 @@ public final class ScmUtils {
 		path.append(base.getGroup());
 		path.append("/");
 		path.append(base.getProfile());
+		path.append("/release/");
+		path.append(instance.toString());
+		return path.toString();
+	}
+
+
+
+	public final static String genMetaPath(GenericInfo base, ReleaseInstance instance) {
+		checkInvalid(base, instance);
+		StringBuffer path = new StringBuffer(SCMDevOpsConstants.CONF_DISCOVERY_ROOT);
 		path.append("/");
+		path.append(base.getGroup());
+		path.append("/");
+		path.append(base.getProfile());
+		path.append("/meta/");
 		path.append(instance.toString());
 		return path.toString();
 	}

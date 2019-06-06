@@ -20,15 +20,14 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
 import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import static com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
-
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
+
+import static com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 /**
  * SCM application context initializer instructions.</br>
@@ -46,6 +45,8 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 
 	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig, InstanceInfo info) {
 		super(config, retryConfig, info);
+		//get token from server
+		receiveToken();
 	}
 
 	@Override

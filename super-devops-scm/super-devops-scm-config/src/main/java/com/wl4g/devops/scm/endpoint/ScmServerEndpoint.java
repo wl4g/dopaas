@@ -19,11 +19,14 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.constants.SCMDevOpsConstants;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.support.cache.JedisService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -33,13 +36,16 @@ import org.springframework.web.bind.annotation.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
 @ScmEndpoint
+@ResponseBody
 public class ScmServerEndpoint extends BaseController {
 
 	@Autowired
 	private ConfigContextHandler handler;
+	@Autowired
+	private JedisService jedisService;
 
 	@GetMapping(value = URI_S_SOURCE_GET)
-	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req, BindingResult bind) {
+	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req, BindingResult bind,@RequestHeader(SCMDevOpsConstants.TOKEN_HEADER) String token) {
 		if (log.isInfoEnabled()) {
 			log.info("Get config source... {}, bind: {}", req, bind);
 		}
@@ -50,6 +56,13 @@ public class ScmServerEndpoint extends BaseController {
 				resp.setCode(RetCode.PARAM_ERR);
 				resp.setMessage(bind.toString());
 			} else {
+				//auth token
+				String realToken = jedisService.get(SCMDevOpsConstants.SCM_META_TOKEN+req.getInstance().toString());
+				//String token = req.getToken();
+				if(StringUtils.isBlank(realToken)||StringUtils.isBlank(token)||!StringUtils.equals(realToken,token)){
+					throw new RuntimeException("token unmatch");
+				}
+
 				// AdminServer source configuration.
 				ReleaseMessage release = handler.findSource(req);
 				resp.getData().put(KEY_RELEASE, release);

@@ -18,9 +18,11 @@ package com.wl4g.devops;
 import com.wl4g.devops.scm.client.annotation.EnableScmClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableScmClient
 @SpringBootApplication
+@EnableDiscoveryClient
 public class DevOpsScmExample {
 
 	public static void main(String[] args) {
