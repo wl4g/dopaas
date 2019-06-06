@@ -17,6 +17,7 @@ package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 import static com.wl4g.devops.shell.utils.Reflections.*;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * Shell CLI server support utility tools
@@ -38,7 +39,20 @@ public abstract class ShellUtils extends BeanUtils2 {
 	 *            the source bean
 	 */
 	public static <T> void copyOptionsProperties(T target, T source) {
-		copyOptionsProperties(target, source, DEFAULT_FIELD_COPYER);
+		copyOptionsProperties(target, source, (targetAttach, tf, sf, sourcePropertyValue) -> {
+			tf.setAccessible(true);
+			Object obj = targetAttach;
+			Object value = sourcePropertyValue;
+			if (value == null) { // Using default-value
+				ShellOption spt = sf.getAnnotation(ShellOption.class);
+				if (spt != null && !isBlank(spt.defaultValue())) {
+					value = Types.convertToBaseOrSimpleSet(spt.defaultValue(), tf.getType());
+				}
+			}
+			if (obj != null && value != null) {
+				tf.set(obj, value);
+			}
+		});
 	}
 
 	/**
