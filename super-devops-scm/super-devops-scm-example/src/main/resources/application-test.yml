@@ -15,3 +15,16 @@
 example:
   firstName: 王
   lastName: jack
+
+redis:
+  passwd: zzx!@#$%
+  connect-timeout: 10000
+  max-attempts: 10
+  # Redis's cluster nodes.
+  nodes:
+  - book-cloud:6379
+  - book-cloud:6380
+  - book-cloud:6381
+  - book-cloud:7379
+  - book-cloud:7380
+  - book-cloud:7381

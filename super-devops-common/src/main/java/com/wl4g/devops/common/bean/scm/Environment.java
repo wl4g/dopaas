@@ -23,6 +23,10 @@ public class Environment extends BaseBean {
 
 	private String groupId;
 
+	private String secretKey;
+
+	private String algName;
+
 	private List<AppInstance> appInstance;
 
 	public List<AppInstance> getAppInstance() {
@@ -47,5 +51,21 @@ public class Environment extends BaseBean {
 
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+
+	public String getSecretKey() {
+		return secretKey;
+	}
+
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
+	public String getAlgName() {
+		return algName;
+	}
+
+	public void setAlgName(String algName) {
+		this.algName = algName;
 	}
 }

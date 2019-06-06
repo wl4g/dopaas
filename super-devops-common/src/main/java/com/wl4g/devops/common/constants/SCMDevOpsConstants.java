@@ -51,4 +51,22 @@ public abstract class SCMDevOpsConstants extends DevOpsConstants {
 	/** Get latest configuration URI. */
 	final public static String URI_C_LATEST = "latest";
 
+	/**
+	 * ENABLE
+	 */
+	final public static int ENABLE = 1;
+	/**
+	 * DISABLE
+	 */
+	final public static int DISABLE = 0;
+
+	final public static String TOKEN_CREATE_TIME = "token_refresh_time:";
+
+	final public static String SCM_META_TOKEN = "scm_meta_token:";
+
+	/**
+	 * Token header name.
+	 */
+	public static final String TOKEN_HEADER = "x-scm-token";
+
 }

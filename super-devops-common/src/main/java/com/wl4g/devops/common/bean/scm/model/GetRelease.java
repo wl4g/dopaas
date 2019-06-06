@@ -35,6 +35,8 @@ public class GetRelease extends GenericInfo {
 		this.setInstance(instance);
 	}
 
+
+
 	public GetRelease(String group, String profile, ReleaseInstance instance) {
 		super(group, profile, null);
 		this.setInstance(instance);
