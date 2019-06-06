@@ -47,4 +47,9 @@ public interface ConfigContextHandler {
 	 */
 	public void release(PreRelease pre);
 
+	/**
+	 * refreshMeta
+	 */
+	public void refreshMeta(boolean focus);
+
 }

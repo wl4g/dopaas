@@ -15,30 +15,35 @@
  */
 package com.wl4g.devops.scm;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.scm.ConfigSourceBean;
+import com.wl4g.devops.common.bean.scm.Environment;
+import com.wl4g.devops.common.bean.scm.VersionContentBean.FileType;
+import com.wl4g.devops.common.bean.scm.model.*;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.common.constants.SCMDevOpsConstants;
+import com.wl4g.devops.common.utils.PropertySources;
+import com.wl4g.devops.common.utils.PropertySources.Type;
+import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
+import com.wl4g.devops.scm.publish.DefaultConfigSourcePublisher;
+import com.wl4g.devops.scm.service.AppGroupService;
+import com.wl4g.devops.scm.service.ConfigurationService;
+import com.wl4g.devops.support.cache.JedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import com.wl4g.devops.common.bean.scm.ConfigSourceBean;
-import com.wl4g.devops.common.bean.scm.VersionContentBean.FileType;
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
-import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
-import com.wl4g.devops.common.utils.PropertySources;
-import com.wl4g.devops.common.utils.PropertySources.Type;
-import com.wl4g.devops.scm.service.ConfigurationService;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration server Service implements.
@@ -57,6 +62,15 @@ public class DefaultConfigContextHandler implements ConfigContextHandler {
 
 	@Autowired
 	private ConfigurationService configService;
+
+	@Autowired
+	private AppGroupService appGroupService;
+
+	@Autowired
+	private DefaultConfigSourcePublisher defaultConfigSourcePublisher;
+
+	@Autowired
+	private JedisService jedisService;
 
 	@Override
 	public ReleaseMessage findSource(GetRelease get) {
@@ -101,6 +115,50 @@ public class DefaultConfigContextHandler implements ConfigContextHandler {
 		}
 
 		this.publisher.release(preRelease);
+	}
+
+	@Override
+	public void refreshMeta(boolean focus) {
+		log.info("start refresh meta");
+		List<AppGroup> appGroups = appGroupService.grouplist();
+		long now = System.currentTimeMillis();
+		for(AppGroup appGroup : appGroups){
+
+			if(!focus){
+				boolean expired = jedisService.exists(SCMDevOpsConstants.TOKEN_CREATE_TIME+appGroup.getName());
+				if(SCMDevOpsConstants.ENABLE != appGroup.getEnable()||expired){
+					continue;
+				}
+			}
+
+
+			AppInstance appInstance = new AppInstance();
+			List<AppInstance> instances =  appGroupService.instancelist(appInstance);
+			List<Environment> environments = appGroupService.environmentlist(null);
+			for(Environment environment : environments){
+				MetaRelease preRelease = new MetaRelease();
+				preRelease.setGroup(appGroup.getName());
+				preRelease.setSecretKey(environment.getSecretKey());
+				preRelease.setAlgName(environment.getAlgName());
+				preRelease.setProfile(environment.getName());
+				List<ReleaseInstance> releaseInstances = new ArrayList<>();
+				for(AppInstance instance : instances){
+					if(instance.getGroupId().intValue()==appGroup.getId().intValue()
+							&&environment.getId().intValue()==Integer.valueOf(instance.getEnvId()).intValue()){
+						ReleaseInstance releaseInstance = new ReleaseInstance();
+						releaseInstance.setHost(instance.getHost());
+						releaseInstance.setPort(instance.getPort());
+						releaseInstances.add(releaseInstance);
+					}
+				}
+				preRelease.setInstances(releaseInstances);
+				if(releaseInstances.size()>0){
+					defaultConfigSourcePublisher.meta(preRelease);
+					jedisService.set(SCMDevOpsConstants.TOKEN_CREATE_TIME+appGroup.getName(),""+now,appGroup.getTokenRefreshInterval());
+				}
+
+			}
+		}
 	}
 
 	/* for test */ ReleaseMessage getReleaseMessage(String application, String profile, ReleaseInstance instance) {

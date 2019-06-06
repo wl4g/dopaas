@@ -22,6 +22,7 @@ import com.wl4g.devops.common.constants.SCMDevOpsConstants;
 import com.wl4g.devops.common.exception.scm.ScmException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
 import com.wl4g.devops.scm.client.config.RetryProperties;
@@ -29,6 +30,12 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import com.wl4g.devops.scm.client.enviroment.ScmEnvironment;
 import com.wl4g.devops.scm.client.enviroment.ScmPropertySource;
+import com.wl4g.devops.scm.common.bean.ScmMetaInfo;
+import com.wl4g.devops.scm.common.utils.ScmUtils;
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +55,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -76,6 +84,8 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 	final protected InstanceInfo info;
 
 	final private static String CIPHER_PREFIX = "{cipher}";
+
+	public static String token = "";
 
 	@Value("${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/devops}")
 	String baseUri;
@@ -177,8 +187,17 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 			log.debug("Get remote release config url: {}", url);
 		}
 
+		HttpHeaders headers = new HttpHeaders();
+		if (StringUtils.hasText(token)) {
+			headers.add(TOKEN_HEADER, token);
+		}
+		log.info("scm token:"+token);
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+		final HttpEntity<Void> entity = new HttpEntity<>((Void) null, headers);
+
 		RespBase<ReleaseMessage> resp = this.restTemplate
-				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
+				.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
 				}).getBody();
 		if (!RespBase.isSuccess(resp)) {
 			throw new ScmException(String.format("Get remote source error. %s, %s", url, resp.getMessage()));
@@ -291,6 +310,34 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 				request.getHeaders().add(h.getKey(), h.getValue());
 			}
 			return execution.execute(request, body);
+		}
+
+	}
+
+	public void receiveToken(){
+		CuratorFramework client = null;
+		try {
+			RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 5);
+			client = CuratorFrameworkFactory.builder().connectString(config.getZookeeperUrl())
+					//.sessionTimeoutMs(10000)
+					.retryPolicy(retryPolicy)
+					//.namespace("admin")
+					.build();
+			client.start();
+			String path = ScmUtils.genMetaPath(new GenericInfo(info.getAppName(), info.getProfilesActive()),
+					info.getBindInstance());
+
+			byte[] b = client.getData().forPath(path);
+			String t = new String(b, StandardCharsets.UTF_8);
+			log.info("get token from zookeeper:"+config.getZookeeperUrl()+",path:"+path);
+			ScmMetaInfo scmMetaInfo = JacksonUtils.parseJSON(t, ScmMetaInfo.class);
+			token = scmMetaInfo.getToken();
+		}catch (Exception e){
+			log.error(e.getMessage());
+		} finally {
+			if (client != null) {
+				client.close();
+			}
 		}
 
 	}

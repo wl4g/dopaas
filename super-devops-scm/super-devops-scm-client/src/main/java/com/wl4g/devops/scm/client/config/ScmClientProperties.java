@@ -15,18 +15,18 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Dave Syer
@@ -43,7 +43,7 @@ public class ScmClientProperties {
 	/**
 	 * Token header name.
 	 */
-	public static final String TOKEN_HEADER = "X-Config-Token";
+	public static final String TOKEN_HEADER = "X-Scm-Token";
 
 	/**
 	 * State header name.
@@ -118,6 +118,9 @@ public class ScmClientProperties {
 	 * Flag to indicate whether to send state. Default true.
 	 */
 	private boolean sendState = true;
+
+	@Value("${spring.cloud.zookeeper.connect-string:localhost:2181}")
+	private String zookeeperUrl;
 
 	/**
 	 * Additional headers used to create the client request.
@@ -241,6 +244,14 @@ public class ScmClientProperties {
 
 	public void setHeaders(Map<String, String> headers) {
 		this.headers = headers;
+	}
+
+	public String getZookeeperUrl() {
+		return zookeeperUrl;
+	}
+
+	public void setZookeeperUrl(String zookeeperUrl) {
+		this.zookeeperUrl = zookeeperUrl;
 	}
 
 	private Credentials extractCredentials(int index) {

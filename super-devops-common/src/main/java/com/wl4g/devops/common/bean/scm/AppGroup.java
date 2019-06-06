@@ -26,6 +26,7 @@ public class AppGroup extends BaseBean {
 	private String name; // 应用名称 Disabled
 	private Integer enable; // 启用状态（0:禁止/1:启用）
 	private String evnname; // 环境名
+	private int tokenRefreshInterval;//token刷新间隔
 
 	/**
 	 * IAM fast-CAS load balancing base/index(redirect) URI.
@@ -72,4 +73,14 @@ public class AppGroup extends BaseBean {
 		this.loadBalanceBaseUri = loadBalanceBaseUri;
 	}
 
+	public int getTokenRefreshInterval() {
+		if(tokenRefreshInterval==0){
+			tokenRefreshInterval = 60*60;
+		}
+		return tokenRefreshInterval;
+	}
+
+	public void setTokenRefreshInterval(int tokenRefreshInterval) {
+		this.tokenRefreshInterval = tokenRefreshInterval;
+	}
 }
