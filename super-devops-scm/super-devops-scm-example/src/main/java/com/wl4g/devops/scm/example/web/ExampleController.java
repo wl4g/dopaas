@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.scm.example.web;
 
+import com.wl4g.devops.iam.client.web.ServerTokenClient;
 import com.wl4g.devops.scm.example.service.ExampleService;
 import com.wl4g.devops.scm.example.service.ExampleService2;
 import org.slf4j.Logger;
@@ -35,11 +36,13 @@ public class ExampleController {
 	@Autowired
 	private ExampleService2 exampleService2;
 
-	/*@Autowired
-	private ServerTokenClient serverTokenClient;*/
+	@Autowired
+	private ServerTokenClient serverTokenClient;
 
 	@Value("#{'${spring.application.name}'}")
 	private String from;
+
+	private static String token = "";
 
 
 	@RequestMapping("start")
@@ -73,10 +76,18 @@ public class ExampleController {
 
 	@RequestMapping("token")
 	public String token() {
-		log.info("ExampleService2 Request stoping... ");
+		log.info("token ");
 		String to = "scm";
-		//return serverTokenClient.getToken(from,to);
-		return null;
+		token = serverTokenClient.getToken(from,to);
+		return token;
+	}
+
+	@RequestMapping("auth")
+	public String  auth() {
+		log.info("auth ");
+		String to = "scm";
+		boolean result = serverTokenClient.authToken(from,to,token);
+		return result?"yes":"no";
 	}
 
 }
