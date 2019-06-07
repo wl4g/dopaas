@@ -24,6 +24,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-support</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-common</artifactId>
 			<version>master</version>
 		</dependency>
