@@ -28,3 +28,10 @@ redis:
   - book-cloud:7379
   - book-cloud:7380
   - book-cloud:7381
+
+spring:
+  cloud:
+    devops:
+      iam:
+        client:
+          base-uri: http://localhost:14040/iam

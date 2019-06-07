@@ -218,10 +218,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 
 
 	/** get token */
-	final public static String URI_S_GET_TOKEN = "/getToken";
+	final public static String URI_S_GET_TOKEN = "getToken";
 
 	/** get token */
-	final public static String URI_S_AUTH_TOKEN = "/authToken";
+	final public static String URI_S_AUTH_TOKEN = "authToken";
 
 	final public static String SERVER_TOKEN_KEY = "server_token:";
 

@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.client.web;
+package com.wl4g.devops.iam.web;
 
-import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.iam.annotation.ExtraController;
 import com.wl4g.devops.support.cache.JedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import com.wl4g.devops.common.web.RespBase.RetCode;
+
 import java.util.UUID;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.SERVER_TOKEN_KEY;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_GET_TOKEN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
-@RestController
-@RequestMapping("/")
-public class ServerAuthenticatorController extends BaseController {
+@ExtraController
+public class ServerAuthenticatorController extends AbstractAuthenticatorController {
 
 	@Autowired
 	private JedisService jedisService;
@@ -48,6 +47,8 @@ public class ServerAuthenticatorController extends BaseController {
 		if (log.isInfoEnabled()) {
 			log.info("getToken processing... sessionId[{}]");
 		}
+		Assert.hasText(from,"appGroup is null");
+		Assert.hasText(to,"appGroup is null");
 		String token = null;
 		/*
 		 * create token
@@ -73,7 +74,7 @@ public class ServerAuthenticatorController extends BaseController {
 	 * @param to    which service you want to visit
 	 * @return
 	 */
-	@RequestMapping(URI_S_GET_TOKEN)
+	@RequestMapping(URI_S_AUTH_TOKEN)
 	@ResponseBody
 	public RespBase RespBase(String from,String to,String token) {
 		if (log.isInfoEnabled()) {
