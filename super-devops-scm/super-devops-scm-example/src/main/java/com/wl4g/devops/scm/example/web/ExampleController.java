@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.scm.example.web;
 
+import com.wl4g.devops.scm.example.service.ExampleService;
+import com.wl4g.devops.scm.example.service.ExampleService2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.wl4g.devops.scm.example.service.ExampleService;
-import com.wl4g.devops.scm.example.service.ExampleService2;
 
 @RestController
 @RequestMapping("/")
@@ -34,6 +34,13 @@ public class ExampleController {
 
 	@Autowired
 	private ExampleService2 exampleService2;
+
+	/*@Autowired
+	private ServerTokenClient serverTokenClient;*/
+
+	@Value("#{'${spring.application.name}'}")
+	private String from;
+
 
 	@RequestMapping("start")
 	public String start() {
@@ -61,6 +68,15 @@ public class ExampleController {
 		log.info("ExampleService2 Request stoping... ");
 		this.exampleService2.stop();
 		return "ExampleService2 Stoped";
+	}
+
+
+	@RequestMapping("token")
+	public String token() {
+		log.info("ExampleService2 Request stoping... ");
+		String to = "scm";
+		//return serverTokenClient.getToken(from,to);
+		return null;
 	}
 
 }
