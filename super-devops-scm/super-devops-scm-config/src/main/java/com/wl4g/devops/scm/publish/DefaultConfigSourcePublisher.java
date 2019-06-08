@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.scm.publish;
 
-import com.google.common.base.Charsets;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.MetaRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
@@ -24,6 +23,7 @@ import com.wl4g.devops.common.exception.scm.ConfigureReleaseZkSetException;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.scm.common.bean.ScmMetaInfo;
 import com.wl4g.devops.scm.common.utils.ScmUtils;
+import com.wl4g.devops.scm.endpoint.ApolloController;
 import com.wl4g.devops.support.cache.JedisService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -32,7 +32,9 @@ import org.apache.curator.framework.api.transaction.CuratorTransactionBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 
@@ -81,13 +83,25 @@ public class DefaultConfigSourcePublisher implements ConfigSourcePublisher {
 				path = this.determineConfigDiscoveryPath(pre, instance);
 
 				// 1.3 Set configuration version.
-				CuratorTransactionBridge bridge = transaction.setData().forPath(path,
-						pre.getMeta().asText().getBytes(Charsets.UTF_8));
+				/*CuratorTransactionBridge bridge = transaction.setData().forPath(path,
+						pre.getMeta().asText().getBytes(Charsets.UTF_8));*/
+
+				//
+				if (ApolloController.watchRequests.containsKey(path)) {
+					Collection<DeferredResult<String>> deferredResults = ApolloController.watchRequests.get(path);
+					Long time = System.currentTimeMillis();
+					//通知所有watch这个namespace变更的长轮训配置变更结果
+					for (DeferredResult<String> deferredResult : deferredResults) {
+						deferredResult.setResult(pre.getMeta().asText());
+					}
+				}
+
+
 
 				// 1.4 Commit transaction.
-				if (!it.hasNext()) {
+				/*if (!it.hasNext()) {
 					bridge.and().commit();
-				}
+				}*/
 
 				if (log.isDebugEnabled()) {
 					log.debug("Release configuration to Zk, instance: {}", instance);
