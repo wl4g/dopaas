@@ -52,7 +52,6 @@ public class ServerTokenClient {
         RespBase respBase = this.restTemplate
                 .exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase>() {
                 }).getBody();
-
         if(RespBase.RetCode.OK.getCode()==respBase.getCode()){
             return true;
         }else{
