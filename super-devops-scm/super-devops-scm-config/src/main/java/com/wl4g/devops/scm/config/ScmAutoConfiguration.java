@@ -17,9 +17,11 @@ package com.wl4g.devops.scm.config;
 
 import java.lang.annotation.Annotation;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
@@ -41,6 +43,8 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
  */
 public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
+	final public static String BEAN_MVC_EXECUTOR = "mvcTaskExecutor";
+
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.devops.scm")
 	public ScmProperties scmProperties() {
@@ -56,6 +60,21 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguratio
 	@Bean
 	public ConfigSourcePublisher configSourcePublisher(JedisService jedisService) {
 		return new DefaultRedisConfigSourcePublisher(scmProperties(), jedisService);
+	}
+
+	@Bean(BEAN_MVC_EXECUTOR)
+	public ThreadPoolTaskExecutor mvcTaskExecutor(ScmProperties config) {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(config.getCorePoolSize());
+		executor.setQueueCapacity(config.getQueueCapacity());
+		executor.setMaxPoolSize(config.getMaxPoolSize());
+		return executor;
+	}
+
+	@Bean
+	public ScmWebMvcConfigurer scmWebMvcConfigurer(ScmProperties config,
+			@Qualifier(BEAN_MVC_EXECUTOR) ThreadPoolTaskExecutor executor) {
+		return new ScmWebMvcConfigurer(config, executor);
 	}
 
 	//

@@ -19,16 +19,23 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+/**
+ * SCM web mvc configurer
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年6月4日
+ * @since
+ */
 public class ScmWebMvcConfigurer extends WebMvcConfigurerAdapter {
 
 	final private ScmProperties config;
 
 	final private ThreadPoolTaskExecutor executor;
 
-	public ScmWebMvcConfigurer(ScmProperties config, ThreadPoolTaskExecutor mvcTaskExecutor) {
+	public ScmWebMvcConfigurer(ScmProperties config, ThreadPoolTaskExecutor executor) {
 		super();
 		this.config = config;
-		this.executor = mvcTaskExecutor;
+		this.executor = executor;
 	}
 
 	/**
@@ -39,7 +46,7 @@ public class ScmWebMvcConfigurer extends WebMvcConfigurerAdapter {
 	@Override
 	public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
 		configurer.setTaskExecutor(executor);
-		configurer.setDefaultTimeout(config.getDeferredDefaultTimeout());
+		configurer.setDefaultTimeout(config.getDefaultTimeout());
 	}
 
 }

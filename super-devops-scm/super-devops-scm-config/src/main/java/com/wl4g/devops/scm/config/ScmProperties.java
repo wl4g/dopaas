@@ -20,9 +20,35 @@ import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
 public class ScmProperties extends TaskProperties {
 	private static final long serialVersionUID = -4696830861294720221L;
 
+	private int corePoolSize = 10;
+	private int maxPoolSize = 25;
+	private int queueCapacity = 100;
 	private long scanDelay = 1_000L;
+	private long defaultTimeout = 30_000L;
 
-	private long deferredDefaultTimeout = 30_000L;
+	public int getCorePoolSize() {
+		return corePoolSize;
+	}
+
+	public void setCorePoolSize(int corePoolSize) {
+		this.corePoolSize = corePoolSize;
+	}
+
+	public int getMaxPoolSize() {
+		return maxPoolSize;
+	}
+
+	public void setMaxPoolSize(int maxPoolSize) {
+		this.maxPoolSize = maxPoolSize;
+	}
+
+	public int getQueueCapacity() {
+		return queueCapacity;
+	}
+
+	public void setQueueCapacity(int queueCapacity) {
+		this.queueCapacity = queueCapacity;
+	}
 
 	public long getScanDelay() {
 		return scanDelay;
@@ -32,12 +58,12 @@ public class ScmProperties extends TaskProperties {
 		this.scanDelay = scanDelayTime;
 	}
 
-	public long getDeferredDefaultTimeout() {
-		return deferredDefaultTimeout;
+	public long getDefaultTimeout() {
+		return defaultTimeout;
 	}
 
-	public void setDeferredDefaultTimeout(long defaultTimeout) {
-		this.deferredDefaultTimeout = defaultTimeout;
+	public void setDefaultTimeout(long defaultTimeout) {
+		this.defaultTimeout = defaultTimeout;
 	}
 
 }

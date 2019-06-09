@@ -31,8 +31,20 @@ import com.wl4g.devops.common.bean.scm.model.PreRelease;
  */
 public interface ConfigSourcePublisher {
 
+	/**
+	 * Real-time publishing config source.
+	 * 
+	 * @param release
+	 * @return
+	 */
 	List<WatchDeferredResult<ResponseEntity<?>>> publish(PreRelease release);
 
+	/**
+	 * Used for hang live client listening configuration.
+	 * 
+	 * @param watch
+	 * @return
+	 */
 	WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch);
 
 }

@@ -25,20 +25,23 @@ import com.wl4g.devops.common.bean.scm.VersionContentBean.FileType;
 import com.wl4g.devops.common.bean.scm.model.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
-import com.wl4g.devops.common.constants.SCMDevOpsConstants;
 import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.utils.PropertySources.Type;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
-import com.wl4g.devops.scm.publish.DefaultConfigSourcePublisher;
 import com.wl4g.devops.scm.service.AppGroupService;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import com.wl4g.devops.support.cache.JedisService;
+import static com.wl4g.devops.common.utils.web.WebUtils2.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Service;
 
+import static java.lang.String.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Configuration server Service implements.
+ * Configuration servers implements.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -54,7 +57,7 @@ import java.util.Map;
  * @since
  */
 @Service
-public class DefaultConfigContextHandler implements ConfigContextHandler {
+public class StandardConfigContextHandler implements ConfigContextHandler {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -67,10 +70,12 @@ public class DefaultConfigContextHandler implements ConfigContextHandler {
 	private AppGroupService appGroupService;
 
 	@Autowired
-	private DefaultConfigSourcePublisher defaultConfigSourcePublisher;
-
-	@Autowired
 	private JedisService jedisService;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+
+	}
 
 	@Override
 	public ReleaseMessage findSource(GetRelease get) {
@@ -109,59 +114,58 @@ public class DefaultConfigContextHandler implements ConfigContextHandler {
 	}
 
 	@Override
-	public void release(PreRelease preRelease) {
-		if (log.isTraceEnabled()) {
-			log.trace("Release configuration. {}", preRelease);
+	public void release(PreRelease pre) {
+		if (log.isInfoEnabled()) {
+			log.info("Pre release for {}", pre);
 		}
 
-		this.publisher.release(preRelease);
+		this.publisher.publish(pre);
 	}
 
+	// TODO
 	@Override
 	public void refreshMeta(boolean focus) {
 		log.info("start refresh meta");
 		List<AppGroup> appGroups = appGroupService.grouplist();
 		long now = System.currentTimeMillis();
-		for(AppGroup appGroup : appGroups){
-
-			if(!focus){
-				boolean expired = jedisService.exists(SCMDevOpsConstants.TOKEN_CREATE_TIME+appGroup.getName());
-				if(SCMDevOpsConstants.ENABLE != appGroup.getEnable()||expired){
+		for (AppGroup appGroup : appGroups) {
+			if (!focus) {
+				boolean expired = jedisService.exists("TOKEN_CREATE_TIME" + appGroup.getName());
+				if (isTrue(valueOf(appGroup.getEnable())) || expired) {
 					continue;
 				}
 			}
 
-
-			AppInstance appInstance = new AppInstance();
-			List<AppInstance> instances =  appGroupService.instancelist(appInstance);
+			AppInstance aInstance = new AppInstance();
+			List<AppInstance> aInstances = appGroupService.instancelist(aInstance);
 			List<Environment> environments = appGroupService.environmentlist(null);
-			for(Environment environment : environments){
-				MetaRelease preRelease = new MetaRelease();
-				preRelease.setGroup(appGroup.getName());
-				preRelease.setSecretKey(environment.getSecretKey());
-				preRelease.setAlgName(environment.getAlgName());
-				preRelease.setProfile(environment.getName());
-				List<ReleaseInstance> releaseInstances = new ArrayList<>();
-				for(AppInstance instance : instances){
-					if(instance.getGroupId().intValue()==appGroup.getId().intValue()
-							&&environment.getId().intValue()==Integer.valueOf(instance.getEnvId()).intValue()){
-						ReleaseInstance releaseInstance = new ReleaseInstance();
-						releaseInstance.setHost(instance.getHost());
-						releaseInstance.setPort(instance.getPort());
-						releaseInstances.add(releaseInstance);
+			for (Environment environment : environments) {
+				MetaRelease meta = new MetaRelease();
+				meta.setGroup(appGroup.getName());
+				meta.setSecretKey(environment.getSecretKey());
+				meta.setAlgName(environment.getAlgName());
+				meta.setProfile(environment.getName());
+				List<ReleaseInstance> rInstances = new ArrayList<>();
+				for (AppInstance instance : aInstances) {
+					if (instance.getGroupId().intValue() == appGroup.getId().intValue()
+							&& environment.getId().intValue() == Integer.valueOf(instance.getEnvId()).intValue()) {
+						ReleaseInstance rInstance = new ReleaseInstance();
+						rInstance.setHost(instance.getHost());
+						rInstance.setPort(instance.getPort());
+						rInstances.add(rInstance);
 					}
 				}
-				preRelease.setInstances(releaseInstances);
-				if(releaseInstances.size()>0){
-					defaultConfigSourcePublisher.meta(preRelease);
-					jedisService.set(SCMDevOpsConstants.TOKEN_CREATE_TIME+appGroup.getName(),""+now,appGroup.getTokenRefreshInterval());
+				meta.setInstances(rInstances);
+				if (rInstances.size() > 0) {
+					// publisher.meta(meta);
+					jedisService.set("TOKEN_CREATE_TIME" + appGroup.getName(), "" + now, appGroup.getTokenRefreshInterval());
 				}
-
 			}
 		}
 	}
 
-	/* for test */ ReleaseMessage getReleaseMessage(String application, String profile, ReleaseInstance instance) {
+	/* for test */
+	public ReleaseMessage getReleaseMessage(String application, String profile, ReleaseInstance instance) {
 		ReleaseMessage release = new ReleaseMessage(application, profile, instance);
 
 		StringBuffer content = new StringBuffer();
