@@ -69,11 +69,6 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 		return new ScmContextRefresher(context, scope);
 	}
 
-	@Bean
-	public ScmContextRefresher scmContextRefresher(ConfigurableApplicationContext context, RefreshScope scope) {
-		return new ScmContextRefresher(context, scope);
-	}
-
 	/**
 	 * See:{@link RefreshAutoConfiguration#loggingRebinder()}
 	 * 
