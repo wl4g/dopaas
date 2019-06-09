@@ -17,6 +17,7 @@ package com.wl4g.devops.scm.context;
 
 import org.springframework.boot.ApplicationRunner;
 
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.bean.scm.model.*;
 
 /**
@@ -26,6 +27,7 @@ import com.wl4g.devops.common.bean.scm.model.*;
  * @version v1.0 2019年5月27日
  * @since
  */
+@Beta
 public interface ConfigContextHandler extends ApplicationRunner {
 
 	/**

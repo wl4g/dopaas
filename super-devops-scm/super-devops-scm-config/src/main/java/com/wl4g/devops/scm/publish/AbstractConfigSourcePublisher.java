@@ -117,9 +117,6 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		}
 	}
 
-	/**
-	 * Real-time publishing config source.
-	 */
 	@Override
 	public List<WatchDeferredResult<ResponseEntity<?>>> publish(PreRelease pre) {
 		Assert.notNull(pre, "Publish release must not be null");
@@ -134,12 +131,6 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		return deferreds;
 	}
 
-	/**
-	 * Used for hang live client listening configuration.
-	 * 
-	 * @param watch
-	 * @return
-	 */
 	@Override
 	public WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch) {
 		if (log.isInfoEnabled()) {
@@ -190,7 +181,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		Assert.notNull(watch, "Watch must not be null");
 
 		// Create watch-deferred
-		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getDeferredDefaultTimeout());
+		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getDefaultTimeout());
 
 		Map<String, WatchDeferredResult<ResponseEntity<?>>> deferredGroup = getCreateLocalWatchDeferreds(watch.getGroup());
 		deferredGroup.put(getWatchKey(watch.getInstance(), watch.getNamespace()), deferred);

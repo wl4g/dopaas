@@ -60,7 +60,7 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 	@PreDestroy
 	public void destroy1() {
 		System.out.println("ExampleService destroy1()..." + this);
-		running.compareAndSet(true,false);
+		running.compareAndSet(true, false);
 	}
 
 	@Override
@@ -76,8 +76,8 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 	public void start() {
 		System.out.println("ExampleService Starting... firstName=" + firstName + ", lastName=" + lastName + " " + this);
 		if (running.compareAndSet(false, true)) {
-			this.createThread();
-			this.thread.start();
+			createThread();
+			thread.start();
 		} else
 			throw new IllegalStateException("ExampleService Thread started..." + this);
 	}
@@ -85,7 +85,7 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 	public void stop() {
 		System.out.println("ExampleService Stoping... firstName=" + firstName + ", lastName=" + lastName + " " + this);
 		if (running.compareAndSet(true, false)) {
-			this.thread = null;
+			thread = null;
 		} else
 			throw new IllegalStateException("ExampleService Thread already stoped.");
 	}
@@ -107,10 +107,7 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 	}
 
 	private synchronized void createThread() {
-		if (this.thread != null) {
-			System.out.println("ExampleService Already thread " + thread);
-		}
-		this.thread = new Thread(() -> {
+		thread = new Thread(() -> {
 			while (running.get()) {
 				System.out.println("ExampleService  " + thread.getName() + ", firstName=" + firstName + ", lastName=" + lastName
 						+ " " + this);
@@ -121,6 +118,7 @@ public class ExampleService implements InitializingBean, DisposableBean, Closeab
 				}
 			}
 		});
+		thread.start();
 	}
 
 }

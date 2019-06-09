@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,7 +31,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	//@Value("#{'${example.firstName:unname}'.toUpperCase()}-${random.int(1000)}")
+	@Value("#{'${example.firstName:unname}'.toUpperCase()}-${random.int(1000)}")
 	private String firstName;
 
 	private String lastName;
@@ -51,7 +52,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 	@PreDestroy
 	public void destroy1() {
 		System.out.println("ExampleService2 @PreDestroy..." + this);
-		running.compareAndSet(true,false);
+		running.compareAndSet(true, false);
 	}
 
 	@Override
@@ -67,8 +68,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 	public void start() {
 		System.out.println("ExampleService2 Starting... firstName=" + firstName + ", lastName=" + lastName + " " + this);
 		if (running.compareAndSet(false, true)) {
-			this.createThread();
-			this.thread.start();
+			createThread();
 		} else
 			throw new IllegalStateException("Thread started..." + this);
 	}
@@ -76,7 +76,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 	public void stop() {
 		System.out.println("ExampleService2 Stoping... firstName=" + firstName + ", lastName=" + lastName + " " + this);
 		if (running.compareAndSet(true, false)) {
-			this.thread = null;
+			thread = null;
 		} else
 			throw new IllegalStateException("ExampleService2 Thread already stoped.");
 	}
@@ -98,10 +98,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 	}
 
 	private synchronized void createThread() {
-		if (this.thread != null) {
-			System.out.println("ExampleService2 Already thread " + thread);
-		}
-		this.thread = new Thread(() -> {
+		thread = new Thread(() -> {
 			while (running.get()) {
 				System.out.println("ExampleService2  " + thread.getName() + ", firstName=" + firstName + ", lastName=" + lastName
 						+ " " + this);
@@ -112,6 +109,7 @@ public class ExampleService2 implements InitializingBean, DisposableBean, Closea
 				}
 			}
 		});
+		thread.start();
 	}
 
 }

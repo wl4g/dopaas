@@ -20,7 +20,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
 
 import com.wl4g.devops.scm.config.ScmAutoConfiguration;
@@ -33,7 +32,6 @@ import com.wl4g.devops.scm.config.ScmAutoConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Import({ ScmAutoConfiguration.class })
-@EnableDiscoveryClient
 public @interface EnableScmServer {
 
 }

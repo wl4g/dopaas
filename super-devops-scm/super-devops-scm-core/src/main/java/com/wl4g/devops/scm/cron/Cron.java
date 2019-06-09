@@ -7,21 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
-
 @EnableScheduling
 @Component
 public class Cron {
 
-    final private static Logger log = LoggerFactory.getLogger(Cron.class);
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private ConfigContextHandler configContextHandler;
+	@Autowired
+	private ConfigContextHandler configContextHandler;
 
-
-    //@Scheduled(cron = "0/50 * * * * ?")
-    public void refreshMeta() {
-        configContextHandler.refreshMeta(false);
-    }
-
+	// TODO
+	// @Scheduled(cron = "0/50 * * * * ?")
+	public void refreshMeta() {
+		configContextHandler.refreshMeta(false);
+	}
 
 }
