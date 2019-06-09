@@ -17,7 +17,10 @@ package com.wl4g.devops.common.web;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -35,22 +38,26 @@ import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.*;
+import static org.springframework.http.MediaType.*;
+import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
+
+import static com.google.common.base.Charsets.UTF_8;
 
 import static com.wl4g.devops.common.constants.DevOpsConstants.PARAM_STACK_TRACE;
-
-import com.google.common.base.Charsets;
+import static com.wl4g.devops.common.utils.web.WebUtils2.write;
+import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
+import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import com.wl4g.devops.common.annotation.DevOpsErrorController;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
-import com.wl4g.devops.common.web.RespBase.RetCode;
 
 import freemarker.template.Template;
 
@@ -62,12 +69,11 @@ import freemarker.template.Template;
  * @since
  */
 @DevOpsErrorController
-public class SuperErrorsController extends AbstractErrorController implements InitializingBean {
-
+public class SmartSuperErrorsController extends AbstractErrorController implements InitializingBean {
 	final private static String DEFAULT_DIR_VIEW = "/default-error-view/";
 	final private static String DEFAULT_PATH_ERROR = "/error";
 
-	final private Logger log = LoggerFactory.getLogger(this.getClass());
+	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Value("${spring.cloud.devops.error.enabled:true}")
 	private boolean enabled;
@@ -78,16 +84,13 @@ public class SuperErrorsController extends AbstractErrorController implements In
 	@Value("${spring.cloud.devops.error.500:500.html}")
 	private String ftl500Name;
 
-	private Template template404;
-	private Template template500;
+	private Template tpl40x;
+	private Template tpl50x;
 
-	public SuperErrorsController(ErrorAttributes errorAttributes) {
+	public SmartSuperErrorsController(ErrorAttributes errorAttributes) {
 		super(errorAttributes);
 	}
 
-	/**
-	 * Default template view initial
-	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (!enabled) {
@@ -99,7 +102,7 @@ public class SuperErrorsController extends AbstractErrorController implements In
 		}
 
 		FreeMarkerConfigurer config = new FreeMarkerConfigurer();
-		config.setTemplateLoaderPath(this.basePath);
+		config.setTemplateLoaderPath(basePath);
 		Properties settings = new Properties();
 		settings.setProperty("template_update_delay", "0");
 		settings.setProperty("default_encoding", "UTF-8");
@@ -110,13 +113,13 @@ public class SuperErrorsController extends AbstractErrorController implements In
 		config.setFreemarkerSettings(settings);
 		try {
 			config.afterPropertiesSet();
-			this.template404 = config.getConfiguration().getTemplate(this.ftl404Name, "UTF-8");
-			this.template500 = config.getConfiguration().getTemplate(this.ftl500Name, "UTF-8");
+			this.tpl40x = config.getConfiguration().getTemplate(ftl404Name, "UTF-8");
+			this.tpl50x = config.getConfiguration().getTemplate(ftl500Name, "UTF-8");
 		} catch (Exception e) {
 			ReflectionUtils.rethrowRuntimeException(e);
 		}
-		Assert.notNull(template404, "Default 404 view template must not be null");
-		Assert.notNull(template500, "Default 500 view template must not be null");
+		Assert.notNull(tpl40x, "Default 404 view template must not be null");
+		Assert.notNull(tpl50x, "Default 500 view template must not be null");
 	}
 
 	/**
@@ -137,26 +140,25 @@ public class SuperErrorsController extends AbstractErrorController implements In
 	 * @return
 	 */
 	@RequestMapping(value = DEFAULT_PATH_ERROR)
-	public void doHandleError(HttpServletRequest request, HttpServletResponse response) {
+	public void doHandleErrors(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			Map<String, Object> model = this.getErrorInformation(request);
+			Map<String, Object> model = getOriginErrorDetails(request);
 			if (log.isErrorEnabled()) {
-				log.error("=> Global error handling:{}", model);
+				log.error("=> Global error handling - {}", model);
 			}
 
 			/*
 			 * If and only if the client is a browser and not an XHR request
 			 * returns to the page, otherwise it returns to JSON
 			 */
-			if (ResponseType.isJSONResponse(ResponseType.auto, request)) {
-				String errmsg = JacksonUtils.toJSONString(new RespBase<>(RetCode.SYS_ERR, (String) model.get("message"), null));
-				WebUtils2.writeJson(response, errmsg);
+			if (isJSONResponse(getResponseType(request), request)) {
+				String errmsg = extractMeaningfulErrorsMessage(model);
+				writeJson(response, toJSONString(new RespBase<>(SYS_ERR, errmsg, null)));
 			} else {
-				WebUtils2.write(response, getStatus(request).value(), MediaType.TEXT_HTML_VALUE,
-						reader(model, request).getBytes(Charsets.UTF_8));
+				write(response, getStatus(request).value(), TEXT_HTML_VALUE, renderErrorPage(model, request).getBytes(UTF_8));
 			}
 		} catch (IOException e) {
-			log.error("\n===========>> Global unified error response failure <<===========\n", e);
+			log.error("\n===========>> Global unified errors response failure <<===========\n", e);
 		}
 	}
 
@@ -180,6 +182,72 @@ public class SuperErrorsController extends AbstractErrorController implements In
 	}
 
 	/**
+	 * Extract meaningful errors messages.
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private String extractMeaningfulErrorsMessage(Map<String, Object> model) {
+		StringBuffer errmsg = new StringBuffer();
+
+		Object message = model.get("message");
+		if (message != null) {
+			errmsg.append(message);
+		}
+
+		Object errors = model.get("errors");
+		if (errors != null) {
+			errmsg.setLength(0); // Print only errors information
+
+			if (errors instanceof Collection) {
+				// Used to remove duplication
+				List<String> fieldErrs = new ArrayList<>(8);
+
+				Collection<Object> _errors = (Collection) errors;
+				Iterator<Object> it = _errors.iterator();
+				while (it.hasNext()) {
+					Object err = it.next();
+					if (err instanceof FieldError) {
+						FieldError ferr = (FieldError) err;
+						/*
+						 * Remove duplicate field validation errors,
+						 * e.g. @NotNull and @NotEmpty
+						 */
+						String fieldErr = ferr.getField();
+						if (!fieldErrs.contains(fieldErr)) {
+							errmsg.append("'");
+							errmsg.append(fieldErr);
+							errmsg.append("'");
+							errmsg.append(ferr.getDefaultMessage());
+							errmsg.append(", ");
+						}
+						fieldErrs.add(fieldErr);
+					} else {
+						errmsg.append(err.toString());
+						errmsg.append(", ");
+					}
+				}
+			} else {
+				errmsg.append(errors.toString());
+			}
+		}
+
+		return errmsg.toString();
+	}
+
+	/**
+	 * Get request response type
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private ResponseType getResponseType(HttpServletRequest request) {
+		ResponseType respType = safeOf(request.getParameter(DEFAULT_PARAM_NAME));
+		return respType == null ? auto : respType;
+	}
+
+	/**
 	 * Whether error stack information is enabled
 	 * 
 	 * @param request
@@ -194,42 +262,42 @@ public class SuperErrorsController extends AbstractErrorController implements In
 	}
 
 	/**
-	 * Error information
+	 * Extract error details information
 	 * 
 	 * @param request
 	 * @return
 	 */
-	private Map<String, Object> getErrorInformation(HttpServletRequest request) {
-		// Error information
-		return Collections.unmodifiableMap(getErrorAttributes(request, isStackTrace(request)));
+	private Map<String, Object> getOriginErrorDetails(HttpServletRequest request) {
+		return getErrorAttributes(request, isStackTrace(request));
 	}
 
 	/**
-	 * Reader text HTML
+	 * Render errors page
 	 * 
 	 * @param model
 	 * @param request
 	 * @return
 	 */
-	private String reader(Map<String, Object> model, HttpServletRequest request) {
-		String renderedString = null;
-		Template template = null;
+	private String renderErrorPage(Map<String, Object> model, HttpServletRequest request) {
+		// Replace the exception message that appears to be meaningful.
+		model.put("message", extractMeaningfulErrorsMessage(model));
 
-		// Error HTTP status
-		HttpStatus status = this.getStatus(request);
+		Template tpl = this.tpl50x;
+		HttpStatus status = getStatus(request);
 		switch (status) {
 		case NOT_FOUND:
-			template = this.template404;
+			tpl = tpl40x;
 			break;
 		default:
-			template = this.template500;
+			tpl = tpl50x;
 		}
 
 		// Reader
+		String renderedString = null;
 		try {
-			renderedString = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+			renderedString = processTemplateIntoString(tpl, model);
 		} catch (Exception e) {
-			ReflectionUtils.rethrowRuntimeException(e);
+			rethrowRuntimeException(e);
 		}
 		return renderedString;
 	}
@@ -246,8 +314,8 @@ public class SuperErrorsController extends AbstractErrorController implements In
 	public static class SuperErrorsControllerConfiguration extends AbstractOptionalControllerConfiguration {
 
 		@Bean
-		public SuperErrorsController superErrorsController(ErrorAttributes errorAttributes) {
-			return new SuperErrorsController(errorAttributes);
+		public SmartSuperErrorsController superErrorsController(ErrorAttributes errorAttributes) {
+			return new SmartSuperErrorsController(errorAttributes);
 		}
 
 		@Bean

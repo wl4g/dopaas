@@ -25,7 +25,6 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,21 +49,15 @@ public class ScmServerEndpoint extends BaseController {
 	}
 
 	@GetMapping(value = URI_S_SOURCE_GET)
-	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req, BindingResult bind) {
+	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req) {
 		if (log.isInfoEnabled()) {
-			log.info("Get config source... {}, bind: {}", req, bind);
+			log.info("On config source ... {}", req);
 		}
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
 		try {
-			if (bind.hasErrors()) {
-				resp.setCode(RetCode.PARAM_ERR);
-				resp.setMessage(bind.toString());
-			} else {
-				// AdminServer source configuration.
-				ReleaseMessage release = handler.findSource(req);
-				resp.getData().put(KEY_RELEASE, release);
-			}
+			// Got config source
+			resp.getData().put(KEY_RELEASE, handler.findSource(req));
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(ExceptionUtils.getRootCauseMessage(e));
@@ -78,20 +71,15 @@ public class ScmServerEndpoint extends BaseController {
 	}
 
 	@PostMapping(value = URI_S_REPORT_POST)
-	public RespBase<?> report(@Validated @RequestBody ReportInfo report, BindingResult bind) {
+	public RespBase<?> report(@Validated @RequestBody ReportInfo report) {
 		if (log.isInfoEnabled()) {
-			log.info("Report: {}, bind: {}", report, bind);
+			log.info("On report ... {}", report);
 		}
 
 		RespBase<?> resp = new RespBase<>();
 		try {
-			if (bind.hasErrors()) {
-				resp.setCode(RetCode.PARAM_ERR);
-				resp.setMessage(bind.toString());
-			} else {
-				// Post to adminServer report-message.
-				handler.report(report);
-			}
+			// Post to adminServer report-message.
+			handler.report(report);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(ExceptionUtils.getRootCauseMessage(e));
@@ -105,19 +93,14 @@ public class ScmServerEndpoint extends BaseController {
 	}
 
 	/* for test */ // @PostMapping(value = URL_CONF_RELEASE)
-	public RespBase<?> release(@Validated @RequestBody PreRelease pre, BindingResult bind) {
+	public RespBase<?> releaseTests(@Validated @RequestBody PreRelease pre) {
 		if (log.isInfoEnabled()) {
-			log.info("Releasing... {}, bind: {}", pre, bind);
+			log.info("On releasing tests ... {}", pre);
 		}
 
 		RespBase<?> resp = new RespBase<>();
-		if (bind.hasErrors()) {
-			resp.setCode(RetCode.PARAM_ERR);
-			resp.setMessage(bind.toString());
-		} else {
-			// Invoke release.
-			handler.release(pre);
-		}
+		// Invoke release.
+		handler.release(pre);
 
 		return resp;
 	}
