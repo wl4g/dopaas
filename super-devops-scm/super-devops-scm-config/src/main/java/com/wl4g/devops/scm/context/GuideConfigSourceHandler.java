@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationArguments;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
@@ -31,14 +31,9 @@ import com.wl4g.devops.common.bean.scm.model.ReportInfo;
  * @version v1.0 2019年5月27日
  * @since
  */
-public class GuideConfigSourceHandler implements ConfigContextHandler {
+public class GuideConfigSourceHandler implements ConfigContextHandler, InitializingBean {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	public GuideConfigSourceHandler() {
-		throw new IllegalStateException(String.format("Using SCM configuration center, you must customize the '%s' interface!",
-				ConfigContextHandler.class.getName()));
-	}
 
 	@Override
 	public ReleaseMessage findSource(GetRelease get) {
@@ -62,8 +57,9 @@ public class GuideConfigSourceHandler implements ConfigContextHandler {
 	}
 
 	@Override
-	public void run(ApplicationArguments args) throws Exception {
-		log.info("Config source context runner ...");
+	public void afterPropertiesSet() throws Exception {
+		throw new IllegalStateException(String.format("Using SCM configuration center, you must customize the '%s' interface!",
+				ConfigContextHandler.class.getName()));
 	}
 
 }

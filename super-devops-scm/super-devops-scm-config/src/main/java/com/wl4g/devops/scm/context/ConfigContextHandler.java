@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.scm.context;
 
-import org.springframework.boot.ApplicationRunner;
-
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.bean.scm.model.*;
 
@@ -28,7 +26,7 @@ import com.wl4g.devops.common.bean.scm.model.*;
  * @since
  */
 @Beta
-public interface ConfigContextHandler extends ApplicationRunner {
+public interface ConfigContextHandler {
 
 	/**
 	 * Find configuration property-source.

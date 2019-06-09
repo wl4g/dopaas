@@ -38,8 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.stereotype.Service;
 
 import static java.lang.String.*;
 import java.io.File;
@@ -56,7 +54,6 @@ import java.util.Map;
  * @date 2018年11月1日
  * @since
  */
-@Service
 public class StandardConfigContextHandler implements ConfigContextHandler {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -71,11 +68,6 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 
 	@Autowired
 	private JedisService jedisService;
-
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
-
-	}
 
 	@Override
 	public ReleaseMessage findSource(GetRelease get) {

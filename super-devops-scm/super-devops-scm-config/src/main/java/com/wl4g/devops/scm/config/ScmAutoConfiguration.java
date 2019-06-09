@@ -53,7 +53,7 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguratio
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ConfigContextHandler configSourceHandler() {
+	public ConfigContextHandler configContextHandler() {
 		return new GuideConfigSourceHandler();
 	}
 
@@ -83,7 +83,7 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguratio
 
 	@Bean
 	public ScmServerEndpoint scmServerEnndpoint() {
-		return new ScmServerEndpoint(configSourceHandler());
+		return new ScmServerEndpoint(configContextHandler());
 	}
 
 	@Bean

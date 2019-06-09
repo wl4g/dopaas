@@ -73,7 +73,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	protected void postStartupProperties() {
 		if (watchController.compareAndSet(false, true)) {
 			if (log.isInfoEnabled()) {
-				log.info("Starting configSource watcher, watchRequests: {}", watchRequests.size());
+				log.info("Starting config source watchRequests: {}", watchRequests.size());
 			}
 		}
 	}
@@ -94,8 +94,8 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 			// Scan poll published configs.
 			Collection<PublishConfigWrapper> next = null;
 			while ((next = pollNextPublishedConfig()) != null) {
-				if (log.isTraceEnabled()) {
-					log.trace("Scan published config: {}", next);
+				if (log.isDebugEnabled()) {
+					log.debug("Scan published config: {}", next);
 				}
 
 				for (PublishConfigWrapper wrap : next) {
@@ -112,7 +112,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 			try {
 				Thread.sleep(config.getScanDelay());
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("", e);
 			}
 		}
 	}
