@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.session.mgt.support;
+package com.wl4g.devops.support.cache;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Charsets;
 
-import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
+import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
@@ -47,11 +47,10 @@ import redis.clients.jedis.ScanResult;
  * pointer iteration. </font> See: <a href=
  * "https://www.jianshu.com/p/2f31881bf847">https://www.jianshu.com/p/2f31881bf847</a>
  * 
- * @author Christoph Strobl
- * @author Thomas Darimont
- * @author Duobiao Ou
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2018年11月9日
+ * @since
  * @param <E>
- * @since 1.4
  */
 public abstract class ScanCursor<E> implements Iterator<E> {
 	final public static String REPLICATION = "Replication";
@@ -142,7 +141,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	@SuppressWarnings("unchecked")
 	public List<E> readItem() {
 		try {
-			return (List<E>) iter.getItems().stream().map(key -> ProtostuffUtils.deserialize(jdsCluster.get(key), ofType))
+			return (List<E>) iter.getItems().stream().map(key -> deserialize(jdsCluster.get(key), ofType))
 					.collect(Collectors.toList());
 		} finally {
 			iter.getItems().clear();
@@ -181,7 +180,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 			throw new NoSuchElementException("No more elements available for cursor " + getCursorId() + ".");
 		}
 
-		return (E) ProtostuffUtils.deserialize(jdsCluster.get(iter.iterator().next()), ofType);
+		return (E) deserialize(jdsCluster.get(iter.iterator().next()), ofType);
 	}
 
 	/**

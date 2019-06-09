@@ -22,12 +22,10 @@ import com.wl4g.devops.scm.client.annotation.EnableScmWatchTask;
 import com.wl4g.devops.scm.client.annotation.EnableScmWatchZk;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
-import com.wl4g.devops.scm.client.configure.watch.DeferredRefreshWatcher;
 import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
-import com.wl4g.devops.scm.client.configure.watch.TokenRefreshWatcher;
 import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
 import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
-import com.wl4g.devops.scm.common.utils.ScmUtils;
+import static com.wl4g.devops.scm.common.utils.ScmUtils.*;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;
@@ -98,25 +96,8 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 	@EnableScmWatchZk
 	public ZookeeperRefreshWatcher zookeeperRefreshWatcher(CuratorFramework curator, ScmContextRefresher refresher,
 			InstanceInfo config) {
-		String path = ScmUtils.genZkConfigPath(new GenericInfo(config.getAppName(), config.getProfilesActive()),
-				config.getBindInstance());
+		String path = genZkConfigPath(new GenericInfo(config.getAppName(), config.getProfilesActive()), config.getBindInstance());
 		return new ZookeeperRefreshWatcher(refresher, path, curator);
-	}
-
-	@Bean("tokenRefreshWatcher")
-	@EnableScmWatchZk
-	public TokenRefreshWatcher tokenRefreshWatcher(CuratorFramework curator, ScmContextRefresher refresher,
-												   InstanceInfo config) {
-		String path = ScmUtils.genMetaPath(new GenericInfo(config.getAppName(), config.getProfilesActive()),
-				config.getBindInstance());
-		return new TokenRefreshWatcher(refresher, path, curator);
-	}
-
-	@Bean("deferredRefreshWatcher")
-	public DeferredRefreshWatcher deferredRefreshWatcher( ScmContextRefresher refresher,InstanceInfo config,ScmClientProperties scmClientProperties) {
-		String path = ScmUtils.genZkConfigPath(new GenericInfo(config.getAppName(), config.getProfilesActive()),
-				config.getBindInstance());
-		return new DeferredRefreshWatcher(refresher, path, scmClientProperties);
 	}
 
 	//
@@ -124,7 +105,7 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 	//
 
 	@Bean
-	public ScmClientEndpoint scmClientController(Environment environment, ScmContextRefresher refresher) {
+	public ScmClientEndpoint scmClientEndpoint(Environment environment, ScmContextRefresher refresher) {
 		return new ScmClientEndpoint(environment, refresher);
 	}
 

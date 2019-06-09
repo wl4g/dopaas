@@ -15,9 +15,18 @@
  */
 package com.wl4g.devops.scm.context;
 
+import org.springframework.boot.ApplicationRunner;
+
 import com.wl4g.devops.common.bean.scm.model.*;
 
-public interface ConfigContextHandler {
+/**
+ * Config soruce context handler interface
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月27日
+ * @since
+ */
+public interface ConfigContextHandler extends ApplicationRunner {
 
 	/**
 	 * Find configuration property-source.

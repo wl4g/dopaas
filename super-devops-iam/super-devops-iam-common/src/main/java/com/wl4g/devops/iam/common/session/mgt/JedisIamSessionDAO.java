@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.iam.common.session.mgt.support.ScanCursor;
+import com.wl4g.devops.support.cache.ScanCursor;
 
 import redis.clients.jedis.ScanParams;
 

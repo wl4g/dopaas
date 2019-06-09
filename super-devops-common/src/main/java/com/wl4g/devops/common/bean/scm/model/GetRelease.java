@@ -30,15 +30,8 @@ public class GetRelease extends GenericInfo {
 		super();
 	}
 
-	public GetRelease(String group, String profile, ReleaseMeta releaseMeta, ReleaseInstance instance) {
-		super(group, profile, releaseMeta);
-		this.setInstance(instance);
-	}
-
-
-
-	public GetRelease(String group, String profile, ReleaseInstance instance) {
-		super(group, profile, null);
+	public GetRelease(String group, String profile, ReleaseMeta meta, ReleaseInstance instance) {
+		super(group, profile, meta);
 		this.setInstance(instance);
 	}
 

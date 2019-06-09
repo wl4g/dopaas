@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.config;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.iam.annotation.ExtraController;
 import com.wl4g.devops.iam.web.DiabloExtraController;
-import com.wl4g.devops.iam.web.ServerAuthenticatorController;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
@@ -39,11 +38,6 @@ public class ExtraConfiguration extends AbstractOptionalControllerConfiguration 
 	@Bean
 	public DiabloExtraController diabloExtraController() {
 		return new DiabloExtraController();
-	}
-
-	@Bean
-	public ServerAuthenticatorController serverAuthenticatorController() {
-		return new ServerAuthenticatorController();
 	}
 
 	@Override
