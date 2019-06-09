@@ -42,7 +42,7 @@ public class ReleaseMessage extends GetRelease {
 	}
 
 	public ReleaseMessage(String application, String profile, ReleaseInstance instance) {
-		super(application, profile, instance);
+		super(application, profile, null, instance);
 	}
 
 	public List<ReleasePropertySource> getPropertySources() {

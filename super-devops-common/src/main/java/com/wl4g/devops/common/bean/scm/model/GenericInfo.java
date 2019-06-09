@@ -28,15 +28,24 @@ public class GenericInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
+	 * Namespace(config file-name)
+	 */
+	@NotNull
+	@NotBlank
+	private String namespace;
+
+	/**
 	 * Application name
 	 */
 	@NotNull
+	@NotBlank
 	private String group;
 
 	/**
 	 * Environment active profile.
 	 */
 	@NotNull
+	@NotBlank
 	private String profile;
 
 	/**
@@ -45,21 +54,27 @@ public class GenericInfo implements Serializable {
 	@NotNull
 	private ReleaseMeta meta = new ReleaseMeta();
 
-
-
 	public GenericInfo() {
 		super();
 	}
 
-	public GenericInfo(String application, String profile) {
-		this(application, profile, null);
+	public GenericInfo(String group, String profile) {
+		this(group, profile, null);
 	}
 
-	public GenericInfo(String application, String profile, ReleaseMeta releaseMeta) {
+	public GenericInfo(String group, String profile, ReleaseMeta meta) {
 		super();
-		this.setGroup(application);
-		this.setProfile(profile);
-		this.setMeta(releaseMeta);
+		setGroup(group);
+		setProfile(profile);
+		setMeta(meta);
+	}
+
+	public String getNamespace() {
+		return namespace;
+	}
+
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
 	}
 
 	public String getGroup() {
@@ -82,7 +97,6 @@ public class GenericInfo implements Serializable {
 		}
 	}
 
-
 	public ReleaseMeta getMeta() {
 		return meta;
 	}
@@ -101,7 +115,7 @@ public class GenericInfo implements Serializable {
 	public void validation(boolean validVersion, boolean validReleaseId) {
 		Assert.notNull(getGroup(), "`application` is not allowed to be null.");
 		Assert.notNull(getProfile(), "`profile` is not allowed to be null.");
-		this.getMeta().validation(validVersion, validReleaseId);
+		getMeta().validation(validVersion, validReleaseId);
 	}
 
 	public static class ReleaseInstance implements Serializable {
@@ -143,13 +157,13 @@ public class GenericInfo implements Serializable {
 
 		@Override
 		public String toString() {
-			return this.getHost() + ":" + this.getPort();
+			return getHost() + ":" + getPort();
 		}
 
 		public void validation() {
 			Assert.notNull(getHost(), "`host` is not allowed to be null.");
 			Assert.notNull(getPort(), "`port` is not allowed to be null.");
-			HostAndPort.fromString(this.toString());
+			HostAndPort.fromString(toString());
 		}
 
 		public static ReleaseInstance of(String hostPortString) {
@@ -199,12 +213,12 @@ public class GenericInfo implements Serializable {
 		}
 
 		public String asText() {
-			return this.getReleaseId() + "@" + this.getVersion();
+			return getReleaseId() + "@" + getVersion();
 		}
 
 		@Override
 		public String toString() {
-			return this.asText();
+			return asText();
 		}
 
 		public void validation(boolean validVersion, boolean validReleaseId) {

@@ -18,29 +18,44 @@ package com.wl4g.devops.scm.config;
 import java.lang.annotation.Annotation;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.scm.context.NothingConfigSourceHandler;
+import com.wl4g.devops.scm.context.GuideConfigSourceHandler;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
-import com.wl4g.devops.scm.publish.DefaultConfigSourcePublisher;
+import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
+import com.wl4g.devops.support.cache.JedisService;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
+/**
+ * SCM auto configuration
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月27日
+ * @since
+ */
 public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguration {
+
+	@Bean
+	@ConfigurationProperties(prefix = "spring.cloud.devops.scm")
+	public ScmProperties scmProperties() {
+		return new ScmProperties();
+	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ConfigContextHandler configSourceHandler() {
-		return new NothingConfigSourceHandler();
+		return new GuideConfigSourceHandler();
 	}
 
 	@Bean
-	public ConfigSourcePublisher configSourcePublisher() {
-		return new DefaultConfigSourcePublisher();
+	public ConfigSourcePublisher configSourcePublisher(JedisService jedisService) {
+		return new DefaultRedisConfigSourcePublisher(scmProperties(), jedisService);
 	}
 
 	//
@@ -49,7 +64,7 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguratio
 
 	@Bean
 	public ScmServerEndpoint scmServerEnndpoint() {
-		return new ScmServerEndpoint();
+		return new ScmServerEndpoint(configSourceHandler());
 	}
 
 	@Bean

@@ -16,7 +16,6 @@
 package com.wl4g.devops.scm.client.config;
 
 import com.wl4g.devops.iam.client.config.IamClientProperties;
-import com.wl4g.devops.iam.client.web.ServerTokenClient;
 import com.wl4g.devops.scm.client.configure.DefaultBootstrapPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -53,8 +52,6 @@ public class ScmBootstrapConfiguration {
 		return new ScmClientProperties(environment);
 	}
 
-
-
 	@Bean
 	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig,
 			InstanceInfo info) {
@@ -65,11 +62,6 @@ public class ScmBootstrapConfiguration {
 	@ConfigurationProperties(prefix = "spring.cloud.devops.scm.client.retry")
 	public RetryProperties retryProperties() {
 		return new RetryProperties();
-	}
-
-	@Bean
-	public ServerTokenClient serverTokenClient(IamClientProperties config) {
-		return new ServerTokenClient(config);
 	}
 
 	@Bean

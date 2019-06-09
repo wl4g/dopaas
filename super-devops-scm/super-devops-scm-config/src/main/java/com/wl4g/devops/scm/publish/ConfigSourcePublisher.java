@@ -15,10 +15,24 @@
  */
 package com.wl4g.devops.scm.publish;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 
+/**
+ * SCM config source server publisher api.
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月27日
+ * @since
+ */
 public interface ConfigSourcePublisher {
 
-	public void release(PreRelease preRelease);
+	List<WatchDeferredResult<ResponseEntity<?>>> publish(PreRelease release);
+
+	WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch);
 
 }

@@ -33,7 +33,6 @@ public class ConfigServerInstanceProvider {
 
 	private static Log logger = LogFactory.getLog(ConfigServerInstanceProvider.class);
 
-
 	@Autowired
 	private DiscoveryClient client;
 

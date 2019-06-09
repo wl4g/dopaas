@@ -17,15 +17,28 @@ package com.wl4g.devops.scm.context;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
 
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 
-public class NothingConfigSourceHandler implements ConfigContextHandler {
+/**
+ * Guide config soruce context handler.
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月27日
+ * @since
+ */
+public class GuideConfigSourceHandler implements ConfigContextHandler {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
+
+	public GuideConfigSourceHandler() {
+		throw new IllegalStateException(String.format("Using SCM configuration center, you must customize the '%s' interface!",
+				ConfigContextHandler.class.getName()));
+	}
 
 	@Override
 	public ReleaseMessage findSource(GetRelease get) {
@@ -45,7 +58,12 @@ public class NothingConfigSourceHandler implements ConfigContextHandler {
 
 	@Override
 	public void refreshMeta(boolean focus) {
-		log.info("Refresh Meta");
+		log.info("Refresh meta ...");
+	}
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		log.info("Config source context runner ...");
 	}
 
 }

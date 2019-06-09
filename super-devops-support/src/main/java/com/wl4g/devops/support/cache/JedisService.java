@@ -19,10 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -31,6 +33,7 @@ import com.wl4g.devops.common.utils.serialize.ObjectUtils;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.ScanParams;
 
 public class JedisService {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -70,6 +73,13 @@ public class JedisService {
 			return result;
 		});
 
+	}
+
+	public <T> ScanCursor<T> scan(final String pattern, final int batch) {
+		byte[] match = trimToEmpty(pattern).getBytes(Charsets.UTF_8);
+		ScanParams params = new ScanParams().count(batch).match(match);
+		return new ScanCursor<T>(getJedisCluster(), params) {
+		}.open();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -246,14 +256,12 @@ public class JedisService {
 	}
 
 	/**
-	 * 设置Set缓存
+	 * Set caching
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @param cacheSeconds
-	 *            超时时间，0为不超时
+	 *            Time-out, 0 is no time-out
 	 * @return
 	 */
 	public Long setObjectSet(final String key, final Set<Object> value, final int cacheSeconds) {
@@ -279,12 +287,10 @@ public class JedisService {
 	}
 
 	/**
-	 * 向Set缓存中添加值
+	 * Adding values to Set cache
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @return
 	 */
 	public Long setSetAdd(final String key, final String... value) {
@@ -303,12 +309,10 @@ public class JedisService {
 	}
 
 	/**
-	 * 向Set缓存中添加值
+	 * Adding values to Set cache
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @return
 	 */
 	public Long setSetObjectAdd(final String key, final Object... value) {
@@ -330,7 +334,7 @@ public class JedisService {
 	}
 
 	/**
-	 * 删除Set缓存中普通成员
+	 * Delete ordinary members from Set cache
 	 * 
 	 * @param key
 	 * @param members
@@ -350,7 +354,7 @@ public class JedisService {
 	}
 
 	/**
-	 * 删除Set缓存中对象成员
+	 * Delete Object Members in Set Cache
 	 * 
 	 * @param key
 	 * @param members
@@ -376,11 +380,10 @@ public class JedisService {
 	}
 
 	/**
-	 * 获取Map缓存
+	 * Getting Map Cache
 	 * 
 	 * @param key
-	 *            键
-	 * @return 值
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getMap(final String key) {
@@ -394,11 +397,10 @@ public class JedisService {
 	}
 
 	/**
-	 * 获取Map缓存
+	 * Getting Map Cache
 	 * 
 	 * @param key
-	 *            键
-	 * @return 值
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getObjectMap(final String key) {
@@ -416,14 +418,12 @@ public class JedisService {
 	}
 
 	/**
-	 * 设置Map缓存
+	 * Setting up Map Cache
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @param cacheSeconds
-	 *            超时时间，0为不超时
+	 *            Time-out, 0 is no time-out
 	 * @return
 	 */
 	public String setMap(final String key, final Map<String, String> value, final int cacheSeconds) {
@@ -440,14 +440,12 @@ public class JedisService {
 	}
 
 	/**
-	 * 设置Map缓存
+	 * Setting up Map Cache
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @param cacheSeconds
-	 *            超时时间，0为不超时
+	 *            Time-out, 0 is no time-out
 	 * @return
 	 */
 	public String setObjectMap(final String key, final Map<String, Object> value, final int cacheSeconds) {
@@ -468,12 +466,10 @@ public class JedisService {
 	}
 
 	/**
-	 * 向Map缓存中添加值
+	 * Adding values to the Map cache
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @return
 	 */
 	public String mapPut(final String key, final Map<String, String> value) {
@@ -487,12 +483,10 @@ public class JedisService {
 	}
 
 	/**
-	 * 向Map缓存中添加值
+	 * Adding values to the Map cache
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @return
 	 */
 	public String mapObjectPut(final String key, final Map<String, Object> value) {
@@ -511,12 +505,10 @@ public class JedisService {
 	}
 
 	/**
-	 * 移除Map缓存中的值
+	 * Remove the value from the Map cache
 	 * 
 	 * @param key
-	 *            键
 	 * @param value
-	 *            值
 	 * @return
 	 */
 	public Long mapRemove(final String key, final String mapKey) {
@@ -636,4 +628,5 @@ public class JedisService {
 	public static abstract interface Callback {
 		public Object execute(JedisCluster jedisCluster);
 	}
+
 }

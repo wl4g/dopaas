@@ -63,10 +63,10 @@ import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.iam.common.session.mgt.support.ScanCursor;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.common.utils.Sessions;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
  * Default authentication handler implements

@@ -41,12 +41,8 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
 @Order(0)
 public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLocator {
 
-	final public static String devOpsPropertySource = "_devOpsPropertySource";
-
 	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig, InstanceInfo info) {
 		super(config, retryConfig, info);
-		//get token from server
-		receiveToken();
 	}
 
 	@Override
@@ -65,7 +61,7 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 			try {
 				// 1.1 Get remote latest property-sources(version/releaseId is
 				// null).
-				ReleaseMessage config = getRemoteReleaseConfig(new GenericInfo.ReleaseMeta());
+				ReleaseMessage config = pullRemoteReleaseConfig(new GenericInfo.ReleaseMeta());
 
 				// 1.2 Resolves cipher resource.
 				resolvesCipherSource(config);
@@ -81,7 +77,7 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 		}
 
 		// When you refresh the configuration source, you need to clean it up.
-		// See:refresh.ScmContextRefresher#addScmConfigToEnvironment()
+		// See:ScmContextRefresher#addScmConfigToEnvironment()
 		return composite;
 	}
 
