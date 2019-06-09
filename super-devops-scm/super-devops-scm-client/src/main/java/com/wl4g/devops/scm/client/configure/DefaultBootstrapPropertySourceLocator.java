@@ -71,7 +71,7 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 
 			} catch (Exception e) {
 				log.warn("-----------------------------------------");
-				log.warn("Could not locate remote PropertySource! {} causes by:{}", getRootCauseMessage(e));
+				log.warn("Could not locate remote PropertySource! causes by: {}", getRootCauseMessage(e));
 				log.warn("-----------------------------------------");
 			}
 		}
