@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.scm.publish;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
@@ -25,7 +28,9 @@ import com.wl4g.devops.support.task.GenericTaskRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +66,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 * Save all client monitors configuration requests globally (Using:
 	 * HTTP-long-poling model).
 	 */
-	final private Map<String, Map<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
+	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
 	public AbstractConfigSourcePublisher(ScmProperties config) {
 		super(config);
@@ -90,29 +95,31 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	@Override
 	public void run() {
 		while (watchController.get()) {
+			// Scan poll published configuration
+			try {
+				Collection<PublishConfigWrapper> next = null;
+				while (watchController.get() && !isEmpty(next = pollNextPublishedConfig())) {
+					if (log.isInfoEnabled()) {
+						log.info("Scan published config for - {}", next);
+					}
 
-			// Scan poll published configs.
-			Collection<PublishConfigWrapper> next = null;
-			while ((next = pollNextPublishedConfig()) != null) {
-				if (log.isDebugEnabled()) {
-					log.debug("Scan published config: {}", next);
-				}
+					for (PublishConfigWrapper wrap : next) {
+						Assert.state((wrap != null && isNotBlank(wrap.getGroup())),
+								String.format("Published config group must not be blank! - %s", wrap));
 
-				for (PublishConfigWrapper wrap : next) {
-					Collection<WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateLocalWatchDeferreds(wrap.getGroup())
-							.values();
-					for (WatchDeferredResult<ResponseEntity<?>> deferred : deferreds) {
-						if (!deferred.isSetOrExpired()) {
-							deferred.setResult(createResponse(OK, wrap.getMeta()));
+						Collection<WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(wrap.getGroup())
+								.values();
+						for (WatchDeferredResult<ResponseEntity<?>> deferred : deferreds) {
+							if (!deferred.isSetOrExpired()) {
+								deferred.setResult(createResponse(OK, wrap.getMeta()));
+							}
 						}
 					}
 				}
-			}
 
-			try {
 				Thread.sleep(config.getScanDelay());
-			} catch (InterruptedException e) {
-				log.error("", e);
+			} catch (Throwable th) {
+				log.error("Watching error!", th);
 			}
 		}
 	}
@@ -122,7 +129,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		Assert.notNull(pre, "Publish release must not be null");
 
 		// Got or create local watching deferredResults.
-		List<WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateLocalWatchDeferreds(pre.getGroup()).values().stream()
+		List<WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(pre.getGroup()).values().stream()
 				.collect(Collectors.toList());
 
 		// Put watch instances(for clustering).
@@ -133,15 +140,11 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 
 	@Override
 	public WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch) {
-		if (log.isInfoEnabled()) {
-			log.info("On watch config source: {}", watch);
-		}
-
 		// Override creation listening latency.
 		WatchDeferredResult<ResponseEntity<?>> deferred = doCreateWatchDeferred(watch);
 
 		if (log.isInfoEnabled()) {
-			log.info("Published! deferred result: {}", deferred);
+			log.info("Created watch deferredResult: {}", deferred);
 		}
 		return deferred;
 	}
@@ -158,7 +161,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	}
 
 	/**
-	 * scan publish config source wrapper
+	 * scan publish configuration source wrapper
 	 * 
 	 * @return
 	 */
@@ -183,24 +186,25 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		// Create watch-deferred
 		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getDefaultTimeout());
 
-		Map<String, WatchDeferredResult<ResponseEntity<?>>> deferredGroup = getCreateLocalWatchDeferreds(watch.getGroup());
-		deferredGroup.put(getWatchKey(watch.getInstance(), watch.getNamespace()), deferred);
+		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getGroup());
+		String watchKey = getWatchKey(watch.getInstance(), watch.getNamespace());
+		deferreds.put(watchKey, deferred);
 
 		final String instance = watch.getInstance().toString();
 		// When deferred Result completes (whether it is timeout or abnormal or
 		// normal), remove the corresponding watch key from watchRequests
 		deferred.onCompletion(() -> {
 			if (log.isInfoEnabled()) {
-				log.info("Completion watch deferred for: {}", instance);
+				log.info("Completed watch instance for: {}", instance);
 			}
-			deferredGroup.remove(instance);
+			deferreds.remove(watchKey, instance);
 		});
 
 		deferred.onTimeout(() -> {
 			if (log.isWarnEnabled()) {
-				log.warn("Watch deferred timeout for: {}", instance);
+				log.warn("Timeout watch deferred instance for: {}", instance);
 			}
-			deferredGroup.remove(instance);
+			deferreds.remove(watchKey, instance);
 
 			// In response to 304(No any configuration modified), the
 			// client will then re-establish the long-polling request.
@@ -216,18 +220,18 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 * @param group
 	 * @return
 	 */
-	protected Map<String, WatchDeferredResult<ResponseEntity<?>>> getCreateLocalWatchDeferreds(String group) {
+	protected Multimap<String, WatchDeferredResult<ResponseEntity<?>>> getCreateWithDeferreds(String group) {
 		Assert.hasText(group, "Group must not be empty");
 
-		Map<String, WatchDeferredResult<ResponseEntity<?>>> watchGroup = watchRequests.get(group);
-		if (watchGroup == null) {
-			watchRequests.putIfAbsent(group, (watchGroup = new ConcurrentHashMap<>(128)));
+		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> watchs = watchRequests.get(group);
+		if (watchs == null) {
+			watchRequests.putIfAbsent(group, (watchs = Multimaps.synchronizedSetMultimap(HashMultimap.create())));
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Got create watch deferred results: {}, total: {}", watchGroup, watchRequests.size());
+		if (log.isDebugEnabled()) {
+			log.debug("Get-create watch group: {}, total: {}, deferredResults: {}", group, watchRequests.size(), watchs);
 		}
-		return watchGroup;
+		return watchs;
 	}
 
 	/**
@@ -244,7 +248,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	}
 
 	/**
-	 * Publish config source information wrapper
+	 * Publish configuration source information wrapper
 	 * 
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年6月5日

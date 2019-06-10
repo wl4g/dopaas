@@ -75,10 +75,10 @@ public class JedisService {
 
 	}
 
-	public <T> ScanCursor<T> scan(final String pattern, final int batch) {
+	public <T> ScanCursor<T> scan(final String pattern, final int batch, final Class<T> clazz) {
 		byte[] match = trimToEmpty(pattern).getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(batch).match(match);
-		return new ScanCursor<T>(getJedisCluster(), params) {
+		return new ScanCursor<T>(getJedisCluster(), clazz, params) {
 		}.open();
 	}
 
@@ -95,7 +95,12 @@ public class JedisService {
 
 	public <T> String setObjectT(final String key, final T value, final int cacheSeconds) {
 		return (String) doInRedis(cluster -> {
-			String result = cluster.setex(getBytesKey(key), cacheSeconds, ProtostuffUtils.serialize(value));
+			String result = null;
+			if (cacheSeconds > 0) {
+				result = cluster.setex(getBytesKey(key), cacheSeconds, ProtostuffUtils.serialize(value));
+			} else {
+				result = cluster.set(getBytesKey(key), ProtostuffUtils.serialize(value));
+			}
 			if (log.isDebugEnabled()) {
 				log.debug("setObjectT {} = {}", key, value);
 			}

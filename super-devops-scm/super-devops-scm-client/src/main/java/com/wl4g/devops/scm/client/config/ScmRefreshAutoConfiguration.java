@@ -15,18 +15,13 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.common.bean.scm.model.GenericInfo;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.client.annotation.EnableScmWatchTask;
-import com.wl4g.devops.scm.client.annotation.EnableScmWatchZk;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
 import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
-import com.wl4g.devops.scm.client.configure.watch.ZookeeperRefreshWatcher;
 import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
-import static com.wl4g.devops.scm.common.utils.ScmUtils.*;
-import org.apache.curator.framework.CuratorFramework;
+
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
@@ -82,17 +77,8 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 	}
 
 	@Bean("taskRefreshWatcher")
-	@EnableScmWatchTask
 	public TimingRefreshWatcher timingRefreshWatcher(ScmContextRefresher refresher) {
 		return new TimingRefreshWatcher(refresher);
-	}
-
-	@Bean("zookeeperRefreshWatcher")
-	@EnableScmWatchZk
-	public ZookeeperRefreshWatcher zookeeperRefreshWatcher(CuratorFramework curator, ScmContextRefresher refresher,
-			InstanceInfo config) {
-		String path = genZkConfigPath(new GenericInfo(config.getAppName(), config.getProfilesActive()), config.getBindInstance());
-		return new ZookeeperRefreshWatcher(refresher, path, curator);
 	}
 
 	//

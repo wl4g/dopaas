@@ -135,51 +135,51 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 		private static final long serialVersionUID = -1996272636830701232L;
 
 		/** concurrency */
-		private Integer concurrency = 3;
+		private int concurrency = 3;
 
 		/** watch dog delay */
-		private Long keepAliveTime = 0L;
+		private long keepAliveTime = 0L;
 
 		/**
 		 * Consumption rReceive queue size
 		 */
-		private Integer acceptQueue = 65535;
+		private int acceptQueue = 65535;
 
 		public TaskProperties() {
 			super();
 		}
 
-		public TaskProperties(Integer concurrency, Long keepAliveTime, Integer acceptQueue) {
+		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue) {
 			super();
 			setConcurrency(concurrency);
 			setKeepAliveTime(keepAliveTime);
 			setAcceptQueue(acceptQueue);
 		}
 
-		public Integer getConcurrency() {
+		public int getConcurrency() {
 			return concurrency;
 		}
 
-		public void setConcurrency(Integer concurrency) {
+		public void setConcurrency(int concurrency) {
 			Assert.isTrue(concurrency > 0, "Concurrency must be greater than 0");
 			this.concurrency = concurrency;
 		}
 
-		public Long getKeepAliveTime() {
+		public long getKeepAliveTime() {
 			Assert.isTrue(concurrency >= 0, "Concurrency must be greater or eq than 0");
 			return keepAliveTime;
 		}
 
-		public void setKeepAliveTime(Long keepAliveTime) {
+		public void setKeepAliveTime(long keepAliveTime) {
 			Assert.isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
 			this.keepAliveTime = keepAliveTime;
 		}
 
-		public Integer getAcceptQueue() {
+		public int getAcceptQueue() {
 			return acceptQueue;
 		}
 
-		public void setAcceptQueue(Integer acceptQueue) {
+		public void setAcceptQueue(int acceptQueue) {
 			Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
 			this.acceptQueue = acceptQueue;
 		}

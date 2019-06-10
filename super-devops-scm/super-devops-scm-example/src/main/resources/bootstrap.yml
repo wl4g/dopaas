@@ -17,18 +17,6 @@ spring: # Base configuration.
   profiles:
     active: test
   cloud: # Spring cloud configuration.
-    zookeeper:
-      connect-string: book-cloud:2181
-      discovery:
-        root: /application
-        enabled: true
-        register: true
-        # See: o.s.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties
-        # o.s.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration
-        metadata:
-          # See: d.c.boot.admin.discovery.DefaultServiceInstanceConverter.getHealthUrl()
-          management.context-path: /${spring.application.name}
-          health.path: health
     # Devops configuration.
     devops: 
       scm.client: # SCM client configuration.
@@ -39,11 +27,8 @@ spring: # Base configuration.
           max-period: 8000
           max-attempts: 4
         watcher:
-          enabled: false
-          init-delay: 120000
+          init-delay: 90000
           delay: 30000
-        zookeeper:
-          enabled: true
 
 # #### Server configuration. ####
 server:
