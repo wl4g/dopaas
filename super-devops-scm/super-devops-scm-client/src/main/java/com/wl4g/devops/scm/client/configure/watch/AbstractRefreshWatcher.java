@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
-import com.wl4g.devops.support.task.GenericTaskRunner;
 
 /**
  * Abstract refresh watcher.
@@ -29,14 +31,21 @@ import com.wl4g.devops.support.task.GenericTaskRunner;
  * @see {@link org.springframework.cloud.zookeeper.config.ConfigWatcher
  *      ConfigWatcher}
  */
-public abstract class AbstractRefreshWatcher extends GenericTaskRunner {
+public abstract class AbstractRefreshWatcher implements Runnable {
 
+	final protected Logger log = LoggerFactory.getLogger(getClass());
+
+	/** Scm context refresher. */
 	final protected ScmContextRefresher refresher;
 
-	public AbstractRefreshWatcher(ScmContextRefresher refresher) {
-		super(new TaskProperties(1, 0, 16));
+	/** Scm property sources remote locator. */
+	final protected ScmPropertySourceLocator locator;
+
+	public AbstractRefreshWatcher(ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
 		Assert.notNull(refresher, "Refresher must not be null");
+		Assert.notNull(locator, "locator must not be null");
 		this.refresher = refresher;
+		this.locator = locator;
 	}
 
 }

@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import java.util.*;
 import java.util.Map.Entry;
+
+import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 
 import com.wl4g.devops.common.bean.scm.model.GenericInfo;
@@ -31,15 +33,13 @@ import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
-import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.Order;
@@ -63,18 +63,12 @@ import static org.springframework.http.HttpMethod.*;
  * @since
  */
 @Order(0)
-public abstract class ScmPropertySourceLocator implements PropertySourceLocator {
+public abstract class ScmPropertySourceLocator implements PropertySourceLocator, InitializingBean {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/** Rest template */
-	final protected RestTemplate restTemplate;
-
 	/** SCM client configuration */
 	final protected ScmClientProperties config;
-
-	/** SCM client retry configuration */
-	final protected RetryProperties retryConfig;
 
 	/** SCM client local instance info */
 	final protected InstanceInfo info;
@@ -82,23 +76,44 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 	/** SCM encrypted field identification prefix */
 	final private static String CIPHER_PREFIX = "{cipher}";
 
-	/** SCM configuration server base URI. */
-	@Value("${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/devops}")
-	private String baseUri;
+	/** Rest template */
+	protected RestTemplate restTemplate;
 
-	public ScmPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig, InstanceInfo info) {
+	public ScmPropertySourceLocator(ScmClientProperties config, InstanceInfo info) {
 		Assert.notNull(config, "Scm client properties must not be null");
-		Assert.notNull(retryConfig, "Retry properties must not be null");
 		Assert.notNull(info, "Instance info must not be null");
 		this.config = config;
-		this.retryConfig = retryConfig;
 		this.info = info;
-		this.restTemplate = createSecureRestTemplate(config);
 	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		if (config.getRequestReadTimeout() < 0) {
+			throw new IllegalStateException("Invalid Value for Read Timeout set.");
+		}
+		factory.setReadTimeout(config.getRequestReadTimeout());
+
+		this.restTemplate = new RestTemplate(factory);
+		Map<String, String> headers = new HashMap<>(config.getHeaders());
+		if (headers.containsKey(AUTHORIZATION)) {
+			// To avoid redundant addition of header
+			headers.remove(AUTHORIZATION);
+		}
+		if (!headers.isEmpty()) {
+			this.restTemplate.setInterceptors(asList(new GenericRequestHeaderInterceptor(headers)));
+		}
+	}
+
+	/**
+	 * Pull release configuration from scm server.
+	 * 
+	 * @param targetReleaseMeta
+	 * @return
+	 */
 	public ReleaseMessage pullRemoteReleaseConfig(GenericInfo.ReleaseMeta targetReleaseMeta) {
-		// Get pull release URL.
-		String uri = baseUri + URI_S_BASE + "/" + URI_S_SOURCE_GET;
+		// Pull release URL.
+		String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
 
 		// Create release get
 		GetRelease get = new GetRelease(info.getAppName(), info.getProfilesActive(), targetReleaseMeta, info.getBindInstance());
@@ -151,7 +166,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 			log.trace("Resolver cipher configuration propertySource ...");
 		}
 
-		for (ReleaseMessage.ReleasePropertySource ps : release.getPropertySources()) {
+		for (ReleasePropertySource ps : release.getPropertySources()) {
 			ps.getSource().forEach((key, value) -> {
 				String cipher = String.valueOf(value);
 				if (cipher.startsWith(CIPHER_PREFIX)) {
@@ -160,7 +175,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 						ps.getSource().put(key, plain);
 
 						if (log.isDebugEnabled()) {
-							log.debug("Decryption property-key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
+							log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
 						}
 					} catch (Exception e) {
 						throw new ScmException("Cipher decryption error.", e);
@@ -179,6 +194,11 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		headers.setAccept(singletonList(APPLICATION_JSON));
 	}
 
+	/**
+	 * Printf property sources.
+	 * 
+	 * @param release
+	 */
 	protected void printfSources(ReleaseMessage release) {
 		if (log.isInfoEnabled()) {
 			log.info("Located environment: group: {}, namespace: {}, profile: {}, release meta: {}", release.getGroup(),
@@ -198,24 +218,12 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		}
 	}
 
-	protected RestTemplate createSecureRestTemplate(ScmClientProperties client) {
-		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		if (client.getRequestReadTimeout() < 0) {
-			throw new IllegalStateException("Invalid Value for Read Timeout set.");
-		}
-		factory.setReadTimeout(client.getRequestReadTimeout());
+	public ScmClientProperties getConfig() {
+		return config;
+	}
 
-		RestTemplate template = new RestTemplate(factory);
-		Map<String, String> headers = new HashMap<>(client.getHeaders());
-		if (headers.containsKey(AUTHORIZATION)) {
-			// To avoid redundant addition of header
-			headers.remove(AUTHORIZATION);
-		}
-		if (!headers.isEmpty()) {
-			template.setInterceptors(Arrays.asList(new GenericRequestHeaderInterceptor(headers)));
-		}
-
-		return template;
+	public RestTemplate getRestTemplate() {
+		return restTemplate;
 	}
 
 	/**

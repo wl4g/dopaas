@@ -133,7 +133,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 				.collect(Collectors.toList());
 
 		// Put watch instances(for clustering).
-		putPublishConfig(new PublishConfigWrapper(pre.getGroup(), pre.getInstances(), pre.getMeta()));
+		publishConfig(new PublishConfigWrapper(pre.getGroup(), pre.getInstances(), pre.getMeta()));
 
 		return deferreds;
 	}
@@ -172,7 +172,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 * 
 	 * @param wrap
 	 */
-	protected abstract void putPublishConfig(PublishConfigWrapper wrap);
+	protected abstract void publishConfig(PublishConfigWrapper wrap);
 
 	/**
 	 * Create watch deferred result.

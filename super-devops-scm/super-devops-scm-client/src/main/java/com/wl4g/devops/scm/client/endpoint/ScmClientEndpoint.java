@@ -94,7 +94,7 @@ public class ScmClientEndpoint extends BaseController {
 		RespBase<List<ReleasePropertySource>> resp = new RespBase<>();
 		try {
 			// Got current environment scm property sources.
-			resp.getData().put(KEY_ENV_SOURCES, getEnvironmentPropertySources());
+			resp.getData().put(KEY_USED_SOURCES, getEnvironmentPropertySources());
 		} catch (Exception e) {
 			String errmsg = ExceptionUtils.getRootCauseMessage(e);
 			resp.setCode(RetCode.SYS_ERR);

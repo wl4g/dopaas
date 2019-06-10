@@ -49,13 +49,13 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 
 	@Override
 	protected Collection<PublishConfigWrapper> pollNextPublishedConfig() {
-		// Extract published
 		List<PublishConfigWrapper> list = new ArrayList<>(4);
 
+		// Extract published config.
 		Set<Object> groups = jedisService.getObjectSet(CACHE_PUB_GROUPS);
 		if (!isEmpty(groups)) {
 			for (Object group : groups) {
-				String key = KEY_PUB_PREFIX + group;
+				String key = getGroupKey((String) group);
 				PublishConfigWrapper wrap = jedisService.getObjectT(key, PublishConfigWrapper.class);
 				if (wrap != null) {
 					list.add(wrap);
@@ -65,23 +65,26 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Scan published config for size: {}, {}", (list != null ? list.size() : 0), list);
+			log.debug("Extract published config for size: {}, {}", (list != null ? list.size() : 0), list);
 		}
 		return list;
 	}
 
 	@Override
-	protected void putPublishConfig(PublishConfigWrapper wrap) {
+	protected void publishConfig(PublishConfigWrapper wrap) {
 		if (log.isDebugEnabled()) {
 			log.debug("Put published config for {}", wrap);
 		}
 
-		// Save group name.
+		// Storage group name
 		jedisService.setSetObjectAdd(CACHE_PUB_GROUPS, wrap.getGroup());
 
-		// Save group published.
-		String key = KEY_PUB_PREFIX + wrap.getGroup();
-		jedisService.setObjectT(key, wrap, 0);
+		// Storage group published
+		jedisService.setObjectT(getGroupKey(wrap.getGroup()), wrap, 0);
+	}
+
+	private String getGroupKey(String group) {
+		return KEY_PUB_PREFIX + group;
 	}
 
 }
