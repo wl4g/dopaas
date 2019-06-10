@@ -16,6 +16,12 @@
  */
 package com.wl4g.devops.scm.client.configure;
 
+import java.io.IOException;
+
+import java.util.*;
+import java.util.Map.Entry;
+import static java.util.Collections.*;
+
 import com.wl4g.devops.common.bean.scm.model.GenericInfo;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
@@ -23,20 +29,12 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySourc
 import com.wl4g.devops.common.exception.scm.ScmException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.codec.AES;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
 import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.common.bean.ScmMetaInfo;
-import static com.wl4g.devops.scm.common.utils.ScmUtils.*;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
-
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import static org.apache.commons.lang3.StringUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,16 +53,6 @@ import org.springframework.web.client.RestTemplate;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.http.HttpMethod.*;
 
-import java.nio.charset.StandardCharsets;
-
-import java.io.IOException;
-
-import java.util.*;
-import java.util.Map.Entry;
-import static java.util.Collections.*;
-
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
-
 /**
  * Abstract SCM application context initializer instructions.</br>
  * See:https://blog.csdn.net/leileibest_437147623/article/details/81074174
@@ -76,9 +64,6 @@ import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
  */
 @Order(0)
 public abstract class ScmPropertySourceLocator implements PropertySourceLocator {
-
-	/** Token header key-name */
-	final public static String SCM_HEADER_TOKEN = "x-scm-token";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -97,10 +82,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 	/** SCM encrypted field identification prefix */
 	final private static String CIPHER_PREFIX = "{cipher}";
 
-	/** SCM meta communication information */
-	private ScmMetaInfo meta;
-
-	/** SCM config server base uri. */
+	/** SCM configuration server base URI. */
 	@Value("${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/devops}")
 	private String baseUri;
 
@@ -112,9 +94,6 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		this.retryConfig = retryConfig;
 		this.info = info;
 		this.restTemplate = createSecureRestTemplate(config);
-
-		// Refresh(token) meta information
-		refreshMetaInfo();
 	}
 
 	public ReleaseMessage pullRemoteReleaseConfig(GenericInfo.ReleaseMeta targetReleaseMeta) {
@@ -131,14 +110,14 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 			log.debug("Get release config url: {}", url);
 		}
 
-		// Add meta headers(token)
-		if (log.isInfoEnabled()) {
-			log.info("Adding header for meta: {}", meta);
-		}
-
 		HttpHeaders headers = new HttpHeaders();
 		attachHeaders(headers);
 		final HttpEntity<Void> entity = new HttpEntity<>(null, headers);
+
+		// Attach headers
+		if (log.isDebugEnabled()) {
+			log.debug("Adding header for: {}", headers);
+		}
 
 		// Do get request source
 		RespBase<ReleaseMessage> resp = restTemplate
@@ -163,7 +142,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 	}
 
 	/**
-	 * Resolver cipher config source.
+	 * Resolver cipher configuration source.
 	 * 
 	 * @param release
 	 */
@@ -197,9 +176,6 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 	 * @param headers
 	 */
 	protected void attachHeaders(HttpHeaders headers) {
-		if (meta != null && isNotBlank(meta.getToken())) {
-			headers.add(SCM_HEADER_TOKEN, meta.getToken());
-		}
 		headers.setAccept(singletonList(APPLICATION_JSON));
 	}
 
@@ -240,38 +216,6 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		}
 
 		return template;
-	}
-
-	/**
-	 * Refresh config meta information
-	 */
-	protected void refreshMetaInfo() {
-		CuratorFramework client = null;
-		try {
-			RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 5);
-			client = CuratorFrameworkFactory.builder().connectString(config.getZookeeperUrl())
-					// .sessionTimeoutMs(10000)
-					.retryPolicy(retryPolicy)
-					// .namespace("admin")
-					.build();
-			client.start();
-
-			String path = genMetaPath(new GenericInfo(info.getAppName(), info.getProfilesActive()), info.getBindInstance());
-			byte[] data = client.getData().forPath(path);
-			String t = new String(data, StandardCharsets.UTF_8);
-			this.meta = JacksonUtils.parseJSON(t, ScmMetaInfo.class);
-
-			if (log.isInfoEnabled()) {
-				log.info("Got meta from zk:{} ,path:", config.getZookeeperUrl(), path);
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		} finally {
-			if (client != null) {
-				client.close();
-			}
-		}
-
 	}
 
 	/**

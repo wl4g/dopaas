@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
-import java.io.IOException;
-
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
@@ -28,40 +27,23 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
  * @version v1.0 2019年5月1日
  * @since
  */
-public class TimingRefreshWatcher extends AbstractRefreshWatcher implements Runnable {
+@EnableScheduling
+public class TimingRefreshWatcher extends AbstractRefreshWatcher {
+
+	final public static String KEY_WATCH_PREFIX = "spring.cloud.devops.scm.client.watch";
 
 	public TimingRefreshWatcher(ScmContextRefresher refresher) {
 		super(refresher);
 	}
 
 	@Override
-	protected void doStart() {
-		//
-		// Ignore operation.
-		//
-	}
-
-	@Override
-	@Scheduled(initialDelayString = "${spring.cloud.devops.scm.client.watch.init-delay:120000}", fixedDelayString = "${devops.config.watch.delay:10000}")
+	@Scheduled(initialDelayString = "${" + KEY_WATCH_PREFIX + ".init-delay:90000}", fixedDelayString = "${" + KEY_WATCH_PREFIX
+			+ ".delay:10000}")
 	public void run() {
 		if (log.isInfoEnabled()) {
 			log.info("Synchronizing refresh from configuration center ...");
 		}
 
-		if (running.get()) {
-			try {
-				super.doExecute(this, null, "Task watch event.");
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);
-			}
-		}
-	}
-
-	@Override
-	public void close() throws IOException {
-		//
-		// Ignore operation.
-		//
 	}
 
 }

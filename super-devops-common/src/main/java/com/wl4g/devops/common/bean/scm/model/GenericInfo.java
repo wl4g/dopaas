@@ -20,6 +20,8 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -28,7 +30,7 @@ public class GenericInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
-	 * Namespace(config file-name)
+	 * Name-space(configuration file-name)
 	 */
 	@NotNull
 	@NotBlank
@@ -52,7 +54,7 @@ public class GenericInfo implements Serializable {
 	 * Version release information
 	 */
 	@NotNull
-	private ReleaseMeta meta = new ReleaseMeta();
+	private ReleaseMeta meta;
 
 	public GenericInfo() {
 		super();
@@ -121,14 +123,20 @@ public class GenericInfo implements Serializable {
 	public static class ReleaseInstance implements Serializable {
 		private static final long serialVersionUID = -4826329780329773259L;
 
+		@NotBlank
+		@NotNull
 		private String host;
-		private int port;
+
+		@Min(1024)
+		@Max(65535)
+		@NotNull
+		private Integer port;
 
 		public ReleaseInstance() {
 			super();
 		}
 
-		public ReleaseInstance(String host, int port) {
+		public ReleaseInstance(String host, Integer port) {
 			super();
 			this.host = host;
 			this.port = port;
@@ -144,11 +152,11 @@ public class GenericInfo implements Serializable {
 			}
 		}
 
-		public int getPort() {
+		public Integer getPort() {
 			return port;
 		}
 
-		public void setPort(int port) {
+		public void setPort(Integer port) {
 			if (port <= 0 || port > 65535) {
 				throw new IllegalArgumentException("Illegal ports are only allowed to be 0 ~ 65535");
 			}
@@ -177,9 +185,11 @@ public class GenericInfo implements Serializable {
 		private static final long serialVersionUID = -4826329110329773259L;
 
 		@NotBlank
+		@NotNull
 		private String version; // Release version(Required).
 
 		@NotBlank
+		@NotNull
 		private String releaseId; // Release ID.
 
 		public ReleaseMeta() {

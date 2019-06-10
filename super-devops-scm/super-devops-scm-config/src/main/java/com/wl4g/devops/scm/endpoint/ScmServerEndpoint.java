@@ -24,14 +24,19 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
+
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
 /**
- * SCM server endpoint api
+ * SCM server end-point API
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日
@@ -41,11 +46,11 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 @ResponseBody
 public class ScmServerEndpoint extends BaseController {
 
-	final private ConfigContextHandler handler;
+	final private ConfigContextHandler contextHandler;
 
 	public ScmServerEndpoint(ConfigContextHandler handler) {
 		super();
-		this.handler = handler;
+		this.contextHandler = handler;
 	}
 
 	@GetMapping(value = URI_S_SOURCE_GET)
@@ -56,8 +61,8 @@ public class ScmServerEndpoint extends BaseController {
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
 		try {
-			// Got config source
-			resp.getData().put(KEY_RELEASE, handler.findSource(req));
+			// Got configuration source
+			resp.getData().put(KEY_RELEASE, contextHandler.getSource(req));
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(ExceptionUtils.getRootCauseMessage(e));
@@ -78,30 +83,69 @@ public class ScmServerEndpoint extends BaseController {
 
 		RespBase<?> resp = new RespBase<>();
 		try {
-			// Post to adminServer report-message.
-			handler.report(report);
+			contextHandler.report(report);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(ExceptionUtils.getRootCauseMessage(e));
-			log.error("Report persistence failed.", e);
+			resp.setMessage(getRootCauseMessage(e));
+			log.error("Report failed.", e);
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("Report response: {}", resp);
+		if (log.isInfoEnabled()) {
+			log.info("Report response: {}", resp);
 		}
 		return resp;
 	}
 
-	/* for test */ // @PostMapping(value = URL_CONF_RELEASE)
+	/**
+	 * Watching configuration source. </br>
+	 * <a href=
+	 * "#">http://localhost:14043/scm/scm-server/watch?instance.host=localhost&instance.port=1&group=scm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
+	 * 
+	 * @param watch
+	 * @return
+	 */
+	@RequestMapping(value = URI_S_WATCH_GET, method = { HEAD })
+	public DeferredResult<?> watch(@Validated GetRelease watch) {
+		if (log.isInfoEnabled()) {
+			log.info("On watch ... {}", watch);
+		}
+
+		return contextHandler.watch(watch);
+	}
+
+	/**
+	 * <h6>For releaseTests</h6></br>
+	 * <b>Header:</b></br>
+	 * <a href="#">http://localhost:14043/scm/scm-server/releaseTests</a></br>
+	 * <b>Body:</b>
+	 * 
+	 * <pre>
+	 *	{
+	 *		"namespace": "application-test.yml",
+	 *		"group": "scm-example",
+	 *		"profile": "test",
+	 *		"instances": [{
+	 *			"host": "localhost",
+	 *			"port": 8848
+	 *		}],
+	 *		"meta": {
+	 *			"releaseId": "1",
+	 *			"version": "1.0.1"
+	 *		}
+	 *	}
+	 * </pre>
+	 * 
+	 * @param pre
+	 * @return
+	 */
+	@PostMapping("releaseTests")
 	public RespBase<?> releaseTests(@Validated @RequestBody PreRelease pre) {
 		if (log.isInfoEnabled()) {
 			log.info("On releasing tests ... {}", pre);
 		}
 
 		RespBase<?> resp = new RespBase<>();
-		// Invoke release.
-		handler.release(pre);
-
+		contextHandler.release(pre);
 		return resp;
 	}
 

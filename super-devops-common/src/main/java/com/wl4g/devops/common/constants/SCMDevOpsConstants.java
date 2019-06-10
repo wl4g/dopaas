@@ -33,15 +33,17 @@ public abstract class SCMDevOpsConstants extends DevOpsConstants {
 	/** Get server release source response data key. */
 	final public static String KEY_RELEASE = "release-source";
 	/** Get client environment source response data key. */
-	final public static String KEY_ENV_SOURCES = "environment-sources";
+	final public static String KEY_ENV_SOURCES = "env-sources";
 
 	// Server.
 	/** Service web root URI. */
 	final public static String URI_S_BASE = "/scm-server";
 	/** Get property source URI. */
-	final public static String URI_S_SOURCE_GET = "source.json";
+	final public static String URI_S_SOURCE_GET = "source";
 	/** Report configuration result URI. */
-	final public static String URI_S_REPORT_POST = "report.json";
+	final public static String URI_S_REPORT_POST = "report";
+	/** Long-polling watching URI. */
+	final public static String URI_S_WATCH_GET = "watch";
 
 	// Client.
 	/** Service web root URI. */

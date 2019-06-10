@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.cache;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.core.ResolvableType;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Charsets;
@@ -72,8 +75,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * Crates new {@link ScanCursor} with {@code id=0} and
 	 * {@link ScanParams#NONE}
 	 */
-	public ScanCursor(JedisCluster cluster) {
-		this(cluster, NONE_PARAMS);
+	public ScanCursor(JedisCluster cluster, Class<?> ofType) {
+		this(cluster, ofType, NONE_PARAMS);
 	}
 
 	/**
@@ -81,8 +84,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param params
 	 */
-	public ScanCursor(JedisCluster cluster, ScanParams params) {
-		this(cluster, "0", params);
+	public ScanCursor(JedisCluster cluster, Class<?> ofType, ScanParams params) {
+		this(cluster, "0", ofType, params);
 	}
 
 	/**
@@ -90,8 +93,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param cursorId
 	 */
-	public ScanCursor(JedisCluster cluster, String cursorId) {
-		this(cluster, cursorId, NONE_PARAMS);
+	public ScanCursor(JedisCluster cluster, String cursorId, Class<?> ofType) {
+		this(cluster, cursorId, ofType, NONE_PARAMS);
 	}
 
 	/**
@@ -103,10 +106,16 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * @param param
 	 *            Defaulted to {@link ScanParams#NONE} if nulled.
 	 */
-	public ScanCursor(JedisCluster jdCluster, String cursorId, ScanParams param) {
-		this.params = param != null ? param : NONE_PARAMS;
-		this.ofType = ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
+	public ScanCursor(JedisCluster jdCluster, String cursorId, Class<?> ofType, ScanParams param) {
+		Assert.notNull(jdCluster, "jedisCluster must not be null");
+		Assert.hasText(cursorId, "cursorId must not be empty");
+		if (ofType == null) {
+			ofType = ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
+		}
+		Assert.notNull(ofType, "Unable to get 'ofType' actual generic parameters");
+		this.ofType = ofType;
 		this.jdsCluster = jdCluster;
+		this.params = param != null ? param : NONE_PARAMS;
 		this.jdsPools = jdCluster.getClusterNodes().values().stream().collect(Collectors.toCollection(ArrayList::new));
 		this.selectionPos = 0;
 		this.state = CursorState.READY;
@@ -141,8 +150,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	@SuppressWarnings("unchecked")
 	public List<E> readItem() {
 		try {
-			return (List<E>) iter.getItems().stream().map(key -> deserialize(jdsCluster.get(key), ofType))
-					.collect(Collectors.toList());
+			return (List<E>) iter.getItems().stream().map(key -> deserialize(jdsCluster.get(key), ofType)).collect(toList());
 		} finally {
 			iter.getItems().clear();
 		}
@@ -181,6 +189,15 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 		}
 
 		return (E) deserialize(jdsCluster.get(iter.iterator().next()), ofType);
+	}
+
+	/**
+	 * Key iterator.
+	 * 
+	 * @return
+	 */
+	public Iterator<byte[]> keyIterator() {
+		return iter.iterator();
 	}
 
 	/**

@@ -24,7 +24,7 @@ public class GetRelease extends GenericInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
 
 	@NotNull
-	private ReleaseInstance instance = new ReleaseInstance();
+	private ReleaseInstance instance;
 
 	public GetRelease() {
 		super();

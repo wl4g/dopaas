@@ -50,7 +50,7 @@ public class ScanCursorTests {
 		byte[] match = ("iam_" + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(200).match(match);
 
-		ScanCursor<IamSession> res = new ScanCursor<IamSession>(cluster, params) {
+		ScanCursor<IamSession> res = new ScanCursor<IamSession>(cluster, null, params) {
 		}.open();
 
 		System.out.println("ScanResult: " + res);

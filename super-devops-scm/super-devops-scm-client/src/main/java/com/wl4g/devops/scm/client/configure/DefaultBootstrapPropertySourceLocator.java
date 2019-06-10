@@ -59,20 +59,20 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
-				// 1.1 Get remote latest property-sources(version/releaseId is
+				// Get remote latest property-sources(version/releaseId is
 				// null).
 				ReleaseMessage config = pullRemoteReleaseConfig(new GenericInfo.ReleaseMeta());
 
-				// 1.2 Resolves cipher resource.
+				// Resolves cipher resource.
 				resolvesCipherSource(config);
 
-				// 1.3 Add configuration to environment.
+				// Add configuration to environment.
 				composite = config.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 
 			} catch (Exception e) {
-				log.warn("-----------------------------------------");
+				log.warn("---------------------------");
 				log.warn("Could not locate remote PropertySource! causes by: {}", getRootCauseMessage(e));
-				log.warn("-----------------------------------------");
+				log.warn("---------------------------");
 			}
 		}
 

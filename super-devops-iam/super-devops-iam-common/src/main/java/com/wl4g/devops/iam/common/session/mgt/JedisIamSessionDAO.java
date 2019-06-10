@@ -106,7 +106,7 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 	public ScanCursor<IamSession> getActiveSessions(final int batchSize, final Object principal) {
 		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(batchSize).match(match);
-		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), params) {
+		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), null, params) {
 		}.open();
 	}
 
