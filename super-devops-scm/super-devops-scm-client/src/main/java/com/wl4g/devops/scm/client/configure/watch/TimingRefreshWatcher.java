@@ -15,10 +15,19 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Timing refresh watcher
@@ -30,18 +39,51 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 @EnableScheduling
 public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 
-	final public static String KEY_WATCH_PREFIX = "spring.cloud.devops.scm.client.watch";
+	final public static String PLACEHOLDER_INIT_DELAY = "${" + PREFIX + ".watch.init-delay:90000}";
+	final public static String PLACEHOLDER_DELAY = "${" + PREFIX + ".watch.delay:30000}";
 
-	public TimingRefreshWatcher(ScmContextRefresher refresher) {
-		super(refresher);
+	/** Watching completion state. */
+	final private AtomicBoolean watchState = new AtomicBoolean(false);
+
+	public TimingRefreshWatcher(ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
+		super(refresher, locator);
 	}
 
+	@Scheduled(initialDelayString = PLACEHOLDER_INIT_DELAY, fixedDelayString = PLACEHOLDER_DELAY)
 	@Override
-	@Scheduled(initialDelayString = "${" + KEY_WATCH_PREFIX + ".init-delay:90000}", fixedDelayString = "${" + KEY_WATCH_PREFIX
-			+ ".delay:10000}")
 	public void run() {
-		if (log.isInfoEnabled()) {
-			log.info("Synchronizing refresh from configuration center ...");
+		// Long-polling watching.
+		createLongPollingWatch();
+	}
+
+	private void createLongPollingWatch() {
+		if (watchState.compareAndSet(false, true)) {
+			if (log.isInfoEnabled()) {
+				log.info("Synchronizing refresh config for {} ...", watchState);
+			}
+
+			String url = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
+			ResponseEntity<ReleaseMeta> resp = locator.getRestTemplate().getForEntity(url, ReleaseMeta.class);
+			if (resp != null) {
+				// Update watching state.
+				watchState.compareAndSet(true, false);
+
+				switch (resp.getStatusCode()) {
+				case OK:
+					// Refresh poll changed configuration.
+					refresher.refresh();
+					break;
+				case NOT_MODIFIED:
+					// Configuration unchanged, continue long polling watching.
+					createLongPollingWatch();
+					break;
+				default:
+					throw new IllegalStateException(
+							String.format("Internal error! No support response httpStatus for %s", resp.getStatusCode()));
+				}
+			}
+		} else if (log.isDebugEnabled()) {
+			log.debug("Skip the watch request in long-polling!");
 		}
 
 	}

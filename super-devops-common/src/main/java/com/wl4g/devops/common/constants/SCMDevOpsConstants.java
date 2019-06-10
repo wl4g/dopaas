@@ -26,14 +26,13 @@ package com.wl4g.devops.common.constants;
 public abstract class SCMDevOpsConstants extends DevOpsConstants {
 
 	// Common and Base.
-	/** Initial application configuration version. */
-	final public static String CONF_DISCOVERY_ROOT = ENV.getOrDefault("spring.cloud.devops.scm.client.discovery.root",
-			"/apps-config");
 
-	/** Get server release source response data key. */
+	/** Server pre-release source response data key. */
+	final public static String KEY_PRE_RELEASE = "pre-release-source";
+	/** Server release source response data key. */
 	final public static String KEY_RELEASE = "release-source";
-	/** Get client environment source response data key. */
-	final public static String KEY_ENV_SOURCES = "env-sources";
+	/** Client environment source response data key. */
+	final public static String KEY_USED_SOURCES = "used-source";
 
 	// Server.
 	/** Service web root URI. */

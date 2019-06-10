@@ -18,7 +18,6 @@ package com.wl4g.devops.scm.client.configure;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
-import com.wl4g.devops.scm.client.config.RetryProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
@@ -41,32 +40,30 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
 @Order(0)
 public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLocator {
 
-	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig, InstanceInfo info) {
-		super(config, retryConfig, info);
+	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, InstanceInfo info) {
+		super(config, info);
 	}
 
+	/**
+	 * Composite property sources.</br>
+	 * See:{@link ScmContextRefresher#addConfigToEnvironment}
+	 */
 	@Override
 	public PropertySource<?> locate(Environment environment) {
 		if (log.isInfoEnabled()) {
 			log.info("SCM bootstrap config is enabled for environment {}", environment);
 		}
 
-		/*
-		 * Define composite property source. {@link
-		 * com.wl4g.devops.scm.client.configure.refresh.AbstractBeanRefresher#
-		 * addConfigToEnvironment()}
-		 */
 		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
-				// Get remote latest property-sources(version/releaseId is
-				// null).
+				// Get remote latest property-sources(version/releaseId)
 				ReleaseMessage config = pullRemoteReleaseConfig(new GenericInfo.ReleaseMeta());
 
-				// Resolves cipher resource.
+				// Resolves cipher resource
 				resolvesCipherSource(config);
 
-				// Add configuration to environment.
+				// Add configuration to environment
 				composite = config.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 
 			} catch (Exception e) {
@@ -76,8 +73,6 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 			}
 		}
 
-		// When you refresh the configuration source, you need to clean it up.
-		// See:ScmContextRefresher#addScmConfigToEnvironment()
 		return composite;
 	}
 

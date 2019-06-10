@@ -57,7 +57,7 @@ public class GuideConfigSourceHandler implements ConfigContextHandler, Initializ
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		throw new IllegalStateException(String.format("Using SCM configuration center, you must customize the '%s' interface!",
+		throw new IllegalStateException(String.format("Used SCM server, you must customize implenments the '%s' !",
 				ConfigContextHandler.class.getName()));
 	}
 
