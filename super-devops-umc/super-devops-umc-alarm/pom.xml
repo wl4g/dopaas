@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-umc-rest</artifactId>
+	<artifactId>super-devops-umc-alarm</artifactId>
 	<packaging>jar</packaging>
 	<name>Super DevOps UMC RESTful</name>
 	<url>http://maven.apache.org</url>
@@ -18,12 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-dao</artifactId>
-			<version>master</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-umc-core</artifactId>
+			<artifactId>super-devops-common</artifactId>
 			<version>master</version>
 		</dependency>
 	</dependencies>
