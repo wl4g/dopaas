@@ -64,6 +64,10 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 
 			String url = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
 			ResponseEntity<ReleaseMeta> resp = locator.getRestTemplate().getForEntity(url, ReleaseMeta.class);
+			if (log.isDebugEnabled()) {
+				log.debug("Watching response for {}", resp);
+			}
+
 			if (resp != null) {
 				// Update watching state.
 				watchState.compareAndSet(true, false);
