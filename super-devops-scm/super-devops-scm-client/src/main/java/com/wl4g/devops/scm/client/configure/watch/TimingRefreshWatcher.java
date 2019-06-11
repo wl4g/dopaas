@@ -16,6 +16,8 @@
 package com.wl4g.devops.scm.client.configure.watch;
 
 import static org.apache.commons.lang3.RandomUtils.*;
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -74,7 +76,13 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 			try {
 				createWatchLongPolling();
 			} catch (Exception e) {
-				log.error("Refresh watching long-polling error!", e);
+				String errtip = "Watching long polling error! causes by: ";
+				if (log.isDebugEnabled()) {
+					log.error(errtip, getStackTrace(e));
+				} else {
+					log.error(errtip, e);
+				}
+
 				synchronized (this) {
 					try {
 						wait(nextLong(1000L, 10_000L));
