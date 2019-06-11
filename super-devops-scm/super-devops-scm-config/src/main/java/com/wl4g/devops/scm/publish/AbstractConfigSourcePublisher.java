@@ -144,7 +144,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		WatchDeferredResult<ResponseEntity<?>> deferred = doCreateWatchDeferred(watch);
 
 		if (log.isInfoEnabled()) {
-			log.info("Created watch deferredResult: {}", deferred);
+			log.info("Created watch deferredResult - {}", deferred);
 		}
 		return deferred;
 	}
@@ -161,7 +161,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	}
 
 	/**
-	 * scan publish configuration source wrapper
+	 * Poll scan published configuration source
 	 * 
 	 * @return
 	 */

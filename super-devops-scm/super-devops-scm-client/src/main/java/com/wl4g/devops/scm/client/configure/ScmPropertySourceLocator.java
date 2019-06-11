@@ -90,11 +90,11 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	public void afterPropertiesSet() throws Exception {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		if (config.getRequestReadTimeout() < 0) {
-			throw new IllegalStateException("Invalid Value for Read Timeout set.");
+			throw new IllegalStateException("Invalid value for read timeout!");
 		}
 		factory.setReadTimeout(config.getRequestReadTimeout());
-
 		this.restTemplate = new RestTemplate(factory);
+
 		Map<String, String> headers = new HashMap<>(config.getHeaders());
 		if (headers.containsKey(AUTHORIZATION)) {
 			// To avoid redundant addition of header
@@ -106,13 +106,13 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	}
 
 	/**
-	 * Pull release configuration from SCM server.
+	 * Fetch release configuration from SCM server.
 	 * 
 	 * @return
 	 */
-	public ReleaseMessage pullRemoteReleaseConfig() {
+	public ReleaseMessage fetchRemoteReleaseConfig() {
 		try {
-			// Pull release URL.
+			// Fetch release URL.
 			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
 			// Create release get
 			ReleaseMeta meta = availableReleaseMeta(false);
@@ -122,7 +122,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			String kvs = new BeanMapConvert(get).toUriParmaters();
 			String url = uri + "?" + kvs;
 			if (log.isDebugEnabled()) {
-				log.debug("Get release config url: {}", url);
+				log.debug("Fetch release config url: {}", url);
 			}
 
 			HttpHeaders headers = new HttpHeaders();
@@ -137,7 +137,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 					.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
 					}).getBody();
 			if (!RespBase.isSuccess(resp)) {
-				throw new ScmException(String.format("Locator remote source error. %s, %s", url, resp.getMessage()));
+				throw new ScmException(String.format("Locate remote config error! %s, %s", url, resp.getMessage()));
 			}
 
 			// Extract release
@@ -149,7 +149,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			printfSources(release);
 
 			if (log.isDebugEnabled()) {
-				log.debug("Get remote release config : {}", release);
+				log.debug("Fetch release config <= {}", release);
 			}
 			return release;
 		} finally {

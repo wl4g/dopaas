@@ -49,7 +49,8 @@ import org.springframework.http.ResponseEntity;
  * @since
  */
 public class StandardConfigContextHandler implements ConfigContextHandler {
-	final private Logger log = LoggerFactory.getLogger(getClass());
+
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private ConfigSourcePublisher publisher;
@@ -95,10 +96,6 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 
 	@Override
 	public void release(PreRelease pre) {
-		if (log.isInfoEnabled()) {
-			log.info("Pre release for {}", pre);
-		}
-
 		this.publisher.publish(pre);
 	}
 

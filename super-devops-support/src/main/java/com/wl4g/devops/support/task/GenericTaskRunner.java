@@ -187,7 +187,6 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 		}
 
 		public long getKeepAliveTime() {
-			Assert.isTrue(concurrency >= 0, "Concurrency must be greater or eq than 0");
 			return keepAliveTime;
 		}
 

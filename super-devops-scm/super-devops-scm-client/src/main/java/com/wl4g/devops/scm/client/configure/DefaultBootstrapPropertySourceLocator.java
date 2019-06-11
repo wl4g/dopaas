@@ -25,7 +25,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
 import static com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 /**
  * SCM application context initializer instructions.</br>
@@ -50,14 +50,14 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 	@Override
 	public PropertySource<?> locate(Environment environment) {
 		if (log.isInfoEnabled()) {
-			log.info("SCM bootstrap config is enabled for environment {}", environment);
+			log.info("SCM bootstrap config is enabled environment for: {}", environment);
 		}
 
 		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
-				// PUll latest property-sources from server.
-				ReleaseMessage config = pullRemoteReleaseConfig();
+				// Pull latest propertySources from server.
+				ReleaseMessage config = fetchRemoteReleaseConfig();
 
 				// Resolves cipher resource
 				resolvesCipherSource(config);
@@ -65,10 +65,15 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 				// Add configuration to environment
 				composite = config.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 
-			} catch (Exception e) {
-				log.warn("---------------------------");
-				log.warn("Could not locate remote PropertySource! causes by: {}", getRootCauseMessage(e));
-				log.warn("---------------------------");
+			} catch (Throwable th) {
+				log.warn("-----------------------------------------");
+				String errtip = "Could not locate remote propertySource! causes by: {}";
+				if (log.isDebugEnabled()) {
+					log.warn(errtip, getStackTrace(th));
+				} else {
+					log.warn(errtip, getRootCauseMessage(th));
+				}
+				log.warn("-----------------------------------------");
 			}
 		}
 
