@@ -76,11 +76,11 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 			try {
 				createWatchLongPolling();
 			} catch (Exception e) {
-				String errtip = "Watching long polling error! causes by: ";
+				String errtip = "Watching long polling error! causes by: {}";
 				if (log.isDebugEnabled()) {
 					log.error(errtip, getStackTrace(e));
 				} else {
-					log.error(errtip, e);
+					log.error(errtip, getRootCauseMessage(e));
 				}
 
 				synchronized (this) {
