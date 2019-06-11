@@ -85,7 +85,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 
 				synchronized (this) {
 					try {
-						wait(nextLong(1000L, 10_000L));
+						wait(nextLong(1000L, 15_000L));
 					} catch (InterruptedException e1) {
 						log.error("", e);
 					}
