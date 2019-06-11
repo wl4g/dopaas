@@ -44,12 +44,15 @@ public abstract class SCMDevOpsConstants extends DevOpsConstants {
 	/** Long-polling watching URI. */
 	final public static String URI_S_WATCH_GET = "watch";
 
+	/** SCM published group. */
+	final public static String CACHE_PUB_GROUPS = "scm_pub_groups";
+	/** SCM published CONFIG prefix. */
+	final public static String KEY_PUB_PREFIX = "scm_pub_config_";
+
 	// Client.
 	/** Service web root URI. */
 	final public static String URI_C_BASE = "/scm-client";
 	/** Refresh URI. */
 	final public static String URI_C_REFRESH = "refresh";
-	/** Get latest configuration URI. */
-	final public static String URI_C_LATEST = "latest";
 
 }

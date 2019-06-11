@@ -53,9 +53,6 @@ public class ScmClientProperties {
 	 */
 	private Map<String, String> headers = new HashMap<>();
 
-	/** Retry properties configuration. */
-	private RetryProperties retry = new RetryProperties();
-
 	public String getBaseUri() {
 		return baseUri;
 	}
@@ -78,77 +75,6 @@ public class ScmClientProperties {
 
 	public void setHeaders(Map<String, String> headers) {
 		this.headers = headers;
-	}
-
-	public RetryProperties getRetry() {
-		return retry;
-	}
-
-	public void setRetry(RetryProperties retry) {
-		this.retry = retry;
-	}
-
-	/**
-	 * Retryable properties
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年6月2日
-	 * @since
-	 */
-	public static class RetryProperties {
-
-		/**
-		 * Initial retry interval in milliseconds.
-		 */
-		long initialInterval = 1000;
-
-		/**
-		 * Multiplier for next interval.
-		 */
-		double multiplier = 1.1;
-
-		/**
-		 * Maximum interval for backoff.
-		 */
-		long maxInterval = 2000;
-
-		/**
-		 * Maximum number of attempts.
-		 */
-		int maxAttempts = 6;
-
-		public long getInitialInterval() {
-			return this.initialInterval;
-		}
-
-		public void setInitialInterval(long initialInterval) {
-			this.initialInterval = initialInterval;
-		}
-
-		public double getMultiplier() {
-			return this.multiplier;
-		}
-
-		public void setMultiplier(double multiplier) {
-			this.multiplier = multiplier;
-		}
-
-		public long getMaxInterval() {
-			return this.maxInterval;
-		}
-
-		public void setMaxInterval(long maxInterval) {
-			this.maxInterval = maxInterval;
-		}
-
-		public int getMaxAttempts() {
-			return this.maxAttempts;
-		}
-
-		public void setMaxAttempts(int maxAttempts) {
-			this.maxAttempts = maxAttempts;
-		}
-
 	}
 
 }

@@ -73,7 +73,7 @@ public class WatchDeferredResult<T> extends DeferredResult<T> implements Seriali
 
 	@Override
 	public String toString() {
-		return "WatchDeferredResult [instanceId=" + instance + ", toString()=" + super.toString() + "]";
+		return "WatchDeferredResult [instance=" + instance + "]";
 	}
 
 }

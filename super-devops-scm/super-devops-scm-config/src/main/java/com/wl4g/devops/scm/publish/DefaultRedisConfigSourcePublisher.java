@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.scm.publish;
 
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;
@@ -33,12 +35,6 @@ import com.wl4g.devops.support.cache.JedisService;
  * @since
  */
 public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePublisher {
-
-	/** SCM published group. */
-	final public static String CACHE_PUB_GROUPS = "scm_pub_groups";
-
-	/** SCM published CONFIG prefix. */
-	final public static String KEY_PUB_PREFIX = "scm_pub_config_";
 
 	final private JedisService jedisService;
 
@@ -65,7 +61,7 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Extract published config for size: {}, {}", (list != null ? list.size() : 0), list);
+			log.debug("Extract published config for - count: {}, {}", list.size(), list);
 		}
 		return list;
 	}

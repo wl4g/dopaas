@@ -15,12 +15,17 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
+
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.utils.bean.BeanMapConvert;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+import com.wl4g.devops.support.task.GenericTaskRunner;
 
 /**
  * Abstract refresh watcher.
@@ -31,21 +36,34 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
  * @see {@link org.springframework.cloud.zookeeper.config.ConfigWatcher
  *      ConfigWatcher}
  */
-public abstract class AbstractRefreshWatcher implements Runnable {
+public abstract class AbstractRefreshWatcher extends GenericTaskRunner {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	/** SCM client configuration */
+	final protected ScmClientProperties config;
 
-	/** Scm context refresher. */
+	/** SCM context refresher. */
 	final protected ScmContextRefresher refresher;
 
-	/** Scm property sources remote locator. */
+	/** SCM property sources remote locator. */
 	final protected ScmPropertySourceLocator locator;
 
-	public AbstractRefreshWatcher(ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
+	public AbstractRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
+		super(new TaskProperties(-1, 0, 0)); // disable worker group
+		Assert.notNull(config, "Config must not be null");
 		Assert.notNull(refresher, "Refresher must not be null");
-		Assert.notNull(locator, "locator must not be null");
+		Assert.notNull(locator, "Locator must not be null");
+		this.config = config;
 		this.refresher = refresher;
 		this.locator = locator;
+	}
+
+	protected String getWatchingUrl(boolean validate) {
+		String uri = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
+
+		// Create releaseGet
+		GetRelease get = new GetRelease(locator.getInfo().getAppName(), locator.getInfo().getProfilesActive(), null,
+				locator.getInfo().getInstance());
+		return (uri + "?" + new BeanMapConvert(get).toUriParmaters());
 	}
 
 }

@@ -30,13 +30,6 @@ public class GenericInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
-	 * Name-space(configuration file-name)
-	 */
-	@NotNull
-	@NotBlank
-	private String namespace;
-
-	/**
 	 * Application name
 	 */
 	@NotNull
@@ -44,7 +37,7 @@ public class GenericInfo implements Serializable {
 	private String group;
 
 	/**
-	 * Environment active profile.
+	 * Name-space(configuration file-name, like spring.profiles)
 	 */
 	@NotNull
 	@NotBlank
@@ -53,49 +46,38 @@ public class GenericInfo implements Serializable {
 	/**
 	 * Version release information
 	 */
-	@NotNull
-	private ReleaseMeta meta;
+	private ReleaseMeta meta = new ReleaseMeta();
 
 	public GenericInfo() {
 		super();
 	}
 
-	public GenericInfo(String group, String profile) {
-		this(group, profile, null);
+	public GenericInfo(String group, String namespace) {
+		this(group, namespace, null);
 	}
 
-	public GenericInfo(String group, String profile, ReleaseMeta meta) {
+	public GenericInfo(String group, String namespace, ReleaseMeta meta) {
 		super();
 		setGroup(group);
-		setProfile(profile);
+		setProfile(namespace);
 		setMeta(meta);
-	}
-
-	public String getNamespace() {
-		return namespace;
-	}
-
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
-
-	public String getGroup() {
-		return group;
-	}
-
-	public void setGroup(String application) {
-		if (!StringUtils.isEmpty(application) && !"NULL".equalsIgnoreCase(application)) {
-			this.group = application;
-		}
 	}
 
 	public String getProfile() {
 		return profile;
 	}
 
-	public void setProfile(String profile) {
-		if (!StringUtils.isEmpty(profile) && !"NULL".equalsIgnoreCase(profile)) {
-			this.profile = profile;
+	public void setProfile(String namespace) {
+		this.profile = namespace;
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		if (!StringUtils.isEmpty(group) && !"NULL".equalsIgnoreCase(group)) {
+			this.group = group;
 		}
 	}
 
@@ -103,9 +85,9 @@ public class GenericInfo implements Serializable {
 		return meta;
 	}
 
-	public void setMeta(ReleaseMeta releaseMeta) {
-		if (releaseMeta != null) {
-			this.meta = releaseMeta;
+	public void setMeta(ReleaseMeta meta) {
+		if (meta != null) {
+			this.meta = meta;
 		}
 	}
 
@@ -114,10 +96,10 @@ public class GenericInfo implements Serializable {
 		return JacksonUtils.toJSONString(this);
 	}
 
-	public void validation(boolean validVersion, boolean validReleaseId) {
-		Assert.notNull(getGroup(), "`application` is not allowed to be null.");
-		Assert.notNull(getProfile(), "`profile` is not allowed to be null.");
-		getMeta().validation(validVersion, validReleaseId);
+	public void validation(boolean versionValidate, boolean releaseIdValidate) {
+		Assert.hasText(getGroup(), "`group` must not be empty");
+		Assert.hasText(getProfile(), "`namespace` must not be empty");
+		getMeta().validation(versionValidate, releaseIdValidate);
 	}
 
 	public static class ReleaseInstance implements Serializable {

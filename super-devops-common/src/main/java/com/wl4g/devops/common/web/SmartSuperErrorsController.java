@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import static java.util.Locale.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -254,11 +254,15 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	 * @return
 	 */
 	private boolean isStackTrace(HttpServletRequest request) {
+		if (log.isDebugEnabled()) {
+			return true;
+		}
+
 		String parameter = request.getParameter(PARAM_STACK_TRACE);
 		if (parameter == null) {
 			return false;
 		}
-		return Boolean.valueOf(parameter.toLowerCase(Locale.ENGLISH));
+		return Boolean.valueOf(parameter.toLowerCase(ENGLISH));
 	}
 
 	/**

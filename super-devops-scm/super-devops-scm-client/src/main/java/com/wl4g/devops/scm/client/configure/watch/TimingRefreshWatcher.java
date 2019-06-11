@@ -15,18 +15,29 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import static org.springframework.http.HttpMethod.*;
 
+import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo.ChangedRecord;
+import com.wl4g.devops.common.exception.scm.ReportRetriesCountOutException;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
-
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
+import static com.wl4g.devops.common.web.RespBase.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_POST;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -36,60 +47,107 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version v1.0 2019年5月1日
  * @since
  */
-@EnableScheduling
 public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 
-	final public static String PLACEHOLDER_INIT_DELAY = "${" + PREFIX + ".watch.init-delay:90000}";
-	final public static String PLACEHOLDER_DELAY = "${" + PREFIX + ".watch.delay:30000}";
+	final public static String EXP_MAXATTEMPTS = "${spring.cloud.devops.scm.client.retry.max-attempts:5}";
+	final public static String EXP_DELAY = "${spring.cloud.devops.scm.client.retry.delay:1000}";
+	final public static String EXP_MAXDELAY = "${spring.cloud.devops.scm.client.retry.max-delay:5000}";
+	final public static String EXP_MULT = "${spring.cloud.devops.scm.client.retry.multiplier:1.1}";
+	final public static String EXP_FASTFAIL = "${spring.cloud.devops.scm.client.retry.threshold-fastfail:true}";
+
+	/** Retry failure exceed threshold fast-fail */
+	@Value(EXP_FASTFAIL)
+	private boolean thresholdFastfail;
 
 	/** Watching completion state. */
 	final private AtomicBoolean watchState = new AtomicBoolean(false);
 
-	public TimingRefreshWatcher(ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
-		super(refresher, locator);
+	public TimingRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
+		super(config, refresher, locator);
 	}
 
-	@Scheduled(initialDelayString = PLACEHOLDER_INIT_DELAY, fixedDelayString = PLACEHOLDER_DELAY)
 	@Override
 	public void run() {
-		// Long-polling watching.
-		createLongPollingWatch();
+		// Loop long-polling watching...
+		while (true) {
+			try {
+				createWatchLongPolling();
+			} catch (Exception e) {
+				log.error("Refresh watching long-polling error!", e);
+			}
+		}
 	}
 
-	private void createLongPollingWatch() {
+	/**
+	 * Create long-polling watching request.
+	 */
+	private void createWatchLongPolling() {
 		if (watchState.compareAndSet(false, true)) {
 			if (log.isInfoEnabled()) {
-				log.info("Synchronizing refresh config for {} ...", watchState);
+				log.info("Synchronizing refresh config ... ");
 			}
 
-			String url = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
+			String url = getWatchingUrl(false);
 			ResponseEntity<ReleaseMeta> resp = locator.getRestTemplate().getForEntity(url, ReleaseMeta.class);
 			if (log.isDebugEnabled()) {
-				log.debug("Watching response for {}", resp);
+				log.debug("Watching response - {}", resp);
 			}
 
-			if (resp != null) {
-				// Update watching state.
-				watchState.compareAndSet(true, false);
-
+			// Update watching state.
+			if (resp != null && watchState.compareAndSet(true, false)) {
 				switch (resp.getStatusCode()) {
+				// Poll refresh(changed).
 				case OK:
-					// Refresh poll changed configuration.
-					refresher.refresh();
+					setReleaseMeta(resp.getBody());
+					// Records changed keys
+					addChanged(refresher.refresh());
 					break;
-				case NOT_MODIFIED:
-					// Configuration unchanged, continue long polling watching.
-					createLongPollingWatch();
+				// Report CONFIG
+				case CHECKPOINT:
+					backendReport();
 					break;
-				default:
+				default: // NOT_MODIFIED
 					throw new IllegalStateException(
-							String.format("Internal error! No support response httpStatus for %s", resp.getStatusCode()));
+							String.format("Unsupport scm protocal status for: '%s'", resp.getStatusCodeValue()));
 				}
 			}
 		} else if (log.isDebugEnabled()) {
 			log.debug("Skip the watch request in long-polling!");
 		}
 
+	}
+
+	/**
+	 * Back-end report changed records
+	 */
+	@Retryable(value = Throwable.class, maxAttemptsExpression = EXP_MAXATTEMPTS, backoff = @Backoff(delayExpression = EXP_DELAY, maxDelayExpression = EXP_MAXDELAY, multiplierExpression = EXP_MULT))
+	private void backendReport() {
+		String url = config.getBaseUri() + URI_S_BASE + "/" + URI_S_REPORT_POST;
+
+		Collection<ChangedRecord> records = getChangedQueues();
+		// Requests
+		RespBase<?> resp = locator.getRestTemplate()
+				.exchange(url, POST, new HttpEntity<>(new ReportInfo(records)), new ParameterizedTypeReference<RespBase<?>>() {
+				}).getBody();
+
+		// Successful reset
+		if (isSuccess(resp)) {
+			changedReset();
+		} else {
+			throw new ReportRetriesCountOutException(String.format("Backend report failure! records for %s", records.size()));
+		}
+	}
+
+	@Recover
+	public void recoverReportRetriesCountOutException(ReportRetriesCountOutException e) {
+		if (thresholdFastfail) {
+			if (log.isWarnEnabled()) {
+				log.warn("Refresh report retries exceed threshold, discarded refresh changed record!");
+			}
+			changedReset();
+		} else if (log.isWarnEnabled()) {
+			log.warn("Refresh report retries exceed threshold!");
+		}
 	}
 
 }

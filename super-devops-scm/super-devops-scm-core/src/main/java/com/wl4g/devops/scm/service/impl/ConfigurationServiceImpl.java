@@ -57,7 +57,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private AppGroupDao appGroupDao;
 	@Autowired
-	private ConfigContextHandler configServerService;
+	private ConfigContextHandler configContextHandler;
 
 	@Override
 	public void configure(VersionOfDetail vd) {
@@ -145,7 +145,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		preRelease.setMeta(meta);
 		preRelease.setInstances(instances);
-		this.configServerService.release(preRelease);
+		this.configContextHandler.release(preRelease);
 	}
 
 	@Override

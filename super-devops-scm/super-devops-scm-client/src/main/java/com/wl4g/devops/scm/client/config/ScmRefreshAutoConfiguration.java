@@ -78,8 +78,9 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 	}
 
 	@Bean("timingRefreshWatcher")
-	public TimingRefreshWatcher timingRefreshWatcher(ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
-		return new TimingRefreshWatcher(refresher, locator);
+	public TimingRefreshWatcher timingRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher,
+			ScmPropertySourceLocator locator) {
+		return new TimingRefreshWatcher(config, refresher, locator);
 	}
 
 	//

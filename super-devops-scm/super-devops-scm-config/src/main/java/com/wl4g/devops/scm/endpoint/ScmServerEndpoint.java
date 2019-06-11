@@ -21,14 +21,11 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -54,23 +51,17 @@ public class ScmServerEndpoint extends BaseController {
 	}
 
 	@GetMapping(value = URI_S_SOURCE_GET)
-	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req) {
+	public RespBase<ReleaseMessage> getSource(@Validated GetRelease get) {
 		if (log.isInfoEnabled()) {
-			log.info("On config source ... {}", req);
+			log.info("Get config source - {}", get);
 		}
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
-		try {
-			// Got configuration source
-			resp.getData().put(KEY_RELEASE, contextHandler.getSource(req));
-		} catch (Exception e) {
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(ExceptionUtils.getRootCauseMessage(e));
-			log.error("Get config-source failed.", e);
-		}
+		// Got configuration source
+		resp.getData().put(KEY_RELEASE, contextHandler.getSource(get));
 
 		if (log.isInfoEnabled()) {
-			log.info("Got config response: {}", resp);
+			log.info("Response config source - {}", resp);
 		}
 		return resp;
 	}
@@ -78,20 +69,14 @@ public class ScmServerEndpoint extends BaseController {
 	@PostMapping(value = URI_S_REPORT_POST)
 	public RespBase<?> report(@Validated @RequestBody ReportInfo report) {
 		if (log.isInfoEnabled()) {
-			log.info("On report ... {}", report);
+			log.info("Report for - {}", report);
 		}
 
 		RespBase<?> resp = new RespBase<>();
-		try {
-			contextHandler.report(report);
-		} catch (Exception e) {
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(getRootCauseMessage(e));
-			log.error("Report failed.", e);
-		}
+		contextHandler.report(report);
 
 		if (log.isInfoEnabled()) {
-			log.info("Report response: {}", resp);
+			log.info("Refresh report response for - {}", resp);
 		}
 		return resp;
 	}
@@ -104,10 +89,10 @@ public class ScmServerEndpoint extends BaseController {
 	 * @param watch
 	 * @return
 	 */
-	@RequestMapping(value = URI_S_WATCH_GET, method = { HEAD })
+	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
 	public DeferredResult<?> watch(@Validated GetRelease watch) {
 		if (log.isInfoEnabled()) {
-			log.info("On watch ... {}", watch);
+			log.info("Watching for - {}", watch);
 		}
 
 		return contextHandler.watch(watch);
@@ -121,9 +106,8 @@ public class ScmServerEndpoint extends BaseController {
 	 * 
 	 * <pre>
 	 *	{
-	 *		"namespace": "application-test.yml",
-	 *		"group": "scm-example",
 	 *		"profile": "test",
+	 *		"group": "scm-example",
 	 *		"instances": [{
 	 *			"host": "localhost",
 	 *			"port": 8848
@@ -138,10 +122,10 @@ public class ScmServerEndpoint extends BaseController {
 	 * @param pre
 	 * @return
 	 */
-	@PostMapping("releaseTests")
+	// @PostMapping("releaseTests")
 	public RespBase<?> releaseTests(@Validated @RequestBody PreRelease pre) {
 		if (log.isInfoEnabled()) {
-			log.info("On releasing tests ... {}", pre);
+			log.info("PreRelease tests - {}", pre);
 		}
 
 		RespBase<?> resp = new RespBase<>();

@@ -15,21 +15,15 @@
  */
 package com.wl4g.devops.scm.client.endpoint;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.ResponseBody;
+//import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -59,59 +53,27 @@ public class ScmClientEndpoint extends BaseController {
 		this.refresher = refresher;
 	}
 
-	@PostMapping(value = URI_C_REFRESH)
-	@ResponseBody
-	public RespBase<?> refresh(@RequestParam("releaseMeta") ReleaseMeta meta, BindingResult bind) {
+	//
+	// Used for tests
+	//
+
+	// @PostMapping(value = URI_C_REFRESH)
+	// @ResponseBody
+	public RespBase<?> refresh(@RequestParam("releaseMeta") ReleaseMeta meta) {
 		if (log.isInfoEnabled()) {
-			log.info("Post configure refresh ... {}", meta);
+			log.info("Refresh client config meta for ... {}", meta);
 		}
 
 		RespBase<?> resp = new RespBase<>();
-		if (bind.hasErrors()) {
-			resp.setCode(RetCode.PARAM_ERR);
-			resp.setMessage(bind.toString());
-		} else {
-			try {
-				// Do refresh.
-				refresher.refresh();
-			} catch (Exception e) {
-				String errmsg = ExceptionUtils.getRootCauseMessage(e);
-				resp.setCode(RetCode.SYS_ERR);
-				resp.setMessage(errmsg);
-				log.error("Invoke refresh failure. {}", errmsg);
-			}
-		}
-		return resp;
-	}
-
-	@GetMapping(value = URI_C_LATEST)
-	@ResponseBody
-	public RespBase<?> latest() {
-		if (log.isInfoEnabled()) {
-			log.info("Got config latest ...");
-		}
-
-		RespBase<List<ReleasePropertySource>> resp = new RespBase<>();
 		try {
-			// Got current environment scm property sources.
-			resp.getData().put(KEY_USED_SOURCES, getEnvironmentPropertySources());
+			refresher.refresh();
 		} catch (Exception e) {
-			String errmsg = ExceptionUtils.getRootCauseMessage(e);
+			String errmsg = getRootCauseMessage(e);
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(errmsg);
-			log.error("Got latest config failure. {}", errmsg);
+			log.error("Refresh failed! {}", errmsg);
 		}
-
 		return resp;
-	}
-
-	private List<ReleasePropertySource> getEnvironmentPropertySources() {
-		List<ReleasePropertySource> sources = new ArrayList<>();
-		//
-		// TODO
-		//
-
-		return sources;
 	}
 
 }

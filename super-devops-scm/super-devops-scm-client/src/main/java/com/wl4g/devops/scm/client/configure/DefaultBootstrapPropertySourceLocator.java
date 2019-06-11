@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.scm.client.configure;
 
-import com.wl4g.devops.common.bean.scm.model.GenericInfo;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
@@ -57,8 +56,8 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
-				// Get remote latest property-sources(version/releaseId)
-				ReleaseMessage config = pullRemoteReleaseConfig(new GenericInfo.ReleaseMeta());
+				// PUll latest property-sources from server.
+				ReleaseMessage config = pullRemoteReleaseConfig();
 
 				// Resolves cipher resource
 				resolvesCipherSource(config);
