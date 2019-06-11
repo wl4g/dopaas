@@ -59,16 +59,18 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		if (bossRunning.compareAndSet(false, true)) {
-			// Create worker
-			final AtomicInteger counter = new AtomicInteger(-1);
-			worker = new ThreadPoolExecutor(1, taskProperties.getConcurrency(), taskProperties.getKeepAliveTime(), MICROSECONDS,
-					new LinkedBlockingQueue<>(taskProperties.getAcceptQueue()), r -> {
-						String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
-						Thread job = new Thread(this, name);
-						job.setDaemon(false);
-						job.setPriority(Thread.NORM_PRIORITY);
-						return job;
-					});
+			// Create worker(if necessary)
+			if (taskProperties.getConcurrency() > 0) {
+				final AtomicInteger counter = new AtomicInteger(-1);
+				worker = new ThreadPoolExecutor(1, taskProperties.getConcurrency(), taskProperties.getKeepAliveTime(),
+						MICROSECONDS, new LinkedBlockingQueue<>(taskProperties.getAcceptQueue()), r -> {
+							String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
+							Thread job = new Thread(this, name);
+							job.setDaemon(false);
+							job.setPriority(Thread.NORM_PRIORITY);
+							return job;
+						});
+			}
 
 			// Create boss
 			String name = getClass().getSimpleName() + "-boos";
@@ -120,6 +122,7 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	}
 
 	protected ThreadPoolExecutor getWorker() {
+		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency>0");
 		return worker;
 	}
 
@@ -134,16 +137,19 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 
 		private static final long serialVersionUID = -1996272636830701232L;
 
-		/** concurrency */
-		private int concurrency = 3;
+		/**
+		 * When the concurrency is less than 0, it means that the worker thread
+		 * group is not enabled (only the boss asynchronous thread is started)
+		 */
+		private int concurrency = -1;
 
 		/** watch dog delay */
 		private long keepAliveTime = 0L;
 
 		/**
-		 * Consumption rReceive queue size
+		 * Consumption receive queue size
 		 */
-		private int acceptQueue = 65535;
+		private int acceptQueue = 8192;
 
 		public TaskProperties() {
 			super();
@@ -161,7 +167,6 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 		}
 
 		public void setConcurrency(int concurrency) {
-			Assert.isTrue(concurrency > 0, "Concurrency must be greater than 0");
 			this.concurrency = concurrency;
 		}
 
@@ -171,7 +176,9 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 		}
 
 		public void setKeepAliveTime(long keepAliveTime) {
-			Assert.isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
+			if (getConcurrency() > 0) {
+				Assert.isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
+			}
 			this.keepAliveTime = keepAliveTime;
 		}
 
@@ -180,7 +187,9 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 		}
 
 		public void setAcceptQueue(int acceptQueue) {
-			Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
+			if (getConcurrency() > 0) {
+				Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
+			}
 			this.acceptQueue = acceptQueue;
 		}
 

@@ -40,7 +40,7 @@ public class InstanceInfo implements InitializingBean, Serializable {
 
 	private String appName;
 	private String profilesActive;
-	private ReleaseInstance bindInstance;
+	private ReleaseInstance instance;
 
 	public InstanceInfo(Environment environment) {
 		this.environment = environment;
@@ -54,8 +54,8 @@ public class InstanceInfo implements InitializingBean, Serializable {
 		return profilesActive;
 	}
 
-	public ReleaseInstance getBindInstance() {
-		return bindInstance;
+	public ReleaseInstance getInstance() {
+		return instance;
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class InstanceInfo implements InitializingBean, Serializable {
 
 		// Bind current instance.
 		try {
-			this.bindInstance = ReleaseInstance.of(InetAddress.getLocalHost().getHostName() + ":" + serverPort);
+			this.instance = ReleaseInstance.of(InetAddress.getLocalHost().getHostName() + ":" + serverPort);
 		} catch (UnknownHostException e) {
 			throw new IllegalStateException(e);
 		}

@@ -18,20 +18,18 @@ package com.wl4g.devops;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.logging.LoggingSystem;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import static org.springframework.boot.logging.LoggingSystem.SYSTEM_PROPERTY;
 
 import com.wl4g.devops.iam.annotation.EnableIamServer;
 import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
 
 @EnableIamServer
-@EnableDiscoveryClient
 @MapperScan("com.wl4g.devops.*.dao")
 @SpringBootApplication
 public class DevOpsIam {
 
 	static {
-		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
+		System.setProperty(SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
 	}
 
 	public static void main(String[] args) {

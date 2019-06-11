@@ -187,7 +187,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getDefaultTimeout());
 
 		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getGroup());
-		String watchKey = getWatchKey(watch.getInstance(), watch.getNamespace());
+		String watchKey = getWatchKey(watch.getInstance(), watch.getProfile());
 		deferreds.put(watchKey, deferred);
 
 		final String instance = watch.getInstance().toString();
@@ -238,13 +238,13 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 * Generate watching deferred key.
 	 * 
 	 * @param instance
-	 * @param namespace
+	 * @param profile
 	 * @return
 	 */
-	protected String getWatchKey(ReleaseInstance instance, String namespace) {
+	protected String getWatchKey(ReleaseInstance instance, String profile) {
 		Assert.notNull(instance, "Release instance must not be null");
-		Assert.hasText(namespace, "Namespace must not be null");
-		return instance.toString() + "-" + namespace;
+		Assert.hasText(profile, "Profile must not be null");
+		return instance.toString() + "-" + profile;
 	}
 
 	/**

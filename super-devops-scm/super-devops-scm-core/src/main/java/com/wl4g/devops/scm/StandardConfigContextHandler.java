@@ -25,6 +25,7 @@ import com.wl4g.devops.common.bean.scm.ConfigSourceBean;
 import com.wl4g.devops.common.bean.scm.VersionContentBean.FileType;
 import com.wl4g.devops.common.bean.scm.model.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
 import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.utils.PropertySources.Type;
@@ -64,7 +65,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		 * releaseId will be empty
 		 */
 		get.validation(false, false);
-		ReleaseMessage release = new ReleaseMessage(get.getGroup(), get.getProfile(), get.getInstance());
+		ReleaseMessage release = new ReleaseMessage(get.getGroup(), get.getProfile(), null, get.getInstance());
 
 		ConfigSourceBean config = this.configService.findSource(get);
 		if (config != null) {
@@ -106,9 +107,12 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		return publisher.watch(watch);
 	}
 
-	/* for test */
-	public ReleaseMessage getReleaseMessage(String application, String profile, ReleaseInstance instance) {
-		ReleaseMessage release = new ReleaseMessage(application, profile, instance);
+	//
+	// for test
+	//
+
+	public ReleaseMessage getReleaseMessage(String group, String namespace, ReleaseMeta meta, ReleaseInstance instance) {
+		ReleaseMessage release = new ReleaseMessage(group, namespace, meta, instance);
 
 		StringBuffer content = new StringBuffer();
 		try {
@@ -119,7 +123,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		System.out.println(content);
 
 		Map<String, Object> source = PropertySources.resolve(Type.YAML, content.toString());
-		release.getPropertySources().add(new ReleasePropertySource("application-test.yml", source));
+		release.getPropertySources().add(new ReleasePropertySource(namespace, source));
 
 		return release;
 	}

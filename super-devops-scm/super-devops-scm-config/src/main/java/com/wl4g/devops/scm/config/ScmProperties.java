@@ -23,6 +23,7 @@ public class ScmProperties extends TaskProperties {
 	private int corePoolSize = 10;
 	private int maxPoolSize = 25;
 	private int queueCapacity = 100;
+
 	private long scanDelay = (long) (0.2 * 1_000L);
 	private long defaultTimeout = 30_000L;
 

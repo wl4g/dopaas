@@ -1,5 +1,4 @@
 /*
-
  * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +23,7 @@ import java.util.Map.Entry;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 
-import com.wl4g.devops.common.bean.scm.model.GenericInfo;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
@@ -35,6 +34,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceInfo;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
 import org.slf4j.Logger;
@@ -106,54 +106,55 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	}
 
 	/**
-	 * Pull release configuration from scm server.
+	 * Pull release configuration from SCM server.
 	 * 
-	 * @param targetReleaseMeta
 	 * @return
 	 */
-	public ReleaseMessage pullRemoteReleaseConfig(GenericInfo.ReleaseMeta targetReleaseMeta) {
-		// Pull release URL.
-		String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
+	public ReleaseMessage pullRemoteReleaseConfig() {
+		try {
+			// Pull release URL.
+			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
+			// Create release get
+			ReleaseMeta meta = availableReleaseMeta(false);
+			GetRelease get = new GetRelease(info.getAppName(), info.getProfilesActive(), meta, info.getInstance());
 
-		// Create release get
-		GetRelease get = new GetRelease(info.getAppName(), info.getProfilesActive(), targetReleaseMeta, info.getBindInstance());
+			// To parameters
+			String kvs = new BeanMapConvert(get).toUriParmaters();
+			String url = uri + "?" + kvs;
+			if (log.isDebugEnabled()) {
+				log.debug("Get release config url: {}", url);
+			}
 
-		// To parameters
-		String params = new BeanMapConvert(get).toUriParmaters();
-		String url = uri + "?" + params;
-		if (log.isDebugEnabled()) {
-			log.debug("Get release config url: {}", url);
+			HttpHeaders headers = new HttpHeaders();
+			attachHeaders(headers);
+			final HttpEntity<Void> entity = new HttpEntity<>(null, headers);
+			// Attach headers
+			if (log.isDebugEnabled()) {
+				log.debug("Adding header for: {}", headers);
+			}
+
+			RespBase<ReleaseMessage> resp = restTemplate
+					.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
+					}).getBody();
+			if (!RespBase.isSuccess(resp)) {
+				throw new ScmException(String.format("Locator remote source error. %s, %s", url, resp.getMessage()));
+			}
+
+			// Extract release
+			ReleaseMessage release = resp.getData().get(KEY_RELEASE);
+			Assert.notNull(release, "Release message is required, it must not be null");
+			release.validation(true, true);
+
+			// Print sources
+			printfSources(release);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Get remote release config : {}", release);
+			}
+			return release;
+		} finally {
+			releaseReset();
 		}
-
-		HttpHeaders headers = new HttpHeaders();
-		attachHeaders(headers);
-		final HttpEntity<Void> entity = new HttpEntity<>(null, headers);
-
-		// Attach headers
-		if (log.isDebugEnabled()) {
-			log.debug("Adding header for: {}", headers);
-		}
-
-		// Do get request source
-		RespBase<ReleaseMessage> resp = restTemplate
-				.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
-				}).getBody();
-		if (!RespBase.isSuccess(resp)) {
-			throw new ScmException(String.format("Get remote source error. %s, %s", url, resp.getMessage()));
-		}
-
-		// Release payload
-		ReleaseMessage release = resp.getData().get(KEY_RELEASE);
-		Assert.notNull(release, "Release message is required, it must not be null");
-		release.validation(true, true);
-
-		// Print sources
-		printfSources(release);
-
-		if (log.isDebugEnabled()) {
-			log.debug("Get remote release config : {}", release);
-		}
-		return release;
 	}
 
 	/**
@@ -195,14 +196,14 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	}
 
 	/**
-	 * Printf property sources.
+	 * Print property sources.
 	 * 
 	 * @param release
 	 */
 	protected void printfSources(ReleaseMessage release) {
 		if (log.isInfoEnabled()) {
-			log.info("Located environment: group: {}, namespace: {}, profile: {}, release meta: {}", release.getGroup(),
-					release.getNamespace(), release.getProfile(), release.getMeta());
+			log.info("Located config for group: {}, profile: {}, releaseMeta: {}", release.getGroup(), release.getProfile(),
+					release.getProfile(), release.getMeta());
 		}
 
 		if (log.isDebugEnabled()) {
@@ -220,6 +221,10 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 
 	public ScmClientProperties getConfig() {
 		return config;
+	}
+
+	public InstanceInfo getInfo() {
+		return info;
 	}
 
 	public RestTemplate getRestTemplate() {
