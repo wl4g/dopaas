@@ -46,7 +46,7 @@ public class ScmClientProperties {
 	/**
 	 * timeout on waiting to read data from the Config Server.
 	 */
-	private int requestReadTimeout = (30 * 1000) + 5000;
+	private int requestReadTimeout = 30 * 1000 + 5000;
 
 	/**
 	 * Additional headers used to create the client request.

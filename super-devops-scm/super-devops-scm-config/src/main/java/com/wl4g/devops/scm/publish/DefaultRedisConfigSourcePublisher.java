@@ -61,7 +61,7 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Extract published config for - count: {}, {}", list.size(), list);
+			log.debug("Extract published config for - ({}), {}", list.size(), list);
 		}
 		return list;
 	}
@@ -69,7 +69,7 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 	@Override
 	protected void publishConfig(PublishConfigWrapper wrap) {
 		if (log.isDebugEnabled()) {
-			log.debug("Put published config for {}", wrap);
+			log.debug("Put published config for - {}", wrap);
 		}
 
 		// Storage group name

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
+import static org.apache.commons.lang3.RandomUtils.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -74,47 +75,59 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 				createWatchLongPolling();
 			} catch (Exception e) {
 				log.error("Refresh watching long-polling error!", e);
+				synchronized (this) {
+					try {
+						wait(nextLong(1000L, 10_000L));
+					} catch (InterruptedException e1) {
+						log.error("", e);
+					}
+				}
+			} finally {
+				watchState.compareAndSet(true, false);
 			}
 		}
 	}
 
 	/**
 	 * Create long-polling watching request.
+	 * 
+	 * @throws Exception
 	 */
-	private void createWatchLongPolling() {
+	private void createWatchLongPolling() throws Exception {
 		if (watchState.compareAndSet(false, true)) {
-			if (log.isInfoEnabled()) {
-				log.info("Synchronizing refresh config ... ");
+			if (log.isDebugEnabled()) {
+				log.debug("Synchronizing refresh config ... ");
 			}
 
 			String url = getWatchingUrl(false);
 			ResponseEntity<ReleaseMeta> resp = locator.getRestTemplate().getForEntity(url, ReleaseMeta.class);
 			if (log.isDebugEnabled()) {
-				log.debug("Watching response - {}", resp);
+				log.debug("Watch result <= {}", resp);
 			}
 
-			// Update watching state.
-			if (resp != null && watchState.compareAndSet(true, false)) {
+			// Update watching state
+			if (resp != null) {
 				switch (resp.getStatusCode()) {
-				// Poll refresh(changed).
 				case OK:
+					// Poll release changed
 					setReleaseMeta(resp.getBody());
-					// Records changed keys
+					// Records changed propertys
 					addChanged(refresher.refresh());
 					break;
-				// Report CONFIG
 				case CHECKPOINT:
+					// Report refresh changed
 					backendReport();
 					break;
-				default: // NOT_MODIFIED
+				case NOT_MODIFIED: // Continue
+					break;
+				default:
 					throw new IllegalStateException(
 							String.format("Unsupport scm protocal status for: '%s'", resp.getStatusCodeValue()));
 				}
 			}
-		} else if (log.isDebugEnabled()) {
-			log.debug("Skip the watch request in long-polling!");
+		} else {
+			log.warn("Skip the watch request in long polling!");
 		}
-
 	}
 
 	/**
@@ -138,6 +151,11 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 		}
 	}
 
+	/**
+	 * Report retries execed count exception.
+	 * 
+	 * @param e
+	 */
 	@Recover
 	public void recoverReportRetriesCountOutException(ReportRetriesCountOutException e) {
 		if (thresholdFastfail) {

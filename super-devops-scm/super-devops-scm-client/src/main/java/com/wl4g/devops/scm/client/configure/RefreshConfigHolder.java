@@ -82,7 +82,7 @@ public abstract class RefreshConfigHolder {
 	}
 
 	public static void addChanged(Set<String> changedKeys) {
-		changedQueue.add(new ChangedRecord(changedKeys, availableReleaseMeta(true)));
+		changedQueue.add(new ChangedRecord(changedKeys, availableReleaseMeta(false)));
 	}
 
 	public static Queue<ChangedRecord> getChangedQueues() {

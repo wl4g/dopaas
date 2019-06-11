@@ -26,6 +26,11 @@ import com.wl4g.devops.scm.context.ConfigContextHandler;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import static java.util.Arrays.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -45,23 +50,26 @@ public class ScmServerEndpoint extends BaseController {
 
 	final private ConfigContextHandler contextHandler;
 
+	@Autowired
+	private Environment environment;
+
 	public ScmServerEndpoint(ConfigContextHandler handler) {
 		super();
 		this.contextHandler = handler;
 	}
 
 	@GetMapping(value = URI_S_SOURCE_GET)
-	public RespBase<ReleaseMessage> getSource(@Validated GetRelease get) {
+	public RespBase<ReleaseMessage> fetchSource(@Validated GetRelease get) {
 		if (log.isInfoEnabled()) {
-			log.info("Get config source - {}", get);
+			log.info("Fetch config source <= {}", get);
 		}
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
-		// Got configuration source
+		// Fetch configuration source
 		resp.getData().put(KEY_RELEASE, contextHandler.getSource(get));
 
 		if (log.isInfoEnabled()) {
-			log.info("Response config source - {}", resp);
+			log.info("Fetch config source => {}", resp);
 		}
 		return resp;
 	}
@@ -69,14 +77,14 @@ public class ScmServerEndpoint extends BaseController {
 	@PostMapping(value = URI_S_REPORT_POST)
 	public RespBase<?> report(@Validated @RequestBody ReportInfo report) {
 		if (log.isInfoEnabled()) {
-			log.info("Report for - {}", report);
+			log.info("Report <= {}", report);
 		}
 
 		RespBase<?> resp = new RespBase<>();
 		contextHandler.report(report);
 
 		if (log.isInfoEnabled()) {
-			log.info("Refresh report response for - {}", resp);
+			log.info("Report => {}", resp);
 		}
 		return resp;
 	}
@@ -92,7 +100,7 @@ public class ScmServerEndpoint extends BaseController {
 	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
 	public DeferredResult<?> watch(@Validated GetRelease watch) {
 		if (log.isInfoEnabled()) {
-			log.info("Watching for - {}", watch);
+			log.info("Watching <= {}", watch);
 		}
 
 		return contextHandler.watch(watch);
@@ -122,11 +130,12 @@ public class ScmServerEndpoint extends BaseController {
 	 * @param pre
 	 * @return
 	 */
-	// @PostMapping("releaseTests")
+	@PostMapping("releaseTests")
 	public RespBase<?> releaseTests(@Validated @RequestBody PreRelease pre) {
 		if (log.isInfoEnabled()) {
-			log.info("PreRelease tests - {}", pre);
+			log.info("Pre release tests <= {}", pre);
 		}
+		Assert.state(binarySearch(environment.getActiveProfiles(), "prod") < 0, "Non-secure APIs have been rejected!");
 
 		RespBase<?> resp = new RespBase<>();
 		contextHandler.release(pre);
