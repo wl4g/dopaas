@@ -20,8 +20,11 @@ import static java.util.concurrent.TimeUnit.*;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -59,21 +62,26 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		if (bossRunning.compareAndSet(false, true)) {
+			final int concurrency = taskProperties.getConcurrency();
+			final long keepTime = taskProperties.getKeepAliveTime();
+			final int acceptQueue = taskProperties.getAcceptQueue();
+
 			// Create worker(if necessary)
-			if (taskProperties.getConcurrency() > 0) {
+			if (concurrency > 0) {
 				final AtomicInteger counter = new AtomicInteger(-1);
-				worker = new ThreadPoolExecutor(1, taskProperties.getConcurrency(), taskProperties.getKeepAliveTime(),
-						MICROSECONDS, new LinkedBlockingQueue<>(taskProperties.getAcceptQueue()), r -> {
-							String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
-							Thread job = new Thread(this, name);
-							job.setDaemon(false);
-							job.setPriority(Thread.NORM_PRIORITY);
-							return job;
-						});
+				final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(acceptQueue);
+
+				worker = new ThreadPoolExecutor(1, concurrency, keepTime, MICROSECONDS, queue, r -> {
+					String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
+					Thread job = new Thread(this, name);
+					job.setDaemon(false);
+					job.setPriority(Thread.NORM_PRIORITY);
+					return job;
+				}, taskProperties.getReject());
 			}
 
 			// Create boss
-			String name = getClass().getSimpleName() + "-boos";
+			String name = getClass().getSimpleName() + "-boss";
 			boss = new Thread(this, name);
 			boss.setDaemon(false);
 			boss.start();
@@ -151,15 +159,23 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 		 */
 		private int acceptQueue = 8192;
 
+		/** Rejected execution handler. */
+		private RejectedExecutionHandler reject = new AbortPolicy();
+
 		public TaskProperties() {
 			super();
 		}
 
 		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue) {
+			this(concurrency, keepAliveTime, acceptQueue, null);
+		}
+
+		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
 			super();
 			setConcurrency(concurrency);
 			setKeepAliveTime(keepAliveTime);
 			setAcceptQueue(acceptQueue);
+			setReject(reject);
 		}
 
 		public int getConcurrency() {
@@ -191,6 +207,16 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 				Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
 			}
 			this.acceptQueue = acceptQueue;
+		}
+
+		public RejectedExecutionHandler getReject() {
+			return reject;
+		}
+
+		public void setReject(RejectedExecutionHandler reject) {
+			if (reject != null) {
+				this.reject = reject;
+			}
 		}
 
 	}
