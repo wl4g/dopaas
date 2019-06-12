@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Scm client properties.
+ * SCM client properties.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月3日
@@ -31,20 +31,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ScmClientProperties {
 
 	/**
-	 * Prefix for Spring Cloud Config properties.
+	 * Prefix for SCM configuration properties.
 	 */
-	public static final String PREFIX = "spring.cloud.devops.scm.client";
+	final public static String PREFIX = "spring.cloud.devops.scm.client";
+	final public static String AUTHORIZATION = "authorization";
 
-	/**
-	 * Authorization header name.
-	 */
-	public static final String AUTHORIZATION = "authorization";
+	final public static String EXP_MAXATTEMPTS = "${spring.cloud.devops.scm.client.retry.max-attempts:5}";
+	final public static String EXP_DELAY = "${spring.cloud.devops.scm.client.retry.delay:1000}";
+	final public static String EXP_MAXDELAY = "${spring.cloud.devops.scm.client.retry.max-delay:5000}";
+	final public static String EXP_MULT = "${spring.cloud.devops.scm.client.retry.multiplier:1.1}";
+	final public static String EXP_FASTFAIL = "${spring.cloud.devops.scm.client.retry.threshold-fastfail:true}";
 
-	/** Scm server based URI. */
+	/** SCM server based URI. */
 	private String baseUri = "http://localhost:14043/scm";
 
 	/**
-	 * timeout on waiting to read data from the Config Server.
+	 * timeout on waiting to read data from the SCM Server.
 	 */
 	private int requestReadTimeout = 30 * 1000 + 5000;
 
