@@ -36,6 +36,7 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.common.web.RespBase.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_POST;
@@ -51,12 +52,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since
  */
 public class TimingRefreshWatcher extends AbstractRefreshWatcher {
-
-	final public static String EXP_MAXATTEMPTS = "${spring.cloud.devops.scm.client.retry.max-attempts:5}";
-	final public static String EXP_DELAY = "${spring.cloud.devops.scm.client.retry.delay:1000}";
-	final public static String EXP_MAXDELAY = "${spring.cloud.devops.scm.client.retry.max-delay:5000}";
-	final public static String EXP_MULT = "${spring.cloud.devops.scm.client.retry.multiplier:1.1}";
-	final public static String EXP_FASTFAIL = "${spring.cloud.devops.scm.client.retry.threshold-fastfail:true}";
 
 	/** Retry failure exceed threshold fast-fail */
 	@Value(EXP_FASTFAIL)
@@ -119,7 +114,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 				case OK:
 					// Poll release changed
 					setReleaseMeta(resp.getBody());
-					// Records changed propertys
+					// Records changed property names
 					addChanged(refresher.refresh());
 					break;
 				case CHECKPOINT:
