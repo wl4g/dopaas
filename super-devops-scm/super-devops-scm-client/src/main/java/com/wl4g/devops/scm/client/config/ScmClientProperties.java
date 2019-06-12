@@ -19,6 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.Assert;
+
+import com.wl4g.devops.scm.config.AbstractScmProperties;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 
 /**
  * SCM client properties.
@@ -27,8 +31,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version v1.0 2019年6月3日
  * @since
  */
-@ConfigurationProperties(ScmClientProperties.PREFIX)
-public class ScmClientProperties {
+@ConfigurationProperties(PREFIX)
+public class ScmClientProperties extends AbstractScmProperties {
+	private static final long serialVersionUID = -2133451846066162424L;
 
 	/**
 	 * Prefix for SCM configuration properties.
@@ -36,19 +41,26 @@ public class ScmClientProperties {
 	final public static String PREFIX = "spring.cloud.devops.scm.client";
 	final public static String AUTHORIZATION = "authorization";
 
-	final public static String EXP_MAXATTEMPTS = "${spring.cloud.devops.scm.client.retry.max-attempts:5}";
-	final public static String EXP_DELAY = "${spring.cloud.devops.scm.client.retry.delay:1000}";
-	final public static String EXP_MAXDELAY = "${spring.cloud.devops.scm.client.retry.max-delay:5000}";
-	final public static String EXP_MULT = "${spring.cloud.devops.scm.client.retry.multiplier:1.1}";
-	final public static String EXP_FASTFAIL = "${spring.cloud.devops.scm.client.retry.threshold-fastfail:true}";
+	final public static String EXP_MAXATTEMPTS = "${" + PREFIX + ".retry.max-attempts:5}";
+	final public static String EXP_DELAY = "${" + PREFIX + ".retry.delay:1000}";
+	final public static String EXP_MAXDELAY = "${" + PREFIX + ".retry.max-delay:5000}";
+	final public static String EXP_MULTIP = "${" + PREFIX + ".retry.multiplier:1.1}";
+	final public static String EXP_FASTFAIL = "${" + PREFIX + ".retry.threshold-fastfail:true}";
 
 	/** SCM server based URI. */
 	private String baseUri = "http://localhost:14043/scm";
 
 	/**
-	 * timeout on waiting to read data from the SCM Server.
+	 * Fetch timeout on waiting to read data from the SCM Server.
 	 */
-	private int requestReadTimeout = 30 * 1000 + 5000;
+	private int fetchReadTimeout = 5 * 1000;
+
+	/**
+	 * Refresh name-space(configuration filename)</br>
+	 * SCM server publishing must be consistent with this configuration or the
+	 * refresh configuration will fail.(Accurate matching)
+	 */
+	private String namespace = "application-test.yaml";
 
 	/**
 	 * Additional headers used to create the client request.
@@ -63,12 +75,23 @@ public class ScmClientProperties {
 		this.baseUri = baseUri;
 	}
 
-	public int getRequestReadTimeout() {
-		return requestReadTimeout;
+	public int getFetchReadTimeout() {
+		return fetchReadTimeout;
 	}
 
-	public void setRequestReadTimeout(int requestReadTimeout) {
-		this.requestReadTimeout = requestReadTimeout;
+	public void setFetchReadTimeout(int fetchReadTimeout) {
+		Assert.state(fetchReadTimeout > 0, String.format("Invalid value for fetch read timeout for %s", fetchReadTimeout));
+		this.fetchReadTimeout = fetchReadTimeout;
+	}
+
+	public String getNamespace() {
+		Assert.hasText(namespace, String.format("Invalid value for namespace for %s", namespace));
+		return namespace;
+	}
+
+	public void setNamespace(String namespace) {
+		Assert.hasText(namespace, String.format("Invalid value for namespace for %s", namespace));
+		this.namespace = namespace;
 	}
 
 	public Map<String, String> getHeaders() {

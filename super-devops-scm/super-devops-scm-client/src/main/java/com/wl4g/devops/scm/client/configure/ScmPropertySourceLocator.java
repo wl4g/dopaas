@@ -31,7 +31,7 @@ import com.wl4g.devops.common.exception.scm.ScmException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.scm.client.config.InstanceInfo;
+import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
@@ -71,7 +71,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	final protected ScmClientProperties config;
 
 	/** SCM client local instance info */
-	final protected InstanceInfo info;
+	final protected InstanceHolder info;
 
 	/** SCM encrypted field identification prefix */
 	final private static String CIPHER_PREFIX = "{cipher}";
@@ -79,7 +79,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	/** Rest template */
 	protected RestTemplate restTemplate;
 
-	public ScmPropertySourceLocator(ScmClientProperties config, InstanceInfo info) {
+	public ScmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
 		Assert.notNull(config, "Scm client properties must not be null");
 		Assert.notNull(info, "Instance info must not be null");
 		this.config = config;
@@ -88,21 +88,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		if (config.getRequestReadTimeout() < 0) {
-			throw new IllegalStateException("Invalid value for read timeout!");
-		}
-		factory.setReadTimeout(config.getRequestReadTimeout());
-		this.restTemplate = new RestTemplate(factory);
-
-		Map<String, String> headers = new HashMap<>(config.getHeaders());
-		if (headers.containsKey(AUTHORIZATION)) {
-			// To avoid redundant addition of header
-			headers.remove(AUTHORIZATION);
-		}
-		if (!headers.isEmpty()) {
-			this.restTemplate.setInterceptors(asList(new GenericRequestHeaderInterceptor(headers)));
-		}
+		this.restTemplate = createRestTemplate(config.getFetchReadTimeout());
 	}
 
 	/**
@@ -116,7 +102,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
 			// Create release get
 			ReleaseMeta meta = availableReleaseMeta(false);
-			GetRelease get = new GetRelease(info.getAppName(), info.getProfilesActive(), meta, info.getInstance());
+			GetRelease get = new GetRelease(info.getAppName(), config.getNamespace(), meta, info.getInstance());
 
 			// To parameters
 			String kvs = new BeanMapConvert(get).toUriParmaters();
@@ -202,8 +188,8 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 */
 	protected void printfSources(ReleaseMessage release) {
 		if (log.isInfoEnabled()) {
-			log.info("Located config for group: {}, profile: {}, releaseMeta: {}", release.getGroup(), release.getProfile(),
-					release.getProfile(), release.getMeta());
+			log.info("Located config for group: {}, profile: {}, releaseMeta: {}", release.getGroup(), release.getNamespace(),
+					release.getNamespace(), release.getMeta());
 		}
 
 		if (log.isDebugEnabled()) {
@@ -219,16 +205,46 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 		}
 	}
 
-	public ScmClientProperties getConfig() {
-		return config;
-	}
+	/**
+	 * Create rest template.
+	 * 
+	 * @param readTimeout
+	 * @return
+	 */
+	public RestTemplate createRestTemplate(long readTimeout) {
+		Assert.state(readTimeout > 0, String.format("Invalid value for read timeout for %s", readTimeout));
 
-	public InstanceInfo getInfo() {
-		return info;
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		factory.setConnectTimeout(config.getConnectTimeout());
+		factory.setReadTimeout((int) readTimeout);
+		factory.setMaxResponseSize(config.getMaxResponseSize());
+		RestTemplate restTemplate = new RestTemplate(factory);
+
+		Map<String, String> headers = new HashMap<>(config.getHeaders());
+		if (headers.containsKey(AUTHORIZATION)) {
+			// To avoid redundant addition of header
+			headers.remove(AUTHORIZATION);
+		}
+		if (!headers.isEmpty()) {
+			restTemplate.setInterceptors(asList(new GenericRequestHeaderInterceptor(headers)));
+		}
+		return restTemplate;
 	}
 
 	public RestTemplate getRestTemplate() {
 		return restTemplate;
+	}
+
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+
+	public ScmClientProperties getConfig() {
+		return config;
+	}
+
+	public InstanceHolder getInfo() {
+		return info;
 	}
 
 	/**

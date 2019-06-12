@@ -32,6 +32,22 @@ import com.wl4g.devops.scm.publish.WatchDeferredResult;
 public interface ConfigContextHandler {
 
 	/**
+	 * Watching long-polling
+	 * 
+	 * @param watch
+	 * @return
+	 */
+	WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch);
+
+	/**
+	 * Release configuration property-sources.
+	 * 
+	 * @param pre
+	 *            request parameter.
+	 */
+	void release(PreRelease pre);
+
+	/**
 	 * Find configuration property-source.
 	 * 
 	 * @param get
@@ -50,15 +66,5 @@ public interface ConfigContextHandler {
 	 * @return
 	 */
 	void report(ReportInfo report);
-
-	/**
-	 * Release configuration property-sources.
-	 * 
-	 * @param pre
-	 *            request parameter.
-	 */
-	void release(PreRelease pre);
-
-	WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch);
 
 }

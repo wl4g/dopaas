@@ -18,8 +18,9 @@ package com.wl4g.devops.common.bean.scm;
 public class VersionContentBean extends BaseBean {
 
 	private Integer versionId; // 版本号ID
-	private String filename; // 文件名称(不含后缀)
-	private Integer type; // 文件类型
+	private String namespaceId; // 命名空间ID（sys_dict表ID）
+	private String namespace; // 命名空间（配置文件名）
+	private Integer type; // 类型
 	private String content; // 配置文件内容
 
 	public Integer getVersionId() {
@@ -30,12 +31,20 @@ public class VersionContentBean extends BaseBean {
 		this.versionId = versionId;
 	}
 
-	public String getFilename() {
-		return filename;
+	public String getNamespaceId() {
+		return namespaceId;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setNamespaceId(String namespaceId) {
+		this.namespaceId = namespaceId;
+	}
+
+	public String getNamespace() {
+		return namespace;
+	}
+
+	public void setNamespace(String filename) {
+		this.namespace = filename;
 	}
 
 	public Integer getType() {

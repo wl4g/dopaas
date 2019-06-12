@@ -41,8 +41,8 @@ public class ReleaseMessage extends GetRelease {
 		super();
 	}
 
-	public ReleaseMessage(String group, String profile, ReleaseMeta meta, ReleaseInstance instance) {
-		super(group, profile, meta, instance);
+	public ReleaseMessage(String group, String namespace, ReleaseMeta meta, ReleaseInstance instance) {
+		super(group, namespace, meta, instance);
 	}
 
 	public List<ReleasePropertySource> getPropertySources() {
@@ -61,11 +61,11 @@ public class ReleaseMessage extends GetRelease {
 	}
 
 	@Override
-	public void validation(boolean validVersion, boolean validReleaseId) {
-		super.validation(validVersion, validReleaseId);
-		Assert.notEmpty(getPropertySources(), "`propertySources` is not allowed to be null.");
+	public void validation(boolean versionValidate, boolean releaseValidate) {
+		super.validation(versionValidate, releaseValidate);
+		Assert.notEmpty(getPropertySources(), "Invalid empty propertySources");
 		getPropertySources().stream().forEach((ps) -> {
-			Assert.notNull(ps, "`releasePropertySource` is not allowed to be null.");
+			Assert.notNull(ps, "Invalid release propertySources");
 			ps.validation();
 		});
 	}

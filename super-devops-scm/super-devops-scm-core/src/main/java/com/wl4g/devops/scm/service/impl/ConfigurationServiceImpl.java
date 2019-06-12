@@ -141,7 +141,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		//
 		PreRelease preRelease = new PreRelease();
 		preRelease.setGroup(appGroup.getName());
-		preRelease.setProfile(envName);
+		preRelease.setNamespace(envName);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		preRelease.setMeta(meta);
 		preRelease.setInstances(instances);

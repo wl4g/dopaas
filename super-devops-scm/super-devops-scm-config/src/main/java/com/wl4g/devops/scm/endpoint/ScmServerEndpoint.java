@@ -58,6 +58,23 @@ public class ScmServerEndpoint extends BaseController {
 		this.contextHandler = handler;
 	}
 
+	/**
+	 * Watching configuration source. </br>
+	 * <a href=
+	 * "#">http://localhost:14043/scm/scm-server/watch?instance.host=localhost&instance.port=14044&group=scm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
+	 * 
+	 * @param watch
+	 * @return
+	 */
+	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
+	public DeferredResult<?> watch(@Validated GetRelease watch) {
+		if (log.isInfoEnabled()) {
+			log.info("Watching <= {}", watch);
+		}
+
+		return contextHandler.watch(watch);
+	}
+
 	@GetMapping(value = URI_S_SOURCE_GET)
 	public RespBase<ReleaseMessage> fetchSource(@Validated GetRelease get) {
 		if (log.isInfoEnabled()) {
@@ -90,31 +107,14 @@ public class ScmServerEndpoint extends BaseController {
 	}
 
 	/**
-	 * Watching configuration source. </br>
-	 * <a href=
-	 * "#">http://localhost:14043/scm/scm-server/watch?instance.host=localhost&instance.port=1&group=scm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
-	 * 
-	 * @param watch
-	 * @return
-	 */
-	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
-	public DeferredResult<?> watch(@Validated GetRelease watch) {
-		if (log.isInfoEnabled()) {
-			log.info("Watching <= {}", watch);
-		}
-
-		return contextHandler.watch(watch);
-	}
-
-	/**
 	 * <h6>For releaseTests</h6></br>
 	 * <b>Header:</b></br>
-	 * <a href="#">http://localhost:14043/scm/scm-server/releaseTests</a></br>
+	 * <a href="#">http://localhost:14044/scm/scm-server/releaseTests</a></br>
 	 * <b>Body:</b>
 	 * 
 	 * <pre>
 	 *	{
-	 *		"profile": "test",
+	 *		"namespace": "application-test.yml",
 	 *		"group": "scm-example",
 	 *		"instances": [{
 	 *			"host": "localhost",

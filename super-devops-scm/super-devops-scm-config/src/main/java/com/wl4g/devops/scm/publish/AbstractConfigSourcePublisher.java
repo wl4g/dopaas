@@ -15,34 +15,34 @@
  */
 package com.wl4g.devops.scm.publish;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.scm.config.ScmProperties;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.http.HttpStatus.*;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
-
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.devops.scm.config.ScmProperties;
+import com.wl4g.devops.support.task.GenericTaskRunner;
+
+import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 
 /**
  * Abstract configuration source publisher.
@@ -56,7 +56,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/** SCM properties config */
+	/** SCM properties configuration */
 	final protected ScmProperties config;
 
 	/** Deferred watch controller */
@@ -69,7 +69,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
 	public AbstractConfigSourcePublisher(ScmProperties config) {
-		super(config);
+		super(config.getTaskProperties());
 		this.config = config;
 		this.watchRequests = new ConcurrentHashMap<>(32);
 	}
@@ -107,17 +107,28 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 						Assert.state((wrap != null && isNotBlank(wrap.getGroup())),
 								String.format("Published config group must not be blank! - %s", wrap));
 
-						Collection<WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(wrap.getGroup())
-								.values();
-						for (WatchDeferredResult<ResponseEntity<?>> deferred : deferreds) {
+						getCreateWithDeferreds(wrap.getGroup()).values().stream().filter(deferred -> {
+							if (deferred != null) {
+								GetRelease watch = deferred.getWatch();
+								// Filters name space
+								if (StringUtils.equals(watch.getNamespace(), wrap.getNamespace())) {
+									// Filters instance
+									return wrap.getInstances().contains(watch.getInstance());
+								}
+							}
+							return false;
+						}).forEach(deferred -> {
 							if (!deferred.isSetOrExpired()) {
+								if (log.isDebugEnabled()) {
+									log.debug("Set deferredResult - {}", deferred);
+								}
 								deferred.setResult(createResponse(OK, wrap.getMeta()));
 							}
-						}
+						});
 					}
 				}
 
-				Thread.sleep(config.getScanDelay());
+				Thread.sleep(config.getWatchDelay());
 			} catch (Throwable th) {
 				log.error("Watching error!", th);
 			}
@@ -133,7 +144,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 				.collect(Collectors.toList());
 
 		// Put watch instances(for clustering).
-		publishConfig(new PublishConfigWrapper(pre.getGroup(), pre.getInstances(), pre.getMeta()));
+		publishConfig(new PublishConfigWrapper(pre));
 
 		return deferreds;
 	}
@@ -184,10 +195,10 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		Assert.notNull(watch, "Watch must not be null");
 
 		// Create watch-deferred
-		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getDefaultTimeout());
+		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getLongPollingTimeout(), watch);
 
 		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getGroup());
-		String watchKey = getWatchKey(watch.getInstance(), watch.getProfile());
+		String watchKey = getWatchKey(watch.getInstance(), watch.getNamespace());
 		deferreds.put(watchKey, deferred);
 
 		final String instance = watch.getInstance().toString();
@@ -195,14 +206,14 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		// normal), remove the corresponding watch key from watchRequests
 		deferred.onCompletion(() -> {
 			if (log.isInfoEnabled()) {
-				log.info("Completed watch instance for: {}", instance);
+				log.info("Completed watch instance - {}", instance);
 			}
 			deferreds.remove(watchKey, instance);
 		});
 
 		deferred.onTimeout(() -> {
 			if (log.isWarnEnabled()) {
-				log.warn("Timeout watch deferred instance for: {}", instance);
+				log.warn("Timeout watch instance - {}", instance);
 			}
 			deferreds.remove(watchKey, instance);
 
@@ -238,13 +249,13 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 * Generate watching deferred key.
 	 * 
 	 * @param instance
-	 * @param profile
+	 * @param namespace
 	 * @return
 	 */
-	protected String getWatchKey(ReleaseInstance instance, String profile) {
+	protected String getWatchKey(ReleaseInstance instance, String namespace) {
 		Assert.notNull(instance, "Release instance must not be null");
-		Assert.hasText(profile, "Profile must not be null");
-		return instance.toString() + "-" + profile;
+		Assert.hasText(namespace, "Namespace must not be null");
+		return instance.toString() + "-" + namespace;
 	}
 
 	/**
@@ -254,48 +265,17 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 * @version v1.0 2019年6月5日
 	 * @since
 	 */
-	public static class PublishConfigWrapper implements Serializable {
+	public static class PublishConfigWrapper extends PreRelease {
 
 		private static final long serialVersionUID = 1569807245009223834L;
 
-		/** Release application group */
-		final private String group;
-
-		/** Release instances */
-		final private List<ReleaseInstance> instances;
-
-		/** Release meta information */
-		final private ReleaseMeta meta;
-
-		public PublishConfigWrapper(String group, List<ReleaseInstance> instances, ReleaseMeta meta) {
-			Assert.notNull(group, "Group must not be null");
-			Assert.notNull(instances, "Release instances must not be null");
-			Assert.notNull(meta, "Release meta must not be null");
-			this.group = group;
-			this.instances = instances;
-			this.meta = meta;
-		}
-
-		public String getGroup() {
-			return group;
-		}
-
-		public List<ReleaseInstance> getInstances() {
-			return instances;
-		}
-
-		public ReleaseMeta getMeta() {
-			return meta;
+		public PublishConfigWrapper(PreRelease pre) {
+			super(pre.getGroup(), pre.getNamespace(), pre.getMeta());
+			setInstances(pre.getInstances());
 		}
 
 		public String asIdentify() {
 			return getGroup() + "_" + getMeta().asText();
-		}
-
-		@Override
-		public String toString() {
-			return "WatchingWrapper [identify=" + asIdentify() + ", group=" + group + ", instances=" + instances + ", meta="
-					+ meta + "]";
 		}
 
 	}

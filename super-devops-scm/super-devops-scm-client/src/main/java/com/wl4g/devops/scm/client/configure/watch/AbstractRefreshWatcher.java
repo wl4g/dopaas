@@ -61,7 +61,7 @@ public abstract class AbstractRefreshWatcher extends GenericTaskRunner {
 		String uri = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
 
 		// Create releaseGet
-		GetRelease get = new GetRelease(locator.getInfo().getAppName(), locator.getInfo().getProfilesActive(), null,
+		GetRelease get = new GetRelease(locator.getInfo().getAppName(), config.getNamespace(), null,
 				locator.getInfo().getInstance());
 		return (uri + "?" + new BeanMapConvert(get).toUriParmaters());
 	}

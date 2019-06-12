@@ -17,8 +17,9 @@ package com.wl4g.devops.common.bean.scm.model;
 
 import com.google.common.net.HostAndPort;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -30,7 +31,7 @@ public class GenericInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
-	 * Application name
+	 * Application name(cluster name)
 	 */
 	@NotNull
 	@NotBlank
@@ -41,7 +42,7 @@ public class GenericInfo implements Serializable {
 	 */
 	@NotNull
 	@NotBlank
-	private String profile;
+	private String namespace;
 
 	/**
 	 * Version release information
@@ -59,16 +60,16 @@ public class GenericInfo implements Serializable {
 	public GenericInfo(String group, String namespace, ReleaseMeta meta) {
 		super();
 		setGroup(group);
-		setProfile(namespace);
+		setNamespace(namespace);
 		setMeta(meta);
 	}
 
-	public String getProfile() {
-		return profile;
+	public String getNamespace() {
+		return namespace;
 	}
 
-	public void setProfile(String namespace) {
-		this.profile = namespace;
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
 	}
 
 	public String getGroup() {
@@ -98,7 +99,7 @@ public class GenericInfo implements Serializable {
 
 	public void validation(boolean versionValidate, boolean releaseIdValidate) {
 		Assert.hasText(getGroup(), "`group` must not be empty");
-		Assert.hasText(getProfile(), "`namespace` must not be empty");
+		Assert.hasText(getNamespace(), "`namespace` must not be empty");
 		getMeta().validation(versionValidate, releaseIdValidate);
 	}
 
@@ -146,6 +147,37 @@ public class GenericInfo implements Serializable {
 		}
 
 		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((host == null) ? 0 : host.hashCode());
+			result = prime * result + ((port == null) ? 0 : port.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ReleaseInstance other = (ReleaseInstance) obj;
+			if (host == null) {
+				if (other.host != null)
+					return false;
+			} else if (!host.equals(other.host))
+				return false;
+			if (port == null) {
+				if (other.port != null)
+					return false;
+			} else if (!port.equals(other.port))
+				return false;
+			return true;
+		}
+
+		@Override
 		public String toString() {
 			return getHost() + ":" + getPort();
 		}
@@ -159,6 +191,10 @@ public class GenericInfo implements Serializable {
 		public static ReleaseInstance of(String hostPortString) {
 			HostAndPort hap = HostAndPort.fromString(hostPortString);
 			return new ReleaseInstance(hap.getHostText(), hap.getPort());
+		}
+
+		public static boolean eq(ReleaseInstance instance1, ReleaseInstance instance2) {
+			return (instance1 != null && instance2 != null && StringUtils.equals(instance1.toString(), instance2.toString()));
 		}
 
 	}
