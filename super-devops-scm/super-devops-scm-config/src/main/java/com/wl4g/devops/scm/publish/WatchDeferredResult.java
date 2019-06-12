@@ -19,10 +19,10 @@ import java.io.Serializable;
 
 import org.springframework.web.context.request.async.DeferredResult;
 
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
 
 /**
- * SCM config soruce server deferred result watch.
+ * SCM configuration soruce server deferred result watch.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日
@@ -31,7 +31,7 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 public class WatchDeferredResult<T> extends DeferredResult<T> implements Serializable {
 	private static final long serialVersionUID = -4499490832010100671L;
 
-	private ReleaseInstance instance;
+	private GetRelease watch;
 
 	public WatchDeferredResult() {
 	}
@@ -63,17 +63,23 @@ public class WatchDeferredResult<T> extends DeferredResult<T> implements Seriali
 		super(timeout, timeoutResult);
 	}
 
-	public ReleaseInstance getInstance() {
-		return instance;
+	public WatchDeferredResult(Long timeout, GetRelease watch) {
+		super(timeout);
+		this.watch = watch;
 	}
 
-	public void setInstanceId(ReleaseInstance instance) {
-		this.instance = instance;
+	public GetRelease getWatch() {
+		return watch;
+	}
+
+	public WatchDeferredResult<T> setWatch(GetRelease get) {
+		this.watch = get;
+		return this;
 	}
 
 	@Override
 	public String toString() {
-		return "WatchDeferredResult [instance=" + instance + "]";
+		return "WatchDeferredResult [watch=" + watch + "]";
 	}
 
 }

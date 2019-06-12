@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.scm;
 
+import static org.apache.commons.lang3.StringUtils.contains;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -22,7 +24,7 @@ import java.util.Map;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.wl4g.devops.common.bean.scm.ConfigSourceBean;
-import com.wl4g.devops.common.bean.scm.VersionContentBean.FileType;
+import com.wl4g.devops.common.bean.scm.VersionContentBean;
 import com.wl4g.devops.common.bean.scm.model.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
@@ -39,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 
 /**
  * Configuration servers implements.
@@ -59,6 +62,16 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 	private ConfigurationService configService;
 
 	@Override
+	public WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch) {
+		return publisher.watch(watch);
+	}
+
+	@Override
+	public void release(PreRelease pre) {
+		this.publisher.publish(pre);
+	}
+
+	@Override
 	public ReleaseMessage getSource(GetRelease get) {
 		/*
 		 * When the client initializes, it sends out the requested version
@@ -66,7 +79,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		 * releaseId will be empty
 		 */
 		get.validation(false, false);
-		ReleaseMessage release = new ReleaseMessage(get.getGroup(), get.getProfile(), null, get.getInstance());
+		ReleaseMessage release = new ReleaseMessage(get.getGroup(), get.getNamespace(), get.getMeta(), get.getInstance());
 
 		ConfigSourceBean config = this.configService.findSource(get);
 		if (config != null) {
@@ -74,14 +87,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 			release.setMeta(config.getReleaseMeta());
 
 			if (config.getContents() != null) {
-				config.getContents().forEach(c -> {
-					// Full filename.
-					String fileType = FileType.of(c.getType()).name().toLowerCase();
-					String fullFileName = c.getFilename() + "." + fileType;
-					// Resolve file content.
-					Map<String, Object> source = PropertySources.resolve(Type.of(fileType), c.getContent());
-					release.getPropertySources().add(new ReleasePropertySource(fullFileName, source));
-				});
+				config.getContents().forEach(vc -> release.getPropertySources().add(convertReleasePropertySource(vc)));
 			}
 		}
 
@@ -94,20 +100,32 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		this.configService.updateReleaseDetail(report);
 	}
 
-	@Override
-	public void release(PreRelease pre) {
-		this.publisher.publish(pre);
+	/**
+	 * Resolve to releasePropertySource
+	 * 
+	 * @param vc
+	 * @return
+	 */
+	private ReleasePropertySource convertReleasePropertySource(VersionContentBean vc) {
+		String filename = vc.getNamespace().toLowerCase();
+		Assert.state(contains(filename, "."), String.format("Invalid namespace filename for: %s", filename));
+
+		// Resolve file content
+		String fileType = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+		Map<String, Object> source = PropertySources.resolve(Type.of(fileType), vc.getContent());
+		return new ReleasePropertySource(filename, source);
 	}
 
-	@Override
-	public WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch) {
-		return publisher.watch(watch);
-	}
-
-	//
-	// for test
-	//
-
+	/**
+	 * 
+	 * /// for test
+	 * 
+	 * @param group
+	 * @param namespace
+	 * @param meta
+	 * @param instance
+	 * @return
+	 */
 	public ReleaseMessage getReleaseMessage(String group, String namespace, ReleaseMeta meta, ReleaseInstance instance) {
 		ReleaseMessage release = new ReleaseMessage(group, namespace, meta, instance);
 

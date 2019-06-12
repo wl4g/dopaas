@@ -16,6 +16,7 @@
 package com.wl4g.devops.scm.client.configure.watch;
 
 import static org.apache.commons.lang3.RandomUtils.*;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.web.client.RestTemplate;
+
 import static org.springframework.http.HttpMethod.*;
 
 import com.wl4g.devops.common.web.RespBase;
@@ -53,15 +56,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 
+	/** Watching completion state. */
+	final private AtomicBoolean watchState = new AtomicBoolean(false);
+
 	/** Retry failure exceed threshold fast-fail */
 	@Value(EXP_FASTFAIL)
 	private boolean thresholdFastfail;
 
-	/** Watching completion state. */
-	final private AtomicBoolean watchState = new AtomicBoolean(false);
+	/** Long polling rest template */
+	private RestTemplate longPollingTemplate;
 
 	public TimingRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
 		super(config, refresher, locator);
+	}
+
+	@Override
+	protected void postStartupProperties() {
+		this.longPollingTemplate = locator.createRestTemplate(config.getLongPollingTimeout());
 	}
 
 	@Override
@@ -70,19 +81,21 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 		while (true) {
 			try {
 				createWatchLongPolling();
-			} catch (Exception e) {
+			} catch (Throwable th) {
 				String errtip = "Watching long polling error! causes by: {}";
 				if (log.isDebugEnabled()) {
-					log.error(errtip, getStackTrace(e));
+					log.error(errtip, getStackTrace(th));
 				} else {
-					log.error(errtip, getRootCauseMessage(e));
+					String causes = getRootCauseMessage(th);
+					causes = isEmpty(causes) ? getMessage(th) : causes;
+					log.warn(errtip, causes);
 				}
 
 				synchronized (this) {
 					try {
 						wait(nextLong(1000L, 15_000L));
 					} catch (InterruptedException e1) {
-						log.error("", e);
+						log.error("", th);
 					}
 				}
 			} finally {
@@ -103,7 +116,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 			}
 
 			String url = getWatchingUrl(false);
-			ResponseEntity<ReleaseMeta> resp = locator.getRestTemplate().getForEntity(url, ReleaseMeta.class);
+			ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
 			if (log.isDebugEnabled()) {
 				log.debug("Watch result <= {}", resp);
 			}
@@ -136,7 +149,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 	/**
 	 * Back-end report changed records
 	 */
-	@Retryable(value = Throwable.class, maxAttemptsExpression = EXP_MAXATTEMPTS, backoff = @Backoff(delayExpression = EXP_DELAY, maxDelayExpression = EXP_MAXDELAY, multiplierExpression = EXP_MULT))
+	@Retryable(value = Throwable.class, maxAttemptsExpression = EXP_MAXATTEMPTS, backoff = @Backoff(delayExpression = EXP_DELAY, maxDelayExpression = EXP_MAXDELAY, multiplierExpression = EXP_MULTIP))
 	private void backendReport() {
 		String url = config.getBaseUri() + URI_S_BASE + "/" + URI_S_REPORT_POST;
 

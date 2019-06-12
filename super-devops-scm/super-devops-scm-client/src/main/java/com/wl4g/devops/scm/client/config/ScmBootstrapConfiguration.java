@@ -44,12 +44,12 @@ public class ScmBootstrapConfiguration {
 	}
 
 	@Bean
-	public InstanceInfo instanceInfo(Environment environment) {
-		return new InstanceInfo(environment);
+	public InstanceHolder instanceHolder(Environment environment) {
+		return new InstanceHolder(environment);
 	}
 
 	@Bean
-	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, InstanceInfo info) {
+	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
 		return new DefaultBootstrapPropertySourceLocator(config, info);
 	}
 

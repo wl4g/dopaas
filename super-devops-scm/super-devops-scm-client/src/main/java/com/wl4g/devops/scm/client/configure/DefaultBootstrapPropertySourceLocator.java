@@ -16,7 +16,7 @@
 package com.wl4g.devops.scm.client.configure;
 
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
-import com.wl4g.devops.scm.client.config.InstanceInfo;
+import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
@@ -25,6 +25,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
 import static com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 /**
@@ -39,7 +40,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 @Order(0)
 public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLocator {
 
-	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, InstanceInfo info) {
+	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
 		super(config, info);
 	}
 
@@ -71,7 +72,9 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 				if (log.isDebugEnabled()) {
 					log.warn(errtip, getStackTrace(th));
 				} else {
-					log.warn(errtip, getRootCauseMessage(th));
+					String causes = getRootCauseMessage(th);
+					causes = isEmpty(causes) ? getMessage(th) : causes;
+					log.warn(errtip, causes);
 				}
 				log.warn("-----------------------------------------");
 			}
