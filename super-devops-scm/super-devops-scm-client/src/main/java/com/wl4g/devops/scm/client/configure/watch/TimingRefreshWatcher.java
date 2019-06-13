@@ -16,7 +16,6 @@
 package com.wl4g.devops.scm.client.configure.watch;
 
 import static org.apache.commons.lang3.RandomUtils.*;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +42,7 @@ import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.common.web.RespBase.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_POST;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -72,7 +72,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 
 	@Override
 	protected void postStartupProperties() {
-		this.longPollingTemplate = locator.createRestTemplate(config.getLongPollingTimeout());
+		this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollingTimeout() * 1.15));
 	}
 
 	@Override
@@ -86,14 +86,12 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 				if (log.isDebugEnabled()) {
 					log.error(errtip, getStackTrace(th));
 				} else {
-					String causes = getRootCauseMessage(th);
-					causes = isEmpty(causes) ? getMessage(th) : causes;
-					log.warn(errtip, causes);
+					log.warn(errtip, getRootCausesString(th));
 				}
 
 				synchronized (this) {
 					try {
-						wait(nextLong(1000L, 15_000L));
+						wait(nextLong(1000L, 10_000L));
 					} catch (InterruptedException e1) {
 						log.error("", th);
 					}
@@ -134,7 +132,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 					// Report refresh changed
 					backendReport();
 					break;
-				case NOT_MODIFIED: // Continue
+				case NOT_MODIFIED: // Next long-polling
 					break;
 				default:
 					throw new IllegalStateException(
@@ -168,7 +166,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 	}
 
 	/**
-	 * Report retries execed count exception.
+	 * Report retries exceed count exception.
 	 * 
 	 * @param e
 	 */

@@ -218,6 +218,12 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 			}
 		}
 
+		@Override
+		public String toString() {
+			return "TaskProperties [concurrency=" + concurrency + ", keepAliveTime=" + keepAliveTime + ", acceptQueue="
+					+ acceptQueue + ", reject=" + reject + "]";
+		}
+
 	}
 
 }

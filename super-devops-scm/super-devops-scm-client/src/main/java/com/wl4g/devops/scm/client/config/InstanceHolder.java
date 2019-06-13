@@ -15,15 +15,24 @@
  */
 package com.wl4g.devops.scm.client.config;
 
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
+import com.google.common.net.HostAndPort;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+
+import io.netty.util.NetUtil;
 
 /**
  * Instance information.
@@ -33,26 +42,50 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
  * @since
  */
 public class InstanceHolder {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	final private Environment environment;
+	/** Application name. */
 	final private String appName;
+
+	/** Local application instance. */
 	final private ReleaseInstance instance;
 
-	public InstanceHolder(Environment environment) {
-		this.environment = environment;
-		// Application name
-		this.appName = this.environment.getProperty("spring.application.name");
-		String servPort = this.environment.getProperty("server.port");
-
-		boolean check = isAnyBlank(appName, servPort);
-		Assert.isTrue(!check,
+	public InstanceHolder(Environment environment, ScmClientProperties config) {
+		this.appName = environment.getProperty("spring.application.name");
+		String servPort = environment.getProperty("server.port");
+		Assert.isTrue(!isAnyBlank(appName, servPort),
 				"Environment['server.port','spring.application.name'] config is null, Because spring cloud loads bootstrap.yml preferentially, which means that other config files are not loaded at initialization, so configurations other than bootstrap.yml cannot be used at initialization, Therefore, these 3 items must be allocated to bootstrap.yml.");
-		try {
-			// Local instance.
-			this.instance = ReleaseInstance.of(InetAddress.getLocalHost().getHostName() + ":" + servPort);
-		} catch (UnknownHostException e) {
-			throw new IllegalStateException(e);
+
+		// Local host(Maybe it's not really needed.)
+		String host = NetUtil.LOCALHOST.getHostName();
+		if (!isEmpty(config.getNetcard())) {
+			// First ipv4 network card
+			Enumeration<NetworkInterface> netInterfaces;
+			try {
+				netInterfaces = NetworkInterface.getNetworkInterfaces();
+				InetAddress addr;
+				while (netInterfaces.hasMoreElements()) {
+					NetworkInterface ni = netInterfaces.nextElement();
+					Enumeration<InetAddress> addresses = ni.getInetAddresses();
+					while (addresses.hasMoreElements()) {
+						addr = addresses.nextElement();
+						if (!addr.isLoopbackAddress() && addr.getHostAddress().indexOf(':') == -1) { // Ignore-ipv6
+							if (StringUtils.equals(ni.getName(), config.getNetcard())) {
+								host = addr.getHostName();
+								break;
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				log.warn("Unable to get hostname of network card '{}', used default for '{}' causes by: {}", config.getNetcard(),
+						host, getRootCausesString(e));
+			}
 		}
+
+		// Check
+		HostAndPort hap = HostAndPort.fromString(host + ":" + servPort);
+		this.instance = new ReleaseInstance(hap.getHostText(), hap.getPort());
 	}
 
 	public String getAppName() {

@@ -24,8 +24,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
 /**
@@ -72,9 +72,7 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 				if (log.isDebugEnabled()) {
 					log.warn(errtip, getStackTrace(th));
 				} else {
-					String causes = getRootCauseMessage(th);
-					causes = isEmpty(causes) ? getMessage(th) : causes;
-					log.warn(errtip, causes);
+					log.warn(errtip, getRootCausesString(th));
 				}
 				log.warn("-----------------------------------------");
 			}

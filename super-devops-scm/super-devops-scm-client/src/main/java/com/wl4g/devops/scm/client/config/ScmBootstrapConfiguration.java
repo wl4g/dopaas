@@ -45,7 +45,7 @@ public class ScmBootstrapConfiguration {
 
 	@Bean
 	public InstanceHolder instanceHolder(Environment environment) {
-		return new InstanceHolder(environment);
+		return new InstanceHolder(environment, scmClientProperties());
 	}
 
 	@Bean
