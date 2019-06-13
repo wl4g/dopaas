@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.annotation;
+package com.wl4g.devops.scm.example.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.wl4g.devops.scm.example.service.ExampleService;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+@Configuration
+public class ExampleAutoConfiguration {
 
-/**
- * Wrapper annotation to enable DevOps watcher task configuration.
- *
- * @since 1.1.0
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-@ConditionalOnProperty(value = "spring.cloud.devops.scm.client.watcher.enabled", matchIfMissing = false)
-public @interface EnableScmWatchTask {
+	@Bean
+	@RefreshScope
+	@ConfigurationProperties(prefix = "example")
+	public ExampleService exampleService() {
+		System.out.println("@Bean create exampleService");
+		return new ExampleService();
+	}
 
 }

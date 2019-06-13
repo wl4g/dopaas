@@ -15,25 +15,26 @@
  */
 package com.wl4g.devops.scm.publish;
 
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.wl4g.devops.scm.config.ScmProperties;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
- * SCM config soruce server publisher implements
+ * SCM configuration source server publisher implements
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日
  * @since
  */
 public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePublisher {
-
-	final public static String KEY_PUB_GROUP_PREFIX = "scm_pub_";
-
-	final private ThreadLocal<ScanCursor<PublishConfigWrapper>> cursorCache = new InheritableThreadLocal<>();
 
 	final private JedisService jedisService;
 
@@ -44,36 +45,42 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 
 	@Override
 	protected Collection<PublishConfigWrapper> pollNextPublishedConfig() {
+		List<PublishConfigWrapper> list = new ArrayList<>(4);
 
-		// Create published config scanner
-		ScanCursor<PublishConfigWrapper> cursor = cursorCache.get();
-		if (cursor == null) {
-			String pattern = KEY_PUB_GROUP_PREFIX + "*";
-			cursorCache.set((cursor = jedisService.scan(pattern, 1)));
-		}
-
-		// Extract published config
-		List<PublishConfigWrapper> list = null;
-		if (cursor.hasNext()) {
-			list = cursor.readItem();
-		} else {
-			cursorCache.remove();
+		// Extract published config.
+		Set<Object> groups = jedisService.getObjectSet(CACHE_PUB_GROUPS);
+		if (!isEmpty(groups)) {
+			for (Object group : groups) {
+				String key = getGroupKey((String) group);
+				PublishConfigWrapper wrap = jedisService.getObjectT(key, PublishConfigWrapper.class);
+				if (wrap != null) {
+					list.add(wrap);
+				}
+				jedisService.del(key);
+			}
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug("Scan published config for size: {}, {}", (list != null ? list.size() : 0), list);
+			log.debug("Extract published config for - ({}), {}", list.size(), list);
 		}
 		return list;
 	}
 
 	@Override
-	protected void putPublishConfig(PublishConfigWrapper wrap) {
+	protected void publishConfig(PublishConfigWrapper wrap) {
 		if (log.isDebugEnabled()) {
-			log.debug("Put published config for {}", wrap);
+			log.debug("Put published config for - {}", wrap);
 		}
 
-		String key = KEY_PUB_GROUP_PREFIX + wrap.asIdentify();
-		jedisService.setObjectT(key, wrap, 0);
+		// Storage group name
+		jedisService.setSetObjectAdd(CACHE_PUB_GROUPS, wrap.getGroup());
+
+		// Storage group published
+		jedisService.setObjectT(getGroupKey(wrap.getGroup()), wrap, 0);
+	}
+
+	private String getGroupKey(String group) {
+		return KEY_PUB_PREFIX + group;
 	}
 
 }

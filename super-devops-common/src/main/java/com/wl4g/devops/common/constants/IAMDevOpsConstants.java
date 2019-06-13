@@ -216,7 +216,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
 
-
 	/** get token */
 	final public static String URI_S_GET_TOKEN = "getToken";
 

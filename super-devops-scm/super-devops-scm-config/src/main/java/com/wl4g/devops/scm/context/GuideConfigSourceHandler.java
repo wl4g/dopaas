@@ -18,14 +18,16 @@ package com.wl4g.devops.scm.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.ResponseEntity;
 
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.scm.publish.WatchDeferredResult;
 
 /**
- * Guide config soruce context handler.
+ * Guide configuration source context handler.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日
@@ -36,29 +38,26 @@ public class GuideConfigSourceHandler implements ConfigContextHandler, Initializ
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override
-	public ReleaseMessage findSource(GetRelease get) {
-		log.info("Find config source: {}", get);
+	public ReleaseMessage getSource(GetRelease get) {
 		return null;
 	}
 
 	@Override
 	public void report(ReportInfo report) {
-		log.info("Config release report: {}", report);
 	}
 
 	@Override
 	public void release(PreRelease pre) {
-		log.info("Config source release: {}", pre);
 	}
 
 	@Override
-	public void refreshMeta(boolean focus) {
-		log.info("Refresh meta ...");
+	public WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch) {
+		return null;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		throw new IllegalStateException(String.format("Using SCM configuration center, you must customize the '%s' interface!",
+		throw new IllegalStateException(String.format("Used SCM server, you must customize implenments the '%s' !",
 				ConfigContextHandler.class.getName()));
 	}
 

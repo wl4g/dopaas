@@ -15,146 +15,68 @@
  */
 package com.wl4g.devops.common.bean.scm.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ReportInfo extends GetRelease {
 	final private static long serialVersionUID = 2523769504519533902L;
 
-	@NotNull
-	private RefreshStatus status = RefreshStatus.FAIL;
+	private Collection<ChangedRecord> changedRecords;
 
-	@NotNull
-	private List<RefreshInfo> details = new ArrayList<>();
-
-	@NotBlank
-	private String desc = "ok";
-
-	public ReportInfo() {
+	public ReportInfo(Collection<ChangedRecord> changedRecords) {
 		super();
+		this.changedRecords = changedRecords;
 	}
 
-	public RefreshStatus getStatus() {
-		return status;
+	public Collection<ChangedRecord> getChangedRecords() {
+		return changedRecords;
 	}
 
-	public void setStatus(RefreshStatus status) {
-		if (status != null) {
-			this.status = status;
-		}
-	}
-
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setDesc(String description) {
-		if (!StringUtils.isEmpty(description) && !"NULL".equalsIgnoreCase(description)) {
-			this.desc = description;
-		}
-	}
-
-	@Override
-	public void validation(boolean validVersion, boolean validReleaseId) {
-		super.validation(validVersion, validReleaseId);
-		Assert.notNull(getInstance(), "`instance` is not allowed to be null.");
-		getInstance().validation();
-	}
-
-	public static class RefreshInfo {
-
-		private String property;
-		private Object oldValue;
-		private Object newValue;
-		private Boolean modifyed;
-
-		public RefreshInfo() {
-			super();
-		}
-
-		public RefreshInfo(String propertyName, Object oldValue, Object newValue, Boolean modifyed) {
-			super();
-			this.setProperty(propertyName);
-			this.setOldValue(oldValue);
-			this.setNewValue(newValue);
-			this.setModifyed(modifyed);
-		}
-
-		public String getProperty() {
-			return property;
-		}
-
-		public void setProperty(String propertyName) {
-			if (propertyName != null) {
-				this.property = propertyName;
-			}
-		}
-
-		public Object getOldValue() {
-			return oldValue;
-		}
-
-		public void setOldValue(Object oldValue) {
-			if (oldValue != null) {
-				this.oldValue = oldValue;
-			}
-		}
-
-		public Object getNewValue() {
-			return newValue;
-		}
-
-		public void setNewValue(Object newValue) {
-			if (newValue != null) {
-				this.newValue = newValue;
-			}
-		}
-
-		public Boolean getModifyed() {
-			return modifyed;
-		}
-
-		public void setModifyed(Boolean modifyed) {
-			if (modifyed != null) {
-				this.modifyed = modifyed;
-			}
-		}
-
+	public void setChangedRecords(Collection<ChangedRecord> changedRecords) {
+		this.changedRecords = changedRecords;
 	}
 
 	@Override
 	public String toString() {
-		return JacksonUtils.toJSONString(this);
+		return "ReportInfo [changedRecords=" + changedRecords + "]";
 	}
 
-	public static enum RefreshStatus {
-		CHANGED(1), NOCHANGED(0), FAIL(-1);
+	public static class ChangedRecord {
 
-		private int value;
+		private Set<String> changedKeys = new HashSet<>();
 
-		private RefreshStatus(int value) {
-			this.value = value;
+		private ReleaseMeta meta = new ReleaseMeta();
+
+		public ChangedRecord() {
+			super();
 		}
 
-		public int getValue() {
-			return value;
+		public ChangedRecord(Set<String> changedKeys, ReleaseMeta meta) {
+			super();
+			this.changedKeys = changedKeys;
+			this.meta = meta;
 		}
 
-		public static RefreshStatus of(int value) {
-			for (RefreshStatus t : values()) {
-				if (t.getValue() == value) {
-					return t;
-				}
-			}
-			throw new IllegalStateException(String.format(" 'value' : %s", String.valueOf(value)));
+		public Set<String> getChangedKeys() {
+			return changedKeys;
+		}
+
+		public void setChangedKeys(Set<String> changedKeys) {
+			this.changedKeys = changedKeys;
+		}
+
+		public ReleaseMeta getMeta() {
+			return meta;
+		}
+
+		public void setMeta(ReleaseMeta meta) {
+			this.meta = meta;
+		}
+
+		@Override
+		public String toString() {
+			return "ChangedInfo [changedKeys=" + changedKeys + ", meta=" + meta + "]";
 		}
 
 	}

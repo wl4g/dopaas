@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.exception.scm;
 
-public class ConfigureReleaseZkSetException extends ScmException {
+public class MismatchedConfigNamespaceException extends ScmException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -23,7 +23,7 @@ public class ConfigureReleaseZkSetException extends ScmException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public ConfigureReleaseZkSetException() {
+	public MismatchedConfigNamespaceException() {
 		super();
 	}
 
@@ -36,7 +36,7 @@ public class ConfigureReleaseZkSetException extends ScmException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public ConfigureReleaseZkSetException(String message) {
+	public MismatchedConfigNamespaceException(String message) {
 		super(message);
 	}
 
@@ -57,7 +57,7 @@ public class ConfigureReleaseZkSetException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ConfigureReleaseZkSetException(String message, Throwable cause) {
+	public MismatchedConfigNamespaceException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +75,8 @@ public class ConfigureReleaseZkSetException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ConfigureReleaseZkSetException(Throwable cause) {
+	public MismatchedConfigNamespaceException(Throwable cause) {
 		super(cause);
 	}
+
 }
