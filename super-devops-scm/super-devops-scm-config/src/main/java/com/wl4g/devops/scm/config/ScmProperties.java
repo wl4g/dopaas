@@ -15,17 +15,17 @@
  */
 package com.wl4g.devops.scm.config;
 
-import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
-
 public class ScmProperties extends AbstractScmProperties {
 	private static final long serialVersionUID = -4696830861294720221L;
 
+	/** Deferred long-polling properties */
+
 	private int corePoolSize = 10;
 	private int maxPoolSize = 25;
-	private int queueCapacity = 100;
-	private long watchDelay = (long) (0.2 * 1_000L);
+	private int queueCapacity = 1024;
 
-	private TaskProperties taskProperties = new TaskProperties();
+	/** Watching delay */
+	private long watchDelay = 200L;
 
 	public int getCorePoolSize() {
 		return corePoolSize;
@@ -55,16 +55,14 @@ public class ScmProperties extends AbstractScmProperties {
 		return watchDelay;
 	}
 
-	public void setWatchDelay(long scanDelayTime) {
-		this.watchDelay = scanDelayTime;
+	public void setWatchDelay(long watchDelay) {
+		this.watchDelay = watchDelay;
 	}
 
-	public TaskProperties getTaskProperties() {
-		return taskProperties;
-	}
-
-	public void setTaskProperties(TaskProperties taskProperties) {
-		this.taskProperties = taskProperties;
+	@Override
+	public String toString() {
+		return "ScmProperties [corePoolSize=" + corePoolSize + ", maxPoolSize=" + maxPoolSize + ", queueCapacity=" + queueCapacity
+				+ ", watchDelay=" + watchDelay + "]";
 	}
 
 }

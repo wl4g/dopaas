@@ -22,6 +22,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.scm.config.AbstractScmProperties;
+
+import io.netty.util.NetUtil;
+
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 
 /**
@@ -51,9 +54,17 @@ public class ScmClientProperties extends AbstractScmProperties {
 	private String baseUri = "http://localhost:14043/scm";
 
 	/**
+	 * SCM client network-card name, By default, the InetAddress that represents
+	 * the loopback address. If IPv6 stack is available, it will refer to
+	 * {@link NetUtil#LOCALHOST6 LOCALHOST6}. Otherwise,
+	 * {@link NetUtil#LOCALHOST4 LOCALHOST4}.
+	 */
+	private String netcard;
+
+	/**
 	 * Fetch timeout on waiting to read data from the SCM Server.
 	 */
-	private int fetchReadTimeout = 5 * 1000;
+	private int fetchReadTimeout = 8 * 1000;
 
 	/**
 	 * Refresh name-space(configuration filename)</br>
@@ -73,6 +84,14 @@ public class ScmClientProperties extends AbstractScmProperties {
 
 	public void setBaseUri(String baseUri) {
 		this.baseUri = baseUri;
+	}
+
+	public String getNetcard() {
+		return netcard;
+	}
+
+	public void setNetcard(String netcard) {
+		this.netcard = netcard;
 	}
 
 	public int getFetchReadTimeout() {

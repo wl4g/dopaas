@@ -14,6 +14,17 @@ spring:
   application.name: scm
   profiles:
     active: test
+  cloud: # Spring cloud configuration.
+    # Devops configuration.
+    devops: 
+      scm: # SCM server configuration.
+        #core-pool-size: 10
+        #max-pool-size: 25
+        #queue-capacity: 1024
+        #watch-delay: 200
+        #long-polling-timeout: 30000
+        #connect-timeout: 5000
+        #max-response-size: 65535
 
 # ### Server configuration. ###
 server:
