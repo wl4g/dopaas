@@ -9,7 +9,7 @@
 	<modules>
 		<module>super-devops-umc-client</module>
 		<module>super-devops-umc-example</module>
-		<module>super-devops-umc-collector</module>
+		<module>super-devops-umc-receiver</module>
 		<module>super-devops-umc-core</module>
 		<module>super-devops-umc-starter</module>
 		<module>super-devops-umc-alarm</module>
