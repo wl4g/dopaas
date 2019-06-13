@@ -1,0 +1,14 @@
+ss -n sport == #{port} |
+awk '
+BEGIN{up=0;down=0;n=0;c1=0;c2=0;c3=0;c4=0;c5=0;c6=0;}
+{up+=$3};
+{down+=$4};
+{n+=1}
+{if($0~"ESTAB") c1+=1};
+{if($0~"CLOSE-WAIT") c2+=1};
+{if($0~"TIME-WAIT") c3+=1};
+{if($0~"CLOSE"&&!$0~"CLOSE-WAIT") c4+=1};
+{if($0~"LISTEN") c5+=1};
+{if($0~"CLOSING") c6+=1};
+END {print up,down,n-1,c1,c2,c3,c4,c5,c6}
+'
