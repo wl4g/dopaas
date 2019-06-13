@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.example.config;
+package com.wl4g.devops.scm.example.service;
 
-import com.wl4g.devops.scm.example.service.ExampleService2;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 
-@Configuration
-public class ExampleConfiguration {
+@RefreshScope
+public class ExampleTask {
 
-	@Bean
-	@RefreshScope
-	@ConfigurationProperties(prefix = "example")
-	public ExampleService2 exampleService2() {
-		System.out.println("@Bean create exampleService2 ...");
-		return new ExampleService2();
+	@Scheduled(initialDelayString = "${devops.example.watch.init-delay:3000}", fixedDelayString = "${devops.example.watch.delay:2000}")
+	public void run() {
+		System.out.println("ExampleWatch#run..." + Thread.currentThread() + ", " + this);
 	}
 
+	// @org.springframework.context.annotation.Configuration
+	public static class ExampleWatchConfiguration {
+
+		@Bean
+		public ExampleTask exampleWatch() {
+			return new ExampleTask();
+		}
+
+	}
 
 }

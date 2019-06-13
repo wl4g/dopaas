@@ -82,8 +82,8 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguratio
 	//
 
 	@Bean
-	public ScmServerEndpoint scmServerEnndpoint() {
-		return new ScmServerEndpoint(configContextHandler());
+	public ScmServerEndpoint scmServerEnndpoint(ConfigContextHandler contextHandler) {
+		return new ScmServerEndpoint(contextHandler);
 	}
 
 	@Bean

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.exception.scm;
 
-public class MismatchedConfigurationException extends ScmException {
+public class NoChangedConfigException extends ScmException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -23,7 +23,7 @@ public class MismatchedConfigurationException extends ScmException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public MismatchedConfigurationException() {
+	public NoChangedConfigException() {
 		super();
 	}
 
@@ -36,7 +36,7 @@ public class MismatchedConfigurationException extends ScmException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public MismatchedConfigurationException(String message) {
+	public NoChangedConfigException(String message) {
 		super(message);
 	}
 
@@ -57,7 +57,7 @@ public class MismatchedConfigurationException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public MismatchedConfigurationException(String message, Throwable cause) {
+	public NoChangedConfigException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +75,7 @@ public class MismatchedConfigurationException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public MismatchedConfigurationException(Throwable cause) {
+	public NoChangedConfigException(Throwable cause) {
 		super(cause);
 	}
 }

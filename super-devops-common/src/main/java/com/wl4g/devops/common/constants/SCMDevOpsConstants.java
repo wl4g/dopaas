@@ -26,29 +26,33 @@ package com.wl4g.devops.common.constants;
 public abstract class SCMDevOpsConstants extends DevOpsConstants {
 
 	// Common and Base.
-	/** Initial application configuration version. */
-	final public static String CONF_DISCOVERY_ROOT = ENV.getOrDefault("spring.cloud.devops.scm.client.discovery.root",
-			"/apps-config");
 
-	/** Get server release source response data key. */
+	/** Server pre-release source response data key. */
+	final public static String KEY_PRE_RELEASE = "pre-release-source";
+	/** Server release source response data key. */
 	final public static String KEY_RELEASE = "release-source";
-	/** Get client environment source response data key. */
-	final public static String KEY_ENV_SOURCES = "environment-sources";
+	/** Client environment source response data key. */
+	final public static String KEY_USED_SOURCES = "used-source";
 
 	// Server.
 	/** Service web root URI. */
 	final public static String URI_S_BASE = "/scm-server";
 	/** Get property source URI. */
-	final public static String URI_S_SOURCE_GET = "source.json";
+	final public static String URI_S_SOURCE_GET = "source";
 	/** Report configuration result URI. */
-	final public static String URI_S_REPORT_POST = "report.json";
+	final public static String URI_S_REPORT_POST = "report";
+	/** Long-polling watching URI. */
+	final public static String URI_S_WATCH_GET = "watch";
+
+	/** SCM published group. */
+	final public static String CACHE_PUB_GROUPS = "scm_pub_groups";
+	/** SCM published CONFIG prefix. */
+	final public static String KEY_PUB_PREFIX = "scm_pub_config_";
 
 	// Client.
 	/** Service web root URI. */
 	final public static String URI_C_BASE = "/scm-client";
 	/** Refresh URI. */
 	final public static String URI_C_REFRESH = "refresh";
-	/** Get latest configuration URI. */
-	final public static String URI_C_LATEST = "latest";
 
 }

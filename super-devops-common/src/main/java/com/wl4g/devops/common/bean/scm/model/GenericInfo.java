@@ -17,9 +17,12 @@ package com.wl4g.devops.common.bean.scm.model;
 
 import com.google.common.net.HostAndPort;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -28,44 +31,36 @@ public class GenericInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
-	 * Namespace(config file-name)
-	 */
-	@NotNull
-	@NotBlank
-	private String namespace;
-
-	/**
-	 * Application name
+	 * Application name(cluster name)
 	 */
 	@NotNull
 	@NotBlank
 	private String group;
 
 	/**
-	 * Environment active profile.
+	 * Name-space(configuration file-name, like spring.profiles)
 	 */
 	@NotNull
 	@NotBlank
-	private String profile;
+	private String namespace;
 
 	/**
 	 * Version release information
 	 */
-	@NotNull
 	private ReleaseMeta meta = new ReleaseMeta();
 
 	public GenericInfo() {
 		super();
 	}
 
-	public GenericInfo(String group, String profile) {
-		this(group, profile, null);
+	public GenericInfo(String group, String namespace) {
+		this(group, namespace, null);
 	}
 
-	public GenericInfo(String group, String profile, ReleaseMeta meta) {
+	public GenericInfo(String group, String namespace, ReleaseMeta meta) {
 		super();
 		setGroup(group);
-		setProfile(profile);
+		setNamespace(namespace);
 		setMeta(meta);
 	}
 
@@ -81,19 +76,9 @@ public class GenericInfo implements Serializable {
 		return group;
 	}
 
-	public void setGroup(String application) {
-		if (!StringUtils.isEmpty(application) && !"NULL".equalsIgnoreCase(application)) {
-			this.group = application;
-		}
-	}
-
-	public String getProfile() {
-		return profile;
-	}
-
-	public void setProfile(String profile) {
-		if (!StringUtils.isEmpty(profile) && !"NULL".equalsIgnoreCase(profile)) {
-			this.profile = profile;
+	public void setGroup(String group) {
+		if (!StringUtils.isEmpty(group) && !"NULL".equalsIgnoreCase(group)) {
+			this.group = group;
 		}
 	}
 
@@ -101,9 +86,9 @@ public class GenericInfo implements Serializable {
 		return meta;
 	}
 
-	public void setMeta(ReleaseMeta releaseMeta) {
-		if (releaseMeta != null) {
-			this.meta = releaseMeta;
+	public void setMeta(ReleaseMeta meta) {
+		if (meta != null) {
+			this.meta = meta;
 		}
 	}
 
@@ -112,23 +97,29 @@ public class GenericInfo implements Serializable {
 		return JacksonUtils.toJSONString(this);
 	}
 
-	public void validation(boolean validVersion, boolean validReleaseId) {
-		Assert.notNull(getGroup(), "`application` is not allowed to be null.");
-		Assert.notNull(getProfile(), "`profile` is not allowed to be null.");
-		getMeta().validation(validVersion, validReleaseId);
+	public void validation(boolean versionValidate, boolean releaseIdValidate) {
+		Assert.hasText(getGroup(), "`group` must not be empty");
+		Assert.hasText(getNamespace(), "`namespace` must not be empty");
+		getMeta().validation(versionValidate, releaseIdValidate);
 	}
 
 	public static class ReleaseInstance implements Serializable {
 		private static final long serialVersionUID = -4826329780329773259L;
 
+		@NotBlank
+		@NotNull
 		private String host;
-		private int port;
+
+		@Min(1024)
+		@Max(65535)
+		@NotNull
+		private Integer port;
 
 		public ReleaseInstance() {
 			super();
 		}
 
-		public ReleaseInstance(String host, int port) {
+		public ReleaseInstance(String host, Integer port) {
 			super();
 			this.host = host;
 			this.port = port;
@@ -144,15 +135,46 @@ public class GenericInfo implements Serializable {
 			}
 		}
 
-		public int getPort() {
+		public Integer getPort() {
 			return port;
 		}
 
-		public void setPort(int port) {
+		public void setPort(Integer port) {
 			if (port <= 0 || port > 65535) {
 				throw new IllegalArgumentException("Illegal ports are only allowed to be 0 ~ 65535");
 			}
 			this.port = port;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((host == null) ? 0 : host.hashCode());
+			result = prime * result + ((port == null) ? 0 : port.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ReleaseInstance other = (ReleaseInstance) obj;
+			if (host == null) {
+				if (other.host != null)
+					return false;
+			} else if (!host.equals(other.host))
+				return false;
+			if (port == null) {
+				if (other.port != null)
+					return false;
+			} else if (!port.equals(other.port))
+				return false;
+			return true;
 		}
 
 		@Override
@@ -171,15 +193,21 @@ public class GenericInfo implements Serializable {
 			return new ReleaseInstance(hap.getHostText(), hap.getPort());
 		}
 
+		public static boolean eq(ReleaseInstance instance1, ReleaseInstance instance2) {
+			return (instance1 != null && instance2 != null && StringUtils.equals(instance1.toString(), instance2.toString()));
+		}
+
 	}
 
 	public static class ReleaseMeta implements Serializable {
 		private static final long serialVersionUID = -4826329110329773259L;
 
 		@NotBlank
+		@NotNull
 		private String version; // Release version(Required).
 
 		@NotBlank
+		@NotNull
 		private String releaseId; // Release ID.
 
 		public ReleaseMeta() {

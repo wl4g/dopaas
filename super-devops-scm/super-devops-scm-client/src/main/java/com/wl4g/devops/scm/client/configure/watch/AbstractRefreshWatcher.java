@@ -15,21 +15,17 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
-import java.io.Closeable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.utils.bean.BeanMapConvert;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+import com.wl4g.devops.support.task.GenericTaskRunner;
 
 /**
  * Abstract refresh watcher.
@@ -40,66 +36,34 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
  * @see {@link org.springframework.cloud.zookeeper.config.ConfigWatcher
  *      ConfigWatcher}
  */
-public abstract class AbstractRefreshWatcher implements InitializingBean, DisposableBean, Closeable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
-	final protected AtomicBoolean running = new AtomicBoolean(false);
-	final protected ExecutorService worker;
+public abstract class AbstractRefreshWatcher extends GenericTaskRunner {
+
+	/** SCM client configuration */
+	final protected ScmClientProperties config;
+
+	/** SCM context refresher. */
 	final protected ScmContextRefresher refresher;
 
-	public AbstractRefreshWatcher(ScmContextRefresher refresher) {
+	/** SCM property sources remote locator. */
+	final protected ScmPropertySourceLocator locator;
+
+	public AbstractRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
+		super(new TaskProperties(-1, 0, 0)); // disable worker group
+		Assert.notNull(config, "Config must not be null");
 		Assert.notNull(refresher, "Refresher must not be null");
+		Assert.notNull(locator, "Locator must not be null");
+		this.config = config;
 		this.refresher = refresher;
-
-		// Initialize executor
-		final AtomicInteger counter = new AtomicInteger(0);
-		this.worker = new ThreadPoolExecutor(1, 2, 0, TimeUnit.SECONDS, new LinkedBlockingDeque<>(16), r -> {
-			String name = "scmRefreshWatch-" + counter.incrementAndGet();
-			Thread t = new Thread(r, name);
-			t.setDaemon(true);
-			return t;
-		});
+		this.locator = locator;
 	}
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		if (running.compareAndSet(false, true)) {
-			// Do actual
-			doStart();
-		} else {
-			throw new IllegalStateException("Already started watcher.");
-		}
-	}
+	protected String getWatchingUrl(boolean validate) {
+		String uri = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
 
-	protected abstract void doStart();
-
-	@Override
-	public void destroy() throws Exception {
-		if (running.compareAndSet(true, false)) {
-			close();
-		}
-	}
-
-	protected void doExecute(Object source, byte data[], String eventDesc) {
-		worker.execute(() -> {
-			try {
-				if (isPayload(data)) {
-					// ReleaseMeta meta = ReleaseMeta.of(new String(data,
-					// Charsets.UTF_8));
-					// Do refresh.
-					refresher.refresh();
-				} else {
-					if (log.isInfoEnabled()) {
-						log.info("Zk listening empty payload. source: {}", source);
-					}
-				}
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);
-			}
-		});
-	}
-
-	private boolean isPayload(byte[] value) {
-		return value != null && value.length > 0;
+		// Create releaseGet
+		GetRelease get = new GetRelease(locator.getInfo().getAppName(), config.getNamespace(), null,
+				locator.getInfo().getInstance());
+		return (uri + "?" + new BeanMapConvert(get).toUriParmaters());
 	}
 
 }

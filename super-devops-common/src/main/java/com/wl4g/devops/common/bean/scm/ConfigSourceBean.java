@@ -21,6 +21,7 @@ import java.util.List;
 public class ConfigSourceBean {
 
 	private ConfigReleaseMeta releaseMeta = new ConfigReleaseMeta();
+
 	private List<VersionContentBean> contents = new ArrayList<>();
 
 	public ConfigReleaseMeta getReleaseMeta() {

@@ -1,5 +1,4 @@
 /*
-
  * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,32 +15,31 @@
  */
 package com.wl4g.devops.scm.client.configure;
 
-import com.wl4g.devops.common.bean.scm.model.GenericInfo;
+import java.io.IOException;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.*;
+
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
 import com.wl4g.devops.common.exception.scm.ScmException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.codec.AES;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.scm.client.config.InstanceInfo;
-import com.wl4g.devops.scm.client.config.RetryProperties;
+import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.common.bean.ScmMetaInfo;
-import static com.wl4g.devops.scm.common.utils.ScmUtils.*;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
-
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import static org.apache.commons.lang3.StringUtils.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.Order;
@@ -55,16 +53,6 @@ import org.springframework.web.client.RestTemplate;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.http.HttpMethod.*;
 
-import java.nio.charset.StandardCharsets;
-
-import java.io.IOException;
-
-import java.util.*;
-import java.util.Map.Entry;
-import static java.util.Collections.*;
-
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
-
 /**
  * Abstract SCM application context initializer instructions.</br>
  * See:https://blog.csdn.net/leileibest_437147623/article/details/81074174
@@ -75,95 +63,88 @@ import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
  * @since
  */
 @Order(0)
-public abstract class ScmPropertySourceLocator implements PropertySourceLocator {
-
-	/** Token header key-name */
-	final public static String SCM_HEADER_TOKEN = "x-scm-token";
+public abstract class ScmPropertySourceLocator implements PropertySourceLocator, InitializingBean {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	/** Rest template */
-	final protected RestTemplate restTemplate;
 
 	/** SCM client configuration */
 	final protected ScmClientProperties config;
 
-	/** SCM client retry configuration */
-	final protected RetryProperties retryConfig;
-
 	/** SCM client local instance info */
-	final protected InstanceInfo info;
+	final protected InstanceHolder info;
 
 	/** SCM encrypted field identification prefix */
 	final private static String CIPHER_PREFIX = "{cipher}";
 
-	/** SCM meta communication information */
-	private ScmMetaInfo meta;
+	/** Rest template */
+	protected RestTemplate restTemplate;
 
-	/** SCM config server base uri. */
-	@Value("${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/devops}")
-	private String baseUri;
-
-	public ScmPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig, InstanceInfo info) {
+	public ScmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
 		Assert.notNull(config, "Scm client properties must not be null");
-		Assert.notNull(retryConfig, "Retry properties must not be null");
 		Assert.notNull(info, "Instance info must not be null");
 		this.config = config;
-		this.retryConfig = retryConfig;
 		this.info = info;
-		this.restTemplate = createSecureRestTemplate(config);
-
-		// Refresh(token) meta information
-		refreshMetaInfo();
 	}
 
-	public ReleaseMessage pullRemoteReleaseConfig(GenericInfo.ReleaseMeta targetReleaseMeta) {
-		// Get pull release URL.
-		String uri = baseUri + URI_S_BASE + "/" + URI_S_SOURCE_GET;
-
-		// Create release get
-		GetRelease get = new GetRelease(info.getAppName(), info.getProfilesActive(), targetReleaseMeta, info.getBindInstance());
-
-		// To parameters
-		String params = new BeanMapConvert(get).toUriParmaters();
-		String url = uri + "?" + params;
-		if (log.isDebugEnabled()) {
-			log.debug("Get release config url: {}", url);
-		}
-
-		// Add meta headers(token)
-		if (log.isInfoEnabled()) {
-			log.info("Adding header for meta: {}", meta);
-		}
-
-		HttpHeaders headers = new HttpHeaders();
-		attachHeaders(headers);
-		final HttpEntity<Void> entity = new HttpEntity<>(null, headers);
-
-		// Do get request source
-		RespBase<ReleaseMessage> resp = restTemplate
-				.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
-				}).getBody();
-		if (!RespBase.isSuccess(resp)) {
-			throw new ScmException(String.format("Get remote source error. %s, %s", url, resp.getMessage()));
-		}
-
-		// Release payload
-		ReleaseMessage release = resp.getData().get(KEY_RELEASE);
-		Assert.notNull(release, "Release message is required, it must not be null");
-		release.validation(true, true);
-
-		// Print sources
-		printfSources(release);
-
-		if (log.isDebugEnabled()) {
-			log.debug("Get remote release config : {}", release);
-		}
-		return release;
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.restTemplate = createRestTemplate(config.getFetchReadTimeout());
 	}
 
 	/**
-	 * Resolver cipher config source.
+	 * Fetch release configuration from SCM server.
+	 * 
+	 * @return
+	 */
+	public ReleaseMessage fetchRemoteReleaseConfig() {
+		try {
+			// Fetch release URL.
+			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
+			// Create release get
+			ReleaseMeta meta = availableReleaseMeta(false);
+			GetRelease get = new GetRelease(info.getAppName(), config.getNamespace(), meta, info.getInstance());
+
+			// To parameters
+			String kvs = new BeanMapConvert(get).toUriParmaters();
+			String url = uri + "?" + kvs;
+			if (log.isDebugEnabled()) {
+				log.debug("Fetch release config url: {}", url);
+			}
+
+			HttpHeaders headers = new HttpHeaders();
+			attachHeaders(headers);
+			final HttpEntity<Void> entity = new HttpEntity<>(null, headers);
+			// Attach headers
+			if (log.isDebugEnabled()) {
+				log.debug("Adding header for: {}", headers);
+			}
+
+			RespBase<ReleaseMessage> resp = restTemplate
+					.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
+					}).getBody();
+			if (!RespBase.isSuccess(resp)) {
+				throw new ScmException(String.format("Locate remote config error! %s, %s", url, resp.getMessage()));
+			}
+
+			// Extract release
+			ReleaseMessage release = resp.getData().get(KEY_RELEASE);
+			Assert.notNull(release, "Release message is required, it must not be null");
+			release.validation(true, true);
+
+			// Print sources
+			printfSources(release);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Fetch release config <= {}", release);
+			}
+			return release;
+		} finally {
+			releaseReset();
+		}
+	}
+
+	/**
+	 * Resolver cipher configuration source.
 	 * 
 	 * @param release
 	 */
@@ -172,7 +153,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 			log.trace("Resolver cipher configuration propertySource ...");
 		}
 
-		for (ReleaseMessage.ReleasePropertySource ps : release.getPropertySources()) {
+		for (ReleasePropertySource ps : release.getPropertySources()) {
 			ps.getSource().forEach((key, value) -> {
 				String cipher = String.valueOf(value);
 				if (cipher.startsWith(CIPHER_PREFIX)) {
@@ -181,7 +162,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 						ps.getSource().put(key, plain);
 
 						if (log.isDebugEnabled()) {
-							log.debug("Decryption property-key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
+							log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
 						}
 					} catch (Exception e) {
 						throw new ScmException("Cipher decryption error.", e);
@@ -197,16 +178,18 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 	 * @param headers
 	 */
 	protected void attachHeaders(HttpHeaders headers) {
-		if (meta != null && isNotBlank(meta.getToken())) {
-			headers.add(SCM_HEADER_TOKEN, meta.getToken());
-		}
 		headers.setAccept(singletonList(APPLICATION_JSON));
 	}
 
+	/**
+	 * Print property sources.
+	 * 
+	 * @param release
+	 */
 	protected void printfSources(ReleaseMessage release) {
 		if (log.isInfoEnabled()) {
-			log.info("Located environment: group: {}, namespace: {}, profile: {}, release meta: {}", release.getGroup(),
-					release.getNamespace(), release.getProfile(), release.getMeta());
+			log.info("Fetched from scm config <= group({}), namespace({}), release meta({})", release.getGroup(),
+					release.getNamespace(), release.getMeta());
 		}
 
 		if (log.isDebugEnabled()) {
@@ -222,56 +205,46 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator 
 		}
 	}
 
-	protected RestTemplate createSecureRestTemplate(ScmClientProperties client) {
-		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		if (client.getRequestReadTimeout() < 0) {
-			throw new IllegalStateException("Invalid Value for Read Timeout set.");
-		}
-		factory.setReadTimeout(client.getRequestReadTimeout());
+	/**
+	 * Create rest template.
+	 * 
+	 * @param readTimeout
+	 * @return
+	 */
+	public RestTemplate createRestTemplate(long readTimeout) {
+		Assert.state(readTimeout > 0, String.format("Invalid value for read timeout for %s", readTimeout));
 
-		RestTemplate template = new RestTemplate(factory);
-		Map<String, String> headers = new HashMap<>(client.getHeaders());
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		factory.setConnectTimeout(config.getConnectTimeout());
+		factory.setReadTimeout((int) readTimeout);
+		factory.setMaxResponseSize(config.getMaxResponseSize());
+		RestTemplate restTemplate = new RestTemplate(factory);
+
+		Map<String, String> headers = new HashMap<>(config.getHeaders());
 		if (headers.containsKey(AUTHORIZATION)) {
 			// To avoid redundant addition of header
 			headers.remove(AUTHORIZATION);
 		}
 		if (!headers.isEmpty()) {
-			template.setInterceptors(Arrays.asList(new GenericRequestHeaderInterceptor(headers)));
+			restTemplate.setInterceptors(asList(new GenericRequestHeaderInterceptor(headers)));
 		}
-
-		return template;
+		return restTemplate;
 	}
 
-	/**
-	 * Refresh config meta information
-	 */
-	protected void refreshMetaInfo() {
-		CuratorFramework client = null;
-		try {
-			RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 5);
-			client = CuratorFrameworkFactory.builder().connectString(config.getZookeeperUrl())
-					// .sessionTimeoutMs(10000)
-					.retryPolicy(retryPolicy)
-					// .namespace("admin")
-					.build();
-			client.start();
+	public RestTemplate getRestTemplate() {
+		return restTemplate;
+	}
 
-			String path = genMetaPath(new GenericInfo(info.getAppName(), info.getProfilesActive()), info.getBindInstance());
-			byte[] data = client.getData().forPath(path);
-			String t = new String(data, StandardCharsets.UTF_8);
-			this.meta = JacksonUtils.parseJSON(t, ScmMetaInfo.class);
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 
-			if (log.isInfoEnabled()) {
-				log.info("Got meta from zk:{} ,path:", config.getZookeeperUrl(), path);
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		} finally {
-			if (client != null) {
-				client.close();
-			}
-		}
+	public ScmClientProperties getConfig() {
+		return config;
+	}
 
+	public InstanceHolder getInfo() {
+		return info;
 	}
 
 	/**

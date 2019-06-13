@@ -20,8 +20,11 @@ import static java.util.concurrent.TimeUnit.*;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -57,30 +60,40 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	}
 
 	@Override
-	public void run(ApplicationArguments args) throws Exception {
+	public synchronized void run(ApplicationArguments args) throws Exception {
+		// Call pre startup
+		preStartupProperties();
+
 		if (bossRunning.compareAndSet(false, true)) {
-			// Create worker
-			final AtomicInteger counter = new AtomicInteger(-1);
-			worker = new ThreadPoolExecutor(1, taskProperties.getConcurrency(), taskProperties.getKeepAliveTime(), MICROSECONDS,
-					new LinkedBlockingQueue<>(taskProperties.getAcceptQueue()), r -> {
-						String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
-						Thread job = new Thread(this, name);
-						job.setDaemon(false);
-						job.setPriority(Thread.NORM_PRIORITY);
-						return job;
-					});
+			final int concurrency = taskProperties.getConcurrency();
+			final long keepTime = taskProperties.getKeepAliveTime();
+			final int acceptQueue = taskProperties.getAcceptQueue();
+
+			// Create worker(if necessary)
+			if (concurrency > 0) {
+				final AtomicInteger counter = new AtomicInteger(-1);
+				final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(acceptQueue);
+
+				worker = new ThreadPoolExecutor(1, concurrency, keepTime, MICROSECONDS, queue, r -> {
+					String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
+					Thread job = new Thread(this, name);
+					job.setDaemon(false);
+					job.setPriority(Thread.NORM_PRIORITY);
+					return job;
+				}, taskProperties.getReject());
+			}
 
 			// Create boss
-			String name = getClass().getSimpleName() + "-boos";
+			String name = getClass().getSimpleName() + "-boss";
 			boss = new Thread(this, name);
 			boss.setDaemon(false);
 			boss.start();
-
-			// Call post
-			postStartupProperties();
 		} else {
 			log.warn("Already runner!, already builders are read-only and do not allow task modification");
 		}
+
+		// Call post startup
+		postStartupProperties();
 	}
 
 	@Override
@@ -90,6 +103,9 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 
 	@Override
 	public void close() throws IOException {
+		// Call pre close
+		preCloseProperties();
+
 		if (bossRunning.compareAndSet(true, false)) {
 			if (worker != null) {
 				try {
@@ -107,19 +123,40 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 			}
 		}
 
-		// Call post closed
+		// Call post close
 		postCloseProperties();
 	}
 
+	/**
+	 * Pre startup properties
+	 */
+	protected void preStartupProperties() {
+
+	}
+
+	/**
+	 * Post startup properties
+	 */
 	protected void postStartupProperties() {
 
 	}
 
+	/**
+	 * Pre close properties
+	 */
+	protected void preCloseProperties() {
+
+	}
+
+	/**
+	 * Post close properties
+	 */
 	protected void postCloseProperties() {
 
 	}
 
 	protected ThreadPoolExecutor getWorker() {
+		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency>0");
 		return worker;
 	}
 
@@ -134,54 +171,83 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 
 		private static final long serialVersionUID = -1996272636830701232L;
 
-		/** concurrency */
-		private Integer concurrency = 3;
+		/**
+		 * When the concurrency is less than 0, it means that the worker thread
+		 * group is not enabled (only the boss asynchronous thread is started)
+		 */
+		private int concurrency = -1;
 
 		/** watch dog delay */
-		private Long keepAliveTime = 0L;
+		private long keepAliveTime = 0L;
 
 		/**
-		 * Consumption rReceive queue size
+		 * Consumption receive queue size
 		 */
-		private Integer acceptQueue = 65535;
+		private int acceptQueue = 8192;
+
+		/** Rejected execution handler. */
+		private RejectedExecutionHandler reject = new AbortPolicy();
 
 		public TaskProperties() {
 			super();
 		}
 
-		public TaskProperties(Integer concurrency, Long keepAliveTime, Integer acceptQueue) {
+		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue) {
+			this(concurrency, keepAliveTime, acceptQueue, null);
+		}
+
+		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
 			super();
 			setConcurrency(concurrency);
 			setKeepAliveTime(keepAliveTime);
 			setAcceptQueue(acceptQueue);
+			setReject(reject);
 		}
 
-		public Integer getConcurrency() {
+		public int getConcurrency() {
 			return concurrency;
 		}
 
-		public void setConcurrency(Integer concurrency) {
-			Assert.isTrue(concurrency > 0, "Concurrency must be greater than 0");
+		public void setConcurrency(int concurrency) {
 			this.concurrency = concurrency;
 		}
 
-		public Long getKeepAliveTime() {
-			Assert.isTrue(concurrency >= 0, "Concurrency must be greater or eq than 0");
+		public long getKeepAliveTime() {
 			return keepAliveTime;
 		}
 
-		public void setKeepAliveTime(Long keepAliveTime) {
-			Assert.isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
+		public void setKeepAliveTime(long keepAliveTime) {
+			if (getConcurrency() > 0) {
+				Assert.isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
+			}
 			this.keepAliveTime = keepAliveTime;
 		}
 
-		public Integer getAcceptQueue() {
+		public int getAcceptQueue() {
 			return acceptQueue;
 		}
 
-		public void setAcceptQueue(Integer acceptQueue) {
-			Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
+		public void setAcceptQueue(int acceptQueue) {
+			if (getConcurrency() > 0) {
+				Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
+			}
 			this.acceptQueue = acceptQueue;
+		}
+
+		public RejectedExecutionHandler getReject() {
+			return reject;
+		}
+
+		public void setReject(RejectedExecutionHandler reject) {
+			if (reject != null) {
+				this.reject = reject;
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "TaskProperties [concurrency=" + concurrency + ", keepAliveTime=" + keepAliveTime + ", acceptQueue="
+					+ acceptQueue + ", reject=" + reject + "]";
 		}
 
 	}

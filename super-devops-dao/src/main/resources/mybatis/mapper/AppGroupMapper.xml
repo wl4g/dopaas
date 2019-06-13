@@ -352,7 +352,7 @@
 
 	<select id="grouplist"  resultType="appGroup">
 		select
-		a.name,a.id,a.token_refresh_interval as "tokenRefreshInterval",a.enable
+		a.name,a.id,a.enable
 		from
 		cf_app_group a
 		JOIN cf_app_environment b on a.id = b.group_id AND b.del_flag = 0
@@ -363,7 +363,10 @@
 	</select>
 
 	<select id="environmentlist" parameterType="java.lang.String" resultType="environment">
-		select a.name,a.id,a.secret_key as "secretKey",a.group_id as "groupId",a.remark,alg_name as "algName" FROM  cf_app_environment a
+		select
+			a.name,a.id,a.group_id as "groupId",a.remark
+		FROM
+			cf_app_environment a
 		<where>
 		a.del_flag = 0
 		<if test="groupId != null and groupId != ''">

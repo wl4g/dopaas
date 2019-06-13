@@ -15,10 +15,8 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.scm.client.configure.DefaultBootstrapPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -36,37 +34,23 @@ import org.springframework.core.env.Environment;
  */
 public class ScmBootstrapConfiguration {
 
-	final public static String BASE_URI = "${spring.cloud.devops.scm.client.base-uri:http://localhost:6400/scm}";
-
 	//
 	// SCM foundation's
 	//
 
 	@Bean
-	public InstanceInfo instanceConfig(Environment environment) {
-		return new InstanceInfo(environment);
+	public ScmClientProperties scmClientProperties() {
+		return new ScmClientProperties();
 	}
 
 	@Bean
-	public ScmClientProperties scmClientProperties(Environment environment) {
-		return new ScmClientProperties(environment);
+	public InstanceHolder instanceHolder(Environment environment) {
+		return new InstanceHolder(environment, scmClientProperties());
 	}
 
 	@Bean
-	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, RetryProperties retryConfig,
-			InstanceInfo info) {
-		return new DefaultBootstrapPropertySourceLocator(config, retryConfig, info);
-	}
-
-	@Bean
-	@ConfigurationProperties(prefix = "spring.cloud.devops.scm.client.retry")
-	public RetryProperties retryProperties() {
-		return new RetryProperties();
-	}
-
-	@Bean
-	public IamClientProperties iamClientProperties() {
-		return new IamClientProperties();
+	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
+		return new DefaultBootstrapPropertySourceLocator(config, info);
 	}
 
 }
