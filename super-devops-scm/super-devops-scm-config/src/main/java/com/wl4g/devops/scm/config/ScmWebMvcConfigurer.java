@@ -46,7 +46,7 @@ public class ScmWebMvcConfigurer extends WebMvcConfigurerAdapter {
 	@Override
 	public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
 		configurer.setTaskExecutor(executor);
-		configurer.setDefaultTimeout(config.getLongPollingTimeout());
+		configurer.setDefaultTimeout(config.getLongPollTimeout());
 	}
 
 }

@@ -15,8 +15,11 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.apache.commons.lang3.RandomUtils.*;
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,7 +29,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.client.RestTemplate;
-
 import static org.springframework.http.HttpMethod.*;
 
 import com.wl4g.devops.common.web.RespBase;
@@ -43,9 +45,6 @@ import static com.wl4g.devops.common.web.RespBase.*;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_POST;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Timing refresh watcher
@@ -71,30 +70,27 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 	}
 
 	@Override
-	protected void postStartupProperties() {
-		this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollingTimeout() * 1.15));
+	protected void preStartupProperties() {
+		this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollTimeout() * 1.15));
 	}
 
 	@Override
 	public void run() {
-		// Loop long-polling watching...
+		// Loop long-polling watcher
 		while (true) {
 			try {
 				createWatchLongPolling();
 			} catch (Throwable th) {
-				String errtip = "Watching long polling error! causes by: {}";
+				String errtip = "Unable to watch error, causes by: {}";
 				if (log.isDebugEnabled()) {
 					log.error(errtip, getStackTrace(th));
 				} else {
 					log.warn(errtip, getRootCausesString(th));
 				}
-
-				synchronized (this) {
-					try {
-						wait(nextLong(1000L, 10_000L));
-					} catch (InterruptedException e1) {
-						log.error("", th);
-					}
+				try {
+					Thread.sleep(nextLong(config.getLongPollDelay(), config.getLongPollMaxDelay()));
+				} catch (InterruptedException e1) {
+					log.error("", th);
 				}
 			} finally {
 				watchState.compareAndSet(true, false);

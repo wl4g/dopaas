@@ -11,7 +11,7 @@ public abstract class AbstractScmProperties implements Serializable {
 	/**
 	 * Watch long-polling timeout on waiting to read data from the SCM Server.
 	 */
-	private long longPollingTimeout = 30 * 1000;
+	private long longPollTimeout = 30 * 1000;
 
 	/** Connect timeout */
 	private int connectTimeout = 5 * 1000;
@@ -19,13 +19,13 @@ public abstract class AbstractScmProperties implements Serializable {
 	/** Max response size */
 	private int maxResponseSize = 65535;
 
-	public long getLongPollingTimeout() {
-		return longPollingTimeout;
+	public long getLongPollTimeout() {
+		return longPollTimeout;
 	}
 
-	public void setLongPollingTimeout(long longPollingTimeout) {
+	public void setLongPollTimeout(long longPollingTimeout) {
 		Assert.state(longPollingTimeout > 0, String.format("Invalid value for long polling timeout for %s", longPollingTimeout));
-		this.longPollingTimeout = longPollingTimeout;
+		this.longPollTimeout = longPollingTimeout;
 	}
 
 	public int getConnectTimeout() {
@@ -48,7 +48,7 @@ public abstract class AbstractScmProperties implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AbstractScmProperties [longPollingTimeout=" + longPollingTimeout + ", connectTimeout=" + connectTimeout
+		return "AbstractScmProperties [longPollingTimeout=" + longPollTimeout + ", connectTimeout=" + connectTimeout
 				+ ", maxResponseSize=" + maxResponseSize + "]";
 	}
 

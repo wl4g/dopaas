@@ -195,7 +195,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		Assert.notNull(watch, "Watch must not be null");
 
 		// Create watch-deferred
-		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getLongPollingTimeout(), watch);
+		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getLongPollTimeout(), watch);
 
 		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getGroup());
 		String watchKey = getWatchKey(watch.getInstance(), watch.getNamespace());

@@ -60,7 +60,10 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	}
 
 	@Override
-	public void run(ApplicationArguments args) throws Exception {
+	public synchronized void run(ApplicationArguments args) throws Exception {
+		// Call pre startup
+		preStartupProperties();
+
 		if (bossRunning.compareAndSet(false, true)) {
 			final int concurrency = taskProperties.getConcurrency();
 			final long keepTime = taskProperties.getKeepAliveTime();
@@ -85,12 +88,12 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 			boss = new Thread(this, name);
 			boss.setDaemon(false);
 			boss.start();
-
-			// Call post
-			postStartupProperties();
 		} else {
 			log.warn("Already runner!, already builders are read-only and do not allow task modification");
 		}
+
+		// Call post startup
+		postStartupProperties();
 	}
 
 	@Override
@@ -100,6 +103,9 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 
 	@Override
 	public void close() throws IOException {
+		// Call pre close
+		preCloseProperties();
+
 		if (bossRunning.compareAndSet(true, false)) {
 			if (worker != null) {
 				try {
@@ -117,14 +123,34 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 			}
 		}
 
-		// Call post closed
+		// Call post close
 		postCloseProperties();
 	}
 
+	/**
+	 * Pre startup properties
+	 */
+	protected void preStartupProperties() {
+
+	}
+
+	/**
+	 * Post startup properties
+	 */
 	protected void postStartupProperties() {
 
 	}
 
+	/**
+	 * Pre close properties
+	 */
+	protected void preCloseProperties() {
+
+	}
+
+	/**
+	 * Post close properties
+	 */
 	protected void postCloseProperties() {
 
 	}

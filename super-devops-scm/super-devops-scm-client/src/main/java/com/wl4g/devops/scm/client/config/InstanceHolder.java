@@ -21,6 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +32,6 @@ import org.springframework.util.Assert;
 
 import com.google.common.net.HostAndPort;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-
-import io.netty.util.NetUtil;
 
 /**
  * Instance information.
@@ -56,8 +55,8 @@ public class InstanceHolder {
 		Assert.isTrue(!isAnyBlank(appName, servPort),
 				"Environment['server.port','spring.application.name'] config is null, Because spring cloud loads bootstrap.yml preferentially, which means that other config files are not loaded at initialization, so configurations other than bootstrap.yml cannot be used at initialization, Therefore, these 3 items must be allocated to bootstrap.yml.");
 
-		// Local host(Maybe it's not really needed.)
-		String host = NetUtil.LOCALHOST.getHostName();
+		// Default host-name (Maybe it's not really needed.)
+		String host = getDefaultLocalHost();
 		if (!isEmpty(config.getNetcard())) {
 			// First ipv4 network card
 			Enumeration<NetworkInterface> netInterfaces;
@@ -94,6 +93,19 @@ public class InstanceHolder {
 
 	public ReleaseInstance getInstance() {
 		return instance;
+	}
+
+	/**
+	 * Get default local host-name
+	 * 
+	 * @return
+	 */
+	private String getDefaultLocalHost() {
+		try {
+			return InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 }
