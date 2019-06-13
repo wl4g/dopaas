@@ -188,7 +188,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 */
 	protected void printfSources(ReleaseMessage release) {
 		if (log.isInfoEnabled()) {
-			log.info("Located config for group: {}, profile: {}, releaseMeta: {}", release.getGroup(), release.getNamespace(),
+			log.info("Fetched from scm config <= group({}), namespace({}), release meta({})", release.getGroup(),
 					release.getNamespace(), release.getMeta());
 		}
 

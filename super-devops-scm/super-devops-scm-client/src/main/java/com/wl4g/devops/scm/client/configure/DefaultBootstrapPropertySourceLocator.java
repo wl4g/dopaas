@@ -51,7 +51,7 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 	@Override
 	public PropertySource<?> locate(Environment environment) {
 		if (log.isInfoEnabled()) {
-			log.info("SCM bootstrap config is enabled environment for: {}", environment);
+			log.info("SCM locate config is enabled environment for: {}", environment);
 		}
 
 		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
@@ -67,14 +67,12 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 				composite = config.convertCompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE);
 
 			} catch (Throwable th) {
-				log.warn("-----------------------------------------");
 				String errtip = "Could not locate remote propertySource! causes by: {}";
 				if (log.isDebugEnabled()) {
 					log.warn(errtip, getStackTrace(th));
 				} else {
 					log.warn(errtip, getRootCausesString(th));
 				}
-				log.warn("-----------------------------------------");
 			}
 		}
 

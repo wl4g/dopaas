@@ -23,8 +23,6 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.scm.config.AbstractScmProperties;
 
-import io.netty.util.NetUtil;
-
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 
 /**
@@ -56,8 +54,7 @@ public class ScmClientProperties extends AbstractScmProperties {
 	/**
 	 * SCM client network-card name, By default, the InetAddress that represents
 	 * the loopback address. If IPv6 stack is available, it will refer to
-	 * {@link NetUtil#LOCALHOST6 LOCALHOST6}. Otherwise,
-	 * {@link NetUtil#LOCALHOST4 LOCALHOST4}.
+	 * {@link java.net.InetAddress#getLocalHost LOCALHOST4}
 	 */
 	private String netcard;
 
@@ -65,6 +62,12 @@ public class ScmClientProperties extends AbstractScmProperties {
 	 * Fetch timeout on waiting to read data from the SCM Server.
 	 */
 	private int fetchReadTimeout = 8 * 1000;
+
+	/** Minimum waiting time for long polling failure. */
+	private long longPollDelay = 2 * 1000L;
+
+	/** Maximum waiting time for long polling failure. */
+	private long longPollMaxDelay = 15 * 1000L;
 
 	/**
 	 * Refresh name-space(configuration filename)</br>
@@ -101,6 +104,24 @@ public class ScmClientProperties extends AbstractScmProperties {
 	public void setFetchReadTimeout(int fetchReadTimeout) {
 		Assert.state(fetchReadTimeout > 0, String.format("Invalid value for fetch read timeout for %s", fetchReadTimeout));
 		this.fetchReadTimeout = fetchReadTimeout;
+	}
+
+	public long getLongPollDelay() {
+		return longPollDelay;
+	}
+
+	public void setLongPollDelay(long longPollDelay) {
+		Assert.state(longPollDelay > 0, String.format("Invalid value for long poll delay for %s", longPollDelay));
+		this.longPollDelay = longPollDelay;
+	}
+
+	public long getLongPollMaxDelay() {
+		return longPollMaxDelay;
+	}
+
+	public void setLongPollMaxDelay(long longPollMaxDelay) {
+		Assert.state(longPollMaxDelay > 0, String.format("Invalid value for long poll max delay for %s", longPollMaxDelay));
+		this.longPollMaxDelay = longPollMaxDelay;
 	}
 
 	public String getNamespace() {
