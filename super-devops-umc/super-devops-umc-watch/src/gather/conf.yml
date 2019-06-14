@@ -1,11 +1,11 @@
 
 #post uri
-server-uri: http://localhost:14046/umc/basic
+server-uri: http://10.0.0.26:14046/umc/basic
 
 #physical
 physical:
   #delay(ms)
-  delay: 5000
+  delay: 10000
   #network card
   net: en0
   gatherPort: 22,9092

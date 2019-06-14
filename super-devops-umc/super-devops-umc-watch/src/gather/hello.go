@@ -25,7 +25,7 @@ var delay time.Duration = 10000
 //网卡
 var netCard string = "eth0"
 //配置文件路径
-var confPath string = "conf.yml"
+var confPath string = "./conf.yml"
 
 //gather port
 var port string = "22,6380"
@@ -39,7 +39,7 @@ var id string = "UNKNOW";
 //初始化
 func init()  {
 	//get conf path
-	flag.StringVar(&confPath, "p", "conf.yml", "conf path")
+	flag.StringVar(&confPath, "p", "./conf.yml", "conf path")
 	flag.Parse()
 	//flag.Usage()//usage
 	fmt.Println("confPath="+confPath)
@@ -71,16 +71,15 @@ func main() {
 	}*/
 	//get()
 
-	/*go memThread()
+	go memThread()
 	go cpuThread()
 	go diskThread()
-	go netThread()*/
+	//go netThread()
 
-	/*for true {
+	for true {
 		time.Sleep(100000 * time.Millisecond)
-	}*/
+	}
 
-	cpuThread()
 
 }
 
