@@ -28,10 +28,16 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	/** Monitoring center server dashboard's root URI. */
 	final public static String URI_DASHBOARD = "/dashboard/";
 
-	/** Monitoring center server dashboard's root URI. */
-	final public static String URI_GATHER = "/gather/";
-
-	/** gather */
+	/** basic */
 	final public static String URI_BASIC = "/basic";
+
+	/** mem */
+	final public static String URI_BASIC_MEM = "/mem";
+	/** mem */
+	final public static String URI_BASIC_CPU = "/cpu";
+	/** mem */
+	final public static String URI_BASIC_DISK = "/disk";
+	/** mem */
+	final public static String URI_BASIC_NET = "/net";
 
 }

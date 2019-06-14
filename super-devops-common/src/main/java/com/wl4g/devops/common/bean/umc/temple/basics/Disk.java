@@ -1,31 +1,47 @@
 package com.wl4g.devops.common.bean.umc.temple.basics;
 
+import com.wl4g.devops.common.bean.umc.temple.BaseTemple;
+
 /**
  * @author vjay
  * @date 2019-06-11 17:25:00
  */
-public class Disk {
+public class Disk extends BaseTemple {
 
-    private PartitionStat partitionStat;
 
-    private Usage usage;
+    private DiskInfo[] diskInfos;
 
-    public PartitionStat getPartitionStat() {
-        return partitionStat;
+    public DiskInfo[] getDiskInfos() {
+        return diskInfos;
     }
 
-    public void setPartitionStat(PartitionStat partitionStat) {
-        this.partitionStat = partitionStat;
+    public void setDiskInfos(DiskInfo[] diskInfos) {
+        this.diskInfos = diskInfos;
     }
 
-    public Usage getUsage() {
-        return usage;
-    }
+    public static class DiskInfo {
 
-    public void setUsage(Usage usage) {
-        this.usage = usage;
-    }
+        private PartitionStat partitionStat;
 
+        private Usage usage;
+
+        public PartitionStat getPartitionStat() {
+            return partitionStat;
+        }
+
+        public void setPartitionStat(PartitionStat partitionStat) {
+            this.partitionStat = partitionStat;
+        }
+
+        public Usage getUsage() {
+            return usage;
+        }
+
+        public void setUsage(Usage usage) {
+            this.usage = usage;
+        }
+
+    }
 
 
     public static class PartitionStat {
@@ -51,7 +67,7 @@ public class Disk {
         }
     }
 
-    public class Usage {
+    public static class Usage {
 
         private String path;
 

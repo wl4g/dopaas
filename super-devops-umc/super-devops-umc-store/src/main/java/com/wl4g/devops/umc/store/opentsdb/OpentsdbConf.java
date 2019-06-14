@@ -7,6 +7,8 @@ import com.wl4g.devops.umc.store.opentsdb.client.OpenTSDBConfig;
 import com.wl4g.devops.umc.store.opentsdb.client.bean.request.Point;
 import com.wl4g.devops.umc.store.opentsdb.client.bean.response.DetailResult;
 import com.wl4g.devops.umc.store.opentsdb.client.http.callback.BatchPutHttpResponseCallback;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,15 +17,23 @@ import java.util.List;
  * @author vjay
  * @date 2019-06-13 15:09:00
  */
+@Component
+@ConfigurationProperties(prefix = "opentsdb")
 public class OpentsdbConf {
 
-    public static OpenTSDBConfig config = null;
-    public static OpenTSDBClient client = null;
+    //@Value("${opentsdb.url}")
+    private static String url;
+
+    //@Value("${opentsdb.port}")
+    private static Integer port;
+
+    private static OpenTSDBConfig config = null;
+    private static OpenTSDBClient client = null;
 
 
     public static void init() {
         try {
-            config = OpenTSDBConfig.address("http://localhost", 4242)
+            config = OpenTSDBConfig.address(url, port)
                     // http连接池大小，默认100
                     .httpConnectionPool(100)
                     // http请求超时时间，默认100s
@@ -68,8 +78,33 @@ public class OpentsdbConf {
         }
     }
 
+    public static OpenTSDBClient getClient() {
+        if(client == null){
+            init();
+        }
+        if(client == null){
+            throw new RuntimeException("can not init the opentsdb client");
+        }
+        return client;
+    }
 
-    public static void main(String[] args){
+    public static String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        OpentsdbConf.url = url;
+    }
+
+    public static Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        OpentsdbConf.port = port;
+    }
+
+    /*public static void main(String[] args){
         init();
         long timestamp = System.currentTimeMillis();
         Point point = Point.metric("test1")
@@ -79,7 +114,7 @@ public class OpentsdbConf {
         client.put(point);
 
         close();
-    }
+    }*/
 
 
 
