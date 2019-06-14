@@ -24,7 +24,7 @@ public class GatherController {
 
     @RequestMapping(UMCDevOpsConstants.URI_BASIC_MEM)
     public void mem(@RequestBody Mem mem){
-        System.out.println(mem);
+        basicOpentsdb.save(mem);
     }
 
     @RequestMapping(UMCDevOpsConstants.URI_BASIC_CPU)
@@ -35,12 +35,12 @@ public class GatherController {
 
     @RequestMapping(UMCDevOpsConstants.URI_BASIC_DISK)
     public void disk(@RequestBody Disk disk){
-        System.out.println(disk);
+        basicOpentsdb.save(disk);
     }
 
     @RequestMapping(UMCDevOpsConstants.URI_BASIC_NET)
     public void net(@RequestBody Net net){
-        System.out.println(net);
+        basicOpentsdb.save(net);
     }
 
 

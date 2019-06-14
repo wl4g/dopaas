@@ -10,7 +10,7 @@ import (
 )
 
 
-var commandPath = "netCommand.txt"
+var commandPath = "./netCommand.txt"
 
 var command string
 
