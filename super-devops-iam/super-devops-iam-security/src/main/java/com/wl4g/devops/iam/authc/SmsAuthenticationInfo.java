@@ -19,17 +19,30 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
+import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+
 public class SmsAuthenticationInfo extends SimpleAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	public SmsAuthenticationInfo(Object principal, Object credentials, String realmName) {
-		this(principal, credentials, null, realmName);
+	/**
+	 * IAM account information.
+	 */
+	final private IamAccountInfo accountInfo;
+
+	public SmsAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, String realmName) {
+		this(accountInfo, principal, credentials, null, realmName);
 	}
 
-	public SmsAuthenticationInfo(Object principal, Object credentials, ByteSource credentialsSalt, String realmName) {
+	public SmsAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, ByteSource credentialsSalt,
+			String realmName) {
+		this.accountInfo = accountInfo;
 		this.principals = new SimplePrincipalCollection(principal, realmName);
 		this.credentials = credentials;
 		this.credentialsSalt = credentialsSalt;
+	}
+
+	public IamAccountInfo getAccountInfo() {
+		return accountInfo;
 	}
 
 }
