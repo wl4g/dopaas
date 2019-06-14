@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-umc-collector</artifactId>
+			<artifactId>super-devops-umc-receiver</artifactId>
 			<version>master</version>
 		</dependency>
 	</dependencies>

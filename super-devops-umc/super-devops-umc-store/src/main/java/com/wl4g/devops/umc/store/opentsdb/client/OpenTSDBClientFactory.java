@@ -8,7 +8,7 @@ package com.wl4g.devops.umc.store.opentsdb.client;
  */
 public class OpenTSDBClientFactory {
 
-    public static OpenTSDBClient connect(OpenTSDBConfig config)  {
+    public static OpenTSDBClient connect(OpenTSDBConfig config) throws Exception {
         return new OpenTSDBClient(config);
     }
 
