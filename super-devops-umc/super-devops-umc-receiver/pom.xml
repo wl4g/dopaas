@@ -26,6 +26,11 @@
 			<artifactId>super-devops-umc-core</artifactId>
 			<version>master</version>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-umc-store</artifactId>
+			<version>master</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
