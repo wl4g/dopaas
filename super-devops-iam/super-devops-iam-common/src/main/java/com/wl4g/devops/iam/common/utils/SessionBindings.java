@@ -162,9 +162,10 @@ public abstract class SessionBindings extends Sessions {
 	 * @param sessionKey
 	 * @param value
 	 */
-	public static void bind(String sessionKey, Object value) {
+	public static <T> T bind(String sessionKey, T value) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
 		getSession().setAttribute(sessionKey, value);
+		return value;
 	}
 
 	/**

@@ -35,6 +35,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_ACCOUNT;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_TOKEN;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -137,11 +140,12 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			validator.validate(token);
 
 			/*
-			 * Extension: can be used to check the parameter 'pre-grant-ticket'
+			 * Extension Point Tips:: can be used to check the parameter
+			 * 'pre-grant-ticket'</br>
 			 */
 
-			// Do get authentication
-			return doAuthenticationInfo((T) token);
+			// Get authentication info and save it(Also include token)
+			return bind(KEY_SESSION_ACCOUNT, doAuthenticationInfo((T) bind(KEY_SESSION_TOKEN, token)));
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}
