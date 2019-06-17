@@ -1,6 +1,7 @@
 package com.wl4g.devops.umc.derby;
 
 import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.wl4g.devops.common.bean.umc.model.physical.Docker;
 import com.wl4g.devops.umc.store.VirtualMetricStore;
 
 /**
@@ -14,6 +15,11 @@ public class DerbyVirtualMetricStore implements VirtualMetricStore {
 
 	@Override
 	public boolean save(PhysicalInfo baseTemple) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean save(Docker docker) {
 		throw new UnsupportedOperationException();
 	}
 

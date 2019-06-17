@@ -1,17 +1,13 @@
 package com.wl4g.devops.umc.receiver;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
-
-import com.wl4g.devops.umc.store.adapter.VirtualMetricStoreAdapter;
-import com.wl4g.devops.common.bean.umc.model.physical.Cpu;
-import com.wl4g.devops.common.bean.umc.model.physical.Disk;
-import com.wl4g.devops.common.bean.umc.model.physical.Mem;
-import com.wl4g.devops.common.bean.umc.model.physical.Net;
+import com.wl4g.devops.common.bean.umc.model.physical.*;
 import com.wl4g.devops.umc.store.adapter.PhysicalMetricStoreAdapter;
-
+import com.wl4g.devops.umc.store.adapter.VirtualMetricStoreAdapter;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 
 /**
  * HTTP collection receiver
@@ -47,5 +43,17 @@ public class RESTFulCollectReceiver extends AbstractCollectReceiver {
 	public void netPhysicalReceive(@RequestBody Net net) {
 		putPhysicalNet(net);
 	}
+
+
+	@RequestMapping(URI_VIRTUAL_DOCKER)
+	public void dockerReceive(@RequestBody Docker docker) {
+
+
+		//putPhysicalNet(net);
+	}
+
+
+
+
 
 }
