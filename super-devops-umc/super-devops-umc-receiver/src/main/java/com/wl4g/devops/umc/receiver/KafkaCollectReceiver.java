@@ -1,7 +1,7 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.umc.store.adapter.VirtualMetricStoreAdapter;
-import com.wl4g.devops.umc.store.adapter.PhysicalMetricStoreAdapter;
+import com.wl4g.devops.umc.store.PhysicalMetricStore;
+import com.wl4g.devops.umc.store.VirtualMetricStore;
 
 /**
  * KAFKA collection receiver
@@ -12,7 +12,7 @@ import com.wl4g.devops.umc.store.adapter.PhysicalMetricStoreAdapter;
  */
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
-	public KafkaCollectReceiver(PhysicalMetricStoreAdapter pStore, VirtualMetricStoreAdapter vStore) {
+	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
 		super(pStore, vStore);
 	}
 

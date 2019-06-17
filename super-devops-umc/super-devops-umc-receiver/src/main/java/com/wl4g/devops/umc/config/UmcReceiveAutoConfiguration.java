@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.umc.receiver.RESTFulCollectReceiver;
+import com.wl4g.devops.umc.receiver.HttpCollectReceiver;
 import com.wl4g.devops.umc.receiver.KafkaCollectReceiver;
-import com.wl4g.devops.umc.store.adapter.PhysicalMetricStoreAdapter;
-import com.wl4g.devops.umc.store.adapter.VirtualMetricStoreAdapter;
+import com.wl4g.devops.umc.store.PhysicalMetricStore;
+import com.wl4g.devops.umc.store.VirtualMetricStore;
 
 /**
  * UMC receiver auto configuration
@@ -23,13 +23,17 @@ import com.wl4g.devops.umc.store.adapter.VirtualMetricStoreAdapter;
 @Configuration
 public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
-	final public static String BEAN_HTTP_RECEIVER = "restfulCollectReceiver";
+	final public static String BEAN_HTTP_RECEIVER = "httpCollectReceiver";
 	final public static String BEAN_KAFKA_RECEIVER = "kafkaCollectReceiver";
 
 	@Bean(BEAN_HTTP_RECEIVER)
-	public RESTFulCollectReceiver restfulCollectReceiverCollectReceiver(PhysicalMetricStoreAdapter pStore,
-			VirtualMetricStoreAdapter vStore) {
-		return new RESTFulCollectReceiver(pStore, vStore);
+	public HttpCollectReceiver httpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
+		return new HttpCollectReceiver(pStore, vStore);
+	}
+
+	@Bean
+	public PrefixHandlerMapping httpCollectReceiverPrefixHandlerMapping() {
+		return createPrefixHandlerMapping();
 	}
 
 	@Override
@@ -43,7 +47,7 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 	}
 
 	@Bean(BEAN_KAFKA_RECEIVER)
-	public KafkaCollectReceiver kafkaCollectReceiver(PhysicalMetricStoreAdapter pStore, VirtualMetricStoreAdapter vStore) {
+	public KafkaCollectReceiver kafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
 		return new KafkaCollectReceiver(pStore, vStore);
 	}
 
