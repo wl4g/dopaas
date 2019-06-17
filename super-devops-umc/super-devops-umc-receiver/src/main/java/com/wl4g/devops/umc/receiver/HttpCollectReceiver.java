@@ -2,12 +2,12 @@ package com.wl4g.devops.umc.receiver;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 
-import com.wl4g.devops.umc.store.adapter.VirtualMetricStoreAdapter;
 import com.wl4g.devops.common.bean.umc.model.physical.Cpu;
 import com.wl4g.devops.common.bean.umc.model.physical.Disk;
 import com.wl4g.devops.common.bean.umc.model.physical.Mem;
 import com.wl4g.devops.common.bean.umc.model.physical.Net;
-import com.wl4g.devops.umc.store.adapter.PhysicalMetricStoreAdapter;
+import com.wl4g.devops.umc.store.PhysicalMetricStore;
+import com.wl4g.devops.umc.store.VirtualMetricStore;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ResponseBody
 @com.wl4g.devops.umc.annotation.HttpCollectReceiver
-public class RESTFulCollectReceiver extends AbstractCollectReceiver {
+public class HttpCollectReceiver extends AbstractCollectReceiver {
 
-	public RESTFulCollectReceiver(PhysicalMetricStoreAdapter pStore, VirtualMetricStoreAdapter vStore) {
+	public HttpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
 		super(pStore, vStore);
 	}
+
+	//
+	// Physical receiver
+	//
 
 	@RequestMapping(URI_PHYSICAL_MEM)
 	public void memPhysicalReceive(@RequestBody Mem mem) {
@@ -46,6 +50,30 @@ public class RESTFulCollectReceiver extends AbstractCollectReceiver {
 	@RequestMapping(URI_PHYSICAL_NET)
 	public void netPhysicalReceive(@RequestBody Net net) {
 		putPhysicalNet(net);
+	}
+
+	//
+	// Virtual receiver
+	//
+
+	@RequestMapping(URI_VIRTUAL_MEM)
+	public void memVirtualReceive() {
+		// TODO
+	}
+
+	@RequestMapping(URI_VIRTUAL_CPU)
+	public void cpuVirtualReceive() {
+		// TODO
+	}
+
+	@RequestMapping(URI_VIRTUAL_DISK)
+	public void diskVirtualReceive() {
+		// TODO
+	}
+
+	@RequestMapping(URI_VIRTUAL_NET)
+	public void netVirtualReceive() {
+		// TODO
 	}
 
 }
