@@ -1,5 +1,8 @@
 package com.wl4g.devops.umc.derby;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.Assert;
+
 import com.wl4g.devops.common.bean.umc.model.physical.Cpu;
 import com.wl4g.devops.common.bean.umc.model.physical.Disk;
 import com.wl4g.devops.common.bean.umc.model.physical.Mem;
@@ -14,6 +17,13 @@ import com.wl4g.devops.umc.store.PhysicalMetricStore;
  * @since
  */
 public class DerbyPhysicalMetricStore implements PhysicalMetricStore {
+
+	final JdbcTemplate jdbcTemplate;
+
+	public DerbyPhysicalMetricStore(JdbcTemplate jdbcTemplate) {
+		Assert.notNull(jdbcTemplate, "JdbcTemplate must not be null");
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Override
 	public boolean save(Cpu cpu) {

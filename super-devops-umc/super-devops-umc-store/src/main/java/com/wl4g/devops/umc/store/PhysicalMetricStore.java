@@ -6,7 +6,7 @@ import com.wl4g.devops.common.bean.umc.model.physical.Mem;
 import com.wl4g.devops.common.bean.umc.model.physical.Net;
 
 /**
- * Foundation(Memory/network/core/disk) monitor data store
+ * Physical(Memory/network/core/disk) monitor data store
  * 
  * @author wangl.sir
  * @version v1.0 2019年6月17日
