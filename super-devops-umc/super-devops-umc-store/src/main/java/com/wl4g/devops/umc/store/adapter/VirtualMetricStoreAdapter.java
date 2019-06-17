@@ -1,14 +1,14 @@
 package com.wl4g.devops.umc.store.adapter;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.stream.Collectors.toList;
+import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.wl4g.devops.common.bean.umc.model.physical.Docker;
+import com.wl4g.devops.umc.store.VirtualMetricStore;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Virtual(docker) monitor data metric store adapter
@@ -29,6 +29,11 @@ public class VirtualMetricStoreAdapter implements VirtualMetricStore {
 
 	@Override
 	public boolean save(PhysicalInfo info) {
+		return false;
+	}
+
+	@Override
+	public boolean save(Docker docker) {
 		return false;
 	}
 
