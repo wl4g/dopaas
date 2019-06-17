@@ -1,5 +1,8 @@
 package com.wl4g.devops.umc.derby;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.Assert;
+
 import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
 import com.wl4g.devops.common.bean.umc.model.physical.Docker;
 import com.wl4g.devops.umc.store.VirtualMetricStore;
@@ -12,6 +15,13 @@ import com.wl4g.devops.umc.store.VirtualMetricStore;
  * @since
  */
 public class DerbyVirtualMetricStore implements VirtualMetricStore {
+
+	final JdbcTemplate jdbcTemplate;
+
+	public DerbyVirtualMetricStore(JdbcTemplate jdbcTemplate) {
+		Assert.notNull(jdbcTemplate, "JdbcTemplate must not be null");
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Override
 	public boolean save(PhysicalInfo baseTemple) {

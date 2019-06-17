@@ -1,8 +1,12 @@
 package com.wl4g.devops.umc.receiver;
 
 import com.wl4g.devops.common.bean.umc.model.physical.*;
-import com.wl4g.devops.umc.store.adapter.VirtualMetricStoreAdapter;
-import com.wl4g.devops.umc.store.adapter.PhysicalMetricStoreAdapter;
+import com.wl4g.devops.common.bean.umc.model.physical.Cpu;
+import com.wl4g.devops.common.bean.umc.model.physical.Disk;
+import com.wl4g.devops.common.bean.umc.model.physical.Mem;
+import com.wl4g.devops.common.bean.umc.model.physical.Net;
+import com.wl4g.devops.umc.store.PhysicalMetricStore;
+import com.wl4g.devops.umc.store.VirtualMetricStore;
 
 /**
  * Abstract collection receiver
@@ -14,12 +18,12 @@ import com.wl4g.devops.umc.store.adapter.PhysicalMetricStoreAdapter;
 public abstract class AbstractCollectReceiver implements CollectReceiver {
 
 	/** Physical metric store adapter. */
-	final protected PhysicalMetricStoreAdapter pStore;
+	final protected PhysicalMetricStore pStore;
 
 	/** Virtual metric store adapter. */
-	final protected VirtualMetricStoreAdapter vStore;
+	final protected VirtualMetricStore vStore;
 
-	public AbstractCollectReceiver(PhysicalMetricStoreAdapter pStore, VirtualMetricStoreAdapter vStore) {
+	public AbstractCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
 		super();
 		this.pStore = pStore;
 		this.vStore = vStore;
@@ -48,8 +52,6 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	//
 	// Virtual storage
 	//
-
-
 
 	protected void putVirtualMem(Mem mem) {
 		// TODO
