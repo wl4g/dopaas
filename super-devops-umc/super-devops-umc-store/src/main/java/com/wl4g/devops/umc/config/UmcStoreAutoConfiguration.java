@@ -63,6 +63,34 @@ public class UmcStoreAutoConfiguration {
 	// Derby metric store's
 	//
 
+	/**
+	 * <b>Quick Start:</b><a href=
+	 * "https://db.apache.org/derby/papers/DerbyTut/ij_intro.html#ij_start">https://db.apache.org/derby/papers/DerbyTut/ij_intro.html#ij_start</a>
+	 * </br>
+	 * <b>Environment Configure:</b><a href=
+	 * "https://db.apache.org/derby/papers/DerbyTut/install_software.html#derby_configure">https://db.apache.org/derby/papers/DerbyTut/install_software.html#derby_configure</a>
+	 * 
+	 * <pre>
+	 * ij> java org.apache.derby.tools.ij
+	 * ij> connect 'jdbc:derby:MyDbTest;create=true';
+	 * 
+	 * ij> create table derbyDB(num int, addr varchar(40));
+	 * ij> insert into derbyDB values (1956,'Webster St.');
+	 * ij> insert into derbyDB values (1910,'Union St.');
+	 * ij> update derbyDB set num=180, addr='Grand Ave.' where num=1956;
+	 * 
+	 * ij> select * from derbyDb;
+	 * NUM        |ADDR
+	 * ----------------------------------------------------
+	 * 180        |Grand Ave.                              
+	 * 1910       |Union St.                               
+	 *  
+	 * 2 rows selected
+	 * ij>
+	 * </pre>
+	 * 
+	 * @return
+	 */
 	@Bean(name = "derbyJdbcTemplate")
 	@ConditionalOnMissingBean(TsdbPhysicalMetricStore.class)
 	public JdbcTemplate derbyJdbcTemplate() {
