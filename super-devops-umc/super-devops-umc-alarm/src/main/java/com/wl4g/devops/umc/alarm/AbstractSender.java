@@ -6,6 +6,6 @@ package com.wl4g.devops.umc.alarm;
  */
 public abstract class AbstractSender {
 
-    public abstract void send();
+	public abstract void send();
 
 }

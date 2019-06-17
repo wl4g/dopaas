@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.annotation;
+package com.wl4g.devops.umc.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.context.annotation.Import;
-
-import com.wl4g.devops.scm.client.config.ScmRefreshAutoConfiguration;
-
 /**
- * SCM annotation to enable configuration.
- *
- * @since 1.1.0
+ * UMC collection receiver
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年6月17日
+ * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@Import({ ScmRefreshAutoConfiguration.class })
-public @interface EnableScmClient {
+public @interface HttpCollectReceiver {
 
 }

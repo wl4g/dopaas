@@ -25,7 +25,9 @@ package com.wl4g.devops.common.constants;
  */
 public abstract class SCMDevOpsConstants extends DevOpsConstants {
 
-	// Common and Base.
+	//
+	// Common and Based.
+	//
 
 	/** Server pre-release source response data key. */
 	final public static String KEY_PRE_RELEASE = "pre-release-source";
@@ -34,7 +36,10 @@ public abstract class SCMDevOpsConstants extends DevOpsConstants {
 	/** Client environment source response data key. */
 	final public static String KEY_USED_SOURCES = "used-source";
 
+	//
 	// Server.
+	//
+
 	/** Service web root URI. */
 	final public static String URI_S_BASE = "/scm-server";
 	/** Get property source URI. */
@@ -49,7 +54,10 @@ public abstract class SCMDevOpsConstants extends DevOpsConstants {
 	/** SCM published CONFIG prefix. */
 	final public static String KEY_PUB_PREFIX = "scm_pub_config_";
 
+	//
 	// Client.
+	//
+
 	/** Service web root URI. */
 	final public static String URI_C_BASE = "/scm-client";
 	/** Refresh URI. */
