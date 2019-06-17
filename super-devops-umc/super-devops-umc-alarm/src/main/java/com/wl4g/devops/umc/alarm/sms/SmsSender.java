@@ -8,9 +8,8 @@ import com.wl4g.devops.umc.alarm.AbstractSender;
  */
 public class SmsSender extends AbstractSender {
 
+	@Override
+	public void send() {
 
-    @Override
-    public void send() {
-
-    }
+	}
 }
