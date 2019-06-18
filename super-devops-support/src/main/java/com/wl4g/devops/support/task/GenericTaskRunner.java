@@ -61,7 +61,7 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 
 	@Override
 	public synchronized void run(ApplicationArguments args) throws Exception {
-		// Call pre startup
+		// Call pre-startup
 		preStartupProperties();
 
 		if (bossRunning.compareAndSet(false, true)) {
@@ -130,29 +130,38 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	/**
 	 * Pre startup properties
 	 */
-	protected void preStartupProperties() {
+	protected void preStartupProperties() throws Exception {
 
 	}
 
 	/**
 	 * Post startup properties
 	 */
-	protected void postStartupProperties() {
+	protected void postStartupProperties() throws Exception {
 
 	}
 
 	/**
 	 * Pre close properties
 	 */
-	protected void preCloseProperties() {
+	protected void preCloseProperties() throws IOException {
 
 	}
 
 	/**
 	 * Post close properties
 	 */
-	protected void postCloseProperties() {
+	protected void postCloseProperties() throws IOException {
 
+	}
+
+	/**
+	 * Is the current runner active.
+	 * 
+	 * @return
+	 */
+	protected boolean isActive() {
+		return boss != null && !boss.isInterrupted() && bossRunning.get();
 	}
 
 	protected ThreadPoolExecutor getWorker() {
