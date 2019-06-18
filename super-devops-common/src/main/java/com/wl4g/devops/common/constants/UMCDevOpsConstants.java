@@ -53,6 +53,9 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	/** Virtual net */
 	final public static String URI_VIRTUAL_NET = "vnet";
 
+	/** Docker */
+	final public static String URI_VIRTUAL_DOCKER = "vdocker";
+
 	//
 	// Server KAFKA client
 	//
@@ -72,6 +75,11 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String TAG_DISK_DEVICE = "device";
 	/** tag -- net : port */
 	final public static String TAG_DISK_NET_PORT = "port";
+
+	/** tag -- docker : containerId */
+	final public static String TAG_DOCKER_CONTAINER_ID = "containerId";
+	/** tag -- docker : name */
+	final public static String TAG_DOCKER_NAME = "name";
 
 	/** metric -- cpu */
 	final public static String METRIC_CPU = "basic.cpu";
@@ -124,5 +132,20 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String METRIC_NET_LISTEN = "basic.net.listen";
 	/** metric -- net : closing */
 	final public static String METRIC_NET_CLOSING = "basic.net.closing";
+
+	/** metric -- docker : cpu.perc */
+	final public static String METRIC_DOCKER_CPU = "docker.cpu.perc";
+	/** metric -- docker : mem.usage */
+	final public static String METRIC_DOCKER_MEM_USAGE = "docker.mem.usage";
+	/** metric -- docker : mem.perc */
+	final public static String METRIC_DOCKER_MEM_PERC = "docker.mem.perc";
+	/** metric -- docker : net.in */
+	final public static String METRIC_DOCKER_NET_IN = "docker.net.in";
+	/** metric -- docker : net.out */
+	final public static String METRIC_DOCKER_NET_OUT = "docker.net.out";
+	/** metric -- docker : block.in */
+	final public static String METRIC_DOCKER_BLOCK_IN = "docker.block.in";
+	/** metric -- docker : block.out */
+	final public static String METRIC_DOCKER_BLOCK_OUT = "docker.block.out";
 
 }
