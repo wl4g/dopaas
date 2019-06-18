@@ -13,16 +13,16 @@ public class PhysicalInfo implements Serializable {
 
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private String id;
+	private String physicalId;
 
 	private String type;
 
-	public String getId() {
-		return id;
+	public String getPhysicalId() {
+		return physicalId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setPhysicalId(String physicalId) {
+		this.physicalId = physicalId;
 	}
 
 	public String getType() {
