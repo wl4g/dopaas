@@ -51,7 +51,7 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 
 	@RequestMapping(URI_VIRTUAL_DOCKER)
 	public void dockerReceive(@RequestBody Docker docker) {
-		//putPhysicalNet(net);
+		putVirtualDocker(docker);
 	}
 
 
