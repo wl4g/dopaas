@@ -36,6 +36,18 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
+  cloud:
+    devops:
+      umc:
+        receiver:
+          http:
+            enabled: true
+          kafka:
+            enabled: true
+            concurrency: 3
+            queue-depth: 4092
+            properties:
+              bootstrap.servers: 127.0.0.1:9092
 
 # Spring-security config.
 security.user:
