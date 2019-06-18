@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.wl4g.devops.common.bean.umc.model.physical.*;
 import com.wl4g.devops.common.bean.umc.model.physical.Cpu;
 import com.wl4g.devops.common.bean.umc.model.physical.Disk;
 import com.wl4g.devops.common.bean.umc.model.physical.Mem;
@@ -66,6 +67,10 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 
 	protected void putVirtualNet(Net net) {
 		// TODO
+	}
+
+	protected void putVirtualDocker(Docker docker) {
+		vStore.save(docker);
 	}
 
 }
