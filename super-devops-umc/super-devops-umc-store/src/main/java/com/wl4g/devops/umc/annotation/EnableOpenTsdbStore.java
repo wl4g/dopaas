@@ -25,7 +25,7 @@ import static com.wl4g.devops.umc.config.UmcStoreAutoConfiguration.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@ConditionalOnProperty(name = KEY_STORE_OPENTSDB_PREFIX, matchIfMissing = false)
+@ConditionalOnProperty(name = KEY_STORE_OPENTSDB_PREFIX + ".host", matchIfMissing = false)
 public @interface EnableOpenTsdbStore {
 
 }

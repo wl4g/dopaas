@@ -7,6 +7,7 @@ import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
  * @author vjay
  * @date 2019-06-12 09:41:00
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Net extends PhysicalInfo {
 
 	private static final long serialVersionUID = 7624894410555358785L;

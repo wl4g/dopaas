@@ -7,6 +7,7 @@ import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
  * @author vjay
  * @date 2019-06-17 16:42:00
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Docker extends PhysicalInfo {
 	private static final long serialVersionUID = -6431729185849981843L;
 

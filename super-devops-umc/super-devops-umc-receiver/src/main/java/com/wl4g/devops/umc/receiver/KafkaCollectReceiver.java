@@ -70,6 +70,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 				log.error(e.getMessage());
 			}
 		}
+		state.completed();
 	}
 
 	/**
