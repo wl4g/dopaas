@@ -1,15 +1,15 @@
 package com.wl4g.devops.umc.receiver;
 
-import java.util.List;
-
+import com.wl4g.devops.umc.store.PhysicalMetricStore;
+import com.wl4g.devops.umc.store.VirtualMetricStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 
+import java.util.List;
+
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.TOPIC_RECEIVE_PATTERN;
-import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.*;
-import com.wl4g.devops.umc.store.PhysicalMetricStore;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
+import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_BATCH_FACTORY;
 
 /**
  * KAFKA collection receiver
@@ -30,7 +30,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param records
 	 * @param ack
 	 */
-	@KafkaListener(topicPattern = TOPIC_RECEIVE_PATTERN, containerFactory = BEAN_KAFKA_BATCH_FACTORY)
+	@KafkaListener(topicPattern = TOPIC_RECEIVE_PATTERN, containerFactory = BEAN_KAFKA_BATCH_FACTORY,containerGroup = "group1")
 	public void onMultiReceive(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
 		try {
 			if (log.isInfoEnabled()) {
@@ -57,6 +57,11 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 		//
 		// TODO
 		//
+		for(ConsumerRecord<String, String> consumerRecord : records){
+			log.info(consumerRecord.key()+" - "+consumerRecord.value());
+		}
+
+
 
 	}
 
