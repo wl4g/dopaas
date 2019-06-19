@@ -74,6 +74,8 @@ public class ReceiverProperties {
 				put(AUTO_OFFSET_RESET_CONFIG, "latest");
 				put(ENABLE_AUTO_COMMIT_CONFIG, "false");
 				put(MAX_POLL_RECORDS_CONFIG, "1000");
+				//put(ENABLE_AUTO_COMMIT_CONFIG, true);
+
 			}
 		};
 
