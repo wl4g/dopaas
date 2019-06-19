@@ -15,8 +15,6 @@ import com.wl4g.devops.umc.derby.DerbyPhysicalMetricStore;
 import com.wl4g.devops.umc.derby.DerbyVirtualMetricStore;
 import com.wl4g.devops.umc.opentsdb.TsdbPhysicalMetricStore;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
-import com.wl4g.devops.umc.store.PhysicalMetricStore;
 
 /**
  * UMC store auto configuration
@@ -49,13 +47,13 @@ public class UmcStoreAutoConfiguration {
 
 	@Bean
 	@EnableOpenTsdbStore
-	public PhysicalMetricStore tsdbPhysicalMetricStore(OpenTSDBClient client) {
+	public TsdbPhysicalMetricStore tsdbPhysicalMetricStore(OpenTSDBClient client) {
 		return new TsdbPhysicalMetricStore(client);
 	}
 
 	@Bean
 	@EnableOpenTsdbStore
-	public VirtualMetricStore tsdbVirtualMetricStore(OpenTSDBClient client) {
+	public TsdbVirtualMetricStore tsdbVirtualMetricStore(OpenTSDBClient client) {
 		return new TsdbVirtualMetricStore(client);
 	}
 
@@ -127,13 +125,13 @@ public class UmcStoreAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(TsdbPhysicalMetricStore.class)
-	public PhysicalMetricStore derbyPhysicalMetricStore() {
+	public DerbyPhysicalMetricStore derbyPhysicalMetricStore() {
 		return new DerbyPhysicalMetricStore(derbyJdbcTemplate());
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(TsdbPhysicalMetricStore.class)
-	public VirtualMetricStore derbyVirtualMetricStore() {
+	public DerbyVirtualMetricStore derbyVirtualMetricStore() {
 		return new DerbyVirtualMetricStore(derbyJdbcTemplate());
 	}
 

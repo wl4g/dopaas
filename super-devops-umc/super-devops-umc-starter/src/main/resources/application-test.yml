@@ -39,6 +39,11 @@ spring:
   cloud:
     devops:
       umc:
+        store:
+          derby:
+          opentsdb:
+            host: 10.0.0.57
+            port: 4242
         receiver:
           http:
             enabled: true
