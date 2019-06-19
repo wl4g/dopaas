@@ -57,6 +57,13 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String URI_VIRTUAL_DOCKER = "vdocker";
 
 	//
+	// Server KAFKA client
+	//
+
+	/** KAFKA receiver topic pattern */
+	final public static String TOPIC_RECEIVE_PATTERN = "__devops_umc_agent_metric_";
+
+	//
 	// Server openTSDB metric
 	//
 
