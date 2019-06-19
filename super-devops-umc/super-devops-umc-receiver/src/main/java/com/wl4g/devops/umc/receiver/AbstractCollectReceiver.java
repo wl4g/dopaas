@@ -1,5 +1,8 @@
 package com.wl4g.devops.umc.receiver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.wl4g.devops.common.bean.umc.model.physical.*;
 import com.wl4g.devops.common.bean.umc.model.physical.Cpu;
 import com.wl4g.devops.common.bean.umc.model.physical.Disk;
@@ -16,6 +19,8 @@ import com.wl4g.devops.umc.store.VirtualMetricStore;
  * @since
  */
 public abstract class AbstractCollectReceiver implements CollectReceiver {
+
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Physical metric store adapter. */
 	final protected PhysicalMetricStore pStore;
