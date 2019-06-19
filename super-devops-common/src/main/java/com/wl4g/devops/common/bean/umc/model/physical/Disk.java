@@ -1,5 +1,6 @@
 package com.wl4g.devops.common.bean.umc.model.physical;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
 
 /**
@@ -67,6 +68,7 @@ public class Disk extends PhysicalInfo {
 		}
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class Usage {
 
 		private String path;
