@@ -38,6 +38,44 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	// Physical storage
 	//
 
+	protected void putPhysical(Total total) {
+		if (total.getMemInfo() != null) {
+			Mem mem = new Mem();
+			mem.setPhysicalId(total.getPhysicalId());
+			mem.setType(total.getType());
+			mem.setMemInfo(total.getMemInfo());
+			putPhysicalMem(mem);
+		}
+		if (total.getCpu() != null) {
+			Cpu cpu = new Cpu();
+			cpu.setPhysicalId(total.getPhysicalId());
+			cpu.setType(total.getType());
+			cpu.setCpu(total.getCpu());
+			putPhysicalCpu(cpu);
+		}
+		if (total.getDiskInfos() != null) {
+			Disk disk = new Disk();
+			disk.setPhysicalId(total.getPhysicalId());
+			disk.setType(total.getType());
+			disk.setDiskInfos(total.getDiskInfos());
+			putPhysicalDisk(disk);
+		}
+		if (total.getNetInfos() != null) {
+			Net net = new Net();
+			net.setPhysicalId(total.getPhysicalId());
+			net.setType(total.getType());
+			net.setNetInfos(total.getNetInfos());
+			putPhysicalNet(net);
+		}
+		if (total.getDockerInfo() != null) {
+			Docker docker = new Docker();
+			docker.setPhysicalId(total.getPhysicalId());
+			docker.setType(total.getType());
+			docker.setDockerInfo(total.getDockerInfo());
+			putVirtualDocker(docker);
+		}
+	}
+
 	protected void putPhysicalMem(Mem mem) {
 		pStore.save(mem);
 	}

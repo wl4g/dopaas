@@ -1,5 +1,6 @@
 package com.wl4g.devops.common.bean.umc.model.physical;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
 
 /**
@@ -20,6 +21,7 @@ public class Net extends PhysicalInfo {
 		this.netInfos = netInfos;
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class NetInfo {
 		private Integer port;
 		private Integer up;

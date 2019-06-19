@@ -36,6 +36,8 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String URI_RECEIVER = "/receiver";
 
 	/** Physical mem */
+	final public static String URI_PHYSICAL_TOTAL = "total";
+	/** Physical mem */
 	final public static String URI_PHYSICAL_MEM = "pmem";
 	/** Physical cpu */
 	final public static String URI_PHYSICAL_CPU = "pcpu";

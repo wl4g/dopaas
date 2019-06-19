@@ -28,6 +28,11 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	// Physical receiver
 	//
 
+	@RequestMapping(URI_PHYSICAL_TOTAL)
+	public void physicalReceive(@RequestBody Total total) {
+		putPhysical(total);
+	}
+
 	@RequestMapping(URI_PHYSICAL_MEM)
 	public void memPhysicalReceive(@RequestBody Mem mem) {
 		putPhysicalMem(mem);

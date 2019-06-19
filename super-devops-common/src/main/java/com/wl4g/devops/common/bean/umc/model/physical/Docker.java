@@ -1,5 +1,6 @@
 package com.wl4g.devops.common.bean.umc.model.physical;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
 
 /**
@@ -19,6 +20,7 @@ public class Docker extends PhysicalInfo {
 		this.dockerInfo = dockerInfo;
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class DockerInfo {
 		private String containerId;
 		private String name;
