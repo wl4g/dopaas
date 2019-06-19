@@ -43,7 +43,7 @@ spring:
           http:
             enabled: true
           kafka:
-            enabled: false
+            enabled: true
             concurrency: 3
             queue-depth: 4092
             properties:
