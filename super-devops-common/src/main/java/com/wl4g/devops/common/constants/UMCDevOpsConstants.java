@@ -35,7 +35,7 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	/** Receiver endpoint based URI */
 	final public static String URI_RECEIVER = "/receiver";
 
-	/** Physical mem */
+	/** Physical total */
 	final public static String URI_PHYSICAL_TOTAL = "total";
 	/** Physical mem */
 	final public static String URI_PHYSICAL_MEM = "pmem";
@@ -54,6 +54,9 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String URI_VIRTUAL_DISK = "vdisk";
 	/** Virtual net */
 	final public static String URI_VIRTUAL_NET = "vnet";
+
+	/** Redis */
+	final public static String URI_REDIS = "redis";
 
 	/** Docker */
 	final public static String URI_VIRTUAL_DOCKER = "vdocker";

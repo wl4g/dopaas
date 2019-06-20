@@ -2,8 +2,7 @@ package com.wl4g.devops.umc.receiver;
 
 import com.wl4g.devops.common.bean.umc.model.physical.Total;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-import com.wl4g.devops.umc.store.PhysicalMetricStore;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
+import com.wl4g.devops.umc.store.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -22,8 +21,8 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
  */
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
-	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
-		super(pStore, vStore);
+	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+		super(pStore, vStore, rStore,zStore,kStore);
 	}
 
 	/**

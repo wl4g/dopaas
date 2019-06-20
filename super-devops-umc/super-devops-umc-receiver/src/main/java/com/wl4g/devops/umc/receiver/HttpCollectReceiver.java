@@ -1,8 +1,8 @@
 package com.wl4g.devops.umc.receiver;
 
 import com.wl4g.devops.common.bean.umc.model.physical.*;
-import com.wl4g.devops.umc.store.PhysicalMetricStore;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
+import com.wl4g.devops.common.bean.umc.model.third.Redis;
+import com.wl4g.devops.umc.store.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,8 +20,8 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 @com.wl4g.devops.umc.annotation.HttpCollectReceiver
 public class HttpCollectReceiver extends AbstractCollectReceiver {
 
-	public HttpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
-		super(pStore, vStore);
+	public HttpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+		super(pStore, vStore, rStore,zStore,kStore);
 	}
 
 	//
@@ -81,5 +81,14 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	public void netVirtualReceive() {
 		// TODO
 	}
+
+	/**
+	 * redis
+	 */
+	@RequestMapping(URI_REDIS)
+	public void redisReceive(@RequestBody Redis redis) {
+		putRedis(redis);
+	}
+
 
 }

@@ -1,11 +1,11 @@
 package com.wl4g.devops.umc.config;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_RECEIVER;
-
-import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.Properties;
-
+import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.umc.annotation.EnableHttpReceiver;
+import com.wl4g.devops.umc.annotation.EnableKafkaReceiver;
+import com.wl4g.devops.umc.receiver.HttpCollectReceiver;
+import com.wl4g.devops.umc.receiver.KafkaCollectReceiver;
+import com.wl4g.devops.umc.store.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +16,12 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer.AckMode;
 import org.springframework.kafka.listener.config.ContainerProperties;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.umc.annotation.EnableHttpReceiver;
-import com.wl4g.devops.umc.annotation.EnableKafkaReceiver;
-import com.wl4g.devops.umc.receiver.HttpCollectReceiver;
-import com.wl4g.devops.umc.receiver.KafkaCollectReceiver;
-import com.wl4g.devops.umc.store.PhysicalMetricStore;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
-import static com.wl4g.devops.umc.config.ReceiverProperties.*;
+import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.Properties;
+
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_RECEIVER;
+import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
 
 /**
  * UMC receiver auto configuration
@@ -51,8 +49,8 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_HTTP_RECEIVER)
 	@EnableHttpReceiver
-	public HttpCollectReceiver httpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
-		return new HttpCollectReceiver(pStore, vStore);
+	public HttpCollectReceiver httpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+		return new HttpCollectReceiver(pStore, vStore, rStore, zStore, kStore);
 	}
 
 	@Bean
@@ -77,8 +75,8 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_KAFKA_RECEIVER)
 	@EnableKafkaReceiver
-	public KafkaCollectReceiver kafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
-		return new KafkaCollectReceiver(pStore, vStore);
+	public KafkaCollectReceiver kafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+		return new KafkaCollectReceiver(pStore, vStore, rStore, zStore, kStore);
 	}
 
 	@Bean(BEAN_KAFKA_BATCH_FACTORY)
