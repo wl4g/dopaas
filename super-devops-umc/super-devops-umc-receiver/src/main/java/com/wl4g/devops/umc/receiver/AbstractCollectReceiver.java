@@ -1,5 +1,9 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.wl4g.devops.common.bean.umc.model.third.Kafka;
+import com.wl4g.devops.common.bean.umc.model.third.Redis;
+import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.umc.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,8 +12,6 @@ import com.wl4g.devops.common.bean.umc.model.physical.Cpu;
 import com.wl4g.devops.common.bean.umc.model.physical.Disk;
 import com.wl4g.devops.common.bean.umc.model.physical.Mem;
 import com.wl4g.devops.common.bean.umc.model.physical.Net;
-import com.wl4g.devops.umc.store.PhysicalMetricStore;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
 
 /**
  * Abstract collection receiver
@@ -28,10 +30,24 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	/** Virtual metric store adapter. */
 	final protected VirtualMetricStore vStore;
 
-	public AbstractCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
+	/** Redis metric store adapter. */
+	final protected RedisMetricStore rStore;
+
+	/** Zookeeper metric store adapter. */
+	final protected ZookeeperMetricStore zStore;
+
+	/** Kafka metric store adapter. */
+	final protected KafkaMetricStore kStore;
+
+	public AbstractCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore
+			, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
 		super();
 		this.pStore = pStore;
 		this.vStore = vStore;
+		this.rStore = rStore;
+		this.zStore = zStore;
+		this.kStore = kStore;
+
 	}
 
 	//
@@ -115,5 +131,20 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	protected void putVirtualDocker(Docker docker) {
 		vStore.save(docker);
 	}
+
+
+	protected void putRedis(Redis redis){
+		rStore.save(redis);
+	}
+
+	protected void putZookeeper(Zookeeper zookeeper){
+		zStore.save(zookeeper);
+	}
+
+	protected void putKafka(Kafka kafka){
+		kStore.save(kafka);
+	}
+
+
 
 }
