@@ -1,7 +1,10 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.physical.*;
+import com.wl4g.devops.common.bean.umc.model.physical.Physical;
+import com.wl4g.devops.common.bean.umc.model.third.Kafka;
 import com.wl4g.devops.common.bean.umc.model.third.Redis;
+import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.umc.store.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,68 +30,45 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	//
 	// Physical receiver
 	//
-
-	@RequestMapping(URI_PHYSICAL_TOTAL)
-	public void physicalReceive(@RequestBody Total total) {
-		putPhysical(total);
+	@RequestMapping(URI_PHYSICAL)
+	public void physicalReceive(@RequestBody Physical physical) {
+		putPhysical(physical);
 	}
 
-	@RequestMapping(URI_PHYSICAL_MEM)
-	public void memPhysicalReceive(@RequestBody Mem mem) {
-		putPhysicalMem(mem);
-	}
 
-	@RequestMapping(URI_PHYSICAL_CPU)
-	public void cpuPhysicalReceive(@RequestBody Cpu cpu) {
-		putPhysicalCpu(cpu);
-	}
-
-	@RequestMapping(URI_PHYSICAL_DISK)
-	public void diskPhysicalReceive(@RequestBody Disk disk) {
-		putPhysicalDisk(disk);
-	}
-
-	@RequestMapping(URI_PHYSICAL_NET)
-	public void netPhysicalReceive(@RequestBody Net net) {
-		putPhysicalNet(net);
-	}
-
+	//
+	// Virtual receiver
+	//
 	@RequestMapping(URI_VIRTUAL_DOCKER)
 	public void dockerReceive(@RequestBody Docker docker) {
 		putVirtualDocker(docker);
 	}
 
-	//
-	// Virtual receiver
-	//
-
-	@RequestMapping(URI_VIRTUAL_MEM)
-	public void memVirtualReceive() {
-		// TODO
-	}
-
-	@RequestMapping(URI_VIRTUAL_CPU)
-	public void cpuVirtualReceive() {
-		// TODO
-	}
-
-	@RequestMapping(URI_VIRTUAL_DISK)
-	public void diskVirtualReceive() {
-		// TODO
-	}
-
-	@RequestMapping(URI_VIRTUAL_NET)
-	public void netVirtualReceive() {
-		// TODO
-	}
 
 	/**
-	 * redis
+	 * Redis
 	 */
 	@RequestMapping(URI_REDIS)
 	public void redisReceive(@RequestBody Redis redis) {
 		putRedis(redis);
 	}
+
+	/**
+	 * Zookeeper
+	 */
+	@RequestMapping(URI_ZOOKEEPER)
+	public void zookeeperReceive(@RequestBody Zookeeper zookeeper) {
+		putZookeeper(zookeeper);
+	}
+
+	/**
+	 * Kafka
+	 */
+	@RequestMapping(URI_KAFKA)
+	public void kafkaReceive(@RequestBody Kafka kafka) {
+		putKafka(kafka);
+	}
+
 
 
 }

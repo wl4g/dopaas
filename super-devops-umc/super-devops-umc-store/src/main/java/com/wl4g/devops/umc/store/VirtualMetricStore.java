@@ -1,7 +1,7 @@
 package com.wl4g.devops.umc.store;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
-import com.wl4g.devops.common.bean.umc.model.physical.Docker;
+import com.wl4g.devops.common.bean.umc.model.Base;
+import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 
 /**
  * Virtual(docker) containers monitor metric store
@@ -12,7 +12,7 @@ import com.wl4g.devops.common.bean.umc.model.physical.Docker;
  */
 public interface VirtualMetricStore extends MetricStore {
 
-	boolean save(PhysicalInfo baseTemple);
+	boolean save(Base baseTemple);
 
 	boolean save(Docker docker);
 

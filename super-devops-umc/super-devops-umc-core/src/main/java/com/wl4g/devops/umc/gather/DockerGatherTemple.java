@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.gather;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.wl4g.devops.common.bean.umc.model.Base;
 
 /**
  * @author vjay
@@ -9,17 +9,17 @@ import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
 public class DockerGatherTemple extends AbstractGatherTemple {
 
     @Override
-    public PhysicalInfo analysis() {
+    public Base analysis() {
         return null;
     }
 
     @Override
-    public void storage(PhysicalInfo baseTemple) {
+    public void storage(Base baseTemple) {
 
     }
 
     @Override
-    public void warn(PhysicalInfo baseTemple){
+    public void warn(Base baseTemple){
 
     }
 }

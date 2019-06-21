@@ -37,7 +37,7 @@ type Writer struct {
 }
 
 // NewWriter allocates and initializes a new Writer writing to w.
-// Parameter width controls the total number of characters on each line
+// Parameter width controls the physical number of characters on each line
 // across all columns.
 func NewWriter(w io.Writer, width int, flag uint) *Writer {
 	return &Writer{

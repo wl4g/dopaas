@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @version v1.0 2019年6月17日
  * @since
  */
-public class PhysicalInfo implements Serializable {
+public class Base implements Serializable {
 
 	private static final long serialVersionUID = 381411777614066880L;
 

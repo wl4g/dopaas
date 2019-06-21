@@ -36,30 +36,19 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String URI_RECEIVER = "/receiver";
 
 	/** Physical total */
-	final public static String URI_PHYSICAL_TOTAL = "total";
-	/** Physical mem */
-	final public static String URI_PHYSICAL_MEM = "pmem";
-	/** Physical cpu */
-	final public static String URI_PHYSICAL_CPU = "pcpu";
-	/** Physical disk */
-	final public static String URI_PHYSICAL_DISK = "pdisk";
-	/** Physical net */
-	final public static String URI_PHYSICAL_NET = "pnet";
+	final public static String URI_PHYSICAL = "physical";
 
-	/** Virtual mem */
-	final public static String URI_VIRTUAL_MEM = "vmem";
-	/** Virtual cpu */
-	final public static String URI_VIRTUAL_CPU = "vcpu";
-	/** Virtual disk */
-	final public static String URI_VIRTUAL_DISK = "vdisk";
-	/** Virtual net */
-	final public static String URI_VIRTUAL_NET = "vnet";
+	/** Docker */
+	final public static String URI_VIRTUAL_DOCKER = "docker";
 
 	/** Redis */
 	final public static String URI_REDIS = "redis";
 
-	/** Docker */
-	final public static String URI_VIRTUAL_DOCKER = "vdocker";
+	/** Zookeeper */
+	final public static String URI_ZOOKEEPER = "zookeeper";
+
+	/** Kafka */
+	final public static String URI_KAFKA = "kafka";
 
 	//
 	// Server KAFKA client
@@ -110,7 +99,7 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String METRIC_DISK_USED = "basic.disk.used";
 	/** metric -- disk : used Percent */
 	final public static String METRIC_DISK_USED_PERCENT = "basic.disk.usedPercent";
-	/** metric -- disk : inodes Total */
+	/** metric -- disk : inodes Physical */
 	final public static String METRIC_DISK_INODES_TOTAL = "basic.disk.inodesTotal";
 	/** metric -- disk : inodes Used */
 	final public static String METRIC_DISK_INODES_USED = "basic.disk.inodesUsed";

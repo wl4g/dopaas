@@ -81,7 +81,7 @@ func TestSafeArrayConversionString(t *testing.T) {
 
 	totalElements, _ := conversion.TotalElements(0)
 	if totalElements != 13 {
-		t.Log(fmt.Sprintf("%d total elements does not equal 13\n", totalElements))
+		t.Log(fmt.Sprintf("%d physical elements does not equal 13\n", totalElements))
 		t.Fail()
 	}
 

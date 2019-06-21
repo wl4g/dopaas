@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.gather;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.wl4g.devops.common.bean.umc.model.Base;
 
 /**
  * @author vjay
@@ -9,11 +9,11 @@ import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
 public abstract class AbstractGatherTemple {
 
 
-    public abstract PhysicalInfo analysis();
+    public abstract Base analysis();
 
-    public abstract void storage(PhysicalInfo baseTemple);
+    public abstract void storage(Base baseTemple);
 
-    public void warn(PhysicalInfo baseTemple){
+    public void warn(Base baseTemple){
 
     }
 

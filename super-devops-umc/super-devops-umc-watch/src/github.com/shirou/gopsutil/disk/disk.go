@@ -11,7 +11,7 @@ var invoke common.Invoker = common.Invoke{}
 type UsageStat struct {
 	Path              string  `json:"path"`
 	Fstype            string  `json:"fstype"`
-	Total             uint64  `json:"total"`
+	Total             uint64  `json:"physical"`
 	Free              uint64  `json:"free"`
 	Used              uint64  `json:"used"`
 	UsedPercent       float64 `json:"usedPercent"`
