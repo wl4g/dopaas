@@ -35,11 +35,11 @@ func VirtualMemoryWithContext(ctx context.Context) (*VirtualMemoryStat, error) {
 	}
 
 	pageSize := uint64(unix.Getpagesize())
-	total, err := getHwMemsize()
+	physical, err := getHwMemsize()
 	if err != nil {
 		return nil, err
 	}
-	totalCount := C.natural_t(total / pageSize)
+	totalCount := C.natural_t(physical / pageSize)
 
 	availableCount := vmstat.inactive_count + vmstat.free_count
 	usedPercent := 100 * float64(totalCount-availableCount) / float64(totalCount)
@@ -47,7 +47,7 @@ func VirtualMemoryWithContext(ctx context.Context) (*VirtualMemoryStat, error) {
 	usedCount := totalCount - availableCount
 
 	return &VirtualMemoryStat{
-		Total:       total,
+		Total:       physical,
 		Available:   pageSize * uint64(availableCount),
 		Used:        pageSize * uint64(usedCount),
 		UsedPercent: usedPercent,

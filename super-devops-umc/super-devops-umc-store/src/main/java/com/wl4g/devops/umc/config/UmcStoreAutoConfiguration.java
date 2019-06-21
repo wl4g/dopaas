@@ -4,8 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.wl4g.devops.umc.annotation.EnableOpenTsdbStore;
 import com.wl4g.devops.umc.derby.DerbyPhysicalMetricStore;
 import com.wl4g.devops.umc.derby.DerbyVirtualMetricStore;
-import com.wl4g.devops.umc.opentsdb.TsdbPhysicalMetricStore;
-import com.wl4g.devops.umc.opentsdb.TsdbVirtualMetricStore;
+import com.wl4g.devops.umc.opentsdb.*;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -54,6 +53,24 @@ public class UmcStoreAutoConfiguration {
 	@EnableOpenTsdbStore
 	public TsdbVirtualMetricStore tsdbVirtualMetricStore(OpenTSDBClient client) {
 		return new TsdbVirtualMetricStore(client);
+	}
+
+	@Bean
+	@EnableOpenTsdbStore
+	public TsdbRedisMetricStore tsdbRedisMetricStore(OpenTSDBClient client) {
+		return new TsdbRedisMetricStore(client);
+	}
+
+	@Bean
+	@EnableOpenTsdbStore
+	public TsdbZookeeperMetricStore tsdbZookeeperMetricStore(OpenTSDBClient client) {
+		return new TsdbZookeeperMetricStore(client);
+	}
+
+	@Bean
+	@EnableOpenTsdbStore
+	public TsdbKafkaMetricStore tsdbKafkaMetricStore(OpenTSDBClient client) {
+		return new TsdbKafkaMetricStore(client);
 	}
 
 	//

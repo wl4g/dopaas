@@ -1,7 +1,7 @@
 package com.wl4g.devops.umc.opentsdb;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
-import com.wl4g.devops.common.bean.umc.model.physical.Docker;
+import com.wl4g.devops.common.bean.umc.model.Base;
+import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
 import com.wl4g.devops.umc.store.VirtualMetricStore;
@@ -28,7 +28,7 @@ public class TsdbVirtualMetricStore implements VirtualMetricStore {
 	}
 
 	@Override
-	public boolean save(PhysicalInfo baseTemple) {
+	public boolean save(Base baseTemple) {
 		return false;
 	}
 

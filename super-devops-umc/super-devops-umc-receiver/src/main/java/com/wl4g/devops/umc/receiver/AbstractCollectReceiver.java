@@ -3,6 +3,7 @@ package com.wl4g.devops.umc.receiver;
 import com.wl4g.devops.common.bean.umc.model.third.Kafka;
 import com.wl4g.devops.common.bean.umc.model.third.Redis;
 import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.umc.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,49 +48,42 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 		this.rStore = rStore;
 		this.zStore = zStore;
 		this.kStore = kStore;
-
 	}
 
 	//
 	// Physical storage
 	//
 
-	protected void putPhysical(Total total) {
-		if (total.getMemInfo() != null) {
+	protected void putPhysical(Physical physical) {
+		if (physical.getMemInfo() != null) {
 			Mem mem = new Mem();
-			mem.setPhysicalId(total.getPhysicalId());
-			mem.setType(total.getType());
-			mem.setMemInfo(total.getMemInfo());
+			mem.setPhysicalId(physical.getPhysicalId());
+			mem.setType(physical.getType());
+			mem.setMemInfo(physical.getMemInfo());
 			putPhysicalMem(mem);
 		}
-		if (total.getCpu() != null) {
+		if (physical.getCpu() != null) {
 			Cpu cpu = new Cpu();
-			cpu.setPhysicalId(total.getPhysicalId());
-			cpu.setType(total.getType());
-			cpu.setCpu(total.getCpu());
+			cpu.setPhysicalId(physical.getPhysicalId());
+			cpu.setType(physical.getType());
+			cpu.setCpu(physical.getCpu());
 			putPhysicalCpu(cpu);
 		}
-		if (total.getDiskInfos() != null) {
+		if (physical.getDiskInfos() != null) {
 			Disk disk = new Disk();
-			disk.setPhysicalId(total.getPhysicalId());
-			disk.setType(total.getType());
-			disk.setDiskInfos(total.getDiskInfos());
+			disk.setPhysicalId(physical.getPhysicalId());
+			disk.setType(physical.getType());
+			disk.setDiskInfos(physical.getDiskInfos());
 			putPhysicalDisk(disk);
 		}
-		if (total.getNetInfos() != null) {
+		if (physical.getNetInfos() != null) {
 			Net net = new Net();
-			net.setPhysicalId(total.getPhysicalId());
-			net.setType(total.getType());
-			net.setNetInfos(total.getNetInfos());
+			net.setPhysicalId(physical.getPhysicalId());
+			net.setType(physical.getType());
+			net.setNetInfos(physical.getNetInfos());
 			putPhysicalNet(net);
 		}
-		if (total.getDockerInfo() != null) {
-			Docker docker = new Docker();
-			docker.setPhysicalId(total.getPhysicalId());
-			docker.setType(total.getType());
-			docker.setDockerInfo(total.getDockerInfo());
-			putVirtualDocker(docker);
-		}
+
 	}
 
 	protected void putPhysicalMem(Mem mem) {
@@ -111,36 +105,23 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	//
 	// Virtual storage
 	//
-
-	protected void putVirtualMem(Mem mem) {
-		// TODO
-	}
-
-	protected void putVirtualCpu(Cpu cpu) {
-		// TODO
-	}
-
-	protected void putVirtualDisk(Disk disk) {
-		// TODO
-	}
-
-	protected void putVirtualNet(Net net) {
-		// TODO
-	}
-
 	protected void putVirtualDocker(Docker docker) {
 		vStore.save(docker);
 	}
 
 
+	//
+	// third storage
+	//
+	//redis
 	protected void putRedis(Redis redis){
 		rStore.save(redis);
 	}
-
+	//zookeeper
 	protected void putZookeeper(Zookeeper zookeeper){
 		zStore.save(zookeeper);
 	}
-
+	//kafka
 	protected void putKafka(Kafka kafka){
 		kStore.save(kafka);
 	}

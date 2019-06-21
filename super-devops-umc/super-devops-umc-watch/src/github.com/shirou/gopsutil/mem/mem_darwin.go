@@ -21,9 +21,9 @@ func getHwMemsize() (uint64, error) {
 	// removes the last byte of the result if it's 0 :/
 	totalString += "\x00"
 
-	total := uint64(binary.LittleEndian.Uint64([]byte(totalString)))
+	physical := uint64(binary.LittleEndian.Uint64([]byte(totalString)))
 
-	return total, nil
+	return physical, nil
 }
 
 // xsw_usage in sys/sysctl.h

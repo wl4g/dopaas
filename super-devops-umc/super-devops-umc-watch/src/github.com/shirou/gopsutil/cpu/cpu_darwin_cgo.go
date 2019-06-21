@@ -99,7 +99,7 @@ func allCPUTimes() ([]TimesStat, error) {
 	}
 
 	c := TimesStat{
-		CPU:    "cpu-total",
+		CPU:    "cpu-physical",
 		User:   float64(cpuload.cpu_ticks[C.CPU_STATE_USER]) / ClocksPerSec,
 		System: float64(cpuload.cpu_ticks[C.CPU_STATE_SYSTEM]) / ClocksPerSec,
 		Nice:   float64(cpuload.cpu_ticks[C.CPU_STATE_NICE]) / ClocksPerSec,

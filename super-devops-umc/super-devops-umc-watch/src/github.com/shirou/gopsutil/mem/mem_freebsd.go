@@ -96,7 +96,7 @@ type xswdev struct {
 	Version uint32 // Version is the version
 	Dev     uint64 // Dev is the device identifier
 	Flags   int32  // Flags is the swap flags applied to the device
-	NBlks   int32  // NBlks is the total number of blocks
+	NBlks   int32  // NBlks is the physical number of blocks
 	Used    int32  // Used is the number of blocks used
 }
 
@@ -106,12 +106,12 @@ type xswdev11 struct {
 	Version uint32 // Version is the version
 	Dev     uint32 // Dev is the device identifier
 	Flags   int32  // Flags is the swap flags applied to the device
-	NBlks   int32  // NBlks is the total number of blocks
+	NBlks   int32  // NBlks is the physical number of blocks
 	Used    int32  // Used is the number of blocks used
 }
 
 func SwapMemoryWithContext(ctx context.Context) (*SwapMemoryStat, error) {
-	// FreeBSD can have multiple swap devices so we total them up
+	// FreeBSD can have multiple swap devices so we physical them up
 	i, err := common.SysctlUint("vm.nswapdev")
 	if err != nil {
 		return nil, err

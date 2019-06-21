@@ -1,14 +1,14 @@
 package com.wl4g.devops.common.bean.umc.model.physical;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.wl4g.devops.common.bean.umc.model.Base;
 
 /**
  * @author vjay
  * @date 2019-06-11 17:25:00
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Disk extends PhysicalInfo {
+public class Disk extends Base {
 
 	private static final long serialVersionUID = -6764466345663297700L;
 
