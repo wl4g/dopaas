@@ -103,26 +103,6 @@
 			<artifactId>spring-cloud-context</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- Zookeeper(Curator) -->
-		<dependency>
-			<groupId>org.apache.curator</groupId>
-			<artifactId>curator-recipes</artifactId>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jline</groupId>
-					<artifactId>jline</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<!-- Other holder -->
 		<dependency>
 			<groupId>org.hibernate</groupId>

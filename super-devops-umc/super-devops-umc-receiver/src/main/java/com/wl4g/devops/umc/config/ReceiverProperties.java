@@ -1,0 +1,150 @@
+package com.wl4g.devops.umc.config;
+
+import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.FETCH_MIN_BYTES_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.MAX_POLL_RECORDS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
+
+import java.util.Properties;
+
+/**
+ * KAFKA properties .
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2017年11月16日
+ * @since
+ */
+public class ReceiverProperties {
+
+	final public static String KEY_RECEIVER_PREFIX = "spring.cloud.devops.umc.receiver";
+
+	/**
+	 * KAFKA consumer properties
+	 */
+	private KafkaReceiverProperties kafka = new KafkaReceiverProperties();
+
+	/** HTTP receiver configuration properties */
+	private HttpReceiverProperties http = new HttpReceiverProperties();
+
+	public KafkaReceiverProperties getKafka() {
+		return kafka;
+	}
+
+	public void setKafka(KafkaReceiverProperties kafka) {
+		this.kafka = kafka;
+	}
+
+	public HttpReceiverProperties getHttp() {
+		return http;
+	}
+
+	public void setHttp(HttpReceiverProperties http) {
+		this.http = http;
+	}
+
+	/**
+	 * KAFKA consumer configuration properties.
+	 * 
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2018年5月15日
+	 * @since
+	 */
+	public static class KafkaReceiverProperties {
+
+		private boolean enabled = false;
+
+		private int pollTimeout = 1000;
+
+		private int concurrency = 3;
+
+		/**
+		 * Bulk consumption change buffer queue size.
+		 */
+		private int queueDepth = 4092;
+
+		private Properties properties = new Properties() {
+			private static final long serialVersionUID = 299259605679445927L;
+			{
+				// Default properties
+				put(BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+				put(SESSION_TIMEOUT_MS_CONFIG, "20000");
+				put(FETCH_MIN_BYTES_CONFIG, "1");
+				put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+				put(VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+				put(AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+				put(AUTO_OFFSET_RESET_CONFIG, "latest");
+				put(ENABLE_AUTO_COMMIT_CONFIG, "false");
+				put(MAX_POLL_RECORDS_CONFIG, "1000");
+			}
+		};
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(boolean startup) {
+			this.enabled = startup;
+		}
+
+		public int getPollTimeout() {
+			return pollTimeout;
+		}
+
+		public void setPollTimeout(int pollTimeout) {
+			this.pollTimeout = pollTimeout;
+		}
+
+		public int getConcurrency() {
+			return concurrency;
+		}
+
+		public void setConcurrency(int concurrency) {
+			this.concurrency = concurrency;
+		}
+
+		public int getQueueDepth() {
+			return queueDepth;
+		}
+
+		public void setQueueDepth(int queueDepth) {
+			this.queueDepth = queueDepth;
+		}
+
+		public Properties getProperties() {
+			return properties;
+		}
+
+		public void setProperties(Properties properties) {
+			this.properties = properties;
+		}
+
+	}
+
+	/**
+	 * HTTP receiver configuration properties
+	 * 
+	 * @author wangl.sir
+	 * @version v1.0 2019年6月18日
+	 * @since
+	 */
+	public static class HttpReceiverProperties {
+
+		private boolean enabled = false;
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+	}
+
+}

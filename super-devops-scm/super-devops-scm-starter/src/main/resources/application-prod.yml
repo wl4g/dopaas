@@ -33,11 +33,6 @@ spring:
       filters: stat,wall
       log-slow-sql: true
 
-# Spring-security config.
-security.user:
-  name: sba_user
-  password: AnGsFmkH2w5lJP9j
-
 # Redis configuration.
 redis:
   passwd: zzx!@#$%

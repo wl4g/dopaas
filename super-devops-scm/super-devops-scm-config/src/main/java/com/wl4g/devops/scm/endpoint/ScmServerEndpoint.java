@@ -19,108 +19,126 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.constants.SCMDevOpsConstants;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.support.cache.JedisService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import static java.util.Arrays.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
+import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
+/**
+ * SCM server end-point API
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月27日
+ * @since
+ */
 @ScmEndpoint
 @ResponseBody
 public class ScmServerEndpoint extends BaseController {
 
+	final private ConfigContextHandler contextHandler;
+
 	@Autowired
-	private ConfigContextHandler handler;
-	@Autowired
-	private JedisService jedisService;
+	private Environment environment;
+
+	public ScmServerEndpoint(ConfigContextHandler handler) {
+		super();
+		this.contextHandler = handler;
+	}
+
+	/**
+	 * Watching configuration source. </br>
+	 * <a href=
+	 * "#">http://localhost:14043/scm/scm-server/watch?instance.host=localhost&instance.port=14044&group=scm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
+	 * 
+	 * @param watch
+	 * @return
+	 */
+	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
+	public DeferredResult<?> watch(@Validated GetRelease watch) {
+		if (log.isInfoEnabled()) {
+			log.info("Watching <= {}", watch);
+		}
+
+		return contextHandler.watch(watch);
+	}
 
 	@GetMapping(value = URI_S_SOURCE_GET)
-	public RespBase<ReleaseMessage> getSource(@Validated GetRelease req, BindingResult bind,@RequestHeader(SCMDevOpsConstants.TOKEN_HEADER) String token) {
+	public RespBase<ReleaseMessage> fetchSource(@Validated GetRelease get) {
 		if (log.isInfoEnabled()) {
-			log.info("Get config source... {}, bind: {}", req, bind);
+			log.info("Fetch config source <= {}", get);
 		}
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
-		try {
-			if (bind.hasErrors()) {
-				resp.setCode(RetCode.PARAM_ERR);
-				resp.setMessage(bind.toString());
-			} else {
-				//auth token
-				String realToken = jedisService.get(SCMDevOpsConstants.SCM_META_TOKEN+req.getInstance().toString());
-				//String token = req.getToken();
-				if(StringUtils.isBlank(realToken)||StringUtils.isBlank(token)||!StringUtils.equals(realToken,token)){
-					throw new RuntimeException("token unmatch");
-				}
-
-				// AdminServer source configuration.
-				ReleaseMessage release = handler.findSource(req);
-				resp.getData().put(KEY_RELEASE, release);
-			}
-		} catch (Exception e) {
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(ExceptionUtils.getRootCauseMessage(e));
-			log.error("Get config-source failed.", e);
-		}
+		// Fetch configuration source
+		resp.getData().put(KEY_RELEASE, contextHandler.getSource(get));
 
 		if (log.isInfoEnabled()) {
-			log.info("Got config response: {}", resp);
+			log.info("Fetch config source => {}", resp);
 		}
 		return resp;
 	}
 
 	@PostMapping(value = URI_S_REPORT_POST)
-	public RespBase<?> report(@Validated @RequestBody ReportInfo report, BindingResult bind) {
+	public RespBase<?> report(@Validated @RequestBody ReportInfo report) {
 		if (log.isInfoEnabled()) {
-			log.info("Report: {}, bind: {}", report, bind);
+			log.info("Report <= {}", report);
 		}
 
 		RespBase<?> resp = new RespBase<>();
-		try {
-			if (bind.hasErrors()) {
-				resp.setCode(RetCode.PARAM_ERR);
-				resp.setMessage(bind.toString());
-			} else {
-				// Post to adminServer report-message.
-				handler.report(report);
-			}
-		} catch (Exception e) {
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(ExceptionUtils.getRootCauseMessage(e));
-			log.error("Report persistence failed.", e);
-		}
+		contextHandler.report(report);
 
-		if (log.isDebugEnabled()) {
-			log.debug("Report response: {}", resp);
+		if (log.isInfoEnabled()) {
+			log.info("Report => {}", resp);
 		}
 		return resp;
 	}
 
-	/* for test */ // @PostMapping(value = URL_CONF_RELEASE)
-	public RespBase<?> release(@Validated @RequestBody PreRelease pre, BindingResult bind) {
+	/**
+	 * <h6>For releaseTests</h6></br>
+	 * <b>Header:</b></br>
+	 * <a href="#">http://localhost:14044/scm/scm-server/releaseTests</a></br>
+	 * <b>Body:</b>
+	 * 
+	 * <pre>
+	 *	{
+	 *		"namespace": "application-test.yml",
+	 *		"group": "scm-example",
+	 *		"instances": [{
+	 *			"host": "localhost",
+	 *			"port": 8848
+	 *		}],
+	 *		"meta": {
+	 *			"releaseId": "1",
+	 *			"version": "1.0.1"
+	 *		}
+	 *	}
+	 * </pre>
+	 * 
+	 * @param pre
+	 * @return
+	 */
+	@PostMapping("releaseTests")
+	public RespBase<?> releaseTests(@Validated @RequestBody PreRelease pre) {
 		if (log.isInfoEnabled()) {
-			log.info("Releasing... {}, bind: {}", pre, bind);
+			log.info("Pre release tests <= {}", pre);
 		}
+		Assert.state(binarySearch(environment.getActiveProfiles(), "prod") < 0, "Non-secure APIs have been rejected!");
 
 		RespBase<?> resp = new RespBase<>();
-		if (bind.hasErrors()) {
-			resp.setCode(RetCode.PARAM_ERR);
-			resp.setMessage(bind.toString());
-		} else {
-			// Invoke release.
-			handler.release(pre);
-		}
-
+		contextHandler.release(pre);
 		return resp;
 	}
 

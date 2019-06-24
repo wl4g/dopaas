@@ -15,9 +15,37 @@
  */
 package com.wl4g.devops.scm.context;
 
-import com.wl4g.devops.common.bean.scm.model.*;
+import org.springframework.http.ResponseEntity;
 
+import com.google.common.annotations.Beta;
+import com.wl4g.devops.common.bean.scm.model.*;
+import com.wl4g.devops.scm.publish.WatchDeferredResult;
+
+/**
+ * Config soruce context handler interface
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月27日
+ * @since
+ */
+@Beta
 public interface ConfigContextHandler {
+
+	/**
+	 * Watching long-polling
+	 * 
+	 * @param watch
+	 * @return
+	 */
+	WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch);
+
+	/**
+	 * Release configuration property-sources.
+	 * 
+	 * @param pre
+	 *            request parameter.
+	 */
+	void release(PreRelease pre);
 
 	/**
 	 * Find configuration property-source.
@@ -26,7 +54,7 @@ public interface ConfigContextHandler {
 	 *            config source get message.
 	 * @return
 	 */
-	public ReleaseMessage findSource(GetRelease get);
+	ReleaseMessage getSource(GetRelease get);
 
 	/**
 	 * Access configuration client report configure result.
@@ -37,19 +65,6 @@ public interface ConfigContextHandler {
 	 *            response parameter.
 	 * @return
 	 */
-	public void report(ReportInfo report);
-
-	/**
-	 * Release configuration property-sources.
-	 * 
-	 * @param pre
-	 *            request parameter.
-	 */
-	public void release(PreRelease pre);
-
-	/**
-	 * refreshMeta
-	 */
-	public void refreshMeta(boolean focus);
+	void report(ReportInfo report);
 
 }

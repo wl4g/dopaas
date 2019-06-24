@@ -36,11 +36,28 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
+  cloud:
+    devops:
+      umc:
+        store:
+          derby:
+          opentsdb:
+            host: 10.0.0.57
+            port: 4242
+        receiver:
+          http:
+            enabled: true
+          kafka:
+            enabled: false
+            concurrency: 3
+            queue-depth: 4092
+            properties:
+              bootstrap.servers: 127.0.0.1:9092
 
 # Spring-security config.
 security.user:
   name: sba_user
-  password: 123456
+  password: hnGsFm6k0klJP9j
 
 # Redis configuration.
 redis:
@@ -55,3 +72,7 @@ redis:
     - safecloud-test:7380
     - safecloud-test:7380
     - safecloud-test:7381
+
+opentsdb:
+  url: http://10.0.0.57
+  port: 4242
