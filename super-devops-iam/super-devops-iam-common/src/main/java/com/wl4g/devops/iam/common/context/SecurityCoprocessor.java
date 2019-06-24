@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.context;
 
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.iam.AfterAuthenticatFailException;
 import com.wl4g.devops.common.exception.iam.AfterAuthenticatSuccessException;
 import org.apache.shiro.authc.AuthenticationException;
@@ -32,6 +33,7 @@ import javax.servlet.ServletResponse;
  * @version v1.0 2019年4月5日
  * @since
  */
+@Beta
 public interface SecurityCoprocessor {
 
 	/**

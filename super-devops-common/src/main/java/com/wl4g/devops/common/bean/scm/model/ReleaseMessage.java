@@ -41,8 +41,8 @@ public class ReleaseMessage extends GetRelease {
 		super();
 	}
 
-	public ReleaseMessage(String application, String profile, ReleaseInstance instance) {
-		super(application, profile, instance);
+	public ReleaseMessage(String group, String namespace, ReleaseMeta meta, ReleaseInstance instance) {
+		super(group, namespace, meta, instance);
 	}
 
 	public List<ReleasePropertySource> getPropertySources() {
@@ -61,18 +61,18 @@ public class ReleaseMessage extends GetRelease {
 	}
 
 	@Override
-	public void validation(boolean validVersion, boolean validReleaseId) {
-		super.validation(validVersion, validReleaseId);
-		Assert.notEmpty(getPropertySources(), "`propertySources` is not allowed to be null.");
+	public void validation(boolean versionValidate, boolean releaseValidate) {
+		super.validation(versionValidate, releaseValidate);
+		Assert.notEmpty(getPropertySources(), "Invalid empty propertySources");
 		getPropertySources().stream().forEach((ps) -> {
-			Assert.notNull(ps, "`releasePropertySource` is not allowed to be null.");
+			Assert.notNull(ps, "Invalid release propertySources");
 			ps.validation();
 		});
 	}
 
 	public CompositePropertySource convertCompositePropertySource(String sourceName) {
 		CompositePropertySource composite = new CompositePropertySource(sourceName);
-		for (ReleasePropertySource ps : this.getPropertySources()) {
+		for (ReleasePropertySource ps : getPropertySources()) {
 			// See:org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration
 			composite.addFirstPropertySource(ps.convertMapPropertySource());
 		}
@@ -128,7 +128,7 @@ public class ReleaseMessage extends GetRelease {
 		}
 
 		public MapPropertySource convertMapPropertySource() {
-			return new MapPropertySource(this.getName(), this.getSource());
+			return new MapPropertySource(getName(), getSource());
 		}
 
 		public static ReleasePropertySource build(MapPropertySource mapSource) {

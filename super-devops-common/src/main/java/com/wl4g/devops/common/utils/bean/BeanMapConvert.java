@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import static com.wl4g.devops.common.utils.reflect.Types.*;
@@ -55,11 +54,14 @@ public final class BeanMapConvert {
 	}
 
 	public Map<String, Object> getBeanMap() {
-		return Collections.unmodifiableMap(doWithDeepFields(null, this.getObject(), new LinkedHashMap<String, Object>()));
+		return Collections.unmodifiableMap(doWithDeepFields(null, getObject(), new LinkedHashMap<String, Object>()));
 	}
 
 	private Map<String, Object> doWithDeepFields(String memberOfParent, Object obj, Map<String, Object> properties) {
-		Assert.notNull(obj, "The obj argument must be null");
+		if (obj == null) {
+			return properties;
+		}
+
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
 			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
@@ -71,7 +73,7 @@ public final class BeanMapConvert {
 					if (isBaseType(property.getPropertyType())) {
 						properties.put(link(memberOfParent, memberName), value);
 					} else {
-						this.doWithDeepFields(memberName, value, properties);
+						doWithDeepFields(memberName, value, properties);
 					}
 				}
 			}

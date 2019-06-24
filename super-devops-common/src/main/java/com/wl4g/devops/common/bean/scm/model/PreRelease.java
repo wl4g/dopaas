@@ -36,8 +36,8 @@ public class PreRelease extends GenericInfo {
 		super();
 	}
 
-	public PreRelease(String application, String profile, ReleaseMeta releaseMeta) {
-		super(application, profile, releaseMeta);
+	public PreRelease(String group, String namespace, ReleaseMeta meta) {
+		super(group, namespace, meta);
 	}
 
 	public List<ReleaseInstance> getInstances() {
