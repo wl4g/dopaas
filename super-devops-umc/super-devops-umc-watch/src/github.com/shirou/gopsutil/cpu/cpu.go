@@ -84,11 +84,11 @@ func (c TimesStat) String() string {
 	return `{` + strings.Join(v, ",") + `}`
 }
 
-// Total returns the total number of seconds in a CPUTimesStat
+// Total returns the physical number of seconds in a CPUTimesStat
 func (c TimesStat) Total() float64 {
-	total := c.User + c.System + c.Nice + c.Iowait + c.Irq + c.Softirq + c.Steal +
+	physical := c.User + c.System + c.Nice + c.Iowait + c.Irq + c.Softirq + c.Steal +
 		c.Guest + c.GuestNice + c.Idle
-	return total
+	return physical
 }
 
 func (c InfoStat) String() string {

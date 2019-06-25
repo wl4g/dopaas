@@ -61,7 +61,7 @@
     <!-- 查询结果数值 -->
     <div class="query">
       <div class="line"></div>
-      <div class="">Result Total： <span class="number">{{total}}</span></div>
+      <div class="">Result Total： <span class="number">{{physical}}</span></div>
     </div>
 
     <!-- 查询结果表格 -->
@@ -154,7 +154,7 @@
       <el-pagination
           background
           layout="prev, pager, next"
-          :total="total"
+          :physical="physical"
           @current-change='currentChange'
           >
   </el-pagination>

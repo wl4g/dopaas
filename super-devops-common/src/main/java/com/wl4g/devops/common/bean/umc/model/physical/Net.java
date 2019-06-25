@@ -1,12 +1,14 @@
 package com.wl4g.devops.common.bean.umc.model.physical;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wl4g.devops.common.bean.umc.model.Base;
 
 /**
  * @author vjay
  * @date 2019-06-12 09:41:00
  */
-public class Net extends PhysicalInfo {
+@JsonIgnoreProperties(ignoreUnknown=true)
+public class Net extends Base {
 
 	private static final long serialVersionUID = 7624894410555358785L;
 
@@ -20,6 +22,7 @@ public class Net extends PhysicalInfo {
 		this.netInfos = netInfos;
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class NetInfo {
 		private Integer port;
 		private Integer up;

@@ -144,7 +144,7 @@ func TimesWithContext(ctx context.Context, percpu bool) ([]TimesStat, error) {
 		if percpu {
 			c.CPU = fmt.Sprintf("cpu%d", j)
 		} else {
-			c.CPU = "cpu-total"
+			c.CPU = "cpu-physical"
 		}
 		ret = append(ret, c)
 	}

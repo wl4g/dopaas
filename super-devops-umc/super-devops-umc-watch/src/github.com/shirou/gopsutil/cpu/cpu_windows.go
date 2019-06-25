@@ -85,7 +85,7 @@ func TimesWithContext(ctx context.Context, percpu bool) ([]TimesStat, error) {
 	system := (kernel - idle)
 
 	ret = append(ret, TimesStat{
-		CPU:    "cpu-total",
+		CPU:    "cpu-physical",
 		Idle:   float64(idle),
 		User:   float64(user),
 		System: float64(system),

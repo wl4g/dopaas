@@ -1,12 +1,14 @@
 package com.wl4g.devops.common.bean.umc.model.physical;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wl4g.devops.common.bean.umc.model.Base;
 
 /**
  * @author vjay
  * @date 2019-06-11 17:23:00
  */
-public class Mem extends PhysicalInfo {
+@JsonIgnoreProperties(ignoreUnknown=true)
+public class Mem extends Base {
 
 	private static final long serialVersionUID = 4764434535991839564L;
 
@@ -20,6 +22,7 @@ public class Mem extends PhysicalInfo {
 		this.memInfo = memInfo;
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class MemInfo {
 		private Long total;
 		private Long free;

@@ -1,15 +1,20 @@
 package com.wl4g.devops.umc.receiver;
 
-import java.util.List;
-
+import com.wl4g.devops.common.bean.umc.model.physical.Physical;
+import com.wl4g.devops.common.bean.umc.model.third.Kafka;
+import com.wl4g.devops.common.bean.umc.model.third.Redis;
+import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.umc.store.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.TOPIC_RECEIVE_PATTERN;
-import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.*;
-import com.wl4g.devops.umc.store.PhysicalMetricStore;
-import com.wl4g.devops.umc.store.VirtualMetricStore;
+import java.util.List;
+
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
+import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_BATCH_FACTORY;
 
 /**
  * KAFKA collection receiver
@@ -20,8 +25,8 @@ import com.wl4g.devops.umc.store.VirtualMetricStore;
  */
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
-	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore) {
-		super(pStore, vStore);
+	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+		super(pStore, vStore, rStore,zStore,kStore);
 	}
 
 	/**
@@ -57,7 +62,37 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 		//
 		// TODO
 		//
+		for(ConsumerRecord<String, String> consumerRecord : records){
+			log.info("listen kafka message"+consumerRecord.value());
+			String key = consumerRecord.key();
+			String value = consumerRecord.value();
 
+			switch (key){
+				case URI_PHYSICAL:
+					Physical physical = JacksonUtils.parseJSON(value, Physical.class);
+					putPhysical(physical);
+					break;
+				case URI_VIRTUAL_DOCKER:
+					Docker docker = JacksonUtils.parseJSON(value, Docker.class);
+					putVirtualDocker(docker);
+					break;
+				case URI_REDIS:
+					Redis redis = JacksonUtils.parseJSON(value, Redis.class);
+					putRedis(redis);
+					break;
+				case URI_ZOOKEEPER:
+					Zookeeper zookeeper = JacksonUtils.parseJSON(value, Zookeeper.class);
+					putZookeeper(zookeeper);
+					break;
+				case URI_KAFKA:
+					Kafka kafka = JacksonUtils.parseJSON(value, Kafka.class);
+					putKafka(kafka);
+					break;
+				default:
+					throw new UnsupportedOperationException("unsupport this type");
+			}
+		}
+		state.completed();
 	}
 
 	/**

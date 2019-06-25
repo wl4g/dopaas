@@ -25,7 +25,7 @@ func TestCpu_times(t *testing.T) {
 		}
 	}
 
-	// test sum of per cpu stats is within margin of error for cpu total stats
+	// test sum of per cpu stats is within margin of error for cpu physical stats
 	cpuTotal, err := Times(false)
 	if err != nil {
 		t.Errorf("error %v", err)

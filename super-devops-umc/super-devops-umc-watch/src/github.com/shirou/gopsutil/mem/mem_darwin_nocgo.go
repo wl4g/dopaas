@@ -75,7 +75,7 @@ func VirtualMemory() (*VirtualMemoryStat, error) {
 func VirtualMemoryWithContext(ctx context.Context) (*VirtualMemoryStat, error) {
 	ret := &VirtualMemoryStat{}
 
-	total, err := getHwMemsize()
+	physical, err := getHwMemsize()
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func VirtualMemoryWithContext(ctx context.Context) (*VirtualMemoryStat, error) {
 	}
 
 	ret.Available = ret.Free + ret.Inactive
-	ret.Total = total
+	ret.Total = physical
 
 	ret.Used = ret.Total - ret.Available
 	ret.UsedPercent = 100 * float64(ret.Used) / float64(ret.Total)

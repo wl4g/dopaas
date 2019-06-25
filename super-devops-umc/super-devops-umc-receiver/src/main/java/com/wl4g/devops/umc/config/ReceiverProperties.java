@@ -1,16 +1,8 @@
 package com.wl4g.devops.umc.config;
 
-import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.FETCH_MIN_BYTES_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.MAX_POLL_RECORDS_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG;
-import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
-
 import java.util.Properties;
+
+import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
 
 /**
  * KAFKA properties .
@@ -72,6 +64,7 @@ public class ReceiverProperties {
 			private static final long serialVersionUID = 299259605679445927L;
 			{
 				// Default properties
+				put(GROUP_ID_CONFIG,"defaultUmcReceiverGroupId");
 				put(BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 				put(SESSION_TIMEOUT_MS_CONFIG, "20000");
 				put(FETCH_MIN_BYTES_CONFIG, "1");
@@ -81,6 +74,8 @@ public class ReceiverProperties {
 				put(AUTO_OFFSET_RESET_CONFIG, "latest");
 				put(ENABLE_AUTO_COMMIT_CONFIG, "false");
 				put(MAX_POLL_RECORDS_CONFIG, "1000");
+				//put(ENABLE_AUTO_COMMIT_CONFIG, true);
+
 			}
 		};
 

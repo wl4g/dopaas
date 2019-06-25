@@ -31,11 +31,11 @@ func init() {
 
 //sum all values in a float64 map with float64 keys
 func msum(x map[float64]float64) float64 {
-	total := 0.0
+	physical := 0.0
 	for _, y := range x {
-		total += y
+		physical += y
 	}
-	return total
+	return physical
 }
 
 func Times(percpu bool) ([]TimesStat, error) {
@@ -111,7 +111,7 @@ func TimesWithContext(ctx context.Context, percpu bool) ([]TimesStat, error) {
 		}
 	} else {
 		ct := &TimesStat{
-			CPU:    "cpu-total",
+			CPU:    "cpu-physical",
 			Idle:   msum(idle) / ClocksPerSec,
 			User:   msum(user) / ClocksPerSec,
 			System: msum(kern) / ClocksPerSec,

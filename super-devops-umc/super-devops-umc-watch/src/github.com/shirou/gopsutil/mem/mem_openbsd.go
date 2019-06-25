@@ -105,18 +105,18 @@ func SwapMemoryWithContext(ctx context.Context) (*SwapMemoryStat, error) {
 	}
 
 	line := string(out)
-	var total, used, free uint64
+	var physical, used, free uint64
 
 	_, err = fmt.Sscanf(line,
-		"total: %d 1K-blocks allocated, %d used, %d available",
-		&total, &used, &free)
+		"physical: %d 1K-blocks allocated, %d used, %d available",
+		&physical, &used, &free)
 	if err != nil {
 		return nil, errors.New("failed to parse swapctl output")
 	}
 
-	percent := float64(used) / float64(total) * 100
+	percent := float64(used) / float64(physical) * 100
 	return &SwapMemoryStat{
-		Total:       total * 1024,
+		Total:       physical * 1024,
 		Used:        used * 1024,
 		Free:        free * 1024,
 		UsedPercent: percent,

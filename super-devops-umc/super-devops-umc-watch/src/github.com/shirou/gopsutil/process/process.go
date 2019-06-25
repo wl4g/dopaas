@@ -215,7 +215,7 @@ func calculatePercent(t1, t2 *cpu.TimesStat, delta float64, numcpu int) float64 
 	return overall_percent
 }
 
-// MemoryPercent returns how many percent of the total RAM this process uses
+// MemoryPercent returns how many percent of the physical RAM this process uses
 func (p *Process) MemoryPercent() (float32, error) {
 	return p.MemoryPercentWithContext(context.Background())
 }
@@ -225,7 +225,7 @@ func (p *Process) MemoryPercentWithContext(ctx context.Context) (float32, error)
 	if err != nil {
 		return 0, err
 	}
-	total := machineMemory.Total
+	physical := machineMemory.Total
 
 	processMemory, err := p.MemoryInfo()
 	if err != nil {
@@ -233,7 +233,7 @@ func (p *Process) MemoryPercentWithContext(ctx context.Context) (float32, error)
 	}
 	used := processMemory.RSS
 
-	return (100 * float32(used) / float32(total)), nil
+	return (100 * float32(used) / float32(physical)), nil
 }
 
 // CPU_Percent returns how many percent of the CPU time this process uses

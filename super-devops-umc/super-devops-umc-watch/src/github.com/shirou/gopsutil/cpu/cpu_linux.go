@@ -217,7 +217,7 @@ func parseStatLine(line string) (*TimesStat, error) {
 
 	cpu := fields[0]
 	if cpu == "cpu" {
-		cpu = "cpu-total"
+		cpu = "cpu-physical"
 	}
 	user, err := strconv.ParseFloat(fields[1], 64)
 	if err != nil {
