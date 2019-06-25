@@ -19,6 +19,7 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class GetRelease extends GenericInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
@@ -30,8 +31,8 @@ public class GetRelease extends GenericInfo {
 		super();
 	}
 
-	public GetRelease(String group, String namespace, ReleaseMeta meta, ReleaseInstance instance) {
-		super(group, namespace, meta);
+	public GetRelease(String group, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
+		super(group, namespaces, meta);
 		setInstance(instance);
 	}
 

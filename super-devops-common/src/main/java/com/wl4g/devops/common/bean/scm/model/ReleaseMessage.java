@@ -15,20 +15,18 @@
  */
 package com.wl4g.devops.common.bean.scm.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ReleaseMessage extends GetRelease {
 	final private static long serialVersionUID = -4016863811283064989L;
@@ -41,8 +39,8 @@ public class ReleaseMessage extends GetRelease {
 		super();
 	}
 
-	public ReleaseMessage(String group, String namespace, ReleaseMeta meta, ReleaseInstance instance) {
-		super(group, namespace, meta, instance);
+	public ReleaseMessage(String group, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
+		super(group, namespaces, meta, instance);
 	}
 
 	public List<ReleasePropertySource> getPropertySources() {
