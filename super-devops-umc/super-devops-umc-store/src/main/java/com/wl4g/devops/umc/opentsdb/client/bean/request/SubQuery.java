@@ -1,12 +1,17 @@
 package com.wl4g.devops.umc.opentsdb.client.bean.request;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.collect.Maps;
 
 /**
  * 子查询，详见<a>http://opentsdb.net/docs/build/html/api_http/query/index.html</a>

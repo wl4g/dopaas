@@ -59,7 +59,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private AppGroupDao appGroupDao;
 	@Autowired
-	private ConfigContextHandler configContextHandler;
+	private ConfigContextHandler contextHandler;
 	@Autowired
 	private DictDao dictDao;
 
@@ -70,7 +70,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (nodeIdList == null || nodeIdList.isEmpty()) {// 如果实例id列表为空则不进行操作
 			return;
 		}
-		String sign = this.signatureVersionContent(vd);
+		String sign = signVersionContent(vd);
 		List<AppInstance> nodeList = new ArrayList<>();
 		for (String nodeId : nodeIdList) {
 			AppInstance instance = this.appGroupDao.getAppInstance(nodeId);
@@ -92,7 +92,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		// Save version information.
 		vd.preInsert();
 		vd.setSign(sign);
-		vd.setSigntype("MD5");
+		vd.setSigntype(ConfigVersion.DEFUALT_SIGN);
 		this.configurationDao.insert(vd);
 		int versionId = vd.getId();
 
@@ -136,29 +136,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			releaseInstance.setPort(instance.getPort());
 			instances.add(releaseInstance);
 		}
-		// Get application environment information.
-		String envName = this.appGroupDao.selectEnvName(String.valueOf(vd.getEnvId()));
 		// Get application group information.
 		AppGroup appGroup = this.appGroupDao.getAppGroup(String.valueOf(vd.getGroupId()));
 
 		List<String> namespaces = new ArrayList<>();
-		for(VersionContentBean versionContentBean : vd.getConfigGurations()){
-			Dict dict = dictDao.selectByPrimaryKey(Integer.valueOf(versionContentBean.getNamespaceId()));
+		for (VersionContentBean vcb : vd.getConfigGurations()) {
+			Dict dict = dictDao.selectByPrimaryKey(Integer.valueOf(vcb.getNamespaceId()));
 			String namespace = dict.getValue();
 			namespaces.add(namespace);
 		}
 
-
-
 		// Request configuration source send to client.
-		//
-		PreRelease preRelease = new PreRelease();
-		preRelease.setGroup(appGroup.getName());
-		preRelease.setNamespaces(namespaces);
+		PreRelease pre = new PreRelease();
+		pre.setGroup(appGroup.getName());
+		pre.setNamespaces(namespaces);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
-		preRelease.setMeta(meta);
-		preRelease.setInstances(instances);
-		this.configContextHandler.release(preRelease);
+		pre.setMeta(meta);
+		pre.setInstances(instances);
+		this.contextHandler.release(pre);
 	}
 
 	@Override
@@ -203,7 +198,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * 
 	 * @return
 	 */
-	private String signatureVersionContent(VersionOfDetail vd) {
+	private String signVersionContent(VersionOfDetail vd) {
 		StringBuffer plain = new StringBuffer();
 		if (vd.getConfigGurations() != null) {
 			vd.getConfigGurations().forEach(c -> plain.append(c.getContent()));

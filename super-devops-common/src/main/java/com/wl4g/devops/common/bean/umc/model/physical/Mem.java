@@ -7,7 +7,7 @@ import com.wl4g.devops.common.bean.umc.model.Base;
  * @author vjay
  * @date 2019-06-11 17:23:00
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Mem extends Base {
 
 	private static final long serialVersionUID = 4764434535991839564L;
@@ -22,7 +22,7 @@ public class Mem extends Base {
 		this.memInfo = memInfo;
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown=true)
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class MemInfo {
 		private Long total;
 		private Long free;

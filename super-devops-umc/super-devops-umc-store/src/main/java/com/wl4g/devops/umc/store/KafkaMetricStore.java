@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.store;
 
-import com.wl4g.devops.common.bean.umc.model.third.Kafka;
+import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 
 /**
  * Physical(Memory/network/core/disk) monitor data store
@@ -11,8 +11,6 @@ import com.wl4g.devops.common.bean.umc.model.third.Kafka;
  */
 public interface KafkaMetricStore extends MetricStore {
 
-	boolean save(Kafka kafka);
-
-
+	boolean save(KafkaStatInfo kafka);
 
 }

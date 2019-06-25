@@ -1,9 +1,9 @@
 package com.wl4g.devops.umc.store;
 
-import com.wl4g.devops.common.bean.umc.model.third.Redis;
+import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
 
 /**
- * Physical(Memory/network/core/disk) monitor data store
+ * Redis(Memory/network/core/disk) monitor data store
  * 
  * @author wangl.sir
  * @version v1.0 2019年6月17日
@@ -11,8 +11,6 @@ import com.wl4g.devops.common.bean.umc.model.third.Redis;
  */
 public interface RedisMetricStore extends MetricStore {
 
-	boolean save(Redis cpu);
-
-
+	boolean save(RedisStatInfo cpu);
 
 }

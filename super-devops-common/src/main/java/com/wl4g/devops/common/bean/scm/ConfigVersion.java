@@ -22,6 +22,8 @@ package com.wl4g.devops.common.bean.scm;
  */
 public class ConfigVersion extends BaseBean {
 
+	final public static String DEFUALT_SIGN = "MD5";
+
 	private String sign; // 摘要计算字符串
 	private String signtype; // 摘要算法名（如：md5/sha1）
 	private Integer groupId; // 关联组ID

@@ -1,16 +1,16 @@
 package com.wl4g.devops.umc.opentsdb.client.sender.consumer;
 
-import com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig;
-import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
-import com.wl4g.devops.umc.opentsdb.client.http.HttpClient;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig;
+import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
+import com.wl4g.devops.umc.opentsdb.client.http.HttpClient;
 
 /**
  * @Author: jinyao

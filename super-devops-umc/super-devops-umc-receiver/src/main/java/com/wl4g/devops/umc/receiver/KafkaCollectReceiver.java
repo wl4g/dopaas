@@ -1,9 +1,9 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.physical.Physical;
-import com.wl4g.devops.common.bean.umc.model.third.Kafka;
-import com.wl4g.devops.common.bean.umc.model.third.Redis;
-import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
 import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.umc.store.*;
@@ -69,7 +69,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
 			switch (key){
 				case URI_PHYSICAL:
-					Physical physical = JacksonUtils.parseJSON(value, Physical.class);
+					PhysicalStatInfo physical = JacksonUtils.parseJSON(value, PhysicalStatInfo.class);
 					putPhysical(physical);
 					break;
 				case URI_VIRTUAL_DOCKER:
@@ -77,15 +77,15 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 					putVirtualDocker(docker);
 					break;
 				case URI_REDIS:
-					Redis redis = JacksonUtils.parseJSON(value, Redis.class);
+					RedisStatInfo redis = JacksonUtils.parseJSON(value, RedisStatInfo.class);
 					putRedis(redis);
 					break;
 				case URI_ZOOKEEPER:
-					Zookeeper zookeeper = JacksonUtils.parseJSON(value, Zookeeper.class);
+					ZookeeperStatInfo zookeeper = JacksonUtils.parseJSON(value, ZookeeperStatInfo.class);
 					putZookeeper(zookeeper);
 					break;
 				case URI_KAFKA:
-					Kafka kafka = JacksonUtils.parseJSON(value, Kafka.class);
+					KafkaStatInfo kafka = JacksonUtils.parseJSON(value, KafkaStatInfo.class);
 					putKafka(kafka);
 					break;
 				default:

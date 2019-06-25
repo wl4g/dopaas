@@ -1,9 +1,9 @@
 package com.wl4g.devops.umc.store;
 
-import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
 
 /**
- * Physical(Memory/network/core/disk) monitor data store
+ * Zookeeper(Memory/network/core/disk) monitor data store
  * 
  * @author wangl.sir
  * @version v1.0 2019年6月17日
@@ -11,8 +11,6 @@ import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
  */
 public interface ZookeeperMetricStore extends MetricStore {
 
-	boolean save(Zookeeper zookeeper);
-
-
+	boolean save(ZookeeperStatInfo zookeeper);
 
 }

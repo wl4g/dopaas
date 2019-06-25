@@ -151,11 +151,8 @@ public class HistoryServiceImpl implements HistoryService {
 
 		// Get application group information.
 		AppGroup appGroup = this.appGroupDao.getAppGroup(String.valueOf(agl.getGroupId()));
-		// Get application environment information.
-		String envName = this.appGroupDao.selectEnvName(String.valueOf(agl.getEnvId()));
-		int versionId = agl.getId();
-		// Get application nodeList information
 
+		// Get application nodeList information
 		AppInstance appInstance = new AppInstance();
 		appInstance.setGroupId(Long.parseLong(String.valueOf(agl.getGroupId())));
 		appInstance.setEnvId(agl.getEnvId());
@@ -171,9 +168,8 @@ public class HistoryServiceImpl implements HistoryService {
 		}
 
 		List<VersionContentBean> versionContentBeans = configGurationDao.selectVersion(agl.getId());
-
 		List<String> namespaces = new ArrayList<>();
-		for(VersionContentBean versionContentBean : versionContentBeans){
+		for (VersionContentBean versionContentBean : versionContentBeans) {
 			Dict dict = dictDao.selectByPrimaryKey(Integer.valueOf(versionContentBean.getNamespaceId()));
 			String namespace = dict.getValue();
 			namespaces.add(namespace);
@@ -182,9 +178,12 @@ public class HistoryServiceImpl implements HistoryService {
 		PreRelease preRelease = new PreRelease();
 		preRelease.setGroup(appGroup.getName());
 		preRelease.setNamespaces(namespaces);
-		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
+		String releaseId = String.valueOf(historyOfDetail.getId());
+		String versionId = String.valueOf(agl.getId());
+		ReleaseMeta meta = new ReleaseMeta(releaseId, versionId);
 		preRelease.setMeta(meta);
 		preRelease.setInstances(instances);
 		this.configServerService.release(preRelease);
 	}
+
 }

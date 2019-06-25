@@ -1,10 +1,10 @@
 package com.wl4g.devops.umc.opentsdb.client.bean.request;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @Author: jinyao

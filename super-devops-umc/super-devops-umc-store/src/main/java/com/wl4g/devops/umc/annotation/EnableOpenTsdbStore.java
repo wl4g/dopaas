@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.umc.annotation;
 
+import static com.wl4g.devops.umc.config.UmcStoreAutoConfiguration.KEY_STORE_OPENTSDB_PREFIX;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import static com.wl4g.devops.umc.config.UmcStoreAutoConfiguration.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })

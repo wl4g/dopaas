@@ -1,8 +1,8 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.third.Kafka;
-import com.wl4g.devops.common.bean.umc.model.third.Redis;
-import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
 import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.umc.store.*;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	// Physical storage
 	//
 
-	protected void putPhysical(Physical physical) {
+	protected void putPhysical(PhysicalStatInfo physical) {
 		if (physical.getMemInfo() != null) {
 			Mem mem = new Mem();
 			mem.setPhysicalId(physical.getPhysicalId());
@@ -114,15 +114,15 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	// third storage
 	//
 	//redis
-	protected void putRedis(Redis redis){
+	protected void putRedis(RedisStatInfo redis){
 		rStore.save(redis);
 	}
 	//zookeeper
-	protected void putZookeeper(Zookeeper zookeeper){
+	protected void putZookeeper(ZookeeperStatInfo zookeeper){
 		zStore.save(zookeeper);
 	}
 	//kafka
-	protected void putKafka(Kafka kafka){
+	protected void putKafka(KafkaStatInfo kafka){
 		kStore.save(kafka);
 	}
 

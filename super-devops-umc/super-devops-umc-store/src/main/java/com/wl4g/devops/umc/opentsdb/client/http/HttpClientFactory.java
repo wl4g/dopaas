@@ -1,5 +1,11 @@
 package com.wl4g.devops.umc.opentsdb.client.http;
 
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
@@ -21,12 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig;
-
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Description:

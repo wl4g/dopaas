@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.opentsdb;
 
-import com.wl4g.devops.common.bean.umc.model.third.Kafka;
+import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 import com.wl4g.devops.umc.store.KafkaMetricStore;
 
@@ -10,15 +10,15 @@ import com.wl4g.devops.umc.store.KafkaMetricStore;
  */
 public class TsdbKafkaMetricStore implements KafkaMetricStore {
 
-    final protected OpenTSDBClient client;
+	final protected OpenTSDBClient client;
 
-    public TsdbKafkaMetricStore(OpenTSDBClient client) {
-        this.client = client;
-    }
+	public TsdbKafkaMetricStore(OpenTSDBClient client) {
+		this.client = client;
+	}
 
-    @Override
-    public boolean save(Kafka kafka) {
+	@Override
+	public boolean save(KafkaStatInfo kafka) {
 
-        return true;
-    }
+		return true;
+	}
 }

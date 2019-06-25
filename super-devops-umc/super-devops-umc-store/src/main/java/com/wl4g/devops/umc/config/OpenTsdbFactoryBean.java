@@ -1,11 +1,7 @@
 package com.wl4g.devops.umc.config;
 
-import static com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig.*;
-import static com.wl4g.devops.umc.opentsdb.client.http.callback.BatchPutHttpResponseCallback.*;
-import static com.wl4g.devops.umc.opentsdb.client.OpenTSDBClientFactory.*;
-import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
-import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
-import com.wl4g.devops.umc.opentsdb.client.bean.response.DetailResult;
+import static com.wl4g.devops.umc.opentsdb.client.OpenTSDBClientFactory.connect;
+import static com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig.address;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +10,11 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
+import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
+import com.wl4g.devops.umc.opentsdb.client.bean.response.DetailResult;
+import com.wl4g.devops.umc.opentsdb.client.http.callback.BatchPutHttpResponseCallback.BatchPutCallBack;
 
 /**
  * OpenTSDB client factory bean

@@ -1,11 +1,11 @@
 package com.wl4g.devops.umc.opentsdb.client.http.callback;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 定义一个FutureCallBack，用来对任务完成、异常、取消后进行减数

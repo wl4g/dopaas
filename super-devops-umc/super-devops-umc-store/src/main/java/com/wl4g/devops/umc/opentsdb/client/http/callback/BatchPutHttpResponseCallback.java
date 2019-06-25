@@ -1,8 +1,8 @@
 package com.wl4g.devops.umc.opentsdb.client.http.callback;
 
-import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
-import com.wl4g.devops.umc.opentsdb.client.bean.response.DetailResult;
-import com.wl4g.devops.umc.opentsdb.client.common.Json;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -11,9 +11,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
+import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
+import com.wl4g.devops.umc.opentsdb.client.bean.response.DetailResult;
+import com.wl4g.devops.umc.opentsdb.client.common.Json;
 
 /**
  * 异步写入回调
