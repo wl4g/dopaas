@@ -1,7 +1,10 @@
 package com.wl4g.devops.umc.opentsdb.client.http;
 
-import com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig;
-import com.wl4g.devops.umc.opentsdb.client.http.callback.GracefulCloseFutureCallBack;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -12,11 +15,8 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig;
+import com.wl4g.devops.umc.opentsdb.client.http.callback.GracefulCloseFutureCallBack;
 
 /**
  * @Description:

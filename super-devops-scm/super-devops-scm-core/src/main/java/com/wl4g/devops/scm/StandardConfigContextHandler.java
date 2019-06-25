@@ -121,21 +121,21 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 	 * @param instance
 	 * @return
 	 */
-	/*public ReleaseMessage getReleaseMessage(String group, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
-		ReleaseMessage release = new ReleaseMessage(group, namespaces, meta, instance);
-
-		StringBuffer content = new StringBuffer();
-		try {
-			Files.readLines(new File("f://test.yml"), Charsets.UTF_8).forEach(s -> content.append(s).append("\r\n"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println(content);
-
-		Map<String, Object> source = PropertySources.resolve(Type.YAML, content.toString());
-		release.getPropertySources().add(new ReleasePropertySource(namespace, source));
-
-		return release;
-	}*/
+	/*
+	 * public ReleaseMessage getReleaseMessage(String group, List<String>
+	 * namespaces, ReleaseMeta meta, ReleaseInstance instance) { ReleaseMessage
+	 * release = new ReleaseMessage(group, namespaces, meta, instance);
+	 * 
+	 * StringBuffer content = new StringBuffer(); try { Files.readLines(new
+	 * File("f://test.yml"), Charsets.UTF_8).forEach(s ->
+	 * content.append(s).append("\r\n")); } catch (IOException e) {
+	 * e.printStackTrace(); } System.out.println(content);
+	 * 
+	 * Map<String, Object> source = PropertySources.resolve(Type.YAML,
+	 * content.toString()); release.getPropertySources().add(new
+	 * ReleasePropertySource(namespace, source));
+	 * 
+	 * return release; }
+	 */
 
 }

@@ -1,9 +1,9 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.physical.Physical;
-import com.wl4g.devops.common.bean.umc.model.third.Kafka;
-import com.wl4g.devops.common.bean.umc.model.third.Redis;
-import com.wl4g.devops.common.bean.umc.model.third.Zookeeper;
+import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
+import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
 import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.umc.store.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +31,7 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	// Physical receiver
 	//
 	@RequestMapping(URI_PHYSICAL)
-	public void physicalReceive(@RequestBody Physical physical) {
+	public void physicalReceive(@RequestBody PhysicalStatInfo physical) {
 		putPhysical(physical);
 	}
 
@@ -49,7 +49,7 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	 * Redis
 	 */
 	@RequestMapping(URI_REDIS)
-	public void redisReceive(@RequestBody Redis redis) {
+	public void redisReceive(@RequestBody RedisStatInfo redis) {
 		putRedis(redis);
 	}
 
@@ -57,7 +57,7 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	 * Zookeeper
 	 */
 	@RequestMapping(URI_ZOOKEEPER)
-	public void zookeeperReceive(@RequestBody Zookeeper zookeeper) {
+	public void zookeeperReceive(@RequestBody ZookeeperStatInfo zookeeper) {
 		putZookeeper(zookeeper);
 	}
 
@@ -65,7 +65,7 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	 * Kafka
 	 */
 	@RequestMapping(URI_KAFKA)
-	public void kafkaReceive(@RequestBody Kafka kafka) {
+	public void kafkaReceive(@RequestBody KafkaStatInfo kafka) {
 		putKafka(kafka);
 	}
 

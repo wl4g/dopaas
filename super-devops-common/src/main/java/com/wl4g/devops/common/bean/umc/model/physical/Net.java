@@ -7,7 +7,7 @@ import com.wl4g.devops.common.bean.umc.model.Base;
  * @author vjay
  * @date 2019-06-12 09:41:00
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Net extends Base {
 
 	private static final long serialVersionUID = 7624894410555358785L;
@@ -22,7 +22,7 @@ public class Net extends Base {
 		this.netInfos = netInfos;
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown=true)
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class NetInfo {
 		private Integer port;
 		private Integer up;

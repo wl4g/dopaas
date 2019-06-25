@@ -1,9 +1,10 @@
 package com.wl4g.devops.umc.opentsdb.client.bean.request;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @Author: jinyao

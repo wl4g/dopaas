@@ -7,7 +7,7 @@ import com.wl4g.devops.common.bean.umc.model.Base;
  * @author vjay
  * @date 2019-06-17 16:42:00
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Docker extends Base {
 	private static final long serialVersionUID = -6431729185849981843L;
 
@@ -21,7 +21,7 @@ public class Docker extends Base {
 		this.dockerInfo = dockerInfo;
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown=true)
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class DockerInfo {
 		private String containerId;
 		private String name;

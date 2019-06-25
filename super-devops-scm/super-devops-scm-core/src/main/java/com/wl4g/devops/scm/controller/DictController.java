@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * 字典
+ * 
  * @author vjay
  * @date 2019-06-24 14:23:00
  */
@@ -19,15 +20,15 @@ import java.util.List;
 @RequestMapping("/dict")
 public class DictController extends BaseController {
 
-    @Autowired
-    private DictDao dictDao;
+	@Autowired
+	private DictDao dictDao;
 
-    @RequestMapping(value = "/getByType")
-    public RespBase<?> getByType(String type){
-        RespBase<List<Dict>> resp = new RespBase<List<Dict>>();
-        List<Dict> dicts =  dictDao.selectByType(type);
-        resp.getData().put("dicts", dicts);
-        return resp;
-    }
+	@RequestMapping(value = "/getByType")
+	public RespBase<?> getByType(String type) {
+		RespBase<List<Dict>> resp = new RespBase<List<Dict>>();
+		List<Dict> dicts = dictDao.selectByType(type);
+		resp.getData().put("dicts", dicts);
+		return resp;
+	}
 
 }

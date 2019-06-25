@@ -1,12 +1,12 @@
 package com.wl4g.devops.umc.opentsdb.client.sender.producer;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author: jinyao

@@ -1,18 +1,23 @@
 package com.wl4g.devops.umc.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.wl4g.devops.umc.annotation.EnableOpenTsdbStore;
-import com.wl4g.devops.umc.derby.DerbyPhysicalMetricStore;
-import com.wl4g.devops.umc.derby.DerbyVirtualMetricStore;
-import com.wl4g.devops.umc.opentsdb.*;
-import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
+import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.wl4g.devops.umc.annotation.EnableOpenTsdbStore;
+import com.wl4g.devops.umc.derby.DerbyPhysicalMetricStore;
+import com.wl4g.devops.umc.derby.DerbyVirtualMetricStore;
+import com.wl4g.devops.umc.opentsdb.TsdbKafkaMetricStore;
+import com.wl4g.devops.umc.opentsdb.TsdbPhysicalMetricStore;
+import com.wl4g.devops.umc.opentsdb.TsdbRedisMetricStore;
+import com.wl4g.devops.umc.opentsdb.TsdbVirtualMetricStore;
+import com.wl4g.devops.umc.opentsdb.TsdbZookeeperMetricStore;
+import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 
 /**
  * UMC store auto configuration

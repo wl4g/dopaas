@@ -54,6 +54,7 @@ public final class BeanMapConvert {
 		return Collections.unmodifiableMap(doWithDeepFields(null, getObject(), new LinkedHashMap<String, Object>()));
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Map<String, Object> doWithDeepFields(String memberOfParent, Object obj, Map<String, Object> properties) {
 		if (obj == null) {
 			return properties;
@@ -71,15 +72,17 @@ public final class BeanMapConvert {
 					if (isBaseType(property.getPropertyType())) {
 						properties.put(link(memberOfParent, memberName), value);
 					} else if (Collection.class.isAssignableFrom(cls)) {
-						StringBuffer keyStr = new StringBuffer();
-						((Collection) value).forEach(e ->
-								keyStr.append(e).append(",")
-						);
-						properties.put(link(memberOfParent, memberName), keyStr);
+						StringBuffer vals = new StringBuffer();
+						((Collection) value).forEach(e -> vals.append(e).append(","));
+						properties.put(link(memberOfParent, memberName), vals);
 					} else if (Map.class.isAssignableFrom(cls)) {
-						//TODO
+						//
+						// Generic type not supported?
+						// TODO
+						//
 					} else if (cls.isArray()) {
-                        //TODO
+						// TODO
+						//
 					} else {
 						doWithDeepFields(memberName, value, properties);
 					}

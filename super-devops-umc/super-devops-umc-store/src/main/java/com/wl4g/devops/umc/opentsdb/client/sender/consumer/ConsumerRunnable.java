@@ -1,20 +1,20 @@
 package com.wl4g.devops.umc.opentsdb.client.sender.consumer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBConfig;
 import com.wl4g.devops.umc.opentsdb.client.bean.request.Api;
 import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
 import com.wl4g.devops.umc.opentsdb.client.common.Json;
 import com.wl4g.devops.umc.opentsdb.client.http.HttpClient;
 import com.wl4g.devops.umc.opentsdb.client.http.callback.BatchPutHttpResponseCallback;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 消费者线程具体的消费逻辑

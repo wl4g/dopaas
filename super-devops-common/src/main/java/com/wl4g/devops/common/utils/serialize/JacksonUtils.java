@@ -28,7 +28,6 @@ public abstract class JacksonUtils {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-
 	public static String toJSONString(Object object) {
 		if (object == null) {
 			return null;
