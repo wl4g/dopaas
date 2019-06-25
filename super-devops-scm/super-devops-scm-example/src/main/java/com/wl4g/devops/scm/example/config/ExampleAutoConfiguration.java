@@ -32,4 +32,12 @@ public class ExampleAutoConfiguration {
 		return new ExampleService();
 	}
 
+	@Bean
+	@RefreshScope
+	@ConfigurationProperties(prefix = "example2")
+	public ExampleService exampleService2() {
+		System.out.println("@Bean create exampleService2");
+		return new ExampleService();
+	}
+
 }

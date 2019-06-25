@@ -15,14 +15,6 @@
  */
 package com.wl4g.devops.scm.client.configure;
 
-import java.io.IOException;
-
-import java.util.*;
-import java.util.Map.Entry;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.*;
-
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
@@ -33,25 +25,36 @@ import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
-import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
-import static org.springframework.http.MediaType.*;
-import static org.springframework.http.HttpMethod.*;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.AUTHORIZATION;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.availableReleaseMeta;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.releaseReset;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 /**
  * Abstract SCM application context initializer instructions.</br>
@@ -102,7 +105,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
 			// Create release get
 			ReleaseMeta meta = availableReleaseMeta(false);
-			GetRelease get = new GetRelease(info.getAppName(), config.getNamespace(), meta, info.getInstance());
+			GetRelease get = new GetRelease(info.getAppName(), config.getNamespaces(), meta, info.getInstance());
 
 			// To parameters
 			String kvs = new BeanMapConvert(get).toUriParmaters();
@@ -189,7 +192,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	protected void printfSources(ReleaseMessage release) {
 		if (log.isInfoEnabled()) {
 			log.info("Fetched from scm config <= group({}), namespace({}), release meta({})", release.getGroup(),
-					release.getNamespace(), release.getMeta());
+					release.getNamespaces(), release.getMeta());
 		}
 
 		if (log.isDebugEnabled()) {

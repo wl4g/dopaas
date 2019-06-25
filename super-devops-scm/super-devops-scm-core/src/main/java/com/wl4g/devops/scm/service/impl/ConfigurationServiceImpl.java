@@ -15,28 +15,30 @@
  */
 package com.wl4g.devops.scm.service.impl;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.bean.share.Dict;
+import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.ConfigurationDao;
+import com.wl4g.devops.dao.scm.HistoryDao;
+import com.wl4g.devops.dao.share.DictDao;
+import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.scm.service.ConfigurationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.wl4g.devops.dao.scm.AppGroupDao;
-import com.wl4g.devops.dao.scm.ConfigurationDao;
-import com.wl4g.devops.dao.scm.HistoryDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
-import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.scm.service.ConfigurationService;
 
 /**
  * DevOps configuration core service implement.
@@ -58,6 +60,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private AppGroupDao appGroupDao;
 	@Autowired
 	private ConfigContextHandler configContextHandler;
+	@Autowired
+	private DictDao dictDao;
 
 	@Override
 	public void configure(VersionOfDetail vd) {
@@ -137,11 +141,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		// Get application group information.
 		AppGroup appGroup = this.appGroupDao.getAppGroup(String.valueOf(vd.getGroupId()));
 
+		List<String> namespaces = new ArrayList<>();
+		for(VersionContentBean versionContentBean : vd.getConfigGurations()){
+			Dict dict = dictDao.selectByPrimaryKey(Integer.valueOf(versionContentBean.getNamespaceId()));
+			String namespace = dict.getValue();
+			namespaces.add(namespace);
+		}
+
+
+
 		// Request configuration source send to client.
 		//
 		PreRelease preRelease = new PreRelease();
 		preRelease.setGroup(appGroup.getName());
-		preRelease.setNamespace(envName);
+		preRelease.setNamespaces(namespaces);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		preRelease.setMeta(meta);
 		preRelease.setInstances(instances);

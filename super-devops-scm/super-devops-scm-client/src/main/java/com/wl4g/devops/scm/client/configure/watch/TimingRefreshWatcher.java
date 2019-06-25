@@ -15,12 +15,14 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.apache.commons.lang3.RandomUtils.*;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
-
+import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo.ChangedRecord;
+import com.wl4g.devops.common.exception.scm.ReportRetriesCountOutException;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
+import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -29,22 +31,19 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.client.RestTemplate;
-import static org.springframework.http.HttpMethod.*;
 
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.bean.scm.model.ReportInfo.ChangedRecord;
-import com.wl4g.devops.common.exception.scm.ReportRetriesCountOutException;
-import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
-import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
-import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
-import static com.wl4g.devops.common.web.RespBase.*;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_POST;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static com.wl4g.devops.common.web.RespBase.isSuccess;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
+import static org.apache.commons.lang3.RandomUtils.nextLong;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * Timing refresh watcher
@@ -110,6 +109,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 			}
 
 			String url = getWatchingUrl(false);
+
 			ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
 			if (log.isDebugEnabled()) {
 				log.debug("Watch result <= {}", resp);

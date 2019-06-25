@@ -17,15 +17,12 @@ package com.wl4g.devops.common.bean.scm.model;
 
 import com.google.common.net.HostAndPort;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.List;
 
 public class GenericInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
@@ -41,8 +38,8 @@ public class GenericInfo implements Serializable {
 	 * Name-space(configuration file-name, like spring.profiles)
 	 */
 	@NotNull
-	@NotBlank
-	private String namespace;
+	@NotEmpty
+	private List<String> namespaces;
 
 	/**
 	 * Version release information
@@ -53,23 +50,23 @@ public class GenericInfo implements Serializable {
 		super();
 	}
 
-	public GenericInfo(String group, String namespace) {
+	public GenericInfo(String group, List<String> namespace) {
 		this(group, namespace, null);
 	}
 
-	public GenericInfo(String group, String namespace, ReleaseMeta meta) {
+	public GenericInfo(String group, List<String> namespaces, ReleaseMeta meta) {
 		super();
 		setGroup(group);
-		setNamespace(namespace);
+		setNamespaces(namespaces);
 		setMeta(meta);
 	}
 
-	public String getNamespace() {
-		return namespace;
+	public List<String> getNamespaces() {
+		return namespaces;
 	}
 
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
+	public void setNamespaces(List<String> namespaces) {
+		this.namespaces = namespaces;
 	}
 
 	public String getGroup() {
@@ -99,7 +96,7 @@ public class GenericInfo implements Serializable {
 
 	public void validation(boolean versionValidate, boolean releaseIdValidate) {
 		Assert.hasText(getGroup(), "`group` must not be empty");
-		Assert.hasText(getNamespace(), "`namespace` must not be empty");
+		Assert.notEmpty(getNamespaces(), "`namespace` must not be empty");
 		getMeta().validation(versionValidate, releaseIdValidate);
 	}
 

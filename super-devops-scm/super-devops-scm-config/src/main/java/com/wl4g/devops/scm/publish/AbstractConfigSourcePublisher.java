@@ -15,13 +15,6 @@
  */
 package com.wl4g.devops.scm.publish;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -30,19 +23,23 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.scm.config.ScmProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
-
-import org.apache.commons.lang3.StringUtils;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.springframework.http.HttpStatus.*;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpStatus.NOT_MODIFIED;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Abstract configuration source publisher.
@@ -111,7 +108,9 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 							if (deferred != null) {
 								GetRelease watch = deferred.getWatch();
 								// Filters name space
-								if (StringUtils.equals(watch.getNamespace(), wrap.getNamespace())) {
+
+								wrap.getNamespaces().retainAll(watch.getNamespaces());
+								if (wrap.getNamespaces()!=null&&wrap.getNamespaces().size()>0) {
 									// Filters instance
 									return wrap.getInstances().contains(watch.getInstance());
 								}
@@ -198,7 +197,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getLongPollTimeout(), watch);
 
 		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getGroup());
-		String watchKey = getWatchKey(watch.getInstance(), watch.getNamespace());
+		String watchKey = getWatchKey(watch.getInstance(), watch.getNamespaces());
 		deferreds.put(watchKey, deferred);
 
 		final String instance = watch.getInstance().toString();
@@ -252,10 +251,10 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 * @param namespace
 	 * @return
 	 */
-	protected String getWatchKey(ReleaseInstance instance, String namespace) {
+	protected String getWatchKey(ReleaseInstance instance, List<String> namespaces) {
 		Assert.notNull(instance, "Release instance must not be null");
-		Assert.hasText(namespace, "Namespace must not be null");
-		return instance.toString() + "-" + namespace;
+		//Assert.notEmpty(namespaces, "Namespace must not be null");
+		return instance.toString();
 	}
 
 	/**
@@ -270,7 +269,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 		private static final long serialVersionUID = 1569807245009223834L;
 
 		public PublishConfigWrapper(PreRelease pre) {
-			super(pre.getGroup(), pre.getNamespace(), pre.getMeta());
+			super(pre.getGroup(), pre.getNamespaces(), pre.getMeta());
 			setInstances(pre.getInstances());
 		}
 

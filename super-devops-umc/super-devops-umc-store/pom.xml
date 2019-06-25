@@ -17,6 +17,7 @@
 		<jackson.version>2.9.8</jackson.version>
 		<druid.version>1.0.26</druid.version>
 		<spring-jdbc.version>4.3.14.RELEASE</spring-jdbc.version>
+		<derby.version>10.14.2.0</derby.version>
 	</properties>
 	<dependencies>
 		<dependency>
