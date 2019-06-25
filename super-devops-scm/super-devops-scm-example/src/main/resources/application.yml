@@ -30,3 +30,9 @@ logging:
     org:
       springframework: INFO
       apache: INFO
+
+
+
+example2:
+  firstName: 张
+  lastName: tom

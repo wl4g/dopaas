@@ -15,15 +15,13 @@
  */
 package com.wl4g.devops.common.bean.scm.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PreRelease extends GenericInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
@@ -36,7 +34,7 @@ public class PreRelease extends GenericInfo {
 		super();
 	}
 
-	public PreRelease(String group, String namespace, ReleaseMeta meta) {
+	public PreRelease(String group, List<String> namespace, ReleaseMeta meta) {
 		super(group, namespace, meta);
 	}
 

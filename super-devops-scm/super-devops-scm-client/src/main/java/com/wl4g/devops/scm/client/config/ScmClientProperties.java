@@ -15,15 +15,16 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.wl4g.devops.scm.config.AbstractScmProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.scm.config.AbstractScmProperties;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
+import static com.wl4g.devops.scm.client.config.ScmClientProperties.PREFIX;
 
 /**
  * SCM client properties.
@@ -74,7 +75,7 @@ public class ScmClientProperties extends AbstractScmProperties {
 	 * SCM server publishing must be consistent with this configuration or the
 	 * refresh configuration will fail.(Accurate matching)
 	 */
-	private String namespace = "application-test.yaml";
+	private List<String> namespaces = new ArrayList<>();
 
 	/**
 	 * Additional headers used to create the client request.
@@ -124,14 +125,14 @@ public class ScmClientProperties extends AbstractScmProperties {
 		this.longPollMaxDelay = longPollMaxDelay;
 	}
 
-	public String getNamespace() {
-		Assert.hasText(namespace, String.format("Invalid value for namespace for %s", namespace));
-		return namespace;
+	public List<String> getNamespaces() {
+		Assert.notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
+		return namespaces;
 	}
 
-	public void setNamespace(String namespace) {
-		Assert.hasText(namespace, String.format("Invalid value for namespace for %s", namespace));
-		this.namespace = namespace;
+	public void setNamespaces(List<String> namespaces) {
+		Assert.notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
+		this.namespaces = namespaces;
 	}
 
 	public Map<String, String> getHeaders() {

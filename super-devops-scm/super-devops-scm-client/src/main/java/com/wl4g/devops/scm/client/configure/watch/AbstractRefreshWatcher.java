@@ -15,17 +15,16 @@
  */
 package com.wl4g.devops.scm.client.configure.watch;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
-
-import org.springframework.util.Assert;
-
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import com.wl4g.devops.support.task.GenericTaskRunner;
+import org.springframework.util.Assert;
+
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
 
 /**
  * Abstract refresh watcher.
@@ -61,7 +60,7 @@ public abstract class AbstractRefreshWatcher extends GenericTaskRunner {
 		String uri = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
 
 		// Create releaseGet
-		GetRelease get = new GetRelease(locator.getInfo().getAppName(), config.getNamespace(), null,
+		GetRelease get = new GetRelease(locator.getInfo().getAppName(), config.getNamespaces(), null,
 				locator.getInfo().getInstance());
 		return (uri + "?" + new BeanMapConvert(get).toUriParmaters());
 	}
