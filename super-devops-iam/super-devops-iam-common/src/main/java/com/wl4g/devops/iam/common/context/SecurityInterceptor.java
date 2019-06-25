@@ -19,6 +19,8 @@ import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.google.common.annotations.Beta;
+
 /**
  * IAM security processing intercept handler
  * 
@@ -26,6 +28,7 @@ import javax.servlet.ServletResponse;
  * @version v1.0 2019年1月18日
  * @since
  */
+@Beta
 public interface SecurityInterceptor {
 
 	/**

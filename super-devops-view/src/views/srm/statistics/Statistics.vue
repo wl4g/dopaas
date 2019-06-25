@@ -144,7 +144,7 @@
        <!-- 查询结果数值 -->
     <div class="query">
       <div class="line"></div>
-      <div class="">查询结果：共查询到 <span class="number">{{total}}</span> 条记录</div>
+      <div class="">查询结果：共查询到 <span class="number">{{physical}}</span> 条记录</div>
     </div>
   </section>
 </template>

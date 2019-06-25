@@ -141,13 +141,13 @@
     </el-table>
     <el-col :span="24" class='btm-action'>
       <el-pagination
-        v-if='pagination  && ( (pagination.total!==undefined && pagination.total>0) || (pagination["page-count"]!==undefined && pagination["page-count"]>0) )'
+        v-if='pagination  && ( (pagination.physical!==undefined && pagination.physical>0) || (pagination["page-count"]!==undefined && pagination["page-count"]>0) )'
         class='pagination'
         :page-sizes="pagination.page_sizes"
         :page-size="pagination.page_size"
         :page-count="pagination['page-count']"
         :layout="pagination.layout"
-        :total="pagination.total"
+        :physical="pagination.physical"
         :current-page='pagination.current_page'
         @current-change='onChangeCurrentPage'
         @size-change='onChangePageSize'>

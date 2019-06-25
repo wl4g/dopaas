@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.utils;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -66,7 +68,7 @@ public abstract class Exceptions extends ExceptionUtils {
 	 * @param thw
 	 * @return
 	 */
-	public static Throwable getRootCauses(final Throwable thw) {
+	public static Throwable getRootCauses(Throwable thw) {
 		if (thw == null) {
 			return null;
 		}
@@ -109,6 +111,20 @@ public abstract class Exceptions extends ExceptionUtils {
 			ex = (Throwable) request.getAttribute("javax.servlet.error.exception");
 		}
 		return ex;
+	}
+
+	/**
+	 * Getting root causes string message
+	 * 
+	 * @param th
+	 * @return
+	 */
+	public static String getRootCausesString(Throwable th) {
+		if (th == null) {
+			return null;
+		}
+		String causes = getRootCauseMessage(th);
+		return isEmpty(causes) ? getMessage(th) : causes;
 	}
 
 }

@@ -15,3 +15,10 @@
 example:
   firstName: 王
   lastName: jack
+
+spring:
+  cloud:
+    devops:
+      iam:
+        client:
+          base-uri: http://localhost:14043/scm

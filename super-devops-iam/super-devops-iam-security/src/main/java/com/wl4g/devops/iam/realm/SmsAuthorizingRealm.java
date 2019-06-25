@@ -96,7 +96,7 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 		 * Password is a string that may be set to empty.
 		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
 		 */
-		return new SmsAuthenticationInfo(principal, token.getCredentials(), getName());
+		return new SmsAuthenticationInfo(acc, principal, token.getCredentials(), getName());
 	}
 
 	/**

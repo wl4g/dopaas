@@ -15,18 +15,16 @@ spring:
   profiles:
     active: test
   cloud: # Spring cloud configuration.
-    zookeeper:
-      connect-string: book-cloud:2181
-      discovery:
-        root: /application
-        enabled: true
-        register: true
-        # See: o.s.cloud.zookeeper.discovery.ZookeeperDiscoveryProperties
-        # o.s.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration
-        metadata:
-          # See: d.c.boot.admin.discovery.DefaultServiceInstanceConverter.getHealthUrl()
-          management.context-path: /${spring.application.name}
-          health.path: health
+    # Devops configuration.
+    devops: 
+      scm: # SCM server configuration.
+        #core-pool-size: 10
+        #max-pool-size: 25
+        #queue-capacity: 1024
+        #watch-delay: 200
+        #long-polling-timeout: 30000
+        #connect-timeout: 5000
+        #max-response-size: 65535
 
 # ### Server configuration. ###
 server:

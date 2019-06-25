@@ -13,43 +13,15 @@
 	</sql>
 
 	<sql id="allVersionDetailColumn">
-		i.id as "id",
-		i.version_id as "versionId",
-		i.type as "type",
-		i.content as "content",
-		i.remark as "remark",
-		i.filename as "filename"
+		vd.id as "id",
+		vd.version_id as "versionId",
+		vd.type as "type",
+		vd.content as "content",
+		vd.remark as "remark",
+		(SELECT d.`value` FROM sys_dict d WHERE d.id=vd.namespace_id) as "namespace",
+		vd.namespace_id as "namespaceId"
 	</sql>
-	
-	<resultMap type="versionOfDetail" id="queryVersionOfDetail">
-		<result column="id" property="id" jdbcType="INTEGER" />
-		<result column="sign" property="sign" jdbcType="VARCHAR"/>
-		<result column="sign_type" property="signtype" jdbcType="VARCHAR"/>
-		<result column="tag" property="tag" jdbcType="INTEGER"/>
-		<result column="name" property="groupName" jdbcType="VARCHAR"/>
-		<result column="host" property="host" jdbcType="VARCHAR"/>
-		<result column="create_by" property="createBy" jdbcType="INTEGER"/>
-		<result column="create_date" property="createDate" jdbcType="VARCHAR"/>
-		<result column="del_flag" property="delFlag" jdbcType="INTEGER"/>
-		<collection property="configGurations" ofType="versionContentBean" javaType="list">
-			<result column="i.id" property="id" jdbcType="INTEGER" />
-			<result column="i.version_id" property="versionId" jdbcType="INTEGER" />
-			<result column="i.type" property="type" jdbcType="INTEGER" />
-			<result column="i.content" property="content" jdbcType="VARCHAR" />
-			<result column="i.remark" property="remark" jdbcType="VARCHAR" />
-			<result column="i.filename" property="filename" jdbcType="VARCHAR" />
-			<!--<result column="i.createDate" property="createDate" jdbcType="VARCHAR" />-->
-		</collection>
-	</resultMap>
-	<resultMap id="queryconfigGurationData" type="versionContentBean">
-		<result column="i.id" property="id" jdbcType="INTEGER" />
-		<result column="i.version_id" property="versionId" jdbcType="INTEGER" />
-		<result column="i.type" property="type" jdbcType="INTEGER" />
-		<result column="i.content" property="content" jdbcType="VARCHAR" />
-		<result column="i.remark" property="remark" jdbcType="VARCHAR" />
-		<result column="i.filename" property="filename" jdbcType="VARCHAR" />
-		<!--<result column="i.createDate" property="createDate" jdbcType="VARCHAR" />-->
-	</resultMap>
+
 	<resultMap id="queryVersion" type="configVersionList">
 		<result column="id" property="id" jdbcType="INTEGER" />
 		<result column="sign" property="sign" jdbcType="VARCHAR"/>
@@ -63,14 +35,14 @@
 		<result column="envRemark" property="envRemark" jdbcType="VARCHAR"/>
 	</resultMap>
 
-	<!-- Configuration source result map. -->
 	<resultMap id="configSourceMap" type="configSourceBean">
 		<association property="releaseMeta" javaType="configReleaseMeta">
 			<result column="releaseId" property="releaseId"/>
 			<result column="version" property="version"/>
 		</association>
 		<collection property="contents" ofType="versionContentBean">
-			<result column="filename" property="filename" />
+			<result column="namespace" property="namespace" />
+			<result column="namespaceId" property="namespace_id" />
 			<result column="type" property="type" />
 			<result column="content" property="content" />
 			<result column="createDate" property="createDate" />
@@ -123,7 +95,7 @@
 	</insert>
 	<insert id ="insertDetail" parameterType="java.util.Map" >
 		insert into cf_version_detail
-		(version_id, `type`, content, remark,filename)
+		(version_id, `type`, content, remark, namespace_id)
 		values
 		<foreach collection ="configGurations" item="detail" index= "index" separator =",">
 			(
@@ -131,7 +103,7 @@
 			#{detail.type},
 			#{detail.content},
 			#{detail.remark},
-			#{detail.filename}
+			#{detail.namespaceId}
 			)
 		</foreach >
 	</insert>
@@ -195,9 +167,9 @@
 		SELECT
 		<include refid="allVersionDetailColumn"/>
 		from
-		cf_version_detail i
+			cf_version_detail vd
 		where
-		i.version_id = #{id}
+			vd.version_id = #{id}
 	</select>
 
 	<select id="list" resultMap="queryVersion">
@@ -262,7 +234,8 @@
 		SELECT
 			rh.id AS "releaseId",
 			i.version_id AS "version",
-			vd.filename AS "filename",
+			sd.`id` AS "namespace_id",
+			sd.`value` AS "namespace",
 			vd.type AS "type",
 			vd.content AS "content",
 			rh.create_date AS "createDate"
@@ -273,9 +246,15 @@
 		INNER JOIN cf_app_environment e ON e.id = i.env_id
 		INNER JOIN cf_app_group g ON g.id = i.group_id
 		INNER JOIN cf_version_detail vd ON vd.version_id = i.version_id
+		INNER JOIN sys_dict sd ON sd.id = vd.namespace_id
 		<where>
 			AND g.`name` = #{group}
-			AND e.`name` = #{profile}
+
+			<if test="namespaces != null"><![CDATA[ AND sd.`value` IN ]]>
+				<foreach item="item" index="index" collection="namespaces" open="(" separator="," close=")">#{item}
+				</foreach>
+			</if>
+
 			<if test="meta != null
 				and meta.releaseId != null and meta.releaseId != 'null' and meta.releaseId != ''
 				and meta.version != null and meta.version != 'null' and meta.version != ''">

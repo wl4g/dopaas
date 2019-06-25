@@ -22,6 +22,16 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 
+import com.google.common.annotations.Beta;
+
+/**
+ * IAM security listener
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年1月18日
+ * @since
+ */
+@Beta
 public interface SecurityListener {
 
 	/**

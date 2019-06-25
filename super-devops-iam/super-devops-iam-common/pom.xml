@@ -24,6 +24,11 @@
 			<version>master</version>
 		</dependency>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-support</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>${jedis.version}</version>

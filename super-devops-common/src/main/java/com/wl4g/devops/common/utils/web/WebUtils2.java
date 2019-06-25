@@ -33,12 +33,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Charsets;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
+import static com.wl4g.devops.common.utils.web.UserAgentUtils.*;
 
 /**
  * WEB tools
@@ -555,6 +557,8 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static enum ResponseType {
 		auto, link, json;
 
+		final public static String DEFAULT_PARAM_NAME = "response_type";
+
 		/**
 		 * Safe converter string to {@link ResponseType}
 		 * 
@@ -603,7 +607,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 			}
 
 			// Is header[XHR] ?
-			boolean isXhr = WebUtils2.isXHRRequest(request);
+			boolean isXhr = isXHRRequest(request);
 
 			switch (respType) { // Matching
 			case json:
@@ -617,7 +621,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 				 * the line), it responds to the rendering page, otherwise it
 				 * responds to JSON.
 				 */
-				return UserAgentUtils.isBrowser(request) ? (isXhr || isAccpetJson) : true;
+				return isBrowser(request) ? (isXhr || isAccpetJson) : true;
 			default:
 				throw new IllegalStateException(String.format("Illegal response type %s", respType));
 			}
