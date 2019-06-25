@@ -15,33 +15,28 @@
  */
 package com.wl4g.devops.scm;
 
-import static org.apache.commons.lang3.StringUtils.contains;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.wl4g.devops.common.bean.scm.ConfigSourceBean;
 import com.wl4g.devops.common.bean.scm.VersionContentBean;
-import com.wl4g.devops.common.bean.scm.model.*;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.utils.PropertySources.Type;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
 import com.wl4g.devops.scm.service.ConfigurationService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.contains;
 
 /**
  * Configuration servers implements.
@@ -79,7 +74,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		 * releaseId will be empty
 		 */
 		get.validation(false, false);
-		ReleaseMessage release = new ReleaseMessage(get.getGroup(), get.getNamespace(), get.getMeta(), get.getInstance());
+		ReleaseMessage release = new ReleaseMessage(get.getGroup(), get.getNamespaces(), get.getMeta(), get.getInstance());
 
 		ConfigSourceBean config = this.configService.findSource(get);
 		if (config != null) {
@@ -126,8 +121,8 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 	 * @param instance
 	 * @return
 	 */
-	public ReleaseMessage getReleaseMessage(String group, String namespace, ReleaseMeta meta, ReleaseInstance instance) {
-		ReleaseMessage release = new ReleaseMessage(group, namespace, meta, instance);
+	/*public ReleaseMessage getReleaseMessage(String group, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
+		ReleaseMessage release = new ReleaseMessage(group, namespaces, meta, instance);
 
 		StringBuffer content = new StringBuffer();
 		try {
@@ -141,6 +136,6 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		release.getPropertySources().add(new ReleasePropertySource(namespace, source));
 
 		return release;
-	}
+	}*/
 
 }

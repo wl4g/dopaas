@@ -16,18 +16,21 @@
 package com.wl4g.devops.scm.service.impl;
 
 import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.devops.common.bean.share.Dict;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
+import com.wl4g.devops.dao.share.DictDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.AppGroupService;
 import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +51,8 @@ public class HistoryServiceImpl implements HistoryService {
 	private ConfigContextHandler configServerService;
 	@Autowired
 	private AppGroupService appGroupService;
+	@Autowired
+	private DictDao dictDao;
 
 	@Override
 	public void insert(HistoryOfDetail historyOfDetail) {
@@ -164,9 +169,19 @@ public class HistoryServiceImpl implements HistoryService {
 			releaseInstance.setPort(instance.getPort());
 			instances.add(releaseInstance);
 		}
+
+		List<VersionContentBean> versionContentBeans = configGurationDao.selectVersion(agl.getId());
+
+		List<String> namespaces = new ArrayList<>();
+		for(VersionContentBean versionContentBean : versionContentBeans){
+			Dict dict = dictDao.selectByPrimaryKey(Integer.valueOf(versionContentBean.getNamespaceId()));
+			String namespace = dict.getValue();
+			namespaces.add(namespace);
+		}
+
 		PreRelease preRelease = new PreRelease();
 		preRelease.setGroup(appGroup.getName());
-		preRelease.setNamespace(envName);
+		preRelease.setNamespaces(namespaces);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		preRelease.setMeta(meta);
 		preRelease.setInstances(instances);
