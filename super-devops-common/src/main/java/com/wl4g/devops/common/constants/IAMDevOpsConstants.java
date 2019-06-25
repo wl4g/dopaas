@@ -61,6 +61,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String KEY_PERMIT_ATTRIBUTE_NAME = "authzPrincipalPermisstionAttributeName";
 
+	/** authentication token save session key-name */
+	final public static String KEY_SESSION_TOKEN = "authcTokenAttributeName";
+	/** authentication info save session key-name */
+	final public static String KEY_SESSION_ACCOUNT = "authcAccountInfoAttributeName";
+
 	/**
 	 * IAM Client-server interactive authentication CAS protocol URI
 	 */
@@ -215,5 +220,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_C_BASE = "/internal";
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
+
+	/** get token */
+	final public static String URI_S_GET_TOKEN = "getToken";
+
+	/** get token */
+	final public static String URI_S_AUTH_TOKEN = "authToken";
+
+	final public static String SERVER_TOKEN_KEY = "server_token:";
 
 }

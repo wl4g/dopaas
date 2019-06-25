@@ -22,6 +22,8 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 
+import com.google.common.annotations.Beta;
+
 /**
  * IAM security context handler
  * 
@@ -29,6 +31,7 @@ import org.apache.shiro.subject.Subject;
  * @version v1.0 2019年3月10日
  * @since
  */
+@Beta
 public interface SecurityContext {
 
 	//

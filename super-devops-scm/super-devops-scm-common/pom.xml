@@ -25,38 +25,6 @@
 			<artifactId>super-devops-common</artifactId>
 			<version>master</version>
 		</dependency>
-		<!-- Spring Cloud(zookeeper) -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
-			<version>${springcloud-zookeeper-discovery.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-netflix-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework.cloud</groupId>
-					<artifactId>spring-cloud-starter-archaius</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.netflix.ribbon</groupId>
-					<artifactId>ribbon</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.netflix.ribbon</groupId>
-					<artifactId>ribbon-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.netflix.ribbon</groupId>
-					<artifactId>ribbon-httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.netflix.ribbon</groupId>
-					<artifactId>ribbon-loadbalancer</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -48,4 +48,5 @@ public class Environment extends BaseBean {
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
+
 }

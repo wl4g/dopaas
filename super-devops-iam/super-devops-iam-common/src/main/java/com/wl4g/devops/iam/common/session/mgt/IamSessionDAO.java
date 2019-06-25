@@ -21,7 +21,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 
 import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.iam.common.session.mgt.support.ScanCursor;
+import com.wl4g.devops.support.cache.ScanCursor;
 
 public interface IamSessionDAO extends SessionDAO {
 

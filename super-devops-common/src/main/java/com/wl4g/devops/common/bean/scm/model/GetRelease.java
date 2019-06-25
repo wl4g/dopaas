@@ -19,25 +19,21 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class GetRelease extends GenericInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
 
 	@NotNull
-	private ReleaseInstance instance = new ReleaseInstance();
+	private ReleaseInstance instance;
 
 	public GetRelease() {
 		super();
 	}
 
-	public GetRelease(String group, String profile, ReleaseMeta releaseMeta, ReleaseInstance instance) {
-		super(group, profile, releaseMeta);
-		this.setInstance(instance);
-	}
-
-	public GetRelease(String group, String profile, ReleaseInstance instance) {
-		super(group, profile, null);
-		this.setInstance(instance);
+	public GetRelease(String group, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
+		super(group, namespaces, meta);
+		setInstance(instance);
 	}
 
 	public ReleaseInstance getInstance() {
@@ -56,9 +52,9 @@ public class GetRelease extends GenericInfo {
 	}
 
 	@Override
-	public void validation(boolean validVersion, boolean validReleaseId) {
-		super.validation(validVersion, validReleaseId);
-		Assert.notNull(getInstance(), "`releaseInstance` is not allowed to be null.");
+	public void validation(boolean versionValidate, boolean releaseValidate) {
+		super.validation(versionValidate, releaseValidate);
+		Assert.notNull(getInstance(), "Invalid empty release instance");
 		getInstance().validation();
 	}
 

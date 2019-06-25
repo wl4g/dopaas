@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.iam.common.session.mgt.support.ScanCursor;
+import com.wl4g.devops.support.cache.ScanCursor;
 
 import redis.clients.jedis.ScanParams;
 
@@ -106,7 +106,7 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 	public ScanCursor<IamSession> getActiveSessions(final int batchSize, final Object principal) {
 		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(batchSize).match(match);
-		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), params) {
+		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), null, params) {
 		}.open();
 	}
 

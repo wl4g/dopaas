@@ -15,22 +15,18 @@
  */
 package com.wl4g.devops.common.utils.bean;
 
+import org.springframework.util.ReflectionUtils;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
-
-import static com.wl4g.devops.common.utils.reflect.Types.*;
+import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
 
 /**
  * Bean and Map Convert.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月28日
@@ -47,7 +43,7 @@ public final class BeanMapConvert {
 
 	/**
 	 * This bean map to URI parameters
-	 * 
+	 *
 	 * @return
 	 */
 	public String toUriParmaters() {
@@ -55,23 +51,37 @@ public final class BeanMapConvert {
 	}
 
 	public Map<String, Object> getBeanMap() {
-		return Collections.unmodifiableMap(doWithDeepFields(null, this.getObject(), new LinkedHashMap<String, Object>()));
+		return Collections.unmodifiableMap(doWithDeepFields(null, getObject(), new LinkedHashMap<String, Object>()));
 	}
 
 	private Map<String, Object> doWithDeepFields(String memberOfParent, Object obj, Map<String, Object> properties) {
-		Assert.notNull(obj, "The obj argument must be null");
+		if (obj == null) {
+			return properties;
+		}
+
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
 			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 			for (PropertyDescriptor property : propertyDescriptors) {
 				String memberName = property.getName();
+				Class<?> cls = property.getPropertyType();
 				// Filter class property
 				if (!memberName.equals("class")) {
 					Object value = ReflectionUtils.invokeMethod(property.getReadMethod(), obj);
 					if (isBaseType(property.getPropertyType())) {
 						properties.put(link(memberOfParent, memberName), value);
+					} else if (Collection.class.isAssignableFrom(cls)) {
+						StringBuffer keyStr = new StringBuffer();
+						((Collection) value).forEach(e ->
+								keyStr.append(e).append(",")
+						);
+						properties.put(link(memberOfParent, memberName), keyStr);
+					} else if (Map.class.isAssignableFrom(cls)) {
+						//TODO
+					} else if (cls.isArray()) {
+                        //TODO
 					} else {
-						this.doWithDeepFields(memberName, value, properties);
+						doWithDeepFields(memberName, value, properties);
 					}
 				}
 			}
@@ -87,7 +97,7 @@ public final class BeanMapConvert {
 
 	/**
 	 * Map to URI parameters
-	 * 
+	 *
 	 * @param param
 	 * @return
 	 */

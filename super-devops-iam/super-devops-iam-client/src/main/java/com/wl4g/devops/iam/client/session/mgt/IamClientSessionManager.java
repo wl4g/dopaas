@@ -33,8 +33,8 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
-import com.wl4g.devops.iam.common.session.mgt.support.ScanCursor;
 import com.wl4g.devops.iam.common.utils.Sessions;
+import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
  * IAM client session manager
