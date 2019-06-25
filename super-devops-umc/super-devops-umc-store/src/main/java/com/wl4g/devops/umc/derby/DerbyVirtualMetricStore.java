@@ -3,8 +3,8 @@ package com.wl4g.devops.umc.derby;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
-import com.wl4g.devops.common.bean.umc.model.physical.Docker;
+import com.wl4g.devops.common.bean.umc.model.Base;
+import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.umc.store.VirtualMetricStore;
 
 /**
@@ -24,7 +24,7 @@ public class DerbyVirtualMetricStore implements VirtualMetricStore {
 	}
 
 	@Override
-	public boolean save(PhysicalInfo baseTemple) {
+	public boolean save(Base baseTemple) {
 		throw new UnsupportedOperationException();
 	}
 

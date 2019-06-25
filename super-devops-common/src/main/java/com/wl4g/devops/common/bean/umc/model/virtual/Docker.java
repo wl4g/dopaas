@@ -1,12 +1,14 @@
-package com.wl4g.devops.common.bean.umc.model.physical;
+package com.wl4g.devops.common.bean.umc.model.virtual;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wl4g.devops.common.bean.umc.model.Base;
 
 /**
  * @author vjay
  * @date 2019-06-17 16:42:00
  */
-public class Docker extends PhysicalInfo {
+@JsonIgnoreProperties(ignoreUnknown=true)
+public class Docker extends Base {
 	private static final long serialVersionUID = -6431729185849981843L;
 
 	private DockerInfo[] dockerInfo;
@@ -19,6 +21,7 @@ public class Docker extends PhysicalInfo {
 		this.dockerInfo = dockerInfo;
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class DockerInfo {
 		private String containerId;
 		private String name;

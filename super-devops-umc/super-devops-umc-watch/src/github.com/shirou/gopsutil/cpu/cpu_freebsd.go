@@ -86,7 +86,7 @@ func TimesWithContext(ctx context.Context, percpu bool) ([]TimesStat, error) {
 	}
 
 	times := (*cpuTimes)(unsafe.Pointer(&buf[0]))
-	return []TimesStat{*timeStat("cpu-total", times)}, nil
+	return []TimesStat{*timeStat("cpu-physical", times)}, nil
 }
 
 // Returns only one InfoStat on FreeBSD.  The information regarding core

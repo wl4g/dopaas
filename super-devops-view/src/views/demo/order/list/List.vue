@@ -29,12 +29,12 @@
     </el-table>
     <el-col :span="24" class='btm-action'>
       <el-pagination
-        v-if='paginations.total>0'
+        v-if='paginations.physical>0'
         class='pagination'
         :page-sizes="paginations.page_sizes"
         :page-size="paginations.page_size"
         :layout="paginations.layout"
-        :total="paginations.total"
+        :physical="paginations.physical"
         :current-page='paginations.current_page'
         @current-change='onChangeCurrentPage'
         @size-change='onChangePageSize'>

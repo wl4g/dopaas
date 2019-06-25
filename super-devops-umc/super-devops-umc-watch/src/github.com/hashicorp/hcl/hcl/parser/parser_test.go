@@ -325,7 +325,7 @@ func TestObjectType(t *testing.T) {
 			continue
 		}
 
-		// check if the total length of items are correct
+		// check if the physical length of items are correct
 		equals(t, l.itemLen, len(obj.List.Items))
 
 		// check if the types are correct

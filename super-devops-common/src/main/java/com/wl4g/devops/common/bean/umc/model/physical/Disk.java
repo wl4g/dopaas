@@ -1,12 +1,14 @@
 package com.wl4g.devops.common.bean.umc.model.physical;
 
-import com.wl4g.devops.common.bean.umc.model.PhysicalInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wl4g.devops.common.bean.umc.model.Base;
 
 /**
  * @author vjay
  * @date 2019-06-11 17:25:00
  */
-public class Disk extends PhysicalInfo {
+@JsonIgnoreProperties(ignoreUnknown=true)
+public class Disk extends Base {
 
 	private static final long serialVersionUID = -6764466345663297700L;
 
@@ -20,6 +22,7 @@ public class Disk extends PhysicalInfo {
 		this.diskInfos = diskInfos;
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class DiskInfo {
 
 		private PartitionStat partitionStat;
@@ -44,6 +47,7 @@ public class Disk extends PhysicalInfo {
 
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class PartitionStat {
 
 		private String device;
@@ -67,6 +71,7 @@ public class Disk extends PhysicalInfo {
 		}
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
 	public static class Usage {
 
 		private String path;

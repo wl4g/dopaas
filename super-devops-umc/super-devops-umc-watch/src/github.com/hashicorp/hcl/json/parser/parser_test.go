@@ -168,7 +168,7 @@ func TestObjectType(t *testing.T) {
 			t.Errorf("node should be of type LiteralType, got: %T", item.Val)
 		}
 
-		// check if the total length of items are correct
+		// check if the physical length of items are correct
 		equals(t, l.itemLen, len(obj.List.Items))
 
 		// check if the types are correct

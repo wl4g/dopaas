@@ -15,13 +15,19 @@
  */
 package com.wl4g.devops.common.utils.serialize;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 
 public abstract class JacksonUtils {
 	final private static ObjectMapper mapper = new ObjectMapper();
+
+	static {
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
+
 
 	public static String toJSONString(Object object) {
 		if (object == null) {

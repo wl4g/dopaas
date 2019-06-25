@@ -14,7 +14,7 @@ var invoke common.Invoker = common.Invoke{}
 // The other fields in this struct contain kernel specific values.
 type VirtualMemoryStat struct {
 	// Total amount of RAM on this system
-	Total uint64 `json:"total"`
+	Total uint64 `json:"physical"`
 
 	// RAM available for programs to allocate
 	//
@@ -78,7 +78,7 @@ type VirtualMemoryStat struct {
 }
 
 type SwapMemoryStat struct {
-	Total       uint64  `json:"total"`
+	Total       uint64  `json:"physical"`
 	Used        uint64  `json:"used"`
 	Free        uint64  `json:"free"`
 	UsedPercent float64 `json:"usedPercent"`
