@@ -25,8 +25,8 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
  */
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
-	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
-		super(pStore, vStore, rStore,zStore,kStore);
+	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStroe) {
+		super(pStore, vStore, rStore,zStore,kStore,mStroe);
 	}
 
 	/**

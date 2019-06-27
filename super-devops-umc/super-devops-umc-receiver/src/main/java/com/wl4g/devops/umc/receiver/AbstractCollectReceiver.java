@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.wl4g.devops.common.bean.umc.model.StatInfos;
 import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
@@ -40,14 +41,18 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	/** Kafka metric store adapter. */
 	final protected KafkaMetricStore kStore;
 
+	/** Kafka metric store adapter. */
+	final protected StatInfoMetricStore mStore;
+
 	public AbstractCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore
-			, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+			, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
 		super();
 		this.pStore = pStore;
 		this.vStore = vStore;
 		this.rStore = rStore;
 		this.zStore = zStore;
 		this.kStore = kStore;
+		this.mStore = mStore;
 	}
 
 	//
@@ -126,6 +131,11 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 		kStore.save(kafka);
 	}
 
+
+	//kafka
+	protected void putStatInfos(StatInfos statInfos){
+		mStore.save(statInfos);
+	}
 
 
 }
