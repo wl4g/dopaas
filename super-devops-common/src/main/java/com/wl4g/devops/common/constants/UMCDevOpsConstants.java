@@ -51,14 +51,14 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String URI_KAFKA = "kafka";
 
 	/** Kafka */
-	final public static String URI_STAT_INFO = "statinfo";
+	final public static String URI_METRIC = "metric";
 
 	//
 	// Server KAFKA client
 	//
 
 	/** KAFKA receiver topic pattern */
-	final public static String TOPIC_RECEIVE_PATTERN = "__devops_umc_agent_metric_";
+	final public static String TOPIC_RECEIVE_PATTERN = "__umc_agent_metric_";
 
 	//
 	// Server openTSDB metric
