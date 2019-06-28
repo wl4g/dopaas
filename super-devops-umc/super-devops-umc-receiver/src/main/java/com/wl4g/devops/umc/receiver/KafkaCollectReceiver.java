@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.wl4g.devops.common.bean.umc.model.StatMetrics;
 import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
@@ -87,6 +88,10 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 				case URI_KAFKA:
 					KafkaStatInfo kafka = JacksonUtils.parseJSON(value, KafkaStatInfo.class);
 					putKafka(kafka);
+					break;
+				case URI_METRIC:
+					StatMetrics statMetrics = JacksonUtils.parseJSON(value, StatMetrics.class);
+					putMetrics(statMetrics);
 					break;
 				default:
 					throw new UnsupportedOperationException("unsupport this type");

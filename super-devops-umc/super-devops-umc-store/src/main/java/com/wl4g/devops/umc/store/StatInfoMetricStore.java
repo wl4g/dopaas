@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.store;
 
-import com.wl4g.devops.common.bean.umc.model.StatInfos;
+import com.wl4g.devops.common.bean.umc.model.StatMetrics;
 
 /**
  * Physical(Memory/network/core/disk) monitor data store
@@ -11,6 +11,6 @@ import com.wl4g.devops.common.bean.umc.model.StatInfos;
  */
 public interface StatInfoMetricStore extends MetricStore {
 
-	boolean save(StatInfos statInfos);
+	boolean save(StatMetrics statMetrics);
 
 }

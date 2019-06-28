@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.StatInfos;
+import com.wl4g.devops.common.bean.umc.model.StatMetrics;
 import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
@@ -74,9 +74,9 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	/**
 	 * Kafka
 	 */
-	@RequestMapping(URI_STAT_INFO)
-	public void statInfoReceive(@RequestBody StatInfos statInfos) {
-		putStatInfos(statInfos);
+	@RequestMapping(URI_METRIC)
+	public void statInfoReceive(@RequestBody StatMetrics statMetrics) {
+		putMetrics(statMetrics);
 	}
 
 

@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.StatInfos;
+import com.wl4g.devops.common.bean.umc.model.StatMetrics;
 import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
@@ -133,8 +133,8 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 
 
 	//kafka
-	protected void putStatInfos(StatInfos statInfos){
-		mStore.save(statInfos);
+	protected void putMetrics(StatMetrics statMetrics){
+		mStore.save(statMetrics);
 	}
 
 

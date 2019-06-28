@@ -7,22 +7,24 @@ import java.util.Map;
  * @author vjay
  * @date 2019-06-27 18:31:00
  */
-public class StatInfos implements Serializable {
+public class StatMetrics implements Serializable {
 
     private static final long serialVersionUID = 381411777614066880L;
 
-    private StatInfo[] statInfos;
+    private StatMetric[] statMetrics;
 
     private Long timestamp;
 
 
-    public static class StatInfo{
+    public static class StatMetric{
 
         private String metric;
 
         private Double value;
 
         private Map<String,String> tags;
+
+        private long timestamp;
 
         public String getMetric() {
             return metric;
@@ -48,14 +50,21 @@ public class StatInfos implements Serializable {
             this.tags = tags;
         }
 
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
     }
 
-    public StatInfo[] getStatInfos() {
-        return statInfos;
+    public StatMetric[] getStatMetrics() {
+        return statMetrics;
     }
 
-    public void setStatInfos(StatInfo[] statInfos) {
-        this.statInfos = statInfos;
+    public void setStatMetrics(StatMetric[] statMetrics) {
+        this.statMetrics = statMetrics;
     }
 
     public Long getTimestamp() {

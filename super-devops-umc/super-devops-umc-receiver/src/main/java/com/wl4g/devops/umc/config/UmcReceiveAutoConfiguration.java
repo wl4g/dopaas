@@ -49,8 +49,8 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_HTTP_RECEIVER)
 	@EnableHttpReceiver
-	public HttpCollectReceiver httpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
-		return new HttpCollectReceiver(pStore, vStore, rStore, zStore, kStore);
+	public HttpCollectReceiver httpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
+		return new HttpCollectReceiver(pStore, vStore, rStore, zStore, kStore,mStore);
 	}
 
 	@Bean
@@ -75,8 +75,8 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_KAFKA_RECEIVER)
 	@EnableKafkaReceiver
-	public KafkaCollectReceiver kafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
-		return new KafkaCollectReceiver(pStore, vStore, rStore, zStore, kStore);
+	public KafkaCollectReceiver kafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
+		return new KafkaCollectReceiver(pStore, vStore, rStore, zStore, kStore,mStore);
 	}
 
 	@Bean(BEAN_KAFKA_BATCH_FACTORY)
