@@ -35,6 +35,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
+
 /**
  * Generic task schedule runner.
  * 
@@ -42,11 +44,15 @@ import org.springframework.util.Assert;
  * @version v1.0 2019年6月2日
  * @since
  */
-public abstract class GenericTaskRunner implements DisposableBean, ApplicationRunner, Closeable, Runnable {
+public abstract class GenericTaskRunner<C extends TaskProperties>
+		implements DisposableBean, ApplicationRunner, Closeable, Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	/** Boss running. */
 	final private AtomicBoolean bossRunning = new AtomicBoolean(false);
-	final private TaskProperties taskProperties;
+
+	/** Runner task properties config. */
+	final C config;
 
 	/** Runner boss thread. */
 	private Thread boss;
@@ -54,9 +60,9 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	/** Runner worker thread group pool. */
 	private ThreadPoolExecutor worker;
 
-	public GenericTaskRunner(TaskProperties taskProperties) {
-		Assert.notNull(taskProperties, "Task properties must not be null");
-		this.taskProperties = taskProperties;
+	public GenericTaskRunner(C config) {
+		Assert.notNull(config, "Task properties must not be null");
+		this.config = config;
 	}
 
 	@Override
@@ -65,9 +71,9 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 		preStartupProperties();
 
 		if (bossRunning.compareAndSet(false, true)) {
-			final int concurrency = taskProperties.getConcurrency();
-			final long keepTime = taskProperties.getKeepAliveTime();
-			final int acceptQueue = taskProperties.getAcceptQueue();
+			final int concurrency = config.getConcurrency();
+			final long keepTime = config.getKeepAliveTime();
+			final int acceptQueue = config.getAcceptQueue();
 
 			// Create worker(if necessary)
 			if (concurrency > 0) {
@@ -80,7 +86,7 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 					job.setDaemon(false);
 					job.setPriority(Thread.NORM_PRIORITY);
 					return job;
-				}, taskProperties.getReject());
+				}, config.getReject());
 			}
 
 			// Create boss
@@ -162,6 +168,10 @@ public abstract class GenericTaskRunner implements DisposableBean, ApplicationRu
 	 */
 	protected boolean isActive() {
 		return boss != null && !boss.isInterrupted() && bossRunning.get();
+	}
+
+	public C getConfig() {
+		return config;
 	}
 
 	protected ThreadPoolExecutor getWorker() {
