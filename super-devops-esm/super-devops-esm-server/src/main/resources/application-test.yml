@@ -36,24 +36,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-  cloud:
-    devops:
-      umc:
-        store:
-          derby:
-          opentsdb:
-            host: http://10.0.0.57
-            port: 4242
-        receiver:
-          http:
-            enabled: true
-          kafka:
-            enabled: true
-            concurrency: 3
-            queue-depth: 4092
-            properties:
-              group.id: defaultUmcReceiverGroupId
-              bootstrap.servers: 127.0.0.1:9092
 
 # Spring-security config.
 security.user:

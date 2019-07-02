@@ -68,14 +68,13 @@ public class ReceiverProperties {
 				put(BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 				put(SESSION_TIMEOUT_MS_CONFIG, "20000");
 				put(FETCH_MIN_BYTES_CONFIG, "1");
-				put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-				put(VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+				put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.BytesDeserializer");
+				put(VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.BytesDeserializer");
 				put(AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
 				put(AUTO_OFFSET_RESET_CONFIG, "latest");
 				put(ENABLE_AUTO_COMMIT_CONFIG, "false");
 				put(MAX_POLL_RECORDS_CONFIG, "1000");
 				// put(ENABLE_AUTO_COMMIT_CONFIG, true);
-
 			}
 		};
 

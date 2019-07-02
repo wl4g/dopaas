@@ -11,6 +11,7 @@ import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.umc.store.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.utils.Bytes;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 
@@ -40,10 +41,10 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param ack
 	 */
 	@KafkaListener(topicPattern = TOPIC_RECEIVE_PATTERN, containerFactory = BEAN_KAFKA_BATCH_FACTORY)
-	public void onMultiReceive(List<ConsumerRecord<byte[], byte[]>> records, Acknowledgment ack) {
+	public void onMultiReceive(List<ConsumerRecord<byte[], Bytes>> records, Acknowledgment ack) {
 		try {
-			if (log.isInfoEnabled()) {
-				log.info("Consumer records for - {}", records);
+			if (log.isDebugEnabled()) {
+				log.debug("Consumer records for - {}", records);
 			}
 			// Process
 			doProcess(records, new MultiAcknowledgmentState(ack));
@@ -61,22 +62,49 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param records
 	 * @param state
 	 */
-	private void doProcess(List<ConsumerRecord<byte[], byte[]>> records, MultiAcknowledgmentState state) {
+	private void doProcess(List<ConsumerRecord<byte[], Bytes>> records, MultiAcknowledgmentState state) {
 		//
 		// TODO
 		//
-		for (ConsumerRecord<byte[], byte[]> consumerRecord : records) {
+		for (ConsumerRecord<byte[], Bytes> consumerRecord : records) {
 			log.info("listen kafka message" + consumerRecord.value());
-			byte[] key = consumerRecord.key();
-			byte[] value = consumerRecord.value();
+			Bytes value = consumerRecord.value();
 
 			try {
-				MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(value);
+				MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(value.get());
 				System.out.println(aggregate.getMetricsList().toString());
 			} catch (InvalidProtocolBufferException e) {
 				e.printStackTrace();
 			}
 
+			// switch (key) {
+			// case URI_PHYSICAL:
+			// PhysicalStatInfo physical = JacksonUtils.parseJSON(value,
+			// PhysicalStatInfo.class);
+			// putPhysical(physical);
+			// break;
+			// case URI_VIRTUAL_DOCKER:
+			// Docker docker = JacksonUtils.parseJSON(value, Docker.class);
+			// putVirtualDocker(docker);
+			// break;
+			// case URI_REDIS:
+			// RedisStatInfo redis = JacksonUtils.parseJSON(value,
+			// RedisStatInfo.class);
+			// putRedis(redis);
+			// break;
+			// case URI_ZOOKEEPER:
+			// ZookeeperStatInfo zookeeper = JacksonUtils.parseJSON(value,
+			// ZookeeperStatInfo.class);
+			// putZookeeper(zookeeper);
+			// break;
+			// case URI_KAFKA:
+			// KafkaStatInfo kafka = JacksonUtils.parseJSON(value,
+			// KafkaStatInfo.class);
+			// putKafka(kafka);
+			// break;
+			// default:
+			// throw new UnsupportedOperationException("unsupport this type");
+			// }
 //			switch (key) {
 //			case URI_PHYSICAL:
 //				PhysicalStatInfo physical = JacksonUtils.parseJSON(value, PhysicalStatInfo.class);
