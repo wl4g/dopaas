@@ -24,6 +24,7 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 @com.wl4g.devops.umc.annotation.HttpCollectReceiver
 public class HttpCollectReceiver extends AbstractCollectReceiver {
 
+
 	public HttpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
 		super(pStore, vStore, rStore,zStore,kStore,mStore);
 	}
@@ -36,7 +37,6 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 		putPhysical(physical);
 	}
 
-
 	//
 	// Virtual receiver
 	//
@@ -44,7 +44,6 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	public void dockerReceive(@RequestBody Docker docker) {
 		putVirtualDocker(docker);
 	}
-
 
 	/**
 	 * Redis
@@ -70,7 +69,6 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 		putKafka(kafka);
 	}
 
-
 	/**
 	 * Kafka
 	 */
@@ -78,8 +76,5 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	public void statInfoReceive(@RequestBody StatMetrics statMetrics) {
 		putMetrics(statMetrics);
 	}
-
-
-
 
 }

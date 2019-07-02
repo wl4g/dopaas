@@ -100,7 +100,6 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 		// Bulk consumption change buffer queue size.
 		containerProps.setQueueDepth(conf.getKafka().getQueueDepth());
 		containerProps.setAckMode(AckMode.MANUAL_IMMEDIATE);
-
 		return factory;
 	}
 

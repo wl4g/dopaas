@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: iam
+  application.name: iam-server
   profiles:
     active: test
   cloud: # Spring cloud configuration.
