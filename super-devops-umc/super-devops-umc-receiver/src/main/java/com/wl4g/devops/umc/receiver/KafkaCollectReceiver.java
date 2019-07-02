@@ -1,6 +1,9 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
 import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
@@ -25,8 +28,9 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
  */
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
-	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
-		super(pStore, vStore, rStore,zStore,kStore);
+	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore,
+			ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+		super(pStore, vStore, rStore, zStore, kStore);
 	}
 
 	/**
@@ -36,7 +40,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param ack
 	 */
 	@KafkaListener(topicPattern = TOPIC_RECEIVE_PATTERN, containerFactory = BEAN_KAFKA_BATCH_FACTORY)
-	public void onMultiReceive(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
+	public void onMultiReceive(List<ConsumerRecord<byte[], byte[]>> records, Acknowledgment ack) {
 		try {
 			if (log.isInfoEnabled()) {
 				log.info("Consumer records for - {}", records);
@@ -58,39 +62,46 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param records
 	 * @param state
 	 */
-	private void doProcess(List<ConsumerRecord<String, String>> records, MultiAcknowledgmentState state) {
+	private void doProcess(List<ConsumerRecord<byte[], byte[]>> records, MultiAcknowledgmentState state) {
 		//
 		// TODO
 		//
-		for(ConsumerRecord<String, String> consumerRecord : records){
-			log.info("listen kafka message"+consumerRecord.value());
-			String key = consumerRecord.key();
-			String value = consumerRecord.value();
+		for (ConsumerRecord<byte[], byte[]> consumerRecord : records) {
+			log.info("listen kafka message" + consumerRecord.value());
+			byte[] key = consumerRecord.key();
+			byte[] value = consumerRecord.value();
 
-			switch (key){
-				case URI_PHYSICAL:
-					PhysicalStatInfo physical = JacksonUtils.parseJSON(value, PhysicalStatInfo.class);
-					putPhysical(physical);
-					break;
-				case URI_VIRTUAL_DOCKER:
-					Docker docker = JacksonUtils.parseJSON(value, Docker.class);
-					putVirtualDocker(docker);
-					break;
-				case URI_REDIS:
-					RedisStatInfo redis = JacksonUtils.parseJSON(value, RedisStatInfo.class);
-					putRedis(redis);
-					break;
-				case URI_ZOOKEEPER:
-					ZookeeperStatInfo zookeeper = JacksonUtils.parseJSON(value, ZookeeperStatInfo.class);
-					putZookeeper(zookeeper);
-					break;
-				case URI_KAFKA:
-					KafkaStatInfo kafka = JacksonUtils.parseJSON(value, KafkaStatInfo.class);
-					putKafka(kafka);
-					break;
-				default:
-					throw new UnsupportedOperationException("unsupport this type");
+			try {
+				MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(value);
+				System.out.println(aggregate.getMetricsList().toString());
+			} catch (InvalidProtocolBufferException e) {
+				e.printStackTrace();
 			}
+			
+//			switch (key) {
+//			case URI_PHYSICAL:
+//				PhysicalStatInfo physical = JacksonUtils.parseJSON(value, PhysicalStatInfo.class);
+//				putPhysical(physical);
+//				break;
+//			case URI_VIRTUAL_DOCKER:
+//				Docker docker = JacksonUtils.parseJSON(value, Docker.class);
+//				putVirtualDocker(docker);
+//				break;
+//			case URI_REDIS:
+//				RedisStatInfo redis = JacksonUtils.parseJSON(value, RedisStatInfo.class);
+//				putRedis(redis);
+//				break;
+//			case URI_ZOOKEEPER:
+//				ZookeeperStatInfo zookeeper = JacksonUtils.parseJSON(value, ZookeeperStatInfo.class);
+//				putZookeeper(zookeeper);
+//				break;
+//			case URI_KAFKA:
+//				KafkaStatInfo kafka = JacksonUtils.parseJSON(value, KafkaStatInfo.class);
+//				putKafka(kafka);
+//				break;
+//			default:
+//				throw new UnsupportedOperationException("unsupport this type");
+//			}
 		}
 		state.completed();
 	}
