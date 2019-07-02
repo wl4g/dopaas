@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## A lightweight and comprehensive DevSecOps solution.
+## A lightweight and comprehensive microservice DevSecOps solution.
 
 [中文文档](README_CN.md)
 
