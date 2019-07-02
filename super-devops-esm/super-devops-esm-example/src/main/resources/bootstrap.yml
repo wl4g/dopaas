@@ -19,7 +19,7 @@ spring: # Base configuration.
 
 # #### Server configuration. ####
 server:
-  port: 14047
+  port: 14049
   contextPath: /${spring.application.name}
   tomcat:
     uri-encoding: UTF-8

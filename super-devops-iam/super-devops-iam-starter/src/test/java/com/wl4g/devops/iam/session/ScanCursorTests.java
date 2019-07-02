@@ -24,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.DevOpsIam;
+import com.wl4g.devops.IamServer;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.support.cache.ScanCursor;
@@ -33,7 +33,7 @@ import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ScanParams;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DevOpsIam.class)
+@SpringBootTest(classes = IamServer.class)
 public class ScanCursorTests {
 
 	@Autowired

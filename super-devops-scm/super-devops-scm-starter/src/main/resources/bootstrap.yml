@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: scm
+  application.name: scm-server
   profiles:
     active: test
   cloud: # Spring cloud configuration.
