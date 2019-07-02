@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-umc-alarm</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps UMC RESTful</name>
+	<name>Super DevOps UMC Alarm</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -18,7 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
+			<artifactId>super-devops-dao</artifactId>
 			<version>master</version>
 		</dependency>
 	</dependencies>
