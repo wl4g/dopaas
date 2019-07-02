@@ -53,7 +53,7 @@ spring:
             queue-depth: 4092
             properties:
               group.id: defaultUmcReceiverGroupId
-              bootstrap.servers: 127.0.0.1:9092
+              bootstrap.servers: owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092
 
 # Spring-security config.
 security.user:

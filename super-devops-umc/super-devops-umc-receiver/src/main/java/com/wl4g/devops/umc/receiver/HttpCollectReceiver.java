@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.wl4g.devops.common.bean.umc.model.StatMetrics;
 import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
 import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
@@ -23,9 +24,9 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 @com.wl4g.devops.umc.annotation.HttpCollectReceiver
 public class HttpCollectReceiver extends AbstractCollectReceiver {
 
-	public HttpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore,
-			ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
-		super(pStore, vStore, rStore, zStore, kStore);
+
+	public HttpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
+		super(pStore, vStore, rStore,zStore,kStore,mStore);
 	}
 
 	//
@@ -66,6 +67,14 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	@RequestMapping(URI_KAFKA)
 	public void kafkaReceive(@RequestBody KafkaStatInfo kafka) {
 		putKafka(kafka);
+	}
+
+	/**
+	 * Kafka
+	 */
+	@RequestMapping(URI_METRIC)
+	public void statInfoReceive(@RequestBody StatMetrics statMetrics) {
+		putMetrics(statMetrics);
 	}
 
 }
