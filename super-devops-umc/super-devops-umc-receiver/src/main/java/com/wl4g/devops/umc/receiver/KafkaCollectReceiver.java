@@ -22,7 +22,7 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
 
 /**
  * KAFKA collection receiver
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年6月17日
  * @since
@@ -30,13 +30,13 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
 	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore,
-			ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
-		super(pStore, vStore, rStore, zStore, kStore);
+								ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
+		super(pStore, vStore, rStore, zStore, kStore,mStore);
 	}
 
 	/**
 	 * Receiving consumer messages on multiple topics
-	 * 
+	 *
 	 * @param records
 	 * @param ack
 	 */
@@ -46,7 +46,6 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 			if (log.isDebugEnabled()) {
 				log.debug("Consumer records for - {}", records);
 			}
-
 			// Process
 			doProcess(records, new MultiAcknowledgmentState(ack));
 		} catch (Exception e) {
@@ -59,7 +58,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
 	/**
 	 * UMC agent metric processing.
-	 * 
+	 *
 	 * @param records
 	 * @param state
 	 */
@@ -106,13 +105,37 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 			// default:
 			// throw new UnsupportedOperationException("unsupport this type");
 			// }
+//			switch (key) {
+//			case URI_PHYSICAL:
+//				PhysicalStatInfo physical = JacksonUtils.parseJSON(value, PhysicalStatInfo.class);
+//				putPhysical(physical);
+//				break;
+//			case URI_VIRTUAL_DOCKER:
+//				Docker docker = JacksonUtils.parseJSON(value, Docker.class);
+//				putVirtualDocker(docker);
+//				break;
+//			case URI_REDIS:
+//				RedisStatInfo redis = JacksonUtils.parseJSON(value, RedisStatInfo.class);
+//				putRedis(redis);
+//				break;
+//			case URI_ZOOKEEPER:
+//				ZookeeperStatInfo zookeeper = JacksonUtils.parseJSON(value, ZookeeperStatInfo.class);
+//				putZookeeper(zookeeper);
+//				break;
+//			case URI_KAFKA:
+//				KafkaStatInfo kafka = JacksonUtils.parseJSON(value, KafkaStatInfo.class);
+//				putKafka(kafka);
+//				break;
+//			default:
+//				throw new UnsupportedOperationException("unsupport this type");
+//			}
 		}
 		state.completed();
 	}
 
 	/**
 	 * Multiple ACK completion state
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年6月18日
 	 * @since
