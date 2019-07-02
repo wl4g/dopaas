@@ -23,6 +23,8 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.scm.config.ScmProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
+import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -49,7 +51,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2018年10月26日
  * @since
  */
-public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner implements ConfigSourcePublisher {
+public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<TaskProperties> implements ConfigSourcePublisher {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -110,7 +112,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 								// Filters name space
 
 								wrap.getNamespaces().retainAll(watch.getNamespaces());
-								if (wrap.getNamespaces()!=null&&wrap.getNamespaces().size()>0) {
+								if (wrap.getNamespaces() != null && wrap.getNamespaces().size() > 0) {
 									// Filters instance
 									return wrap.getInstances().contains(watch.getInstance());
 								}
@@ -253,7 +255,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner im
 	 */
 	protected String getWatchKey(ReleaseInstance instance, List<String> namespaces) {
 		Assert.notNull(instance, "Release instance must not be null");
-		//Assert.notEmpty(namespaces, "Namespace must not be null");
+		// Assert.notEmpty(namespaces, "Namespace must not be null");
 		return instance.toString();
 	}
 

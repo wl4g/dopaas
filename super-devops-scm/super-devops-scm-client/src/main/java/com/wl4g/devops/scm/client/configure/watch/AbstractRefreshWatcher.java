@@ -21,10 +21,12 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import org.springframework.util.Assert;
+import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
+
+import org.springframework.util.Assert;
 
 /**
  * Abstract refresh watcher.
@@ -35,7 +37,7 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GE
  * @see {@link org.springframework.cloud.zookeeper.config.ConfigWatcher
  *      ConfigWatcher}
  */
-public abstract class AbstractRefreshWatcher extends GenericTaskRunner {
+public abstract class AbstractRefreshWatcher extends GenericTaskRunner<TaskProperties> {
 
 	/** SCM client configuration */
 	final protected ScmClientProperties config;
