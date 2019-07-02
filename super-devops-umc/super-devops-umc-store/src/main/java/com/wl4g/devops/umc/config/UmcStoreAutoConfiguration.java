@@ -5,6 +5,7 @@ import com.wl4g.devops.umc.annotation.EnableOpenTsdbStore;
 import com.wl4g.devops.umc.derby.DerbyMetricStore;
 import com.wl4g.devops.umc.opentsdb.TsdbMetricStore;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
+import com.wl4g.devops.umc.store.MetricStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -115,7 +116,7 @@ public class UmcStoreAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(DerbyMetricStore.class)
+	@ConditionalOnMissingBean(MetricStore.class)
 	public DerbyMetricStore derbyPhysicalMetricStore() {
 		return new DerbyMetricStore(derbyJdbcTemplate());
 	}
