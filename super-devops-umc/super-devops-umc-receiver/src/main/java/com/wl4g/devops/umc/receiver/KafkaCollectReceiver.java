@@ -1,15 +1,9 @@
 package com.wl4g.devops.umc.receiver;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
-import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
-import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
-import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
-import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-import com.wl4g.devops.umc.store.*;
+import com.wl4g.devops.umc.store.MetricStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,7 +11,7 @@ import org.springframework.kafka.support.Acknowledgment;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.TOPIC_RECEIVE_PATTERN;
 import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_BATCH_FACTORY;
 
 /**
@@ -29,9 +23,8 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
  */
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
-	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore,
-								ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
-		super(pStore, vStore, rStore, zStore, kStore,mStore);
+	public KafkaCollectReceiver(MetricStore store) {
+		super(store);
 	}
 
 	/**

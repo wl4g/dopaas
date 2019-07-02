@@ -2,9 +2,8 @@ package com.wl4g.devops.umc.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.wl4g.devops.umc.annotation.EnableOpenTsdbStore;
-import com.wl4g.devops.umc.derby.DerbyPhysicalMetricStore;
-import com.wl4g.devops.umc.derby.DerbyVirtualMetricStore;
-import com.wl4g.devops.umc.opentsdb.*;
+import com.wl4g.devops.umc.derby.DerbyMetricStore;
+import com.wl4g.devops.umc.opentsdb.TsdbMetricStore;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -45,40 +44,10 @@ public class UmcStoreAutoConfiguration {
 
 	@Bean
 	@EnableOpenTsdbStore
-	public TsdbPhysicalMetricStore tsdbPhysicalMetricStore(OpenTSDBClient client) {
-		return new TsdbPhysicalMetricStore(client);
+	public TsdbMetricStore tsdbPhysicalMetricStore(OpenTSDBClient client) {
+		return new TsdbMetricStore(client);
 	}
 
-	@Bean
-	@EnableOpenTsdbStore
-	public TsdbVirtualMetricStore tsdbVirtualMetricStore(OpenTSDBClient client) {
-		return new TsdbVirtualMetricStore(client);
-	}
-
-	@Bean
-	@EnableOpenTsdbStore
-	public TsdbRedisMetricStore tsdbRedisMetricStore(OpenTSDBClient client) {
-		return new TsdbRedisMetricStore(client);
-	}
-
-	@Bean
-	@EnableOpenTsdbStore
-	public TsdbZookeeperMetricStore tsdbZookeeperMetricStore(OpenTSDBClient client) {
-		return new TsdbZookeeperMetricStore(client);
-	}
-
-	@Bean
-	@EnableOpenTsdbStore
-	public TsdbKafkaMetricStore tsdbKafkaMetricStore(OpenTSDBClient client) {
-		return new TsdbKafkaMetricStore(client);
-	}
-
-
-	@Bean
-	@EnableOpenTsdbStore
-	public TsdbStatInfoMetricStore tsdbStatInfoMetricStore(OpenTSDBClient client) {
-		return new TsdbStatInfoMetricStore(client);
-	}
 	//
 	// Derby metric store's
 	//
@@ -112,7 +81,7 @@ public class UmcStoreAutoConfiguration {
 	 * @return
 	 */
 	@Bean(name = "derbyJdbcTemplate")
-	@ConditionalOnMissingBean(TsdbPhysicalMetricStore.class)
+	@ConditionalOnMissingBean(DerbyMetricStore.class)
 	public JdbcTemplate derbyJdbcTemplate() {
 		final DruidDataSource datasource = new DruidDataSource();
 		try {
@@ -146,15 +115,9 @@ public class UmcStoreAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(TsdbPhysicalMetricStore.class)
-	public DerbyPhysicalMetricStore derbyPhysicalMetricStore() {
-		return new DerbyPhysicalMetricStore(derbyJdbcTemplate());
-	}
-
-	@Bean
-	@ConditionalOnMissingBean(TsdbPhysicalMetricStore.class)
-	public DerbyVirtualMetricStore derbyVirtualMetricStore() {
-		return new DerbyVirtualMetricStore(derbyJdbcTemplate());
+	@ConditionalOnMissingBean(DerbyMetricStore.class)
+	public DerbyMetricStore derbyPhysicalMetricStore() {
+		return new DerbyMetricStore(derbyJdbcTemplate());
 	}
 
 }

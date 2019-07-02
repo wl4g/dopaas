@@ -1,5 +1,7 @@
 package com.wl4g.devops.umc.store;
 
+import com.wl4g.devops.common.bean.umc.model.StatMetrics;
+
 /**
  * UMC metric store
  * 
@@ -8,5 +10,7 @@ package com.wl4g.devops.umc.store;
  * @since
  */
 public interface MetricStore {
+
+    boolean save(StatMetrics statMetrics);
 
 }
