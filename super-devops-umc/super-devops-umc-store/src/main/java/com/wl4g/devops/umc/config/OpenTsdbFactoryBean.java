@@ -41,7 +41,7 @@ public class OpenTsdbFactoryBean implements InitializingBean, DisposableBean, Fa
 				// http请求超时时间，默认100s
 				.httpConnectTimeout(100)
 				// 异步写入数据时，每次http提交的数据条数，默认50
-				.batchPutSize(100)
+				.batchPutSize(500)
 				// 异步写入数据中，内部有一个队列，默认队列大小20000
 				.batchPutBufferSize(20000)
 				// 异步写入等待时间，如果距离上一次请求超多300ms，且有数据，则直接提交
