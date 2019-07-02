@@ -2,7 +2,7 @@
 
 English version goes [here](README.md)
 
-[客户端文档](https://github.com/wl4g/umc-agent/README_CN.md)
+[客户端文档](https://github.com/wl4g/umc-agent/blob/master/README.md)
 
 #### 编译客户端GO
 - 直接运行客户端
