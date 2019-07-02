@@ -21,7 +21,7 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
 
 /**
  * KAFKA collection receiver
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年6月17日
  * @since
@@ -29,13 +29,13 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
 public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
 	public KafkaCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore,
-			ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
-		super(pStore, vStore, rStore, zStore, kStore);
+								ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
+		super(pStore, vStore, rStore, zStore, kStore,mStore);
 	}
 
 	/**
 	 * Receiving consumer messages on multiple topics
-	 * 
+	 *
 	 * @param records
 	 * @param ack
 	 */
@@ -45,7 +45,6 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 			if (log.isInfoEnabled()) {
 				log.info("Consumer records for - {}", records);
 			}
-
 			// Process
 			doProcess(records, new MultiAcknowledgmentState(ack));
 		} catch (Exception e) {
@@ -58,7 +57,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
 	/**
 	 * UMC agent metric processing.
-	 * 
+	 *
 	 * @param records
 	 * @param state
 	 */
@@ -77,7 +76,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 			} catch (InvalidProtocolBufferException e) {
 				e.printStackTrace();
 			}
-			
+
 //			switch (key) {
 //			case URI_PHYSICAL:
 //				PhysicalStatInfo physical = JacksonUtils.parseJSON(value, PhysicalStatInfo.class);
@@ -108,7 +107,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 
 	/**
 	 * Multiple ACK completion state
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年6月18日
 	 * @since
