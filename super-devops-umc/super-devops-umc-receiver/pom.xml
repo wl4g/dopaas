@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-umc-receiver</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps UMC RESTful</name>
+	<name>Super DevOps UMC Receiver</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -16,6 +16,7 @@
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<spring-kafka.version>1.2.2.RELEASE</spring-kafka.version>
 		<kafka-clients.version>0.10.1.0</kafka-clients.version>
+		<final.name>umc-receiver</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -51,6 +52,16 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<finalName>${final.name}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>script/**</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -71,6 +82,26 @@
 						<phase>verify</phase>
 						<goals>
 							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>${final.name}-${project.version}-bin</finalName>
+					<!-- not append assembly id in release file name -->
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assemble/package.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>

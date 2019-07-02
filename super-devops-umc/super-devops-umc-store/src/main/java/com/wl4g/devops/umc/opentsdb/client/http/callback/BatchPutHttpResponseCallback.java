@@ -1,9 +1,8 @@
 package com.wl4g.devops.umc.opentsdb.client.http.callback;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-
+import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
+import com.wl4g.devops.umc.opentsdb.client.bean.response.DetailResult;
+import com.wl4g.devops.umc.opentsdb.client.common.Json;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
@@ -11,9 +10,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
-import com.wl4g.devops.umc.opentsdb.client.bean.response.DetailResult;
-import com.wl4g.devops.umc.opentsdb.client.common.Json;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * 异步写入回调
@@ -48,6 +47,7 @@ public class BatchPutHttpResponseCallback implements FutureCallback<HttpResponse
 				try {
 					String content = EntityUtils.toString(entity, Charset.defaultCharset());
 					DetailResult detailResult = Json.readValue(content, DetailResult.class);
+					log.info("commit success count{}",detailResult.getSuccess());
 					if (detailResult.getFailed() == 0) {
 						log.debug("批量添加错误数量为0，全部成功");
 						this.callBack.response(points, detailResult);

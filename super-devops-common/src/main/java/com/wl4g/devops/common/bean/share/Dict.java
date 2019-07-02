@@ -4,6 +4,13 @@ import com.wl4g.devops.common.bean.scm.BaseBean;
 
 import java.io.Serializable;
 
+/**
+ * System share dict bean.
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年7月2日
+ * @since
+ */
 public class Dict extends BaseBean implements Serializable {
 
 	private static final long serialVersionUID = 381411777614066880L;
