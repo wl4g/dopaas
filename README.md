@@ -4,6 +4,7 @@
 ## 工程模块说明
     super-devops-ci       Continuous integration(持续集成系统, 软件持续集成、构建发布)
     super-devops-common   Common(公共模块, 包括bean/utils等)
+    super-devops-esm      Elastic scaling management(弹性伸缩管理中心, 如：集成k8s、docker基于CPU、网络流量自动/手动容器伸缩管理)
     super-devops-scm      Soft configuration management(软件应用配置管理系统, 在线配置中心源热刷新)
     super-devops-srm      Soft resources management(软件容器相关资源管理系统, 提供部署模板、部署流程、容器初始化、服务编排及日志筛查等)
     super-devops-doc      API document(API文档系统, 在线API文档查阅)
