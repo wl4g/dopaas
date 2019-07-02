@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-umc-alarm</artifactId>
+	<artifactId>super-devops-esm-core</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps UMC Alarm</name>
+	<name>Super DevOps Core</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-umc</artifactId>
+		<artifactId>super-devops-esm</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -18,7 +18,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
+			<artifactId>super-devops-dao</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-support</artifactId>
 			<version>master</version>
 		</dependency>
 	</dependencies>

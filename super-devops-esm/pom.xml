@@ -1,36 +1,49 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-umc-alarm</artifactId>
-	<packaging>jar</packaging>
-	<name>Super DevOps UMC Alarm</name>
-	<url>http://maven.apache.org</url>
-	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-umc</artifactId>
-		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+	<groupId>com.wl4g</groupId>
+	<artifactId>super-devops-esm</artifactId>
+	<version>master</version>
+	<packaging>pom</packaging>
+	<name>Super DevOps ESM</name>
+	<modules>
+		<module>super-devops-esm-core</module>
+		<module>super-devops-esm-example</module>
+		<module>super-devops-esm-estimator</module>
+		<module>super-devops-esm-scaler</module>
+		<module>super-devops-esm-server</module>
+	</modules>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<project.parent.version>master</project.parent.version>
 	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
-			<version>master</version>
-		</dependency>
-	</dependencies>
+	<repositories>
+		<repository>
+			<id>nexus-senior-plugin</id>
+			<name>Team Nexus jar Repository</name>
+			<url>http://47.107.57.204/m2-repository/</url>
+		</repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/libs-snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
