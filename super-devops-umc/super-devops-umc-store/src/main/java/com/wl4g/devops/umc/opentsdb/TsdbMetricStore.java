@@ -3,7 +3,7 @@ package com.wl4g.devops.umc.opentsdb;
 import com.wl4g.devops.common.bean.umc.model.StatMetrics;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
-import com.wl4g.devops.umc.store.StatInfoMetricStore;
+import com.wl4g.devops.umc.store.MetricStore;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +14,13 @@ import java.util.Map;
  * @author vjay
  * @date 2019-06-20 16:12:00
  */
-public class TsdbStatInfoMetricStore implements StatInfoMetricStore {
+public class TsdbMetricStore implements MetricStore {
 
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	final protected OpenTSDBClient client;
 
-	public TsdbStatInfoMetricStore(OpenTSDBClient client) {
+	public TsdbMetricStore(OpenTSDBClient client) {
 		this.client = client;
 	}
 

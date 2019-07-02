@@ -1,17 +1,12 @@
 package com.wl4g.devops.umc.receiver;
 
 import com.wl4g.devops.common.bean.umc.model.StatMetrics;
-import com.wl4g.devops.common.bean.umc.model.physical.PhysicalStatInfo;
-import com.wl4g.devops.common.bean.umc.model.third.KafkaStatInfo;
-import com.wl4g.devops.common.bean.umc.model.third.RedisStatInfo;
-import com.wl4g.devops.common.bean.umc.model.third.ZookeeperStatInfo;
-import com.wl4g.devops.common.bean.umc.model.virtual.Docker;
-import com.wl4g.devops.umc.store.*;
+import com.wl4g.devops.umc.store.MetricStore;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_METRIC;
 
 /**
  * HTTP collection receiver
@@ -25,52 +20,13 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 public class HttpCollectReceiver extends AbstractCollectReceiver {
 
 
-	public HttpCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore,StatInfoMetricStore mStore) {
-		super(pStore, vStore, rStore,zStore,kStore,mStore);
+	public HttpCollectReceiver(MetricStore store) {
+		super(store);
 	}
 
-	//
-	// Physical receiver
-	//
-	@RequestMapping(URI_PHYSICAL)
-	public void physicalReceive(@RequestBody PhysicalStatInfo physical) {
-		putPhysical(physical);
-	}
-
-	//
-	// Virtual receiver
-	//
-	@RequestMapping(URI_VIRTUAL_DOCKER)
-	public void dockerReceive(@RequestBody Docker docker) {
-		putVirtualDocker(docker);
-	}
 
 	/**
-	 * Redis
-	 */
-	@RequestMapping(URI_REDIS)
-	public void redisReceive(@RequestBody RedisStatInfo redis) {
-		putRedis(redis);
-	}
-
-	/**
-	 * Zookeeper
-	 */
-	@RequestMapping(URI_ZOOKEEPER)
-	public void zookeeperReceive(@RequestBody ZookeeperStatInfo zookeeper) {
-		putZookeeper(zookeeper);
-	}
-
-	/**
-	 * Kafka
-	 */
-	@RequestMapping(URI_KAFKA)
-	public void kafkaReceive(@RequestBody KafkaStatInfo kafka) {
-		putKafka(kafka);
-	}
-
-	/**
-	 * Kafka
+	 * metrics
 	 */
 	@RequestMapping(URI_METRIC)
 	public void statInfoReceive(@RequestBody StatMetrics statMetrics) {
