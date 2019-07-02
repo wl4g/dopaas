@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## 一个轻量级而覆盖全面的DevSecOps解决方案.
+## 一个轻量而全面的微服务DevSecOps解决方案.
 
 English version goes [here](README.md)
 
