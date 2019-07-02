@@ -70,6 +70,9 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 				e.printStackTrace();
 			}
 
+			
+
+
 			// switch (key) {
 			// case URI_PHYSICAL:
 			// PhysicalStatInfo physical = JacksonUtils.parseJSON(value,

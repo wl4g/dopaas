@@ -1,8 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.StatMetrics;
 import com.wl4g.devops.umc.store.MetricStore;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -29,8 +27,11 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	 * metrics
 	 */
 	@RequestMapping(URI_METRIC)
-	public void statInfoReceive(@RequestBody StatMetrics statMetrics) {
-		putMetrics(statMetrics);
+	public void statInfoReceive() {
+		//System.out.println(body);
+		System.out.println("into");
+		//StatMetrics statMetrics = null;
+		//putMetrics(statMetrics);
 	}
 
 }
