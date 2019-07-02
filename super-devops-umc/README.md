@@ -1,4 +1,4 @@
-# UMC - An open source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.
+## UMC - An open source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.
 
 [中文文档](README_CN.md)
 
