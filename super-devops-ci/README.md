@@ -1,6 +1,6 @@
 ci system
 
-English version goes [here](README_CN.md)
+[中文文档](README_CN.md)
 
 # Quick start
 
