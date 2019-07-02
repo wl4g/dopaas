@@ -45,7 +45,7 @@ public class TsdbMetricStore implements MetricStore {
 			i++;
 			client.put(point);
 		}
-		log.info("count - "+i);
+		log.info("Metrics count - "+i);
 
 		/*for(StatMetrics.StatMetric statMetric : statMetrics.getStatMetrics()){
 			statMetric.setTimestamp(timestamp);
