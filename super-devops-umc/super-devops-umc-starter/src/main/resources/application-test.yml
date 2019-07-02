@@ -42,7 +42,7 @@ spring:
         store:
           derby:
           opentsdb:
-            host: http://10.0.0.57
+            host: http://10.0.0.160
             port: 4242
         receiver:
           http:
@@ -75,5 +75,5 @@ redis:
     - safecloud-test:7381
 
 opentsdb:
-  url: http://10.0.0.57
+  url: http://10.0.0.160
   port: 4242
