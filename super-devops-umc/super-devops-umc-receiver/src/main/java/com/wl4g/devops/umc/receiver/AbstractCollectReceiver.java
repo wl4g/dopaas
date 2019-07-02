@@ -40,8 +40,8 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	/** Kafka metric store adapter. */
 	final protected KafkaMetricStore kStore;
 
-	public AbstractCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore
-			, RedisMetricStore rStore, ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
+	public AbstractCollectReceiver(PhysicalMetricStore pStore, VirtualMetricStore vStore, RedisMetricStore rStore,
+			ZookeeperMetricStore zStore, KafkaMetricStore kStore) {
 		super();
 		this.pStore = pStore;
 		this.vStore = vStore;
@@ -109,23 +109,22 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 		vStore.save(docker);
 	}
 
-
 	//
 	// third storage
 	//
-	//redis
-	protected void putRedis(RedisStatInfo redis){
+	// redis
+	protected void putRedis(RedisStatInfo redis) {
 		rStore.save(redis);
 	}
-	//zookeeper
-	protected void putZookeeper(ZookeeperStatInfo zookeeper){
+
+	// zookeeper
+	protected void putZookeeper(ZookeeperStatInfo zookeeper) {
 		zStore.save(zookeeper);
 	}
-	//kafka
-	protected void putKafka(KafkaStatInfo kafka){
+
+	// kafka
+	protected void putKafka(KafkaStatInfo kafka) {
 		kStore.save(kafka);
 	}
-
-
 
 }

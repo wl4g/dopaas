@@ -20,8 +20,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.logging.LoggingSystem;
 
+import com.wl4g.devops.esm.annotation.EnableEsmServer;
 import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
 
+@EnableEsmServer
 @MapperScan("com.wl4g.devops.*.dao")
 @SpringBootApplication
 public class EsmServer {
