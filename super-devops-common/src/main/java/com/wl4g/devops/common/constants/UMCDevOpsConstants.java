@@ -55,7 +55,7 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	//
 
 	/** KAFKA receiver topic pattern */
-	final public static String TOPIC_RECEIVE_PATTERN = "__devops_umc_agent_metric_";
+	final public static String TOPIC_RECEIVE_PATTERN = "umc_agent_metrics";
 
 	//
 	// Server openTSDB metric
