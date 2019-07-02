@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps</name>
 	<url>https://super-devops.wl4g.com</url>
-	<description>A very lightweight DevSecOps full-featured platform for the entire software lifecycle</description>
+	<description>A DevSecOps solution that covers the entire software lifecycle and lightweight microservices.</description>
 	<organization>
 		<name>Wanglsir</name>
 		<url>https://blog.wl4g.com/super-devops</url>
@@ -50,11 +50,12 @@
 	</developers>
 	<modules>
 		<module>super-devops-common</module>
+		<module>super-devops-esm</module>
 		<module>super-devops-dao</module>
-		<module>super-devops-shell</module>
 		<module>super-devops-support</module>
 		<module>super-devops-scm</module>
 		<module>super-devops-ci</module>
+		<!-- <module>super-devops-shell</module> -->
 		<!--<module>super-devops-srm</module> -->
 		<!-- <module>super-devops-doc</module> -->
 		<module>super-devops-iam</module>
