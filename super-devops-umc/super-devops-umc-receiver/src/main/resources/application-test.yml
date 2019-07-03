@@ -54,6 +54,7 @@ spring:
             properties:
               group.id: defaultUmcReceiverGroupId
               bootstrap.servers: owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092
+#              bootstrap.servers: localhost:9092
 
 # Spring-security config.
 security.user:
