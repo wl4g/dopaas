@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.StatMetrics;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +29,8 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	}
 
 	//kafka
-	protected void putMetrics(StatMetrics statMetrics){
-		store.save(statMetrics);
+	protected void putMetrics(MetricModel.MetricAggregate aggregate){
+		store.save(aggregate);
 	}
 
 }
