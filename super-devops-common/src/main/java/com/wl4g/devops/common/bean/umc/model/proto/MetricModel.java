@@ -3,6 +3,7 @@
 
 package com.wl4g.devops.common.bean.umc.model.proto;
 
+@SuppressWarnings({ "unused", "unchecked", "deprecation" })
 public final class MetricModel {
 	private MetricModel() {
 	}
@@ -19,27 +20,37 @@ public final class MetricModel {
 			com.google.protobuf.MessageOrBuilder {
 
 		/**
-		 * <code>string Instance = 1;</code>
+		 * <code>string classify = 1;</code>
+		 */
+		java.lang.String getClassify();
+
+		/**
+		 * <code>string classify = 1;</code>
+		 */
+		com.google.protobuf.ByteString getClassifyBytes();
+
+		/**
+		 * <code>string instance = 2;</code>
 		 */
 		java.lang.String getInstance();
 
 		/**
-		 * <code>string Instance = 1;</code>
+		 * <code>string instance = 2;</code>
 		 */
 		com.google.protobuf.ByteString getInstanceBytes();
 
 		/**
-		 * <code>string Namespace = 2;</code>
+		 * <code>string namespace = 3;</code>
 		 */
 		java.lang.String getNamespace();
 
 		/**
-		 * <code>string Namespace = 2;</code>
+		 * <code>string namespace = 3;</code>
 		 */
 		com.google.protobuf.ByteString getNamespaceBytes();
 
 		/**
-		 * <code>int64 Timestamp = 3;</code>
+		 * <code>int64 timestamp = 4;</code>
 		 */
 		long getTimestamp();
 
@@ -48,7 +59,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		java.util.List<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric> getMetricsList();
 
@@ -57,7 +68,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric getMetrics(int index);
 
@@ -66,7 +77,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		int getMetricsCount();
 
@@ -75,7 +86,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		java.util.List<? extends com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder> getMetricsOrBuilderList();
 
@@ -84,7 +95,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder getMetricsOrBuilder(int index);
 	}
@@ -104,14 +115,11 @@ public final class MetricModel {
 		}
 
 		private MetricAggregate() {
+			classify_ = "";
 			instance_ = "";
 			namespace_ = "";
+			timestamp_ = 0L;
 			metrics_ = java.util.Collections.emptyList();
-		}
-
-		@java.lang.Override
-		protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-			return new MetricAggregate();
 		}
 
 		@java.lang.Override
@@ -139,31 +147,37 @@ public final class MetricModel {
 					case 10: {
 						java.lang.String s = input.readStringRequireUtf8();
 
-						instance_ = s;
+						classify_ = s;
 						break;
 					}
 					case 18: {
 						java.lang.String s = input.readStringRequireUtf8();
 
+						instance_ = s;
+						break;
+					}
+					case 26: {
+						java.lang.String s = input.readStringRequireUtf8();
+
 						namespace_ = s;
 						break;
 					}
-					case 24: {
+					case 32: {
 
 						timestamp_ = input.readInt64();
 						break;
 					}
-					case 34: {
-						if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+					case 42: {
+						if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
 							metrics_ = new java.util.ArrayList<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric>();
-							mutable_bitField0_ |= 0x00000001;
+							mutable_bitField0_ |= 0x00000010;
 						}
 						metrics_.add(input.readMessage(com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.parser(),
 								extensionRegistry));
 						break;
 					}
 					default: {
-						if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+						if (!parseUnknownFieldProto3(input, unknownFields, extensionRegistry, tag)) {
 							done = true;
 						}
 						break;
@@ -175,7 +189,7 @@ public final class MetricModel {
 			} catch (java.io.IOException e) {
 				throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
 			} finally {
-				if (((mutable_bitField0_ & 0x00000001) != 0)) {
+				if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
 					metrics_ = java.util.Collections.unmodifiableList(metrics_);
 				}
 				this.unknownFields = unknownFields.build();
@@ -195,11 +209,44 @@ public final class MetricModel {
 							com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate.Builder.class);
 		}
 
-		public static final int INSTANCE_FIELD_NUMBER = 1;
+		private int bitField0_;
+		public static final int CLASSIFY_FIELD_NUMBER = 1;
+		private volatile java.lang.Object classify_;
+
+		/**
+		 * <code>string classify = 1;</code>
+		 */
+		public java.lang.String getClassify() {
+			java.lang.Object ref = classify_;
+			if (ref instanceof java.lang.String) {
+				return (java.lang.String) ref;
+			} else {
+				com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+				java.lang.String s = bs.toStringUtf8();
+				classify_ = s;
+				return s;
+			}
+		}
+
+		/**
+		 * <code>string classify = 1;</code>
+		 */
+		public com.google.protobuf.ByteString getClassifyBytes() {
+			java.lang.Object ref = classify_;
+			if (ref instanceof java.lang.String) {
+				com.google.protobuf.ByteString b = com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+				classify_ = b;
+				return b;
+			} else {
+				return (com.google.protobuf.ByteString) ref;
+			}
+		}
+
+		public static final int INSTANCE_FIELD_NUMBER = 2;
 		private volatile java.lang.Object instance_;
 
 		/**
-		 * <code>string Instance = 1;</code>
+		 * <code>string instance = 2;</code>
 		 */
 		public java.lang.String getInstance() {
 			java.lang.Object ref = instance_;
@@ -214,7 +261,7 @@ public final class MetricModel {
 		}
 
 		/**
-		 * <code>string Instance = 1;</code>
+		 * <code>string instance = 2;</code>
 		 */
 		public com.google.protobuf.ByteString getInstanceBytes() {
 			java.lang.Object ref = instance_;
@@ -227,11 +274,11 @@ public final class MetricModel {
 			}
 		}
 
-		public static final int NAMESPACE_FIELD_NUMBER = 2;
+		public static final int NAMESPACE_FIELD_NUMBER = 3;
 		private volatile java.lang.Object namespace_;
 
 		/**
-		 * <code>string Namespace = 2;</code>
+		 * <code>string namespace = 3;</code>
 		 */
 		public java.lang.String getNamespace() {
 			java.lang.Object ref = namespace_;
@@ -246,7 +293,7 @@ public final class MetricModel {
 		}
 
 		/**
-		 * <code>string Namespace = 2;</code>
+		 * <code>string namespace = 3;</code>
 		 */
 		public com.google.protobuf.ByteString getNamespaceBytes() {
 			java.lang.Object ref = namespace_;
@@ -259,17 +306,17 @@ public final class MetricModel {
 			}
 		}
 
-		public static final int TIMESTAMP_FIELD_NUMBER = 3;
+		public static final int TIMESTAMP_FIELD_NUMBER = 4;
 		private long timestamp_;
 
 		/**
-		 * <code>int64 Timestamp = 3;</code>
+		 * <code>int64 timestamp = 4;</code>
 		 */
 		public long getTimestamp() {
 			return timestamp_;
 		}
 
-		public static final int METRICS_FIELD_NUMBER = 4;
+		public static final int METRICS_FIELD_NUMBER = 5;
 		private java.util.List<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric> metrics_;
 
 		/**
@@ -277,7 +324,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		public java.util.List<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric> getMetricsList() {
 			return metrics_;
@@ -288,7 +335,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		public java.util.List<? extends com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder> getMetricsOrBuilderList() {
 			return metrics_;
@@ -299,7 +346,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		public int getMetricsCount() {
 			return metrics_.size();
@@ -310,7 +357,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric getMetrics(int index) {
 			return metrics_.get(index);
@@ -321,7 +368,7 @@ public final class MetricModel {
 		 * Array&lt;Metric&gt;
 		 * </pre>
 		 *
-		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+		 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 		 */
 		public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder getMetricsOrBuilder(int index) {
 			return metrics_.get(index);
@@ -343,17 +390,20 @@ public final class MetricModel {
 
 		@java.lang.Override
 		public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+			if (!getClassifyBytes().isEmpty()) {
+				com.google.protobuf.GeneratedMessageV3.writeString(output, 1, classify_);
+			}
 			if (!getInstanceBytes().isEmpty()) {
-				com.google.protobuf.GeneratedMessageV3.writeString(output, 1, instance_);
+				com.google.protobuf.GeneratedMessageV3.writeString(output, 2, instance_);
 			}
 			if (!getNamespaceBytes().isEmpty()) {
-				com.google.protobuf.GeneratedMessageV3.writeString(output, 2, namespace_);
+				com.google.protobuf.GeneratedMessageV3.writeString(output, 3, namespace_);
 			}
 			if (timestamp_ != 0L) {
-				output.writeInt64(3, timestamp_);
+				output.writeInt64(4, timestamp_);
 			}
 			for (int i = 0; i < metrics_.size(); i++) {
-				output.writeMessage(4, metrics_.get(i));
+				output.writeMessage(5, metrics_.get(i));
 			}
 			unknownFields.writeTo(output);
 		}
@@ -365,17 +415,20 @@ public final class MetricModel {
 				return size;
 
 			size = 0;
+			if (!getClassifyBytes().isEmpty()) {
+				size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, classify_);
+			}
 			if (!getInstanceBytes().isEmpty()) {
-				size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, instance_);
+				size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, instance_);
 			}
 			if (!getNamespaceBytes().isEmpty()) {
-				size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, namespace_);
+				size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, namespace_);
 			}
 			if (timestamp_ != 0L) {
-				size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, timestamp_);
+				size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, timestamp_);
 			}
 			for (int i = 0; i < metrics_.size(); i++) {
-				size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, metrics_.get(i));
+				size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, metrics_.get(i));
 			}
 			size += unknownFields.getSerializedSize();
 			memoizedSize = size;
@@ -392,20 +445,16 @@ public final class MetricModel {
 			}
 			com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate other = (com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate) obj;
 
-			if (!getInstance().equals(other.getInstance()))
-				return false;
-			if (!getNamespace().equals(other.getNamespace()))
-				return false;
-			if (getTimestamp() != other.getTimestamp())
-				return false;
-			if (!getMetricsList().equals(other.getMetricsList()))
-				return false;
-			if (!unknownFields.equals(other.unknownFields))
-				return false;
-			return true;
+			boolean result = true;
+			result = result && getClassify().equals(other.getClassify());
+			result = result && getInstance().equals(other.getInstance());
+			result = result && getNamespace().equals(other.getNamespace());
+			result = result && (getTimestamp() == other.getTimestamp());
+			result = result && getMetricsList().equals(other.getMetricsList());
+			result = result && unknownFields.equals(other.unknownFields);
+			return result;
 		}
 
-		@SuppressWarnings("unchecked")
 		@java.lang.Override
 		public int hashCode() {
 			if (memoizedHashCode != 0) {
@@ -413,6 +462,8 @@ public final class MetricModel {
 			}
 			int hash = 41;
 			hash = (19 * hash) + getDescriptor().hashCode();
+			hash = (37 * hash) + CLASSIFY_FIELD_NUMBER;
+			hash = (53 * hash) + getClassify().hashCode();
 			hash = (37 * hash) + INSTANCE_FIELD_NUMBER;
 			hash = (53 * hash) + getInstance().hashCode();
 			hash = (37 * hash) + NAMESPACE_FIELD_NUMBER;
@@ -556,6 +607,8 @@ public final class MetricModel {
 			@java.lang.Override
 			public Builder clear() {
 				super.clear();
+				classify_ = "";
+
 				instance_ = "";
 
 				namespace_ = "";
@@ -564,7 +617,7 @@ public final class MetricModel {
 
 				if (metricsBuilder_ == null) {
 					metrics_ = java.util.Collections.emptyList();
-					bitField0_ = (bitField0_ & ~0x00000001);
+					bitField0_ = (bitField0_ & ~0x00000010);
 				} else {
 					metricsBuilder_.clear();
 				}
@@ -594,51 +647,55 @@ public final class MetricModel {
 			public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate buildPartial() {
 				com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate result = new com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate(
 						this);
+				int from_bitField0_ = bitField0_;
+				int to_bitField0_ = 0;
+				result.classify_ = classify_;
 				result.instance_ = instance_;
 				result.namespace_ = namespace_;
 				result.timestamp_ = timestamp_;
 				if (metricsBuilder_ == null) {
-					if (((bitField0_ & 0x00000001) != 0)) {
+					if (((bitField0_ & 0x00000010) == 0x00000010)) {
 						metrics_ = java.util.Collections.unmodifiableList(metrics_);
-						bitField0_ = (bitField0_ & ~0x00000001);
+						bitField0_ = (bitField0_ & ~0x00000010);
 					}
 					result.metrics_ = metrics_;
 				} else {
 					result.metrics_ = metricsBuilder_.build();
 				}
+				result.bitField0_ = to_bitField0_;
 				onBuilt();
 				return result;
 			}
 
 			@java.lang.Override
 			public Builder clone() {
-				return super.clone();
+				return (Builder) super.clone();
 			}
 
 			@java.lang.Override
 			public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
-				return super.setField(field, value);
+				return (Builder) super.setField(field, value);
 			}
 
 			@java.lang.Override
 			public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
-				return super.clearField(field);
+				return (Builder) super.clearField(field);
 			}
 
 			@java.lang.Override
 			public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-				return super.clearOneof(oneof);
+				return (Builder) super.clearOneof(oneof);
 			}
 
 			@java.lang.Override
 			public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
 					java.lang.Object value) {
-				return super.setRepeatedField(field, index, value);
+				return (Builder) super.setRepeatedField(field, index, value);
 			}
 
 			@java.lang.Override
 			public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
-				return super.addRepeatedField(field, value);
+				return (Builder) super.addRepeatedField(field, value);
 			}
 
 			@java.lang.Override
@@ -654,6 +711,10 @@ public final class MetricModel {
 			public Builder mergeFrom(com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate other) {
 				if (other == com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate.getDefaultInstance())
 					return this;
+				if (!other.getClassify().isEmpty()) {
+					classify_ = other.classify_;
+					onChanged();
+				}
 				if (!other.getInstance().isEmpty()) {
 					instance_ = other.instance_;
 					onChanged();
@@ -669,7 +730,7 @@ public final class MetricModel {
 					if (!other.metrics_.isEmpty()) {
 						if (metrics_.isEmpty()) {
 							metrics_ = other.metrics_;
-							bitField0_ = (bitField0_ & ~0x00000001);
+							bitField0_ = (bitField0_ & ~0x00000010);
 						} else {
 							ensureMetricsIsMutable();
 							metrics_.addAll(other.metrics_);
@@ -682,7 +743,7 @@ public final class MetricModel {
 							metricsBuilder_.dispose();
 							metricsBuilder_ = null;
 							metrics_ = other.metrics_;
-							bitField0_ = (bitField0_ & ~0x00000001);
+							bitField0_ = (bitField0_ & ~0x00000010);
 							metricsBuilder_ = com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
 									? getMetricsFieldBuilder() : null;
 						} else {
@@ -720,10 +781,78 @@ public final class MetricModel {
 
 			private int bitField0_;
 
+			private java.lang.Object classify_ = "";
+
+			/**
+			 * <code>string classify = 1;</code>
+			 */
+			public java.lang.String getClassify() {
+				java.lang.Object ref = classify_;
+				if (!(ref instanceof java.lang.String)) {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					classify_ = s;
+					return s;
+				} else {
+					return (java.lang.String) ref;
+				}
+			}
+
+			/**
+			 * <code>string classify = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getClassifyBytes() {
+				java.lang.Object ref = classify_;
+				if (ref instanceof String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+					classify_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			/**
+			 * <code>string classify = 1;</code>
+			 */
+			public Builder setClassify(java.lang.String value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+
+				classify_ = value;
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>string classify = 1;</code>
+			 */
+			public Builder clearClassify() {
+
+				classify_ = getDefaultInstance().getClassify();
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>string classify = 1;</code>
+			 */
+			public Builder setClassifyBytes(com.google.protobuf.ByteString value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				checkByteStringIsUtf8(value);
+
+				classify_ = value;
+				onChanged();
+				return this;
+			}
+
 			private java.lang.Object instance_ = "";
 
 			/**
-			 * <code>string Instance = 1;</code>
+			 * <code>string instance = 2;</code>
 			 */
 			public java.lang.String getInstance() {
 				java.lang.Object ref = instance_;
@@ -738,7 +867,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Instance = 1;</code>
+			 * <code>string instance = 2;</code>
 			 */
 			public com.google.protobuf.ByteString getInstanceBytes() {
 				java.lang.Object ref = instance_;
@@ -752,7 +881,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Instance = 1;</code>
+			 * <code>string instance = 2;</code>
 			 */
 			public Builder setInstance(java.lang.String value) {
 				if (value == null) {
@@ -765,7 +894,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Instance = 1;</code>
+			 * <code>string instance = 2;</code>
 			 */
 			public Builder clearInstance() {
 
@@ -775,7 +904,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Instance = 1;</code>
+			 * <code>string instance = 2;</code>
 			 */
 			public Builder setInstanceBytes(com.google.protobuf.ByteString value) {
 				if (value == null) {
@@ -791,7 +920,7 @@ public final class MetricModel {
 			private java.lang.Object namespace_ = "";
 
 			/**
-			 * <code>string Namespace = 2;</code>
+			 * <code>string namespace = 3;</code>
 			 */
 			public java.lang.String getNamespace() {
 				java.lang.Object ref = namespace_;
@@ -806,7 +935,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Namespace = 2;</code>
+			 * <code>string namespace = 3;</code>
 			 */
 			public com.google.protobuf.ByteString getNamespaceBytes() {
 				java.lang.Object ref = namespace_;
@@ -820,7 +949,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Namespace = 2;</code>
+			 * <code>string namespace = 3;</code>
 			 */
 			public Builder setNamespace(java.lang.String value) {
 				if (value == null) {
@@ -833,7 +962,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Namespace = 2;</code>
+			 * <code>string namespace = 3;</code>
 			 */
 			public Builder clearNamespace() {
 
@@ -843,7 +972,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>string Namespace = 2;</code>
+			 * <code>string namespace = 3;</code>
 			 */
 			public Builder setNamespaceBytes(com.google.protobuf.ByteString value) {
 				if (value == null) {
@@ -859,14 +988,14 @@ public final class MetricModel {
 			private long timestamp_;
 
 			/**
-			 * <code>int64 Timestamp = 3;</code>
+			 * <code>int64 timestamp = 4;</code>
 			 */
 			public long getTimestamp() {
 				return timestamp_;
 			}
 
 			/**
-			 * <code>int64 Timestamp = 3;</code>
+			 * <code>int64 timestamp = 4;</code>
 			 */
 			public Builder setTimestamp(long value) {
 
@@ -876,7 +1005,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>int64 Timestamp = 3;</code>
+			 * <code>int64 timestamp = 4;</code>
 			 */
 			public Builder clearTimestamp() {
 
@@ -889,9 +1018,9 @@ public final class MetricModel {
 					.emptyList();
 
 			private void ensureMetricsIsMutable() {
-				if (!((bitField0_ & 0x00000001) != 0)) {
+				if (!((bitField0_ & 0x00000010) == 0x00000010)) {
 					metrics_ = new java.util.ArrayList<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric>(metrics_);
-					bitField0_ |= 0x00000001;
+					bitField0_ |= 0x00000010;
 				}
 			}
 
@@ -902,7 +1031,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public java.util.List<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric> getMetricsList() {
 				if (metricsBuilder_ == null) {
@@ -917,7 +1046,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public int getMetricsCount() {
 				if (metricsBuilder_ == null) {
@@ -932,7 +1061,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric getMetrics(int index) {
 				if (metricsBuilder_ == null) {
@@ -947,7 +1076,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder setMetrics(int index, com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric value) {
 				if (metricsBuilder_ == null) {
@@ -968,7 +1097,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder setMetrics(int index,
 					com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder builderForValue) {
@@ -987,7 +1116,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder addMetrics(com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric value) {
 				if (metricsBuilder_ == null) {
@@ -1008,7 +1137,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder addMetrics(int index, com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric value) {
 				if (metricsBuilder_ == null) {
@@ -1029,7 +1158,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder addMetrics(com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder builderForValue) {
 				if (metricsBuilder_ == null) {
@@ -1047,7 +1176,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder addMetrics(int index,
 					com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder builderForValue) {
@@ -1066,7 +1195,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder addAllMetrics(
 					java.lang.Iterable<? extends com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric> values) {
@@ -1085,12 +1214,12 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder clearMetrics() {
 				if (metricsBuilder_ == null) {
 					metrics_ = java.util.Collections.emptyList();
-					bitField0_ = (bitField0_ & ~0x00000001);
+					bitField0_ = (bitField0_ & ~0x00000010);
 					onChanged();
 				} else {
 					metricsBuilder_.clear();
@@ -1103,7 +1232,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public Builder removeMetrics(int index) {
 				if (metricsBuilder_ == null) {
@@ -1121,7 +1250,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder getMetricsBuilder(int index) {
 				return getMetricsFieldBuilder().getBuilder(index);
@@ -1132,7 +1261,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder getMetricsOrBuilder(int index) {
 				if (metricsBuilder_ == null) {
@@ -1147,7 +1276,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public java.util.List<? extends com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder> getMetricsOrBuilderList() {
 				if (metricsBuilder_ != null) {
@@ -1162,7 +1291,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder addMetricsBuilder() {
 				return getMetricsFieldBuilder()
@@ -1174,7 +1303,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder addMetricsBuilder(int index) {
 				return getMetricsFieldBuilder().addBuilder(index,
@@ -1186,7 +1315,7 @@ public final class MetricModel {
 			 * Array&lt;Metric&gt;
 			 * </pre>
 			 *
-			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 4;</code>
+			 * <code>repeated .com.wl4g.devops.common.bean.umc.model.proto.Metric metrics = 5;</code>
 			 */
 			public java.util.List<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder> getMetricsBuilderList() {
 				return getMetricsFieldBuilder().getBuilderList();
@@ -1195,7 +1324,7 @@ public final class MetricModel {
 			private com.google.protobuf.RepeatedFieldBuilderV3<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric, com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder, com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder> getMetricsFieldBuilder() {
 				if (metricsBuilder_ == null) {
 					metricsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric, com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder, com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricOrBuilder>(
-							metrics_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+							metrics_, ((bitField0_ & 0x00000010) == 0x00000010), getParentForChildren(), isClean());
 					metrics_ = null;
 				}
 				return metricsBuilder_;
@@ -1203,7 +1332,7 @@ public final class MetricModel {
 
 			@java.lang.Override
 			public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
-				return super.setUnknownFields(unknownFields);
+				return super.setUnknownFieldsProto3(unknownFields);
 			}
 
 			@java.lang.Override
@@ -1264,12 +1393,12 @@ public final class MetricModel {
 		com.google.protobuf.ByteString getMetricBytes();
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 		int getTagsCount();
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 		boolean containsTags(java.lang.String key);
 
@@ -1280,18 +1409,18 @@ public final class MetricModel {
 		java.util.Map<java.lang.String, java.lang.String> getTags();
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 		java.util.Map<java.lang.String, java.lang.String> getTagsMap();
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 
 		java.lang.String getTagsOrDefault(java.lang.String key, java.lang.String defaultValue);
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 
 		java.lang.String getTagsOrThrow(java.lang.String key);
@@ -1317,11 +1446,7 @@ public final class MetricModel {
 
 		private Metric() {
 			metric_ = "";
-		}
-
-		@java.lang.Override
-		protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-			return new Metric();
+			value_ = 0D;
 		}
 
 		@java.lang.Override
@@ -1352,9 +1477,9 @@ public final class MetricModel {
 						break;
 					}
 					case 18: {
-						if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+						if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
 							tags_ = com.google.protobuf.MapField.newMapField(TagsDefaultEntryHolder.defaultEntry);
-							mutable_bitField0_ |= 0x00000001;
+							mutable_bitField0_ |= 0x00000002;
 						}
 						com.google.protobuf.MapEntry<java.lang.String, java.lang.String> tags__ = input
 								.readMessage(TagsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
@@ -1367,7 +1492,7 @@ public final class MetricModel {
 						break;
 					}
 					default: {
-						if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+						if (!parseUnknownFieldProto3(input, unknownFields, extensionRegistry, tag)) {
 							done = true;
 						}
 						break;
@@ -1406,6 +1531,7 @@ public final class MetricModel {
 							com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric.Builder.class);
 		}
 
+		private int bitField0_;
 		public static final int METRIC_FIELD_NUMBER = 1;
 		private volatile java.lang.Object metric_;
 
@@ -1460,7 +1586,7 @@ public final class MetricModel {
 		}
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 
 		public boolean containsTags(java.lang.String key) {
@@ -1479,7 +1605,7 @@ public final class MetricModel {
 		}
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 
 		public java.util.Map<java.lang.String, java.lang.String> getTagsMap() {
@@ -1487,7 +1613,7 @@ public final class MetricModel {
 		}
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 
 		public java.lang.String getTagsOrDefault(java.lang.String key, java.lang.String defaultValue) {
@@ -1499,7 +1625,7 @@ public final class MetricModel {
 		}
 
 		/**
-		 * <code>map&lt;string, string&gt; Tags = 2;</code>
+		 * <code>map&lt;string, string&gt; tags = 2;</code>
 		 */
 
 		public java.lang.String getTagsOrThrow(java.lang.String key) {
@@ -1583,18 +1709,15 @@ public final class MetricModel {
 			}
 			com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric other = (com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric) obj;
 
-			if (!getMetric().equals(other.getMetric()))
-				return false;
-			if (!internalGetTags().equals(other.internalGetTags()))
-				return false;
-			if (java.lang.Double.doubleToLongBits(getValue()) != java.lang.Double.doubleToLongBits(other.getValue()))
-				return false;
-			if (!unknownFields.equals(other.unknownFields))
-				return false;
-			return true;
+			boolean result = true;
+			result = result && getMetric().equals(other.getMetric());
+			result = result && internalGetTags().equals(other.internalGetTags());
+			result = result
+					&& (java.lang.Double.doubleToLongBits(getValue()) == java.lang.Double.doubleToLongBits(other.getValue()));
+			result = result && unknownFields.equals(other.unknownFields);
+			return result;
 		}
 
-		@SuppressWarnings("unchecked")
 		@java.lang.Override
 		public int hashCode() {
 			if (memoizedHashCode != 0) {
@@ -1791,43 +1914,46 @@ public final class MetricModel {
 			public com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric buildPartial() {
 				com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric result = new com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric(
 						this);
+				int from_bitField0_ = bitField0_;
+				int to_bitField0_ = 0;
 				result.metric_ = metric_;
 				result.tags_ = internalGetTags();
 				result.tags_.makeImmutable();
 				result.value_ = value_;
+				result.bitField0_ = to_bitField0_;
 				onBuilt();
 				return result;
 			}
 
 			@java.lang.Override
 			public Builder clone() {
-				return super.clone();
+				return (Builder) super.clone();
 			}
 
 			@java.lang.Override
 			public Builder setField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
-				return super.setField(field, value);
+				return (Builder) super.setField(field, value);
 			}
 
 			@java.lang.Override
 			public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
-				return super.clearField(field);
+				return (Builder) super.clearField(field);
 			}
 
 			@java.lang.Override
 			public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-				return super.clearOneof(oneof);
+				return (Builder) super.clearOneof(oneof);
 			}
 
 			@java.lang.Override
 			public Builder setRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, int index,
 					java.lang.Object value) {
-				return super.setRepeatedField(field, index, value);
+				return (Builder) super.setRepeatedField(field, index, value);
 			}
 
 			@java.lang.Override
 			public Builder addRepeatedField(com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
-				return super.addRepeatedField(field, value);
+				return (Builder) super.addRepeatedField(field, value);
 			}
 
 			@java.lang.Override
@@ -1877,6 +2003,8 @@ public final class MetricModel {
 				}
 				return this;
 			}
+
+			private int bitField0_;
 
 			private java.lang.Object metric_ = "";
 
@@ -1972,7 +2100,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>map&lt;string, string&gt; Tags = 2;</code>
+			 * <code>map&lt;string, string&gt; tags = 2;</code>
 			 */
 
 			public boolean containsTags(java.lang.String key) {
@@ -1991,7 +2119,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>map&lt;string, string&gt; Tags = 2;</code>
+			 * <code>map&lt;string, string&gt; tags = 2;</code>
 			 */
 
 			public java.util.Map<java.lang.String, java.lang.String> getTagsMap() {
@@ -1999,7 +2127,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>map&lt;string, string&gt; Tags = 2;</code>
+			 * <code>map&lt;string, string&gt; tags = 2;</code>
 			 */
 
 			public java.lang.String getTagsOrDefault(java.lang.String key, java.lang.String defaultValue) {
@@ -2011,7 +2139,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>map&lt;string, string&gt; Tags = 2;</code>
+			 * <code>map&lt;string, string&gt; tags = 2;</code>
 			 */
 
 			public java.lang.String getTagsOrThrow(java.lang.String key) {
@@ -2031,7 +2159,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>map&lt;string, string&gt; Tags = 2;</code>
+			 * <code>map&lt;string, string&gt; tags = 2;</code>
 			 */
 
 			public Builder removeTags(java.lang.String key) {
@@ -2051,7 +2179,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>map&lt;string, string&gt; Tags = 2;</code>
+			 * <code>map&lt;string, string&gt; tags = 2;</code>
 			 */
 			public Builder putTags(java.lang.String key, java.lang.String value) {
 				if (key == null) {
@@ -2065,7 +2193,7 @@ public final class MetricModel {
 			}
 
 			/**
-			 * <code>map&lt;string, string&gt; Tags = 2;</code>
+			 * <code>map&lt;string, string&gt; tags = 2;</code>
 			 */
 
 			public Builder putAllTags(java.util.Map<java.lang.String, java.lang.String> values) {
@@ -2104,7 +2232,7 @@ public final class MetricModel {
 
 			@java.lang.Override
 			public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
-				return super.setUnknownFields(unknownFields);
+				return super.setUnknownFieldsProto3(unknownFields);
 			}
 
 			@java.lang.Override
@@ -2155,6 +2283,7 @@ public final class MetricModel {
 	private static final com.google.protobuf.Descriptors.Descriptor internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_descriptor;
 	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_fieldAccessorTable;
 	private static final com.google.protobuf.Descriptors.Descriptor internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_TagsEntry_descriptor;
+	private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_TagsEntry_fieldAccessorTable;
 
 	public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
 		return descriptor;
@@ -2163,28 +2292,34 @@ public final class MetricModel {
 	private static com.google.protobuf.Descriptors.FileDescriptor descriptor;
 	static {
 		java.lang.String[] descriptorData = { "\n>com/wl4g/devops/common/bean/umc/model/"
-				+ "proto/metric_model.proto\022+com.wl4g.devop" + "s.common.bean.umc.model.proto\"\217\001\n\017Metric"
-				+ "Aggregate\022\020\n\010Instance\030\001 \001(\t\022\021\n\tNamespace"
-				+ "\030\002 \001(\t\022\021\n\tTimestamp\030\003 \001(\003\022D\n\007metrics\030\004 \003"
-				+ "(\01323.com.wl4g.devops.common.bean.umc.mod"
-				+ "el.proto.Metric\"\241\001\n\006Metric\022\016\n\006Metric\030\001 \001"
-				+ "(\t\022K\n\004Tags\030\002 \003(\0132=.com.wl4g.devops.commo" + "n.bean.umc.model.proto.Metric.TagsEntry\022"
-				+ "\r\n\005Value\030\003 \001(\001\032+\n\tTagsEntry\022\013\n\003key\030\001 \001(\t"
-				+ "\022\r\n\005value\030\002 \001(\t:\0028\001b\006proto3" };
-		descriptor = com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(descriptorData,
-				new com.google.protobuf.Descriptors.FileDescriptor[] {});
+				+ "proto/metric_model.proto\022+com.wl4g.devop" + "s.common.bean.umc.model.proto\"\241\001\n\017Metric"
+				+ "Aggregate\022\020\n\010classify\030\001 \001(\t\022\020\n\010instance\030"
+				+ "\002 \001(\t\022\021\n\tnamespace\030\003 \001(\t\022\021\n\ttimestamp\030\004 "
+				+ "\001(\003\022D\n\007metrics\030\005 \003(\01323.com.wl4g.devops.c"
+				+ "ommon.bean.umc.model.proto.Metric\"\241\001\n\006Me"
+				+ "tric\022\016\n\006Metric\030\001 \001(\t\022K\n\004tags\030\002 \003(\0132=.com"
+				+ ".wl4g.devops.common.bean.umc.model.proto" + ".Metric.TagsEntry\022\r\n\005Value\030\003 \001(\001\032+\n\tTags"
+				+ "Entry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001b\006p" + "roto3" };
+		com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner = new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+			public com.google.protobuf.ExtensionRegistry assignDescriptors(com.google.protobuf.Descriptors.FileDescriptor root) {
+				descriptor = root;
+				return null;
+			}
+		};
+		com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(descriptorData,
+				new com.google.protobuf.Descriptors.FileDescriptor[] {}, assigner);
 		internal_static_com_wl4g_devops_common_bean_umc_model_proto_MetricAggregate_descriptor = getDescriptor().getMessageTypes()
 				.get(0);
 		internal_static_com_wl4g_devops_common_bean_umc_model_proto_MetricAggregate_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
 				internal_static_com_wl4g_devops_common_bean_umc_model_proto_MetricAggregate_descriptor,
-				new java.lang.String[] { "Instance", "Namespace", "Timestamp", "Metrics", });
+				new java.lang.String[] { "Classify", "Instance", "Namespace", "Timestamp", "Metrics", });
 		internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_descriptor = getDescriptor().getMessageTypes().get(1);
 		internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
 				internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_descriptor,
 				new java.lang.String[] { "Metric", "Tags", "Value", });
 		internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_TagsEntry_descriptor = internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_descriptor
 				.getNestedTypes().get(0);
-		new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+		internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_TagsEntry_fieldAccessorTable = new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
 				internal_static_com_wl4g_devops_common_bean_umc_model_proto_Metric_TagsEntry_descriptor,
 				new java.lang.String[] { "Key", "Value", });
 	}

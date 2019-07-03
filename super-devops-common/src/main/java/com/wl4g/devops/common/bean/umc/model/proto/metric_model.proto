@@ -15,19 +15,20 @@
  */
 syntax = "proto3";  // Must(proto2,proto3)
 
-package indicators;
-//package com.wl4g.devops.common.bean.umc.model.proto;
+//package indicators;
+package com.wl4g.devops.common.bean.umc.model.proto;
 
 message MetricAggregate {
-    string Instance = 1;
-    string Namespace = 2;
-    int64 Timestamp = 3;
-    repeated Metric metrics = 4; // Array<Metric>
+    string classify = 1;
+    string instance = 2;
+    string namespace = 3;
+    int64 timestamp = 4;
+    repeated Metric metrics = 5; // Array<Metric>
 }
 
 message Metric {
     string Metric = 1;
-    map<string, string> Tags = 2;
+    map<string, string> tags = 2;
     double Value = 3;
 }
 
@@ -46,7 +47,7 @@ message Metric {
 // cd $PROJECT_HOME/pkg
 // protoc --gogo_out=. indicators/metric_model.proto
 //
-// [java]
+// [java] @SuppressWarnings({ "unused", "unchecked", "deprecation" })
 //
 // cd $PROJECT_HOME/src/main/java
 // protoc --java_out=. com/wl4g/devops/common/bean/umc/model/proto/metric_model.proto
