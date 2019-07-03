@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.derby;
 
-import com.wl4g.devops.common.bean.umc.model.StatMetrics;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
@@ -23,7 +23,7 @@ public class DerbyMetricStore implements MetricStore {
 
 
 	@Override
-	public boolean save(StatMetrics statMetrics) {
+	public boolean save(MetricModel.MetricAggregate aggregate) {
 		return false;
 	}
 }
