@@ -35,7 +35,7 @@ public class TsdbMetricStore implements MetricStore {
 				continue;
 			}
 
-			Point.MetricBuilder pointBuilder = Point.metric(statMetric.getMetric()).value(timestamp/1000, statMetric.getValue());
+			Point.MetricBuilder pointBuilder = Point.metric(statMetric.getMetric()).value(timestamp, statMetric.getValue());
 			Map<String, String> tag = statMetric.getTagsMap();
 			for (Map.Entry<String, String> entry : tag.entrySet()) {
 				String key = entry.getKey();
