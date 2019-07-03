@@ -37,15 +37,15 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	public void onMultiReceive(List<ConsumerRecord<byte[], Bytes>> records, Acknowledgment ack) {
 		try {
 			if (log.isDebugEnabled()) {
-				//log.debug("Consumer records for - {}", records);
+				log.debug("Receive metric records - {}", records);
 			}
-			// Process
+			if (log.isInfoEnabled()) {
+				log.info("Receive metric records size - {}", records.size());
+			}
+
 			doProcess(records, new MultiAcknowledgmentState(ack));
 		} catch (Exception e) {
-			log.error("", e);
-		} finally {
-			// Echo
-			// ack.acknowledge();
+			log.error(String.format("Failed to receive process for ", records.size()), e);
 		}
 	}
 
@@ -56,17 +56,17 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param state
 	 */
 	private void doProcess(List<ConsumerRecord<byte[], Bytes>> records, MultiAcknowledgmentState state) {
-		//
-		// TODO
-		//
 		for (ConsumerRecord<byte[], Bytes> consumerRecord : records) {
-			//log.info("listen kafka message" + consumerRecord.value());
-			Bytes value = consumerRecord.value();
 			try {
+				Bytes value = consumerRecord.value();
 				MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(value.get());
+				if (log.isDebugEnabled()) {
+					log.debug("Put aggregate metric for - {}", aggregate);
+				}
+
 				putMetrics(aggregate);
 			} catch (InvalidProtocolBufferException e) {
-				e.printStackTrace();
+				log.error("Failed to parse metric message.", e);
 			}
 		}
 		state.completed();
