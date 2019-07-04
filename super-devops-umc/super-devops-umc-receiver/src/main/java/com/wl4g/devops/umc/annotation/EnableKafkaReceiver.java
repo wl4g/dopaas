@@ -21,6 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import static com.wl4g.devops.umc.config.ReceiverProperties.*;
 
 @Retention(RetentionPolicy.RUNTIME)

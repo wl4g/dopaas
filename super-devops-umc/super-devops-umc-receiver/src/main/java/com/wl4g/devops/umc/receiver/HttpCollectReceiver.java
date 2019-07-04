@@ -17,21 +17,19 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_METRIC;
 @com.wl4g.devops.umc.annotation.HttpCollectReceiver
 public class HttpCollectReceiver extends AbstractCollectReceiver {
 
-
 	public HttpCollectReceiver(MetricStore store) {
 		super(store);
 	}
-
 
 	/**
 	 * metrics
 	 */
 	@RequestMapping(URI_METRIC)
 	public void statInfoReceive() {
-		//System.out.println(body);
+		// System.out.println(body);
 		System.out.println("into");
-		//StatMetrics statMetrics = null;
-		//putMetrics(statMetrics);
+		// StatMetrics statMetrics = null;
+		// putMetrics(statMetrics);
 	}
 
 }

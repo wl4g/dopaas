@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.admin;
+package com.wl4g.devops.umc.web;
 
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
@@ -34,7 +34,7 @@ import java.util.Date;
 
 @Controller
 @RequestMapping(UMCDevOpsConstants.URI_DASHBOARD)
-public class DashboardController extends BaseController {
+public class HomeController extends BaseController {
 
 	@Autowired
 	private DashboardHandle dashboardService;

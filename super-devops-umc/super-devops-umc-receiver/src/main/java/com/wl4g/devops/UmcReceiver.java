@@ -27,7 +27,7 @@ import de.codecentric.boot.admin.config.EnableAdminServer;
 
 @EnableAdminServer
 @EnableDiscoveryClient
-@MapperScan("com.wl4g.devops.*.dao")
+@MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class UmcReceiver {
 

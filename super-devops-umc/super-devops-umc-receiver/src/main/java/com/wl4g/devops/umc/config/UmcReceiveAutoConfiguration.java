@@ -6,6 +6,7 @@ import com.wl4g.devops.umc.annotation.EnableKafkaReceiver;
 import com.wl4g.devops.umc.receiver.HttpCollectReceiver;
 import com.wl4g.devops.umc.receiver.KafkaCollectReceiver;
 import com.wl4g.devops.umc.store.*;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

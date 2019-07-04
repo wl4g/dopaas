@@ -16,8 +16,6 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-
-
 	/** metric store adapter. */
 	final protected MetricStore store;
 
@@ -28,8 +26,8 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 
 	}
 
-	//kafka
-	protected void putMetrics(MetricModel.MetricAggregate aggregate){
+	// kafka
+	protected void putMetrics(MetricModel.MetricAggregate aggregate) {
 		store.save(aggregate);
 	}
 
