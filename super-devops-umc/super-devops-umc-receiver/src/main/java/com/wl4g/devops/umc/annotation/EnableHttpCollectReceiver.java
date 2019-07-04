@@ -27,6 +27,6 @@ import static com.wl4g.devops.umc.config.ReceiverProperties.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @ConditionalOnProperty(name = KEY_RECEIVER_PREFIX + ".http.enabled", matchIfMissing = false)
-public @interface EnableHttpReceiver {
+public @interface EnableHttpCollectReceiver {
 
 }

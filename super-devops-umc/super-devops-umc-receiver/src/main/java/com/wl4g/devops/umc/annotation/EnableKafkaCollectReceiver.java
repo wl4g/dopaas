@@ -27,6 +27,6 @@ import static com.wl4g.devops.umc.config.ReceiverProperties.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @ConditionalOnProperty(name = KEY_RECEIVER_PREFIX + ".kafka.enabled", matchIfMissing = false)
-public @interface EnableKafkaReceiver {
+public @interface EnableKafkaCollectReceiver {
 
 }
