@@ -1,12 +1,13 @@
 package com.wl4g.devops.umc.config;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.umc.annotation.EnableHttpReceiver;
-import com.wl4g.devops.umc.annotation.EnableKafkaReceiver;
+import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
+import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
 import com.wl4g.devops.umc.receiver.HttpCollectReceiver;
 import com.wl4g.devops.umc.receiver.KafkaCollectReceiver;
 import com.wl4g.devops.umc.store.*;
 
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
  * @since
  */
 @Configuration
+@ImportAutoConfiguration(UmcWatchAutoConfiguration.class)
 public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
 	final public static String BEAN_HTTP_RECEIVER = "httpCollectReceiver";
@@ -49,13 +51,13 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 	//
 
 	@Bean(BEAN_HTTP_RECEIVER)
-	@EnableHttpReceiver
+	@EnableHttpCollectReceiver
 	public HttpCollectReceiver httpCollectReceiver(MetricStore store) {
 		return new HttpCollectReceiver(store);
 	}
 
 	@Bean
-	@EnableHttpReceiver
+	@EnableHttpCollectReceiver
 	public PrefixHandlerMapping httpCollectReceiverPrefixHandlerMapping() {
 		return createPrefixHandlerMapping();
 	}
@@ -75,13 +77,13 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 	//
 
 	@Bean(BEAN_KAFKA_RECEIVER)
-	@EnableKafkaReceiver
+	@EnableKafkaCollectReceiver
 	public KafkaCollectReceiver kafkaCollectReceiver(MetricStore store) {
 		return new KafkaCollectReceiver(store);
 	}
 
 	@Bean(BEAN_KAFKA_BATCH_FACTORY)
-	@EnableKafkaReceiver
+	@EnableKafkaCollectReceiver
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public KafkaListenerContainerFactory<?> batchFactory(ReceiverProperties conf) {
 		// Create consumer factory.

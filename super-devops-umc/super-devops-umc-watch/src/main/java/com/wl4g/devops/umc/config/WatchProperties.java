@@ -13,17 +13,17 @@ import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
 public class WatchProperties extends TaskProperties {
 	private static final long serialVersionUID = 5508561234067054195L;
 
-	private String zkServers;
+	private String zkServers = "localhost:2181";
 
-	private String namespace;
+	private String namespace = "umcElasticJobNs";
 
-	private String cron;
+	private String cron = "0/30 * * * * ?";
 
-	private int totalCount;
+	private int totalCount = 1;
 
 	private String itemParams;
 
-	private int fetchCacheTime = -1;
+	private int fetchCacheSec = -1;
 
 	public String getZkServers() {
 		return zkServers;
@@ -69,12 +69,12 @@ public class WatchProperties extends TaskProperties {
 		this.itemParams = itemParams;
 	}
 
-	public int getFetchCacheTime() {
-		return fetchCacheTime;
+	public int getFetchCacheSec() {
+		return fetchCacheSec;
 	}
 
-	public void setFetchCacheTime(int fetchCacheTime) {
-		this.fetchCacheTime = fetchCacheTime;
+	public void setFetchCacheSec(int fetchCacheTime) {
+		this.fetchCacheSec = fetchCacheTime;
 	}
 
 }

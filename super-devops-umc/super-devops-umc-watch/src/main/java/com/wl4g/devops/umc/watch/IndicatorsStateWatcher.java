@@ -48,7 +48,7 @@ public abstract class IndicatorsStateWatcher implements SimpleJob {
 			List<IndicatorsMetaInfo> dataset = null;
 
 			// Fetch indicators meta info.
-			if (config.getFetchCacheTime() > 0) {
+			if (config.getFetchCacheSec() > 0) {
 				// Fetch from cache
 				dataset = fetchCache();
 				if (isEmpty(dataset)) {
@@ -61,7 +61,7 @@ public abstract class IndicatorsStateWatcher implements SimpleJob {
 			}
 
 			if (log.isInfoEnabled()) {
-				log.info("Fetch indicators metas for - size({})", dataset.size());
+				log.info("Fetch indicators metas for - size({})", (dataset != null ? dataset.size() : 0));
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("Fetch indicators metas for - {}", dataset);
@@ -93,7 +93,7 @@ public abstract class IndicatorsStateWatcher implements SimpleJob {
 			return;
 		}
 
-		jedisService.setObjectT(KEY_FETCH_CACHE, toJSONString(dataset), config.getFetchCacheTime());
+		jedisService.setObjectT(KEY_FETCH_CACHE, toJSONString(dataset), config.getFetchCacheSec());
 	}
 
 	/**
