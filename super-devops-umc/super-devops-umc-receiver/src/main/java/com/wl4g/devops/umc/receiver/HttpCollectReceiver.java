@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_METRIC;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
+import org.springframework.web.bind.annotation.RequestBody;
+
 /**
  * HTTP collection receiver
  * 
@@ -25,11 +29,13 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	 * metrics
 	 */
 	@RequestMapping(URI_METRIC)
-	public void statInfoReceive() {
-		// System.out.println(body);
-		System.out.println("into");
-		// StatMetrics statMetrics = null;
-		// putMetrics(statMetrics);
+	public void statInfoReceive(@RequestBody byte[] body) {
+		try {
+			MetricModel.MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(body);
+			putMetrics(aggregate);
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
