@@ -1,6 +1,9 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.umc.store.MetricStore;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -27,11 +30,13 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	 * metrics
 	 */
 	@RequestMapping(URI_METRIC)
-	public void statInfoReceive() {
-		//System.out.println(body);
-		System.out.println("into");
-		//StatMetrics statMetrics = null;
-		//putMetrics(statMetrics);
+	public void statInfoReceive(@RequestBody byte[] body) {
+		try {
+			MetricModel.MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(body);
+			putMetrics(aggregate);
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
