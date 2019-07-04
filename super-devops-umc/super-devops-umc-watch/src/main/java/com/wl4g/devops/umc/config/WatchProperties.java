@@ -10,22 +10,71 @@ import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
  * @date 2017年11月16日
  * @since
  */
-public class WatchProperties {
+public class WatchProperties extends TaskProperties {
+	private static final long serialVersionUID = 5508561234067054195L;
 
-	final public static String KEY_RECEIVER_PREFIX = "spring.cloud.devops.umc.watch";
+	private String zkServers;
 
-	private TaskProperties watch = new TaskProperties();
+	private String namespace;
 
-	public WatchProperties() {
-		this.watch.setConcurrency(1); // By default
+	private String cron;
+
+	private int totalCount;
+
+	private String itemParams;
+
+	private int fetchCacheTime = -1;
+
+	public String getZkServers() {
+		return zkServers;
 	}
 
-	public TaskProperties getWatch() {
-		return watch;
+	public void setZkServers(String zkServers) {
+		this.zkServers = zkServers;
 	}
 
-	public void setWatch(TaskProperties watch) {
-		this.watch = watch;
+	public String getNamespace() {
+		return namespace;
+	}
+
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public String getCron() {
+		return cron;
+	}
+
+	public void setCron(String cron) {
+		this.cron = cron;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
+	}
+
+	public String getItemParams() {
+		return itemParams;
+	}
+
+	public void setItemParams(String itemParams) {
+		this.itemParams = itemParams;
+	}
+
+	public int getFetchCacheTime() {
+		return fetchCacheTime;
+	}
+
+	public void setFetchCacheTime(int fetchCacheTime) {
+		this.fetchCacheTime = fetchCacheTime;
 	}
 
 }
