@@ -25,7 +25,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import com.wl4g.devops.common.internal.logback.LogbackLoggingSystem;
 
 @EnableDiscoveryClient
-@MapperScan("com.wl4g.devops.*.dao")
+@MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class UmcAdmin {
 
