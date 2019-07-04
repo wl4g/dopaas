@@ -9,4 +9,13 @@ package com.wl4g.devops.umc.fetch;
  */
 public interface IndicatorsMetaInfo {
 
+	/**
+	 * Get collection meta target. </br>
+	 * e.g. instanceId(instance node identifier), dtuId(lot device identifier),
+	 * etc
+	 * 
+	 * @return
+	 */
+	String getTargetIdentifier();
+
 }

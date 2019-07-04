@@ -24,6 +24,13 @@ import com.wl4g.devops.umc.watch.ServiceIndicatorsStateWatcher;
 import com.wl4g.devops.umc.watch.WatchJobListener;
 import com.wl4g.devops.umc.watch.WatchScheduler;
 
+/**
+ * UMC watching auto configuration.
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年7月4日
+ * @since
+ */
 public class UmcWatchAutoConfiguration {
 
 	final public static String KEY_WATCH_PREFIX = "spring.cloud.devops.umc.watch";
