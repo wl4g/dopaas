@@ -26,7 +26,11 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 
 	}
 
-	// kafka
+	/**
+	 * Puts to metrics aggreate.
+	 * 
+	 * @param aggregate
+	 */
 	protected void putMetrics(MetricModel.MetricAggregate aggregate) {
 		store.save(aggregate);
 	}
