@@ -52,6 +52,12 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
+				<!-- Is there a bug? In version 1.5.13, TomcatEmbeddedServletContainerFacotry#line:234 
+					is interchanged with 235 rows in sequence. -->
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- Spring Boot -->

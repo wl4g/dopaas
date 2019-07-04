@@ -11,10 +11,6 @@
 # #### Environment(Prod) configuration. ####
 #
 spring:
-  boot: # Spring boot admin.
-    admin:
-      notify.composite:
-        href-url: http://127.0.0.1:${server.port}/${spring.application.name}
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -40,7 +36,7 @@ spring:
 # Spring-security config.
 security.user:
   name: sba_user
-  password: AnGsFmkH2w5lJP9j
+  password: hnGsFm6k0klJP9j
 
 # Redis configuration.
 redis:
@@ -55,3 +51,7 @@ redis:
     - web-node1:6380
     - web-node1:6380
     - web-node1:6381
+
+opentsdb:
+  url: http://10.0.0.57
+  port: 4242
