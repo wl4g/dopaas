@@ -5,7 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="template_id" property="templateId" jdbcType="INTEGER" />
     <result column="aggregator" property="aggregator" jdbcType="VARCHAR" />
-    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="INTEGER" />
     <result column="value" property="value" jdbcType="DOUBLE" />
     <result column="trigger_type" property="triggerType" jdbcType="INTEGER" />
     <result column="continuity_time" property="continuityTime" jdbcType="BIGINT" />
@@ -28,7 +28,7 @@
       operator, value, trigger_type, 
       continuity_time)
     values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, #{aggregator,jdbcType=VARCHAR}, 
-      #{operator,jdbcType=VARCHAR}, #{value,jdbcType=DOUBLE}, #{triggerType,jdbcType=INTEGER}, 
+      #{operator,jdbcType=INTEGER}, #{value,jdbcType=DOUBLE}, #{triggerType,jdbcType=INTEGER},
       #{continuityTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
@@ -67,7 +67,7 @@
         #{aggregator,jdbcType=VARCHAR},
       </if>
       <if test="operator != null" >
-        #{operator,jdbcType=VARCHAR},
+        #{operator,jdbcType=INTEGER},
       </if>
       <if test="value != null" >
         #{value,jdbcType=DOUBLE},
@@ -90,7 +90,7 @@
         aggregator = #{aggregator,jdbcType=VARCHAR},
       </if>
       <if test="operator != null" >
-        operator = #{operator,jdbcType=VARCHAR},
+        operator = #{operator,jdbcType=INTEGER},
       </if>
       <if test="value != null" >
         value = #{value,jdbcType=DOUBLE},
@@ -108,7 +108,7 @@
     update umc_alarm_rule
     set template_id = #{templateId,jdbcType=INTEGER},
       aggregator = #{aggregator,jdbcType=VARCHAR},
-      operator = #{operator,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=INTEGER},
       value = #{value,jdbcType=DOUBLE},
       trigger_type = #{triggerType,jdbcType=INTEGER},
       continuity_time = #{continuityTime,jdbcType=BIGINT}

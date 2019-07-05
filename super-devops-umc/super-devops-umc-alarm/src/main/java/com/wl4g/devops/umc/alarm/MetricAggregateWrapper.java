@@ -1,10 +1,11 @@
 package com.wl4g.devops.umc.alarm;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Metric aggregate wrapper.
@@ -26,15 +27,43 @@ public class MetricAggregateWrapper implements Serializable {
 	 */
 	private String classify = EMPTY;
 
-	/**
-	 * Collection metric target tags.
-	 */
-	private Map<String, String> tags = new HashMap<>();
+	private List<Metric> metrics;
 
-	/**
-	 * Collection metric value.
-	 */
-	private Double value;
+	private Long timeStamp;
+
+	public static class Metric{
+
+		private String metric;
+
+		private Map<String, String> tags = new HashMap<>();
+
+		private Double value;
+
+		public String getMetric() {
+			return metric;
+		}
+
+		public void setMetric(String metric) {
+			this.metric = metric;
+		}
+
+		public Map<String, String> getTags() {
+			return tags;
+		}
+
+		public void setTags(Map<String, String> tags) {
+			this.tags = tags;
+		}
+
+		public Double getValue() {
+			return value;
+		}
+
+		public void setValue(Double value) {
+			this.value = value;
+		}
+	}
+
 
 	public String getCollectId() {
 		return collectId;
@@ -52,26 +81,29 @@ public class MetricAggregateWrapper implements Serializable {
 		this.classify = metricType;
 	}
 
-	public Map<String, String> getTags() {
-		return tags;
+	public List<Metric> getMetrics() {
+		return metrics;
 	}
 
-	public void setTags(Map<String, String> tags) {
-		this.tags = tags;
+	public void setMetrics(List<Metric> metrics) {
+		this.metrics = metrics;
 	}
 
-	public Double getValue() {
-		return value;
+	public Long getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setValue(Double value) {
-		this.value = value;
+	public void setTimeStamp(Long timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
 	@Override
 	public String toString() {
-		return "MetricAggregateWrapper [collectId=" + collectId + ", metricType=" + classify + ", tags=" + tags + ", value="
-				+ value + "]";
+		return "MetricAggregateWrapper{" +
+				"collectId='" + collectId + '\'' +
+				", classify='" + classify + '\'' +
+				", metrics=" + metrics +
+				", timeStamp=" + timeStamp +
+				'}';
 	}
-
 }
