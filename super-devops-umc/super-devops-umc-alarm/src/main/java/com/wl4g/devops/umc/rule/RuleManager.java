@@ -34,51 +34,75 @@ public class RuleManager {
     @Autowired
     private AlarmDaoInterface alarmDaoInterface;
 
-    private Map<Integer, Set<Integer>> tagToTemplate = new HashMap<>();
+
 
 
     //after system start run
-    public void putInstandIPToIdInRedis(){
+    /*public void putInstandIPToIdInRedis(){
         AppInstance appInstance = new AppInstance();
         List<AppInstance> instancelist = alarmDaoInterface.instancelist(appInstance);
         for(AppInstance appInstance1 : instancelist){
             jedisService.set(KEY_CACHE_INSTANCE_ID+appInstance1.getIp()+":"+appInstance1.getPort(),String.valueOf(appInstance1.getId()),0);
         }
+    }*/
+
+
+    public String getInstandId(String instance){
+        String instandId = jedisService.get(KEY_CACHE_INSTANCE_ID+instance);
+        if(StringUtils.isBlank(instandId)||StringUtils.equals(instandId,NOT_FOUND)){
+            AppInstance appInstance = new AppInstance();
+            List<AppInstance> instancelist = alarmDaoInterface.instancelist(appInstance);
+            boolean found = false;
+            for(AppInstance appInstance1 : instancelist){
+                if(StringUtils.equals(instance,appInstance1.getIp()+":"+appInstance1.getPort())){
+                    //found
+                    instandId = String.valueOf(appInstance1.getId());
+                    jedisService.set(KEY_CACHE_INSTANCE_ID+appInstance1.getIp()+":"+appInstance1.getPort(),String.valueOf(appInstance1.getId()),0);
+                    found = true;
+                    break;
+                }
+            }
+            jedisService.set(KEY_CACHE_INSTANCE_ID+instance,NOT_FOUND,30);
+        }
+        return instandId;
     }
 
+
     //after system start run
-    public void putAllAlarmConfigIntoRedis(){
-        Map<Integer,AlarmTemplate> alarmTemplateMap = getAllAlarmTemplate();
-        List<AlarmConfig> alarmConfigs = alarmDaoInterface.selectAll();
-        for(AlarmConfig alarmConfig : alarmConfigs){
-            String tagsStr = alarmConfig.getTags();
-            Integer templateId = alarmConfig.getTemplateId();
-            String[] tags = tagsStr.split(",");
-            for(String tag : tags){
-                int instandId = Integer.parseInt(tag);
-                Set<Integer> set = tagToTemplate.get(instandId);
-                if(null==set){
-                    set = new HashSet<>();
+    public String getAlarmRuleInfo(String instandId){
+
+        String json = jedisService.get(KEY_CACHE_INSTANCE_ID+instandId);
+        if(StringUtils.isBlank(instandId)||StringUtils.equals(instandId,NOT_FOUND)){
+            Map<Integer,AlarmTemplate> alarmTemplateMap = getAllAlarmTemplate();
+            List<AlarmConfig> alarmConfigs = alarmDaoInterface.selectAll();
+            Set<Integer> templates = new HashSet<>();
+
+            for(AlarmConfig alarmConfig : alarmConfigs){
+                String[] tags = alarmConfig.getTags().split(",");
+                Integer templateId = alarmConfig.getTemplateId();
+                if(Arrays.asList(tags).contains(instandId)){
+                    templates.add(templateId);
                 }
-                set.add(templateId);
             }
-        }
-        for (Map.Entry<Integer, Set<Integer>> entry : tagToTemplate.entrySet()) {
-            int instandId = entry.getKey();
-            Set<Integer> temList = entry.getValue();
+            Set<Integer> temList = templates;
             AlarmRuleInfo alarmConfigRedis = new AlarmRuleInfo();
-            alarmConfigRedis.setCollectId(instandId);
+            alarmConfigRedis.setCollectId(Integer.parseInt(instandId));
             alarmConfigRedis.setAlarmTemplateId(temList);
             List<AlarmTemplate> alarmTemplates = new ArrayList<>();
             for(Integer tem : temList){
                 alarmTemplates.add(alarmTemplateMap.get(tem));
             }
             alarmConfigRedis.setAlarmTemplates(alarmTemplates);
+            if(alarmTemplates.size()<=0){
+                jedisService.set(KEY_CACHE_ALARM_RULE+String.valueOf(Integer.parseInt(instandId)),json,0);
+                return json;
+            }
             //TODO
-            String json = JacksonUtils.toJSONString(alarmConfigRedis);
-            jedisService.set(KEY_CACHE_ALARM_RULE+String.valueOf(instandId),json,0);
-
+            json = JacksonUtils.toJSONString(alarmConfigRedis);
+            jedisService.set(KEY_CACHE_ALARM_RULE+instandId,NOT_FOUND,30);
         }
+
+        return json;
     }
 
 
@@ -125,7 +149,6 @@ public class RuleManager {
                 return 0;
             }
         });
-
         jedisService.set(KEY_CACHE_TEMPLATE_HIS+templateId,JacksonUtils.toJSONString(templateHisRedis),ttl);
 
         return points;

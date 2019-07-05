@@ -5,7 +5,7 @@ import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.AlarmRuleInfo;
 import com.wl4g.devops.common.bean.umc.model.TemplateHisInfo;
-import com.wl4g.devops.common.enums.Operator;
+import com.wl4g.devops.common.enums.OperatorEnum;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_RULE;
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_INSTANCE_ID;
 
 /**
  * Default collection metric valve alerter.
@@ -58,13 +57,14 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 
 			long now = System.currentTimeMillis();
 			List<MetricAggregateWrapper.Metric> metricsList = wrap.getMetrics();
-			long gatherTime = wrap.getTimeStamp();
+			//long gatherTime = wrap.getTimeStamp();
 			String instance = wrap.getCollectId();
-			String instandId = jedisService.get(KEY_CACHE_INSTANCE_ID+instance);
+			String instandId = ruleManager.getInstandId(instance);
+
 			if(StringUtils.isBlank(instandId)){
 				return;
 			}
-			String json = jedisService.get(KEY_CACHE_ALARM_RULE+String.valueOf(instandId));
+			String json = jedisService.get(KEY_CACHE_ALARM_RULE+instandId);
 			AlarmRuleInfo alarmConfigRedis = JacksonUtils.parseJSON(json, AlarmRuleInfo.class);
 
 			List<AlarmTemplate> alarmTemplates = alarmConfigRedis.getAlarmTemplates();
@@ -93,8 +93,6 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 					}
 				}
 			}
-
-
 		});
 
 	}
@@ -105,7 +103,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 			Double[] valuesByContinuityTime = getValuesByContinuityTime(rule.getContinuityTime(), points, now);
 			String aggregator = rule.getAggregator();
 			AbstractRuleJudge ruleJedge = getRuleJedge(aggregator);
-			boolean match = ruleJedge.judge(valuesByContinuityTime, Operator.safeOf(rule.getOperator()),rule.getValue());
+			boolean match = ruleJedge.judge(valuesByContinuityTime, OperatorEnum.safeOf(rule.getOperator()),rule.getValue());
 			if(match){
 				return true;
 			}
