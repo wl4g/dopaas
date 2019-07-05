@@ -48,11 +48,11 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 	protected void alarm(MetricModel.MetricAggregate aggregate){
 		MetricAggregateWrapper wrap = new MetricAggregateWrapper();
 		wrap.setCollectId(aggregate.getInstance());
-		wrap.setTimeStamp(aggregate.getTimestamp());
+		wrap.setTimestamp(aggregate.getTimestamp());
 		wrap.setClassify(aggregate.getClassify());
-		List<MetricAggregateWrapper.Metric> metrics = new ArrayList<>();
+		List<MetricAggregateWrapper.MetricWrapper> metrics = new ArrayList<>();
 		for(MetricModel.Metric metric : aggregate.getMetricsList()){
-			MetricAggregateWrapper.Metric metric1 = new MetricAggregateWrapper.Metric();
+			MetricAggregateWrapper.MetricWrapper metric1 = new MetricAggregateWrapper.MetricWrapper();
 			metric1.setMetric(metric.getMetric());
 			metric1.setValue(metric.getValue());
 			metric1.setTags(metric.getTagsMap());
