@@ -15,8 +15,6 @@
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<final.name>scm-server</final.name>
-		<docker.image.prefix>${project.groupId}</docker.image.prefix>
-		<docker.image.tag>${project.version}</docker.image.tag>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -116,12 +114,13 @@
 							</execution>
 						</executions>
 						<configuration>
-							<repository>${docker.image.prefix}:${docker.image.tag}</repository>
+							<repository>${project.build.finalName}:${project.version}</repository>
 							<tag>${project.version}</tag>
 							<contextDirectory>src/main/docker</contextDirectory>
 							<connectTimeoutMillis>10000</connectTimeoutMillis>
 							<buildArgs>
-								<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+								<APP_NAME>${project.build.finalName}</APP_NAME>
+								<APP_VERSION>${project.version}</APP_VERSION>
 							</buildArgs>
 						</configuration>
 					</plugin>
