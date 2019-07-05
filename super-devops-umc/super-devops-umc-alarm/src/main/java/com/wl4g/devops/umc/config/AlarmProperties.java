@@ -12,4 +12,9 @@ import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 public class AlarmProperties extends RunProperties {
 	private static final long serialVersionUID = -3690593536229115411L;
 
+	public AlarmProperties() {
+		// No need to start the asynchronous running of the boss.
+		setAsync(false);
+	}
+
 }
