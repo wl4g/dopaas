@@ -8,24 +8,27 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author vjay
- * @date 2019-07-04 16:54:00
+ * Alarm rule information.
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年7月5日
+ * @since
  */
 public class AlarmRuleInfo {
 
 	/** Metric collect point identity. */
-	private Integer serviceId; // e.g. cf_instance.id
+	private Integer collectId; // e.g. cf_instance.id
 
 	private Set<Integer> alarmTemplateId = new HashSet<>();
 
 	private List<AlarmTemplate> alarmTemplates = new ArrayList<>();
 
-	public Integer getServiceId() {
-		return serviceId;
+	public Integer getCollectId() {
+		return collectId;
 	}
 
-	public void setServiceId(Integer instantId) {
-		this.serviceId = instantId;
+	public void setCollectId(Integer collectId) {
+		this.collectId = collectId;
 	}
 
 	public List<AlarmTemplate> getAlarmTemplates() {

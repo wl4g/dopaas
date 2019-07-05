@@ -40,6 +40,11 @@
 			<version>master</version>
 		</dependency>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-umc-alarm</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
 			<groupId>de.codecentric</groupId>
 			<artifactId>spring-boot-admin-server</artifactId>
 			<version>${spring-boot-admin.version}</version>

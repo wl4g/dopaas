@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 @Controller
-@RequestMapping(UMCDevOpsConstants.URI_DASHBOARD)
+@RequestMapping(UMCDevOpsConstants.URI_ADMIN_HOME)
 public class HomeController extends BaseController {
 
 	@Autowired
