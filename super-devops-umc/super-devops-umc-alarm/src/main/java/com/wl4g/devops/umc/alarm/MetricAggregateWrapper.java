@@ -22,16 +22,61 @@ public class MetricAggregateWrapper implements Serializable {
 	 */
 	private String collectId = EMPTY;
 
-	/**
-	 * Collection metric type .
-	 */
+	/** Collect metric type. */
 	private String classify = EMPTY;
 
-	private List<Metric> metrics;
+	/** Collect metric list. */
+	private List<MetricWrapper> metrics;
 
-	private Long timeStamp;
+	/** Collect metric time-stamp. */
+	private Long timestamp;
 
-	public static class Metric{
+	public String getCollectId() {
+		return collectId;
+	}
+
+	public void setCollectId(String collectId) {
+		this.collectId = collectId;
+	}
+
+	public String getClassify() {
+		return classify;
+	}
+
+	public void setClassify(String metricType) {
+		this.classify = metricType;
+	}
+
+	public List<MetricWrapper> getMetrics() {
+		return metrics;
+	}
+
+	public void setMetrics(List<MetricWrapper> metrics) {
+		this.metrics = metrics;
+	}
+
+	public Long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Long timeStamp) {
+		this.timestamp = timeStamp;
+	}
+
+	@Override
+	public String toString() {
+		return "MetricAggregateWrapper{" + "collectId='" + collectId + '\'' + ", classify='" + classify + '\'' + ", metrics="
+				+ metrics + ", timeStamp=" + timestamp + '}';
+	}
+
+	/**
+	 * Metric wrapper.
+	 * 
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年7月5日
+	 * @since
+	 */
+	public static class MetricWrapper {
 
 		private String metric;
 
@@ -64,46 +109,4 @@ public class MetricAggregateWrapper implements Serializable {
 		}
 	}
 
-
-	public String getCollectId() {
-		return collectId;
-	}
-
-	public void setCollectId(String collectId) {
-		this.collectId = collectId;
-	}
-
-	public String getClassify() {
-		return classify;
-	}
-
-	public void setClassify(String metricType) {
-		this.classify = metricType;
-	}
-
-	public List<Metric> getMetrics() {
-		return metrics;
-	}
-
-	public void setMetrics(List<Metric> metrics) {
-		this.metrics = metrics;
-	}
-
-	public Long getTimeStamp() {
-		return timeStamp;
-	}
-
-	public void setTimeStamp(Long timeStamp) {
-		this.timeStamp = timeStamp;
-	}
-
-	@Override
-	public String toString() {
-		return "MetricAggregateWrapper{" +
-				"collectId='" + collectId + '\'' +
-				", classify='" + classify + '\'' +
-				", metrics=" + metrics +
-				", timeStamp=" + timeStamp +
-				'}';
-	}
 }
