@@ -47,6 +47,9 @@ public class RuleManager {
     }*/
 
 
+    /**
+     * get InstandId by Instand,get from redis first ,if not found ,get from db
+     */
     public String getInstandId(String instance){
         String instandId = jedisService.get(KEY_CACHE_INSTANCE_ID+instance);
         if(StringUtils.isBlank(instandId)||StringUtils.equals(instandId,NOT_FOUND)){
@@ -68,10 +71,12 @@ public class RuleManager {
     }
 
 
-    //after system start run
+    /**
+     * Get Rule By instandid ,get from redis first ,if not found ,get from db
+     */
     public String getAlarmRuleInfo(String instandId){
 
-        String json = jedisService.get(KEY_CACHE_INSTANCE_ID+instandId);
+        String json = jedisService.get(KEY_CACHE_ALARM_RULE+instandId);
         if(StringUtils.isBlank(instandId)||StringUtils.equals(instandId,NOT_FOUND)){
             Map<Integer,AlarmTemplate> alarmTemplateMap = getAllAlarmTemplate();
             List<AlarmConfig> alarmConfigs = alarmDaoInterface.selectAll();
@@ -105,7 +110,9 @@ public class RuleManager {
         return json;
     }
 
-
+    /**
+     * Get all Template ,and cache in map
+     */
     private Map<Integer,AlarmTemplate> getAllAlarmTemplate(){
         Map<Integer,AlarmTemplate> alarmTemplateMap = new HashMap<>();
         List<AlarmTemplate> alarmTemplates = alarmDaoInterface.selectAllWithRule();
@@ -116,6 +123,9 @@ public class RuleManager {
     }
 
 
+    /**
+     * Get point history by templateId, and save the newest value into redis
+     */
     public List<TemplateHisInfo.Point> duelTempalteInRedis(Integer templateId, Double value, Long timestamp, long now, int ttl){
         String json = jedisService.get(UMCDevOpsConstants.KEY_CACHE_TEMPLATE_HIS+templateId);
 
@@ -154,6 +164,9 @@ public class RuleManager {
         return points;
     }
 
+    /**
+     * Get longest time from rules
+     */
     public Long getLongestRuleKeepTime(List<AlarmRule> rules){
         long keepTime = 0;
         for(AlarmRule alarmRule : rules){
