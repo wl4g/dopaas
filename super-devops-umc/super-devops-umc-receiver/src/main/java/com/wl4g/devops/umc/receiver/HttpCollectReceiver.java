@@ -1,14 +1,19 @@
 package com.wl4g.devops.umc.receiver;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.umc.store.MetricStore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_METRIC;
+import java.util.List;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
-import org.springframework.web.bind.annotation.RequestBody;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_METRIC;
 
 /**
  * HTTP collection receiver
@@ -20,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @ResponseBody
 @com.wl4g.devops.umc.annotation.HttpCollectReceiver
 public class HttpCollectReceiver extends AbstractCollectReceiver {
+
+	@Autowired
+	private AlarmTemplateDao alarmTemplateDao;
 
 	public HttpCollectReceiver(MetricStore store) {
 		super(store);
@@ -37,5 +45,14 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 			e.printStackTrace();
 		}
 	}
+
+
+	@RequestMapping("test")
+	public String test() {
+
+		List<AlarmTemplate> alarmTemplates = alarmTemplateDao.selectAllWithRule();
+		return JacksonUtils.toJSONString(alarmTemplates);
+	}
+
 
 }

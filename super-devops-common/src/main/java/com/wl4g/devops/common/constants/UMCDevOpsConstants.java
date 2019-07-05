@@ -53,6 +53,11 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	/** Kafka */
 	final public static String URI_METRIC = "metric";
 
+
+	final public static String REDIS_PRO_UMC_ALARM = "umc:alarm:";
+
+	final public static String REDIS_PRO_UMC_IP_TO_ID = "umc:ip2id:";
+
 	//
 	// Server KAFKA client
 	//
