@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_METRIC;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_ENDPOINT;
 
 /**
  * HTTP collection receiver
@@ -36,7 +36,7 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	/**
 	 * metrics
 	 */
-	@RequestMapping(URI_METRIC)
+	@RequestMapping(URI_HTTP_RECEIVER_ENDPOINT)
 	public void statInfoReceive(@RequestBody byte[] body) {
 		try {
 			MetricModel.MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(body);

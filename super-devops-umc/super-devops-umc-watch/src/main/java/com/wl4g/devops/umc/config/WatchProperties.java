@@ -69,6 +69,15 @@ public class WatchProperties extends TaskProperties {
 		this.itemParams = itemParams;
 	}
 
+	/**
+	 * Note: <font color=red>Note: Can't use caching? Because data changes in
+	 * real time, it is not possible to cache data through fragmented indexing,
+	 * Therefore, it may lead to dirty reading and hallucination of data. It is
+	 * suggested that the cache time should not be set too long.</font> </br>
+	 * {@link com.wl4g.devops.umc.watch.IndicatorsStateWatcher#fetchShardingCache}
+	 * 
+	 * @return
+	 */
 	public int getFetchCacheSec() {
 		return fetchCacheSec;
 	}

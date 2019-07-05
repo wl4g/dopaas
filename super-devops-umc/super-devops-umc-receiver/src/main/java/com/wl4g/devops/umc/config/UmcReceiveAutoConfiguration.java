@@ -22,7 +22,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_RECEIVER;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_BASE;
 import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
 
 /**
@@ -64,7 +64,7 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Override
 	protected String getMappingPrefix() {
-		return URI_RECEIVER;
+		return URI_HTTP_RECEIVER_BASE;
 	}
 
 	@Override

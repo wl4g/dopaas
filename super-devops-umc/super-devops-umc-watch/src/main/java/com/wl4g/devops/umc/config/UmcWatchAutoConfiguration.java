@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 
 import com.dangdang.ddframe.job.api.dataflow.DataflowJob;
 import com.dangdang.ddframe.job.api.simple.SimpleJob;
-import com.dangdang.ddframe.job.config.JobCoreConfiguration;
 import com.dangdang.ddframe.job.config.dataflow.DataflowJobConfiguration;
 import com.dangdang.ddframe.job.config.simple.SimpleJobConfiguration;
 import com.dangdang.ddframe.job.event.JobEventConfiguration;
@@ -17,9 +16,13 @@ import com.dangdang.ddframe.job.lite.api.JobScheduler;
 import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperConfiguration;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
+import static com.dangdang.ddframe.job.lite.config.LiteJobConfiguration.*;
+import static com.dangdang.ddframe.job.config.JobCoreConfiguration.*;
+
 import com.wl4g.devops.common.annotation.Unused;
 import com.wl4g.devops.umc.fetch.ServiceIndicatorsMetaFetcher;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
+import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
 import com.wl4g.devops.umc.watch.ServiceIndicatorsStateWatcher;
 import com.wl4g.devops.umc.watch.WatchJobListener;
 import com.wl4g.devops.umc.watch.WatchScheduler;
@@ -56,7 +59,7 @@ public class UmcWatchAutoConfiguration {
 	}
 
 	@Bean
-	public WatchJobListener metricWatchJobListener() {
+	public WatchJobListener watchJobListener() {
 		return new WatchJobListener();
 	}
 
@@ -66,32 +69,27 @@ public class UmcWatchAutoConfiguration {
 	}
 
 	@Bean(initMethod = "init")
-	public JobScheduler metricWatchScheduler(WatchProperties config, JobEventConfiguration eventConfig,
+	public JobScheduler watchScheduler(WatchProperties config, JobEventConfiguration eventConfig,
 			ServiceIndicatorsStateWatcher job, ZookeeperRegistryCenter regCenter) {
-		LiteJobConfiguration jobConfig = getLiteJobConfiguration(job.getClass(), config.getCron(), config.getTotalCount(),
+		LiteJobConfiguration jobConfig = getDataflowLiteJobConfiguration(job.getClass(), config.getCron(), config.getTotalCount(),
 				config.getItemParams());
-		return new WatchScheduler(job, regCenter, jobConfig, eventConfig, metricWatchJobListener());
-	}
-
-	private LiteJobConfiguration getLiteJobConfiguration(final Class<? extends SimpleJob> jobClass, final String cron,
-			final int shardingTotalCount, final String shardingItemParameters) {
-		return LiteJobConfiguration
-				.newBuilder(
-						new SimpleJobConfiguration(JobCoreConfiguration.newBuilder(jobClass.getName(), cron, shardingTotalCount)
-								.shardingItemParameters(shardingItemParameters).build(), jobClass.getCanonicalName()))
-				.overwrite(true).build();
+		return new WatchScheduler(job, regCenter, jobConfig, eventConfig, watchJobListener());
 	}
 
 	@Unused
-	private LiteJobConfiguration getDataflowLiteJobConfiguration(Class<? extends DataflowJob<Object>> jobClass, String cron,
-			int shardingTotalCount, String shardingItemParameters) {
+	private LiteJobConfiguration getLiteJobConfiguration(final Class<? extends SimpleJob> jobClass, final String cron,
+			final int shardingTotalCount, final String shardingItemParameters) {
 		return LiteJobConfiguration
-				.newBuilder(
-						new DataflowJobConfiguration(
-								JobCoreConfiguration.newBuilder(jobClass.getName(), cron, shardingTotalCount)
-										.shardingItemParameters(shardingItemParameters).build(),
-								jobClass.getCanonicalName(), true))
+				.newBuilder(new SimpleJobConfiguration(newBuilder(jobClass.getName(), cron, shardingTotalCount)
+						.shardingItemParameters(shardingItemParameters).build(), jobClass.getCanonicalName()))
 				.overwrite(true).build();
+	}
+
+	private LiteJobConfiguration getDataflowLiteJobConfiguration(Class<? extends DataflowJob<IndicatorsMetaInfo>> jobClass,
+			String cron, int shardingTotalCount, String shardingItemParameters) {
+		return newBuilder(new DataflowJobConfiguration(
+				newBuilder(jobClass.getName(), cron, shardingTotalCount).shardingItemParameters(shardingItemParameters).build(),
+				jobClass.getCanonicalName(), true)).overwrite(true).build();
 	}
 
 	//

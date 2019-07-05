@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.watch;
 
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_FETCH_META;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -10,22 +11,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dangdang.ddframe.job.api.ShardingContext;
-import com.dangdang.ddframe.job.api.simple.SimpleJob;
+import com.dangdang.ddframe.job.api.dataflow.DataflowJob;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.config.WatchProperties;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
 
 /**
- * Metrics state indicators watcher of based.
+ * Indicators metric state watcher of based.
  * 
  * @author wangl.sir
  * @version v1.0 2019年7月4日
  * @since
  */
-public abstract class IndicatorsStateWatcher implements SimpleJob {
-
-	final public static String KEY_FETCH_CACHE = "umc_meta_fetch_cache";
+public abstract class IndicatorsStateWatcher implements DataflowJob<IndicatorsMetaInfo> {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -39,61 +38,79 @@ public abstract class IndicatorsStateWatcher implements SimpleJob {
 	protected IndicatorsMetaFetcher fetcher;
 
 	@Override
-	public void execute(ShardingContext sctx) {
+	public List<IndicatorsMetaInfo> fetchData(ShardingContext sctx) {
 		if (log.isInfoEnabled()) {
-			log.info("Exec sharding for - {}", toJSONString(sctx));
+			log.info("Fetch indicators meta sharding for - {}", toJSONString(sctx));
 		}
 
+		List<IndicatorsMetaInfo> dataset = null;
 		try {
-			List<IndicatorsMetaInfo> dataset = null;
-
 			// Fetch indicators meta info.
 			if (config.getFetchCacheSec() > 0) {
-				// Fetch from cache
-				dataset = fetchCache();
+				// Fetch from cache.
+				dataset = fetchShardingCache(sctx);
 				if (isEmpty(dataset)) {
-					dataset = fetcher.fetch(sctx); // From DB
+					dataset = fetcher.fetch(sctx); // Fetch DB
 				}
 				// Store to cache.
-				storeToCacheIfNecessary(dataset);
+				store2CacheIfNecessary(sctx, dataset);
 			} else {
-				dataset = fetcher.fetch(sctx); // From DB
+				dataset = fetcher.fetch(sctx); // Fetch DB
 			}
-
-			if (log.isInfoEnabled()) {
-				log.info("Fetch indicators metas for - size({})", (dataset != null ? dataset.size() : 0));
-			}
-			if (log.isDebugEnabled()) {
-				log.debug("Fetch indicators metas for - {}", dataset);
-			}
-
-			doWatching(dataset);
 		} catch (Exception e) {
-			log.error("Failed to fetch indicators targets", e);
+			log.error("Failed to fetch sharding indicators meta", e);
 		}
 
+		if (log.isInfoEnabled()) {
+			log.info("Fetch indicators meta for - size({})", (dataset != null ? dataset.size() : 0));
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("Fetch indicators meta for - {}", dataset);
+		}
+
+		// Terminate the current schedule if the return data set is empty.
+		return dataset;
+	}
+
+	@Override
+	public void processData(ShardingContext sctx, List<IndicatorsMetaInfo> data) {
+		doWatching(data);
 	}
 
 	/**
-	 * Fetch meta info from cache.
-	 * 
+	 * Fetch meta info from cache.</br>
+	 * <font color=red>Note: Can't use caching? Because data changes in real
+	 * time, it is not possible to cache data through fragmented indexing,
+	 * Therefore, it may lead to dirty reading and hallucination of data. It is
+	 * suggested that the cache time should not be set too long.</font>
 	 */
 	@SuppressWarnings("unchecked")
-	protected List<IndicatorsMetaInfo> fetchCache() {
-		return jedisService.getObjectT(KEY_FETCH_CACHE, ArrayList.class);
+	protected List<IndicatorsMetaInfo> fetchShardingCache(ShardingContext sctx) {
+		return jedisService.getObjectT(getShardingCacheKey(sctx), ArrayList.class);
 	}
 
 	/**
-	 * Store fetch meta info to cache.
+	 * Store sharding meta info to cache.
 	 * 
+	 * @param sctx
 	 * @param dataset
 	 */
-	protected void storeToCacheIfNecessary(List<IndicatorsMetaInfo> dataset) {
+	protected void store2CacheIfNecessary(ShardingContext sctx, List<IndicatorsMetaInfo> dataset) {
 		if (isEmpty(dataset)) {
 			return;
 		}
 
-		jedisService.setObjectT(KEY_FETCH_CACHE, toJSONString(dataset), config.getFetchCacheSec());
+		jedisService.setObjectT(getShardingCacheKey(sctx), toJSONString(dataset), config.getFetchCacheSec());
+	}
+
+	/**
+	 * Get sharding cache key.
+	 * 
+	 * @param sctx
+	 * @return
+	 */
+	protected String getShardingCacheKey(ShardingContext sctx) {
+		return KEY_CACHE_FETCH_META + sctx.getShardingItem();
 	}
 
 	/**
