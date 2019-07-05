@@ -1,24 +1,34 @@
-# Dockerfile for super-devops-scm
+# Dockerfile for com.wl4g/devops scm-server
+# 1. Copy ${APP_NAME}-${APP_VERSION}.tar to current directory.
+# 2. Build with: docker build -t com.wl4g/${APP_NAME}:${APP_VERSION} .
+# 3. Run with: docker run -p 8080:8080 -d -v /tmp/logs:/opt/logs --name apollo-configservice apollo-configservice
 
-# Build with:
-# docker build -t scm:master .
+FROM openjdk:8-jre-alpine
+LABEL maintainer="wanglsir<983708408@qq.com>"
 
-FROM openjdk:8-jre-alpine3.8
+ENV APP_NAME "scm"
+ENV APP_VERSION "master"
+ENV APP_PORT 14043
+ENV APP_HOME "/opt/apps/acm/${APP_NAME}-package"
+# DataSource Info
+ENV DS_URL ""
+ENV DS_USERNAME ""
+ENV DS_PASSWORD ""
 
-RUN \
-    echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories && \
-    echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories && \
-    apk update upgrade && \
-    apk add --no-cache procps curl bash tzdata && \
-    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
-    echo "Asia/Shanghai" > /etc/timezone && \
-    mkdir -p /apollo-admin-server
+RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
+    && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
+    && apk update upgrade \
+    && apk add --no-cache procps unzip curl bash tzdata \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone
 
-ADD . /target/scm-master-bin.tar
+ADD ${APP_NAME}-${APP_VERSION}.tar /${APP_NAME}-${APP_VERSION}.tar
 
-ENV SCM_SERVICE_NAME="scm"
-ENV JAVA_OPTS=""
+RUN mkdir -p ${APP_HOME}
+RUN tar -xf /${APP_NAME}-${APP_VERSION}.tar -C ${APP_HOME} \
+    && rm -rf /${APP_NAME}-${APP_VERSION}.tar \
+    && chmod +x ${APP_HOME}/bin/startup.sh
 
-EXPOSE 14043
+EXPOSE $APP_PORT
 
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /scm.jar" ]
+CMD ["${APP_HOME}/bin/startup.sh"]
