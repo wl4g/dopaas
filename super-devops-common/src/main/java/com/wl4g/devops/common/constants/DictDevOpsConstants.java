@@ -15,24 +15,23 @@
  */
 package com.wl4g.devops.common.constants;
 
-import java.util.Collections;
-import java.util.Map;
-
 /**
- * DevOps constants definitions.
+ * Dictionaries devOps constants
  * 
  * @author wangl.sir
- * @version v1.0 2019年7月5日
+ * @version v1.0 2019年4月5日
  * @since
  */
-public abstract class DevOpsConstants {
+public abstract class DictDevOpsConstants extends DevOpsConstants {
 
-	/** OS environment map cache. */
-	final protected static Map<String, String> ENV = Collections.unmodifiableMap(System.getenv());
+	//
+	// System dictionaries type definitions.
+	//
 
-	/**
-	 * Controlling Spring-enabled Unified Exception Handling Stack Information
-	 */
-	final public static String PARAM_STACK_TRACE = ENV.getOrDefault("spring.error.stack.trace", "_stacktrace");
+	/** DevOps alarm notification template type dictionaries definitions. */
+	final public static String DICT_TYPE_ALARM_TPL = "alarm_tpl_type";
+
+	/** DevOps application name-space type dictionaries definitions. */
+	final public static String DICT_TYPE_APP_NS = "app_ns_type";
 
 }

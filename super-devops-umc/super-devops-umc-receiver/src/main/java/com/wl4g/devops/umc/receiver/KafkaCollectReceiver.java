@@ -11,7 +11,7 @@ import org.springframework.kafka.support.Acknowledgment;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.TOPIC_RECEIVE_PATTERN;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.TOPIC_KAFKA_RECEIVE_PATTERN;
 import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_BATCH_FACTORY;
 
 /**
@@ -33,7 +33,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param records
 	 * @param ack
 	 */
-	@KafkaListener(topicPattern = TOPIC_RECEIVE_PATTERN, containerFactory = BEAN_KAFKA_BATCH_FACTORY)
+	@KafkaListener(topicPattern = TOPIC_KAFKA_RECEIVE_PATTERN, containerFactory = BEAN_KAFKA_BATCH_FACTORY)
 	public void onMultiReceive(List<ConsumerRecord<byte[], Bytes>> records, Acknowledgment ack) {
 		try {
 			if (log.isDebugEnabled()) {

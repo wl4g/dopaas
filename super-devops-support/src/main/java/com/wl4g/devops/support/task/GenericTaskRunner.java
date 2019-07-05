@@ -51,7 +51,7 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 	/** Boss running. */
 	final private AtomicBoolean bossRunning = new AtomicBoolean(false);
 
-	/** Runner task properties config. */
+	/** Runner task properties configuration. */
 	final C config;
 
 	/** Runner boss thread. */
@@ -89,11 +89,15 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 				}, config.getReject());
 			}
 
-			// Create boss
-			String name = getClass().getSimpleName() + "-boss";
-			boss = new Thread(this, name);
-			boss.setDaemon(false);
-			boss.start();
+			// Boss asynchronously execution.(if necessary)
+			if (config.isAsync()) {
+				String name = getClass().getSimpleName() + "-boss";
+				boss = new Thread(this, name);
+				boss.setDaemon(false);
+				boss.start();
+			} else {
+				run(); // Sync execution.
+			}
 		} else {
 			log.warn("Already runner!, already builders are read-only and do not allow task modification");
 		}
@@ -190,6 +194,9 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 
 		private static final long serialVersionUID = -1996272636830701232L;
 
+		/** Whether to start the boss thread asynchronously. */
+		private boolean async = true;
+
 		/**
 		 * When the concurrency is less than 0, it means that the worker thread
 		 * group is not enabled (only the boss asynchronous thread is started)
@@ -216,11 +223,25 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 		}
 
 		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
+			this(true, concurrency, keepAliveTime, acceptQueue, reject);
+		}
+
+		public TaskProperties(boolean async, int concurrency, long keepAliveTime, int acceptQueue,
+				RejectedExecutionHandler reject) {
 			super();
+			setAsync(async);
 			setConcurrency(concurrency);
 			setKeepAliveTime(keepAliveTime);
 			setAcceptQueue(acceptQueue);
 			setReject(reject);
+		}
+
+		public boolean isAsync() {
+			return async;
+		}
+
+		public void setAsync(boolean async) {
+			this.async = async;
 		}
 
 		public int getConcurrency() {

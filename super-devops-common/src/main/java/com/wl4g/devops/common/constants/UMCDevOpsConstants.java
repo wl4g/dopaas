@@ -26,47 +26,40 @@ package com.wl4g.devops.common.constants;
 public abstract class UMCDevOpsConstants extends DevOpsConstants {
 
 	//
-	// Common
+	// UMC admin definition.
 	//
 
 	/** Administrator dashboard's base URI. */
-	final public static String URI_DASHBOARD = "/dashboard/";
-
-	/** Receiver endpoint based URI */
-	final public static String URI_RECEIVER = "/receiver";
-
-	/** Physical total */
-	final public static String URI_PHYSICAL = "physical";
-
-	/** Docker */
-	final public static String URI_VIRTUAL_DOCKER = "docker";
-
-	/** Redis */
-	final public static String URI_REDIS = "redis";
-
-	/** Zookeeper */
-	final public static String URI_ZOOKEEPER = "zookeeper";
-
-	/** Kafka */
-	final public static String URI_KAFKA = "kafka";
-
-	/** Kafka */
-	final public static String URI_METRIC = "metric";
-
-
-	final public static String REDIS_PRO_UMC_ALARM = "umc:alarm:";
-
-	final public static String REDIS_PRO_UMC_IP_TO_ID = "umc:ip2id:";
+	final public static String URI_ADMIN_HOME = "/dashboard";
 
 	//
-	// Server KAFKA client
+	// UMC receiver definition.(corresponding to agent collector)
 	//
 
-	/** KAFKA receiver topic pattern */
-	final public static String TOPIC_RECEIVE_PATTERN = "umc_agent_metrics";
+	/** Receiver end-point based URI */
+	final public static String URI_HTTP_RECEIVER_BASE = "/receiver";
+
+	/** HTTP receiver metric end-point URI.(corresponding to agent collector) */
+	final public static String URI_HTTP_RECEIVER_ENDPOINT = "metric";
+
+	final public static String KEY_CACHE_ALARM_RULE = "umc_alarm_";
+
+	final public static String KEY_CACHE_INSTANCE_ID = "umc_ip2id_";
+
+	/**
+	 * KAFKA receiver metric topic pattern.(corresponding to agent collector)
+	 */
+	final public static String TOPIC_KAFKA_RECEIVE_PATTERN = "umc_agent_metrics";
 
 	//
-	// Server openTSDB metric
+	// UMC watch definition.
+	//
+
+	/** Watch fetch sharding cache key. */
+	final public static String KEY_CACHE_FETCH_META = "umc_fetch_meta_sharding_";
+
+	//
+	// UMC serial store definition.(corresponding to agent collector)
 	//
 
 	/** tag -- id */
