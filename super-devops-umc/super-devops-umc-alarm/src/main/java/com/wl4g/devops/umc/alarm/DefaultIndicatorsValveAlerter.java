@@ -2,6 +2,7 @@ package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.umc.config.AlarmProperties;
 
 /**
  * Default collection metric valve alerter.
@@ -12,7 +13,7 @@ import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
  */
 public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperties> implements IndicatorsValveAlerter {
 
-	public DefaultIndicatorsValveAlerter(RunProperties config) {
+	public DefaultIndicatorsValveAlerter(AlarmProperties config) {
 		super(config);
 	}
 

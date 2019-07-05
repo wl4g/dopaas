@@ -1,7 +1,6 @@
 package com.wl4g.devops.umc.receiver;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -56,12 +55,12 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param state
 	 */
 	private void doProcess(List<ConsumerRecord<byte[], Bytes>> records, MultiAcknowledgmentState state) {
-		for (ConsumerRecord<byte[], Bytes> consumerRecord : records) {
+		for (ConsumerRecord<byte[], Bytes> record : records) {
 			try {
-				Bytes value = consumerRecord.value();
-				MetricAggregate aggregate = MetricModel.MetricAggregate.parseFrom(value.get());
+				Bytes value = record.value();
+				MetricAggregate aggregate = MetricAggregate.parseFrom(value.get());
 				if (log.isDebugEnabled()) {
-					log.debug("Put aggregate metric for - {}", aggregate);
+					log.debug("Put metric aggregate for - {}", aggregate);
 				}
 
 				putMetrics(aggregate);
