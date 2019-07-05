@@ -35,6 +35,11 @@
 			<version>master</version>
 		</dependency>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-umc-alarm</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 			<version>${spring-kafka.version}</version>

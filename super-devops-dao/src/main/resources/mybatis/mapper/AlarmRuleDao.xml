@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.umc.AlarmRuleDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmRule" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="template_id" property="templateId" jdbcType="INTEGER" />
+    <result column="aggregator" property="aggregator" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="DOUBLE" />
+    <result column="trigger_type" property="triggerType" jdbcType="INTEGER" />
+    <result column="continuity_time" property="continuityTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, template_id, aggregator, operator, value, trigger_type, continuity_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from umc_alarm_rule
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from umc_alarm_rule
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
+    insert into umc_alarm_rule (id, template_id, aggregator, 
+      operator, value, trigger_type, 
+      continuity_time)
+    values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, #{aggregator,jdbcType=VARCHAR}, 
+      #{operator,jdbcType=VARCHAR}, #{value,jdbcType=DOUBLE}, #{triggerType,jdbcType=INTEGER}, 
+      #{continuityTime,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
+    insert into umc_alarm_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="aggregator != null" >
+        aggregator,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="value != null" >
+        value,
+      </if>
+      <if test="triggerType != null" >
+        trigger_type,
+      </if>
+      <if test="continuityTime != null" >
+        continuity_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=INTEGER},
+      </if>
+      <if test="aggregator != null" >
+        #{aggregator,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        #{value,jdbcType=DOUBLE},
+      </if>
+      <if test="triggerType != null" >
+        #{triggerType,jdbcType=INTEGER},
+      </if>
+      <if test="continuityTime != null" >
+        #{continuityTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
+    update umc_alarm_rule
+    <set >
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=INTEGER},
+      </if>
+      <if test="aggregator != null" >
+        aggregator = #{aggregator,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        value = #{value,jdbcType=DOUBLE},
+      </if>
+      <if test="triggerType != null" >
+        trigger_type = #{triggerType,jdbcType=INTEGER},
+      </if>
+      <if test="continuityTime != null" >
+        continuity_time = #{continuityTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
+    update umc_alarm_rule
+    set template_id = #{templateId,jdbcType=INTEGER},
+      aggregator = #{aggregator,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=VARCHAR},
+      value = #{value,jdbcType=DOUBLE},
+      trigger_type = #{triggerType,jdbcType=INTEGER},
+      continuity_time = #{continuityTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from umc_alarm_rule
+  </select>
+</mapper>
