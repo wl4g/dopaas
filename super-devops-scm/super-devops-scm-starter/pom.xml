@@ -83,9 +83,6 @@
 	<profiles>
 		<profile>
 			<id>default</id>
-			<properties>
-				<profiles.active>default</profiles.active>
-			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -93,11 +90,9 @@
 		<profile>
 			<!-- [Step1] Modify docker server: '/etc/docker/daemon.json' => {"hosts":["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"]} -->
 			<!-- [Step2] Add OS environment: DOCKER_HOST=tcp://localhost:2375 -->
-			<!-- [Step3] clean install -Pdocker:push -Ddockerfile.username=yourname -Ddockerfile.password=yourpass -->
+			<!-- [Step3] clean install -Pdocker:push -Ddockerfile.username=yourname 
+				-Ddockerfile.password=yourpass -->
 			<id>docker:push</id>
-			<properties>
-				<profiles.active>docker-push</profiles.active>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -106,7 +101,7 @@
 						<version>1.4.9</version>
 						<executions>
 							<execution>
-								<id>docker-push</id>
+								<id>docker-build-push</id>
 								<goals>
 									<goal>build</goal>
 									<goal>push</goal>
