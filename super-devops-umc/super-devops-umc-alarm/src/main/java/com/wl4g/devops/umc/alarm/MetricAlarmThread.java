@@ -29,7 +29,7 @@ public class MetricAlarmThread extends GenericTaskRunner {
 
 	private MetricAggregate aggregate;
 
-	public MetricAlarmThread(TaskProperties config, MetricAggregate aggregate) {
+	public MetricAlarmThread(RunProperties config, MetricAggregate aggregate) {
 		super(config);
 		this.aggregate = aggregate;
 	}

@@ -96,7 +96,7 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 		String fStatus = this.getFromStatusText(e);
 		String tStatus = this.getToStatusText(e);
 		String msgId = UUID.randomUUID().toString().replaceAll("-", "").substring(16, 24);
-		String detailsUrl = getHrefUrl() + UMCDevOpsConstants.URI_DASHBOARD + msgId;
+		String detailsUrl = getHrefUrl() + UMCDevOpsConstants.URI_ADMIN_HOME + msgId;
 
 		// Save StatusMessage to cache.
 		StatusMessage msg = StatusMessage.wrap(appInfo, healthUrl, fStatus, tStatus, info.getTimestamp(), mailTo, phoneTo,

@@ -35,7 +35,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
+import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 
 /**
  * Generic task schedule runner.
@@ -44,7 +44,7 @@ import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
  * @version v1.0 2019年6月2日
  * @since
  */
-public abstract class GenericTaskRunner<C extends TaskProperties>
+public abstract class GenericTaskRunner<C extends RunProperties>
 		implements DisposableBean, ApplicationRunner, Closeable, Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -174,10 +174,20 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 		return boss != null && !boss.isInterrupted() && bossRunning.get();
 	}
 
+	/**
+	 * Get configuration properties.
+	 * 
+	 * @return
+	 */
 	public C getConfig() {
 		return config;
 	}
 
+	/**
+	 * Get thread worker.
+	 * 
+	 * @return
+	 */
 	protected ThreadPoolExecutor getWorker() {
 		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency>0");
 		return worker;
@@ -190,7 +200,7 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 	 * @version v1.0 2019年6月8日
 	 * @since
 	 */
-	public static class TaskProperties implements Serializable {
+	public static class RunProperties implements Serializable {
 
 		private static final long serialVersionUID = -1996272636830701232L;
 
@@ -214,19 +224,19 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 		/** Rejected execution handler. */
 		private RejectedExecutionHandler reject = new AbortPolicy();
 
-		public TaskProperties() {
+		public RunProperties() {
 			super();
 		}
 
-		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue) {
+		public RunProperties(int concurrency, long keepAliveTime, int acceptQueue) {
 			this(concurrency, keepAliveTime, acceptQueue, null);
 		}
 
-		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
+		public RunProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
 			this(true, concurrency, keepAliveTime, acceptQueue, reject);
 		}
 
-		public TaskProperties(boolean async, int concurrency, long keepAliveTime, int acceptQueue,
+		public RunProperties(boolean async, int concurrency, long keepAliveTime, int acceptQueue,
 				RejectedExecutionHandler reject) {
 			super();
 			setAsync(async);
