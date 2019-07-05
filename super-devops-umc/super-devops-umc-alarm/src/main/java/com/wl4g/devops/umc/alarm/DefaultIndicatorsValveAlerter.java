@@ -5,15 +5,14 @@ import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.AlarmRuleInfo;
 import com.wl4g.devops.common.bean.umc.model.TemplateHisInfo;
+import com.wl4g.devops.common.enums.AggregatorEnum;
 import com.wl4g.devops.common.enums.OperatorEnum;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
-import com.wl4g.devops.umc.rule.AbstractRuleJudge;
-import com.wl4g.devops.umc.rule.AvgRuleJedge;
-import com.wl4g.devops.umc.rule.RuleManager;
+import com.wl4g.devops.umc.rule.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -113,9 +112,17 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 
 
 	private AbstractRuleJudge getRuleJedge(String aggregator){
-		//TODO
-		if(aggregator.equals("")){
+		AggregatorEnum aggregatorEnum = AggregatorEnum.safeOf(aggregator);
+		if(aggregatorEnum.equals(AggregatorEnum.AVG)){
 			return new AvgRuleJedge();
+		}else if(aggregatorEnum.equals(AggregatorEnum.LAST)){
+			return new LastRuleJedge();
+		}else if(aggregatorEnum.equals(AggregatorEnum.MAX)){
+			return new MaxRuleJedge();
+		}else if(aggregatorEnum.equals(AggregatorEnum.MIN)){
+			return new MinRuleJedge();
+		}else if(aggregatorEnum.equals(AggregatorEnum.SUM)){
+			return new SumRuleJedge();
 		}
 		return null;
 	}
