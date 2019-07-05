@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_RULE;
-
 /**
  * Default collection metric valve alerter.
  * 
@@ -53,7 +51,6 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 
 		getWorker().execute(() -> {
 			// TODO alarm send ...
-
 			long now = System.currentTimeMillis();
 			List<MetricAggregateWrapper.Metric> metricsList = wrap.getMetrics();
 			//long gatherTime = wrap.getTimeStamp();
@@ -63,7 +60,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 			if(StringUtils.isBlank(instandId)){
 				return;
 			}
-			String json = jedisService.get(KEY_CACHE_ALARM_RULE+instandId);
+			String json = ruleManager.getAlarmRuleInfo(instandId);
 			AlarmRuleInfo alarmConfigRedis = JacksonUtils.parseJSON(json, AlarmRuleInfo.class);
 
 			List<AlarmTemplate> alarmTemplates = alarmConfigRedis.getAlarmTemplates();
@@ -96,6 +93,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 
 	}
 
+	/**
+	 * Chekc role is match
+	 */
 	private boolean checkRoleMatch(List<TemplateHisInfo.Point> points, List<AlarmRule> rules, long now ){
 		//or
 		for(AlarmRule rule : rules){
@@ -111,6 +111,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	}
 
 
+	/**
+	 * Get RuleJedge by aggregator
+	 */
 	private AbstractRuleJudge getRuleJedge(String aggregator){
 		AggregatorEnum aggregatorEnum = AggregatorEnum.safeOf(aggregator);
 		if(aggregatorEnum.equals(AggregatorEnum.AVG)){
@@ -128,6 +131,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	}
 
 
+	/**
+	 * Get effective point in range time
+	 */
 	private Double[] getValuesByContinuityTime(long continuityTime,List<TemplateHisInfo.Point> points,long now){
 		List<Double> values = new ArrayList<>();
 		for(TemplateHisInfo.Point point : points){
@@ -140,7 +146,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	}
 
 
-
+	/**
+	 * Send msg by template , found sent to who by template
+	 */
 	private void sendMsg(AlarmTemplate alarmTemplate, String instandId){
 		//get all match alarm config
 		List<AlarmConfig> alarmConfigs = alarmDaoInterface.selectByTemplateId(alarmTemplate.getId());
@@ -162,6 +170,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	}
 
 
+	/**
+	 * Is Tags Match
+	 */
 	private boolean isTagsMatch(Map<String, String> tagsMap,Map<String, String> map){
 
 		boolean isTagMatch = true;
@@ -180,7 +191,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	}
 
 
-
+	/**
+	 * tool
+	 */
 	private Map<String,String> str2Map(String str){
 		if(StringUtils.isBlank(str)){
 			return null;
