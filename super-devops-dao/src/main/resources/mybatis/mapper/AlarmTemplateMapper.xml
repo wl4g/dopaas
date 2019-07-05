@@ -18,7 +18,7 @@
       <id column="rid" property="id" jdbcType="INTEGER" />
       <result column="template_id" property="templateId" jdbcType="INTEGER" />
       <result column="aggregator" property="aggregator" jdbcType="VARCHAR" />
-      <result column="operator" property="operator" jdbcType="VARCHAR" />
+      <result column="operator" property="operator" jdbcType="INTEGER" />
       <result column="value" property="value" jdbcType="DOUBLE" />
       <result column="trigger_type" property="triggerType" jdbcType="INTEGER" />
       <result column="continuity_time" property="continuityTime" jdbcType="BIGINT" />
