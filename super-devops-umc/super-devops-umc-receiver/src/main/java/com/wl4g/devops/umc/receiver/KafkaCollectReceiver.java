@@ -64,6 +64,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 				}
 
 				putMetrics(aggregate);
+				alarm(aggregate);
 			} catch (InvalidProtocolBufferException e) {
 				log.error("Failed to parse metric message.", e);
 			}

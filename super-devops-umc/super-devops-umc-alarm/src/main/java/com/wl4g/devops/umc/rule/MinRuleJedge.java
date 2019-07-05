@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.rule;
 
-import com.wl4g.devops.common.enums.Operator;
+import com.wl4g.devops.common.enums.OperatorEnum;
 
 /**
  * @author vjay
@@ -10,7 +10,7 @@ public class MinRuleJedge extends AbstractRuleJudge{
 
 
     @Override
-    public boolean judge(Double[] values, Operator operator,double standard) {
+    public boolean judge(Double[] values, OperatorEnum operatorEnum, double standard) {
         if(values==null||values.length<=0){
             return false;
         }
@@ -20,6 +20,6 @@ public class MinRuleJedge extends AbstractRuleJudge{
                 operatorResult = value;
             }
         }
-        return super.operator(operator,operatorResult,standard);
+        return super.operator(operatorEnum,operatorResult,standard);
     }
 }
