@@ -61,7 +61,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<finalName>${final.name}-${project.version}-bin</finalName>
+					<finalName>${project.build.finalName}-${project.version}-bin</finalName>
 					<!-- not append assembly id in release file name -->
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
@@ -109,13 +109,16 @@
 							</execution>
 						</executions>
 						<configuration>
-							<repository>${project.build.finalName}:${project.version}</repository>
+							<repository>wl4g/${project.build.finalName}</repository>
 							<tag>${project.version}</tag>
-							<contextDirectory>src/main/docker</contextDirectory>
+							<!-- <contextDirectory>src/main/docker</contextDirectory> -->
+							<readTimeoutMillis>30000</readTimeoutMillis>
 							<connectTimeoutMillis>10000</connectTimeoutMillis>
 							<buildArgs>
 								<APP_NAME>${project.build.finalName}</APP_NAME>
 								<APP_VERSION>${project.version}</APP_VERSION>
+								<APP_BIN_NAME>${project.build.finalName}-${project.version}-bin</APP_BIN_NAME>
+								<APP_PORT>14043</APP_PORT>
 							</buildArgs>
 						</configuration>
 					</plugin>
