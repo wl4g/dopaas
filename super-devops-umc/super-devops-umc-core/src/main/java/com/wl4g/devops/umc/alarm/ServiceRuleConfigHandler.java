@@ -1,15 +1,15 @@
 package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.dao.scm.AppGroupDao;
-import com.wl4g.devops.dao.umc.AlarmConfigDao;
-import com.wl4g.devops.dao.umc.AlarmTemplateDao;
+import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_RULE;
@@ -35,6 +35,15 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 	@Autowired
 	private AlarmConfigDao alarmConfigDao;
 
+	@Autowired
+	private AlarmRecordDao alarmRecordDao;
+
+	@Autowired
+	private AlarmRecordRuleDao alarmRecordRuleDao;
+
+	@Autowired
+	private AlarmRecordUserDao alarmRecordUserDao;
+
 
 
 	@Override
@@ -51,6 +60,37 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 	@Override
 	public List<AlarmConfig> getByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
 		return alarmConfigDao.getByCollectIdAndTemplateId(templateId,collectId);
+	}
+
+
+	@Transactional
+	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate, List<AlarmRule> rules){
+		for(AlarmConfig alarmConfig : alarmConfigs){
+			AlarmRecord alarmRecord = new AlarmRecord();
+			alarmRecord.setTemplateId(alarmTemplate.getId());
+			alarmRecord.setName(alarmConfig.getName());
+			alarmRecord.setCollectId(collectId);
+			alarmRecord.setGatherTime(new Date(gatherTime));
+			alarmRecord.setAlarmTime(nowDate);
+			alarmRecord.setAlarmInfo(alarmConfig.getAlarmContent());
+			alarmRecord.setAlarmType(alarmConfig.getAlarmType());
+			int result = alarmRecordDao.insertSelective(alarmRecord);
+			//TODO  batch save is better
+			for(AlarmRule alarmRule : rules){
+				AlarmRecordRule alarmRecordRule = new AlarmRecordRule();
+				alarmRecordRule.setRecordId(alarmRecord.getId());
+				alarmRecordRule.setRuleId(alarmRule.getId());
+				result = alarmRecordRuleDao.insertSelective(alarmRecordRule);
+			}
+			String memberStr = alarmConfig.getAlarmMember();
+			String members[] = memberStr.split(",");
+			for(String s : members){
+				AlarmRecordUser alarmRecordUser = new AlarmRecordUser();
+				alarmRecordUser.setRecordId(alarmRecord.getId());
+				alarmRecordUser.setUserId(Integer.parseInt(s));
+				result = alarmRecordUserDao.insertSelective(alarmRecordUser);
+			}
+		}
 	}
 
 	/**

@@ -2,9 +2,11 @@ package com.wl4g.devops.umc.rule.handler;
 
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,6 +35,11 @@ public class MustImpledRuleConfigHandler implements RuleConfigHandler, Initializ
 
 	@Override
 	public List<AlarmConfig> getByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate, List<AlarmRule> rules) {
 		throw new UnsupportedOperationException();
 	}
 
