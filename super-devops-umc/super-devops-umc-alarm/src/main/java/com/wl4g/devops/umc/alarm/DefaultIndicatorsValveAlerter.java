@@ -10,6 +10,7 @@ import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
+import com.wl4g.devops.umc.notification.AlarmNotifier;
 import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
@@ -20,10 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.wl4g.devops.umc.rule.AggregatorType.safeOf;
 
@@ -43,6 +41,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 
 	@Autowired
 	private RuleConfigHandler ruleConfigHandler;
+
+	@Autowired
+	private AlarmNotifier alarmNotifier;
 
 	public DefaultIndicatorsValveAlerter(AlarmProperties config) {
 		super(config);
@@ -179,12 +180,12 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 		for(AlarmConfig alarmConfig : alarmConfigs){
 			if (StringUtils.isBlank(alarmConfig.getAlarmMember()))
 				continue;
-			// String[] alarmTarget =
-			// alarmConfig.getAlarmMember().split(",");
+			String[] alarmTarget = alarmConfig.getAlarmMember().split(",");
 			String msg = alarmConfig.getAlarmContent();
 			// TODO send msg
 			log.info("send msg, templateId={},collectId={}, msg={},sendType={},sentTo={}",alarmTemplate.getId(),collectId,msg,alarmConfig.getAlarmType(),alarmConfig.getAlarmMember());
-			// new WeChatSender().send(Arrays.asList(alarmTarget),msg);
+
+			alarmNotifier.simpleNotify(new ArrayList<>(Arrays.asList(alarmTarget)),alarmConfig.getAlarmContent());
 		}
 	}
 
