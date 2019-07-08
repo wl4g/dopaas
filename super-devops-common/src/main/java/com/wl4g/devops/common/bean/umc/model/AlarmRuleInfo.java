@@ -3,9 +3,7 @@ package com.wl4g.devops.common.bean.umc.model;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Alarm rule information.
@@ -19,7 +17,7 @@ public class AlarmRuleInfo {
 	/** Metric collect point identity. */
 	private Integer collectId; // e.g. cf_instance.id
 
-	private Set<Integer> alarmTemplateId = new HashSet<>();
+	//private Set<Integer> alarmTemplateId = new HashSet<>();
 
 	private List<AlarmTemplate> alarmTemplates = new ArrayList<>();
 
@@ -39,12 +37,12 @@ public class AlarmRuleInfo {
 		this.alarmTemplates = alarmTemplates;
 	}
 
-	public Set<Integer> getAlarmTemplateId() {
+	/*public Set<Integer> getAlarmTemplateId() {
 		return alarmTemplateId;
 	}
 
 	public void setAlarmTemplateId(Set<Integer> alarmTemplateId) {
 		this.alarmTemplateId = alarmTemplateId;
-	}
+	}*/
 
 }

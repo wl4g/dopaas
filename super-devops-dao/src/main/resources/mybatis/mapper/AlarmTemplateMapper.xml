@@ -183,13 +183,28 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="selectAllWithRule" resultMap="BaseResultMap">
+  <!--<select id="selectWithRuleByids" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List_t" />
     ,
     <include refid="Rule_Column_List" />
-
     from umc_alarm_template t LEFT JOIN umc_alarm_rule r on t.id=r.template_id where t.enable=1 and t.del_flag!=1
+  </select>-->
 
+  <select id="getByCollectId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List_t" />
+    ,
+    <include refid="Rule_Column_List" />
+    from umc_alarm_template t
+    left join umc_alarm_config uac on t.id=uac.template_id
+    left join umc_alarm_config_collect uacc on uacc.config_id=uac.id
+    LEFT JOIN umc_alarm_rule r on t.id=r.template_id
+    where uac.enable=1 and t.enable=1 and t.del_flag!=1
+    <if test="collectId != null and collectId != 0 " >
+      and  uacc.collect_id=#{collectId,jdbcType=INTEGER}
+    </if>
   </select>
+
+
 </mapper>

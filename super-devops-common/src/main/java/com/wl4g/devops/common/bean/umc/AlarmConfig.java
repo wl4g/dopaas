@@ -8,11 +8,19 @@ public class AlarmConfig extends BaseBean {
 
 	private Integer templateId;
 
-	private String tags;
-
 	private String alarmType;
 
 	private String alarmContent;
+
+	private String alarmMember;
+
+	public String getAlarmMember() {
+		return alarmMember;
+	}
+
+	public void setAlarmMember(String alarmMember) {
+		this.alarmMember = alarmMember;
+	}
 
 	public String getName() {
 		return name;
@@ -28,14 +36,6 @@ public class AlarmConfig extends BaseBean {
 
 	public void setTemplateId(Integer templateId) {
 		this.templateId = templateId;
-	}
-
-	public String getTags() {
-		return tags;
-	}
-
-	public void setTags(String tags) {
-		this.tags = tags == null ? null : tags.trim();
 	}
 
 	public String getAlarmType() {

@@ -1,20 +1,18 @@
 package com.wl4g.devops.umc.alarm;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_RULE;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.common.bean.umc.model.AlarmRuleInfo;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_RULE;
 
 /**
  * Service metric indicators rule handler.
@@ -37,29 +35,22 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 	@Autowired
 	private AlarmConfigDao alarmConfigDao;
 
-	@Override
-	public List<AlarmConfig> selectByTemplateId(Integer templateId) {
-		return alarmConfigDao.selectByTemplateId(templateId);
-	}
+
 
 	@Override
 	public List<AppInstance> instancelist(AppInstance appInstance) {
 		return appGroupDao.instancelist(appInstance);
 	}
 
+
 	@Override
-	public List<AlarmConfig> selectAll() {
-		return alarmConfigDao.selectAll();
+	public List<AlarmTemplate> getByCollectId(Integer collectId) {
+		return alarmTemplateDao.getByCollectId(collectId);
 	}
 
 	@Override
-	public List<AlarmTemplate> selectAllWithRule() {
-		return alarmTemplateDao.selectAllWithRule();
-	}
-
-	@Override
-	public AlarmRuleInfo getRule(String collectId) {
-		return jedisService.getObjectT(getRuleCacheKey(collectId), AlarmRuleInfo.class);
+	public List<AlarmConfig> getByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
+		return alarmConfigDao.getByCollectIdAndTemplateId(templateId,collectId);
 	}
 
 	/**

@@ -385,6 +385,12 @@
 			<if test="groupId != null and groupId != ''">
 				and a.group_id=#{groupId}
 			</if>
+			<if test="ip != null and groupId != ''">
+				and a.ip=#{ip}
+			</if>
+			<if test="port != null and groupId != ''">
+				and a.port=#{port}
+			</if>
 		</where>
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
