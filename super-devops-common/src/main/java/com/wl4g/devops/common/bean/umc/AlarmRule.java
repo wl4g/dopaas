@@ -4,63 +4,64 @@ import com.wl4g.devops.common.bean.scm.BaseBean;
 
 public class AlarmRule extends BaseBean {
 
-	private Integer templateId;
+    private Integer templateId;
 
-	private String aggregator;
+    private String aggregator;
 
-	private String operator;
+    private Integer operator;
 
-	private Double value;
+    private Double value;
 
-	private Integer triggerType;
+    private Integer triggerType;
 
-	private Long continuityTime;
+    private Long continuityTime;
 
-	public Integer getTemplateId() {
-		return templateId;
-	}
 
-	public void setTemplateId(Integer templateId) {
-		this.templateId = templateId;
-	}
+    public Integer getTemplateId() {
+        return templateId;
+    }
 
-	public String getAggregator() {
-		return aggregator;
-	}
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
+    }
 
-	public void setAggregator(String aggregator) {
-		this.aggregator = aggregator == null ? null : aggregator.trim();
-	}
+    public String getAggregator() {
+        return aggregator;
+    }
 
-	public String getOperator() {
-		return operator;
-	}
+    public void setAggregator(String aggregator) {
+        this.aggregator = aggregator == null ? null : aggregator.trim();
+    }
 
-	public void setOperator(String operator) {
-		this.operator = operator == null ? null : operator.trim();
-	}
+    public Integer getOperator() {
+        return operator;
+    }
 
-	public Double getValue() {
-		return value;
-	}
+    public void setOperator(Integer operator) {
+        this.operator = operator;
+    }
 
-	public void setValue(Double value) {
-		this.value = value;
-	}
+    public Double getValue() {
+        return value;
+    }
 
-	public Integer getTriggerType() {
-		return triggerType;
-	}
+    public void setValue(Double value) {
+        this.value = value;
+    }
 
-	public void setTriggerType(Integer triggerType) {
-		this.triggerType = triggerType;
-	}
+    public Integer getTriggerType() {
+        return triggerType;
+    }
 
-	public Long getContinuityTime() {
-		return continuityTime;
-	}
+    public void setTriggerType(Integer triggerType) {
+        this.triggerType = triggerType;
+    }
 
-	public void setContinuityTime(Long continuityTime) {
-		this.continuityTime = continuityTime;
-	}
+    public Long getContinuityTime() {
+        return continuityTime;
+    }
+
+    public void setContinuityTime(Long continuityTime) {
+        this.continuityTime = continuityTime;
+    }
 }

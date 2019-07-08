@@ -205,4 +205,12 @@
     where enable=1 and del_flag!=1
   </select>
 
+
+  <select id="selectByTemplateId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from umc_alarm_config
+    where template_id = #{templateId,jdbcType=INTEGER}
+  </select>
+
 </mapper>

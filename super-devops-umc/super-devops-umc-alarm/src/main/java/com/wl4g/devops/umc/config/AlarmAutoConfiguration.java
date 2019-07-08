@@ -6,8 +6,9 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
-import com.wl4g.devops.umc.rule.NoneMustImpleRuleHandler;
-import com.wl4g.devops.umc.rule.RuleHandler;
+import com.wl4g.devops.umc.rule.RuleConfigManager;
+import com.wl4g.devops.umc.rule.handler.MustImpledRuleConfigHandler;
+import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
 
 /**
  * Alarm auto configuration.
@@ -32,9 +33,14 @@ public class AlarmAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(RuleHandler.class)
-	public RuleHandler ruleHandler() {
-		return new NoneMustImpleRuleHandler();
+	@ConditionalOnMissingBean(RuleConfigHandler.class)
+	public RuleConfigHandler ruleConfigHandler() {
+		return new MustImpledRuleConfigHandler();
+	}
+
+	@Bean
+	public RuleConfigManager ruleConfigManager() {
+		return new RuleConfigManager();
 	}
 
 }

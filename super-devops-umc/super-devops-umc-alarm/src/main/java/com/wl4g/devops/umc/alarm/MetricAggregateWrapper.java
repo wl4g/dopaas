@@ -1,10 +1,11 @@
 package com.wl4g.devops.umc.alarm;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Metric aggregate wrapper.
@@ -21,20 +22,14 @@ public class MetricAggregateWrapper implements Serializable {
 	 */
 	private String collectId = EMPTY;
 
-	/**
-	 * Collection metric type .
-	 */
+	/** Collect metric type. */
 	private String classify = EMPTY;
 
-	/**
-	 * Collection metric target tags.
-	 */
-	private Map<String, String> tags = new HashMap<>();
+	/** Collect metric list. */
+	private List<MetricWrapper> metrics;
 
-	/**
-	 * Collection metric value.
-	 */
-	private Double value;
+	/** Collect metric time-stamp. */
+	private Long timestamp;
 
 	public String getCollectId() {
 		return collectId;
@@ -52,26 +47,66 @@ public class MetricAggregateWrapper implements Serializable {
 		this.classify = metricType;
 	}
 
-	public Map<String, String> getTags() {
-		return tags;
+	public List<MetricWrapper> getMetrics() {
+		return metrics;
 	}
 
-	public void setTags(Map<String, String> tags) {
-		this.tags = tags;
+	public void setMetrics(List<MetricWrapper> metrics) {
+		this.metrics = metrics;
 	}
 
-	public Double getValue() {
-		return value;
+	public Long getTimestamp() {
+		return timestamp;
 	}
 
-	public void setValue(Double value) {
-		this.value = value;
+	public void setTimestamp(Long timeStamp) {
+		this.timestamp = timeStamp;
 	}
 
 	@Override
 	public String toString() {
-		return "MetricAggregateWrapper [collectId=" + collectId + ", metricType=" + classify + ", tags=" + tags + ", value="
-				+ value + "]";
+		return "MetricAggregateWrapper{" + "collectId='" + collectId + '\'' + ", classify='" + classify + '\'' + ", metrics="
+				+ metrics + ", timeStamp=" + timestamp + '}';
+	}
+
+	/**
+	 * Metric wrapper.
+	 * 
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年7月5日
+	 * @since
+	 */
+	public static class MetricWrapper {
+
+		private String metric;
+
+		private Map<String, String> tags = new HashMap<>();
+
+		private Double value;
+
+		public String getMetric() {
+			return metric;
+		}
+
+		public void setMetric(String metric) {
+			this.metric = metric;
+		}
+
+		public Map<String, String> getTags() {
+			return tags;
+		}
+
+		public void setTags(Map<String, String> tags) {
+			this.tags = tags;
+		}
+
+		public Double getValue() {
+			return value;
+		}
+
+		public void setValue(Double value) {
+			this.value = value;
+		}
 	}
 
 }
