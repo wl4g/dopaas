@@ -12,8 +12,6 @@ public class AlarmConfig extends BaseBean {
 
 	private String alarmType;
 
-	private String alarmMember;
-
 	private String alarmContent;
 
 	public String getName() {
@@ -46,14 +44,6 @@ public class AlarmConfig extends BaseBean {
 
 	public void setAlarmType(String alarmType) {
 		this.alarmType = alarmType == null ? null : alarmType.trim();
-	}
-
-	public String getAlarmMember() {
-		return alarmMember;
-	}
-
-	public void setAlarmMember(String alarmMember) {
-		this.alarmMember = alarmMember == null ? null : alarmMember.trim();
 	}
 
 	public String getAlarmContent() {

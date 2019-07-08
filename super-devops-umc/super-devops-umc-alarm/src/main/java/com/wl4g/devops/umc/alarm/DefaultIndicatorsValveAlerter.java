@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+import static com.wl4g.devops.umc.rule.AggregatorType.*;
+
 /**
  * Default collection metric valve alerter.
  * 
@@ -59,12 +61,12 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 			List<MetricAggregateWrapper.MetricWrapper> metricsList = wrap.getMetrics();
 			// long gatherTime = wrap.getTimeStamp();
 			String instance = wrap.getCollectId();
-			String instandId = ruleConfigManager.getInstandId(instance);
+			String collectId = ruleConfigManager.convertCollectId(instance);
 
-			if (StringUtils.isBlank(instandId)) {
+			if (StringUtils.isBlank(collectId)) {
 				return;
 			}
-			String json = ruleConfigManager.getAlarmRuleInfo(instandId);
+			String json = ruleConfigManager.getAlarmRuleInfo(collectId);
 			AlarmRuleInfo alarmConfigRedis = JacksonUtils.parseJSON(json, AlarmRuleInfo.class);
 
 			List<AlarmTemplate> alarmTemplates = alarmConfigRedis.getAlarmTemplates();
@@ -87,9 +89,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 						List<TemplateHisInfo.Point> points = ruleConfigManager.duelTempalteInRedis(alarmTemplate.getId(),
 								metric.getValue(), wrap.getTimestamp(), now, longestKeepTime.intValue());
 
-						if (checkRoleMatch(points, rules, now)) {
+						if (checkRuleMatch(points, rules, now)) {
 							// TODO send msg
-							sendMsg(alarmTemplate, instandId);
+							sendMsg(alarmTemplate, collectId);
 						}
 					}
 				}
@@ -101,13 +103,13 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	/**
 	 * Chekc role is match
 	 */
-	private boolean checkRoleMatch(List<TemplateHisInfo.Point> points, List<AlarmRule> rules, long now) {
+	private boolean checkRuleMatch(List<TemplateHisInfo.Point> points, List<AlarmRule> rules, long now) {
 		// or
 		for (AlarmRule rule : rules) {
 			Double[] valuesByContinuityTime = getValuesByContinuityTime(rule.getContinuityTime(), points, now);
 			String aggregator = rule.getAggregator();
-			AbstractRuleInspector ruleJedge = getRuleJedge(aggregator);
-			boolean match = ruleJedge.judge(valuesByContinuityTime, OperatorType.safeOf(rule.getOperator()), rule.getValue());
+			AbstractRuleInspector ruleJudge = getRuleJudge(aggregator);
+			boolean match = ruleJudge.judge(valuesByContinuityTime, OperatorType.safeOf(rule.getOperator()), rule.getValue());
 			if (match) {
 				return true;
 			}
@@ -118,20 +120,22 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	/**
 	 * Get RuleJedge by aggregator
 	 */
-	private AbstractRuleInspector getRuleJedge(String aggregator) {
-		AggregatorType aggregatorEnum = AggregatorType.safeOf(aggregator);
-		if (aggregatorEnum.equals(AggregatorType.AVG)) {
-			return new AvgRuleInspector();
-		} else if (aggregatorEnum.equals(AggregatorType.LAST)) {
-			return new LastRuleInspector();
-		} else if (aggregatorEnum.equals(AggregatorType.MAX)) {
-			return new MaxRuleInspector();
-		} else if (aggregatorEnum.equals(AggregatorType.MIN)) {
-			return new MinRuleInspector();
-		} else if (aggregatorEnum.equals(AggregatorType.SUM)) {
-			return new SumRuleInspector();
+	private AbstractRuleInspector getRuleJudge(String aggregator) {
+		AggregatorType aggregatorEnum = safeOf(aggregator);
+		switch (aggregatorEnum){
+			case AVG:
+				return new AvgRuleInspector();
+			case LAST:
+				return new LastRuleInspector();
+			case MAX:
+				return new MaxRuleInspector();
+			case MIN:
+				return new MinRuleInspector();
+			case SUM:
+				return new SumRuleInspector();
+			default:
+				return null;
 		}
-		return null;
 	}
 
 	/**
@@ -151,14 +155,14 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	/**
 	 * Send msg by template , found sent to who by template
 	 */
-	private void sendMsg(AlarmTemplate alarmTemplate, String instandId) {
+	private void sendMsg(AlarmTemplate alarmTemplate, String collectId) {
 		// get all match alarm config
 		List<AlarmConfig> alarmConfigs = ruleConfigHandler.selectByTemplateId(alarmTemplate.getId());
 		for (AlarmConfig alarmConfig : alarmConfigs) {
 			if (StringUtils.isBlank(alarmConfig.getTags()))
 				continue;
 			String[] tags = alarmConfig.getTags().split(",");
-			boolean matchInstant = Arrays.asList(tags).contains(instandId);
+			boolean matchInstant = Arrays.asList(tags).contains(collectId);
 			if (matchInstant) {
 				if (StringUtils.isBlank(alarmConfig.getAlarmMember()))
 					continue;
