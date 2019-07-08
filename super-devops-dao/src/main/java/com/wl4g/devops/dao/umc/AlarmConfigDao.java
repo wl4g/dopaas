@@ -18,4 +18,6 @@ public interface AlarmConfigDao {
     int updateByPrimaryKey(AlarmConfig record);
 
     List<AlarmConfig> selectAll();
+
+    List<AlarmConfig> selectByTemplateId(Integer templateId);
 }

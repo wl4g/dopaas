@@ -46,10 +46,14 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 
 	final public static String KEY_CACHE_INSTANCE_ID = "umc_ip2id_";
 
+	final public static String KEY_CACHE_TEMPLATE_HIS = "umc_templatehis_";
+
 	/**
 	 * KAFKA receiver metric topic pattern.(corresponding to agent collector)
 	 */
 	final public static String TOPIC_KAFKA_RECEIVE_PATTERN = "umc_agent_metrics";
+
+	final public static String NOT_FOUND = "umc_ip_not_found_";
 
 	//
 	// UMC watch definition.
