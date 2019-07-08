@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.rule;
 
+import com.google.common.net.HostAndPort;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
@@ -14,6 +15,8 @@ import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -24,7 +27,7 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
  * @author vjay
  * @date 2019-07-04 15:47:00
  */
-public class RuleConfigManager {
+public class RuleConfigManager implements ApplicationRunner {
 
 	@Autowired
 	private JedisService jedisService;
@@ -33,34 +36,45 @@ public class RuleConfigManager {
 	private RuleConfigHandler ruleConfigHandler;
 
 	/**
-	 * get InstandId by Instand,get from redis first ,if not found ,get from db
+	 * get collectId by collect,get from redis first ,if not found ,get from db
 	 */
-	public String getInstandId(String instance) {
-		String instandId = jedisService.get(KEY_CACHE_INSTANCE_ID + instance);
-		if (StringUtils.isBlank(instandId) || StringUtils.equals(instandId, NOT_FOUND)) {
+	public String convertCollectId(String collectIpAndPort) {
+		//check ip and port
+		HostAndPort.fromString(collectIpAndPort);
+
+		String collectId = jedisService.get(getCacheKeyByIpAndPort(collectIpAndPort));
+
+		if (StringUtils.isBlank(collectId) || StringUtils.equals(collectId, NOT_FOUND)) {
 			AppInstance appInstance = new AppInstance();
 			List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
 			for (AppInstance appInstance1 : instancelist) {
-				if (StringUtils.equals(instance, appInstance1.getIp() + ":" + appInstance1.getPort())) {
+				if (StringUtils.equals(collectIpAndPort, appInstance1.getIp() + ":" + appInstance1.getPort())) {
 					// found
-					instandId = String.valueOf(appInstance1.getId());
-					jedisService.set(KEY_CACHE_INSTANCE_ID + appInstance1.getIp() + ":" + appInstance1.getPort(),
+					collectId = String.valueOf(appInstance1.getId());
+					jedisService.set(getCacheKeyByIpAndPort(appInstance1.getIp() + ":" + appInstance1.getPort()) ,
 							String.valueOf(appInstance1.getId()), 0);
+					//TODO
+					//jedisService.setObjectT()
 					break;
 				}
 			}
-			jedisService.set(KEY_CACHE_INSTANCE_ID + instance, NOT_FOUND, 30);
+			jedisService.set(getCacheKeyByIpAndPort(collectIpAndPort) , NOT_FOUND, 30);
 		}
-		return instandId;
+		return collectId;
+	}
+
+	//TODO
+	public void clearAll(){
+
 	}
 
 	/**
-	 * Get Rule By instandid ,get from redis first ,if not found ,get from db
+	 * Get Rule By collectid ,get from redis first ,if not found ,get from db
 	 */
-	public String getAlarmRuleInfo(String instandId) {
+	public String getAlarmRuleInfo(String collectId) {
 
-		String json = jedisService.get(KEY_CACHE_ALARM_RULE + instandId);
-		if (StringUtils.isBlank(instandId) || StringUtils.equals(instandId, NOT_FOUND)) {
+		String json = jedisService.get(KEY_CACHE_ALARM_RULE + collectId);
+		if (StringUtils.isBlank(collectId) || StringUtils.equals(collectId, NOT_FOUND)) {
 			Map<Integer, AlarmTemplate> alarmTemplateMap = getAllAlarmTemplate();
 			List<AlarmConfig> alarmConfigs = ruleConfigHandler.selectAll();
 			Set<Integer> templates = new HashSet<>();
@@ -68,13 +82,13 @@ public class RuleConfigManager {
 			for (AlarmConfig alarmConfig : alarmConfigs) {
 				String[] tags = alarmConfig.getTags().split(",");
 				Integer templateId = alarmConfig.getTemplateId();
-				if (Arrays.asList(tags).contains(instandId)) {
+				if (Arrays.asList(tags).contains(collectId)) {
 					templates.add(templateId);
 				}
 			}
 			Set<Integer> temList = templates;
 			AlarmRuleInfo alarmConfigRedis = new AlarmRuleInfo();
-			alarmConfigRedis.setCollectId(Integer.parseInt(instandId));
+			alarmConfigRedis.setCollectId(Integer.parseInt(collectId));
 			alarmConfigRedis.setAlarmTemplateId(temList);
 			List<AlarmTemplate> alarmTemplates = new ArrayList<>();
 			for (Integer tem : temList) {
@@ -82,12 +96,12 @@ public class RuleConfigManager {
 			}
 			alarmConfigRedis.setAlarmTemplates(alarmTemplates);
 			if (alarmTemplates.size() <= 0) {
-				jedisService.set(KEY_CACHE_ALARM_RULE + String.valueOf(Integer.parseInt(instandId)), json, 0);
+				jedisService.set(KEY_CACHE_ALARM_RULE + String.valueOf(Integer.parseInt(collectId)), json, 0);
 				return json;
 			}
 			// TODO
 			json = JacksonUtils.toJSONString(alarmConfigRedis);
-			jedisService.set(KEY_CACHE_ALARM_RULE + instandId, NOT_FOUND, 30);
+			jedisService.set(KEY_CACHE_ALARM_RULE + collectId, NOT_FOUND, 30);
 		}
 
 		return json;
@@ -159,4 +173,15 @@ public class RuleConfigManager {
 		return keepTime;
 	}
 
+	@Override
+	public void run(ApplicationArguments applicationArguments) throws Exception {
+		//after start
+	}
+
+
+
+
+	public static String getCacheKeyByIpAndPort(String collectIpAndPort){
+		return  KEY_CACHE_INSTANCE_ID + collectIpAndPort;
+	}
 }

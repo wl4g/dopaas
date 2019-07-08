@@ -32,14 +32,13 @@
         </javaClientGenerator>
 
         <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
-        <table tableName="umc_alarm_config" domainObjectName="AlarmConfig"
+        <table tableName="umc_alarm_config_collect" domainObjectName="AlarmConfigCollect"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="umc_alarm_record" domainObjectName="AlarmRecord"
+        <table tableName="umc_alarm_record_rule" domainObjectName="AlarmRecordRule"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="umc_alarm_rule" domainObjectName="AlarmRule"
+        <table tableName="umc_alarm_record_user" domainObjectName="AlarmRecordUser"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="umc_alarm_template" domainObjectName="AlarmTemplate"
-               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+
         <!--<table tableName="ci_task" domainObjectName="Task"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="ci_task_detail" domainObjectName="TaskDetail"
