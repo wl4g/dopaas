@@ -3,16 +3,16 @@
 <mapper namespace="com.wl4g.devops.dao.umc.AlarmRecordDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmRecord" >
     <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="template_id" property="templateId" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="tags" property="tags" jdbcType="VARCHAR" />
+    <result column="collect_id" property="collectId" jdbcType="INTEGER" />
     <result column="gather_time" property="gatherTime" jdbcType="TIMESTAMP" />
     <result column="alarm_time" property="alarmTime" jdbcType="TIMESTAMP" />
     <result column="alarm_info" property="alarmInfo" jdbcType="VARCHAR" />
     <result column="alarm_type" property="alarmType" jdbcType="VARCHAR" />
-    <result column="alarm_member" property="alarmMember" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, tags, gather_time, alarm_time, alarm_info, alarm_type, alarm_member
+    id, template_id, name, collect_id, gather_time, alarm_time, alarm_info, alarm_type
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -25,12 +25,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" >
-    insert into umc_alarm_record (id, name, tags, 
-      gather_time, alarm_time, alarm_info, 
-      alarm_type, alarm_member)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{tags,jdbcType=VARCHAR}, 
-      #{gatherTime,jdbcType=TIMESTAMP}, #{alarmTime,jdbcType=TIMESTAMP}, #{alarmInfo,jdbcType=VARCHAR}, 
-      #{alarmType,jdbcType=VARCHAR}, #{alarmMember,jdbcType=VARCHAR})
+    insert into umc_alarm_record (id, template_id, name, 
+      collect_id, gather_time, alarm_time, 
+      alarm_info, alarm_type)
+    values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{collectId,jdbcType=INTEGER}, #{gatherTime,jdbcType=TIMESTAMP}, #{alarmTime,jdbcType=TIMESTAMP}, 
+      #{alarmInfo,jdbcType=VARCHAR}, #{alarmType,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" >
     insert into umc_alarm_record
@@ -38,11 +38,14 @@
       <if test="id != null" >
         id,
       </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
       <if test="name != null" >
         name,
       </if>
-      <if test="tags != null" >
-        tags,
+      <if test="collectId != null" >
+        collect_id,
       </if>
       <if test="gatherTime != null" >
         gather_time,
@@ -56,19 +59,19 @@
       <if test="alarmType != null" >
         alarm_type,
       </if>
-      <if test="alarmMember != null" >
-        alarm_member,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=INTEGER},
+      </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="tags != null" >
-        #{tags,jdbcType=VARCHAR},
+      <if test="collectId != null" >
+        #{collectId,jdbcType=INTEGER},
       </if>
       <if test="gatherTime != null" >
         #{gatherTime,jdbcType=TIMESTAMP},
@@ -82,19 +85,19 @@
       <if test="alarmType != null" >
         #{alarmType,jdbcType=VARCHAR},
       </if>
-      <if test="alarmMember != null" >
-        #{alarmMember,jdbcType=VARCHAR},
-      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" >
     update umc_alarm_record
     <set >
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=INTEGER},
+      </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="tags != null" >
-        tags = #{tags,jdbcType=VARCHAR},
+      <if test="collectId != null" >
+        collect_id = #{collectId,jdbcType=INTEGER},
       </if>
       <if test="gatherTime != null" >
         gather_time = #{gatherTime,jdbcType=TIMESTAMP},
@@ -108,21 +111,18 @@
       <if test="alarmType != null" >
         alarm_type = #{alarmType,jdbcType=VARCHAR},
       </if>
-      <if test="alarmMember != null" >
-        alarm_member = #{alarmMember,jdbcType=VARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" >
     update umc_alarm_record
-    set name = #{name,jdbcType=VARCHAR},
-      tags = #{tags,jdbcType=VARCHAR},
+    set template_id = #{templateId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      collect_id = #{collectId,jdbcType=INTEGER},
       gather_time = #{gatherTime,jdbcType=TIMESTAMP},
       alarm_time = #{alarmTime,jdbcType=TIMESTAMP},
       alarm_info = #{alarmInfo,jdbcType=VARCHAR},
-      alarm_type = #{alarmType,jdbcType=VARCHAR},
-      alarm_member = #{alarmMember,jdbcType=VARCHAR}
+      alarm_type = #{alarmType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
