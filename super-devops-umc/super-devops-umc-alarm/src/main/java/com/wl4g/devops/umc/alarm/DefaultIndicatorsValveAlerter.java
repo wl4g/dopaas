@@ -10,21 +10,21 @@ import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
-import com.wl4g.devops.umc.rule.*;
+import com.wl4g.devops.umc.rule.AggregatorType;
+import com.wl4g.devops.umc.rule.OperatorType;
+import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
-import com.wl4g.devops.umc.rule.inspect.AbstractRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.AvgRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.LastRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.MaxRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.MinRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.SumRuleInspector;
-
+import com.wl4g.devops.umc.rule.inspect.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import static com.wl4g.devops.umc.rule.AggregatorType.*;
+import static com.wl4g.devops.umc.rule.AggregatorType.safeOf;
 
 /**
  * Default collection metric valve alerter.
@@ -34,6 +34,8 @@ import static com.wl4g.devops.umc.rule.AggregatorType.*;
  * @since
  */
 public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperties> implements IndicatorsValveAlerter {
+
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private RuleConfigManager ruleConfigManager;
@@ -53,51 +55,54 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 
 	@Override
 	public void alarm(MetricAggregateWrapper wrap) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 		getWorker().execute(() -> {
-			// TODO alarm send ...
-			long now = System.currentTimeMillis();
-			List<MetricAggregateWrapper.MetricWrapper> metricsList = wrap.getMetrics();
-			// long gatherTime = wrap.getTimeStamp();
-			String instance = wrap.getCollectId();
-			String collectId = ruleConfigManager.convertCollectId(instance);
+			duel(wrap);
+		});
+	}
 
-			if (StringUtils.isBlank(collectId)) {
-				return;
-			}
-			String json = ruleConfigManager.getAlarmRuleInfo(collectId);
-			AlarmRuleInfo alarmConfigRedis = JacksonUtils.parseJSON(json, AlarmRuleInfo.class);
 
-			List<AlarmTemplate> alarmTemplates = alarmConfigRedis.getAlarmTemplates();
+	public void duel(MetricAggregateWrapper wrap){
+		long now = System.currentTimeMillis();
+		List<MetricAggregateWrapper.MetricWrapper> metricsList = wrap.getMetrics();
+		// long gatherTime = wrap.getTimeStamp();
+		String collectIp = wrap.getCollectId();
+		log.info("start match rule,collectIp={}",collectIp);
 
-			for (MetricWrapper metric : metricsList) {
-				Map<String, String> tagsMap = metric.getTags();
-				String metricName = metric.getMetric();
-				for (AlarmTemplate alarmTemplate : alarmTemplates) {
-					if (StringUtils.equals(metricName, alarmTemplate.getMetric())) {
-						String tags = alarmTemplate.getTags();
-						Map<String, String> map = str2Map(tags);
-						// check tags
-						if (!isTagsMatch(tagsMap, map)) {
-							continue;
-						}
-						// TODO duel rules
-						List<AlarmRule> rules = alarmTemplate.getRules();
-						Long longestKeepTime = ruleConfigManager.getLongestRuleKeepTime(rules);
-						// get history point from redis
-						List<TemplateHisInfo.Point> points = ruleConfigManager.duelTempalteInRedis(alarmTemplate.getId(),
-								metric.getValue(), wrap.getTimestamp(), now, longestKeepTime.intValue());
+		Integer collectId = ruleConfigManager.convertCollectIp(collectIp);
+		if (null==collectId) {
+			return;
+		}
+		AlarmRuleInfo alarmConfigRedis =  ruleConfigManager.getAlarmRuleInfo(collectId);
 
-						if (checkRuleMatch(points, rules, now)) {
-							// TODO send msg
-							sendMsg(alarmTemplate, collectId);
-						}
+		List<AlarmTemplate> alarmTemplates = alarmConfigRedis.getAlarmTemplates();
+
+		for (MetricWrapper metric : metricsList) {
+			Map<String, String> tagsMap = metric.getTags();
+			String metricName = metric.getMetric();
+			for (AlarmTemplate alarmTemplate : alarmTemplates) {
+				if (StringUtils.equals(metricName, alarmTemplate.getMetric())) {
+					String tags = alarmTemplate.getTags();
+					Map<String, String> map = JacksonUtils.parseJSON(tags,Map.class);
+					// check tags
+					if (!isTagsMatch(tagsMap, map)) {
+						continue;
+					}
+					//duel rules
+					List<AlarmRule> rules = alarmTemplate.getRules();
+					Long longestKeepTime = ruleConfigManager.cacheTime(rules);
+					// get history point from redis
+					List<TemplateHisInfo.Point> points = ruleConfigManager.duelTempalteInRedis(alarmTemplate.getId(),
+							metric.getValue(), wrap.getTimestamp(), now, longestKeepTime.intValue());
+
+					if (checkRuleMatch(points, rules, now)) {
+						// send msg
+						sendMsg(alarmTemplate, collectId);
 					}
 				}
 			}
-		});
-
+		}
 	}
 
 	/**
@@ -106,11 +111,13 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	private boolean checkRuleMatch(List<TemplateHisInfo.Point> points, List<AlarmRule> rules, long now) {
 		// or
 		for (AlarmRule rule : rules) {
-			Double[] valuesByContinuityTime = getValuesByContinuityTime(rule.getContinuityTime(), points, now);
+			Double[] valuesByContinuityTime = effectiveScopeValues(rule.getContinuityTime(), points, now);
 			String aggregator = rule.getAggregator();
 			AbstractRuleInspector ruleJudge = getRuleJudge(aggregator);
 			boolean match = ruleJudge.judge(valuesByContinuityTime, OperatorType.safeOf(rule.getOperator()), rule.getValue());
 			if (match) {
+				//TODO save record
+
 				return true;
 			}
 		}
@@ -118,7 +125,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	}
 
 	/**
-	 * Get RuleJedge by aggregator
+	 * Get Rule Judge by aggregator
 	 */
 	private AbstractRuleInspector getRuleJudge(String aggregator) {
 		AggregatorType aggregatorEnum = safeOf(aggregator);
@@ -141,7 +148,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	/**
 	 * Get effective point in range time
 	 */
-	private Double[] getValuesByContinuityTime(long continuityTime, List<TemplateHisInfo.Point> points, long now) {
+	private Double[] effectiveScopeValues(long continuityTime, List<TemplateHisInfo.Point> points, long now) {
 		List<Double> values = new ArrayList<>();
 		for (TemplateHisInfo.Point point : points) {
 			if (now - point.getTimeStamp() < continuityTime) {
@@ -155,33 +162,25 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	/**
 	 * Send msg by template , found sent to who by template
 	 */
-	private void sendMsg(AlarmTemplate alarmTemplate, String collectId) {
+	private void sendMsg(AlarmTemplate alarmTemplate, Integer collectId) {
 		// get all match alarm config
-		List<AlarmConfig> alarmConfigs = ruleConfigHandler.selectByTemplateId(alarmTemplate.getId());
-		for (AlarmConfig alarmConfig : alarmConfigs) {
-			if (StringUtils.isBlank(alarmConfig.getTags()))
+		List<AlarmConfig> alarmConfigs = ruleConfigHandler.getByCollectIdAndTemplateId(alarmTemplate.getId(), collectId);
+		for(AlarmConfig alarmConfig : alarmConfigs){
+			if (StringUtils.isBlank(alarmConfig.getAlarmMember()))
 				continue;
-			String[] tags = alarmConfig.getTags().split(",");
-			boolean matchInstant = Arrays.asList(tags).contains(collectId);
-			if (matchInstant) {
-				if (StringUtils.isBlank(alarmConfig.getAlarmMember()))
-					continue;
-				// String[] alarmTarget =
-				// alarmConfig.getAlarmMember().split(",");
-				String msg = alarmConfig.getAlarmContent();
-				// TODO send msg
-				log.info("send msg:" + msg);
-				// new WeChatSender().send(Arrays.asList(alarmTarget),msg);
-			}
+			// String[] alarmTarget =
+			// alarmConfig.getAlarmMember().split(",");
+			String msg = alarmConfig.getAlarmContent();
+			// TODO send msg
+			log.info("send msg:" + msg);
+			// new WeChatSender().send(Arrays.asList(alarmTarget),msg);
 		}
-
 	}
 
 	/**
 	 * Is Tags Match
 	 */
 	private boolean isTagsMatch(Map<String, String> tagsMap, Map<String, String> map) {
-
 		boolean isTagMatch = true;
 		for (Map.Entry<String, String> entry : map.entrySet()) {
 			String value = tagsMap.get(entry.getKey());
@@ -197,23 +196,5 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 		return isTagMatch;
 	}
 
-	/**
-	 * tool
-	 */
-	private Map<String, String> str2Map(String str) {
-		if (StringUtils.isBlank(str)) {
-			return null;
-		}
-		String[] strs = str.split(",");
-		Map<String, String> map = new HashMap<>();
-		for (String string : strs) {
-			String kv[] = string.split("=");
-			if (kv.length != 2) {
-				continue;
-			}
-			map.put(kv[0], kv[1]);
-		}
-		return map;
-	}
 
 }

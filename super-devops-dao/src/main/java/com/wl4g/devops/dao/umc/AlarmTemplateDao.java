@@ -17,5 +17,7 @@ public interface AlarmTemplateDao {
 
     int updateByPrimaryKey(AlarmTemplate record);
 
-    List<AlarmTemplate> selectAllWithRule();
+    //List<AlarmTemplate> selectWithRuleByids();
+
+    List<AlarmTemplate> getByCollectId(Integer collectId);
 }
