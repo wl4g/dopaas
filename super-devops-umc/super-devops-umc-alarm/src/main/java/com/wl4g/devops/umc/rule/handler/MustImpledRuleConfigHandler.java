@@ -29,12 +29,12 @@ public class MustImpledRuleConfigHandler implements RuleConfigHandler, Initializ
 	}
 
 	@Override
-	public List<AlarmTemplate> getByCollectId(Integer collectId) {
+	public List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<AlarmConfig> getByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
+	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
 		throw new UnsupportedOperationException();
 	}
 

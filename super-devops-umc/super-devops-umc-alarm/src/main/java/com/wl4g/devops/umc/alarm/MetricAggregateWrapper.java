@@ -56,7 +56,7 @@ public class MetricAggregateWrapper implements Serializable {
 	}
 
 	public Long getTimestamp() {
-		return timestamp;
+		return timestamp*1000;
 	}
 
 	public void setTimestamp(Long timeStamp) {

@@ -25,9 +25,9 @@ public interface RuleConfigHandler {
 
 	//List<AlarmConfig> selectAll();
 
-	List<AlarmTemplate> getByCollectId(Integer collectId);
+	List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId);
 
-	List<AlarmConfig> getByCollectIdAndTemplateId(Integer templateId,Integer collectId);
+	List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId);
 
 	void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate, List<AlarmRule> rules);
 
