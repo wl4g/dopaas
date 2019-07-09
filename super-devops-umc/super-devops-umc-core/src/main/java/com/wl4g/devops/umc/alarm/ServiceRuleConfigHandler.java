@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.alarm;
 
+import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.dao.scm.AppGroupDao;
@@ -50,6 +51,11 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 		return appGroupDao.instancelist(appInstance);
 	}
 
+	@Override
+	public AppGroup getAppGroupByName(String groupName) {
+		return appGroupDao.getAppGroupByName(groupName);
+	}
+
 
 	@Override
 	public List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId) {
@@ -57,9 +63,21 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 	}
 
 	@Override
+	public List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId) {
+		return alarmTemplateDao.getByGroupId(groupId);
+	}
+
+	@Override
 	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
 		return alarmConfigDao.getByCollectIdAndTemplateId(templateId,collectId);
 	}
+
+	@Override
+	public List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId) {
+		return alarmConfigDao.getByGroupIdAndTemplateId(templateId,groupId);
+	}
+
+
 
 
 	@Transactional

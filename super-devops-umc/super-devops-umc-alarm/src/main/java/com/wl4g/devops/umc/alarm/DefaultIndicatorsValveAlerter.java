@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.USE_GROUP;
 import static com.wl4g.devops.umc.rule.AggregatorType.safeOf;
 
 /**
@@ -77,13 +78,23 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
         String collectIp = wrap.getCollectId();
         log.info("start match rule,collectIp={}", collectIp);
 
-        Integer collectId = ruleConfigManager.convertCollectIp(collectIp);
-        if (null == collectId) {
-            return;
+        List<AlarmTemplate> alarmTemplates;
+        Integer collectId = null;
+        Integer groupId = null;
+        if(StringUtils.equals(collectIp,USE_GROUP)){
+            groupId = ruleConfigManager.convertGroupId(wrap.getClassify());
+            AlarmRuleInfo alarmRuleInfo = ruleConfigManager.getAlarmRuleInfoByGroupId(groupId);
+            alarmTemplates = alarmRuleInfo.getAlarmTemplates();
+        }else{
+            collectId = ruleConfigManager.convertCollectIp(collectIp);
+            if (null == collectId) {
+                return;
+            }
+            AlarmRuleInfo alarmRuleInfo = ruleConfigManager.getAlarmRuleInfoByCollectId(collectId);
+            alarmTemplates = alarmRuleInfo.getAlarmTemplates();
         }
-        AlarmRuleInfo alarmRuleInfo = ruleConfigManager.getAlarmRuleInfo(collectId);
 
-        List<AlarmTemplate> alarmTemplates = alarmRuleInfo.getAlarmTemplates();
+
 
         for (MetricWrapper metric : metricsList) {
             Map<String, String> tagsMap = metric.getTags();
@@ -106,16 +117,29 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
                     List<AlarmRule> macthRule = new ArrayList<>();
                     if (checkRuleMatch(points, rules, now, macthRule)) {
                         log.info("match template rule,metricName={}, template_id={},historyData={}", metricName, alarmTemplate.getId(), JacksonUtils.toJSONString(points));
-                        List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTemplate.getId(), collectId);
-                        //save record
-                        ruleConfigHandler.saveRecord(alarmTemplate, alarmConfigs, collectId, gatherTime, nowDate, macthRule);
-                        // send msg
-                        sendMsg(alarmTemplate, collectId, alarmConfigs);
+
+                        preSend(collectIp,collectId,groupId,alarmTemplate, gatherTime, nowDate, macthRule);
                     } else {
                         log.debug("not match rule, needn't send msg");
                     }
                 }
             }
+        }
+    }
+
+    private void preSend(String collectIp,Integer collectId,Integer groupId,AlarmTemplate alarmTemplate,long gatherTime,Date nowDate,List<AlarmRule> macthRule){
+        if(StringUtils.equals(collectIp,USE_GROUP)){
+            List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByGroupIdAndTemplateId(alarmTemplate.getId(), groupId);
+            //save record
+            ruleConfigHandler.saveRecord(alarmTemplate, alarmConfigs, groupId, gatherTime, nowDate, macthRule);
+            // send msg
+            sendMsg(alarmTemplate, alarmConfigs);
+        }else{
+            List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTemplate.getId(), collectId);
+            //save record
+            ruleConfigHandler.saveRecord(alarmTemplate, alarmConfigs, collectId, gatherTime, nowDate, macthRule);
+            // send msg
+            sendMsg(alarmTemplate, alarmConfigs);
         }
     }
 
@@ -178,7 +202,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
     /**
      * Send msg by template , found sent to who by template
      */
-    private void sendMsg(AlarmTemplate alarmTemplate, Integer collectId, List<AlarmConfig> alarmConfigs) {
+    private void sendMsg(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs) {
         // get all match alarm config
         //List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTemplate.getId(), collectId);
         for (AlarmConfig alarmConfig : alarmConfigs) {
@@ -187,7 +211,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
             String[] alarmTarget = alarmConfig.getAlarmMember().split(",");
             String msg = alarmConfig.getAlarmContent();
             // TODO send msg
-            log.info("send msg, templateId={},collectId={}, msg={},sendType={},sentTo={}", alarmTemplate.getId(), collectId, msg, alarmConfig.getAlarmType(), alarmConfig.getAlarmMember());
+            log.info("send msg, templateId={}, msg={},sendType={},sentTo={}", alarmTemplate.getId(),  msg, alarmConfig.getAlarmType(), alarmConfig.getAlarmMember());
             AlarmNotifier alarmNotifier = alarmNotifier(alarmConfig.getAlarmType());
             if(null!=alarmNotifier){
                 alarmNotifier.simpleNotify(new ArrayList<>(Arrays.asList(alarmTarget)), alarmConfig.getAlarmContent());
