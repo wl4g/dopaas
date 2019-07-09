@@ -7,6 +7,7 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper;
+import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +32,8 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 
 	@Autowired
 	private AlarmTemplateDao alarmTemplateDao;
+	@Autowired
+	private RuleConfigManager ruleConfigManager;
 
 
 	public HttpCollectReceiver(MetricStore store) {
@@ -56,5 +59,10 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 	public String test() {
 		List<AlarmTemplate> alarmTemplates = alarmTemplateDao.getByCollectId(null);
 		return JacksonUtils.toJSONString(alarmTemplates);
+	}
+
+	@RequestMapping("clean")
+	public void clean() {
+		ruleConfigManager.clearAll();
 	}
 }

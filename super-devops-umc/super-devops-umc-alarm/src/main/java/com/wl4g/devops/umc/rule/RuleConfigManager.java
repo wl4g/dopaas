@@ -19,8 +19,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
@@ -43,12 +41,14 @@ public class RuleConfigManager implements ApplicationRunner {
 	 */
 	public Integer convertCollectIp(String collectIpAndPort) {
 		//check ip and port
+		@SuppressWarnings("UnstableApiUsage")
 		HostAndPort hostAndPort = HostAndPort.fromString(collectIpAndPort);
+
 		String collectId = jedisService.get(getCacheKeyIpAndPort(collectIpAndPort));
 		if (StringUtils.isBlank(collectId) && !StringUtils.equals(collectId, NOT_FOUND)) {
 			AppInstance appInstance = new AppInstance();
 			appInstance.setIp(hostAndPort.getHostText());
-			appInstance.setPort(hostAndPort.getPort());
+			appInstance.setPort(hostAndPort.getPortOrDefault(0));
 			List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
 			if (null != instancelist && instancelist.size() > 0) {//found
 				AppInstance appInstance1 = instancelist.get(0);
@@ -66,7 +66,7 @@ public class RuleConfigManager implements ApplicationRunner {
 	/**
 	 * cache all collectIp to collectId
 	 */
-	public void cacheCollectIp2CollectId() {
+	private void cacheCollectIp2CollectId() {
 		AppInstance appInstance = new AppInstance();
 		List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
 		for (AppInstance appInstance1 : instancelist) {
@@ -77,9 +77,9 @@ public class RuleConfigManager implements ApplicationRunner {
 	}
 
 
-	//TODO
+	//TODO del all by prefix
 	public void clearAll(){
-		//TODO  del all by prefix
+		jedisService.del("umc_alarm_66");
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class RuleConfigManager implements ApplicationRunner {
 		//String json = jedisService.get(getCacheKeyAlarmRule(collectId));
 		AlarmRuleInfo alarmRuleInfo = jedisService.getJsonToObj(getCacheKeyAlarmRule(collectId),AlarmRuleInfo.class);
 		if (null==alarmRuleInfo) {
-			List<AlarmTemplate> alarmTemplates = ruleConfigHandler.getByCollectId(collectId);
+			List<AlarmTemplate> alarmTemplates = ruleConfigHandler.getAlarmTemplateByCollectId(collectId);
 			alarmRuleInfo = new AlarmRuleInfo();
 			alarmRuleInfo.setCollectId(collectId);
 			alarmRuleInfo.setAlarmTemplates(alarmTemplates);
@@ -103,16 +103,16 @@ public class RuleConfigManager implements ApplicationRunner {
 	}
 
 	//TODO cache all Alarm Rule Info when app start
-	public void cacheAlarmRuleInfo(){
-		//TODO
-	}
+	/*public void cacheAlarmRuleInfo(){
+
+	}*/
 
 	/**
 	 * Get point history by templateId, and save the newest value into redis
 	 */
 	public List<TemplateHisInfo.Point> duelTempalteInRedis(Integer templateId, Double value, Long timestamp, long now, int ttl) {
 		String json = jedisService.get(getCacheKeyTemplateHis(templateId));
-		TemplateHisInfo templateHisRedis = null;
+		TemplateHisInfo templateHisRedis;
 		if (StringUtils.isNotBlank(json)) {
 			templateHisRedis = JacksonUtils.parseJSON(json, TemplateHisInfo.class);
 		} else {
@@ -125,24 +125,18 @@ public class RuleConfigManager implements ApplicationRunner {
 		List<Point> needDel = new ArrayList<>();
 		for (Point point : points) {
 			long t = point.getTimeStamp();
-			if (now - t >= ttl) {
+			if (now - t >= ttl*1000) {
 				needDel.add(point);
 			}
 		}
 		points.removeAll(needDel);
 		points.add(new Point(timestamp, value));
 		templateHisRedis.setPoints(points);
-		Collections.sort(points, new Comparator<Point>() {
-			public int compare(Point arg0, Point arg1) {
-				if (arg0.getTimeStamp() > (arg1.getTimeStamp())) {
-					return 1;
-				} else if (arg0.getTimeStamp() < (arg1.getTimeStamp())) {
-					return -1;
-				}
-				return 0;
-			}
-		});
+		points.sort(null);
 		jedisService.set(getCacheKeyTemplateHis(templateId), JacksonUtils.toJSONString(templateHisRedis), ttl);
+
+		String s = jedisService.get(getCacheKeyTemplateHis(templateId));
+		log.info(s);
 
 		return points;
 	}
@@ -161,7 +155,7 @@ public class RuleConfigManager implements ApplicationRunner {
 	}
 
 	@Override
-	public void run(ApplicationArguments applicationArguments) throws Exception {
+	public void run(ApplicationArguments applicationArguments){
 		//after start
 		cacheCollectIp2CollectId();
 	}
@@ -169,15 +163,15 @@ public class RuleConfigManager implements ApplicationRunner {
 
 
 
-	public static String getCacheKeyIpAndPort(String collectIpAndPort){
+	private static String getCacheKeyIpAndPort(String collectIpAndPort){
 		return  KEY_CACHE_INSTANCE_ID + collectIpAndPort;
 	}
 
-	public static String getCacheKeyAlarmRule(Integer collectId){
+	private static String getCacheKeyAlarmRule(Integer collectId){
 		return  KEY_CACHE_ALARM_RULE + collectId;
 	}
 
-	public static String getCacheKeyTemplateHis(Integer templateId){
+	private static String getCacheKeyTemplateHis(Integer templateId){
 		return KEY_CACHE_TEMPLATE_HIS + templateId;
 	}
 }

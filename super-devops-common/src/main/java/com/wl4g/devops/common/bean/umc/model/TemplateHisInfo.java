@@ -18,7 +18,7 @@ public class TemplateHisInfo {
         this.points = points;
     }
 
-    public static class Point{
+    public static class Point implements Comparable<Point>{
 
         public Point() {
 
@@ -49,7 +49,7 @@ public class TemplateHisInfo {
             this.value = value;
         }
 
-        /*@Override
+        @Override
         public int compareTo(Point arg0) {
             if(this.getTimeStamp()>(arg0.getTimeStamp())){
                 return 1;
@@ -57,7 +57,7 @@ public class TemplateHisInfo {
                 return -1;
             }
             return 0;      //这里定义你排序的规则。
-        }*/
+        }
     }
 
 
