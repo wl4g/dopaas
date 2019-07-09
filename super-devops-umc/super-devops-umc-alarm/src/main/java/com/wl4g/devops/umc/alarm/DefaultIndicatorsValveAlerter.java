@@ -81,11 +81,11 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
         List<AlarmTemplate> alarmTemplates;
         Integer collectId = null;
         Integer groupId = null;
-        if(StringUtils.equals(collectIp,USE_GROUP)){
+        if (StringUtils.equals(collectIp, USE_GROUP)) {
             groupId = ruleConfigManager.convertGroupId(wrap.getClassify());
             AlarmRuleInfo alarmRuleInfo = ruleConfigManager.getAlarmRuleInfoByGroupId(groupId);
             alarmTemplates = alarmRuleInfo.getAlarmTemplates();
-        }else{
+        } else {
             collectId = ruleConfigManager.convertCollectIp(collectIp);
             if (null == collectId) {
                 return;
@@ -93,7 +93,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
             AlarmRuleInfo alarmRuleInfo = ruleConfigManager.getAlarmRuleInfoByCollectId(collectId);
             alarmTemplates = alarmRuleInfo.getAlarmTemplates();
         }
-
+        if (null == alarmTemplates) {
+            return;
+        }
 
 
         for (MetricWrapper metric : metricsList) {
@@ -118,7 +120,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
                     if (checkRuleMatch(points, rules, now, macthRule)) {
                         log.info("match template rule,metricName={}, template_id={},historyData={}", metricName, alarmTemplate.getId(), JacksonUtils.toJSONString(points));
 
-                        preSend(collectIp,collectId,groupId,alarmTemplate, gatherTime, nowDate, macthRule);
+                        preSend(collectIp, collectId, groupId, alarmTemplate, gatherTime, nowDate, macthRule);
                     } else {
                         log.debug("not match rule, needn't send msg");
                     }
@@ -127,14 +129,14 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
         }
     }
 
-    private void preSend(String collectIp,Integer collectId,Integer groupId,AlarmTemplate alarmTemplate,long gatherTime,Date nowDate,List<AlarmRule> macthRule){
-        if(StringUtils.equals(collectIp,USE_GROUP)){
+    private void preSend(String collectIp, Integer collectId, Integer groupId, AlarmTemplate alarmTemplate, long gatherTime, Date nowDate, List<AlarmRule> macthRule) {
+        if (StringUtils.equals(collectIp, USE_GROUP)) {
             List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByGroupIdAndTemplateId(alarmTemplate.getId(), groupId);
             //save record
             ruleConfigHandler.saveRecord(alarmTemplate, alarmConfigs, groupId, gatherTime, nowDate, macthRule);
             // send msg
             sendMsg(alarmTemplate, alarmConfigs);
-        }else{
+        } else {
             List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTemplate.getId(), collectId);
             //save record
             ruleConfigHandler.saveRecord(alarmTemplate, alarmConfigs, collectId, gatherTime, nowDate, macthRule);
@@ -211,9 +213,9 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
             String[] alarmTarget = alarmConfig.getAlarmMember().split(",");
             String msg = alarmConfig.getAlarmContent();
             // TODO send msg
-            log.info("send msg, templateId={}, msg={},sendType={},sentTo={}", alarmTemplate.getId(),  msg, alarmConfig.getAlarmType(), alarmConfig.getAlarmMember());
+            log.info("send msg, templateId={}, msg={},sendType={},sentTo={}", alarmTemplate.getId(), msg, alarmConfig.getAlarmType(), alarmConfig.getAlarmMember());
             AlarmNotifier alarmNotifier = alarmNotifier(alarmConfig.getAlarmType());
-            if(null!=alarmNotifier){
+            if (null != alarmNotifier) {
                 alarmNotifier.simpleNotify(new ArrayList<>(Arrays.asList(alarmTarget)), alarmConfig.getAlarmContent());
             }
         }
