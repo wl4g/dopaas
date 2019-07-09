@@ -1,5 +1,7 @@
 package com.wl4g.devops.umc.notification;
 
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import java.util.Map;
  * @version v1.0 2019年7月5日
  * @since
  */
+@Component
 public interface AlarmNotifier {
 
 	/**

@@ -11,6 +11,10 @@ import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.notification.AlarmNotifier;
+import com.wl4g.devops.umc.notification.AlarmType;
+import com.wl4g.devops.umc.notification.email.EmailNotifier;
+import com.wl4g.devops.umc.notification.sms.SmsNotifier;
+import com.wl4g.devops.umc.notification.wechat.WeChatNotifier;
 import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
@@ -42,8 +46,6 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 	@Autowired
 	private RuleConfigHandler ruleConfigHandler;
 
-	@Autowired
-	private AlarmNotifier alarmNotifier;
 
 	public DefaultIndicatorsValveAlerter(AlarmProperties config) {
 		super(config);
@@ -184,8 +186,23 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
 			String msg = alarmConfig.getAlarmContent();
 			// TODO send msg
 			log.info("send msg, templateId={},collectId={}, msg={},sendType={},sentTo={}",alarmTemplate.getId(),collectId,msg,alarmConfig.getAlarmType(),alarmConfig.getAlarmMember());
+			alarmNotifier(alarmConfig.getAlarmType()).simpleNotify(new ArrayList<>(Arrays.asList(alarmTarget)),alarmConfig.getAlarmContent());
+		}
+	}
 
-			alarmNotifier.simpleNotify(new ArrayList<>(Arrays.asList(alarmTarget)),alarmConfig.getAlarmContent());
+
+
+	private AlarmNotifier alarmNotifier(String alarmType){
+		AlarmType alarmT = AlarmType.safeOf(Integer.parseInt(alarmType));
+		switch (alarmT){
+			case EMAIL:
+				return new EmailNotifier();
+			case SMS:
+				return new SmsNotifier();
+			case WECHAT:
+				return new WeChatNotifier();
+			default:
+				return null;
 		}
 	}
 

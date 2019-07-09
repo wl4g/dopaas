@@ -54,10 +54,7 @@ public class HttpCollectReceiver extends AbstractCollectReceiver {
 
 	@RequestMapping("test")
 	public String test() {
-
-		List<AlarmTemplate> alarmTemplates = alarmTemplateDao.selectAllWithRule();
+		List<AlarmTemplate> alarmTemplates = alarmTemplateDao.getByCollectId(null);
 		return JacksonUtils.toJSONString(alarmTemplates);
 	}
-
-
 }
