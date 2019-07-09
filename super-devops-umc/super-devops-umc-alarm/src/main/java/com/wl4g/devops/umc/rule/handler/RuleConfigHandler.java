@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.rule.handler;
 
+import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
@@ -17,18 +18,18 @@ import java.util.List;
  */
 public interface RuleConfigHandler {
 
-	//AlarmRuleInfo getRule(String collectId);
-
-	//List<AlarmConfig> selectByTemplateId(Integer templateId);
-
 	List<AppInstance> instancelist(AppInstance appInstance);
 
-	//List<AlarmConfig> selectAll();
+	AppGroup getAppGroupByName(String groupName);
 
 	List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId);
+
+	List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId);
 
 	List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId);
 
 	void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate, List<AlarmRule> rules);
+
+	List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId);
 
 }

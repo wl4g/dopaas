@@ -21,4 +21,8 @@ public interface AlarmTemplateDao {
     //List<AlarmTemplate> selectWithRuleByids();
 
     List<AlarmTemplate> getByCollectId(@Param("collectId") Integer collectId);
+
+
+    List<AlarmTemplate> getByGroupId(@Param("groupId") Integer groupId);
+
 }

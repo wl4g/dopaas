@@ -14,6 +14,8 @@ public class AlarmConfig extends BaseBean {
 
 	private String alarmMember;
 
+	private Integer groupId;
+
 	public String getAlarmMember() {
 		return alarmMember;
 	}
@@ -54,4 +56,11 @@ public class AlarmConfig extends BaseBean {
 		this.alarmContent = alarmContent == null ? null : alarmContent.trim();
 	}
 
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
 }

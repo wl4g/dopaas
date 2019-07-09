@@ -24,5 +24,7 @@ public interface AlarmConfigDao {
 
     List<AlarmConfig> getByCollectIdAndTemplateId(@Param("templateId")Integer templateId, @Param("collectId")Integer collectId);
 
+    List<AlarmConfig> getByGroupIdAndTemplateId(@Param("templateId")Integer templateId, @Param("groupId")Integer groupId);
+
 
 }

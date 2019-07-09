@@ -15,19 +15,19 @@ import java.util.List;
 public class AlarmRuleInfo {
 
 	/** Metric collect point identity. */
-	private Integer collectId; // e.g. cf_instance.id
+	//private Integer collectId; // e.g. cf_instance.id
 
 	//private Set<Integer> alarmTemplateId = new HashSet<>();
 
 	private List<AlarmTemplate> alarmTemplates = new ArrayList<>();
 
-	public Integer getCollectId() {
+	/*public Integer getCollectId() {
 		return collectId;
 	}
 
 	public void setCollectId(Integer collectId) {
 		this.collectId = collectId;
-	}
+	}*/
 
 	public List<AlarmTemplate> getAlarmTemplates() {
 		return alarmTemplates;
