@@ -3,6 +3,8 @@ package com.wl4g.devops.umc.config;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
+import com.wl4g.devops.umc.notification.AbstractAlarmNotifier;
+import com.wl4g.devops.umc.notification.AlarmNotifier;
 import com.wl4g.devops.umc.receiver.HttpCollectReceiver;
 import com.wl4g.devops.umc.receiver.KafkaCollectReceiver;
 import com.wl4g.devops.umc.store.*;
@@ -105,5 +107,11 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 		containerProps.setAckMode(AckMode.MANUAL_IMMEDIATE);
 		return factory;
 	}
+
+	/*@Bean
+	public AlarmNotifier alarmNotifier() {
+		return new AbstractAlarmNotifier() {
+		};
+	}*/
 
 }
