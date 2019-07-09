@@ -68,7 +68,7 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
         duel(wrap);
     }
 
-
+    @SuppressWarnings("unchecked")
     private void duel(MetricAggregateWrapper wrap) {
         long now = System.currentTimeMillis();
         Date nowDate = new Date();
@@ -91,7 +91,6 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
             for (AlarmTemplate alarmTemplate : alarmTemplates) {
                 if (StringUtils.equals(metricName, alarmTemplate.getMetric())) {
                     String tags = alarmTemplate.getTags();
-                    @SuppressWarnings("unchecked")
                     Map<String, String> map = JacksonUtils.parseJSON(tags, Map.class);
                     // check tags
                     if (!isTagsMatch(tagsMap, map)) {
