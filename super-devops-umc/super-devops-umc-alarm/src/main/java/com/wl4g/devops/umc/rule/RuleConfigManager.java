@@ -87,16 +87,16 @@ public class RuleConfigManager implements ApplicationRunner {
 	 */
 	public AlarmRuleInfo getAlarmRuleInfo(Integer collectId) {
 		//String json = jedisService.get(getCacheKeyAlarmRule(collectId));
-		AlarmRuleInfo alarmRuleInfo = jedisService.getJsonToObj(getCacheKeyAlarmRule(collectId),AlarmRuleInfo.class);
+		AlarmRuleInfo alarmRuleInfo = jedisService.getObjectAsJson(getCacheKeyAlarmRule(collectId),AlarmRuleInfo.class);
 		if (null==alarmRuleInfo) {
 			List<AlarmTemplate> alarmTemplates = ruleConfigHandler.getByCollectId(collectId);
 			alarmRuleInfo = new AlarmRuleInfo();
 			alarmRuleInfo.setCollectId(collectId);
 			alarmRuleInfo.setAlarmTemplates(alarmTemplates);
 			if(alarmTemplates.size()<=0){
-				jedisService.setObjectToJson(getCacheKeyAlarmRule(collectId),alarmRuleInfo,30);
+				jedisService.setObjectAsJson(getCacheKeyAlarmRule(collectId),alarmRuleInfo,30);
 			}else{
-				jedisService.setObjectToJson(getCacheKeyAlarmRule(collectId),alarmRuleInfo,0);
+				jedisService.setObjectAsJson(getCacheKeyAlarmRule(collectId),alarmRuleInfo,0);
 			}
 		}
 		return alarmRuleInfo;

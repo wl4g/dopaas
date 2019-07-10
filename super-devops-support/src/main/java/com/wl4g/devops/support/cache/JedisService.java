@@ -23,7 +23,6 @@ import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.utils.serialize.ObjectUtils;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -34,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class JedisService {
@@ -109,8 +110,7 @@ public class JedisService {
 		});
 	}
 
-
-	public <T> String setObjectToJson(final String key, final T value, final int cacheSeconds) {
+	public <T> String setObjectAsJson(final String key, final T value, final int cacheSeconds) {
 		return (String) doInRedis(cluster -> {
 			String result = null;
 			if (cacheSeconds != 0) {
@@ -119,21 +119,22 @@ public class JedisService {
 				result = cluster.set(key, JacksonUtils.toJSONString(value));
 			}
 			if (log.isDebugEnabled()) {
-				log.debug("set {} = {}", key, value);
+				log.debug("setObjectAsJson {} = {}", key, value);
 			}
 			return result;
 		});
 	}
 
-	public <T> T getJsonToObj(final String key, Class<T> clazz) {
+	@SuppressWarnings("unchecked")
+	public <T> T getObjectAsJson(final String key, Class<T> clazz) {
 		return (T) doInRedis(cluster -> {
 			String json = cluster.get(key);
-			if(StringUtils.isBlank(json)){
-			    return null;
-            }
-			T value = JacksonUtils.parseJSON(json,clazz);
+			if (isBlank(json)) {
+				return null;
+			}
+			T value = parseJSON(json, clazz);
 			if (log.isDebugEnabled()) {
-				log.debug("getObjectT {} = {}", key, value);
+				log.debug("getObjectAsJson {} = {}", key, value);
 			}
 			return value;
 		});
