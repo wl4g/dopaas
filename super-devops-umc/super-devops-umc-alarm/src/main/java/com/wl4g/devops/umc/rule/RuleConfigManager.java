@@ -1,6 +1,7 @@
 package com.wl4g.devops.umc.rule;
 
 import com.google.common.net.HostAndPort;
+import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
@@ -19,8 +20,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
@@ -38,23 +37,24 @@ public class RuleConfigManager implements ApplicationRunner {
 
 	@Autowired
 	private RuleConfigHandler ruleConfigHandler;
+
 	/**
 	 * get collectId by collect,get from redis first ,if not found ,get from db
 	 */
 	public Integer convertCollectIp(String collectIpAndPort) {
-		//check ip and port
+		// check ip and port
 		HostAndPort hostAndPort = HostAndPort.fromString(collectIpAndPort);
+
 		String collectId = jedisService.get(getCacheKeyIpAndPort(collectIpAndPort));
 		if (StringUtils.isBlank(collectId) && !StringUtils.equals(collectId, NOT_FOUND)) {
 			AppInstance appInstance = new AppInstance();
 			appInstance.setIp(hostAndPort.getHostText());
-			appInstance.setPort(hostAndPort.getPort());
+			appInstance.setPort(hostAndPort.getPortOrDefault(0));
 			List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
-			if (null != instancelist && instancelist.size() > 0) {//found
+			if (null != instancelist && instancelist.size() > 0) {// found
 				AppInstance appInstance1 = instancelist.get(0);
 				collectId = String.valueOf(appInstance1.getId());
-				jedisService.set(getCacheKeyIpAndPort(collectIpAndPort),
-						String.valueOf(appInstance1.getId()), 0);
+				jedisService.set(getCacheKeyIpAndPort(collectIpAndPort), String.valueOf(appInstance1.getId()), 0);
 			} else {
 				jedisService.set(getCacheKeyIpAndPort(collectIpAndPort), NOT_FOUND, 30);
 			}
@@ -62,11 +62,26 @@ public class RuleConfigManager implements ApplicationRunner {
 		return Integer.parseInt(collectId);
 	}
 
+	public Integer convertGroupId(String groupName) {
+		// check ip and port
+		String groupId = jedisService.get(getCacheKeyGroup2Id(groupName));
+		if (StringUtils.isBlank(groupId) && !StringUtils.equals(groupId, NOT_FOUND)) {
+			AppGroup appGroup = ruleConfigHandler.getAppGroupByName(groupName);
+
+			if (null != appGroup) {// found
+				groupId = appGroup.getId().toString();
+				jedisService.set(getCacheKeyGroup2Id(groupName), groupId, 0);
+			} else {
+				jedisService.set(getCacheKeyGroup2Id(groupName), NOT_FOUND, 30);
+			}
+		}
+		return Integer.parseInt(groupId);
+	}
 
 	/**
 	 * cache all collectIp to collectId
 	 */
-	public void cacheCollectIp2CollectId() {
+	private void cacheCollectIp2CollectId() {
 		AppInstance appInstance = new AppInstance();
 		List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
 		for (AppInstance appInstance1 : instancelist) {
@@ -76,43 +91,61 @@ public class RuleConfigManager implements ApplicationRunner {
 		}
 	}
 
-
-	//TODO
-	public void clearAll(){
-		//TODO  del all by prefix
+	// TODO del all by prefix
+	public void clearAll() {
+		jedisService.del("umc_alarm_66");
 	}
 
 	/**
 	 * Get Rule By collectid ,get from redis first ,if not found ,get from db
 	 */
-	public AlarmRuleInfo getAlarmRuleInfo(Integer collectId) {
-		//String json = jedisService.get(getCacheKeyAlarmRule(collectId));
-		AlarmRuleInfo alarmRuleInfo = jedisService.getObjectAsJson(getCacheKeyAlarmRule(collectId),AlarmRuleInfo.class);
-		if (null==alarmRuleInfo) {
-			List<AlarmTemplate> alarmTemplates = ruleConfigHandler.getByCollectId(collectId);
+	public AlarmRuleInfo getAlarmRuleInfoByCollectId(Integer collectId) {
+		AlarmRuleInfo alarmRuleInfo = jedisService.getObjectAsJson(getCacheKeyAlarmRuleByCollectId(collectId),
+				AlarmRuleInfo.class);
+		if (null == alarmRuleInfo) {
+			List<AlarmTemplate> alarmTemplates = ruleConfigHandler.getAlarmTemplateByCollectId(collectId);
 			alarmRuleInfo = new AlarmRuleInfo();
-			alarmRuleInfo.setCollectId(collectId);
+			// alarmRuleInfo.setCollectId(collectId);
 			alarmRuleInfo.setAlarmTemplates(alarmTemplates);
-			if(alarmTemplates.size()<=0){
-				jedisService.setObjectAsJson(getCacheKeyAlarmRule(collectId),alarmRuleInfo,30);
-			}else{
-				jedisService.setObjectAsJson(getCacheKeyAlarmRule(collectId),alarmRuleInfo,0);
+			if (alarmTemplates.size() <= 0) {
+				jedisService.setObjectAsJson(getCacheKeyAlarmRuleByCollectId(collectId), NOT_FOUND, 30);
+			} else {
+				jedisService.setObjectAsJson(getCacheKeyAlarmRuleByCollectId(collectId), alarmRuleInfo, 0);
 			}
 		}
 		return alarmRuleInfo;
 	}
 
-	//TODO cache all Alarm Rule Info when app start
-	public void cacheAlarmRuleInfo(){
-		//TODO
+	public AlarmRuleInfo getAlarmRuleInfoByGroupId(Integer groupId) {
+		AlarmRuleInfo alarmRuleInfo = jedisService.getObjectAsJson(getCacheKeyAlarmRuleByGroupId(groupId), AlarmRuleInfo.class);
+		if (null == alarmRuleInfo) {
+
+			List<AlarmTemplate> alarmTemplates = ruleConfigHandler.getAlarmTemplateByGroupId(groupId);
+			alarmRuleInfo = new AlarmRuleInfo();
+			// alarmRuleInfo.setCollectId(collectId);
+			alarmRuleInfo.setAlarmTemplates(alarmTemplates);
+			if (alarmTemplates.size() <= 0) {
+				jedisService.setObjectAsJson(getCacheKeyAlarmRuleByGroupId(groupId), NOT_FOUND, 30);
+			} else {
+				jedisService.setObjectAsJson(getCacheKeyAlarmRuleByGroupId(groupId), alarmRuleInfo, 0);
+			}
+		}
+		return alarmRuleInfo;
 	}
+
+	// TODO cache all Alarm Rule Info when app start
+	/*
+	 * public void cacheAlarmRuleInfo(){
+	 * 
+	 * }
+	 */
 
 	/**
 	 * Get point history by templateId, and save the newest value into redis
 	 */
 	public List<TemplateHisInfo.Point> duelTempalteInRedis(Integer templateId, Double value, Long timestamp, long now, int ttl) {
 		String json = jedisService.get(getCacheKeyTemplateHis(templateId));
-		TemplateHisInfo templateHisRedis = null;
+		TemplateHisInfo templateHisRedis;
 		if (StringUtils.isNotBlank(json)) {
 			templateHisRedis = JacksonUtils.parseJSON(json, TemplateHisInfo.class);
 		} else {
@@ -125,24 +158,18 @@ public class RuleConfigManager implements ApplicationRunner {
 		List<Point> needDel = new ArrayList<>();
 		for (Point point : points) {
 			long t = point.getTimeStamp();
-			if (now - t >= ttl) {
+			if (now - t >= ttl * 1000) {
 				needDel.add(point);
 			}
 		}
 		points.removeAll(needDel);
 		points.add(new Point(timestamp, value));
 		templateHisRedis.setPoints(points);
-		Collections.sort(points, new Comparator<Point>() {
-			public int compare(Point arg0, Point arg1) {
-				if (arg0.getTimeStamp() > (arg1.getTimeStamp())) {
-					return 1;
-				} else if (arg0.getTimeStamp() < (arg1.getTimeStamp())) {
-					return -1;
-				}
-				return 0;
-			}
-		});
+		points.sort(null);
 		jedisService.set(getCacheKeyTemplateHis(templateId), JacksonUtils.toJSONString(templateHisRedis), ttl);
+
+		String s = jedisService.get(getCacheKeyTemplateHis(templateId));
+		log.info(s);
 
 		return points;
 	}
@@ -161,23 +188,28 @@ public class RuleConfigManager implements ApplicationRunner {
 	}
 
 	@Override
-	public void run(ApplicationArguments applicationArguments) throws Exception {
-		//after start
+	public void run(ApplicationArguments applicationArguments) {
+		// after start
 		cacheCollectIp2CollectId();
 	}
 
-
-
-
-	public static String getCacheKeyIpAndPort(String collectIpAndPort){
-		return  KEY_CACHE_INSTANCE_ID + collectIpAndPort;
+	private static String getCacheKeyIpAndPort(String collectIpAndPort) {
+		return KEY_CACHE_INSTANCE_ID + collectIpAndPort;
 	}
 
-	public static String getCacheKeyAlarmRule(Integer collectId){
-		return  KEY_CACHE_ALARM_RULE + collectId;
+	private static String getCacheKeyGroup2Id(String groupName) {
+		return KEY_CACHE_GROUP_ID + groupName;
 	}
 
-	public static String getCacheKeyTemplateHis(Integer templateId){
+	private static String getCacheKeyAlarmRuleByCollectId(Integer collectId) {
+		return KEY_CACHE_ALARM_RULE_COLLECT + collectId;
+	}
+
+	private static String getCacheKeyAlarmRuleByGroupId(Integer groupId) {
+		return KEY_CACHE_ALARM_RULE_GROUP + groupId;
+	}
+
+	private static String getCacheKeyTemplateHis(Integer templateId) {
 		return KEY_CACHE_TEMPLATE_HIS + templateId;
 	}
 }

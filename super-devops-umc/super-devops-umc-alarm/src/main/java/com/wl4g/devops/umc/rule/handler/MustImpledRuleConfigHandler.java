@@ -1,5 +1,6 @@
 package com.wl4g.devops.umc.rule.handler;
 
+import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
@@ -29,17 +30,32 @@ public class MustImpledRuleConfigHandler implements RuleConfigHandler, Initializ
 	}
 
 	@Override
-	public List<AlarmTemplate> getByCollectId(Integer collectId) {
+	public AppGroup getAppGroupByName(String groupName) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<AlarmConfig> getByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
+	public List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate, List<AlarmRule> rules) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId) {
 		throw new UnsupportedOperationException();
 	}
 

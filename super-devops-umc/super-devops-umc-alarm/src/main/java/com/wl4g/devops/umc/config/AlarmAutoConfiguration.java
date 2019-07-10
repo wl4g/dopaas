@@ -24,7 +24,9 @@ public class AlarmAutoConfiguration {
 	@Bean
 	@ConfigurationProperties(prefix = KEY_ALARM_PREFIX)
 	public AlarmProperties alarmProperties() {
-		return new AlarmProperties();
+		AlarmProperties alarmProperties = new AlarmProperties();
+		alarmProperties.setConcurrency(2);
+		return alarmProperties;
 	}
 
 	@Bean
