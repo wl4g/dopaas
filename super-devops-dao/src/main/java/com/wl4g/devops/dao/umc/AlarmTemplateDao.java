@@ -1,6 +1,7 @@
 package com.wl4g.devops.dao.umc;
 
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,5 +20,9 @@ public interface AlarmTemplateDao {
 
     //List<AlarmTemplate> selectWithRuleByids();
 
-    List<AlarmTemplate> getByCollectId(Integer collectId);
+    List<AlarmTemplate> getByCollectId(@Param("collectId") Integer collectId);
+
+
+    List<AlarmTemplate> getByGroupId(@Param("groupId") Integer groupId);
+
 }
