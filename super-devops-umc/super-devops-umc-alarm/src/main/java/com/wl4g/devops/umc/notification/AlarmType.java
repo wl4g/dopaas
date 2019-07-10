@@ -6,7 +6,7 @@ package com.wl4g.devops.umc.notification;
  */
 public enum AlarmType {
 
-	EMAIL(1), SMS(2), WECHAT(3);
+	EMAIL(1), SMS(2), WECHAT(3),BARK(4);
 
 	private int value;
 

@@ -12,6 +12,7 @@ import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.notification.AlarmNotifier;
 import com.wl4g.devops.umc.notification.AlarmType;
+import com.wl4g.devops.umc.notification.bark.BarkNotifier;
 import com.wl4g.devops.umc.notification.email.EmailNotifier;
 import com.wl4g.devops.umc.notification.sms.SmsNotifier;
 import com.wl4g.devops.umc.notification.wechat.WeChatNotifier;
@@ -235,6 +236,8 @@ public class DefaultIndicatorsValveAlerter extends GenericTaskRunner<RunProperti
                 return new SmsNotifier();
             case WECHAT:
                 return new WeChatNotifier();
+            case BARK:
+                return new BarkNotifier();
             default:
                 return null;
         }
