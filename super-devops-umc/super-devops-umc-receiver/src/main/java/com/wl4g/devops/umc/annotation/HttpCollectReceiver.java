@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ ElementType.TYPE })
 public @interface HttpCollectReceiver {
 
 }

@@ -18,9 +18,16 @@ package com.wl4g.devops.common.constants;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * DevOps constants definitions.
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年7月5日
+ * @since
+ */
 public abstract class DevOpsConstants {
 
-	// System environment map cache.
+	/** OS environment map cache. */
 	final protected static Map<String, String> ENV = Collections.unmodifiableMap(System.getenv());
 
 	/**

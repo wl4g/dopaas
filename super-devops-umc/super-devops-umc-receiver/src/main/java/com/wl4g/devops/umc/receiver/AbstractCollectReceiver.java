@@ -1,9 +1,15 @@
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.StatMetrics;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
+import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.alarm.MetricAggregateWrapper;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract collection receiver
@@ -14,9 +20,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCollectReceiver implements CollectReceiver {
 
+	@Autowired
+	private IndicatorsValveAlerter indicatorsValveAlerter;
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-
 
 	/** metric store adapter. */
 	final protected MetricStore store;
@@ -28,9 +35,31 @@ public abstract class AbstractCollectReceiver implements CollectReceiver {
 
 	}
 
-	//kafka
-	protected void putMetrics(StatMetrics statMetrics){
-		store.save(statMetrics);
+	/**
+	 * Puts to metrics aggreate.
+	 * 
+	 * @param aggregate
+	 */
+	protected void putMetrics(MetricModel.MetricAggregate aggregate) {
+		store.save(aggregate);
+	}
+
+
+	protected void alarm(MetricModel.MetricAggregate aggregate){
+		MetricAggregateWrapper wrap = new MetricAggregateWrapper();
+		wrap.setCollectId(aggregate.getInstance());
+		wrap.setTimestamp(aggregate.getTimestamp());
+		wrap.setClassify(aggregate.getClassify());
+		List<MetricAggregateWrapper.MetricWrapper> metrics = new ArrayList<>();
+		for(MetricModel.Metric metric : aggregate.getMetricsList()){
+			MetricAggregateWrapper.MetricWrapper metric1 = new MetricAggregateWrapper.MetricWrapper();
+			metric1.setMetric(metric.getMetric());
+			metric1.setValue(metric.getValue());
+			metric1.setTags(metric.getTagsMap());
+			metrics.add(metric1);
+		}
+		wrap.setMetrics(metrics);
+		indicatorsValveAlerter.alarm(wrap);
 	}
 
 }

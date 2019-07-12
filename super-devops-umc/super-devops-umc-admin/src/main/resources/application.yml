@@ -13,7 +13,7 @@
 spring:
   resources.static-locations: classpath:/static/
   profiles:
-    include: common,support,util,admin
+    include: common,support,util
 
 # Mybatis configuration.
 mybatis:
@@ -31,7 +31,6 @@ logging:
     minIndex: 1
     maxIndex: 10
   level:
-    de.codecentric.boot.admin: INFO
     org:
       springframework: INFO
       apache: INFO

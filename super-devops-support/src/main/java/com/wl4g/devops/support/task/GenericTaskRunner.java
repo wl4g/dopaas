@@ -35,7 +35,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
+import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 
 /**
  * Generic task schedule runner.
@@ -44,14 +44,14 @@ import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
  * @version v1.0 2019年6月2日
  * @since
  */
-public abstract class GenericTaskRunner<C extends TaskProperties>
+public abstract class GenericTaskRunner<C extends RunProperties>
 		implements DisposableBean, ApplicationRunner, Closeable, Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Boss running. */
 	final private AtomicBoolean bossRunning = new AtomicBoolean(false);
 
-	/** Runner task properties config. */
+	/** Runner task properties configuration. */
 	final C config;
 
 	/** Runner boss thread. */
@@ -89,11 +89,15 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 				}, config.getReject());
 			}
 
-			// Create boss
-			String name = getClass().getSimpleName() + "-boss";
-			boss = new Thread(this, name);
-			boss.setDaemon(false);
-			boss.start();
+			// Boss asynchronously execution.(if necessary)
+			if (config.isAsync()) {
+				String name = getClass().getSimpleName() + "-boss";
+				boss = new Thread(this, name);
+				boss.setDaemon(false);
+				boss.start();
+			} else {
+				run(); // Sync execution.
+			}
 		} else {
 			log.warn("Already runner!, already builders are read-only and do not allow task modification");
 		}
@@ -170,10 +174,20 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 		return boss != null && !boss.isInterrupted() && bossRunning.get();
 	}
 
+	/**
+	 * Get configuration properties.
+	 * 
+	 * @return
+	 */
 	public C getConfig() {
 		return config;
 	}
 
+	/**
+	 * Get thread worker.
+	 * 
+	 * @return
+	 */
 	protected ThreadPoolExecutor getWorker() {
 		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency>0");
 		return worker;
@@ -186,9 +200,12 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 	 * @version v1.0 2019年6月8日
 	 * @since
 	 */
-	public static class TaskProperties implements Serializable {
+	public static class RunProperties implements Serializable {
 
 		private static final long serialVersionUID = -1996272636830701232L;
+
+		/** Whether to start the boss thread asynchronously. */
+		private boolean async = true;
 
 		/**
 		 * When the concurrency is less than 0, it means that the worker thread
@@ -207,20 +224,34 @@ public abstract class GenericTaskRunner<C extends TaskProperties>
 		/** Rejected execution handler. */
 		private RejectedExecutionHandler reject = new AbortPolicy();
 
-		public TaskProperties() {
+		public RunProperties() {
 			super();
 		}
 
-		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue) {
+		public RunProperties(int concurrency, long keepAliveTime, int acceptQueue) {
 			this(concurrency, keepAliveTime, acceptQueue, null);
 		}
 
-		public TaskProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
+		public RunProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
+			this(true, concurrency, keepAliveTime, acceptQueue, reject);
+		}
+
+		public RunProperties(boolean async, int concurrency, long keepAliveTime, int acceptQueue,
+				RejectedExecutionHandler reject) {
 			super();
+			setAsync(async);
 			setConcurrency(concurrency);
 			setKeepAliveTime(keepAliveTime);
 			setAcceptQueue(acceptQueue);
 			setReject(reject);
+		}
+
+		public boolean isAsync() {
+			return async;
+		}
+
+		public void setAsync(boolean async) {
+			this.async = async;
 		}
 
 		public int getConcurrency() {

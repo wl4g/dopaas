@@ -14,6 +14,7 @@
 		<module>super-devops-umc-core</module>
 		<module>super-devops-umc-alarm</module>
 		<module>super-devops-umc-store</module>
+		<module>super-devops-umc-watch</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

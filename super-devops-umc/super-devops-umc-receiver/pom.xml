@@ -21,17 +21,22 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-dao</artifactId>
-			<version>master</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-umc-core</artifactId>
 			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-umc-store</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-umc-watch</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-umc-alarm</artifactId>
 			<version>master</version>
 		</dependency>
 		<dependency>

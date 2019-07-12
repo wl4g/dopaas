@@ -5,7 +5,7 @@ import java.util.Properties;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
 
 /**
- * KAFKA properties .
+ * Receiver properties .
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
