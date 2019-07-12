@@ -229,12 +229,12 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	// ==============================
 
 	//
-	// X X S _ I N T E R C E P T O R _ C O N F I G's.
+	// X S S _ I N T E R C E P T O R _ C O N F I G's.
 	//
 
 	@Bean
-	@ConditionalOnProperty(name = "spring.web.xss.enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = "spring.web.xss")
+	@ConditionalOnProperty(name = XssProperties.PREFIX + ".enabled", matchIfMissing = true)
+	@ConfigurationProperties(prefix = XssProperties.PREFIX)
 	public XssProperties xssProperties() {
 		return new XssProperties();
 	}
@@ -254,9 +254,11 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 
 	@Bean
 	@ConditionalOnBean(XssSecurityResolveInterceptor.class)
-	public AspectJExpressionPointcutAdvisor xssSecurityResolveAspectJPointcutAdvisor(XssProperties config,
+	public AspectJExpressionPointcutAdvisor xssSecurityResolveAspectJExpressionPointcutAdvisor(XssProperties config,
 			XssSecurityResolveInterceptor advice) {
-		Assert.hasText(config.getExpression(), "'expression' of the xss security resolve AOP pointcut is emtpy.");
+		Assert.hasText(config.getExpression(),
+				String.format("XSS interception expression is required, and the '%s' configuration item does not exist?",
+						XssProperties.PREFIX));
 		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
 		advisor.setExpression(config.getExpression());
 		advisor.setAdvice(advice);
