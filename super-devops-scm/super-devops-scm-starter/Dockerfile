@@ -12,7 +12,10 @@ ARG APP_NAME
 ARG APP_VERSION
 ARG APP_BIN_NAME
 ARG APP_PORT
+ARG APP_HOME="/opt/apps/acm/${APP_NAME}-package"
 ENV APP_HOME "/opt/apps/acm/${APP_NAME}-package"
+ENV APP_BIN_NAME ${APP_BIN_NAME}
+ENV APP_NAME ${APP_NAME}
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
@@ -28,6 +31,11 @@ RUN tar -xf /${APP_BIN_NAME}.tar -C ${APP_HOME} \
 && rm -rf /${APP_BIN_NAME}.tar \
 && chmod +x ${APP_HOME}/${APP_BIN_NAME}/bin/startup.sh
 
+RUN cd ${APP_HOME}/${APP_BIN_NAME}/bin \
+&& pwd && ls -l
+
 EXPOSE ${APP_PORT}
 
-#CMD ["${APP_HOME}/${APP_BIN_NAME}/bin/startup.sh"]
+CMD ["/bin/sh", "-c", "${APP_HOME}/${APP_BIN_NAME}/bin/startup.sh"]
+
+
