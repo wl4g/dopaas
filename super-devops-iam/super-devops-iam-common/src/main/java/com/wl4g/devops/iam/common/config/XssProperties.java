@@ -28,6 +28,7 @@ import org.springframework.util.Assert;
  */
 public class XssProperties implements Serializable {
 	private static final long serialVersionUID = -5701992202744439835L;
+	final public static String PREFIX = "spring.web.xss";
 
 	/**
 	 * XSS attack solves AOP section expression
