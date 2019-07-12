@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
-import com.wl4g.devops.common.utils.context.SpringContextHolder;
+import com.wl4g.devops.common.utils.context.SpringContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +91,7 @@ public abstract class BasedDeployProvider {
 
 	public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
 			List<TaskDetail> taskDetails) {
-		this.config = SpringContextHolder.getBean(DeployProperties.class);
+		this.config = SpringContexts.getBean(DeployProperties.class);
 		this.path = path;
 		this.branch = branch;
 		this.alias = alias;
@@ -102,7 +102,7 @@ public abstract class BasedDeployProvider {
 		this.tarName = a[a.length - 1];
 
 		this.project = project;
-		this.dependencyService = SpringContextHolder.getBean(DependencyService.class);
+		this.dependencyService = SpringContexts.getBean(DependencyService.class);
 	}
 
 	public abstract void execute() throws Exception;
