@@ -256,9 +256,6 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	@ConditionalOnBean(XssSecurityResolveInterceptor.class)
 	public AspectJExpressionPointcutAdvisor xssSecurityResolveAspectJExpressionPointcutAdvisor(XssProperties config,
 			XssSecurityResolveInterceptor advice) {
-		Assert.hasText(config.getExpression(),
-				String.format("XSS interception expression is required, and the '%s' configuration item does not exist?",
-						XssProperties.PREFIX));
 		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
 		advisor.setExpression(config.getExpression());
 		advisor.setAdvice(advice);
