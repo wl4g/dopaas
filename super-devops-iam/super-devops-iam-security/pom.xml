@@ -22,8 +22,8 @@
 			<version>master</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> <version>1.8.7</version> 
-			</dependency> -->
+		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> 
+			<version>1.8.7</version> </dependency> -->
 	</dependencies>
 	<build>
 		<plugins>
@@ -94,7 +94,8 @@
 						<option>-keepdirectories</option>
 						<option>-keepattributes
 							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
-						<option>-keepclassmembers public class * {void set*(***);*** get*();}</option>
+						<option>-keepclassmembers public class * {void set*(***);***
+							get*();}</option>
 						<option>-keep public class * extends javax.servlet.Servlet</option>
 					</options>
 					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
@@ -114,8 +115,11 @@
 			<resource>
 				<directory>src/main/java</directory>
 				<includes>
-					<include>**/*.*</include>
+					<include>**/*.properties</include>
 				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
 				<filtering>false</filtering>
 			</resource>
 			<resource>
