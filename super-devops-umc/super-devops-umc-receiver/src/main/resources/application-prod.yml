@@ -41,9 +41,9 @@ spring:
       umc:
         store:
           derby:
-#          opentsdb:
-#            host: 10.0.0.57
-#            port: 4242
+          opentsdb:
+            host: http://10.0.0.160
+            port: 4242
         receiver:
           http:
             enabled: true
@@ -53,6 +53,9 @@ spring:
             queue-depth: 4092
             properties:
               bootstrap.servers: owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092
+        watch:
+          zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
+          fetch-cache-sec: 1800
 
 # Spring-security config.
 security.user:

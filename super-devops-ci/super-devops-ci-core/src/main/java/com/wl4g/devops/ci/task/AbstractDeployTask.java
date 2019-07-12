@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.utils.context.SpringContextHolder;
+import com.wl4g.devops.common.utils.context.SpringContexts;
 
 /**
  * Abstract deployments task.
@@ -41,7 +41,7 @@ public abstract class AbstractDeployTask implements Runnable {
 		super();
 		this.instance = instance;
 		this.project = project;
-		this.taskService = SpringContextHolder.getBean(TaskService.class);
+		this.taskService = SpringContexts.getBean(TaskService.class);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.wl4g.devops.umc.opentsdb;
 
-import com.wl4g.devops.common.bean.umc.model.StatMetrics;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
 import com.wl4g.devops.umc.store.MetricStore;
@@ -25,22 +25,24 @@ public class TsdbMetricStore implements MetricStore {
 	}
 
 	@Override
-	public boolean save(StatMetrics statMetrics) {
-		long timestamp = statMetrics.getTimestamp();
+	public boolean save(MetricModel.MetricAggregate aggregate) {
+		long timestamp = aggregate.getTimestamp();
 
 		int i = 0;
-		for(StatMetrics.StatMetric statMetric : statMetrics.getStatMetrics()){
-			if(StringUtils.isBlank(statMetric.getMetric())||statMetric.getValue()==null|| statMetrics.getStatMetrics()==null|| statMetrics.getStatMetrics().length<=0){
+		for(MetricModel.Metric statMetric : aggregate.getMetricsList()){
+			statMetric.getTagsMap();
+			if(StringUtils.isBlank(statMetric.getMetric())){
 				continue;
 			}
-			Point.MetricBuilder pointBuilder = Point.metric(statMetric.getMetric())
-					.value(timestamp/1000, statMetric.getValue());
-			Map<String, String> tag = statMetric.getTags();
+
+			Point.MetricBuilder pointBuilder = Point.metric(statMetric.getMetric()).value(timestamp, statMetric.getValue());
+			Map<String, String> tag = statMetric.getTagsMap();
 			for (Map.Entry<String, String> entry : tag.entrySet()) {
 				String key = entry.getKey();
 				String value = entry.getValue();
 				pointBuilder.tag(key,value);
 			}
+			pointBuilder.tag("instance",aggregate.getInstance());
 			Point point = pointBuilder.build();
 			i++;
 			client.put(point);

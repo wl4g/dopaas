@@ -15,25 +15,27 @@
  */
 package com.wl4g.devops.support.cache;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.apache.commons.lang3.StringUtils.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.utils.serialize.ObjectUtils;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ScanParams;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class JedisService {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -105,6 +107,36 @@ public class JedisService {
 				log.debug("setObjectT {} = {}", key, value);
 			}
 			return result;
+		});
+	}
+
+	public <T> String setObjectAsJson(final String key, final T value, final int cacheSeconds) {
+		return (String) doInRedis(cluster -> {
+			String result = null;
+			if (cacheSeconds != 0) {
+				result = cluster.setex(key, cacheSeconds, JacksonUtils.toJSONString(value));
+			} else {
+				result = cluster.set(key, JacksonUtils.toJSONString(value));
+			}
+			if (log.isDebugEnabled()) {
+				log.debug("setObjectAsJson {} = {}", key, value);
+			}
+			return result;
+		});
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getObjectAsJson(final String key, Class<T> clazz) {
+		return (T) doInRedis(cluster -> {
+			String json = cluster.get(key);
+			if (isBlank(json)) {
+				return null;
+			}
+			T value = parseJSON(json, clazz);
+			if (log.isDebugEnabled()) {
+				log.debug("getObjectAsJson {} = {}", key, value);
+			}
+			return value;
 		});
 	}
 
@@ -513,7 +545,7 @@ public class JedisService {
 	 * Remove the value from the Map cache
 	 * 
 	 * @param key
-	 * @param value
+	 * @param mapKey
 	 * @return
 	 */
 	public Long mapRemove(final String key, final String mapKey) {

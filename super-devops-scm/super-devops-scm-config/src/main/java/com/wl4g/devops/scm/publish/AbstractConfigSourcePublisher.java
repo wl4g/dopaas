@@ -23,7 +23,7 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.scm.config.ScmProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.GenericTaskRunner.TaskProperties;
+import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2018年10月26日
  * @since
  */
-public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<TaskProperties> implements ConfigSourcePublisher {
+public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<RunProperties> implements ConfigSourcePublisher {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -68,7 +68,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ta
 	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
 	public AbstractConfigSourcePublisher(ScmProperties config) {
-		super(new TaskProperties());
+		super(new RunProperties());
 		this.config = config;
 		this.watchRequests = new ConcurrentHashMap<>(32);
 	}

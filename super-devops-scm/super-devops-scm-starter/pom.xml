@@ -61,7 +61,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<finalName>${final.name}-${project.version}-bin</finalName>
+					<finalName>${project.build.finalName}-${project.version}-bin</finalName>
 					<!-- not append assembly id in release file name -->
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
@@ -78,6 +78,96 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- [Step1] add config in maven setting.xml
+					<server>
+						<id>docker.io</id>
+						<username>your user name</username>
+						<password>your password </password>
+					</server>
+			 -->
+			<!-- [Step2] set <useMavenSettingsForAuth>true</useMavenSettingsForAuth> in <configuration> -->
+			<!-- [Step3] <repository>wl4g/${project.build.finalName}</repository> the "wl4g" must be same as you docker hub username  -->
+			<!-- [Step3] build command : mvn dockerfile:build dockerfile:tag dockerfile:push -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.9</version>
+				<executions>
+					<execution>
+						<id>docker-build-push</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skipPush>false</skipPush>
+					<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+					<repository>xburnerair00/test</repository>
+
+					<tag>${project.version}</tag>
+					<!-- <contextDirectory>src/main/docker</contextDirectory> -->
+					<readTimeoutMillis>30000</readTimeoutMillis>
+					<connectTimeoutMillis>10000</connectTimeoutMillis>
+					<buildArgs>
+						<APP_NAME>${project.build.finalName}</APP_NAME>
+						<APP_VERSION>${project.version}</APP_VERSION>
+						<APP_BIN_NAME>${project.build.finalName}-${project.version}-bin</APP_BIN_NAME>
+						<APP_PORT>14043</APP_PORT>
+					</buildArgs>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
+
+
+	<!--<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			&lt;!&ndash; [Step1] Modify docker server: '/etc/docker/daemon.json' => {"hosts":["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"]} &ndash;&gt;
+			&lt;!&ndash; [Step2] Add OS environment: DOCKER_HOST=tcp://localhost:2375 &ndash;&gt;
+			&lt;!&ndash; [Step3] clean install -Pdocker:push -Ddockerfile.username=yourname
+				-Ddockerfile.password=yourpass &ndash;&gt;
+			<id>docker:push</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>1.4.9</version>
+						<executions>
+							<execution>
+								<id>docker-build-push</id>
+								<goals>
+									<goal>build</goal>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<repository>wl4g/${project.build.finalName}</repository>
+							<tag>${project.version}</tag>
+							&lt;!&ndash; <contextDirectory>src/main/docker</contextDirectory> &ndash;&gt;
+							<readTimeoutMillis>30000</readTimeoutMillis>
+							<connectTimeoutMillis>10000</connectTimeoutMillis>
+							<buildArgs>
+								<APP_NAME>${project.build.finalName}</APP_NAME>
+								<APP_VERSION>${project.version}</APP_VERSION>
+								<APP_BIN_NAME>${project.build.finalName}-${project.version}-bin</APP_BIN_NAME>
+								<APP_PORT>14043</APP_PORT>
+							</buildArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>-->
 </project>

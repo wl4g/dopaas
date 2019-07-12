@@ -11,10 +11,6 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  boot: # Spring boot admin.
-    admin:
-      notify.composite:
-        href-url: http://127.0.0.1:${server.port}/${spring.application.name}
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
