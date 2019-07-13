@@ -32,3 +32,4 @@ classes
 *.class
 MANIFEST.MF
 *.csv
+*.cache*
