@@ -137,7 +137,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			instances.add(releaseInstance);
 		}
 		// Get application group information.
-		AppGroup appGroup = this.appGroupDao.getAppGroup(String.valueOf(vd.getGroupId()));
+		AppGroup appGroup = this.appGroupDao.getAppGroup(vd.getGroupId());
 
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean vcb : vd.getConfigGurations()) {

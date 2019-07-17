@@ -15,16 +15,12 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.bean.scm.ConfigVersionList;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
@@ -64,11 +60,15 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public Task getTaskById(Integer id){
+	public Task getTaskById(Integer id) {
 		Task task = taskDao.selectByPrimaryKey(id);
 		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
-		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
-		task.setGroupName(appGroup.getName());
+		if (null != project && null != project.getAppGroupId()) {
+			AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
+			if (null != appGroup) {
+				task.setGroupName(appGroup.getName());
+			}
+		}
 		return task;
 
 	}

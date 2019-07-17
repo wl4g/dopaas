@@ -61,7 +61,7 @@ public interface AppGroupDao {
 
 	public AppInstance getAppInstance(@Param(value = "id") String id);
 
-	public AppGroup getAppGroup(@Param(value = "id") String id);
+	public AppGroup getAppGroup(@Param(value = "id") Integer id);
 
 	public AppGroup getAppGroupByName(@Param(value = "name") String name);
 
