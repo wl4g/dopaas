@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,9 +30,11 @@ import java.util.List;
 @Component
 public interface TaskService {
 
-	List<Task> list(CustomPage customPage);
+	List<Task> list(String groupName,String projectName,String branchName);
 
 	List<TaskDetail> getDetailByTaskId(Integer id);
+
+	Task getTaskById(Integer id);
 
 	Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
 			Integer parentId, String command, Integer tarType);

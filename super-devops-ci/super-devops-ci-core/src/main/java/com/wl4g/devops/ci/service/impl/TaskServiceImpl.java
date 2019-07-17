@@ -15,18 +15,25 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
+import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
+import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -41,10 +48,14 @@ public class TaskServiceImpl implements TaskService {
 	private TaskDao taskDao;
 	@Autowired
 	private TaskDetailDao taskDetailDao;
+	@Autowired
+	private ProjectDao projectDao;
+	@Autowired
+	private AppGroupDao appGroupDao;
 
 	@Override
-	public List<Task> list(CustomPage customPage) {
-		return taskDao.list(customPage);
+	public List<Task> list(String groupName,String projectName,String branchName) {
+		return taskDao.list(groupName,projectName,branchName);
 	}
 
 	@Override
@@ -53,10 +64,20 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	public Task getTaskById(Integer id){
+		Task task = taskDao.selectByPrimaryKey(id);
+		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
+		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
+		task.setGroupName(appGroup.getName());
+		return task;
+
+	}
+
+	@Override
 	@Transactional
 	public Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
 			Integer parentId, String command, Integer tarType) {
-
+		Assert.notNull(project,"not found project,please check che project config");
 		Task task = new Task();
 		task.preInsert();
 		task.setType(type);

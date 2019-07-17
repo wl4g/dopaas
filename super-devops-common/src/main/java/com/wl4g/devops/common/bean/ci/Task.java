@@ -40,6 +40,10 @@ public class Task extends BaseBean implements Serializable {
 
 	private String result;
 
+	private String projectName;
+
+	private String groupName;
+
 	public Integer getType() {
 		return type;
 	}
@@ -110,5 +114,21 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setTarType(Integer tarType) {
 		this.tarType = tarType;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

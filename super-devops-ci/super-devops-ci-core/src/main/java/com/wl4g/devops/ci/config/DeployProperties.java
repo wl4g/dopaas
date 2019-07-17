@@ -48,7 +48,7 @@ public class DeployProperties {
 
 	public String getGitBasePath() {
 		if(StringUtils.isBlank(gitBasePath)){
-			gitBasePath = System.getProperties().getProperty("user.home")+"/git";
+			gitBasePath = System.getProperties().getProperty("user.home")+"/gittest";
 		}
 		return gitBasePath;
 	}

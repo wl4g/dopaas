@@ -30,6 +30,10 @@ public class Dependency extends BaseBean implements Serializable {
 
 	private String parentBranch;
 
+	private String projectName;
+
+	private String parentName;
+
 	public Dependency() {
 
 	}
@@ -68,5 +72,21 @@ public class Dependency extends BaseBean implements Serializable {
 
 	public void setParentBranch(String parentBranch) {
 		this.parentBranch = parentBranch;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public String getParentName() {
+		return parentName;
+	}
+
+	public void setParentName(String parentName) {
+		this.parentName = parentName;
 	}
 }

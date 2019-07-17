@@ -11,6 +11,9 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <!-- other -->
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="parent_name" property="parentName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, project_id, parent_id, parent_branch, del_flag, create_date, create_by, update_date, 
@@ -145,5 +148,17 @@
     <include refid="Base_Column_List" />
     from ci_dependency
     where project_id = #{projectId,jdbcType=INTEGER}
+  </select>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    d.*,p.project_name,pp.project_name parent_name
+    from ci_dependency d
+    left join ci_project p on d.project_id = p.id
+    left join ci_project pp on d.parent_id = pp.id
+    where d.del_flag!=1
+    <if test="projectName != null and projectName != ''" >
+      AND p.project_name LIKE CONCAT('%','${projectName}','%')
+    </if>
   </select>
 </mapper>

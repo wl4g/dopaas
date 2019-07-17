@@ -14,6 +14,8 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <!-- other -->
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, project_id, branch_name, enable,tar_type,command, remark, del_flag, create_date, create_by, update_date,
@@ -29,7 +31,7 @@
     delete from ci_trigger
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Trigger" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Trigger" useGeneratedKeys="true" keyProperty="id">
     insert into ci_trigger (id, project_id, branch_name, 
       enable,tar_type,command, remark, del_flag,
       create_date, create_by, update_date, 
@@ -39,7 +41,7 @@
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Trigger" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Trigger" useGeneratedKeys="true" keyProperty="id">
     insert into ci_trigger
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -175,9 +177,13 @@
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    <include refid="Base_Column_List" />
-    from ci_trigger
-    limit ${(customPage.pageNum -1) * customPage.pageSize}, ${customPage.pageSize}
+    t.*,p.project_name
+    from ci_trigger t
+    left join ci_project p on p.id=t.project_id
+    where t.del_flag!=1
+    <if test="projectName != null and projectName != ''" >
+      AND p.project_name LIKE CONCAT('%','${projectName}','%')
+    </if>
   </select>
 
   <select id="getTriggerByProjectAndBranch" resultMap="BaseResultMap" parameterType="java.util.Map" >

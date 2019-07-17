@@ -31,6 +31,8 @@ public class TaskDetail extends BaseBean implements Serializable {
 
 	private String result;
 
+	private String instanceName;
+
 	public Integer getTaskId() {
 		return taskId;
 	}
@@ -61,5 +63,13 @@ public class TaskDetail extends BaseBean implements Serializable {
 
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	public String getInstanceName() {
+		return instanceName;
+	}
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
 	}
 }

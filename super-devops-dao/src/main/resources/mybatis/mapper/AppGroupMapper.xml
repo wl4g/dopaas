@@ -355,11 +355,9 @@
 		a.name,a.id,a.enable
 		from
 		cf_app_group a
-		JOIN cf_app_environment b on a.id = b.group_id AND b.del_flag = 0
 		<where>
 			a.del_flag = 0
 		</where>
-		GROUP by a.id
 	</select>
 
 	<select id="environmentlist" parameterType="java.lang.String" resultType="environment">
@@ -385,10 +383,10 @@
 			<if test="groupId != null and groupId != ''">
 				and a.group_id=#{groupId}
 			</if>
-			<if test="ip != null and groupId != ''">
+			<if test="ip != null and ip != ''">
 				and a.ip=#{ip}
 			</if>
-			<if test="port != null and groupId != ''">
+			<if test="port != null and port != ''">
 				and a.port=#{port}
 			</if>
 		</where>

@@ -15,10 +15,16 @@
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <!-- other -->
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List">
     id, project_name, git_url, app_group_id, tar_path, parent_app_home, link_app_home,
     remark, del_flag, create_date, create_by, update_date, update_by
+  </sql>
+  <sql id="Base_Column_List_p">
+    p.id, p.project_name, p.git_url, p.app_group_id, p.tar_path, p.parent_app_home, p.link_app_home,
+    p.remark, p.del_flag, p.create_date, p.create_by, p.update_date, p.update_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -189,9 +195,17 @@
 
   <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from ci_project
-    limit ${(customPage.pageNum -1) * customPage.pageSize}, ${customPage.pageSize}
+    <include refid="Base_Column_List_p" />
+    ,g.name as group_name
+    from ci_project p
+    left join cf_app_group g on p.app_group_id=g.id
+    where p.del_flag!=1
+    <if test="groupName != null and groupName != ''" >
+      AND g.name LIKE CONCAT('%','${groupName}','%')
+    </if>
+    <if test="projectName != null and projectName != ''" >
+      AND p.project_name LIKE CONCAT('%','${projectName}','%')
+    </if>
   </select>
 
   <select id="getByProjectName" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -205,6 +219,6 @@
     select
     <include refid="Base_Column_List" />
     from ci_project
-    where app_group_id = #{appGroupId,jdbcType=INTEGER}
+    where app_group_id = #{appGroupId,jdbcType=INTEGER} and del_flag!=1
   </select>
 </mapper>

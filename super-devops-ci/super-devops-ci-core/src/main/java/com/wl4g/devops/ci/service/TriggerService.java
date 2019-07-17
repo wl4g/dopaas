@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.ci.TriggerDetail;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 
 import java.util.List;
 
@@ -36,8 +35,6 @@ public interface TriggerService {
 	void enable(Integer id);
 
 	void disable(Integer id);
-
-	List<Trigger> list(CustomPage customPage);
 
 	List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
 
