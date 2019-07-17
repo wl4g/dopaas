@@ -99,7 +99,7 @@ public class CiServiceImpl implements CiService {
 	@Override
 	public void createTask(Integer appGroupId, String branchName, List<String> instanceIds,int type) {
 		Assert.notNull(appGroupId,"groupId is null");
-		AppGroup appGroup = appGroupDao.getAppGroup(appGroupId.toString());
+		AppGroup appGroup = appGroupDao.getAppGroup(appGroupId);
 		createTask(appGroup,branchName,instanceIds,type);
 	}
 
@@ -206,7 +206,7 @@ public class CiServiceImpl implements CiService {
 		Assert.notNull(task, "task can not be null");
 		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
 		Assert.notNull(project, "project can not be null");
-		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
+		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
 		Assert.notNull(appGroup, "appGroup can not be null");
 
 		List<TaskDetail> taskDetails = taskService.getDetailByTaskId(task.getId());
