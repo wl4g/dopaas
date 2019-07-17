@@ -27,7 +27,7 @@ public class AppInstance extends BaseBean {
 	private Long groupId; // 应用分组ID
 	private String host; // 实例节点Host（如：web-node1）
 	private String ip; // 主机IP地址
-	private int port; // 服务监听端口
+	private Integer port; // 服务监听端口
 	private String envId; // 环境id
 	private String opsIds = "1"; // 运维者userIds（逗号分隔）
 	private String versionId; // 版本id
@@ -61,11 +61,11 @@ public class AppInstance extends BaseBean {
 		this.ip = ip;
 	}
 
-	public int getPort() {
+	public Integer getPort() {
 		return port;
 	}
 
-	public void setPort(int port) {
+	public void setPort(Integer port) {
 		this.port = port;
 	}
 

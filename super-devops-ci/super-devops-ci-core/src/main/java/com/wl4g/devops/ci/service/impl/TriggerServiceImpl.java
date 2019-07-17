@@ -44,7 +44,7 @@ public class TriggerServiceImpl implements TriggerService {
 	@Transactional
 	public int insert(Trigger trigger, Integer[] instanceIds) {
 		trigger.preInsert();
-		int result = triggerDao.insert(trigger);
+		int result = triggerDao.insertSelective(trigger);
 		int triggerId = trigger.getId();
 		if (null == instanceIds) {
 			throw new RuntimeException("instance can not be null");
@@ -55,7 +55,7 @@ public class TriggerServiceImpl implements TriggerService {
 			triggerDetail.setInstanceId(instanceId);
 			triggerDetail.preInsert();
 			triggerDetail.setTriggerId(triggerId);
-			triggerDetailDao.insert(triggerDetail);
+			triggerDetailDao.insertSelective(triggerDetail);
 		}
 
 		return result;
@@ -77,7 +77,7 @@ public class TriggerServiceImpl implements TriggerService {
 			triggerDetail.setInstanceId(instanceId);
 			triggerDetail.preInsert();
 			triggerDetail.setTriggerId(triggerId);
-			triggerDetailDao.insert(triggerDetail);
+			triggerDetailDao.insertSelective(triggerDetail);
 		}
 		return result;
 	}
@@ -107,10 +107,6 @@ public class TriggerServiceImpl implements TriggerService {
 		triggerDao.updateByPrimaryKeySelective(trigger);
 	}
 
-	@Override
-	public List<Trigger> list(CustomPage customPage) {
-		return triggerDao.list(customPage);
-	}
 
 	@Override
 	public List<TriggerDetail> getDetailByTriggerId(Integer triggerId) {

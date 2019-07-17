@@ -42,6 +42,8 @@ public class Project extends BaseBean implements Serializable {
 
 	private String linkAppHome;
 
+	private String groupName;
+
 	public String getProjectName() {
 		return projectName;
 	}
@@ -88,6 +90,14 @@ public class Project extends BaseBean implements Serializable {
 
 	public void setLinkAppHome(String linkAppHome) {
 		this.linkAppHome = linkAppHome;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 
 	@Override

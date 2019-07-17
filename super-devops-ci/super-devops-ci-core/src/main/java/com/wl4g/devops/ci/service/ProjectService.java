@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 
 import java.util.List;
 
@@ -34,6 +33,8 @@ public interface ProjectService {
 
 	int removeById(Integer id);
 
-	List<Project> list(CustomPage customPage);
+	List<Project> list(String groupName,String projectName);
+
+	Project selectByPrimaryKey(Integer id);
 
 }

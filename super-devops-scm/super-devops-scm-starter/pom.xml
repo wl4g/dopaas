@@ -97,13 +97,12 @@
 					<execution>
 						<id>docker-build-push</id>
 						<goals>
-							<goal>build</goal>
-							<goal>push</goal>
+							<!--<goal>build</goal>-->
+							<!--<goal>push</goal>-->
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
-					<skipPush>false</skipPush>
 					<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 					<repository>xburnerair00/test</repository>
 

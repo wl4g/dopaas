@@ -29,7 +29,6 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
-import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -96,27 +95,37 @@ public class CiServiceImpl implements CiService {
 		return trigger;
 	}
 
-	@Override
-	public void createTask(String appGroupName, String branchName, List<String> instanceIds) {
 
+	@Override
+	public void createTask(Integer appGroupId, String branchName, List<String> instanceIds,int type) {
+		Assert.notNull(appGroupId,"groupId is null");
+		AppGroup appGroup = appGroupDao.getAppGroup(appGroupId.toString());
+		createTask(appGroup,branchName,instanceIds,type);
+	}
+
+	@Override
+	public void createTask(String appGroupName, String branchName, List<String> instanceIds,int type) {
 		AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
-		Assert.notNull(appGroup, String.format("not found this app: %s", appGroupName));
+		createTask(appGroup,branchName,instanceIds,type);
+	}
+
+	private void createTask(AppGroup appGroup, String branchName, List<String> instanceIds,int type){
+		Assert.notNull(appGroup, "not found this app");
 		Project project = projectDao.getByAppGroupId(appGroup.getId());
-		Assert.notNull(appGroup, String.format("not found this app: %s", appGroupName));
 		Assert.notEmpty(instanceIds, "instanceIds find empty list,Please check the instanceId");
 		List<AppInstance> instances = new ArrayList<>();
 		for (String instanceId : instanceIds) {
 			AppInstance instance = appGroupDao.getAppInstance(instanceId);
 			instances.add(instance);
 		}
-		Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
+		Task task = taskService.createTask(project, instances, type,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, null, null, null, CiDevOpsConstants.TAR_TYPE_TAR);
 		BasedDeployProvider provider = getDeployProvider(task);
 
 		try {
 			//// update task--running
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
-			// exec
+			//TODO  exec
 			provider.execute();
 			// update task--success
 			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
@@ -156,7 +165,7 @@ public class CiServiceImpl implements CiService {
 		String sha = null;
 
 		// Print to client
-		ShellContextHolder.printfQuietly("task begin");
+		//ShellContextHolder.printfQuietly("task begin");
 		Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
 		BasedDeployProvider provider = getDeployProvider(task);

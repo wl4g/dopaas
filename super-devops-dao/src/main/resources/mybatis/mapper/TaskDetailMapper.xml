@@ -11,6 +11,9 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+
+    <!-- ohter -->
+    <result column="remark" property="instanceName" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskDetail" extends="BaseResultMap" >
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
@@ -172,10 +175,9 @@
 
   <select id="getDetailByTaskId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
     select
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from ci_task_detail
+    d.*,i.remark
+    from ci_task_detail d
+    left join cf_app_instance i on d.instance_id=i.id
     where task_id = #{id,jdbcType=INTEGER}
   </select>
 </mapper>

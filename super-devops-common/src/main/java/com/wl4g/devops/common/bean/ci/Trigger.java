@@ -32,6 +32,8 @@ public class Trigger extends BaseBean implements Serializable {
 
 	private Integer tarType;
 
+	private String projectName;
+
 	private List<TriggerDetail> triggerDetails;
 
 	public Integer getProjectId() {
@@ -72,5 +74,13 @@ public class Trigger extends BaseBean implements Serializable {
 
 	public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
 		this.triggerDetails = triggerDetails;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 }

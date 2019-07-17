@@ -17,6 +17,11 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="result" property="result" jdbcType="VARCHAR" />
+    <!-- other  -->
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="name" property="groupName" jdbcType="VARCHAR" />
+
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.Task" extends="BaseResultMap" >
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
@@ -24,6 +29,10 @@
   <sql id="Base_Column_List" >
     id, type, project_id, status, branch_name, sha, parent_id,tar_type,command, remark, del_flag, create_date,
     create_by, update_date, update_by
+  </sql>
+  <sql id="Base_Column_List_t" >
+    t.id, t.type, t.project_id, t.status, t.branch_name, t.sha, t.parent_id,t.tar_type,command, t.remark, t.del_flag, t.create_date,
+    t.create_by, t.update_date, t.update_by,t.result
   </sql>
   <sql id="Blob_Column_List" >
     result
@@ -242,8 +251,21 @@
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    <include refid="Base_Column_List" />
-    from ci_task
-    limit ${(customPage.pageNum -1) * customPage.pageSize}, ${customPage.pageSize}
+    <include refid="Base_Column_List_t" />
+    ,p.project_name,g.name
+    from ci_task t
+    left join ci_project p on t.project_id=p.id
+    left join cf_app_group g on p.app_group_id=g.id
+    where t.del_flag!=1
+    <if test="groupName != null and groupName != ''" >
+      AND g.name LIKE CONCAT('%','${groupName}','%')
+    </if>
+    <if test="projectName != null and projectName != ''" >
+      AND p.project_name LIKE CONCAT('%','${projectName}','%')
+    </if>
+    <if test="branchName != null and branchName != ''" >
+      AND t.branch_name LIKE CONCAT('%','${branchName}','%')
+    </if>
+    order by t.create_date desc
   </select>
 </mapper>
