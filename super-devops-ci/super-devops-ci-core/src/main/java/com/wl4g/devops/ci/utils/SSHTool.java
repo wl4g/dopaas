@@ -16,13 +16,15 @@
 package com.wl4g.devops.ci.utils;
 
 import ch.ethz.ssh2.*;
-
 import com.google.common.base.Charsets;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
-import static org.apache.commons.lang3.StringUtils.*;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * SSH connection utility tools.
@@ -106,7 +108,7 @@ public abstract class SSHTool extends ShellTool {
 	 * @param mode
 	 *            默认为null
 	 */
-	public static void uploadFile(String host, String userName, char[] rsa, File f, String remoteTargetDirectory) {
+	public static String uploadFile(String host, String userName, char[] rsa, File f, String remoteTargetDirectory) {
 		log.info("upload file begin: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
 
 		ShellContextHolder.printfQuietly("upload file: " + f.getAbsolutePath() + " to " + remoteTargetDirectory);
@@ -154,9 +156,10 @@ public abstract class SSHTool extends ShellTool {
 			} catch (Exception e) {
 			}
 		}
+		return "upload file success";
 	}
 
-	private static String execute(Connection conn, String cmd) {
+	private static String execute(Connection conn, String cmd) throws IOException{
 		// logger.info("command=" + cmd);
 
 		String result = EMPTY;
@@ -170,10 +173,13 @@ public abstract class SSHTool extends ShellTool {
 			// if result blank, get error msg
 			if (isBlank(result)) {
 				result = printf(session.getStderr());
+				if(isNotBlank(result)){
+					throw new RuntimeException(result);
+				}
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			if (null != session) {
 				session.close();

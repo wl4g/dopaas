@@ -42,7 +42,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 	public void execute() throws Exception {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProject().getId());
-		getDependencyService().build(dependency, getBranch());
+		getDependencyService().build(dependency, getBranch(),isSuccess,result);
 
 		// backup in local
 		backupLocal(getPath() + getProject().getTarPath());

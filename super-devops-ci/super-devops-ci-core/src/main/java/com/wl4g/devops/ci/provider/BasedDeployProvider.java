@@ -89,6 +89,10 @@ public abstract class BasedDeployProvider {
 	 */
 	final private Date now = new Date();
 
+
+	protected Boolean isSuccess = new Boolean(true);
+	protected StringBuffer result = new StringBuffer();
+
 	public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
 			List<TaskDetail> taskDetails) {
 		this.config = SpringContexts.getBean(DeployProperties.class);
@@ -114,8 +118,9 @@ public abstract class BasedDeployProvider {
 		String rsaKey = config.getCipherKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
-
-		return SSHTool.execute(targetHost, userName, command, rsaReal);
+		String result = command + "\n";
+		result += SSHTool.execute(targetHost, userName, command, rsaReal);
+		return result;
 	}
 
 	/**
@@ -173,15 +178,15 @@ public abstract class BasedDeployProvider {
 	 * bak local + scp + rename
 	 */
 	public String scpAndTar(String path, String targetHost, String userName, String targetPath, String rsa) throws Exception {
-		String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa);
+		String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa)+"\n";
 		// scp
-		scpToTmp(path, targetHost, userName, rsa);
+        result +=  scpToTmp(path, targetHost, userName, rsa)+"\n";
 		// tar
-		result += tarToTmp(targetHost, userName, path, rsa);
+		result += tarToTmp(targetHost, userName, path, rsa)+"\n";
 		// mkdir--real app path
 		// result += mkdirs(targetHost, userName, targetPath, rsa);
 		// move
-		result += moveToTarPath(targetHost, userName, path, targetPath, rsa);
+		result += moveToTarPath(targetHost, userName, path, targetPath, rsa)+"\n";
 		return result;
 	}
 
@@ -194,13 +199,13 @@ public abstract class BasedDeployProvider {
 	/**
 	 * scpToTmp
 	 */
-	public void scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
+	public String scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
 		// String command = "scp -r " + path + " " + targetHost + ":/home/" +
 		// userName + "/tmp";
 		String rsaKey = config.getCipherKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
-		SSHTool.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
+		return SSHTool.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
 	}
 
 	/**
@@ -323,5 +328,21 @@ public abstract class BasedDeployProvider {
 
 	public Project getProject() {
 		return project;
+	}
+
+	public Boolean getSuccess() {
+		return isSuccess;
+	}
+
+	public void setSuccess(Boolean success) {
+		isSuccess = success;
+	}
+
+	public StringBuffer getResult() {
+		return result;
+	}
+
+	public void setResult(StringBuffer result) {
+		this.result = result;
 	}
 }
