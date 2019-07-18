@@ -121,20 +121,8 @@ public class CiServiceImpl implements CiService {
 		Task task = taskService.createTask(project, instances, type,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, null, null, null, CiDevOpsConstants.TAR_TYPE_TAR);
 		BasedDeployProvider provider = getDeployProvider(task);
-
-		try {
-			//// update task--running
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
-			//TODO  exec
-			provider.execute();
-			// update task--success
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
-		} catch (Exception e) {
-			// update task--fail
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_FAIL);
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
+		//execute
+		execute(task.getId(),provider);
 	}
 
 	public void hook(String projectName, String branchName, String url) {
@@ -169,21 +157,37 @@ public class CiServiceImpl implements CiService {
 		Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
 		BasedDeployProvider provider = getDeployProvider(task);
+		//execute
+		execute(task.getId(),provider);
+	}
 
-		try {
-			// update task--running
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
+	private void execute(Integer taskId, BasedDeployProvider provider) {
 
-			// exec
-			provider.execute();
+		// update task--running
+		taskService.updateTaskStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 
-			// update task--success
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
-		} catch (Exception e) {
-			// update task--fail
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_FAIL);
-			e.printStackTrace();
-		}
+		//optimize : use multithreading
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					// exec
+					provider.execute();
+					if (provider.getSuccess()) {
+						// update task--success
+						taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
+					} else {
+						// update task--success
+						taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
+					}
+
+
+				} catch (Exception e) {
+					// update task--fail
+					taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}).start();
 
 	}
 

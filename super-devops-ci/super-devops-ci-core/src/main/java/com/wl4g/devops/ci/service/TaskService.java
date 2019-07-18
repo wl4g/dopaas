@@ -40,7 +40,8 @@ public interface TaskService {
 			Integer parentId, String command, Integer tarType);
 
 	void updateTaskStatus(int taskId, int status);
+	void updateTaskStatusAndResult(int taskId, int status,String result);
 
-	void updateTaskDetailStatus(int taskDetailId, int status);
+	void updateTaskDetailStatusAndResult(int taskDetailId, int status,String result);
 
 }

@@ -52,28 +52,35 @@ public class DependencyServiceImpl implements DependencyService {
 	private ProjectDao projectDao;
 
 	@Override
-	public void build(Dependency dependency, String branch) throws Exception {
+	public void build(Dependency dependency, String branch,Boolean success,StringBuffer result) throws Exception {
 		Integer projectId = dependency.getProjectId();
 
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
 		if (dependencies != null && dependencies.size() > 0) {
 			for (Dependency dep : dependencies) {
 				String br = dep.getParentBranch();
-				build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br);
+				build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br, success, result);
 			}
 		}
 
+		// Is Continue ? if fail then return
+		if(!success){
+			return;
+		}
 		// build
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		String path = config.getGitBasePath() + "/" + project.getProjectName();
 		if (checkGitPahtExist(path)) {
 			GitUtils.checkout(config.getCredentials(), path, branch);
+			result.append("project checkout success:").append(project.getProjectName()).append("\n");
 		} else {
 			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+			result.append("project clone success:").append(project.getProjectName()).append("\n");
 		}
 
 		// Install
-		mvnInstall(path);
+		String installResult = mvnInstall(path);
+		result.append(installResult);
 	}
 
 	private boolean checkGitPahtExist(String path) throws Exception {
