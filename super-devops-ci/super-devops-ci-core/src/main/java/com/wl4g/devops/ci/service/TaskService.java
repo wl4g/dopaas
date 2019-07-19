@@ -44,4 +44,6 @@ public interface TaskService {
 
 	void updateTaskDetailStatusAndResult(int taskDetailId, int status,String result);
 
+	void updateTaskStatusAndResultAndSha(int taskId, int status,String result,String sha,String md5);
+
 }

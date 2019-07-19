@@ -17,15 +17,22 @@ package com.wl4g.devops.rest.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.cron.CronUtils;
+import com.wl4g.devops.ci.cron.DynamicTask;
+import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.ci.TriggerDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.wl4g.devops.common.bean.scm.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.devops.common.bean.scm.BaseBean.ENABLED;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
 
 /**
  * CI/CD controller
@@ -56,6 +63,18 @@ public class TriggerController {
 	@Autowired
 	private AppGroupDao appGroupDao;
 
+	@Autowired
+	private DynamicTask dynamicTask;
+
+	@Autowired
+	private DeployProperties config;
+
+	@Autowired
+	private CiService ciService;
+
+	@Autowired
+	private ProjectDao projectDao;
+
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(String projectName,CustomPage customPage) {
@@ -63,7 +82,6 @@ public class TriggerController {
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
 		Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-
 		List<Trigger> list = triggerDao.list(projectName);
 		customPage.setPageNum(pageNum);
 
@@ -77,17 +95,33 @@ public class TriggerController {
 	@RequestMapping(value = "/save")
 	public RespBase<?> save(Trigger trigger,Integer[] instances) {
 		RespBase<Object> resp = RespBase.create();
+		checkTriggerCron(trigger);
 		Assert.notEmpty(instances,"instances can not be empty");
 		if(null != trigger.getId()&&trigger.getId()>0){
 			trigger.preUpdate();
-			triggerService.update(trigger,instances);
+			trigger = triggerService.update(trigger, instances);
 		}else{
 			trigger.preInsert();
 			trigger.setDelFlag(DEL_FLAG_NORMAL);
-			trigger.setEnable(ENABLED);
-			triggerService.insert(trigger,instances);
+			trigger = triggerService.insert(trigger,instances);
 		}
+		restart(trigger);
 		return resp;
+	}
+
+	private boolean checkTriggerCron(Trigger trigger){
+		Assert.notNull(trigger,"trigger can not be null");
+		Assert.notNull(trigger.getType(),"type can not be null");
+		Assert.notNull(trigger.getProjectId(),"project can not be null");
+		if(trigger.getType().intValue()==TASK_TYPE_TIMMING){
+			Assert.notNull(trigger.getCron(),"cron can not be null");
+		}
+		return true;
+	}
+
+	private void restart(Trigger trigger){
+		Project project = projectDao.selectByPrimaryKey(trigger.getProjectId());
+		dynamicTask.restartCron(trigger.getId().toString(),trigger.getCron(),trigger, project,config, ciService);
 	}
 
 	@RequestMapping(value = "/detail")
@@ -117,8 +151,39 @@ public class TriggerController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id,"id can not be null");
 		triggerService.delete(id);
+		dynamicTask.stopCron(id.toString());
 		return resp;
 	}
+
+
+	@RequestMapping(value = "/checkCronExpression")
+	public RespBase<?> checkCronExpression(String expression) {
+		RespBase<Object> resp = RespBase.create();
+		boolean isValid = CronUtils.isValidExpression(expression);
+		resp.getData().put("validExpression",isValid);
+		return resp;
+	}
+
+	@RequestMapping(value = "/cronNextExecTime")
+	public RespBase<?> cronNextExecTime(String expression,Integer numTimes) {
+		RespBase<Object> resp = RespBase.create();
+		if(null==numTimes || numTimes<=0){
+			numTimes = 5;
+		}
+		boolean isValid = CronUtils.isValidExpression(expression);
+		resp.getData().put("validExpression",isValid);
+		if(!isValid){
+			return resp;
+		}
+		try {
+			List<String> nextExecTime = CronUtils.getNextExecTime(expression, numTimes);
+			resp.getData().put("nextExecTime",StringUtils.join(nextExecTime, "\n"));
+		}catch (Exception e){
+
+		}
+		return resp;
+	}
+
 
 
 

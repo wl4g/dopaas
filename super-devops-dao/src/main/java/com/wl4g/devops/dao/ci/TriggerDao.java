@@ -37,4 +37,7 @@ public interface TriggerDao {
     List<Trigger> list(@Param("projectName") String projectName);
 
     Trigger getTriggerByProjectAndBranch(Map<String,Object> map);
+
+    List<Trigger> selectByType(@Param("type") Integer type);
+
 }

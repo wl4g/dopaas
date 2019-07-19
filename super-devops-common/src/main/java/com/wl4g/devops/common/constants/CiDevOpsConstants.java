@@ -46,6 +46,10 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_TYPE_MANUAL = 2;
 	// Rollback trigger
 	public static final int TASK_TYPE_ROLLBACK = 3;
+	// Auto trigger
+	public static final int TASK_TYPE_TIMMING = 4;
+
+
 
 	public static final int TASK_ENABLE_STATUS = 1;
 	public static final int TASK_DISABLE_STATUS = 0;

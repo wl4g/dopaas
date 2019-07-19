@@ -89,6 +89,14 @@ public abstract class BasedDeployProvider {
 	 */
 	final private Date now = new Date();
 
+	/**
+	 * sha
+	 */
+	protected String sha;
+	/**
+	 * md5
+	 */
+	protected String md5;
 
 	protected Boolean isSuccess = new Boolean(true);
 	protected StringBuffer result = new StringBuffer();
@@ -344,5 +352,21 @@ public abstract class BasedDeployProvider {
 
 	public void setResult(StringBuffer result) {
 		this.result = result;
+	}
+
+	public String getSha() {
+		return sha;
+	}
+
+	public void setSha(String sha) {
+		this.sha = sha;
+	}
+
+	public String getMd5() {
+		return md5;
+	}
+
+	public void setMd5(String md5) {
+		this.md5 = md5;
 	}
 }

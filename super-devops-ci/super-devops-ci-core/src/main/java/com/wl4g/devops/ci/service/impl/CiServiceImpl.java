@@ -174,13 +174,13 @@ public class CiServiceImpl implements CiService {
 					provider.execute();
 					if (provider.getSuccess()) {
 						// update task--success
-						taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
+						provider.getPath();
+						taskService.updateTaskStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(),provider.getSha(),provider.getMd5());
+						//taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
 					} else {
 						// update task--success
 						taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
 					}
-
-
 				} catch (Exception e) {
 					// update task--fail
 					taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
