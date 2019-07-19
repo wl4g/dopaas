@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -162,23 +164,73 @@ public class GitUtils {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		// git远程url地址
-		// String url =
-		// "http://code.anjiancloud.owner/devops-team/safecloud-devops.git";
-		// String localPath = "/Users/vjay/gittest/safecloud-devops";
+	//TODO
+	public static boolean checkGitPahtExist(String path) throws Exception {
+		File file = new File(path + "/.git");
+		if (file.exists()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-		// String url = "https://github.com/wl4g/super-devops.git";
-		String url = "http://code.anjiancloud.owner:8443/biz-team/android-team/portal-for-android.git";
-		String localPath = "/Users/vjay/gittest/super-devops";
+	public static void main(String[] args) throws Exception {
+		// git远程url地址
+		String url = "http://git.anjiancloud.repo/heweijie/safecloud-devops-datachecker.git";
+		String localPath = "/Users/vjay/gittest/safecloud-devops-datachecker";
 		String branchName = "master";
 
-		CredentialsProvider cp = new UsernamePasswordCredentialsProvider("", "");
-		GitUtils.clone(cp, url, localPath);
-		GitUtils.checkout(cp, localPath, branchName);
+		CredentialsProvider cp = new UsernamePasswordCredentialsProvider("heweijie", "hwj13535248668");
+		//GitUtils.clone(cp, url, localPath,"test");
 
-		// GitUtils.delbranch(localPath,branchName);
-		GitUtils.branchlist(localPath);
+		//GitUtils.checkout(cp, localPath, branchName);
+		//GitUtils.branchlist(localPath);
+
+
+		//test
+		//GitUtils.checkout(cp, localPath, branchName);
+		roolback(cp,localPath,"a4be5dda3cabd324f334ff3ed31b36d95f6de936");
+	}
+
+
+
+	public static String getOldestCommitSha(String localPath) throws Exception{
+		Git git = Git.open(new File(localPath));
+		Iterable<RevCommit> iterable=git.log().setMaxCount(1).call();//拿最新的comit-sha
+		Iterator<RevCommit> iter=iterable.iterator();
+		if (iter.hasNext()){
+			RevCommit commit=iter.next();
+			String commitID=commit.getName();  //这个应该就是提交的版本号
+			log.info("OldestCommitSha={} localPath={}",commitID,localPath);
+			return commitID;
+		}
+		return null;
+	}
+
+	/**
+	 * Checkout and pull
+	 */
+	public static void roolback(CredentialsProvider credentials, String localPath, String sha) {
+		String projectURL = localPath + "/.git";
+		Git git = null;
+		try {
+			git = Git.open(new File(projectURL));
+			git.fetch().setCredentialsProvider(credentials).call();
+			git.checkout().setName(sha).call();
+			if (log.isInfoEnabled()) {
+				log.info("checkout branch success;sha={} localPath={}" ,sha, localPath);
+			}
+			ShellContextHolder.printfQuietly("rollback branch success;sha=" + sha + " localPath=" + localPath);
+		} catch (Exception e) {
+			String errmsg = String.format("rollback branch failure. sha=%s, localPath=%s", sha, localPath);
+			ShellContextHolder.printfQuietly(errmsg);
+			log.error(errmsg, e);
+			throw new RuntimeException(e);
+		} finally {
+			if (git != null) {
+				git.close();
+			}
+		}
 	}
 
 }

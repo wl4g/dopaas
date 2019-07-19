@@ -16,11 +16,14 @@
 package com.wl4g.devops.ci.provider;
 
 import com.wl4g.devops.ci.task.MvnAssembleTarDeployTask;
+import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.utils.codec.FileCodec;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -44,6 +47,9 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 		dependency.setProjectId(getProject().getId());
 		getDependencyService().build(dependency, getBranch(),isSuccess,result);
 
+		//get sha and md5
+		setSha(GitUtils.getOldestCommitSha(getPath()));
+		setMd5(FileCodec.getFileMD5(new File(getPath()+getProject().getTarPath())));
 		// backup in local
 		backupLocal(getPath() + getProject().getTarPath());
 

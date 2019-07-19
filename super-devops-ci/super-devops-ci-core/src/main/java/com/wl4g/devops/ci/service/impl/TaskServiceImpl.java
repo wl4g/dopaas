@@ -121,6 +121,18 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	public void updateTaskStatusAndResultAndSha(int taskId, int status,String result,String sha,String md5) {
+		Task task = new Task();
+		task.preUpdate();
+		task.setId(taskId);
+		task.setStatus(status);
+		task.setResult(result);
+		task.setSha(sha);
+		task.setMd5(md5);
+		taskDao.updateByPrimaryKeySelective(task);
+	}
+
+	@Override
 	public void updateTaskDetailStatusAndResult(int taskDetailId, int status,String result) {
 		TaskDetail taskDetail = new TaskDetail();
 		taskDetail.preUpdate();

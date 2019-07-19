@@ -18,6 +18,7 @@ package com.wl4g.devops.common.bean.ci;
 import com.wl4g.devops.common.bean.scm.BaseBean;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Task extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
@@ -32,6 +33,8 @@ public class Task extends BaseBean implements Serializable {
 
 	private String sha;
 
+	private String md5;
+
 	private Integer parentId;
 
 	private String command;
@@ -43,6 +46,8 @@ public class Task extends BaseBean implements Serializable {
 	private String projectName;
 
 	private String groupName;
+
+	private List<TriggerDetail> triggerDetails;
 
 	public Integer getType() {
 		return type;
@@ -130,5 +135,13 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+
+	public String getMd5() {
+		return md5;
+	}
+
+	public void setMd5(String md5) {
+		this.md5 = md5;
 	}
 }

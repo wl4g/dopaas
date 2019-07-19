@@ -24,12 +24,10 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -70,7 +68,7 @@ public class DependencyServiceImpl implements DependencyService {
 		// build
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		String path = config.getGitBasePath() + "/" + project.getProjectName();
-		if (checkGitPahtExist(path)) {
+		if (GitUtils.checkGitPahtExist(path)) {
 			GitUtils.checkout(config.getCredentials(), path, branch);
 			result.append("project checkout success:").append(project.getProjectName()).append("\n");
 		} else {
@@ -83,14 +81,7 @@ public class DependencyServiceImpl implements DependencyService {
 		result.append(installResult);
 	}
 
-	private boolean checkGitPahtExist(String path) throws Exception {
-		File file = new File(path + "/.git");
-		if (file.exists()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+
 
 	/**
 	 * Building (maven)
