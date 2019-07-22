@@ -74,7 +74,8 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 		dependency.setProjectId(getProject().getId());
 
 		//TODO check bakup file isExist
-		String oldFilePath = getPath() + getProject().getTarPath()+"#"+getTask().getRefId();
+		String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) +"#"+getTask().getRefId();
+
 		File oldFile = new File(oldFilePath);
 		if(oldFile.exists()){
 			getBackupLocal(oldFilePath,getPath() + getProject().getTarPath());

@@ -255,7 +255,7 @@ public abstract class BasedDeployProvider {
      */
     public String getBackupLocal(String backFile,String target) throws Exception {
         checkPath(config.getBackupPath());
-        String command = "cp -Rf"+backFile+" "+ target;
+        String command = "cp -Rf "+backFile+" "+ target;
         return SSHTool.exec(command);
     }
 
