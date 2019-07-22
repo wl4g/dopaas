@@ -71,7 +71,9 @@ public class DependencyServiceImpl implements DependencyService {
 		if (dependencies != null && dependencies.size() > 0) {
 			for (Dependency dep : dependencies) {
 				String br = dep.getBranch();
-				build(task,new Dependency(dep.getDependentId()), StringUtils.isBlank(br) ? branch : br, success, result,true);
+				Dependency dependency1 = new Dependency(dep.getDependentId());
+				dependency1.setId(dep.getId());
+				build(task,dependency1, StringUtils.isBlank(br) ? branch : br, success, result,true);
 			}
 		}
 
@@ -119,7 +121,9 @@ public class DependencyServiceImpl implements DependencyService {
 		if (dependencies != null && dependencies.size() > 0) {
 			for (Dependency dep : dependencies) {
 				String br = dep.getBranch();
-				rollback(task,new Dependency(dep.getDependentId()), StringUtils.isBlank(br) ? branch : br, success, result,true);
+				Dependency dependency1 = new Dependency(dep.getDependentId());
+				dependency1.setId(dep.getId());
+				rollback(task,dependency1, StringUtils.isBlank(br) ? branch : br, success, result,true);
 			}
 		}
 

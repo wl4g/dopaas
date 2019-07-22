@@ -114,9 +114,7 @@ public class TaskController {
 	public RespBase<?> rollback(Integer taskId){
 		RespBase<Object> resp = RespBase.create();
 		Task task = taskService.getTaskById(taskId);
-
-		System.out.println("into rollback");
-
+		ciService.rollback(taskId);
 		return resp;
 	}
 

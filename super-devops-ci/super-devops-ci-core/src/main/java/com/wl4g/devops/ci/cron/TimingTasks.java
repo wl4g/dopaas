@@ -4,7 +4,6 @@ import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.dao.ci.TaskDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +23,7 @@ public class TimingTasks {
     /**
      * Scan time out task
      */
-    @Scheduled(cron = "00/30 * * * * ?")
+    //@Scheduled(cron = "00/30 * * * * ?")
     public void delCache() {
         Integer taskTimeout = config.getTaskTimeout();
         if(taskTimeout==null || taskTimeout==0){

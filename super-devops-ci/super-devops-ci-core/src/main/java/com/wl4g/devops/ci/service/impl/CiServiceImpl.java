@@ -237,7 +237,7 @@ public class CiServiceImpl implements CiService {
 		Assert.notNull(taskOld, "not found this app");
 		List<TaskDetail> taskDetails = taskService.getDetailByTaskId(taskId);
 		Assert.notEmpty(taskDetails, "taskDetails find empty list");
-		Project project = projectDao.getByAppGroupId(taskOld.getProjectId());
+		Project project = projectDao.selectByPrimaryKey(taskOld.getProjectId());
 		Assert.notNull(project, "not found this project");
 		List<AppInstance> instances = new ArrayList<>();
 		for (TaskDetail taskDetail : taskDetails) {

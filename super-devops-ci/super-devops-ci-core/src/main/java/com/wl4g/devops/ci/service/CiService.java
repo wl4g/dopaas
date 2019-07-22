@@ -42,4 +42,6 @@ public interface CiService {
 
 	void createTask(Integer appGroupId, String branchName, List<String> instanceIds,int type);
 
+	void rollback(Integer taskId);
+
 }
