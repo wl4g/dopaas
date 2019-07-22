@@ -16,6 +16,7 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.Dependency;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ public interface DependencyDao {
     int updateByPrimaryKey(Dependency record);
 
     List<Dependency> getParentsByProjectId(Integer projectId);
+
+    List<Dependency> list(@Param("projectName") String projectName);
 
 
 }

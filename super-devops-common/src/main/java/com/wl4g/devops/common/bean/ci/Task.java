@@ -18,6 +18,7 @@ package com.wl4g.devops.common.bean.ci;
 import com.wl4g.devops.common.bean.scm.BaseBean;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Task extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
@@ -30,15 +31,23 @@ public class Task extends BaseBean implements Serializable {
 
 	private String branchName;
 
-	private String sha;
+	private String shaGit;
 
-	private Integer parentId;
+	private String shaLocal;
+
+	private Integer refId;
 
 	private String command;
 
 	private Integer tarType;
 
 	private String result;
+
+	private String projectName;
+
+	private String groupName;
+
+	private List<TriggerDetail> triggerDetails;
 
 	public Integer getType() {
 		return type;
@@ -72,20 +81,20 @@ public class Task extends BaseBean implements Serializable {
 		this.branchName = branchName;
 	}
 
-	public String getSha() {
-		return sha;
+	public String getShaGit() {
+		return shaGit;
 	}
 
-	public void setSha(String sha) {
-		this.sha = sha;
+	public void setShaGit(String shaGit) {
+		this.shaGit = shaGit;
 	}
 
-	public Integer getParentId() {
-		return parentId;
+	public Integer getRefId() {
+		return refId;
 	}
 
-	public void setParentId(Integer parentId) {
-		this.parentId = parentId;
+	public void setRefId(Integer refId) {
+		this.refId = refId;
 	}
 
 	public String getResult() {
@@ -110,5 +119,37 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setTarType(Integer tarType) {
 		this.tarType = tarType;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getShaLocal() {
+		return shaLocal;
+	}
+
+	public void setShaLocal(String shaLocal) {
+		this.shaLocal = shaLocal;
+	}
+
+	public List<TriggerDetail> getTriggerDetails() {
+		return triggerDetails;
+	}
+
+	public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
+		this.triggerDetails = triggerDetails;
 	}
 }

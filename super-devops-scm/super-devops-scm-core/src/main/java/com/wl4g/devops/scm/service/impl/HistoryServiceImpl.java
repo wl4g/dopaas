@@ -150,7 +150,7 @@ public class HistoryServiceImpl implements HistoryService {
 		configGurationDao.updateNode(nMap);
 
 		// Get application group information.
-		AppGroup appGroup = this.appGroupDao.getAppGroup(String.valueOf(agl.getGroupId()));
+		AppGroup appGroup = this.appGroupDao.getAppGroup(agl.getGroupId());
 
 		// Get application nodeList information
 		AppInstance appInstance = new AppInstance();

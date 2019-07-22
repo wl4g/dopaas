@@ -86,15 +86,16 @@
 					<execution>
 						<id>default</id>
 						<goals>
-							<goal>build</goal>
-							<goal>push</goal>
+							<!--<goal>build</goal> -->
+							<!--<goal>push</goal> -->
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
-					<repository>wl4g/${project.build.finalName}</repository>
-					<tag>${project.version}</tag>
 					<!-- <contextDirectory>src/main/docker</contextDirectory> -->
+					<repository>wl4g/${project.build.finalName}</repository>
+					<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+					<tag>${project.version}</tag>
 					<readTimeoutMillis>30000</readTimeoutMillis>
 					<connectTimeoutMillis>10000</connectTimeoutMillis>
 					<buildArgs>

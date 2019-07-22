@@ -37,6 +37,9 @@ public abstract class AbstractDeployTask implements Runnable {
 	final protected Project project;
 	final protected TaskService taskService;
 
+	protected Boolean isSuccess = true;
+	protected StringBuffer result = new StringBuffer();
+
 	public AbstractDeployTask(AppInstance instance, Project project) {
 		super();
 		this.instance = instance;

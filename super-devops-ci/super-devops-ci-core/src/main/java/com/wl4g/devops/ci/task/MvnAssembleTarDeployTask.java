@@ -62,26 +62,29 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 		Assert.notNull(taskDetailId, "taskDetailId can not be null");
 		try {
 			// Update status
-			taskService.updateTaskDetailStatus(taskDetailId, TASK_STATUS_RUNNING);
-
+			taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING,null);
+			Boolean detailSuccess = new Boolean(false);
 			// Scp to tmp,rename,move to webapps
-			provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(), project.getParentAppHome(),
+			String s = provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(), project.getParentAppHome(),
 					instance.getSshRsa());
+			result.append(s).append("\n");
 
 			// Change link
-			provider.relink(instance.getHost(), project.getParentAppHome(), instance.getServerAccount(), path + tarPath,
+			String s1 = provider.relink(instance.getHost(), project.getParentAppHome(), instance.getServerAccount(), path + tarPath,
 					instance.getSshRsa());
+			result.append(s1).append("\n");
 
 			// Restart
-			provider.restart(instance.getHost(), instance.getServerAccount(), instance.getSshRsa());
+			String s2 = provider.restart(instance.getHost(), instance.getServerAccount(), instance.getSshRsa());
+			result.append(s2).append("\n");
 
 			// Update status
-			taskService.updateTaskDetailStatus(taskDetailId, TASK_STATUS_SUCCESS);
+			taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS,result.toString());
 
 		} catch (Exception e) {
 			log.error("Deploy job failed", e);
-			taskService.updateTaskDetailStatus(taskDetailId, TASK_STATUS_FAIL);
-			throw new RuntimeException(e);
+			taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,result.toString()+"\n"+e.toString());
+			//throw new RuntimeException(e);
 		}
 
 		if (log.isInfoEnabled()) {

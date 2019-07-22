@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
+import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -82,7 +83,7 @@ public class BackendConsole {
                 printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
 
                 // Create async task
-                ciService.createTask(appGroupName, branchName, instances);
+                ciService.createTask(appGroupName, branchName, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER);
 
                 printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
             } else {

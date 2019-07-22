@@ -40,6 +40,8 @@ public class DeployProperties {
 
 	private String cipherKey;
 
+	private Integer taskTimeout;
+
 	//
 	// Temporary
 	//
@@ -48,7 +50,7 @@ public class DeployProperties {
 
 	public String getGitBasePath() {
 		if(StringUtils.isBlank(gitBasePath)){
-			gitBasePath = System.getProperties().getProperty("user.home")+"/git";
+			gitBasePath = System.getProperties().getProperty("user.home")+"/gittest";
 		}
 		return gitBasePath;
 	}
@@ -99,5 +101,11 @@ public class DeployProperties {
 		return credentials;
 	}
 
+	public Integer getTaskTimeout() {
+		return taskTimeout;
+	}
 
+	public void setTaskTimeout(Integer taskTimeout) {
+		this.taskTimeout = taskTimeout;
+	}
 }

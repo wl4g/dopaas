@@ -19,13 +19,14 @@ import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.ci.TriggerDetail;
 import com.wl4g.devops.common.bean.scm.BaseBean;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,44 +43,44 @@ public class TriggerServiceImpl implements TriggerService {
 
 	@Override
 	@Transactional
-	public int insert(Trigger trigger, Integer[] instanceIds) {
+	public Trigger insert(Trigger trigger, Integer[] instanceIds) {
 		trigger.preInsert();
-		int result = triggerDao.insert(trigger);
+		int result = triggerDao.insertSelective(trigger);
 		int triggerId = trigger.getId();
-		if (null == instanceIds) {
-			throw new RuntimeException("instance can not be null");
-		}
-
+		Assert.notEmpty(instanceIds,"instance can not be null");
+		List<TriggerDetail> triggerDetails = new ArrayList<>();
 		for (Integer instanceId : instanceIds) {
 			TriggerDetail triggerDetail = new TriggerDetail();
 			triggerDetail.setInstanceId(instanceId);
 			triggerDetail.preInsert();
 			triggerDetail.setTriggerId(triggerId);
-			triggerDetailDao.insert(triggerDetail);
+			triggerDetailDao.insertSelective(triggerDetail);
+			triggerDetails.add(triggerDetail);
 		}
+		trigger.setTriggerDetails(triggerDetails);
 
-		return result;
+		return trigger;
 	}
 
 	@Override
 	@Transactional
-	public int update(Trigger trigger, Integer[] instanceIds) {
+	public Trigger update(Trigger trigger, Integer[] instanceIds) {
 		trigger.preUpdate();
 		int result = triggerDao.updateByPrimaryKeySelective(trigger);
 		int triggerId = trigger.getId();
-		if (null == instanceIds) {
-			return result;
-		}
-
+		Assert.notEmpty(instanceIds,"instance can not be null");
+		List<TriggerDetail> triggerDetails = new ArrayList<>();
 		triggerDetailDao.deleteByTriggerId(triggerId);
 		for (Integer instanceId : instanceIds) {
 			TriggerDetail triggerDetail = new TriggerDetail();
 			triggerDetail.setInstanceId(instanceId);
 			triggerDetail.preInsert();
 			triggerDetail.setTriggerId(triggerId);
-			triggerDetailDao.insert(triggerDetail);
+			triggerDetailDao.insertSelective(triggerDetail);
+			triggerDetails.add(triggerDetail);
 		}
-		return result;
+		trigger.setTriggerDetails(triggerDetails);
+		return trigger;
 	}
 
 	@Override
@@ -107,10 +108,6 @@ public class TriggerServiceImpl implements TriggerService {
 		triggerDao.updateByPrimaryKeySelective(trigger);
 	}
 
-	@Override
-	public List<Trigger> list(CustomPage customPage) {
-		return triggerDao.list(customPage);
-	}
 
 	@Override
 	public List<TriggerDetail> getDetailByTriggerId(Integer triggerId) {
