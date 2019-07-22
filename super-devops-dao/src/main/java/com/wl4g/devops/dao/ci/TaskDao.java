@@ -36,4 +36,6 @@ public interface TaskDao {
     int updateByPrimaryKey(Task record);
 
     List<Task> list(@Param("groupName") String groupName,@Param("projectName") String projectName,@Param("branchName") String branchName);
+
+    int updateStatus(Integer time);
 }

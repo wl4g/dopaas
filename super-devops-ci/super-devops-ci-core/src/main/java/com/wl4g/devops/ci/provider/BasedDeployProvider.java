@@ -20,6 +20,7 @@ import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
@@ -82,6 +83,10 @@ public abstract class BasedDeployProvider {
 	 */
 	final private DependencyService dependencyService;
 
+	final private Task task;
+
+	final private Task refTask;
+
 	final private Project project;
 
 	/**
@@ -92,22 +97,25 @@ public abstract class BasedDeployProvider {
 	/**
 	 * sha
 	 */
-	protected String sha;
+	protected String shaGit;
 	/**
 	 * md5
 	 */
-	protected String md5;
+	protected String shaLocal;
+
 
 	protected Boolean isSuccess = new Boolean(true);
 	protected StringBuffer result = new StringBuffer();
 
-	public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
+	public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,Task task,Task refTask,
 			List<TaskDetail> taskDetails) {
 		this.config = SpringContexts.getBean(DeployProperties.class);
 		this.path = path;
 		this.branch = branch;
 		this.alias = alias;
 		this.instances = instances;
+		this.task = task;
+		this.refTask = refTask;
 		this.taskDetails = taskDetails;
 
 		String[] a = project.getTarPath().split("/");
@@ -236,11 +244,20 @@ public abstract class BasedDeployProvider {
 	/**
 	 * local back up
 	 */
-	public String backupLocal(String path) throws Exception {
+	public String backupLocal(String path,String sign) throws Exception {
 		checkPath(config.getBackupPath());
-		String command = "cp -Rf " + path + " " + config.getBackupPath() + "/" + subPackname(path) + getDateTimeStr();
+		String command = "cp -Rf " + path + " " + config.getBackupPath() + "/" + subPackname(path) +"#"+ sign;
 		return SSHTool.exec(command);
 	}
+
+    /**
+     * get local back up
+     */
+    public String getBackupLocal(String backFile,String target) throws Exception {
+        checkPath(config.getBackupPath());
+        String command = "cp -Rf"+backFile+" "+ target;
+        return SSHTool.exec(command);
+    }
 
 	/**
 	 * mkdir
@@ -253,8 +270,8 @@ public abstract class BasedDeployProvider {
 	/**
 	 * rollback
 	 */
-	public String rollback() throws Exception {
-		return null;
+	public void rollback() throws Exception {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -354,19 +371,27 @@ public abstract class BasedDeployProvider {
 		this.result = result;
 	}
 
-	public String getSha() {
-		return sha;
+	public String getShaGit() {
+		return shaGit;
 	}
 
-	public void setSha(String sha) {
-		this.sha = sha;
+	public void setShaGit(String shaGit) {
+		this.shaGit = shaGit;
 	}
 
-	public String getMd5() {
-		return md5;
+	public String getShaLocal() {
+		return shaLocal;
 	}
 
-	public void setMd5(String md5) {
-		this.md5 = md5;
+	public void setShaLocal(String shaLocal) {
+		this.shaLocal = shaLocal;
+	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public Task getRefTask() {
+		return refTask;
 	}
 }

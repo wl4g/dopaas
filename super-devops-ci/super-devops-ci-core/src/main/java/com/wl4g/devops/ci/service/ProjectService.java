@@ -37,4 +37,6 @@ public interface ProjectService {
 
 	Project selectByPrimaryKey(Integer id);
 
+	int updateLockStatus(Integer id,Integer lockStatus);
+
 }

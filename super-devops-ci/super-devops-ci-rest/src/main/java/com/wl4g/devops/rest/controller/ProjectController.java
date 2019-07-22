@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.common.web.RespBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -101,6 +102,14 @@ public class ProjectController {
 		return resp;
 	}
 
+
+	@RequestMapping(value = "/unlock")
+	public RespBase<?> unlock(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		Assert.notNull(id,"id can not be null");
+		projectService.updateLockStatus(id,CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK);
+		return resp;
+	}
 
 
 

@@ -110,6 +110,16 @@ public class TaskController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/rollback")
+	public RespBase<?> rollback(Integer taskId){
+		RespBase<Object> resp = RespBase.create();
+		Task task = taskService.getTaskById(taskId);
+
+		System.out.println("into rollback");
+
+		return resp;
+	}
+
 
 
 

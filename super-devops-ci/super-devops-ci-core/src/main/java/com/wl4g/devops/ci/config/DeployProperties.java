@@ -40,6 +40,8 @@ public class DeployProperties {
 
 	private String cipherKey;
 
+	private Integer taskTimeout;
+
 	//
 	// Temporary
 	//
@@ -99,5 +101,11 @@ public class DeployProperties {
 		return credentials;
 	}
 
+	public Integer getTaskTimeout() {
+		return taskTimeout;
+	}
 
+	public void setTaskTimeout(Integer taskTimeout) {
+		this.taskTimeout = taskTimeout;
+	}
 }
