@@ -44,6 +44,8 @@ public class Project extends BaseBean implements Serializable {
 
 	private String groupName;
 
+	private Integer lockStatus;
+
 	public String getProjectName() {
 		return projectName;
 	}
@@ -98,6 +100,14 @@ public class Project extends BaseBean implements Serializable {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+
+	public Integer getLockStatus() {
+		return lockStatus;
+	}
+
+	public void setLockStatus(Integer lockStatus) {
+		this.lockStatus = lockStatus;
 	}
 
 	@Override

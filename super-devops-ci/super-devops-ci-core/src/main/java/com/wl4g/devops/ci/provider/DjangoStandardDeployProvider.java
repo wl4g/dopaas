@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.provider;
 
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 
@@ -31,9 +32,9 @@ import java.util.List;
 public class DjangoStandardDeployProvider extends BasedDeployProvider {
 
     public DjangoStandardDeployProvider(Project project,
-                                        String path, String branch, String alias, List<AppInstance> instances,
+                                        String path, String branch, String alias, List<AppInstance> instances, Task task,Task refTask,
                                         List<TaskDetail> taskDetails) {
-        super(project, path, branch, alias, instances, taskDetails);
+        super(project, path, branch, alias, instances,task,refTask, taskDetails);
     }
 
     @Override

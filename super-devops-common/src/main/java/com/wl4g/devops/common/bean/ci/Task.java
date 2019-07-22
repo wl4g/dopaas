@@ -31,11 +31,11 @@ public class Task extends BaseBean implements Serializable {
 
 	private String branchName;
 
-	private String sha;
+	private String shaGit;
 
-	private String md5;
+	private String shaLocal;
 
-	private Integer parentId;
+	private Integer refId;
 
 	private String command;
 
@@ -81,20 +81,20 @@ public class Task extends BaseBean implements Serializable {
 		this.branchName = branchName;
 	}
 
-	public String getSha() {
-		return sha;
+	public String getShaGit() {
+		return shaGit;
 	}
 
-	public void setSha(String sha) {
-		this.sha = sha;
+	public void setShaGit(String shaGit) {
+		this.shaGit = shaGit;
 	}
 
-	public Integer getParentId() {
-		return parentId;
+	public Integer getRefId() {
+		return refId;
 	}
 
-	public void setParentId(Integer parentId) {
-		this.parentId = parentId;
+	public void setRefId(Integer refId) {
+		this.refId = refId;
 	}
 
 	public String getResult() {
@@ -137,11 +137,19 @@ public class Task extends BaseBean implements Serializable {
 		this.groupName = groupName;
 	}
 
-	public String getMd5() {
-		return md5;
+	public String getShaLocal() {
+		return shaLocal;
 	}
 
-	public void setMd5(String md5) {
-		this.md5 = md5;
+	public void setShaLocal(String shaLocal) {
+		this.shaLocal = shaLocal;
+	}
+
+	public List<TriggerDetail> getTriggerDetails() {
+		return triggerDetails;
+	}
+
+	public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
+		this.triggerDetails = triggerDetails;
 	}
 }

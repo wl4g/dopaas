@@ -75,4 +75,13 @@ public class ProjectServiceImpl implements ProjectService {
 		return projectDao.selectByPrimaryKey(id);
 	}
 
+	@Override
+	public int updateLockStatus(Integer id,Integer lockStatus) {
+		Project project = new Project();
+		project.setId(id);
+		project.setLockStatus(lockStatus);
+		return projectDao.updateByPrimaryKeySelective(project);
+	}
+
+
 }

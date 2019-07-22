@@ -17,18 +17,26 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
+import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskSign;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
+
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_LOCK;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK;
 
 /**
  * Dependency service implements
@@ -49,15 +57,21 @@ public class DependencyServiceImpl implements DependencyService {
 	@Autowired
 	private ProjectDao projectDao;
 
+	@Autowired
+	private ProjectService projectService;
+
+	@Autowired
+	private TaskSignDao taskSignDao;
+
 	@Override
-	public void build(Dependency dependency, String branch,Boolean success,StringBuffer result) throws Exception {
+	public void build(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
 		Integer projectId = dependency.getProjectId();
 
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
 		if (dependencies != null && dependencies.size() > 0) {
 			for (Dependency dep : dependencies) {
-				String br = dep.getParentBranch();
-				build(new Dependency(dep.getParentId()), StringUtils.isBlank(br) ? branch : br, success, result);
+				String br = dep.getBranch();
+				build(task,new Dependency(dep.getDependentId()), StringUtils.isBlank(br) ? branch : br, success, result,true);
 			}
 		}
 
@@ -67,6 +81,11 @@ public class DependencyServiceImpl implements DependencyService {
 		}
 		// build
 		Project project = projectDao.selectByPrimaryKey(projectId);
+		if(project.getLockStatus().intValue()==TASK_LOCK_STATUS_LOCK){
+			throw new RuntimeException("project is lock , please check the project lock status");
+		}
+		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
+
 		String path = config.getGitBasePath() + "/" + project.getProjectName();
 		if (GitUtils.checkGitPahtExist(path)) {
 			GitUtils.checkout(config.getCredentials(), path, branch);
@@ -76,11 +95,83 @@ public class DependencyServiceImpl implements DependencyService {
 			result.append("project clone success:").append(project.getProjectName()).append("\n");
 		}
 
+		//save
+		if(isDependency){
+			TaskSign taskSign = new TaskSign();
+			taskSign.setTaskId(task.getId());
+			taskSign.setDependenvyId(dependency.getId());
+			taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+			taskSignDao.insertSelective(taskSign);
+		}
+
 		// Install
 		String installResult = mvnInstall(path);
 		result.append(installResult);
+
+		//finish then unlock the project
+		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
 	}
 
+	@Override
+	public void rollback(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+		Integer projectId = dependency.getProjectId();
+		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
+		if (dependencies != null && dependencies.size() > 0) {
+			for (Dependency dep : dependencies) {
+				String br = dep.getBranch();
+				rollback(task,new Dependency(dep.getDependentId()), StringUtils.isBlank(br) ? branch : br, success, result,true);
+			}
+		}
+
+		// Is Continue ? if fail then return
+		if(!success){
+			return;
+		}
+		// build
+		Project project = projectDao.selectByPrimaryKey(projectId);
+
+		if(project.getLockStatus().intValue()==TASK_LOCK_STATUS_LOCK){
+			throw new RuntimeException("project is lock , please check the project lock status");
+		}
+		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
+
+		String path = config.getGitBasePath() + "/" + project.getProjectName();
+
+		String sha = null;
+		if(isDependency){
+			TaskSign taskSign = taskSignDao.selectByDependencyId(dependency.getId());
+			Assert.notNull(taskSign,"not found taskSign");
+			sha = taskSign.getShaGit();
+		}else{
+			sha = task.getShaGit();
+		}
+
+		if (GitUtils.checkGitPahtExist(path)) {
+			GitUtils.roolback(config.getCredentials(),path,sha);
+			result.append("project rollback success:").append(project.getProjectName()).append("\n");
+		} else {
+			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+			result.append("project clone success:").append(project.getProjectName()).append("\n");
+			GitUtils.roolback(config.getCredentials(),path,sha);
+			result.append("project rollback success:").append(project.getProjectName()).append("\n");
+		}
+
+		//save
+		if(isDependency){
+			TaskSign taskSign = new TaskSign();
+			taskSign.setTaskId(task.getId());
+			taskSign.setDependenvyId(dependency.getId());
+			taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+			taskSignDao.insertSelective(taskSign);
+		}
+
+		// Install
+		String installResult = mvnInstall(path);
+		result.append(installResult);
+
+		//finish then unlock the project
+		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
+	}
 
 
 	/**

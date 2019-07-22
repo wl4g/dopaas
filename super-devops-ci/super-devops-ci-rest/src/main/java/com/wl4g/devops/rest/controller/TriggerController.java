@@ -121,7 +121,7 @@ public class TriggerController {
 
 	private void restart(Trigger trigger){
 		Project project = projectDao.selectByPrimaryKey(trigger.getProjectId());
-		dynamicTask.restartCron(trigger.getId().toString(),trigger.getCron(),trigger, project,config, ciService);
+		dynamicTask.restartCron(trigger.getId().toString(),trigger.getCron(),trigger, project);
 	}
 
 	@RequestMapping(value = "/detail")

@@ -76,7 +76,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	@Transactional
 	public Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-			Integer parentId, String command, Integer tarType) {
+			Integer refId, String command, Integer tarType) {
 		Assert.notNull(project,"not found project,please check che project config");
 		Task task = new Task();
 		task.preInsert();
@@ -84,8 +84,8 @@ public class TaskServiceImpl implements TaskService {
 		task.setProjectId(project.getId());
 		task.setStatus(status);
 		task.setBranchName(branchName);
-		task.setSha(sha);
-		task.setParentId(parentId);
+		task.setShaGit(sha);
+		task.setRefId(refId);
 		task.setCommand(command);
 		task.setTarType(tarType);
 		task.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
@@ -127,8 +127,8 @@ public class TaskServiceImpl implements TaskService {
 		task.setId(taskId);
 		task.setStatus(status);
 		task.setResult(result);
-		task.setSha(sha);
-		task.setMd5(md5);
+		task.setShaGit(sha);
+		task.setShaLocal(md5);
 		taskDao.updateByPrimaryKeySelective(task);
 	}
 

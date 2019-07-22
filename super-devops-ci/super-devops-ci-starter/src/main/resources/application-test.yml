@@ -61,4 +61,5 @@ deploy:
   git-username: heweijie
   git-password: hwj13535248668
   cipher-key: 03DE18C2FC4E605F
+  task-timeout: 300
 

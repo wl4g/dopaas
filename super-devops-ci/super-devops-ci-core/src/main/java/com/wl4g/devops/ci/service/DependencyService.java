@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Dependency;
+import com.wl4g.devops.common.bean.ci.Task;
 
 /**
  * @author vjay
@@ -23,6 +24,8 @@ import com.wl4g.devops.common.bean.ci.Dependency;
  */
 public interface DependencyService {
 
-	public void build(Dependency dependency, String branch,Boolean success,StringBuffer result) throws Exception;
+	public void build(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception;
+
+	public void rollback(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception;
 
 }
