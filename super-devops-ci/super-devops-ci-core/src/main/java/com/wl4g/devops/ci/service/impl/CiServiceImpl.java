@@ -29,7 +29,6 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
-import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -96,36 +95,34 @@ public class CiServiceImpl implements CiService {
 		return trigger;
 	}
 
-	@Override
-	public void createTask(String appGroupName, String branchName, List<String> instanceIds) {
 
+	@Override
+	public void createTask(Integer appGroupId, String branchName, List<String> instanceIds,int type) {
+		Assert.notNull(appGroupId,"groupId is null");
+		AppGroup appGroup = appGroupDao.getAppGroup(appGroupId);
+		createTask(appGroup,branchName,instanceIds,type);
+	}
+
+	@Override
+	public void createTask(String appGroupName, String branchName, List<String> instanceIds,int type) {
 		AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
-		Assert.notNull(appGroup, String.format("not found this app: %s", appGroupName));
+		createTask(appGroup,branchName,instanceIds,type);
+	}
+
+	private void createTask(AppGroup appGroup, String branchName, List<String> instanceIds,int type){
+		Assert.notNull(appGroup, "not found this app");
 		Project project = projectDao.getByAppGroupId(appGroup.getId());
-		Assert.notNull(appGroup, String.format("not found this app: %s", appGroupName));
 		Assert.notEmpty(instanceIds, "instanceIds find empty list,Please check the instanceId");
 		List<AppInstance> instances = new ArrayList<>();
 		for (String instanceId : instanceIds) {
 			AppInstance instance = appGroupDao.getAppInstance(instanceId);
 			instances.add(instance);
 		}
-		Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
+		Task task = taskService.createTask(project, instances, type,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, null, null, null, CiDevOpsConstants.TAR_TYPE_TAR);
 		BasedDeployProvider provider = getDeployProvider(task);
-
-		try {
-			//// update task--running
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
-			// exec
-			provider.execute();
-			// update task--success
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
-		} catch (Exception e) {
-			// update task--fail
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_FAIL);
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
+		//execute
+		execute(task.getId(),provider);
 	}
 
 	public void hook(String projectName, String branchName, String url) {
@@ -156,33 +153,47 @@ public class CiServiceImpl implements CiService {
 		String sha = null;
 
 		// Print to client
-		ShellContextHolder.printfQuietly("task begin");
+		//ShellContextHolder.printfQuietly("task begin");
 		Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
 		BasedDeployProvider provider = getDeployProvider(task);
+		//execute
+		execute(task.getId(),provider);
+	}
 
-		try {
-			// update task--running
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_RUNNING);
+	private void execute(Integer taskId, BasedDeployProvider provider) {
 
-			// exec
-			provider.execute();
+		// update task--running
+		taskService.updateTaskStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 
-			// update task--success
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_SUCCESS);
-		} catch (Exception e) {
-			// update task--fail
-			taskService.updateTaskStatus(task.getId(), CiDevOpsConstants.TASK_STATUS_FAIL);
-			e.printStackTrace();
-		}
-
+		//optimize : use multithreading
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					// exec
+					provider.execute();
+					if (provider.getSuccess()) {
+						// update task--success
+						taskService.updateTaskStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(),provider.getShaGit(),provider.getShaLocal());
+						//taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
+					} else {
+						// update task--success
+						taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
+					}
+				} catch (Exception e) {
+					// update task--fail
+					taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 	private BasedDeployProvider getDeployProvider(Project project, int tarType, String path, String branch, String alias,
-			List<AppInstance> instances, List<TaskDetail> taskDetails) {
+			List<AppInstance> instances,Task task,Task refTask, List<TaskDetail> taskDetails) {
 		switch (tarType) {
 		case CiDevOpsConstants.TAR_TYPE_TAR:
-			return new MvnAssembleTarDeployProvider(project, path, branch, alias, instances, taskDetails);
+			return new MvnAssembleTarDeployProvider(project, path, branch, alias, instances,task,refTask, taskDetails);
 		case CiDevOpsConstants.TAR_TYPE_JAR:
 			// return new JarSubject(path, url, branch,
 			// alias,tarPath,instances,taskDetails);
@@ -197,18 +208,76 @@ public class CiServiceImpl implements CiService {
 		Assert.notNull(task, "task can not be null");
 		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
 		Assert.notNull(project, "project can not be null");
-		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId().toString());
+		AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
 		Assert.notNull(appGroup, "appGroup can not be null");
 
 		List<TaskDetail> taskDetails = taskService.getDetailByTaskId(task.getId());
 		Assert.notNull(taskDetails, "taskDetails can not be null");
+
+		Task refTask = null;
+		if(task.getRefId()!=null){
+			refTask = taskService.getTaskById(task.getRefId());
+		}
+
 		List<AppInstance> instances = new ArrayList<>();
 		for (TaskDetail taskDetail : taskDetails) {
 			AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
 		return getDeployProvider(project, task.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
-				task.getBranchName(), appGroup.getName(), instances, taskDetails);
+				task.getBranchName(), appGroup.getName(), instances,task,refTask, taskDetails);
+	}
+
+
+
+	public void rollback(Integer taskId){
+
+		Assert.notNull(taskId, "taskId is null");
+		Task taskOld = taskService.getTaskById(taskId);
+		Assert.notNull(taskOld, "not found this app");
+		List<TaskDetail> taskDetails = taskService.getDetailByTaskId(taskId);
+		Assert.notEmpty(taskDetails, "taskDetails find empty list");
+		Project project = projectDao.getByAppGroupId(taskOld.getProjectId());
+		Assert.notNull(project, "not found this project");
+		List<AppInstance> instances = new ArrayList<>();
+		for (TaskDetail taskDetail : taskDetails) {
+			AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
+			instances.add(instance);
+		}
+		Task task = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
+				CiDevOpsConstants.TASK_STATUS_CREATE, taskOld.getBranchName(), null, taskId, null, CiDevOpsConstants.TAR_TYPE_TAR);
+		BasedDeployProvider provider = getDeployProvider(task);
+		//execute
+		rollbackExecute(task.getId(),provider);
+
+	}
+
+	private void rollbackExecute(Integer taskId, BasedDeployProvider provider) {
+
+		// update task--running
+		taskService.updateTaskStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
+
+		//optimize : use multithreading
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					// exec
+					provider.rollback();
+					if (provider.getSuccess()) {
+						// update task--success
+						taskService.updateTaskStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(),provider.getShaGit(),provider.getShaLocal());
+						//taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
+					} else {
+						// update task--success
+						taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
+					}
+				} catch (Exception e) {
+					// update task--fail
+					taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 }

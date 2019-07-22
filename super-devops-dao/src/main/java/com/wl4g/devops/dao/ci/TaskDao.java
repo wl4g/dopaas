@@ -16,7 +16,7 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -35,5 +35,7 @@ public interface TaskDao {
 
     int updateByPrimaryKey(Task record);
 
-    List<Task> list(CustomPage customPage);
+    List<Task> list(@Param("groupName") String groupName,@Param("projectName") String projectName,@Param("branchName") String branchName);
+
+    int updateStatus(Integer time);
 }

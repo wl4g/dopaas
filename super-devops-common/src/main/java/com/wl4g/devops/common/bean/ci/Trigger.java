@@ -32,6 +32,14 @@ public class Trigger extends BaseBean implements Serializable {
 
 	private Integer tarType;
 
+	private String projectName;
+
+	private Integer type;
+
+	private String cron;
+
+	private String sha;
+
 	private List<TriggerDetail> triggerDetails;
 
 	public Integer getProjectId() {
@@ -72,5 +80,37 @@ public class Trigger extends BaseBean implements Serializable {
 
 	public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
 		this.triggerDetails = triggerDetails;
+	}
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public String getCron() {
+		return cron;
+	}
+
+	public void setCron(String cron) {
+		this.cron = cron;
+	}
+
+	public String getSha() {
+		return sha;
+	}
+
+	public void setSha(String sha) {
+		this.sha = sha;
 	}
 }

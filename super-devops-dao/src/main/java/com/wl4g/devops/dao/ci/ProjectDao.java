@@ -16,7 +16,7 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public interface ProjectDao {
 
     int updateByPrimaryKey(Project record);
 
-    List<Project> list(CustomPage customPage);
+    List<Project> list(@Param("groupName") String groupName, @Param("projectName") String projectName);
 
     Project getByProjectName(String projectName);
 

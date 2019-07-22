@@ -4,16 +4,19 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Dependency" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
-    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
-    <result column="parent_branch" property="parentBranch" jdbcType="VARCHAR" />
+    <result column="dependent_id" property="dependentId" jdbcType="INTEGER" />
+    <result column="branch" property="branch" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="CHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <!-- other -->
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="parent_name" property="parentName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_id, parent_id, parent_branch, del_flag, create_date, create_by, update_date, 
+    id, project_id, dependent_id, branch, del_flag, create_date, create_by, update_date,
     update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -27,12 +30,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Dependency" >
-    insert into ci_dependency (id, project_id, parent_id, 
-      parent_branch, del_flag, create_date, 
+    insert into ci_dependency (id, project_id, dependent_id,
+      branch, del_flag, create_date,
       create_by, update_date, update_by
       )
-    values (#{id,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, 
-      #{parentBranch,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, #{dependentId,jdbcType=INTEGER},
+      #{branch,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP},
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
       )
   </insert>
@@ -45,11 +48,11 @@
       <if test="projectId != null" >
         project_id,
       </if>
-      <if test="parentId != null" >
-        parent_id,
+      <if test="dependentId != null" >
+        dependent_id,
       </if>
-      <if test="parentBranch != null" >
-        parent_branch,
+      <if test="branch != null" >
+        branch,
       </if>
       <if test="delFlag != null" >
         del_flag,
@@ -74,11 +77,11 @@
       <if test="projectId != null" >
         #{projectId,jdbcType=INTEGER},
       </if>
-      <if test="parentId != null" >
-        #{parentId,jdbcType=INTEGER},
+      <if test="dependentId != null" >
+        #{dependentId,jdbcType=INTEGER},
       </if>
-      <if test="parentBranch != null" >
-        #{parentBranch,jdbcType=VARCHAR},
+      <if test="branch != null" >
+        #{branch,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=CHAR},
@@ -103,11 +106,11 @@
       <if test="projectId != null" >
         project_id = #{projectId,jdbcType=INTEGER},
       </if>
-      <if test="parentId != null" >
-        parent_id = #{parentId,jdbcType=INTEGER},
+      <if test="dependentId != null" >
+        dependent_id = #{dependentId,jdbcType=INTEGER},
       </if>
-      <if test="parentBranch != null" >
-        parent_branch = #{parentBranch,jdbcType=VARCHAR},
+      <if test="branch != null" >
+        branch = #{branch,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=CHAR},
@@ -130,8 +133,8 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Dependency" >
     update ci_dependency
     set project_id = #{projectId,jdbcType=INTEGER},
-      parent_id = #{parentId,jdbcType=INTEGER},
-      parent_branch = #{parentBranch,jdbcType=VARCHAR},
+      dependent_id = #{dependentId,jdbcType=INTEGER},
+      branch = #{branch,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
@@ -145,5 +148,17 @@
     <include refid="Base_Column_List" />
     from ci_dependency
     where project_id = #{projectId,jdbcType=INTEGER}
+  </select>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    d.*,p.project_name,pp.project_name parent_name
+    from ci_dependency d
+    left join ci_project p on d.project_id = p.id
+    left join ci_project pp on d.dependent_id = pp.id
+    where d.del_flag!=1
+    <if test="projectName != null and projectName != ''" >
+      AND p.project_name LIKE CONCAT('%','${projectName}','%')
+    </if>
   </select>
 </mapper>

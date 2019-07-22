@@ -18,9 +18,10 @@ package com.wl4g.devops.ci.service.impl;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.BaseBean;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -31,16 +32,21 @@ import java.util.List;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
+	@Autowired
 	private ProjectDao projectDao;
 
 	@Override
 	public int insert(Project project) {
+		Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+		Assert.state(hasProject==null,"Config Repeated");
 		project.preInsert();
-		return projectDao.insert(project);
+		return projectDao.insertSelective(project);
 	}
 
 	@Override
 	public int update(Project project) {
+		Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+		Assert.state(hasProject==null||hasProject.getId().intValue()==project.getId().intValue(),"Config Repeated");
 		project.preUpdate();
 		return projectDao.updateByPrimaryKeySelective(project);
 	}
@@ -49,6 +55,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public int deleteById(Integer id) {
 		Project project = new Project();
 		project.preUpdate();
+		project.setId(id);
 		project.setDelFlag(BaseBean.DEL_FLAG_DELETE);
 		return projectDao.updateByPrimaryKeySelective(project);
 	}
@@ -59,8 +66,22 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<Project> list(CustomPage customPage) {
-		return projectDao.list(customPage);
+	public List<Project> list(String groupName,String projectName) {
+		return projectDao.list(groupName,projectName);
 	}
+
+	@Override
+	public Project selectByPrimaryKey(Integer id) {
+		return projectDao.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public int updateLockStatus(Integer id,Integer lockStatus) {
+		Project project = new Project();
+		project.setId(id);
+		project.setLockStatus(lockStatus);
+		return projectDao.updateByPrimaryKeySelective(project);
+	}
+
 
 }

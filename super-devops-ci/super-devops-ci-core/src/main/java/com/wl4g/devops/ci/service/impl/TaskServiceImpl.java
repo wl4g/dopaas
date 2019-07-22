@@ -19,14 +19,17 @@ import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
+import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
+import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -41,10 +44,14 @@ public class TaskServiceImpl implements TaskService {
 	private TaskDao taskDao;
 	@Autowired
 	private TaskDetailDao taskDetailDao;
+	@Autowired
+	private ProjectDao projectDao;
+	@Autowired
+	private AppGroupDao appGroupDao;
 
 	@Override
-	public List<Task> list(CustomPage customPage) {
-		return taskDao.list(customPage);
+	public List<Task> list(String groupName,String projectName,String branchName) {
+		return taskDao.list(groupName,projectName,branchName);
 	}
 
 	@Override
@@ -53,18 +60,32 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	public Task getTaskById(Integer id) {
+		Task task = taskDao.selectByPrimaryKey(id);
+		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
+		if (null != project && null != project.getAppGroupId()) {
+			AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
+			if (null != appGroup) {
+				task.setGroupName(appGroup.getName());
+			}
+		}
+		return task;
+
+	}
+
+	@Override
 	@Transactional
 	public Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-			Integer parentId, String command, Integer tarType) {
-
+			Integer refId, String command, Integer tarType) {
+		Assert.notNull(project,"not found project,please check che project config");
 		Task task = new Task();
 		task.preInsert();
 		task.setType(type);
 		task.setProjectId(project.getId());
 		task.setStatus(status);
 		task.setBranchName(branchName);
-		task.setSha(sha);
-		task.setParentId(parentId);
+		task.setShaGit(sha);
+		task.setRefId(refId);
 		task.setCommand(command);
 		task.setTarType(tarType);
 		task.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
@@ -90,12 +111,37 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public void updateTaskDetailStatus(int taskDetailId, int status) {
+	public void updateTaskStatusAndResult(int taskId, int status,String result) {
+		Task task = new Task();
+		task.preUpdate();
+		task.setId(taskId);
+		task.setStatus(status);
+		task.setResult(result);
+		taskDao.updateByPrimaryKeySelective(task);
+	}
+
+	@Override
+	public void updateTaskStatusAndResultAndSha(int taskId, int status,String result,String sha,String md5) {
+		Task task = new Task();
+		task.preUpdate();
+		task.setId(taskId);
+		task.setStatus(status);
+		task.setResult(result);
+		task.setShaGit(sha);
+		task.setShaLocal(md5);
+		taskDao.updateByPrimaryKeySelective(task);
+	}
+
+	@Override
+	public void updateTaskDetailStatusAndResult(int taskDetailId, int status,String result) {
 		TaskDetail taskDetail = new TaskDetail();
 		taskDetail.preUpdate();
 		taskDetail.setId(taskDetailId);
 		taskDetail.setStatus(status);
+		taskDetail.setResult(result);
 		taskDetailDao.updateByPrimaryKeySelective(taskDetail);
 	}
+
+
 
 }
