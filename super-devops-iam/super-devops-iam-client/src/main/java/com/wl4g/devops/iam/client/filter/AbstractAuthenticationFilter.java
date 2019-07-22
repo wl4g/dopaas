@@ -192,9 +192,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		Throwable cause = Exceptions.getRootCause(ae);
 		if (cause != null) {
 			if (cause instanceof RuntimeException) {
-				log.error("On failure caused by: {}", Exceptions.getMessage(cause));
+				log.error("Failed to caused by: {}", Exceptions.getMessage(cause));
 			} else {
-				log.error("On failure", cause);
+				log.error("Failed to authentication!", cause);
 			}
 		}
 
@@ -208,7 +208,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * Only if the error is not authenticated, can it be redirected to the
 		 * IAM server login page, otherwise the client will display the error
 		 * page directly (to prevent unlimited redirection).
-		 * See:xx.validation.AbstractBasedTicketValidator#getRemoteValidation()
+		 * See:xx.validation.AbstractBasedValidator#doGetRemoteValidation()
 		 */
 		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
 			// Response JSON message
@@ -317,6 +317,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			redirectUrl.append("=").append(config.getServiceName());
 			redirectUrl.append("&").append(config.getParam().getRedirectUrl());
 			redirectUrl.append("=").append(WebUtils2.safeEncodeURL(callbackRedirectUrl));
+			// Add custom parameters.
+			redirectUrl.append("&").append(request.getQueryString());
 		}
 
 		return redirectUrl.toString();
