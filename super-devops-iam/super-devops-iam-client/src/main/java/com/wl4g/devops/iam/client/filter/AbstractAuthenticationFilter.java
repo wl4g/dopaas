@@ -31,6 +31,9 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
+import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -49,8 +52,6 @@ import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
-import com.wl4g.devops.iam.common.utils.Sessions;
 
 import java.io.IOException;
 
@@ -147,42 +148,41 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * Binding session => grantTicket. Synchronize with
 		 * FastCasAuthorizingRealm#doGetAuthenticationInfo
 		 */
-		SessionBindings.bind(SAVE_GRANT_TICKET, grantTicket);
-		if (log.isInfoEnabled()) {
-			log.info("Bind grantTicket[{}], sessionId[{}]", grantTicket, Sessions.getSessionId(subject));
+		bind(SAVE_GRANT_TICKET, grantTicket);
+		if (log.isDebugEnabled()) {
+			log.debug("Authenticated bind grantTicket[{}], sessionId[{}]", grantTicket, getSessionId(subject));
 		}
 
 		/**
 		 * Binding grantTicket => sessionId. Synchronize with
 		 * IamClientSessionManager#getSessionId
 		 */
-		long expiredMs = SessionBindings.getSessionExpiredTime();
-		cache.put(new EnhancedKey(grantTicket, expiredMs), Sessions.getSessionId(subject));
+		long expiredMs = getSessionExpiredTime();
+		cache.put(new EnhancedKey(grantTicket, expiredMs), getSessionId(subject));
 
 		// Determine success URL
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
-		// Post-handling of login success
+		// Call Logon success handle.
 		coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response);
 
 		// JSON response
 		if (isJSONResponse(request)) {
 			try {
-				// Make logged-in response message
+				// Make logged response json.
 				String logged = makeLoggedResponse(request, successUrl);
 				if (log.isInfoEnabled()) {
-					log.info("Logged success response[{}]", logged);
+					log.info("Authenticated response to - {}", logged);
 				}
-				// Response to login success JSON message
 				WebUtils2.writeJson(WebUtils.toHttp(response), logged);
 			} catch (IOException e) {
-				log.error("Logged success response json error", e);
+				log.error("Logged response json error", e);
 			}
 		}
-		// Redirection URL
+		// Redirection
 		else {
 			if (log.isInfoEnabled()) {
-				log.info("Logged redirect to successUrl[{}]", successUrl);
+				log.info("Authenticated redirect to - {}", successUrl);
 			}
 			WebUtils.issueRedirect(request, response, successUrl);
 		}
@@ -198,14 +198,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			if (cause instanceof RuntimeException) {
 				log.error("Failed to caused by: {}", Exceptions.getMessage(cause));
 			} else {
-				log.error("Failed to authentication!", cause);
+				log.error("Failed to authentication.", cause);
 			}
 		}
 
 		// Failure redirect URL
-		String failureRedirectUrl = buildFailureRedirectUrl(cause, WebUtils.toHttp(request));
+		String failureRedirectUrl = makeFailureRedirectUrl(cause, WebUtils.toHttp(request));
 
-		// Post-handling of login failure
+		// Post handle of authenticate failure.
 		coprocessor.postAuthenticatingFailure(token, ae, request, response);
 
 		/*
@@ -226,11 +226,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				} catch (IOException e) {
 					log.error("Response json error", e);
 				}
-			} else { // Redirects the login page directly
+			} else { // Redirects the login page direct.
 				try {
 					WebUtils.issueRedirect(request, response, failureRedirectUrl);
 				} catch (IOException e) {
-					log.error("Cannot callback to failure url : {}", failureRedirectUrl, e);
+					log.error("Cannot redirect to failure url - {}", failureRedirectUrl, e);
 				}
 			}
 		}
@@ -240,7 +240,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				String errmsg = String.format("<b>Iam Server Internal Error</b><br/>%s", Exceptions.getMessage(cause));
 				WebUtils.toHttp(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
-				log.error("Response error", e);
+				log.error("Failed to response error", e);
 			}
 		}
 
@@ -278,7 +278,6 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	private String makeLoggedResponse(ServletRequest request, String redirectUri) {
 		Assert.notNull(redirectUri, "'redirectUri' must not be null");
-		// Make message
 		return config.getStrategy().makeResponse(RetCode.OK.getCode(), DEFAULT_AUTHC_STATUS, "Login successful", redirectUri);
 	}
 
@@ -298,13 +297,13 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	/**
-	 * Building failure redirect URL
+	 * Make failure redirect URL
 	 * 
 	 * @param cause
 	 * @param request
 	 * @return
 	 */
-	protected String buildFailureRedirectUrl(Throwable cause, HttpServletRequest request) {
+	protected String makeFailureRedirectUrl(Throwable cause, HttpServletRequest request) {
 		// Redirect URL
 		String callbackRedirectUrl = new StringBuffer(WebUtils2.getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR)
 				.toString();
