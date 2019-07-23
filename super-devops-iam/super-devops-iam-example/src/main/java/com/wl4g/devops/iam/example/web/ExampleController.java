@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.example.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.devops.iam.client.annotation.SecondAuthenticate;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
+import com.wl4g.devops.iam.example.ExampleClientSecurityCoprocessor;
 import com.wl4g.devops.iam.example.handler.TestSecondAuthenticateHandler;
 import com.wl4g.devops.iam.example.service.ExampleService;
 
@@ -105,6 +107,9 @@ public class ExampleController {
 	@RequestMapping("index")
 	public String indexView(HttpServletRequest request, HttpServletResponse response) {
 		// response.setHeader("Access-Control-Allow-Origin", "*");
+		String exampleKey1 = (String) SecurityUtils.getSubject().getSession()
+				.getAttribute(ExampleClientSecurityCoprocessor.KEY_EXAMPLE_STORE_IN_SESSION);
+		System.out.println("+++>>>" + exampleKey1);
 		return "index";
 	}
 
