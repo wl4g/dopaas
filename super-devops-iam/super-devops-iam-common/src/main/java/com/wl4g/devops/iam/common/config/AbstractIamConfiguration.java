@@ -60,6 +60,13 @@ import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
 
 import redis.clients.jedis.JedisCluster;
 
+/**
+ * Abstract IAM common based configuration.
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2018年12月23日
+ * @since
+ */
 public abstract class AbstractIamConfiguration extends AbstractOptionalControllerConfiguration {
 
 	// ==============================
