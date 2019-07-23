@@ -32,6 +32,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
 import static org.apache.commons.lang3.StringUtils.endsWith;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
@@ -320,12 +321,15 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			fullRedirectUrl.append("=").append(config.getServiceName());
 			fullRedirectUrl.append("&").append(config.getParam().getRedirectUrl());
 			// Add custom parameters.
-			if (endsWith(callbackRedirectUrl, "?")) {
-				callbackRedirectUrl += "&";
-			} else {
-				callbackRedirectUrl += "?";
+			String queryString = request.getQueryString();
+			if (!isBlank(queryString)) {
+				if (endsWith(callbackRedirectUrl, "?")) {
+					callbackRedirectUrl += "&" + queryString;
+				} else {
+					callbackRedirectUrl += "?" + queryString;
+				}
 			}
-			fullRedirectUrl.append("=").append(safeEncodeURL(callbackRedirectUrl + request.getQueryString()));
+			fullRedirectUrl.append("=").append(safeEncodeURL(callbackRedirectUrl));
 		}
 
 		return fullRedirectUrl.toString();
