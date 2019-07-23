@@ -15,6 +15,23 @@
  */
 package com.wl4g.devops.iam.filter;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
+import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -25,14 +42,6 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
 
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
@@ -48,13 +57,6 @@ import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
-import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
-//import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
 
 /**
  * Multiple channel login authentication submitted processing based filter
@@ -333,7 +335,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected String getFromRedirectUrl(ServletRequest request) {
 		String redirectUrl = WebUtils.getCleanParam(request, config.getParam().getRedirectUrl()); // prerogative
 		return StringUtils.hasText(redirectUrl) ? redirectUrl
-				: SessionBindings.extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
+				: extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
 	}
 
 	/**
@@ -426,7 +428,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Callback success redirect URI
 		String successRedirectUrl = getFromRedirectUrl(request);
 		if (!StringUtils.hasText(successRedirectUrl)) {
-			successRedirectUrl = getSuccessUrl(); // fallback
+			successRedirectUrl = getSuccessUrl(); // fall-back
 		}
 		// Determine success URL
 		successRedirectUrl = context.determineLoginSuccessUrl(successRedirectUrl, token, subject, request, response);
