@@ -191,41 +191,40 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				grantTicket = authHandler.loggedin(fromAppName, subject).getGrantTicket();
 			}
 
-			// Post-handling of login success
+			// Post handle of login success.
 			coprocessor.postAuthenticatingSuccess(tk, subject, request, response);
 
-			// Response JSON response.
+			// Response JSON.
 			if (isJSONResponse(request)) {
 				try {
-					// Make logged-in response message
+					// Make logged response json.
 					String logged = makeLoggedResponse(request, grantTicket, successRedirectUrl);
 					if (log.isInfoEnabled()) {
-						log.info("Login success response:{}", logged);
+						log.info("Response to success - {}", logged);
 					}
-					// Response to login success JSON message
 					WebUtils2.writeJson(WebUtils.toHttp(response), logged);
 				} catch (IOException e) {
 					log.error("Login success response json error", e);
 				}
 			}
-			// Redirect the login-page directly
+			// Redirect to login page.
 			else {
 				/*
 				 * When the source application exists, the indication is that it
 				 * needs to be redirected to the CAS client application, then
 				 * grantTicket is required.
 				 */
-				Map params = null;
-				if (StringUtils.hasText(grantTicket)) {
-					params = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
-					if (log.isInfoEnabled()) {
-						log.info("Login success redirect to '{}', param:{}", successRedirectUrl, params);
-					}
-				}
 				try {
+					Map params = null;
+					if (StringUtils.hasText(grantTicket)) {
+						params = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
+						if (log.isInfoEnabled()) {
+							log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
+						}
+					}
 					WebUtils.issueRedirect(request, response, successRedirectUrl, params, true);
 				} catch (IOException e) {
-					log.error("Login success redirection failed", e);
+					log.error("Cannot redirect successUrl", e);
 				}
 			}
 
