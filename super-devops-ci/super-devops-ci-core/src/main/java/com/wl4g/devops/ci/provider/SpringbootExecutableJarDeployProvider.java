@@ -32,9 +32,9 @@ import java.util.List;
 public class SpringbootExecutableJarDeployProvider extends BasedDeployProvider {
 
     public SpringbootExecutableJarDeployProvider(Project project,
-                                                 String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances, Task task,Task refTask,
+                                                 String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances, Task task, Task refTask,
                                                  List<TaskDetail> taskDetails) {
-        super(project, path, branch, alias, instances,task,refTask, taskDetails);
+        super(project, path, branch, alias, instances, task, refTask, taskDetails);
     }
 
     @Override

@@ -37,7 +37,7 @@ import static com.wl4g.devops.common.bean.scm.BaseBean.ENABLED;
 
 /**
  * CI/CD controller
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-16 15:05:00
@@ -46,67 +46,56 @@ import static com.wl4g.devops.common.bean.scm.BaseBean.ENABLED;
 @RequestMapping("/dependency")
 public class DependencyController {
 
-	@Autowired
-	private DependencyDao dependencyDao;
+    @Autowired
+    private DependencyDao dependencyDao;
 
-	@RequestMapping(value = "/list")
-	public RespBase<?> list(String projectName,CustomPage customPage) {
-		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-		Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-		List<Dependency> list = dependencyDao.list(projectName);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
-		return resp;
-	}
+    @RequestMapping(value = "/list")
+    public RespBase<?> list(String projectName, CustomPage customPage) {
+        RespBase<Object> resp = RespBase.create();
+        Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
+        Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+        Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
+        List<Dependency> list = dependencyDao.list(projectName);
+        customPage.setPageNum(pageNum);
+        customPage.setPageSize(pageSize);
+        customPage.setTotal(page.getTotal());
+        resp.getData().put("page", customPage);
+        resp.getData().put("list", list);
+        return resp;
+    }
 
-	@RequestMapping(value = "/save")
-	public RespBase<?> save(Dependency dependency) {
-		RespBase<Object> resp = RespBase.create();
+    @RequestMapping(value = "/save")
+    public RespBase<?> save(Dependency dependency) {
+        RespBase<Object> resp = RespBase.create();
 
-		if(null != dependency.getId()&&dependency.getId()>0){
-			dependency.preUpdate();
-			dependencyDao.updateByPrimaryKeySelective(dependency);
-		}else{
-			dependency.preInsert();
-			dependency.setDelFlag(DEL_FLAG_NORMAL);
-			dependency.setEnable(ENABLED);
-			dependencyDao.insertSelective(dependency);
-		}
-		return resp;
-	}
+        if (null != dependency.getId() && dependency.getId() > 0) {
+            dependency.preUpdate();
+            dependencyDao.updateByPrimaryKeySelective(dependency);
+        } else {
+            dependency.preInsert();
+            dependency.setDelFlag(DEL_FLAG_NORMAL);
+            dependency.setEnable(ENABLED);
+            dependencyDao.insertSelective(dependency);
+        }
+        return resp;
+    }
 
-	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
-		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(id,"id can not be null");
-		Dependency dependency = dependencyDao.selectByPrimaryKey(id);
-		resp.getData().put("dependency",dependency);
-		return resp;
-	}
+    @RequestMapping(value = "/detail")
+    public RespBase<?> detail(Integer id) {
+        RespBase<Object> resp = RespBase.create();
+        Assert.notNull(id, "id can not be null");
+        Dependency dependency = dependencyDao.selectByPrimaryKey(id);
+        resp.getData().put("dependency", dependency);
+        return resp;
+    }
 
-	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
-		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(id,"id can not be null");
-		dependencyDao.deleteByPrimaryKey(id);
-		return resp;
-	}
-
-
-
-
-
-
-
-
-
-
-
+    @RequestMapping(value = "/del")
+    public RespBase<?> del(Integer id) {
+        RespBase<Object> resp = RespBase.create();
+        Assert.notNull(id, "id can not be null");
+        dependencyDao.deleteByPrimaryKey(id);
+        return resp;
+    }
 
 
 }

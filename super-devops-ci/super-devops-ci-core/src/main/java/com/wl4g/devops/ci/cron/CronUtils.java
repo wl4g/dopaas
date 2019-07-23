@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class CronUtils {
 
-    public static boolean isValidExpression(String expression){
+    public static boolean isValidExpression(String expression) {
         return CronExpression.isValidExpression(expression);
     }
 
@@ -25,7 +25,7 @@ public class CronUtils {
         CronTriggerImpl cronTriggerImpl = new CronTriggerImpl();
         try {
             cronTriggerImpl.setCronExpression(expression);
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         // 这个是重点，一行代码搞定
@@ -37,9 +37,9 @@ public class CronUtils {
         return list;
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(getNextExecTime("0 0/2 * * * ?", 5)+"\n");
-    }
+    /*public static void main(String[] args) throws Exception {
+        System.out.println(getNextExecTime("0 0/2 * * * ?", 5) + "\n");
+    }*/
 
 
 }
