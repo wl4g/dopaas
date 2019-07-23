@@ -21,6 +21,7 @@ import com.wl4g.devops.common.exception.iam.AfterAuthenticatSuccessException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.servlet.Cookie;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
@@ -60,6 +61,18 @@ public interface SecurityCoprocessor {
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) throws AfterAuthenticatSuccessException {
+	}
+
+	/**
+	 * Call post save cookie of authenticating success.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param newCookie
+	 * @throws AfterAuthenticatSuccessException
+	 */
+	default void postRenewCookie(ServletRequest request, ServletResponse response, Cookie newCookie)
+			throws AfterAuthenticatSuccessException {
 	}
 
 	/**

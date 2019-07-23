@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.client.context;
 import com.wl4g.devops.iam.common.context.SecurityContext;
 
 /**
- * IAM client security handler
+ * IAM client security handler context.
  * 
  * @author wangl.sir
  * @version v1.0 2019年1月18日

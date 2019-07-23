@@ -53,6 +53,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
 
 /**
  * Abstract custom WEB session management
@@ -88,6 +89,12 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 */
 	@Autowired
 	protected IamSessionDAO sessionDAO;
+
+	/**
+	 * Security processor.
+	 */
+	@Autowired
+	protected SecurityCoprocessor coprocessor;
 
 	public AbstractIamSessionManager(C config, String cacheName) {
 		Assert.notNull(config, "'config' must not be null");
@@ -354,7 +361,11 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		if (isBrowser || WebUtils.isTrue(request, config.getParam().getSidSaveCookie())) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
 			cookie.setValue(sessionId);
+			// Call post properties.
+			coprocessor.postRenewCookie(request, response, cookie);
+			// Save to response.
 			cookie.saveTo(WebUtils.toHttp(request), WebUtils.toHttp(response));
+
 			if (log.isTraceEnabled()) {
 				log.trace("Set session ID cookie for session with id {}", sessionId);
 			}
