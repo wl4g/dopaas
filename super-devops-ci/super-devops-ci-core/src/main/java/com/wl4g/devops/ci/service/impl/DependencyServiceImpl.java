@@ -83,39 +83,42 @@ public class DependencyServiceImpl implements DependencyService {
 		}
 		// build
 		Project project = projectDao.selectByPrimaryKey(projectId);
-		if(project.getLockStatus().intValue()==TASK_LOCK_STATUS_LOCK){
-			throw new RuntimeException("project is lock , please check the project lock status");
+		Assert.notNull(project,"project not exist");
+		try {
+			if(project.getLockStatus() ==TASK_LOCK_STATUS_LOCK){
+				throw new RuntimeException("project is lock , please check the project lock status");
+			}
+			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
+
+			String path = config.getGitBasePath() + "/" + project.getProjectName();
+			if (GitUtils.checkGitPahtExist(path)) {
+				GitUtils.checkout(config.getCredentials(), path, branch);
+				result.append("project checkout success:").append(project.getProjectName()).append("\n");
+			} else {
+				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+				result.append("project clone success:").append(project.getProjectName()).append("\n");
+			}
+
+			//save
+			if(isDependency){
+				TaskSign taskSign = new TaskSign();
+				taskSign.setTaskId(task.getId());
+				taskSign.setDependenvyId(dependency.getId());
+				taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+				taskSignDao.insertSelective(taskSign);
+			}
+
+			// Install
+			String installResult = mvnInstall(path);
+			result.append(installResult);
+		} finally {
+			//finish then unlock the project
+			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
 		}
-		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
-
-		String path = config.getGitBasePath() + "/" + project.getProjectName();
-		if (GitUtils.checkGitPahtExist(path)) {
-			GitUtils.checkout(config.getCredentials(), path, branch);
-			result.append("project checkout success:").append(project.getProjectName()).append("\n");
-		} else {
-			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-			result.append("project clone success:").append(project.getProjectName()).append("\n");
-		}
-
-		//save
-		if(isDependency){
-			TaskSign taskSign = new TaskSign();
-			taskSign.setTaskId(task.getId());
-			taskSign.setDependenvyId(dependency.getId());
-			taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
-			taskSignDao.insertSelective(taskSign);
-		}
-
-		// Install
-		String installResult = mvnInstall(path);
-		result.append(installResult);
-
-		//finish then unlock the project
-		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
 	}
 
 	@Override
-	public void rollback(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+	public void rollback(Task task,Task refTask, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
 		Integer projectId = dependency.getProjectId();
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
 		if (dependencies != null && dependencies.size() > 0) {
@@ -123,7 +126,7 @@ public class DependencyServiceImpl implements DependencyService {
 				String br = dep.getBranch();
 				Dependency dependency1 = new Dependency(dep.getDependentId());
 				dependency1.setId(dep.getId());
-				rollback(task,dependency1, StringUtils.isBlank(br) ? branch : br, success, result,true);
+				rollback(task,refTask,dependency1, StringUtils.isBlank(br) ? branch : br, success, result,true);
 			}
 		}
 
@@ -133,48 +136,50 @@ public class DependencyServiceImpl implements DependencyService {
 		}
 		// build
 		Project project = projectDao.selectByPrimaryKey(projectId);
+		Assert.notNull(project,"project not exist");
+		try {
+			if(project.getLockStatus() ==TASK_LOCK_STATUS_LOCK){
+				throw new RuntimeException("project is lock , please check the project lock status");
+			}
+			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
 
-		if(project.getLockStatus().intValue()==TASK_LOCK_STATUS_LOCK){
-			throw new RuntimeException("project is lock , please check the project lock status");
+			String path = config.getGitBasePath() + "/" + project.getProjectName();
+
+			String sha;
+			if(isDependency){
+				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependency.getId(),task.getRefId());
+				Assert.notNull(taskSign,"not found taskSign");
+				sha = taskSign.getShaGit();
+			}else{
+				sha = refTask.getShaGit();
+			}
+
+			if (GitUtils.checkGitPahtExist(path)) {
+				GitUtils.roolback(config.getCredentials(),path,sha);
+				result.append("project rollback success:").append(project.getProjectName()).append("\n");
+			} else {
+				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+				result.append("project clone success:").append(project.getProjectName()).append("\n");
+				GitUtils.roolback(config.getCredentials(),path,sha);
+				result.append("project rollback success:").append(project.getProjectName()).append("\n");
+			}
+
+			//save
+			if(isDependency){
+				TaskSign taskSign = new TaskSign();
+				taskSign.setTaskId(task.getId());
+				taskSign.setDependenvyId(dependency.getId());
+				taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+				taskSignDao.insertSelective(taskSign);
+			}
+
+			// Install
+			String installResult = mvnInstall(path);
+			result.append(installResult);
+		} finally {
+			//finish then unlock the project
+			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
 		}
-		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
-
-		String path = config.getGitBasePath() + "/" + project.getProjectName();
-
-		String sha = null;
-		if(isDependency){
-			TaskSign taskSign = taskSignDao.selectByDependencyId(dependency.getId());
-			Assert.notNull(taskSign,"not found taskSign");
-			sha = taskSign.getShaGit();
-		}else{
-			sha = task.getShaGit();
-		}
-
-		if (GitUtils.checkGitPahtExist(path)) {
-			GitUtils.roolback(config.getCredentials(),path,sha);
-			result.append("project rollback success:").append(project.getProjectName()).append("\n");
-		} else {
-			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-			result.append("project clone success:").append(project.getProjectName()).append("\n");
-			GitUtils.roolback(config.getCredentials(),path,sha);
-			result.append("project rollback success:").append(project.getProjectName()).append("\n");
-		}
-
-		//save
-		if(isDependency){
-			TaskSign taskSign = new TaskSign();
-			taskSign.setTaskId(task.getId());
-			taskSign.setDependenvyId(dependency.getId());
-			taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
-			taskSignDao.insertSelective(taskSign);
-		}
-
-		// Install
-		String installResult = mvnInstall(path);
-		result.append(installResult);
-
-		//finish then unlock the project
-		projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
 	}
 
 

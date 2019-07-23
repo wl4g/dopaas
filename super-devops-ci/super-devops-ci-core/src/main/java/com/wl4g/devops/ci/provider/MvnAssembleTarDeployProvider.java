@@ -81,7 +81,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 			getBackupLocal(oldFilePath,getPath() + getProject().getTarPath());
 			setShaGit(getRefTask().getShaGit());
 		}else{
-			getDependencyService().rollback(getTask(),dependency, getBranch(),isSuccess,result,false);
+			getDependencyService().rollback(getTask(),getRefTask(),dependency, getBranch(),isSuccess,result,false);
 			setShaGit(GitUtils.getOldestCommitSha(getPath()));
 		}
 

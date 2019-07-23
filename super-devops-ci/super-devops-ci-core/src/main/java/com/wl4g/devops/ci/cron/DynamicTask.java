@@ -3,6 +3,7 @@ package com.wl4g.devops.ci.cron;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
@@ -50,6 +51,9 @@ public class DynamicTask implements ApplicationRunner {
     @Autowired
     private ProjectDao projectDao;
 
+    @Autowired
+    private TriggerService triggerService;
+
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         return new ThreadPoolTaskScheduler();
@@ -77,7 +81,7 @@ public class DynamicTask implements ApplicationRunner {
         if(trigger.getEnable()!=1){
             return;
         }
-        ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(new CronRunnable( trigger, project, config, ciService), new CronTrigger(expression));
+        ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(new CronRunnable( trigger, project, config, ciService,triggerService), new CronTrigger(expression));
         DynamicTask.map.put(key,future);
     }
 
@@ -109,6 +113,6 @@ public class DynamicTask implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
         //TODO
-        //startAll();
+        startAll();
     }
 }

@@ -108,6 +108,14 @@ public class TriggerServiceImpl implements TriggerService {
 		triggerDao.updateByPrimaryKeySelective(trigger);
 	}
 
+	@Override
+	public void updateSha(Integer id,String sha){
+		Trigger trigger = new Trigger();
+		trigger.setId(id);
+		trigger.setSha(sha);
+		triggerDao.updateByPrimaryKeySelective(trigger);
+	}
+
 
 	@Override
 	public List<TriggerDetail> getDetailByTriggerId(Integer triggerId) {

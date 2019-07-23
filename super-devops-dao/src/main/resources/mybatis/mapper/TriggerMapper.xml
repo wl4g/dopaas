@@ -243,7 +243,7 @@
     <include refid="Base_Column_List_t" />
     ,d.instance_id
     from ci_trigger t
-    left join ci_task_detail d on d.trigger_id=t.id
+    left join ci_trigger_detail d on d.trigger_id=t.id
     where t.del_flag!=1
     <if test="type != null and type != 0" >
       AND t.type = #{type,jdbcType=INTEGER}

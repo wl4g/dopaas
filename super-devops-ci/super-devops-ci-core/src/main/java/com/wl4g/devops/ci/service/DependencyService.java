@@ -26,6 +26,6 @@ public interface DependencyService {
 
 	public void build(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception;
 
-	public void rollback(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception;
+	public void rollback(Task task,Task refTask, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception;
 
 }
