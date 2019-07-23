@@ -38,4 +38,6 @@ public interface TriggerService {
 
 	List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
 
+	void updateSha(Integer id,String sha);
+
 }

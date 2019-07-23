@@ -19,6 +19,7 @@ import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.CredentialsProvider;
@@ -95,7 +96,7 @@ public class GitUtils {
 			List<Ref> refs = git.branchList().call();
 			boolean exist = false;// is branch exist
 			for (Ref ref : refs) {
-				String branchNameHad = ref.getName().substring(11);
+				String branchNameHad = getBranchName(ref);
 				if (StringUtils.equals(branchName, branchNameHad)) {
 					exist = true;
 				}
@@ -162,6 +163,19 @@ public class GitUtils {
 				git.close();
 			}
 		}
+	}
+
+	private static String getBranchName(Ref ref){
+		String name = ref.getName();
+		if("HEAD".equals(name)){
+			ObjectId objectId = ref.getObjectId();
+			name = objectId.getName();
+		}else{
+			int index = name.lastIndexOf("/");
+			name = name.substring(index+1);
+		}
+
+		return name;
 	}
 
 	//TODO

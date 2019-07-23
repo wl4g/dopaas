@@ -105,7 +105,7 @@ public class TriggerController {
 			trigger.setDelFlag(DEL_FLAG_NORMAL);
 			trigger = triggerService.insert(trigger,instances);
 		}
-		restart(trigger);
+		restart(trigger.getId());
 		return resp;
 	}
 
@@ -119,7 +119,8 @@ public class TriggerController {
 		return true;
 	}
 
-	private void restart(Trigger trigger){
+	private void restart(Integer triggerId){
+		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
 		Project project = projectDao.selectByPrimaryKey(trigger.getProjectId());
 		dynamicTask.restartCron(trigger.getId().toString(),trigger.getCron(),trigger, project);
 	}

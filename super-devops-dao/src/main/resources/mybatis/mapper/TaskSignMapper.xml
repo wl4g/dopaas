@@ -80,11 +80,11 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="selectByDependencyId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByDependencyIdAndTaskId" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
     from ci_task_sign
-    where dependency_id = #{dependencyId,jdbcType=INTEGER}
+    where dependency_id = #{dependencyId,jdbcType=INTEGER} and task_id=#{taskId,jdbcType=INTEGER}
   </select>
 
 </mapper>
