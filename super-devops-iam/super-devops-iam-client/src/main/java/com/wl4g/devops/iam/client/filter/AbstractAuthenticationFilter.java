@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
@@ -306,22 +307,21 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				.toString();
 
 		// Redirect URL with callback
-		StringBuffer redirectUrl = new StringBuffer();
+		StringBuffer fullRedirectUrl = new StringBuffer();
 
 		// Unauthorized
 		if (cause instanceof UnauthorizedException) {
-			redirectUrl.append(config.getUnauthorizedUri());
+			fullRedirectUrl.append(config.getUnauthorizedUri());
 		} else if (cause instanceof UnauthenticatedException) { // Unauthenticated
-			redirectUrl.append(getLoginUrl());
-			redirectUrl.append("?").append(config.getParam().getApplication());
-			redirectUrl.append("=").append(config.getServiceName());
-			redirectUrl.append("&").append(config.getParam().getRedirectUrl());
-			redirectUrl.append("=").append(WebUtils2.safeEncodeURL(callbackRedirectUrl));
+			fullRedirectUrl.append(getLoginUrl());
+			fullRedirectUrl.append("?").append(config.getParam().getApplication());
+			fullRedirectUrl.append("=").append(config.getServiceName());
+			fullRedirectUrl.append("&").append(config.getParam().getRedirectUrl());
 			// Add custom parameters.
-			redirectUrl.append("&").append(request.getQueryString());
+			fullRedirectUrl.append("=").append(safeEncodeURL(callbackRedirectUrl + "&" + request.getQueryString()));
 		}
 
-		return redirectUrl.toString();
+		return fullRedirectUrl.toString();
 	}
 
 	/**
