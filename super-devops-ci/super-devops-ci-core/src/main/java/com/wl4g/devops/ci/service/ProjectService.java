@@ -25,18 +25,18 @@ import java.util.List;
  */
 public interface ProjectService {
 
-	int insert(Project project);
+    int insert(Project project);
 
-	int update(Project project);
+    int update(Project project);
 
-	int deleteById(Integer id);
+    int deleteById(Integer id);
 
-	int removeById(Integer id);
+    int removeById(Integer id);
 
-	List<Project> list(String groupName,String projectName);
+    List<Project> list(String groupName, String projectName);
 
-	Project selectByPrimaryKey(Integer id);
+    Project selectByPrimaryKey(Integer id);
 
-	int updateLockStatus(Integer id,Integer lockStatus);
+    int updateLockStatus(Integer id, Integer lockStatus);
 
 }

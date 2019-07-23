@@ -21,91 +21,91 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 /**
  * Deployments configuration properties.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月25日
  * @since
  */
 public class DeployProperties {
 
-	private String gitBasePath;
+    private String gitBasePath;
 
-	private String gitUsername;
+    private String gitUsername;
 
-	private String gitPassword;
+    private String gitPassword;
 
-	private String backupPath;
+    private String backupPath;
 
-	//private String linkPath;
+    //private String linkPath;
 
-	private String cipherKey;
+    private String cipherKey;
 
-	private Integer taskTimeout;
+    private Integer taskTimeout;
 
-	//
-	// Temporary
-	//
+    //
+    // Temporary
+    //
 
-	private CredentialsProvider credentials;
+    private CredentialsProvider credentials;
 
-	public String getGitBasePath() {
-		if(StringUtils.isBlank(gitBasePath)){
-			gitBasePath = System.getProperties().getProperty("user.home")+"/gittest";
-		}
-		return gitBasePath;
-	}
+    public String getGitBasePath() {
+        if (StringUtils.isBlank(gitBasePath)) {
+            gitBasePath = System.getProperties().getProperty("user.home") + "/gittest";
+        }
+        return gitBasePath;
+    }
 
-	public void setGitBasePath(String gitBasePath) {
-		this.gitBasePath = gitBasePath;
-	}
+    public void setGitBasePath(String gitBasePath) {
+        this.gitBasePath = gitBasePath;
+    }
 
-	public String getGitUsername() {
-		return gitUsername;
-	}
+    public String getGitUsername() {
+        return gitUsername;
+    }
 
-	public void setGitUsername(String gitAccount) {
-		this.gitUsername = gitAccount;
-	}
+    public void setGitUsername(String gitAccount) {
+        this.gitUsername = gitAccount;
+    }
 
-	public String getGitPassword() {
-		return gitPassword;
-	}
+    public String getGitPassword() {
+        return gitPassword;
+    }
 
-	public void setGitPassword(String gitPassword) {
-		this.gitPassword = gitPassword;
-	}
+    public void setGitPassword(String gitPassword) {
+        this.gitPassword = gitPassword;
+    }
 
-	public String getBackupPath() {
-		if(StringUtils.isBlank(backupPath)){
-			backupPath = System.getProperties().getProperty("user.home")+"/git/bak";
-		}
-		return backupPath;
-	}
+    public String getBackupPath() {
+        if (StringUtils.isBlank(backupPath)) {
+            backupPath = System.getProperties().getProperty("user.home") + "/git/bak";
+        }
+        return backupPath;
+    }
 
-	public void setBackupPath(String bakPath) {
-		this.backupPath = bakPath;
-	}
+    public void setBackupPath(String bakPath) {
+        this.backupPath = bakPath;
+    }
 
-	public String getCipherKey() {
-		return cipherKey;
-	}
+    public String getCipherKey() {
+        return cipherKey;
+    }
 
-	public void setCipherKey(String cipherKey) {
-		this.cipherKey = cipherKey;
-	}
+    public void setCipherKey(String cipherKey) {
+        this.cipherKey = cipherKey;
+    }
 
-	public CredentialsProvider getCredentials() {
-		if (null == credentials) {
-			credentials = new UsernamePasswordCredentialsProvider(gitUsername, gitPassword);
-		}
-		return credentials;
-	}
+    public CredentialsProvider getCredentials() {
+        if (null == credentials) {
+            credentials = new UsernamePasswordCredentialsProvider(gitUsername, gitPassword);
+        }
+        return credentials;
+    }
 
-	public Integer getTaskTimeout() {
-		return taskTimeout;
-	}
+    public Integer getTaskTimeout() {
+        return taskTimeout;
+    }
 
-	public void setTaskTimeout(Integer taskTimeout) {
-		this.taskTimeout = taskTimeout;
-	}
+    public void setTaskTimeout(Integer taskTimeout) {
+        this.taskTimeout = taskTimeout;
+    }
 }

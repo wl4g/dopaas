@@ -35,7 +35,7 @@ import static com.wl4g.devops.common.bean.scm.BaseBean.ENABLED;
 
 /**
  * CI/CD controller
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-16 15:05:00
@@ -44,82 +44,72 @@ import static com.wl4g.devops.common.bean.scm.BaseBean.ENABLED;
 @RequestMapping("/project")
 public class ProjectController {
 
-	@Autowired
-	private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
-	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName,String projectName,CustomPage customPage) {
-		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-		Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-		List<Project> list = projectService.list(groupName, projectName);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
-		return resp;
-	}
+    @RequestMapping(value = "/list")
+    public RespBase<?> list(String groupName, String projectName, CustomPage customPage) {
+        RespBase<Object> resp = RespBase.create();
+        Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
+        Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+        Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
+        List<Project> list = projectService.list(groupName, projectName);
+        customPage.setPageNum(pageNum);
+        customPage.setPageSize(pageSize);
+        customPage.setTotal(page.getTotal());
+        resp.getData().put("page", customPage);
+        resp.getData().put("list", list);
+        return resp;
+    }
 
-	@RequestMapping(value = "/save")
-	public RespBase<?> save(Project project) {
-		RespBase<Object> resp = RespBase.create();
-		if(null != project.getId()&&project.getId()>0){
-			project.preUpdate();
-			projectService.update(project);
-		}else{
-			project.preInsert();
-			project.setDelFlag(DEL_FLAG_NORMAL);
-			project.setEnable(ENABLED);
-			projectService.insert(project);
-		}
-		return resp;
-	}
+    @RequestMapping(value = "/save")
+    public RespBase<?> save(Project project) {
+        RespBase<Object> resp = RespBase.create();
+        if (null != project.getId() && project.getId() > 0) {
+            project.preUpdate();
+            projectService.update(project);
+        } else {
+            project.preInsert();
+            project.setDelFlag(DEL_FLAG_NORMAL);
+            project.setEnable(ENABLED);
+            projectService.insert(project);
+        }
+        return resp;
+    }
 
-	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
-		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(id,"id can not be null");
-		Project project = projectService.selectByPrimaryKey(id);
-		resp.getData().put("project",project);
-		return resp;
-	}
+    @RequestMapping(value = "/detail")
+    public RespBase<?> detail(Integer id) {
+        RespBase<Object> resp = RespBase.create();
+        Assert.notNull(id, "id can not be null");
+        Project project = projectService.selectByPrimaryKey(id);
+        resp.getData().put("project", project);
+        return resp;
+    }
 
-	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
-		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(id,"id can not be null");
-		projectService.deleteById(id);
-		return resp;
-	}
+    @RequestMapping(value = "/del")
+    public RespBase<?> del(Integer id) {
+        RespBase<Object> resp = RespBase.create();
+        Assert.notNull(id, "id can not be null");
+        projectService.deleteById(id);
+        return resp;
+    }
 
-	@RequestMapping(value = "/all")
-	public RespBase<?> all() {
-		RespBase<Object> resp = RespBase.create();
-		List<Project> list = projectService.list(null, null);
-		resp.getData().put("list", list);
-		return resp;
-	}
-
-
-	@RequestMapping(value = "/unlock")
-	public RespBase<?> unlock(Integer id) {
-		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(id,"id can not be null");
-		projectService.updateLockStatus(id,CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK);
-		return resp;
-	}
+    @RequestMapping(value = "/all")
+    public RespBase<?> all() {
+        RespBase<Object> resp = RespBase.create();
+        List<Project> list = projectService.list(null, null);
+        resp.getData().put("list", list);
+        return resp;
+    }
 
 
-
-
-
-
-
-
-
-
+    @RequestMapping(value = "/unlock")
+    public RespBase<?> unlock(Integer id) {
+        RespBase<Object> resp = RespBase.create();
+        Assert.notNull(id, "id can not be null");
+        projectService.updateLockStatus(id, CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK);
+        return resp;
+    }
 
 
 }

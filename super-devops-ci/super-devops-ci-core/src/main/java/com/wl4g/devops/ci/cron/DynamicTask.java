@@ -37,7 +37,7 @@ public class DynamicTask implements ApplicationRunner {
     @Autowired
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
-    public static ConcurrentHashMap<String,ScheduledFuture<?>> map = new ConcurrentHashMap();
+    public static ConcurrentHashMap<String, ScheduledFuture<?>> map = new ConcurrentHashMap();
 
     @Autowired
     private TriggerDao triggerDao;
@@ -62,11 +62,11 @@ public class DynamicTask implements ApplicationRunner {
     /**
      * start All ,for after start app
      */
-    public void startAll(){
+    public void startAll() {
         List<Trigger> triggers = triggerDao.selectByType(CiDevOpsConstants.TASK_TYPE_TIMMING);
-        for(Trigger trigger : triggers){
+        for (Trigger trigger : triggers) {
             Project project = projectDao.selectByPrimaryKey(trigger.getProjectId());
-            restartCron( trigger.getId().toString(),  trigger.getCron(),  trigger,  project);
+            restartCron(trigger.getId().toString(), trigger.getCron(), trigger, project);
         }
     }
 
@@ -75,14 +75,14 @@ public class DynamicTask implements ApplicationRunner {
      */
     public void startCron(String key, String expression, Trigger trigger, Project project) {
         log.info("startCron ");
-        if(isExist(key)){
+        if (isExist(key)) {
             stopCron(key);
         }
-        if(trigger.getEnable()!=1){
+        if (trigger.getEnable() != 1) {
             return;
         }
-        ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(new CronRunnable( trigger, project, config, ciService,triggerService), new CronTrigger(expression));
-        DynamicTask.map.put(key,future);
+        ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(new CronRunnable(trigger, project, config, ciService, triggerService), new CronTrigger(expression));
+        DynamicTask.map.put(key, future);
     }
 
     /**
@@ -102,17 +102,16 @@ public class DynamicTask implements ApplicationRunner {
     public void restartCron(String key, String expression, Trigger trigger, Project project) {
         log.info("restartCron");
         stopCron(key);
-        startCron(key,expression,trigger,project);
+        startCron(key, expression, trigger, project);
     }
 
-    private boolean isExist(String key){
+    private boolean isExist(String key) {
         return map.containsKey(key);
     }
 
 
     @Override
-    public void run(ApplicationArguments applicationArguments) throws Exception {
-        //TODO
+    public void run(ApplicationArguments applicationArguments) {
         startAll();
     }
 }

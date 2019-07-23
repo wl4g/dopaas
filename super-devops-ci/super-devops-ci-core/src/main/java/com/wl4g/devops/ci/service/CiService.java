@@ -28,20 +28,20 @@ import java.util.List;
  */
 public interface CiService {
 
-	List<AppGroup> grouplist();
+    List<AppGroup> grouplist();
 
-	List<Environment> environmentlist(String groupId);
+    List<Environment> environmentlist(String groupId);
 
-	List<AppInstance> instancelist(AppInstance appInstance);
+    List<AppInstance> instancelist(AppInstance appInstance);
 
-	Trigger getTriggerByProjectAndBranch(Integer projectId, String branchName);
+    Trigger getTriggerByProjectAndBranch(Integer projectId, String branchName);
 
-	void hook(String projectName, String branchName, String url);
+    void hook(String projectName, String branchName, String url);
 
-	void createTask(String projectName, String branchName, List<String> instanceIds,int type);
+    void createTask(String projectName, String branchName, List<String> instanceIds, int type);
 
-	void createTask(Integer appGroupId, String branchName, List<String> instanceIds,int type);
+    void createTask(Integer appGroupId, String branchName, List<String> instanceIds, int type);
 
-	void rollback(Integer taskId);
+    void rollback(Integer taskId);
 
 }

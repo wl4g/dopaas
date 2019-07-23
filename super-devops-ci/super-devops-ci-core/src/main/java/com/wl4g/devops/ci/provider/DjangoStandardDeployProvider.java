@@ -32,9 +32,9 @@ import java.util.List;
 public class DjangoStandardDeployProvider extends BasedDeployProvider {
 
     public DjangoStandardDeployProvider(Project project,
-                                        String path, String branch, String alias, List<AppInstance> instances, Task task,Task refTask,
+                                        String path, String branch, String alias, List<AppInstance> instances, Task task, Task refTask,
                                         List<TaskDetail> taskDetails) {
-        super(project, path, branch, alias, instances,task,refTask, taskDetails);
+        super(project, path, branch, alias, instances, task, refTask, taskDetails);
     }
 
     @Override

@@ -24,7 +24,7 @@ package com.wl4g.devops.ci.provider;
 
 /**
  * Native jar deployments provider.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:28:00

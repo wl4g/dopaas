@@ -40,7 +40,7 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATU
 
 /**
  * Dependency service implements
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-22 11:39:00
@@ -48,148 +48,148 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATU
 @Service
 public class DependencyServiceImpl implements DependencyService {
 
-	@Autowired
-	private DeployProperties config;
+    @Autowired
+    private DeployProperties config;
 
-	@Autowired
-	private DependencyDao dependencyDao;
+    @Autowired
+    private DependencyDao dependencyDao;
 
-	@Autowired
-	private ProjectDao projectDao;
+    @Autowired
+    private ProjectDao projectDao;
 
-	@Autowired
-	private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
-	@Autowired
-	private TaskSignDao taskSignDao;
+    @Autowired
+    private TaskSignDao taskSignDao;
 
-	@Override
-	public void build(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
-		Integer projectId = dependency.getProjectId();
+    @Override
+    public void build(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+        Integer projectId = dependency.getProjectId();
 
-		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
-		if (dependencies != null && dependencies.size() > 0) {
-			for (Dependency dep : dependencies) {
-				String br = dep.getBranch();
-				Dependency dependency1 = new Dependency(dep.getDependentId());
-				dependency1.setId(dep.getId());
-				build(task,dependency1, StringUtils.isBlank(br) ? branch : br, success, result,true);
-			}
-		}
+        List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
+        if (dependencies != null && dependencies.size() > 0) {
+            for (Dependency dep : dependencies) {
+                String br = dep.getBranch();
+                Dependency dependency1 = new Dependency(dep.getDependentId());
+                dependency1.setId(dep.getId());
+                build(task, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
+            }
+        }
 
-		// Is Continue ? if fail then return
-		if(!success){
-			return;
-		}
-		// build
-		Project project = projectDao.selectByPrimaryKey(projectId);
-		Assert.notNull(project,"project not exist");
-		try {
-			if(project.getLockStatus() ==TASK_LOCK_STATUS_LOCK){
-				throw new RuntimeException("project is lock , please check the project lock status");
-			}
-			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
+        // Is Continue ? if fail then return
+        if (!success) {
+            return;
+        }
+        // build
+        Project project = projectDao.selectByPrimaryKey(projectId);
+        Assert.notNull(project, "project not exist");
+        try {
+            if (project.getLockStatus() == TASK_LOCK_STATUS_LOCK) {
+                throw new RuntimeException("project is lock , please check the project lock status");
+            }
+            projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
 
-			String path = config.getGitBasePath() + "/" + project.getProjectName();
-			if (GitUtils.checkGitPahtExist(path)) {
-				GitUtils.checkout(config.getCredentials(), path, branch);
-				result.append("project checkout success:").append(project.getProjectName()).append("\n");
-			} else {
-				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-				result.append("project clone success:").append(project.getProjectName()).append("\n");
-			}
+            String path = config.getGitBasePath() + "/" + project.getProjectName();
+            if (GitUtils.checkGitPahtExist(path)) {
+                GitUtils.checkout(config.getCredentials(), path, branch);
+                result.append("project checkout success:").append(project.getProjectName()).append("\n");
+            } else {
+                GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+                result.append("project clone success:").append(project.getProjectName()).append("\n");
+            }
 
-			//save
-			if(isDependency){
-				TaskSign taskSign = new TaskSign();
-				taskSign.setTaskId(task.getId());
-				taskSign.setDependenvyId(dependency.getId());
-				taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
-				taskSignDao.insertSelective(taskSign);
-			}
+            //save
+            if (isDependency) {
+                TaskSign taskSign = new TaskSign();
+                taskSign.setTaskId(task.getId());
+                taskSign.setDependenvyId(dependency.getId());
+                taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+                taskSignDao.insertSelective(taskSign);
+            }
 
-			// Install
-			String installResult = mvnInstall(path);
-			result.append(installResult);
-		} finally {
-			//finish then unlock the project
-			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
-		}
-	}
+            // Install
+            String installResult = mvnInstall(path);
+            result.append(installResult);
+        } finally {
+            //finish then unlock the project
+            projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
+        }
+    }
 
-	@Override
-	public void rollback(Task task,Task refTask, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
-		Integer projectId = dependency.getProjectId();
-		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
-		if (dependencies != null && dependencies.size() > 0) {
-			for (Dependency dep : dependencies) {
-				String br = dep.getBranch();
-				Dependency dependency1 = new Dependency(dep.getDependentId());
-				dependency1.setId(dep.getId());
-				rollback(task,refTask,dependency1, StringUtils.isBlank(br) ? branch : br, success, result,true);
-			}
-		}
+    @Override
+    public void rollback(Task task, Task refTask, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+        Integer projectId = dependency.getProjectId();
+        List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
+        if (dependencies != null && dependencies.size() > 0) {
+            for (Dependency dep : dependencies) {
+                String br = dep.getBranch();
+                Dependency dependency1 = new Dependency(dep.getDependentId());
+                dependency1.setId(dep.getId());
+                rollback(task, refTask, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
+            }
+        }
 
-		// Is Continue ? if fail then return
-		if(!success){
-			return;
-		}
-		// build
-		Project project = projectDao.selectByPrimaryKey(projectId);
-		Assert.notNull(project,"project not exist");
-		try {
-			if(project.getLockStatus() ==TASK_LOCK_STATUS_LOCK){
-				throw new RuntimeException("project is lock , please check the project lock status");
-			}
-			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
+        // Is Continue ? if fail then return
+        if (!success) {
+            return;
+        }
+        // build
+        Project project = projectDao.selectByPrimaryKey(projectId);
+        Assert.notNull(project, "project not exist");
+        try {
+            if (project.getLockStatus() == TASK_LOCK_STATUS_LOCK) {
+                throw new RuntimeException("project is lock , please check the project lock status");
+            }
+            projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);
 
-			String path = config.getGitBasePath() + "/" + project.getProjectName();
+            String path = config.getGitBasePath() + "/" + project.getProjectName();
 
-			String sha;
-			if(isDependency){
-				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependency.getId(),task.getRefId());
-				Assert.notNull(taskSign,"not found taskSign");
-				sha = taskSign.getShaGit();
-			}else{
-				sha = refTask.getShaGit();
-			}
+            String sha;
+            if (isDependency) {
+                TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependency.getId(), task.getRefId());
+                Assert.notNull(taskSign, "not found taskSign");
+                sha = taskSign.getShaGit();
+            } else {
+                sha = refTask.getShaGit();
+            }
 
-			if (GitUtils.checkGitPahtExist(path)) {
-				GitUtils.roolback(config.getCredentials(),path,sha);
-				result.append("project rollback success:").append(project.getProjectName()).append("\n");
-			} else {
-				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-				result.append("project clone success:").append(project.getProjectName()).append("\n");
-				GitUtils.roolback(config.getCredentials(),path,sha);
-				result.append("project rollback success:").append(project.getProjectName()).append("\n");
-			}
+            if (GitUtils.checkGitPahtExist(path)) {
+                GitUtils.roolback(config.getCredentials(), path, sha);
+                result.append("project rollback success:").append(project.getProjectName()).append("\n");
+            } else {
+                GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+                result.append("project clone success:").append(project.getProjectName()).append("\n");
+                GitUtils.roolback(config.getCredentials(), path, sha);
+                result.append("project rollback success:").append(project.getProjectName()).append("\n");
+            }
 
-			//save
-			if(isDependency){
-				TaskSign taskSign = new TaskSign();
-				taskSign.setTaskId(task.getId());
-				taskSign.setDependenvyId(dependency.getId());
-				taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
-				taskSignDao.insertSelective(taskSign);
-			}
+            //save
+            if (isDependency) {
+                TaskSign taskSign = new TaskSign();
+                taskSign.setTaskId(task.getId());
+                taskSign.setDependenvyId(dependency.getId());
+                taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+                taskSignDao.insertSelective(taskSign);
+            }
 
-			// Install
-			String installResult = mvnInstall(path);
-			result.append(installResult);
-		} finally {
-			//finish then unlock the project
-			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
-		}
-	}
+            // Install
+            String installResult = mvnInstall(path);
+            result.append(installResult);
+        } finally {
+            //finish then unlock the project
+            projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
+        }
+    }
 
 
-	/**
-	 * Building (maven)
-	 */
-	private String mvnInstall(String path) throws Exception {
-		// Execution mvn
-		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-		return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary());
-	}
+    /**
+     * Building (maven)
+     */
+    private String mvnInstall(String path) throws Exception {
+        // Execution mvn
+        String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
+        return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary());
+    }
 
 }

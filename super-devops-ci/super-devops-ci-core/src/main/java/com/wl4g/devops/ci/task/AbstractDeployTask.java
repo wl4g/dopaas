@@ -25,26 +25,26 @@ import com.wl4g.devops.common.utils.context.SpringContexts;
 
 /**
  * Abstract deployments task.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月25日
  * @since
  */
 public abstract class AbstractDeployTask implements Runnable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	final protected AppInstance instance;
-	final protected Project project;
-	final protected TaskService taskService;
+    final protected AppInstance instance;
+    final protected Project project;
+    final protected TaskService taskService;
 
-	protected Boolean isSuccess = true;
-	protected StringBuffer result = new StringBuffer();
+    protected Boolean isSuccess = true;
+    protected StringBuffer result = new StringBuffer();
 
-	public AbstractDeployTask(AppInstance instance, Project project) {
-		super();
-		this.instance = instance;
-		this.project = project;
-		this.taskService = SpringContexts.getBean(TaskService.class);
-	}
+    public AbstractDeployTask(AppInstance instance, Project project) {
+        super();
+        this.instance = instance;
+        this.project = project;
+        this.taskService = SpringContexts.getBean(TaskService.class);
+    }
 
 }

@@ -20,76 +20,77 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.springframework.util.Assert;
+
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 /**
  * Maven assemble tar deployments task.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
  * @since
  */
 public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 
-	private MvnAssembleTarDeployProvider provider;
-	private String path;
-	private String tarPath;
-	private Integer taskDetailId;
+    private MvnAssembleTarDeployProvider provider;
+    private String path;
+    private String tarPath;
+    private Integer taskDetailId;
 
-	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, Project project, String path, AppInstance instance,
-			String tarPath, List<TaskDetail> taskDetails) {
-		super(instance, project);
-		this.provider = provider;
-		this.path = path;
-		this.tarPath = tarPath;
-		Assert.notNull(taskDetails, "taskDetails can not be null");
-		for (TaskDetail taskDetail : taskDetails) {
-			if (taskDetail.getInstanceId().intValue() == instance.getId().intValue()) {
-				this.taskDetailId = taskDetail.getId();
-				break;
-			}
-		}
-	}
+    public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, Project project, String path, AppInstance instance,
+                                    String tarPath, List<TaskDetail> taskDetails) {
+        super(instance, project);
+        this.provider = provider;
+        this.path = path;
+        this.tarPath = tarPath;
+        Assert.notNull(taskDetails, "taskDetails can not be null");
+        for (TaskDetail taskDetail : taskDetails) {
+            if (taskDetail.getInstanceId().intValue() == instance.getId().intValue()) {
+                this.taskDetailId = taskDetail.getId();
+                break;
+            }
+        }
+    }
 
-	@Override
-	public void run() {
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is starting ...");
-		}
+    @Override
+    public void run() {
+        if (log.isInfoEnabled()) {
+            log.info("Deploy task is starting ...");
+        }
 
-		Assert.notNull(taskDetailId, "taskDetailId can not be null");
-		try {
-			// Update status
-			taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING,null);
-			Boolean detailSuccess = new Boolean(false);
-			// Scp to tmp,rename,move to webapps
-			String s = provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(), project.getParentAppHome(),
-					instance.getSshRsa());
-			result.append(s).append("\n");
+        Assert.notNull(taskDetailId, "taskDetailId can not be null");
+        try {
+            // Update status
+            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+            //Boolean detailSuccess = new Boolean(false);
+            // Scp to tmp,rename,move to webapps
+            String s = provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(), project.getParentAppHome(),
+                    instance.getSshRsa());
+            result.append(s).append("\n");
 
-			// Change link
-			String s1 = provider.relink(instance.getHost(), project.getParentAppHome(), instance.getServerAccount(), path + tarPath,
-					instance.getSshRsa());
-			result.append(s1).append("\n");
+            // Change link
+            String s1 = provider.relink(instance.getHost(), project.getParentAppHome(), instance.getServerAccount(), path + tarPath,
+                    instance.getSshRsa());
+            result.append(s1).append("\n");
 
-			// Restart
-			String s2 = provider.restart(instance.getHost(), instance.getServerAccount(), instance.getSshRsa());
-			result.append(s2).append("\n");
+            // Restart
+            String s2 = provider.restart(instance.getHost(), instance.getServerAccount(), instance.getSshRsa());
+            result.append(s2).append("\n");
 
-			// Update status
-			taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS,result.toString());
+            // Update status
+            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 
-		} catch (Exception e) {
-			log.error("Deploy job failed", e);
-			taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,result.toString()+"\n"+e.toString());
-			//throw new RuntimeException(e);
-		}
+        } catch (Exception e) {
+            log.error("Deploy job failed", e);
+            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, result.toString() + "\n" + e.toString());
+            //throw new RuntimeException(e);
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is finished!");
-		}
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Deploy task is finished!");
+        }
+    }
 
 }

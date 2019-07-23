@@ -18,7 +18,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-07-19 10:41:00
  */
-public class CronRunnable implements Runnable{
+public class CronRunnable implements Runnable {
 
     final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -35,8 +35,8 @@ public class CronRunnable implements Runnable{
     private TriggerService triggerService;
 
 
-    public CronRunnable(Trigger trigger,Project project,DeployProperties config,CiService ciService,TriggerService triggerService){
-        this.trigger  = trigger;
+    public CronRunnable(Trigger trigger, Project project, DeployProperties config, CiService ciService, TriggerService triggerService) {
+        this.trigger = trigger;
         this.triggerDetails = trigger.getTriggerDetails();
         this.project = project;
         this.config = config;
@@ -47,7 +47,7 @@ public class CronRunnable implements Runnable{
     @Override
     public void run() {
         log.info("Timing tasks start");
-        if(check()){
+        if (check()) {
             //TODO need build
             /*List<String> instanceStrs = new ArrayList<>();
             for(TriggerDetail triggerDetail : triggerDetails){
@@ -58,15 +58,15 @@ public class CronRunnable implements Runnable{
             String path = config.getGitBasePath() + "/" + project.getProjectName();
             try {
                 String newSha = GitUtils.getOldestCommitSha(path);
-                if(StringUtils.isNotBlank(newSha)){
-                    triggerService.updateSha(trigger.getId(),newSha);
+                if (StringUtils.isNotBlank(newSha)) {
+                    triggerService.updateSha(trigger.getId(), newSha);
                     trigger.setSha(newSha);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            log.info("Cron Create Task triggerId={} projectId={} projectName={} time={}",trigger.getId(),project.getId(),project.getProjectName(),new Date());
+            log.info("Cron Create Task triggerId={} projectId={} projectName={} time={}", trigger.getId(), project.getId(), project.getProjectName(), new Date());
         }
     }
 
@@ -83,7 +83,7 @@ public class CronRunnable implements Runnable{
                 GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, trigger.getBranchName());
             }
             String oldestSha = GitUtils.getOldestCommitSha(path);
-            return !StringUtils.equals(sha,oldestSha);
+            return !StringUtils.equals(sha, oldestSha);
         } catch (Exception e) {
             e.printStackTrace();
         }

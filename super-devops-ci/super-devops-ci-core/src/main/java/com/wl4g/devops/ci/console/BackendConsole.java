@@ -128,7 +128,7 @@ public class BackendConsole {
                 return "AppGroup not exist";
             }
             List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
-            if (null == environments || environments.size()<=0) {
+            if (null == environments || environments.size() <= 0) {
                 return "no one env";
             }
             if (isBlank(envName)) {
@@ -152,7 +152,7 @@ public class BackendConsole {
                 if (null == instances || instances.size() < 1) {
                     return "none";
                 }
-                result.append(" ----- <"+envName+"> -----\n");
+                result.append(" ----- <" + envName + "> -----\n");
                 result.append("\t[ID]    [HostAndPort]          [description]\n");
                 for (int i = 0; i < instances.size() && i < 50; i++) {
                     if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r) && pattern.matcher(instances.get(i).getIp() + ":" + instances.get(i).getPort()).matches()) {
@@ -170,7 +170,7 @@ public class BackendConsole {
 
     private StringBuffer appendApp(StringBuffer result, AppGroup appGroup, String r) {
         List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
-        if (environments == null||environments.size() <= 0) {
+        if (environments == null || environments.size() <= 0) {
             return result;
         }
         result.append(" <").append(appGroup.getName()).append(">:\n");
@@ -185,10 +185,10 @@ public class BackendConsole {
         appInstance.setEnvId(environment.getId().toString());
         List<AppInstance> instances = appGroupDao.instancelist(appInstance);
 
-        if (null == instances ||instances.size() <= 0) {
+        if (null == instances || instances.size() <= 0) {
             return result;
         }
-        result.append(" ----- <"+environment.getName()+"> -----\n");
+        result.append(" ----- <" + environment.getName() + "> -----\n");
         result.append("\t[ID]    [HostAndPort]          [description]\n");
 
         Pattern pattern = Pattern.compile(r);

@@ -30,20 +30,21 @@ import java.util.List;
 @Component
 public interface TaskService {
 
-	List<Task> list(String groupName,String projectName,String branchName);
+    List<Task> list(String groupName, String projectName, String branchName);
 
-	List<TaskDetail> getDetailByTaskId(Integer id);
+    List<TaskDetail> getDetailByTaskId(Integer id);
 
-	Task getTaskById(Integer id);
+    Task getTaskById(Integer id);
 
-	Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-			Integer parentId, String command, Integer tarType);
+    Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
+                    Integer parentId, String command, Integer tarType);
 
-	void updateTaskStatus(int taskId, int status);
-	void updateTaskStatusAndResult(int taskId, int status,String result);
+    void updateTaskStatus(int taskId, int status);
 
-	void updateTaskDetailStatusAndResult(int taskDetailId, int status,String result);
+    void updateTaskStatusAndResult(int taskId, int status, String result);
 
-	void updateTaskStatusAndResultAndSha(int taskId, int status,String result,String sha,String md5);
+    void updateTaskDetailStatusAndResult(int taskDetailId, int status, String result);
+
+    void updateTaskStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
 
 }

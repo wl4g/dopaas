@@ -33,80 +33,79 @@ import java.util.List;
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:28:00
- * @since
  */
 public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 
-	public MvnAssembleTarDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, Task task,Task refTask,
-			List<TaskDetail> taskDetails) {
-		super(project, path, branch, alias, instances,task,refTask, taskDetails);
-	}
+    public MvnAssembleTarDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, Task task, Task refTask,
+                                        List<TaskDetail> taskDetails) {
+        super(project, path, branch, alias, instances, task, refTask, taskDetails);
+    }
 
-	@Override
-	public void execute() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getProject().getId());
-		getDependencyService().build(getTask(),dependency, getBranch(),isSuccess,result,false);
+    @Override
+    public void execute() throws Exception {
+        Dependency dependency = new Dependency();
+        dependency.setProjectId(getProject().getId());
+        getDependencyService().build(getTask(), dependency, getBranch(), isSuccess, result, false);
 
-		//get sha and md5
-		setShaGit(GitUtils.getOldestCommitSha(getPath()));
-		setShaLocal(FileCodec.getFileMD5(new File(getPath()+getProject().getTarPath())));
-		// backup in local
-		backupLocal(getPath() + getProject().getTarPath(),getTask().getId().toString());
+        //get sha and md5
+        setShaGit(GitUtils.getOldestCommitSha(getPath()));
+        setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
+        // backup in local
+        backupLocal(getPath() + getProject().getTarPath(), getTask().getId().toString());
 
-		// scp to server
-		for (AppInstance instance : getInstances()) {
-			Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
-					getTaskDetails());
-			Thread t = new Thread(task);
-			t.start();
-			t.join();
-		}
+        // scp to server
+        for (AppInstance instance : getInstances()) {
+            Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
+                    getTaskDetails());
+            Thread t = new Thread(task);
+            t.start();
+            t.join();
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Maven assemble deploy done!");
+        }
+    }
 
-	@Override
-	public void rollback() throws Exception{
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getProject().getId());
+    @Override
+    public void rollback() throws Exception {
+        Dependency dependency = new Dependency();
+        dependency.setProjectId(getProject().getId());
 
-		//TODO check bakup file isExist
-		String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) +"#"+getTask().getRefId();
+        //TODO check bakup file isExist
+        String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#" + getTask().getRefId();
 
-		File oldFile = new File(oldFilePath);
-		if(oldFile.exists()){
-			getBackupLocal(oldFilePath,getPath() + getProject().getTarPath());
-			setShaGit(getRefTask().getShaGit());
-		}else{
-			getDependencyService().rollback(getTask(),getRefTask(),dependency, getBranch(),isSuccess,result,false);
-			setShaGit(GitUtils.getOldestCommitSha(getPath()));
-		}
+        File oldFile = new File(oldFilePath);
+        if (oldFile.exists()) {
+            getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
+            setShaGit(getRefTask().getShaGit());
+        } else {
+            getDependencyService().rollback(getTask(), getRefTask(), dependency, getBranch(), isSuccess, result, false);
+            setShaGit(GitUtils.getOldestCommitSha(getPath()));
+        }
 
 
-		setShaLocal(FileCodec.getFileMD5(new File(getPath()+getProject().getTarPath())));
-		// backup in local
-		backupLocal(getPath() + getProject().getTarPath(),getTask().getId().toString());
+        setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
+        // backup in local
+        backupLocal(getPath() + getProject().getTarPath(), getTask().getId().toString());
 
-		// scp to server
-		for (AppInstance instance : getInstances()) {
-			Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
-					getTaskDetails());
-			Thread t = new Thread(task);
-			t.start();
-			t.join();
-		}
+        // scp to server
+        for (AppInstance instance : getInstances()) {
+            Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
+                    getTaskDetails());
+            Thread t = new Thread(task);
+            t.start();
+            t.join();
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Maven assemble deploy done!");
+        }
+    }
 
-	public String restart(String host, String userName, String rsa) throws Exception {
-		String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc " + getAlias() + " restart";
-		return doExecute(host, userName, command, rsa);
-	}
+    public String restart(String host, String userName, String rsa) throws Exception {
+        String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc " + getAlias() + " restart";
+        return doExecute(host, userName, command, rsa);
+    }
 
 }

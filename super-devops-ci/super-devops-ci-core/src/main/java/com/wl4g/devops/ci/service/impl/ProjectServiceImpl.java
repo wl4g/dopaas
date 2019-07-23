@@ -32,56 +32,56 @@ import java.util.List;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-	@Autowired
-	private ProjectDao projectDao;
+    @Autowired
+    private ProjectDao projectDao;
 
-	@Override
-	public int insert(Project project) {
-		Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
-		Assert.state(hasProject==null,"Config Repeated");
-		project.preInsert();
-		return projectDao.insertSelective(project);
-	}
+    @Override
+    public int insert(Project project) {
+        Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+        Assert.state(hasProject == null, "Config Repeated");
+        project.preInsert();
+        return projectDao.insertSelective(project);
+    }
 
-	@Override
-	public int update(Project project) {
-		Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
-		Assert.state(hasProject==null||hasProject.getId().intValue()==project.getId().intValue(),"Config Repeated");
-		project.preUpdate();
-		return projectDao.updateByPrimaryKeySelective(project);
-	}
+    @Override
+    public int update(Project project) {
+        Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+        Assert.state(hasProject == null || hasProject.getId().intValue() == project.getId().intValue(), "Config Repeated");
+        project.preUpdate();
+        return projectDao.updateByPrimaryKeySelective(project);
+    }
 
-	@Override
-	public int deleteById(Integer id) {
-		Project project = new Project();
-		project.preUpdate();
-		project.setId(id);
-		project.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		return projectDao.updateByPrimaryKeySelective(project);
-	}
+    @Override
+    public int deleteById(Integer id) {
+        Project project = new Project();
+        project.preUpdate();
+        project.setId(id);
+        project.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        return projectDao.updateByPrimaryKeySelective(project);
+    }
 
-	@Override
-	public int removeById(Integer id) {
-		return projectDao.deleteByPrimaryKey(id);
-	}
+    @Override
+    public int removeById(Integer id) {
+        return projectDao.deleteByPrimaryKey(id);
+    }
 
-	@Override
-	public List<Project> list(String groupName,String projectName) {
-		return projectDao.list(groupName,projectName);
-	}
+    @Override
+    public List<Project> list(String groupName, String projectName) {
+        return projectDao.list(groupName, projectName);
+    }
 
-	@Override
-	public Project selectByPrimaryKey(Integer id) {
-		return projectDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public Project selectByPrimaryKey(Integer id) {
+        return projectDao.selectByPrimaryKey(id);
+    }
 
-	@Override
-	public int updateLockStatus(Integer id,Integer lockStatus) {
-		Project project = new Project();
-		project.setId(id);
-		project.setLockStatus(lockStatus);
-		return projectDao.updateByPrimaryKeySelective(project);
-	}
+    @Override
+    public int updateLockStatus(Integer id, Integer lockStatus) {
+        Project project = new Project();
+        project.setId(id);
+        project.setLockStatus(lockStatus);
+        return projectDao.updateByPrimaryKeySelective(project);
+    }
 
 
 }

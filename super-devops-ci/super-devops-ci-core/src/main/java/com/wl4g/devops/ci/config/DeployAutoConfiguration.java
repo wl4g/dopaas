@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Deployments auto configuration.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月21日
  * @since
@@ -29,10 +29,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DeployAutoConfiguration {
 
-	@Bean
-	@ConfigurationProperties(prefix = "deploy")
-	public DeployProperties deployProperties() {
-		return new DeployProperties();
-	}
+    @Bean
+    @ConfigurationProperties(prefix = "deploy")
+    public DeployProperties deployProperties() {
+        return new DeployProperties();
+    }
 
 }
