@@ -23,6 +23,7 @@ import java.beans.PropertyDescriptor;
 import java.util.*;
 
 import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Bean and Map Convert.
@@ -105,6 +106,10 @@ public final class BeanMapConvert {
 	 * @return
 	 */
 	public static String toUriParmaters(Map<String, Object> param) {
+		if (param == null) {
+			return EMPTY;
+		}
+
 		// To URI parameters string
 		StringBuffer uri = new StringBuffer();
 		for (Iterator<?> it = param.keySet().iterator(); it.hasNext();) {

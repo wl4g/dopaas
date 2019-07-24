@@ -1,12 +1,10 @@
 package com.wl4g.devops.umc.notification.wechat;
 
 import com.wl4g.devops.umc.notification.AbstractAlarmNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.wl4g.devops.umc.notification.AlarmType;
+
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 /**
  * @author vjay
@@ -14,19 +12,27 @@ import java.util.List;
  */
 public class WeChatNotifier extends AbstractAlarmNotifier {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	@Override
+	public AlarmType alarmType() {
+		return AlarmType.WECHAT;
+	}
 
 	@Override
-	public void simpleNotify(List<String> targets, String message) {
-		// send msg
-		log.info("send msg:" + message);
-		test(message);
+	public void simpleNotify(SimpleAlarmMessage message) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void templateNotify(TeampleAlarmMessage message) {
+		// TODO Auto-generated method stub
 
 	}
 
 	/**
 	 * Just for Test
 	 */
+	@SuppressWarnings("unused")
 	private void test(String msg) {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		RestTemplate restTemplate = new RestTemplate(factory);

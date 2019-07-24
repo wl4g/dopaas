@@ -21,4 +21,5 @@ public class MinRuleInspector extends AbstractRuleInspector {
 		}
 		return super.operate(operatorEnum, operatorResult, standard);
 	}
+
 }

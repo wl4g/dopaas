@@ -110,7 +110,7 @@ public class RuleConfigManager implements ApplicationRunner {
 	}
 
 	/**
-	 * Get Rule By collectid ,get from redis first ,if not found ,get from db
+	 * Get Rule By collect IDs
 	 */
 	public AlarmRuleInfo getAlarmRuleInfoByCollectId(Integer collectId) {
 		AlarmRuleInfo alarmRuleInfo = jedisService.getObjectAsJson(getCacheKeyAlarmRuleByCollectId(collectId),
@@ -176,21 +176,20 @@ public class RuleConfigManager implements ApplicationRunner {
 
 		String s = jedisService.get(getCacheKeyTemplateHis(templateId));
 		log.info(s);
-
 		return points;
 	}
 
 	/**
-	 * Get longest time from rules
+	 * Extract largest metric keep time window of rules.
 	 */
-	public Long cacheTime(List<AlarmRule> rules) {
-		long cacheTime = 0;
+	public static Long extLargestRuleWindowKeepTime(List<AlarmRule> rules) {
+		long largestTimeWindow = 0;
 		for (AlarmRule alarmRule : rules) {
-			if (alarmRule.getContinuityTime() > cacheTime) {
-				cacheTime = alarmRule.getContinuityTime();
+			if (alarmRule.getContinuityTime() > largestTimeWindow) {
+				largestTimeWindow = alarmRule.getContinuityTime();
 			}
 		}
-		return cacheTime;
+		return largestTimeWindow;
 	}
 
 	//

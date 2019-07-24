@@ -1,7 +1,7 @@
 package com.wl4g.devops.umc.notification;
 
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Based multiple channel notifier.
@@ -12,16 +12,6 @@ import java.util.Map;
  */
 public abstract class AbstractAlarmNotifier implements AlarmNotifier {
 
-	@Override
-	public void simpleNotify(List<String> targets, String message) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void templateNotify(List<String> targets, String templateCode, Map<String, Object> message) {
-		// TODO Auto-generated method stub
-
-	}
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 }
