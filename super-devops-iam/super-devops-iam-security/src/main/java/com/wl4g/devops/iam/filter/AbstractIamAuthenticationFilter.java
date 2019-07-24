@@ -46,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.utils.Exceptions;
-import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -166,7 +165,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected abstract T postCreateToken(String remoteHost, String fromAppName, String redirectUrl, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response)
 			throws Exception {
@@ -195,20 +194,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Post handle of login success.
 			coprocessor.postAuthenticatingSuccess(tk, subject, request, response);
 
-			// Append parameters.
-			Map params = Collections.emptyMap();
-			if (StringUtils.hasText(grantTicket)) {
-				params = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
-				if (log.isInfoEnabled()) {
-					log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
-				}
-			}
-
 			// Response JSON.
 			if (isJSONResponse(request)) {
 				try {
 					// Make logged JSON.
-					successRedirectUrl += "?" + BeanMapConvert.toUriParmaters(params);
 					String logged = makeLoggedResponse(request, grantTicket, successRedirectUrl);
 					if (log.isInfoEnabled()) {
 						log.info("Response to success - {}", logged);
@@ -225,11 +214,14 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				 * needs to be redirected to the CAS client application, then
 				 * grantTicket is required.
 				 */
-				try {
-					WebUtils.issueRedirect(request, response, successRedirectUrl, params, true);
-				} catch (IOException e) {
-					log.error("Cannot redirect successUrl", e);
+				Map params = Collections.emptyMap();
+				if (StringUtils.hasText(grantTicket)) {
+					params = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
 				}
+				if (log.isInfoEnabled()) {
+					log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
+				}
+				WebUtils.issueRedirect(request, response, successRedirectUrl, params, true);
 			}
 
 		} catch (IamException e) {
