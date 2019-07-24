@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.rule.inspect;
 import com.wl4g.devops.umc.rule.OperatorType;
 
 /**
- * Rule judger checker.
+ * Rule verify inspector.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年7月5日
@@ -26,6 +26,6 @@ import com.wl4g.devops.umc.rule.OperatorType;
  */
 public interface RuleInspector {
 
-	boolean judge(Double[] values, OperatorType operatorEnum, double standard);
+	boolean verify(Double[] values, OperatorType operatorEnum, double standard);
 
 }

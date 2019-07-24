@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author vjay
@@ -38,10 +39,29 @@ public class RuleConfigManager implements ApplicationRunner {
 	@Autowired
 	private RuleConfigHandler ruleConfigHandler;
 
+	@Override
+	public void run(ApplicationArguments args) {
+		// Initialize all collect IDs.
+		initializeCollectIdAll();
+	}
+
+	/**
+	 * Initialize all collect IDs to the cache.
+	 */
+	private void initializeCollectIdAll() {
+		AppInstance appInstance = new AppInstance();
+		List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
+		for (AppInstance appInstance1 : instancelist) {
+			// found
+			jedisService.set(getCacheKeyIpAndPort(appInstance1.getIp() + ":" + appInstance1.getPort()),
+					String.valueOf(appInstance1.getId()), 0);
+		}
+	}
+
 	/**
 	 * get collectId by collect,get from redis first ,if not found ,get from db
 	 */
-	public Integer convertCollectIp(String collectIpAndPort) {
+	public Integer convertCollectId(String collectIpAndPort) {
 		// check ip and port
 		HostAndPort hostAndPort = HostAndPort.fromString(collectIpAndPort);
 
@@ -50,11 +70,12 @@ public class RuleConfigManager implements ApplicationRunner {
 			AppInstance appInstance = new AppInstance();
 			appInstance.setIp(hostAndPort.getHostText());
 			appInstance.setPort(hostAndPort.getPortOrDefault(0));
-			List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
-			if (null != instancelist && instancelist.size() > 0) {// found
-				AppInstance appInstance1 = instancelist.get(0);
-				collectId = String.valueOf(appInstance1.getId());
-				jedisService.set(getCacheKeyIpAndPort(collectIpAndPort), String.valueOf(appInstance1.getId()), 0);
+
+			List<AppInstance> instances = ruleConfigHandler.instancelist(appInstance);
+			if (!isEmpty(instances)) {// found
+				AppInstance appI = instances.get(0);
+				collectId = String.valueOf(appI.getId());
+				jedisService.set(getCacheKeyIpAndPort(collectIpAndPort), String.valueOf(appI.getId()), 0);
 			} else {
 				jedisService.set(getCacheKeyIpAndPort(collectIpAndPort), NOT_FOUND, 30);
 			}
@@ -62,33 +83,25 @@ public class RuleConfigManager implements ApplicationRunner {
 		return Integer.parseInt(collectId);
 	}
 
-	public Integer convertGroupId(String groupName) {
+	/**
+	 * Converting collect point informations to Universal collect pointId.
+	 * 
+	 * @param serviceId
+	 * @return
+	 */
+	public Integer convertServiceId(String serviceId) {
 		// check ip and port
-		String groupId = jedisService.get(getCacheKeyGroup2Id(groupName));
+		String groupId = jedisService.get(getCacheKeyGroup2Id(serviceId));
 		if (StringUtils.isBlank(groupId) && !StringUtils.equals(groupId, NOT_FOUND)) {
-			AppGroup appGroup = ruleConfigHandler.getAppGroupByName(groupName);
-
-			if (null != appGroup) {// found
-				groupId = appGroup.getId().toString();
-				jedisService.set(getCacheKeyGroup2Id(groupName), groupId, 0);
+			AppGroup appG = ruleConfigHandler.getAppGroupByName(serviceId);
+			if (null != appG) {// found
+				groupId = appG.getId().toString();
+				jedisService.set(getCacheKeyGroup2Id(serviceId), groupId, 0);
 			} else {
-				jedisService.set(getCacheKeyGroup2Id(groupName), NOT_FOUND, 30);
+				jedisService.set(getCacheKeyGroup2Id(serviceId), NOT_FOUND, 30);
 			}
 		}
 		return Integer.parseInt(groupId);
-	}
-
-	/**
-	 * cache all collectIp to collectId
-	 */
-	private void cacheCollectIp2CollectId() {
-		AppInstance appInstance = new AppInstance();
-		List<AppInstance> instancelist = ruleConfigHandler.instancelist(appInstance);
-		for (AppInstance appInstance1 : instancelist) {
-			// found
-			jedisService.set(getCacheKeyIpAndPort(appInstance1.getIp() + ":" + appInstance1.getPort()),
-					String.valueOf(appInstance1.getId()), 0);
-		}
 	}
 
 	// TODO del all by prefix
@@ -132,13 +145,6 @@ public class RuleConfigManager implements ApplicationRunner {
 		}
 		return alarmRuleInfo;
 	}
-
-	// TODO cache all Alarm Rule Info when app start
-	/*
-	 * public void cacheAlarmRuleInfo(){
-	 * 
-	 * }
-	 */
 
 	/**
 	 * Get point history by templateId, and save the newest value into redis
@@ -187,11 +193,9 @@ public class RuleConfigManager implements ApplicationRunner {
 		return cacheTime;
 	}
 
-	@Override
-	public void run(ApplicationArguments applicationArguments) {
-		// after start
-		cacheCollectIp2CollectId();
-	}
+	//
+	// --- Cache key generate. ---
+	//
 
 	private static String getCacheKeyIpAndPort(String collectIpAndPort) {
 		return KEY_CACHE_INSTANCE_ID + collectIpAndPort;
@@ -212,4 +216,5 @@ public class RuleConfigManager implements ApplicationRunner {
 	private static String getCacheKeyTemplateHis(Integer templateId) {
 		return KEY_CACHE_TEMPLATE_HIS + templateId;
 	}
+
 }

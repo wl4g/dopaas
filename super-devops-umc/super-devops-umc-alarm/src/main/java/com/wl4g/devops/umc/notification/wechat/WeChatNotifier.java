@@ -14,26 +14,26 @@ import java.util.List;
  */
 public class WeChatNotifier extends AbstractAlarmNotifier {
 
-    final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-    @Override
-    public void simpleNotify(List<String> targets, String message) {
-        //send msg
-        log.info("send msg:"+message);
-        test(message);
+	@Override
+	public void simpleNotify(List<String> targets, String message) {
+		// send msg
+		log.info("send msg:" + message);
+		test(message);
 
+	}
 
-    }
-
-    /**
-     * Just for Test
-     */
-    private void test(String msg){
-        Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-        RestTemplate restTemplate = new RestTemplate(factory);
-        String url = "http://sc.ftqq.com/SCU37589T84d5e38c6aac8d8071f97652967308715c120c0205aec.send?text=主人服务器又挂掉啦:"+msg+" time:"+System.currentTimeMillis();
-        String result = restTemplate.getForObject(url,String.class);
-        log.info(result);
-    }
+	/**
+	 * Just for Test
+	 */
+	private void test(String msg) {
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		RestTemplate restTemplate = new RestTemplate(factory);
+		String url = "http://sc.ftqq.com/SCU37589T84d5e38c6aac8d8071f97652967308715c120c0205aec.send?text=主人服务器又挂掉啦:" + msg
+				+ " time:" + System.currentTimeMillis();
+		String result = restTemplate.getForObject(url, String.class);
+		log.info(result);
+	}
 
 }

@@ -9,10 +9,11 @@ import com.wl4g.devops.umc.rule.OperatorType;
 public class AvgRuleInspector extends AbstractRuleInspector {
 
 	@Override
-	public boolean judge(Double[] values, OperatorType operatorEnum, double standard) {
+	public boolean verify(Double[] values, OperatorType oper, double threshold) {
 		if (values == null || values.length <= 0) {
 			return false;
 		}
+
 		double operatorResult = 0;
 		int count = 0;
 		for (double value : values) {
@@ -20,6 +21,6 @@ public class AvgRuleInspector extends AbstractRuleInspector {
 			count++;
 		}
 		operatorResult = operatorResult / count;
-		return super.operate(operatorEnum, operatorResult, standard);
+		return super.operate(oper, operatorResult, threshold);
 	}
 }

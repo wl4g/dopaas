@@ -9,7 +9,7 @@ import com.wl4g.devops.umc.rule.OperatorType;
 public class MinRuleInspector extends AbstractRuleInspector {
 
 	@Override
-	public boolean judge(Double[] values, OperatorType operatorEnum, double standard) {
+	public boolean verify(Double[] values, OperatorType operatorEnum, double standard) {
 		if (values == null || values.length <= 0) {
 			return false;
 		}

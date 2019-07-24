@@ -20,9 +20,9 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
  * @version v1.0 2019年6月17日
  * @since
  */
-public class KafkaCollectReceiver extends AbstractCollectReceiver {
+public class KafkaMetricReceiver extends AbstractMetricReceiver {
 
-	public KafkaCollectReceiver(MetricStore store) {
+	public KafkaMetricReceiver(MetricStore store) {
 		super(store);
 	}
 
@@ -33,7 +33,7 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	 * @param ack
 	 */
 	@KafkaListener(topicPattern = TOPIC_KAFKA_RECEIVE_PATTERN, containerFactory = BEAN_KAFKA_BATCH_FACTORY)
-	public void onMultiReceive(List<ConsumerRecord<byte[], Bytes>> records, Acknowledgment ack) {
+	public void onMetricReceive(List<ConsumerRecord<byte[], Bytes>> records, Acknowledgment ack) {
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Receive metric records - {}", records);
@@ -57,13 +57,15 @@ public class KafkaCollectReceiver extends AbstractCollectReceiver {
 	private void doProcess(List<ConsumerRecord<byte[], Bytes>> records, MultiAcknowledgmentState state) {
 		for (ConsumerRecord<byte[], Bytes> record : records) {
 			try {
-				Bytes value = record.value();
-				MetricAggregate aggregate = MetricAggregate.parseFrom(value.get());
+				MetricAggregate aggregate = MetricAggregate.parseFrom(record.value().get());
 				if (log.isDebugEnabled()) {
 					log.debug("Put metric aggregate for - {}", aggregate);
 				}
 
+				// Storage metrics.
 				putMetrics(aggregate);
+
+				// Metrics alarm.
 				alarm(aggregate);
 			} catch (InvalidProtocolBufferException e) {
 				log.error("Failed to parse metric message.", e);

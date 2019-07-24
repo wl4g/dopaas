@@ -3,10 +3,8 @@ package com.wl4g.devops.umc.config;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
-import com.wl4g.devops.umc.notification.AbstractAlarmNotifier;
-import com.wl4g.devops.umc.notification.AlarmNotifier;
-import com.wl4g.devops.umc.receiver.HttpCollectReceiver;
-import com.wl4g.devops.umc.receiver.KafkaCollectReceiver;
+import com.wl4g.devops.umc.receiver.HttpMetricReceiver;
+import com.wl4g.devops.umc.receiver.KafkaMetricReceiver;
 import com.wl4g.devops.umc.store.*;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -54,8 +52,8 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_HTTP_RECEIVER)
 	@EnableHttpCollectReceiver
-	public HttpCollectReceiver httpCollectReceiver(MetricStore store) {
-		return new HttpCollectReceiver(store);
+	public HttpMetricReceiver httpCollectReceiver(MetricStore store) {
+		return new HttpMetricReceiver(store);
 	}
 
 	@Bean
@@ -80,8 +78,8 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_KAFKA_RECEIVER)
 	@EnableKafkaCollectReceiver
-	public KafkaCollectReceiver kafkaCollectReceiver(MetricStore store) {
-		return new KafkaCollectReceiver(store);
+	public KafkaMetricReceiver kafkaCollectReceiver(MetricStore store) {
+		return new KafkaMetricReceiver(store);
 	}
 
 	@Bean(BEAN_KAFKA_BATCH_FACTORY)
@@ -107,11 +105,5 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 		containerProps.setAckMode(AckMode.MANUAL_IMMEDIATE);
 		return factory;
 	}
-
-	/*@Bean
-	public AlarmNotifier alarmNotifier() {
-		return new AbstractAlarmNotifier() {
-		};
-	}*/
 
 }
