@@ -50,7 +50,8 @@ public class MustImpledRuleConfigHandler implements RuleConfigHandler, Initializ
 	}
 
 	@Override
-	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate, List<AlarmRule> rules) {
+	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime,
+			Date nowDate, List<AlarmRule> rules) {
 		throw new UnsupportedOperationException();
 	}
 

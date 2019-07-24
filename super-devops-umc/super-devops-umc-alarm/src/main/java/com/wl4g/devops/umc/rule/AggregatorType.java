@@ -1,8 +1,11 @@
 package com.wl4g.devops.umc.rule;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
+ * Aggregate type definition.
+ * 
+ * @author Wangl.sir
  * @author vjay
  * @date 2019-07-05 19:13:00
  */
@@ -20,12 +23,18 @@ public enum AggregatorType {
 		this.value = value;
 	}
 
-	public static AggregatorType safeOf(String operator) {
+	/**
+	 * Parse aggregate type of operator string.
+	 * 
+	 * @param aggregateString
+	 * @return
+	 */
+	public static AggregatorType of(String aggregateString) {
 		for (AggregatorType t : values()) {
-			if (StringUtils.equals(operator, t.getValue())) {
+			if (equalsIgnoreCase(aggregateString, t.getValue())) {
 				return t;
 			}
 		}
-		return null;
+		throw new UnsupportedOperationException(String.format("Unsupport aggregate operator(%d)", aggregateString));
 	}
 }

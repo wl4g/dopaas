@@ -18,13 +18,43 @@ public enum OperatorType {
 		this.value = value;
 	}
 
-	public static OperatorType safeOf(int operator) {
+	/**
+	 * Do operation
+	 * 
+	 * @param value1
+	 * @param value2
+	 * @return
+	 */
+	public boolean operate(double value1, double value2) {
+		switch (of(getValue())) {
+		case EQ:
+			return value1 == value2;
+		case GT:
+			return value1 > value2;
+		case GTE:
+			return value1 >= value2;
+		case LT:
+			return value1 < value2;
+		case LTE:
+			return value1 <= value2;
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * Parse operator type of value.
+	 * 
+	 * @param operator
+	 * @return
+	 */
+	public static OperatorType of(int operator) {
 		for (OperatorType t : values()) {
-			if (operator == (t.getValue())) {
+			if (operator == t.getValue()) {
 				return t;
 			}
 		}
-		return null;
+		throw new UnsupportedOperationException(String.format("Unsupport operator(%d)", operator));
 	}
 
 }
