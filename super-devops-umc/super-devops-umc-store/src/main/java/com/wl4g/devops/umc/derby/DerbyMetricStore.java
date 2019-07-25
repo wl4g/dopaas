@@ -36,7 +36,6 @@ public class DerbyMetricStore implements MetricStore {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-
 	@Override
 	public boolean save(MetricModel.MetricAggregate aggregate) {
 		return false;
