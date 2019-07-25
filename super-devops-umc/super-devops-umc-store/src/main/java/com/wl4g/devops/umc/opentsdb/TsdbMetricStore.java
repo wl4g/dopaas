@@ -44,9 +44,9 @@ public class TsdbMetricStore implements MetricStore {
 		long timestamp = aggregate.getTimestamp();
 
 		int i = 0;
-		for(MetricModel.Metric statMetric : aggregate.getMetricsList()){
+		for (MetricModel.Metric statMetric : aggregate.getMetricsList()) {
 			statMetric.getTagsMap();
-			if(StringUtils.isBlank(statMetric.getMetric())){
+			if (StringUtils.isBlank(statMetric.getMetric())) {
 				continue;
 			}
 
@@ -55,31 +55,32 @@ public class TsdbMetricStore implements MetricStore {
 			for (Map.Entry<String, String> entry : tag.entrySet()) {
 				String key = entry.getKey();
 				String value = entry.getValue();
-				pointBuilder.tag(key,value);
+				pointBuilder.tag(key, value);
 			}
-			pointBuilder.tag("instance",aggregate.getInstance());
+			pointBuilder.tag("instance", aggregate.getInstance());
 			Point point = pointBuilder.build();
 			i++;
 			client.put(point);
 		}
-		log.info("Metrics count - "+i);
+		log.info("Metrics count - " + i);
 
-		/*for(StatMetrics.StatMetric statMetric : statMetrics.getStatMetrics()){
-			statMetric.setTimestamp(timestamp);
-		}
-		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		RestTemplate restTemplate = new RestTemplate(factory);
-		String json = JacksonUtils.toJSONString(statMetrics.getStatMetrics());
-		HttpHeaders headers = new HttpHeaders();
-		MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-		headers.setContentType(type);
-		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-		HttpEntity<String> formEntity = new HttpEntity<String>(json, headers);
-		String result = restTemplate.postForEntity("http://10.0.0.57:4242/api/put?details",formEntity, String.class).getBody();*/
-
+		/*
+		 * for(StatMetrics.StatMetric statMetric :
+		 * statMetrics.getStatMetrics()){ statMetric.setTimestamp(timestamp); }
+		 * Netty4ClientHttpRequestFactory factory = new
+		 * Netty4ClientHttpRequestFactory(); RestTemplate restTemplate = new
+		 * RestTemplate(factory); String json =
+		 * JacksonUtils.toJSONString(statMetrics.getStatMetrics()); HttpHeaders
+		 * headers = new HttpHeaders(); MediaType type =
+		 * MediaType.parseMediaType("application/json; charset=UTF-8");
+		 * headers.setContentType(type); headers.add("Accept",
+		 * MediaType.APPLICATION_JSON.toString()); HttpEntity<String> formEntity
+		 * = new HttpEntity<String>(json, headers); String result =
+		 * restTemplate.postForEntity("http://10.0.0.57:4242/api/put?details",
+		 * formEntity, String.class).getBody();
+		 */
 
 		return true;
 	}
-
 
 }

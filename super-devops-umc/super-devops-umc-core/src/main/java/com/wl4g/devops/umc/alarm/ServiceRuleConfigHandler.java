@@ -59,8 +59,6 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 	@Autowired
 	private AlarmRecordUserDao alarmRecordUserDao;
 
-
-
 	@Override
 	public List<AppInstance> instancelist(AppInstance appInstance) {
 		return appGroupDao.instancelist(appInstance);
@@ -70,7 +68,6 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 	public AppGroup getAppGroupByName(String groupName) {
 		return appGroupDao.getAppGroupByName(groupName);
 	}
-
 
 	@Override
 	public List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId) {
@@ -84,20 +81,18 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 
 	@Override
 	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
-		return alarmConfigDao.getByCollectIdAndTemplateId(templateId,collectId);
+		return alarmConfigDao.getByCollectIdAndTemplateId(templateId, collectId);
 	}
 
 	@Override
 	public List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId) {
-		return alarmConfigDao.getByGroupIdAndTemplateId(templateId,groupId);
+		return alarmConfigDao.getByGroupIdAndTemplateId(templateId, groupId);
 	}
 
-
-
-
 	@Transactional
-	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate, List<AlarmRule> rules){
-		for(AlarmConfig alarmConfig : alarmConfigs){
+	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime,
+			Date nowDate, List<AlarmRule> rules) {
+		for (AlarmConfig alarmConfig : alarmConfigs) {
 			AlarmRecord alarmRecord = new AlarmRecord();
 			alarmRecord.setTemplateId(alarmTemplate.getId());
 			alarmRecord.setName(alarmConfig.getName());
@@ -107,19 +102,19 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 			alarmRecord.setAlarmInfo(alarmConfig.getAlarmContent());
 			alarmRecord.setAlarmType(alarmConfig.getAlarmType());
 			alarmRecordDao.insertSelective(alarmRecord);
-			//TODO  batch save is better
-			for(AlarmRule alarmRule : rules){
+			// TODO batch save is better
+			for (AlarmRule alarmRule : rules) {
 				AlarmRecordRule alarmRecordRule = new AlarmRecordRule();
 				alarmRecordRule.setRecordId(alarmRecord.getId());
 				alarmRecordRule.setRuleId(alarmRule.getId());
 				alarmRecordRuleDao.insertSelective(alarmRecordRule);
 			}
 			String memberStr = alarmConfig.getAlarmMember();
-			if(StringUtils.isBlank(memberStr)){
+			if (StringUtils.isBlank(memberStr)) {
 				return;
 			}
 			String members[] = memberStr.split(",");
-			for(String s : members){
+			for (String s : members) {
 				AlarmRecordUser alarmRecordUser = new AlarmRecordUser();
 				alarmRecordUser.setRecordId(alarmRecord.getId());
 				alarmRecordUser.setUserId(Integer.parseInt(s));
@@ -127,7 +122,5 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 			}
 		}
 	}
-
-
 
 }

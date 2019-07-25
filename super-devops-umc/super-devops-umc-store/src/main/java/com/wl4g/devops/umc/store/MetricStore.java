@@ -26,6 +26,6 @@ import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
  */
 public interface MetricStore {
 
-    boolean save(MetricModel.MetricAggregate aggregate);
+	boolean save(MetricModel.MetricAggregate aggregate);
 
 }
