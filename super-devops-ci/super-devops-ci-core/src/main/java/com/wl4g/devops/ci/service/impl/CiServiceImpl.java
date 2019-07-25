@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.provider.BasedDeployProvider;
+import com.wl4g.devops.ci.provider.DockerBuildDeployProvider;
 import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskService;
@@ -97,19 +98,19 @@ public class CiServiceImpl implements CiService {
 
 
     @Override
-    public void createTask(Integer appGroupId, String branchName, List<String> instanceIds, int type) {
+    public void createTask(Integer appGroupId, String branchName, List<String> instanceIds, int type,int tarType) {
         Assert.notNull(appGroupId, "groupId is null");
         AppGroup appGroup = appGroupDao.getAppGroup(appGroupId);
-        createTask(appGroup, branchName, instanceIds, type);
+        createTask(appGroup, branchName, instanceIds, type,tarType);
     }
 
     @Override
-    public void createTask(String appGroupName, String branchName, List<String> instanceIds, int type) {
+    public void createTask(String appGroupName, String branchName, List<String> instanceIds, int type,int tarType) {
         AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
-        createTask(appGroup, branchName, instanceIds, type);
+        createTask(appGroup, branchName, instanceIds, type,tarType);
     }
 
-    private void createTask(AppGroup appGroup, String branchName, List<String> instanceIds, int type) {
+    private void createTask(AppGroup appGroup, String branchName, List<String> instanceIds, int type,int tarType) {
         Assert.notNull(appGroup, "not found this app");
         Project project = projectDao.getByAppGroupId(appGroup.getId());
         Assert.notEmpty(instanceIds, "instanceIds find empty list,Please check the instanceId");
@@ -119,7 +120,7 @@ public class CiServiceImpl implements CiService {
             instances.add(instance);
         }
         Task task = taskService.createTask(project, instances, type,
-                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, null, null, null, CiDevOpsConstants.TAR_TYPE_TAR);
+                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, null, null, null, tarType);
         BasedDeployProvider provider = getDeployProvider(task);
         //execute
         execute(task.getId(), provider);
@@ -197,8 +198,8 @@ public class CiServiceImpl implements CiService {
             case CiDevOpsConstants.TAR_TYPE_JAR:
                 // return new JarSubject(path, url, branch,
                 // alias,tarPath,instances,taskDetails);
-            case CiDevOpsConstants.TAR_TYPE_OTHER:
-                // return new OtherSubject();
+            case CiDevOpsConstants.TAR_TYPE_DOCKER:
+                return new DockerBuildDeployProvider(project, path, branch, alias, instances, task, refTask, taskDetails);
             default:
                 throw new RuntimeException("unsuppost type:" + tarType);
         }
@@ -210,6 +211,7 @@ public class CiServiceImpl implements CiService {
         Assert.notNull(project, "project can not be null");
         AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
         Assert.notNull(appGroup, "appGroup can not be null");
+        project.setGroupName(appGroup.getName());
 
         List<TaskDetail> taskDetails = taskService.getDetailByTaskId(task.getId());
         Assert.notNull(taskDetails, "taskDetails can not be null");

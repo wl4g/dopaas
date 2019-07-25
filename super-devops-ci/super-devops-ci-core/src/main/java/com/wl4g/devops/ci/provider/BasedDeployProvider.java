@@ -292,6 +292,35 @@ public abstract class BasedDeployProvider {
         return doExecute(targetHost, userName, command, rsa);
     }
 
+    /**
+     * docker build
+     */
+    public String dockerBuild(String path) throws Exception{
+        String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
+                +config.getDockerPushUsername()+" -Ddockerfile.password="+config.getDockerPushPasswd();
+        return SSHTool.exec(command);
+    }
+
+    public String dockerPull(String targetHost, String userName, String imageName, String rsa) throws Exception{
+        String command = "docker pull "+imageName;
+        return doExecute(targetHost, userName, command, rsa);
+    }
+
+    public String dockerStop(String targetHost, String userName, String groupName, String rsa) throws Exception{
+        String command = "docker stop "+groupName;
+        return doExecute(targetHost, userName, command, rsa);
+    }
+
+    public String dockerRemoveContainer(String targetHost, String userName, String groupName, String rsa) throws Exception{
+        String command = "docker rm "+groupName;
+        return doExecute(targetHost, userName, command, rsa);
+    }
+
+    public String dockerRun(String targetHost, String userName, String runCommand, String rsa) throws Exception{
+        return doExecute(targetHost, userName, runCommand, rsa);
+    }
+
+
     public String getDateTimeStr() {
         String str = DateUtils.formatDate(now, DateUtils.YMDHM);
         str = str.substring(2, str.length());

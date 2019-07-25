@@ -83,7 +83,7 @@ public class BackendConsole {
                 printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
 
                 // Create async task
-                ciService.createTask(appGroupName, branchName, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER);
+                ciService.createTask(appGroupName, branchName, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,CiDevOpsConstants.TAR_TYPE_TAR);
 
                 printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
             } else {
