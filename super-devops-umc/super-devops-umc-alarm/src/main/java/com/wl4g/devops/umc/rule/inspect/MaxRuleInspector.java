@@ -15,13 +15,21 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 
 /**
+ * Max rule inspector
+ * 
  * @author vjay
  * @date 2019-07-05 10:02:00
  */
 public class MaxRuleInspector extends AbstractRuleInspector {
+
+	@Override
+	public AggregatorType inspectType() {
+		return AggregatorType.MAX;
+	}
 
 	@Override
 	public boolean verify(Double[] values, OperatorType operatorEnum, double standard) {

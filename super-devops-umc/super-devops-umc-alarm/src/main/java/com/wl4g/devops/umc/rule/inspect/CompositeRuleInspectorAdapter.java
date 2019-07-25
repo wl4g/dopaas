@@ -15,30 +15,44 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.util.Assert;
+
 import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 
 /**
- * @author vjay
- * @date 2019-07-05 10:02:00
+ * Composite rule inspector adapter.
+ * 
+ * @author Wangl.sir
+ * @version v1.0 2019年7月25日
+ * @since
  */
-public class SumRuleInspector extends AbstractRuleInspector {
+public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 
-	@Override
-	public AggregatorType inspectType() {
-		return AggregatorType.SUM;
+	/**
+	 * Rule inspectors.
+	 */
+	final protected Map<AggregatorType, RuleInspector> ruleInspectors = new LinkedHashMap<>();
+
+	public CompositeRuleInspectorAdapter(List<RuleInspector> ruleInspectors) {
+		Assert.state(!isEmpty(ruleInspectors), "Rule inspectors has at least one.");
+		ruleInspectors.forEach(inspector -> ruleInspectors.put(inspector.inspectType(), inspector));
 	}
 
 	@Override
 	public boolean verify(Double[] values, OperatorType operatorEnum, double standard) {
-		if (values == null || values.length <= 0) {
-			return false;
-		}
-		double operatorResult = 0;
-		for (double value : values) {
-			operatorResult += value;
-		}
-		return super.operate(operatorEnum, operatorResult, standard);
+		return false;
+	}
+
+	@Override
+	public AggregatorType inspectType() {
+		throw new UnsupportedOperationException();
 	}
 
 }

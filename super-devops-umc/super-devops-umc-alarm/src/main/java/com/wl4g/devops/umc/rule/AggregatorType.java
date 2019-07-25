@@ -26,7 +26,7 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  */
 public enum AggregatorType {
 
-	AVG("avg"), LAST("last"), MAX("max"), MIN("min"), SUM("sum");
+	AVG("avg"), LATEST("latest"), MAX("max"), MIN("min"), SUM("sum");
 
 	private String value;
 

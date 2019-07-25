@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 
 /**
@@ -26,6 +27,16 @@ import com.wl4g.devops.umc.rule.OperatorType;
  */
 public interface RuleInspector {
 
+	AggregatorType inspectType();
+
+	/**
+	 * Metric aggregate rule inspection
+	 * 
+	 * @param values
+	 * @param operatorEnum
+	 * @param standard
+	 * @return
+	 */
 	boolean verify(Double[] values, OperatorType operatorEnum, double standard);
 
 }
