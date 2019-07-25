@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  * @version v1.0 2019年7月23日
  * @since
  */
-public abstract class AndroidIamClientController {
+public abstract class AndroidIamUserCoordinator {
 
 	final public static String PARAM_CODE = "code";
 	final public static String PARAM_DATA = "data";
@@ -64,11 +64,10 @@ public abstract class AndroidIamClientController {
 				if (redirectUrl != null) {
 					// Check symbol for redirectUrl.
 					checkUrl(redirectUrl);
-
-					// Request iam
+					// Login IAM
 					ResponseEntity resp = doRequest(ServiceType.IAM_SERV, URI_AUTHENTICATOR, Collections.emptyMap());
 					respBody = toJsonMap(resp.getBody());
-					// Iam unauthentication?
+					// IAM unauth?
 					if (respBody != null && CODE_UNAUTH.equals(respBody.get(PARAM_CODE))) {
 						return true; // Jump login view.
 					}
