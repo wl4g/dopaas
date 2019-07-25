@@ -1,5 +1,5 @@
-/*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+/**
+ * Copyright 2017 ~ 2025 the original author or authors[983708408@qq.com].
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,9 +40,9 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	 */
 	final protected Map<AggregatorType, RuleInspector> ruleInspectors = new LinkedHashMap<>();
 
-	public CompositeRuleInspectorAdapter(List<RuleInspector> ruleInspectors) {
-		Assert.state(!isEmpty(ruleInspectors), "Rule inspectors has at least one.");
-		ruleInspectors.forEach(inspector -> ruleInspectors.put(inspector.inspectType(), inspector));
+	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
+		Assert.state(!isEmpty(inspectors), "Rule inspectors has at least one.");
+		inspectors.forEach(inspector -> inspectors.put(inspector.inspectType(), inspector));
 	}
 
 	@Override
