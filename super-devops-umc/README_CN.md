@@ -43,7 +43,7 @@ END {print up,down,n,c1,c2,c3,c4,c5,c6}
 - conf.yml
 ```
 #post uri
-server-uri: http://10.0.0.26:14046/umc/basic
+server-uri: http://10.0.0.26:14047/umc/basic
 
 #physical
 physical:
