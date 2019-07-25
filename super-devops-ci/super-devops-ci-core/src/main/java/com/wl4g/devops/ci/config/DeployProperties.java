@@ -28,11 +28,15 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  */
 public class DeployProperties {
 
+    private String gitUrl;
+
     private String gitBasePath;
 
     private String gitUsername;
 
     private String gitPassword;
+
+    private String  gitToken;
 
     private String backupPath;
 
@@ -129,5 +133,21 @@ public class DeployProperties {
 
     public void setDockerPushPasswd(String dockerPushPasswd) {
         this.dockerPushPasswd = dockerPushPasswd;
+    }
+
+    public String getGitUrl() {
+        return gitUrl;
+    }
+
+    public void setGitUrl(String gitUrl) {
+        this.gitUrl = gitUrl;
+    }
+
+    public String getGitToken() {
+        return gitToken;
+    }
+
+    public void setGitToken(String gitToken) {
+        this.gitToken = gitToken;
     }
 }
