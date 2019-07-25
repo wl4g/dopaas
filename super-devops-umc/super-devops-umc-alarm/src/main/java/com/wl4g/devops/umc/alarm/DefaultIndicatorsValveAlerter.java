@@ -18,7 +18,6 @@ package com.wl4g.devops.umc.alarm;
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.USE_GROUP;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.umc.rule.AggregatorType.of;
-import static com.wl4g.devops.umc.rule.OperatorType.of;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.ArrayList;
@@ -38,12 +37,8 @@ import com.wl4g.devops.common.bean.umc.model.TemplateHisInfo.Point;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
-import com.wl4g.devops.umc.rule.inspect.AvgRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.LatestRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.MaxRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.MinRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.RuleInspector;
-import com.wl4g.devops.umc.rule.inspect.SumRuleInspector;
+import com.wl4g.devops.umc.rule.OperatorType;
+import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 
 /**
  * Default collection metric valve alerter.
@@ -125,44 +120,19 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * Check rule is match
 	 */
 	protected boolean checkRuleMatch(List<Point> points, List<AlarmRule> rules, long now, List<AlarmRule> macthRule) {
-		// match mode for 'OR'.
-		boolean result = false;
+		// Match mode for 'OR'.
+		boolean matched = false;
 		for (AlarmRule rule : rules) {
 			// Get latest time window metric values.
-			Double[] metricValues = getLatestTimeWindowMetricValues(rule.getContinuityTime(), points, now);
-			// Get rule inspector.
-			RuleInspector inspector = createRuleInspector(rule.getAggregator());
-			// Do inspection verify.
-			if (inspector.verify(metricValues, of(rule.getOperator()), rule.getValue())) {
+			Double[] metricVals = getLatestTimeWindowMetricValues(rule.getContinuityTime(), points, now);
+			// Do inspection.
+			if (inspector.verify(new InspectWrapper(OperatorType.of(rule.getOperator()), of(rule.getAggregator()),
+					rule.getValue(), metricVals))) {
 				macthRule.add(rule);
-				result = true;
-				break;
+				matched = true; // at only
 			}
 		}
-		return result;
-	}
-
-	/**
-	 * Create Rule inspector by aggregate.
-	 * 
-	 * @param aggregator
-	 * @return
-	 */
-	protected RuleInspector createRuleInspector(String aggregator) {
-		switch (of(aggregator)) {
-		case AVG:
-			return new AvgRuleInspector();
-		case LATEST:
-			return new LatestRuleInspector();
-		case MAX:
-			return new MaxRuleInspector();
-		case MIN:
-			return new MinRuleInspector();
-		case SUM:
-			return new SumRuleInspector();
-		default:
-			throw new UnsupportedOperationException(String.format("Unsupport aggregator type (%s)", aggregator));
-		}
+		return matched;
 	}
 
 	/**

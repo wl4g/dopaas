@@ -24,6 +24,7 @@ import com.wl4g.devops.umc.notification.AlarmNotifier.SimpleAlarmMessage;
 import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
+import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -51,6 +52,9 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 
 	@Autowired
 	protected CompositeAlarmNotifierAdapter notifier;
+
+	@Autowired
+	protected CompositeRuleInspectorAdapter inspector;
 
 	public AbstractIndicatorsValveAlerter(AlarmProperties config) {
 		super(config);
