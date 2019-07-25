@@ -78,6 +78,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
@@ -86,14 +87,15 @@
 					<execution>
 						<id>default</id>
 						<goals>
-							<!--<goal>build</goal> -->
-							<!--<goal>push</goal> -->
+							<goal>build</goal>
+							<goal>push</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
+					<skip>${dockerskip}</skip>
 					<!-- <contextDirectory>src/main/docker</contextDirectory> -->
-					<repository>wl4g/${project.build.finalName}</repository>
+					<repository>xburnerair00/test</repository>
 					<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 					<tag>${project.version}</tag>
 					<readTimeoutMillis>30000</readTimeoutMillis>
@@ -106,6 +108,29 @@
 					</buildArgs>
 				</configuration>
 			</plugin>
+
+
 		</plugins>
 	</build>
+
+
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<dockerskip>true</dockerskip>
+			</properties>
+		</profile>
+		<profile>
+			<id>docker:push</id>
+			<properties>
+				<dockerskip>false</dockerskip>
+			</properties>
+		</profile>
+	</profiles>
+
+
 </project>

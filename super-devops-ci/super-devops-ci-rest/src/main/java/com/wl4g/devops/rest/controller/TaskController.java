@@ -88,13 +88,13 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/create")
-    public RespBase<?> create(Integer appGroupId, String branchName, Integer[] instances) {
+    public RespBase<?> create(Integer appGroupId, String branchName, Integer[] instances,Integer tarType) {
         RespBase<Object> resp = RespBase.create();
         List<String> instanceStrs = new ArrayList<>();
         for (Integer instance : instances) {
             instanceStrs.add(String.valueOf(instance));
         }
-        ciService.createTask(appGroupId, branchName, instanceStrs, CiDevOpsConstants.TASK_TYPE_MANUAL);
+        ciService.createTask(appGroupId, branchName, instanceStrs, CiDevOpsConstants.TASK_TYPE_MANUAL,tarType);
         return resp;
     }
 

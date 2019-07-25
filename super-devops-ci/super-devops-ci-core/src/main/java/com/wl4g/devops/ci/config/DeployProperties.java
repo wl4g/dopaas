@@ -42,6 +42,12 @@ public class DeployProperties {
 
     private Integer taskTimeout;
 
+
+    //docker
+    private String dockerPushUsername;
+    private String dockerPushPasswd;
+
+
     //
     // Temporary
     //
@@ -107,5 +113,21 @@ public class DeployProperties {
 
     public void setTaskTimeout(Integer taskTimeout) {
         this.taskTimeout = taskTimeout;
+    }
+
+    public String getDockerPushUsername() {
+        return dockerPushUsername;
+    }
+
+    public void setDockerPushUsername(String dockerPushUsername) {
+        this.dockerPushUsername = dockerPushUsername;
+    }
+
+    public String getDockerPushPasswd() {
+        return dockerPushPasswd;
+    }
+
+    public void setDockerPushPasswd(String dockerPushPasswd) {
+        this.dockerPushPasswd = dockerPushPasswd;
     }
 }
