@@ -13,4 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.derby;
+package com.wl4g.devops.umc.rule.inspect;
+
+import com.wl4g.devops.umc.rule.AggregatorType;
+
+/**
+ * Latest rule inspector
+ * 
+ * @author Wangl.sir
+ * @author vjay
+ * @date 2019-07-05 10:02:00
+ */
+public class LatestRuleInspector extends AbstractRuleInspector {
+
+	@Override
+	public AggregatorType aggregateType() {
+		return AggregatorType.LATEST;
+	}
+
+	@Override
+	public boolean verify(InspectWrapper wrap) {
+		if (wrap.getValues() == null || wrap.getValues().length <= 0) {
+			return false;
+		}
+
+		double operatorResult = wrap.getValues()[wrap.getValues().length - 1];
+		return super.operate(wrap.getOperator(), operatorResult, wrap.getBaseline());
+	}
+
+}
