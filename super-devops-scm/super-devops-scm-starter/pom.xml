@@ -79,6 +79,20 @@
 				</executions>
 			</plugin>
 
+			<!-- [Step1] add config in maven setting.xml
+					<server>
+						<id>docker.io</id>
+						<username>your user name</username>
+						<password>your password </password>
+					</server>
+			 -->
+			<!-- [Step2] set <useMavenSettingsForAuth>true</useMavenSettingsForAuth> in <configuration> -->
+			<!-- [Step3] <repository>wl4g/${project.build.finalName}</repository> the "wl4g" must be same as you docker hub username  -->
+			<!-- [Step3] build command :
+				normal : mvn install
+				just build: mvn -Pdocker:push dockerfile:push -Ddockerfile.username=xburnerair00 -Ddockerfile.password=hwj13535248668
+				build and push: mvn -Pdocker:push dockerfile:build dockerfile:push -Ddockerfile.username=xburnerair00 -Ddockerfile.password=hwj13535248668
+			-->
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
