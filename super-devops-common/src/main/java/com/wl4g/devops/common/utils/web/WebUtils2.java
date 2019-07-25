@@ -41,6 +41,7 @@ import org.springframework.util.CollectionUtils;
 import com.google.common.base.Charsets;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * WEB tools
@@ -517,7 +518,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * @return
 	 */
 	public static String cleanURI(String uri) {
-		if (StringUtils.isEmpty(uri)) {
+		if (isBlank(uri)) {
 			return uri;
 		}
 
@@ -538,6 +539,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 				schema = uri0.substring(0, startIndex) + URL_SEPAR_PROTO;
 				path = uri0.substring(startIndex + URL_SEPAR_PROTO.length());
 			}
+			// '/shopping/order//list' => '/shopping/order/list'
 			uri = safeDecodeURL(schema + path.replaceAll(URL_SEPAR_SLASH + URL_SEPAR_SLASH + URL_SEPAR_SLASH, URL_SEPAR_SLASH)
 					.replaceAll(URL_SEPAR_SLASH + URL_SEPAR_SLASH, URL_SEPAR_SLASH));
 		} catch (Exception e) {

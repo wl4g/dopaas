@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.iam.example.android;
 
+import static java.util.Collections.emptyMap;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -32,63 +33,89 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class AndroidIamUserCoordinator {
 
-	final public static String PARAM_CODE = "code";
-	final public static String PARAM_DATA = "data";
-	final public static String CODE_UNAUTH = "401";
-	final public static String URI_AUTHENTICATOR = "authenticator";
-
 	/**
 	 * Table for storing authentication information.
 	 */
 	final protected ConcurrentMap<ServiceType, String> authTable = new ConcurrentHashMap<>(16);
 
+	/**
+	 * To JSON map.
+	 * 
+	 * @param json
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	protected abstract Map toJsonMap(String json);
+
+	/**
+	 * Do execution http request.
+	 * 
+	 * @param serviceType
+	 * @param requestUri
+	 * @param parameter
+	 * @return
+	 */
 	@SuppressWarnings("rawtypes")
 	protected abstract ResponseEntity doRequest(ServiceType serviceType, String requestUri, Map parameter);
 
+	/**
+	 * Check for unauthenticated from the current response
+	 * 
+	 * @param serviceType
+	 * @param header
+	 * @param body
+	 * @return Returning TRUE indicates that the current state is not
+	 *         authenticated, otherwise FALSE
+	 */
 	@SuppressWarnings("rawtypes")
-	protected void preRequest(ServiceType serviceType, String requestUri, Map parameter) {
-		if (serviceType == null) {
-			throw new IllegalStateException("Service type must not be null");
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected boolean checkUnauthWithPostResponse(ServiceType serviceType, Map header, String body) {
+	protected boolean isUnauthenticationWithResponse(ServiceType serviceType, Map header, String body) {
 		if (serviceType == null) {
 			throw new IllegalStateException("Service type must not be null");
 		}
 		Map respBody = toJsonMap(body);
-		if (respBody != null && CODE_UNAUTH.equals(respBody.get(PARAM_CODE))) { // unauth?
-			if (ServiceType.IAM_SERV != serviceType) { // e.g. portal unauth?
-				String redirectUrl = (String) respBody.get(PARAM_DATA);
-				if (redirectUrl != null) {
-					// Check symbol for redirectUrl.
-					checkUrl(redirectUrl);
-					// Login IAM
-					ResponseEntity resp = doRequest(ServiceType.IAM_SERV, URI_AUTHENTICATOR, Collections.emptyMap());
+		if (respBody != null && "401".equals(respBody.get("code"))) { // unauth?
+			// e.g. EMS no-authentication?
+			if (ServiceType.IAM != serviceType) {
+				// Login IAM
+				String authIamUri = String.format("authenticator?response_type=json&service=%s&redirect_url=%s",
+						serviceType.getService(), serviceType.getBaseUri());
+				ResponseEntity resp = doRequest(ServiceType.IAM, authIamUri, emptyMap());
+				respBody = toJsonMap(resp.getBody());
+				// IAM no authentication?
+				if (respBody != null && "401".equals(respBody.get("code"))) {
+					return true; // Necessary jump login view.
+				} else {
+					// get redirectUrl and check.
+					String redirectUrl = checkUrl((String) respBody.get("data"));
+					resp = doRequest(serviceType, redirectUrl, emptyMap());
 					respBody = toJsonMap(resp.getBody());
-					// IAM unauth?
-					if (respBody != null && CODE_UNAUTH.equals(respBody.get(PARAM_CODE))) {
-						return true; // Jump login view.
+					if (respBody != null && "401".equals(respBody.get("code"))) {
+						// e.g. save EMS token.
+						String grantTicket = (String) resp.getHeader().get(serviceType.getGrantTicketName());
+						if (grantTicket == null) {
+							throw new IllegalStateException(String
+									.format("Error to iam client grantTicket null, for response header: ", resp.getHeader()));
+						}
+						authTable.put(serviceType, grantTicket);
 					}
 				}
-			} else { // iam unauth?
+			} else { // IAM no authentication?
 				return true; // Direct jump login view.
 			}
 		}
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected abstract Map toJsonMap(String json);
-
-	private void checkUrl(String url) {
+	private String checkUrl(String url) {
 		// Check symbol for redirectUrl.
-		try {
-			new URI(url);
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException(e);
+		if (url != null) {
+			try {
+				new URI(url);
+			} catch (URISyntaxException e) {
+				throw new IllegalStateException(e);
+			}
 		}
+		return url;
 	}
 
 	/**
@@ -103,85 +130,108 @@ public abstract class AndroidIamUserCoordinator {
 		/**
 		 * IAM certification background service.
 		 */
-		IAM_SERV("http://passport.anjiancloud.test/sso/"),
+		IAM("sso", "__SSO", "http://passport.anjiancloud.test/sso/"),
 
 		/**
 		 * Management console back-end service.
 		 */
-		MP_SERV("http://mp.anjiancloud.test/mp/"),
+		MP("mp", "__MP", "http://mp.anjiancloud.test/mp/"),
 
 		/**
 		 * Portal backstage service.
 		 */
-		PORTAL_SERV("http://portal.anjiancloud.test/portal/"),
+		PORTAL("portal", "__PORTAL", "http://portal.anjiancloud.test/portal/"),
 
 		/**
 		 * Energy consumption management background service
 		 */
-		EMS_SERV("http://ems.anjiancloud.test/ems/"),
+		EMS("ems", "__EMS", "http://ems.anjiancloud.test/ems/"),
 
 		/**
 		 * Trend forecasting background service.
 		 */
-		TRENDS_SERV("http://trends.anjiancloud.test/trends/"),
+		TRENDS("trends", "__TRENDS", "http://trends.anjiancloud.test/trends/"),
 
 		/**
 		 * Family cloud backstage service
 		 */
-		HIOT_SERV("http://hiot.anjiancloud.test/hiot/"),
+		HIOT("hiot", "__HIOT", "http://hiot.anjiancloud.test/hiot/"),
 
 		/**
 		 * Industrial internet of Things cloud background service
 		 */
-		IIOT_SERV("http://iiot.anjiancloud.test/iiot/");
+		IIOT("iiot", "__IIOT", "http://iiot.anjiancloud.test/iiot/");
 
 		// /**
 		// * IAM certification background service.
 		// */
-		// IAM_SERV("https://passport.anjiancloud.com/sso/"),
+		// IAM("sso", "__SSO","https://passport.anjiancloud.com/sso/"),
 		//
 		// /**
 		// * Management console back-end service.
 		// */
-		// MP_SERV("https://mp.anjiancloud.com/mp/"),
+		// MP("mp", "__MP","https://mp.anjiancloud.com/mp/"),
 		//
 		// /**
 		// * Portal backstage service.
 		// */
-		// PORTAL_SERV("https://portal.anjiancloud.com/portal/"),
+		// PORTAL("portal",
+		// "__PORTAL","https://portal.anjiancloud.com/portal/"),
 		//
 		// /**
 		// * Energy consumption management background service
 		// */
-		// EMS_SERV("https://ems.anjiancloud.com/ems/"),
+		// EMS("ems", "__EMS","https://ems.anjiancloud.com/ems/"),
 		//
 		// /**
 		// * Trend forecasting background service.
 		// */
-		// TRENDS_SERV("https://trends.anjiancloud.com/trends/"),
+		// TRENDS("trends",
+		// "__TRENDS","https://trends.anjiancloud.com/trends/"),
 		//
 		// /**
 		// * Family cloud backstage service
 		// */
-		// HIOT_SERV("https://hiot.anjiancloud.com/hiot/"),
+		// HIOT("hiot", "__HIOT","https://hiot.anjiancloud.com/hiot/"),
 		//
 		// /**
 		// * Industrial internet of Things cloud background service
 		// */
-		// IIOT_SERV("https://iiot.anjiancloud.com/iiot/");
+		// IIOT("iiot", "__IIOT","https://iiot.anjiancloud.com/iiot/");
+
+		final private String service;
+
+		final private String grantTicketName;
 
 		final private String baseUri;
 
-		private ServiceType(String baseUri) {
+		private ServiceType(String service, String grantTicketName, String baseUri) {
+			this.service = service;
+			this.grantTicketName = grantTicketName;
 			this.baseUri = baseUri;
+		}
+
+		public String getService() {
+			return service;
 		}
 
 		public String getBaseUri() {
 			return baseUri;
 		}
 
+		public String getGrantTicketName() {
+			return grantTicketName;
+		}
+
 	}
 
+	/**
+	 * Response wrap entity.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年7月25日
+	 * @since
+	 */
 	@SuppressWarnings("rawtypes")
 	public static class ResponseEntity {
 
@@ -221,10 +271,6 @@ public abstract class AndroidIamUserCoordinator {
 			this.body = body;
 		}
 
-	}
-
-	public static void main(String[] args) {
-		System.out.println("".equals(null));
 	}
 
 }
