@@ -29,7 +29,7 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	// jar
 	public static final int TAR_TYPE_JAR = 2;
 	// other
-	public static final int TAR_TYPE_OTHER = 3;
+	public static final int TAR_TYPE_DOCKER = 3;
 
 	// task-create
 	public static final int TASK_STATUS_CREATE = 0;
