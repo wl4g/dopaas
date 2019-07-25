@@ -33,9 +33,11 @@ import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.handler.MustImpledRuleConfigHandler;
 import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
 import com.wl4g.devops.umc.rule.inspect.AvgRuleInspector;
+import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.LatestRuleInspector;
 import com.wl4g.devops.umc.rule.inspect.MaxRuleInspector;
 import com.wl4g.devops.umc.rule.inspect.MinRuleInspector;
+import com.wl4g.devops.umc.rule.inspect.RuleInspector;
 import com.wl4g.devops.umc.rule.inspect.SumRuleInspector;
 
 /**
@@ -129,6 +131,11 @@ public class AlarmAutoConfiguration {
 	@Bean
 	public SumRuleInspector sumRuleInspector() {
 		return new SumRuleInspector();
+	}
+
+	@Bean
+	public CompositeRuleInspectorAdapter compositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
+		return new CompositeRuleInspectorAdapter(inspectors);
 	}
 
 }
