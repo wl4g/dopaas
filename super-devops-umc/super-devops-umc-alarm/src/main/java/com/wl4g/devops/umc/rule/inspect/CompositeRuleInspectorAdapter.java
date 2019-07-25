@@ -16,22 +16,17 @@
 package com.wl4g.devops.umc.rule.inspect;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.umc.notification.AlarmNotifier;
 import com.wl4g.devops.umc.notification.AlarmType;
 import com.wl4g.devops.umc.rule.AggregatorType;
-import com.wl4g.devops.umc.rule.OperatorType;
-import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 
 /**
  * Composite rule inspector adapter.
@@ -48,8 +43,8 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	final protected Map<AggregatorType, RuleInspector> ruleInspectors = new LinkedHashMap<>();
 
 	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
-		Assert.state(!isEmpty(inspectors), "Rule inspectors has at least one.");
-		inspectors.forEach(inspector -> inspectors.put(inspector.aggregateType(), inspector));
+		Assert.state(!CollectionUtils.isEmpty(inspectors), "Rule inspectors has at least one.");
+		inspectors.forEach(inspector -> ruleInspectors.put(inspector.aggregateType(), inspector));
 	}
 
 	@Override
