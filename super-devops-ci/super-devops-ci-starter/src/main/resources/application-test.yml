@@ -58,8 +58,10 @@ redis:
 
 # Deploy git configuration.
 deploy:
+  git-url: http://git.anjiancloud.repo
   git-username: heweijie
   git-password: hwj13535248668
+  git-token: Xw6xYojnoj7SSDyyLXP7
   cipher-key: 03DE18C2FC4E605F
   task-timeout: 300
   docker-push-username: xburnerair00
