@@ -24,9 +24,14 @@ import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.common.web.RespBase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -110,6 +115,38 @@ public class ProjectController {
         projectService.updateLockStatus(id, CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK);
         return resp;
     }
+
+
+    @RequestMapping(value = "/getBranchs")
+    public RespBase<?> getBranchs(Integer appGroupId,Integer tarOrBranch) {
+        RespBase<Object> resp = RespBase.create();
+        Assert.notNull(appGroupId, "id can not be null");
+        if(tarOrBranch==2){
+
+        }else{
+
+        }
+
+        return resp;
+    }
+
+    @RequestMapping(value = "/test")
+    public String getBr(){
+        Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+        RestTemplate restTemplate = new RestTemplate(factory);
+
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("PRIVATE-TOKEN", "Xw6xYojnoj7SSDyyLXP7");
+        HttpEntity<String> formEntity = new HttpEntity<String>(null, headers);
+        String result = restTemplate.postForEntity("http://git.anjiancloud.repo/api/v4/projects?search=safecloud-devops&simple=true",formEntity, String.class).getBody();
+        return result;
+    }
+
+
+
+
 
 
 }
