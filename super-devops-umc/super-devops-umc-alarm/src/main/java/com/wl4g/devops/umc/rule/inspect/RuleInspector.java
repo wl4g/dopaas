@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import java.util.Arrays;
+
+import org.springframework.util.Assert;
+
 import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 
@@ -27,16 +31,64 @@ import com.wl4g.devops.umc.rule.OperatorType;
  */
 public interface RuleInspector {
 
-	AggregatorType inspectType();
+	AggregatorType aggregateType();
 
 	/**
 	 * Metric aggregate rule inspection
 	 * 
-	 * @param values
-	 * @param operatorEnum
-	 * @param standard
+	 * @param wrap
 	 * @return
 	 */
-	boolean verify(Double[] values, OperatorType operatorEnum, double standard);
+	boolean verify(InspectWrapper wrap);
+
+	/**
+	 * Metric inspection wrapper.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年7月24日
+	 * @since
+	 */
+	public static class InspectWrapper {
+
+		final private OperatorType operator;
+
+		final private AggregatorType aggregator;
+
+		final private Double baseline;
+
+		final private Double[] values;
+
+		public InspectWrapper(OperatorType operator, AggregatorType aggregator, Double baseline, Double[] values) {
+			Assert.isNull(operator, "Operator type must not be null");
+			Assert.isNull(aggregator, "Aggregator type must not be null");
+			this.operator = operator;
+			this.aggregator = aggregator;
+			this.baseline = baseline;
+			this.values = values;
+		}
+
+		public OperatorType getOperator() {
+			return operator;
+		}
+
+		public AggregatorType getAggregator() {
+			return aggregator;
+		}
+
+		public Double[] getValues() {
+			return values;
+		}
+
+		public Double getBaseline() {
+			return baseline;
+		}
+
+		@Override
+		public String toString() {
+			return "MeticInspectWrapper [operator=" + operator + ", aggregator=" + aggregator + ", values="
+					+ Arrays.toString(values) + ", baseline=" + baseline + "]";
+		}
+
+	}
 
 }

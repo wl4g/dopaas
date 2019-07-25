@@ -15,16 +15,23 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.umc.notification.AlarmNotifier;
+import com.wl4g.devops.umc.notification.AlarmType;
 import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
+import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 
 /**
  * Composite rule inspector adapter.
@@ -42,17 +49,41 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 
 	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
 		Assert.state(!isEmpty(inspectors), "Rule inspectors has at least one.");
-		inspectors.forEach(inspector -> inspectors.put(inspector.inspectType(), inspector));
+		inspectors.forEach(inspector -> inspectors.put(inspector.aggregateType(), inspector));
 	}
 
 	@Override
-	public boolean verify(Double[] values, OperatorType operatorEnum, double standard) {
-		return false;
+	public boolean verify(InspectWrapper wrap) {
+		Optional<RuleInspector> opt = determineRuleInspector("");
+		return opt.isPresent() ? opt.get().verify(wrap) : false;
 	}
 
 	@Override
-	public AggregatorType inspectType() {
+	public AggregatorType aggregateType() {
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Determine rule inspector.
+	 * 
+	 * @param aggregateType
+	 * @return
+	 */
+	protected Optional<RuleInspector> determineRuleInspector(String aggregateType) {
+		if (isBlank(aggregateType)) {
+			log.warn("Unsupported this rule aggregate type: {}", aggregateType);
+			return Optional.empty();
+		}
+		for (String part : aggregateType.split(",")) {
+			AlarmType type = AlarmType.safeOf(part);
+			if (null != type) {
+				RuleInspector inspector = ruleInspectors.get(type);
+				if (inspector != null) {
+					return Optional.of(inspector);
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 }

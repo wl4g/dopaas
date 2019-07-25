@@ -16,7 +16,6 @@
 package com.wl4g.devops.umc.rule.inspect;
 
 import com.wl4g.devops.umc.rule.AggregatorType;
-import com.wl4g.devops.umc.rule.OperatorType;
 
 /**
  * Latest rule inspector
@@ -28,17 +27,18 @@ import com.wl4g.devops.umc.rule.OperatorType;
 public class LatestRuleInspector extends AbstractRuleInspector {
 
 	@Override
-	public AggregatorType inspectType() {
+	public AggregatorType aggregateType() {
 		return AggregatorType.LATEST;
 	}
 
 	@Override
-	public boolean verify(Double[] values, OperatorType operatorEnum, double standard) {
-		if (values == null || values.length <= 0) {
+	public boolean verify(InspectWrapper wrap) {
+		if (wrap.getValues() == null || wrap.getValues().length <= 0) {
 			return false;
 		}
-		double operatorResult = values[values.length - 1];
-		return super.operate(operatorEnum, operatorResult, standard);
+
+		double operatorResult = wrap.getValues()[wrap.getValues().length - 1];
+		return super.operate(wrap.getOperator(), operatorResult, wrap.getBaseline());
 	}
 
 }
