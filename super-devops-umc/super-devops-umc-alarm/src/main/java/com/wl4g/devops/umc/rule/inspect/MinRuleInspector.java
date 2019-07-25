@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 
 /**
@@ -22,6 +23,11 @@ import com.wl4g.devops.umc.rule.OperatorType;
  * @date 2019-07-05 10:02:00
  */
 public class MinRuleInspector extends AbstractRuleInspector {
+
+	@Override
+	public AggregatorType inspectType() {
+		return AggregatorType.MIN;
+	}
 
 	@Override
 	public boolean verify(Double[] values, OperatorType operatorEnum, double standard) {

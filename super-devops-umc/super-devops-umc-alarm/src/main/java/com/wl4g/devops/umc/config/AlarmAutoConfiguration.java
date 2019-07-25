@@ -32,6 +32,11 @@ import com.wl4g.devops.umc.notification.wechat.WeChatNotifier;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.handler.MustImpledRuleConfigHandler;
 import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
+import com.wl4g.devops.umc.rule.inspect.AvgRuleInspector;
+import com.wl4g.devops.umc.rule.inspect.LatestRuleInspector;
+import com.wl4g.devops.umc.rule.inspect.MaxRuleInspector;
+import com.wl4g.devops.umc.rule.inspect.MinRuleInspector;
+import com.wl4g.devops.umc.rule.inspect.SumRuleInspector;
 
 /**
  * Alarm auto configuration.
@@ -95,6 +100,35 @@ public class AlarmAutoConfiguration {
 	@Bean
 	public CompositeAlarmNotifierAdapter compositeAlarmNotifierAdapter(List<AlarmNotifier> notifiers) {
 		return new CompositeAlarmNotifierAdapter(notifiers);
+	}
+
+	//
+	// Alarm rule inspector.
+	//
+
+	@Bean
+	public AvgRuleInspector avgRuleInspector() {
+		return new AvgRuleInspector();
+	}
+
+	@Bean
+	public MinRuleInspector minRuleInspector() {
+		return new MinRuleInspector();
+	}
+
+	@Bean
+	public MaxRuleInspector maxRuleInspector() {
+		return new MaxRuleInspector();
+	}
+
+	@Bean
+	public LatestRuleInspector latestRuleInspector() {
+		return new LatestRuleInspector();
+	}
+
+	@Bean
+	public SumRuleInspector sumRuleInspector() {
+		return new SumRuleInspector();
 	}
 
 }

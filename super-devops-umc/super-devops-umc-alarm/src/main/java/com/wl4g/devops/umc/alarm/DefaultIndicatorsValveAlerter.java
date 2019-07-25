@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.wl4g.devops.umc.rule.RuleConfigManager.*;
+
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
@@ -38,7 +39,7 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.rule.inspect.AvgRuleInspector;
-import com.wl4g.devops.umc.rule.inspect.LastRuleInspector;
+import com.wl4g.devops.umc.rule.inspect.LatestRuleInspector;
 import com.wl4g.devops.umc.rule.inspect.MaxRuleInspector;
 import com.wl4g.devops.umc.rule.inspect.MinRuleInspector;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector;
@@ -151,8 +152,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		switch (of(aggregator)) {
 		case AVG:
 			return new AvgRuleInspector();
-		case LAST:
-			return new LastRuleInspector();
+		case LATEST:
+			return new LatestRuleInspector();
 		case MAX:
 			return new MaxRuleInspector();
 		case MIN:

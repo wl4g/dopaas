@@ -15,13 +15,22 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import com.wl4g.devops.umc.rule.AggregatorType;
 import com.wl4g.devops.umc.rule.OperatorType;
 
 /**
+ * Avg rule inspector
+ * 
+ * @author Wangl.sir
  * @author vjay
  * @date 2019-07-05 10:02:00
  */
 public class AvgRuleInspector extends AbstractRuleInspector {
+
+	@Override
+	public AggregatorType inspectType() {
+		return AggregatorType.AVG;
+	}
 
 	@Override
 	public boolean verify(Double[] values, OperatorType oper, double threshold) {
@@ -38,4 +47,5 @@ public class AvgRuleInspector extends AbstractRuleInspector {
 		operatorResult = operatorResult / count;
 		return super.operate(oper, operatorResult, threshold);
 	}
+
 }
