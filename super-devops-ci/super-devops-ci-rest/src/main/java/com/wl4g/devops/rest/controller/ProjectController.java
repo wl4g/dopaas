@@ -146,7 +146,7 @@ public class ProjectController {
 
         Integer gitlabProjectId = getGitlabProjectId(getGitProjectNameByUrl(url));
 
-        if(tarOrBranch==2){//tag
+        if(tarOrBranch!=null&&tarOrBranch==2){//tag
             List<String> branchNames = getTagsByProjectId(gitlabProjectId);
             resp.getData().put("branchNames",branchNames);
         }else{//branch

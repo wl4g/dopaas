@@ -46,8 +46,6 @@ public class Project extends BaseBean implements Serializable {
 
 	private Integer lockStatus;
 
-	private String restartCommand;
-
 	public String getProjectName() {
 		return projectName;
 	}
@@ -112,13 +110,6 @@ public class Project extends BaseBean implements Serializable {
 		this.lockStatus = lockStatus;
 	}
 
-	public String getRestartCommand() {
-		return restartCommand;
-	}
-
-	public void setRestartCommand(String restartCommand) {
-		this.restartCommand = restartCommand;
-	}
 
 	@Override
 	public String toString() {

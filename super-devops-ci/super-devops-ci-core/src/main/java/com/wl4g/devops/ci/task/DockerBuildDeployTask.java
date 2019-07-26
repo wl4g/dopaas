@@ -63,7 +63,7 @@ public class DockerBuildDeployTask extends AbstractDeployTask {
         Assert.notNull(taskDetailId, "taskDetailId can not be null");
         try {
             // Update status
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+            taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 
             // Pull
@@ -80,11 +80,11 @@ public class DockerBuildDeployTask extends AbstractDeployTask {
             result.append(s3).append("\n");
 
             // Update status
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
+            taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 
         } catch (Exception e) {
             log.error("Deploy job failed", e);
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, result.toString() + "\n" + e.toString());
+            taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, result.toString() + "\n" + e.toString());
             //throw new RuntimeException(e);
         }
 

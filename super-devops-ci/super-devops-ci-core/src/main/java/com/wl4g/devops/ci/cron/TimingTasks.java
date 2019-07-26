@@ -1,7 +1,7 @@
 package com.wl4g.devops.ci.cron;
 
 import com.wl4g.devops.ci.config.DeployProperties;
-import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,7 +19,7 @@ public class TimingTasks {
     private DeployProperties config;
 
     @Autowired
-    private TaskDao taskDao;
+    private TaskHistoryDao taskHistoryDao;
 
     /**
      * Scan time out task
@@ -30,7 +30,7 @@ public class TimingTasks {
         if (taskTimeout == null || taskTimeout == 0) {
             return;
         }
-        taskDao.updateStatus(taskTimeout);
+        taskHistoryDao.updateStatus(taskTimeout);
     }
 
 

@@ -1,39 +1,29 @@
-/*
- * Copyright 2017 ~ 2025 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.wl4g.devops.dao.ci;
 
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskDetail;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface TaskDetailDao {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(TaskHistoryDetail record);
+    int insert(TaskDetail record);
 
-    int insertSelective(TaskHistoryDetail record);
+    int insertSelective(TaskDetail record);
 
-    TaskHistoryDetail selectByPrimaryKey(Integer id);
+    TaskDetail selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TaskHistoryDetail record);
+    int updateByPrimaryKeySelective(TaskDetail record);
 
-    int updateByPrimaryKeyWithBLOBs(TaskHistoryDetail record);
+    int updateByPrimaryKey(TaskDetail record);
 
-    int updateByPrimaryKey(TaskHistoryDetail record);
+    int deleteByTaskId(Integer taskId);
 
-    List<TaskHistoryDetail> getDetailByTaskId(Integer id);
+    List<TaskDetail> getUsedInstance(@Param("appGroupId") Integer appGroupId, @Param("taskId") Integer taskId);
+
+    List<TaskDetail> selectByTaskId(Integer taskId);
+
+
 
 }
