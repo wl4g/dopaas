@@ -17,11 +17,18 @@ package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
+import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.shiro.util.Assert.hasText;
+import static org.apache.shiro.util.Assert.notNull;
+import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -183,11 +190,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 			// Callback success redirect URI
 			String successRedirectUrl = determineSuccessUrl(tk, subject, request, response); // prior
-			Assert.hasText(successRedirectUrl, "Check the successful login redirection URL configure");
+			hasText(successRedirectUrl, "Check the successful login redirection URL configure");
 
 			// Granting ticket
 			String grantTicket = null;
-			if (StringUtils.hasText(fromAppName)) {
+			if (isNotBlank(fromAppName)) {
 				grantTicket = authHandler.loggedin(fromAppName, subject).getGrantTicket();
 			}
 
@@ -215,13 +222,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				 * grantTicket is required.
 				 */
 				Map params = Collections.emptyMap();
-				if (StringUtils.hasText(grantTicket)) {
+				if (isNotBlank(grantTicket)) {
 					params = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
 				}
 				if (log.isInfoEnabled()) {
 					log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
 				}
-				WebUtils.issueRedirect(request, response, successRedirectUrl, params, true);
+				issueRedirect(request, response, successRedirectUrl, params, true);
 			}
 
 		} catch (IamException e) {
@@ -365,11 +372,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	private String makeLoggedResponse(ServletRequest request, String grantTicket, String redirectUrl) {
-		Assert.notNull(redirectUrl, "'redirectUrl' must not be null");
+		notNull(redirectUrl, "'redirectUrl' must not be null");
 
 		// Redirection URL
 		StringBuffer uri = new StringBuffer(redirectUrl);
-		if (StringUtils.hasText(grantTicket)) {
+		if (isNotBlank(grantTicket)) {
 			if (uri.lastIndexOf("?") > 0) {
 				uri.append("&");
 			} else {
@@ -381,7 +388,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Relative path processing
 		String url = uri.toString();
 		if (url.startsWith("/")) {
-			url = WebUtils2.getRFCBaseURI(WebUtils.toHttp(request), true) + uri;
+			url = getRFCBaseURI(WebUtils.toHttp(request), true) + uri;
 		}
 
 		// Make message
@@ -422,14 +429,14 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			ServletResponse response) {
 		// Callback success redirect URI
 		String successRedirectUrl = getFromRedirectUrl(request);
-		if (!StringUtils.hasText(successRedirectUrl)) {
+		if (isBlank(successRedirectUrl)) {
 			successRedirectUrl = getSuccessUrl(); // fall-back
 		}
 		// Determine success URL
 		successRedirectUrl = context.determineLoginSuccessUrl(successRedirectUrl, token, subject, request, response);
 
-		Assert.hasText(successRedirectUrl, "'successRedirectUrl' is empty, please check the configure");
-		WebUtils2.cleanURI(successRedirectUrl); // symbol check
+		hasText(successRedirectUrl, "'successRedirectUrl' is empty, please check the configure");
+		cleanURI(successRedirectUrl); // symbol check
 		return successRedirectUrl;
 	}
 
@@ -457,8 +464,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		String loginUrl = context.determineLoginFailureUrl(failRedirectUrl, token, ae, request, response);
-		Assert.hasText(loginUrl, "'loginUrl' is empty, please check the configure");
-		WebUtils2.cleanURI(loginUrl); // check
+		hasText(loginUrl, "'loginUrl' is empty, please check the configure");
+		cleanURI(loginUrl); // check
 		return loginUrl;
 	}
 
