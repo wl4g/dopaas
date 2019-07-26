@@ -49,9 +49,9 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	// Auto trigger
 	public static final int TASK_TYPE_TIMMING = 4;
 
-	//Task Lock Status -- Lock
+	//TaskHistory Lock Status -- Lock
 	public static final int TASK_LOCK_STATUS_LOCK = 1;
-	//Task Lock Status -- unLock
+	//TaskHistory Lock Status -- unLock
 	public static final int TASK_LOCK_STATUS__UNLOCK = 0;
 
 

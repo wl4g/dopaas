@@ -16,6 +16,7 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.TriggerDetail;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -35,4 +36,6 @@ public interface TriggerDetailDao {
     int deleteByTriggerId(Integer id);
 
     List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
+
+    List<TriggerDetail> getUsedInstance(@Param("projectId") Integer projectId,@Param("triggerId") Integer triggerId);
 }

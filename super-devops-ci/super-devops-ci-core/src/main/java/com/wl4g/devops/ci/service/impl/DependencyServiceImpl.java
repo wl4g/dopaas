@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskSign;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -64,7 +64,7 @@ public class DependencyServiceImpl implements DependencyService {
     private TaskSignDao taskSignDao;
 
     @Override
-    public void build(Task task, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+    public void build(TaskHistory taskHistory, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
         Integer projectId = dependency.getProjectId();
 
         List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
@@ -73,7 +73,7 @@ public class DependencyServiceImpl implements DependencyService {
                 String br = dep.getBranch();
                 Dependency dependency1 = new Dependency(dep.getDependentId());
                 dependency1.setId(dep.getId());
-                build(task, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
+                build(taskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
             }
         }
 
@@ -102,7 +102,7 @@ public class DependencyServiceImpl implements DependencyService {
             //save
             if (isDependency) {
                 TaskSign taskSign = new TaskSign();
-                taskSign.setTaskId(task.getId());
+                taskSign.setTaskId(taskHistory.getId());
                 taskSign.setDependenvyId(dependency.getId());
                 taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
                 taskSignDao.insertSelective(taskSign);
@@ -118,7 +118,7 @@ public class DependencyServiceImpl implements DependencyService {
     }
 
     @Override
-    public void rollback(Task task, Task refTask, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+    public void rollback(TaskHistory taskHistory, TaskHistory refTaskHistory, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
         Integer projectId = dependency.getProjectId();
         List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
         if (dependencies != null && dependencies.size() > 0) {
@@ -126,7 +126,7 @@ public class DependencyServiceImpl implements DependencyService {
                 String br = dep.getBranch();
                 Dependency dependency1 = new Dependency(dep.getDependentId());
                 dependency1.setId(dep.getId());
-                rollback(task, refTask, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
+                rollback(taskHistory, refTaskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
             }
         }
 
@@ -147,11 +147,11 @@ public class DependencyServiceImpl implements DependencyService {
 
             String sha;
             if (isDependency) {
-                TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependency.getId(), task.getRefId());
+                TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependency.getId(), taskHistory.getRefId());
                 Assert.notNull(taskSign, "not found taskSign");
                 sha = taskSign.getShaGit();
             } else {
-                sha = refTask.getShaGit();
+                sha = refTaskHistory.getShaGit();
             }
 
             if (GitUtils.checkGitPahtExist(path)) {
@@ -167,7 +167,7 @@ public class DependencyServiceImpl implements DependencyService {
             //save
             if (isDependency) {
                 TaskSign taskSign = new TaskSign();
-                taskSign.setTaskId(task.getId());
+                taskSign.setTaskId(taskHistory.getId());
                 taskSign.setDependenvyId(dependency.getId());
                 taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
                 taskSignDao.insertSelective(taskSign);

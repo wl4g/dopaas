@@ -11,6 +11,7 @@
     <result column="link_app_home" jdbcType="VARCHAR" property="linkAppHome" />
     <result column="lock_status" jdbcType="INTEGER" property="lockStatus" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="restart_command" jdbcType="VARCHAR" property="restartCommand" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
@@ -21,11 +22,11 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, project_name, git_url, app_group_id, tar_path, parent_app_home, link_app_home,lock_status,
-    remark, del_flag, create_date, create_by, update_date, update_by
+    remark,restart_command, del_flag, create_date, create_by, update_date, update_by
   </sql>
   <sql id="Base_Column_List_p">
     p.id, p.project_name, p.git_url, p.app_group_id, p.tar_path, p.parent_app_home, p.link_app_home,p.lock_status,
-    p.remark, p.del_flag, p.create_date, p.create_by, p.update_date, p.update_by
+    p.remark,p.restart_command, p.del_flag, p.create_date, p.create_by, p.update_date, p.update_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -40,12 +41,12 @@
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project">
     insert into ci_project (id, project_name, git_url,
       app_group_id, tar_path, parent_app_home,
-      link_app_home,lock_status, remark, del_flag,
+      link_app_home,lock_status, remark,restart_command, del_flag,
       create_date, create_by, update_date,
       update_by)
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{gitUrl,jdbcType=VARCHAR},
       #{appGroupId,jdbcType=INTEGER}, #{tarPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
-      #{linkAppHome,jdbcType=VARCHAR},#{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+      #{linkAppHome,jdbcType=VARCHAR},#{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{restartCommand,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
   </insert>
@@ -78,6 +79,9 @@
       </if>
       <if test="remark != null">
         remark,
+      </if>
+      <if test="restartCommand != null">
+        restart_command,
       </if>
       <if test="delFlag != null">
         del_flag,
@@ -123,6 +127,9 @@
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="restartCommand != null">
+        #{restartCommand,jdbcType=VARCHAR},
+      </if>
       <if test="delFlag != null">
         #{delFlag,jdbcType=CHAR},
       </if>
@@ -167,6 +174,9 @@
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="restartCommand != null">
+        restart_command = #{restartCommand,jdbcType=VARCHAR},
+      </if>
       <if test="delFlag != null">
         del_flag = #{delFlag,jdbcType=CHAR},
       </if>
@@ -195,6 +205,7 @@
       link_app_home = #{linkAppHome,jdbcType=VARCHAR},
       lock_status = #{lockStatus,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
+      restart_command = #{restartCommand,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},

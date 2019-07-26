@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.task;
 
 import com.wl4g.devops.ci.provider.DockerBuildDeployProvider;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.springframework.util.Assert;
 
@@ -40,15 +40,15 @@ public class DockerBuildDeployTask extends AbstractDeployTask {
     private Integer taskDetailId;
 
     public DockerBuildDeployTask(DockerBuildDeployProvider provider, Project project, String path, AppInstance instance,
-                                 String tarPath, List<TaskDetail> taskDetails) {
+                                 String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
         super(instance, project);
         this.provider = provider;
         this.path = path;
         this.tarPath = tarPath;
-        Assert.notNull(taskDetails, "taskDetails can not be null");
-        for (TaskDetail taskDetail : taskDetails) {
-            if (taskDetail.getInstanceId().intValue() == instance.getId().intValue()) {
-                this.taskDetailId = taskDetail.getId();
+        Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
+        for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
+            if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
+                this.taskDetailId = taskHistoryDetail.getId();
                 break;
             }
         }

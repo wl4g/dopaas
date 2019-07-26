@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.devops.dao.ci.TaskDetailDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskDetail" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="instance_id" property="instanceId" jdbcType="INTEGER" />
@@ -15,7 +15,7 @@
     <!-- ohter -->
     <result column="remark" property="instanceName" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskDetail" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" extends="BaseResultMap" >
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -37,7 +37,7 @@
     delete from ci_task_detail
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
     insert into ci_task_detail (id, task_id, instance_id, 
       status, del_flag, create_date, 
       create_by, update_date, update_by, 
@@ -47,7 +47,7 @@
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{result,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
     insert into ci_task_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -114,7 +114,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
     update ci_task_detail
     <set >
       <if test="taskId != null" >
@@ -147,7 +147,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
     update ci_task_detail
     set task_id = #{taskId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},
@@ -160,7 +160,7 @@
       result = #{result,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
     update ci_task_detail
     set task_id = #{taskId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},

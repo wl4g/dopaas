@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,6 +45,7 @@ public class TriggerServiceImpl implements TriggerService {
     @Override
     @Transactional
     public Trigger insert(Trigger trigger, Integer[] instanceIds) {
+        Assert.state(!isRepeat(trigger,instanceIds),"trigger deploy this instance is Repeat,please check");
         trigger.preInsert();
         int result = triggerDao.insertSelective(trigger);
         int triggerId = trigger.getId();
@@ -81,6 +83,17 @@ public class TriggerServiceImpl implements TriggerService {
         }
         trigger.setTriggerDetails(triggerDetails);
         return trigger;
+    }
+
+
+    private boolean isRepeat(Trigger trigger,Integer[] instanceIds){
+        List<TriggerDetail> usedInstance = triggerDetailDao.getUsedInstance(trigger.getProjectId(), trigger.getId());
+        for(TriggerDetail triggerDetail : usedInstance){
+            if(Arrays.asList(instanceIds).contains(triggerDetail.getInstanceId())){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

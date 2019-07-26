@@ -61,7 +61,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 	private ThreadPoolExecutor worker;
 
 	public GenericTaskRunner(C config) {
-		Assert.notNull(config, "Task properties must not be null");
+		Assert.notNull(config, "TaskHistory properties must not be null");
 		this.config = config;
 	}
 

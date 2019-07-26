@@ -19,8 +19,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskService;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.*;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.common.web.RespBase;
@@ -78,7 +78,7 @@ public class TaskController {
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
         Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-        List<Task> list = taskService.list(groupName, projectName, branchName);
+        List<TaskHistory> list = taskService.list(groupName, projectName, branchName);
         customPage.setPageNum(pageNum);
         customPage.setPageSize(pageSize);
         customPage.setTotal(page.getTotal());
@@ -101,19 +101,19 @@ public class TaskController {
     @RequestMapping(value = "/detail")
     public RespBase<?> detail(Integer taskId) {
         RespBase<Object> resp = RespBase.create();
-        Task task = taskService.getTaskById(taskId);
-        List<TaskDetail> taskDetails = taskService.getDetailByTaskId(taskId);
-        resp.getData().put("group", task.getGroupName());
-        resp.getData().put("branch", task.getBranchName());
-        resp.getData().put("result", task.getResult());
-        resp.getData().put("taskDetails", taskDetails);
+        TaskHistory taskHistory = taskService.getTaskById(taskId);
+        List<TaskHistoryDetail> taskHistoryDetails = taskService.getDetailByTaskId(taskId);
+        resp.getData().put("group", taskHistory.getGroupName());
+        resp.getData().put("branch", taskHistory.getBranchName());
+        resp.getData().put("result", taskHistory.getResult());
+        resp.getData().put("taskDetails", taskHistoryDetails);
         return resp;
     }
 
     @RequestMapping(value = "/rollback")
     public RespBase<?> rollback(Integer taskId) {
         RespBase<Object> resp = RespBase.create();
-        Task task = taskService.getTaskById(taskId);
+        TaskHistory taskHistory = taskService.getTaskById(taskId);
         ciService.rollback(taskId);
         return resp;
     }

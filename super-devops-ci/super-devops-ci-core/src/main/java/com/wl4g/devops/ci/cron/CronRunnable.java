@@ -66,7 +66,7 @@ public class CronRunnable implements Runnable {
                 e.printStackTrace();
             }
 
-            log.info("Cron Create Task triggerId={} projectId={} projectName={} time={}", trigger.getId(), project.getId(), project.getProjectName(), new Date());
+            log.info("Cron Create TaskHistory triggerId={} projectId={} projectName={} time={}", trigger.getId(), project.getId(), project.getProjectName(), new Date());
         }
     }
 

@@ -20,8 +20,8 @@ import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
@@ -74,18 +74,18 @@ public abstract class BasedDeployProvider {
     final private List<AppInstance> instances;
 
     /**
-     * taskDetails
+     * taskHistoryDetails
      */
-    final private List<TaskDetail> taskDetails;
+    final private List<TaskHistoryDetail> taskHistoryDetails;
 
     /**
      * service
      */
     final private DependencyService dependencyService;
 
-    final private Task task;
+    final private TaskHistory taskHistory;
 
-    final private Task refTask;
+    final private TaskHistory refTaskHistory;
 
     final private Project project;
 
@@ -107,16 +107,16 @@ public abstract class BasedDeployProvider {
     protected Boolean isSuccess = new Boolean(true);
     protected StringBuffer result = new StringBuffer();
 
-    public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, Task task, Task refTask,
-                               List<TaskDetail> taskDetails) {
+    public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
+                               List<TaskHistoryDetail> taskHistoryDetails) {
         this.config = SpringContexts.getBean(DeployProperties.class);
         this.path = path;
         this.branch = branch;
         this.alias = alias;
         this.instances = instances;
-        this.task = task;
-        this.refTask = refTask;
-        this.taskDetails = taskDetails;
+        this.taskHistory = taskHistory;
+        this.refTaskHistory = refTaskHistory;
+        this.taskHistoryDetails = taskHistoryDetails;
 
         String[] a = project.getTarPath().split("/");
         this.tarName = a[a.length - 1];
@@ -373,8 +373,8 @@ public abstract class BasedDeployProvider {
         return dependencyService;
     }
 
-    public List<TaskDetail> getTaskDetails() {
-        return taskDetails;
+    public List<TaskHistoryDetail> getTaskHistoryDetails() {
+        return taskHistoryDetails;
     }
 
     public Project getProject() {
@@ -413,11 +413,11 @@ public abstract class BasedDeployProvider {
         this.shaLocal = shaLocal;
     }
 
-    public Task getTask() {
-        return task;
+    public TaskHistory getTaskHistory() {
+        return taskHistory;
     }
 
-    public Task getRefTask() {
-        return refTask;
+    public TaskHistory getRefTaskHistory() {
+        return refTaskHistory;
     }
 }
