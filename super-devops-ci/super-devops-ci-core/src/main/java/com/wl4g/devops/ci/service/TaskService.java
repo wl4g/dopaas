@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.springframework.stereotype.Component;
 
@@ -30,14 +30,14 @@ import java.util.List;
 @Component
 public interface TaskService {
 
-    List<Task> list(String groupName, String projectName, String branchName);
+    List<TaskHistory> list(String groupName, String projectName, String branchName);
 
-    List<TaskDetail> getDetailByTaskId(Integer id);
+    List<TaskHistoryDetail> getDetailByTaskId(Integer id);
 
-    Task getTaskById(Integer id);
+    TaskHistory getTaskById(Integer id);
 
-    Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-                    Integer parentId, String command, Integer tarType);
+    TaskHistory createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
+                           Integer parentId, String command, Integer tarType);
 
     void updateTaskStatus(int taskId, int status);
 

@@ -15,25 +15,25 @@
  */
 package com.wl4g.devops.dao.ci;
 
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 
 import java.util.List;
 
 public interface TaskDetailDao {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(TaskDetail record);
+    int insert(TaskHistoryDetail record);
 
-    int insertSelective(TaskDetail record);
+    int insertSelective(TaskHistoryDetail record);
 
-    TaskDetail selectByPrimaryKey(Integer id);
+    TaskHistoryDetail selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TaskDetail record);
+    int updateByPrimaryKeySelective(TaskHistoryDetail record);
 
-    int updateByPrimaryKeyWithBLOBs(TaskDetail record);
+    int updateByPrimaryKeyWithBLOBs(TaskHistoryDetail record);
 
-    int updateByPrimaryKey(TaskDetail record);
+    int updateByPrimaryKey(TaskHistoryDetail record);
 
-    List<TaskDetail> getDetailByTaskId(Integer id);
+    List<TaskHistoryDetail> getDetailByTaskId(Integer id);
 
 }

@@ -135,7 +135,7 @@ public abstract class ShellContextHolder {
 	 */
 	public static void assertInterruptIfNecessary() throws InterruptedException {
 		if (isInterruptIfNecessary()) {
-			throw new InterruptedException(String.format("Task that interrupted!"));
+			throw new InterruptedException(String.format("TaskHistory that interrupted!"));
 		}
 	}
 

@@ -43,9 +43,9 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
 
-        <!--<table tableName="ci_task" domainObjectName="Task"
+        <!--<table tableName="ci_task" domainObjectName="TaskHistory"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="ci_task_detail" domainObjectName="TaskDetail"
+        <table tableName="ci_task_detail" domainObjectName="TaskHistoryDetail"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="ci_trigger" domainObjectName="Trigger"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>

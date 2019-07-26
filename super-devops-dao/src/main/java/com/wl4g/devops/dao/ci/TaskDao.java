@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dao.ci;
 
-import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,19 +23,19 @@ import java.util.List;
 public interface TaskDao {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Task record);
+    int insert(TaskHistory record);
 
-    int insertSelective(Task record);
+    int insertSelective(TaskHistory record);
 
-    Task selectByPrimaryKey(Integer id);
+    TaskHistory selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Task record);
+    int updateByPrimaryKeySelective(TaskHistory record);
 
-    int updateByPrimaryKeyWithBLOBs(Task record);
+    int updateByPrimaryKeyWithBLOBs(TaskHistory record);
 
-    int updateByPrimaryKey(Task record);
+    int updateByPrimaryKey(TaskHistory record);
 
-    List<Task> list(@Param("groupName") String groupName,@Param("projectName") String projectName,@Param("branchName") String branchName);
+    List<TaskHistory> list(@Param("groupName") String groupName, @Param("projectName") String projectName, @Param("branchName") String branchName);
 
     int updateStatus(Integer time);
 }

@@ -19,8 +19,8 @@ import com.wl4g.devops.ci.task.DockerBuildDeployTask;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
 
@@ -36,16 +36,16 @@ import java.util.List;
  */
 public class DockerBuildDeployProvider extends BasedDeployProvider {
 
-    public DockerBuildDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, Task task, Task refTask,
-                                     List<TaskDetail> taskDetails) {
-        super(project, path, branch, alias, instances, task, refTask, taskDetails);
+    public DockerBuildDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
+                                     List<TaskHistoryDetail> taskHistoryDetails) {
+        super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
     }
 
     @Override
     public void execute() throws Exception {
         Dependency dependency = new Dependency();
         dependency.setProjectId(getProject().getId());
-        getDependencyService().build(getTask(), dependency, getBranch(), isSuccess, result, false);
+        getDependencyService().build(getTaskHistory(), dependency, getBranch(), isSuccess, result, false);
 
         //get sha and md5
         setShaGit(GitUtils.getOldestCommitSha(getPath()));
@@ -56,7 +56,7 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
         // Each install pull and restart
         for (AppInstance instance : getInstances()) {
             Runnable task = new DockerBuildDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
-                    getTaskDetails());
+                    getTaskHistoryDetails());
             Thread t = new Thread(task);
             t.start();
             t.join();
@@ -73,26 +73,26 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
         dependency.setProjectId(getProject().getId());
 
         //TODO check bakup file isExist
-        String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#" + getTask().getRefId();
+        String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#" + getTaskHistory().getRefId();
 
         File oldFile = new File(oldFilePath);
         if (oldFile.exists()) {
             getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
-            setShaGit(getRefTask().getShaGit());
+            setShaGit(getRefTaskHistory().getShaGit());
         } else {
-            getDependencyService().rollback(getTask(), getRefTask(), dependency, getBranch(), isSuccess, result, false);
+            getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), isSuccess, result, false);
             setShaGit(GitUtils.getOldestCommitSha(getPath()));
         }
 
 
         setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
         // backup in local
-        backupLocal(getPath() + getProject().getTarPath(), getTask().getId().toString());
+        backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
 
         // scp to server
         for (AppInstance instance : getInstances()) {
             Runnable task = new DockerBuildDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
-                    getTaskDetails());
+                    getTaskHistoryDetails());
             Thread t = new Thread(task);
             t.start();
             t.join();

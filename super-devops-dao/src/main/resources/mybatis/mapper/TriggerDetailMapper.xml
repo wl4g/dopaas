@@ -139,4 +139,17 @@
     where trigger_id = #{triggerId,jdbcType=INTEGER}
   </select>
 
+  <select id="getUsedInstance" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select td.* from ci_trigger t
+    left join ci_trigger_detail td on t.id=td.trigger_id
+    where t.project_id=#{projectId,jdbcType=INTEGER}
+    <if test="triggerId != null">
+      and t.id !=#{triggerId,jdbcType=INTEGER}
+    </if>
+
+  </select>
+
+
+
+
 </mapper>

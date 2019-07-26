@@ -17,8 +17,8 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
@@ -50,96 +50,96 @@ public class TaskServiceImpl implements TaskService {
     private AppGroupDao appGroupDao;
 
     @Override
-    public List<Task> list(String groupName, String projectName, String branchName) {
+    public List<TaskHistory> list(String groupName, String projectName, String branchName) {
         return taskDao.list(groupName, projectName, branchName);
     }
 
     @Override
-    public List<TaskDetail> getDetailByTaskId(Integer id) {
+    public List<TaskHistoryDetail> getDetailByTaskId(Integer id) {
         return taskDetailDao.getDetailByTaskId(id);
     }
 
     @Override
-    public Task getTaskById(Integer id) {
-        Task task = taskDao.selectByPrimaryKey(id);
-        Project project = projectDao.selectByPrimaryKey(task.getProjectId());
+    public TaskHistory getTaskById(Integer id) {
+        TaskHistory taskHistory = taskDao.selectByPrimaryKey(id);
+        Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
         if (null != project && null != project.getAppGroupId()) {
             AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
             if (null != appGroup) {
-                task.setGroupName(appGroup.getName());
+                taskHistory.setGroupName(appGroup.getName());
             }
         }
-        return task;
+        return taskHistory;
 
     }
 
     @Override
     @Transactional
-    public Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-                           Integer refId, String command, Integer tarType) {
+    public TaskHistory createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
+                                  Integer refId, String command, Integer tarType) {
         Assert.notNull(project, "not found project,please check che project config");
-        Task task = new Task();
-        task.preInsert();
-        task.setType(type);
-        task.setProjectId(project.getId());
-        task.setStatus(status);
-        task.setBranchName(branchName);
-        task.setShaGit(sha);
-        task.setRefId(refId);
-        task.setCommand(command);
-        task.setTarType(tarType);
-        task.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
-        taskDao.insertSelective(task);
+        TaskHistory taskHistory = new TaskHistory();
+        taskHistory.preInsert();
+        taskHistory.setType(type);
+        taskHistory.setProjectId(project.getId());
+        taskHistory.setStatus(status);
+        taskHistory.setBranchName(branchName);
+        taskHistory.setShaGit(sha);
+        taskHistory.setRefId(refId);
+        taskHistory.setCommand(command);
+        taskHistory.setTarType(tarType);
+        taskHistory.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
+        taskDao.insertSelective(taskHistory);
         for (AppInstance instance : instances) {
-            TaskDetail taskDetail = new TaskDetail();
-            taskDetail.preInsert();
-            taskDetail.setTaskId(task.getId());
-            taskDetail.setInstanceId(instance.getId());
-            taskDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
-            taskDetailDao.insertSelective(taskDetail);
+            TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
+            taskHistoryDetail.preInsert();
+            taskHistoryDetail.setTaskId(taskHistory.getId());
+            taskHistoryDetail.setInstanceId(instance.getId());
+            taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
+            taskDetailDao.insertSelective(taskHistoryDetail);
         }
-        return task;
+        return taskHistory;
     }
 
     @Override
     public void updateTaskStatus(int taskId, int status) {
-        Task task = new Task();
-        task.preUpdate();
-        task.setId(taskId);
-        task.setStatus(status);
-        taskDao.updateByPrimaryKeySelective(task);
+        TaskHistory taskHistory = new TaskHistory();
+        taskHistory.preUpdate();
+        taskHistory.setId(taskId);
+        taskHistory.setStatus(status);
+        taskDao.updateByPrimaryKeySelective(taskHistory);
     }
 
     @Override
     public void updateTaskStatusAndResult(int taskId, int status, String result) {
-        Task task = new Task();
-        task.preUpdate();
-        task.setId(taskId);
-        task.setStatus(status);
-        task.setResult(result);
-        taskDao.updateByPrimaryKeySelective(task);
+        TaskHistory taskHistory = new TaskHistory();
+        taskHistory.preUpdate();
+        taskHistory.setId(taskId);
+        taskHistory.setStatus(status);
+        taskHistory.setResult(result);
+        taskDao.updateByPrimaryKeySelective(taskHistory);
     }
 
     @Override
     public void updateTaskStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5) {
-        Task task = new Task();
-        task.preUpdate();
-        task.setId(taskId);
-        task.setStatus(status);
-        task.setResult(result);
-        task.setShaGit(sha);
-        task.setShaLocal(md5);
-        taskDao.updateByPrimaryKeySelective(task);
+        TaskHistory taskHistory = new TaskHistory();
+        taskHistory.preUpdate();
+        taskHistory.setId(taskId);
+        taskHistory.setStatus(status);
+        taskHistory.setResult(result);
+        taskHistory.setShaGit(sha);
+        taskHistory.setShaLocal(md5);
+        taskDao.updateByPrimaryKeySelective(taskHistory);
     }
 
     @Override
     public void updateTaskDetailStatusAndResult(int taskDetailId, int status, String result) {
-        TaskDetail taskDetail = new TaskDetail();
-        taskDetail.preUpdate();
-        taskDetail.setId(taskDetailId);
-        taskDetail.setStatus(status);
-        taskDetail.setResult(result);
-        taskDetailDao.updateByPrimaryKeySelective(taskDetail);
+        TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
+        taskHistoryDetail.preUpdate();
+        taskHistoryDetail.setId(taskDetailId);
+        taskHistoryDetail.setStatus(status);
+        taskHistoryDetail.setResult(result);
+        taskDetailDao.updateByPrimaryKeySelective(taskHistoryDetail);
     }
 
 

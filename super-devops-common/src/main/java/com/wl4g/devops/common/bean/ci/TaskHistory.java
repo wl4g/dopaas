@@ -20,7 +20,7 @@ import com.wl4g.devops.common.bean.scm.BaseBean;
 import java.io.Serializable;
 import java.util.List;
 
-public class Task extends BaseBean implements Serializable {
+public class TaskHistory extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
 
 	private Integer type;
