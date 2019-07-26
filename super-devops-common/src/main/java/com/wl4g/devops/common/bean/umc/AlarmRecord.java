@@ -1,8 +1,8 @@
 package com.wl4g.devops.common.bean.umc;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
-
 import java.util.Date;
+
+import com.wl4g.devops.common.bean.BaseBean;
 
 public class AlarmRecord extends BaseBean {
 

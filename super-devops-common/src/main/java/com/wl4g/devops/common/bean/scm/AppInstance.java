@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.bean.scm;
 
+import com.wl4g.devops.common.bean.BaseBean;
+
 /**
  * 对应：cf_app_instance表
  * 

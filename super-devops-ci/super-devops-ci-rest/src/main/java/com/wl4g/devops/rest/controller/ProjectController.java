@@ -40,12 +40,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.wl4g.devops.common.bean.scm.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.devops.common.bean.scm.BaseBean.ENABLED;
 
 /**
  * CI/CD controller

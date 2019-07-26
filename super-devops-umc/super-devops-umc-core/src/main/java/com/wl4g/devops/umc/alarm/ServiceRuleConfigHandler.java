@@ -21,7 +21,8 @@ import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
+import com.wl4g.devops.umc.handler.AlarmConfigHandler;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ import java.util.List;
  * @version v1.0 2019年7月5日
  * @since
  */
-public class ServiceRuleConfigHandler implements RuleConfigHandler {
+public class ServiceRuleConfigHandler implements AlarmConfigHandler {
 
 	@Autowired
 	protected JedisService jedisService;
@@ -95,13 +96,14 @@ public class ServiceRuleConfigHandler implements RuleConfigHandler {
 		for (AlarmConfig alarmConfig : alarmConfigs) {
 			AlarmRecord alarmRecord = new AlarmRecord();
 			alarmRecord.setTemplateId(alarmTemplate.getId());
-			alarmRecord.setName(alarmConfig.getName());
 			alarmRecord.setCollectId(collectId);
+			alarmRecord.setName(alarmConfig.getName());
 			alarmRecord.setGatherTime(new Date(gatherTime));
 			alarmRecord.setAlarmTime(nowDate);
 			alarmRecord.setAlarmInfo(alarmConfig.getAlarmContent());
 			alarmRecord.setAlarmType(alarmConfig.getAlarmType());
 			alarmRecordDao.insertSelective(alarmRecord);
+
 			// TODO batch save is better
 			for (AlarmRule alarmRule : rules) {
 				AlarmRecordRule alarmRecordRule = new AlarmRecordRule();

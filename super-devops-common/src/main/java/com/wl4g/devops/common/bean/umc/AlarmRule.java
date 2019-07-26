@@ -1,6 +1,6 @@
 package com.wl4g.devops.common.bean.umc;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
+import com.wl4g.devops.common.bean.BaseBean;
 
 public class AlarmRule extends BaseBean {
 

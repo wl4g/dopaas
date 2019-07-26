@@ -16,9 +16,13 @@
 package com.wl4g.devops.umc.alarm;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.USE_GROUP;
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.umc.rule.AggregatorType.of;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,14 +31,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import static com.wl4g.devops.umc.rule.RuleConfigManager.*;
-
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.common.bean.umc.model.AlarmRuleInfo;
-import com.wl4g.devops.common.bean.umc.model.TemplateHisInfo.Point;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.rule.OperatorType;
@@ -54,157 +54,120 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	}
 
 	@Override
-	protected void doAlarmHandling(MetricAggregateWrapper aggWrap) {
-		long now = System.currentTimeMillis();
-		Date nowDate = new Date();
-		String collectIp = aggWrap.getCollectId();
+	protected void doHandleAlarm(MetricAggregateWrapper aggWrap) {
 		if (log.isInfoEnabled()) {
-			log.info("Alarm matching rule collectId={}", collectIp);
+			log.info("Alarm handling for collectId: {}", aggWrap.getCollectId());
 		}
 
 		List<AlarmTemplate> alarmTpls = null;
-		Integer collectId = null;
-		Integer groupId = null;
-		if (StringUtils.equals(collectIp, USE_GROUP)) {
-			groupId = ruleConfigManager.convertServiceId(aggWrap.getClassify());
-			AlarmRuleInfo alarmRuleInfo = ruleConfigManager.getAlarmRuleInfoByGroupId(groupId);
-			alarmTpls = alarmRuleInfo.getAlarmTemplates();
+		String serviceId = null;
+		String groupId = null;
+		if (StringUtils.equals(aggWrap.getCollectId(), USE_GROUP)) {
+			groupId = ruleConfigManager.transformToCollectGroupId(aggWrap.getClassify());
+			alarmTpls = ruleConfigManager.getGroupIdAlarmRuleTpls(groupId);
 		} else {
-			collectId = ruleConfigManager.convertCollectId(collectIp);
-			if (null == collectId) {
-				return;
-			}
-			AlarmRuleInfo alarmRuleInfo = ruleConfigManager.getAlarmRuleInfoByCollectId(collectId);
-			if (alarmRuleInfo != null) {
-				alarmTpls = alarmRuleInfo.getAlarmTemplates();
-			}
+			serviceId = ruleConfigManager.transformToCollectId(aggWrap.getCollectId());
+			alarmTpls = ruleConfigManager.getCollectIdAlarmRuleTpls(serviceId);
 		}
-		if (null == alarmTpls) {
+		if (isEmpty(alarmTpls)) {
 			return;
 		}
 
+		long now = System.currentTimeMillis();
 		for (MetricWrapper metricWrap : aggWrap.getMetrics()) {
 			String metricName = metricWrap.getMetric();
-			for (AlarmTemplate alarmTemplate : alarmTpls) {
-				if (StringUtils.equals(metricName, alarmTemplate.getMetric())) {
-					// Matching tags
-					if (!matchTags(metricWrap.getTags(), alarmTemplate.getTags())) {
+			for (AlarmTemplate tpl : alarmTpls) {
+				if (StringUtils.equals(metricName, tpl.getMetric())) {
+					// Match tags
+					if (!matchTags(metricWrap.getTags(), tpl.getTagsMap())) {
 						continue;
 					}
-
-					// Inspection by rule.
-					List<AlarmRule> rules = alarmTemplate.getRules();
 					// largest metric keep time window of rules.
-					Long largestRuleWindowKeepTime = extLargestRuleWindowKeepTime(rules);
-					// get history point from redis
-					List<Point> points = ruleConfigManager.duelTempalteInRedis(alarmTemplate.getId(), metricWrap.getValue(),
-							aggWrap.getTimestamp(), now, largestRuleWindowKeepTime.intValue());
+					long largestRuleWindowKeepTime = extractLargestRuleWindowKeepTime(tpl.getRules());
 
-					List<AlarmRule> macthRule = new ArrayList<>();
-					if (checkRuleMatch(points, rules, now, macthRule)) {
-						log.info("match template rule,metricName={}, template_id={},historyData={}", metricName,
-								alarmTemplate.getId(), JacksonUtils.toJSONString(points));
+					// Extract latest metrics in time window
+					List<MetricValue> metricVals = offerMetricValuesTimeWindow(tpl.getId(), metricWrap.getValue(),
+							aggWrap.getTimestamp(), now, largestRuleWindowKeepTime);
 
-						storageAndNotification(collectIp, collectId, groupId, alarmTemplate, aggWrap.getTimestamp(), nowDate,
-								macthRule);
-					} else {
-						log.debug("not match rule, needn't send msg");
+					// Matching alarm rules of metric values.
+					List<AlarmRule> matchedRules = matchAlarmRules(metricVals, tpl.getRules(), now);
+					if (!isEmpty(matchedRules)) {
+						if (log.isInfoEnabled()) {
+							log.info("Matched to metric: {} and rule template: {}, time window data: {}", metricName, tpl.getId(),
+									toJSONString(metricVals));
+						}
+						storageNotification(aggWrap.getCollectId(), serviceId, groupId, tpl, aggWrap.getTimestamp(),
+								matchedRules);
+					} else if (log.isDebugEnabled()) {
+						log.debug("No match to metric: {} and rule template: {}, time window data: {}", metricName, tpl.getId(),
+								toJSONString(metricVals));
 					}
 				}
-
 			}
 		}
+
 	}
 
 	/**
-	 * Check rule is match
+	 * Matching alarm rules.
 	 */
-	protected boolean checkRuleMatch(List<Point> points, List<AlarmRule> rules, long now, List<AlarmRule> macthRule) {
+	protected List<AlarmRule> matchAlarmRules(List<MetricValue> metricVals, List<AlarmRule> rules, long now) {
 		// Match mode for 'OR'.
-		boolean matched = false;
-		for (AlarmRule rule : rules) {
+		return safeList(rules).stream().map(rule -> {
 			// Get latest time window metric values.
-			Double[] metricVals = getLatestTimeWindowMetricValues(rule.getContinuityTime(), points, now);
+			Double[] vals = extractAvailableTimeWindowMetricValues(metricVals, rule.getContinuityTime(), now);
 			// Do inspection.
-			if (inspector.verify(new InspectWrapper(OperatorType.of(rule.getOperator()), of(rule.getAggregator()),
-					rule.getValue(), metricVals))) {
-				macthRule.add(rule);
-				matched = true; // at only
+			OperatorType oper = OperatorType.of(rule.getOperator());
+			if (inspector.verify(new InspectWrapper(oper, of(rule.getAggregator()), rule.getValue(), vals))) {
+				return rule;
 			}
-		}
-		return matched;
+			return null;
+		}).collect(toList());
 	}
 
 	/**
-	 * Get a metrics of the latest duration time.
+	 * Extract a metrics of the latest duration time.
 	 * 
+	 * @param metricVals
 	 * @param durationMs
-	 * @param points
 	 * @param now
 	 * @return
 	 */
-	protected Double[] getLatestTimeWindowMetricValues(long durationMs, List<Point> points, long now) {
+	protected Double[] extractAvailableTimeWindowMetricValues(List<MetricValue> metricVals, long durationMs, long now) {
 		List<Double> values = new ArrayList<>();
-		for (Point point : points) {
-			if (now - point.getTimeStamp() < durationMs * 1000) {
-				values.add(point.getValue());
+		for (MetricValue val : metricVals) {
+			if ((now - val.getTimestamp()) < durationMs) {
+				values.add(val.getValue());
 			}
 		}
 		return values.toArray(new Double[values.size()]);
 	}
 
 	/**
-	 * Matching tags
-	 */
-	@SuppressWarnings("unchecked")
-	protected boolean matchTags(Map<String, String> tagsMap, String tplTags) {
-		if (isBlank(tplTags)) {
-			return false;
-		}
-		Map<String, String> tplTagsMap = parseJSON(tplTags, Map.class);
-
-		boolean matched = true;
-		for (Map.Entry<String, String> entry : tplTagsMap.entrySet()) {
-			String value = tagsMap.get(entry.getKey());
-			if (StringUtils.isBlank(value)) {
-				matched = false;
-				break;
-			}
-			if (!StringUtils.equals(value, entry.getValue())) {
-				matched = false;
-				break;
-			}
-		}
-		return matched;
-	}
-
-	/**
 	 * Storage and notification.
 	 * 
-	 * @param collectIp
 	 * @param collectId
+	 * @param serviceId
 	 * @param groupId
-	 * @param alarmTemplate
+	 * @param alarmTpl
 	 * @param gatherTime
-	 * @param nowDate
-	 * @param macthRule
+	 * @param macthedRules
 	 */
-	protected void storageAndNotification(String collectIp, Integer collectId, Integer groupId, AlarmTemplate alarmTemplate,
-			long gatherTime, Date nowDate, List<AlarmRule> macthRule) {
-		if (StringUtils.equals(collectIp, USE_GROUP)) {
-			List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByGroupIdAndTemplateId(alarmTemplate.getId(),
-					groupId);
-			ruleConfigHandler.saveRecord(alarmTemplate, alarmConfigs, groupId, gatherTime, nowDate, macthRule);
-
+	protected void storageNotification(String collectId, String serviceId, String groupId, AlarmTemplate alarmTpl,
+			long gatherTime, List<AlarmRule> macthedRules) {
+		List<AlarmConfig> alarmConfigs = null;
+		if (StringUtils.equals(collectId, USE_GROUP)) {
+			alarmConfigs = alarmConfigHandler.getAlarmConfigByGroupIdAndTemplateId(alarmTpl.getId(), groupId);
+			// Storage record.
+			alarmConfigHandler.saveRecord(alarmTpl, alarmConfigs, groupId, gatherTime, new Date(), macthedRules);
 			// Notification
-			notification(alarmTemplate, alarmConfigs);
+			notification(alarmTpl, alarmConfigs);
 		} else {
-			List<AlarmConfig> alarmConfigs = ruleConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTemplate.getId(),
-					collectId);
-			ruleConfigHandler.saveRecord(alarmTemplate, alarmConfigs, collectId, gatherTime, nowDate, macthRule);
-
+			alarmConfigs = alarmConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTpl.getId(), serviceId);
+			// Storage record.
+			alarmConfigHandler.saveRecord(alarmTpl, alarmConfigs, serviceId, gatherTime, new Date(), macthedRules);
 			// Notification
-			notification(alarmTemplate, alarmConfigs);
+			notification(alarmTpl, alarmConfigs);
 		}
 	}
 

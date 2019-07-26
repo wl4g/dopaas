@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
-
 import java.io.Serializable;
 import java.util.List;
+
+import com.wl4g.devops.common.bean.BaseBean;
 
 public class Trigger extends BaseBean implements Serializable {
 

@@ -1,9 +1,9 @@
 package com.wl4g.devops.common.bean.umc;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.wl4g.devops.common.bean.BaseBean;
 
 public class AlarmTemplate extends BaseBean {
 
