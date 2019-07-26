@@ -1,47 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.devops.dao.ci.TaskDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskHistory" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Task" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
+    <result column="app_group_id" property="appGroupId" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
-    <result column="status" property="status" jdbcType="INTEGER" />
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
-    <result column="sha_git" property="shaGit" jdbcType="VARCHAR" />
-    <result column="sha_local" property="shaLocal" jdbcType="VARCHAR" />
-    <result column="ref_id" property="refId" jdbcType="INTEGER" />
     <result column="tar_type" property="tarType" jdbcType="INTEGER" />
-    <result column="command" property="command" jdbcType="VARCHAR" />
+    <result column="branch_type" property="branchType" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="del_flag" property="delFlag" jdbcType="CHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
-    <result column="result" property="result" jdbcType="VARCHAR" />
-    <!-- other  -->
-    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
-    <result column="name" property="groupName" jdbcType="VARCHAR" />
+    <result column="pre_command" property="preCommand" jdbcType="LONGVARCHAR" />
+    <result column="post_command" property="postCommand" jdbcType="LONGVARCHAR" />
+
+    <!-- other -->
+    <result column="group_name" property="groupName" jdbcType="LONGVARCHAR" />
+
+    <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.scm.AppInstance">
+      <result column="i.id" property="id" jdbcType="INTEGER" />
+      <result column="i.host" property="host" jdbcType="VARCHAR" />
+      <result column="i.ip" property="ip" jdbcType="VARCHAR" />
+      <result column="i.port" property="port" jdbcType="INTEGER" />
+      <result column="i.remark" property="remark" jdbcType="VARCHAR" />
+    </collection>
+
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskHistory" extends="BaseResultMap" >
-    <result column="result" property="result" jdbcType="LONGVARCHAR" />
-  </resultMap>
+
   <sql id="Base_Column_List" >
-    id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,tar_type,command, remark, del_flag, create_date,
-    create_by, update_date, update_by
+    id, task_name, app_group_id, project_id, branch_name, tar_type, branch_type, remark, 
+    enable, del_flag, create_date, create_by, update_date, update_by,pre_command, post_command
   </sql>
+
+  <sql id="InstanceColumn">
+		,i.id as "i.id",
+		i.`host` as "i.host",
+		i.`ip` as "i.ip",
+		i.`port` as "i.port",
+		i.remark as "i.remark"
+	</sql>
+
   <sql id="Base_Column_List_t" >
-    t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.tar_type,command, t.remark, t.del_flag, t.create_date,
-    t.create_by, t.update_date, t.update_by,t.result
+    t.id, t.task_name, t.app_group_id, t.project_id, t.branch_name, t.tar_type, t.branch_type, t.remark,
+    t.enable, t.del_flag, t.create_date, t.create_by, t.update_date, t.update_by,t.pre_command, t.post_command
   </sql>
-  <sql id="Blob_Column_List" >
-    result
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from ci_task
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -49,51 +60,49 @@
     delete from ci_task
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
-    insert into ci_task (id, type, project_id, 
-      status, branch_name, sha_git,sha_local,
-      ref_id, tar_type,command,remark, del_flag,
-      create_date, create_by, update_date, 
-      update_by, result)
-    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
-      #{refId,jdbcType=INTEGER},#{tarType,jdbcType=INTEGER},#{command,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
-      #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR})
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Task" >
+    insert into ci_task (id, task_name, app_group_id, 
+      project_id, branch_name, tar_type, 
+      branch_type, remark, enable, 
+      del_flag, create_date, create_by, 
+      update_date, update_by, pre_command, 
+      post_command)
+    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{appGroupId,jdbcType=INTEGER}, 
+      #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=INTEGER},
+      #{branchType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
+      #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{preCommand,jdbcType=LONGVARCHAR}, 
+      #{postCommand,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Task" useGeneratedKeys="true" keyProperty="id" >
     insert into ci_task
     <trim prefix="(" suffix=")" suffixOverrides="," >
-
-      <if test="type != null" >
-        type,
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="taskName != null" >
+        task_name,
+      </if>
+      <if test="appGroupId != null" >
+        app_group_id,
       </if>
       <if test="projectId != null" >
         project_id,
       </if>
-      <if test="status != null" >
-        status,
-      </if>
       <if test="branchName != null" >
         branch_name,
-      </if>
-      <if test="shaGit != null" >
-        sha_git,
-      </if>
-      <if test="shaLocal != null" >
-        sha_local,
-      </if>
-      <if test="refId != null" >
-        ref_id,
       </if>
       <if test="tarType != null" >
         tar_type,
       </if>
-      <if test="command != null" >
-        command,
+      <if test="branchType != null" >
+        branch_type,
       </if>
       <if test="remark != null" >
         remark,
+      </if>
+      <if test="enable != null" >
+        enable,
       </if>
       <if test="delFlag != null" >
         del_flag,
@@ -110,41 +119,40 @@
       <if test="updateBy != null" >
         update_by,
       </if>
-      <if test="result != null" >
-        result,
+      <if test="preCommand != null" >
+        pre_command,
+      </if>
+      <if test="postCommand != null" >
+        post_command,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-
-      <if test="type != null" >
-        #{type,jdbcType=INTEGER},
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="taskName != null" >
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="appGroupId != null" >
+        #{appGroupId,jdbcType=INTEGER},
       </if>
       <if test="projectId != null" >
         #{projectId,jdbcType=INTEGER},
       </if>
-      <if test="status != null" >
-        #{status,jdbcType=INTEGER},
-      </if>
       <if test="branchName != null" >
         #{branchName,jdbcType=VARCHAR},
-      </if>
-      <if test="shaGit != null" >
-        #{shaGit,jdbcType=VARCHAR},
-      </if>
-      <if test="shaLocal != null" >
-        #{shaLocal,jdbcType=VARCHAR},
-      </if>
-      <if test="refId != null" >
-        #{refId,jdbcType=INTEGER},
       </if>
       <if test="tarType != null" >
         #{tarType,jdbcType=INTEGER},
       </if>
-      <if test="command != null" >
-        #{command,jdbcType=VARCHAR},
+      <if test="branchType != null" >
+        #{branchType,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=CHAR},
@@ -161,43 +169,40 @@
       <if test="updateBy != null" >
         #{updateBy,jdbcType=VARCHAR},
       </if>
-      <if test="result != null" >
-        #{result,jdbcType=LONGVARCHAR},
+      <if test="preCommand != null" >
+        #{preCommand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="postCommand != null" >
+        #{postCommand,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     update ci_task
     <set >
-      <if test="type != null" >
-        type = #{type,jdbcType=INTEGER},
+      <if test="taskName != null" >
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="appGroupId != null" >
+        app_group_id = #{appGroupId,jdbcType=INTEGER},
       </if>
       <if test="projectId != null" >
         project_id = #{projectId,jdbcType=INTEGER},
       </if>
-      <if test="status != null" >
-        status = #{status,jdbcType=INTEGER},
-      </if>
       <if test="branchName != null" >
         branch_name = #{branchName,jdbcType=VARCHAR},
-      </if>
-      <if test="shaGit != null" >
-        sha_git = #{shaGit,jdbcType=VARCHAR},
-      </if>
-      <if test="shaLocal != null" >
-        sha_local = #{shaLocal,jdbcType=VARCHAR},
-      </if>
-      <if test="refId != null" >
-        ref_id = #{refId,jdbcType=INTEGER},
       </if>
       <if test="tarType != null" >
         tar_type = #{tarType,jdbcType=INTEGER},
       </if>
-      <if test="command != null" >
-        command = #{command,jdbcType=VARCHAR},
+      <if test="branchType != null" >
+        branch_type = #{branchType,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=CHAR},
@@ -214,44 +219,44 @@
       <if test="updateBy != null" >
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
-      <if test="result != null" >
-        result = #{result,jdbcType=LONGVARCHAR},
+      <if test="preCommand != null" >
+        pre_command = #{preCommand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="postCommand != null" >
+        post_command = #{postCommand,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     update ci_task
-    set type = #{type,jdbcType=INTEGER},
+    set task_name = #{taskName,jdbcType=VARCHAR},
+      app_group_id = #{appGroupId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
-      sha_git = #{shaGit,jdbcType=VARCHAR},
-      sha_local = #{shaLocal,jdbcType=VARCHAR},
-      ref_id = #{refId,jdbcType=INTEGER},
       tar_type = #{tarType,jdbcType=INTEGER},
-      command = #{command,jdbcType=VARCHAR},
+      branch_type = #{branchType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
-      result = #{result,jdbcType=LONGVARCHAR}
+      pre_command = #{preCommand,jdbcType=LONGVARCHAR},
+      post_command = #{postCommand,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     update ci_task
-    set type = #{type,jdbcType=INTEGER},
+    set task_name = #{taskName,jdbcType=VARCHAR},
+      app_group_id = #{appGroupId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
-      sha_git = #{shaGit,jdbcType=VARCHAR},
-      sha_local = #{shaLocal,jdbcType=VARCHAR},
-      ref_id = #{refId,jdbcType=INTEGER},
       tar_type = #{tarType,jdbcType=INTEGER},
-      command = #{command,jdbcType=VARCHAR},
+      branch_type = #{branchType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
@@ -263,30 +268,35 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_t" />
-    ,p.project_name,g.name
+    <include refid="InstanceColumn" />
+
+    ,g.name group_name
     from ci_task t
-    left join ci_project p on t.project_id=p.id
-    left join cf_app_group g on p.app_group_id=g.id
+    left join cf_app_group g on t.app_group_id=g.id
+    left join ci_task_detail td on td.task_id=t.id
+    left join cf_app_instance i on i.id=td.instance_id
     where t.del_flag!=1
+    <if test="id != null and id != ''" >
+      AND t.id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="taskName != null and taskName != ''" >
+      AND t.task_name LIKE CONCAT('%','${taskName}','%')
+    </if>
     <if test="groupName != null and groupName != ''" >
       AND g.name LIKE CONCAT('%','${groupName}','%')
-    </if>
-    <if test="projectName != null and projectName != ''" >
-      AND p.project_name LIKE CONCAT('%','${projectName}','%')
     </if>
     <if test="branchName != null and branchName != ''" >
       AND t.branch_name LIKE CONCAT('%','${branchName}','%')
     </if>
+    <if test="tarType != null and tarType != ''" >
+      AND t.tar_type = #{tarType,jdbcType=INTEGER}
+    </if>
+    <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
+      AND DATE_FORMAT(a.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(a.create_date,'%Y-%m-%d %H:%i') &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+    </if>
+
     order by t.create_date desc
   </select>
-
-  <update id="updateStatus" parameterType="java.lang.Integer" >
-    <![CDATA[
-    update ci_task set status=4
-    where status not in(2,3,4)
-    and TIMESTAMPDIFF(second ,create_date,now())>#{time,jdbcType=INTEGER};
-    ]]>
-  </update>
-
 
 </mapper>

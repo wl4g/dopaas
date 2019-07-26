@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.common.bean.scm;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.util.Date;
 
 /**
  * 实体基类
@@ -46,6 +46,7 @@ public abstract class BaseBean {
 	 * 删除状态
 	 */
 	public static final int DEFAULT_USER_ID = 1;
+
 
 	private Integer id;
 	private Integer createBy; // 创建人

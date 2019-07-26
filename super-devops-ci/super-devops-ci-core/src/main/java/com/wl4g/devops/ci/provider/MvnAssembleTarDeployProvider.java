@@ -104,7 +104,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
     }
 
     public String restart(String host, String userName, String rsa) throws Exception {
-        String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && " + getProject().getRestartCommand();
+        String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && "  /* + getProject().getRestartCommand()*/;
         return doExecute(host, userName, command, rsa);
     }
 

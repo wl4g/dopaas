@@ -63,7 +63,7 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
         Assert.notNull(taskDetailId, "taskDetailId can not be null");
         try {
             // Update status
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+            taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
             //Boolean detailSuccess = new Boolean(false);
             // Scp to tmp,rename,move to webapps
             String s = provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(), project.getParentAppHome(),
@@ -80,11 +80,11 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
             result.append(s2).append("\n");
 
             // Update status
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
+            taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 
         } catch (Exception e) {
             log.error("Deploy job failed", e);
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, result.toString() + "\n" + e.toString());
+            taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, result.toString() + "\n" + e.toString());
             //throw new RuntimeException(e);
         }
 
