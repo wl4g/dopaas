@@ -39,15 +39,13 @@
         <table tableName="umc_alarm_record_user" domainObjectName="AlarmRecordUser"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
-        <table tableName="ci_task_sign" domainObjectName="TaskSign"
-               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
 
-        <!--<table tableName="ci_task" domainObjectName="TaskHistory"
+        <table tableName="ci_task" domainObjectName="Task"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="ci_task_detail" domainObjectName="TaskHistoryDetail"
+        <table tableName="ci_task_detail" domainObjectName="TaskDetail"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="ci_trigger" domainObjectName="Trigger"
+        <!--<table tableName="ci_trigger" domainObjectName="Trigger"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
         <table tableName="ci_trigger_detail" domainObjectName="TriggerDetail"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->

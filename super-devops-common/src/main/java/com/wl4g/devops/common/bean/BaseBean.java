@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.common.bean;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.util.Date;
 
 /**
  * 实体基类
