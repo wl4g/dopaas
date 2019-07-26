@@ -27,11 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.wl4g.devops.common.bean.scm.BaseBean.DEL_FLAG_NORMAL;
 
 /**
  * @author vjay
