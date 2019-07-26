@@ -23,6 +23,8 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.handler.CheckImpledAlarmConfigHandler;
+import com.wl4g.devops.umc.handler.AlarmConfigHandler;
 import com.wl4g.devops.umc.notification.AlarmNotifier;
 import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.notification.bark.BarkNotifier;
@@ -30,8 +32,6 @@ import com.wl4g.devops.umc.notification.email.EmailNotifier;
 import com.wl4g.devops.umc.notification.sms.SmsNotifier;
 import com.wl4g.devops.umc.notification.wechat.WeChatNotifier;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
-import com.wl4g.devops.umc.rule.handler.MustImpledRuleConfigHandler;
-import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
 import com.wl4g.devops.umc.rule.inspect.AvgRuleInspector;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.LatestRuleInspector;
@@ -65,9 +65,9 @@ public class AlarmAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(RuleConfigHandler.class)
-	public RuleConfigHandler ruleConfigHandler() {
-		return new MustImpledRuleConfigHandler();
+	@ConditionalOnMissingBean(AlarmConfigHandler.class)
+	public AlarmConfigHandler checkImpledAlarmPropertiesConfigurer() {
+		return new CheckImpledAlarmConfigHandler();
 	}
 
 	@Bean

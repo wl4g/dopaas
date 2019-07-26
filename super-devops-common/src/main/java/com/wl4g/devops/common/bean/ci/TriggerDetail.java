@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
-
 import java.io.Serializable;
+
+import com.wl4g.devops.common.bean.BaseBean;
 
 public class TriggerDetail extends BaseBean implements Serializable {
 

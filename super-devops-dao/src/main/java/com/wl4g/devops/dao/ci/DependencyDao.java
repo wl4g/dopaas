@@ -21,21 +21,20 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface DependencyDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(Dependency record);
+	int insert(Dependency record);
 
-    int insertSelective(Dependency record);
+	int insertSelective(Dependency record);
 
-    Dependency selectByPrimaryKey(Integer id);
+	Dependency selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Dependency record);
+	int updateByPrimaryKeySelective(Dependency record);
 
-    int updateByPrimaryKey(Dependency record);
+	int updateByPrimaryKey(Dependency record);
 
-    List<Dependency> getParentsByProjectId(Integer projectId);
+	List<Dependency> getParentsByProjectId(Integer projectId);
 
-    List<Dependency> list(@Param("projectName") String projectName);
-
+	List<Dependency> list(@Param("projectName") String projectName);
 
 }

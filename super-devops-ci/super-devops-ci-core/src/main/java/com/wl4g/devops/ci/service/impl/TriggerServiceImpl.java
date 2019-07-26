@@ -16,9 +16,9 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.TriggerService;
+import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.ci.TriggerDetail;
-import com.wl4g.devops.common.bean.scm.BaseBean;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import org.springframework.beans.factory.annotation.Autowired;

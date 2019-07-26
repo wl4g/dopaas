@@ -21,21 +21,21 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TriggerDetailDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(TriggerDetail record);
+	int insert(TriggerDetail record);
 
-    int insertSelective(TriggerDetail record);
+	int insertSelective(TriggerDetail record);
 
-    TriggerDetail selectByPrimaryKey(Integer id);
+	TriggerDetail selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TriggerDetail record);
+	int updateByPrimaryKeySelective(TriggerDetail record);
 
-    int updateByPrimaryKey(TriggerDetail record);
+	int updateByPrimaryKey(TriggerDetail record);
 
-    int deleteByTriggerId(Integer id);
+	int deleteByTriggerId(Integer id);
 
-    List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
+	List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
 
-    List<TriggerDetail> getUsedInstance(@Param("projectId") Integer projectId,@Param("triggerId") Integer triggerId);
+	List<TriggerDetail> getUsedInstance(@Param("projectId") Integer projectId, @Param("triggerId") Integer triggerId);
 }

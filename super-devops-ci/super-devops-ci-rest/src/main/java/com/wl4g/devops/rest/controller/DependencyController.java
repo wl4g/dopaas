@@ -30,10 +30,10 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 
-import static com.wl4g.devops.common.bean.scm.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.devops.common.bean.scm.BaseBean.ENABLED;
+import java.util.List;
 
 /**
  * CI/CD controller

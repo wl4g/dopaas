@@ -17,6 +17,8 @@ package com.wl4g.devops.common.bean.scm;
 
 import java.util.List;
 
+import com.wl4g.devops.common.bean.BaseBean;
+
 public class Environment extends BaseBean {
 
 	private String name;

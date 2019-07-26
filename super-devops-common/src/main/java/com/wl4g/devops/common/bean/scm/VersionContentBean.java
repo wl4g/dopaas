@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.bean.scm;
 
+import com.wl4g.devops.common.bean.BaseBean;
+
 public class VersionContentBean extends BaseBean {
 
 	private Integer versionId; // 版本号ID
