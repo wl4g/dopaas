@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.provider.BasedDeployProvider;
 import com.wl4g.devops.ci.provider.DockerBuildDeployProvider;
 import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.ci.service.CiService;
-import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
@@ -62,7 +62,7 @@ public class CiServiceImpl implements CiService {
     private ProjectDao projectDao;
 
     @Autowired
-    private TaskService taskService;
+    private TaskHistoryService taskHistoryService;
 
     @Override
     public List<AppGroup> grouplist() {
@@ -119,7 +119,7 @@ public class CiServiceImpl implements CiService {
             AppInstance instance = appGroupDao.getAppInstance(instanceId);
             instances.add(instance);
         }
-        TaskHistory taskHistory = taskService.createTask(project, instances, type,
+        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, type,
                 CiDevOpsConstants.TASK_STATUS_CREATE, branchName, null, null, null, tarType);
         BasedDeployProvider provider = getDeployProvider(taskHistory);
         //execute
@@ -155,7 +155,7 @@ public class CiServiceImpl implements CiService {
 
         // Print to client
         //ShellContextHolder.printfQuietly("taskHistory begin");
-        TaskHistory taskHistory = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
+        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
                 CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
         BasedDeployProvider provider = getDeployProvider(taskHistory);
         //execute
@@ -165,7 +165,7 @@ public class CiServiceImpl implements CiService {
     private void execute(Integer taskId, BasedDeployProvider provider) {
 
         // update task--running
-        taskService.updateTaskStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
+        taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 
         //optimize : use multithreading
         new Thread(new Runnable() {
@@ -175,15 +175,15 @@ public class CiServiceImpl implements CiService {
                     provider.execute();
                     if (provider.getSuccess()) {
                         // update task--success
-                        taskService.updateTaskStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(), provider.getShaGit(), provider.getShaLocal());
-                        //taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
+                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(), provider.getShaGit(), provider.getShaLocal());
+                        //taskService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
                     } else {
                         // update task--success
-                        taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
+                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
                     }
                 } catch (Exception e) {
                     // update task--fail
-                    taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
+                    taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -213,12 +213,12 @@ public class CiServiceImpl implements CiService {
         Assert.notNull(appGroup, "appGroup can not be null");
         project.setGroupName(appGroup.getName());
 
-        List<TaskHistoryDetail> taskHistoryDetails = taskService.getDetailByTaskId(taskHistory.getId());
+        List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskHistory.getId());
         Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
 
         TaskHistory refTaskHistory = null;
         if (taskHistory.getRefId() != null) {
-            refTaskHistory = taskService.getTaskById(taskHistory.getRefId());
+            refTaskHistory = taskHistoryService.getById(taskHistory.getRefId());
         }
 
         List<AppInstance> instances = new ArrayList<>();
@@ -234,9 +234,9 @@ public class CiServiceImpl implements CiService {
     public void rollback(Integer taskId) {
 
         Assert.notNull(taskId, "taskId is null");
-        TaskHistory taskHistoryOld = taskService.getTaskById(taskId);
+        TaskHistory taskHistoryOld = taskHistoryService.getById(taskId);
         Assert.notNull(taskHistoryOld, "not found this app");
-        List<TaskHistoryDetail> taskHistoryDetails = taskService.getDetailByTaskId(taskId);
+        List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
         Assert.notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
         Project project = projectDao.selectByPrimaryKey(taskHistoryOld.getProjectId());
         Assert.notNull(project, "not found this project");
@@ -245,7 +245,7 @@ public class CiServiceImpl implements CiService {
             AppInstance instance = appGroupDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
             instances.add(instance);
         }
-        TaskHistory taskHistory = taskService.createTask(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
+        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
                 CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId, null, CiDevOpsConstants.TAR_TYPE_TAR);
         BasedDeployProvider provider = getDeployProvider(taskHistory);
         //execute
@@ -256,7 +256,7 @@ public class CiServiceImpl implements CiService {
     private void rollbackExecute(Integer taskId, BasedDeployProvider provider) {
 
         // update task--running
-        taskService.updateTaskStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
+        taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 
         //optimize : use multithreading
         new Thread(new Runnable() {
@@ -266,15 +266,15 @@ public class CiServiceImpl implements CiService {
                     provider.rollback();
                     if (provider.getSuccess()) {
                         // update task--success
-                        taskService.updateTaskStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(), provider.getShaGit(), provider.getShaLocal());
-                        //taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
+                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(), provider.getShaGit(), provider.getShaLocal());
+                        //taskService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
                     } else {
                         // update task--success
-                        taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
+                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
                     }
                 } catch (Exception e) {
                     // update task--fail
-                    taskService.updateTaskStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
+                    taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
                     e.printStackTrace();
                 }
             }

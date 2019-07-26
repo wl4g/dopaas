@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.service;
+package com.wl4g.devops.dao.ci;
 
-import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 
-/**
- * @author vjay
- * @date 2019-05-17 11:04:00
- */
-public interface TaskService {
+import java.util.List;
 
-    Task save(Task task,Integer[] instanceIds);
+public interface TaskHistoryDetailDao {
+    int deleteByPrimaryKey(Integer id);
 
-    int delete(Integer id);
+    int insert(TaskHistoryDetail record);
 
-    Task getTaskDetailById(Integer triggerId);
+    int insertSelective(TaskHistoryDetail record);
 
+    TaskHistoryDetail selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(TaskHistoryDetail record);
+
+    int updateByPrimaryKeyWithBLOBs(TaskHistoryDetail record);
+
+    int updateByPrimaryKey(TaskHistoryDetail record);
+
+    List<TaskHistoryDetail> getDetailByTaskId(Integer id);
 
 }
