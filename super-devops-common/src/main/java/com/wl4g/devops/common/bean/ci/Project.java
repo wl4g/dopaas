@@ -110,7 +110,6 @@ public class Project extends BaseBean implements Serializable {
 		this.lockStatus = lockStatus;
 	}
 
-
 	@Override
 	public String toString() {
 		return "Project [projectName=" + projectName + ", gitUrl=" + gitUrl + ", appGroupId=" + appGroupId + ", tarPath="

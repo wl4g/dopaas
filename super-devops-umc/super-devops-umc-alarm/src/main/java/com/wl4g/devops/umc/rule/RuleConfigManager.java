@@ -113,6 +113,9 @@ public class RuleConfigManager implements ApplicationRunner {
 		return groupId;
 	}
 
+	/**
+	 * Clean rule to cache.
+	 */
 	public void clearAll() {
 		jedisService.del("umc_alarm_66");
 	}
@@ -152,9 +155,7 @@ public class RuleConfigManager implements ApplicationRunner {
 		return alarmTpls;
 	}
 
-	//
 	// --- Cache key ---
-	//
 
 	private static String getCacheKeyIpAndPort(String collectIpAndPort) {
 		return KEY_CACHE_INSTANCE_ID + collectIpAndPort;

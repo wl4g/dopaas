@@ -1,19 +1,39 @@
 package com.wl4g.devops.common.bean.umc;
 
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
 public class AlarmTemplate extends BaseBean {
 
+	private String name;
+
 	private String metric;
 
-	private Integer templateClassify;
+	private Integer classify;
 
 	private String tags;
 
 	private List<AlarmRule> rules = new ArrayList<>();
+
+	//
+	// Tempoary
+	//
+
+	private Map<String, String> tagMap;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getMetric() {
 		return metric;
@@ -23,12 +43,12 @@ public class AlarmTemplate extends BaseBean {
 		this.metric = metric == null ? null : metric.trim();
 	}
 
-	public Integer getTemplateClassify() {
-		return templateClassify;
+	public Integer getClassify() {
+		return classify;
 	}
 
-	public void setTemplateClassify(Integer templateClassify) {
-		this.templateClassify = templateClassify;
+	public void setClassify(Integer templateClassify) {
+		this.classify = templateClassify;
 	}
 
 	public String getTags() {
@@ -45,5 +65,13 @@ public class AlarmTemplate extends BaseBean {
 
 	public void setRules(List<AlarmRule> rules) {
 		this.rules = rules;
+	}
+
+	@SuppressWarnings("unchecked")
+	public synchronized Map<String, String> getTagsMap() {
+		if (isEmpty(tagMap)) {
+			tagMap = parseJSON(getTags(), Map.class);
+		}
+		return tagMap;
 	}
 }

@@ -4,7 +4,7 @@
 English version goes [here](README.md)
 
 ### 文档
-- [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块, CICD构建流等
+- [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等
 - [ESM](super-devops-esm/README_CN.md)          &nbsp;&nbsp;    弹性伸缩管理, 集成k8s、docker，基于CPU、网络流量自动或手动容器伸缩的管理
 - [SCM](super-devops-scm/README_CN.md)          &nbsp;&nbsp;    配置服务中心, 支持在线配置热更新如：DataSource、RedisClient等
 - [SRM](super-devops-srm/README_CN.md)          &nbsp;&nbsp;    服务资源管理, 如，集成ELK日志系统等

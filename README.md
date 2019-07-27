@@ -4,7 +4,7 @@
 [中文文档](README_CN.md)
 
 ### Docs
-- [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment module, CICD build flow, etc.
+- [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment(Continuous iteration), CICD build flow, etc.
 - [ESM](super-devops-esm/README.md)           &nbsp;&nbsp;    Flexible scalability management, integrated k8s, docker, management based on CPU, network traffic automatic or manual container scaling.
 - [SCM](super-devops-scm/README.md)           &nbsp;&nbsp;    Configure the service center to support online configuration of hot updates such as DataSource, RedisClient, etc.
 - [SRM](super-devops-srm/README.md)           &nbsp;&nbsp;    Service resource management, such as integrated ELK log system, etc.

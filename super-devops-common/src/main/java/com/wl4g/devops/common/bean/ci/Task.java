@@ -8,117 +8,116 @@ import java.util.List;
 
 public class Task extends BaseBean implements Serializable {
 
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
-    private String taskName;
+	private String taskName;
 
-    private Integer appGroupId;
+	private Integer appGroupId;
 
-    private Integer projectId;
+	private Integer projectId;
 
-    private String branchName;
+	private String branchName;
 
-    private Integer tarType;
+	private Integer tarType;
 
-    private String branchType;
+	private String branchType;
 
-    private String preCommand;
+	private String preCommand;
 
-    private String postCommand;
+	private String postCommand;
 
-    private List<AppInstance> instances;
+	private List<AppInstance> instances;
 
-    private List<TaskDetail> taskDetails;
+	private List<TaskDetail> taskDetails;
 
+	/* other */
+	private String groupName;
 
-    /* other */
-    private String groupName;
+	public String getPreCommand() {
+		return preCommand;
+	}
 
-    public String getPreCommand() {
-        return preCommand;
-    }
+	public void setPreCommand(String preCommand) {
+		this.preCommand = preCommand == null ? null : preCommand.trim();
+	}
 
-    public void setPreCommand(String preCommand) {
-        this.preCommand = preCommand == null ? null : preCommand.trim();
-    }
+	public String getPostCommand() {
+		return postCommand;
+	}
 
-    public String getPostCommand() {
-        return postCommand;
-    }
+	public void setPostCommand(String postCommand) {
+		this.postCommand = postCommand == null ? null : postCommand.trim();
+	}
 
-    public void setPostCommand(String postCommand) {
-        this.postCommand = postCommand == null ? null : postCommand.trim();
-    }
+	public String getTaskName() {
+		return taskName;
+	}
 
-    public String getTaskName() {
-        return taskName;
-    }
+	public void setTaskName(String taskName) {
+		this.taskName = taskName == null ? null : taskName.trim();
+	}
 
-    public void setTaskName(String taskName) {
-        this.taskName = taskName == null ? null : taskName.trim();
-    }
+	public Integer getAppGroupId() {
+		return appGroupId;
+	}
 
-    public Integer getAppGroupId() {
-        return appGroupId;
-    }
+	public void setAppGroupId(Integer appGroupId) {
+		this.appGroupId = appGroupId;
+	}
 
-    public void setAppGroupId(Integer appGroupId) {
-        this.appGroupId = appGroupId;
-    }
+	public Integer getProjectId() {
+		return projectId;
+	}
 
-    public Integer getProjectId() {
-        return projectId;
-    }
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
+	}
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
+	public String getBranchName() {
+		return branchName;
+	}
 
-    public String getBranchName() {
-        return branchName;
-    }
+	public void setBranchName(String branchName) {
+		this.branchName = branchName == null ? null : branchName.trim();
+	}
 
-    public void setBranchName(String branchName) {
-        this.branchName = branchName == null ? null : branchName.trim();
-    }
+	public Integer getTarType() {
+		return tarType;
+	}
 
-    public Integer getTarType() {
-        return tarType;
-    }
+	public void setTarType(Integer tarType) {
+		this.tarType = tarType;
+	}
 
-    public void setTarType(Integer tarType) {
-        this.tarType = tarType;
-    }
+	public String getBranchType() {
+		return branchType;
+	}
 
-    public String getBranchType() {
-        return branchType;
-    }
+	public void setBranchType(String branchType) {
+		this.branchType = branchType == null ? null : branchType.trim();
+	}
 
-    public void setBranchType(String branchType) {
-        this.branchType = branchType == null ? null : branchType.trim();
-    }
+	public String getGroupName() {
+		return groupName;
+	}
 
-    public String getGroupName() {
-        return groupName;
-    }
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
+	public List<AppInstance> getInstances() {
+		return instances;
+	}
 
-    public List<AppInstance> getInstances() {
-        return instances;
-    }
+	public void setInstances(List<AppInstance> instances) {
+		this.instances = instances;
+	}
 
-    public void setInstances(List<AppInstance> instances) {
-        this.instances = instances;
-    }
+	public List<TaskDetail> getTaskDetails() {
+		return taskDetails;
+	}
 
-    public List<TaskDetail> getTaskDetails() {
-        return taskDetails;
-    }
-
-    public void setTaskDetails(List<TaskDetail> taskDetails) {
-        this.taskDetails = taskDetails;
-    }
+	public void setTaskDetails(List<TaskDetail> taskDetails) {
+		this.taskDetails = taskDetails;
+	}
 }

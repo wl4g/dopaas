@@ -5,13 +5,13 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="template_id" property="templateId" jdbcType="INTEGER" />
     <result column="aggregator" property="aggregator" jdbcType="VARCHAR" />
-    <result column="operator" property="operator" jdbcType="INTEGER" />
+    <result column="relate_operator" property="relateOperator" jdbcType="INTEGER" />
+    <result column="logical_operator" property="logicalOperator" jdbcType="INTEGER" />
+    <result column="queue_time_window" property="queueTimeWindow" jdbcType="BIGINT" />
     <result column="value" property="value" jdbcType="DOUBLE" />
-    <result column="trigger_type" property="triggerType" jdbcType="INTEGER" />
-    <result column="continuity_time" property="continuityTime" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, template_id, aggregator, operator, value, trigger_type, continuity_time
+    id, template_id, aggregator, relate_operator, logical_operator, queue_time_window, value
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -24,12 +24,18 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
-    insert into umc_alarm_rule (id, template_id, aggregator, 
-      operator, value, trigger_type, 
-      continuity_time)
-    values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, #{aggregator,jdbcType=VARCHAR}, 
-      #{operator,jdbcType=INTEGER}, #{value,jdbcType=DOUBLE}, #{triggerType,jdbcType=INTEGER},
-      #{continuityTime,jdbcType=BIGINT})
+    insert into umc_alarm_rule (
+      id, template_id, aggregator, 
+      relate_operator, logical_operator,
+      logical_operator, queue_time_window, value)
+    values (
+      #{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER},
+      #{aggregator,jdbcType=VARCHAR},
+      #{relateOperator,jdbcType=INTEGER},
+      #{logicalOperator,jdbcType=INTEGER},
+      #{queueTimeWindow,jdbcType=BIGINT},
+      #{value,jdbcType=DOUBLE}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
     insert into umc_alarm_rule
@@ -43,17 +49,17 @@
       <if test="aggregator != null" >
         aggregator,
       </if>
-      <if test="operator != null" >
-        operator,
+      <if test="relateOperator != null" >
+        relate_operator,
+      </if>
+      <if test="logicalOperator != null" >
+        logical_operator,
+      </if>
+      <if test="queueTimeWindow != null" >
+        queue_time_window,
       </if>
       <if test="value != null" >
         value,
-      </if>
-      <if test="triggerType != null" >
-        trigger_type,
-      </if>
-      <if test="continuityTime != null" >
-        continuity_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -66,17 +72,17 @@
       <if test="aggregator != null" >
         #{aggregator,jdbcType=VARCHAR},
       </if>
-      <if test="operator != null" >
-        #{operator,jdbcType=INTEGER},
+      <if test="relateOperator != null" >
+        #{relateOperator,jdbcType=INTEGER},
+      </if>
+      <if test="logicalOperator != null" >
+        #{logicalOperator,jdbcType=INTEGER},
+      </if>
+      <if test="queueTimeWindow != null" >
+        #{queueTimeWindow,jdbcType=BIGINT},
       </if>
       <if test="value != null" >
         #{value,jdbcType=DOUBLE},
-      </if>
-      <if test="triggerType != null" >
-        #{triggerType,jdbcType=INTEGER},
-      </if>
-      <if test="continuityTime != null" >
-        #{continuityTime,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -89,17 +95,17 @@
       <if test="aggregator != null" >
         aggregator = #{aggregator,jdbcType=VARCHAR},
       </if>
-      <if test="operator != null" >
-        operator = #{operator,jdbcType=INTEGER},
+      <if test="relateOperator != null" >
+        relate_operator = #{relateOperator,jdbcType=INTEGER},
+      </if>
+      <if test="logicalOperator != null" >
+        logical_operator = #{logicalOperator,jdbcType=INTEGER},
+      </if>
+      <if test="queueTimeWindow != null" >
+        queue_time_window = #{queueTimeWindow,jdbcType=BIGINT},
       </if>
       <if test="value != null" >
         value = #{value,jdbcType=DOUBLE},
-      </if>
-      <if test="triggerType != null" >
-        trigger_type = #{triggerType,jdbcType=INTEGER},
-      </if>
-      <if test="continuityTime != null" >
-        continuity_time = #{continuityTime,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -108,13 +114,12 @@
     update umc_alarm_rule
     set template_id = #{templateId,jdbcType=INTEGER},
       aggregator = #{aggregator,jdbcType=VARCHAR},
-      operator = #{operator,jdbcType=INTEGER},
-      value = #{value,jdbcType=DOUBLE},
-      trigger_type = #{triggerType,jdbcType=INTEGER},
-      continuity_time = #{continuityTime,jdbcType=BIGINT}
+      relate_operator = #{relateOperator,jdbcType=INTEGER},
+      logical_operator = #{logicalOperator,jdbcType=INTEGER},
+      queue_time_window = #{queueTimeWindow,jdbcType=BIGINT},
+      value = #{value,jdbcType=DOUBLE}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
   <select id="selectAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

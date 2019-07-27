@@ -18,7 +18,6 @@ package com.wl4g.devops.umc.alarm;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
@@ -30,13 +29,10 @@ import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_TEMPLATE_HIS;
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static java.lang.Math.abs;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,27 +103,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	}
 
 	/**
-	 * Offer and update metric values in time windows.
-	 */
-	protected List<MetricValue> offerMetricValuesTimeWindow(Serializable templateId, Double value, long timestamp, long now,
-			long ttl) {
-		String slipTimeWindowKey = getLatestSlipTimeWindowCacheKey(templateId);
-		List<MetricValue> metricValues = jedisService.getObjectList(slipTimeWindowKey, MetricValue.class);
-
-		// Clean expired metrics.
-		Iterator<MetricValue> it = safeList(metricValues).iterator();
-		while (it.hasNext()) {
-			if (abs(now - it.next().getTimestamp()) >= ttl) {
-				it.remove();
-			}
-		}
-
-		jedisService.listObjectAdd(slipTimeWindowKey, new MetricValue(timestamp, value));
-		return metricValues;
-	}
-
-	/**
-	 * Matching tags
+	 * Match metric tags
 	 */
 	protected boolean matchTags(Map<String, String> metricTagMap, Map<String, String> tplTagMap) {
 		if (isEmpty(tplTagMap)) {
@@ -142,7 +118,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	}
 
 	/**
-	 * Found sent to who by template
+	 * Notification of alarm teamplate to users.
 	 */
 	protected void notification(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs) {
 		for (AlarmConfig alarmConfig : alarmConfigs) {
@@ -152,9 +128,8 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 			// Alarm notifier members.
 			String[] alarmMembers = alarmConfig.getAlarmMember().split(",");
 			if (log.isInfoEnabled()) {
-				log.info("Alarm notification for templateId: {}, notifierType: {}, notifierTo: {}, content: {}",
-						alarmTemplate.getId(), alarmConfig.getAlarmType(), alarmConfig.getAlarmMember(),
-						alarmConfig.getAlarmContent());
+				log.info("Notification alarm for templateId: {}, notifierType: {}, to: {}, content: {}", alarmTemplate.getId(),
+						alarmConfig.getAlarmType(), alarmConfig.getAlarmMember(), alarmConfig.getAlarmContent());
 			}
 			// Alarm to multiple notifiers.
 			notifier.simpleNotify(
