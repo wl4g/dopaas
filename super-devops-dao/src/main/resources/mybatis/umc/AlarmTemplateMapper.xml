@@ -3,8 +3,9 @@
 <mapper namespace="com.wl4g.devops.dao.umc.AlarmTemplateDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
     <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="metric" property="metric" jdbcType="VARCHAR" />
-    <result column="template_classify" property="templateClassify" jdbcType="INTEGER" />
+    <result column="classify" property="classify" jdbcType="INTEGER" />
     <result column="tags" property="tags" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -13,7 +14,6 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
-
     <collection property="rules" javaType="list" ofType="com.wl4g.devops.common.bean.umc.AlarmRule">
       <id column="rid" property="id" jdbcType="INTEGER" />
       <result column="template_id" property="templateId" jdbcType="INTEGER" />
@@ -23,15 +23,15 @@
       <result column="trigger_type" property="triggerType" jdbcType="INTEGER" />
       <result column="continuity_time" property="continuityTime" jdbcType="BIGINT" />
     </collection>
-
   </resultMap>
+
   <sql id="Base_Column_List" >
-    id, metric, template_classify, tags, enable, remark, del_flag, create_date, create_by, 
+    id, name, metric, classify, tags, enable, remark, del_flag, create_date, create_by, 
     update_date, update_by
   </sql>
 
   <sql id="Base_Column_List_t" >
-    t.id, t.metric, t.template_classify, t.tags, t.enable, t.remark, t.del_flag, t.create_date, t.create_by,
+    t.id, t.name, t.metric, t.classify, t.tags, t.enable, t.remark, t.del_flag, t.create_date, t.create_by,
     t.update_date, t.update_by
   </sql>
 
@@ -45,19 +45,39 @@
     from umc_alarm_template
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from umc_alarm_template
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
-    insert into umc_alarm_template (id, metric, template_classify, 
-      tags, enable, remark, 
-      del_flag, create_date, create_by, 
-      update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{metric,jdbcType=VARCHAR}, #{templateClassify,jdbcType=INTEGER}, 
-      #{tags,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+    insert into umc_alarm_template (
+      id,
+      name,
+      metric,
+      classify, 
+      tags,
+      enable,
+      remark, 
+      del_flag,
+      create_date,
+      create_by, 
+      update_date,
+      update_by
+      ) VALUES (
+      #{id,jdbcType=INTEGER},
+      #{name,jdbcType=VARCHAR},
+      #{metric,jdbcType=VARCHAR},
+      #{classify,jdbcType=INTEGER}, 
+      #{tags,jdbcType=VARCHAR},
+      #{enable,jdbcType=INTEGER},
+      #{remark,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=CHAR},
+      #{createDate,jdbcType=TIMESTAMP},
+      #{createBy,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP},
+      #{updateBy,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
     insert into umc_alarm_template
@@ -65,11 +85,14 @@
       <if test="id != null" >
         id,
       </if>
+      <if test="name != null" >
+        name,
+      </if>
       <if test="metric != null" >
         metric,
       </if>
-      <if test="templateClassify != null" >
-        template_classify,
+      <if test="classify != null" >
+        classify,
       </if>
       <if test="tags != null" >
         tags,
@@ -100,11 +123,14 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
       <if test="metric != null" >
         #{metric,jdbcType=VARCHAR},
       </if>
-      <if test="templateClassify != null" >
-        #{templateClassify,jdbcType=INTEGER},
+      <if test="classify != null" >
+        #{classify,jdbcType=INTEGER},
       </if>
       <if test="tags != null" >
         #{tags,jdbcType=VARCHAR},
@@ -135,11 +161,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
     update umc_alarm_template
     <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
       <if test="metric != null" >
         metric = #{metric,jdbcType=VARCHAR},
       </if>
-      <if test="templateClassify != null" >
-        template_classify = #{templateClassify,jdbcType=INTEGER},
+      <if test="classify != null" >
+        classify = #{classify,jdbcType=INTEGER},
       </if>
       <if test="tags != null" >
         tags = #{tags,jdbcType=VARCHAR},
@@ -170,8 +199,10 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
     update umc_alarm_template
-    set metric = #{metric,jdbcType=VARCHAR},
-      template_classify = #{templateClassify,jdbcType=INTEGER},
+    set
+      name = #{name,jdbcType=VARCHAR},
+      metric = #{metric,jdbcType=VARCHAR},
+      classify = #{classify,jdbcType=INTEGER},
       tags = #{tags,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
@@ -182,14 +213,6 @@
       update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
-  <!--<select id="selectWithRuleByids" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List_t" />
-    ,
-    <include refid="Rule_Column_List" />
-    from umc_alarm_template t LEFT JOIN umc_alarm_rule r on t.id=r.template_id where t.enable=1 and t.del_flag!=1
-  </select>-->
 
   <select id="getByCollectId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
@@ -217,6 +240,5 @@
     where uac.enable=1 and t.enable=1 and t.del_flag!=1
     and  uac.group_id=#{groupId,jdbcType=INTEGER}
   </select>
-
 
 </mapper>
