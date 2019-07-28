@@ -22,11 +22,7 @@ import com.wl4g.devops.ci.cron.CronUtils;
 import com.wl4g.devops.ci.cron.DynamicTask;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.ci.TriggerDetail;
-import com.wl4g.devops.common.bean.scm.AppInstance;
-import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -77,12 +73,12 @@ public class TriggerController {
 
 
     @RequestMapping(value = "/list")
-    public RespBase<?> list(String projectName, CustomPage customPage) {
+    public RespBase<?> list(CustomPage customPage,Integer id,String name,Integer taskId,Integer enable,String startDate, String endDate) {
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-        List<Trigger> list = triggerDao.list(projectName);
+        Page<Trigger> page = PageHelper.startPage(pageNum, pageSize, true);
+        List<Trigger> list = triggerDao.list(id,name,taskId,enable,startDate,endDate);
         customPage.setPageNum(pageNum);
 
         customPage.setPageSize(pageSize);
@@ -93,17 +89,16 @@ public class TriggerController {
     }
 
     @RequestMapping(value = "/save")
-    public RespBase<?> save(Trigger trigger, Integer[] instances) {
+    public RespBase<?> save(Trigger trigger) {
         RespBase<Object> resp = RespBase.create();
         checkTriggerCron(trigger);
-        Assert.notEmpty(instances, "instances can not be empty");
         if (null != trigger.getId() && trigger.getId() > 0) {
             trigger.preUpdate();
-            trigger = triggerService.update(trigger, instances);
+            trigger = triggerService.update(trigger);
         } else {
             trigger.preInsert();
             trigger.setDelFlag(DEL_FLAG_NORMAL);
-            trigger = triggerService.insert(trigger, instances);
+            trigger = triggerService.insert(trigger);
         }
         restart(trigger.getId());
         return resp;
@@ -112,7 +107,7 @@ public class TriggerController {
     private boolean checkTriggerCron(Trigger trigger) {
         Assert.notNull(trigger, "trigger can not be null");
         Assert.notNull(trigger.getType(), "type can not be null");
-        Assert.notNull(trigger.getProjectId(), "project can not be null");
+        Assert.notNull(trigger.getGroupId(), "project can not be null");
         if (trigger.getType().intValue() == TASK_TYPE_TIMMING) {
             Assert.notNull(trigger.getCron(), "cron can not be null");
         }
@@ -121,8 +116,7 @@ public class TriggerController {
 
     private void restart(Integer triggerId) {
         Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-        Project project = projectDao.selectByPrimaryKey(trigger.getProjectId());
-        dynamicTask.restartCron(trigger.getId().toString(), trigger.getCron(), trigger, project);
+        dynamicTask.restartCron(trigger.getId().toString(), trigger.getCron(), trigger);
     }
 
     @RequestMapping(value = "/detail")
@@ -131,26 +125,9 @@ public class TriggerController {
         Assert.notNull(id, "id can not be null");
         Trigger trigger = triggerDao.selectByPrimaryKey(id);
         Assert.notNull(trigger, "not found trigger");
-        List<TriggerDetail> triggerDetails = triggerService.getDetailByTriggerId(id);
-        Assert.notEmpty(triggerDetails, "triggerDetails is empty");
-        AppInstance appInstance = null;
-        for (TriggerDetail triggerDetail : triggerDetails) {
-            Integer instanceId = triggerDetail.getInstanceId();
-            appInstance = appGroupDao.getAppInstance(instanceId.toString());
-            if (appInstance != null) {
-                break;
-            }
-        }
-        Assert.notNull(appInstance, "not found app instance");
 
-        Integer[] instances = new Integer[triggerDetails.size()];
-        for (int i = 0; i < triggerDetails.size(); i++) {
-            instances[i] = triggerDetails.get(i).getInstanceId();
-        }
         resp.getData().put("trigger", trigger);
-        resp.getData().put("appGroupId", appInstance.getGroupId());
-        resp.getData().put("envId", Integer.valueOf(appInstance.getEnvId()));
-        resp.getData().put("instances", instances);
+        resp.getData().put("appGroupId", trigger.getGroupId());
 
         return resp;
     }

@@ -26,18 +26,14 @@ import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
-import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TriggerDao;
-import com.wl4g.devops.dao.ci.TriggerDetailDao;
+import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author vjay
@@ -64,6 +60,12 @@ public class CiServiceImpl implements CiService {
     @Autowired
     private TaskHistoryService taskHistoryService;
 
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private TaskDetailDao taskDetailDao;
+
     @Override
     public List<AppGroup> grouplist() {
         return appGroupDao.grouplist();
@@ -80,19 +82,11 @@ public class CiServiceImpl implements CiService {
     }
 
     @Override
-    public Trigger getTriggerByProjectAndBranch(Integer projectId, String branchName) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("projectId", projectId);
-        map.put("branchName", branchName);
-        Trigger trigger = triggerDao.getTriggerByProjectAndBranch(map);
+    public Trigger getTriggerByAppGroupIdAndBranch(Integer appGroupId, String branchName) {
+        Trigger trigger = triggerDao.getTriggerByAppGroupIdAndBranch(appGroupId,branchName);
         if (null == trigger) {
             return null;
         }
-        List<TriggerDetail> triggerDetails = triggerDetailDao.getDetailByTriggerId(trigger.getId());
-        if (null == triggerDetails) {
-            return null;
-        }
-        trigger.setTriggerDetails(triggerDetails);
         return trigger;
     }
 
@@ -137,15 +131,19 @@ public class CiServiceImpl implements CiService {
         // AppGroup appGroup =
         // appGroupDao.getAppGroup(project.getAppGroupId().toString());
         // String alias = appGroup.getName();
-        Trigger trigger = getTriggerByProjectAndBranch(project.getId(), branchName);
+        Trigger trigger = getTriggerByAppGroupIdAndBranch(project.getAppGroupId(), branchName);
         if (null == trigger) {
             return;
         }
         // Assert.notNull(trigger,"trigger not found, please config first");
 
         List<AppInstance> instances = new ArrayList<>();
-        for (TriggerDetail triggerDetail : trigger.getTriggerDetails()) {
-            AppInstance instance = appGroupDao.getAppInstance(triggerDetail.getInstanceId().toString());
+        Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
+        Assert.notNull(task,"task not found");
+        List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(task.getId());
+
+        for (TaskDetail taskDetail : taskDetails) {
+            AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
             instances.add(instance);
         }
         Assert.notEmpty(instances, "instances not found, please config first");
@@ -156,7 +154,7 @@ public class CiServiceImpl implements CiService {
         // Print to client
         //ShellContextHolder.printfQuietly("taskHistory begin");
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
-                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, trigger.getTarType());
+                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, task.getTarType());
         BasedDeployProvider provider = getDeployProvider(taskHistory);
         //execute
         execute(taskHistory.getId(), provider);

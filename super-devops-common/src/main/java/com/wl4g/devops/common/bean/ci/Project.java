@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.bean.ci;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
@@ -45,6 +46,8 @@ public class Project extends BaseBean implements Serializable {
 	private String groupName;
 
 	private Integer lockStatus;
+
+	private List<Dependency> dependencies;
 
 	public String getProjectName() {
 		return projectName;
@@ -108,6 +111,14 @@ public class Project extends BaseBean implements Serializable {
 
 	public void setLockStatus(Integer lockStatus) {
 		this.lockStatus = lockStatus;
+	}
+
+	public List<Dependency> getDependencies() {
+		return dependencies;
+	}
+
+	public void setDependencies(List<Dependency> dependencies) {
+		this.dependencies = dependencies;
 	}
 
 	@Override

@@ -19,25 +19,26 @@ import com.wl4g.devops.common.bean.ci.Trigger;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TriggerDao {
-	int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Integer id);
 
-	int insert(Trigger record);
+    int insert(Trigger record);
 
-	int insertSelective(Trigger record);
+    int insertSelective(Trigger record);
 
-	Trigger selectByPrimaryKey(Integer id);
+    Trigger selectByPrimaryKey(Integer id);
 
-	int updateByPrimaryKeySelective(Trigger record);
+    int updateByPrimaryKeySelective(Trigger record);
 
-	int updateByPrimaryKey(Trigger record);
+    int updateByPrimaryKey(Trigger record);
 
-	List<Trigger> list(@Param("projectName") String projectName);
+    List<Trigger> list(@Param("id") Integer id, @Param("name") String name,@Param("taskId")Integer taskId,
+                       @Param("enable") Integer enable,@Param("startDate") String startDate,
+                       @Param("endDate") String endDate);
 
-	Trigger getTriggerByProjectAndBranch(Map<String, Object> map);
+    Trigger getTriggerByAppGroupIdAndBranch(@Param("appGroupId") Integer appGroupId, @Param("branchName") String branchName);
 
-	List<Trigger> selectByType(@Param("type") Integer type);
+    List<Trigger> selectByType(@Param("type") Integer type);
 
 }
