@@ -123,6 +123,15 @@ public class TaskController {
         Assert.hasText(task.getBranchName(),"branchName is null");
     }
 
+    @RequestMapping(value = "/getListByAppGroupId")
+    public RespBase<?> getListByAppGroupId(Integer appGroupId) {
+        Assert.notNull(appGroupId,"appGroupId can not be null");
+        RespBase<Object> resp = RespBase.create();
+        List<Task> tasks = taskDao.selectByAppGroupId(appGroupId);
+        resp.getData().put("tasks",tasks);
+        return resp;
+    }
+
 
 
 

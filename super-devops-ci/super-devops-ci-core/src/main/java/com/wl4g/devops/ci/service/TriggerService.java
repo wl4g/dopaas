@@ -26,9 +26,9 @@ import java.util.List;
  */
 public interface TriggerService {
 
-    Trigger insert(Trigger trigger, Integer[] instanceIds);
+    Trigger insert(Trigger trigger);
 
-    Trigger update(Trigger trigger, Integer[] instanceIds);
+    Trigger update(Trigger trigger);
 
     int delete(Integer id);
 

@@ -299,4 +299,12 @@
     order by t.create_date desc
   </select>
 
+
+  <select id="selectByAppGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_task
+    where app_group_id = #{appGroupId,jdbcType=INTEGER}
+  </select>
+
 </mapper>

@@ -34,7 +34,7 @@ public interface CiService {
 
     List<AppInstance> instancelist(AppInstance appInstance);
 
-    Trigger getTriggerByProjectAndBranch(Integer projectId, String branchName);
+    Trigger getTriggerByAppGroupIdAndBranch(Integer appGroupId, String branchName);
 
     void hook(String projectName, String branchName, String url);
 
