@@ -5,9 +5,13 @@ import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -54,6 +59,12 @@ public class DynamicTask implements ApplicationRunner {
     @Autowired
     private TriggerService triggerService;
 
+    @Autowired
+    private TaskDao taskDao;
+
+    @Autowired
+    private TaskDetailDao taskDetailDao;
+
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         return new ThreadPoolTaskScheduler();
@@ -65,15 +76,14 @@ public class DynamicTask implements ApplicationRunner {
     public void startAll() {
         List<Trigger> triggers = triggerDao.selectByType(CiDevOpsConstants.TASK_TYPE_TIMMING);
         for (Trigger trigger : triggers) {
-            Project project = projectDao.selectByPrimaryKey(trigger.getProjectId());
-            restartCron(trigger.getId().toString(), trigger.getCron(), trigger, project);
+            restartCron(trigger.getId().toString(), trigger.getCron(), trigger);
         }
     }
 
     /**
      * start Cron
      */
-    public void startCron(String key, String expression, Trigger trigger, Project project) {
+    public void startCron(String key, String expression, Trigger trigger, Project project,Task task,List<TaskDetail> taskDetails) {
         log.info("startCron ");
         if (isExist(key)) {
             stopCron(key);
@@ -81,7 +91,7 @@ public class DynamicTask implements ApplicationRunner {
         if (trigger.getEnable() != 1) {
             return;
         }
-        ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(new CronRunnable(trigger, project, config, ciService, triggerService), new CronTrigger(expression));
+        ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(new CronRunnable(trigger, project, config, ciService, triggerService,task,taskDetails), new CronTrigger(expression));
         DynamicTask.map.put(key, future);
     }
 
@@ -99,10 +109,18 @@ public class DynamicTask implements ApplicationRunner {
     /**
      * restartCron
      */
-    public void restartCron(String key, String expression, Trigger trigger, Project project) {
+    public void restartCron(String key, String expression, Trigger trigger) {
         log.info("restartCron");
         stopCron(key);
-        startCron(key, expression, trigger, project);
+
+        Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
+        List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(trigger.getTaskId());
+        Assert.notNull(task,"task not found");
+        Assert.notEmpty(taskDetails,"taskDetails is empty");
+        Project project = projectDao.selectByPrimaryKey(task.getProjectId());
+        Assert.notNull(project,"project not found");
+
+        startCron(key, expression, trigger, project,task,taskDetails);
     }
 
     private boolean isExist(String key) {

@@ -5,12 +5,14 @@ import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.ci.TriggerDetail;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class CronRunnable implements Runnable {
 
     private Trigger trigger;
 
-    private List<TriggerDetail> triggerDetails;
+    //private List<TriggerDetail> triggerDetails;
 
     private Project project;
 
@@ -34,14 +36,20 @@ public class CronRunnable implements Runnable {
 
     private TriggerService triggerService;
 
+    private Task task;
 
-    public CronRunnable(Trigger trigger, Project project, DeployProperties config, CiService ciService, TriggerService triggerService) {
+    private List<TaskDetail> taskDetails;
+
+
+    public CronRunnable(Trigger trigger, Project project, DeployProperties config, CiService ciService, TriggerService triggerService,Task task,List<TaskDetail> taskDetails) {
         this.trigger = trigger;
-        this.triggerDetails = trigger.getTriggerDetails();
+        //this.triggerDetails = trigger.getTriggerDetails();
         this.project = project;
         this.config = config;
         this.ciService = ciService;
         this.triggerService = triggerService;
+        this.task = task;
+        this.taskDetails = taskDetails;
     }
 
     @Override
@@ -49,11 +57,11 @@ public class CronRunnable implements Runnable {
         log.info("Timing tasks start");
         if (check()) {
             //TODO need build
-            /*List<String> instanceStrs = new ArrayList<>();
-            for(TriggerDetail triggerDetail : triggerDetails){
-                instanceStrs.add(String.valueOf(triggerDetail.getInstanceId()));
+            List<String> instanceStrs = new ArrayList<>();
+            for(TaskDetail taskDetail : taskDetails){
+                instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
             }
-            ciService.createTaskHistory(project.getAppGroupId(), trigger.getBranchName(), instanceStrs, CiDevOpsConstants.TASK_TYPE_TIMMING);*/
+            //ciService.createTask(project.getAppGroupId(), task.getBranchName(), instanceStrs, CiDevOpsConstants.TASK_TYPE_TIMMING,TAR_TYPE_TAR);
             //set new sha in db
             String path = config.getGitBasePath() + "/" + project.getProjectName();
             try {
@@ -78,9 +86,9 @@ public class CronRunnable implements Runnable {
         String path = config.getGitBasePath() + "/" + project.getProjectName();
         try {
             if (GitUtils.checkGitPahtExist(path)) {
-                GitUtils.checkout(config.getCredentials(), path, trigger.getBranchName());
+                GitUtils.checkout(config.getCredentials(), path, task.getBranchName());
             } else {
-                GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, trigger.getBranchName());
+                GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, task.getBranchName());
             }
             String oldestSha = GitUtils.getOldestCommitSha(path);
             return !StringUtils.equals(sha, oldestSha);

@@ -49,7 +49,7 @@
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Project">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Project" useGeneratedKeys="true" keyProperty="id">
     insert into ci_project
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

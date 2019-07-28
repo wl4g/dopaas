@@ -23,4 +23,8 @@ public interface TaskDao {
     List<Task> list(@Param("id") Integer id,@Param("taskName") String taskName,@Param("groupName") String groupName,
                     @Param("branchName") String branchName,@Param("tarType") Integer tarType,@Param("startDate") String startDate,
                     @Param("endDate") String endDate);
+
+
+    List<Task> selectByAppGroupId(Integer appGroupId);
+
 }

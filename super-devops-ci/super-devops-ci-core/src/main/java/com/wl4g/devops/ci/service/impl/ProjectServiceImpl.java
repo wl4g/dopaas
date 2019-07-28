@@ -18,9 +18,13 @@ package com.wl4g.devops.ci.service.impl;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Dependency;
+import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -35,20 +39,46 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ProjectDao projectDao;
 
+    @Autowired
+    private DependencyDao dependencyDao;
+
     @Override
+    @Transactional
     public int insert(Project project) {
         Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+        //check repeated
         Assert.state(hasProject == null, "Config Repeated");
         project.preInsert();
-        return projectDao.insertSelective(project);
+        int result = projectDao.insertSelective(project);
+        if (project.getDependencies() != null) {
+            for (Dependency dependency : project.getDependencies()) {
+                if(dependency.getDependentId()!=null&& StringUtils.isNotBlank(dependency.getBranch())){
+                    dependency.setProjectId(project.getId());
+                    dependencyDao.insertSelective(dependency);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
+    @Transactional
     public int update(Project project) {
         Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+        //check repeated 
         Assert.state(hasProject == null || hasProject.getId().intValue() == project.getId().intValue(), "Config Repeated");
         project.preUpdate();
-        return projectDao.updateByPrimaryKeySelective(project);
+        int result = projectDao.updateByPrimaryKeySelective(project);
+        dependencyDao.deleteByProjectId(project.getId());
+        if (project.getDependencies() != null) {
+            for (Dependency dependency : project.getDependencies()) {
+                if(dependency.getDependentId()!=null&& StringUtils.isNotBlank(dependency.getBranch())){
+                    dependency.setProjectId(project.getId());
+                    dependencyDao.insertSelective(dependency);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -72,7 +102,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Project selectByPrimaryKey(Integer id) {
-        return projectDao.selectByPrimaryKey(id);
+        Project project = projectDao.selectByPrimaryKey(id);
+        List<Dependency> dependencies = dependencyDao.getParentsByProjectId(project.getId());
+        project.setDependencies(dependencies);
+        return project;
     }
 
     @Override
