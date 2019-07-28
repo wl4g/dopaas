@@ -36,6 +36,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -85,7 +86,7 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/save")
-    public RespBase<?> save(Project project) {
+    public RespBase<?> save(@RequestBody Project project) {
         RespBase<Object> resp = RespBase.create();
         if (null != project.getId() && project.getId() > 0) {
             project.preUpdate();

@@ -24,10 +24,7 @@ import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,56 +41,19 @@ public class TriggerServiceImpl implements TriggerService {
 
     @Override
     @Transactional
-    public Trigger insert(Trigger trigger, Integer[] instanceIds) {
-        Assert.state(!isRepeat(trigger,instanceIds),"trigger deploy this instance is Repeat,please check");
+    public Trigger insert(Trigger trigger) {
         trigger.preInsert();
-        int result = triggerDao.insertSelective(trigger);
-        int triggerId = trigger.getId();
-        Assert.notEmpty(instanceIds, "instance can not be null");
-        List<TriggerDetail> triggerDetails = new ArrayList<>();
-        for (Integer instanceId : instanceIds) {
-            TriggerDetail triggerDetail = new TriggerDetail();
-            triggerDetail.setInstanceId(instanceId);
-            triggerDetail.preInsert();
-            triggerDetail.setTriggerId(triggerId);
-            triggerDetailDao.insertSelective(triggerDetail);
-            triggerDetails.add(triggerDetail);
-        }
-        trigger.setTriggerDetails(triggerDetails);
-
+        triggerDao.insertSelective(trigger);
         return trigger;
     }
 
     @Override
     @Transactional
-    public Trigger update(Trigger trigger, Integer[] instanceIds) {
+    public Trigger update(Trigger trigger) {
         trigger.preUpdate();
         triggerDao.updateByPrimaryKeySelective(trigger);
         int triggerId = trigger.getId();
-        Assert.notEmpty(instanceIds, "instance can not be null");
-        List<TriggerDetail> triggerDetails = new ArrayList<>();
-        triggerDetailDao.deleteByTriggerId(triggerId);
-        for (Integer instanceId : instanceIds) {
-            TriggerDetail triggerDetail = new TriggerDetail();
-            triggerDetail.setInstanceId(instanceId);
-            triggerDetail.preInsert();
-            triggerDetail.setTriggerId(triggerId);
-            triggerDetailDao.insertSelective(triggerDetail);
-            triggerDetails.add(triggerDetail);
-        }
-        trigger.setTriggerDetails(triggerDetails);
         return trigger;
-    }
-
-
-    private boolean isRepeat(Trigger trigger,Integer[] instanceIds){
-        List<TriggerDetail> usedInstance = triggerDetailDao.getUsedInstance(trigger.getProjectId(), trigger.getId());
-        for(TriggerDetail triggerDetail : usedInstance){
-            if(Arrays.asList(instanceIds).contains(triggerDetail.getInstanceId())){
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

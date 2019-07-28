@@ -161,4 +161,9 @@
       AND p.project_name LIKE CONCAT('%','${projectName}','%')
     </if>
   </select>
+
+  <delete id="deleteByProjectId" parameterType="java.lang.Integer" >
+    delete from ci_dependency
+    where project_id = #{projectId,jdbcType=INTEGER}
+  </delete>
 </mapper>
