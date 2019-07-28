@@ -113,4 +113,5 @@ public class Trigger extends BaseBean implements Serializable {
 	public void setSha(String sha) {
 		this.sha = sha;
 	}
+	
 }

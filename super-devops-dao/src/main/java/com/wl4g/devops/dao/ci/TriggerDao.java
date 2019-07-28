@@ -40,4 +40,5 @@ public interface TriggerDao {
 
 	List<Trigger> selectByType(@Param("type") Integer type);
 
+	
 }
