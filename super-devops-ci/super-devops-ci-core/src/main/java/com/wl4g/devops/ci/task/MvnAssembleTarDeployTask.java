@@ -64,6 +64,11 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
         try {
             // Update status
             taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+
+            //pre command
+            String s4 = provider.doExecute(instance.getHost(), instance.getServerAccount(), provider.getTaskHistory().getPreCommand(),instance.getSshRsa());
+            result.append(s4).append("\n");
+
             //Boolean detailSuccess = new Boolean(false);
             // Scp to tmp,rename,move to webapps
             String s = provider.scpAndTar(path + tarPath, instance.getHost(), instance.getServerAccount(), project.getParentAppHome(),
@@ -75,8 +80,8 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
                     instance.getSshRsa());
             result.append(s1).append("\n");
 
-            // Restart
-            String s2 = provider.restart(instance.getHost(), instance.getServerAccount(), instance.getSshRsa());
+            //post command (restart command)
+            String s2 = provider.doExecute(instance.getHost(), instance.getServerAccount(), provider.getTaskHistory().getPreCommand(),instance.getSshRsa());
             result.append(s2).append("\n");
 
             // Update status

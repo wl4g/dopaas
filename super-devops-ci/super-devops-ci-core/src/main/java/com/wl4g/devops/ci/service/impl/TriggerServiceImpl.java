@@ -18,14 +18,10 @@ package com.wl4g.devops.ci.service.impl;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.ci.TriggerDetail;
 import com.wl4g.devops.dao.ci.TriggerDao;
-import com.wl4g.devops.dao.ci.TriggerDetailDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @author vjay
@@ -36,8 +32,6 @@ public class TriggerServiceImpl implements TriggerService {
 
     @Autowired
     private TriggerDao triggerDao;
-    @Autowired
-    private TriggerDetailDao triggerDetailDao;
 
     @Override
     @Transactional
@@ -59,7 +53,6 @@ public class TriggerServiceImpl implements TriggerService {
     @Override
     @Transactional
     public int delete(Integer id) {
-        triggerDetailDao.deleteByTriggerId(id);
         return triggerDao.deleteByPrimaryKey(id);
     }
 
@@ -87,12 +80,6 @@ public class TriggerServiceImpl implements TriggerService {
         trigger.setId(id);
         trigger.setSha(sha);
         triggerDao.updateByPrimaryKeySelective(trigger);
-    }
-
-
-    @Override
-    public List<TriggerDetail> getDetailByTriggerId(Integer triggerId) {
-        return triggerDetailDao.getDetailByTriggerId(triggerId);
     }
 
 }

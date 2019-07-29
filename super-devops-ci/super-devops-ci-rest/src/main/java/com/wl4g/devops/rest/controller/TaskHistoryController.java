@@ -21,14 +21,12 @@ import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.constants.CiDevOpsConstants;
+import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.RespBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,17 +59,6 @@ public class TaskHistoryController {
         customPage.setTotal(page.getTotal());
         resp.getData().put("page", customPage);
         resp.getData().put("list", list);
-        return resp;
-    }
-
-    @RequestMapping(value = "/create")
-    public RespBase<?> create(Integer appGroupId, String branchName, Integer[] instances,Integer tarType) {
-        RespBase<Object> resp = RespBase.create();
-        List<String> instanceStrs = new ArrayList<>();
-        for (Integer instance : instances) {
-            instanceStrs.add(String.valueOf(instance));
-        }
-        ciService.createTask(appGroupId, branchName, instanceStrs, CiDevOpsConstants.TASK_TYPE_MANUAL,tarType);
         return resp;
     }
 

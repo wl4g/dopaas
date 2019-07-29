@@ -52,9 +52,6 @@ public class CiServiceImpl implements CiService {
     private TriggerDao triggerDao;
 
     @Autowired
-    private TriggerDetailDao triggerDetailDao;
-
-    @Autowired
     private ProjectDao projectDao;
 
     @Autowired
@@ -92,32 +89,39 @@ public class CiServiceImpl implements CiService {
 
 
     @Override
-    public void createTask(Integer appGroupId, String branchName, List<String> instanceIds, int type,int tarType) {
-        Assert.notNull(appGroupId, "groupId is null");
-        AppGroup appGroup = appGroupDao.getAppGroup(appGroupId);
-        createTask(appGroup, branchName, instanceIds, type,tarType);
-    }
+    public void createTask(Integer taskId) {
 
-    @Override
-    public void createTask(String appGroupName, String branchName, List<String> instanceIds, int type,int tarType) {
-        AppGroup appGroup = appGroupDao.getAppGroupByName(appGroupName);
-        createTask(appGroup, branchName, instanceIds, type,tarType);
-    }
+        Assert.notNull(taskId,"taskId is null");
+        Task task = taskDao.selectByPrimaryKey(taskId);
+        Assert.notNull(task,"task is null");
+        List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
+        List<String> instanceStrs = new ArrayList<>();
+        for (TaskDetail taskDetail : taskDetails) {
+            instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
+        }
+        Assert.notNull(task.getAppGroupId(), "groupId is null");
+        AppGroup appGroup = appGroupDao.getAppGroup(task.getAppGroupId());
 
-    private void createTask(AppGroup appGroup, String branchName, List<String> instanceIds, int type,int tarType) {
         Assert.notNull(appGroup, "not found this app");
         Project project = projectDao.getByAppGroupId(appGroup.getId());
-        Assert.notEmpty(instanceIds, "instanceIds find empty list,Please check the instanceId");
+
+        Assert.notEmpty(instanceStrs, "instanceIds find empty list,Please check the instanceId");
         List<AppInstance> instances = new ArrayList<>();
-        for (String instanceId : instanceIds) {
+        for (String instanceId : instanceStrs) {
             AppInstance instance = appGroupDao.getAppInstance(instanceId);
             instances.add(instance);
         }
-        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, type,
-                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, null, null, null, tarType);
+        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
+                CiDevOpsConstants.TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getPreCommand(),task.getPostCommand(), task.getTarType());
         BasedDeployProvider provider = getDeployProvider(taskHistory);
         //execute
         execute(taskHistory.getId(), provider);
+    }
+
+
+
+    private void createTask(AppGroup appGroup, String branchName, List<String> instanceIds, int type,int tarType) {
+
     }
 
     public void hook(String projectName, String branchName, String url) {
@@ -154,7 +158,7 @@ public class CiServiceImpl implements CiService {
         // Print to client
         //ShellContextHolder.printfQuietly("taskHistory begin");
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
-                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, null, task.getTarType());
+                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, task.getPreCommand(),task.getPostCommand(), task.getTarType());
         BasedDeployProvider provider = getDeployProvider(taskHistory);
         //execute
         execute(taskHistory.getId(), provider);
@@ -244,7 +248,7 @@ public class CiServiceImpl implements CiService {
             instances.add(instance);
         }
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
-                CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId, null, CiDevOpsConstants.TAR_TYPE_TAR);
+                CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId, taskHistoryOld.getPreCommand(),taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR);
         BasedDeployProvider provider = getDeployProvider(taskHistory);
         //execute
         rollbackExecute(taskHistory.getId(), provider);

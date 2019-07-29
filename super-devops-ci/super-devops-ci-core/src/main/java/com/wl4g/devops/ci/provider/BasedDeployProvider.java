@@ -273,24 +273,39 @@ public abstract class BasedDeployProvider {
 
     /**
      * stop
-     */
+     *//*
     public String stop(String targetHost, String userName, String command, String rsa) throws Exception {
         return doExecute(targetHost, userName, command, rsa);
     }
 
-    /**
+    *//**
      * start
-     */
+     *//*
     public String start(String targetHost, String userName, String command, String rsa) throws Exception {
         return doExecute(targetHost, userName, command, rsa);
     }
 
-    /**
+    *//**
      * restart
-     */
+     *//*
     public String restart(String targetHost, String userName, String command, String rsa) throws Exception {
         return doExecute(targetHost, userName, command, rsa);
     }
+
+    *//**
+     * before start app running
+     *//*
+    public String preCommand(String targetHost, String userName, String command, String rsa) throws Exception{
+        return doExecute(targetHost, userName, command, rsa);
+    }
+
+    *//**
+     * after start app running
+     *//*
+    public String postCommand(String targetHost, String userName, String command, String rsa) throws Exception{
+        return doExecute(targetHost, userName, command, rsa);
+    }*/
+
 
     /**
      * docker build
