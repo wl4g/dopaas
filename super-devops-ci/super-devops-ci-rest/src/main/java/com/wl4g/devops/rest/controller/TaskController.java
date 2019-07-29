@@ -23,14 +23,17 @@ import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,6 +58,9 @@ public class TaskController {
 
     @Autowired
     private AppGroupDao appGroupDao;
+
+    @Autowired
+    private TaskDetailDao taskDetailDao;
 
 
     @RequestMapping(value = "/list")
@@ -129,6 +135,21 @@ public class TaskController {
         RespBase<Object> resp = RespBase.create();
         List<Task> tasks = taskDao.selectByAppGroupId(appGroupId);
         resp.getData().put("tasks",tasks);
+        return resp;
+    }
+
+    @RequestMapping(value = "/create")
+    public RespBase<?> create(Integer taskId) {
+        RespBase<Object> resp = RespBase.create();
+        Assert.notNull(taskId,"taskId is null");
+        Task task = taskDao.selectByPrimaryKey(taskId);
+        Assert.notNull(task,"task is null");
+        List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
+        List<String> instanceStrs = new ArrayList<>();
+        for (TaskDetail taskDetail : taskDetails) {
+            instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
+        }
+        ciService.createTask(task.getAppGroupId(), task.getBranchName(), instanceStrs, CiDevOpsConstants.TASK_TYPE_MANUAL,CiDevOpsConstants.TAR_TYPE_TAR);
         return resp;
     }
 

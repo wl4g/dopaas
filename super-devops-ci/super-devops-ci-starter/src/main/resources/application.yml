@@ -28,6 +28,6 @@ logging:
 # Mybatis configuration.
 mybatis:
   configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/mapper/*Mapper.xml
-#  mapperLocations: classpath:mybatis/**/*Mapper.xml
+#  mapperLocations: classpath:mybatis/mapper/*Mapper.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
   typeAliasesPackage: com.wl4g.devops.common.bean.*,com.wl4g.devops.common.bean.*.*
