@@ -38,9 +38,7 @@ public interface CiService {
 
     void hook(String projectName, String branchName, String url);
 
-    void createTask(String projectName, String branchName, List<String> instanceIds, int type,int tarType);
-
-    void createTask(Integer appGroupId, String branchName, List<String> instanceIds, int type,int tarType);
+    void createTask(Integer taskId);
 
     void rollback(Integer taskId);
 

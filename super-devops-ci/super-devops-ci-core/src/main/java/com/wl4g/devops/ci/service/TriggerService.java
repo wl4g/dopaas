@@ -16,9 +16,6 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.ci.TriggerDetail;
-
-import java.util.List;
 
 /**
  * @author vjay
@@ -35,8 +32,6 @@ public interface TriggerService {
     void enable(Integer id);
 
     void disable(Integer id);
-
-    List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
 
     void updateSha(Integer id, String sha);
 

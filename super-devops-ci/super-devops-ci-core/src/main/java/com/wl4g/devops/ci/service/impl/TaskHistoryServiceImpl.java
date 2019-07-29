@@ -76,7 +76,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
     @Override
     @Transactional
     public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-                                         Integer refId, String command, Integer tarType) {
+                                         Integer refId, String preCommand,String postCommand, Integer tarType) {
         Assert.notNull(project, "not found project,please check che project config");
         TaskHistory taskHistory = new TaskHistory();
         taskHistory.preInsert();
@@ -86,7 +86,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
         taskHistory.setBranchName(branchName);
         taskHistory.setShaGit(sha);
         taskHistory.setRefId(refId);
-        taskHistory.setCommand(command);
+        taskHistory.setPreCommand(preCommand);
+        taskHistory.setPostCommand(postCommand);
         taskHistory.setTarType(tarType);
         taskHistory.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
         taskHistoryDao.insertSelective(taskHistory);

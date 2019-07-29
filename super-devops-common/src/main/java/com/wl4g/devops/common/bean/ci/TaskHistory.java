@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.wl4g.devops.common.bean.BaseBean;
+
+import java.io.Serializable;
 
 public class TaskHistory extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
@@ -37,7 +36,9 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private Integer refId;
 
-	private String command;
+	private String preCommand;
+
+	private String postCommand;
 
 	private Integer tarType;
 
@@ -46,8 +47,6 @@ public class TaskHistory extends BaseBean implements Serializable {
 	private String projectName;
 
 	private String groupName;
-
-	private List<TriggerDetail> triggerDetails;
 
 	public Integer getType() {
 		return type;
@@ -105,12 +104,20 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.result = result;
 	}
 
-	public String getCommand() {
-		return command;
+	public String getPreCommand() {
+		return preCommand;
 	}
 
-	public void setCommand(String command) {
-		this.command = command;
+	public void setPreCommand(String preCommand) {
+		this.preCommand = preCommand;
+	}
+
+	public String getPostCommand() {
+		return postCommand;
+	}
+
+	public void setPostCommand(String postCommand) {
+		this.postCommand = postCommand;
 	}
 
 	public Integer getTarType() {
@@ -145,11 +152,4 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.shaLocal = shaLocal;
 	}
 
-	public List<TriggerDetail> getTriggerDetails() {
-		return triggerDetails;
-	}
-
-	public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
-		this.triggerDetails = triggerDetails;
-	}
 }
