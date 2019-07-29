@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.provider;
 
 import com.wl4g.devops.ci.config.DeployProperties;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -139,41 +138,6 @@ public abstract class BasedDeployProvider {
         return result;
     }
 
-    /**
-     * check git path exist
-     */
-    public boolean checkGitPahtExist() throws Exception {
-        File file = new File(path + "/.git");
-        if (file.exists()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * clone
-     */
-    public void clone(String path, String url, String branch) throws Exception {
-        GitUtils.clone(config.getCredentials(), url, path, branch);
-    }
-
-    /**
-     * checkOut
-     */
-    public void checkOut(String path, String branch) throws Exception {
-        GitUtils.checkout(config.getCredentials(), path, branch);
-    }
-
-    /**
-     * build (maven)
-     */
-    public String build(String path) throws Exception {
-        String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-        // String command = "mvn -f /Users/vjay/gittest/jianzutest clean install
-        // -Dmaven.test.skip=true";
-        return SSHTool.exec(command);
-    }
 
     /**
      * @param path       -- /fingerproject/finger-auth/target/fingerauth.tar
@@ -270,42 +234,6 @@ public abstract class BasedDeployProvider {
     public void rollback() throws Exception {
         throw new UnsupportedOperationException();
     }
-
-    /**
-     * stop
-     *//*
-    public String stop(String targetHost, String userName, String command, String rsa) throws Exception {
-        return doExecute(targetHost, userName, command, rsa);
-    }
-
-    *//**
-     * start
-     *//*
-    public String start(String targetHost, String userName, String command, String rsa) throws Exception {
-        return doExecute(targetHost, userName, command, rsa);
-    }
-
-    *//**
-     * restart
-     *//*
-    public String restart(String targetHost, String userName, String command, String rsa) throws Exception {
-        return doExecute(targetHost, userName, command, rsa);
-    }
-
-    *//**
-     * before start app running
-     *//*
-    public String preCommand(String targetHost, String userName, String command, String rsa) throws Exception{
-        return doExecute(targetHost, userName, command, rsa);
-    }
-
-    *//**
-     * after start app running
-     *//*
-    public String postCommand(String targetHost, String userName, String command, String rsa) throws Exception{
-        return doExecute(targetHost, userName, command, rsa);
-    }*/
-
 
     /**
      * docker build

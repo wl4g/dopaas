@@ -209,7 +209,7 @@
       AND id=#{id,jdbcType=INTEGER}
     </if>
     <if test="name != null and name != ''" >
-      AND name=#{name,jdbcType=VARCHAR}
+      AND name LIKE CONCAT('%','${name}','%')
     </if>
     <if test="taskId != null" >
       AND task_id=#{taskId,jdbcType=INTEGER}
@@ -218,8 +218,8 @@
       AND enable=#{enable,jdbcType=INTEGER}
     </if>
     <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
-      AND DATE_FORMAT(a.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
-      AND DATE_FORMAT(a.create_date,'%Y-%m-%d %H:%i') &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(create_date,'%Y-%m-%d %H:%i') &lt; DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
     </if>
   </select>
 

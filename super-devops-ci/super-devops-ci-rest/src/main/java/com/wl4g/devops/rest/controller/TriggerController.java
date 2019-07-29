@@ -24,6 +24,7 @@ import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
@@ -73,12 +74,19 @@ public class TriggerController {
 
 
     @RequestMapping(value = "/list")
-    public RespBase<?> list(CustomPage customPage,Integer id,String name,Integer taskId,Integer enable,String startDate, String endDate) {
+    public RespBase<?> list(CustomPage customPage, Integer id, String name, Integer taskId, Integer enable,
+                            String startDate,String endDate) {
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
         Page<Trigger> page = PageHelper.startPage(pageNum, pageSize, true);
-        List<Trigger> list = triggerDao.list(id,name,taskId,enable,startDate,endDate);
+
+        String endDateStr = null;
+        if(StringUtils.isNotBlank(endDate)){
+            endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate),1));
+        }
+
+        List<Trigger> list = triggerDao.list(id,name,taskId,enable,startDate,endDateStr);
         customPage.setPageNum(pageNum);
 
         customPage.setPageSize(pageSize);
