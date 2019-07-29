@@ -23,16 +23,17 @@ import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,7 +69,13 @@ public class TaskController {
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
         Page<Task> page = PageHelper.startPage(pageNum, pageSize, true);
-        List<Task> list = taskDao.list(id,taskName,groupName, branchName,tarType,startDate,endDate);
+
+        String endDateStr = null;
+        if(StringUtils.isNotBlank(endDate)){
+            endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate),1));
+        }
+
+        List<Task> list = taskDao.list(id,taskName,groupName, branchName,tarType,startDate,endDateStr);
         customPage.setPageNum(pageNum);
         customPage.setPageSize(pageSize);
         customPage.setTotal(page.getTotal());
