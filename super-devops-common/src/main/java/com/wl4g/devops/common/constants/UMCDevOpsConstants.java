@@ -59,8 +59,6 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 
 	final public static String NOT_FOUND = "umc_ip_not_found_";
 
-	final public static String USE_GROUP = "USEGROUP";
-
 	//
 	// UMC watch definition.
 	//

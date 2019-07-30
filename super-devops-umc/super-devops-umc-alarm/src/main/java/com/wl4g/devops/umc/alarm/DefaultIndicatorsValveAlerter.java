@@ -40,7 +40,7 @@ import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
-import com.wl4g.devops.umc.rule.OperatorType;
+import com.wl4g.devops.umc.rule.RelateOperatorType;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 
 /**
@@ -96,13 +96,13 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					List<AlarmRule> matchedRules = matchAlarmRules(metricVals, tpl.getRules(), now);
 					if (!isEmpty(matchedRules)) {
 						if (log.isInfoEnabled()) {
-							log.info("Matched to metric: {} and rule template: {}, time window data: {}", metricName, tpl.getId(),
-									toJSONString(metricVals));
+							log.info("Matched to metric: {} and rule template: {}, time window queue: {}", metricName,
+									tpl.getId(), toJSONString(metricVals));
 						}
 						storageNotification(aggWrap.getCollectId(), serviceId, groupId, tpl, aggWrap.getTimestamp(),
 								matchedRules);
 					} else if (log.isDebugEnabled()) {
-						log.debug("No match to metric: {} and rule template: {}, time window data: {}", metricName, tpl.getId(),
+						log.debug("No match to metric: {} and rule template: {}, time window queue: {}", metricName, tpl.getId(),
 								toJSONString(metricVals));
 					}
 				}
@@ -118,9 +118,9 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		// Match mode for 'OR'.
 		return safeList(rules).stream().map(rule -> {
 			// Get latest time window metric values.
-			Double[] vals = extractAvailableTimeWindowMetricValues(metricVals, rule.getContinuityTime(), now);
+			Double[] vals = extractAvailableTimeWindowMetricValues(metricVals, rule.getQueueTimeWindow(), now);
 			// Do inspection.
-			OperatorType oper = OperatorType.of(rule.getOperator());
+			RelateOperatorType oper = RelateOperatorType.of(rule.getRelateOperator());
 			if (inspector.verify(new InspectWrapper(oper, of(rule.getAggregator()), rule.getValue(), vals))) {
 				return rule;
 			}

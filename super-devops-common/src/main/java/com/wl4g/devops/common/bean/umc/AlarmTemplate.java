@@ -22,7 +22,7 @@ public class AlarmTemplate extends BaseBean {
 	private List<AlarmRule> rules = new ArrayList<>();
 
 	//
-	// Tempoary
+	// Temporary
 	//
 
 	private Map<String, String> tagMap;

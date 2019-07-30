@@ -155,6 +155,25 @@ public class RuleConfigManager implements ApplicationRunner {
 		return alarmTpls;
 	}
 
+	/**
+	 * Find alarm rule template by collectId.
+	 * 
+	 * @param groupId
+	 * @return
+	 */
+	public List<AlarmTemplate> findAlarmRuleTpls(String collectId) {
+		List<AlarmTemplate> alarmTpls = jedisService.getObjectList(getGroupIdAlarmRuleCacheKey(groupId), AlarmTemplate.class);
+		if (isEmpty(alarmTpls)) {
+			alarmTpls = ruleConfigurer.getAlarmTemplateByGroupId(groupId);
+			if (isEmpty(alarmTpls)) {
+				jedisService.setObjectAsJson(getGroupIdAlarmRuleCacheKey(groupId), NOT_FOUND, 30);
+			} else {
+				jedisService.setObjectAsJson(getGroupIdAlarmRuleCacheKey(groupId), alarmTpls, 0);
+			}
+		}
+		return alarmTpls;
+	}
+
 	// --- Cache key ---
 
 	private static String getCacheKeyIpAndPort(String collectIpAndPort) {

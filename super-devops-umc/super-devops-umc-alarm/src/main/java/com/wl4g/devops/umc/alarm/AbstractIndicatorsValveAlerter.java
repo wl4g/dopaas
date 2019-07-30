@@ -94,9 +94,9 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	protected long extractLargestRuleWindowKeepTime(List<AlarmRule> rules) {
 		long largestTimeWindow = 0;
 		for (AlarmRule alarmRule : rules) {
-			Long timeWindow = alarmRule.getContinuityTime();
+			Long timeWindow = alarmRule.getQueueTimeWindow();
 			if ((timeWindow != null ? timeWindow : 0) > largestTimeWindow) {
-				largestTimeWindow = alarmRule.getContinuityTime();
+				largestTimeWindow = alarmRule.getQueueTimeWindow();
 			}
 		}
 		return largestTimeWindow;
