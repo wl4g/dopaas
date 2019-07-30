@@ -31,13 +31,15 @@ import com.wl4g.devops.common.utils.context.SpringContexts;
  * @since
  */
 public abstract class AbstractDeployTask implements Runnable {
-    final protected Logger log = LoggerFactory.getLogger(getClass());
 
+    final protected Logger log = LoggerFactory.getLogger(getClass());
     final protected AppInstance instance;
     final protected Project project;
     final protected TaskHistoryService taskHistoryService;
 
+    // Is Success , if not , return
     protected Boolean isSuccess = true;
+    // Result
     protected StringBuffer result = new StringBuffer();
 
     public AbstractDeployTask(AppInstance instance, Project project) {

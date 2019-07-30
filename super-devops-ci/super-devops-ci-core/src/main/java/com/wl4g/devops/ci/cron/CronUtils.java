@@ -16,10 +16,16 @@ import java.util.List;
  */
 public class CronUtils {
 
+    /**
+     * Check the expression is Valid
+     */
     public static boolean isValidExpression(String expression) {
         return CronExpression.isValidExpression(expression);
     }
 
+    /**
+     * Get the expression next numTimes -- run time
+     */
     public static List<String> getNextExecTime(String expression, Integer numTimes) {
         List<String> list = new ArrayList<>();
         CronTriggerImpl cronTriggerImpl = new CronTriggerImpl();
@@ -28,7 +34,6 @@ public class CronUtils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        // 这个是重点，一行代码搞定
         List<Date> dates = TriggerUtils.computeFireTimes(cronTriggerImpl, null, numTimes);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (Date date : dates) {
@@ -36,10 +41,6 @@ public class CronUtils {
         }
         return list;
     }
-
-    /*public static void main(String[] args) throws Exception {
-        System.out.println(getNextExecTime("0 0/2 * * * ?", 5) + "\n");
-    }*/
 
 
 }

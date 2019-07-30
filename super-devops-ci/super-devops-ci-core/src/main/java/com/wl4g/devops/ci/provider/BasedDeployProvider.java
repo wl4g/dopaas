@@ -73,19 +73,28 @@ public abstract class BasedDeployProvider {
     final private List<AppInstance> instances;
 
     /**
-     * taskHistoryDetails
+     * TaskHistoryDetails
      */
     final private List<TaskHistoryDetail> taskHistoryDetails;
 
     /**
-     * service
+     * Service
      */
     final private DependencyService dependencyService;
 
+    /**
+     * Task History
+     */
     final private TaskHistory taskHistory;
 
+    /**
+     * Ref Task History , for rollback
+     */
     final private TaskHistory refTaskHistory;
 
+    /**
+     * project
+     */
     final private Project project;
 
     /**
@@ -102,8 +111,14 @@ public abstract class BasedDeployProvider {
      */
     protected String shaLocal;
 
-
+    /**
+     * is success , if fail , Stop running
+     */
     protected Boolean isSuccess = new Boolean(true);
+
+    /**
+     * result
+     */
     protected StringBuffer result = new StringBuffer();
 
     public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
@@ -116,20 +131,21 @@ public abstract class BasedDeployProvider {
         this.taskHistory = taskHistory;
         this.refTaskHistory = refTaskHistory;
         this.taskHistoryDetails = taskHistoryDetails;
-
         String[] a = project.getTarPath().split("/");
         this.tarName = a[a.length - 1];
-
         this.project = project;
         this.dependencyService = SpringContexts.getBean(DependencyService.class);
     }
 
+    /**
+     * Execute
+     */
     public abstract void execute() throws Exception;
 
     /**
-     * exce command
+     * Exce command
      */
-    public String doExecute(String targetHost, String userName, String command, String rsa) throws Exception {
+    public String exceCommand(String targetHost, String userName, String command, String rsa) throws Exception {
         String rsaKey = config.getCipherKey();
         AES aes = new AES(rsaKey);
         char[] rsaReal = aes.decrypt(rsa).toCharArray();
@@ -140,19 +156,7 @@ public abstract class BasedDeployProvider {
 
 
     /**
-     * @param path       -- /fingerproject/finger-auth/target/fingerauth.tar
-     * @param targetHost -- webapps@10.100.0.253
-     * @param targetPath -- /data/webapps/web-auth/webapps/
-     * @return
-     * @throws Exception
-     */
-    public String scp(String path, String targetHost, String targetPath) throws Exception {
-        String command = "scp -r " + path + " " + targetHost + ":" + targetPath;
-        return SSHTool.exec(command);
-    }
-
-    /**
-     * bak local + scp + rename
+     *  Scp + tar + move to basePath
      */
     public String scpAndTar(String path, String targetHost, String userName, String targetPath, String rsa) throws Exception {
         String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
@@ -167,18 +171,19 @@ public abstract class BasedDeployProvider {
         return result;
     }
 
+    /**
+     * Relink
+     */
     public String relink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
         String command = "ln -snf " + targetPath + "/" + replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr() + " "
                 + project.getLinkAppHome();
-        return doExecute(targetHost, userName, command, rsa);
+        return exceCommand(targetHost, userName, command, rsa);
     }
 
     /**
-     * scpToTmp
+     * Scp To Tmp
      */
     public String scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
-        // String command = "scp -r " + path + " " + targetHost + ":/home/" +
-        // userName + "/tmp";
         String rsaKey = config.getCipherKey();
         AES aes = new AES(rsaKey);
         char[] rsaReal = aes.decrypt(rsa).toCharArray();
@@ -186,24 +191,24 @@ public abstract class BasedDeployProvider {
     }
 
     /**
-     * unzip in tmp
+     * Unzip in tmp
      */
     public String tarToTmp(String targetHost, String userName, String path, String rsa) throws Exception {
         String command = "tar -xvf /home/" + userName + "/tmp" + "/" + subPackname(path) + " -C /home/" + userName + "/tmp";
-        return doExecute(targetHost, userName, command, rsa);
+        return exceCommand(targetHost, userName, command, rsa);
     }
 
     /**
-     * move to tar path
+     * Move to tar path
      */
     public String moveToTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
         String command = "mv /home/" + userName + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
                 + replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr();
-        return doExecute(targetHost, userName, command, rsa);
+        return exceCommand(targetHost, userName, command, rsa);
     }
 
     /**
-     * local back up
+     * Local back up
      */
     public String backupLocal(String path, String sign) throws Exception {
         checkPath(config.getBackupPath());
@@ -212,7 +217,7 @@ public abstract class BasedDeployProvider {
     }
 
     /**
-     * get local back up
+     * Get local back up , for rollback
      */
     public String getBackupLocal(String backFile, String target) throws Exception {
         checkPath(config.getBackupPath());
@@ -221,22 +226,22 @@ public abstract class BasedDeployProvider {
     }
 
     /**
-     * mkdir
+     * Mkdir
      */
     public String mkdirs(String targetHost, String userName, String path, String rsa) throws Exception {
         String command = "mkdir -p " + path;
-        return doExecute(targetHost, userName, command, rsa);
+        return exceCommand(targetHost, userName, command, rsa);
     }
 
     /**
-     * rollback
+     * Rollback
      */
     public void rollback() throws Exception {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * docker build
+     * Docker build
      */
     public String dockerBuild(String path) throws Exception{
         String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
@@ -244,29 +249,41 @@ public abstract class BasedDeployProvider {
         return SSHTool.exec(command);
     }
 
+    /**
+     * Docker pull
+     */
     public String dockerPull(String targetHost, String userName, String imageName, String rsa) throws Exception{
         String command = "docker pull "+imageName;
-        return doExecute(targetHost, userName, command, rsa);
+        return exceCommand(targetHost, userName, command, rsa);
     }
 
+    /**
+     * Docker stop
+     */
     public String dockerStop(String targetHost, String userName, String groupName, String rsa) throws Exception{
         String command = "docker stop "+groupName;
-        return doExecute(targetHost, userName, command, rsa);
+        return exceCommand(targetHost, userName, command, rsa);
     }
 
+    /**
+     * Docker remove container
+     */
     public String dockerRemoveContainer(String targetHost, String userName, String groupName, String rsa) throws Exception{
         String command = "docker rm "+groupName;
-        return doExecute(targetHost, userName, command, rsa);
+        return exceCommand(targetHost, userName, command, rsa);
     }
 
+    /**
+     * Docker Run
+     */
     public String dockerRun(String targetHost, String userName, String runCommand, String rsa) throws Exception{
-        return doExecute(targetHost, userName, runCommand, rsa);
+        return exceCommand(targetHost, userName, runCommand, rsa);
     }
 
 
     public String getDateTimeStr() {
         String str = DateUtils.formatDate(now, DateUtils.YMDHM);
-        str = str.substring(2, str.length());
+        str = str.substring(2);
         str = "-v" + str;
         return str;
     }
