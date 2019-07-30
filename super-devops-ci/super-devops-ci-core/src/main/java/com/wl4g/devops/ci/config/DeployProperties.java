@@ -28,37 +28,62 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  */
 public class DeployProperties {
 
+    /**
+     * Git check out url
+     */
     private String gitUrl;
 
+    /**
+     * Git check out path
+     */
     private String gitBasePath;
 
+    /**
+     * Git check out username
+     */
     private String gitUsername;
 
+    /**
+     * Git check out password
+     */
     private String gitPassword;
 
+    /**
+     * Gitlab token, for get branch
+     */
     private String  gitToken;
 
+    /**
+     * After build tar,save the tar in backup path
+     */
     private String backupPath;
 
-    //private String linkPath;
-
+    /**
+     * Cipher key , for decrypt the ssh ase
+     */
     private String cipherKey;
 
+    /**
+     * build task time out
+     */
     private Integer taskTimeout;
 
-
-    //docker
+    /**
+     * docker push username
+     */
     private String dockerPushUsername;
+
+    /**
+     * docker push password
+     */
     private String dockerPushPasswd;
 
-
-    //
-    // Temporary
-    //
-
+    /**
+     * credentials for git
+     */
     private CredentialsProvider credentials;
 
-    public String getGitBasePath() {
+    public String getGitBasePath() {// if blank ,user default
         if (StringUtils.isBlank(gitBasePath)) {
             gitBasePath = System.getProperties().getProperty("user.home") + "/gittest";
         }
@@ -86,7 +111,7 @@ public class DeployProperties {
     }
 
     public String getBackupPath() {
-        if (StringUtils.isBlank(backupPath)) {
+        if (StringUtils.isBlank(backupPath)) {// if blank ,user default
             backupPath = System.getProperties().getProperty("user.home") + "/git/bak";
         }
         return backupPath;

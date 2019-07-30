@@ -66,7 +66,7 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
             taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
             //pre command
-            String s4 = provider.doExecute(instance.getHost(), instance.getServerAccount(), provider.getTaskHistory().getPreCommand(),instance.getSshRsa());
+            String s4 = provider.exceCommand(instance.getHost(), instance.getServerAccount(), provider.getTaskHistory().getPreCommand(),instance.getSshRsa());
             result.append(s4).append("\n");
 
             //Boolean detailSuccess = new Boolean(false);
@@ -81,7 +81,7 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
             result.append(s1).append("\n");
 
             //post command (restart command)
-            String s2 = provider.doExecute(instance.getHost(), instance.getServerAccount(), provider.getTaskHistory().getPreCommand(),instance.getSshRsa());
+            String s2 = provider.exceCommand(instance.getHost(), instance.getServerAccount(), provider.getTaskHistory().getPreCommand(),instance.getSshRsa());
             result.append(s2).append("\n");
 
             // Update status

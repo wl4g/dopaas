@@ -67,7 +67,7 @@ public class DockerBuildDeployTask extends AbstractDeployTask {
 
 
             // Pull
-            String s = provider.dockerPull(instance.getHost(), instance.getServerAccount(),"wl4g/"+project.getGroupName()+":master"/* TODO 要改成动态的 */, instance.getSshRsa());
+            String s = provider.dockerPull(instance.getHost(), instance.getServerAccount(),"wl4g/"+project.getGroupName()+":master"/* TODO 要改成动态的 provider.getTaskHistory().getPreCommand() */, instance.getSshRsa());
             result.append(s).append("\n");
             // Restart
             String s1 = provider.dockerStop(instance.getHost(), instance.getServerAccount(),project.getGroupName(), instance.getSshRsa());
@@ -76,8 +76,9 @@ public class DockerBuildDeployTask extends AbstractDeployTask {
             String s2 = provider.dockerRemoveContainer(instance.getHost(), instance.getServerAccount(),project.getGroupName(), instance.getSshRsa());
             result.append(s2).append("\n");
             // Run
-            String s3 = provider.dockerRun(instance.getHost(), instance.getServerAccount(),"docker run wl4g/"+project.getGroupName()+":master"/* TODO 要改成动态的 */, instance.getSshRsa());
+            String s3 = provider.dockerRun(instance.getHost(), instance.getServerAccount(),"docker run wl4g/"+project.getGroupName()+":master"/* TODO 要改成动态的 provider.getTaskHistory().getPostCommand() */, instance.getSshRsa());
             result.append(s3).append("\n");
+
 
             // Update status
             taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
