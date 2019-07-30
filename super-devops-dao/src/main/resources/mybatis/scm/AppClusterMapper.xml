@@ -393,7 +393,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.server_account as "serverAccount",a.ssh_rsa as "sshRsa" FROM  cf_app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "serverAccount",a.ssh_key as "sshRsa" FROM  cf_app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">
