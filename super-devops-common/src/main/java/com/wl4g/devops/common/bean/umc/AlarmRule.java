@@ -8,13 +8,13 @@ public class AlarmRule extends BaseBean {
 
 	private String aggregator;
 
-	private Integer operator;
+	private Integer relateOperator;
 
 	private Double value;
 
-	private Integer triggerType;
+	private Integer logicalOperator;
 
-	private Long continuityTime;
+	private Long queueTimeWindow;
 
 	public Integer getTemplateId() {
 		return templateId;
@@ -32,12 +32,12 @@ public class AlarmRule extends BaseBean {
 		this.aggregator = aggregator == null ? null : aggregator.trim();
 	}
 
-	public Integer getOperator() {
-		return operator;
+	public Integer getRelateOperator() {
+		return relateOperator;
 	}
 
-	public void setOperator(Integer operator) {
-		this.operator = operator;
+	public void setRelateOperator(Integer operator) {
+		this.relateOperator = operator;
 	}
 
 	public Double getValue() {
@@ -48,19 +48,19 @@ public class AlarmRule extends BaseBean {
 		this.value = value;
 	}
 
-	public Integer getTriggerType() {
-		return triggerType;
+	public Integer getLogicalOperator() {
+		return logicalOperator;
 	}
 
-	public void setTriggerType(Integer triggerType) {
-		this.triggerType = triggerType;
+	public void setLogicalOperator(Integer triggerType) {
+		this.logicalOperator = triggerType;
 	}
 
-	public Long getContinuityTime() {
-		return continuityTime;
+	public Long getQueueTimeWindow() {
+		return queueTimeWindow;
 	}
 
-	public void setContinuityTime(Long continuityTime) {
-		this.continuityTime = continuityTime;
+	public void setQueueTimeWindow(Long continuityTime) {
+		this.queueTimeWindow = continuityTime;
 	}
 }

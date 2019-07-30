@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.rule.inspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.umc.rule.OperatorType;
+import com.wl4g.devops.umc.rule.RelateOperatorType;
 
 /**
  * Abstract rule inspecctor
@@ -39,7 +39,7 @@ public abstract class AbstractRuleInspector implements RuleInspector {
 	 * @param value2
 	 * @return
 	 */
-	protected boolean operate(OperatorType operator, double value1, double value2) {
+	protected boolean operate(RelateOperatorType operator, double value1, double value2) {
 		return operator.operate(value1, value2);
 	}
 
