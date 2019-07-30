@@ -48,6 +48,9 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String groupName;
 
+	//for console
+	private String instancesStr;
+
 	public Integer getType() {
 		return type;
 	}

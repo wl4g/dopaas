@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 /**
  * Deployments auto configuration.
@@ -33,6 +34,11 @@ public class DeployAutoConfiguration {
     @ConfigurationProperties(prefix = "deploy")
     public DeployProperties deployProperties() {
         return new DeployProperties();
+    }
+
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+        return new ThreadPoolTaskScheduler();
     }
 
 }

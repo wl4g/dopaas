@@ -20,21 +20,20 @@ import com.wl4g.devops.shell.annotation.ShellOption;
 import java.io.Serializable;
 
 /**
- * @author Wangl.sir <983708408@qq.com>
  * @author vjay
- * @date 2019-05-21 15:53:00
+ * @date 2019-05-21 16:18:00
  */
-public class BuildArgument implements Serializable {
+public class ModifyTimingTaskExpressionArgument implements Serializable {
     private static final long serialVersionUID = -90377698662015272L;
 
-    @ShellOption(opt = "t", lopt = "taskId", help = "taskId")
-    private Integer taskId;
+    @ShellOption(opt = "e", lopt = "expression", help = "modify the expression of the timing task", required = true)
+    private String expression;
 
-    public Integer getTaskId() {
-        return taskId;
+    public String getExpression() {
+        return expression;
     }
 
-    public void setTaskId(Integer taskId) {
-        this.taskId = taskId;
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 }

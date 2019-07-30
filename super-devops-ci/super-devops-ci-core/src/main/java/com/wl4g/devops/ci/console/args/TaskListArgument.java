@@ -24,17 +24,28 @@ import java.io.Serializable;
  * @author vjay
  * @date 2019-05-21 15:53:00
  */
-public class BuildArgument implements Serializable {
+public class TaskListArgument implements Serializable {
     private static final long serialVersionUID = -90377698662015272L;
 
-    @ShellOption(opt = "t", lopt = "taskId", help = "taskId")
-    private Integer taskId;
+    @ShellOption(opt = "p", lopt = "pagenum", help = "page num" ,required = false)
+    private String pageNum;
 
-    public Integer getTaskId() {
-        return taskId;
+    @ShellOption(opt = "s", lopt = "pagesize", help = "page size" ,required = false)
+    private String pageSize;
+
+    public String getPageNum() {
+        return pageNum;
     }
 
-    public void setTaskId(Integer taskId) {
-        this.taskId = taskId;
+    public void setPageNum(String pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public String getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(String pageSize) {
+        this.pageSize = pageSize;
     }
 }

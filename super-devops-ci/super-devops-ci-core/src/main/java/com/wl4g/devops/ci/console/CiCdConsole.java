@@ -15,12 +15,22 @@
  */
 package com.wl4g.devops.ci.console;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
+import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
+import com.wl4g.devops.ci.console.args.TaskListArgument;
+import com.wl4g.devops.ci.cron.CronUtils;
+import com.wl4g.devops.ci.cron.TimingTasks;
 import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
+import com.wl4g.devops.common.utils.printf.TablePrintUtil;
+import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -60,6 +70,63 @@ public class CiCdConsole {
 	@Autowired
 	private SimpleRedisLockManager lockManager;
 
+	@Autowired
+	private TimingTasks timingTasks;
+
+	@Autowired
+	private TaskDao taskDao;
+
+
+
+	@ShellMethod(keys = "expression", group = GROUP, help = "modify the expression of the timing task")
+	public String modifyTimingTaskExpression(ModifyTimingTaskExpressionArgument argument) {
+		String expression = argument.getExpression();
+		// Open console printer.
+		open();
+		try {
+			// Print to client
+			printfQuietly(String.format("expression = <%s>",expression));
+			if(CronUtils.isValidExpression(expression)){
+				timingTasks.modifyExpression(expression);
+				printfQuietly(String.format("modify the success , expression = <%s>",expression));
+			}else{
+				printfQuietly(String.format("the expression is not valid , expression = <%s>",expression));
+			}
+		} catch (Exception e) {
+			printfQuietly(String.format("modify the fail , expression = <%s>",expression));
+			printfQuietly(e);
+		} finally {
+			// Close console printer.
+			close();
+		}
+
+		return "Deployment task finished!";
+	}
+
+	@ShellMethod(keys = "taskList", group = GROUP, help = "get task list")
+	public String taskList(TaskListArgument argument) {
+		// Open console printer.
+		open();
+		try {
+			// Print to client
+			Integer pageNum = StringUtils.isNotBlank(argument.getPageNum()) ? Integer.valueOf(argument.getPageNum()) : 1;
+			Integer pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
+			Page<TaskHistory> page = PageHelper.startPage(pageNum, pageSize, true);
+			List<Task> list = taskDao.list(null,null,null,null,null, null, null);
+			String result = TablePrintUtil.build(list).setH('=').setV('!').getTableString();
+			return result;
+		} catch (Exception e) {
+			printfQuietly(e);
+			throw e;
+		} finally {
+			// Close console printer.
+			close();
+		}
+
+	}
+
+
+
 	/**
 	 * Execution deployments
 	 *
@@ -68,9 +135,6 @@ public class CiCdConsole {
 	 */
 	@ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
 	public String deploy(BuildArgument argument) {
-		String appGroupName = argument.getAppGroupName();
-		List<String> instances = argument.getInstances();
-		String branchName = argument.getBranchName();
 
 		// Open console printer.
 		open();
@@ -79,14 +143,11 @@ public class CiCdConsole {
 		try {
 			if (lock.tryLock()) {
 				// Print to client
-				printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
 
 				// Create async task
 				//TODO 修改后与原有逻辑有差异，必须多一个环节，选task
-				/*ciService.createTask(appGroupName, branchName, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
-						CiDevOpsConstants.TAR_TYPE_TAR);*/
+				ciService.createTask(argument.getTaskId());
 
-				printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
 			} else {
 				printfQuietly("One Task is running ,Please try again later");
 			}
