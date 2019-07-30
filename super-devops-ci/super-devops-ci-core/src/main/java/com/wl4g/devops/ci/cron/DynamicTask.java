@@ -30,13 +30,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 /**
+ * Dynamic Timing Task
  * @author vjay
  * @date 2019-07-19 09:50:00
  */
 @RestController
 @Component
 public class DynamicTask implements ApplicationRunner {
-
     final protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -85,7 +85,7 @@ public class DynamicTask implements ApplicationRunner {
      */
     public void startCron(String key, String expression, Trigger trigger, Project project,Task task,List<TaskDetail> taskDetails) {
         log.info("startCron ");
-        if (isExist(key)) {
+        if (map.containsKey(key)) {
             stopCron(key);
         }
         if (trigger.getEnable() != 1) {
@@ -123,13 +123,9 @@ public class DynamicTask implements ApplicationRunner {
         startCron(key, expression, trigger, project,task,taskDetails);
     }
 
-    private boolean isExist(String key) {
-        return map.containsKey(key);
-    }
-
-
     @Override
     public void run(ApplicationArguments applicationArguments) {
+        //start all after app start
         startAll();
     }
 }

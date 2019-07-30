@@ -26,8 +26,6 @@ public class CronRunnable implements Runnable {
 
     private Trigger trigger;
 
-    //private List<TriggerDetail> triggerDetails;
-
     private Project project;
 
     private DeployProperties config;
@@ -61,7 +59,7 @@ public class CronRunnable implements Runnable {
             for(TaskDetail taskDetail : taskDetails){
                 instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
             }
-            //ciService.createTask(project.getAppGroupId(), task.getBranchName(), instanceStrs, CiDevOpsConstants.TASK_TYPE_TIMMING,TAR_TYPE_TAR);
+            ciService.createTask(task.getId());
             //set new sha in db
             String path = config.getGitBasePath() + "/" + project.getProjectName();
             try {
