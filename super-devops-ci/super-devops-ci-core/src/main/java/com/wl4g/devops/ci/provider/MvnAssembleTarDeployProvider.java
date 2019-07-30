@@ -36,8 +36,8 @@ import java.util.List;
  */
 public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 
-    public MvnAssembleTarDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
-                                        List<TaskHistoryDetail> taskHistoryDetails) {
+    public MvnAssembleTarDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
+                                        TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
         super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
     }
 
@@ -45,50 +45,38 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
     public void execute() throws Exception {
         Dependency dependency = new Dependency();
         dependency.setProjectId(getProject().getId());
+        // maven install , include dependency
         getDependencyService().build(getTaskHistory(), dependency, getBranch(), isSuccess, result, false);
-
-        //get sha and md5
+        // get git sha
         setShaGit(GitUtils.getOldestCommitSha(getPath()));
-        setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
-        // backup in local
-        backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
-
-        // scp to server
-        for (AppInstance instance : getInstances()) {
-            Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
-                    getTaskHistoryDetails());
-            Thread t = new Thread(task);
-            t.start();
-            t.join();
-        }
-
-        if (log.isInfoEnabled()) {
-            log.info("Maven assemble deploy done!");
-        }
+        deploy();
     }
 
     @Override
     public void rollback() throws Exception {
         Dependency dependency = new Dependency();
         dependency.setProjectId(getProject().getId());
-
-        //TODO check bakup file isExist
+        // Old file
         String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#" + getTaskHistory().getRefId();
-
         File oldFile = new File(oldFilePath);
-        if (oldFile.exists()) {
+        if (oldFile.exists()) {// Check bakup file isExist , if not -- check out from git
             getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
             setShaGit(getRefTaskHistory().getShaGit());
         } else {
             getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), isSuccess, result, false);
             setShaGit(GitUtils.getOldestCommitSha(getPath()));
         }
+        deploy();
+    }
 
-
+    /**
+     * Deploy
+     */
+    private void deploy() throws Exception{
+        // get local sha
         setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
         // backup in local
         backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
-
         // scp to server
         for (AppInstance instance : getInstances()) {
             Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
@@ -102,10 +90,4 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
             log.info("Maven assemble deploy done!");
         }
     }
-
-    /*public String restart(String host, String userName, String rsa) throws Exception {
-        String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && "  *//* + getProject().getRestartCommand()*//*;
-        return doExecute(host, userName, command, rsa);
-    }*/
-
 }

@@ -72,7 +72,7 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
         Dependency dependency = new Dependency();
         dependency.setProjectId(getProject().getId());
 
-        //TODO check bakup file isExist
+        //check bakup file isExist
         String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#" + getTaskHistory().getRefId();
 
         File oldFile = new File(oldFilePath);
@@ -103,9 +103,5 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
         }
     }
 
-    public String restart(String host, String userName, String rsa) throws Exception {
-        String command = ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc " + getAlias() + " restart";
-        return doExecute(host, userName, command, rsa);
-    }
 
 }
