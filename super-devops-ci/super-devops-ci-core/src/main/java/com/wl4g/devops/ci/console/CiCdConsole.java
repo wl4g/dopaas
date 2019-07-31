@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.console;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
@@ -25,7 +24,6 @@ import com.wl4g.devops.ci.cron.CronUtils;
 import com.wl4g.devops.ci.cron.TimingTasks;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
@@ -109,9 +107,9 @@ public class CiCdConsole {
 		open();
 		try {
 			// Print to client
-			Integer pageNum = StringUtils.isNotBlank(argument.getPageNum()) ? Integer.valueOf(argument.getPageNum()) : 1;
-			Integer pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
-			Page<TaskHistory> page = PageHelper.startPage(pageNum, pageSize, true);
+			int pageNum = StringUtils.isNotBlank(argument.getPageNum()) ? Integer.valueOf(argument.getPageNum()) : 1;
+			int pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
+			PageHelper.startPage(pageNum, pageSize, true);
 			List<Task> list = taskDao.list(null,null,null,null,null, null, null);
 			String result = TableFormatters.build(list).setH('=').setV('!').getTableString();
 			return result;
@@ -122,16 +120,10 @@ public class CiCdConsole {
 			// Close console printer.
 			close();
 		}
-
 	}
-
-
 
 	/**
 	 * Execution deployments
-	 *
-	 * @param argument
-	 * @return
 	 */
 	@ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
 	public String deploy(BuildArgument argument) {
@@ -165,10 +157,6 @@ public class CiCdConsole {
 
 	/**
 	 * Got application groups list.
-	 *
-	 * @param argument
-	 * @param context
-	 * @return
 	 */
 	@ShellMethod(keys = "list", group = GROUP, help = "Get a list of application information")
 	public String list(InstanceListArgument argument) {
@@ -214,7 +202,7 @@ public class CiCdConsole {
 				if (null == instances || instances.size() < 1) {
 					return "none";
 				}
-				result.append(" ----- <" + envName + "> -----\n");
+				result.append(" ----- <").append(envName).append("> -----\n");
 				result.append("\t[ID]    [HostAndPort]          [description]\n");
 				for (int i = 0; i < instances.size() && i < 50; i++) {
 					if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
@@ -230,27 +218,26 @@ public class CiCdConsole {
 		return result.toString();
 	}
 
-	private StringBuffer appendApp(StringBuffer result, AppGroup appGroup, String r) {
+	private void appendApp(StringBuffer result, AppGroup appGroup, String r) {
 		List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
 		if (environments == null || environments.size() <= 0) {
-			return result;
+			return;
 		}
 		result.append(" <").append(appGroup.getName()).append(">:\n");
-		for (int i = 0; i < environments.size(); i++) {
-			appendEnv(result, environments.get(i), r);
+		for (Environment environment : environments) {
+			appendEnv(result, environment, r);
 		}
-		return result;
 	}
 
-	private StringBuffer appendEnv(StringBuffer result, Environment environment, String r) {
+	private void appendEnv(StringBuffer result, Environment environment, String r) {
 		AppInstance appInstance = new AppInstance();
 		appInstance.setEnvId(environment.getId().toString());
 		List<AppInstance> instances = appGroupDao.instancelist(appInstance);
 
 		if (null == instances || instances.size() <= 0) {
-			return result;
+			return;
 		}
-		result.append(" ----- <" + environment.getName() + "> -----\n");
+		result.append(" ----- <").append(environment.getName()).append("> -----\n");
 		result.append("\t[ID]    [HostAndPort]          [description]\n");
 
 		Pattern pattern = Pattern.compile(r);
@@ -263,18 +250,16 @@ public class CiCdConsole {
 				}
 			}
 		}
-		return result;
 	}
 
-	private StringBuffer appendInstance(StringBuffer result, AppInstance instance) {
+	private void appendInstance(StringBuffer result, AppInstance instance) {
 		result.append("\t").append(formatCell(instance.getId().toString(), 8))
 				.append(formatCell((instance.getIp() + ":" + instance.getPort()), 23)).append(instance.getRemark()).append("\n");
-		return result;
 	}
 
 	private String formatCell(String text, int width) {
 		if (text != null && text.length() < width) {
-			StringBuffer space = new StringBuffer();
+			StringBuilder space = new StringBuilder();
 			for (int i = 0; i < width - text.length(); i++) {
 				space.append(" ");
 			}

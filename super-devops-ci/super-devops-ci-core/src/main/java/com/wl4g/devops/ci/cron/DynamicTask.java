@@ -79,7 +79,8 @@ public class DynamicTask implements ApplicationRunner {
      * start Cron
      */
     public void startCron(String key, String expression, Trigger trigger, Project project,Task task,List<TaskDetail> taskDetails) {
-        log.info("startCron ");
+        log.info("into DynamicTask.startCron prarms::"+ "triggerId = {} , expression = {} , trigger = {} , project = {} , task = {} , taskDetails = {} ",
+                key, expression, trigger, project, task, taskDetails );
         if (map.containsKey(key)) {
             stopCron(key);
         }
@@ -94,7 +95,7 @@ public class DynamicTask implements ApplicationRunner {
      * stopCron
      */
     public void stopCron(String key) {
-        log.info("stopCron");
+        log.info("into DynamicTask.stopCron prarms::"+ "triggerId = {} ", key );
         ScheduledFuture<?> future = DynamicTask.map.get(key);
         if (future != null) {
             future.cancel(true);
@@ -105,7 +106,7 @@ public class DynamicTask implements ApplicationRunner {
      * restartCron
      */
     public void restartCron(String key, String expression, Trigger trigger) {
-        log.info("restartCron");
+        log.info("into DynamicTask.restartCron prarms::"+ "key = {} , expression = {} , trigger = {} ", key, expression, trigger );
         stopCron(key);
 
         Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());

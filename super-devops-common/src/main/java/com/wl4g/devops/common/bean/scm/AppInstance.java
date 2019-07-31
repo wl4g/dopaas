@@ -18,7 +18,7 @@ package com.wl4g.devops.common.bean.scm;
 import com.wl4g.devops.common.bean.BaseBean;
 
 /**
- * 对应：cf_app_instance表
+ * 对应：app_instance表
  * 
  * @author sut
  * @Description: TODO
@@ -109,5 +109,20 @@ public class AppInstance extends BaseBean {
 
 	public void setServerAccount(String serverAccount) {
 		this.serverAccount = serverAccount;
+	}
+
+	@Override
+	public String toString() {
+		return "AppInstance{" +
+				"groupId=" + groupId +
+				", host='" + host + '\'' +
+				", ip='" + ip + '\'' +
+				", port=" + port +
+				", envId='" + envId + '\'' +
+				", opsIds='" + opsIds + '\'' +
+				", versionId='" + versionId + '\'' +
+				", serverAccount='" + serverAccount + '\'' +
+				", sshRsa='" + sshRsa + '\'' +
+				'}';
 	}
 }

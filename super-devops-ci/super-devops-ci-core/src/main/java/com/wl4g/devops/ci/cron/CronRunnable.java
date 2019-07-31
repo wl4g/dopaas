@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Cron Runnagle
  * @author vjay
  * @date 2019-07-19 10:41:00
  */
@@ -53,11 +54,11 @@ public class CronRunnable implements Runnable {
     @Override
     public void run() {
         log.info("Timing tasks start");
-        if (check()) {
-            //TODO need build
-            List<String> instanceStrs = new ArrayList<>();
+        if (check()) {//check
+            log.info("Code had modify , create build task now triggetId={} ",trigger.getId());
+            List<String> instancesStr = new ArrayList<>();
             for(TaskDetail taskDetail : taskDetails){
-                instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
+                instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
             }
             ciService.createTask(task.getId());
             //set new sha in db
@@ -77,7 +78,7 @@ public class CronRunnable implements Runnable {
     }
 
     /**
-     * check need or not build
+     * check need or not build -- 当本地git仓库的sha和服务器上的不一致时(有代码提交)，则需要更新
      */
     private boolean check() {
         String sha = trigger.getSha();

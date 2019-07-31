@@ -29,6 +29,8 @@ import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * CI/CD controller
+ * Task controller
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
@@ -46,6 +48,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/task")
 public class TaskController {
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private CiService ciService;
@@ -63,8 +66,22 @@ public class TaskController {
     private TaskDetailDao taskDetailDao;
 
 
+    /**
+     * Page List
+     * @param customPage
+     * @param id
+     * @param taskName
+     * @param groupName
+     * @param branchName
+     * @param tarType
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @RequestMapping(value = "/list")
     public RespBase<?> list(CustomPage customPage,Integer id,String taskName ,String groupName, String branchName, Integer tarType,String startDate, String endDate) {
+        log.info("into TaskController.list prarms::"+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
+                customPage, id, taskName, groupName, branchName, tarType, startDate, endDate );
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
@@ -84,8 +101,15 @@ public class TaskController {
         return resp;
     }
 
+    /**
+     * Save
+     * @param task
+     * @param instance
+     * @return
+     */
     @RequestMapping(value = "/save")
     public RespBase<?> save(Task task, Integer[] instance) {
+        log.info("into TaskController.save prarms::"+ "task = {} , instance = {} ", task, instance );
         Assert.notNull(task,"task can not be null");
         Assert.notEmpty(instance, "instances can not be empty");
         checkTask(task);
@@ -94,8 +118,14 @@ public class TaskController {
         return resp;
     }
 
+    /**
+     * Detail by id
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/detail")
     public RespBase<?> detail(Integer id) {
+        log.info("into TaskController.detail prarms::"+ "id = {} ", id );
         Assert.notNull(id,"id can not be null");
         RespBase<Object> resp = RespBase.create();
         Task task = taskService.getTaskDetailById(id);
@@ -104,22 +134,28 @@ public class TaskController {
         for (TaskDetail taskDetail : task.getTaskDetails()) {
             Integer instanceId = taskDetail.getInstanceId();
             appInstance = appGroupDao.getAppInstance(instanceId.toString());
-            if (appInstance != null) {
+            if (appInstance != null && appInstance.getEnvId() !=null) {
                 break;
             }
         }
-
         Integer[] instances = new Integer[task.getTaskDetails().size()];
         for (int i = 0; i < task.getTaskDetails().size(); i++) {
             instances[i] = task.getTaskDetails().get(i).getInstanceId();
         }
 
         resp.getData().put("task",task);
-        resp.getData().put("envId", Integer.valueOf(appInstance.getEnvId()));
+        if(null!=appInstance){
+            resp.getData().put("envId", Integer.valueOf(appInstance.getEnvId()));
+        }
         resp.getData().put("instances",instances);
         return resp;
     }
 
+    /**
+     * Delete by id
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/del")
     public RespBase<?> del(Integer id) {
         Assert.notNull(id,"id can not be null");
@@ -128,6 +164,10 @@ public class TaskController {
         return resp;
     }
 
+    /**
+     * Check the form
+     * @param task
+     */
     private void checkTask(Task task){
         Assert.hasText(task.getTaskName(),"taskName is null");
         Assert.notNull(task.getAppGroupId(),"groupId is null");
@@ -135,6 +175,10 @@ public class TaskController {
         Assert.hasText(task.getBranchName(),"branchName is null");
     }
 
+    /**
+     * Get List By appGroupId
+     * @param appGroupId
+     */
     @RequestMapping(value = "/getListByAppGroupId")
     public RespBase<?> getListByAppGroupId(Integer appGroupId) {
         Assert.notNull(appGroupId,"appGroupId can not be null");
@@ -144,6 +188,10 @@ public class TaskController {
         return resp;
     }
 
+    /**
+     * create Task History and run Task
+     * @param taskId
+     */
     @RequestMapping(value = "/create")
     public RespBase<?> create(Integer taskId) {
         RespBase<Object> resp = RespBase.create();
