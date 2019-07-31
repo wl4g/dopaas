@@ -41,6 +41,9 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
         super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
     }
 
+    /**
+     * excute build and deploy
+     */
     @Override
     public void execute() throws Exception {
         Dependency dependency = new Dependency();
@@ -52,6 +55,9 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
         deploy();
     }
 
+    /**
+     * rollback
+     */
     @Override
     public void rollback() throws Exception {
         Dependency dependency = new Dependency();
@@ -79,6 +85,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
         backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
         // scp to server
         for (AppInstance instance : getInstances()) {
+            //create deploy task
             Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
                     getTaskHistoryDetails());
             Thread t = new Thread(task);

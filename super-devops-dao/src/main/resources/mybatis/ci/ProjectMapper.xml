@@ -209,7 +209,7 @@
     <include refid="Base_Column_List_p" />
     ,g.name as group_name
     from ci_project p
-    left join cf_app_group g on p.app_group_id=g.id
+    left join cf_app_cluster g on p.app_group_id=g.id
     where p.del_flag!=1
     <if test="groupName != null and groupName != ''" >
       AND g.name LIKE CONCAT('%','${groupName}','%')

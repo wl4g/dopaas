@@ -66,4 +66,15 @@ public class Trigger extends BaseBean implements Serializable {
         this.sha = sha == null ? null : sha.trim();
     }
 
+    @Override
+    public String toString() {
+        return "Trigger{" +
+                "name='" + name + '\'' +
+                ", groupId=" + groupId +
+                ", taskId=" + taskId +
+                ", type=" + type +
+                ", cron='" + cron + '\'' +
+                ", sha='" + sha + '\'' +
+                '}';
+    }
 }

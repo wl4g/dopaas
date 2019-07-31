@@ -280,7 +280,9 @@ public abstract class BasedDeployProvider {
         return exceCommand(targetHost, userName, runCommand, rsa);
     }
 
-
+    /**
+     * Get date to string user for version
+     */
     public String getDateTimeStr() {
         String str = DateUtils.formatDate(now, DateUtils.YMDHM);
         str = str.substring(2);
@@ -288,11 +290,17 @@ public abstract class BasedDeployProvider {
         return str;
     }
 
+    /**
+     * Get Package Name from path
+     */
     public String subPackname(String path) {
         String[] a = path.split("/");
         return a[a.length - 1];
     }
 
+    /**
+     * Get Packname WithOut Postfix from path
+     */
     public String subPacknameWithOutPostfix(String path) {
         String a = subPackname(path);
         return a.substring(0, a.lastIndexOf("."));
