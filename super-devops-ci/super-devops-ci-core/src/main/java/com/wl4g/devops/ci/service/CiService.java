@@ -40,6 +40,6 @@ public interface CiService {
 
     void createTask(Integer taskId);
 
-    void rollback(Integer taskId);
+    void createRollbackTask(Integer taskId);
 
 }

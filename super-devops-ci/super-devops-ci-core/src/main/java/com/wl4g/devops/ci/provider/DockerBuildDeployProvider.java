@@ -41,6 +41,10 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
         super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
     }
 
+    /**
+     * execute -- build , push , pull , run
+     * @throws Exception
+     */
     @Override
     public void execute() throws Exception {
         Dependency dependency = new Dependency();
@@ -67,6 +71,10 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
         }
     }
 
+    /**
+     * Rollback
+     * @throws Exception
+     */
     @Override
     public void rollback() throws Exception {
         Dependency dependency = new Dependency();
