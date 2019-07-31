@@ -30,6 +30,7 @@ import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
@@ -37,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +110,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 			return false;
 		}
 		for (Entry<String, String> ent : tplTagMap.entrySet()) {
-			if (StringUtils.equals(metricTagMap.get(ent.getKey()), ent.getValue())) {
+			if (trimToEmpty(ent.getValue()).equals(metricTagMap.get(ent.getKey()))) {
 				return true;
 			}
 		}
@@ -118,9 +118,9 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	}
 
 	/**
-	 * Notification of alarm teamplate to users.
+	 * Notification of alarm template to users.
 	 */
-	protected void notification(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs) {
+	protected void notification(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, List<AlarmRule> macthedRules) {
 		for (AlarmConfig alarmConfig : alarmConfigs) {
 			if (isBlank(alarmConfig.getAlarmMember())) {
 				continue;
@@ -131,7 +131,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 				log.info("Notification alarm for templateId: {}, notifierType: {}, to: {}, content: {}", alarmTemplate.getId(),
 						alarmConfig.getAlarmType(), alarmConfig.getAlarmMember(), alarmConfig.getAlarmContent());
 			}
-			// Alarm to multiple notifiers.
+			// Alarm to composite notifiers.
 			notifier.simpleNotify(
 					new SimpleAlarmMessage(alarmConfig.getAlarmContent(), alarmConfig.getAlarmType(), alarmMembers));
 		}

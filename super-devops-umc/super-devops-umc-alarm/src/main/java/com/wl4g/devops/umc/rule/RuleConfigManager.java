@@ -82,7 +82,7 @@ public class RuleConfigManager implements ApplicationRunner {
 	 * @param groupId
 	 * @return
 	 */
-	public List<AlarmTemplate> findAlarmRuleTpls(String collectId) {
+	public List<AlarmTemplate> loadAlarmRuleTpls(String collectId) {
 		String key = getCollectIdAlarmRulesCacheKey(collectId);
 		// First get the cache
 		List<AlarmTemplate> alarmTpls = jedisService.getObjectList(key, AlarmTemplate.class);
