@@ -42,22 +42,24 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	/** HTTP receiver metric end-point URI.(corresponding to agent collector) */
 	final public static String URI_HTTP_RECEIVER_ENDPOINT = "metric";
 
-	final public static String KEY_CACHE_ALARM_RULE_COLLECT = "umc_alarm_collect_";
+	//
+	// UMC alarm definition.
+	//
 
-	final public static String KEY_CACHE_ALARM_RULE_GROUP = "umc_alarm_group_";
+	/**
+	 * UMC Alarm template prefix key corresponding to a collector.
+	 */
+	final public static String KEY_CACHE_ALARM_TPLS = "umc_alarm_tpls_";
 
-	final public static String KEY_CACHE_INSTANCE_ID = "umc_ip2id_";
-
-	final public static String KEY_CACHE_GROUP_ID = "umc_name2GroupId_";
-
-	final public static String KEY_CACHE_TEMPLATE_HIS = "umc_templatehis_";
+	/**
+	 * UMC alarm metric value in time window queue key prefix.
+	 */
+	final public static String KEY_CACHE_ALARM_METRIC_QUEUE = "umc_templatehis_";
 
 	/**
 	 * KAFKA receiver metric topic pattern.(corresponding to agent collector)
 	 */
 	final public static String TOPIC_KAFKA_RECEIVE_PATTERN = "umc_agent_metrics";
-
-	final public static String NOT_FOUND = "umc_ip_not_found_";
 
 	//
 	// UMC watch definition.

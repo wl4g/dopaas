@@ -22,13 +22,13 @@ import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
-import com.wl4g.devops.umc.handler.AlarmConfigHandler;
+import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.notification.AlarmNotifier.SimpleAlarmMessage;
 import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_TEMPLATE_HIS;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -56,7 +56,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	protected RuleConfigManager ruleConfigManager;
 
 	@Autowired
-	protected AlarmConfigHandler alarmConfigHandler;
+	protected AlarmConfigurer alarmConfigHandler;
 
 	@Autowired
 	protected CompositeAlarmNotifierAdapter notifier;
@@ -137,8 +137,12 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 		}
 	}
 
-	protected static String getLatestSlipTimeWindowCacheKey(Serializable templateId) {
-		return KEY_CACHE_TEMPLATE_HIS + templateId;
+	//
+	// --- Cache key. ---
+	//
+
+	protected static String getTimeWindowQueueCacheKey(Serializable templateId) {
+		return KEY_CACHE_ALARM_METRIC_QUEUE + templateId;
 	}
 
 }

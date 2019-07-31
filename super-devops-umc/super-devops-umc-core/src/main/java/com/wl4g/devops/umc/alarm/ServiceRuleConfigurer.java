@@ -21,11 +21,12 @@ import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.umc.handler.AlarmConfigHandler;
+import com.wl4g.devops.umc.handler.AlarmConfigurer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,7 @@ import java.util.List;
  * @version v1.0 2019年7月5日
  * @since
  */
-public class ServiceRuleConfigHandler implements AlarmConfigHandler {
+public class ServiceRuleConfigurer implements AlarmConfigurer {
 
 	@Autowired
 	protected JedisService jedisService;
@@ -81,48 +82,45 @@ public class ServiceRuleConfigHandler implements AlarmConfigHandler {
 	}
 
 	@Override
-	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
-		return alarmConfigDao.getByCollectIdAndTemplateId(templateId, collectId);
-	}
-
-	@Override
-	public List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId) {
-		return alarmConfigDao.getByGroupIdAndTemplateId(templateId, groupId);
+	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, String collectId) {
+		return alarmConfigDao.getByCollectIdAndTemplateId(templateId, Integer.parseInt(collectId));
 	}
 
 	@Transactional
-	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime,
-			Date nowDate, List<AlarmRule> rules) {
+	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
+			List<AlarmRule> rules) {
 		for (AlarmConfig alarmConfig : alarmConfigs) {
-			AlarmRecord alarmRecord = new AlarmRecord();
-			alarmRecord.setTemplateId(alarmTemplate.getId());
-			alarmRecord.setCollectId(collectId);
-			alarmRecord.setName(alarmConfig.getName());
-			alarmRecord.setGatherTime(new Date(gatherTime));
-			alarmRecord.setAlarmTime(nowDate);
-			alarmRecord.setAlarmInfo(alarmConfig.getAlarmContent());
-			alarmRecord.setAlarmType(alarmConfig.getAlarmType());
-			alarmRecordDao.insertSelective(alarmRecord);
+			AlarmRecord record = new AlarmRecord();
+			record.setTemplateId(alarmTemplate.getId());
+			record.setCollectId(Integer.parseInt(collectId));
+			record.setName(alarmConfig.getName());
+			record.setGatherTime(new Date(gatherTime));
+			record.setAlarmTime(new Date());
+			record.setAlarmInfo(alarmConfig.getAlarmContent());
+			record.setAlarmType(alarmConfig.getAlarmType());
+			alarmRecordDao.insertSelective(record);
 
-			// TODO batch save is better
-			for (AlarmRule alarmRule : rules) {
-				AlarmRecordRule alarmRecordRule = new AlarmRecordRule();
-				alarmRecordRule.setRecordId(alarmRecord.getId());
-				alarmRecordRule.setRuleId(alarmRule.getId());
-				alarmRecordRuleDao.insertSelective(alarmRecordRule);
+			// Alarm matched rules.
+			for (AlarmRule rule : rules) {
+				AlarmRecordRule recordRule = new AlarmRecordRule();
+				recordRule.setRecordId(record.getId());
+				recordRule.setRuleId(rule.getId());
+				alarmRecordRuleDao.insertSelective(recordRule);
 			}
+
+			// Alarm notification users.
 			String memberStr = alarmConfig.getAlarmMember();
-			if (StringUtils.isBlank(memberStr)) {
-				return;
-			}
-			String members[] = memberStr.split(",");
-			for (String s : members) {
-				AlarmRecordUser alarmRecordUser = new AlarmRecordUser();
-				alarmRecordUser.setRecordId(alarmRecord.getId());
-				alarmRecordUser.setUserId(Integer.parseInt(s));
-				alarmRecordUserDao.insertSelective(alarmRecordUser);
+			if (!isBlank(memberStr)) {
+				String members[] = memberStr.split(",");
+				for (String s : members) {
+					AlarmRecordUser recordUser = new AlarmRecordUser();
+					recordUser.setRecordId(record.getId());
+					recordUser.setUserId(Integer.parseInt(s));
+					alarmRecordUserDao.insertSelective(recordUser);
+				}
 			}
 		}
+
 	}
 
 }

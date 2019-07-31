@@ -15,22 +15,17 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.USE_GROUP;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.umc.rule.AggregatorType.of;
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -62,20 +57,16 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			log.info("Alarm handling for collectId: {}", aggWrap.getCollectId());
 		}
 
-		List<AlarmTemplate> alarmTpls = null;
-		String serviceId = null;
-		String groupId = null;
-		if (StringUtils.equals(aggWrap.getCollectId(), USE_GROUP)) {
-			groupId = ruleConfigManager.transformToCollectGroupId(aggWrap.getClassify());
-			alarmTpls = ruleConfigManager.getGroupIdAlarmRuleTpls(groupId);
-		} else {
-			serviceId = ruleConfigManager.transformToCollectId(aggWrap.getCollectId());
-			alarmTpls = ruleConfigManager.getCollectIdAlarmRuleTpls(serviceId);
-		}
+		// Find alarm templates by collectId.
+		List<AlarmTemplate> alarmTpls = ruleConfigManager.findAlarmRuleTpls(aggWrap.getCollectId());
 		if (isEmpty(alarmTpls)) {
+			if (log.isInfoEnabled()) {
+				log.info("No found alarm templates for {}", aggWrap.getCollectId());
+			}
 			return;
 		}
 
+		// Handling alarm.
 		long now = System.currentTimeMillis();
 		for (MetricWrapper metricWrap : aggWrap.getMetrics()) {
 			String metricName = metricWrap.getMetric();
@@ -87,22 +78,22 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					}
 					// largest metric keep time window of rules.
 					long largestRuleWindowKeepTime = extractLargestRuleWindowKeepTime(tpl.getRules());
-
-					// Extract latest metrics in time window
-					List<MetricValue> metricVals = offerMetricValuesTimeWindow(tpl.getId(), metricWrap.getValue(),
+					// Offer latest metrics in time window queue.
+					List<MetricValue> metricVals = offerTimeWindowQueue(tpl.getId(), metricWrap.getValue(),
 							aggWrap.getTimestamp(), now, largestRuleWindowKeepTime);
 
-					// Matching alarm rules of metric values.
+					// Match alarm rules of metric values.
 					List<AlarmRule> matchedRules = matchAlarmRules(metricVals, tpl.getRules(), now);
 					if (!isEmpty(matchedRules)) {
 						if (log.isInfoEnabled()) {
-							log.info("Matched to metric: {} and rule template: {}, time window queue: {}", metricName,
+							log.info("Matched to metric: {} and alarm template: {}, time window queue: {}", metricName,
 									tpl.getId(), toJSONString(metricVals));
 						}
-						storageNotification(aggWrap.getCollectId(), serviceId, groupId, tpl, aggWrap.getTimestamp(),
-								matchedRules);
+
+						// Storage & notification
+						storageNotification(aggWrap.getCollectId(), tpl, aggWrap.getTimestamp(), matchedRules);
 					} else if (log.isDebugEnabled()) {
-						log.debug("No match to metric: {} and rule template: {}, time window queue: {}", metricName, tpl.getId(),
+						log.debug("No match to metric: {} and alarm template: {}, time window queue: {}", metricName, tpl.getId(),
 								toJSONString(metricVals));
 					}
 				}
@@ -118,7 +109,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		// Match mode for 'OR'.
 		return safeList(rules).stream().map(rule -> {
 			// Get latest time window metric values.
-			Double[] vals = extractAvailableTimeWindowMetricValues(metricVals, rule.getQueueTimeWindow(), now);
+			Double[] vals = extractAvailableQueueMetricValues(metricVals, rule.getQueueTimeWindow(), now);
 			// Do inspection.
 			RelateOperatorType oper = RelateOperatorType.of(rule.getRelateOperator());
 			if (inspector.verify(new InspectWrapper(oper, of(rule.getAggregator()), rule.getValue(), vals))) {
@@ -129,22 +120,22 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	}
 
 	/**
-	 * Offer and update metric values in time windows.
+	 * Offer metric values in time windows.
 	 */
-	protected List<MetricValue> offerMetricValuesTimeWindow(Serializable templateId, Double value, long timestamp, long now,
-			long ttl) {
-		String timeWindowKey = getLatestSlipTimeWindowCacheKey(templateId);
+	protected List<MetricValue> offerTimeWindowQueue(Serializable tplId, Double value, long gatherTime, long now, long ttl) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(tplId);
 		List<MetricValue> metricVals = jedisService.getObjectList(timeWindowKey, MetricValue.class);
 
 		// Clean expired metrics.
 		Iterator<MetricValue> it = safeList(metricVals).iterator();
 		while (it.hasNext()) {
-			if (abs(now - it.next().getTimestamp()) >= ttl) {
+			if (abs(now - it.next().getGatherTime()) >= ttl) {
 				it.remove();
 			}
 		}
 
-		jedisService.listObjectAdd(timeWindowKey, new MetricValue(timestamp, value));
+		// Append to cache.
+		jedisService.listObjectAdd(timeWindowKey, new MetricValue(gatherTime, value));
 		return metricVals;
 	}
 
@@ -156,10 +147,10 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param now
 	 * @return
 	 */
-	protected Double[] extractAvailableTimeWindowMetricValues(List<MetricValue> metricVals, long durationMs, long now) {
+	protected Double[] extractAvailableQueueMetricValues(List<MetricValue> metricVals, long durationMs, long now) {
 		List<Double> values = new ArrayList<>();
 		for (MetricValue val : metricVals) {
-			if ((now - val.getTimestamp()) < durationMs) {
+			if ((now - val.getGatherTime()) < durationMs) {
 				values.add(val.getValue());
 			}
 		}
@@ -170,28 +161,18 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * Storage and notification.
 	 * 
 	 * @param collectId
-	 * @param serviceId
-	 * @param groupId
+	 * @param collectId
 	 * @param alarmTpl
 	 * @param gatherTime
 	 * @param macthedRules
 	 */
-	protected void storageNotification(String collectId, String serviceId, String groupId, AlarmTemplate alarmTpl,
-			long gatherTime, List<AlarmRule> macthedRules) {
-		List<AlarmConfig> alarmConfigs = null;
-		if (StringUtils.equals(collectId, USE_GROUP)) {
-			alarmConfigs = alarmConfigHandler.getAlarmConfigByGroupIdAndTemplateId(alarmTpl.getId(), groupId);
-			// Storage record.
-			alarmConfigHandler.saveRecord(alarmTpl, alarmConfigs, groupId, gatherTime, new Date(), macthedRules);
-			// Notification
-			notification(alarmTpl, alarmConfigs);
-		} else {
-			alarmConfigs = alarmConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTpl.getId(), serviceId);
-			// Storage record.
-			alarmConfigHandler.saveRecord(alarmTpl, alarmConfigs, serviceId, gatherTime, new Date(), macthedRules);
-			// Notification
-			notification(alarmTpl, alarmConfigs);
-		}
+	protected void storageNotification(String collectId, AlarmTemplate alarmTpl, long gatherTime, List<AlarmRule> macthedRules) {
+		List<AlarmConfig> alarmConfigs = alarmConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTpl.getId(), collectId);
+		// Storage record.
+		alarmConfigHandler.saveRecord(alarmTpl, alarmConfigs, collectId, gatherTime, macthedRules);
+
+		// Notification
+		notification(alarmTpl, alarmConfigs);
 	}
 
 }
