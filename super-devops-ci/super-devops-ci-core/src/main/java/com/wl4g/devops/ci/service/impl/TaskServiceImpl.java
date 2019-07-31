@@ -27,11 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 
 /**
  * @author vjay
@@ -51,6 +51,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Task save(Task task, Integer[] instanceIds) {
+        //check task repeat
         Assert.state(!isRepeat(task,instanceIds),"trigger deploy this instance is Repeat,please check");
         Assert.notEmpty(instanceIds, "instance can not be null");
         Assert.notNull(task, "task can not be null");
@@ -102,8 +103,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
+    /**
+     * check task repeat
+     * @param task
+     * @param instanceIds
+     * @return
+     */
     private boolean isRepeat(Task task,Integer[] instanceIds){
-        //TODO
         List<TaskDetail> taskDetails = taskDetailDao.getUsedInstance(task.getAppGroupId(), task.getId());
         for(TaskDetail taskDetail : taskDetails){
             if(Arrays.asList(instanceIds).contains(taskDetail.getInstanceId())){

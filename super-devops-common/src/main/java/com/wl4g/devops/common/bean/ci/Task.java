@@ -120,4 +120,21 @@ public class Task extends BaseBean implements Serializable {
 	public void setTaskDetails(List<TaskDetail> taskDetails) {
 		this.taskDetails = taskDetails;
 	}
+
+	@Override
+	public String toString() {
+		return "Task{" +
+				"taskName='" + taskName + '\'' +
+				", appGroupId=" + appGroupId +
+				", projectId=" + projectId +
+				", branchName='" + branchName + '\'' +
+				", tarType=" + tarType +
+				", branchType='" + branchType + '\'' +
+				", preCommand='" + preCommand + '\'' +
+				", postCommand='" + postCommand + '\'' +
+				", instances=" + instances +
+				", taskDetails=" + taskDetails +
+				", groupName='" + groupName + '\'' +
+				'}';
+	}
 }

@@ -103,7 +103,7 @@
 		COUNT(0) as instanceCount,
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_group a
+		cf_app_cluster a
 		JOIN cf_app_environment b on a.id = b.group_id AND b.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -120,7 +120,7 @@
 		b.name as "evnname",
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_group a
+		cf_app_cluster a
 		JOIN cf_app_environment b on b.group_id=a.id AND b.del_flag = #{DEL_FLAG_NORMAL}
 		JOIN cf_app_instance f ON f.group_id = a.id AND f.env_id = b.id AND f.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
@@ -232,7 +232,7 @@
 	</update>
 
 	<insert id="insert" parameterType="instanceOfGroup" useGeneratedKeys="true" keyProperty="id">
-		insert into cf_app_group 
+		insert into cf_app_cluster
 		<trim prefix="(" suffix=")" suffixOverrides="," >
 			<if test="deptId != null">
 				dept_id,
@@ -288,7 +288,7 @@
 	</insert>
 	
 	<update id="delete" parameterType="appGroup">
-		update cf_app_group
+		update cf_app_cluster
 		<set>
 			<if test="updateBy != null">
 				update_by = #{updateBy},
@@ -302,7 +302,7 @@
 	</update>
 	
 	<update id="update" parameterType="appGroup">
-		update cf_app_group
+		update cf_app_cluster
 		<set>
 			<if test="deptId != null">
 				dept_id = #{deptId},
@@ -331,7 +331,7 @@
 		<include refid="allInstanceColumn"/>,
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_group a
+		cf_app_cluster a
 		LEFT JOIN cf_app_instance i ON a.id = i.group_id and i.del_flag = #{DEL_FLAG_NORMAL}
 		where
 		a.del_flag = #{DEL_FLAG_NORMAL}
@@ -343,7 +343,7 @@
 		<include refid="allEnvColumn"/>,
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_group a
+		cf_app_cluster a
 		LEFT JOIN cf_app_environment e ON a.id = e.group_id and e.del_flag = #{DEL_FLAG_NORMAL}
 		where
 		a.del_flag = #{DEL_FLAG_NORMAL}
@@ -354,7 +354,7 @@
 		select
 		a.name,a.id,a.enable
 		from
-		cf_app_group a
+		cf_app_cluster a
 		<where>
 			a.del_flag = 0
 		</where>
@@ -442,7 +442,7 @@
 
 	<!-- Get application group -->
 	<select id="getAppGroup" resultType="appGroup">
-		select a.* FROM cf_app_group a
+		select a.* FROM cf_app_cluster a
 		<where>
 		a.del_flag = 0
 		<if test="id != null and id != 0">
@@ -456,7 +456,7 @@
 	</select>
 
 	<select id="getAppGroupByName" resultType="appGroup">
-		select a.* FROM cf_app_group a
+		select a.* FROM cf_app_cluster a
 		<where>
 			a.del_flag = 0
 			<if test="name != null and name != ''">

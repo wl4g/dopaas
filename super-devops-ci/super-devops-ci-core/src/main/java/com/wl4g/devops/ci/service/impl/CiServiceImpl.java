@@ -26,8 +26,13 @@ import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
-import com.wl4g.devops.dao.ci.*;
+import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.dao.ci.TaskDetailDao;
+import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -36,11 +41,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * CI/CD
  * @author vjay
  * @date 2019-05-16 14:50:00
  */
 @Service
 public class CiServiceImpl implements CiService {
+
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private DeployProperties config;
@@ -88,9 +96,13 @@ public class CiServiceImpl implements CiService {
     }
 
 
+    /**
+     * Create Task History
+     * @param taskId
+     */
     @Override
     public void createTask(Integer taskId) {
-
+        log.debug("into CiServiceImpl.createTask prarms::"+ "taskId = {} ", taskId );
         Assert.notNull(taskId,"taskId is null");
         Task task = taskDao.selectByPrimaryKey(taskId);
         Assert.notNull(task,"task is null");
@@ -113,33 +125,29 @@ public class CiServiceImpl implements CiService {
         }
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
                 CiDevOpsConstants.TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getPreCommand(),task.getPostCommand(), task.getTarType());
-        BasedDeployProvider provider = getDeployProvider(taskHistory);
+        BasedDeployProvider provider = buildDeployProvider(taskHistory);
         //execute
         execute(taskHistory.getId(), provider);
     }
 
 
-
-    private void createTask(AppGroup appGroup, String branchName, List<String> instanceIds, int type,int tarType) {
-
-    }
-
+    /**
+     * Hook -- for gitlab hook
+     * @param projectName
+     * @param branchName
+     * @param url
+     */
     public void hook(String projectName, String branchName, String url) {
-        // just for test
-        // projectName = "safecloud-devops-datachecker";
+        log.info("into CiServiceImpl.hook prarms::"+ "projectName = {} , branchName = {} , url = {} ", projectName, branchName, url );
         Project project = projectDao.getByProjectName(projectName);
         if (null == project) {
             return;
         }
-        // Assert.notNull(project,"project not found, please config first");
-        // AppGroup appGroup =
-        // appGroupDao.getAppGroup(project.getAppGroupId().toString());
-        // String alias = appGroup.getName();
         Trigger trigger = getTriggerByAppGroupIdAndBranch(project.getAppGroupId(), branchName);
         if (null == trigger) {
             return;
         }
-        // Assert.notNull(trigger,"trigger not found, please config first");
+        Assert.notNull(trigger,"trigger not found, please config first");
 
         List<AppInstance> instances = new ArrayList<>();
         Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
@@ -159,13 +167,18 @@ public class CiServiceImpl implements CiService {
         //ShellContextHolder.printfQuietly("taskHistory begin");
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
                 CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, task.getPreCommand(),task.getPostCommand(), task.getTarType());
-        BasedDeployProvider provider = getDeployProvider(taskHistory);
+        BasedDeployProvider provider = buildDeployProvider(taskHistory);
         //execute
         execute(taskHistory.getId(), provider);
     }
 
+    /**
+     * Execute task
+     * @param taskId
+     * @param provider
+     */
     private void execute(Integer taskId, BasedDeployProvider provider) {
-
+        log.info("task start taskId={}",taskId);
         // update task--running
         taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 
@@ -177,14 +190,17 @@ public class CiServiceImpl implements CiService {
                     provider.execute();
                     if (provider.getSuccess()) {
                         // update task--success
+                        log.info("task succcess taskId={}",taskId);
                         taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(), provider.getShaGit(), provider.getShaLocal());
                         //taskService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
                     } else {
-                        // update task--success
+                        // update task--fail
+                        log.info("task fail taskId={}",taskId);
                         taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
                     }
                 } catch (Exception e) {
                     // update task--fail
+                    log.info("task fail taskId={}",taskId);
                     taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
                     e.printStackTrace();
                 }
@@ -192,8 +208,21 @@ public class CiServiceImpl implements CiService {
         }).start();
     }
 
+    /**
+     * Get Deploy Provider by type
+     * @param project
+     * @param tarType
+     * @param path
+     * @param branch
+     * @param alias
+     * @param instances
+     * @param taskHistory
+     * @param refTaskHistory
+     * @param taskHistoryDetails
+     * @return
+     */
     private BasedDeployProvider getDeployProvider(Project project, int tarType, String path, String branch, String alias,
-                                                  List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
+                                                    List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
         switch (tarType) {
             case CiDevOpsConstants.TAR_TYPE_TAR:
                 return new MvnAssembleTarDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
@@ -207,7 +236,13 @@ public class CiServiceImpl implements CiService {
         }
     }
 
-    public BasedDeployProvider getDeployProvider(TaskHistory taskHistory) {
+    /**
+     * build Deploy Provider
+     * @param taskHistory
+     * @return
+     */
+    public BasedDeployProvider buildDeployProvider(TaskHistory taskHistory) {
+        log.info("into CiServiceImpl.buildDeployProvider prarms::"+ "taskHistory = {} ", taskHistory );
         Assert.notNull(taskHistory, "taskHistory can not be null");
         Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
         Assert.notNull(project, "project can not be null");
@@ -233,8 +268,12 @@ public class CiServiceImpl implements CiService {
     }
 
 
-    public void rollback(Integer taskId) {
-
+    /**
+     * Create Rollback Task by taskId
+     * @param taskId
+     */
+    public void createRollbackTask(Integer taskId) {
+        log.info("into CiServiceImpl.rollback prarms::"+ "taskId = {} ", taskId );
         Assert.notNull(taskId, "taskId is null");
         TaskHistory taskHistoryOld = taskHistoryService.getById(taskId);
         Assert.notNull(taskHistoryOld, "not found this app");
@@ -249,17 +288,20 @@ public class CiServiceImpl implements CiService {
         }
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
                 CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId, taskHistoryOld.getPreCommand(),taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR);
-        BasedDeployProvider provider = getDeployProvider(taskHistory);
+        BasedDeployProvider provider = buildDeployProvider(taskHistory);
         //execute
-        rollbackExecute(taskHistory.getId(), provider);
+        rollback(taskHistory.getId(), provider);
 
     }
 
-    private void rollbackExecute(Integer taskId, BasedDeployProvider provider) {
-
+    /**
+     * Run rollback task
+     * @param taskId
+     * @param provider
+     */
+    private void rollback(Integer taskId, BasedDeployProvider provider) {
         // update task--running
         taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
-
         //optimize : use multithreading
         new Thread(new Runnable() {
             public void run() {

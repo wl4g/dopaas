@@ -110,4 +110,19 @@ public class AppInstance extends BaseBean {
 	public void setServerAccount(String serverAccount) {
 		this.serverAccount = serverAccount;
 	}
+
+	@Override
+	public String toString() {
+		return "AppInstance{" +
+				"groupId=" + groupId +
+				", host='" + host + '\'' +
+				", ip='" + ip + '\'' +
+				", port=" + port +
+				", envId='" + envId + '\'' +
+				", opsIds='" + opsIds + '\'' +
+				", versionId='" + versionId + '\'' +
+				", serverAccount='" + serverAccount + '\'' +
+				", sshRsa='" + sshRsa + '\'' +
+				'}';
+	}
 }

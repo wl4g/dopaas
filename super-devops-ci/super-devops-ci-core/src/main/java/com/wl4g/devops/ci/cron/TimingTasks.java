@@ -37,9 +37,12 @@ public class TimingTasks implements ApplicationRunner {
     private static ScheduledFuture<?> future;
 
 
+    /**
+     * Scan timeout task , modify their status
+     * @param applicationArguments
+     */
     @Override
-    public void run(ApplicationArguments applicationArguments) throws Exception {
-
+    public void run(ApplicationArguments applicationArguments) {
         //Scan time out task
         future = threadPoolTaskScheduler.schedule(new Runnable() {
             @Override

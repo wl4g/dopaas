@@ -30,6 +30,8 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +52,8 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMI
 @RestController
 @RequestMapping("/trigger")
 public class TriggerController {
+
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private TriggerDao triggerDao;
@@ -73,9 +77,22 @@ public class TriggerController {
     private ProjectDao projectDao;
 
 
+    /**
+     * Page List
+     * @param customPage
+     * @param id
+     * @param name
+     * @param taskId
+     * @param enable
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @RequestMapping(value = "/list")
     public RespBase<?> list(CustomPage customPage, Integer id, String name, Integer taskId, Integer enable,
                             String startDate,String endDate) {
+        log.info("into TriggerController.list prarms::"+ "customPage = {} , id = {} , name = {} , taskId = {} , enable = {} , startDate = {} , endDate = {} ",
+                customPage, id, name, taskId, enable, startDate, endDate );
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
@@ -96,8 +113,14 @@ public class TriggerController {
         return resp;
     }
 
+    /**
+     * Save
+     * @param trigger
+     * @return
+     */
     @RequestMapping(value = "/save")
     public RespBase<?> save(Trigger trigger) {
+        log.info("into TriggerController.save prarms::"+ "trigger = {} ", trigger );
         RespBase<Object> resp = RespBase.create();
         checkTriggerCron(trigger);
         if (null != trigger.getId() && trigger.getId() > 0) {
@@ -112,23 +135,36 @@ public class TriggerController {
         return resp;
     }
 
-    private boolean checkTriggerCron(Trigger trigger) {
+    /**
+     * Check form
+     * @param trigger
+     */
+    private void checkTriggerCron(Trigger trigger) {
         Assert.notNull(trigger, "trigger can not be null");
         Assert.notNull(trigger.getType(), "type can not be null");
         Assert.notNull(trigger.getGroupId(), "project can not be null");
-        if (trigger.getType().intValue() == TASK_TYPE_TIMMING) {
+        if (trigger.getType() == TASK_TYPE_TIMMING) {
             Assert.notNull(trigger.getCron(), "cron can not be null");
         }
-        return true;
     }
 
+    /**
+     * Restart Cron -- when modify or create the timing task , restart the cron
+     * @param triggerId
+     */
     private void restart(Integer triggerId) {
         Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
         dynamicTask.restartCron(trigger.getId().toString(), trigger.getCron(), trigger);
     }
 
+    /**
+     * Detail by id
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/detail")
     public RespBase<?> detail(Integer id) {
+        log.info("into TriggerController.detail prarms::"+ "id = {} ", id );
         RespBase<Object> resp = RespBase.create();
         Assert.notNull(id, "id can not be null");
         Trigger trigger = triggerDao.selectByPrimaryKey(id);
@@ -140,8 +176,14 @@ public class TriggerController {
         return resp;
     }
 
+    /**
+     * Delete by id
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/del")
     public RespBase<?> del(Integer id) {
+        log.info("into TriggerController.del prarms::"+ "id = {} ", id );
         RespBase<Object> resp = RespBase.create();
         Assert.notNull(id, "id can not be null");
         triggerService.delete(id);
@@ -150,16 +192,29 @@ public class TriggerController {
     }
 
 
+    /**
+     * Check cron expression is valid
+     * @param expression
+     * @return
+     */
     @RequestMapping(value = "/checkCronExpression")
     public RespBase<?> checkCronExpression(String expression) {
+        log.debug("into TriggerController.checkCronExpression prarms::"+ "expression = {} ", expression );
         RespBase<Object> resp = RespBase.create();
         boolean isValid = CronUtils.isValidExpression(expression);
         resp.getData().put("validExpression", isValid);
         return resp;
     }
 
+    /**
+     * Get Cron next Execute Times
+     * @param expression
+     * @param numTimes
+     * @return
+     */
     @RequestMapping(value = "/cronNextExecTime")
     public RespBase<?> cronNextExecTime(String expression, Integer numTimes) {
+        log.debug("into TriggerController.cronNextExecTime prarms::"+ "expression = {} , numTimes = {} ", expression, numTimes );
         RespBase<Object> resp = RespBase.create();
         if (null == numTimes || numTimes <= 0) {
             numTimes = 5;
@@ -173,7 +228,8 @@ public class TriggerController {
             List<String> nextExecTime = CronUtils.getNextExecTime(expression, numTimes);
             resp.getData().put("nextExecTime", StringUtils.join(nextExecTime, "\n"));
         } catch (Exception e) {
-
+            resp.getData().put("validExpression", false);
+            return resp;
         }
         return resp;
     }

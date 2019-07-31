@@ -278,7 +278,7 @@
     ,p.project_name,g.name
     from ci_task_history t
     left join ci_project p on t.project_id=p.id
-    left join cf_app_group g on p.app_group_id=g.id
+    left join cf_app_cluster g on p.app_group_id=g.id
     where t.del_flag!=1
     <if test="groupName != null and groupName != ''" >
       AND g.name LIKE CONCAT('%','${groupName}','%')

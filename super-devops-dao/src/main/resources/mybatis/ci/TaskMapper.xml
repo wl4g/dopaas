@@ -272,7 +272,7 @@
 
     ,g.name group_name
     from ci_task t
-    left join cf_app_group g on t.app_group_id=g.id
+    left join cf_app_cluster g on t.app_group_id=g.id
     left join ci_task_detail td on td.task_id=t.id
     left join cf_app_instance i on i.id=td.instance_id
     where t.del_flag!=1

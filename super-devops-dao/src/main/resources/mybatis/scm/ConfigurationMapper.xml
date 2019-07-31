@@ -185,7 +185,7 @@
 			d.id as envId
 		FROM cf_version a
 		JOIN cf_app_instance b ON a.id = b.version_id
-		JOIN cf_app_group c ON b.group_id = c.id
+		JOIN cf_app_cluster c ON b.group_id = c.id
 		JOIN cf_app_environment d ON b.env_id = d.id and d.group_id = c.id
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
@@ -244,7 +244,7 @@
 		INNER JOIN cf_release_history rh ON rh.id = rd.release_id
 		INNER JOIN cf_app_instance i ON i.id = rd.instance_id
 		INNER JOIN cf_app_environment e ON e.id = i.env_id
-		INNER JOIN cf_app_group g ON g.id = i.group_id
+		INNER JOIN cf_app_cluster g ON g.id = i.group_id
 		INNER JOIN cf_version_detail vd ON vd.version_id = i.version_id
 		INNER JOIN sys_dict sd ON sd.id = vd.namespace_id
 		<where>
