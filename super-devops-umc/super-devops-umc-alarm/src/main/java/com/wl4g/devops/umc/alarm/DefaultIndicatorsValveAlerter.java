@@ -57,8 +57,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			log.info("Alarm handling for collectId: {}", aggWrap.getCollectId());
 		}
 
-		// Find alarm templates by collectId.
-		List<AlarmTemplate> alarmTpls = ruleConfigManager.findAlarmRuleTpls(aggWrap.getCollectId());
+		// Load alarm templates by collectId.
+		List<AlarmTemplate> alarmTpls = ruleConfigManager.loadAlarmRuleTpls(aggWrap.getCollectId());
 		if (isEmpty(alarmTpls)) {
 			if (log.isInfoEnabled()) {
 				log.info("No found alarm templates for {}", aggWrap.getCollectId());
@@ -76,6 +76,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					if (!matchTags(metricWrap.getTags(), tpl.getTagsMap())) {
 						continue;
 					}
+
 					// largest metric keep time window of rules.
 					long largestRuleWindowKeepTime = extractLargestRuleWindowKeepTime(tpl.getRules());
 					// Offer latest metrics in time window queue.
@@ -170,9 +171,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		List<AlarmConfig> alarmConfigs = alarmConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTpl.getId(), collectId);
 		// Storage record.
 		alarmConfigHandler.saveRecord(alarmTpl, alarmConfigs, collectId, gatherTime, macthedRules);
-
 		// Notification
-		notification(alarmTpl, alarmConfigs);
+		notification(alarmTpl, alarmConfigs, macthedRules);
 	}
 
 }
