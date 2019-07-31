@@ -18,7 +18,7 @@ package com.wl4g.devops.common.bean.scm;
 import com.wl4g.devops.common.bean.BaseBean;
 
 /**
- * 对应：cf_version表
+ * 对应：scm_version表
  * 
  * @date 2018年9月25日
  */

@@ -18,7 +18,7 @@ package com.wl4g.devops.common.bean.scm;
 import com.wl4g.devops.common.bean.BaseBean;
 
 /**
- * 对应表：cf_app_cluster
+ * 对应表：app_cluster
  * 
  * @date 2018年9月19日
  */
