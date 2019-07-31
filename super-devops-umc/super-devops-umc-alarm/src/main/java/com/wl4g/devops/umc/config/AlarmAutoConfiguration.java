@@ -23,8 +23,8 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
-import com.wl4g.devops.umc.handler.CheckImpledAlarmConfigHandler;
-import com.wl4g.devops.umc.handler.AlarmConfigHandler;
+import com.wl4g.devops.umc.handler.CheckImpledAlarmConfigurer;
+import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.notification.AlarmNotifier;
 import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.notification.bark.BarkNotifier;
@@ -65,9 +65,9 @@ public class AlarmAutoConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(AlarmConfigHandler.class)
-	public AlarmConfigHandler checkImpledAlarmPropertiesConfigurer() {
-		return new CheckImpledAlarmConfigHandler();
+	@ConditionalOnMissingBean(AlarmConfigurer.class)
+	public AlarmConfigurer checkImpledAlarmPropertiesConfigurer() {
+		return new CheckImpledAlarmConfigurer();
 	}
 
 	@Bean

@@ -21,7 +21,6 @@ import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ import java.util.List;
  * @version v1.0 2019年7月5日
  * @since
  */
-public interface AlarmConfigHandler {
+public interface AlarmConfigurer {
 
 	List<AppInstance> instancelist(AppInstance appInstance);
 
@@ -41,11 +40,9 @@ public interface AlarmConfigHandler {
 
 	List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId);
 
-	List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId);
+	List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, String collectId);
 
-	void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate,
+	void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
 			List<AlarmRule> rules);
-
-	List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId);
 
 }

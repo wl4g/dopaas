@@ -2,9 +2,10 @@ package com.wl4g.devops.common.utils.lang;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Collection2 utility.
@@ -21,7 +22,7 @@ public abstract class Collections2 {
 	 * @param collection
 	 * @return
 	 */
-	public static <T> Collection<T> safeList(Collection<T> collection) {
+	public static <T> List<T> safeList(List<T> collection) {
 		return isEmpty(collection) ? Collections.emptyList() : collection;
 	}
 
@@ -31,7 +32,7 @@ public abstract class Collections2 {
 	 * @param collection
 	 * @return
 	 */
-	public static <T> Collection<T> safeSet(Collection<T> collection) {
+	public static <T> Set<T> safeSet(Set<T> collection) {
 		return isEmpty(collection) ? Collections.emptySet() : collection;
 	}
 

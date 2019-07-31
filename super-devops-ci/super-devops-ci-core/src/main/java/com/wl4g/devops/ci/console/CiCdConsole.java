@@ -29,7 +29,7 @@ import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.scm.AppGroup;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
-import com.wl4g.devops.common.utils.printf.TablePrintUtil;
+import com.wl4g.devops.common.utils.lang.TableFormatters;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
@@ -113,7 +113,7 @@ public class CiCdConsole {
 			Integer pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
 			Page<TaskHistory> page = PageHelper.startPage(pageNum, pageSize, true);
 			List<Task> list = taskDao.list(null,null,null,null,null, null, null);
-			String result = TablePrintUtil.build(list).setH('=').setV('!').getTableString();
+			String result = TableFormatters.build(list).setH('=').setV('!').getTableString();
 			return result;
 		} catch (Exception e) {
 			printfQuietly(e);

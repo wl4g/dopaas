@@ -80,10 +80,10 @@ public class JedisService {
 
 	}
 
-	public <T> ScanCursor<T> scan(final String pattern, final int batch, final Class<T> clazz) {
+	public <T> ScanCursor<T> scan(final String pattern, final int batch, final Class<T> valueType) {
 		byte[] match = trimToEmpty(pattern).getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(batch).match(match);
-		return new ScanCursor<T>(getJedisCluster(), clazz, params) {
+		return new ScanCursor<T>(getJedisCluster(), valueType, params) {
 		}.open();
 	}
 

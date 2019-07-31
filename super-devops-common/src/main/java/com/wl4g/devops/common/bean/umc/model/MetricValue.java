@@ -9,25 +9,25 @@ package com.wl4g.devops.common.bean.umc.model;
  */
 public class MetricValue implements Comparable<MetricValue> {
 
+	private long gatherTime;
+
+	private double value;
+
 	public MetricValue() {
 
 	}
 
-	public MetricValue(long timestamp, double value) {
-		this.timestamp = timestamp;
+	public MetricValue(long gatherTime, double value) {
+		this.gatherTime = gatherTime;
 		this.value = value;
 	}
 
-	private long timestamp;
-
-	private double value;
-
-	public long getTimestamp() {
-		return timestamp;
+	public long getGatherTime() {
+		return gatherTime;
 	}
 
-	public void setTimestamp(long timeStamp) {
-		this.timestamp = timeStamp;
+	public void setGatherTime(long gatherTime) {
+		this.gatherTime = gatherTime;
 	}
 
 	public double getValue() {
@@ -40,9 +40,9 @@ public class MetricValue implements Comparable<MetricValue> {
 
 	@Override
 	public int compareTo(MetricValue o) {
-		if (this.getTimestamp() > (o.getTimestamp())) {
+		if (this.getGatherTime() > (o.getGatherTime())) {
 			return 1;
-		} else if (this.getTimestamp() < (o.getTimestamp())) {
+		} else if (this.getGatherTime() < (o.getGatherTime())) {
 			return -1;
 		}
 		return 0;

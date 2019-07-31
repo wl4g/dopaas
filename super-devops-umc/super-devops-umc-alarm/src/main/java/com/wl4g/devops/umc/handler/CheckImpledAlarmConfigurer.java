@@ -22,7 +22,6 @@ import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,11 +31,11 @@ import java.util.List;
  * @version v1.0 2019年7月5日
  * @since
  */
-public class CheckImpledAlarmConfigHandler implements AlarmConfigHandler, InitializingBean {
+public class CheckImpledAlarmConfigurer implements AlarmConfigurer, InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		throw new IllegalStateException(String.format("Rule handlers must be implemented '%s'", AlarmConfigHandler.class));
+		throw new IllegalStateException(String.format("Rule handlers must be implemented '%s'", AlarmConfigurer.class));
 	}
 
 	@Override
@@ -60,18 +59,13 @@ public class CheckImpledAlarmConfigHandler implements AlarmConfigHandler, Initia
 	}
 
 	@Override
-	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId) {
+	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, String collectId) {
 		return null;
 	}
 
 	@Override
-	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime,
-			Date nowDate, List<AlarmRule> rules) {
-	}
-
-	@Override
-	public List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId) {
-		return null;
+	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
+			List<AlarmRule> rules) {
 	}
 
 }

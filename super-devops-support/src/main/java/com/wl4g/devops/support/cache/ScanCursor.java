@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.support.cache;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,21 +64,21 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	final public static ScanParams NONE_PARAMS = new ScanParams();
 
 	final private ScanParams params;
-	final private Class<?> ofType;
+	final private Class<?> valueType;
 	final private JedisCluster jdsCluster;
 	final private List<JedisPool> jdsPools;
 
 	private int selectionPos;
 	private CursorState state;
 	private String cursorId;
-	private ScanIterable<byte[]> iter;
+	private ScanIterable<byte[]> iter; // Values
 
 	/**
 	 * Crates new {@link ScanCursor} with {@code id=0} and
 	 * {@link ScanParams#NONE}
 	 */
-	public ScanCursor(JedisCluster cluster, Class<?> ofType) {
-		this(cluster, ofType, NONE_PARAMS);
+	public ScanCursor(JedisCluster cluster, Class<?> valueType) {
+		this(cluster, valueType, NONE_PARAMS);
 	}
 
 	/**
@@ -84,8 +86,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param params
 	 */
-	public ScanCursor(JedisCluster cluster, Class<?> ofType, ScanParams params) {
-		this(cluster, "0", ofType, params);
+	public ScanCursor(JedisCluster cluster, Class<?> valueType, ScanParams params) {
+		this(cluster, "0", valueType, params);
 	}
 
 	/**
@@ -93,8 +95,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param cursorId
 	 */
-	public ScanCursor(JedisCluster cluster, String cursorId, Class<?> ofType) {
-		this(cluster, cursorId, ofType, NONE_PARAMS);
+	public ScanCursor(JedisCluster cluster, String cursorId, Class<?> valueType) {
+		this(cluster, cursorId, valueType, NONE_PARAMS);
 	}
 
 	/**
@@ -106,14 +108,15 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * @param param
 	 *            Defaulted to {@link ScanParams#NONE} if nulled.
 	 */
-	public ScanCursor(JedisCluster jdCluster, String cursorId, Class<?> ofType, ScanParams param) {
+	public ScanCursor(JedisCluster jdCluster, String cursorId, Class<?> valueType, ScanParams param) {
 		Assert.notNull(jdCluster, "jedisCluster must not be null");
 		Assert.hasText(cursorId, "cursorId must not be empty");
-		if (ofType == null) {
-			ofType = ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
+		if (valueType == null) {
+			valueType = ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
 		}
-		Assert.notNull(ofType, "Unable to get 'ofType' actual generic parameters");
-		this.ofType = ofType;
+		// Assert.notNull(valueType, "Unable to get 'valueType' actual generic
+		// parameters");
+		this.valueType = valueType;
 		this.jdsCluster = jdCluster;
 		this.params = param != null ? param : NONE_PARAMS;
 		this.jdsPools = jdCluster.getClusterNodes().values().stream().collect(Collectors.toCollection(ArrayList::new));
@@ -142,15 +145,34 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	}
 
 	/**
+	 * Scan keys.
+	 * 
+	 * @return
+	 */
+	public List<byte[]> keys() {
+		return iter.getItems();
+	}
+
+	/**
+	 * Scan keys as string.
+	 * 
+	 * @return
+	 */
+	public List<String> keysAsString() {
+		return iter.getItems().stream().map(e -> new String(e)).collect(toList());
+	}
+
+	/**
 	 * Mutual exclusion with the {@link ScanCursor#next()} method (only one can
 	 * be used)
 	 * 
 	 * @see ScanCursor#next()
 	 */
 	@SuppressWarnings("unchecked")
-	public List<E> readItem() {
+	public List<E> readValues() {
 		try {
-			return (List<E>) iter.getItems().stream().map(key -> deserialize(jdsCluster.get(key), ofType)).collect(toList());
+			return (List<E>) iter.getItems().stream().map(key -> deserialize(jdsCluster.get(key), getValueType()))
+					.collect(toList());
 		} finally {
 			iter.getItems().clear();
 		}
@@ -173,8 +195,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	}
 
 	/**
-	 * Fetch the next item from the underlying {@link Iterable}. mutual
-	 * exclusion with {@link ScanCursor#readItem()} method (only one can be
+	 * Fetch the next value from the underlying {@link Iterable}. mutual
+	 * exclusion with {@link ScanCursor#readValues()} method (only one can be
 	 * used)
 	 * 
 	 * @return
@@ -188,16 +210,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 			throw new NoSuchElementException("No more elements available for cursor " + getCursorId() + ".");
 		}
 
-		return (E) deserialize(jdsCluster.get(iter.iterator().next()), ofType);
-	}
-
-	/**
-	 * Key iterator.
-	 * 
-	 * @return
-	 */
-	public Iterator<byte[]> keyIterator() {
-		return iter.iterator();
+		return (E) deserialize(jdsCluster.get(iter.iterator().next()), getValueType());
 	}
 
 	/**
@@ -344,6 +357,16 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	}
 
 	/**
+	 * Types of corresponding values for scanning keys.
+	 * 
+	 * @return
+	 */
+	public Class<?> getValueType() {
+		Assert.notNull(valueType, "No scan value java type is specified. Use constructs that can set value java type.");
+		return valueType;
+	}
+
+	/**
 	 * Cursor state
 	 * 
 	 * @author Wangl.sir <983708408@qq.com>
@@ -392,7 +415,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 		 */
 		public ScanIterable(String cursorId, List<K> items) {
 			this.cursorId = cursorId;
-			this.items = (!CollectionUtils.isEmpty(items) ? new ArrayList<K>(items) : Collections.<K> emptyList());
+			this.items = (isEmpty(items) ? emptyList() : new ArrayList<K>(items));
 			this.iter = this.items.iterator();
 		}
 
