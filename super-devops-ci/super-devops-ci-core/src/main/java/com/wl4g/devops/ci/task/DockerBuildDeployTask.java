@@ -35,16 +35,11 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 public class DockerBuildDeployTask extends AbstractDeployTask {
 
     private DockerBuildDeployProvider provider;
-    private String path;
-    private String tarPath;
     private Integer taskDetailId;
 
-    public DockerBuildDeployTask(DockerBuildDeployProvider provider, Project project, String path, AppInstance instance,
-                                 String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
+    public DockerBuildDeployTask(DockerBuildDeployProvider provider, Project project,  AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
         super(instance, project);
         this.provider = provider;
-        this.path = path;
-        this.tarPath = tarPath;
         Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
         for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
             if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
