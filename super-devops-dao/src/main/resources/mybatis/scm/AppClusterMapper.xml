@@ -103,8 +103,8 @@
 		COUNT(0) as instanceCount,
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_cluster a
-		JOIN cf_app_environment b on a.id = b.group_id AND b.del_flag = #{DEL_FLAG_NORMAL}
+		app_cluster a
+		JOIN app_environment b on a.id = b.group_id AND b.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="name != null and name != ''">
@@ -120,9 +120,9 @@
 		b.name as "evnname",
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_cluster a
-		JOIN cf_app_environment b on b.group_id=a.id AND b.del_flag = #{DEL_FLAG_NORMAL}
-		JOIN cf_app_instance f ON f.group_id = a.id AND f.env_id = b.id AND f.del_flag = #{DEL_FLAG_NORMAL}
+		app_cluster a
+		JOIN app_environment b on b.group_id=a.id AND b.del_flag = #{DEL_FLAG_NORMAL}
+		JOIN app_instance f ON f.group_id = a.id AND f.env_id = b.id AND f.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="name != null and name != ''">
@@ -134,7 +134,7 @@
 
 
 	<insert id ="insertInstance" parameterType="instanceOfGroup" >
-		insert into cf_app_instance
+		insert into app_instance
 		(group_id, `enable`, `host`, `ip`, `port`, ops_ids, remark, create_by, create_date, update_by, update_date, env_id)
 		values
 		<foreach collection ="appInstance" item="instance" index= "index" separator =",">
@@ -156,7 +156,7 @@
 	</insert >
 
 	<insert id ="insertEnvironment" parameterType="instanceOfGroup" >
-		insert into cf_app_environment
+		insert into app_environment
 		(group_id, `name`, remark, create_by, create_date, update_by, update_date)
 		values
 		<foreach collection ="environment" item="env" index= "index" separator =",">
@@ -173,7 +173,7 @@
 	</insert >
 
 	<update id="updateInstance" parameterType="appInstance">
-		update cf_app_instance
+		update app_instance
 		<set>
 			<if test="groupId != null">
 				group_id = #{groupId},
@@ -210,7 +210,7 @@
 	</update>
 
 	<update id="updateEnvironment" parameterType="environment">
-		update cf_app_environment
+		update app_environment
 		<set>
 			<if test="groupId != null">
 				group_id = #{groupId},
@@ -232,7 +232,7 @@
 	</update>
 
 	<insert id="insert" parameterType="instanceOfGroup" useGeneratedKeys="true" keyProperty="id">
-		insert into cf_app_cluster
+		insert into app_cluster
 		<trim prefix="(" suffix=")" suffixOverrides="," >
 			<if test="deptId != null">
 				dept_id,
@@ -288,7 +288,7 @@
 	</insert>
 	
 	<update id="delete" parameterType="appGroup">
-		update cf_app_cluster
+		update app_cluster
 		<set>
 			<if test="updateBy != null">
 				update_by = #{updateBy},
@@ -302,7 +302,7 @@
 	</update>
 	
 	<update id="update" parameterType="appGroup">
-		update cf_app_cluster
+		update app_cluster
 		<set>
 			<if test="deptId != null">
 				dept_id = #{deptId},
@@ -331,8 +331,8 @@
 		<include refid="allInstanceColumn"/>,
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_cluster a
-		LEFT JOIN cf_app_instance i ON a.id = i.group_id and i.del_flag = #{DEL_FLAG_NORMAL}
+		app_cluster a
+		LEFT JOIN app_instance i ON a.id = i.group_id and i.del_flag = #{DEL_FLAG_NORMAL}
 		where
 		a.del_flag = #{DEL_FLAG_NORMAL}
 		and a.id = #{id}
@@ -343,8 +343,8 @@
 		<include refid="allEnvColumn"/>,
 		<include refid="allGroupColumn"/>
 		from
-		cf_app_cluster a
-		LEFT JOIN cf_app_environment e ON a.id = e.group_id and e.del_flag = #{DEL_FLAG_NORMAL}
+		app_cluster a
+		LEFT JOIN app_environment e ON a.id = e.group_id and e.del_flag = #{DEL_FLAG_NORMAL}
 		where
 		a.del_flag = #{DEL_FLAG_NORMAL}
 		and a.id = #{id}
@@ -354,7 +354,7 @@
 		select
 		a.name,a.id,a.enable
 		from
-		cf_app_cluster a
+		app_cluster a
 		<where>
 			a.del_flag = 0
 		</where>
@@ -364,7 +364,7 @@
 		select
 			a.name,a.id,a.group_id as "groupId",a.remark
 		FROM
-			cf_app_environment a
+			app_environment a
 		<where>
 		a.del_flag = 0
 		<if test="groupId != null and groupId != ''">
@@ -374,7 +374,7 @@
 	</select>
 
 	<select id="instancelist" parameterType="appInstance" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.ip,a.port FROM  cf_app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.ip,a.port FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="envId != null and envId != ''">
@@ -393,7 +393,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "serverAccount",a.ssh_key as "sshRsa" FROM  cf_app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "serverAccount",a.ssh_key as "sshRsa" FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">
@@ -402,7 +402,7 @@
 		</where>
 	</select>
      <update id="deleteInstance" parameterType="appInstance">
-		update cf_app_instance
+		update app_instance
 		<set>
 			<if test="updateBy != null">
 				update_by = #{updateBy},
@@ -416,7 +416,7 @@
 	</update>
 
 	<update id="deleteEnv" parameterType="environment">
-		update cf_app_environment
+		update app_environment
 		<set>
 			<if test="updateBy != null">
 				update_by = #{updateBy},
@@ -431,7 +431,7 @@
 
 	<!-- Get application environment -->
 	<select id="selectEnvName" parameterType="java.lang.String"  resultType="java.lang.String">
-		select a.name FROM cf_app_environment a
+		select a.name FROM app_environment a
 		<where>
 		a.del_flag = 0
 		<if test="envId != null and envId != ''">
@@ -442,7 +442,7 @@
 
 	<!-- Get application group -->
 	<select id="getAppGroup" resultType="appGroup">
-		select a.* FROM cf_app_cluster a
+		select a.* FROM app_cluster a
 		<where>
 		a.del_flag = 0
 		<if test="id != null and id != 0">
@@ -456,7 +456,7 @@
 	</select>
 
 	<select id="getAppGroupByName" resultType="appGroup">
-		select a.* FROM cf_app_cluster a
+		select a.* FROM app_cluster a
 		<where>
 			a.del_flag = 0
 			<if test="name != null and name != ''">
