@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
+import com.wl4g.devops.common.bean.BaseBean;
+
 import java.io.Serializable;
 import java.util.List;
-
-import com.wl4g.devops.common.bean.BaseBean;
 
 /**
  * Project bean entity.
@@ -123,8 +123,16 @@ public class Project extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Project [projectName=" + projectName + ", gitUrl=" + gitUrl + ", appGroupId=" + appGroupId + ", tarPath="
-				+ tarPath + ", parentAppHome=" + parentAppHome + ", linkAppHome=" + linkAppHome + "]";
+		return "Project{" +
+				"projectName='" + projectName + '\'' +
+				", gitUrl='" + gitUrl + '\'' +
+				", appGroupId=" + appGroupId +
+				", tarPath='" + tarPath + '\'' +
+				", parentAppHome='" + parentAppHome + '\'' +
+				", linkAppHome='" + linkAppHome + '\'' +
+				", groupName='" + groupName + '\'' +
+				", lockStatus=" + lockStatus +
+				", dependencies=" + dependencies +
+				'}';
 	}
-
 }
