@@ -69,8 +69,8 @@
 			<result column="i.updateDate" property="updateDate" jdbcType="TIMESTAMP" />
 			<result column="i.delFlag" property="delFlag" jdbcType="INTEGER" />
 			<result column="i.envId" property="envId" jdbcType="VARCHAR" />
-			<result column="i.serverAccount" property="serverAccount" jdbcType="VARCHAR" />
-			<result column="i.sshRsa" property="sshRsa" jdbcType="VARCHAR" />
+			<result column="i.sshUser" property="sshUser" jdbcType="VARCHAR" />
+			<result column="i.sshKey" property="sshKey" jdbcType="VARCHAR" />
 		</collection>
 	</resultMap>
 
@@ -393,7 +393,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "serverAccount",a.ssh_key as "sshRsa" FROM  app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">

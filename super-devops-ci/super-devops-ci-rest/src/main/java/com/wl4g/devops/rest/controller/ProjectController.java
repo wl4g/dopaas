@@ -22,7 +22,6 @@ import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.CustomPage;
-import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -47,6 +46,7 @@ import java.util.Map;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK;
 
 /**
  * Porject controller
@@ -109,6 +109,7 @@ public class ProjectController {
             project.preInsert();
             project.setDelFlag(DEL_FLAG_NORMAL);
             project.setEnable(ENABLED);
+            project.setLockStatus(TASK_LOCK_STATUS__UNLOCK);
             projectService.insert(project);
         }
         return resp;
@@ -165,7 +166,7 @@ public class ProjectController {
         log.info("into ProjectController.unlock prarms::"+ "id = {} ", id );
         RespBase<Object> resp = RespBase.create();
         Assert.notNull(id, "id can not be null");
-        projectService.updateLockStatus(id, CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK);
+        projectService.updateLockStatus(id, TASK_LOCK_STATUS__UNLOCK);
         return resp;
     }
 

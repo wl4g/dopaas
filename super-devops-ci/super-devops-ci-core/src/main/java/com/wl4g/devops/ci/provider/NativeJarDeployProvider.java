@@ -50,14 +50,14 @@ package com.wl4g.devops.ci.provider;
 // // scp to server for(AppInstance instance : instances){
 //
 // // scp to server
-// scp(path + "/" + tarPath, instance.getServerAccount() + "@" +
+// scp(path + "/" + tarPath, instance.getSshUser() + "@" +
 // instance.getHost(), instance.getBasePath());
 //
 // // stop server
-// // stop(instance.getHost(),instance.getServerAccount(),alias);
+// // stop(instance.getHost(),instance.getSshUser(),alias);
 //
 // // restart server
-// start(instance.getHost(), instance.getServerAccount(), alias, tarName);
+// start(instance.getHost(), instance.getSshUser(), alias, tarName);
 // }log.info("Done");
 //
 // }
