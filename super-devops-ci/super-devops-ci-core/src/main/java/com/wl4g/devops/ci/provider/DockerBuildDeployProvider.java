@@ -59,8 +59,7 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
 
         // Each install pull and restart
         for (AppInstance instance : getInstances()) {
-            Runnable task = new DockerBuildDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
-                    getTaskHistoryDetails());
+            Runnable task = new DockerBuildDeployTask(this, getProject(),  instance, getTaskHistoryDetails());
             Thread t = new Thread(task);
             t.start();
             t.join();
@@ -99,8 +98,7 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
 
         // scp to server
         for (AppInstance instance : getInstances()) {
-            Runnable task = new DockerBuildDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
-                    getTaskHistoryDetails());
+            Runnable task = new DockerBuildDeployTask(this, getProject(),instance, getTaskHistoryDetails());
             Thread t = new Thread(task);
             t.start();
             t.join();
