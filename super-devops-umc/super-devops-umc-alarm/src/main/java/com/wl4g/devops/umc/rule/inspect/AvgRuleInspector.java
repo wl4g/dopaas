@@ -18,8 +18,9 @@ package com.wl4g.devops.umc.rule.inspect;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeToList;
 import static java.util.stream.Collectors.summarizingDouble;
 
-import com.wl4g.devops.umc.rule.AggregatorType;
-import com.wl4g.devops.umc.rule.RelateOperatorType;
+import com.wl4g.devops.umc.rule.Aggregator;
+import com.wl4g.devops.umc.rule.LogicalOperator;
+import com.wl4g.devops.umc.rule.RelationOperator;
 
 /**
  * Average rule inspector
@@ -31,8 +32,8 @@ import com.wl4g.devops.umc.rule.RelateOperatorType;
 public class AvgRuleInspector extends AbstractRuleInspector {
 
 	@Override
-	public AggregatorType aggregateType() {
-		return AggregatorType.AVG;
+	public Aggregator aggregateType() {
+		return Aggregator.AVG;
 	}
 
 	@Override
@@ -40,7 +41,8 @@ public class AvgRuleInspector extends AbstractRuleInspector {
 		// Average
 		double avg = safeToList(Double.class, wrap.getValues()).stream().filter(val -> null != val)
 				.collect(summarizingDouble(val -> val)).getAverage();
-		return super.operate(RelateOperatorType.of(wrap.getOperator()), avg, wrap.getBaseline());
+		return super.operate(LogicalOperator.of(wrap.getLogicalOperator()), RelationOperator.of(wrap.getRelateOperator()), avg,
+				wrap.getBaseline());
 	}
 
 }

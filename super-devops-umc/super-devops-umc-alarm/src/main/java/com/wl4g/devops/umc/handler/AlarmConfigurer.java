@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.umc.handler;
 
-import com.wl4g.devops.common.bean.scm.AppCluster;
-import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
@@ -32,17 +30,11 @@ import java.util.List;
  */
 public interface AlarmConfigurer {
 
-	List<AppInstance> instancelist(AppInstance appInstance);
+	List<AlarmTemplate> findAlarmTemplate(Integer collectId);
 
-	AppCluster getAppGroupByName(String groupName);
+	List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId);
 
-	List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId);
-
-	List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId);
-
-	List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, String collectId);
-
-	void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
+	void saveAlarmRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
 			List<AlarmRule> rules);
 
 }
