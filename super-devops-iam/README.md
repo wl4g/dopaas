@@ -1,16 +1,16 @@
-## 一个基于CAS协议的SSO统一认证实现，支持WeChat、QQ、Facebook等SNS授权认证，Opensaml开放API授权，内置接口级AOP二次认证实现
+## A CAS-based SSO unified authentication implementation, supporting WeChat, QQ, Facebook and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.
 ---
-一、快速入门
-- 1，服务端集成：
-    - 1.1，独立运行模式，使用iam的数据库表，适用于新系统集成，
-    - 1.2，依赖嵌入模式，使用外部自定义数据库表，适用于旧系统改造集成，
-    - 1.3，所有支持的yml配置，
+#### Quick Start
+- 1，Server integration:
+    - 1.1，Independent operation mode, using Iam database tables, is suitable for new system integration.
+    - 1.2，Depending on embedded mode and using external custom database tables, it is suitable for old system transformation and integration.
+    - 1.3，All supported YML configurations,
 
-- 2，客户端集成：
-    - 2.1，PC集成(前后端分离)
-    - 2.2，[安卓端接入（全局认证拦截器）](super-devops-iam-example/src/main/java/com/wl4g/devops/iam/example/android/AndroidIamUserCoordinator.java)
-	- 2.3，微信公众号集成，
-	- 2.4，服务端所有支持的yml配置:
+- 2，Client integration:
+    - 2.1，PC integration (front-end and back-end separation)
+    - 2.2，[Android Access (Global Authentication Interceptor)](super-devops-iam-example/src/main/java/com/wl4g/devops/iam/example/android/AndroidIamUserCoordinator.java)
+	- 2.3，Wechat Public Signal Integration,
+	- 2.4，All supported YML configurations on the server side:
 ```
 spring:
   cloud:
@@ -67,7 +67,7 @@ spring:
         captcha:
           enabled: true
 ```
-	>> 2.5，客户端所有支持的yml配置:
+	-  2.5，All supported YML configurations on the client side:
 ```
 spring:
   cloud:
@@ -112,8 +112,8 @@ spring:
             name: IAMTOKEN_${spring.application.name}
 ```
 
-二、二次开发
-> * 3.1、客户端二次开发
-> * 3.2、服务端二次开发
+#### Secondary Development
+> * 3.1、Secondary development of Client
+> * 3.2、Secondary development of Server
 
 ###### [Reference](https://www.zybuluo.com/mdeditor)
