@@ -42,7 +42,7 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	final private AtomicBoolean modified = new AtomicBoolean(false);
 
 	public OnceModifiableMap(Map<K, V> readOnlyMap) {
-		Assert.notEmpty(readOnlyMap, "Once modifiable read only map must not be null.");
+		Assert.state(null != readOnlyMap, "Once modifiable read only map must not be null.");
 		this.readOnlyMap = readOnlyMap;
 	}
 
@@ -94,7 +94,7 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> finalMap) {
-		Assert.notEmpty(finalMap, "Once modifiable final map must not be null.");
+		Assert.state(null != finalMap, "Once modifiable final map must not be null.");
 		if (this.modified.compareAndSet(false, true)) {
 			this.readOnlyMap.putAll(finalMap);
 		} else {
