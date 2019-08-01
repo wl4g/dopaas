@@ -6,12 +6,13 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.esm.annotation.EnableEsmScalingController;
+import com.wl4g.devops.esm.console.EsmScalingConsole;
 import com.wl4g.devops.esm.rest.EsmScalingController;
 
-public class EsmServerAutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class EsmAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
 	//
-	// Server controller.
+	// ESM server RESTful.
 	//
 
 	@Override
@@ -35,7 +36,12 @@ public class EsmServerAutoConfiguration extends AbstractOptionalControllerConfig
 	}
 
 	//
-	// ESM service.
+	// ESM console.
 	//
+
+	@Bean
+	public EsmScalingConsole esmScalingConsole() {
+		return new EsmScalingConsole();
+	}
 
 }

@@ -20,25 +20,32 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import com.wl4g.devops.ci.console.CiCdConsole;
+
 /**
- * Deployments auto configuration.
+ * CICD auto configuration.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月21日
  * @since
  */
 @Configuration
-public class DeployAutoConfiguration {
+public class CiCdAutoConfiguration {
 
-    @Bean
-    @ConfigurationProperties(prefix = "deploy")
-    public DeployProperties deployProperties() {
-        return new DeployProperties();
-    }
+	@Bean
+	@ConfigurationProperties(prefix = "deploy")
+	public CiCdProperties deployProperties() {
+		return new CiCdProperties();
+	}
 
-    @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-        return new ThreadPoolTaskScheduler();
-    }
+	@Bean
+	public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+		return new ThreadPoolTaskScheduler();
+	}
+
+	@Bean
+	public CiCdConsole ciCdConsole() {
+		return new CiCdConsole();
+	}
 
 }

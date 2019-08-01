@@ -1,7 +1,7 @@
 package com.wl4g.devops.ci.cron;
 
 
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -47,7 +47,7 @@ public class DynamicTask implements ApplicationRunner {
     private TriggerDao triggerDao;
 
     @Autowired
-    private DeployProperties config;
+    private CiCdProperties config;
 
     @Autowired
     private CiService ciService;

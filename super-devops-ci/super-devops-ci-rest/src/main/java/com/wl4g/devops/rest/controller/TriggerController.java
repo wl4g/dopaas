@@ -17,7 +17,7 @@ package com.wl4g.devops.rest.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.cron.CronUtils;
 import com.wl4g.devops.ci.cron.DynamicTask;
 import com.wl4g.devops.ci.service.CiService;
@@ -68,7 +68,7 @@ public class TriggerController {
     private DynamicTask dynamicTask;
 
     @Autowired
-    private DeployProperties config;
+    private CiCdProperties config;
 
     @Autowired
     private CiService ciService;

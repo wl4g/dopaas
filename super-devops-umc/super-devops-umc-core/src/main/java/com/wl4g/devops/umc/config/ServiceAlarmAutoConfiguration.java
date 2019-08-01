@@ -30,7 +30,7 @@ import com.wl4g.devops.umc.handler.AlarmConfigurer;
  * @since
  */
 @Configuration
-@ImportAutoConfiguration(AlarmAutoConfiguration.class)
+@ImportAutoConfiguration(UmcAlarmAutoConfiguration.class)
 public class ServiceAlarmAutoConfiguration {
 
 	@Bean

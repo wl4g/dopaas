@@ -18,6 +18,7 @@ package com.wl4g.devops.umc.config;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
+import com.wl4g.devops.umc.console.ReceiveConsole;
 import com.wl4g.devops.umc.receiver.HttpMetricReceiver;
 import com.wl4g.devops.umc.receiver.KafkaMetricReceiver;
 import com.wl4g.devops.umc.store.*;
@@ -119,6 +120,15 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 		containerProps.setQueueDepth(conf.getKafka().getQueueDepth());
 		containerProps.setAckMode(AckMode.MANUAL_IMMEDIATE);
 		return factory;
+	}
+
+	//
+	// Receive console.
+	//
+
+	@Bean
+	public ReceiveConsole receiveConsole() {
+		return new ReceiveConsole();
 	}
 
 }

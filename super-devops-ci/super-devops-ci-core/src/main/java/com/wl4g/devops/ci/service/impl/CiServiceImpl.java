@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.provider.BasedDeployProvider;
 import com.wl4g.devops.ci.provider.DockerBuildDeployProvider;
 import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
@@ -51,7 +51,7 @@ public class CiServiceImpl implements CiService {
     final protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private DeployProperties config;
+    private CiCdProperties config;
 
     @Autowired
     private AppGroupDao appGroupDao;

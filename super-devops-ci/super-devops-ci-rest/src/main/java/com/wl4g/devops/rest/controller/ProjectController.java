@@ -17,7 +17,7 @@ package com.wl4g.devops.rest.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
@@ -68,7 +68,7 @@ public class ProjectController {
     private ProjectDao projectDao;
 
     @Autowired
-    private DeployProperties config;
+    private CiCdProperties config;
 
     /**
      * list

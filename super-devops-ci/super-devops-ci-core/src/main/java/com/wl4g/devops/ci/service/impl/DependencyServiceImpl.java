@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.utils.GitUtils;
@@ -53,7 +53,7 @@ public class DependencyServiceImpl implements DependencyService {
     final protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private DeployProperties config;
+    private CiCdProperties config;
 
     @Autowired
     private DependencyDao dependencyDao;
