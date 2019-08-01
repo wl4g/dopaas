@@ -24,7 +24,7 @@ import com.wl4g.devops.ci.cron.CronUtils;
 import com.wl4g.devops.ci.cron.TimingTasks;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.common.utils.lang.TableFormatters;
@@ -167,15 +167,15 @@ public class CiCdConsole {
 		String r = argument.getAnyInstants();
 		Pattern pattern = Pattern.compile(r);
 		if (isBlank(appGroupName)) {
-			List<AppGroup> apps = appGroupDao.grouplist();
-			for (AppGroup appGroup : apps) {
-				appendApp(result, appGroup, r);
+			List<AppCluster> apps = appGroupDao.grouplist();
+			for (AppCluster appCluster : apps) {
+				appendApp(result, appCluster, r);
 				result.append("\n");
 			}
 		} else {
-			AppGroup app = appGroupDao.getAppGroupByName(appGroupName);
+			AppCluster app = appGroupDao.getAppGroupByName(appGroupName);
 			if (null == app) {
-				return "AppGroup not exist";
+				return "AppCluster not exist";
 			}
 			List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
 			if (null == environments || environments.size() <= 0) {
@@ -218,12 +218,12 @@ public class CiCdConsole {
 		return result.toString();
 	}
 
-	private void appendApp(StringBuffer result, AppGroup appGroup, String r) {
-		List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
+	private void appendApp(StringBuffer result, AppCluster appCluster, String r) {
+		List<Environment> environments = appGroupDao.environmentlist(appCluster.getId().toString());
 		if (environments == null || environments.size() <= 0) {
 			return;
 		}
-		result.append(" <").append(appGroup.getName()).append(">:\n");
+		result.append(" <").append(appCluster.getName()).append(">:\n");
 		for (Environment environment : environments) {
 			appendEnv(result, environment, r);
 		}

@@ -49,7 +49,7 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
     public void execute() throws Exception {
         Dependency dependency = new Dependency();
         dependency.setProjectId(getProject().getId());
-        getDependencyService().build(getTaskHistory(), dependency, getBranch(), isSuccess, result, false);
+        getDependencyService().build(getTaskHistory(), dependency, getBranch(), taskResult, false);
 
         //get sha and md5
         setShaGit(GitUtils.getOldestCommitSha(getPath()));
@@ -87,7 +87,7 @@ public class DockerBuildDeployProvider extends BasedDeployProvider {
             getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
             setShaGit(getRefTaskHistory().getShaGit());
         } else {
-            getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), isSuccess, result, false);
+            getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), taskResult, false);
             setShaGit(GitUtils.getOldestCommitSha(getPath()));
         }
 

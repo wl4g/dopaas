@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
@@ -114,12 +115,14 @@ public abstract class BasedDeployProvider {
     /**
      * is success , if fail , Stop running
      */
-    protected Boolean isSuccess = new Boolean(true);
+    //protected Boolean isSuccess = new Boolean(true);
 
     /**
      * result
      */
-    protected StringBuffer result = new StringBuffer();
+    //protected StringBuffer result = new StringBuffer();
+
+    protected TaskResult taskResult = new TaskResult();
 
     public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
                                List<TaskHistoryDetail> taskHistoryDetails) {
@@ -349,20 +352,12 @@ public abstract class BasedDeployProvider {
         return project;
     }
 
-    public Boolean getSuccess() {
-        return isSuccess;
+    public TaskResult getTaskResult() {
+        return taskResult;
     }
 
-    public void setSuccess(Boolean success) {
-        isSuccess = success;
-    }
-
-    public StringBuffer getResult() {
-        return result;
-    }
-
-    public void setResult(StringBuffer result) {
-        this.result = result;
+    public void setTaskResult(TaskResult taskResult) {
+        this.taskResult = taskResult;
     }
 
     public String getShaGit() {

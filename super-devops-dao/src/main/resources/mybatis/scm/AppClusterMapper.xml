@@ -69,8 +69,8 @@
 			<result column="i.updateDate" property="updateDate" jdbcType="TIMESTAMP" />
 			<result column="i.delFlag" property="delFlag" jdbcType="INTEGER" />
 			<result column="i.envId" property="envId" jdbcType="VARCHAR" />
-			<result column="i.serverAccount" property="serverAccount" jdbcType="VARCHAR" />
-			<result column="i.sshRsa" property="sshRsa" jdbcType="VARCHAR" />
+			<result column="i.sshUser" property="sshUser" jdbcType="VARCHAR" />
+			<result column="i.sshKey" property="sshKey" jdbcType="VARCHAR" />
 		</collection>
 	</resultMap>
 
@@ -287,7 +287,7 @@
 		</trim>
 	</insert>
 	
-	<update id="delete" parameterType="appGroup">
+	<update id="delete" parameterType="appCluster">
 		update app_cluster
 		<set>
 			<if test="updateBy != null">
@@ -301,7 +301,7 @@
 		where id = #{id} 
 	</update>
 	
-	<update id="update" parameterType="appGroup">
+	<update id="update" parameterType="appCluster">
 		update app_cluster
 		<set>
 			<if test="deptId != null">
@@ -326,7 +326,7 @@
 		where id = #{id}
 	</update>
 	
-	<select id="select" parameterType="appGroup" resultMap="queryInstanceOfGroup">
+	<select id="select" parameterType="appCluster" resultMap="queryInstanceOfGroup">
 		select
 		<include refid="allInstanceColumn"/>,
 		<include refid="allGroupColumn"/>
@@ -338,7 +338,7 @@
 		and a.id = #{id}
 	</select>
 
-	<select id="selectEnv" parameterType="appGroup" resultMap="queryEnvGroup">
+	<select id="selectEnv" parameterType="appCluster" resultMap="queryEnvGroup">
 		select
 		<include refid="allEnvColumn"/>,
 		<include refid="allGroupColumn"/>
@@ -350,7 +350,7 @@
 		and a.id = #{id}
 	</select>
 
-	<select id="grouplist"  resultType="appGroup">
+	<select id="grouplist"  resultType="appCluster">
 		select
 		a.name,a.id,a.enable
 		from
@@ -393,7 +393,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "serverAccount",a.ssh_key as "sshRsa" FROM  app_instance a
+		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">
@@ -441,7 +441,7 @@
 	</select>
 
 	<!-- Get application group -->
-	<select id="getAppGroup" resultType="appGroup">
+	<select id="getAppGroup" resultType="appCluster">
 		select a.* FROM app_cluster a
 		<where>
 		a.del_flag = 0
@@ -455,7 +455,7 @@
 		</where>
 	</select>
 
-	<select id="getAppGroupByName" resultType="appGroup">
+	<select id="getAppGroupByName" resultType="appCluster">
 		select a.* FROM app_cluster a
 		<where>
 			a.del_flag = 0
