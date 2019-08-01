@@ -75,11 +75,11 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 						continue;
 					}
 
-					// largest metric keep time window of rules.
-					long largestRuleWindowKeepTime = extractLargestRuleWindowKeepTime(tpl.getRules());
+					// Maximum metric keep time window of rules.
+					long maxWindowTime = extractMaxRuleWindowTime(tpl.getRules());
 					// Offer latest metrics in time window queue.
 					List<MetricValue> metricVals = offerTimeWindowQueue(tpl.getId(), metricWrap.getValue(),
-							aggWrap.getTimestamp(), now, largestRuleWindowKeepTime);
+							aggWrap.getTimestamp(), now, maxWindowTime);
 
 					// Match alarm rules of metric values.
 					List<AlarmRule> matchedRules = matchAlarmRules(metricVals, tpl.getRules(), now);
@@ -105,12 +105,14 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * Match alarm rules.
 	 */
 	protected List<AlarmRule> matchAlarmRules(List<MetricValue> metricVals, List<AlarmRule> rules, long now) {
-		// Match mode for 'OR'.
+		// Match mode for 'OR'/'AND'.
 		return safeList(rules).stream().map(rule -> {
 			// Get latest time window metric values.
 			Double[] vals = extractAvailableQueueMetricValues(metricVals, rule.getQueueTimeWindow(), now);
 			// Do inspection.
-			if (inspector.verify(new InspectWrapper(rule.getRelateOperator(), rule.getAggregator(), rule.getValue(), vals))) {
+			InspectWrapper wrap = new InspectWrapper(rule.getLogicalOperator(), rule.getRelateOperator(), rule.getAggregator(),
+					rule.getValue(), vals);
+			if (inspector.verify(wrap)) {
 				return rule;
 			}
 			return null;
@@ -165,9 +167,9 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param macthedRules
 	 */
 	protected void storageNotification(String collectId, AlarmTemplate alarmTpl, long gatherTime, List<AlarmRule> macthedRules) {
-		List<AlarmConfig> alarmConfigs = alarmConfigHandler.getAlarmConfigByCollectIdAndTemplateId(alarmTpl.getId(), collectId);
+		List<AlarmConfig> alarmConfigs = alarmConfigHandler.findAlarmConfig(alarmTpl.getId(), collectId);
 		// Storage record.
-		alarmConfigHandler.saveRecord(alarmTpl, alarmConfigs, collectId, gatherTime, macthedRules);
+		alarmConfigHandler.saveAlarmRecord(alarmTpl, alarmConfigs, collectId, gatherTime, macthedRules);
 		// Notification
 		notification(alarmTpl, alarmConfigs, macthedRules);
 	}

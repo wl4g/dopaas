@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.umc.rule.AggregatorType;
+import com.wl4g.devops.umc.rule.Aggregator;
 
 /**
  * Rule verify inspector.
@@ -30,7 +30,7 @@ import com.wl4g.devops.umc.rule.AggregatorType;
  */
 public interface RuleInspector {
 
-	AggregatorType aggregateType();
+	Aggregator aggregateType();
 
 	/**
 	 * Metric aggregate rule inspection
@@ -49,7 +49,9 @@ public interface RuleInspector {
 	 */
 	public static class InspectWrapper {
 
-		final private Integer operator;
+		final private Integer relateOperator;
+
+		final private Integer logicalOperator;
 
 		final private String aggregator;
 
@@ -57,17 +59,24 @@ public interface RuleInspector {
 
 		final private Double[] values;
 
-		public InspectWrapper(Integer operator, String aggregator, Double baseline, Double[] values) {
-			Assert.notNull(operator, "Operator type must not be null");
+		public InspectWrapper(Integer logicalOperator, Integer relateOperator, String aggregator, Double baseline,
+				Double[] values) {
+			Assert.notNull(logicalOperator, "Logical operator must not be null");
+			Assert.notNull(relateOperator, "Relate operator must not be null");
 			Assert.hasText(aggregator, "Aggregator type must not be empty");
-			this.operator = operator;
+			this.logicalOperator = logicalOperator;
+			this.relateOperator = relateOperator;
 			this.aggregator = aggregator;
 			this.baseline = baseline;
 			this.values = values;
 		}
 
-		public Integer getOperator() {
-			return operator;
+		public Integer getLogicalOperator() {
+			return logicalOperator;
+		}
+
+		public Integer getRelateOperator() {
+			return relateOperator;
 		}
 
 		public String getAggregator() {
@@ -84,7 +93,7 @@ public interface RuleInspector {
 
 		@Override
 		public String toString() {
-			return "MeticInspectWrapper [operator=" + operator + ", aggregator=" + aggregator + ", values="
+			return "MeticInspectWrapper [operator=" + relateOperator + ", aggregator=" + aggregator + ", values="
 					+ Arrays.toString(values) + ", baseline=" + baseline + "]";
 		}
 

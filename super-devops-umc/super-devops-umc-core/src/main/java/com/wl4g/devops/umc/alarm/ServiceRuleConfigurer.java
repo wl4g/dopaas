@@ -15,10 +15,7 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.scm.AppCluster;
-import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.*;
-import com.wl4g.devops.dao.scm.AppGroupDao;
 import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
@@ -44,9 +41,6 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	protected JedisService jedisService;
 
 	@Autowired
-	private AppGroupDao appGroupDao;
-
-	@Autowired
 	private AlarmTemplateDao alarmTemplateDao;
 
 	@Autowired
@@ -62,32 +56,17 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	private AlarmRecordUserDao alarmRecordUserDao;
 
 	@Override
-	public List<AppInstance> instancelist(AppInstance appInstance) {
-		return appGroupDao.instancelist(appInstance);
-	}
-
-	@Override
-	public AppCluster getAppGroupByName(String groupName) {
-		return appGroupDao.getAppGroupByName(groupName);
-	}
-
-	@Override
-	public List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId) {
+	public List<AlarmTemplate> findAlarmTemplate(Integer collectId) {
 		return alarmTemplateDao.getByCollectId(collectId);
 	}
 
 	@Override
-	public List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId) {
-		return alarmTemplateDao.getByGroupId(groupId);
-	}
-
-	@Override
-	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, String collectId) {
+	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId) {
 		return alarmConfigDao.getByCollectIdAndTemplateId(templateId, Integer.parseInt(collectId));
 	}
 
 	@Transactional
-	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
+	public void saveAlarmRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
 			List<AlarmRule> rules) {
 		for (AlarmConfig alarmConfig : alarmConfigs) {
 			AlarmRecord record = new AlarmRecord();

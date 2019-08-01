@@ -16,15 +16,15 @@
 package com.wl4g.devops.umc.rule;
 
 /**
- * Logical operator definition.
+ * Relation operator definition.
  * 
  * @author Wangl.sir
- * @version v1.0 2019年7月30日
- * @since
+ * @author vjay
+ * @date 2019-07-05 10:13:00
  */
-public enum LogicalOperatorType {
+public enum RelationOperator {
 
-	AND(1), OR(2);
+	EQ(1), GT(2), GTE(3), LT(4), LTE(5);
 
 	private int value;
 
@@ -32,8 +32,32 @@ public enum LogicalOperatorType {
 		return value;
 	}
 
-	LogicalOperatorType(int value) {
+	RelationOperator(int value) {
 		this.value = value;
+	}
+
+	/**
+	 * Do operation
+	 * 
+	 * @param value1
+	 * @param value2
+	 * @return
+	 */
+	public boolean operate(double value1, double value2) {
+		switch (of(getValue())) {
+		case EQ:
+			return value1 == value2;
+		case GT:
+			return value1 > value2;
+		case GTE:
+			return value1 >= value2;
+		case LT:
+			return value1 < value2;
+		case LTE:
+			return value1 <= value2;
+		default:
+			return false;
+		}
 	}
 
 	/**
@@ -42,8 +66,8 @@ public enum LogicalOperatorType {
 	 * @param operator
 	 * @return
 	 */
-	public static LogicalOperatorType of(int operator) {
-		for (LogicalOperatorType t : values()) {
+	public static RelationOperator of(int operator) {
+		for (RelationOperator t : values()) {
 			if (operator == t.getValue()) {
 				return t;
 			}

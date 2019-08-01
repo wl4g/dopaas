@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
-import com.wl4g.devops.umc.rule.AggregatorType;
+import com.wl4g.devops.umc.rule.Aggregator;
 
 /**
  * Composite rule inspector adapter.
@@ -41,7 +41,7 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	/**
 	 * Rule inspectors.
 	 */
-	final protected Map<AggregatorType, RuleInspector> ruleInspectors = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<Aggregator, RuleInspector> ruleInspectors = new OnceModifiableMap<>(new HashMap<>());
 
 	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
 		Assert.state(!CollectionUtils.isEmpty(inspectors), "Rule inspectors has at least one.");
@@ -55,7 +55,7 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	}
 
 	@Override
-	public AggregatorType aggregateType() {
+	public Aggregator aggregateType() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -71,7 +71,7 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 			return Optional.empty();
 		}
 		for (String aggre : aggregator.split(",")) {
-			AggregatorType type = AggregatorType.safeOf(aggre);
+			Aggregator type = Aggregator.safeOf(aggre);
 			if (null != type) {
 				RuleInspector inspector = ruleInspectors.get(type);
 				if (inspector != null) {

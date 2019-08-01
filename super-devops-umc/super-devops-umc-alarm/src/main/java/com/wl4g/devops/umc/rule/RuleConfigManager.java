@@ -92,7 +92,7 @@ public class RuleConfigManager implements ApplicationRunner {
 		// First get the cache
 		List<AlarmTemplate> alarmTpls = jedisService.getObjectList(key, AlarmTemplate.class);
 		if (isEmpty(alarmTpls)) {
-			alarmTpls = ruleConfigurer.getAlarmTemplateByCollectId(Integer.parseInt(collectId));
+			alarmTpls = ruleConfigurer.findAlarmTemplate(Integer.parseInt(collectId));
 			if (!isEmpty(alarmTpls)) {
 				jedisService.setObjectList(key, alarmTpls, 0);
 			}

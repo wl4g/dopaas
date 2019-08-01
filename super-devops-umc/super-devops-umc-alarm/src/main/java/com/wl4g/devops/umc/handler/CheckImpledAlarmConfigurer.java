@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.umc.handler;
 
-import com.wl4g.devops.common.bean.scm.AppCluster;
-import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
@@ -39,32 +37,17 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<AppInstance> instancelist(AppInstance appInstance) {
+	public List<AlarmTemplate> findAlarmTemplate(Integer collectId) {
 		return null;
 	}
 
 	@Override
-	public AppCluster getAppGroupByName(String groupName) {
+	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId) {
 		return null;
 	}
 
 	@Override
-	public List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId) {
-		return null;
-	}
-
-	@Override
-	public List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId) {
-		return null;
-	}
-
-	@Override
-	public List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, String collectId) {
-		return null;
-	}
-
-	@Override
-	public void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
+	public void saveAlarmRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
 			List<AlarmRule> rules) {
 	}
 

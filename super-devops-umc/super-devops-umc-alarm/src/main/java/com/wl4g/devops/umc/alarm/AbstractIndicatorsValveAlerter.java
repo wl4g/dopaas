@@ -91,7 +91,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	/**
 	 * Extract largest metric keep time window of rules.
 	 */
-	protected long extractLargestRuleWindowKeepTime(List<AlarmRule> rules) {
+	protected long extractMaxRuleWindowTime(List<AlarmRule> rules) {
 		long largestTimeWindow = 0;
 		for (AlarmRule alarmRule : rules) {
 			Long timeWindow = alarmRule.getQueueTimeWindow();
@@ -106,8 +106,10 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	 * Match metric tags
 	 */
 	protected boolean matchTags(Map<String, String> metricTagMap, Map<String, String> tplTagMap) {
+		// If no tag is configured, the matching tag does not need to be
+		// executed.
 		if (isEmpty(tplTagMap)) {
-			return false;
+			return true;
 		}
 		for (Entry<String, String> ent : tplTagMap.entrySet()) {
 			if (trimToEmpty(ent.getValue()).equals(metricTagMap.get(ent.getKey()))) {

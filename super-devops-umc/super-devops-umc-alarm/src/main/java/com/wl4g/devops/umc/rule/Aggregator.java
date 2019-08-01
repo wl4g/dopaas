@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  * @author vjay
  * @date 2019-07-05 19:13:00
  */
-public enum AggregatorType {
+public enum Aggregator {
 
 	AVG("avg"), LATEST("latest"), MAX("max"), MIN("min"), SUM("sum");
 
@@ -34,7 +34,7 @@ public enum AggregatorType {
 		return value;
 	}
 
-	AggregatorType(String value) {
+	Aggregator(String value) {
 		this.value = value;
 	}
 
@@ -44,8 +44,8 @@ public enum AggregatorType {
 	 * @param aggregateString
 	 * @return
 	 */
-	public static AggregatorType safeOf(String aggregateString) {
-		for (AggregatorType t : values()) {
+	public static Aggregator safeOf(String aggregateString) {
+		for (Aggregator t : values()) {
 			if (equalsIgnoreCase(aggregateString, t.getValue())) {
 				return t;
 			}

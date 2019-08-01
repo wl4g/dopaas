@@ -16,15 +16,15 @@
 package com.wl4g.devops.umc.rule;
 
 /**
- * Relate operator definition.
+ * Logical operator definition.
  * 
  * @author Wangl.sir
- * @author vjay
- * @date 2019-07-05 10:13:00
+ * @version v1.0 2019年7月30日
+ * @since
  */
-public enum RelateOperatorType {
+public enum LogicalOperator {
 
-	EQ(1), GT(2), GTE(3), LT(4), LTE(5);
+	AND(1), OR(2);
 
 	private int value;
 
@@ -32,32 +32,8 @@ public enum RelateOperatorType {
 		return value;
 	}
 
-	RelateOperatorType(int value) {
+	LogicalOperator(int value) {
 		this.value = value;
-	}
-
-	/**
-	 * Do operation
-	 * 
-	 * @param value1
-	 * @param value2
-	 * @return
-	 */
-	public boolean operate(double value1, double value2) {
-		switch (of(getValue())) {
-		case EQ:
-			return value1 == value2;
-		case GT:
-			return value1 > value2;
-		case GTE:
-			return value1 >= value2;
-		case LT:
-			return value1 < value2;
-		case LTE:
-			return value1 <= value2;
-		default:
-			return false;
-		}
 	}
 
 	/**
@@ -66,8 +42,8 @@ public enum RelateOperatorType {
 	 * @param operator
 	 * @return
 	 */
-	public static RelateOperatorType of(int operator) {
-		for (RelateOperatorType t : values()) {
+	public static LogicalOperator of(int operator) {
+		for (LogicalOperator t : values()) {
 			if (operator == t.getValue()) {
 				return t;
 			}
