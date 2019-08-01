@@ -1,6 +1,9 @@
 ![DevSecOps](shots/logo.jpg)
 ## A lightweight and comprehensive microservice DevSecOps solution.
 
+[![Build Status](https://travis-ci.org/wl4g/kafka_offset_tool/)
+
+
 [中文文档](README_CN.md)
 
 ### Runtime environment
