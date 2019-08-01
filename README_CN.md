@@ -1,7 +1,7 @@
 ![DevSecOps](shots/logo.jpg)
 ## 一个轻量而全面的微服务DevSecOps解决方案.
 
-![Build Status](https://travis-ci.org/wl4g/kafka_offset_tool.svg)
+![Build Status](https://travis-ci.org/wl4g/super-devops.svg)
 
 English version goes [here](README.md)
 
