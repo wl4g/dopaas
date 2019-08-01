@@ -45,7 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public int insert(Project project) {
-        Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+        Project hasProject = projectDao.getByAppClusterId(project.getClusterId());
         //check repeated
         Assert.state(hasProject == null, "Config Repeated");
         project.preInsert();
@@ -64,7 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public int update(Project project) {
-        Project hasProject = projectDao.getByAppGroupId(project.getAppGroupId());
+        Project hasProject = projectDao.getByAppClusterId(project.getClusterId());
         //check repeated 
         Assert.state(hasProject == null || hasProject.getId().intValue() == project.getId().intValue(), "Config Repeated");
         project.preUpdate();

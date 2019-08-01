@@ -39,13 +39,13 @@ public interface RuleConfigHandler {
 
 	List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId);
 
-	List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId);
+	List<AlarmTemplate> getAlarmTemplateByClusterId(Integer clusterId);
 
 	List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, Integer collectId);
 
 	void saveRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, Integer collectId, Long gatherTime, Date nowDate,
 			List<AlarmRule> rules);
 
-	List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId);
+	List<AlarmConfig> getAlarmConfigByClusterIdAndTemplateId(Integer templateId, Integer clusterId);
 
 }

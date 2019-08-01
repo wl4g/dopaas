@@ -15,22 +15,21 @@
  */
 package com.wl4g.devops.scm.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.scm.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.scm.service.AppGroupService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 应用组管理
@@ -42,10 +41,10 @@ import com.github.pagehelper.PageHelper;
  */
 @RestController
 @RequestMapping("/appGroup")
-public class AppGroupController extends BaseController {
+public class AppClusterController extends BaseController {
 
 	@Autowired
-	private AppGroupService appGroupService;
+	private AppClusterService appClusterService;
 
 	/**
 	 * 添加应用环境组
@@ -65,7 +64,7 @@ public class AppGroupController extends BaseController {
 					insertappInstance.add(u);
 				} else {
 					if (iog.getId() != null) {
-						u.setGroupId(String.valueOf(iog.getId()));
+						u.setClusterId(String.valueOf(iog.getId()));
 					}
 					u.setCreateBy(iog.getCreateBy());
 					u.setUpdateBy(iog.getUpdateBy());
@@ -75,14 +74,14 @@ public class AppGroupController extends BaseController {
 			if (!insertappInstance.isEmpty()) {
 				iog.setEnvironment(insertappInstance);
 				if (iog.getId() != null) {
-					appGroupService.update(iog);
+					appClusterService.update(iog);
 				} else {
-					appGroupService.insert(iog);
+					appClusterService.insert(iog);
 				}
-				appGroupService.insertEnvironment(iog);
+				appClusterService.insertEnvironment(iog);
 			}
 			if (!updateInstance.isEmpty()) {
-				appGroupService.update(iog);
+				appClusterService.update(iog);
 				updateInstance.stream().forEach(u -> updateEnvironment(u));
 			}
 
@@ -116,7 +115,7 @@ public class AppGroupController extends BaseController {
 				if (u.getId() == null) {
 					insertappInstance.add(u);
 				} else {
-					u.setGroupId(Long.valueOf(iog.getId()));
+					u.setClusterId(Long.valueOf(iog.getId()));
 					u.setEnvId(iog.getEnvId());
 					u.setCreateBy(iog.getCreateBy());
 					u.setUpdateBy(iog.getUpdateBy());
@@ -125,7 +124,7 @@ public class AppGroupController extends BaseController {
 			});
 			if (!insertappInstance.isEmpty()) {
 				iog.setAppInstance(insertappInstance);
-				appGroupService.insertInstance(iog);
+				appClusterService.insertInstance(iog);
 			}
 			if (!updateInstance.isEmpty()) {
 				updateInstance.stream().forEach(u -> updateInstance(u));
@@ -158,7 +157,7 @@ public class AppGroupController extends BaseController {
 				log.error("请求失败，id为空！");
 				return resp;
 			}
-			boolean flag = appGroupService.delete(ap);
+			boolean flag = appClusterService.delete(ap);
 			if (flag) {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
@@ -192,7 +191,7 @@ public class AppGroupController extends BaseController {
 				log.error("请求失败，id为空！");
 				return resp;
 			}
-			boolean flag = appGroupService.deleteEnv(ap);
+			boolean flag = appClusterService.deleteEnv(ap);
 			if (flag) {
 
 			} else {
@@ -222,7 +221,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<?> resp = new RespBase<>();
 		try {
-			boolean flag = appGroupService.update(ap);
+			boolean flag = appClusterService.update(ap);
 			if (flag) {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
@@ -251,7 +250,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			InstanceOfGroup iof = appGroupService.select(ap);
+			InstanceOfGroup iof = appClusterService.select(ap);
 			if (null != iof) {
 				resp.getData().put("iof", iof);
 			} else {
@@ -281,7 +280,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			InstanceOfGroup iof = appGroupService.selectEnv(ap);
+			InstanceOfGroup iof = appClusterService.selectEnv(ap);
 			if (null != iof) {
 				resp.getData().put("iof", iof);
 			} else {
@@ -314,7 +313,7 @@ public class AppGroupController extends BaseController {
 			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 			Page<AppGroupList> page = PageHelper.startPage(pageNum, pageSize, true);
-			List<AppGroupList> list = appGroupService.list(agl);
+			List<AppGroupList> list = appClusterService.list(agl);
 			customPage.setPageNum(pageNum);
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
@@ -346,7 +345,7 @@ public class AppGroupController extends BaseController {
 			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 			Page<AppGroupList> page = PageHelper.startPage(pageNum, pageSize, true);
-			List<AppGroupList> list = appGroupService.groupEnvlist(agl);
+			List<AppGroupList> list = appClusterService.groupEnvlist(agl);
 			customPage.setPageNum(pageNum);
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
@@ -375,7 +374,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<?> resp = new RespBase<>();
 		try {
-			boolean flag = appGroupService.insertInstance(iog);
+			boolean flag = appClusterService.insertInstance(iog);
 			if (flag) {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
@@ -404,7 +403,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<?> resp = new RespBase<>();
 		try {
-			boolean flag = appGroupService.deleteInstance(instance);
+			boolean flag = appClusterService.deleteInstance(instance);
 			if (flag) {
 
 			} else {
@@ -434,7 +433,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<?> resp = new RespBase<>();
 		try {
-			boolean flag = appGroupService.updateInstance(instance);
+			boolean flag = appClusterService.updateInstance(instance);
 			if (flag) {
 
 			} else {
@@ -457,7 +456,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<?> resp = new RespBase<>();
 		try {
-			boolean flag = appGroupService.updateEnvironment(instance);
+			boolean flag = appClusterService.updateEnvironment(instance);
 			if (flag) {
 
 			} else {
@@ -487,7 +486,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			List<AppCluster> grouplist = appGroupService.grouplist();
+			List<AppCluster> grouplist = appClusterService.grouplist();
 			resp.getData().put("grouplist", grouplist);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -506,13 +505,13 @@ public class AppGroupController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/envir_list")
-	public RespBase<?> environmentlist(String groupId) {
+	public RespBase<?> environmentlist(String clusterId) {
 		if (log.isInfoEnabled()) {
-			log.info("EnvironmentList request ... {}", groupId);
+			log.info("EnvironmentList request ... {}", clusterId);
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			List<Environment> envlist = appGroupService.environmentlist(groupId);
+			List<Environment> envlist = appClusterService.environmentlist(clusterId);
 			resp.getData().put("envlist", envlist);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -537,7 +536,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			List<AppInstance> instancelist = appGroupService.instancelist(appInstance);
+			List<AppInstance> instancelist = appClusterService.instancelist(appInstance);
 			resp.getData().put("instancelist", instancelist);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

@@ -28,7 +28,7 @@ import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class TriggerController {
     private TriggerService triggerService;
 
     @Autowired
-    private AppGroupDao appGroupDao;
+    private AppClusterDao appClusterDao;
 
     @Autowired
     private DynamicTask dynamicTask;
@@ -131,7 +131,10 @@ public class TriggerController {
             trigger.setDelFlag(DEL_FLAG_NORMAL);
             trigger = triggerService.insert(trigger);
         }
-        restart(trigger.getId());
+        if(trigger.getType()!=null&&trigger.getType()== TASK_TYPE_TIMMING){
+            restart(trigger.getId());
+        }
+
         return resp;
     }
 
@@ -142,7 +145,7 @@ public class TriggerController {
     private void checkTriggerCron(Trigger trigger) {
         Assert.notNull(trigger, "trigger can not be null");
         Assert.notNull(trigger.getType(), "type can not be null");
-        Assert.notNull(trigger.getGroupId(), "project can not be null");
+        Assert.notNull(trigger.getClusterId(), "project can not be null");
         if (trigger.getType() == TASK_TYPE_TIMMING) {
             Assert.notNull(trigger.getCron(), "cron can not be null");
         }
@@ -171,7 +174,7 @@ public class TriggerController {
         Assert.notNull(trigger, "not found trigger");
 
         resp.getData().put("trigger", trigger);
-        resp.getData().put("appGroupId", trigger.getGroupId());
+        resp.getData().put("appClusterId", trigger.getClusterId());
 
         return resp;
     }

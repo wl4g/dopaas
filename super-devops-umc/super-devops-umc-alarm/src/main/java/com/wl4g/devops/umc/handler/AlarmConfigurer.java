@@ -38,7 +38,7 @@ public interface AlarmConfigurer {
 
 	List<AlarmTemplate> getAlarmTemplateByCollectId(Integer collectId);
 
-	List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId);
+	List<AlarmTemplate> getAlarmTemplateByClusterId(Integer clusterId);
 
 	List<AlarmConfig> getAlarmConfigByCollectIdAndTemplateId(Integer templateId, String collectId);
 

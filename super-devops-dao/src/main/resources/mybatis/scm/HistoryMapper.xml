@@ -238,16 +238,16 @@
 	</select>
     <!--查询轨迹列表信息 -->
 	<select id="list" parameterType="configVersionList" resultMap="queryVersion">
-		SELECT d.id as "instanceId",d.`host`,d.`ip`,d.id as nodeId ,d.`port`,g.`name`,g.id as groupId,f.`remark` as envRemark,f.id as envId,b.type,b.id as "historyId",b.version_id as "id",b.create_date as "createDate",b.remark as "remark"
+		SELECT d.id as "instanceId",d.`host`,d.`ip`,d.id as nodeId ,d.`port`,g.`name`,g.id as clusterId,f.`remark` as envRemark,f.id as envId,b.type,b.id as "historyId",b.version_id as "id",b.create_date as "createDate",b.remark as "remark"
 		FROM scm_release_history b
 		JOIN scm_release_detail c ON b.id = c.release_id
 		JOIN app_instance d ON d.id = c.instance_id and d.del_flag = #{DEL_FLAG_NORMAL}
-		JOIN app_cluster g ON d.group_id = g.id  and g.del_flag = #{DEL_FLAG_NORMAL}
+		JOIN app_cluster g ON d.cluster_id = g.id  and g.del_flag = #{DEL_FLAG_NORMAL}
 		JOIN app_environment f ON d.env_id = f.id and f.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
 			b.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="groupId != null and groupId != ''">
-				AND g.id = #{groupId}
+			<if test="clusterId != null and clusterId != ''">
+				AND g.id = #{clusterId}
 			</if>
 
 			<if test="instanceId != null and instanceId != ''">

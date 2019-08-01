@@ -172,17 +172,17 @@ public class ProjectController {
 
     /**
      * 从gitlab获取分支列表，让前端可以下拉显示
-     * @param appGroupId
+     * @param appClusterId
      * @param tarOrBranch
      * @return
      */
     @RequestMapping(value = "/getBranchs")
-    public RespBase<?> getBranchs(Integer appGroupId,Integer tarOrBranch) {
-        log.debug("into ProjectController.getBranchs prarms::"+ "appGroupId = {} , tarOrBranch = {} ", appGroupId, tarOrBranch );
+    public RespBase<?> getBranchs(Integer appClusterId,Integer tarOrBranch) {
+        log.debug("into ProjectController.getBranchs prarms::"+ "appClusterId = {} , tarOrBranch = {} ", appClusterId, tarOrBranch );
         RespBase<Object> resp = RespBase.create();
-        Assert.notNull(appGroupId, "id can not be null");
+        Assert.notNull(appClusterId, "id can not be null");
 
-        Project project = projectDao.getByAppGroupId(appGroupId);
+        Project project = projectDao.getByAppClusterId(appClusterId);
         Assert.notNull(project,"not found project ,please check you project config");
         String url = project.getGitUrl();
 

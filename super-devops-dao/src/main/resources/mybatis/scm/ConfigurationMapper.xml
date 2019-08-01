@@ -152,8 +152,8 @@
 			<if test="createDate != null">
 				create_date = #{createDate},
 			</if>
-			<if test="groupId != null and groupId != ''">
-				group_id = #{groupId},
+			<if test="clusterId != null and clusterId != ''">
+				cluster_id = #{clusterId},
 			</if>
 			<if test="instanceId != null and instanceId != ''">
 				instance_id = #{instanceId},
@@ -180,19 +180,19 @@
 			b.id as nodeId,
 			b.`port`,
 			c.`name`,
-			c.id as groupId,
+			c.id as clusterId,
 			d.`remark` as envRemark,
 			d.id as envId
 		FROM scm_version a
 		JOIN app_instance b ON a.id = b.version_id
-		JOIN app_cluster c ON b.group_id = c.id
-		JOIN app_environment d ON b.env_id = d.id and d.group_id = c.id
+		JOIN app_cluster c ON b.cluster_id = c.id
+		JOIN app_environment d ON b.env_id = d.id and d.cluster_id = c.id
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			AND c.del_flag = #{DEL_FLAG_NORMAL}
 			AND d.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="groupId != null and groupId != ''">
-				AND c.id = #{groupId}
+			<if test="clusterId != null and clusterId != ''">
+				AND c.id = #{clusterId}
 			</if>
 			<if test="instanceId != null and instanceId != ''">
 				AND b.id = #{instanceId}
@@ -244,7 +244,7 @@
 		INNER JOIN scm_release_history rh ON rh.id = rd.release_id
 		INNER JOIN app_instance i ON i.id = rd.instance_id
 		INNER JOIN app_environment e ON e.id = i.env_id
-		INNER JOIN app_cluster g ON g.id = i.group_id
+		INNER JOIN app_cluster g ON g.id = i.cluster_id
 		INNER JOIN scm_version_detail vd ON vd.version_id = i.version_id
 		INNER JOIN sys_dict sd ON sd.id = vd.namespace_id
 		<where>

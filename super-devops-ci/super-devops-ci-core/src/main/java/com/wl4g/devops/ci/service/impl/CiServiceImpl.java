@@ -30,7 +30,7 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class CiServiceImpl implements CiService {
     private CiCdProperties config;
 
     @Autowired
-    private AppGroupDao appGroupDao;
+    private AppClusterDao appClusterDao;
 
     @Autowired
     private TriggerDao triggerDao;
@@ -73,22 +73,22 @@ public class CiServiceImpl implements CiService {
 
     @Override
     public List<AppCluster> grouplist() {
-        return appGroupDao.grouplist();
+        return appClusterDao.grouplist();
     }
 
     @Override
-    public List<Environment> environmentlist(String groupId) {
-        return appGroupDao.environmentlist(groupId);
+    public List<Environment> environmentlist(String clusterId) {
+        return appClusterDao.environmentlist(clusterId);
     }
 
     @Override
     public List<AppInstance> instancelist(AppInstance appInstance) {
-        return appGroupDao.instancelist(appInstance);
+        return appClusterDao.instancelist(appInstance);
     }
 
     @Override
-    public Trigger getTriggerByAppGroupIdAndBranch(Integer appGroupId, String branchName) {
-        Trigger trigger = triggerDao.getTriggerByAppGroupIdAndBranch(appGroupId,branchName);
+    public Trigger getTriggerByAppClusterIdAndBranch(Integer appClusterId, String branchName) {
+        Trigger trigger = triggerDao.getTriggerByAppClusterIdAndBranch(appClusterId,branchName);
         if (null == trigger) {
             return null;
         }
@@ -111,16 +111,16 @@ public class CiServiceImpl implements CiService {
         for (TaskDetail taskDetail : taskDetails) {
             instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
         }
-        Assert.notNull(task.getAppGroupId(), "groupId is null");
-        AppCluster appCluster = appGroupDao.getAppGroup(task.getAppGroupId());
+        Assert.notNull(task.getClusterId(), "clusterId is null");
+        AppCluster appCluster = appClusterDao.getAppGroup(task.getClusterId());
 
         Assert.notNull(appCluster, "not found this app");
-        Project project = projectDao.getByAppGroupId(appCluster.getId());
+        Project project = projectDao.getByAppClusterId(appCluster.getId());
 
         Assert.notEmpty(instanceStrs, "instanceIds find empty list,Please check the instanceId");
         List<AppInstance> instances = new ArrayList<>();
         for (String instanceId : instanceStrs) {
-            AppInstance instance = appGroupDao.getAppInstance(instanceId);
+            AppInstance instance = appClusterDao.getAppInstance(instanceId);
             instances.add(instance);
         }
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
@@ -143,7 +143,7 @@ public class CiServiceImpl implements CiService {
         if (null == project) {
             return;
         }
-        Trigger trigger = getTriggerByAppGroupIdAndBranch(project.getAppGroupId(), branchName);
+        Trigger trigger = getTriggerByAppClusterIdAndBranch(project.getClusterId(), branchName);
         if (null == trigger) {
             return;
         }
@@ -155,7 +155,7 @@ public class CiServiceImpl implements CiService {
         List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(task.getId());
 
         for (TaskDetail taskDetail : taskDetails) {
-            AppInstance instance = appGroupDao.getAppInstance(taskDetail.getInstanceId().toString());
+            AppInstance instance = appClusterDao.getAppInstance(taskDetail.getInstanceId().toString());
             instances.add(instance);
         }
         Assert.notEmpty(instances, "instances not found, please config first");
@@ -246,7 +246,7 @@ public class CiServiceImpl implements CiService {
         Assert.notNull(taskHistory, "taskHistory can not be null");
         Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
         Assert.notNull(project, "project can not be null");
-        AppCluster appCluster = appGroupDao.getAppGroup(project.getAppGroupId());
+        AppCluster appCluster = appClusterDao.getAppGroup(project.getClusterId());
         Assert.notNull(appCluster, "appCluster can not be null");
         project.setGroupName(appCluster.getName());
 
@@ -260,7 +260,7 @@ public class CiServiceImpl implements CiService {
 
         List<AppInstance> instances = new ArrayList<>();
         for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-            AppInstance instance = appGroupDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
+            AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
             instances.add(instance);
         }
         return getDeployProvider(project, taskHistory.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
@@ -283,7 +283,7 @@ public class CiServiceImpl implements CiService {
         Assert.notNull(project, "not found this project");
         List<AppInstance> instances = new ArrayList<>();
         for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-            AppInstance instance = appGroupDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
+            AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
             instances.add(instance);
         }
         TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,

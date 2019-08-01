@@ -23,17 +23,17 @@ package com.wl4g.devops.common.bean.scm;
  * @date 2018年9月20日
  */
 public class ReleaseDetailList extends ReleaseDetail {
-	private String groupId; // 组id
+	private String clusterId; // 组id
 	private String releInstanceId; // 节点id
 	private String envId;// 环境id=
 	private Integer instanceCount; // 节点（实例）数
 
-	public String getGroupId() {
-		return groupId;
+	public String getClusterId() {
+		return clusterId;
 	}
 
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
+	public void setClusterId(String clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getReleInstanceId() {

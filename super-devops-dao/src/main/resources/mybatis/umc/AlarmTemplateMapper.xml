@@ -229,7 +229,7 @@
     </if>
   </select>
 
-  <select id="getByGroupId" resultMap="BaseResultMap" parameterType="java.util.Map">
+  <select id="getByClusterId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
     <include refid="Base_Column_List_t" />
     ,
@@ -238,7 +238,7 @@
     left join umc_alarm_config uac on t.id=uac.template_id
     LEFT JOIN umc_alarm_rule r on t.id=r.template_id
     where uac.enable=1 and t.enable=1 and t.del_flag!=1
-    and  uac.group_id=#{groupId,jdbcType=INTEGER}
+    and  uac.cluster_id=#{clusterId,jdbcType=INTEGER}
   </select>
 
 </mapper>
