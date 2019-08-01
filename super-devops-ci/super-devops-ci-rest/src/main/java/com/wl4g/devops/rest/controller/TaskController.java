@@ -170,7 +170,7 @@ public class TaskController {
      */
     private void checkTask(Task task){
         Assert.hasText(task.getTaskName(),"taskName is null");
-        Assert.notNull(task.getClusterId(),"clusterId is null");
+        Assert.notNull(task.getAppClusterId(),"clusterId is null");
         Assert.notNull(task.getTarType(),"packType is null");
         Assert.hasText(task.getBranchName(),"branchName is null");
     }

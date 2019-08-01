@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Task" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-    <result column="app_cluster_id" property="clusterId" jdbcType="INTEGER" />
+    <result column="app_cluster_id" property="appClusterId" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
     <result column="tar_type" property="tarType" jdbcType="INTEGER" />
@@ -67,7 +67,7 @@
       del_flag, create_date, create_by, 
       update_date, update_by, pre_command, 
       post_command)
-    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
       #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=INTEGER},
       #{branchType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
@@ -83,7 +83,7 @@
       <if test="taskName != null" >
         task_name,
       </if>
-      <if test="clusterId != null" >
+      <if test="appClusterId != null" >
         app_cluster_id,
       </if>
       <if test="projectId != null" >
@@ -133,8 +133,8 @@
       <if test="taskName != null" >
         #{taskName,jdbcType=VARCHAR},
       </if>
-      <if test="clusterId != null" >
-        #{clusterId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="projectId != null" >
         #{projectId,jdbcType=INTEGER},
@@ -183,8 +183,8 @@
       <if test="taskName != null" >
         task_name = #{taskName,jdbcType=VARCHAR},
       </if>
-      <if test="clusterId != null" >
-        app_cluster_id = #{clusterId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="projectId != null" >
         project_id = #{projectId,jdbcType=INTEGER},
@@ -231,7 +231,7 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     update ci_task
     set task_name = #{taskName,jdbcType=VARCHAR},
-      app_cluster_id = #{clusterId,jdbcType=INTEGER},
+      app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
       tar_type = #{tarType,jdbcType=INTEGER},
@@ -250,7 +250,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     update ci_task
     set task_name = #{taskName,jdbcType=VARCHAR},
-      app_cluster_id = #{clusterId,jdbcType=INTEGER},
+      app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
       tar_type = #{tarType,jdbcType=INTEGER},
@@ -304,7 +304,7 @@
     select
     <include refid="Base_Column_List" />
     from ci_task
-    where app_cluster_id = #{clusterId,jdbcType=INTEGER}
+    where app_cluster_id = #{appClusterId,jdbcType=INTEGER}
   </select>
 
 </mapper>

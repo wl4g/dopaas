@@ -5,7 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="INTEGER" />
-    <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
+    <result column="cluster_id" property="appClusterId" jdbcType="INTEGER" />
     <result column="alarm_type" property="alarmType" jdbcType="VARCHAR" />
     <result column="alarm_member" property="alarmMember" jdbcType="VARCHAR" />
     <result column="alarm_content" property="alarmContent" jdbcType="VARCHAR" />
@@ -37,7 +37,7 @@
       alarm_content, enable, remark, 
       del_flag, create_date, create_by, 
       update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{templateId,jdbcType=INTEGER},  #{clusterId,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{templateId,jdbcType=INTEGER},  #{appClusterId,jdbcType=INTEGER},
        #{alarmType,jdbcType=VARCHAR}, #{alarmMember,jdbcType=VARCHAR},
       #{alarmContent,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
@@ -55,7 +55,7 @@
       <if test="templateId != null" >
         template_id,
       </if>
-      <if test="clusterId != null" >
+      <if test="appClusterId != null" >
         cluster_id,
       </if>
       <if test="alarmType != null" >
@@ -99,8 +99,8 @@
       <if test="templateId != null" >
         #{templateId,jdbcType=INTEGER},
       </if>
-      <if test="clusterId != null" >
-        #{clusterId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="alarmType != null" >
         #{alarmType,jdbcType=VARCHAR},
@@ -143,8 +143,8 @@
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=INTEGER},
       </if>
-      <if test="clusterId != null" >
-        cluster_id = #{clusterId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="alarmType != null" >
         alarm_type = #{alarmType,jdbcType=VARCHAR},
@@ -183,7 +183,7 @@
     update umc_alarm_config
     set name = #{name,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=INTEGER},
-      cluster_id = #{clusterId,jdbcType=INTEGER},
+      cluster_id = #{appClusterId,jdbcType=INTEGER},
       alarm_type = #{alarmType,jdbcType=VARCHAR},
       alarm_member = #{alarmMember,jdbcType=VARCHAR},
       alarm_content = #{alarmContent,jdbcType=VARCHAR},
@@ -223,7 +223,7 @@
   <select id="getByClusterIdAndTemplateId" resultMap="BaseResultMap" parameterType="java.util.Map">
   select * from umc_alarm_config uac
   left join umc_alarm_template uat on uat.id=uac.template_id
-  where uac.template_id=#{templateId,jdbcType=INTEGER} and uac.cluster_id=#{clusterId,jdbcType=INTEGER}
+  where uac.template_id=#{templateId,jdbcType=INTEGER} and uac.cluster_id=#{appClusterId,jdbcType=INTEGER}
 </select>
 
 </mapper>

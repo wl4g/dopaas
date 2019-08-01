@@ -145,7 +145,7 @@ public class TriggerController {
     private void checkTriggerCron(Trigger trigger) {
         Assert.notNull(trigger, "trigger can not be null");
         Assert.notNull(trigger.getType(), "type can not be null");
-        Assert.notNull(trigger.getClusterId(), "project can not be null");
+        Assert.notNull(trigger.getAppClusterId(), "project can not be null");
         if (trigger.getType() == TASK_TYPE_TIMMING) {
             Assert.notNull(trigger.getCron(), "cron can not be null");
         }
@@ -174,7 +174,7 @@ public class TriggerController {
         Assert.notNull(trigger, "not found trigger");
 
         resp.getData().put("trigger", trigger);
-        resp.getData().put("appClusterId", trigger.getClusterId());
+        resp.getData().put("appClusterId", trigger.getAppClusterId());
 
         return resp;
     }

@@ -152,8 +152,8 @@
 			<if test="createDate != null">
 				create_date = #{createDate},
 			</if>
-			<if test="clusterId != null and clusterId != ''">
-				cluster_id = #{clusterId},
+			<if test="appClusterId != null and appClusterId != ''">
+				cluster_id = #{appClusterId},
 			</if>
 			<if test="instanceId != null and instanceId != ''">
 				instance_id = #{instanceId},
@@ -180,7 +180,7 @@
 			b.id as nodeId,
 			b.`port`,
 			c.`name`,
-			c.id as clusterId,
+			c.id as appClusterId,
 			d.`remark` as envRemark,
 			d.id as envId
 		FROM scm_version a
@@ -191,8 +191,8 @@
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			AND c.del_flag = #{DEL_FLAG_NORMAL}
 			AND d.del_flag = #{DEL_FLAG_NORMAL}
-			<if test="clusterId != null and clusterId != ''">
-				AND c.id = #{clusterId}
+			<if test="appClusterId != null and appClusterId != ''">
+				AND c.id = #{appClusterId}
 			</if>
 			<if test="instanceId != null and instanceId != ''">
 				AND b.id = #{instanceId}

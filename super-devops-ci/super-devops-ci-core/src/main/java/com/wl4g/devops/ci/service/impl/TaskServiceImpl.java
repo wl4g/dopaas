@@ -55,7 +55,7 @@ public class TaskServiceImpl implements TaskService {
         Assert.state(!isRepeat(task,instanceIds),"trigger deploy this instance is Repeat,please check");
         Assert.notEmpty(instanceIds, "instance can not be null");
         Assert.notNull(task, "task can not be null");
-        Project project = projectDao.getByAppClusterId(task.getClusterId());
+        Project project = projectDao.getByAppClusterId(task.getAppClusterId());
         Assert.notNull(project, "Not found project , Please check you project config");
         task.setProjectId(project.getId());
         if (null != task.getId() && task.getId() > 0) {
@@ -110,7 +110,7 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     private boolean isRepeat(Task task,Integer[] instanceIds){
-        List<TaskDetail> taskDetails = taskDetailDao.getUsedInstance(task.getClusterId(), task.getId());
+        List<TaskDetail> taskDetails = taskDetailDao.getUsedInstance(task.getAppClusterId(), task.getId());
         for(TaskDetail taskDetail : taskDetails){
             if(Arrays.asList(instanceIds).contains(taskDetail.getInstanceId())){
                 return true;

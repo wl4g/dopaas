@@ -63,8 +63,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
     public TaskHistory getById(Integer id) {
         TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(id);
         Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
-        if (null != project && null != project.getClusterId()) {
-            AppCluster appCluster = appClusterDao.getAppGroup(project.getClusterId());
+        if (null != project && null != project.getAppClusterId()) {
+            AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
             if (null != appCluster) {
                 taskHistory.setGroupName(appCluster.getName());
             }

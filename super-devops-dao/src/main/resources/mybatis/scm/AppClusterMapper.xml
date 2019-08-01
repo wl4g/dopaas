@@ -16,7 +16,7 @@
 	
 	<sql id="allInstanceColumn">
 		i.id as "i.id",
-		i.cluster_id as "i.clusterId",
+		i.cluster_id as "i.appClusterId",
 		i.enable as "i.enable",
 		i.`host` as "i.host",
 		i.`ip` as "i.ip",
@@ -33,7 +33,7 @@
 
 	<sql id="allEnvColumn">
 		e.id as "e.id",
-		e.cluster_id as "e.clusterId",
+		e.cluster_id as "e.appClusterId",
 		e.remark as "e.remark",
 		e.name as "e.name",
 		e.create_by as "e.createBy",
@@ -56,7 +56,7 @@
 		<result column="delFlag" property="delFlag" jdbcType="INTEGER" />
 		<collection property="appInstance" ofType="appInstance" javaType="list">
 			<result column="i.id" property="id" jdbcType="INTEGER" />
-			<result column="i.clusterId" property="clusterId" jdbcType="INTEGER" />
+			<result column="i.appClusterId" property="appClusterId" jdbcType="INTEGER" />
 			<result column="i.enable" property="enable" jdbcType="INTEGER" />
 			<result column="i.host" property="host" jdbcType="VARCHAR" />
 			<result column="i.ip" property="ip" jdbcType="VARCHAR" />
@@ -87,7 +87,7 @@
 		<result column="delFlag" property="delFlag" jdbcType="INTEGER" />
 		<collection property="environment" ofType="environment" javaType="list">
 			<result column="e.id" property="id" jdbcType="INTEGER" />
-			<result column="e.clusterId" property="clusterId" jdbcType="INTEGER" />
+			<result column="e.appClusterId" property="appClusterId" jdbcType="INTEGER" />
 			<result column="e.remark" property="remark" jdbcType="VARCHAR" />
 			<result column="e.createBy" property="createBy" jdbcType="INTEGER" />
 			<result column="e.createDate" property="createDate" jdbcType="TIMESTAMP" />
@@ -175,8 +175,8 @@
 	<update id="updateInstance" parameterType="appInstance">
 		update app_instance
 		<set>
-			<if test="clusterId != null">
-				cluster_id = #{clusterId},
+			<if test="appClusterId != null">
+				cluster_id = #{appClusterId},
 			</if>
 			<if test="enable != null">
 				enable = #{enable},
@@ -212,8 +212,8 @@
 	<update id="updateEnvironment" parameterType="environment">
 		update app_environment
 		<set>
-			<if test="clusterId != null">
-				cluster_id = #{clusterId},
+			<if test="appClusterId != null">
+				cluster_id = #{appClusterId},
 			</if>
 			<if test="name != null and name != ''">
 				`name` = #{name},
@@ -362,26 +362,26 @@
 
 	<select id="environmentlist" parameterType="java.lang.String" resultType="environment">
 		select
-			a.name,a.id,a.cluster_id as "clusterId",a.remark
+			a.name,a.id,a.cluster_id as "appClusterId",a.remark
 		FROM
 			app_environment a
 		<where>
 		a.del_flag = 0
-		<if test="clusterId != null and clusterId != ''">
-			and a.cluster_id=#{clusterId}
+		<if test="appClusterId != null and appClusterId != ''">
+			and a.cluster_id=#{appClusterId}
 		</if>
 		</where>
 	</select>
 
 	<select id="instancelist" parameterType="appInstance" resultType="appInstance">
-		select a.remark,a.id,a.cluster_id as "clusterId",a.env_id as "envId",a.host,a.ip,a.port FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",a.host,a.ip,a.port FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="envId != null and envId != ''">
 				and a.env_id=#{envId}
 			</if>
-			<if test="clusterId != null and clusterId != ''">
-				and a.cluster_id=#{clusterId}
+			<if test="appClusterId != null and appClusterId != ''">
+				and a.cluster_id=#{appClusterId}
 			</if>
 			<if test="ip != null and ip != ''">
 				and a.ip=#{ip}
@@ -393,7 +393,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.cluster_id as "clusterId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">
