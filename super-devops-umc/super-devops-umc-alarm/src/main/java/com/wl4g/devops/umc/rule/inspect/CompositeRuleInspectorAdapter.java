@@ -27,7 +27,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
-import com.wl4g.devops.umc.notification.AlarmType;
 import com.wl4g.devops.umc.rule.AggregatorType;
 
 /**
@@ -51,7 +50,7 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 
 	@Override
 	public boolean verify(InspectWrapper wrap) {
-		Optional<RuleInspector> opt = determineRuleInspector("");
+		Optional<RuleInspector> opt = determineRuleInspector(wrap.getAggregator());
 		return opt.isPresent() ? opt.get().verify(wrap) : false;
 	}
 
@@ -63,16 +62,16 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	/**
 	 * Determine rule inspector.
 	 * 
-	 * @param aggregateType
+	 * @param aggregator
 	 * @return
 	 */
-	protected Optional<RuleInspector> determineRuleInspector(String aggregateType) {
-		if (isBlank(aggregateType)) {
-			log.warn("Unsupported this rule aggregate type: {}", aggregateType);
+	protected Optional<RuleInspector> determineRuleInspector(String aggregator) {
+		if (isBlank(aggregator)) {
+			log.warn("Unsupported this rule aggregator: {}", aggregator);
 			return Optional.empty();
 		}
-		for (String part : aggregateType.split(",")) {
-			AlarmType type = AlarmType.safeOf(part);
+		for (String aggre : aggregator.split(",")) {
+			AggregatorType type = AggregatorType.safeOf(aggre);
 			if (null != type) {
 				RuleInspector inspector = ruleInspectors.get(type);
 				if (inspector != null) {

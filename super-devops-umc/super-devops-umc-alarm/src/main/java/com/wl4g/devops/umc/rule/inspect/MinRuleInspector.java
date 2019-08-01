@@ -15,9 +15,16 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import static com.wl4g.devops.common.utils.lang.Collections2.safeToList;
+import static java.util.stream.Collectors.summarizingDouble;
+
 import com.wl4g.devops.umc.rule.AggregatorType;
+import com.wl4g.devops.umc.rule.RelateOperatorType;
 
 /**
+ * Minimum rule inspector.
+ * 
+ * @author Wangl.sir
  * @author vjay
  * @date 2019-07-05 10:02:00
  */
@@ -30,17 +37,10 @@ public class MinRuleInspector extends AbstractRuleInspector {
 
 	@Override
 	public boolean verify(InspectWrapper wrap) {
-		if (wrap.getValues() == null || wrap.getValues().length <= 0) {
-			return false;
-		}
-
-		double operatorResult = 0;
-		for (double value : wrap.getValues()) {
-			if (value < operatorResult) {
-				operatorResult = value;
-			}
-		}
-		return super.operate(wrap.getOperator(), operatorResult, wrap.getBaseline());
+		// Minimum
+		double min = safeToList(Double.class, wrap.getValues()).stream().filter(val -> null != val)
+				.collect(summarizingDouble(val -> val)).getMin();
+		return super.operate(RelateOperatorType.of(wrap.getOperator()), min, wrap.getBaseline());
 	}
 
 }

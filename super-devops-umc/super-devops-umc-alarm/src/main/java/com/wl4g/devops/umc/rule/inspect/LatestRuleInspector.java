@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
+
 import com.wl4g.devops.umc.rule.AggregatorType;
+import com.wl4g.devops.umc.rule.RelateOperatorType;
 
 /**
  * Latest rule inspector
@@ -33,12 +36,12 @@ public class LatestRuleInspector extends AbstractRuleInspector {
 
 	@Override
 	public boolean verify(InspectWrapper wrap) {
-		if (wrap.getValues() == null || wrap.getValues().length <= 0) {
+		if (isEmptyArray(wrap.getValues())) {
 			return false;
 		}
-
-		double operatorResult = wrap.getValues()[wrap.getValues().length - 1];
-		return super.operate(wrap.getOperator(), operatorResult, wrap.getBaseline());
+		// Latest/Last
+		double latest = wrap.getValues()[wrap.getValues().length - 1];
+		return super.operate(RelateOperatorType.of(wrap.getOperator()), latest, wrap.getBaseline());
 	}
 
 }

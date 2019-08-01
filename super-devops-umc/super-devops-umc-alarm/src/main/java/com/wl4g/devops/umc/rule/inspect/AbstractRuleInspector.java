@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.wl4g.devops.umc.rule.RelateOperatorType;
 
 /**
- * Abstract rule inspecctor
+ * Abstract rule inspector
  * 
  * @author Wangl.sir
  * @author vjay
