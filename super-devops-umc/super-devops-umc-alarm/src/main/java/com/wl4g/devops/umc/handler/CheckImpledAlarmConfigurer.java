@@ -54,7 +54,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId) {
+	public List<AlarmTemplate> getAlarmTemplateByClusterId(Integer clusterId) {
 		return null;
 	}
 

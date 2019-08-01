@@ -35,7 +35,7 @@ public class Project extends BaseBean implements Serializable {
 
 	private String gitUrl;
 
-	private Integer appGroupId;
+	private Integer clusterId;
 
 	private String tarPath;
 
@@ -57,12 +57,12 @@ public class Project extends BaseBean implements Serializable {
 		this.projectName = projectName;
 	}
 
-	public Integer getAppGroupId() {
-		return appGroupId;
+	public Integer getClusterId() {
+		return clusterId;
 	}
 
-	public void setAppGroupId(Integer appGroupId) {
-		this.appGroupId = appGroupId;
+	public void setClusterId(Integer clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getTarPath() {
@@ -126,7 +126,7 @@ public class Project extends BaseBean implements Serializable {
 		return "Project{" +
 				"projectName='" + projectName + '\'' +
 				", gitUrl='" + gitUrl + '\'' +
-				", appGroupId=" + appGroupId +
+				", clusterId=" + clusterId +
 				", tarPath='" + tarPath + '\'' +
 				", parentAppHome='" + parentAppHome + '\'' +
 				", linkAppHome='" + linkAppHome + '\'' +

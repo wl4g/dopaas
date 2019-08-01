@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.scm.service;
 
-import java.util.List;
-
 import com.wl4g.devops.common.bean.scm.*;
+
+import java.util.List;
 
 /**
  * 应用组管理Service接口
@@ -25,7 +25,7 @@ import com.wl4g.devops.common.bean.scm.*;
  * @author sut
  * @date 2018年9月20日
  */
-public interface AppGroupService {
+public interface AppClusterService {
 
 	public void insert(InstanceOfGroup iog);
 
@@ -55,7 +55,7 @@ public interface AppGroupService {
 
 	public List<AppCluster> grouplist();
 
-	public List<Environment> environmentlist(String groupId);
+	public List<Environment> environmentlist(String clusterId);
 
 	public List<AppInstance> instancelist(AppInstance appInstance);
 

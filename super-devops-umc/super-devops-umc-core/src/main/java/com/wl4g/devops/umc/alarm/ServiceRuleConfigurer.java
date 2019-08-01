@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.alarm;
 import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.*;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
@@ -44,7 +44,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	protected JedisService jedisService;
 
 	@Autowired
-	private AppGroupDao appGroupDao;
+	private AppClusterDao appClusterDao;
 
 	@Autowired
 	private AlarmTemplateDao alarmTemplateDao;
@@ -63,12 +63,12 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 
 	@Override
 	public List<AppInstance> instancelist(AppInstance appInstance) {
-		return appGroupDao.instancelist(appInstance);
+		return appClusterDao.instancelist(appInstance);
 	}
 
 	@Override
 	public AppCluster getAppGroupByName(String groupName) {
-		return appGroupDao.getAppGroupByName(groupName);
+		return appClusterDao.getAppGroupByName(groupName);
 	}
 
 	@Override
@@ -77,8 +77,8 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	}
 
 	@Override
-	public List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId) {
-		return alarmTemplateDao.getByGroupId(groupId);
+	public List<AlarmTemplate> getAlarmTemplateByClusterId(Integer clusterId) {
+		return alarmTemplateDao.getByClusterId(clusterId);
 	}
 
 	@Override

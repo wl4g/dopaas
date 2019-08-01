@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.scm.AppGroupDao">
+<mapper namespace="com.wl4g.devops.dao.scm.AppClusterDao">
 	<sql id="allGroupColumn">
 		a.id as "id",
 		a.dept_id as "deptId",
@@ -16,7 +16,7 @@
 	
 	<sql id="allInstanceColumn">
 		i.id as "i.id",
-		i.group_id as "i.groupId",
+		i.cluster_id as "i.clusterId",
 		i.enable as "i.enable",
 		i.`host` as "i.host",
 		i.`ip` as "i.ip",
@@ -33,7 +33,7 @@
 
 	<sql id="allEnvColumn">
 		e.id as "e.id",
-		e.group_id as "e.groupId",
+		e.cluster_id as "e.clusterId",
 		e.remark as "e.remark",
 		e.name as "e.name",
 		e.create_by as "e.createBy",
@@ -56,7 +56,7 @@
 		<result column="delFlag" property="delFlag" jdbcType="INTEGER" />
 		<collection property="appInstance" ofType="appInstance" javaType="list">
 			<result column="i.id" property="id" jdbcType="INTEGER" />
-			<result column="i.groupId" property="groupId" jdbcType="INTEGER" />
+			<result column="i.clusterId" property="clusterId" jdbcType="INTEGER" />
 			<result column="i.enable" property="enable" jdbcType="INTEGER" />
 			<result column="i.host" property="host" jdbcType="VARCHAR" />
 			<result column="i.ip" property="ip" jdbcType="VARCHAR" />
@@ -87,7 +87,7 @@
 		<result column="delFlag" property="delFlag" jdbcType="INTEGER" />
 		<collection property="environment" ofType="environment" javaType="list">
 			<result column="e.id" property="id" jdbcType="INTEGER" />
-			<result column="e.groupId" property="groupId" jdbcType="INTEGER" />
+			<result column="e.clusterId" property="clusterId" jdbcType="INTEGER" />
 			<result column="e.remark" property="remark" jdbcType="VARCHAR" />
 			<result column="e.createBy" property="createBy" jdbcType="INTEGER" />
 			<result column="e.createDate" property="createDate" jdbcType="TIMESTAMP" />
@@ -104,7 +104,7 @@
 		<include refid="allGroupColumn"/>
 		from
 		app_cluster a
-		JOIN app_environment b on a.id = b.group_id AND b.del_flag = #{DEL_FLAG_NORMAL}
+		JOIN app_environment b on a.id = b.cluster_id AND b.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="name != null and name != ''">
@@ -121,8 +121,8 @@
 		<include refid="allGroupColumn"/>
 		from
 		app_cluster a
-		JOIN app_environment b on b.group_id=a.id AND b.del_flag = #{DEL_FLAG_NORMAL}
-		JOIN app_instance f ON f.group_id = a.id AND f.env_id = b.id AND f.del_flag = #{DEL_FLAG_NORMAL}
+		JOIN app_environment b on b.cluster_id=a.id AND b.del_flag = #{DEL_FLAG_NORMAL}
+		JOIN app_instance f ON f.cluster_id = a.id AND f.env_id = b.id AND f.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="name != null and name != ''">
@@ -135,7 +135,7 @@
 
 	<insert id ="insertInstance" parameterType="instanceOfGroup" >
 		insert into app_instance
-		(group_id, `enable`, `host`, `ip`, `port`, ops_ids, remark, create_by, create_date, update_by, update_date, env_id)
+		(cluster_id, `enable`, `host`, `ip`, `port`, ops_ids, remark, create_by, create_date, update_by, update_date, env_id)
 		values
 		<foreach collection ="appInstance" item="instance" index= "index" separator =",">
 			(
@@ -157,7 +157,7 @@
 
 	<insert id ="insertEnvironment" parameterType="instanceOfGroup" >
 		insert into app_environment
-		(group_id, `name`, remark, create_by, create_date, update_by, update_date)
+		(cluster_id, `name`, remark, create_by, create_date, update_by, update_date)
 		values
 		<foreach collection ="environment" item="env" index= "index" separator =",">
 			(
@@ -175,8 +175,8 @@
 	<update id="updateInstance" parameterType="appInstance">
 		update app_instance
 		<set>
-			<if test="groupId != null">
-				group_id = #{groupId},
+			<if test="clusterId != null">
+				cluster_id = #{clusterId},
 			</if>
 			<if test="enable != null">
 				enable = #{enable},
@@ -212,8 +212,8 @@
 	<update id="updateEnvironment" parameterType="environment">
 		update app_environment
 		<set>
-			<if test="groupId != null">
-				group_id = #{groupId},
+			<if test="clusterId != null">
+				cluster_id = #{clusterId},
 			</if>
 			<if test="name != null and name != ''">
 				`name` = #{name},
@@ -332,7 +332,7 @@
 		<include refid="allGroupColumn"/>
 		from
 		app_cluster a
-		LEFT JOIN app_instance i ON a.id = i.group_id and i.del_flag = #{DEL_FLAG_NORMAL}
+		LEFT JOIN app_instance i ON a.id = i.cluster_id and i.del_flag = #{DEL_FLAG_NORMAL}
 		where
 		a.del_flag = #{DEL_FLAG_NORMAL}
 		and a.id = #{id}
@@ -344,7 +344,7 @@
 		<include refid="allGroupColumn"/>
 		from
 		app_cluster a
-		LEFT JOIN app_environment e ON a.id = e.group_id and e.del_flag = #{DEL_FLAG_NORMAL}
+		LEFT JOIN app_environment e ON a.id = e.cluster_id and e.del_flag = #{DEL_FLAG_NORMAL}
 		where
 		a.del_flag = #{DEL_FLAG_NORMAL}
 		and a.id = #{id}
@@ -362,26 +362,26 @@
 
 	<select id="environmentlist" parameterType="java.lang.String" resultType="environment">
 		select
-			a.name,a.id,a.group_id as "groupId",a.remark
+			a.name,a.id,a.cluster_id as "clusterId",a.remark
 		FROM
 			app_environment a
 		<where>
 		a.del_flag = 0
-		<if test="groupId != null and groupId != ''">
-			and a.group_id=#{groupId}
+		<if test="clusterId != null and clusterId != ''">
+			and a.cluster_id=#{clusterId}
 		</if>
 		</where>
 	</select>
 
 	<select id="instancelist" parameterType="appInstance" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.ip,a.port FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "clusterId",a.env_id as "envId",a.host,a.ip,a.port FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="envId != null and envId != ''">
 				and a.env_id=#{envId}
 			</if>
-			<if test="groupId != null and groupId != ''">
-				and a.group_id=#{groupId}
+			<if test="clusterId != null and clusterId != ''">
+				and a.cluster_id=#{clusterId}
 			</if>
 			<if test="ip != null and ip != ''">
 				and a.ip=#{ip}
@@ -393,7 +393,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.group_id as "groupId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "clusterId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">

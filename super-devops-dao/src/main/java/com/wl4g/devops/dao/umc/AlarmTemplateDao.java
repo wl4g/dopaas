@@ -21,6 +21,6 @@ public interface AlarmTemplateDao {
 
 	List<AlarmTemplate> getByCollectId(@Param("collectId") Serializable collectId);
 
-	List<AlarmTemplate> getByGroupId(@Param("groupId") Serializable groupId);
+	List<AlarmTemplate> getByClusterId(@Param("clusterId") Serializable clusterId);
 
 }
