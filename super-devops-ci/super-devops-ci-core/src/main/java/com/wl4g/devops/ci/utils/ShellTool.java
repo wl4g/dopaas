@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.utils;
 
+import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,12 @@ public abstract class ShellTool {
         return exec(cmd, null);
     }
 
-    public static String exec(String cmd, Function<String, Boolean> callback) throws Exception {
+    public static String exec(String cmd, TaskResult taskResult) throws Exception {
+        return exec(cmd, null, taskResult);
+    }
+
+
+    public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("Execution native command for '{}'", cmd);
         }
@@ -69,7 +75,10 @@ public abstract class ShellTool {
             log.info(inlog);
             ShellContextHolder.printfQuietly(inlog);
         }
-
+        int exitValue = ps.exitValue();
+        if(exitValue != 0){
+            taskResult.setSuccess(false);
+        }
         String log = slog.toString();
         String err = serr.toString();
         if (isNotBlank(err)) {
@@ -79,5 +88,6 @@ public abstract class ShellTool {
 
         return log;
     }
+
 
 }

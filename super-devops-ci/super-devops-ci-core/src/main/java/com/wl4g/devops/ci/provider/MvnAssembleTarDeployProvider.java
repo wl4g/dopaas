@@ -49,7 +49,10 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
         Dependency dependency = new Dependency();
         dependency.setProjectId(getProject().getId());
         // maven install , include dependency
-        getDependencyService().build(getTaskHistory(), dependency, getBranch(), isSuccess, result, false);
+        getDependencyService().build(getTaskHistory(), dependency, getBranch(),  taskResult, false);
+        if (!taskResult.isSuccess()) {
+            return;
+        }
         // get git sha
         setShaGit(GitUtils.getOldestCommitSha(getPath()));
         deploy();
@@ -69,7 +72,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
             getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
             setShaGit(getRefTaskHistory().getShaGit());
         } else {
-            getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), isSuccess, result, false);
+            getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), taskResult, false);
             setShaGit(GitUtils.getOldestCommitSha(getPath()));
         }
         deploy();

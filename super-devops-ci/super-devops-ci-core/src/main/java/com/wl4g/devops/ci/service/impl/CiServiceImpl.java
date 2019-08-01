@@ -188,20 +188,20 @@ public class CiServiceImpl implements CiService {
                 try {
                     // exec
                     provider.execute();
-                    if (provider.getSuccess()) {
+                    if (provider.getTaskResult().isSuccess()) {
                         // update task--success
                         log.info("task succcess taskId={}",taskId);
-                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(), provider.getShaGit(), provider.getShaLocal());
+                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(), provider.getShaLocal());
                         //taskService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
                     } else {
                         // update task--fail
                         log.info("task fail taskId={}",taskId);
-                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
+                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getTaskResult().getStringBuffer().toString());
                     }
                 } catch (Exception e) {
                     // update task--fail
                     log.info("task fail taskId={}",taskId);
-                    taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
+                    taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getTaskResult().getStringBuffer().toString()+e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -308,13 +308,13 @@ public class CiServiceImpl implements CiService {
                 try {
                     // exec
                     provider.rollback();
-                    if (provider.getSuccess()) {
+                    if (provider.getTaskResult().isSuccess()) {
                         // update task--success
-                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString(), provider.getShaGit(), provider.getShaLocal());
+                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(), provider.getShaLocal());
                         //taskService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
                     } else {
                         // update task--success
-                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getResult().toString());
+                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getTaskResult().getStringBuffer().toString());
                     }
                 } catch (Exception e) {
                     // update task--fail
