@@ -147,7 +147,7 @@ public class AppGroupController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
-	public RespBase<?> delete(AppGroup ap) {
+	public RespBase<?> delete(AppCluster ap) {
 		if (log.isInfoEnabled()) {
 			log.info("AppGropDelete request ... {}", ap);
 		}
@@ -216,7 +216,7 @@ public class AppGroupController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public RespBase<?> update(AppGroup ap) {
+	public RespBase<?> update(AppCluster ap) {
 		if (log.isInfoEnabled()) {
 			log.info("AppGroupUpdate request ... {}", ap);
 		}
@@ -245,7 +245,7 @@ public class AppGroupController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/select", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> select(AppGroup ap) {
+	public RespBase<?> select(AppCluster ap) {
 		if (log.isInfoEnabled()) {
 			log.info("AppGroupSelect request ... {}", ap);
 		}
@@ -275,7 +275,7 @@ public class AppGroupController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/env_list", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> selectEnv(AppGroup ap) {
+	public RespBase<?> selectEnv(AppCluster ap) {
 		if (log.isInfoEnabled()) {
 			log.info("AppGroupEnvList request ... {}", ap);
 		}
@@ -487,7 +487,7 @@ public class AppGroupController extends BaseController {
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			List<AppGroup> grouplist = appGroupService.grouplist();
+			List<AppCluster> grouplist = appGroupService.grouplist();
 			resp.getData().put("grouplist", grouplist);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

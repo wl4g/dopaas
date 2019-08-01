@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
@@ -72,7 +72,7 @@ public class CiServiceImpl implements CiService {
     private TaskDetailDao taskDetailDao;
 
     @Override
-    public List<AppGroup> grouplist() {
+    public List<AppCluster> grouplist() {
         return appGroupDao.grouplist();
     }
 
@@ -112,10 +112,10 @@ public class CiServiceImpl implements CiService {
             instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
         }
         Assert.notNull(task.getAppGroupId(), "groupId is null");
-        AppGroup appGroup = appGroupDao.getAppGroup(task.getAppGroupId());
+        AppCluster appCluster = appGroupDao.getAppGroup(task.getAppGroupId());
 
-        Assert.notNull(appGroup, "not found this app");
-        Project project = projectDao.getByAppGroupId(appGroup.getId());
+        Assert.notNull(appCluster, "not found this app");
+        Project project = projectDao.getByAppGroupId(appCluster.getId());
 
         Assert.notEmpty(instanceStrs, "instanceIds find empty list,Please check the instanceId");
         List<AppInstance> instances = new ArrayList<>();
@@ -246,9 +246,9 @@ public class CiServiceImpl implements CiService {
         Assert.notNull(taskHistory, "taskHistory can not be null");
         Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
         Assert.notNull(project, "project can not be null");
-        AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
-        Assert.notNull(appGroup, "appGroup can not be null");
-        project.setGroupName(appGroup.getName());
+        AppCluster appCluster = appGroupDao.getAppGroup(project.getAppGroupId());
+        Assert.notNull(appCluster, "appCluster can not be null");
+        project.setGroupName(appCluster.getName());
 
         List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskHistory.getId());
         Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
@@ -264,7 +264,7 @@ public class CiServiceImpl implements CiService {
             instances.add(instance);
         }
         return getDeployProvider(project, taskHistory.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
-                taskHistory.getBranchName(), appGroup.getName(), instances, taskHistory, refTaskHistory, taskHistoryDetails);
+                taskHistory.getBranchName(), appCluster.getName(), instances, taskHistory, refTaskHistory, taskHistoryDetails);
     }
 
 

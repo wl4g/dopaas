@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.scm;
 
 import java.util.List;
 
-public class InstanceOfGroup extends AppGroup {
+public class InstanceOfGroup extends AppCluster {
 
 	private List<AppInstance> appInstance;
 

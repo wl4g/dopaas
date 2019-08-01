@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.handler;
 
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
@@ -44,7 +44,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public AppGroup getAppGroupByName(String groupName) {
+	public AppCluster getAppGroupByName(String groupName) {
 		return null;
 	}
 

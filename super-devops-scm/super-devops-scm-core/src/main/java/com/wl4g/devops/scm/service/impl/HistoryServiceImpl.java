@@ -150,7 +150,7 @@ public class HistoryServiceImpl implements HistoryService {
 		configGurationDao.updateNode(nMap);
 
 		// Get application group information.
-		AppGroup appGroup = this.appGroupDao.getAppGroup(agl.getGroupId());
+		AppCluster appCluster = this.appGroupDao.getAppGroup(agl.getGroupId());
 
 		// Get application nodeList information
 		AppInstance appInstance = new AppInstance();
@@ -176,7 +176,7 @@ public class HistoryServiceImpl implements HistoryService {
 		}
 
 		PreRelease preRelease = new PreRelease();
-		preRelease.setGroup(appGroup.getName());
+		preRelease.setGroup(appCluster.getName());
 		preRelease.setNamespaces(namespaces);
 		String releaseId = String.valueOf(historyOfDetail.getId());
 		String versionId = String.valueOf(agl.getId());

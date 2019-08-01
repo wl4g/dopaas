@@ -287,7 +287,7 @@
 		</trim>
 	</insert>
 	
-	<update id="delete" parameterType="appGroup">
+	<update id="delete" parameterType="appCluster">
 		update app_cluster
 		<set>
 			<if test="updateBy != null">
@@ -301,7 +301,7 @@
 		where id = #{id} 
 	</update>
 	
-	<update id="update" parameterType="appGroup">
+	<update id="update" parameterType="appCluster">
 		update app_cluster
 		<set>
 			<if test="deptId != null">
@@ -326,7 +326,7 @@
 		where id = #{id}
 	</update>
 	
-	<select id="select" parameterType="appGroup" resultMap="queryInstanceOfGroup">
+	<select id="select" parameterType="appCluster" resultMap="queryInstanceOfGroup">
 		select
 		<include refid="allInstanceColumn"/>,
 		<include refid="allGroupColumn"/>
@@ -338,7 +338,7 @@
 		and a.id = #{id}
 	</select>
 
-	<select id="selectEnv" parameterType="appGroup" resultMap="queryEnvGroup">
+	<select id="selectEnv" parameterType="appCluster" resultMap="queryEnvGroup">
 		select
 		<include refid="allEnvColumn"/>,
 		<include refid="allGroupColumn"/>
@@ -350,7 +350,7 @@
 		and a.id = #{id}
 	</select>
 
-	<select id="grouplist"  resultType="appGroup">
+	<select id="grouplist"  resultType="appCluster">
 		select
 		a.name,a.id,a.enable
 		from
@@ -441,7 +441,7 @@
 	</select>
 
 	<!-- Get application group -->
-	<select id="getAppGroup" resultType="appGroup">
+	<select id="getAppGroup" resultType="appCluster">
 		select a.* FROM app_cluster a
 		<where>
 		a.del_flag = 0
@@ -455,7 +455,7 @@
 		</where>
 	</select>
 
-	<select id="getAppGroupByName" resultType="appGroup">
+	<select id="getAppGroupByName" resultType="appCluster">
 		select a.* FROM app_cluster a
 		<where>
 			a.del_flag = 0

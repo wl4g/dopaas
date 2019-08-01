@@ -29,15 +29,15 @@ public interface AppGroupService {
 
 	public void insert(InstanceOfGroup iog);
 
-	public boolean delete(AppGroup group);
+	public boolean delete(AppCluster group);
 
 	public boolean deleteEnv(Environment group);
 
-	public boolean update(AppGroup group);
+	public boolean update(AppCluster group);
 
-	public InstanceOfGroup select(AppGroup group);
+	public InstanceOfGroup select(AppCluster group);
 
-	public InstanceOfGroup selectEnv(AppGroup group);
+	public InstanceOfGroup selectEnv(AppCluster group);
 
 	public List<AppGroupList> list(AppGroupList agl);
 
@@ -53,7 +53,7 @@ public interface AppGroupService {
 
 	public boolean updateEnvironment(Environment instance);
 
-	public List<AppGroup> grouplist();
+	public List<AppCluster> grouplist();
 
 	public List<Environment> environmentlist(String groupId);
 

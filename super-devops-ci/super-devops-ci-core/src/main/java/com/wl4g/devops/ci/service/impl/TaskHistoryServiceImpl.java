@@ -19,7 +19,7 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -64,9 +64,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
         TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(id);
         Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
         if (null != project && null != project.getAppGroupId()) {
-            AppGroup appGroup = appGroupDao.getAppGroup(project.getAppGroupId());
-            if (null != appGroup) {
-                taskHistory.setGroupName(appGroup.getName());
+            AppCluster appCluster = appGroupDao.getAppGroup(project.getAppGroupId());
+            if (null != appCluster) {
+                taskHistory.setGroupName(appCluster.getName());
             }
         }
         return taskHistory;
