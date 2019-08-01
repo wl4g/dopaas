@@ -57,10 +57,15 @@ public class RuleConfigManager implements ApplicationRunner {
 
 	/**
 	 * Clean rule to cache.
+	 * 
+	 * @param clearBatch
 	 */
-	public void clearAll() {
+	public void clearAll(int clearBatch) {
+		if (clearBatch <= 0) {
+			clearBatch = 200;
+		}
 		String pattern = KEY_CACHE_ALARM_TPLS + "*";
-		ScanCursor<?> cursor = jedisService.scan(pattern, 200, null);
+		ScanCursor<?> cursor = jedisService.scan(pattern, clearBatch, null);
 		int count = 0;
 		for (String key : cursor.keysAsString()) {
 			try {
