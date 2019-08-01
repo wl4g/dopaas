@@ -22,7 +22,7 @@ import com.wl4g.devops.common.bean.BaseBean;
  * 
  * @date 2018年9月19日
  */
-public class AppGroup extends BaseBean {
+public class AppCluster extends BaseBean {
 
 	private Long deptId; // 应用所属部门ID
 	private String name; // 应用名称 Disabled

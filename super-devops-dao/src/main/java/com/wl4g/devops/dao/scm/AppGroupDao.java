@@ -27,15 +27,15 @@ public interface AppGroupDao {
 
 	public Long insert(InstanceOfGroup iog);
 
-	public boolean delete(AppGroup group);
+	public boolean delete(AppCluster group);
 
 	public boolean deleteEnv(Environment group);
 
-	public boolean update(AppGroup group);
+	public boolean update(AppCluster group);
 
-	public InstanceOfGroup select(AppGroup group);
+	public InstanceOfGroup select(AppCluster group);
 
-	public InstanceOfGroup selectEnv(AppGroup group);
+	public InstanceOfGroup selectEnv(AppCluster group);
 
 	public List<AppGroupList> list(AppGroupList agl);
 
@@ -51,7 +51,7 @@ public interface AppGroupDao {
 
 	public boolean updateEnvironment(Environment instance);
 
-	public List<AppGroup> grouplist();
+	public List<AppCluster> grouplist();
 
 	public List<Environment> environmentlist(@Param(value = "groupId") String groupId);
 
@@ -61,8 +61,8 @@ public interface AppGroupDao {
 
 	public AppInstance getAppInstance(@Param(value = "id") String id);
 
-	public AppGroup getAppGroup(@Param(value = "id") Integer id);
+	public AppCluster getAppGroup(@Param(value = "id") Integer id);
 
-	public AppGroup getAppGroupByName(@Param(value = "name") String name);
+	public AppCluster getAppGroupByName(@Param(value = "name") String name);
 
 }

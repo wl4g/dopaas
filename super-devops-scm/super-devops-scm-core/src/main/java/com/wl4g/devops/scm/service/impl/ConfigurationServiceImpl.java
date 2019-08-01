@@ -137,7 +137,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			instances.add(releaseInstance);
 		}
 		// Get application group information.
-		AppGroup appGroup = this.appGroupDao.getAppGroup(vd.getGroupId());
+		AppCluster appCluster = this.appGroupDao.getAppGroup(vd.getGroupId());
 
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean vcb : vd.getConfigGurations()) {
@@ -148,7 +148,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 		// Request configuration source send to client.
 		PreRelease pre = new PreRelease();
-		pre.setGroup(appGroup.getName());
+		pre.setGroup(appCluster.getName());
 		pre.setNamespaces(namespaces);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		pre.setMeta(meta);
