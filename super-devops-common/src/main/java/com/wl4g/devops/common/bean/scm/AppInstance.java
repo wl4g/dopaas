@@ -36,8 +36,8 @@ public class AppInstance extends BaseBean {
 
 	// 20190517add
 	// private String basePath;// 项目部署路径
-	private String serverAccount;// 登录账号
-	private String sshRsa;
+	private String sshUser;// 登录账号
+	private String sshKey;
 
 	public Long getGroupId() {
 		return groupId;
@@ -95,20 +95,20 @@ public class AppInstance extends BaseBean {
 		this.versionId = versionId;
 	}
 
-	public String getSshRsa() {
-		return sshRsa;
+	public String getSshKey() {
+		return sshKey;
 	}
 
-	public void setSshRsa(String sshRsa) {
-		this.sshRsa = sshRsa;
+	public void setSshKey(String sshKey) {
+		this.sshKey = sshKey;
 	}
 
-	public String getServerAccount() {
-		return serverAccount;
+	public String getSshUser() {
+		return sshUser;
 	}
 
-	public void setServerAccount(String serverAccount) {
-		this.serverAccount = serverAccount;
+	public void setSshUser(String sshUser) {
+		this.sshUser = sshUser;
 	}
 
 	@Override
@@ -121,8 +121,8 @@ public class AppInstance extends BaseBean {
 				", envId='" + envId + '\'' +
 				", opsIds='" + opsIds + '\'' +
 				", versionId='" + versionId + '\'' +
-				", serverAccount='" + serverAccount + '\'' +
-				", sshRsa='" + sshRsa + '\'' +
+				", sshUser='" + sshUser + '\'' +
+				", sshKey='" + sshKey + '\'' +
 				'}';
 	}
 }

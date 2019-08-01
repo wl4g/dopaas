@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.dao.scm.AppGroupDao;
@@ -67,7 +67,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	}
 
 	@Override
-	public AppGroup getAppGroupByName(String groupName) {
+	public AppCluster getAppGroupByName(String groupName) {
 		return appGroupDao.getAppGroupByName(groupName);
 	}
 

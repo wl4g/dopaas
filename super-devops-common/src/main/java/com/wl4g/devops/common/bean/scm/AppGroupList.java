@@ -22,7 +22,7 @@ package com.wl4g.devops.common.bean.scm;
  * @Description: TODO
  * @date 2018年9月20日
  */
-public class AppGroupList extends AppGroup {
+public class AppGroupList extends AppCluster {
 
 	private Integer instanceCount; // 节点（实例）数
 

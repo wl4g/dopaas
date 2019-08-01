@@ -41,7 +41,7 @@ public class AppGroupServiceImpl implements AppGroupService {
 	}
 
 	@Override
-	public boolean delete(AppGroup group) {
+	public boolean delete(AppCluster group) {
 		group.preUpdate();
 		return appGroupDao.delete(group);
 	}
@@ -53,18 +53,18 @@ public class AppGroupServiceImpl implements AppGroupService {
 	}
 
 	@Override
-	public boolean update(AppGroup group) {
+	public boolean update(AppCluster group) {
 		group.preUpdate();
 		return appGroupDao.update(group);
 	}
 
 	@Override
-	public InstanceOfGroup select(AppGroup group) {
+	public InstanceOfGroup select(AppCluster group) {
 		return appGroupDao.select(group);
 	}
 
 	@Override
-	public InstanceOfGroup selectEnv(AppGroup group) {
+	public InstanceOfGroup selectEnv(AppCluster group) {
 		return appGroupDao.selectEnv(group);
 	}
 
@@ -106,7 +106,7 @@ public class AppGroupServiceImpl implements AppGroupService {
 	}
 
 	@Override
-	public List<AppGroup> grouplist() {
+	public List<AppCluster> grouplist() {
 		return appGroupDao.grouplist();
 	}
 

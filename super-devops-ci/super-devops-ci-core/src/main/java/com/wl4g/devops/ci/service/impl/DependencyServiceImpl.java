@@ -24,6 +24,7 @@ import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskSign;
+import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -78,7 +79,7 @@ public class DependencyServiceImpl implements DependencyService {
      * @throws Exception
      */
     @Override
-    public void build(TaskHistory taskHistory, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+    public void build(TaskHistory taskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency) throws Exception {
         Integer projectId = dependency.getProjectId();
         List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
         if (dependencies != null && dependencies.size() > 0) {
@@ -87,12 +88,12 @@ public class DependencyServiceImpl implements DependencyService {
                 Dependency dependency1 = new Dependency(dep.getDependentId());
                 dependency1.setId(dep.getId());
                 // 如果依赖配置中有配置分支，则用配置的分支，若没有，则默认用打包项目的分支
-                build(taskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
+                build(taskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, taskResult, true);
             }
         }
 
         // Is Continue ? if fail then return
-        if (!success) {
+        if (!taskResult.isSuccess()) {
             return;
         }
         // ===== build start =====
@@ -100,7 +101,7 @@ public class DependencyServiceImpl implements DependencyService {
         Project project = projectDao.selectByPrimaryKey(projectId);
         Assert.notNull(project, "project not exist");
         try {
-            if (project.getLockStatus() == TASK_LOCK_STATUS_LOCK) { // 校验项目锁定状态 ，锁定则无法继续
+            if (project.getLockStatus() != null && project.getLockStatus() == TASK_LOCK_STATUS_LOCK) { // 校验项目锁定状态 ，锁定则无法继续
                 throw new RuntimeException("project is lock , please check the project lock status");
             }
             projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);//锁定项目，防止同一个项目同时build
@@ -108,10 +109,10 @@ public class DependencyServiceImpl implements DependencyService {
             String path = config.getGitBasePath() + "/" + project.getProjectName();
             if (GitUtils.checkGitPahtExist(path)) {// 若果目录存在则:chekcout 分支 并 pull
                 GitUtils.checkout(config.getCredentials(), path, branch);
-                result.append("project checkout success:").append(project.getProjectName()).append("\n");
+                taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
             } else { // 若目录不存在: 则clone 项目并 checkout 对应分支
                 GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-                result.append("project clone success:").append(project.getProjectName()).append("\n");
+                taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
             }
 
             //save dependency git sha -- 保存依赖项目的sha，用于回滚时找回对应的 历史依赖项目
@@ -124,10 +125,10 @@ public class DependencyServiceImpl implements DependencyService {
             }
 
             // run install command
-            String installResult = mvnInstall(path);
+            String installResult = mvnInstall(path,taskResult);
 
             // ===== build end =====
-            result.append(installResult);
+            taskResult.getStringBuffer().append(installResult);
         } finally {
             //finish then unlock the project
             projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
@@ -146,7 +147,7 @@ public class DependencyServiceImpl implements DependencyService {
      * @throws Exception
      */
     @Override
-    public void rollback(TaskHistory taskHistory, TaskHistory refTaskHistory, Dependency dependency, String branch, Boolean success, StringBuffer result, boolean isDependency) throws Exception {
+    public void rollback(TaskHistory taskHistory, TaskHistory refTaskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency) throws Exception {
         Integer projectId = dependency.getProjectId();
         List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
         if (dependencies != null && dependencies.size() > 0) {
@@ -154,12 +155,12 @@ public class DependencyServiceImpl implements DependencyService {
                 String br = dep.getBranch();
                 Dependency dependency1 = new Dependency(dep.getDependentId());
                 dependency1.setId(dep.getId());
-                rollback(taskHistory, refTaskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, success, result, true);
+                rollback(taskHistory, refTaskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, taskResult, true);
             }
         }
 
         // Is Continue ? if fail then return
-        if (!success) {
+        if (!taskResult.isSuccess()) {
             return;
         }
         // ===== build start =====
@@ -185,12 +186,12 @@ public class DependencyServiceImpl implements DependencyService {
 
             if (GitUtils.checkGitPahtExist(path)) {
                 GitUtils.roolback(config.getCredentials(), path, sha);
-                result.append("project rollback success:").append(project.getProjectName()).append("\n");
+                taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
             } else {
                 GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-                result.append("project clone success:").append(project.getProjectName()).append("\n");
+                taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
                 GitUtils.roolback(config.getCredentials(), path, sha);
-                result.append("project rollback success:").append(project.getProjectName()).append("\n");
+                taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
             }
 
             ////save dependency git sha -- 保存依赖项目的sha，回滚时也要保存进该表
@@ -203,10 +204,10 @@ public class DependencyServiceImpl implements DependencyService {
             }
 
             // run install command
-            String installResult = mvnInstall(path);
+            String installResult = mvnInstall(path,taskResult);
 
             // ===== build end =====
-            result.append(installResult); // just for show in page
+            taskResult.getStringBuffer().append(installResult); // just for show in page
         } finally {
             //finish then unlock the project
             projectService.updateLockStatus(projectId, TASK_LOCK_STATUS__UNLOCK);
@@ -217,10 +218,10 @@ public class DependencyServiceImpl implements DependencyService {
     /**
      * Building (maven)
      */
-    private String mvnInstall(String path) throws Exception {
+    private String mvnInstall(String path,TaskResult taskResult) throws Exception {
         // Execution mvn
         String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
-        return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary());
+        return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary(),taskResult);
     }
 
 }

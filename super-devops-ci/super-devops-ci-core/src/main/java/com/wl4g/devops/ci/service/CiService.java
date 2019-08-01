@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
 
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface CiService {
 
-    List<AppGroup> grouplist();
+    List<AppCluster> grouplist();
 
     List<Environment> environmentlist(String groupId);
 
