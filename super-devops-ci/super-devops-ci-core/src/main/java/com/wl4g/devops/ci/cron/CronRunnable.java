@@ -1,6 +1,6 @@
 package com.wl4g.devops.ci.cron;
 
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.ci.utils.GitUtils;
@@ -29,7 +29,7 @@ public class CronRunnable implements Runnable {
 
     private Project project;
 
-    private DeployProperties config;
+    private CiCdProperties config;
 
     private CiService ciService;
 
@@ -40,7 +40,7 @@ public class CronRunnable implements Runnable {
     private List<TaskDetail> taskDetails;
 
 
-    public CronRunnable(Trigger trigger, Project project, DeployProperties config, CiService ciService, TriggerService triggerService,Task task,List<TaskDetail> taskDetails) {
+    public CronRunnable(Trigger trigger, Project project, CiCdProperties config, CiService ciService, TriggerService triggerService,Task task,List<TaskDetail> taskDetails) {
         this.trigger = trigger;
         //this.triggerDetails = trigger.getTriggerDetails();
         this.project = project;

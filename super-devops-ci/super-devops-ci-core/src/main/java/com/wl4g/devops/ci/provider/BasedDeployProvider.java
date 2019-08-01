@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.provider;
 
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -45,7 +45,7 @@ public abstract class BasedDeployProvider {
     /**
      * Deployments properties configuration.
      */
-    final protected DeployProperties config;
+    final protected CiCdProperties config;
 
     /**
      * branch name
@@ -123,7 +123,7 @@ public abstract class BasedDeployProvider {
 
     public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
                                List<TaskHistoryDetail> taskHistoryDetails) {
-        this.config = SpringContexts.getBean(DeployProperties.class);
+        this.config = SpringContexts.getBean(CiCdProperties.class);
         this.path = path;
         this.branch = branch;
         this.alias = alias;

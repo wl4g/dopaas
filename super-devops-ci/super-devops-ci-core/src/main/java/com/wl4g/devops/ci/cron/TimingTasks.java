@@ -1,6 +1,6 @@
 package com.wl4g.devops.ci.cron;
 
-import com.wl4g.devops.ci.config.DeployProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class TimingTasks implements ApplicationRunner {
     final protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private DeployProperties config;
+    private CiCdProperties config;
 
     @Autowired
     private TaskHistoryDao taskHistoryDao;

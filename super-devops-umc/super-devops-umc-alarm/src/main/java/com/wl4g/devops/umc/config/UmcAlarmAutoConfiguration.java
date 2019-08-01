@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.console.AlarmConsole;
 import com.wl4g.devops.umc.handler.CheckImpledAlarmConfigurer;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.notification.AlarmNotifier;
@@ -47,7 +48,7 @@ import com.wl4g.devops.umc.rule.inspect.SumRuleInspector;
  * @version v1.0 2019年7月5日
  * @since
  */
-public class AlarmAutoConfiguration {
+public class UmcAlarmAutoConfiguration {
 
 	final public static String KEY_ALARM_PREFIX = "spring.cloud.devops.umc.alarm";
 
@@ -138,4 +139,12 @@ public class AlarmAutoConfiguration {
 		return new CompositeRuleInspectorAdapter(inspectors);
 	}
 
+	//
+	// Alarm console.
+	//
+
+	@Bean
+	public AlarmConsole alarmConsole() {
+		return new AlarmConsole();
+	}
 }

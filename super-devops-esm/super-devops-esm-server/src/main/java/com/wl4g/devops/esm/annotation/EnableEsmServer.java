@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.devops.esm.config.EsmServerAutoConfiguration;
+import com.wl4g.devops.esm.config.EsmAutoConfiguration;
 
 /**
  * SCM annotation to enable configuration.
@@ -31,7 +31,7 @@ import com.wl4g.devops.esm.config.EsmServerAutoConfiguration;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@Import({ EsmServerAutoConfiguration.class })
+@Import({ EsmAutoConfiguration.class })
 public @interface EnableEsmServer {
 
 }
