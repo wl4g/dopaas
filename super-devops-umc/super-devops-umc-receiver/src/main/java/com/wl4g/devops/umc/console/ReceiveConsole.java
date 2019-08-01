@@ -17,11 +17,8 @@ package com.wl4g.devops.umc.console;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.shell.annotation.ShellComponent;
-import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.umc.rule.RuleConfigManager;
 
 /**
  * Receiver configuration console.
@@ -35,19 +32,5 @@ public class ReceiveConsole {
 	final public static String SHELL_GROUP = "Umc metric receive commands.";
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	private RuleConfigManager ruleConfigManager;
-
-	/**
-	 * Cleanup all of alarm rules cache.
-	 */
-	@ShellMethod(keys = "rule-clear", group = SHELL_GROUP, help = "Cleanup all of alarm rules cache.")
-	public void cleanRuleAll() {
-		if (log.isInfoEnabled()) {
-			log.info("Cleaning all of rules cache...");
-		}
-		ruleConfigManager.clearAll();
-	}
 
 }
