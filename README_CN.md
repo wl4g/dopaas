@@ -4,8 +4,8 @@
 English version goes [here](README.md)
 
 ### 运行时环境
-基础环境依赖（必须）：JDK8+、Maven3.5+、MySQL5.6+
-其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
+- 基础环境依赖（必须）：JDK8+、Maven3.5+、MySQL5.6+
+- 其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
 
 ### 文档
 - [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等

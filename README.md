@@ -4,8 +4,8 @@
 [中文文档](README_CN.md)
 
 ### Runtime environment
-Basic environment dependency (must): JDK8+、Maven3.5+、MySQL5.6+
-Other environment dependencies (if necessary): Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
+- Basic environment dependencies (must): JDK8+、Maven3.5+、MySQL5.6+
+- Other environment dependencies (if necessary): Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
 
 ### Docs
 - [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment(Continuous iteration), CICD build flow, etc.
