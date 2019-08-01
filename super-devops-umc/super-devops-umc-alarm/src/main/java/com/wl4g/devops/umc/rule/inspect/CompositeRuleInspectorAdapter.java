@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 import com.wl4g.devops.umc.notification.AlarmType;
 import com.wl4g.devops.umc.rule.AggregatorType;
 
@@ -40,11 +42,11 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	/**
 	 * Rule inspectors.
 	 */
-	final protected Map<AggregatorType, RuleInspector> ruleInspectors = new LinkedHashMap<>();
+	final protected Map<AggregatorType, RuleInspector> ruleInspectors = new OnceModifiableMap<>(new HashMap<>());
 
 	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
 		Assert.state(!CollectionUtils.isEmpty(inspectors), "Rule inspectors has at least one.");
-		inspectors.forEach(inspector -> ruleInspectors.put(inspector.aggregateType(), inspector));
+		this.ruleInspectors.putAll(inspectors.stream().collect(toMap(RuleInspector::aggregateType, inspector -> inspector)));
 	}
 
 	@Override
