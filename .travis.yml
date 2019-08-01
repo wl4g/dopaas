@@ -39,7 +39,7 @@ notifications:
   email:
     recipients:
       - 983708408@qq.com
-      - other@.com
+      - 1154635107@qq.com
     on_success: always # default: change
     on_failure: always # default: change
 
