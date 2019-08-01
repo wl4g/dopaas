@@ -44,12 +44,13 @@ public enum AggregatorType {
 	 * @param aggregateString
 	 * @return
 	 */
-	public static AggregatorType of(String aggregateString) {
+	public static AggregatorType safeOf(String aggregateString) {
 		for (AggregatorType t : values()) {
 			if (equalsIgnoreCase(aggregateString, t.getValue())) {
 				return t;
 			}
 		}
-		throw new UnsupportedOperationException(String.format("Unsupport aggregate operator(%d)", aggregateString));
+		return null;
 	}
+
 }

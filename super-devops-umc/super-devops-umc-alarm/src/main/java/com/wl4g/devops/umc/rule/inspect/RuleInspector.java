@@ -20,7 +20,6 @@ import java.util.Arrays;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.umc.rule.AggregatorType;
-import com.wl4g.devops.umc.rule.RelateOperatorType;
 
 /**
  * Rule verify inspector.
@@ -50,28 +49,28 @@ public interface RuleInspector {
 	 */
 	public static class InspectWrapper {
 
-		final private RelateOperatorType operator;
+		final private Integer operator;
 
-		final private AggregatorType aggregator;
+		final private String aggregator;
 
 		final private Double baseline;
 
 		final private Double[] values;
 
-		public InspectWrapper(RelateOperatorType operator, AggregatorType aggregator, Double baseline, Double[] values) {
-			Assert.isNull(operator, "Operator type must not be null");
-			Assert.isNull(aggregator, "Aggregator type must not be null");
+		public InspectWrapper(Integer operator, String aggregator, Double baseline, Double[] values) {
+			Assert.notNull(operator, "Operator type must not be null");
+			Assert.hasText(aggregator, "Aggregator type must not be empty");
 			this.operator = operator;
 			this.aggregator = aggregator;
 			this.baseline = baseline;
 			this.values = values;
 		}
 
-		public RelateOperatorType getOperator() {
+		public Integer getOperator() {
 			return operator;
 		}
 
-		public AggregatorType getAggregator() {
+		public String getAggregator() {
 			return aggregator;
 		}
 
