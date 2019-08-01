@@ -36,7 +36,7 @@ public abstract class AndroidIamUserCoordinator {
 	/**
 	 * Table for storing authentication information.
 	 */
-	final protected ConcurrentMap<ServiceType, String> authTable = new ConcurrentHashMap<>(16);
+	final protected ConcurrentMap<ServiceType, String> grantTicketCache = new ConcurrentHashMap<>(16);
 
 	/**
 	 * To JSON map.
@@ -48,7 +48,7 @@ public abstract class AndroidIamUserCoordinator {
 	protected abstract Map toJsonMap(String json);
 
 	/**
-	 * Do execution http request.
+	 * Do execution HTTP request.
 	 * 
 	 * @param serviceType
 	 * @param requestUri
@@ -68,7 +68,7 @@ public abstract class AndroidIamUserCoordinator {
 	 *         authenticated, otherwise FALSE
 	 */
 	@SuppressWarnings("rawtypes")
-	protected boolean isUnauthenticationWithResponse(ServiceType serviceType, Map header, String body) {
+	protected boolean checkUnauthWithResponse(ServiceType serviceType, Map header, String body) {
 		if (serviceType == null) {
 			throw new IllegalStateException("Service type must not be null");
 		}
@@ -96,7 +96,7 @@ public abstract class AndroidIamUserCoordinator {
 							throw new IllegalStateException(String
 									.format("Error to iam client grantTicket null, for response header: ", resp.getHeader()));
 						}
-						authTable.put(serviceType, grantTicket);
+						grantTicketCache.put(serviceType, grantTicket);
 					}
 				}
 			} else { // IAM no authentication?
