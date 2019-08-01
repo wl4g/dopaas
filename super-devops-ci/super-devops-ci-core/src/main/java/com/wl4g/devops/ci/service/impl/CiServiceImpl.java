@@ -111,8 +111,8 @@ public class CiServiceImpl implements CiService {
         for (TaskDetail taskDetail : taskDetails) {
             instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
         }
-        Assert.notNull(task.getClusterId(), "clusterId is null");
-        AppCluster appCluster = appClusterDao.getAppGroup(task.getClusterId());
+        Assert.notNull(task.getAppClusterId(), "clusterId is null");
+        AppCluster appCluster = appClusterDao.getAppGroup(task.getAppClusterId());
 
         Assert.notNull(appCluster, "not found this app");
         Project project = projectDao.getByAppClusterId(appCluster.getId());
@@ -143,7 +143,7 @@ public class CiServiceImpl implements CiService {
         if (null == project) {
             return;
         }
-        Trigger trigger = getTriggerByAppClusterIdAndBranch(project.getClusterId(), branchName);
+        Trigger trigger = getTriggerByAppClusterIdAndBranch(project.getAppClusterId(), branchName);
         if (null == trigger) {
             return;
         }
@@ -246,7 +246,7 @@ public class CiServiceImpl implements CiService {
         Assert.notNull(taskHistory, "taskHistory can not be null");
         Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
         Assert.notNull(project, "project can not be null");
-        AppCluster appCluster = appClusterDao.getAppGroup(project.getClusterId());
+        AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
         Assert.notNull(appCluster, "appCluster can not be null");
         project.setGroupName(appCluster.getName());
 

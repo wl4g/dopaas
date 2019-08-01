@@ -8,7 +8,7 @@ public class Trigger extends BaseBean implements Serializable {
 
     private String name;
 
-    private Integer clusterId;
+    private Integer appClusterId;
 
     private Integer taskId;
 
@@ -26,12 +26,12 @@ public class Trigger extends BaseBean implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
-    public Integer getClusterId() {
-        return clusterId;
+    public Integer getAppClusterId() {
+        return appClusterId;
     }
 
-    public void setClusterId(Integer clusterId) {
-        this.clusterId = clusterId;
+    public void setAppClusterId(Integer appClusterId) {
+        this.appClusterId = appClusterId;
     }
 
     public Integer getTaskId() {
@@ -70,7 +70,7 @@ public class Trigger extends BaseBean implements Serializable {
     public String toString() {
         return "Trigger{" +
                 "name='" + name + '\'' +
-                ", clusterId=" + clusterId +
+                ", appClusterId=" + appClusterId +
                 ", taskId=" + taskId +
                 ", type=" + type +
                 ", cron='" + cron + '\'' +

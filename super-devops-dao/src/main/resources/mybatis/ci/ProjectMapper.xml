@@ -5,7 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="project_name" jdbcType="VARCHAR" property="projectName" />
     <result column="git_url" jdbcType="VARCHAR" property="gitUrl" />
-    <result column="app_cluster_id" jdbcType="INTEGER" property="clusterId" />
+    <result column="app_cluster_id" jdbcType="INTEGER" property="appClusterId" />
     <result column="tar_path" jdbcType="VARCHAR" property="tarPath" />
     <result column="parent_app_home" jdbcType="VARCHAR" property="parentAppHome" />
     <result column="link_app_home" jdbcType="VARCHAR" property="linkAppHome" />
@@ -44,7 +44,7 @@
       create_date, create_by, update_date,
       update_by)
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{gitUrl,jdbcType=VARCHAR},
-      #{clusterId,jdbcType=INTEGER}, #{tarPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
+      #{appClusterId,jdbcType=INTEGER}, #{tarPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
       #{linkAppHome,jdbcType=VARCHAR},#{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
@@ -61,7 +61,7 @@
       <if test="gitUrl != null">
         git_url,
       </if>
-      <if test="clusterId != null">
+      <if test="appClusterId != null">
         app_cluster_id,
       </if>
       <if test="tarPath != null">
@@ -105,8 +105,8 @@
       <if test="gitUrl != null">
         #{gitUrl,jdbcType=VARCHAR},
       </if>
-      <if test="clusterId != null">
-        #{clusterId,jdbcType=INTEGER},
+      <if test="appClusterId != null">
+        #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="tarPath != null">
         #{tarPath,jdbcType=VARCHAR},
@@ -149,8 +149,8 @@
       <if test="gitUrl != null">
         git_url = #{gitUrl,jdbcType=VARCHAR},
       </if>
-      <if test="clusterId != null">
-        app_cluster_id = #{clusterId,jdbcType=INTEGER},
+      <if test="appClusterId != null">
+        app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="tarPath != null">
         tar_path = #{tarPath,jdbcType=VARCHAR},
@@ -189,7 +189,7 @@
     update ci_project
     set project_name = #{projectName,jdbcType=VARCHAR},
       git_url = #{gitUrl,jdbcType=VARCHAR},
-      app_cluster_id = #{clusterId,jdbcType=INTEGER},
+      app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       tar_path = #{tarPath,jdbcType=VARCHAR},
       parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
       link_app_home = #{linkAppHome,jdbcType=VARCHAR},
@@ -230,6 +230,6 @@
     select
     <include refid="Base_Column_List" />
     from ci_project
-    where app_cluster_id = #{clusterId,jdbcType=INTEGER} and del_flag!=1
+    where app_cluster_id = #{appClusterId,jdbcType=INTEGER} and del_flag!=1
   </select>
 </mapper>
