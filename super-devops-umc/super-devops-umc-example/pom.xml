@@ -22,6 +22,16 @@
 			<artifactId>super-devops-umc-client</artifactId>
 			<version>master</version>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-umc-alarm</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-umc-watch</artifactId>
+			<version>master</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>
