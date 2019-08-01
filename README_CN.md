@@ -3,6 +3,10 @@
 
 English version goes [here](README.md)
 
+### 运行时环境
+基础环境依赖（必须）：JDK8+、Maven3.5+、MySQL5.6+
+其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
+
 ### 文档
 - [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等
 - [ESM](super-devops-esm/README_CN.md)          &nbsp;&nbsp;    弹性伸缩管理, 集成k8s、docker，基于CPU、网络流量自动或手动容器伸缩的管理
