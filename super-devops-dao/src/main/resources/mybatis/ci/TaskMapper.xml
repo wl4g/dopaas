@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Task" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-    <result column="app_group_id" property="appGroupId" jdbcType="INTEGER" />
+    <result column="app_cluster_id" property="appClusterId" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
     <result column="tar_type" property="tarType" jdbcType="INTEGER" />
@@ -33,7 +33,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, task_name, app_group_id, project_id, branch_name, tar_type, branch_type, remark, 
+    id, task_name, app_cluster_id, project_id, branch_name, tar_type, branch_type, remark,
     enable, del_flag, create_date, create_by, update_date, update_by,pre_command, post_command
   </sql>
 
@@ -46,7 +46,7 @@
 	</sql>
 
   <sql id="Base_Column_List_t" >
-    t.id, t.task_name, t.app_group_id, t.project_id, t.branch_name, t.tar_type, t.branch_type, t.remark,
+    t.id, t.task_name, t.app_cluster_id, t.project_id, t.branch_name, t.tar_type, t.branch_type, t.remark,
     t.enable, t.del_flag, t.create_date, t.create_by, t.update_date, t.update_by,t.pre_command, t.post_command
   </sql>
 
@@ -61,13 +61,13 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Task" >
-    insert into ci_task (id, task_name, app_group_id, 
+    insert into ci_task (id, task_name, app_cluster_id,
       project_id, branch_name, tar_type, 
       branch_type, remark, enable, 
       del_flag, create_date, create_by, 
       update_date, update_by, pre_command, 
       post_command)
-    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{appGroupId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
       #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=INTEGER},
       #{branchType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
@@ -83,8 +83,8 @@
       <if test="taskName != null" >
         task_name,
       </if>
-      <if test="appGroupId != null" >
-        app_group_id,
+      <if test="appClusterId != null" >
+        app_cluster_id,
       </if>
       <if test="projectId != null" >
         project_id,
@@ -133,8 +133,8 @@
       <if test="taskName != null" >
         #{taskName,jdbcType=VARCHAR},
       </if>
-      <if test="appGroupId != null" >
-        #{appGroupId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="projectId != null" >
         #{projectId,jdbcType=INTEGER},
@@ -183,8 +183,8 @@
       <if test="taskName != null" >
         task_name = #{taskName,jdbcType=VARCHAR},
       </if>
-      <if test="appGroupId != null" >
-        app_group_id = #{appGroupId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="projectId != null" >
         project_id = #{projectId,jdbcType=INTEGER},
@@ -231,7 +231,7 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     update ci_task
     set task_name = #{taskName,jdbcType=VARCHAR},
-      app_group_id = #{appGroupId,jdbcType=INTEGER},
+      app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
       tar_type = #{tarType,jdbcType=INTEGER},
@@ -250,7 +250,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Task" >
     update ci_task
     set task_name = #{taskName,jdbcType=VARCHAR},
-      app_group_id = #{appGroupId,jdbcType=INTEGER},
+      app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
       tar_type = #{tarType,jdbcType=INTEGER},
@@ -272,7 +272,7 @@
 
     ,g.name group_name
     from ci_task t
-    left join app_cluster g on t.app_group_id=g.id
+    left join app_cluster g on t.app_cluster_id=g.id
     left join ci_task_detail td on td.task_id=t.id
     left join app_instance i on i.id=td.instance_id
     where t.del_flag!=1
@@ -300,11 +300,11 @@
   </select>
 
 
-  <select id="selectByAppGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByAppClusterId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     from ci_task
-    where app_group_id = #{appGroupId,jdbcType=INTEGER}
+    where app_cluster_id = #{appClusterId,jdbcType=INTEGER}
   </select>
 
 </mapper>

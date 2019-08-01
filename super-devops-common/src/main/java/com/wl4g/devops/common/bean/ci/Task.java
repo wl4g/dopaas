@@ -12,7 +12,7 @@ public class Task extends BaseBean implements Serializable {
 
 	private String taskName;
 
-	private Integer appGroupId;
+	private Integer appClusterId;
 
 	private Integer projectId;
 
@@ -57,12 +57,12 @@ public class Task extends BaseBean implements Serializable {
 		this.taskName = taskName == null ? null : taskName.trim();
 	}
 
-	public Integer getAppGroupId() {
-		return appGroupId;
+	public Integer getAppClusterId() {
+		return appClusterId;
 	}
 
-	public void setAppGroupId(Integer appGroupId) {
-		this.appGroupId = appGroupId;
+	public void setAppClusterId(Integer appClusterId) {
+		this.appClusterId = appClusterId;
 	}
 
 	public Integer getProjectId() {
@@ -125,7 +125,7 @@ public class Task extends BaseBean implements Serializable {
 	public String toString() {
 		return "Task{" +
 				"taskName='" + taskName + '\'' +
-				", appGroupId=" + appGroupId +
+				", appClusterId=" + appClusterId +
 				", projectId=" + projectId +
 				", branchName='" + branchName + '\'' +
 				", tarType=" + tarType +

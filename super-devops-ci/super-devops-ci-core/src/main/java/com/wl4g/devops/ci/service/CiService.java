@@ -30,11 +30,11 @@ public interface CiService {
 
     List<AppCluster> grouplist();
 
-    List<Environment> environmentlist(String groupId);
+    List<Environment> environmentlist(String clusterId);
 
     List<AppInstance> instancelist(AppInstance appInstance);
 
-    Trigger getTriggerByAppGroupIdAndBranch(Integer appGroupId, String branchName);
+    Trigger getTriggerByAppClusterIdAndBranch(Integer appClusterId, String branchName);
 
     void hook(String projectName, String branchName, String url);
 

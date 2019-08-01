@@ -15,116 +15,116 @@
  */
 package com.wl4g.devops.scm.service.impl;
 
-import java.util.List;
-
 import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.scm.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.wl4g.devops.scm.service.AppGroupService;
+
+import java.util.List;
 
 @Service
 @Transactional
-public class AppGroupServiceImpl implements AppGroupService {
+public class AppClueterServiceImpl implements AppClusterService {
 
 	@Autowired
-	private AppGroupDao appGroupDao;
+	private AppClusterDao appClusterDao;
 
 	@Override
 	public void insert(InstanceOfGroup iog) {
 		iog.preInsert();
-		appGroupDao.insert(iog);
+		appClusterDao.insert(iog);
 		if (null != iog.getAppInstance() && !iog.getAppInstance().isEmpty()) {
-			appGroupDao.insertInstance(iog);
+			appClusterDao.insertInstance(iog);
 		}
 	}
 
 	@Override
 	public boolean delete(AppCluster group) {
 		group.preUpdate();
-		return appGroupDao.delete(group);
+		return appClusterDao.delete(group);
 	}
 
 	@Override
 	public boolean deleteEnv(Environment group) {
 		group.preUpdate();
-		return appGroupDao.deleteEnv(group);
+		return appClusterDao.deleteEnv(group);
 	}
 
 	@Override
 	public boolean update(AppCluster group) {
 		group.preUpdate();
-		return appGroupDao.update(group);
+		return appClusterDao.update(group);
 	}
 
 	@Override
 	public InstanceOfGroup select(AppCluster group) {
-		return appGroupDao.select(group);
+		return appClusterDao.select(group);
 	}
 
 	@Override
 	public InstanceOfGroup selectEnv(AppCluster group) {
-		return appGroupDao.selectEnv(group);
+		return appClusterDao.selectEnv(group);
 	}
 
 	@Override
 	public List<AppGroupList> list(AppGroupList agl) {
-		return appGroupDao.list(agl);
+		return appClusterDao.list(agl);
 	}
 
 	public List<AppGroupList> groupEnvlist(AppGroupList agl) {
-		return appGroupDao.groupEnvlist(agl);
+		return appClusterDao.groupEnvlist(agl);
 	}
 
 	@Override
 	public boolean insertInstance(InstanceOfGroup iog) {
 		iog.preInsert();
-		return appGroupDao.insertInstance(iog);
+		return appClusterDao.insertInstance(iog);
 	}
 
 	public boolean insertEnvironment(InstanceOfGroup iog) {
 		iog.preInsert();
-		return appGroupDao.insertEnvironment(iog);
+		return appClusterDao.insertEnvironment(iog);
 	}
 
 	@Override
 	public boolean deleteInstance(AppInstance instance) {
 		instance.preUpdate();
-		return appGroupDao.deleteInstance(instance);
+		return appClusterDao.deleteInstance(instance);
 	}
 
 	@Override
 	public boolean updateInstance(AppInstance instance) {
 		instance.preUpdate();
-		return appGroupDao.updateInstance(instance);
+		return appClusterDao.updateInstance(instance);
 	}
 
 	public boolean updateEnvironment(Environment instance) {
 		instance.preUpdate();
-		return appGroupDao.updateEnvironment(instance);
+		return appClusterDao.updateEnvironment(instance);
 	}
 
 	@Override
 	public List<AppCluster> grouplist() {
-		return appGroupDao.grouplist();
+		return appClusterDao.grouplist();
 	}
 
-	public List<Environment> environmentlist(String groupId) {
-		return appGroupDao.environmentlist(groupId);
+	public List<Environment> environmentlist(String clusterId) {
+		return appClusterDao.environmentlist(clusterId);
 	}
 
 	public List<AppInstance> instancelist(AppInstance appInstance) {
-		return appGroupDao.instancelist(appInstance);
+		return appClusterDao.instancelist(appInstance);
 	}
 
 	@Override
 	public String selectEnvName(String envId) {
-		return appGroupDao.selectEnvName(envId);
+		return appClusterDao.selectEnvName(envId);
 	}
 
 	@Override
 	public AppInstance getAppInstance(String id) {
-		return appGroupDao.getAppInstance(id);
+		return appClusterDao.getAppInstance(id);
 	}
 }

@@ -27,7 +27,7 @@ import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,7 @@ public class TaskController {
     private TaskService taskService;
 
     @Autowired
-    private AppGroupDao appGroupDao;
+    private AppClusterDao appClusterDao;
 
     @Autowired
     private TaskDetailDao taskDetailDao;
@@ -133,7 +133,7 @@ public class TaskController {
         AppInstance appInstance = null;
         for (TaskDetail taskDetail : task.getTaskDetails()) {
             Integer instanceId = taskDetail.getInstanceId();
-            appInstance = appGroupDao.getAppInstance(instanceId.toString());
+            appInstance = appClusterDao.getAppInstance(instanceId.toString());
             if (appInstance != null && appInstance.getEnvId() !=null) {
                 break;
             }
@@ -170,20 +170,20 @@ public class TaskController {
      */
     private void checkTask(Task task){
         Assert.hasText(task.getTaskName(),"taskName is null");
-        Assert.notNull(task.getAppGroupId(),"groupId is null");
+        Assert.notNull(task.getAppClusterId(),"clusterId is null");
         Assert.notNull(task.getTarType(),"packType is null");
         Assert.hasText(task.getBranchName(),"branchName is null");
     }
 
     /**
-     * Get List By appGroupId
-     * @param appGroupId
+     * Get List By appClusterId
+     * @param appClusterId
      */
-    @RequestMapping(value = "/getListByAppGroupId")
-    public RespBase<?> getListByAppGroupId(Integer appGroupId) {
-        Assert.notNull(appGroupId,"appGroupId can not be null");
+    @RequestMapping(value = "/getListByAppClusterId")
+    public RespBase<?> getListByAppClusterId(Integer appClusterId) {
+        Assert.notNull(appClusterId,"appClusterId can not be null");
         RespBase<Object> resp = RespBase.create();
-        List<Task> tasks = taskDao.selectByAppGroupId(appGroupId);
+        List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
         resp.getData().put("tasks",tasks);
         return resp;
     }

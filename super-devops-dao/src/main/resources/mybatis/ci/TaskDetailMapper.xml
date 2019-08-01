@@ -77,7 +77,7 @@
   <select id="getUsedInstance" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select td.* from ci_task t
     left join ci_task_detail td on t.id=td.task_id
-    where t.app_group_id=#{appGroupId,jdbcType=INTEGER}
+    where t.app_cluster_id=#{appClusterId,jdbcType=INTEGER}
     <if test="taskId != null">
       and t.id !=#{taskId,jdbcType=INTEGER}
     </if>

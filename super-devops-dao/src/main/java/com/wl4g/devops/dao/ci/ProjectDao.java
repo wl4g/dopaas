@@ -37,6 +37,6 @@ public interface ProjectDao {
 
 	Project getByProjectName(String projectName);
 
-	Project getByAppGroupId(Integer appGrouPId);
+	Project getByAppClusterId(Integer appGrouPId);
 
 }

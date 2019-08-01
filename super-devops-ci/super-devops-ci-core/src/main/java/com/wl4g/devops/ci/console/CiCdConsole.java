@@ -29,7 +29,7 @@ import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
 import com.wl4g.devops.common.utils.lang.TableFormatters;
 import com.wl4g.devops.dao.ci.TaskDao;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.support.lock.SimpleRedisLockManager;
@@ -60,7 +60,7 @@ public class CiCdConsole {
 	final public static String GROUP = "Devops CI/CD console commands";
 
 	@Autowired
-	private AppGroupDao appGroupDao;
+	private AppClusterDao appClusterDao;
 
 	@Autowired
 	private CiService ciService;
@@ -167,17 +167,17 @@ public class CiCdConsole {
 		String r = argument.getAnyInstants();
 		Pattern pattern = Pattern.compile(r);
 		if (isBlank(appGroupName)) {
-			List<AppCluster> apps = appGroupDao.grouplist();
+			List<AppCluster> apps = appClusterDao.grouplist();
 			for (AppCluster appCluster : apps) {
 				appendApp(result, appCluster, r);
 				result.append("\n");
 			}
 		} else {
-			AppCluster app = appGroupDao.getAppGroupByName(appGroupName);
+			AppCluster app = appClusterDao.getAppGroupByName(appGroupName);
 			if (null == app) {
 				return "AppCluster not exist";
 			}
-			List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
+			List<Environment> environments = appClusterDao.environmentlist(app.getId().toString());
 			if (null == environments || environments.size() <= 0) {
 				return "no one env";
 			}
@@ -198,7 +198,7 @@ public class CiCdConsole {
 				}
 				AppInstance appInstance = new AppInstance();
 				appInstance.setEnvId(envId.toString());
-				List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+				List<AppInstance> instances = appClusterDao.instancelist(appInstance);
 				if (null == instances || instances.size() < 1) {
 					return "none";
 				}
@@ -219,7 +219,7 @@ public class CiCdConsole {
 	}
 
 	private void appendApp(StringBuffer result, AppCluster appCluster, String r) {
-		List<Environment> environments = appGroupDao.environmentlist(appCluster.getId().toString());
+		List<Environment> environments = appClusterDao.environmentlist(appCluster.getId().toString());
 		if (environments == null || environments.size() <= 0) {
 			return;
 		}
@@ -232,7 +232,7 @@ public class CiCdConsole {
 	private void appendEnv(StringBuffer result, Environment environment, String r) {
 		AppInstance appInstance = new AppInstance();
 		appInstance.setEnvId(environment.getId().toString());
-		List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+		List<AppInstance> instances = appClusterDao.instancelist(appInstance);
 
 		if (null == instances || instances.size() <= 0) {
 			return;

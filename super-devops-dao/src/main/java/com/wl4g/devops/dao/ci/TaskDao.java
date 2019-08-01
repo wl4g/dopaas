@@ -25,6 +25,6 @@ public interface TaskDao {
                     @Param("endDate") String endDate);
 
 
-    List<Task> selectByAppGroupId(Integer appGroupId);
+    List<Task> selectByAppClusterId(Integer appClusterId);
 
 }

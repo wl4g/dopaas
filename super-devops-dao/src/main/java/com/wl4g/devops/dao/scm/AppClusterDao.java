@@ -23,7 +23,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * 应用组管理DAO接口
  */
-public interface AppGroupDao {
+public interface AppClusterDao {
 
 	public Long insert(InstanceOfGroup iog);
 
@@ -53,7 +53,7 @@ public interface AppGroupDao {
 
 	public List<AppCluster> grouplist();
 
-	public List<Environment> environmentlist(@Param(value = "groupId") String groupId);
+	public List<Environment> environmentlist(@Param(value = "clusterId") String clusterId);
 
 	public List<AppInstance> instancelist(AppInstance appInstance);
 

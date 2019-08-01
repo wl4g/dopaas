@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Trigger" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="cluster_id" property="appClusterId" jdbcType="INTEGER" />
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="cron" property="cron" jdbcType="VARCHAR" />
@@ -18,7 +18,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, group_id, task_id, type, cron, sha, remark, enable, del_flag, create_date, 
+    id, name, cluster_id, task_id, type, cron, sha, remark, enable, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -32,12 +32,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Trigger" >
-    insert into ci_trigger (id, name, group_id, 
+    insert into ci_trigger (id, name, cluster_id,
       task_id, type, cron, 
       sha, remark, enable, 
       del_flag, create_date, create_by, 
       update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{groupId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
       #{taskId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{cron,jdbcType=VARCHAR}, 
       #{sha,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
@@ -52,8 +52,8 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="groupId != null" >
-        group_id,
+      <if test="appClusterId != null" >
+        cluster_id,
       </if>
       <if test="taskId != null" >
         task_id,
@@ -96,8 +96,8 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="groupId != null" >
-        #{groupId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="taskId != null" >
         #{taskId,jdbcType=INTEGER},
@@ -140,8 +140,8 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="groupId != null" >
-        group_id = #{groupId,jdbcType=INTEGER},
+      <if test="appClusterId != null" >
+        cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
       <if test="taskId != null" >
         task_id = #{taskId,jdbcType=INTEGER},
@@ -182,7 +182,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Trigger" >
     update ci_trigger
     set name = #{name,jdbcType=VARCHAR},
-      group_id = #{groupId,jdbcType=INTEGER},
+      cluster_id = #{appClusterId,jdbcType=INTEGER},
       task_id = #{taskId,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
       cron = #{cron,jdbcType=VARCHAR},
@@ -223,12 +223,12 @@
     </if>
   </select>
 
-  <select id="getTriggerByAppGroupIdAndBranch" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  <select id="getTriggerByAppClusterIdAndBranch" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     tr.*
     from ci_trigger tr
     left join ci_task ta on tr.task_id=ta.id
-    where ta.group_id=#{appGroupId,jdbcType=INTEGER} and ta.branch_name=#{branchName,jdbcType=VARCHAR} limit 1
+    where ta.cluster_id=#{appClusterId,jdbcType=INTEGER} and ta.branch_name=#{branchName,jdbcType=VARCHAR} limit 1
   </select>
 
   <select id="selectByType" resultMap="BaseResultMap" parameterType="java.util.Map" >

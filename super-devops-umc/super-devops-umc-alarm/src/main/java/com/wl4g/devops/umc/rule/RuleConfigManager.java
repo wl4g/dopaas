@@ -84,7 +84,7 @@ public class RuleConfigManager implements ApplicationRunner {
 	/**
 	 * Find alarm rule template by collectId.
 	 * 
-	 * @param groupId
+	 * @param clusterId
 	 * @return
 	 */
 	public List<AlarmTemplate> loadAlarmRuleTpls(String collectId) {

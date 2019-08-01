@@ -26,7 +26,7 @@ import com.wl4g.devops.common.bean.BaseBean;
  */
 public class AppInstance extends BaseBean {
 
-	private Long groupId; // 应用分组ID
+	private Long clusterId; // 应用分组ID
 	private String host; // 实例节点Host（如：web-node1）
 	private String ip; // 主机IP地址
 	private Integer port; // 服务监听端口
@@ -39,12 +39,12 @@ public class AppInstance extends BaseBean {
 	private String sshUser;// 登录账号
 	private String sshKey;
 
-	public Long getGroupId() {
-		return groupId;
+	public Long getClusterId() {
+		return clusterId;
 	}
 
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
+	public void setClusterId(Long clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getHost() {
@@ -114,7 +114,7 @@ public class AppInstance extends BaseBean {
 	@Override
 	public String toString() {
 		return "AppInstance{" +
-				"groupId=" + groupId +
+				"clusterId=" + clusterId +
 				", host='" + host + '\'' +
 				", ip='" + ip + '\'' +
 				", port=" + port +

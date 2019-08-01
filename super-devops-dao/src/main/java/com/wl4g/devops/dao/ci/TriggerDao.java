@@ -37,7 +37,7 @@ public interface TriggerDao {
                        @Param("enable") Integer enable,@Param("startDate") String startDate,
                        @Param("endDate") String endDate);
 
-    Trigger getTriggerByAppGroupIdAndBranch(@Param("appGroupId") Integer appGroupId, @Param("branchName") String branchName);
+    Trigger getTriggerByAppClusterIdAndBranch(@Param("appClusterId") Integer appClusterId, @Param("branchName") String branchName);
 
     List<Trigger> selectByType(@Param("type") Integer type);
 
