@@ -20,7 +20,7 @@ public interface TaskDetailDao {
 
     int deleteByTaskId(Integer taskId);
 
-    List<TaskDetail> getUsedInstance(@Param("appGroupId") Integer appGroupId, @Param("taskId") Integer taskId);
+    List<TaskDetail> getUsedInstance(@Param("appClusterId") Integer appClusterId, @Param("taskId") Integer taskId);
 
     List<TaskDetail> selectByTaskId(Integer taskId);
 

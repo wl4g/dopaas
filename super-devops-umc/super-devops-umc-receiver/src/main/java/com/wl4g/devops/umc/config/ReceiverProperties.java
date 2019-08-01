@@ -79,7 +79,7 @@ public class ReceiverProperties {
 			private static final long serialVersionUID = 299259605679445927L;
 			{
 				// Default properties
-				put(GROUP_ID_CONFIG, "defaultUmcReceiverGroupId");
+				put(GROUP_ID_CONFIG, "defaultUmcReceiverClusterId");
 				put(BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 				put(SESSION_TIMEOUT_MS_CONFIG, "20000");
 				put(FETCH_MIN_BYTES_CONFIG, "1");

@@ -25,7 +25,7 @@ import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +47,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
     @Autowired
     private ProjectDao projectDao;
     @Autowired
-    private AppGroupDao appGroupDao;
+    private AppClusterDao appClusterDao;
 
     @Override
     public List<TaskHistory> list(String groupName, String projectName, String branchName) {
@@ -63,8 +63,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
     public TaskHistory getById(Integer id) {
         TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(id);
         Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
-        if (null != project && null != project.getAppGroupId()) {
-            AppCluster appCluster = appGroupDao.getAppGroup(project.getAppGroupId());
+        if (null != project && null != project.getAppClusterId()) {
+            AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
             if (null != appCluster) {
                 taskHistory.setGroupName(appCluster.getName());
             }
