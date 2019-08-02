@@ -34,60 +34,58 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @since
  */
 public abstract class ShellTool {
-    final private static Logger log = LoggerFactory.getLogger(ShellTool.class);
+	final private static Logger log = LoggerFactory.getLogger(ShellTool.class);
 
-    /**
-     * Execute commands in local
-     */
-    public static String exec(String cmd) throws Exception {
-        return exec(cmd, null);
-    }
+	/**
+	 * Execute commands in local
+	 */
+	public static String exec(String cmd) throws Exception {
+		return exec(cmd, null);
+	}
 
-    public static String exec(String cmd, TaskResult taskResult) throws Exception {
-        return exec(cmd, null, taskResult);
-    }
+	public static String exec(String cmd, TaskResult taskResult) throws Exception {
+		return exec(cmd, null, taskResult);
+	}
 
+	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
+		if (log.isInfoEnabled()) {
+			log.info("Execution native command for '{}'", cmd);
+		}
 
-    public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
-        if (log.isInfoEnabled()) {
-            log.info("Execution native command for '{}'", cmd);
-        }
+		StringBuffer slog = new StringBuffer();
+		StringBuffer serr = new StringBuffer();
 
-        StringBuffer slog = new StringBuffer();
-        StringBuffer serr = new StringBuffer();
+		Process ps = Runtime.getRuntime().exec(cmd);
+		BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+		BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
+		String inlog;
+		while ((inlog = blog.readLine()) != null) {
+			if (callback != null) {
+				if (!callback.apply(inlog)) {
+					throw new InterruptedException("Commands force interrupted!");
+				}
+			}
+			slog.append(inlog).append("\n");
+			log.info(inlog);
+			ShellContextHolder.printfQuietly(inlog);
+		}
+		while ((inlog = berr.readLine()) != null) {
+			serr.append(inlog).append("\n");
+			log.info(inlog);
+			ShellContextHolder.printfQuietly(inlog);
+		}
+		int exitValue = ps.exitValue();
+		if (exitValue != 0) {
+			taskResult.setSuccess(false);
+		}
+		String log = slog.toString();
+		String err = serr.toString();
+		if (isNotBlank(err)) {
+			log += err;
+			throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + log.toString());
+		}
 
-        Process ps = Runtime.getRuntime().exec(cmd);
-        BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-        BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
-        String inlog;
-        while ((inlog = blog.readLine()) != null) {
-            if (callback != null) {
-                if (!callback.apply(inlog)) {
-                    throw new InterruptedException("Commands force interrupted!");
-                }
-            }
-            slog.append(inlog).append("\n");
-            log.info(inlog);
-            ShellContextHolder.printfQuietly(inlog);
-        }
-        while ((inlog = berr.readLine()) != null) {
-            serr.append(inlog).append("\n");
-            log.info(inlog);
-            ShellContextHolder.printfQuietly(inlog);
-        }
-        int exitValue = ps.exitValue();
-        if(exitValue != 0){
-            taskResult.setSuccess(false);
-        }
-        String log = slog.toString();
-        String err = serr.toString();
-        if (isNotBlank(err)) {
-            log += err;
-            throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + log.toString());
-        }
-
-        return log;
-    }
-
+		return log;
+	}
 
 }

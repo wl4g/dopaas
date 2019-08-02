@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
+import com.wl4g.devops.ci.git.GitlabV4Template;
 
 /**
  * CICD auto configuration.
@@ -46,6 +47,11 @@ public class CiCdAutoConfiguration {
 	@Bean
 	public CiCdConsole ciCdConsole() {
 		return new CiCdConsole();
+	}
+
+	@Bean
+	public GitlabV4Template gitlabTemplate() {
+		return new GitlabV4Template();
 	}
 
 }

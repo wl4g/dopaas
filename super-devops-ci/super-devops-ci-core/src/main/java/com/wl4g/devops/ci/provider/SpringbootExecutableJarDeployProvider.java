@@ -31,15 +31,15 @@ import java.util.List;
  */
 public class SpringbootExecutableJarDeployProvider extends BasedDeployProvider {
 
-    public SpringbootExecutableJarDeployProvider(Project project,
-                                                 String path, String url, String branch, String alias, String tarPath, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
-                                                 List<TaskHistoryDetail> taskHistoryDetails) {
-        super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
-    }
+	public SpringbootExecutableJarDeployProvider(Project project, String path, String url, String branch, String alias,
+			String tarPath, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
+	}
 
-    @Override
-    public void execute() throws Exception {
+	@Override
+	public void execute() throws Exception {
 
-    }
+	}
 
 }

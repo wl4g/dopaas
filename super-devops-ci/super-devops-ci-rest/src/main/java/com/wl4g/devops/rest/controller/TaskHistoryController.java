@@ -22,9 +22,8 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,72 +39,73 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/taskHis")
-public class TaskHistoryController {
+public class TaskHistoryController extends BaseController {
 
-    final protected Logger log = LoggerFactory.getLogger(getClass());
+	@Autowired
+	private CiService ciService;
 
-    @Autowired
-    private CiService ciService;
+	@Autowired
+	private TaskHistoryService taskHistoryService;
 
-    @Autowired
-    private TaskHistoryService taskHistoryService;
+	/**
+	 * List
+	 * 
+	 * @param groupName
+	 * @param projectName
+	 * @param branchName
+	 * @param customPage
+	 * @return
+	 */
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(String groupName, String projectName, String branchName, CustomPage customPage) {
+		log.info(
+				"into TaskHistoryController.list prarms::"
+						+ "groupName = {} , projectName = {} , branchName = {} , customPage = {} ",
+				groupName, projectName, branchName, customPage);
+		RespBase<Object> resp = RespBase.create();
+		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Page<TaskHistory> page = PageHelper.startPage(pageNum, pageSize, true);
+		List<TaskHistory> list = taskHistoryService.list(groupName, projectName, branchName);
+		customPage.setPageNum(pageNum);
+		customPage.setPageSize(pageSize);
+		customPage.setTotal(page.getTotal());
+		resp.getData().put("page", customPage);
+		resp.getData().put("list", list);
+		return resp;
+	}
 
+	/**
+	 * Detail by id
+	 * 
+	 * @param taskId
+	 * @return
+	 */
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer taskId) {
+		log.info("into TaskHistoryController.detail prarms::" + "taskId = {} ", taskId);
+		RespBase<Object> resp = RespBase.create();
+		TaskHistory taskHistory = taskHistoryService.getById(taskId);
+		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
+		resp.getData().put("group", taskHistory.getGroupName());
+		resp.getData().put("branch", taskHistory.getBranchName());
+		resp.getData().put("result", taskHistory.getResult());
+		resp.getData().put("taskDetails", taskHistoryDetails);
+		return resp;
+	}
 
-    /**
-     * List
-     * @param groupName
-     * @param projectName
-     * @param branchName
-     * @param customPage
-     * @return
-     */
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(String groupName, String projectName, String branchName, CustomPage customPage) {
-        log.info("into TaskHistoryController.list prarms::"+ "groupName = {} , projectName = {} , branchName = {} , customPage = {} ",
-                groupName, projectName, branchName, customPage );
-        RespBase<Object> resp = RespBase.create();
-        Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-        Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page<TaskHistory> page = PageHelper.startPage(pageNum, pageSize, true);
-        List<TaskHistory> list = taskHistoryService.list(groupName, projectName, branchName);
-        customPage.setPageNum(pageNum);
-        customPage.setPageSize(pageSize);
-        customPage.setTotal(page.getTotal());
-        resp.getData().put("page", customPage);
-        resp.getData().put("list", list);
-        return resp;
-    }
-
-    /**
-     * Detail by id
-     * @param taskId
-     * @return
-     */
-    @RequestMapping(value = "/detail")
-    public RespBase<?> detail(Integer taskId) {
-        log.info("into TaskHistoryController.detail prarms::"+ "taskId = {} ", taskId );
-        RespBase<Object> resp = RespBase.create();
-        TaskHistory taskHistory = taskHistoryService.getById(taskId);
-        List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
-        resp.getData().put("group", taskHistory.getGroupName());
-        resp.getData().put("branch", taskHistory.getBranchName());
-        resp.getData().put("result", taskHistory.getResult());
-        resp.getData().put("taskDetails", taskHistoryDetails);
-        return resp;
-    }
-
-    /**
-     * Rollback
-     * @param taskId
-     * @return
-     */
-    @RequestMapping(value = "/rollback")
-    public RespBase<?> rollback(Integer taskId) {
-        log.info("into TaskHistoryController.rollback prarms::"+ "taskId = {} ", taskId );
-        RespBase<Object> resp = RespBase.create();
-        ciService.createRollbackTask(taskId);
-        return resp;
-    }
-
+	/**
+	 * Rollback
+	 * 
+	 * @param taskId
+	 * @return
+	 */
+	@RequestMapping(value = "/rollback")
+	public RespBase<?> rollback(Integer taskId) {
+		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
+		RespBase<Object> resp = RespBase.create();
+		ciService.createRollbackTask(taskId);
+		return resp;
+	}
 
 }

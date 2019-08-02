@@ -42,287 +42,310 @@ import java.util.List;
 
 /**
  * CI/CD
+ * 
  * @author vjay
  * @date 2019-05-16 14:50:00
  */
 @Service
 public class CiServiceImpl implements CiService {
 
-    final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private CiCdProperties config;
+	@Autowired
+	private CiCdProperties config;
 
-    @Autowired
-    private AppClusterDao appClusterDao;
+	@Autowired
+	private AppClusterDao appClusterDao;
 
-    @Autowired
-    private TriggerDao triggerDao;
+	@Autowired
+	private TriggerDao triggerDao;
 
-    @Autowired
-    private ProjectDao projectDao;
+	@Autowired
+	private ProjectDao projectDao;
 
-    @Autowired
-    private TaskHistoryService taskHistoryService;
+	@Autowired
+	private TaskHistoryService taskHistoryService;
 
-    @Autowired
-    private TaskDao taskDao;
+	@Autowired
+	private TaskDao taskDao;
 
-    @Autowired
-    private TaskDetailDao taskDetailDao;
+	@Autowired
+	private TaskDetailDao taskDetailDao;
 
-    @Override
-    public List<AppCluster> grouplist() {
-        return appClusterDao.grouplist();
-    }
+	@Override
+	public List<AppCluster> grouplist() {
+		return appClusterDao.grouplist();
+	}
 
-    @Override
-    public List<Environment> environmentlist(String clusterId) {
-        return appClusterDao.environmentlist(clusterId);
-    }
+	@Override
+	public List<Environment> environmentlist(String clusterId) {
+		return appClusterDao.environmentlist(clusterId);
+	}
 
-    @Override
-    public List<AppInstance> instancelist(AppInstance appInstance) {
-        return appClusterDao.instancelist(appInstance);
-    }
+	@Override
+	public List<AppInstance> instancelist(AppInstance appInstance) {
+		return appClusterDao.instancelist(appInstance);
+	}
 
-    @Override
-    public Trigger getTriggerByAppClusterIdAndBranch(Integer appClusterId, String branchName) {
-        Trigger trigger = triggerDao.getTriggerByAppClusterIdAndBranch(appClusterId,branchName);
-        if (null == trigger) {
-            return null;
-        }
-        return trigger;
-    }
+	@Override
+	public Trigger getTriggerByAppClusterIdAndBranch(Integer appClusterId, String branchName) {
+		Trigger trigger = triggerDao.getTriggerByAppClusterIdAndBranch(appClusterId, branchName);
+		if (null == trigger) {
+			return null;
+		}
+		return trigger;
+	}
 
+	/**
+	 * Create Task History
+	 * 
+	 * @param taskId
+	 */
+	@Override
+	public void createTask(Integer taskId) {
+		log.debug("into CiServiceImpl.createTask prarms::" + "taskId = {} ", taskId);
+		Assert.notNull(taskId, "taskId is null");
+		Task task = taskDao.selectByPrimaryKey(taskId);
+		Assert.notNull(task, "task is null");
+		List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
+		List<String> instanceStrs = new ArrayList<>();
+		for (TaskDetail taskDetail : taskDetails) {
+			instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
+		}
+		Assert.notNull(task.getAppClusterId(), "clusterId is null");
+		AppCluster appCluster = appClusterDao.getAppGroup(task.getAppClusterId());
 
-    /**
-     * Create Task History
-     * @param taskId
-     */
-    @Override
-    public void createTask(Integer taskId) {
-        log.debug("into CiServiceImpl.createTask prarms::"+ "taskId = {} ", taskId );
-        Assert.notNull(taskId,"taskId is null");
-        Task task = taskDao.selectByPrimaryKey(taskId);
-        Assert.notNull(task,"task is null");
-        List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
-        List<String> instanceStrs = new ArrayList<>();
-        for (TaskDetail taskDetail : taskDetails) {
-            instanceStrs.add(String.valueOf(taskDetail.getInstanceId()));
-        }
-        Assert.notNull(task.getAppClusterId(), "clusterId is null");
-        AppCluster appCluster = appClusterDao.getAppGroup(task.getAppClusterId());
+		Assert.notNull(appCluster, "not found this app");
+		Project project = projectDao.getByAppClusterId(appCluster.getId());
 
-        Assert.notNull(appCluster, "not found this app");
-        Project project = projectDao.getByAppClusterId(appCluster.getId());
+		Assert.notEmpty(instanceStrs, "instanceIds find empty list,Please check the instanceId");
+		List<AppInstance> instances = new ArrayList<>();
+		for (String instanceId : instanceStrs) {
+			AppInstance instance = appClusterDao.getAppInstance(instanceId);
+			instances.add(instance);
+		}
+		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
+				CiDevOpsConstants.TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getPreCommand(),
+				task.getPostCommand(), task.getTarType());
+		BasedDeployProvider provider = buildDeployProvider(taskHistory);
+		// execute
+		execute(taskHistory.getId(), provider);
+	}
 
-        Assert.notEmpty(instanceStrs, "instanceIds find empty list,Please check the instanceId");
-        List<AppInstance> instances = new ArrayList<>();
-        for (String instanceId : instanceStrs) {
-            AppInstance instance = appClusterDao.getAppInstance(instanceId);
-            instances.add(instance);
-        }
-        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
-                CiDevOpsConstants.TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getPreCommand(),task.getPostCommand(), task.getTarType());
-        BasedDeployProvider provider = buildDeployProvider(taskHistory);
-        //execute
-        execute(taskHistory.getId(), provider);
-    }
+	/**
+	 * Hook -- for gitlab hook
+	 * 
+	 * @param projectName
+	 * @param branchName
+	 * @param url
+	 */
+	public void hook(String projectName, String branchName, String url) {
+		log.info("into CiServiceImpl.hook prarms::" + "projectName = {} , branchName = {} , url = {} ", projectName, branchName,
+				url);
+		Project project = projectDao.getByProjectName(projectName);
+		if (null == project) {
+			return;
+		}
+		Trigger trigger = getTriggerByAppClusterIdAndBranch(project.getAppClusterId(), branchName);
+		if (null == trigger) {
+			return;
+		}
+		Assert.notNull(trigger, "trigger not found, please config first");
 
+		List<AppInstance> instances = new ArrayList<>();
+		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
+		Assert.notNull(task, "task not found");
+		List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(task.getId());
 
-    /**
-     * Hook -- for gitlab hook
-     * @param projectName
-     * @param branchName
-     * @param url
-     */
-    public void hook(String projectName, String branchName, String url) {
-        log.info("into CiServiceImpl.hook prarms::"+ "projectName = {} , branchName = {} , url = {} ", projectName, branchName, url );
-        Project project = projectDao.getByProjectName(projectName);
-        if (null == project) {
-            return;
-        }
-        Trigger trigger = getTriggerByAppClusterIdAndBranch(project.getAppClusterId(), branchName);
-        if (null == trigger) {
-            return;
-        }
-        Assert.notNull(trigger,"trigger not found, please config first");
+		for (TaskDetail taskDetail : taskDetails) {
+			AppInstance instance = appClusterDao.getAppInstance(taskDetail.getInstanceId().toString());
+			instances.add(instance);
+		}
+		Assert.notEmpty(instances, "instances not found, please config first");
 
-        List<AppInstance> instances = new ArrayList<>();
-        Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
-        Assert.notNull(task,"task not found");
-        List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(task.getId());
+		// get sha
+		String sha = null;
 
-        for (TaskDetail taskDetail : taskDetails) {
-            AppInstance instance = appClusterDao.getAppInstance(taskDetail.getInstanceId().toString());
-            instances.add(instance);
-        }
-        Assert.notEmpty(instances, "instances not found, please config first");
+		// Print to client
+		// ShellContextHolder.printfQuietly("taskHistory begin");
+		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
+				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, task.getPreCommand(), task.getPostCommand(),
+				task.getTarType());
+		BasedDeployProvider provider = buildDeployProvider(taskHistory);
+		// execute
+		execute(taskHistory.getId(), provider);
+	}
 
-        // get sha
-        String sha = null;
+	/**
+	 * Execute task
+	 * 
+	 * @param taskId
+	 * @param provider
+	 */
+	private void execute(Integer taskId, BasedDeployProvider provider) {
+		log.info("task start taskId={}", taskId);
+		// update task--running
+		taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 
-        // Print to client
-        //ShellContextHolder.printfQuietly("taskHistory begin");
-        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
-                CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, task.getPreCommand(),task.getPostCommand(), task.getTarType());
-        BasedDeployProvider provider = buildDeployProvider(taskHistory);
-        //execute
-        execute(taskHistory.getId(), provider);
-    }
+		// optimize : use multithreading
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					// exec
+					provider.execute();
+					if (provider.getTaskResult().isSuccess()) {
+						// update task--success
+						log.info("task succcess taskId={}", taskId);
+						taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS,
+								provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(),
+								provider.getShaLocal());
+						// taskService.updateStatusAndResult(taskId,
+						// CiDevOpsConstants.TASK_STATUS_SUCCESS,
+						// provider.getResult().toString());
+					} else {
+						// update task--fail
+						log.info("task fail taskId={}", taskId);
+						taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
+								provider.getTaskResult().getStringBuffer().toString());
+					}
+				} catch (Exception e) {
+					// update task--fail
+					log.info("task fail taskId={}", taskId);
+					taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
+							provider.getTaskResult().getStringBuffer().toString() + e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
 
-    /**
-     * Execute task
-     * @param taskId
-     * @param provider
-     */
-    private void execute(Integer taskId, BasedDeployProvider provider) {
-        log.info("task start taskId={}",taskId);
-        // update task--running
-        taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
+	/**
+	 * Get Deploy Provider by type
+	 * 
+	 * @param project
+	 * @param tarType
+	 * @param path
+	 * @param branch
+	 * @param alias
+	 * @param instances
+	 * @param taskHistory
+	 * @param refTaskHistory
+	 * @param taskHistoryDetails
+	 * @return
+	 */
+	private BasedDeployProvider getDeployProvider(Project project, int tarType, String path, String branch, String alias,
+			List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		switch (tarType) {
+		case CiDevOpsConstants.TAR_TYPE_TAR:
+			return new MvnAssembleTarDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory,
+					taskHistoryDetails);
+		case CiDevOpsConstants.TAR_TYPE_JAR:
+			// return new JarSubject(path, url, branch,
+			// alias,tarPath,instances,taskHistoryDetails);
+		case CiDevOpsConstants.TAR_TYPE_DOCKER:
+			return new DockerBuildDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory,
+					taskHistoryDetails);
+		default:
+			throw new RuntimeException("unsuppost type:" + tarType);
+		}
+	}
 
-        //optimize : use multithreading
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    // exec
-                    provider.execute();
-                    if (provider.getTaskResult().isSuccess()) {
-                        // update task--success
-                        log.info("task succcess taskId={}",taskId);
-                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(), provider.getShaLocal());
-                        //taskService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
-                    } else {
-                        // update task--fail
-                        log.info("task fail taskId={}",taskId);
-                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getTaskResult().getStringBuffer().toString());
-                    }
-                } catch (Exception e) {
-                    // update task--fail
-                    log.info("task fail taskId={}",taskId);
-                    taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getTaskResult().getStringBuffer().toString()+e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+	/**
+	 * build Deploy Provider
+	 * 
+	 * @param taskHistory
+	 * @return
+	 */
+	public BasedDeployProvider buildDeployProvider(TaskHistory taskHistory) {
+		log.info("into CiServiceImpl.buildDeployProvider prarms::" + "taskHistory = {} ", taskHistory);
+		Assert.notNull(taskHistory, "taskHistory can not be null");
+		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
+		Assert.notNull(project, "project can not be null");
+		AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
+		Assert.notNull(appCluster, "appCluster can not be null");
+		project.setGroupName(appCluster.getName());
 
-    /**
-     * Get Deploy Provider by type
-     * @param project
-     * @param tarType
-     * @param path
-     * @param branch
-     * @param alias
-     * @param instances
-     * @param taskHistory
-     * @param refTaskHistory
-     * @param taskHistoryDetails
-     * @return
-     */
-    private BasedDeployProvider getDeployProvider(Project project, int tarType, String path, String branch, String alias,
-                                                    List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
-        switch (tarType) {
-            case CiDevOpsConstants.TAR_TYPE_TAR:
-                return new MvnAssembleTarDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
-            case CiDevOpsConstants.TAR_TYPE_JAR:
-                // return new JarSubject(path, url, branch,
-                // alias,tarPath,instances,taskHistoryDetails);
-            case CiDevOpsConstants.TAR_TYPE_DOCKER:
-                return new DockerBuildDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
-            default:
-                throw new RuntimeException("unsuppost type:" + tarType);
-        }
-    }
+		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskHistory.getId());
+		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
 
-    /**
-     * build Deploy Provider
-     * @param taskHistory
-     * @return
-     */
-    public BasedDeployProvider buildDeployProvider(TaskHistory taskHistory) {
-        log.info("into CiServiceImpl.buildDeployProvider prarms::"+ "taskHistory = {} ", taskHistory );
-        Assert.notNull(taskHistory, "taskHistory can not be null");
-        Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
-        Assert.notNull(project, "project can not be null");
-        AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
-        Assert.notNull(appCluster, "appCluster can not be null");
-        project.setGroupName(appCluster.getName());
+		TaskHistory refTaskHistory = null;
+		if (taskHistory.getRefId() != null) {
+			refTaskHistory = taskHistoryService.getById(taskHistory.getRefId());
+		}
 
-        List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskHistory.getId());
-        Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
+		List<AppInstance> instances = new ArrayList<>();
+		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
+			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
+			instances.add(instance);
+		}
+		return getDeployProvider(project, taskHistory.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
+				taskHistory.getBranchName(), appCluster.getName(), instances, taskHistory, refTaskHistory, taskHistoryDetails);
+	}
 
-        TaskHistory refTaskHistory = null;
-        if (taskHistory.getRefId() != null) {
-            refTaskHistory = taskHistoryService.getById(taskHistory.getRefId());
-        }
+	/**
+	 * Create Rollback Task by taskId
+	 * 
+	 * @param taskId
+	 */
+	public void createRollbackTask(Integer taskId) {
+		log.info("into CiServiceImpl.rollback prarms::" + "taskId = {} ", taskId);
+		Assert.notNull(taskId, "taskId is null");
+		TaskHistory taskHistoryOld = taskHistoryService.getById(taskId);
+		Assert.notNull(taskHistoryOld, "not found this app");
+		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
+		Assert.notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
+		Project project = projectDao.selectByPrimaryKey(taskHistoryOld.getProjectId());
+		Assert.notNull(project, "not found this project");
+		List<AppInstance> instances = new ArrayList<>();
+		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
+			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
+			instances.add(instance);
+		}
+		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
+				CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId,
+				taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR);
+		BasedDeployProvider provider = buildDeployProvider(taskHistory);
+		// execute
+		rollback(taskHistory.getId(), provider);
 
-        List<AppInstance> instances = new ArrayList<>();
-        for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-            AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
-            instances.add(instance);
-        }
-        return getDeployProvider(project, taskHistory.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
-                taskHistory.getBranchName(), appCluster.getName(), instances, taskHistory, refTaskHistory, taskHistoryDetails);
-    }
+	}
 
-
-    /**
-     * Create Rollback Task by taskId
-     * @param taskId
-     */
-    public void createRollbackTask(Integer taskId) {
-        log.info("into CiServiceImpl.rollback prarms::"+ "taskId = {} ", taskId );
-        Assert.notNull(taskId, "taskId is null");
-        TaskHistory taskHistoryOld = taskHistoryService.getById(taskId);
-        Assert.notNull(taskHistoryOld, "not found this app");
-        List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
-        Assert.notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
-        Project project = projectDao.selectByPrimaryKey(taskHistoryOld.getProjectId());
-        Assert.notNull(project, "not found this project");
-        List<AppInstance> instances = new ArrayList<>();
-        for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-            AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
-            instances.add(instance);
-        }
-        TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
-                CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId, taskHistoryOld.getPreCommand(),taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR);
-        BasedDeployProvider provider = buildDeployProvider(taskHistory);
-        //execute
-        rollback(taskHistory.getId(), provider);
-
-    }
-
-    /**
-     * Run rollback task
-     * @param taskId
-     * @param provider
-     */
-    private void rollback(Integer taskId, BasedDeployProvider provider) {
-        // update task--running
-        taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
-        //optimize : use multithreading
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    // exec
-                    provider.rollback();
-                    if (provider.getTaskResult().isSuccess()) {
-                        // update task--success
-                        taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(), provider.getShaLocal());
-                        //taskService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS, provider.getResult().toString());
-                    } else {
-                        // update task--success
-                        taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, provider.getTaskResult().getStringBuffer().toString());
-                    }
-                } catch (Exception e) {
-                    // update task--fail
-                    taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+	/**
+	 * Run rollback task
+	 * 
+	 * @param taskId
+	 * @param provider
+	 */
+	private void rollback(Integer taskId, BasedDeployProvider provider) {
+		// update task--running
+		taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
+		// optimize : use multithreading
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					// exec
+					provider.rollback();
+					if (provider.getTaskResult().isSuccess()) {
+						// update task--success
+						taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS,
+								provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(),
+								provider.getShaLocal());
+						// taskService.updateStatusAndResult(taskId,
+						// CiDevOpsConstants.TASK_STATUS_SUCCESS,
+						// provider.getResult().toString());
+					} else {
+						// update task--success
+						taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
+								provider.getTaskResult().getStringBuffer().toString());
+					}
+				} catch (Exception e) {
+					// update task--fail
+					taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL, e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
 
 }

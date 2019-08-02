@@ -13,27 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.console.args;
+package com.wl4g.devops.ci.git;
 
-import com.wl4g.devops.shell.annotation.ShellOption;
-
-import java.io.Serializable;
+import java.util.List;
 
 /**
- * @author vjay
- * @date 2019-05-21 16:18:00
+ * GIT API template
+ * 
+ * @author Wangl.sir
+ * @version v1.0 2019年8月2日
+ * @since
  */
-public class ModifyTimingTaskExpressionArgument implements Serializable {
-	private static final long serialVersionUID = -90377698662015272L;
+public interface GitTemplate {
 
-	@ShellOption(opt = "e", lopt = "expression", help = "modify the expression of the timing task", required = true)
-	private String expression;
+	/**
+	 * Get GITLAB remote branch names.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	List<String> getRemoteBranchNames(int projectId);
 
-	public String getExpression() {
-		return expression;
-	}
+	/**
+	 * Get GITLAB remote tag names.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	List<String> getRemoteTags(int projectId);
 
-	public void setExpression(String expression) {
-		this.expression = expression;
-	}
+	/**
+	 * Find remote project ID by project name.
+	 * 
+	 * @param projectName
+	 * @return
+	 */
+	List<Integer> findRemoteProjectId(String projectName);
+
 }

@@ -25,8 +25,10 @@ import com.wl4g.devops.common.bean.ci.dto.TaskResult;
  */
 public interface DependencyService {
 
-    void build(TaskHistory taskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency) throws Exception;
+	void build(TaskHistory taskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency)
+			throws Exception;
 
-    void rollback(TaskHistory taskHistory, TaskHistory refTaskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency) throws Exception;
+	void rollback(TaskHistory taskHistory, TaskHistory refTaskHistory, Dependency dependency, String branch,
+			TaskResult taskResult, boolean isDependency) throws Exception;
 
 }

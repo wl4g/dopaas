@@ -21,6 +21,7 @@
 		<user-agent.version>1.2.4</user-agent.version>
 		<hibernate-validator.version>6.0.16.Final</hibernate-validator.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
+		<quartz.version>2.2.2</quartz.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -209,6 +210,12 @@
 			<version>${java.version}</version>
 			<scope>system</scope>
 			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${quartz.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>
