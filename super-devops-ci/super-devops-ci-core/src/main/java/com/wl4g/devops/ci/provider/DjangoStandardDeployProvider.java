@@ -31,15 +31,14 @@ import java.util.List;
  */
 public class DjangoStandardDeployProvider extends BasedDeployProvider {
 
-    public DjangoStandardDeployProvider(Project project,
-                                        String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
-                                        List<TaskHistoryDetail> taskHistoryDetails) {
-        super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
-    }
+	public DjangoStandardDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
+			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
+		super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
+	}
 
-    @Override
-    public void execute() throws Exception {
+	@Override
+	public void execute() throws Exception {
 
-    }
+	}
 
 }

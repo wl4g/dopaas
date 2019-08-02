@@ -36,78 +36,79 @@ import java.util.List;
  */
 public class DockerBuildDeployProvider extends BasedDeployProvider {
 
-    public DockerBuildDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
-                                     List<TaskHistoryDetail> taskHistoryDetails) {
-        super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
-    }
+	public DockerBuildDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
+			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
+		super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
+	}
 
-    /**
-     * execute -- build , push , pull , run
-     * @throws Exception
-     */
-    @Override
-    public void execute() throws Exception {
-        Dependency dependency = new Dependency();
-        dependency.setProjectId(getProject().getId());
-        getDependencyService().build(getTaskHistory(), dependency, getBranch(), taskResult, false);
+	/**
+	 * execute -- build , push , pull , run
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public void execute() throws Exception {
+		Dependency dependency = new Dependency();
+		dependency.setProjectId(getProject().getId());
+		getDependencyService().build(getTaskHistory(), dependency, getBranch(), taskResult, false);
 
-        //get sha and md5
-        setShaGit(GitUtils.getOldestCommitSha(getPath()));
+		// get sha and md5
+		setShaGit(GitUtils.getOldestCommitSha(getPath()));
 
-        //docker build
-        dockerBuild(getPath());
+		// docker build
+		dockerBuild(getPath());
 
-        // Each install pull and restart
-        for (AppInstance instance : getInstances()) {
-            Runnable task = new DockerBuildDeployTask(this, getProject(),  instance, getTaskHistoryDetails());
-            Thread t = new Thread(task);
-            t.start();
-            t.join();
-        }
+		// Each install pull and restart
+		for (AppInstance instance : getInstances()) {
+			Runnable task = new DockerBuildDeployTask(this, getProject(), instance, getTaskHistoryDetails());
+			Thread t = new Thread(task);
+			t.start();
+			t.join();
+		}
 
-        if (log.isInfoEnabled()) {
-            log.info("Maven assemble deploy done!");
-        }
-    }
+		if (log.isInfoEnabled()) {
+			log.info("Maven assemble deploy done!");
+		}
+	}
 
-    /**
-     * Rollback
-     * @throws Exception
-     */
-    @Override
-    public void rollback() throws Exception {
-        Dependency dependency = new Dependency();
-        dependency.setProjectId(getProject().getId());
+	/**
+	 * Rollback
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public void rollback() throws Exception {
+		Dependency dependency = new Dependency();
+		dependency.setProjectId(getProject().getId());
 
-        //check bakup file isExist
-        String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#" + getTaskHistory().getRefId();
+		// check bakup file isExist
+		String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#"
+				+ getTaskHistory().getRefId();
 
-        File oldFile = new File(oldFilePath);
-        if (oldFile.exists()) {
-            getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
-            setShaGit(getRefTaskHistory().getShaGit());
-        } else {
-            getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-            setShaGit(GitUtils.getOldestCommitSha(getPath()));
-        }
+		File oldFile = new File(oldFilePath);
+		if (oldFile.exists()) {
+			getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
+			setShaGit(getRefTaskHistory().getShaGit());
+		} else {
+			getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), taskResult, false);
+			setShaGit(GitUtils.getOldestCommitSha(getPath()));
+		}
 
+		setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
+		// backup in local
+		backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
 
-        setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
-        // backup in local
-        backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
+		// scp to server
+		for (AppInstance instance : getInstances()) {
+			Runnable task = new DockerBuildDeployTask(this, getProject(), instance, getTaskHistoryDetails());
+			Thread t = new Thread(task);
+			t.start();
+			t.join();
+		}
 
-        // scp to server
-        for (AppInstance instance : getInstances()) {
-            Runnable task = new DockerBuildDeployTask(this, getProject(),instance, getTaskHistoryDetails());
-            Thread t = new Thread(task);
-            t.start();
-            t.join();
-        }
-
-        if (log.isInfoEnabled()) {
-            log.info("Maven assemble deploy done!");
-        }
-    }
-
+		if (log.isInfoEnabled()) {
+			log.info("Maven assemble deploy done!");
+		}
+	}
 
 }

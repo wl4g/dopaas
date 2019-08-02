@@ -40,108 +40,107 @@ import java.util.List;
 @Service
 public class TaskHistoryServiceImpl implements TaskHistoryService {
 
-    @Autowired
-    private TaskHistoryDao taskHistoryDao;
-    @Autowired
-    private TaskHistoryDetailDao taskHistoryDetailDao;
-    @Autowired
-    private ProjectDao projectDao;
-    @Autowired
-    private AppClusterDao appClusterDao;
+	@Autowired
+	private TaskHistoryDao taskHistoryDao;
+	@Autowired
+	private TaskHistoryDetailDao taskHistoryDetailDao;
+	@Autowired
+	private ProjectDao projectDao;
+	@Autowired
+	private AppClusterDao appClusterDao;
 
-    @Override
-    public List<TaskHistory> list(String groupName, String projectName, String branchName) {
-        return taskHistoryDao.list(groupName, projectName, branchName);
-    }
+	@Override
+	public List<TaskHistory> list(String groupName, String projectName, String branchName) {
+		return taskHistoryDao.list(groupName, projectName, branchName);
+	}
 
-    @Override
-    public List<TaskHistoryDetail> getDetailByTaskId(Integer id) {
-        return taskHistoryDetailDao.getDetailByTaskId(id);
-    }
+	@Override
+	public List<TaskHistoryDetail> getDetailByTaskId(Integer id) {
+		return taskHistoryDetailDao.getDetailByTaskId(id);
+	}
 
-    @Override
-    public TaskHistory getById(Integer id) {
-        TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(id);
-        Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
-        if (null != project && null != project.getAppClusterId()) {
-            AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
-            if (null != appCluster) {
-                taskHistory.setGroupName(appCluster.getName());
-            }
-        }
-        return taskHistory;
+	@Override
+	public TaskHistory getById(Integer id) {
+		TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(id);
+		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
+		if (null != project && null != project.getAppClusterId()) {
+			AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
+			if (null != appCluster) {
+				taskHistory.setGroupName(appCluster.getName());
+			}
+		}
+		return taskHistory;
 
-    }
+	}
 
-    @Override
-    @Transactional
-    public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-                                         Integer refId, String preCommand,String postCommand, Integer tarType) {
-        Assert.notNull(project, "not found project,please check che project config");
-        TaskHistory taskHistory = new TaskHistory();
-        taskHistory.preInsert();
-        taskHistory.setType(type);
-        taskHistory.setProjectId(project.getId());
-        taskHistory.setStatus(status);
-        taskHistory.setBranchName(branchName);
-        taskHistory.setShaGit(sha);
-        taskHistory.setRefId(refId);
-        taskHistory.setPreCommand(preCommand);
-        taskHistory.setPostCommand(postCommand);
-        taskHistory.setTarType(tarType);
-        taskHistory.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
-        taskHistoryDao.insertSelective(taskHistory);
-        for (AppInstance instance : instances) {
-            TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
-            taskHistoryDetail.preInsert();
-            taskHistoryDetail.setTaskId(taskHistory.getId());
-            taskHistoryDetail.setInstanceId(instance.getId());
-            taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
-            taskHistoryDetailDao.insertSelective(taskHistoryDetail);
-        }
-        return taskHistory;
-    }
+	@Override
+	@Transactional
+	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
+			String sha, Integer refId, String preCommand, String postCommand, Integer tarType) {
+		Assert.notNull(project, "not found project,please check che project config");
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preInsert();
+		taskHistory.setType(type);
+		taskHistory.setProjectId(project.getId());
+		taskHistory.setStatus(status);
+		taskHistory.setBranchName(branchName);
+		taskHistory.setShaGit(sha);
+		taskHistory.setRefId(refId);
+		taskHistory.setPreCommand(preCommand);
+		taskHistory.setPostCommand(postCommand);
+		taskHistory.setTarType(tarType);
+		taskHistory.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
+		taskHistoryDao.insertSelective(taskHistory);
+		for (AppInstance instance : instances) {
+			TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
+			taskHistoryDetail.preInsert();
+			taskHistoryDetail.setTaskId(taskHistory.getId());
+			taskHistoryDetail.setInstanceId(instance.getId());
+			taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
+			taskHistoryDetailDao.insertSelective(taskHistoryDetail);
+		}
+		return taskHistory;
+	}
 
-    @Override
-    public void updateStatus(int taskId, int status) {
-        TaskHistory taskHistory = new TaskHistory();
-        taskHistory.preUpdate();
-        taskHistory.setId(taskId);
-        taskHistory.setStatus(status);
-        taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
-    }
+	@Override
+	public void updateStatus(int taskId, int status) {
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preUpdate();
+		taskHistory.setId(taskId);
+		taskHistory.setStatus(status);
+		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+	}
 
-    @Override
-    public void updateStatusAndResult(int taskId, int status, String result) {
-        TaskHistory taskHistory = new TaskHistory();
-        taskHistory.preUpdate();
-        taskHistory.setId(taskId);
-        taskHistory.setStatus(status);
-        taskHistory.setResult(result);
-        taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
-    }
+	@Override
+	public void updateStatusAndResult(int taskId, int status, String result) {
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preUpdate();
+		taskHistory.setId(taskId);
+		taskHistory.setStatus(status);
+		taskHistory.setResult(result);
+		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+	}
 
-    @Override
-    public void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5) {
-        TaskHistory taskHistory = new TaskHistory();
-        taskHistory.preUpdate();
-        taskHistory.setId(taskId);
-        taskHistory.setStatus(status);
-        taskHistory.setResult(result);
-        taskHistory.setShaGit(sha);
-        taskHistory.setShaLocal(md5);
-        taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
-    }
+	@Override
+	public void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5) {
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preUpdate();
+		taskHistory.setId(taskId);
+		taskHistory.setStatus(status);
+		taskHistory.setResult(result);
+		taskHistory.setShaGit(sha);
+		taskHistory.setShaLocal(md5);
+		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+	}
 
-    @Override
-    public void updateDetailStatusAndResult(int taskDetailId, int status, String result) {
-        TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
-        taskHistoryDetail.preUpdate();
-        taskHistoryDetail.setId(taskDetailId);
-        taskHistoryDetail.setStatus(status);
-        taskHistoryDetail.setResult(result);
-        taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryDetail);
-    }
-
+	@Override
+	public void updateDetailStatusAndResult(int taskDetailId, int status, String result) {
+		TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
+		taskHistoryDetail.preUpdate();
+		taskHistoryDetail.setId(taskDetailId);
+		taskHistoryDetail.setStatus(status);
+		taskHistoryDetail.setResult(result);
+		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryDetail);
+	}
 
 }
