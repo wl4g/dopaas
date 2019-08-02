@@ -46,7 +46,6 @@ public class TriggerServiceImpl implements TriggerService {
     public Trigger update(Trigger trigger) {
         trigger.preUpdate();
         triggerDao.updateByPrimaryKeySelective(trigger);
-        int triggerId = trigger.getId();
         return trigger;
     }
 
