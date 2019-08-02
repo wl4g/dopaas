@@ -17,18 +17,14 @@ package com.wl4g.devops.rest.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.cron.CronUtils;
 import com.wl4g.devops.ci.cron.DynamicTask;
-import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
-import com.wl4g.devops.dao.scm.AppClusterDao;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,19 +58,8 @@ public class TriggerController {
     private TriggerService triggerService;
 
     @Autowired
-    private AppClusterDao appClusterDao;
-
-    @Autowired
     private DynamicTask dynamicTask;
 
-    @Autowired
-    private CiCdProperties config;
-
-    @Autowired
-    private CiService ciService;
-
-    @Autowired
-    private ProjectDao projectDao;
 
 
     /**

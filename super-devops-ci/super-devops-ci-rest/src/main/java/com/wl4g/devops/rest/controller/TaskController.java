@@ -26,7 +26,6 @@ import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.TaskDao;
-import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -61,9 +60,6 @@ public class TaskController {
 
     @Autowired
     private AppClusterDao appClusterDao;
-
-    @Autowired
-    private TaskDetailDao taskDetailDao;
 
 
     /**

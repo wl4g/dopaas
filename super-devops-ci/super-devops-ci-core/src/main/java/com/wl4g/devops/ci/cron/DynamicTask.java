@@ -41,7 +41,7 @@ public class DynamicTask implements ApplicationRunner {
     @Autowired
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
-    public static ConcurrentHashMap<String, ScheduledFuture<?>> map = new ConcurrentHashMap();
+    private static ConcurrentHashMap<String, ScheduledFuture<?>> map = new ConcurrentHashMap<String, ScheduledFuture<?>>();
 
     @Autowired
     private TriggerDao triggerDao;
@@ -68,7 +68,7 @@ public class DynamicTask implements ApplicationRunner {
     /**
      * start All ,for after start app
      */
-    public void startAll() {
+    private void startAll() {
         List<Trigger> triggers = triggerDao.selectByType(CiDevOpsConstants.TASK_TYPE_TIMMING);
         for (Trigger trigger : triggers) {
             restartCron(trigger.getId().toString(), trigger.getCron(), trigger);
@@ -78,7 +78,7 @@ public class DynamicTask implements ApplicationRunner {
     /**
      * start Cron
      */
-    public void startCron(String key, String expression, Trigger trigger, Project project,Task task,List<TaskDetail> taskDetails) {
+    private void startCron(String key, String expression, Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
         log.info("into DynamicTask.startCron prarms::"+ "triggerId = {} , expression = {} , trigger = {} , project = {} , task = {} , taskDetails = {} ",
                 key, expression, trigger, project, task, taskDetails );
         if (map.containsKey(key)) {

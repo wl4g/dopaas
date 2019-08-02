@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 public class Trigger extends BaseBean implements Serializable {
 
+    private static final long serialVersionUID = 381411777614066880L;
+
     private String name;
 
     private Integer appClusterId;

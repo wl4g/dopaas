@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.utils;
 
+import com.wl4g.devops.common.annotation.Unused;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
@@ -23,7 +24,6 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,6 +129,7 @@ public class GitUtils {
     /**
      * Delete branch
      */
+    @Unused
     public static void delbranch(String localPath, String branchName) {
         String projectURL = localPath + "/.git";
         Git git = null;
@@ -147,6 +148,7 @@ public class GitUtils {
     /**
      * Get local branch list
      */
+    @Unused
     public static void branchlist(String localPath) {
         String projectURL = localPath + "/.git";
         Git git = null;
@@ -178,17 +180,13 @@ public class GitUtils {
         return name;
     }
 
-    //TODO
-    public static boolean checkGitPahtExist(String path) throws Exception {
+    public static boolean checkGitPahtExist(String path){
         File file = new File(path + "/.git");
-        if (file.exists()) {
-            return true;
-        } else {
-            return false;
-        }
+        return file.exists();
     }
 
-    public static void main(String[] args) throws Exception {
+    //for test , don't remove
+    /*public static void main(String[] args) throws Exception {
         // git远程url地址
         String url = "http://git.anjiancloud.repo/heweijie/safecloud-devops-datachecker.git";
         String localPath = "/Users/vjay/gittest/safecloud-devops-datachecker";
@@ -200,11 +198,10 @@ public class GitUtils {
         //GitUtils.checkout(cp, localPath, branchName);
         //GitUtils.branchlist(localPath);
 
-
         //test
         //GitUtils.checkout(cp, localPath, branchName);
         roolback(cp, localPath, "a4be5dda3cabd324f334ff3ed31b36d95f6de936");
-    }
+    }*/
 
 
     public static String getOldestCommitSha(String localPath) throws Exception {
