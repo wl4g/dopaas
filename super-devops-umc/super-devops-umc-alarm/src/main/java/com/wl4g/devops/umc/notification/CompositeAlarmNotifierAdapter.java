@@ -15,16 +15,19 @@
  */
 package com.wl4g.devops.umc.notification;
 
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.util.Assert;
+
+import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 
 /**
  * Alarm notifier adapter.
@@ -38,11 +41,11 @@ public class CompositeAlarmNotifierAdapter extends AbstractAlarmNotifier {
 	/**
 	 * Alarm notifiers.
 	 */
-	final protected Map<AlarmType, AlarmNotifier> alarmNotifiers = new LinkedHashMap<>();
+	final protected Map<AlarmType, AlarmNotifier> alarmNotifiers = new OnceModifiableMap<>(new HashMap<>());
 
 	public CompositeAlarmNotifierAdapter(List<AlarmNotifier> notifiers) {
 		Assert.state(!isEmpty(notifiers), "Alarm Notifier has at least one.");
-		notifiers.forEach(notifier -> alarmNotifiers.put(notifier.alarmType(), notifier));
+		this.alarmNotifiers.putAll(notifiers.stream().collect(toMap(AlarmNotifier::alarmType, notifier -> notifier)));
 	}
 
 	@Override

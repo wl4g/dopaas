@@ -21,22 +21,22 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface ProjectDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(Project record);
+	int insert(Project record);
 
-    int insertSelective(Project record);
+	int insertSelective(Project record);
 
-    Project selectByPrimaryKey(Integer id);
+	Project selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Project record);
+	int updateByPrimaryKeySelective(Project record);
 
-    int updateByPrimaryKey(Project record);
+	int updateByPrimaryKey(Project record);
 
-    List<Project> list(@Param("groupName") String groupName, @Param("projectName") String projectName);
+	List<Project> list(@Param("groupName") String groupName, @Param("projectName") String projectName);
 
-    Project getByProjectName(String projectName);
+	Project getByProjectName(String projectName);
 
-    Project getByAppGroupId(Integer appGrouPId);
+	Project getByAppClusterId(Integer appGrouPId);
 
 }

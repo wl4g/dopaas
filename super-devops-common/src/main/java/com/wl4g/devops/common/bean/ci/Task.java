@@ -1,60 +1,68 @@
-/*
- * Copyright 2017 ~ 2025 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.wl4g.devops.common.bean.ci;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
+import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.scm.AppInstance;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class Task extends BaseBean implements Serializable {
+
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private Integer type;
+	private String taskName;
+
+	private Integer appClusterId;
 
 	private Integer projectId;
 
-	private Integer status;
-
 	private String branchName;
-
-	private String shaGit;
-
-	private String shaLocal;
-
-	private Integer refId;
-
-	private String command;
 
 	private Integer tarType;
 
-	private String result;
+	private String branchType;
 
-	private String projectName;
+	private String preCommand;
 
+	private String postCommand;
+
+	private List<AppInstance> instances;
+
+	private List<TaskDetail> taskDetails;
+
+	/* other */
 	private String groupName;
 
-	private List<TriggerDetail> triggerDetails;
-
-	public Integer getType() {
-		return type;
+	public String getPreCommand() {
+		return preCommand;
 	}
 
-	public void setType(Integer type) {
-		this.type = type;
+	public void setPreCommand(String preCommand) {
+		this.preCommand = preCommand == null ? null : preCommand.trim();
+	}
+
+	public String getPostCommand() {
+		return postCommand;
+	}
+
+	public void setPostCommand(String postCommand) {
+		this.postCommand = postCommand == null ? null : postCommand.trim();
+	}
+
+	public String getTaskName() {
+		return taskName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName == null ? null : taskName.trim();
+	}
+
+	public Integer getAppClusterId() {
+		return appClusterId;
+	}
+
+	public void setAppClusterId(Integer appClusterId) {
+		this.appClusterId = appClusterId;
 	}
 
 	public Integer getProjectId() {
@@ -65,52 +73,12 @@ public class Task extends BaseBean implements Serializable {
 		this.projectId = projectId;
 	}
 
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-
 	public String getBranchName() {
 		return branchName;
 	}
 
 	public void setBranchName(String branchName) {
-		this.branchName = branchName;
-	}
-
-	public String getShaGit() {
-		return shaGit;
-	}
-
-	public void setShaGit(String shaGit) {
-		this.shaGit = shaGit;
-	}
-
-	public Integer getRefId() {
-		return refId;
-	}
-
-	public void setRefId(Integer refId) {
-		this.refId = refId;
-	}
-
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
-	}
-
-	public String getCommand() {
-		return command;
-	}
-
-	public void setCommand(String command) {
-		this.command = command;
+		this.branchName = branchName == null ? null : branchName.trim();
 	}
 
 	public Integer getTarType() {
@@ -121,12 +89,12 @@ public class Task extends BaseBean implements Serializable {
 		this.tarType = tarType;
 	}
 
-	public String getProjectName() {
-		return projectName;
+	public String getBranchType() {
+		return branchType;
 	}
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	public void setBranchType(String branchType) {
+		this.branchType = branchType == null ? null : branchType.trim();
 	}
 
 	public String getGroupName() {
@@ -137,19 +105,36 @@ public class Task extends BaseBean implements Serializable {
 		this.groupName = groupName;
 	}
 
-	public String getShaLocal() {
-		return shaLocal;
+	public List<AppInstance> getInstances() {
+		return instances;
 	}
 
-	public void setShaLocal(String shaLocal) {
-		this.shaLocal = shaLocal;
+	public void setInstances(List<AppInstance> instances) {
+		this.instances = instances;
 	}
 
-	public List<TriggerDetail> getTriggerDetails() {
-		return triggerDetails;
+	public List<TaskDetail> getTaskDetails() {
+		return taskDetails;
 	}
 
-	public void setTriggerDetails(List<TriggerDetail> triggerDetails) {
-		this.triggerDetails = triggerDetails;
+	public void setTaskDetails(List<TaskDetail> taskDetails) {
+		this.taskDetails = taskDetails;
+	}
+
+	@Override
+	public String toString() {
+		return "Task{" +
+				"taskName='" + taskName + '\'' +
+				", appClusterId=" + appClusterId +
+				", projectId=" + projectId +
+				", branchName='" + branchName + '\'' +
+				", tarType=" + tarType +
+				", branchType='" + branchType + '\'' +
+				", preCommand='" + preCommand + '\'' +
+				", postCommand='" + postCommand + '\'' +
+				", instances=" + instances +
+				", taskDetails=" + taskDetails +
+				", groupName='" + groupName + '\'' +
+				'}';
 	}
 }

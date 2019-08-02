@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.bean.share.Dict;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.dao.share.DictDao;
@@ -57,7 +57,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private HistoryDao historyDao;
 	@Autowired
-	private AppGroupDao appGroupDao;
+	private AppClusterDao appClusterDao;
 	@Autowired
 	private ConfigContextHandler contextHandler;
 	@Autowired
@@ -73,7 +73,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		String sign = signVersionContent(vd);
 		List<AppInstance> nodeList = new ArrayList<>();
 		for (String nodeId : nodeIdList) {
-			AppInstance instance = this.appGroupDao.getAppInstance(nodeId);
+			AppInstance instance = this.appClusterDao.getAppInstance(nodeId);
 			String hisVersionId = instance.getVersionId();
 			if (hisVersionId != null) {
 				Version version = new Version();
@@ -137,7 +137,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			instances.add(releaseInstance);
 		}
 		// Get application group information.
-		AppGroup appGroup = this.appGroupDao.getAppGroup(vd.getGroupId());
+		AppCluster appCluster = this.appClusterDao.getAppGroup(vd.getClusterId());
 
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean vcb : vd.getConfigGurations()) {
@@ -148,7 +148,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 		// Request configuration source send to client.
 		PreRelease pre = new PreRelease();
-		pre.setGroup(appGroup.getName());
+		pre.setGroup(appCluster.getName());
 		pre.setNamespaces(namespaces);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		pre.setMeta(meta);

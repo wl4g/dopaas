@@ -16,9 +16,6 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.ci.TriggerDetail;
-
-import java.util.List;
 
 /**
  * @author vjay
@@ -26,18 +23,16 @@ import java.util.List;
  */
 public interface TriggerService {
 
-    Trigger insert(Trigger trigger, Integer[] instanceIds);
+	Trigger insert(Trigger trigger);
 
-    Trigger update(Trigger trigger, Integer[] instanceIds);
+	Trigger update(Trigger trigger);
 
-    int delete(Integer id);
+	int delete(Integer id);
 
-    void enable(Integer id);
+	void enable(Integer id);
 
-    void disable(Integer id);
+	void disable(Integer id);
 
-    List<TriggerDetail> getDetailByTriggerId(Integer triggerId);
-
-    void updateSha(Integer id, String sha);
+	void updateSha(Integer id, String sha);
 
 }

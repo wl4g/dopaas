@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,8 +26,8 @@ import java.util.Optional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.umc.notification.AlarmType;
-import com.wl4g.devops.umc.rule.AggregatorType;
+import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
+import com.wl4g.devops.umc.rule.Aggregator;
 
 /**
  * Composite rule inspector adapter.
@@ -40,37 +41,37 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	/**
 	 * Rule inspectors.
 	 */
-	final protected Map<AggregatorType, RuleInspector> ruleInspectors = new LinkedHashMap<>();
+	final protected Map<Aggregator, RuleInspector> ruleInspectors = new OnceModifiableMap<>(new HashMap<>());
 
 	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
 		Assert.state(!CollectionUtils.isEmpty(inspectors), "Rule inspectors has at least one.");
-		inspectors.forEach(inspector -> ruleInspectors.put(inspector.aggregateType(), inspector));
+		this.ruleInspectors.putAll(inspectors.stream().collect(toMap(RuleInspector::aggregateType, inspector -> inspector)));
 	}
 
 	@Override
 	public boolean verify(InspectWrapper wrap) {
-		Optional<RuleInspector> opt = determineRuleInspector("");
+		Optional<RuleInspector> opt = determineRuleInspector(wrap.getAggregator());
 		return opt.isPresent() ? opt.get().verify(wrap) : false;
 	}
 
 	@Override
-	public AggregatorType aggregateType() {
+	public Aggregator aggregateType() {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Determine rule inspector.
 	 * 
-	 * @param aggregateType
+	 * @param aggregator
 	 * @return
 	 */
-	protected Optional<RuleInspector> determineRuleInspector(String aggregateType) {
-		if (isBlank(aggregateType)) {
-			log.warn("Unsupported this rule aggregate type: {}", aggregateType);
+	protected Optional<RuleInspector> determineRuleInspector(String aggregator) {
+		if (isBlank(aggregator)) {
+			log.warn("Unsupported this rule aggregator: {}", aggregator);
 			return Optional.empty();
 		}
-		for (String part : aggregateType.split(",")) {
-			AlarmType type = AlarmType.safeOf(part);
+		for (String aggre : aggregator.split(",")) {
+			Aggregator type = Aggregator.safeOf(aggre);
 			if (null != type) {
 				RuleInspector inspector = ruleInspectors.get(type);
 				if (inspector != null) {

@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.ci.Trigger;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TriggerDao {
     int deleteByPrimaryKey(Integer id);
@@ -34,9 +33,11 @@ public interface TriggerDao {
 
     int updateByPrimaryKey(Trigger record);
 
-    List<Trigger> list(@Param("projectName") String projectName);
+    List<Trigger> list(@Param("id") Integer id, @Param("name") String name,@Param("taskId")Integer taskId,
+                       @Param("enable") Integer enable,@Param("startDate") String startDate,
+                       @Param("endDate") String endDate);
 
-    Trigger getTriggerByProjectAndBranch(Map<String,Object> map);
+    Trigger getTriggerByAppClusterIdAndBranch(@Param("appClusterId") Integer appClusterId, @Param("branchName") String branchName);
 
     List<Trigger> selectByType(@Param("type") Integer type);
 

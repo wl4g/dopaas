@@ -19,8 +19,8 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.umc.alarm.ServiceRuleConfigHandler;
-import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
+import com.wl4g.devops.umc.alarm.ServiceRuleConfigurer;
+import com.wl4g.devops.umc.handler.AlarmConfigurer;
 
 /**
  * Service alarm auto configuration.
@@ -30,12 +30,12 @@ import com.wl4g.devops.umc.rule.handler.RuleConfigHandler;
  * @since
  */
 @Configuration
-@ImportAutoConfiguration(AlarmAutoConfiguration.class)
+@ImportAutoConfiguration(UmcAlarmAutoConfiguration.class)
 public class ServiceAlarmAutoConfiguration {
 
 	@Bean
-	public RuleConfigHandler serviceRuleHandler() {
-		return new ServiceRuleConfigHandler();
+	public AlarmConfigurer serviceRuleConfigurer() {
+		return new ServiceRuleConfigurer();
 	}
 
 }

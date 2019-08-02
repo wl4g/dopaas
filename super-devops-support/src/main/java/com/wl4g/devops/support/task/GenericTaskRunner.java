@@ -49,7 +49,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Boss running. */
-	final private AtomicBoolean bossRunning = new AtomicBoolean(false);
+	final private AtomicBoolean bossState = new AtomicBoolean(false);
 
 	/** Runner task properties configuration. */
 	final C config;
@@ -61,7 +61,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 	private ThreadPoolExecutor worker;
 
 	public GenericTaskRunner(C config) {
-		Assert.notNull(config, "Task properties must not be null");
+		Assert.notNull(config, "TaskHistory properties must not be null");
 		this.config = config;
 	}
 
@@ -70,23 +70,21 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		// Call pre-startup
 		preStartupProperties();
 
-		if (bossRunning.compareAndSet(false, true)) {
-			final int concurrency = config.getConcurrency();
-			final long keepTime = config.getKeepAliveTime();
-			final int acceptQueue = config.getAcceptQueue();
-
-			// Create worker(if necessary)
-			if (concurrency > 0) {
+		// Create worker(if necessary)
+		if (bossState.compareAndSet(false, true)) {
+			if (config.getConcurrency() > 0) {
 				final AtomicInteger counter = new AtomicInteger(-1);
-				final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(acceptQueue);
-
-				worker = new ThreadPoolExecutor(1, concurrency, keepTime, MICROSECONDS, queue, r -> {
-					String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
-					Thread job = new Thread(this, name);
-					job.setDaemon(false);
-					job.setPriority(Thread.NORM_PRIORITY);
-					return job;
-				}, config.getReject());
+				final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(config.getAcceptQueue());
+				this.worker = new ThreadPoolExecutor(1, config.getConcurrency(), config.getKeepAliveTime(), MICROSECONDS, queue,
+						r -> {
+							String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
+							Thread job = new Thread(this, name);
+							job.setDaemon(false);
+							job.setPriority(Thread.NORM_PRIORITY);
+							return job;
+						}, config.getReject());
+			} else {
+				log.warn("No workthread pool for started, because the number of workthread is less than 0");
 			}
 
 			// Boss asynchronously execution.(if necessary)
@@ -116,7 +114,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		// Call pre close
 		preCloseProperties();
 
-		if (bossRunning.compareAndSet(true, false)) {
+		if (bossState.compareAndSet(true, false)) {
 			if (worker != null) {
 				try {
 					worker.shutdown();
@@ -171,7 +169,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 	 * @return
 	 */
 	protected boolean isActive() {
-		return boss != null && !boss.isInterrupted() && bossRunning.get();
+		return boss != null && !boss.isInterrupted() && bossState.get();
 	}
 
 	/**

@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.utils.serialize;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,6 +29,12 @@ public abstract class JacksonUtils {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
+	/**
+	 * Object to JSON strings.
+	 * 
+	 * @param object
+	 * @return
+	 */
 	public static String toJSONString(Object object) {
 		if (object == null) {
 			return null;
@@ -35,10 +42,17 @@ public abstract class JacksonUtils {
 		try {
 			return mapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
+	/**
+	 * Parse object from JSON strings.
+	 * 
+	 * @param content
+	 * @param clazz
+	 * @return
+	 */
 	public static <T> T parseJSON(String content, Class<T> clazz) {
 		if (content == null) {
 			return null;
@@ -46,7 +60,22 @@ public abstract class JacksonUtils {
 		try {
 			return mapper.readValue(content, clazz);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Parse object from JSON strings.
+	 * 
+	 * @param content
+	 * @param valueTypeRef
+	 * @return
+	 */
+	public static <T> T parseJSON(String content, TypeReference<T> valueTypeRef) {
+		try {
+			return mapper.readValue(content, valueTypeRef);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 

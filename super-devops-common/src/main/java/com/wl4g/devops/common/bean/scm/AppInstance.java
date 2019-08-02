@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.common.bean.scm;
 
+import com.wl4g.devops.common.bean.BaseBean;
+
 /**
- * 对应：cf_app_instance表
+ * 对应：app_instance表
  * 
  * @author sut
  * @Description: TODO
@@ -24,7 +26,7 @@ package com.wl4g.devops.common.bean.scm;
  */
 public class AppInstance extends BaseBean {
 
-	private Long groupId; // 应用分组ID
+	private Long clusterId; // 应用分组ID
 	private String host; // 实例节点Host（如：web-node1）
 	private String ip; // 主机IP地址
 	private Integer port; // 服务监听端口
@@ -34,15 +36,15 @@ public class AppInstance extends BaseBean {
 
 	// 20190517add
 	// private String basePath;// 项目部署路径
-	private String serverAccount;// 登录账号
-	private String sshRsa;
+	private String sshUser;// 登录账号
+	private String sshKey;
 
-	public Long getGroupId() {
-		return groupId;
+	public Long getClusterId() {
+		return clusterId;
 	}
 
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
+	public void setClusterId(Long clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getHost() {
@@ -93,19 +95,34 @@ public class AppInstance extends BaseBean {
 		this.versionId = versionId;
 	}
 
-	public String getSshRsa() {
-		return sshRsa;
+	public String getSshKey() {
+		return sshKey;
 	}
 
-	public void setSshRsa(String sshRsa) {
-		this.sshRsa = sshRsa;
+	public void setSshKey(String sshKey) {
+		this.sshKey = sshKey;
 	}
 
-	public String getServerAccount() {
-		return serverAccount;
+	public String getSshUser() {
+		return sshUser;
 	}
 
-	public void setServerAccount(String serverAccount) {
-		this.serverAccount = serverAccount;
+	public void setSshUser(String sshUser) {
+		this.sshUser = sshUser;
+	}
+
+	@Override
+	public String toString() {
+		return "AppInstance{" +
+				"clusterId=" + clusterId +
+				", host='" + host + '\'' +
+				", ip='" + ip + '\'' +
+				", port=" + port +
+				", envId='" + envId + '\'' +
+				", opsIds='" + opsIds + '\'' +
+				", versionId='" + versionId + '\'' +
+				", sshUser='" + sshUser + '\'' +
+				", sshKey='" + sshKey + '\'' +
+				'}';
 	}
 }

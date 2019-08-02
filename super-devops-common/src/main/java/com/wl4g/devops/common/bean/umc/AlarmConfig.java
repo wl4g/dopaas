@@ -1,6 +1,6 @@
 package com.wl4g.devops.common.bean.umc;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
+import com.wl4g.devops.common.bean.BaseBean;
 
 public class AlarmConfig extends BaseBean {
 
@@ -14,7 +14,7 @@ public class AlarmConfig extends BaseBean {
 
 	private String alarmMember;
 
-	private Integer groupId;
+	private Integer clusterId;
 
 	public String getAlarmMember() {
 		return alarmMember;
@@ -56,11 +56,11 @@ public class AlarmConfig extends BaseBean {
 		this.alarmContent = alarmContent == null ? null : alarmContent.trim();
 	}
 
-	public Integer getGroupId() {
-		return groupId;
+	public Integer getClusterId() {
+		return clusterId;
 	}
 
-	public void setGroupId(Integer groupId) {
-		this.groupId = groupId;
+	public void setClusterId(Integer clusterId) {
+		this.clusterId = clusterId;
 	}
 }

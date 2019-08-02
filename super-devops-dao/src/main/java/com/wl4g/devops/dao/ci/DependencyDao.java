@@ -37,5 +37,8 @@ public interface DependencyDao {
 
     List<Dependency> list(@Param("projectName") String projectName);
 
+    int deleteByProjectId(Integer projectId);
+
+
 
 }

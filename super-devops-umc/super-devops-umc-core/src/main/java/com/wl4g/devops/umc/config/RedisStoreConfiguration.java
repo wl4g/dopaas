@@ -123,12 +123,8 @@ public class RedisStoreConfiguration {
 
 			@Override
 			public Collection<ClientApplicationEvent> findAll() {
-				List<ClientApplicationEvent> events = new ArrayList<>();
-				List<Object> list = jedisService.getObjectList(eventListName);
-				Collections.reverse(list);
-				for (Object obj : list) {
-					events.add((ClientApplicationEvent) obj);
-				}
+				List<ClientApplicationEvent> events = jedisService.getObjectList(eventListName, ClientApplicationEvent.class);
+				Collections.reverse(events);
 				return events;
 			}
 		};

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.rule.handler;
 
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
@@ -45,7 +45,7 @@ public class MustImpledRuleConfigHandler implements RuleConfigHandler, Initializ
 	}
 
 	@Override
-	public AppGroup getAppGroupByName(String groupName) {
+	public AppCluster getAppGroupByName(String groupName) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -55,7 +55,7 @@ public class MustImpledRuleConfigHandler implements RuleConfigHandler, Initializ
 	}
 
 	@Override
-	public List<AlarmTemplate> getAlarmTemplateByGroupId(Integer groupId) {
+	public List<AlarmTemplate> getAlarmTemplateByClusterId(Integer clusterId) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -71,7 +71,7 @@ public class MustImpledRuleConfigHandler implements RuleConfigHandler, Initializ
 	}
 
 	@Override
-	public List<AlarmConfig> getAlarmConfigByGroupIdAndTemplateId(Integer templateId, Integer groupId) {
+	public List<AlarmConfig> getAlarmConfigByClusterIdAndTemplateId(Integer templateId, Integer clusterId) {
 		throw new UnsupportedOperationException();
 	}
 

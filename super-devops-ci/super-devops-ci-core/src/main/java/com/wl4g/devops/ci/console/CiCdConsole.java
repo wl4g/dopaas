@@ -15,14 +15,21 @@
  */
 package com.wl4g.devops.ci.console;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
+import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
+import com.wl4g.devops.ci.console.args.TaskListArgument;
 import com.wl4g.devops.ci.service.CiService;
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.ci.task.TimingTasks;
+import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
-import com.wl4g.devops.common.constants.CiDevOpsConstants;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.common.utils.lang.TableFormatters;
+import com.wl4g.devops.common.utils.task.CronUtils;
+import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.support.lock.SimpleRedisLockManager;
@@ -53,7 +60,7 @@ public class CiCdConsole {
 	final public static String GROUP = "Devops CI/CD console commands";
 
 	@Autowired
-	private AppGroupDao appGroupDao;
+	private AppClusterDao appClusterDao;
 
 	@Autowired
 	private CiService ciService;
@@ -61,17 +68,63 @@ public class CiCdConsole {
 	@Autowired
 	private SimpleRedisLockManager lockManager;
 
+	@Autowired
+	private TimingTasks timingTasks;
+
+	@Autowired
+	private TaskDao taskDao;
+
+	@ShellMethod(keys = "expression", group = GROUP, help = "modify the expression of the timing task")
+	public String modifyTimingTaskExpression(ModifyTimingTaskExpressionArgument argument) {
+		String expression = argument.getExpression();
+		// Open console printer.
+		open();
+		try {
+			// Print to client
+			printfQuietly(String.format("expression = <%s>", expression));
+			if (CronUtils.isValidExpression(expression)) {
+				timingTasks.modifyExpression(expression);
+				printfQuietly(String.format("modify the success , expression = <%s>", expression));
+			} else {
+				printfQuietly(String.format("the expression is not valid , expression = <%s>", expression));
+			}
+		} catch (Exception e) {
+			printfQuietly(String.format("modify the fail , expression = <%s>", expression));
+			printfQuietly(e);
+		} finally {
+			// Close console printer.
+			close();
+		}
+
+		return "Deployment task finished!";
+	}
+
+	@ShellMethod(keys = "taskList", group = GROUP, help = "get task list")
+	public String taskList(TaskListArgument argument) {
+		// Open console printer.
+		open();
+		try {
+			// Print to client
+			int pageNum = StringUtils.isNotBlank(argument.getPageNum()) ? Integer.valueOf(argument.getPageNum()) : 1;
+			int pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
+			PageHelper.startPage(pageNum, pageSize, true);
+			List<Task> list = taskDao.list(null, null, null, null, null, null, null);
+			String result = TableFormatters.build(list).setH('=').setV('!').getTableString();
+			return result;
+		} catch (Exception e) {
+			printfQuietly(e);
+			throw e;
+		} finally {
+			// Close console printer.
+			close();
+		}
+	}
+
 	/**
 	 * Execution deployments
-	 *
-	 * @param argument
-	 * @return
 	 */
 	@ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
 	public String deploy(BuildArgument argument) {
-		String appGroupName = argument.getAppGroupName();
-		List<String> instances = argument.getInstances();
-		String branchName = argument.getBranchName();
 
 		// Open console printer.
 		open();
@@ -80,13 +133,11 @@ public class CiCdConsole {
 		try {
 			if (lock.tryLock()) {
 				// Print to client
-				printfQuietly(String.format("Deployment starting <%s><%s><%s> ...", appGroupName, branchName, instances));
 
 				// Create async task
-				ciService.createTask(appGroupName, branchName, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
-						CiDevOpsConstants.TAR_TYPE_TAR);
+				// TODO 修改后与原有逻辑有差异，必须多一个环节，选task
+				ciService.createTask(argument.getTaskId());
 
-				printfQuietly(String.format("Deployment successfully for <%s><%s><%s> !", appGroupName, branchName, instances));
 			} else {
 				printfQuietly("One Task is running ,Please try again later");
 			}
@@ -104,10 +155,6 @@ public class CiCdConsole {
 
 	/**
 	 * Got application groups list.
-	 *
-	 * @param argument
-	 * @param context
-	 * @return
 	 */
 	@ShellMethod(keys = "list", group = GROUP, help = "Get a list of application information")
 	public String list(InstanceListArgument argument) {
@@ -118,17 +165,17 @@ public class CiCdConsole {
 		String r = argument.getAnyInstants();
 		Pattern pattern = Pattern.compile(r);
 		if (isBlank(appGroupName)) {
-			List<AppGroup> apps = appGroupDao.grouplist();
-			for (AppGroup appGroup : apps) {
-				appendApp(result, appGroup, r);
+			List<AppCluster> apps = appClusterDao.grouplist();
+			for (AppCluster appCluster : apps) {
+				appendApp(result, appCluster, r);
 				result.append("\n");
 			}
 		} else {
-			AppGroup app = appGroupDao.getAppGroupByName(appGroupName);
+			AppCluster app = appClusterDao.getAppGroupByName(appGroupName);
 			if (null == app) {
-				return "AppGroup not exist";
+				return "AppCluster not exist";
 			}
-			List<Environment> environments = appGroupDao.environmentlist(app.getId().toString());
+			List<Environment> environments = appClusterDao.environmentlist(app.getId().toString());
 			if (null == environments || environments.size() <= 0) {
 				return "no one env";
 			}
@@ -149,11 +196,11 @@ public class CiCdConsole {
 				}
 				AppInstance appInstance = new AppInstance();
 				appInstance.setEnvId(envId.toString());
-				List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+				List<AppInstance> instances = appClusterDao.instancelist(appInstance);
 				if (null == instances || instances.size() < 1) {
 					return "none";
 				}
-				result.append(" ----- <" + envName + "> -----\n");
+				result.append(" ----- <").append(envName).append("> -----\n");
 				result.append("\t[ID]    [HostAndPort]          [description]\n");
 				for (int i = 0; i < instances.size() && i < 50; i++) {
 					if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
@@ -169,27 +216,26 @@ public class CiCdConsole {
 		return result.toString();
 	}
 
-	private StringBuffer appendApp(StringBuffer result, AppGroup appGroup, String r) {
-		List<Environment> environments = appGroupDao.environmentlist(appGroup.getId().toString());
+	private void appendApp(StringBuffer result, AppCluster appCluster, String r) {
+		List<Environment> environments = appClusterDao.environmentlist(appCluster.getId().toString());
 		if (environments == null || environments.size() <= 0) {
-			return result;
+			return;
 		}
-		result.append(" <").append(appGroup.getName()).append(">:\n");
-		for (int i = 0; i < environments.size(); i++) {
-			appendEnv(result, environments.get(i), r);
+		result.append(" <").append(appCluster.getName()).append(">:\n");
+		for (Environment environment : environments) {
+			appendEnv(result, environment, r);
 		}
-		return result;
 	}
 
-	private StringBuffer appendEnv(StringBuffer result, Environment environment, String r) {
+	private void appendEnv(StringBuffer result, Environment environment, String r) {
 		AppInstance appInstance = new AppInstance();
 		appInstance.setEnvId(environment.getId().toString());
-		List<AppInstance> instances = appGroupDao.instancelist(appInstance);
+		List<AppInstance> instances = appClusterDao.instancelist(appInstance);
 
 		if (null == instances || instances.size() <= 0) {
-			return result;
+			return;
 		}
-		result.append(" ----- <" + environment.getName() + "> -----\n");
+		result.append(" ----- <").append(environment.getName()).append("> -----\n");
 		result.append("\t[ID]    [HostAndPort]          [description]\n");
 
 		Pattern pattern = Pattern.compile(r);
@@ -202,18 +248,16 @@ public class CiCdConsole {
 				}
 			}
 		}
-		return result;
 	}
 
-	private StringBuffer appendInstance(StringBuffer result, AppInstance instance) {
+	private void appendInstance(StringBuffer result, AppInstance instance) {
 		result.append("\t").append(formatCell(instance.getId().toString(), 8))
 				.append(formatCell((instance.getIp() + ":" + instance.getPort()), 23)).append(instance.getRemark()).append("\n");
-		return result;
 	}
 
 	private String formatCell(String text, int width) {
 		if (text != null && text.length() < width) {
-			StringBuffer space = new StringBuffer();
+			StringBuilder space = new StringBuilder();
 			for (int i = 0; i < width - text.length(); i++) {
 				space.append(" ");
 			}

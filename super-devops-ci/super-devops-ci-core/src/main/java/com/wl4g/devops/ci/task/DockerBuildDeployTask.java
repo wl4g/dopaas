@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.task;
 
 import com.wl4g.devops.ci.provider.DockerBuildDeployProvider;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import org.springframework.util.Assert;
 
@@ -34,63 +34,69 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  */
 public class DockerBuildDeployTask extends AbstractDeployTask {
 
-    private DockerBuildDeployProvider provider;
-    private String path;
-    private String tarPath;
-    private Integer taskDetailId;
+	private DockerBuildDeployProvider provider;
+	private Integer taskDetailId;
 
-    public DockerBuildDeployTask(DockerBuildDeployProvider provider, Project project, String path, AppInstance instance,
-                                 String tarPath, List<TaskDetail> taskDetails) {
-        super(instance, project);
-        this.provider = provider;
-        this.path = path;
-        this.tarPath = tarPath;
-        Assert.notNull(taskDetails, "taskDetails can not be null");
-        for (TaskDetail taskDetail : taskDetails) {
-            if (taskDetail.getInstanceId().intValue() == instance.getId().intValue()) {
-                this.taskDetailId = taskDetail.getId();
-                break;
-            }
-        }
-    }
+	public DockerBuildDeployTask(DockerBuildDeployProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		super(instance, project);
+		this.provider = provider;
+		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
+		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
+			if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
+				this.taskDetailId = taskHistoryDetail.getId();
+				break;
+			}
+		}
+	}
 
-    @Override
-    public void run() {
-        if (log.isInfoEnabled()) {
-            log.info("Deploy task is starting ...");
-        }
+	@Override
+	public void run() {
+		if (log.isInfoEnabled()) {
+			log.info("Deploy task is starting ...");
+		}
 
-        Assert.notNull(taskDetailId, "taskDetailId can not be null");
-        try {
-            // Update status
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+		Assert.notNull(taskDetailId, "taskDetailId can not be null");
+		try {
+			// Update status
+			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
+			// Pull
+			String s = provider.dockerPull(instance.getHost(), instance.getSshUser(), "wl4g/" + project.getGroupName()
+					+ ":master"/*
+								 * TODO 要改成动态的
+								 * provider.getTaskHistory().getPreCommand()
+								 */, instance.getSshKey());
+			result.append(s).append("\n");
+			// Restart
+			String s1 = provider.dockerStop(instance.getHost(), instance.getSshUser(), project.getGroupName(),
+					instance.getSshKey());
+			result.append(s1).append("\n");
+			// Remove Container
+			String s2 = provider.dockerRemoveContainer(instance.getHost(), instance.getSshUser(), project.getGroupName(),
+					instance.getSshKey());
+			result.append(s2).append("\n");
+			// Run
+			String s3 = provider.dockerRun(instance.getHost(), instance.getSshUser(), "docker run wl4g/" + project.getGroupName()
+					+ ":master"/*
+								 * TODO 要改成动态的
+								 * provider.getTaskHistory().getPostCommand()
+								 */, instance.getSshKey());
+			result.append(s3).append("\n");
 
-            // Pull
-            String s = provider.dockerPull(instance.getHost(), instance.getServerAccount(),"wl4g/"+project.getGroupName()+":master"/* TODO 要改成动态的 */, instance.getSshRsa());
-            result.append(s).append("\n");
-            // Restart
-            String s1 = provider.dockerStop(instance.getHost(), instance.getServerAccount(),project.getGroupName(), instance.getSshRsa());
-            result.append(s1).append("\n");
-            // Remove Container
-            String s2 = provider.dockerRemoveContainer(instance.getHost(), instance.getServerAccount(),project.getGroupName(), instance.getSshRsa());
-            result.append(s2).append("\n");
-            // Run
-            String s3 = provider.dockerRun(instance.getHost(), instance.getServerAccount(),"docker run wl4g/"+project.getGroupName()+":master"/* TODO 要改成动态的 */, instance.getSshRsa());
-            result.append(s3).append("\n");
+			// Update status
+			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 
-            // Update status
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
+		} catch (Exception e) {
+			log.error("Deploy job failed", e);
+			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
+					result.toString() + "\n" + e.toString());
+			// throw new RuntimeException(e);
+		}
 
-        } catch (Exception e) {
-            log.error("Deploy job failed", e);
-            taskService.updateTaskDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, result.toString() + "\n" + e.toString());
-            //throw new RuntimeException(e);
-        }
-
-        if (log.isInfoEnabled()) {
-            log.info("Deploy task is finished!");
-        }
-    }
+		if (log.isInfoEnabled()) {
+			log.info("Deploy task is finished!");
+		}
+	}
 
 }
