@@ -20,12 +20,12 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.share.Dict;
-import com.wl4g.devops.dao.scm.AppGroupDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.dao.share.DictDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.scm.service.AppGroupService;
+import com.wl4g.devops.scm.service.AppClusterService;
 import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,11 +46,11 @@ public class HistoryServiceImpl implements HistoryService {
 	@Autowired
 	private ConfigurationDao configGurationDao;
 	@Autowired
-	private AppGroupDao appGroupDao;
+	private AppClusterDao appClusterDao;
 	@Autowired
 	private ConfigContextHandler configServerService;
 	@Autowired
-	private AppGroupService appGroupService;
+	private AppClusterService appClusterService;
 	@Autowired
 	private DictDao dictDao;
 
@@ -150,13 +150,13 @@ public class HistoryServiceImpl implements HistoryService {
 		configGurationDao.updateNode(nMap);
 
 		// Get application group information.
-		AppGroup appGroup = this.appGroupDao.getAppGroup(agl.getGroupId());
+		AppCluster appCluster = this.appClusterDao.getAppGroup(agl.getClusterId());
 
 		// Get application nodeList information
 		AppInstance appInstance = new AppInstance();
-		appInstance.setGroupId(Long.parseLong(String.valueOf(agl.getGroupId())));
+		appInstance.setClusterId(Long.parseLong(String.valueOf(agl.getClusterId())));
 		appInstance.setEnvId(agl.getEnvId());
-		List<AppInstance> nodeList = appGroupService.instancelist(appInstance);
+		List<AppInstance> nodeList = appClusterService.instancelist(appInstance);
 		// Define release instance list.
 		List<ReleaseInstance> instances = new ArrayList<>();
 		for (AppInstance instance : nodeList) {
@@ -176,7 +176,7 @@ public class HistoryServiceImpl implements HistoryService {
 		}
 
 		PreRelease preRelease = new PreRelease();
-		preRelease.setGroup(appGroup.getName());
+		preRelease.setGroup(appCluster.getName());
 		preRelease.setNamespaces(namespaces);
 		String releaseId = String.valueOf(historyOfDetail.getId());
 		String versionId = String.valueOf(agl.getId());

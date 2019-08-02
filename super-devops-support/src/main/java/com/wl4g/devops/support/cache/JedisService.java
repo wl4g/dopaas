@@ -16,7 +16,6 @@
 package com.wl4g.devops.support.cache;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
@@ -33,9 +32,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class JedisService {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -77,10 +80,10 @@ public class JedisService {
 
 	}
 
-	public <T> ScanCursor<T> scan(final String pattern, final int batch, final Class<T> clazz) {
+	public <T> ScanCursor<T> scan(final String pattern, final int batch, final Class<T> valueType) {
 		byte[] match = trimToEmpty(pattern).getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(batch).match(match);
-		return new ScanCursor<T>(getJedisCluster(), clazz, params) {
+		return new ScanCursor<T>(getJedisCluster(), valueType, params) {
 		}.open();
 	}
 
@@ -174,76 +177,65 @@ public class JedisService {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Object> getObjectList(final String key) {
-		return (List<Object>) doInRedis(cluster -> {
-			List<Object> value = Lists.newArrayList();
-			List<byte[]> list = cluster.lrange(getBytesKey(key), 0, -1);
-			for (byte[] bs : list) {
-				value.add(toObject(bs));
-			}
-			return value;
-		});
-	}
-
-	public Long setList(final String key, final List<String> value, final int cacheSeconds) {
+	public Long setList(final String key, final List<String> values, final int cacheSeconds) {
 		return (Long) doInRedis(cluster -> {
-			Long result = cluster.rpush(key, value.toArray(new String[] {}));
+			Long result = cluster.rpush(key, values.toArray(new String[] {}));
 			if (cacheSeconds > 0) {
 				cluster.expire(key, cacheSeconds);
 			}
 			if (log.isDebugEnabled()) {
-				log.debug("setList {} = {}", key, value);
+				log.debug("setList {} = {}", key, values);
 			}
 			return result;
 		});
 	}
 
-	public Long setObjectList(final String key, final List<Object> value, final int cacheSeconds) {
+	public Long listAdd(final String key, final String... values) {
+		return (Long) doInRedis(cluster -> {
+			Long result = cluster.rpush(key, values);
+			if (log.isDebugEnabled())
+				log.debug("listAdd {} = {}", key, values);
+			return result;
+		});
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getObjectList(final String key, final Class<T> clazz) {
+		return (List<T>) doInRedis(cluster -> {
+			return safeList(cluster.lrange(key, 0, -1)).stream().map(e -> parseJSON(e, clazz)).collect(toList());
+		});
+	}
+
+	public <T> Long setObjectList(final String key, final List<T> values, final int cacheSeconds) {
 		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
-			if (value != null && !value.isEmpty()) {
-				byte[][] members = new byte[value.size()][0];
-				int i = 0;
-				for (Object o : value) {
-					members[i] = toBytes(o);
-					++i;
-				}
-				result = cluster.sadd(getBytesKey(key), members);
+			if (!isEmpty(values)) {
+				List<String> members = safeList(values).stream().map(v -> toJSONString(v)).collect(toList());
+				result = cluster.rpush(key, members.toArray(new String[] {}));
 			}
 			if (cacheSeconds != 0) {
 				cluster.expire(key, cacheSeconds);
 			}
 			if (log.isDebugEnabled()) {
-				log.debug("setObjectList {} = {}", key, value);
+				log.debug("setObjectList {} = {}", key, values);
 			}
 			return result;
 		});
 	}
 
-	public Long listAdd(final String key, final String... value) {
-		return (Long) doInRedis(cluster -> {
-			Long result = cluster.rpush(key, value);
-			if (log.isDebugEnabled())
-				log.debug("listAdd {} = {}", key, value);
-			return result;
-		});
-	}
-
-	public Long listObjectAdd(final String key, final Object... value) {
+	@SuppressWarnings("unchecked")
+	public <T> Long listObjectAdd(final String key, final T... values) {
 		return (Long) doInRedis(cluster -> {
 			Long result = 0L;
-			if (value != null && value.length != 0) {
-				byte[][] members = new byte[value.length][0];
-				int i = 0;
-				for (Object o : value) {
-					members[i] = this.toBytes(o);
-					++i;
+			if (values != null && values.length != 0) {
+				String[] members = new String[values.length];
+				for (int i = 0; i < values.length; i++) {
+					members[i] = toJSONString(values[i]);
 				}
-				result = cluster.rpush(getBytesKey(key), members);
+				result = cluster.rpush(key, members);
 			}
 			if (log.isDebugEnabled()) {
-				log.debug("listObjectAdd {} = {}", key, value);
+				log.debug("listObjectAdd {} = {}", key, values);
 			}
 			return result;
 		});

@@ -15,36 +15,18 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
-import com.wl4g.devops.common.bean.scm.AppInstance;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @author vjay
- * @date 2019-05-17 11:43:00
+ * @date 2019-05-17 11:04:00
  */
-@Component
 public interface TaskService {
 
-    List<Task> list(String groupName, String projectName, String branchName);
+	Task save(Task task, Integer[] instanceIds);
 
-    List<TaskDetail> getDetailByTaskId(Integer id);
+	int delete(Integer id);
 
-    Task getTaskById(Integer id);
-
-    Task createTask(Project project, List<AppInstance> instances, int type, int status, String branchName, String sha,
-                    Integer parentId, String command, Integer tarType);
-
-    void updateTaskStatus(int taskId, int status);
-
-    void updateTaskStatusAndResult(int taskId, int status, String result);
-
-    void updateTaskDetailStatusAndResult(int taskDetailId, int status, String result);
-
-    void updateTaskStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
+	Task getTaskDetailById(Integer triggerId);
 
 }

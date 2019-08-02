@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.store;
 
-import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
 
 /**
  * UMC metric store
@@ -26,6 +26,6 @@ import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
  */
 public interface MetricStore {
 
-	boolean save(MetricModel.MetricAggregate aggregate);
+	boolean save(MetricAggregate aggregate);
 
 }

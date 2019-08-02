@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.common.bean.scm;
 
+import com.wl4g.devops.common.bean.BaseBean;
+
 /**
- * 对应：cf_version表
+ * 对应：scm_version表
  * 
  * @date 2018年9月25日
  */
@@ -26,7 +28,7 @@ public class ConfigVersion extends BaseBean {
 
 	private String sign; // 摘要计算字符串
 	private String signtype; // 摘要算法名（如：md5/sha1）
-	private Integer groupId; // 关联组ID
+	private Integer clusterId; // 关联组ID
 	private String groupName; // 关联组名称
 	private String host; // 节点地址
 	private String tag; // 版本状态（1:健康/2:缺陷）
@@ -91,12 +93,12 @@ public class ConfigVersion extends BaseBean {
 		this.signtype = signtype;
 	}
 
-	public Integer getGroupId() {
-		return groupId;
+	public Integer getClusterId() {
+		return clusterId;
 	}
 
-	public void setGroupId(Integer groupId) {
-		this.groupId = groupId;
+	public void setClusterId(Integer clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getGroupName() {

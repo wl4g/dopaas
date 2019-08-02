@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
+import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Project bean entity.
@@ -34,7 +35,7 @@ public class Project extends BaseBean implements Serializable {
 
 	private String gitUrl;
 
-	private Integer appGroupId;
+	private Integer appClusterId;
 
 	private String tarPath;
 
@@ -46,6 +47,8 @@ public class Project extends BaseBean implements Serializable {
 
 	private Integer lockStatus;
 
+	private List<Dependency> dependencies;
+
 	public String getProjectName() {
 		return projectName;
 	}
@@ -54,12 +57,12 @@ public class Project extends BaseBean implements Serializable {
 		this.projectName = projectName;
 	}
 
-	public Integer getAppGroupId() {
-		return appGroupId;
+	public Integer getAppClusterId() {
+		return appClusterId;
 	}
 
-	public void setAppGroupId(Integer appGroupId) {
-		this.appGroupId = appGroupId;
+	public void setAppClusterId(Integer appClusterId) {
+		this.appClusterId = appClusterId;
 	}
 
 	public String getTarPath() {
@@ -110,10 +113,26 @@ public class Project extends BaseBean implements Serializable {
 		this.lockStatus = lockStatus;
 	}
 
-	@Override
-	public String toString() {
-		return "Project [projectName=" + projectName + ", gitUrl=" + gitUrl + ", appGroupId=" + appGroupId + ", tarPath="
-				+ tarPath + ", parentAppHome=" + parentAppHome + ", linkAppHome=" + linkAppHome + "]";
+	public List<Dependency> getDependencies() {
+		return dependencies;
 	}
 
+	public void setDependencies(List<Dependency> dependencies) {
+		this.dependencies = dependencies;
+	}
+
+	@Override
+	public String toString() {
+		return "Project{" +
+				"projectName='" + projectName + '\'' +
+				", gitUrl='" + gitUrl + '\'' +
+				", appClusterId=" + appClusterId +
+				", tarPath='" + tarPath + '\'' +
+				", parentAppHome='" + parentAppHome + '\'' +
+				", linkAppHome='" + linkAppHome + '\'' +
+				", groupName='" + groupName + '\'' +
+				", lockStatus=" + lockStatus +
+				", dependencies=" + dependencies +
+				'}';
+	}
 }

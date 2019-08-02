@@ -76,7 +76,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 		try {
 			ScanCursor<IamSession> cursor = this.sessionDAO.getActiveSessions(DEFAULT_BATCH_SIZE);
 			while (cursor.hasNext()) {
-				List<IamSession> activeSessions = cursor.readItem();
+				List<IamSession> activeSessions = cursor.readValues();
 
 				// GrantTicket and session
 				Map<String, Session> tmp = new HashMap<>(activeSessions.size());

@@ -19,8 +19,7 @@ import java.util.Arrays;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.umc.rule.AggregatorType;
-import com.wl4g.devops.umc.rule.OperatorType;
+import com.wl4g.devops.umc.rule.Aggregator;
 
 /**
  * Rule verify inspector.
@@ -31,7 +30,7 @@ import com.wl4g.devops.umc.rule.OperatorType;
  */
 public interface RuleInspector {
 
-	AggregatorType aggregateType();
+	Aggregator aggregateType();
 
 	/**
 	 * Metric aggregate rule inspection
@@ -50,28 +49,37 @@ public interface RuleInspector {
 	 */
 	public static class InspectWrapper {
 
-		final private OperatorType operator;
+		final private Integer relateOperator;
 
-		final private AggregatorType aggregator;
+		final private Integer logicalOperator;
+
+		final private String aggregator;
 
 		final private Double baseline;
 
 		final private Double[] values;
 
-		public InspectWrapper(OperatorType operator, AggregatorType aggregator, Double baseline, Double[] values) {
-			Assert.isNull(operator, "Operator type must not be null");
-			Assert.isNull(aggregator, "Aggregator type must not be null");
-			this.operator = operator;
+		public InspectWrapper(Integer logicalOperator, Integer relateOperator, String aggregator, Double baseline,
+				Double[] values) {
+			Assert.notNull(logicalOperator, "Logical operator must not be null");
+			Assert.notNull(relateOperator, "Relate operator must not be null");
+			Assert.hasText(aggregator, "Aggregator type must not be empty");
+			this.logicalOperator = logicalOperator;
+			this.relateOperator = relateOperator;
 			this.aggregator = aggregator;
 			this.baseline = baseline;
 			this.values = values;
 		}
 
-		public OperatorType getOperator() {
-			return operator;
+		public Integer getLogicalOperator() {
+			return logicalOperator;
 		}
 
-		public AggregatorType getAggregator() {
+		public Integer getRelateOperator() {
+			return relateOperator;
+		}
+
+		public String getAggregator() {
 			return aggregator;
 		}
 
@@ -85,7 +93,7 @@ public interface RuleInspector {
 
 		@Override
 		public String toString() {
-			return "MeticInspectWrapper [operator=" + operator + ", aggregator=" + aggregator + ", values="
+			return "MeticInspectWrapper [operator=" + relateOperator + ", aggregator=" + aggregator + ", values="
 					+ Arrays.toString(values) + ", baseline=" + baseline + "]";
 		}
 

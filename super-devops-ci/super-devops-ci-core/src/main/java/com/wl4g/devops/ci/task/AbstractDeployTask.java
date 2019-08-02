@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.utils.context.SpringContexts;
@@ -31,20 +31,22 @@ import com.wl4g.devops.common.utils.context.SpringContexts;
  * @since
  */
 public abstract class AbstractDeployTask implements Runnable {
-    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-    final protected AppInstance instance;
-    final protected Project project;
-    final protected TaskService taskService;
+	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected AppInstance instance;
+	final protected Project project;
+	final protected TaskHistoryService taskHistoryService;
 
-    protected Boolean isSuccess = true;
-    protected StringBuffer result = new StringBuffer();
+	// Is Success , if not , return
+	protected Boolean isSuccess = true;
+	// Result
+	protected StringBuffer result = new StringBuffer();
 
-    public AbstractDeployTask(AppInstance instance, Project project) {
-        super();
-        this.instance = instance;
-        this.project = project;
-        this.taskService = SpringContexts.getBean(TaskService.class);
-    }
+	public AbstractDeployTask(AppInstance instance, Project project) {
+		super();
+		this.instance = instance;
+		this.project = project;
+		this.taskHistoryService = SpringContexts.getBean(TaskHistoryService.class);
+	}
 
 }

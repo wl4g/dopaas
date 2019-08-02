@@ -25,38 +25,38 @@ import java.io.Serializable;
  * @date 2019-05-21 16:18:00
  */
 public class InstanceListArgument implements Serializable {
-    private static final long serialVersionUID = -90377698662015272L;
+	private static final long serialVersionUID = -90377698662015272L;
 
-    @ShellOption(opt = "a", lopt = "app", help = "Application service name to be deployed", required = false)
-    private String appGroupName;
+	@ShellOption(opt = "a", lopt = "app", help = "Application service name to be deployed", required = false)
+	private String appGroupName;
 
-    @ShellOption(opt = "e", lopt = "env", help = "The environment of the application to be deployed", required = false)
-    private String envName;
+	@ShellOption(opt = "e", lopt = "env", help = "The environment of the application to be deployed", required = false)
+	private String envName;
 
-    @ShellOption(opt = "r", lopt = "showRegex", help = "Regular expressions that show only the required instants", required = false)
-    private String anyInstants;
+	@ShellOption(opt = "r", lopt = "showRegex", help = "Regular expressions that show only the required instants", required = false)
+	private String anyInstants;
 
-    public String getAppGroupName() {
-        return appGroupName;
-    }
+	public String getAppGroupName() {
+		return appGroupName;
+	}
 
-    public void setAppGroupName(String appGroupName) {
-        this.appGroupName = appGroupName;
-    }
+	public void setAppGroupName(String appGroupName) {
+		this.appGroupName = appGroupName;
+	}
 
-    public String getEnvName() {
-        return envName;
-    }
+	public String getEnvName() {
+		return envName;
+	}
 
-    public void setEnvName(String envName) {
-        this.envName = envName;
-    }
+	public void setEnvName(String envName) {
+		this.envName = envName;
+	}
 
-    public String getAnyInstants() {
-        return anyInstants;
-    }
+	public String getAnyInstants() {
+		return anyInstants;
+	}
 
-    public void setAnyInstants(String anyInstants) {
-        this.anyInstants = anyInstants;
-    }
+	public void setAnyInstants(String anyInstants) {
+		this.anyInstants = anyInstants;
+	}
 }

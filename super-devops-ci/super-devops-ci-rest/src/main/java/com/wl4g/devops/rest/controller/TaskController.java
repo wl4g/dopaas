@@ -21,18 +21,23 @@ import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
-import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.constants.CiDevOpsConstants;
+import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.utils.DateUtils;
+import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * CI/CD controller
+ * Task controller
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
@@ -40,83 +45,161 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/task")
-public class TaskController {
+public class TaskController extends BaseController {
 
-    @Autowired
-    private CiService ciService;
+	@Autowired
+	private CiService ciService;
 
-    @Autowired
-    private TaskService taskService;
+	@Autowired
+	private TaskDao taskDao;
 
+	@Autowired
+	private TaskService taskService;
 
-	/*@RequestMapping(value = "/grouplist")
-	public RespBase<?> grouplist() {
-		RespBase<List<AppGroup>> resp = RespBase.create();
-		resp.getData().put("appGroups", ciService.grouplist());
+	@Autowired
+	private AppClusterDao appClusterDao;
+
+	/**
+	 * Page List
+	 * 
+	 * @param customPage
+	 * @param id
+	 * @param taskName
+	 * @param groupName
+	 * @param branchName
+	 * @param tarType
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(CustomPage customPage, Integer id, String taskName, String groupName, String branchName,
+			Integer tarType, String startDate, String endDate) {
+		log.info(
+				"into TaskController.list prarms::"
+						+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
+				customPage, id, taskName, groupName, branchName, tarType, startDate, endDate);
+		RespBase<Object> resp = RespBase.create();
+		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Page<Task> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		String endDateStr = null;
+		if (StringUtils.isNotBlank(endDate)) {
+			endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate), 1));
+		}
+
+		List<Task> list = taskDao.list(id, taskName, groupName, branchName, tarType, startDate, endDateStr);
+		customPage.setPageNum(pageNum);
+		customPage.setPageSize(pageSize);
+		customPage.setTotal(page.getTotal());
+		resp.getData().put("page", customPage);
+		resp.getData().put("list", list);
 		return resp;
 	}
 
-	@RequestMapping(value = "/environmentlist")
-	public RespBase<?> environmentlist(String groupId) {
-		RespBase<List<Environment>> resp = RespBase.create();
-		List<Environment> environments = ciService.environmentlist(groupId);
-		resp.getData().put("environments", environments);
+	/**
+	 * Save
+	 * 
+	 * @param task
+	 * @param instance
+	 * @return
+	 */
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(Task task, Integer[] instance) {
+		log.info("into TaskController.save prarms::" + "task = {} , instance = {} ", task, instance);
+		Assert.notNull(task, "task can not be null");
+		Assert.notEmpty(instance, "instances can not be empty");
+		checkTask(task);
+		RespBase<Object> resp = RespBase.create();
+		taskService.save(task, instance);
 		return resp;
 	}
 
-	@RequestMapping(value = "/instancelist")
-	public RespBase<?> instancelist(AppInstance appInstance) {
-		RespBase<List<AppInstance>> resp = RespBase.create();
-		List<AppInstance> appInstances = ciService.instancelist(appInstance);
-		resp.getData().put("appInstances", appInstances);
+	/**
+	 * Detail by id
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		log.info("into TaskController.detail prarms::" + "id = {} ", id);
+		Assert.notNull(id, "id can not be null");
+		RespBase<Object> resp = RespBase.create();
+		Task task = taskService.getTaskDetailById(id);
+
+		AppInstance appInstance = null;
+		for (TaskDetail taskDetail : task.getTaskDetails()) {
+			Integer instanceId = taskDetail.getInstanceId();
+			appInstance = appClusterDao.getAppInstance(instanceId.toString());
+			if (appInstance != null && appInstance.getEnvId() != null) {
+				break;
+			}
+		}
+		Integer[] instances = new Integer[task.getTaskDetails().size()];
+		for (int i = 0; i < task.getTaskDetails().size(); i++) {
+			instances[i] = task.getTaskDetails().get(i).getInstanceId();
+		}
+
+		resp.getData().put("task", task);
+		if (null != appInstance) {
+			resp.getData().put("envId", Integer.valueOf(appInstance.getEnvId()));
+		}
+		resp.getData().put("instances", instances);
 		return resp;
-	}*/
+	}
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(String groupName, String projectName, String branchName, CustomPage customPage) {
-        RespBase<Object> resp = RespBase.create();
-        Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-        Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-        List<Task> list = taskService.list(groupName, projectName, branchName);
-        customPage.setPageNum(pageNum);
-        customPage.setPageSize(pageSize);
-        customPage.setTotal(page.getTotal());
-        resp.getData().put("page", customPage);
-        resp.getData().put("list", list);
-        return resp;
-    }
+	/**
+	 * Delete by id
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		Assert.notNull(id, "id can not be null");
+		RespBase<Object> resp = RespBase.create();
+		taskService.delete(id);
+		return resp;
+	}
 
-    @RequestMapping(value = "/create")
-    public RespBase<?> create(Integer appGroupId, String branchName, Integer[] instances,Integer tarType) {
-        RespBase<Object> resp = RespBase.create();
-        List<String> instanceStrs = new ArrayList<>();
-        for (Integer instance : instances) {
-            instanceStrs.add(String.valueOf(instance));
-        }
-        ciService.createTask(appGroupId, branchName, instanceStrs, CiDevOpsConstants.TASK_TYPE_MANUAL,tarType);
-        return resp;
-    }
+	/**
+	 * Check the form
+	 * 
+	 * @param task
+	 */
+	private void checkTask(Task task) {
+		Assert.hasText(task.getTaskName(), "taskName is null");
+		Assert.notNull(task.getAppClusterId(), "clusterId is null");
+		Assert.notNull(task.getTarType(), "packType is null");
+		Assert.hasText(task.getBranchName(), "branchName is null");
+	}
 
-    @RequestMapping(value = "/detail")
-    public RespBase<?> detail(Integer taskId) {
-        RespBase<Object> resp = RespBase.create();
-        Task task = taskService.getTaskById(taskId);
-        List<TaskDetail> taskDetails = taskService.getDetailByTaskId(taskId);
-        resp.getData().put("group", task.getGroupName());
-        resp.getData().put("branch", task.getBranchName());
-        resp.getData().put("result", task.getResult());
-        resp.getData().put("taskDetails", taskDetails);
-        return resp;
-    }
+	/**
+	 * Get List By appClusterId
+	 * 
+	 * @param appClusterId
+	 */
+	@RequestMapping(value = "/getListByAppClusterId")
+	public RespBase<?> getListByAppClusterId(Integer appClusterId) {
+		Assert.notNull(appClusterId, "appClusterId can not be null");
+		RespBase<Object> resp = RespBase.create();
+		List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
+		resp.getData().put("tasks", tasks);
+		return resp;
+	}
 
-    @RequestMapping(value = "/rollback")
-    public RespBase<?> rollback(Integer taskId) {
-        RespBase<Object> resp = RespBase.create();
-        Task task = taskService.getTaskById(taskId);
-        ciService.rollback(taskId);
-        return resp;
-    }
-
+	/**
+	 * create Task History and run Task
+	 * 
+	 * @param taskId
+	 */
+	@RequestMapping(value = "/create")
+	public RespBase<?> create(Integer taskId) {
+		RespBase<Object> resp = RespBase.create();
+		ciService.createTask(taskId);
+		return resp;
+	}
 
 }

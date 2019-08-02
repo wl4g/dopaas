@@ -1,8 +1,8 @@
 package com.wl4g.devops.common.bean.share;
 
-import com.wl4g.devops.common.bean.scm.BaseBean;
-
 import java.io.Serializable;
+
+import com.wl4g.devops.common.bean.BaseBean;
 
 /**
  * System share dict bean.

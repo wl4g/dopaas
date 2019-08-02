@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.scm.AppGroup;
+import com.wl4g.devops.common.bean.scm.AppCluster;
 import com.wl4g.devops.common.bean.scm.AppInstance;
 import com.wl4g.devops.common.bean.scm.Environment;
 
@@ -28,20 +28,18 @@ import java.util.List;
  */
 public interface CiService {
 
-    List<AppGroup> grouplist();
+	List<AppCluster> grouplist();
 
-    List<Environment> environmentlist(String groupId);
+	List<Environment> environmentlist(String clusterId);
 
-    List<AppInstance> instancelist(AppInstance appInstance);
+	List<AppInstance> instancelist(AppInstance appInstance);
 
-    Trigger getTriggerByProjectAndBranch(Integer projectId, String branchName);
+	Trigger getTriggerByAppClusterIdAndBranch(Integer appClusterId, String branchName);
 
-    void hook(String projectName, String branchName, String url);
+	void hook(String projectName, String branchName, String url);
 
-    void createTask(String projectName, String branchName, List<String> instanceIds, int type,int tarType);
+	void createTask(Integer taskId);
 
-    void createTask(Integer appGroupId, String branchName, List<String> instanceIds, int type,int tarType);
-
-    void rollback(Integer taskId);
+	void createRollbackTask(Integer taskId);
 
 }

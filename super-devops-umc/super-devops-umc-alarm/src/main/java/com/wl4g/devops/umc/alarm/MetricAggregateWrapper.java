@@ -93,7 +93,7 @@ public class MetricAggregateWrapper implements Serializable {
 	 */
 	public static class MetricWrapper {
 
-		private String metric;
+		private String metric = EMPTY;
 
 		private Map<String, String> tags = new HashMap<>();
 

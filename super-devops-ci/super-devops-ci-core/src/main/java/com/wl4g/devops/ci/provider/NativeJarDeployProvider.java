@@ -19,7 +19,7 @@ package com.wl4g.devops.ci.provider;
 //
 // import com.wl4g.devops.ci.config.DeployProperties;
 // import com.wl4g.devops.ci.service.DependencyService;
-// import com.wl4g.devops.common.bean.ci.TaskDetail;
+// import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 // import com.wl4g.devops.common.bean.scm.AppInstance;
 
 /**
@@ -34,7 +34,7 @@ package com.wl4g.devops.ci.provider;
 // public NativeJarDeployProvider(DependencyService dependencyService,
 // DeployProperties config, Integer projectId, String path,
 // String url, String branch, String alias, String tarPath, List<AppInstance>
-// instances, List<TaskDetail> taskDetails) {
+// instances, List<TaskHistoryDetail> taskDetails) {
 // super(dependencyService, config, projectId, path, url, branch, alias,
 // tarPath, instances, taskDetails);
 // }
@@ -50,14 +50,14 @@ package com.wl4g.devops.ci.provider;
 // // scp to server for(AppInstance instance : instances){
 //
 // // scp to server
-// scp(path + "/" + tarPath, instance.getServerAccount() + "@" +
+// scp(path + "/" + tarPath, instance.getSshUser() + "@" +
 // instance.getHost(), instance.getBasePath());
 //
 // // stop server
-// // stop(instance.getHost(),instance.getServerAccount(),alias);
+// // stop(instance.getHost(),instance.getSshUser(),alias);
 //
 // // restart server
-// start(instance.getHost(), instance.getServerAccount(), alias, tarName);
+// start(instance.getHost(), instance.getSshUser(), alias, tarName);
 // }log.info("Done");
 //
 // }

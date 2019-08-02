@@ -15,13 +15,15 @@
  */
 package com.wl4g.devops.common.bean.scm;
 
+import com.wl4g.devops.common.bean.BaseBean;
+
 import java.util.List;
 
 public class Environment extends BaseBean {
 
 	private String name;
 
-	private String groupId;
+	private String clusterId;
 
 	private List<AppInstance> appInstance;
 
@@ -41,12 +43,12 @@ public class Environment extends BaseBean {
 		this.name = name;
 	}
 
-	public String getGroupId() {
-		return groupId;
+	public String getClusterId() {
+		return clusterId;
 	}
 
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
+	public void setClusterId(String clusterId) {
+		this.clusterId = clusterId;
 	}
 
 }
