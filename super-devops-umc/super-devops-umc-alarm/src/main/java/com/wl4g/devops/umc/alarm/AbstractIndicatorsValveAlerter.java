@@ -53,10 +53,10 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	protected RuleConfigManager ruleConfigManager;
+	protected RuleConfigManager ruleManager;
 
 	@Autowired
-	protected AlarmConfigurer alarmConfigHandler;
+	protected AlarmConfigurer configurer;
 
 	@Autowired
 	protected CompositeAlarmNotifierAdapter notifier;

@@ -15,20 +15,24 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import com.wl4g.devops.umc.config.AlarmProperties;
+
 /**
- * Collection metric valve alerter.
+ * Simulate indicators valve alerter.
  * 
- * @author Wangl.sir
- * @version v1.0 2019年7月5日
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019-08-04
  * @since
  */
-public interface IndicatorsValveAlerter {
+public class SimulateIndicatorsValveAleter extends AbstractIndicatorsValveAlerter {
 
-	/**
-	 * Aggregate data alerts based on metrics.
-	 * 
-	 * @param wrap
-	 */
-	void alarm(MetricAggregateWrapper wrap);
+	public SimulateIndicatorsValveAleter(AlarmProperties config) {
+		super(config);
+	}
+
+	@Override
+	protected void doHandleAlarm(MetricAggregateWrapper aggWrap) {
+
+	}
 
 }
