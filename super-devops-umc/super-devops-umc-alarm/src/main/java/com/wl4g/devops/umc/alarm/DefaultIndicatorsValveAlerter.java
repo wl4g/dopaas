@@ -56,10 +56,10 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		}
 
 		// Load alarm templates by collectId.
-		List<AlarmTemplate> alarmTpls = ruleConfigManager.loadAlarmRuleTpls(aggWrap.getCollectId());
+		List<AlarmTemplate> alarmTpls = ruleManager.loadAlarmRuleTpls(aggWrap.getCollectId());
 		if (isEmpty(alarmTpls)) {
 			if (log.isInfoEnabled()) {
-				log.info("No found alarm templates for {}", aggWrap.getCollectId());
+				log.info("No found alarm templates for collect: {}", aggWrap.getCollectId());
 			}
 			return;
 		}
@@ -167,9 +167,9 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param macthedRules
 	 */
 	protected void storageNotification(String collectId, AlarmTemplate alarmTpl, long gatherTime, List<AlarmRule> macthedRules) {
-		List<AlarmConfig> alarmConfigs = alarmConfigHandler.findAlarmConfig(alarmTpl.getId(), collectId);
+		List<AlarmConfig> alarmConfigs = configurer.findAlarmConfig(alarmTpl.getId(), collectId);
 		// Storage record.
-		alarmConfigHandler.saveAlarmRecord(alarmTpl, alarmConfigs, collectId, gatherTime, macthedRules);
+		configurer.saveAlarmRecord(alarmTpl, alarmConfigs, collectId, gatherTime, macthedRules);
 		// Notification
 		notification(alarmTpl, alarmConfigs, macthedRules);
 	}

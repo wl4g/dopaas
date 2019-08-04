@@ -33,7 +33,9 @@ public class MetricAggregateWrapper implements Serializable {
 	private static final long serialVersionUID = 6450172459195801884L;
 
 	/**
-	 * Metric collection target ID.
+	 * Standard timing data collector address ID, such as REDIS service metrics
+	 * collector: defaultRedisCollector, or IOT device collector (DTU custom
+	 * address) e.g.: 11511888
 	 */
 	private String collectId = EMPTY;
 
@@ -95,8 +97,26 @@ public class MetricAggregateWrapper implements Serializable {
 
 		private String metric = EMPTY;
 
+		/**
+		 * Standard time series data TAG, such as: collect of server REDIS
+		 * metric:
+		 * 
+		 * <pre>
+		 * tag.put("server", "192.168.1.2:6379")
+		 * </pre>
+		 * 
+		 * or collect of IOT device metric:
+		 * 
+		 * <pre>
+		 * tag.put("addrIPOrder", "01")
+		 * </pre>
+		 */
 		private Map<String, String> tags = new HashMap<>();
 
+		/**
+		 * Value metric by standard time series data, such as MySQL current
+		 * connections: 1000, or current electric: 500 KW/H
+		 */
 		private Double value;
 
 		public String getMetric() {
