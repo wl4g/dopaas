@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric;
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
@@ -38,19 +38,19 @@ import com.wl4g.devops.umc.store.MetricStore;
  */
 public abstract class AbstractMetricReceiver implements MetricReceiver {
 
-	@Autowired
-	private IndicatorsValveAlerter indicatorsValveAlerter;
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/** metric store adapter. */
+	/** Indicator valve alerter. */
+	final protected IndicatorsValveAlerter alerter;
+
+	/** Metric store adapter. */
 	final protected MetricStore store;
 
-	public AbstractMetricReceiver(MetricStore store) {
-
-		super();
+	public AbstractMetricReceiver(IndicatorsValveAlerter alerter, MetricStore store) {
+		Assert.notNull(alerter, "IndicatorsValveAlerter must not be null.");
+		Assert.notNull(store, "MetricStore must not be null.");
+		this.alerter = alerter;
 		this.store = store;
-
 	}
 
 	/**
@@ -69,7 +69,7 @@ public abstract class AbstractMetricReceiver implements MetricReceiver {
 	 */
 	protected void alarm(MetricAggregate aggregate) {
 		MetricAggregateWrapper wrap = new MetricAggregateWrapper();
-		wrap.setCollectId(aggregate.getInstance());
+		wrap.setCollectAddr(aggregate.getInstance());
 		wrap.setTimestamp(aggregate.getTimestamp());
 		wrap.setClassify(aggregate.getClassify());
 
@@ -84,7 +84,7 @@ public abstract class AbstractMetricReceiver implements MetricReceiver {
 		wrap.setMetrics(metrics);
 
 		// Do alarm alerter.
-		indicatorsValveAlerter.alarm(wrap);
+		alerter.alarm(wrap);
 	}
 
 }

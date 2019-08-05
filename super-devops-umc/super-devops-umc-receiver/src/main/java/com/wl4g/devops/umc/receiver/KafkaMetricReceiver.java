@@ -17,6 +17,7 @@ package com.wl4g.devops.umc.receiver;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
+import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
@@ -37,8 +38,8 @@ import static com.wl4g.devops.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_
  */
 public class KafkaMetricReceiver extends AbstractMetricReceiver {
 
-	public KafkaMetricReceiver(MetricStore store) {
-		super(store);
+	public KafkaMetricReceiver(IndicatorsValveAlerter alerter, MetricStore store) {
+		super(alerter, store);
 	}
 
 	/**

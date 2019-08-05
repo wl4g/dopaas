@@ -16,11 +16,15 @@
 package com.wl4g.devops.umc.alarm;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.Assert;
+
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Metric aggregate wrapper.
@@ -37,31 +41,33 @@ public class MetricAggregateWrapper implements Serializable {
 	 * collector: defaultRedisCollector, or IOT device collector (DTU custom
 	 * address) e.g.: 11511888
 	 */
-	private String collectId = EMPTY;
+	private String collectAddr = EMPTY;
 
 	/** Collect metric type. */
 	private String classify = EMPTY;
 
 	/** Collect metric list. */
-	private List<MetricWrapper> metrics;
+	private List<MetricWrapper> metrics = new ArrayList<>();
 
 	/** Collect metric time-stamp. */
-	private Long timestamp;
+	private Long timestamp = -1L;
 
-	public String getCollectId() {
-		return collectId;
+	public String getCollectAddr() {
+		return collectAddr;
 	}
 
-	public void setCollectId(String collectId) {
-		this.collectId = collectId;
+	public void setCollectAddr(String collectId) {
+		Assert.hasText(collectId, "Collect addr must not be empty.");
+		this.collectAddr = collectId;
 	}
 
 	public String getClassify() {
 		return classify;
 	}
 
-	public void setClassify(String metricType) {
-		this.classify = metricType;
+	public void setClassify(String classify) {
+		Assert.hasText(classify, "Collect classify must not be empty.");
+		this.classify = classify;
 	}
 
 	public List<MetricWrapper> getMetrics() {
@@ -69,20 +75,22 @@ public class MetricAggregateWrapper implements Serializable {
 	}
 
 	public void setMetrics(List<MetricWrapper> metrics) {
-		this.metrics = metrics;
+		if (!isEmpty(metrics)) {
+			this.metrics.addAll(metrics);
+		}
 	}
 
 	public Long getTimestamp() {
 		return timestamp * 1000;
 	}
 
-	public void setTimestamp(Long timeStamp) {
-		this.timestamp = timeStamp;
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	@Override
 	public String toString() {
-		return "MetricAggregateWrapper{" + "collectId='" + collectId + '\'' + ", classify='" + classify + '\'' + ", metrics="
+		return "MetricAggregateWrapper{" + "collectId='" + collectAddr + '\'' + ", classify='" + classify + '\'' + ", metrics="
 				+ metrics + ", timeStamp=" + timestamp + '}';
 	}
 

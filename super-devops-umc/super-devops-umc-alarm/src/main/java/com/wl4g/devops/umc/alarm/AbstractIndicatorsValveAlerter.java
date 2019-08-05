@@ -18,6 +18,7 @@ package com.wl4g.devops.umc.alarm;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
@@ -33,14 +34,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 /**
  * Abstract collection metric valve alerter.
@@ -52,23 +52,34 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	protected RuleConfigManager ruleManager;
+	/** JEDIS service */
+	final protected JedisService jedisService;
 
-	@Autowired
-	protected AlarmConfigurer configurer;
+	/** Alarm configuration */
+	final protected AlarmConfigurer configurer;
 
-	@Autowired
-	protected CompositeAlarmNotifierAdapter notifier;
+	/** Alarm rule manager */
+	final protected RuleConfigManager ruleManager;
 
-	@Autowired
-	protected CompositeRuleInspectorAdapter inspector;
+	/** Alarm rule inspector */
+	final protected CompositeRuleInspectorAdapter inspector;
 
-	@Autowired
-	protected JedisService jedisService;
+	/** Alarm notifier */
+	final protected CompositeAlarmNotifierAdapter notifier;
 
-	public AbstractIndicatorsValveAlerter(AlarmProperties config) {
+	public AbstractIndicatorsValveAlerter(AlarmProperties config, JedisService jedisService, AlarmConfigurer configurer,
+			RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
 		super(config);
+		Assert.notNull(jedisService, "JedisService is null, please check config.");
+		Assert.notNull(configurer, "AlarmConfigurer is null, please check config.");
+		Assert.notNull(ruleManager, "RuleManager is null, please check config.");
+		Assert.notNull(inspector, "RuleInspector is null, please check config.");
+		Assert.notNull(notifier, "AlarmNotifier is null, please check config.");
+		this.jedisService = jedisService;
+		this.configurer = configurer;
+		this.ruleManager = ruleManager;
+		this.inspector = inspector;
+		this.notifier = notifier;
 	}
 
 	@Override
@@ -84,12 +95,15 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	/**
 	 * Do handling alarm.
 	 * 
-	 * @param aggWrap
+	 * @param agwrap
 	 */
-	protected abstract void doHandleAlarm(MetricAggregateWrapper aggWrap);
+	protected abstract void doHandleAlarm(MetricAggregateWrapper agwrap);
 
 	/**
 	 * Extract largest metric keep time window of rules.
+	 * 
+	 * @param rules
+	 * @return
 	 */
 	protected long extractMaxRuleWindowTime(List<AlarmRule> rules) {
 		long largestTimeWindow = 0;
@@ -104,6 +118,10 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 
 	/**
 	 * Match metric tags
+	 * 
+	 * @param metricTagMap
+	 * @param tplTagMap
+	 * @return
 	 */
 	protected boolean matchTags(Map<String, String> metricTagMap, Map<String, String> tplTagMap) {
 		// If no tag is configured, the matching tag does not need to be
@@ -120,9 +138,37 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	}
 
 	/**
-	 * Notification of alarm template to users.
+	 * GET metric values queue by collect address.
+	 * 
+	 * @param collectAddr
+	 * @return
 	 */
-	protected void notification(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, List<AlarmRule> macthedRules) {
+	protected List<MetricValue> doPeekMetricValueQueue(String collectAddr) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(collectAddr);
+		return jedisService.getObjectList(timeWindowKey, MetricValue.class);
+	}
+
+	/**
+	 * Storage metric values to cache.
+	 * 
+	 * @param collectAddr
+	 * @param ttl
+	 * @param metricVals
+	 */
+	protected List<MetricValue> doOfferMetricValueQueue(String collectAddr, long ttl, List<MetricValue> metricVals) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(collectAddr);
+		jedisService.setObjectList(timeWindowKey, metricVals, (int) ttl);
+		return metricVals;
+	}
+
+	/**
+	 * Notification of alarm template to users.
+	 * 
+	 * @param alarmTpl
+	 * @param alarmConfigs
+	 * @param macthedRules
+	 */
+	protected void notification(AlarmTemplate alarmTpl, List<AlarmConfig> alarmConfigs, List<AlarmRule> macthedRules) {
 		for (AlarmConfig alarmConfig : alarmConfigs) {
 			if (isBlank(alarmConfig.getAlarmMember())) {
 				continue;
@@ -130,7 +176,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 			// Alarm notifier members.
 			String[] alarmMembers = alarmConfig.getAlarmMember().split(",");
 			if (log.isInfoEnabled()) {
-				log.info("Notification alarm for templateId: {}, notifierType: {}, to: {}, content: {}", alarmTemplate.getId(),
+				log.info("Notification alarm for templateId: {}, notifierType: {}, to: {}, content: {}", alarmTpl.getId(),
 						alarmConfig.getAlarmType(), alarmConfig.getAlarmMember(), alarmConfig.getAlarmContent());
 			}
 			// Alarm to composite notifiers.
@@ -143,8 +189,9 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	// --- Cache key. ---
 	//
 
-	protected static String getTimeWindowQueueCacheKey(Serializable templateId) {
-		return KEY_CACHE_ALARM_METRIC_QUEUE + templateId;
+	protected String getTimeWindowQueueCacheKey(String collectAddr) {
+		Assert.hasText(collectAddr, "Collect addr must not be empty");
+		return KEY_CACHE_ALARM_METRIC_QUEUE + collectAddr;
 	}
 
 }

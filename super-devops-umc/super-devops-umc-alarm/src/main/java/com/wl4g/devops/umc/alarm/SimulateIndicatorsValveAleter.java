@@ -15,7 +15,16 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE;
+
+import org.springframework.util.Assert;
+
+import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.config.AlarmProperties;
+import com.wl4g.devops.umc.handler.AlarmConfigurer;
+import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
+import com.wl4g.devops.umc.rule.RuleConfigManager;
+import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
 /**
  * Simulate indicators valve alerter.
@@ -24,15 +33,17 @@ import com.wl4g.devops.umc.config.AlarmProperties;
  * @version v1.0 2019-08-04
  * @since
  */
-public class SimulateIndicatorsValveAleter extends AbstractIndicatorsValveAlerter {
+public class SimulateIndicatorsValveAleter extends DefaultIndicatorsValveAlerter {
 
-	public SimulateIndicatorsValveAleter(AlarmProperties config) {
-		super(config);
+	public SimulateIndicatorsValveAleter(AlarmProperties config, JedisService jedisService, AlarmConfigurer configurer,
+			RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
+		super(config, jedisService, configurer, ruleManager, inspector, notifier);
 	}
 
 	@Override
-	protected void doHandleAlarm(MetricAggregateWrapper aggWrap) {
-
+	protected String getTimeWindowQueueCacheKey(String collectAddr) {
+		Assert.hasText(collectAddr, "Collect addr must not be empty");
+		return KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE + collectAddr;
 	}
 
 }

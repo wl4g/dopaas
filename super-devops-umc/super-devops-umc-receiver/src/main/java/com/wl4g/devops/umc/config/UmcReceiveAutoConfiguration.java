@@ -16,6 +16,7 @@
 package com.wl4g.devops.umc.config;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
 import com.wl4g.devops.umc.console.ReceiveConsole;
@@ -23,6 +24,7 @@ import com.wl4g.devops.umc.receiver.HttpMetricReceiver;
 import com.wl4g.devops.umc.receiver.KafkaMetricReceiver;
 import com.wl4g.devops.umc.store.*;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +40,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Properties;
 
+import static com.wl4g.devops.umc.config.UmcAlarmAutoConfiguration.*;
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_BASE;
 import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
 
@@ -68,8 +71,9 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_HTTP_RECEIVER)
 	@EnableHttpCollectReceiver
-	public HttpMetricReceiver httpCollectReceiver(MetricStore store) {
-		return new HttpMetricReceiver(store);
+	public HttpMetricReceiver httpCollectReceiver(@Qualifier(BEAN_DEFAULT_VALVE_ALERTER) IndicatorsValveAlerter alerter,
+			MetricStore store) {
+		return new HttpMetricReceiver(alerter, store);
 	}
 
 	@Bean
@@ -94,8 +98,9 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfi
 
 	@Bean(BEAN_KAFKA_RECEIVER)
 	@EnableKafkaCollectReceiver
-	public KafkaMetricReceiver kafkaCollectReceiver(MetricStore store) {
-		return new KafkaMetricReceiver(store);
+	public KafkaMetricReceiver kafkaCollectReceiver(@Qualifier(BEAN_DEFAULT_VALVE_ALERTER) IndicatorsValveAlerter alerter,
+			MetricStore store) {
+		return new KafkaMetricReceiver(alerter, store);
 	}
 
 	@Bean(BEAN_KAFKA_BATCH_FACTORY)

@@ -15,25 +15,35 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import static com.wl4g.devops.common.utils.lang.Collections2.ensureList;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
+import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
+import com.wl4g.devops.umc.handler.AlarmConfigurer;
+import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
+import com.wl4g.devops.umc.rule.RuleConfigManager;
+import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 
 /**
@@ -45,28 +55,35 @@ import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
  */
 public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerter {
 
-	public DefaultIndicatorsValveAlerter(AlarmProperties config) {
-		super(config);
+	/**
+	 * REDIS lock manager.
+	 */
+	@Autowired
+	protected SimpleRedisLockManager lockManager;
+
+	public DefaultIndicatorsValveAlerter(AlarmProperties config, JedisService jedisService, AlarmConfigurer configurer,
+			RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
+		super(config, jedisService, configurer, ruleManager, inspector, notifier);
 	}
 
 	@Override
-	protected void doHandleAlarm(MetricAggregateWrapper aggWrap) {
+	protected void doHandleAlarm(MetricAggregateWrapper agwrap) {
 		if (log.isInfoEnabled()) {
-			log.info("Alarm handling for collectId: {}", aggWrap.getCollectId());
+			log.info("Alarm handling for collectId: {}", agwrap.getCollectAddr());
 		}
 
 		// Load alarm templates by collectId.
-		List<AlarmTemplate> alarmTpls = ruleManager.loadAlarmRuleTpls(aggWrap.getCollectId());
+		List<AlarmTemplate> alarmTpls = ruleManager.loadAlarmRuleTpls(agwrap.getCollectAddr());
 		if (isEmpty(alarmTpls)) {
 			if (log.isInfoEnabled()) {
-				log.info("No found alarm templates for collect: {}", aggWrap.getCollectId());
+				log.info("No found alarm templates for collect: {}", agwrap.getCollectAddr());
 			}
 			return;
 		}
 
 		// Handling alarm.
 		long now = System.currentTimeMillis();
-		for (MetricWrapper metricWrap : aggWrap.getMetrics()) {
+		for (MetricWrapper metricWrap : agwrap.getMetrics()) {
 			String metricName = metricWrap.getMetric();
 			for (AlarmTemplate tpl : alarmTpls) {
 				if (StringUtils.equals(metricName, tpl.getMetric())) {
@@ -78,8 +95,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					// Maximum metric keep time window of rules.
 					long maxWindowTime = extractMaxRuleWindowTime(tpl.getRules());
 					// Offer latest metrics in time window queue.
-					List<MetricValue> metricVals = offerTimeWindowQueue(tpl.getId(), metricWrap.getValue(),
-							aggWrap.getTimestamp(), now, maxWindowTime);
+					List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getCollectAddr(), metricWrap.getValue(),
+							agwrap.getTimestamp(), now, maxWindowTime);
 
 					// Match alarm rules of metric values.
 					List<AlarmRule> matchedRules = matchAlarmRules(metricVals, tpl.getRules(), now);
@@ -90,7 +107,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 						}
 
 						// Storage & notification
-						storageNotification(aggWrap.getCollectId(), tpl, aggWrap.getTimestamp(), matchedRules);
+						storageNotification(agwrap.getCollectAddr(), tpl, agwrap.getTimestamp(), matchedRules);
 					} else if (log.isDebugEnabled()) {
 						log.debug("No match to metric: {} and alarm template: {}, time window queue: {}", metricName, tpl.getId(),
 								toJSONString(metricVals));
@@ -103,6 +120,11 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 	/**
 	 * Match alarm rules.
+	 * 
+	 * @param metricVals
+	 * @param rules
+	 * @param now
+	 * @return
 	 */
 	protected List<AlarmRule> matchAlarmRules(List<MetricValue> metricVals, List<AlarmRule> rules, long now) {
 		// Match mode for 'OR'/'AND'.
@@ -121,21 +143,48 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 	/**
 	 * Offer metric values in time windows.
+	 * 
+	 * @param collectAddr
+	 *            collector address
+	 * @param value
+	 *            metric value
+	 * @param gatherTime
+	 *            gather time-stamp.
+	 * @param now
+	 *            current date time-stamp.
+	 * @param ttl
+	 *            time-to-live
+	 * @return
 	 */
-	protected List<MetricValue> offerTimeWindowQueue(Serializable tplId, Double value, long gatherTime, long now, long ttl) {
-		String timeWindowKey = getTimeWindowQueueCacheKey(tplId);
-		List<MetricValue> metricVals = jedisService.getObjectList(timeWindowKey, MetricValue.class);
+	protected List<MetricValue> offerTimeWindowQueue(String collectAddr, Double value, long gatherTime, long now, long ttl) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(collectAddr);
+		// To solve the concurrency problem of metric window queue in
+		// distributed environment.
+		Lock lock = lockManager.getLock(timeWindowKey);
 
-		// Clean expired metrics.
-		Iterator<MetricValue> it = safeList(metricVals).iterator();
-		while (it.hasNext()) {
-			if (abs(now - it.next().getGatherTime()) >= ttl) {
-				it.remove();
+		List<MetricValue> metricVals = emptyList();
+		try {
+			if (lock.tryLock(5L, TimeUnit.SECONDS)) {
+				metricVals = ensureList(doPeekMetricValueQueue(collectAddr));
+				metricVals.add(new MetricValue(gatherTime, value));
+
+				// Clean expired metrics.
+				Iterator<MetricValue> it = metricVals.iterator();
+				while (it.hasNext()) {
+					if (abs(now - it.next().getGatherTime()) >= ttl) {
+						it.remove();
+					}
+				}
+
+				// Storage to queue.
+				doOfferMetricValueQueue(collectAddr, ttl, metricVals);
 			}
+		} catch (InterruptedException e) {
+			throw new IllegalStateException(e);
+		} finally {
+			lock.unlock();
 		}
 
-		// Append to cache.
-		jedisService.listObjectAdd(timeWindowKey, new MetricValue(gatherTime, value));
 		return metricVals;
 	}
 
@@ -160,16 +209,17 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	/**
 	 * Storage and notification.
 	 * 
-	 * @param collectId
-	 * @param collectId
+	 * @param collectAddr
+	 * @param collectAddr
 	 * @param alarmTpl
 	 * @param gatherTime
 	 * @param macthedRules
 	 */
-	protected void storageNotification(String collectId, AlarmTemplate alarmTpl, long gatherTime, List<AlarmRule> macthedRules) {
-		List<AlarmConfig> alarmConfigs = configurer.findAlarmConfig(alarmTpl.getId(), collectId);
+	protected void storageNotification(String collectAddr, AlarmTemplate alarmTpl, long gatherTime,
+			List<AlarmRule> macthedRules) {
+		List<AlarmConfig> alarmConfigs = configurer.findAlarmConfig(alarmTpl.getId(), collectAddr);
 		// Storage record.
-		configurer.saveAlarmRecord(alarmTpl, alarmConfigs, collectId, gatherTime, macthedRules);
+		configurer.saveAlarmRecord(alarmTpl, alarmConfigs, collectAddr, gatherTime, macthedRules);
 		// Notification
 		notification(alarmTpl, alarmConfigs, macthedRules);
 	}
