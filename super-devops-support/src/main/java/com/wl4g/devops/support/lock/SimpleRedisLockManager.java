@@ -62,19 +62,18 @@ public class SimpleRedisLockManager {
 	 * @version v1.0 2019年3月19日
 	 * @since
 	 */
-	public class SimpleSpinLock implements Lock {
+	public static class SimpleSpinLock implements Lock {
+		final private static String NAMESPACE = "simple_lock_";
+		final private static Long SUCCESS = new Long(1L);
+		final private static String NXXX = "NX";
+		final private static String EXPX = "PX";
+		final private static long FREQ_MS = 50L;
 
-		final private String NAMESPACE = "simple_lock_";
-		final private Long SUCCESS = new Long(1L);
-		final private String NXXX = "NX";
-		final private String EXPX = "PX";
-		final private long FREQ_MS = 50L;
-
+		final private Logger log = LoggerFactory.getLogger(getClass());
 		final private JedisCluster jedisCluster;
-		final private int timeoutMs;
 		final private String name;
-
-		private String processId;
+		final private String processId;
+		final private int timeoutMs;
 
 		public SimpleSpinLock(JedisCluster jedisCluster, String name, int timeoutMs,
 				TimeUnit unit/* , String processId */) {
@@ -97,7 +96,7 @@ public class SimpleRedisLockManager {
 				try {
 					Thread.sleep(FREQ_MS);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					throw new IllegalStateException(e);
 				}
 			}
 		}
@@ -114,8 +113,8 @@ public class SimpleRedisLockManager {
 		}
 
 		@Override
-		public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-			long t = unit.toMillis(time) / FREQ_MS, c = 0;
+		public boolean tryLock(long time, TimeUnit timeUnit) throws InterruptedException {
+			long t = timeUnit.toMillis(time) / FREQ_MS, c = 0;
 			while (t > (++c)) {
 				Thread.sleep(FREQ_MS);
 				if (jedisCluster.set(name, processId, NXXX, EXPX, timeoutMs) != null) {
@@ -130,7 +129,7 @@ public class SimpleRedisLockManager {
 			String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 			Object res = jedisCluster.eval(script, Collections.singletonList(name), Collections.singletonList(processId));
 			if (!SUCCESS.equals(res)) {
-				log.warn(String.format("Unlock failure '%s'", processId));
+				log.warn(String.format("Failed to unlock for '%s'", processId));
 			}
 		}
 

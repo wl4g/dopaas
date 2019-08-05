@@ -21,8 +21,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.alarm.SimulateIndicatorsValveAleter;
 import com.wl4g.devops.umc.console.AlarmConsole;
 import com.wl4g.devops.umc.handler.CheckImpledAlarmConfigurer;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
@@ -52,6 +54,10 @@ public class UmcAlarmAutoConfiguration {
 
 	final public static String KEY_ALARM_PREFIX = "spring.cloud.devops.umc.alarm";
 
+	final public static String BEAN_DEFAULT_VALVE_ALERTER = "defaultIndicatorsValveAlerter";
+
+	final public static String BEAN_SIMULATE_VALVE_ALERTER = "simulateIndicatorsValveAlerter";
+
 	@Bean
 	@ConfigurationProperties(prefix = KEY_ALARM_PREFIX)
 	public AlarmProperties alarmProperties() {
@@ -60,9 +66,18 @@ public class UmcAlarmAutoConfiguration {
 		return alarmProperties;
 	}
 
-	@Bean
-	public IndicatorsValveAlerter indicatorsValveAlerter() {
-		return new DefaultIndicatorsValveAlerter(alarmProperties());
+	@Bean(BEAN_DEFAULT_VALVE_ALERTER)
+	public IndicatorsValveAlerter defaultIndicatorsValveAlerter(AlarmProperties config, JedisService jedisService,
+			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
+			CompositeAlarmNotifierAdapter notifier) {
+		return new DefaultIndicatorsValveAlerter(config, jedisService, configurer, ruleManager, inspector, notifier);
+	}
+
+	@Bean(BEAN_SIMULATE_VALVE_ALERTER)
+	public IndicatorsValveAlerter simulateIndicatorsValveAlerter(AlarmProperties config, JedisService jedisService,
+			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
+			CompositeAlarmNotifierAdapter notifier) {
+		return new SimulateIndicatorsValveAleter(config, jedisService, configurer, ruleManager, inspector, notifier);
 	}
 
 	@Bean

@@ -54,7 +54,12 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	/**
 	 * UMC alarm metric value in time window queue key prefix.
 	 */
-	final public static String KEY_CACHE_ALARM_METRIC_QUEUE = "umc_templatehis_";
+	final public static String KEY_CACHE_ALARM_METRIC_QUEUE = "umc_alarm_queue_";
+
+	/**
+	 * Simulation UMC alarm metric value in time window queue key prefix.
+	 */
+	final public static String KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE = "umc_alarm_queue_simulate_";
 
 	/**
 	 * KAFKA receiver metric topic pattern.(corresponding to agent collector)

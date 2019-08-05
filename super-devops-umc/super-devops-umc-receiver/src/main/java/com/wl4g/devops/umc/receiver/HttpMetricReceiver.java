@@ -16,6 +16,7 @@
 package com.wl4g.devops.umc.receiver;
 
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
+import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +35,8 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_HTTP_RECEI
 @com.wl4g.devops.umc.annotation.HttpCollectReceiver
 public class HttpMetricReceiver extends AbstractMetricReceiver {
 
-	public HttpMetricReceiver(MetricStore store) {
-		super(store);
+	public HttpMetricReceiver(IndicatorsValveAlerter alerter, MetricStore store) {
+		super(alerter, store);
 	}
 
 	/**

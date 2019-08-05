@@ -3,6 +3,7 @@ package com.wl4g.devops.common.utils.lang;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,29 @@ public abstract class Collections2 {
 	@SuppressWarnings("unchecked")
 	public static <T> T[] safeArray(Class<T> componentType, T... array) {
 		return null == array ? (T[]) Array.newInstance(componentType, 0) : array;
+	}
+
+	/**
+	 * Ensure that the default is at least an ArrayList instance (when the
+	 * parameter is empty)
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public static <T> List<T> ensureList(List<T> list) {
+		return isEmpty(list) ? new ArrayList<T>() : list;
+	}
+
+	/**
+	 * Ensure that the default is at least an ArrayList instance (when the
+	 * parameter is empty)
+	 * 
+	 * @param list
+	 * @param fallback
+	 * @return
+	 */
+	public static <T> List<T> ensureList(List<T> list, List<T> fallback) {
+		return isEmpty(list) ? fallback : list;
 	}
 
 	/**
