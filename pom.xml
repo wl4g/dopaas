@@ -55,8 +55,8 @@
 		<module>super-devops-support</module>
 		<module>super-devops-scm</module>
 		<module>super-devops-ci</module>
-		<!-- <module>super-devops-shell</module> -->
-		<!--<module>super-devops-srm</module> -->
+		<module>super-devops-shell</module>
+		<module>super-devops-srm</module>
 		<!-- <module>super-devops-doc</module> -->
 		<module>super-devops-iam</module>
 		<!-- <module>super-devops-im</module> -->
