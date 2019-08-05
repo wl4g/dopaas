@@ -1,78 +1,70 @@
 package com.wl4g.devops.common.bean.umc;
 
-import java.util.Date;
-
 import com.wl4g.devops.common.bean.BaseBean;
 
-public class AlarmRecord extends BaseBean {
+import java.io.Serializable;
+import java.util.Date;
 
-	private Integer templateId;
+public class AlarmRecord extends BaseBean implements Serializable {
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;
+    private String name;
 
-	private Integer collectId;
+    private Integer configId;
 
-	private Date gatherTime;
+    private Date gatherTime;
 
-	private Date alarmTime;
+    private Date createTime;
 
-	private String alarmInfo;
+    private String alarmInfo;
 
-	private String alarmType;
+    private String alarmType;
 
-	public Integer getTemplateId() {
-		return templateId;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setTemplateId(Integer templateId) {
-		this.templateId = templateId;
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Integer getConfigId() {
+        return configId;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setConfigId(Integer configId) {
+        this.configId = configId;
+    }
 
-	public Integer getCollectId() {
-		return collectId;
-	}
+    public Date getGatherTime() {
+        return gatherTime;
+    }
 
-	public void setCollectId(Integer collectId) {
-		this.collectId = collectId;
-	}
+    public void setGatherTime(Date gatherTime) {
+        this.gatherTime = gatherTime;
+    }
 
-	public Date getGatherTime() {
-		return gatherTime;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setGatherTime(Date gatherTime) {
-		this.gatherTime = gatherTime;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public Date getAlarmTime() {
-		return alarmTime;
-	}
+    public String getAlarmInfo() {
+        return alarmInfo;
+    }
 
-	public void setAlarmTime(Date alarmTime) {
-		this.alarmTime = alarmTime;
-	}
+    public void setAlarmInfo(String alarmInfo) {
+        this.alarmInfo = alarmInfo == null ? null : alarmInfo.trim();
+    }
 
-	public String getAlarmInfo() {
-		return alarmInfo;
-	}
+    public String getAlarmType() {
+        return alarmType;
+    }
 
-	public void setAlarmInfo(String alarmInfo) {
-		this.alarmInfo = alarmInfo == null ? null : alarmInfo.trim();
-	}
-
-	public String getAlarmType() {
-		return alarmType;
-	}
-
-	public void setAlarmType(String alarmType) {
-		this.alarmType = alarmType == null ? null : alarmType.trim();
-	}
+    public void setAlarmType(String alarmType) {
+        this.alarmType = alarmType == null ? null : alarmType.trim();
+    }
 }

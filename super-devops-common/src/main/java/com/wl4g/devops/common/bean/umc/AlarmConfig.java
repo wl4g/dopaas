@@ -2,65 +2,41 @@ package com.wl4g.devops.common.bean.umc;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-public class AlarmConfig extends BaseBean {
+import java.io.Serializable;
+import java.util.Date;
 
-	private String name;
+public class AlarmConfig extends BaseBean implements Serializable {
 
-	private Integer templateId;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String alarmType;
+    private Integer collectId;
 
-	private String alarmContent;
+    private Integer templateId;
 
-	private String alarmMember;
+    private Integer contactGroupId;
 
-	private Integer clusterId;
+    public Integer getCollectId() {
+        return collectId;
+    }
 
-	public String getAlarmMember() {
-		return alarmMember;
-	}
+    public void setCollectId(Integer collectId) {
+        this.collectId = collectId;
+    }
 
-	public void setAlarmMember(String alarmMember) {
-		this.alarmMember = alarmMember;
-	}
+    public Integer getTemplateId() {
+        return templateId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public Integer getContactGroupId() {
+        return contactGroupId;
+    }
 
-	public Integer getTemplateId() {
-		return templateId;
-	}
+    public void setContactGroupId(Integer contactGroupId) {
+        this.contactGroupId = contactGroupId;
+    }
 
-	public void setTemplateId(Integer templateId) {
-		this.templateId = templateId;
-	}
-
-	public String getAlarmType() {
-		return alarmType;
-	}
-
-	public void setAlarmType(String alarmType) {
-		this.alarmType = alarmType == null ? null : alarmType.trim();
-	}
-
-	public String getAlarmContent() {
-		return alarmContent;
-	}
-
-	public void setAlarmContent(String alarmContent) {
-		this.alarmContent = alarmContent == null ? null : alarmContent.trim();
-	}
-
-	public Integer getClusterId() {
-		return clusterId;
-	}
-
-	public void setClusterId(Integer clusterId) {
-		this.clusterId = clusterId;
-	}
 }

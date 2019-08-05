@@ -9,9 +9,11 @@
     <result column="logical_operator" property="logicalOperator" jdbcType="INTEGER" />
     <result column="queue_time_window" property="queueTimeWindow" jdbcType="BIGINT" />
     <result column="value" property="value" jdbcType="DOUBLE" />
+    <result column="alarm_level" property="alarmLevel" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, template_id, aggregator, relate_operator, logical_operator, queue_time_window, value
+    id, template_id, aggregator, relate_operator, logical_operator, queue_time_window, 
+    value, alarm_level
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -24,20 +26,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
-    insert into umc_alarm_rule (
-      id, template_id, aggregator, 
-      relate_operator, logical_operator,
-      logical_operator, queue_time_window, value)
-    values (
-      #{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER},
-      #{aggregator,jdbcType=VARCHAR},
-      #{relateOperator,jdbcType=INTEGER},
-      #{logicalOperator,jdbcType=INTEGER},
-      #{queueTimeWindow,jdbcType=BIGINT},
-      #{value,jdbcType=DOUBLE}
-    )
+    insert into umc_alarm_rule (id, template_id, aggregator, 
+      relate_operator, logical_operator, queue_time_window, 
+      value, alarm_level)
+    values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, #{aggregator,jdbcType=VARCHAR}, 
+      #{relateOperator,jdbcType=INTEGER}, #{logicalOperator,jdbcType=INTEGER}, #{queueTimeWindow,jdbcType=BIGINT}, 
+      #{value,jdbcType=DOUBLE}, #{alarmLevel,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_rule
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -60,6 +56,9 @@
       </if>
       <if test="value != null" >
         value,
+      </if>
+      <if test="alarmLevel != null" >
+        alarm_level,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -84,6 +83,9 @@
       <if test="value != null" >
         #{value,jdbcType=DOUBLE},
       </if>
+      <if test="alarmLevel != null" >
+        #{alarmLevel,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
@@ -107,6 +109,9 @@
       <if test="value != null" >
         value = #{value,jdbcType=DOUBLE},
       </if>
+      <if test="alarmLevel != null" >
+        alarm_level = #{alarmLevel,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -117,9 +122,11 @@
       relate_operator = #{relateOperator,jdbcType=INTEGER},
       logical_operator = #{logicalOperator,jdbcType=INTEGER},
       queue_time_window = #{queueTimeWindow,jdbcType=BIGINT},
-      value = #{value,jdbcType=DOUBLE}
+      value = #{value,jdbcType=DOUBLE},
+      alarm_level = #{alarmLevel,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <select id="selectAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
