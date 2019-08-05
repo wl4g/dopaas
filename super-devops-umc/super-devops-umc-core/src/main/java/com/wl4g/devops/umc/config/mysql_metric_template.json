@@ -1,0 +1,12 @@
+{
+	"classify": "mysql",
+	"version": "v0.1.1_agent-0.1.1",
+	"description": "Mysql metric definitions, need to correspond to umc-agent version support.",
+	"metrics": [
+		{
+			"name": "mysql.active.connects",
+			"desc": "Mysql current active connections",
+			"descCN": "Mysql当前活跃连接数"
+		}
+	]
+}

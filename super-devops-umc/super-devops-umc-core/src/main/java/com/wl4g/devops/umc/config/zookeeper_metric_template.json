@@ -1,0 +1,12 @@
+{
+	"classify": "zookeeper",
+	"version": "v0.1.1_agent-0.1.1",
+	"description": "Zookeeper metric definitions, need to correspond to umc-agent version support.",
+	"metrics": [
+		{
+			"name": "zookeeper.active.connects",
+			"desc": "Zookeeper current active connections",
+			"descCN": "Zookeeper当前活跃连接数"
+		}
+	]
+}
