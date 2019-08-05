@@ -26,6 +26,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -83,35 +84,38 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 		// Handling alarm.
 		long now = System.currentTimeMillis();
-		for (MetricWrapper metricWrap : agwrap.getMetrics()) {
-			String metricName = metricWrap.getMetric();
+		for (MetricWrapper mwrap : agwrap.getMetrics()) {
+			String metricName = mwrap.getMetric();
 			for (AlarmTemplate tpl : alarmTpls) {
 				if (StringUtils.equals(metricName, tpl.getMetric())) {
 					// Match tags
-					if (!matchTags(metricWrap.getTags(), tpl.getTagsMap())) {
+					Map<String, String> matchedTags = matchTags(mwrap.getTags(), tpl.getTagsMap());
+					if (isEmpty(matchedTags)) {
+						log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", metricName, tpl.getId(),
+								mwrap.getTags());
 						continue;
 					}
 
 					// Maximum metric keep time window of rules.
 					long maxWindowTime = extractMaxRuleWindowTime(tpl.getRules());
 					// Offer latest metrics in time window queue.
-					List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getCollectAddr(), metricWrap.getValue(),
+					List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getCollectAddr(), mwrap.getValue(),
 							agwrap.getTimestamp(), now, maxWindowTime);
 
 					// Match alarm rules of metric values.
 					List<AlarmRule> matchedRules = matchAlarmRules(metricVals, tpl.getRules(), now);
-					if (!isEmpty(matchedRules)) {
-						if (log.isInfoEnabled()) {
-							log.info("Matched to metric: {} and alarm template: {}, time window queue: {}", metricName,
-									tpl.getId(), toJSONString(metricVals));
-						}
+					if (isEmpty(matchedRules)) {
+						log.debug("No match rule to metric: {} and alarm template: {}, timeWindowQueue: {}", metricName,
+								tpl.getId(), toJSONString(metricVals));
+						continue;
+					}
 
-						// Storage & notification
-						storageNotification(agwrap.getCollectAddr(), tpl, agwrap.getTimestamp(), matchedRules);
-					} else if (log.isDebugEnabled()) {
-						log.debug("No match to metric: {} and alarm template: {}, time window queue: {}", metricName, tpl.getId(),
+					if (log.isInfoEnabled()) {
+						log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", metricName, tpl.getId(),
 								toJSONString(metricVals));
 					}
+					// Storage & notification
+					storageNotification(agwrap.getCollectAddr(), agwrap.getTimestamp(), tpl, matchedTags, matchedRules);
 				}
 			}
 		}
@@ -167,7 +171,6 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			if (lock.tryLock(5L, TimeUnit.SECONDS)) {
 				metricVals = ensureList(doPeekMetricValueQueue(collectAddr));
 				metricVals.add(new MetricValue(gatherTime, value));
-
 				// Clean expired metrics.
 				Iterator<MetricValue> it = metricVals.iterator();
 				while (it.hasNext()) {
@@ -175,7 +178,6 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 						it.remove();
 					}
 				}
-
 				// Storage to queue.
 				doOfferMetricValueQueue(collectAddr, ttl, metricVals);
 			}
@@ -207,15 +209,15 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	}
 
 	/**
-	 * Storage and notification.
+	 * Storage and notification alarm.
 	 * 
 	 * @param collectAddr
 	 * @param alarmTpl
 	 * @param gatherTime
 	 * @param macthedRules
 	 */
-	protected void storageNotification(String collectAddr, AlarmTemplate alarmTpl, long gatherTime,
-			List<AlarmRule> macthedRules) {
+	protected void storageNotification(String collectAddr, long gatherTime, AlarmTemplate alarmTpl,
+			Map<String, String> matchedTags, List<AlarmRule> macthedRules) {
 		List<AlarmConfig> alarmConfigs = configurer.findAlarmConfig(alarmTpl.getId(), collectAddr);
 		// Storage record.
 		configurer.saveAlarmRecord(alarmTpl, alarmConfigs, collectAddr, gatherTime, macthedRules);

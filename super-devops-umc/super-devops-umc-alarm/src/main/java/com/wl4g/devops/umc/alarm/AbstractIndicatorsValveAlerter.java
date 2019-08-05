@@ -29,9 +29,11 @@ import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -121,18 +123,19 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	 * @param tplTagMap
 	 * @return
 	 */
-	protected boolean matchTags(Map<String, String> metricTagMap, Map<String, String> tplTagMap) {
+	protected Map<String, String> matchTags(Map<String, String> metricTagMap, Map<String, String> tplTagMap) {
 		// If no tag is configured, the matching tag does not need to be
 		// executed.
 		if (isEmpty(tplTagMap)) {
-			return true;
+			return emptyMap();
 		}
+		Map<String, String> matchedTags = new HashMap<>();
 		for (Entry<String, String> ent : tplTagMap.entrySet()) {
 			if (trimToEmpty(ent.getValue()).equals(metricTagMap.get(ent.getKey()))) {
-				return true;
+				matchedTags.put(ent.getKey(), ent.getValue());
 			}
 		}
-		return false;
+		return matchedTags;
 	}
 
 	/**
