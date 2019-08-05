@@ -16,14 +16,14 @@
 package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.*;
-import com.wl4g.devops.dao.umc.*;
+import com.wl4g.devops.dao.umc.AlarmConfigDao;
+import com.wl4g.devops.dao.umc.AlarmRecordDao;
+import com.wl4g.devops.dao.umc.AlarmRecordRuleDao;
+import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Date;
 import java.util.List;
@@ -52,8 +52,6 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	@Autowired
 	private AlarmRecordRuleDao alarmRecordRuleDao;
 
-	@Autowired
-	private AlarmRecordUserDao alarmRecordUserDao;
 
 	@Override
 	public List<AlarmTemplate> findAlarmTemplate(Integer collectId) {
@@ -70,13 +68,11 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 			List<AlarmRule> rules) {
 		for (AlarmConfig alarmConfig : alarmConfigs) {
 			AlarmRecord record = new AlarmRecord();
-			record.setTemplateId(alarmTemplate.getId());
-			record.setCollectId(Integer.parseInt(collectId));
-			record.setName(alarmConfig.getName());
+			record.setConfigId(alarmConfig.getId());
 			record.setGatherTime(new Date(gatherTime));
-			record.setAlarmTime(new Date());
-			record.setAlarmInfo(alarmConfig.getAlarmContent());
-			record.setAlarmType(alarmConfig.getAlarmType());
+			record.setCreateTime(new Date());
+			//TODO
+			record.setAlarmInfo("//TODO");
 			alarmRecordDao.insertSelective(record);
 
 			// Alarm matched rules.
@@ -88,16 +84,9 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 			}
 
 			// Alarm notification users.
-			String memberStr = alarmConfig.getAlarmMember();
-			if (!isBlank(memberStr)) {
-				String members[] = memberStr.split(",");
-				for (String s : members) {
-					AlarmRecordUser recordUser = new AlarmRecordUser();
-					recordUser.setRecordId(record.getId());
-					recordUser.setUserId(Integer.parseInt(s));
-					alarmRecordUserDao.insertSelective(recordUser);
-				}
-			}
+			Integer contactGroupId = alarmConfig.getContactGroupId();
+			//TODO 根据联系分组，找到联系人，生成notification
+
 		}
 
 	}

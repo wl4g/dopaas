@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.umc.AlarmContactGroupRefDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmContactGroupRef" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
+    <result column="contact_id" property="contactId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, contact_group_id, contact_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from umc_alarm_contact_group_ref
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from umc_alarm_contact_group_ref
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroupRef" >
+    insert into umc_alarm_contact_group_ref (id, contact_group_id, contact_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{contactGroupId,jdbcType=INTEGER}, #{contactId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroupRef" useGeneratedKeys="true" keyProperty="id">
+    insert into umc_alarm_contact_group_ref
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="contactGroupId != null" >
+        contact_group_id,
+      </if>
+      <if test="contactId != null" >
+        contact_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="contactGroupId != null" >
+        #{contactGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="contactId != null" >
+        #{contactId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroupRef" >
+    update umc_alarm_contact_group_ref
+    <set >
+      <if test="contactGroupId != null" >
+        contact_group_id = #{contactGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="contactId != null" >
+        contact_id = #{contactId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroupRef" >
+    update umc_alarm_contact_group_ref
+    set contact_group_id = #{contactGroupId,jdbcType=INTEGER},
+      contact_id = #{contactId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -90,8 +90,8 @@ public class MetricAggregateWrapper implements Serializable {
 
 	@Override
 	public String toString() {
-		return "MetricAggregateWrapper{" + "collectId='" + collectAddr + '\'' + ", classify='" + classify + '\'' + ", metrics="
-				+ metrics + ", timeStamp=" + timestamp + '}';
+		return "MetricAggregateWrapper [collectAddr=" + collectAddr + ", classify=" + classify + ", metrics=" + metrics
+				+ ", timestamp=" + timestamp + "]";
 	}
 
 	/**

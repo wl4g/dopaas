@@ -1,77 +1,94 @@
 package com.wl4g.devops.common.bean.umc;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.devops.common.bean.BaseBean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.wl4g.devops.common.bean.BaseBean;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
-public class AlarmTemplate extends BaseBean {
+public class AlarmTemplate extends BaseBean implements Serializable {
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;
 
-	private String metric;
+    private String name;
 
-	private Integer classify;
+    private String metric;
 
-	private String tags;
+    private String classify;
 
-	private List<AlarmRule> rules = new ArrayList<>();
+    private String tags;
 
-	//
-	// Temporary
-	//
+    private Integer notifyLevel;
 
-	private Map<String, String> tagMap;
+    private List<AlarmRule> rules = new ArrayList<>();
 
-	public String getName() {
-		return name;
-	}
+    private Map<String, String> tagMap;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getMetric() {
-		return metric;
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public void setMetric(String metric) {
-		this.metric = metric == null ? null : metric.trim();
-	}
+    public String getMetric() {
+        return metric;
+    }
 
-	public Integer getClassify() {
-		return classify;
-	}
+    public void setMetric(String metric) {
+        this.metric = metric == null ? null : metric.trim();
+    }
 
-	public void setClassify(Integer templateClassify) {
-		this.classify = templateClassify;
-	}
+    public String getClassify() {
+        return classify;
+    }
 
-	public String getTags() {
-		return tags;
-	}
+    public void setClassify(String classify) {
+        this.classify = classify == null ? null : classify.trim();
+    }
 
-	public void setTags(String tags) {
-		this.tags = tags == null ? null : tags.trim();
-	}
+    public String getTags() {
+        return tags;
+    }
 
-	public List<AlarmRule> getRules() {
-		return rules;
-	}
+    public void setTags(String tags) {
+        this.tags = tags == null ? null : tags.trim();
+    }
 
-	public void setRules(List<AlarmRule> rules) {
-		this.rules = rules;
-	}
+    public Integer getNotifyLevel() {
+        return notifyLevel;
+    }
 
-	@SuppressWarnings("unchecked")
-	public synchronized Map<String, String> getTagsMap() {
-		if (isEmpty(tagMap)) {
-			tagMap = parseJSON(getTags(), Map.class);
-		}
-		return tagMap;
-	}
+    public void setNotifyLevel(Integer notifyLevel) {
+        this.notifyLevel = notifyLevel;
+    }
+
+    public List<AlarmRule> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<AlarmRule> rules) {
+        this.rules = rules;
+    }
+
+    public Map<String, String> getTagMap() {
+        return tagMap;
+    }
+
+    public void setTagMap(Map<String, String> tagMap) {
+        this.tagMap = tagMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    public synchronized Map<String, String> getTagsMap() {
+        if (isEmpty(tagMap)) {
+            tagMap = parseJSON(getTags(), Map.class);
+        }
+        return tagMap;
+    }
 }

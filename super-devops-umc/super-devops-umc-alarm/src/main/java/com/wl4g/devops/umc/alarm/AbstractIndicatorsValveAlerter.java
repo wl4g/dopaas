@@ -24,13 +24,11 @@ import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
-import com.wl4g.devops.umc.notification.AlarmNotifier.SimpleAlarmMessage;
 import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -169,20 +167,26 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	 * @param macthedRules
 	 */
 	protected void notification(AlarmTemplate alarmTpl, List<AlarmConfig> alarmConfigs, List<AlarmRule> macthedRules) {
-		for (AlarmConfig alarmConfig : alarmConfigs) {
-			if (isBlank(alarmConfig.getAlarmMember())) {
-				continue;
-			}
-			// Alarm notifier members.
-			String[] alarmMembers = alarmConfig.getAlarmMember().split(",");
-			if (log.isInfoEnabled()) {
-				log.info("Notification alarm for templateId: {}, notifierType: {}, to: {}, content: {}", alarmTpl.getId(),
-						alarmConfig.getAlarmType(), alarmConfig.getAlarmMember(), alarmConfig.getAlarmContent());
-			}
-			// Alarm to composite notifiers.
-			notifier.simpleNotify(
-					new SimpleAlarmMessage(alarmConfig.getAlarmContent(), alarmConfig.getAlarmType(), alarmMembers));
-		}
+
+		// TODO 通知方式改变，没有了notifierType，通过contact下的配置来决定发送方式
+
+		// for (AlarmConfig alarmConfig : alarmConfigs) {
+		// if (isBlank(alarmConfig.getAlarmMember())) {
+		// continue;
+		// }
+		// // Alarm notifier members.
+		// String[] alarmMembers = alarmConfig.getAlarmMember().split(",");
+		// if (log.isInfoEnabled()) {
+		// log.info("Notification alarm for templateId: {}, notifierType: {},
+		// to: {}, content: {}", alarmTemplate.getId(),
+		// alarmConfig.getAlarmType(), alarmConfig.getAlarmMember(),
+		// alarmConfig.getAlarmContent());
+		// }
+		// // Alarm to composite notifiers.
+		// notifier.simpleNotify(
+		// new SimpleAlarmMessage(alarmConfig.getAlarmContent(),
+		// alarmConfig.getAlarmType(), alarmMembers));
+		// }
 	}
 
 	//

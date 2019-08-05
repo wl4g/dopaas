@@ -210,7 +210,6 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * Storage and notification.
 	 * 
 	 * @param collectAddr
-	 * @param collectAddr
 	 * @param alarmTpl
 	 * @param gatherTime
 	 * @param macthedRules
