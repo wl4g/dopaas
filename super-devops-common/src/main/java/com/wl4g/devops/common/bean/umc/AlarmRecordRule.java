@@ -1,33 +1,29 @@
 package com.wl4g.devops.common.bean.umc;
 
-public class AlarmRecordRule {
-	private Integer id;
+import com.wl4g.devops.common.bean.BaseBean;
 
-	private Integer recordId;
+import java.io.Serializable;
 
-	private Integer ruleId;
+public class AlarmRecordRule extends BaseBean implements Serializable {
+    private static final long serialVersionUID = 381411777614066880L;
 
-	public Integer getId() {
-		return id;
-	}
+    private Integer recordId;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    private Integer ruleId;
 
-	public Integer getRecordId() {
-		return recordId;
-	}
+    public Integer getRecordId() {
+        return recordId;
+    }
 
-	public void setRecordId(Integer recordId) {
-		this.recordId = recordId;
-	}
+    public void setRecordId(Integer recordId) {
+        this.recordId = recordId;
+    }
 
-	public Integer getRuleId() {
-		return ruleId;
-	}
+    public Integer getRuleId() {
+        return ruleId;
+    }
 
-	public void setRuleId(Integer ruleId) {
-		this.ruleId = ruleId;
-	}
+    public void setRuleId(Integer ruleId) {
+        this.ruleId = ruleId;
+    }
 }

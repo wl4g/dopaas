@@ -6,24 +6,23 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface AlarmConfigDao {
-	int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Integer id);
 
-	int insert(AlarmConfig record);
+    int insert(AlarmConfig record);
 
-	int insertSelective(AlarmConfig record);
+    int insertSelective(AlarmConfig record);
 
-	AlarmConfig selectByPrimaryKey(Integer id);
+    AlarmConfig selectByPrimaryKey(Integer id);
 
-	int updateByPrimaryKeySelective(AlarmConfig record);
+    int updateByPrimaryKeySelective(AlarmConfig record);
 
-	int updateByPrimaryKey(AlarmConfig record);
+    int updateByPrimaryKey(AlarmConfig record);
 
-	List<AlarmConfig> selectAll();
+    List<AlarmConfig> selectAll();
 
-	List<AlarmConfig> selectByTemplateId(Integer templateId);
+    List<AlarmConfig> selectByTemplateId(Integer templateId);
 
-	List<AlarmConfig> getByCollectIdAndTemplateId(@Param("templateId") Integer templateId, @Param("collectId") Integer collectId);
+    List<AlarmConfig> getByCollectIdAndTemplateId(@Param("templateId") Integer templateId, @Param("collectId") Integer collectId);
 
-	List<AlarmConfig> getByClusterIdAndTemplateId(@Param("templateId") Integer templateId, @Param("clusterId") Integer clusterId);
-
+    List<AlarmConfig> getByClusterIdAndTemplateId(@Param("templateId") Integer templateId, @Param("clusterId") Integer clusterId);
 }
