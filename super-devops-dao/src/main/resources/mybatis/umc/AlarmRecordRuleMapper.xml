@@ -25,7 +25,7 @@
     values (#{id,jdbcType=INTEGER}, #{recordId,jdbcType=INTEGER}, #{ruleId,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecordRule" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecordRule" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_record_rule
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

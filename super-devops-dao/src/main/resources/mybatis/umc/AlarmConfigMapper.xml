@@ -3,23 +3,19 @@
 <mapper namespace="com.wl4g.devops.dao.umc.AlarmConfigDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmConfig" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="collect_id" property="collectId" jdbcType="INTEGER" />
     <result column="template_id" property="templateId" jdbcType="INTEGER" />
-    <result column="cluster_id" property="appClusterId" jdbcType="INTEGER" />
-    <result column="alarm_type" property="alarmType" jdbcType="VARCHAR" />
-    <result column="alarm_member" property="alarmMember" jdbcType="VARCHAR" />
-    <result column="alarm_content" property="alarmContent" jdbcType="VARCHAR" />
+    <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, template_id,cluster_id, alarm_type, alarm_member, alarm_content, enable, remark,
-    del_flag, create_date, create_by, update_date, update_by
+    id, collect_id, template_id, contact_group_id, enable, create_date, create_by, update_date, 
+    update_by, del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -32,49 +28,32 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmConfig" >
-    insert into umc_alarm_config (id, name, template_id,cluster_id
-       alarm_type, alarm_member,
-      alarm_content, enable, remark, 
-      del_flag, create_date, create_by, 
-      update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{templateId,jdbcType=INTEGER},  #{appClusterId,jdbcType=INTEGER},
-       #{alarmType,jdbcType=VARCHAR}, #{alarmMember,jdbcType=VARCHAR},
-      #{alarmContent,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+    insert into umc_alarm_config (id, collect_id, template_id, 
+      contact_group_id, enable, create_date, 
+      create_by, update_date, update_by, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{collectId,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, 
+      #{contactGroupId,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmConfig" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmConfig" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_config
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="name != null" >
-        name,
+      <if test="collectId != null" >
+        collect_id,
       </if>
       <if test="templateId != null" >
         template_id,
       </if>
-      <if test="appClusterId != null" >
-        cluster_id,
-      </if>
-      <if test="alarmType != null" >
-        alarm_type,
-      </if>
-      <if test="alarmMember != null" >
-        alarm_member,
-      </if>
-      <if test="alarmContent != null" >
-        alarm_content,
+      <if test="contactGroupId != null" >
+        contact_group_id,
       </if>
       <if test="enable != null" >
         enable,
-      </if>
-      <if test="remark != null" >
-        remark,
-      </if>
-      <if test="delFlag != null" >
-        del_flag,
       </if>
       <if test="createDate != null" >
         create_date,
@@ -88,37 +67,25 @@
       <if test="updateBy != null" >
         update_by,
       </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
+      <if test="collectId != null" >
+        #{collectId,jdbcType=INTEGER},
       </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=INTEGER},
       </if>
-      <if test="appClusterId != null" >
-        #{appClusterId,jdbcType=INTEGER},
-      </if>
-      <if test="alarmType != null" >
-        #{alarmType,jdbcType=VARCHAR},
-      </if>
-      <if test="alarmMember != null" >
-        #{alarmMember,jdbcType=VARCHAR},
-      </if>
-      <if test="alarmContent != null" >
-        #{alarmContent,jdbcType=VARCHAR},
+      <if test="contactGroupId != null" >
+        #{contactGroupId,jdbcType=INTEGER},
       </if>
       <if test="enable != null" >
         #{enable,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null" >
-        #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
       </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
@@ -132,37 +99,25 @@
       <if test="updateBy != null" >
         #{updateBy,jdbcType=VARCHAR},
       </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmConfig" >
     update umc_alarm_config
     <set >
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
+      <if test="collectId != null" >
+        collect_id = #{collectId,jdbcType=INTEGER},
       </if>
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=INTEGER},
       </if>
-      <if test="appClusterId != null" >
-        cluster_id = #{appClusterId,jdbcType=INTEGER},
-      </if>
-      <if test="alarmType != null" >
-        alarm_type = #{alarmType,jdbcType=VARCHAR},
-      </if>
-      <if test="alarmMember != null" >
-        alarm_member = #{alarmMember,jdbcType=VARCHAR},
-      </if>
-      <if test="alarmContent != null" >
-        alarm_content = #{alarmContent,jdbcType=VARCHAR},
+      <if test="contactGroupId != null" >
+        contact_group_id = #{contactGroupId,jdbcType=INTEGER},
       </if>
       <if test="enable != null" >
         enable = #{enable,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null" >
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
       </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -176,24 +131,23 @@
       <if test="updateBy != null" >
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmConfig" >
     update umc_alarm_config
-    set name = #{name,jdbcType=VARCHAR},
+    set collect_id = #{collectId,jdbcType=INTEGER},
       template_id = #{templateId,jdbcType=INTEGER},
-      cluster_id = #{appClusterId,jdbcType=INTEGER},
-      alarm_type = #{alarmType,jdbcType=VARCHAR},
-      alarm_member = #{alarmMember,jdbcType=VARCHAR},
-      alarm_content = #{alarmContent,jdbcType=VARCHAR},
+      contact_group_id = #{contactGroupId,jdbcType=INTEGER},
       enable = #{enable,jdbcType=INTEGER},
-      remark = #{remark,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=VARCHAR}
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -225,5 +179,6 @@
   left join umc_alarm_template uat on uat.id=uac.template_id
   where uac.template_id=#{templateId,jdbcType=INTEGER} and uac.cluster_id=#{appClusterId,jdbcType=INTEGER}
 </select>
+
 
 </mapper>

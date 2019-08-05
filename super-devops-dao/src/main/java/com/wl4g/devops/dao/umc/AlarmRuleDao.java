@@ -18,4 +18,5 @@ public interface AlarmRuleDao {
     int updateByPrimaryKey(AlarmRule record);
 
     List<AlarmRule> selectAll();
+
 }

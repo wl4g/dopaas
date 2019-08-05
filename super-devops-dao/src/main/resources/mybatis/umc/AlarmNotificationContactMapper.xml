@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.umc.AlarmNotificationContactDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="notification_id" property="notificationId" jdbcType="INTEGER" />
+    <result column="contact_id" property="contactId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, notification_id, contact_id, status, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from umc_alarm_notification_contact
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from umc_alarm_notification_contact
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
+    insert into umc_alarm_notification_contact (id, notification_id, contact_id, 
+      status, remark)
+    values (#{id,jdbcType=INTEGER}, #{notificationId,jdbcType=INTEGER}, #{contactId,jdbcType=INTEGER}, 
+      #{status,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" useGeneratedKeys="true" keyProperty="id">
+    insert into umc_alarm_notification_contact
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="notificationId != null" >
+        notification_id,
+      </if>
+      <if test="contactId != null" >
+        contact_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="notificationId != null" >
+        #{notificationId,jdbcType=INTEGER},
+      </if>
+      <if test="contactId != null" >
+        #{contactId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
+    update umc_alarm_notification_contact
+    <set >
+      <if test="notificationId != null" >
+        notification_id = #{notificationId,jdbcType=INTEGER},
+      </if>
+      <if test="contactId != null" >
+        contact_id = #{contactId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
+    update umc_alarm_notification_contact
+    set notification_id = #{notificationId,jdbcType=INTEGER},
+      contact_id = #{contactId,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
