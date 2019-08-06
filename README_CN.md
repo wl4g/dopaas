@@ -25,7 +25,7 @@ English version goes [here](README.md)
 
 
 ### 如何交流、反馈、参与贡献？
-- Q855349515: 
+- QQ1(855349515)
 - ![q855349515](shots/q855349515.jpg)
 - GitHub：https://github.com/wl4g/super-devops
 - 开源中国：https://gitee.com/wl4g/super-devops
