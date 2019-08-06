@@ -1,6 +1,9 @@
 package com.wl4g.devops.dao.umc;
 
 import com.wl4g.devops.common.bean.umc.AlarmContact;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface AlarmContactDao {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +17,8 @@ public interface AlarmContactDao {
     int updateByPrimaryKeySelective(AlarmContact record);
 
     int updateByPrimaryKey(AlarmContact record);
+
+    List<AlarmContact> list(@Param("name") String name,@Param("email") String email, @Param("phone") String phone);
+
+
 }
