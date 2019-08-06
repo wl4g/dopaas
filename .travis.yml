@@ -1,6 +1,8 @@
 language: java
 sudo: false
 
+jdk: openjdk8
+
 matrix:
   include:
   - env:
