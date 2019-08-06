@@ -1,6 +1,11 @@
 language: java
 sudo: false
 
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+  - openjdk8
+
 matrix:
   include:
   - env:
@@ -11,11 +16,6 @@ matrix:
       - ZULUJDK=9
   - env:
       - ZULUJDK=8
-
-jdk:
-  - oraclejdk8
-  - oraclejdk9
-  - openjdk8
 
 #before_install:
 #  # adding $HOME/.sdkman to cache would create an empty directory, which interferes with the initial installation
