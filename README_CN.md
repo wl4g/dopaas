@@ -28,6 +28,6 @@ English version goes [here](README.md)
 - QQ 群号： 群1(855349515)
 - GitHub：https://github.com/wl4g/super-devops
 - 开源中国：https://gitee.com/wl4g/super-devops
-一个人的个人能力再强，也无法战胜一个团队，希望兄弟姐妹的支持，能够贡献出自己的部分代码，参与进来共同完善它(^_^)。
+- 一个人的个人能力再强，也无法战胜一个团队，希望兄弟姐妹的支持，能够贡献出自己的部分代码，参与进来共同完善它(^_^)。
 
 [如何共享代码](https://www.cnblogs.com/wenber/p/3630921.html)
