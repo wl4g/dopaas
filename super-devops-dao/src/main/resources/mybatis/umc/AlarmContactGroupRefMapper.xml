@@ -68,4 +68,17 @@
       contact_id = #{contactId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <delete id="deleteByContactId" parameterType="java.lang.Integer" >
+    delete from umc_alarm_contact_group_ref
+    where contact_id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <select id="selectByContactId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from umc_alarm_contact_group_ref
+    where contact_id = #{id,jdbcType=INTEGER}
+  </select>
+
 </mapper>
