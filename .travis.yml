@@ -1,14 +1,14 @@
 language: java
 sudo: false
 
+jdk: openjdk8
+script:
+  - jdk_switcher use openjdk8
+  - export JAVA_HOME=$HOME/openjdk8
+  - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk8 --target $JAVA_HOME
+
 matrix:
   include:
-  - env:
-      - ZULUJDK=11
-  - env:
-      - ZULUJDK=10
-  - env:
-      - ZULUJDK=9
   - env:
       - ZULUJDK=8
 
@@ -19,21 +19,21 @@ matrix:
 #  - echo sdkman_auto_answer=true > $HOME/.sdkman/etc/config
 #  - source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-install:
-  - sdk install java $(sdk list java | grep -o "$ZULUJDK\.[0-9\.]*-zulu" | head -1)
-  - unset JAVA_HOME
+#install:
+#  - sdk install java $(sdk list java | grep -o "$ZULUJDK\.[0-9\.]*-zulu" | head -1)
+#  - unset JAVA_HOME
 
 cache:
   directories:
     - "$HOME/.m2/repository"
     - "$HOME/.m2/wrapper"
 
-script:
-  - ./mvnw -version
-  - ./mvnw clean package -P full -Dsphinx.binUrl=https://github.com/hengyunabc/sphinx-binary/releases/download/v0.4.0.1/sphinx.linux-x86_64
+#script:
+#  - ./mvnw -version
+#  - ./mvnw clean package -P full -Dsphinx.binUrl=https://github.com/xxx/sphinx-binary/releases/download/v0.4.0.1/sphinx.linux-x86_64
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)
 
 # See: https://docs.travis-ci.com/user/notifications
 notifications:
