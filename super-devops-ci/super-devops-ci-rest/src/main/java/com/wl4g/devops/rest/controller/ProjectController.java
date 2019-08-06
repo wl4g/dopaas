@@ -20,7 +20,6 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.git.GitlabV4Template;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -72,7 +71,7 @@ public class ProjectController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-		Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
+		Page<Project> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<Project> list = projectService.list(groupName, projectName);
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);

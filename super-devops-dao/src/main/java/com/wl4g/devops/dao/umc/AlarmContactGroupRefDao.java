@@ -2,6 +2,8 @@ package com.wl4g.devops.dao.umc;
 
 import com.wl4g.devops.common.bean.umc.AlarmContactGroupRef;
 
+import java.util.List;
+
 public interface AlarmContactGroupRefDao {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,9 @@ public interface AlarmContactGroupRefDao {
     int updateByPrimaryKeySelective(AlarmContactGroupRef record);
 
     int updateByPrimaryKey(AlarmContactGroupRef record);
+
+    int deleteByContactId(Integer id);
+
+    List<AlarmContactGroupRef> selectByContactId(Integer id);
+
 }
