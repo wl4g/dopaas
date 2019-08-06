@@ -39,6 +39,15 @@
     phone_num_of_freq, dingtalk_num_of_freq, wechat_num_of_freq, twitter_num_of_freq, 
     facebook_num_of_freq, create_by, create_date, update_by, update_date, del_flag
   </sql>
+
+  <sql id="Base_Column_List_c" >
+    c.id, c.name, c.email, c.phone, c.dingtalk, c.wechat, c.twitter, c.facebook, c.email_enable, c.phone_enable,
+    c.dingtalk_enable, c.wechat_enable, c.twitter_enable, c.facebook_enable, c.phone_time_of_freq,
+    c.dingtalk_time_of_freq, c.wechat_time_of_freq, c.twitter_time_of_freq, c.facebook_time_of_freq,
+    c.phone_num_of_freq, c.dingtalk_num_of_freq, c.wechat_num_of_freq, c.twitter_num_of_freq,
+    c.facebook_num_of_freq, c.create_by, c.create_date, c.update_by, c.update_date, c.del_flag
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -374,4 +383,25 @@
       del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List_c" />
+    ,g.name as group_name
+    from umc_alarm_contact c
+    left join umc_alarm_contact_group_ref gr on c.id = gr.contact_id
+    left join umc_alarm_contact_group g on gr.contact_group_id = g.id
+    where c.del_flag!=1
+    <if test="name != null and name != ''" >
+      AND c.name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="email != null and email != ''" >
+      AND c.email LIKE CONCAT('%','${email}','%')
+    </if>
+    <if test="phone != null and phone != ''" >
+      AND c.phone LIKE CONCAT('%','${phone}','%')
+    </if>
+  </select>
+
+
 </mapper>

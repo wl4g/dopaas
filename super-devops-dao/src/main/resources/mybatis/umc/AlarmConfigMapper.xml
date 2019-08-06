@@ -12,10 +12,11 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="callback_url" property="callbackUrl" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, collect_id, template_id, contact_group_id, enable, create_date, create_by, update_date, 
-    update_by, del_flag
+    update_by, del_flag,callback_url
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -31,11 +32,11 @@
     insert into umc_alarm_config (id, collect_id, template_id, 
       contact_group_id, enable, create_date, 
       create_by, update_date, update_by, 
-      del_flag)
+      del_flag,callback_url)
     values (#{id,jdbcType=INTEGER}, #{collectId,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, 
       #{contactGroupId,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=INTEGER})
+      #{delFlag,jdbcType=INTEGER}, #{callbackUrl,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmConfig" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_config
@@ -70,6 +71,9 @@
       <if test="delFlag != null" >
         del_flag,
       </if>
+      <if test="callbackUrl != null" >
+        callback_url,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -101,6 +105,9 @@
       </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="callbackUrl != null" >
+        #{callbackUrl,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -134,6 +141,9 @@
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
+      <if test="callbackUrl != null" >
+        callback_url = #{callbackUrl,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -147,7 +157,8 @@
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=INTEGER}
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      callback_url = #{callbackUrl,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

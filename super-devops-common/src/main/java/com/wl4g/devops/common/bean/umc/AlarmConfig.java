@@ -3,7 +3,6 @@ package com.wl4g.devops.common.bean.umc;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class AlarmConfig extends BaseBean implements Serializable {
 
@@ -14,6 +13,8 @@ public class AlarmConfig extends BaseBean implements Serializable {
     private Integer templateId;
 
     private Integer contactGroupId;
+
+    private String callbackUrl;
 
     public Integer getCollectId() {
         return collectId;
@@ -39,4 +40,11 @@ public class AlarmConfig extends BaseBean implements Serializable {
         this.contactGroupId = contactGroupId;
     }
 
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
+    }
 }
