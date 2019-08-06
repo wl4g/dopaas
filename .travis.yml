@@ -12,6 +12,11 @@ matrix:
   - env:
       - ZULUJDK=8
 
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+  - openjdk8
+
 #before_install:
 #  # adding $HOME/.sdkman to cache would create an empty directory, which interferes with the initial installation
 #  - "[[ -d $HOME/.sdkman/bin/ ]] || rm -rf $HOME/.sdkman/"
