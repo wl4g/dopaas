@@ -19,9 +19,9 @@ matrix:
 #  - echo sdkman_auto_answer=true > $HOME/.sdkman/etc/config
 #  - source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-install:
-  - sdk install java $(sdk list java | grep -o "$ZULUJDK\.[0-9\.]*-zulu" | head -1)
-  - unset JAVA_HOME
+#install:
+#  - sdk install java $(sdk list java | grep -o "$ZULUJDK\.[0-9\.]*-zulu" | head -1)
+#  - unset JAVA_HOME
 
 cache:
   directories:
