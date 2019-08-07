@@ -25,7 +25,8 @@ English version goes [here](README.md)
 
 
 ### 如何交流、反馈、参与贡献？
-- QQ 群号： 群1(855349515)
+- QQ1(855349515)
+- ![q855349515](shots/q855349515.jpg)
 - GitHub：https://github.com/wl4g/super-devops
 - 开源中国：https://gitee.com/wl4g/super-devops
 - 一个人的个人能力再强，也无法战胜一个团队，希望兄弟姐妹的支持，能够贡献出自己的部分代码，参与进来共同完善它(^_^)。

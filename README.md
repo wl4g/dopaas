@@ -5,7 +5,6 @@
 ![License](https://camo.githubusercontent.com/ce4fb5b3ec026da9d76d9de28d688d0a0d493949/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f73706f746966792f646f636b657266696c652d6d6176656e2e737667)
 
 
-
 [中文文档](README_CN.md)
 
 ### Runtime environment
@@ -25,7 +24,8 @@
 - [VCS](super-devops-vcs/README.md)           &nbsp;&nbsp;    Version control service, software source code, release package version management.
 
 ### Communicate, feedback and contribute?
-- QQ Group: Group1(855349515)
+- QQ1(855349515)
+- ![q855349515](shots/q855349515.jpg)
 - GitHub: https://github.com/wl4g/super-devops
 - OS China: https://gitee.com/wl4g/super-devops
 - No matter how strong a person's personal ability is, he can't defeat a team. He hopes that his brothers and sisters can support him and contribute some of his own code to improve it together (^_^).
