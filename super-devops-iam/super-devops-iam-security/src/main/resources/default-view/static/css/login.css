@@ -39,6 +39,7 @@ a {
 #top {
     width: 100%;
     height: 5vh;
+    margin-left: -8%;
 }
 
 #img_logo {
