@@ -7,10 +7,20 @@
     <result column="contact_id" property="contactId" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+
+    <!-- other -->
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, notification_id, contact_id, status, remark
   </sql>
+
+  <sql id="Base_Column_List_nc" >
+    nc.id, nc.notification_id, nc.contact_id, nc.status, nc.remark
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -90,4 +100,13 @@
       remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="getByNotificationId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />,name,email,phone
+    from umc_alarm_notification_contact
+    where notification_id = #{id,jdbcType=INTEGER}
+  </select>
+
 </mapper>

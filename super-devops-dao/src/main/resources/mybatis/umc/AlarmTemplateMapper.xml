@@ -235,4 +235,21 @@
     where uac.enable=1 and t.enable=1 and t.del_flag!=1
     and  uac.cluster_id=#{appClusterId,jdbcType=INTEGER}
   </select>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from umc_alarm_template
+    where del_flag!=1
+    <if test="name != null and name != ''" >
+      AND name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="metric != null and metric != ''" >
+      AND metric LIKE CONCAT('%','${metric}','%')
+    </if>
+    <if test="classify != null and classify != ''" >
+      AND classify=#{classify,jdbcType=VARCHAR}
+    </if>
+  </select>
+
 </mapper>

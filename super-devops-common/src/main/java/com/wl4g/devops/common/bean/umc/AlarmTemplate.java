@@ -1,9 +1,11 @@
 package com.wl4g.devops.common.bean.umc;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +14,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class AlarmTemplate extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;
-
 
     private String name;
 
@@ -26,7 +27,7 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 
     private List<AlarmRule> rules = new ArrayList<>();
 
-    private Map<String, String> tagMap;
+    private List<Map<String,String>> tagMap;
 
     public String getName() {
         return name;
@@ -76,19 +77,28 @@ public class AlarmTemplate extends BaseBean implements Serializable {
         this.rules = rules;
     }
 
-    public Map<String, String> getTagMap() {
+    public List<Map<String, String>> getTagMap() {
         return tagMap;
     }
 
-    public void setTagMap(Map<String, String> tagMap) {
+    public void setTagMap(List<Map<String, String>> tagMap) {
+        if(isEmpty(tagMap)&&isEmpty(tagMap)){
+            tagMap = parseJSON(getTags(), List.class);
+        }
         this.tagMap = tagMap;
     }
 
     @SuppressWarnings("unchecked")
     public synchronized Map<String, String> getTagsMap() {
         if (isEmpty(tagMap)) {
-            tagMap = parseJSON(getTags(), Map.class);
+            tagMap = parseJSON(getTags(), List.class);
         }
-        return tagMap;
+        Map<String,String> map = new HashMap<String,String>();
+        for(Map<String,String> m : tagMap){
+            if(m.get("name")!=null&&m.get("value")!=null&&StringUtils.isNotBlank(m.get("name"))&&StringUtils.isNotBlank(m.get("value"))){
+                map.put(m.get("name"),m.get("value"));
+            }
+        }
+        return map;
     }
 }

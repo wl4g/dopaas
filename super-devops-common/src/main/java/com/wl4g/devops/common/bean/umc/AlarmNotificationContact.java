@@ -14,6 +14,11 @@ public class AlarmNotificationContact extends BaseBean implements Serializable {
 
     private String status;
 
+    //other
+    private String name;
+    private String email;
+    private String phone;
+
     public Integer getNotificationId() {
         return notificationId;
     }
@@ -38,4 +43,27 @@ public class AlarmNotificationContact extends BaseBean implements Serializable {
         this.status = status == null ? null : status.trim();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }
