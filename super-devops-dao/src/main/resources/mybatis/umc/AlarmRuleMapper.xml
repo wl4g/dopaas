@@ -10,11 +10,22 @@
     <result column="queue_time_window" property="queueTimeWindow" jdbcType="BIGINT" />
     <result column="value" property="value" jdbcType="DOUBLE" />
     <result column="alarm_level" property="alarmLevel" jdbcType="INTEGER" />
+    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+
+    <!-- other -->
+    <result column="compare_value" property="compareValue" jdbcType="DOUBLE" />
+
   </resultMap>
   <sql id="Base_Column_List" >
     id, template_id, aggregator, relate_operator, logical_operator, queue_time_window, 
-    value, alarm_level
+    value, alarm_level,del_flag
   </sql>
+
+  <sql id="Base_Column_List_r" >
+    r.id, r.template_id, r.aggregator, r.relate_operator, r.logical_operator, r.queue_time_window,
+    r.value, r.alarm_level,r.del_flag
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -28,10 +39,10 @@
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" >
     insert into umc_alarm_rule (id, template_id, aggregator, 
       relate_operator, logical_operator, queue_time_window, 
-      value, alarm_level)
+      value, alarm_level,del_flag)
     values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, #{aggregator,jdbcType=VARCHAR}, 
       #{relateOperator,jdbcType=INTEGER}, #{logicalOperator,jdbcType=INTEGER}, #{queueTimeWindow,jdbcType=BIGINT}, 
-      #{value,jdbcType=DOUBLE}, #{alarmLevel,jdbcType=INTEGER})
+      #{value,jdbcType=DOUBLE}, #{alarmLevel,jdbcType=INTEGER}, #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_rule
@@ -60,6 +71,9 @@
       <if test="alarmLevel != null" >
         alarm_level,
       </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -85,6 +99,9 @@
       </if>
       <if test="alarmLevel != null" >
         #{alarmLevel,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -112,6 +129,9 @@
       <if test="alarmLevel != null" >
         alarm_level = #{alarmLevel,jdbcType=INTEGER},
       </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -123,7 +143,8 @@
       logical_operator = #{logicalOperator,jdbcType=INTEGER},
       queue_time_window = #{queueTimeWindow,jdbcType=BIGINT},
       value = #{value,jdbcType=DOUBLE},
-      alarm_level = #{alarmLevel,jdbcType=INTEGER}
+      alarm_level = #{alarmLevel,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -132,4 +153,27 @@
     <include refid="Base_Column_List" />
     from umc_alarm_rule
   </select>
+
+
+  <select id="selectByRecordId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List_r" />,rr.compare_value
+    from umc_alarm_record_rule rr
+    left join umc_alarm_rule r on rr.rule_id=r.id
+    where rr.record_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByTemplateId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from umc_alarm_rule
+    where template_id = #{id,jdbcType=INTEGER} and del_flag!=1
+  </select>
+
+  <delete id="deleteByTemplateId" parameterType="java.lang.Integer" >
+    delete from umc_alarm_rule
+    where template_id = #{id,jdbcType=INTEGER}
+  </delete>
+
+
 </mapper>

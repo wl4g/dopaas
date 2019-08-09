@@ -2,6 +2,8 @@ package com.wl4g.devops.dao.umc;
 
 import com.wl4g.devops.common.bean.umc.AlarmNotificationContact;
 
+import java.util.List;
+
 public interface AlarmNotificationContactDao {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,7 @@ public interface AlarmNotificationContactDao {
     int updateByPrimaryKeySelective(AlarmNotificationContact record);
 
     int updateByPrimaryKey(AlarmNotificationContact record);
+
+    List<AlarmNotificationContact> getByNotificationId(Integer id);
+
 }

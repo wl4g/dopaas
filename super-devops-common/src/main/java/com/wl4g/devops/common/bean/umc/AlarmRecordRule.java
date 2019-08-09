@@ -11,6 +11,8 @@ public class AlarmRecordRule extends BaseBean implements Serializable {
 
     private Integer ruleId;
 
+    private Double compareValue;
+
     public Integer getRecordId() {
         return recordId;
     }
@@ -25,5 +27,13 @@ public class AlarmRecordRule extends BaseBean implements Serializable {
 
     public void setRuleId(Integer ruleId) {
         this.ruleId = ruleId;
+    }
+
+    public Double getCompareValue() {
+        return compareValue;
+    }
+
+    public void setCompareValue(Double compareValue) {
+        this.compareValue = compareValue;
     }
 }

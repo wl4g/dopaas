@@ -4,6 +4,7 @@ import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class AlarmRecord extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;
@@ -19,6 +20,14 @@ public class AlarmRecord extends BaseBean implements Serializable {
     private String alarmInfo;
 
     private String alarmType;
+
+    private Integer notificationId;
+
+    private List<AlarmRule> alarmRules;
+
+    private AlarmConfig alarmConfig;
+
+    private AlarmTemplate alarmTemplate;
 
     public String getName() {
         return name;
@@ -66,5 +75,37 @@ public class AlarmRecord extends BaseBean implements Serializable {
 
     public void setAlarmType(String alarmType) {
         this.alarmType = alarmType == null ? null : alarmType.trim();
+    }
+
+    public List<AlarmRule> getAlarmRules() {
+        return alarmRules;
+    }
+
+    public void setAlarmRules(List<AlarmRule> alarmRules) {
+        this.alarmRules = alarmRules;
+    }
+
+    public AlarmConfig getAlarmConfig() {
+        return alarmConfig;
+    }
+
+    public void setAlarmConfig(AlarmConfig alarmConfig) {
+        this.alarmConfig = alarmConfig;
+    }
+
+    public AlarmTemplate getAlarmTemplate() {
+        return alarmTemplate;
+    }
+
+    public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
+        this.alarmTemplate = alarmTemplate;
+    }
+
+    public Integer getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(Integer notificationId) {
+        this.notificationId = notificationId;
     }
 }
