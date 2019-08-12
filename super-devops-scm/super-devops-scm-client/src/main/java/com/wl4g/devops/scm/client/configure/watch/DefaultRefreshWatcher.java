@@ -52,7 +52,7 @@ import static org.springframework.http.HttpMethod.POST;
  * @version v1.0 2019年5月1日
  * @since
  */
-public class TimingRefreshWatcher extends AbstractRefreshWatcher {
+public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
 	/** Watching completion state. */
 	final private AtomicBoolean watchState = new AtomicBoolean(false);
@@ -64,7 +64,7 @@ public class TimingRefreshWatcher extends AbstractRefreshWatcher {
 	/** Long polling rest template */
 	private RestTemplate longPollingTemplate;
 
-	public TimingRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
+	public DefaultRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
 		super(config, refresher, locator);
 	}
 
