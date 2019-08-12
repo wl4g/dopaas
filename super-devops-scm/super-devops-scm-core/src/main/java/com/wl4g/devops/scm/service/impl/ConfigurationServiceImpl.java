@@ -133,7 +133,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			// Get application instance information.
 			ReleaseInstance releaseInstance = new ReleaseInstance();
 			releaseInstance.setHost(instance.getHost());
-			releaseInstance.setPort(instance.getPort());
+			releaseInstance.setPort(Integer.valueOf(instance.getEndpoint()));
 			instances.add(releaseInstance);
 		}
 		// Get application group information.

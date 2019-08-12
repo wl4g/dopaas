@@ -20,6 +20,8 @@ public interface AlarmConfigDao {
 
     List<AlarmConfig> selectAll();
 
+    List<AlarmConfig> list(@Param("templateId") Integer templateId,@Param("contactGroupId") Integer contactGroupId);
+
     List<AlarmConfig> selectByTemplateId(Integer templateId);
 
     List<AlarmConfig> getByCollectIdAndTemplateId(@Param("templateId") Integer templateId, @Param("collectId") Integer collectId);
