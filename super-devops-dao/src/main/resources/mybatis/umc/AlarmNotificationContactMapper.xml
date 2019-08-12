@@ -104,9 +104,10 @@
 
   <select id="getByNotificationId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
-    <include refid="Base_Column_List" />,name,email,phone
-    from umc_alarm_notification_contact
-    where notification_id = #{id,jdbcType=INTEGER}
+    <include refid="Base_Column_List_nc" />,c.name,c.email,c.phone
+    from umc_alarm_notification_contact nc
+    left join umc_alarm_contact c on nc.contact_id=c.id
+    where nc.notification_id = #{id,jdbcType=INTEGER}
   </select>
 
 </mapper>

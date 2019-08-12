@@ -49,7 +49,7 @@ public class NotificationController extends BaseController {
         RespBase<Object> resp = RespBase.create();
         AlarmNotification notification = alarmNotificationDao.selectByPrimaryKey(id);
         List<AlarmNotificationContact> notificationContacts = alarmNotificationContactDao.getByNotificationId(id);
-        resp.getData().put("metricTemplate",notification);
+        resp.getData().put("notification",notification);
         resp.getData().put("notificationContacts",notificationContacts);
         return resp;
     }
