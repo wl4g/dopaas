@@ -110,16 +110,16 @@ public class GenericInfo implements Serializable {
 		@Min(1024)
 		@Max(65535)
 		@NotNull
-		private Integer port;
+		private String endpoint;
 
 		public ReleaseInstance() {
 			super();
 		}
 
-		public ReleaseInstance(String host, Integer port) {
+		public ReleaseInstance(String host, String endpoint) {
 			super();
 			this.host = host;
-			this.port = port;
+			this.endpoint = endpoint;
 		}
 
 		public String getHost() {
@@ -132,15 +132,14 @@ public class GenericInfo implements Serializable {
 			}
 		}
 
-		public Integer getPort() {
-			return port;
+		public String getEndpoint() {
+			return endpoint;
 		}
 
-		public void setPort(Integer port) {
-			if (port <= 0 || port > 65535) {
-				throw new IllegalArgumentException("Illegal ports are only allowed to be 0 ~ 65535");
+		public void setEndpoint(String endpoint) {
+			if (!StringUtils.isEmpty(endpoint) && !"NULL".equalsIgnoreCase(endpoint)) {
+				this.endpoint = endpoint;
 			}
-			this.port = port;
 		}
 
 		@Override
@@ -148,7 +147,7 @@ public class GenericInfo implements Serializable {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((host == null) ? 0 : host.hashCode());
-			result = prime * result + ((port == null) ? 0 : port.hashCode());
+			result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
 			return result;
 		}
 
@@ -166,32 +165,27 @@ public class GenericInfo implements Serializable {
 					return false;
 			} else if (!host.equals(other.host))
 				return false;
-			if (port == null) {
-				if (other.port != null)
+			if (endpoint == null) {
+				if (other.endpoint != null)
 					return false;
-			} else if (!port.equals(other.port))
+			} else if (!endpoint.equals(other.endpoint))
 				return false;
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return getHost() + ":" + getPort();
+			return getHost() + ":" + getEndpoint();
 		}
 
 		public void validation() {
 			Assert.notNull(getHost(), "`host` is not allowed to be null.");
-			Assert.notNull(getPort(), "`port` is not allowed to be null.");
+			Assert.notNull(getEndpoint(), "`port` is not allowed to be null.");
 			HostAndPort.fromString(toString());
 		}
 
-		public static ReleaseInstance of(String hostPortString) {
-			HostAndPort hap = HostAndPort.fromString(hostPortString);
-			return new ReleaseInstance(hap.getHostText(), hap.getPort());
-		}
-
-		public static boolean eq(ReleaseInstance instance1, ReleaseInstance instance2) {
-			return (instance1 != null && instance2 != null && StringUtils.equals(instance1.toString(), instance2.toString()));
+		public static boolean eq(ReleaseInstance i1, ReleaseInstance i2) {
+			return (i1 != null && i2 != null && StringUtils.equals(i1.toString(), i2.toString()));
 		}
 
 	}
