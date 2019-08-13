@@ -17,7 +17,8 @@
 			captchaEnabledKey: "captchaEnabled", // 控制验证码显示的参数名
 			secretKey: "secret", // 控制验证码显示的参数名
 			whichKey: "which", // 请求连接到SNS的参数名
-			refreshUrlKey: "refresh_url", // 提交回调刷新URL参数名
+			redirectUrlKey: "redirect_url", // 重定向URL参数名
+			refreshUrlKey: "refresh_url", // 刷新URL参数名
 			principalKey: "principal", // 提交账号参数名
 			credentialKey: "password", // 提交账号密码参数名
 			captchaKey: "captcha", // 登录提交验证码参数名
@@ -354,7 +355,7 @@
 								});
 								settings.signIn.onError(resp[msgKey]); // 登录失败回调
 							} else { // 登录成功，直接重定向
-								var redirectUrl = CommonUtils.checkEmpty("Login successful, response redirectUrl is empty", resp.data);
+								var redirectUrl = CommonUtils.checkEmpty("Login successful, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.signIn.onSuccess(principal, redirectUrl)){
 									window.location.href = redirectUrl;
 								}
