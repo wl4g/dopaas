@@ -52,6 +52,14 @@ public class DictController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		Dict dict = dictDao.selectByPrimaryKey(id);
+		resp.getData().put("dict",dict);
+		return resp;
+	}
+
 	@RequestMapping(value = "/del")
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
