@@ -3,12 +3,13 @@ package com.wl4g.devops.umc.web;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.scm.CustomPage;
-import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.umc.AlarmContactGroupDao;
-import com.wl4g.devops.umc.service.ContactGroupService;
+import com.wl4g.devops.dao.umc.AlarmConfigDao;
+import com.wl4g.devops.umc.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,23 +20,23 @@ import java.util.List;
  * @date 2019-08-05 11:44:00
  */
 @RestController
-@RequestMapping("/contactGroup")
-public class ContactGroupController extends BaseController {
+@RequestMapping("/config")
+public class ConfigController extends BaseController {
 
     @Autowired
-    private AlarmContactGroupDao alarmContactGroupDao;
+    private AlarmConfigDao alarmConfigDao;
 
     @Autowired
-    private ContactGroupService contactGroupService;
+    private ConfigService configService;
 
     @RequestMapping(value = "/list")
-    public RespBase<?> list(String name, CustomPage customPage) {
-        log.info("into ContactGroupController.list prarms::"+ "name = {} , customPage = {} ", name, customPage );
+    public RespBase<?> list(Integer templateId,Integer contactGroupId, CustomPage customPage) {
+        log.info("into ConfigController.list prarms::"+ "templateId = {} , contactGroupId = {} , customPage = {} ", templateId, contactGroupId, customPage );
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
         Page page = PageHelper.startPage(pageNum, pageSize, true);
-        List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
+        List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
         customPage.setPageNum(pageNum);
         customPage.setPageSize(pageSize);
         customPage.setTotal(page.getTotal());
@@ -45,27 +46,25 @@ public class ContactGroupController extends BaseController {
     }
 
     @RequestMapping(value = "/save")
-    public RespBase<?> save(AlarmContactGroup alarmContactGroup) {
-        log.info("into ContactGroupController.save prarms::"+ "alarmContactGroup = {} ", alarmContactGroup );
+    public RespBase<?> save(@RequestBody AlarmConfig alarmConfig) {
         RespBase<Object> resp = RespBase.create();
-        contactGroupService.save(alarmContactGroup);
+        configService.save(alarmConfig);
+        return resp;
+    }
+
+    @RequestMapping(value = "/detail")
+    public RespBase<?> detail(Integer id) {
+        RespBase<Object> resp = RespBase.create();
+        AlarmConfig alarmConfig = configService.detail(id);
+        resp.getData().put("alarmConfig",alarmConfig);
         return resp;
     }
 
 
     @RequestMapping(value = "/del")
     public RespBase<?> del(Integer id) {
-        log.info("into ContactController.del prarms::"+ "id = {} ", id );
         RespBase<Object> resp = RespBase.create();
-        contactGroupService.del(id);
-        return resp;
-    }
-
-    @RequestMapping(value = "/all")
-    public RespBase<?> all() {
-        RespBase<Object> resp = RespBase.create();
-        List<AlarmContactGroup> list = alarmContactGroupDao.list(null);
-        resp.getData().put("list", list);
+        configService.del(id);
         return resp;
     }
 

@@ -53,7 +53,7 @@ public interface AppClusterDao {
 
 	public List<AppCluster> grouplist();
 
-	public List<Environment> environmentlist(@Param(value = "clusterId") String clusterId);
+	public List<Environment> environmentlist(@Param(value = "appClusterId") String appClusterId);
 
 	public List<AppInstance> instancelist(AppInstance appInstance);
 

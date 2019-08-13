@@ -6,34 +6,36 @@ import java.io.Serializable;
 
 public class MetricTemplate extends BaseBean implements Serializable {
 
-    private String metric;
+	private static final long serialVersionUID = 1466220729681199183L;
 
-    private String classify;
+	private String metric;
 
-    private String remark;
+	private String classify;
 
-    public String getMetric() {
-        return metric;
-    }
+	private String remark;
 
-    public void setMetric(String metric) {
-        this.metric = metric == null ? null : metric.trim();
-    }
+	public String getMetric() {
+		return metric;
+	}
 
-    public String getClassify() {
-        return classify;
-    }
+	public void setMetric(String metric) {
+		this.metric = metric == null ? null : metric.trim();
+	}
 
-    public void setClassify(String classify) {
-        this.classify = classify == null ? null : classify.trim();
-    }
+	public String getClassify() {
+		return classify;
+	}
 
-    public String getRemark() {
-        return remark;
-    }
+	public void setClassify(String classify) {
+		this.classify = classify == null ? null : classify.trim();
+	}
 
-    public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
-    }
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark == null ? null : remark.trim();
+	}
 
 }

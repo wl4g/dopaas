@@ -81,6 +81,14 @@ public class TemplateController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/getByClassify")
+    public RespBase<?> getByClassify(String classify) {
+        RespBase<Object> resp = RespBase.create();
+        List<AlarmTemplate> list = alarmTemplateDao.list(null, null,classify);
+        resp.getData().put("list", list);
+        return resp;
+    }
+
 
 
 

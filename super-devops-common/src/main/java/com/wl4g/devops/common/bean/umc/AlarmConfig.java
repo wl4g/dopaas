@@ -16,6 +16,17 @@ public class AlarmConfig extends BaseBean implements Serializable {
 
     private String callbackUrl;
 
+
+    /*other*/
+    private String templateName;
+
+    private String contactGroupName;
+
+
+    private Integer group;
+    private Integer environment;
+    private String classify;
+
     public Integer getCollectId() {
         return collectId;
     }
@@ -46,5 +57,46 @@ public class AlarmConfig extends BaseBean implements Serializable {
 
     public void setCallbackUrl(String callbackUrl) {
         this.callbackUrl = callbackUrl;
+    }
+
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
+    public String getContactGroupName() {
+        return contactGroupName;
+    }
+
+    public void setContactGroupName(String contactGroupName) {
+        this.contactGroupName = contactGroupName;
+    }
+
+    public Integer getGroup() {
+        return group;
+    }
+
+    public void setGroup(Integer group) {
+        this.group = group;
+    }
+
+    public Integer getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Integer environment) {
+        this.environment = environment;
+    }
+
+    public String getClassify() {
+        return classify;
+    }
+
+    public void setClassify(String classify) {
+        this.classify = classify;
     }
 }
