@@ -330,8 +330,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	protected String getFromAppName(ServletRequest request) {
 		String fromAppName = getCleanParam(request, config.getParam().getApplication()); // Priority
-		return StringUtils.hasText(fromAppName) ? fromAppName
-				: SessionBindings.extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication());
+		return isNotBlank(fromAppName) ? fromAppName : extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication());
 	}
 
 	/**
@@ -342,8 +341,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	protected String getFromRedirectUrl(ServletRequest request) {
 		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl()); // prerogative
-		return StringUtils.hasText(redirectUrl) ? redirectUrl
-				: extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
+		return isNotBlank(redirectUrl) ? redirectUrl : extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
 	}
 
 	/**
