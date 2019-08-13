@@ -73,10 +73,10 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 		}
 
 		// Storage group name
-		jedisService.setSetObjectAdd(CACHE_PUB_GROUPS, wrap.getGroup());
+		jedisService.setSetObjectAdd(CACHE_PUB_GROUPS, wrap.getCluster());
 
 		// Storage group published
-		jedisService.setObjectT(getGroupKey(wrap.getGroup()), wrap, 0);
+		jedisService.setObjectT(getGroupKey(wrap.getCluster()), wrap, 0);
 	}
 
 	private String getGroupKey(String group) {

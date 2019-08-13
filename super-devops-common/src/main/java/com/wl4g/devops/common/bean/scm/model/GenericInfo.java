@@ -32,7 +32,7 @@ public class GenericInfo implements Serializable {
 	 */
 	@NotNull
 	@NotBlank
-	private String group;
+	private String cluster;
 
 	/**
 	 * Name-space(configuration file-name, like spring.profiles)
@@ -50,13 +50,13 @@ public class GenericInfo implements Serializable {
 		super();
 	}
 
-	public GenericInfo(String group, List<String> namespace) {
-		this(group, namespace, null);
+	public GenericInfo(String cluster, List<String> namespace) {
+		this(cluster, namespace, null);
 	}
 
-	public GenericInfo(String group, List<String> namespaces, ReleaseMeta meta) {
+	public GenericInfo(String cluster, List<String> namespaces, ReleaseMeta meta) {
 		super();
-		setGroup(group);
+		setCluster(cluster);
 		setNamespaces(namespaces);
 		setMeta(meta);
 	}
@@ -69,13 +69,13 @@ public class GenericInfo implements Serializable {
 		this.namespaces = namespaces;
 	}
 
-	public String getGroup() {
-		return group;
+	public String getCluster() {
+		return cluster;
 	}
 
-	public void setGroup(String group) {
-		if (!StringUtils.isEmpty(group) && !"NULL".equalsIgnoreCase(group)) {
-			this.group = group;
+	public void setCluster(String cluster) {
+		if (!StringUtils.isEmpty(cluster) && !"NULL".equalsIgnoreCase(cluster)) {
+			this.cluster = cluster;
 		}
 	}
 
@@ -94,10 +94,10 @@ public class GenericInfo implements Serializable {
 		return JacksonUtils.toJSONString(this);
 	}
 
-	public void validation(boolean versionValidate, boolean releaseIdValidate) {
-		Assert.hasText(getGroup(), "`group` must not be empty");
+	public void validation(boolean validVersion, boolean validRelease) {
+		Assert.hasText(getCluster(), "`cluster` must not be empty");
 		Assert.notEmpty(getNamespaces(), "`namespace` must not be empty");
-		getMeta().validation(versionValidate, releaseIdValidate);
+		getMeta().validation(validVersion, validRelease);
 	}
 
 	public static class ReleaseInstance implements Serializable {
