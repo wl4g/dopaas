@@ -382,26 +382,26 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		hasText(successRedirectUrl, "'successRedirectUrl' must not be empty");
 
 		// Redirection URL
-		StringBuffer uri = new StringBuffer(successRedirectUrl);
+		StringBuffer redirectUri = new StringBuffer(successRedirectUrl);
 		if (isNotBlank(grantTicket)) {
-			if (uri.lastIndexOf("?") > 0) {
-				uri.append("&");
+			if (redirectUri.lastIndexOf("?") > 0) {
+				redirectUri.append("&");
 			} else {
-				uri.append("?");
+				redirectUri.append("?");
 			}
-			uri.append(config.getParam().getGrantTicket()).append("=").append(grantTicket);
+			redirectUri.append(config.getParam().getGrantTicket()).append("=").append(grantTicket);
 		}
 
 		// Relative path processing
-		String url = uri.toString();
-		if (url.startsWith("/")) {
-			url = getRFCBaseURI(toHttp(request), true) + uri;
+		String redirectUrl = redirectUri.toString();
+		if (redirectUrl.startsWith("/")) {
+			redirectUrl = getRFCBaseURI(toHttp(request), true) + redirectUri;
 		}
 
 		// Make message
 		RespBase<String> resp = RespBase.create();
 		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Authentication success");
-		params.put(config.getParam().getRedirectUrl(), successRedirectUrl);
+		params.put(config.getParam().getRedirectUrl(), redirectUrl);
 		resp.getData().putAll(params);
 		return toJSONString(resp);
 	}
