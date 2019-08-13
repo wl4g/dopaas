@@ -25,7 +25,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, 'key', value, label, type, description, themes, icon, sort, status, create_by,
+    id, `key`, value, label, type, description, themes, icon, sort, status, create_by,
     create_date, update_by, update_date, remark, del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -39,7 +39,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.share.Dict" >
-    insert into sys_dict (id, 'key', value,
+    insert into sys_dict (id, `key`, value,
       label, type, description, 
       themes, icon, sort, 
       status, create_by, create_date, 
@@ -59,7 +59,7 @@
         id,
       </if>
       <if test="key != null" >
-        'key',
+        `key`,
       </if>
       <if test="value != null" >
         value,
@@ -159,7 +159,7 @@
     update sys_dict
     <set >
       <if test="key != null" >
-        'key' = #{key,jdbcType=VARCHAR},
+        `key` = #{key,jdbcType=VARCHAR},
       </if>
       <if test="value != null" >
         value = #{value,jdbcType=VARCHAR},
@@ -208,7 +208,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.share.Dict" >
     update sys_dict
-    set 'key' = #{key,jdbcType=VARCHAR},
+    set `key` = #{key,jdbcType=VARCHAR},
       value = #{value,jdbcType=VARCHAR},
       label = #{label,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
@@ -237,7 +237,7 @@
     select
     <include refid="Base_Column_List" />
     from sys_dict
-    where key = #{key,jdbcType=VARCHAR} limit 1
+    where `key` = #{key,jdbcType=VARCHAR} limit 1
   </select>
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
@@ -246,13 +246,13 @@
     from sys_dict
     where del_flag!=1
     <if test="key != null and key != ''" >
-      AND key LIKE CONCAT('%','${key}','%')
+      AND `key` LIKE CONCAT('%','${key}','%')
     </if>
     <if test="label != null and label != ''" >
       AND label LIKE CONCAT('%','${label}','%')
     </if>
     <if test="type != null and type != ''" >
-      AND type=#{type,jdbcType=VARCHAR})
+      AND type = #{type,jdbcType=VARCHAR}
     </if>
     <if test="description != null and description != ''" >
       AND description LIKE CONCAT('%','${description}','%')
