@@ -207,9 +207,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Build response parameter.
 			Map params = new HashMap();
 			params.put(config.getParam().getApplication(), fromAppName);
-			if (isNotBlank(grantTicket)) {
-				params.put(config.getParam().getGrantTicket(), grantTicket);
-			}
 
 			// Response JSON.
 			if (isJSONResponse(request)) {
@@ -231,6 +228,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				 * needs to be redirected to the CAS client application, then
 				 * grantTicket is required.
 				 */
+				if (isNotBlank(grantTicket)) {
+					params.put(config.getParam().getGrantTicket(), grantTicket);
+				}
 				if (log.isInfoEnabled()) {
 					log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
 				}
