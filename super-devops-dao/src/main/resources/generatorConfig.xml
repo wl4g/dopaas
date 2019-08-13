@@ -40,7 +40,7 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
 
-        <table tableName="umc_metric_template" domainObjectName="MetricTemplate"
+        <table tableName="sys_dict" domainObjectName="Dict"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
         <!--<table tableName="umc_alarm_collector" domainObjectName="AlarmCollector"
