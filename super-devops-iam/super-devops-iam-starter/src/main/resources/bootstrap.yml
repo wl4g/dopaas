@@ -41,8 +41,6 @@ spring:
           second-auth-code: secondAuthCode
           funcId: function
           i18n-lang: lang
-        strategy: # Authentication api interactive strategy configuration.
-          response-template: '{"code":${code},"message":"${message}","status":"${status}","data":"${data}"}'
         matcher:
           fail-fast-match-max-attempts: 10
           fail-fast-match-delay: 3600000

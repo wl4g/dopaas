@@ -27,15 +27,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
+import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_AUTHC_STATUS;
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_UNAUTHC_STATUS;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.util.Assert.hasText;
 
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
@@ -43,7 +47,7 @@ import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
-import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
@@ -277,8 +281,12 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @return
 	 */
 	private String makeLoggedResponse(ServletRequest request, String redirectUri) {
-		Assert.notNull(redirectUri, "'redirectUri' must not be null");
-		return config.getStrategy().makeResponse(RetCode.OK.getCode(), DEFAULT_AUTHC_STATUS, "Login successful", redirectUri);
+		hasText(redirectUri, "'redirectUri' must not be null");
+		// Make message
+		RespBase<String> resp = RespBase.create();
+		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Login successful");
+		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
+		return toJSONString(resp);
 	}
 
 	/**
@@ -293,7 +301,10 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
 		String errmsg = err != null ? err.getMessage() : "Not logged-in";
 		// Make message
-		return config.getStrategy().makeResponse(RetCode.UNAUTHC.getCode(), DEFAULT_UNAUTHC_STATUS, errmsg, loginRedirectUrl);
+		RespBase<String> resp = RespBase.create();
+		resp.setCode(UNAUTHC).setStatus(DEFAULT_UNAUTHC_STATUS).setMessage(errmsg);
+		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
+		return toJSONString(resp);
 	}
 
 	/**

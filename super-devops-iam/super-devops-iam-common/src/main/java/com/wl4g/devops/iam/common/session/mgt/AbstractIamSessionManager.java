@@ -20,7 +20,8 @@ import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SE
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_ID_SOURCE;
-
+import static org.apache.shiro.web.util.WebUtils.isTrue;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static java.lang.Boolean.TRUE;
 import java.io.Serializable;
 import java.util.Collection;
@@ -353,27 +354,25 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param sessionId
 	 */
 	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, String sessionId) {
-		boolean isBrowser = UserAgentUtils.isBrowser(WebUtils.toHttp(request));
+		boolean isBrowser = UserAgentUtils.isBrowser(toHttp(request));
 		/*
 		 * When a browser request or display specifies that cookies need to be
 		 * saved.
 		 */
-		if (isBrowser || WebUtils.isTrue(request, config.getParam().getSidSaveCookie())) {
+		if (isBrowser || isTrue(request, config.getParam().getSidSaveCookie())) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
 			cookie.setValue(sessionId);
 			// Call post properties.
 			coprocessor.postRenewCookie(request, response, cookie);
 			// Save to response.
-			cookie.saveTo(WebUtils.toHttp(request), WebUtils.toHttp(response));
-
+			cookie.saveTo(toHttp(request), toHttp(response));
 			if (log.isTraceEnabled()) {
 				log.trace("Set session ID cookie for session with id {}", sessionId);
 			}
-		} else {
-			/*
-			 * Addition customize security headers.
-			 */
-			WebUtils.toHttp(response).addHeader(getSessionIdCookie().getName(), sessionId);
+		}
+		// Addition customize security headers.
+		else {
+			toHttp(response).addHeader(getSessionIdCookie().getName(), sessionId);
 		}
 
 	}
