@@ -54,7 +54,7 @@ public class InstanceHolder {
 		this.appName = environment.getProperty("spring.application.name");
 		String servPort = environment.getProperty("server.port");
 		Assert.isTrue(!isAnyBlank(appName, servPort),
-				"Environment['server.port','spring.application.name'] config is null, Because spring cloud loads bootstrap.yml preferentially, which means that other config files are not loaded at initialization, so configurations other than bootstrap.yml cannot be used at initialization, Therefore, these 3 items must be allocated to bootstrap.yml.");
+				"Failed to obtain application name and server port. Check if bootstrap.yml is configured correctly");
 
 		// Default local host-name.
 		String hostname = getLocalHostname();
@@ -65,12 +65,11 @@ public class InstanceHolder {
 			try {
 				// First ipv4 network card
 				Enumeration<NetworkInterface> nis = getNetworkInterfaces();
-				InetAddress addr;
 				while (nis.hasMoreElements()) {
 					NetworkInterface ni = nis.nextElement();
 					Enumeration<InetAddress> addresses = ni.getInetAddresses();
 					while (addresses.hasMoreElements()) {
-						addr = addresses.nextElement();
+						InetAddress addr = addresses.nextElement();
 						if (!addr.isLoopbackAddress() && addr.getHostAddress().indexOf(':') == -1) { // Ignore-ipv6
 							if (StringUtils.equals(ni.getName(), config.getNetcard())) {
 								hostname = addr.getHostName();
@@ -85,9 +84,9 @@ public class InstanceHolder {
 			}
 		}
 
-		// Check
+		// Check & build ReleaseInstance.
 		HostAndPort hap = HostAndPort.fromString(hostname + ":" + servPort);
-		this.instance = new ReleaseInstance(hap.getHostText(), hap.getPort());
+		this.instance = new ReleaseInstance(hap.getHostText(), String.valueOf(hap.getPort()));
 	}
 
 	public String getAppName() {

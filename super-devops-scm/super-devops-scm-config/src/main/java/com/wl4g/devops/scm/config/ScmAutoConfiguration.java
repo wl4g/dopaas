@@ -26,7 +26,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.scm.context.GuideConfigSourceHandler;
+import com.wl4g.devops.scm.context.CheckImpledConfigContextHandler;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
@@ -54,7 +54,7 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguratio
 	@Bean
 	@ConditionalOnMissingBean
 	public ConfigContextHandler configContextHandler() {
-		return new GuideConfigSourceHandler();
+		return new CheckImpledConfigContextHandler();
 	}
 
 	@Bean

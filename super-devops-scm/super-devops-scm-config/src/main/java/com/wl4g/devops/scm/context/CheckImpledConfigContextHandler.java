@@ -33,7 +33,7 @@ import com.wl4g.devops.scm.publish.WatchDeferredResult;
  * @version v1.0 2019年5月27日
  * @since
  */
-public class GuideConfigSourceHandler implements ConfigContextHandler, InitializingBean {
+public class CheckImpledConfigContextHandler implements ConfigContextHandler, InitializingBean {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
