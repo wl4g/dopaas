@@ -176,7 +176,7 @@ public class HistoryServiceImpl implements HistoryService {
 		}
 
 		PreRelease preRelease = new PreRelease();
-		preRelease.setGroup(appCluster.getName());
+		preRelease.setCluster(appCluster.getName());
 		preRelease.setNamespaces(namespaces);
 		String releaseId = String.valueOf(historyOfDetail.getId());
 		String versionId = String.valueOf(agl.getId());
