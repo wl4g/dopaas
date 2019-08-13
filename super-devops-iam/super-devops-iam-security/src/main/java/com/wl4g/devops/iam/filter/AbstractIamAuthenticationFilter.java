@@ -17,21 +17,24 @@ package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_STATUS;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_AUTHC_STATUS;
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_UNAUTHC_STATUS;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.util.Assert.hasText;
-import static org.apache.shiro.util.Assert.notNull;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -45,7 +48,6 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,7 @@ import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
+import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
@@ -142,7 +145,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	@Override
 	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
 		if (log.isDebugEnabled()) {
-			log.debug("Access denied url: {}", WebUtils.toHttp(request).getRequestURI());
+			log.debug("Access denied url: {}", toHttp(request).getRequestURI());
 		}
 		return executeLogin(request, response);
 	}
@@ -156,7 +159,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 */
 		if (!coprocessor.preAuthentication(this, request, response)) {
 			throw new AccessRejectedException(
-					String.format("Access rejected for remote IP:%s", WebUtils2.getHttpRemoteAddr(WebUtils.toHttp(request))));
+					String.format("Access rejected for remote IP:%s", WebUtils2.getHttpRemoteAddr(toHttp(request))));
 		}
 
 		// Client remote host
@@ -166,13 +169,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		String redirectUrl = getFromRedirectUrl(request);
 
 		// Create authentication token
-		return postCreateToken(remoteHost, fromAppName, redirectUrl, WebUtils.toHttp(request), WebUtils.toHttp(response));
+		return postCreateToken(remoteHost, fromAppName, redirectUrl, toHttp(request), toHttp(response));
 	}
 
 	protected abstract T postCreateToken(String remoteHost, String fromAppName, String redirectUrl, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response)
 			throws Exception {
@@ -201,15 +204,22 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Post handle of login success.
 			coprocessor.postAuthenticatingSuccess(tk, subject, request, response);
 
+			// Build response parameter.
+			Map params = new HashMap();
+			params.put(config.getParam().getApplication(), fromAppName);
+			if (isNotBlank(grantTicket)) {
+				params.put(config.getParam().getGrantTicket(), grantTicket);
+			}
+
 			// Response JSON.
 			if (isJSONResponse(request)) {
 				try {
 					// Make logged JSON.
-					String logged = makeLoggedResponse(request, grantTicket, successRedirectUrl);
+					String logged = makeLoggedResponse(request, grantTicket, successRedirectUrl, params);
 					if (log.isInfoEnabled()) {
 						log.info("Response to success - {}", logged);
 					}
-					WebUtils2.writeJson(WebUtils.toHttp(response), logged);
+					writeJson(toHttp(response), logged);
 				} catch (IOException e) {
 					log.error("Login success response json error", e);
 				}
@@ -221,10 +231,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				 * needs to be redirected to the CAS client application, then
 				 * grantTicket is required.
 				 */
-				Map params = Collections.emptyMap();
-				if (isNotBlank(grantTicket)) {
-					params = Collections.singletonMap(config.getParam().getGrantTicket(), grantTicket);
-				}
 				if (log.isInfoEnabled()) {
 					log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
 				}
@@ -263,7 +269,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		String failRedirectUrl = determineFailureUrl(tk, ae, request, response);
 
 		// Get binding parameters
-		Map queryParams = SessionBindings.getBindValue(KEY_REQ_AUTH_PARAMS);
+		Map params = SessionBindings.getBindValue(KEY_REQ_AUTH_PARAMS);
 
 		// Post-handling of login failure
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
@@ -271,11 +277,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Response JSON message
 		if (isJSONResponse(request)) {
 			try {
-				final String failed = makeFailedResponse(failRedirectUrl, request, queryParams, thw);
+				final String failed = makeFailedResponse(failRedirectUrl, request, params, thw);
 				if (log.isInfoEnabled()) {
 					log.info("Response unauthentication. {}", failed);
 				}
-				WebUtils2.writeJson(WebUtils.toHttp(response), failed);
+				WebUtils2.writeJson(toHttp(response), failed);
 			} catch (IOException e) {
 				log.error("Response unauthentication json error", e);
 			}
@@ -286,7 +292,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				if (log.isInfoEnabled()) {
 					log.info("Redirect to login: {}", failRedirectUrl);
 				}
-				WebUtils.issueRedirect(request, response, failRedirectUrl, queryParams, true);
+				issueRedirect(request, response, failRedirectUrl, params, true);
 			} catch (IOException e1) {
 				log.error("Redirect to login failed.", e1);
 			}
@@ -313,7 +319,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			log.debug("Using response type:{}", respType);
 		}
 
-		return ResponseType.isJSONResponse(respType, WebUtils.toHttp(request));
+		return ResponseType.isJSONResponse(respType, toHttp(request));
 	}
 
 	/**
@@ -323,7 +329,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	protected String getFromAppName(ServletRequest request) {
-		String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication()); // Priority
+		String fromAppName = getCleanParam(request, config.getParam().getApplication()); // Priority
 		return StringUtils.hasText(fromAppName) ? fromAppName
 				: SessionBindings.extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication());
 	}
@@ -335,7 +341,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	protected String getFromRedirectUrl(ServletRequest request) {
-		String redirectUrl = WebUtils.getCleanParam(request, config.getParam().getRedirectUrl()); // prerogative
+		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl()); // prerogative
 		return StringUtils.hasText(redirectUrl) ? redirectUrl
 				: extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
 	}
@@ -365,17 +371,20 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * 
 	 * @param request
 	 *            Servlet request
+	 * @param fromAppName
+	 *            from application name
 	 * @param grantTicket
 	 *            logged information model
-	 * @param redirectUrl
+	 * @param successRedirectUrl
 	 *            login success redirect URL
 	 * @return
 	 */
-	private String makeLoggedResponse(ServletRequest request, String grantTicket, String redirectUrl) {
-		notNull(redirectUrl, "'redirectUrl' must not be null");
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private String makeLoggedResponse(ServletRequest request, String grantTicket, String successRedirectUrl, Map params) {
+		hasText(successRedirectUrl, "'successRedirectUrl' must not be empty");
 
 		// Redirection URL
-		StringBuffer uri = new StringBuffer(redirectUrl);
+		StringBuffer uri = new StringBuffer(successRedirectUrl);
 		if (isNotBlank(grantTicket)) {
 			if (uri.lastIndexOf("?") > 0) {
 				uri.append("&");
@@ -388,11 +397,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Relative path processing
 		String url = uri.toString();
 		if (url.startsWith("/")) {
-			url = getRFCBaseURI(WebUtils.toHttp(request), true) + uri;
+			url = getRFCBaseURI(toHttp(request), true) + uri;
 		}
 
 		// Make message
-		return config.getStrategy().makeResponse(OK.getCode(), DEFAULT_AUTHC_STATUS, "Authentication success", url);
+		RespBase<String> resp = RespBase.create();
+		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Authentication success");
+		params.put(config.getParam().getRedirectUrl(), successRedirectUrl);
+		resp.getData().putAll(params);
+		return toJSONString(resp);
 	}
 
 	/**
@@ -402,17 +415,20 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 *            failure redirect URL
 	 * @param request
 	 *            Servlet request
-	 * @param queryParams
+	 * @param params
 	 *            Redirected query configuration parameters
 	 * @param thw
 	 *            Exception object
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map queryParams, Throwable thw) {
-		String errmsg = (thw != null && StringUtils.hasText(thw.getMessage())) ? thw.getMessage() : "Authentication fail";
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map params, Throwable thw) {
+		String errmsg = (thw != null && isNotBlank(thw.getMessage())) ? thw.getMessage() : "Authentication fail";
 		// Make message
-		return config.getStrategy().makeResponse(UNAUTHC.getCode(), DEFAULT_UNAUTHC_STATUS, errmsg, failureRedirectUrl);
+		RespBase<String> resp = RespBase.create();
+		resp.setCode(UNAUTHC).setStatus(DEFAULT_UNAUTHC_STATUS).setMessage(errmsg);
+		resp.getData().putAll(params);
+		return toJSONString(resp);
 	}
 
 	/**

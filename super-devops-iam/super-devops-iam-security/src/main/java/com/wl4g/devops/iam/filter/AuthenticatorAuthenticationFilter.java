@@ -21,16 +21,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.util.WebUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
@@ -109,12 +109,12 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		String redirectUrlKey = config.getParam().getRedirectUrl();
 
 		// Parameter values
-		String sourceApp = WebUtils.getCleanParam(request, sourceAppKey);
-		String respType = WebUtils.getCleanParam(request, responseTypeKey);
-		String redirectUrl = WebUtils.getCleanParam(request, redirectUrlKey);
+		String sourceApp = getCleanParam(request, sourceAppKey);
+		String respType = getCleanParam(request, responseTypeKey);
+		String redirectUrl = getCleanParam(request, redirectUrlKey);
 
 		// Overlay to save the latest parameters
-		SessionBindings.bindKVParameters(KEY_REQ_AUTH_PARAMS,
+		bindKVParameters(KEY_REQ_AUTH_PARAMS,
 				new Object[] { sourceAppKey, sourceApp, responseTypeKey, respType, redirectUrlKey, redirectUrl });
 		if (log.isDebugEnabled()) {
 			log.debug("Bind requests. sourceApp[{}], respType[{}], redirectUrl[{}]", sourceApp, respType, redirectUrl);
