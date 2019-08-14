@@ -84,7 +84,8 @@ public class AlarmResult {
 
 	@Override
 	public String toString() {
-		return "AlarmResult [matchedTag=" + matchedTag + ", matchedRules=" + matchedRules + "]";
+		return "AlarmResult [aggregateWrap=" + aggregateWrap + ", alarmTemplate=" + alarmTemplate + ", matchedTag=" + matchedTag
+				+ ", matchedRules=" + matchedRules + "]";
 	}
 
 }
