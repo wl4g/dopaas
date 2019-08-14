@@ -61,4 +61,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	<description>SRM - A Spring cloud-based software resource management service that integrates EFK distributed log centralized collection and analysis</description>
+	<url>https://srm.super-devops.wl4g.com</url>
 </project>

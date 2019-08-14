@@ -20,12 +20,10 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-rest</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-captcha</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

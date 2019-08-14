@@ -4,7 +4,7 @@
 	<artifactId>super-devops-ci-rest</artifactId>
 	<packaging>jar</packaging>
 	<name>Super DevOps CI RESTful</name>
-	<url>http://maven.apache.org</url>
+	<url>https://ci.super-devops.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>super-devops-ci</artifactId>
@@ -19,7 +19,6 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-ci-core</artifactId>
-			<version>master</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -47,6 +46,19 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<preparationGoals>clean install</preparationGoals>
+				</configuration>
+			</plugin> -->
+			<!-- <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.1</version>
+			</plugin> -->
 		</plugins>
 	</build>
 </project>
