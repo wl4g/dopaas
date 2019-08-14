@@ -22,22 +22,18 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-support</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-shell-cli</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-dao</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-shell-core</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>

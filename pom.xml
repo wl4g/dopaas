@@ -23,7 +23,7 @@
 		<connection>scm:git:git@github.com:wl4g/super-devops.git</connection>
 		<developerConnection>scm:git:git@github.com:wl4g/super-devops.git</developerConnection>
 		<url>https://github.com/wl4g/super-devops</url>
-		<tag>v${project.version}</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<developers>
 		<developer>
@@ -58,23 +58,23 @@
 		<module>super-devops-ci</module>
 		<module>super-devops-shell</module>
 		<module>super-devops-srm</module>
-		<!-- <module>super-devops-doc</module> -->
 		<module>super-devops-iam</module>
-		<!-- <module>super-devops-im</module> -->
 		<module>super-devops-umc</module>
+		<!-- <module>super-devops-doc</module> -->
+		<!-- <module>super-devops-im</module> -->
 		<!-- <module>super-devops-vcs</module> -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<project.parent.version>master</project.parent.version>
+		<project.all.version>master</project.all.version>
 	</properties>
 	<repositories>
 		<repository>
-			<id>central</id>
-			<name>aliyun</name>
-			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+			<id>aliyun-public</id>
+			<name>Aliyun public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -160,4 +160,8 @@
 			</build>
 		</profile>
 	</profiles>
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/wl4g/super-devops/issues</url>
+	</issueManagement>
 </project>

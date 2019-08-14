@@ -58,4 +58,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	<url>https://scm.super-devops.wl4g.com</url>
+	<description>SCM - An Open Source Distributed Independent Configuration Center based on Spring Cloud.</description>
 </project>

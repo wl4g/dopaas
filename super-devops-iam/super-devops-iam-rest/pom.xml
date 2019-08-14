@@ -19,12 +19,10 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-core</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-security</artifactId>
-			<version>master</version>
 		</dependency>
 	</dependencies>
 	<build>
