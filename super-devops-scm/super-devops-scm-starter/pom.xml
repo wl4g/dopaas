@@ -79,9 +79,10 @@
 				</executions>
 			</plugin>
 			<!-- Usage: -->
-			<!-- [Build]: mvn -Pdocker:push dockerfile:push -Ddockerfile.username=wl4g -Ddockerfile.password=123456 -->
-			<!-- [Build & push]: mvn -Pdocker:push dockerfile:build dockerfile:push -Ddockerfile.username=wl4g 
+			<!-- [Build]: mvn -Pdocker:install dockerfile:build -Ddockerfile.username=wl4g 
 				-Ddockerfile.password=123456 -->
+			<!-- [Build & Push]: mvn -Pdocker:install dockerfile:build dockerfile:push 
+				-Ddockerfile.username=wl4g -Ddockerfile.password=123456 -->
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
@@ -124,7 +125,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>docker:push</id>
+			<id>docker:install</id>
 			<properties>
 				<dockerskip>false</dockerskip>
 			</properties>

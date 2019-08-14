@@ -21,7 +21,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.*;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenericInfo implements Serializable {
@@ -39,7 +43,7 @@ public class GenericInfo implements Serializable {
 	 */
 	@NotNull
 	@NotEmpty
-	private List<String> namespaces;
+	private List<String> namespaces = new ArrayList<>();
 
 	/**
 	 * Version release information
@@ -66,7 +70,10 @@ public class GenericInfo implements Serializable {
 	}
 
 	public void setNamespaces(List<String> namespaces) {
-		this.namespaces = namespaces;
+		if (!isEmpty(namespaces)) {
+			this.namespaces.clear();
+			this.namespaces.addAll(namespaces);
+		}
 	}
 
 	public String getCluster() {
