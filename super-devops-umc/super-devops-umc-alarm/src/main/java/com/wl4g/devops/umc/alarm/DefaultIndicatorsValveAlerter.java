@@ -246,7 +246,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	protected void postAlarmResultProcessed(List<AlarmResult> results) {
 		for (AlarmResult result : results) {
 			if (checkNotifyLimit(result)) {
-
+				// TODO
+				// Save notification
 			}
 		}
 
@@ -266,6 +267,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @return
 	 */
 	protected boolean checkNotifyLimit(AlarmResult result) {
+		// TODO
 		return false;
 	}
 
