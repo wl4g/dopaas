@@ -127,8 +127,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Usage: mvn versions:set -DoldVersion=* -DnewVersion=latest -DprocessAllModules=true 
-				-DallowSnapshots=true -DgenerateBackupPoms=false clean install -DskipTests -->
+			<!-- Usage: mvn versions:set -DnewVersion=latest clean install -DskipTests -->
 			<!-- See: http://www.mojohaus.org/versions-maven-plugin/set-mojo.html -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
