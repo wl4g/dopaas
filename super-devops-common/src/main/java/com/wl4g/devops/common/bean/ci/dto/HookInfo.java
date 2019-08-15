@@ -55,6 +55,11 @@ public class HookInfo {
 		this.repository = repository;
 	}
 
+	@Override
+	public String toString() {
+		return "HookInfo [ref=" + ref + ", branchName=" + branchName + ", repository=" + repository + "]";
+	}
+
 	public class Repository {
 
 		private String name;
@@ -76,6 +81,12 @@ public class HookInfo {
 		public void setGit_http_url(String git_http_url) {
 			this.gitHttpUrl = git_http_url;
 		}
+
+		@Override
+		public String toString() {
+			return "Repository [name=" + name + ", gitHttpUrl=" + gitHttpUrl + "]";
+		}
+
 	}
 
 }
