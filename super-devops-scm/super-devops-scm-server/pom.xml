@@ -81,8 +81,8 @@
 			<!-- Usage: -->
 			<!-- [Build]: mvn -Pdocker:install dockerfile:build -Ddockerfile.username=wl4g 
 				-Ddockerfile.password=123456 -->
-			<!-- [Build & Push]: mvn -Pdocker:install dockerfile:build dockerfile:push 
-				-Ddockerfile.username=wl4g -Ddockerfile.password=123456 -->
+			<!-- [Push]: mvn -Pdocker:install dockerfile:build dockerfile:push -Ddockerfile.username=wl4g 
+				-Ddockerfile.password=123456 -->
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>dockerfile-maven-plugin</artifactId>
