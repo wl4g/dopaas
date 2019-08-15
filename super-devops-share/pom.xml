@@ -9,6 +9,7 @@
 	<modules>
 		<module>super-devops-share-admin</module>
 		<module>super-devops-share-core</module>
+		<module>super-devops-share-support</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,9 +19,9 @@
 	</properties>
 	<repositories>
 		<repository>
-			<id>nexus-senior-plugin</id>
-			<name>Team Nexus jar Repository</name>
-			<url>http://47.107.57.204/m2-repository/</url>
+			<id>aliyun-public</id>
+			<name>Aliyun public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
 		</repository>
 		<repository>
 			<id>spring-snapshots</id>

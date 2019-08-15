@@ -6,15 +6,16 @@
 	<version>master</version>
 	<packaging>pom</packaging>
 	<name>Super DevOps IAM</name>
+	<url>https://iam.super-devops.wl4g.com</url>
+	<description>A CAS-based SSO unified authentication implementation, supporting WeChat, QQ, Facebook and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.</description>
 	<modules>
 		<module>super-devops-iam-client</module>
 		<module>super-devops-iam-captcha</module>
 		<module>super-devops-iam-common</module>
 		<module>super-devops-iam-core</module>
 		<module>super-devops-iam-example</module>
-		<module>super-devops-iam-rest</module>
 		<module>super-devops-iam-security</module>
-		<module>super-devops-iam-starter</module>
+		<module>super-devops-iam-server</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,6 +23,24 @@
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<project.parent.version>master</project.parent.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>aliyun-public</id>
+			<name>Aliyun public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/libs-snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -56,7 +75,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-support</artifactId>
+				<artifactId>super-devops-share-support</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
@@ -76,24 +95,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<repositories>
-		<repository>
-			<id>aliyun-public</id>
-			<name>Aliyun public</name>
-			<url>https://maven.aliyun.com/repository/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/libs-snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<build>
 		<plugins>
 			<plugin>
@@ -122,6 +123,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<url>https://iam.super-devops.wl4g.com</url>
-	<description>A CAS-based SSO unified authentication implementation, supporting WeChat, QQ, Facebook and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.</description>
 </project>
