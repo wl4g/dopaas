@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.scm;
+package com.wl4g.devops.common.bean.share;
 
 /**
  * 列表展示实体

@@ -17,7 +17,7 @@ package com.wl4g.devops.dao.scm;
 
 import java.util.List;
 
-import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.common.bean.share.*;
 import org.apache.ibatis.annotations.Param;
 
 /**

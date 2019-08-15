@@ -28,6 +28,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-share-core</artifactId>
+			<version>master</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-dao</artifactId>
 			<version>master</version>
 		</dependency>

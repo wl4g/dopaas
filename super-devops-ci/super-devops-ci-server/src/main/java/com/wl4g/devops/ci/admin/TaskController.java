@@ -21,7 +21,7 @@ import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
-import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.BaseController;

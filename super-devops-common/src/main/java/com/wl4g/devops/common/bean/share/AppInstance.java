@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.scm;
+package com.wl4g.devops.common.bean.share;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
@@ -26,12 +26,10 @@ import com.wl4g.devops.common.bean.BaseBean;
  */
 public class AppInstance extends BaseBean {
 
-	private Long clusterId; // 应用分组ID
-	private String host; // 实例节点Host（如：web-node1）
-	private String ip; // 主机IP地址
+	private Long appClusterId; // 应用分组ID
+	private Integer hostId;
 	private String endpoint; // 服务监听端口
 	private String envId; // 环境id
-	private String opsIds = "1"; // 运维者userIds（逗号分隔）
 	private String versionId; // 版本id
 
 	// 20190517add
@@ -39,29 +37,16 @@ public class AppInstance extends BaseBean {
 	private String sshUser;// 登录账号
 	private String sshKey;
 
-	public Long getClusterId() {
-		return clusterId;
+
+
+	public Long getAppClusterId() {
+		return appClusterId;
 	}
 
-	public void setClusterId(Long clusterId) {
-		this.clusterId = clusterId;
+	public void setAppClusterId(Long appClusterId) {
+		this.appClusterId = appClusterId;
 	}
 
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
 
 	public String getEndpoint() {
 		return endpoint;
@@ -79,13 +64,6 @@ public class AppInstance extends BaseBean {
 		this.envId = envId;
 	}
 
-	public String getOpsIds() {
-		return opsIds;
-	}
-
-	public void setOpsIds(String opsIds) {
-		this.opsIds = opsIds;
-	}
 
 	public String getVersionId() {
 		return versionId;
@@ -114,12 +92,9 @@ public class AppInstance extends BaseBean {
 	@Override
 	public String toString() {
 		return "AppInstance{" +
-				"clusterId=" + clusterId +
-				", host='" + host + '\'' +
-				", ip='" + ip + '\'' +
+				"appClusterId=" + appClusterId +
 				", endpoint=" + endpoint +
 				", envId='" + envId + '\'' +
-				", opsIds='" + opsIds + '\'' +
 				", versionId='" + versionId + '\'' +
 				", sshUser='" + sshUser + '\'' +
 				", sshKey='" + sshKey + '\'' +

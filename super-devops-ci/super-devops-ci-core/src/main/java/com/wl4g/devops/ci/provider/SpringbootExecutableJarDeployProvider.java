@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.provider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.util.List;
 

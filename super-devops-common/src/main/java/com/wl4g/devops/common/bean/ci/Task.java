@@ -1,7 +1,7 @@
 package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.io.Serializable;
 import java.util.List;
