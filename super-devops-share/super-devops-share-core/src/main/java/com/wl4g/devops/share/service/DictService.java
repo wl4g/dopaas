@@ -11,9 +11,11 @@ import java.util.Map;
  */
 public interface DictService {
 
-    void save(Dict dict);
+    void insert(Dict dict);
 
-    void del(Integer id);
+    void update(Dict dict);
+
+    void del(String key);
 
     List<Dict> getBytype(String type);
 

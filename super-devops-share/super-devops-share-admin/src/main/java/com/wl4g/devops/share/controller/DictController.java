@@ -56,24 +56,28 @@ public class DictController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(Dict dict) {
+	public RespBase<?> save(Dict dict,Boolean isEdit) {
 		RespBase<Object> resp = RespBase.create();
-		dictService.save(dict);
+		if(isEdit){
+			dictService.update(dict);
+		}else{
+			dictService.insert(dict);
+		}
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(String key) {
 		RespBase<Object> resp = RespBase.create();
-		Dict dict = dictDao.selectByPrimaryKey(id);
+		Dict dict = dictDao.selectByPrimaryKey(key);
 		resp.getData().put("dict",dict);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
-		dictService.del(id);
+		dictService.del(key);
 		return resp;
 	}
 

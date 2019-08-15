@@ -13,9 +13,9 @@ public class Dict extends BaseBean implements Serializable {
 
 	private String label;
 
-	private String type;
+	private String labelEn;
 
-	private String description;
+	private String type;
 
 	private String themes;
 
@@ -57,14 +57,6 @@ public class Dict extends BaseBean implements Serializable {
 		this.type = type == null ? null : type.trim();
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description == null ? null : description.trim();
-	}
-
 	public String getThemes() {
 		return themes;
 	}
@@ -97,9 +89,18 @@ public class Dict extends BaseBean implements Serializable {
 		this.status = status;
 	}
 
+
+	public String getLabelEn() {
+		return labelEn;
+	}
+
+	public void setLabelEn(String labelEn) {
+		this.labelEn = labelEn;
+	}
+
 	@Override
 	public String toString() {
-		return "Dict [key=" + key + ", value=" + value + ", label=" + label + ", type=" + type + ", description=" + description
+		return "Dict [key=" + key + ", value=" + value + ", label=" + label + ", type=" + type
 				+ ", themes=" + themes + ", icon=" + icon + ", sort=" + sort + ", status=" + status + "]";
 	}
 

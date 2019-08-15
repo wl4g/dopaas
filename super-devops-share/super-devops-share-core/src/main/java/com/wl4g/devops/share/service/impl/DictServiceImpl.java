@@ -24,24 +24,37 @@ public class DictServiceImpl  implements DictService {
     @Autowired
     private DictDao dictDao;
 
-
     @Override
-    public void save(Dict dict) {
-        Assert.notNull(dict,"dict is null");
-        if(dict.getId()!=null){
-            dict.preUpdate();
-            dictDao.updateByPrimaryKeySelective(dict);
-        }else{
-            dict.preInsert();
-            dictDao.insertSelective(dict);
-        }
+    public void insert(Dict dict) {
+        checkBeforePersistence(dict);
+        checkRepeat(dict);
+        dict.preInsert();
+        dictDao.insertSelective(dict);
     }
 
     @Override
-    public void del(Integer id) {
-        Assert.notNull(id,"id is null");
+    public void update(Dict dict) {
+        dict.preUpdate();
+        dictDao.updateByPrimaryKeySelective(dict);
+    }
+
+    private void checkBeforePersistence(Dict dict){
+        Assert.notNull(dict,"dict is null");
+        Assert.hasText(dict.getKey(),"key is null");
+        Assert.hasText(dict.getType(),"key is null");
+        Assert.hasText(dict.getLabel(),"key is null");
+    }
+
+    private void checkRepeat(Dict dict){
+        Dict dict1 = dictDao.selectByPrimaryKey(dict.getKey());
+        Assert.isNull(dict1,"dict key is repeat");
+    }
+
+    @Override
+    public void del(String key) {
+        Assert.hasText(key,"id is null");
         Dict dict = new Dict();
-        dict.setId(id);
+        dict.setKey(key);
         dict.preUpdate();
         dict.setDelFlag(DEL_FLAG_DELETE);
         dictDao.updateByPrimaryKeySelective(dict);
