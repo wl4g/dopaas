@@ -6,18 +6,18 @@
 	<version>master</version>
 	<packaging>pom</packaging>
 	<name>Super DevOps Shell</name>
+	<description>Shell-cli is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.</description>
+	<url>https://shell-cli.super-devops.wl4g.com</url>
 	<modules>
 		<module>super-devops-shell-common</module>
 		<module>super-devops-shell-core</module>
 		<module>super-devops-shell-cli</module>
 		<module>super-devops-shell-example</module>
-		
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<project.parent.version>master</project.parent.version>
 	</properties>
 	<build>
 		<plugins>
@@ -47,6 +47,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<description>Shell-cli is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.</description>
-	<url>https://shell-cli.super-devops.wl4g.com</url>
 </project>

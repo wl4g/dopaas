@@ -128,19 +128,17 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.3</version>
-				<configuration>
-					<preparationGoals>clean install</preparationGoals>
-				</configuration>
-			</plugin>
+			<!-- Usage: mvn versions:set -DoldVersion=* -DnewVersion=master -DprocessAllModules=true 
+				-DallowSnapshots=true -DgenerateBackupPoms=false clean install -DskipTests -->
+			<!-- See: http://www.mojohaus.org/versions-maven-plugin/set-mojo.html -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
 				<version>2.1</version>
 			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-release-plugin</artifactId> 
+				<version>2.5.3</version> <configuration> <preparationGoals>clean install</preparationGoals> 
+				</configuration> </plugin> -->
 		</plugins>
 	</build>
 	<profiles>

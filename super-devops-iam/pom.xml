@@ -21,7 +21,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<project.parent.version>master</project.parent.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -41,60 +40,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-iam-common</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-iam-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-iam-client</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-iam-security</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-iam-captcha</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-iam-rest</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-share-support</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-dao</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-shell-cli</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-shell-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>

@@ -20,6 +20,7 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-ci-core</artifactId>
+			<version>master</version>
 		</dependency>
 	</dependencies>
 	<build>
