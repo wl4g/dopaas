@@ -1,38 +1,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-iam-example</artifactId>
+	<artifactId>super-devops-ci-server</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps IAM Example</name>
-	<url>http://maven.apache.org</url>
+	<name>Super DevOps CI Server</name>
+	<url>https://ci.super-devops.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-iam</artifactId>
+		<artifactId>super-devops-ci</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<final.name>iam-example</final.name>
+		<final.name>ci-server</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-iam-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-share-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-freemarker</artifactId>
-			<version>1.5.13.RELEASE</version>
+			<artifactId>super-devops-ci-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>script/**</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -77,6 +77,11 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-release-plugin</artifactId> 
+				<version>2.5.3</version> <configuration> <preparationGoals>clean install</preparationGoals> 
+				</configuration> </plugin> -->
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>versions-maven-plugin</artifactId> 
+				<version>2.1</version> </plugin> -->
 		</plugins>
 	</build>
 </project>

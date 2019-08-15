@@ -9,9 +9,9 @@
 	<url>https://ci.super-devops.wl4g.com</url>
 	<description>CI - An open source continuous integration deployment system based on Spring Cloud.</description>
 	<modules>
-		<module>super-devops-ci-rest</module>
 		<module>super-devops-ci-core</module>
-		<module>super-devops-ci-starter</module>
+		<module>super-devops-ci-server</module>
+		<module>super-devops-ci-example</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
