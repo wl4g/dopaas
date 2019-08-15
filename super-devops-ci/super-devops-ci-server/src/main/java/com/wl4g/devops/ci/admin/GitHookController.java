@@ -44,12 +44,13 @@ public class GitHookController extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping("gitlab")
-	public void gitlabHookReceive(@RequestBody HookInfo hook) throws Exception {
+	public void gitlabHook(@RequestBody HookInfo hook) throws Exception {
+		if (log.isInfoEnabled()) {
+			log.info("Gitlab hook receive <= {}", hook);
+		}
 		String branchName = hook.getBranchName();
 		String url = hook.getRepository().getGitHttpUrl();
 		String projectName = hook.getRepository().getName();
-		log.info("activity hook,projectName=" + projectName + " branchName=" + branchName + " url=" + url);
-		// BaseSubject baseSubject = getDevTool(projectName,branchName,url);
 		ciService.hook(projectName, branchName, url);
 	}
 
