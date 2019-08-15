@@ -16,6 +16,8 @@ public class AlarmNotification extends BaseBean implements Serializable {
 
     private String alarmNote;
 
+    private String groupName;
+
     public Integer getContactGroupId() {
         return contactGroupId;
     }
@@ -46,5 +48,13 @@ public class AlarmNotification extends BaseBean implements Serializable {
 
     public void setAlarmNote(String alarmNote) {
         this.alarmNote = alarmNote == null ? null : alarmNote.trim();
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

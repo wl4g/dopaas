@@ -20,7 +20,7 @@ import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
-import com.wl4g.devops.scm.client.configure.watch.TimingRefreshWatcher;
+import com.wl4g.devops.scm.client.configure.watch.DefaultRefreshWatcher;
 import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
 
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -78,9 +78,9 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfi
 	}
 
 	@Bean("timingRefreshWatcher")
-	public TimingRefreshWatcher timingRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher,
+	public DefaultRefreshWatcher timingRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher,
 			ScmPropertySourceLocator locator) {
-		return new TimingRefreshWatcher(config, refresher, locator);
+		return new DefaultRefreshWatcher(config, refresher, locator);
 	}
 
 	//

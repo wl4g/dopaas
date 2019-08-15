@@ -29,7 +29,7 @@ public class AppInstance extends BaseBean {
 	private Long clusterId; // 应用分组ID
 	private String host; // 实例节点Host（如：web-node1）
 	private String ip; // 主机IP地址
-	private Integer port; // 服务监听端口
+	private String endpoint; // 服务监听端口
 	private String envId; // 环境id
 	private String opsIds = "1"; // 运维者userIds（逗号分隔）
 	private String versionId; // 版本id
@@ -63,12 +63,12 @@ public class AppInstance extends BaseBean {
 		this.ip = ip;
 	}
 
-	public Integer getPort() {
-		return port;
+	public String getEndpoint() {
+		return endpoint;
 	}
 
-	public void setPort(Integer port) {
-		this.port = port;
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
 	}
 
 	public String getEnvId() {
@@ -117,7 +117,7 @@ public class AppInstance extends BaseBean {
 				"clusterId=" + clusterId +
 				", host='" + host + '\'' +
 				", ip='" + ip + '\'' +
-				", port=" + port +
+				", endpoint=" + endpoint +
 				", envId='" + envId + '\'' +
 				", opsIds='" + opsIds + '\'' +
 				", versionId='" + versionId + '\'' +

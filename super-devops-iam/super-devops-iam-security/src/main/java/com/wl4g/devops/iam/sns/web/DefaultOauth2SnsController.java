@@ -28,6 +28,7 @@ import com.google.common.base.Charsets;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
+import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.SnsController;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
@@ -35,9 +36,12 @@ import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
 
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_AUTHC_READY_STATUS;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.StrategyProperties.DEFAULT_SECOND_AUTHC_STATUS;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.web.WebUtils2.safeDecodeURL;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CALLBACK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AFTER_CALLBACK_AGENT;
 
@@ -58,6 +62,9 @@ import javax.validation.constraints.NotBlank;
  */
 @SnsController
 public class DefaultOauth2SnsController extends AbstractSnsController {
+
+	final public static String DEFAULT_AUTHC_READY_STATUS = "certificateReady";
+	final public static String DEFAULT_SECOND_AUTHC_STATUS = "SecondCertifies";
 
 	public DefaultOauth2SnsController(IamProperties config, SnsProperties snsConfig, DelegateSnsHandler delegate) {
 		super(config, snsConfig, delegate);
@@ -101,21 +108,22 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		// Response type
 		String respType = WebUtils.getCleanParam(request, config.getParam().getResponseType());
 		if (ResponseType.isJSONResponse(respType, request)) {
-			String authorizingMsg = config.getStrategy().makeResponse(RetCode.OK.getCode(), DEFAULT_AUTHC_READY_STATUS,
-					"Getting the SNS authorization code is ready.", null);
-			this.writeJson(response, authorizingMsg);
+			RespBase<String> resp = RespBase.create();
+			resp.setCode(RetCode.OK).setStatus(DEFAULT_AUTHC_READY_STATUS)
+					.setMessage("Obtain the SNS authorization code is ready.");
+			writeJson(response, toJSONString(resp));
 		} else {
 			/**
 			 * Some handler have carried the 'redirect:' prefix
 			 */
 			if (StringUtils.startsWithIgnoreCase(authorizingUrl, REDIRECT_PREFIX)) {
-				WebUtils.issueRedirect(request, response, authorizingUrl.substring(REDIRECT_PREFIX.length()), null, false);
+				issueRedirect(request, response, authorizingUrl.substring(REDIRECT_PREFIX.length()), null, false);
 			} else {
 				// Return the URL string directly without redirection
 				String msg = String.format(
 						"<div>Please configure the callback URL on the social network platform <b>%s</b> as follows (note: it's the Wechat official public platform, not an open platform):</div><br/><a style=\"word-break:break-all;\" href=\"%s\" target=\"_blank\">%s</a>",
 						provider, authorizingUrl, authorizingUrl);
-				this.write(response, HttpServletResponse.SC_OK, MediaType.TEXT_HTML_VALUE, msg.getBytes(Charsets.UTF_8));
+				write(response, HttpServletResponse.SC_OK, MediaType.TEXT_HTML_VALUE, msg.getBytes(Charsets.UTF_8));
 			}
 		}
 	}
@@ -134,30 +142,34 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		}
 
 		// Basic parameters
-		String which = WebUtils.getCleanParam(request, config.getParam().getWhich());
-		String state = WebUtils.getCleanParam(request, config.getParam().getState());
+		String which = getCleanParam(request, config.getParam().getWhich());
+		String state = getCleanParam(request, config.getParam().getState());
 
 		// Which
 		Which wh = Which.safeOf(which);
 		Assert.notNull(wh, String.format("'%s' must not be null", config.getParam().getWhich()));
 
 		// Delegate getting redirect refreshUrl
-		String redirectRefreshUrl = this.delegate.callback(wh, provider, state, code, request);
+		String redirectRefreshUrl = delegate.callback(wh, provider, state, code, request);
 		if (log.isInfoEnabled()) {
 			log.info("Callback provider[{}], state[{}], url[{}]", provider, state, redirectRefreshUrl);
 		}
 
-		// Refresh redirection URL is empty, indicating that no redirection is
-		// required for this operation.
-		if (StringUtils.isEmpty(redirectRefreshUrl)) {
-			// Response JSON of redirection
-			String respMsg = config.getStrategy().makeResponse(RetCode.OK.getCode(), DEFAULT_SECOND_AUTHC_STATUS,
-					"The second authentication has been successful.", redirectRefreshUrl);
-			WebUtils2.writeJson(response, respMsg);
+		/*
+		 * Refresh redirection URL is empty, indicating that no redirection is
+		 * required for this operation.
+		 */
+		if (isBlank(redirectRefreshUrl)) {
+			// Response JSON of redirection.
+			RespBase<String> resp = RespBase.create();
+			resp.setCode(RetCode.OK).setStatus(DEFAULT_SECOND_AUTHC_STATUS).setMessage("Second authenticate successfully.");
+			// resp.setData(singletonMap(config.getParam().getRefreshUrl(),
+			// redirectRefreshUrl));
+			writeJson(response, toJSONString(resp));
 		}
 		// Redirection to refresh URL
 		else {
-			WebUtils.issueRedirect(request, response, WebUtils2.safeDecodeURL(redirectRefreshUrl), null, false);
+			issueRedirect(request, response, safeDecodeURL(redirectRefreshUrl), null, false);
 		}
 
 	}

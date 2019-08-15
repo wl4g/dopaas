@@ -110,8 +110,8 @@ public class AppClueterServiceImpl implements AppClusterService {
 		return appClusterDao.grouplist();
 	}
 
-	public List<Environment> environmentlist(String clusterId) {
-		return appClusterDao.environmentlist(clusterId);
+	public List<Environment> environmentlist(String appClusterId) {
+		return appClusterDao.environmentlist(appClusterId);
 	}
 
 	public List<AppInstance> instancelist(AppInstance appInstance) {

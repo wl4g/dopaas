@@ -15,28 +15,22 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmRule;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
-import com.wl4g.devops.umc.handler.AlarmConfigurer;
-import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
-import com.wl4g.devops.umc.rule.RuleConfigManager;
-import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
-import static java.util.Collections.emptyMap;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static com.wl4g.devops.common.utils.lang.Collections2.ensureList;
+import static java.lang.Math.abs;
+import static java.util.Collections.emptyList;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,34 +46,20 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/** JEDIS service */
+	/** REDIS service */
 	final protected JedisService jedisService;
 
-	/** Alarm configuration */
-	final protected AlarmConfigurer configurer;
+	/**
+	 * REDIS lock manager.
+	 */
+	final protected SimpleRedisLockManager lockManager;
 
-	/** Alarm rule manager */
-	final protected RuleConfigManager ruleManager;
-
-	/** Alarm rule inspector */
-	final protected CompositeRuleInspectorAdapter inspector;
-
-	/** Alarm notifier */
-	final protected CompositeAlarmNotifierAdapter notifier;
-
-	public AbstractIndicatorsValveAlerter(AlarmProperties config, JedisService jedisService, AlarmConfigurer configurer,
-			RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
+	public AbstractIndicatorsValveAlerter(JedisService jedisService, SimpleRedisLockManager lockManager, AlarmProperties config) {
 		super(config);
 		Assert.notNull(jedisService, "JedisService is null, please check config.");
-		Assert.notNull(configurer, "AlarmConfigurer is null, please check config.");
-		Assert.notNull(ruleManager, "RuleManager is null, please check config.");
-		Assert.notNull(inspector, "RuleInspector is null, please check config.");
-		Assert.notNull(notifier, "AlarmNotifier is null, please check config.");
+		Assert.notNull(lockManager, "LockManager is null, please check config.");
 		this.jedisService = jedisService;
-		this.configurer = configurer;
-		this.ruleManager = ruleManager;
-		this.inspector = inspector;
-		this.notifier = notifier;
+		this.lockManager = lockManager;
 	}
 
 	@Override
@@ -99,43 +79,51 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	 */
 	protected abstract void doHandleAlarm(MetricAggregateWrapper agwrap);
 
-	/**
-	 * Extract largest metric keep time window of rules.
-	 * 
-	 * @param rules
-	 * @return
-	 */
-	protected long extractMaxRuleWindowTime(List<AlarmRule> rules) {
-		long largestTimeWindow = 0;
-		for (AlarmRule alarmRule : rules) {
-			Long timeWindow = alarmRule.getQueueTimeWindow();
-			if ((timeWindow != null ? timeWindow : 0) > largestTimeWindow) {
-				largestTimeWindow = alarmRule.getQueueTimeWindow();
-			}
-		}
-		return largestTimeWindow;
-	}
+	// --- Metric time queue. ---
 
 	/**
-	 * Match metric tags
+	 * Offer metric values in time windows.
 	 * 
-	 * @param metricTagMap
-	 * @param tplTagMap
+	 * @param collectAddr
+	 *            collector address
+	 * @param value
+	 *            metric value
+	 * @param gatherTime
+	 *            gather time-stamp.
+	 * @param now
+	 *            current date time-stamp.
+	 * @param ttl
+	 *            time-to-live
 	 * @return
 	 */
-	protected Map<String, String> matchTags(Map<String, String> metricTagMap, Map<String, String> tplTagMap) {
-		// If no tag is configured, the matching tag does not need to be
-		// executed.
-		if (isEmpty(tplTagMap)) {
-			return emptyMap();
-		}
-		Map<String, String> matchedTags = new HashMap<>();
-		for (Entry<String, String> ent : tplTagMap.entrySet()) {
-			if (trimToEmpty(ent.getValue()).equals(metricTagMap.get(ent.getKey()))) {
-				matchedTags.put(ent.getKey(), ent.getValue());
+	protected List<MetricValue> offerTimeWindowQueue(String collectAddr, Double value, long gatherTime, long now, long ttl) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(collectAddr);
+		// To solve the concurrency problem of metric window queue in
+		// distributed environment.
+		Lock lock = lockManager.getLock(timeWindowKey);
+
+		List<MetricValue> metricVals = emptyList();
+		try {
+			if (lock.tryLock(10L, TimeUnit.SECONDS)) {
+				metricVals = ensureList(doPeekMetricValueQueue(collectAddr));
+				metricVals.add(new MetricValue(gatherTime, value));
+
+				// Check & clean expired metrics.
+				Iterator<MetricValue> it = metricVals.iterator();
+				while (it.hasNext()) {
+					if (abs(now - it.next().getGatherTime()) >= ttl) {
+						it.remove();
+					}
+				}
+				// Offer to queue.
+				doOfferMetricValueQueue(collectAddr, ttl, metricVals);
 			}
+		} catch (InterruptedException e) {
+			throw new IllegalStateException(e);
+		} finally {
+			lock.unlock();
 		}
-		return matchedTags;
+		return metricVals;
 	}
 
 	/**
@@ -162,39 +150,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 		return metricVals;
 	}
 
-	/**
-	 * Notification of alarm template to users.
-	 * 
-	 * @param alarmTpl
-	 * @param alarmConfigs
-	 * @param macthedRules
-	 */
-	protected void notification(AlarmTemplate alarmTpl, List<AlarmConfig> alarmConfigs, List<AlarmRule> macthedRules) {
-
-		// TODO 通知方式改变，没有了notifierType，通过contact下的配置来决定发送方式
-
-		// for (AlarmConfig alarmConfig : alarmConfigs) {
-		// if (isBlank(alarmConfig.getAlarmMember())) {
-		// continue;
-		// }
-		// // Alarm notifier members.
-		// String[] alarmMembers = alarmConfig.getAlarmMember().split(",");
-		// if (log.isInfoEnabled()) {
-		// log.info("Notification alarm for templateId: {}, notifierType: {},
-		// to: {}, content: {}", alarmTemplate.getId(),
-		// alarmConfig.getAlarmType(), alarmConfig.getAlarmMember(),
-		// alarmConfig.getAlarmContent());
-		// }
-		// // Alarm to composite notifiers.
-		// notifier.simpleNotify(
-		// new SimpleAlarmMessage(alarmConfig.getAlarmContent(),
-		// alarmConfig.getAlarmType(), alarmMembers));
-		// }
-	}
-
-	//
 	// --- Cache key. ---
-	//
 
 	protected String getTimeWindowQueueCacheKey(String collectAddr) {
 		Assert.hasText(collectAddr, "Collect addr must not be empty");

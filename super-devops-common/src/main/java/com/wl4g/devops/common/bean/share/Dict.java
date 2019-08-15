@@ -1,19 +1,13 @@
 package com.wl4g.devops.common.bean.share;
 
-import java.io.Serializable;
-
 import com.wl4g.devops.common.bean.BaseBean;
 
-/**
- * System share dict bean.
- * 
- * @author wangl.sir
- * @version v1.0 2019年7月2日
- * @since
- */
-public class Dict extends BaseBean implements Serializable {
+import java.io.Serializable;
 
-	private static final long serialVersionUID = 381411777614066880L;
+public class Dict extends BaseBean implements Serializable {
+	private static final long serialVersionUID = -7546448616357790576L;
+
+	private String key;
 
 	private String value;
 
@@ -23,16 +17,28 @@ public class Dict extends BaseBean implements Serializable {
 
 	private String description;
 
-	private Integer sort;
+	private String themes;
+
+	private String icon;
+
+	private Long sort;
 
 	private Integer status;
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key == null ? null : key.trim();
+	}
 
 	public String getValue() {
 		return value;
 	}
 
 	public void setValue(String value) {
-		this.value = value;
+		this.value = value == null ? null : value.trim();
 	}
 
 	public String getLabel() {
@@ -40,7 +46,7 @@ public class Dict extends BaseBean implements Serializable {
 	}
 
 	public void setLabel(String label) {
-		this.label = label;
+		this.label = label == null ? null : label.trim();
 	}
 
 	public String getType() {
@@ -48,7 +54,7 @@ public class Dict extends BaseBean implements Serializable {
 	}
 
 	public void setType(String type) {
-		this.type = type;
+		this.type = type == null ? null : type.trim();
 	}
 
 	public String getDescription() {
@@ -56,14 +62,30 @@ public class Dict extends BaseBean implements Serializable {
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		this.description = description == null ? null : description.trim();
 	}
 
-	public Integer getSort() {
+	public String getThemes() {
+		return themes;
+	}
+
+	public void setThemes(String themes) {
+		this.themes = themes == null ? null : themes.trim();
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon == null ? null : icon.trim();
+	}
+
+	public Long getSort() {
 		return sort;
 	}
 
-	public void setSort(Integer sort) {
+	public void setSort(Long sort) {
 		this.sort = sort;
 	}
 
@@ -74,4 +96,11 @@ public class Dict extends BaseBean implements Serializable {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+
+	@Override
+	public String toString() {
+		return "Dict [key=" + key + ", value=" + value + ", label=" + label + ", type=" + type + ", description=" + description
+				+ ", themes=" + themes + ", icon=" + icon + ", sort=" + sort + ", status=" + status + "]";
+	}
+
 }

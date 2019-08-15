@@ -5,14 +5,16 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="config_id" property="configId" jdbcType="INTEGER" />
+    <result column="notification_id" property="notificationId" jdbcType="INTEGER" />
     <result column="gather_time" property="gatherTime" jdbcType="TIMESTAMP" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="alarm_info" property="alarmInfo" jdbcType="VARCHAR" />
     <result column="alarm_type" property="alarmType" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, config_id, gather_time, create_time, alarm_info, alarm_type
+    id, name, config_id,notification_id, gather_time, create_time, alarm_info, alarm_type
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -24,10 +26,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" >
-    insert into umc_alarm_record (id, name, config_id, 
+    insert into umc_alarm_record (id, name, config_id, notification_id,
       gather_time, create_time, alarm_info, 
       alarm_type)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{configId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{configId,jdbcType=INTEGER}, #{notificationId,jdbcType=INTEGER},
       #{gatherTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{alarmInfo,jdbcType=VARCHAR}, 
       #{alarmType,jdbcType=VARCHAR})
   </insert>
@@ -42,6 +44,9 @@
       </if>
       <if test="configId != null" >
         config_id,
+      </if>
+      <if test="notificationId != null" >
+        notification_id,
       </if>
       <if test="gatherTime != null" >
         gather_time,
@@ -66,6 +71,9 @@
       <if test="configId != null" >
         #{configId,jdbcType=INTEGER},
       </if>
+      <if test="notificationId != null" >
+        #{notificationId,jdbcType=INTEGER},
+      </if>
       <if test="gatherTime != null" >
         #{gatherTime,jdbcType=TIMESTAMP},
       </if>
@@ -89,6 +97,9 @@
       <if test="configId != null" >
         config_id = #{configId,jdbcType=INTEGER},
       </if>
+      <if test="notificationId != null" >
+        notification_id = #{notificationId,jdbcType=INTEGER},
+      </if>
       <if test="gatherTime != null" >
         gather_time = #{gatherTime,jdbcType=TIMESTAMP},
       </if>
@@ -108,10 +119,28 @@
     update umc_alarm_record
     set name = #{name,jdbcType=VARCHAR},
       config_id = #{configId,jdbcType=INTEGER},
+      notification_id = #{notificationId,jdbcType=INTEGER},
       gather_time = #{gatherTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       alarm_info = #{alarmInfo,jdbcType=VARCHAR},
       alarm_type = #{alarmType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from umc_alarm_record
+    where 1=1
+    <if test="name != null and name != ''" >
+      AND name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
+      AND DATE_FORMAT(create_time,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(create_time,'%Y-%m-%d %H:%i') &lt; DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+    </if>
+    order by create_time desc
+  </select>
+
 </mapper>

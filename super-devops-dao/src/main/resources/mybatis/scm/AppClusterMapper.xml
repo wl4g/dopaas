@@ -19,8 +19,8 @@
 		i.cluster_id as "i.appClusterId",
 		i.enable as "i.enable",
 		i.`host` as "i.host",
-		i.`ip` as "i.ip",
-		i.`port` as "i.port",
+
+		i.`endpoint` as "i.endpoint",
 		i.ops_ids as "i.opsIds",
 		i.remark as "i.remark",
 		i.create_by as "i.createBy",
@@ -60,7 +60,7 @@
 			<result column="i.enable" property="enable" jdbcType="INTEGER" />
 			<result column="i.host" property="host" jdbcType="VARCHAR" />
 			<result column="i.ip" property="ip" jdbcType="VARCHAR" />
-			<result column="i.port" property="port" jdbcType="INTEGER" />
+			<result column="i.endpoint" property="endpoint" jdbcType="VARCHAR" />
 			<result column="i.ops_ids" property="opsIds" jdbcType="VARCHAR" />
 			<result column="i.remark" property="remark" jdbcType="VARCHAR" />
 			<result column="i.createBy" property="createBy" jdbcType="INTEGER" />
@@ -135,7 +135,7 @@
 
 	<insert id ="insertInstance" parameterType="instanceOfGroup" >
 		insert into app_instance
-		(cluster_id, `enable`, `host`, `ip`, `port`, ops_ids, remark, create_by, create_date, update_by, update_date, env_id)
+		(cluster_id, `enable`, `host`, `ip`, `endpoint`, ops_ids, remark, create_by, create_date, update_by, update_date, env_id)
 		values
 		<foreach collection ="appInstance" item="instance" index= "index" separator =",">
 			(
@@ -143,7 +143,7 @@
 			#{instance.enable},
 			#{instance.host},
 			#{instance.ip},
-			#{instance.port},
+			#{instance.endpoint},
 			#{instance.opsIds},
 			#{instance.remark},
 			#{createBy},
@@ -187,8 +187,8 @@
 			<if test="ip != null and ip != ''">
 				`ip` = #{ip},
 			</if>
-			<if test="port != null and port != ''">
-				`port` = #{port},
+			<if test="endpoint != null and endpoint != ''">
+				`endpoint` = #{endpoint},
 			</if>
 			<if test="opsIds != null and opsIds != ''">
 				ops_ids = #{opsIds},
@@ -374,26 +374,28 @@
 	</select>
 
 	<select id="instancelist" parameterType="appInstance" resultType="appInstance">
-		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",a.host,a.ip,a.port FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",h.hostname host,a.endpoint FROM  app_instance a
+		left join app_host h on h.id = a.host_id
 		<where>
 			a.del_flag = 0
 			<if test="envId != null and envId != ''">
 				and a.env_id=#{envId}
 			</if>
-			<if test="appClusterId != null and appClusterId != ''">
-				and a.cluster_id=#{appClusterId}
+			<if test="clusterId != null and clusterId != ''">
+				and a.cluster_id=#{clusterId}
 			</if>
 			<if test="ip != null and ip != ''">
 				and a.ip=#{ip}
 			</if>
-			<if test="port != null and port != ''">
-				and a.port=#{port}
+			<if test="endpoint != null and endpoint != ''">
+				and a.endpoint=#{endpoint}
 			</if>
 		</where>
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",a.host,a.port,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "clusterId",a.env_id as "envId",h.hostname host,a.endpoint,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
+			left join app_host h on h.id = a.host_id
 		<where>
 			a.del_flag = 0
 			<if test="id != null and id != ''">

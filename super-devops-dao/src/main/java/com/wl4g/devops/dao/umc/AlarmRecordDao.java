@@ -1,6 +1,9 @@
 package com.wl4g.devops.dao.umc;
 
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface AlarmRecordDao {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +17,7 @@ public interface AlarmRecordDao {
     int updateByPrimaryKeySelective(AlarmRecord record);
 
     int updateByPrimaryKey(AlarmRecord record);
+
+    List<AlarmRecord> list(@Param("name") String name, @Param("startDate") String startDate,
+                           @Param("endDate") String endDate);
 }

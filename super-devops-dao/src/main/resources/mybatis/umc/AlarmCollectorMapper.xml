@@ -13,11 +13,20 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+
+    <!-- other -->
+    <result column="hname" property="hname" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, name, addr, host_id, status, remark, create_date, create_by, update_date, update_by, 
     del_flag
   </sql>
+
+  <sql id="Base_Column_List_c" >
+    c.id, c.name, c.addr, c.host_id, c.status, c.remark, c.create_date, c.create_by, c.update_date, c.update_by,
+    c.del_flag
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -161,4 +170,19 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List_c" />
+    ,h.name hname
+    from umc_alarm_collector c
+    left join app_host h on c.host_id=h.id
+    where c.del_flag!=1
+    <if test="name != null and name != ''" >
+      AND c.name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="addr != null and addr != ''" >
+      AND c.addr LIKE CONCAT('%','${addr}','%')
+    </if>
+  </select>
 </mapper>

@@ -163,7 +163,7 @@ public class HistoryServiceImpl implements HistoryService {
 			// Get application instance information.
 			ReleaseInstance releaseInstance = new ReleaseInstance();
 			releaseInstance.setHost(instance.getHost());
-			releaseInstance.setPort(instance.getPort());
+			releaseInstance.setEndpoint(instance.getEndpoint());
 			instances.add(releaseInstance);
 		}
 
@@ -176,7 +176,7 @@ public class HistoryServiceImpl implements HistoryService {
 		}
 
 		PreRelease preRelease = new PreRelease();
-		preRelease.setGroup(appCluster.getName());
+		preRelease.setCluster(appCluster.getName());
 		preRelease.setNamespaces(namespaces);
 		String releaseId = String.valueOf(historyOfDetail.getId());
 		String versionId = String.valueOf(agl.getId());

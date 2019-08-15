@@ -21,6 +21,8 @@ public class AlarmRule extends BaseBean implements Serializable {
 
     private Integer alarmLevel;
 
+    private Double compareValue;
+
     public Integer getTemplateId() {
         return templateId;
     }
@@ -75,5 +77,13 @@ public class AlarmRule extends BaseBean implements Serializable {
 
     public void setAlarmLevel(Integer alarmLevel) {
         this.alarmLevel = alarmLevel;
+    }
+
+    public Double getCompareValue() {
+        return compareValue;
+    }
+
+    public void setCompareValue(Double compareValue) {
+        this.compareValue = compareValue;
     }
 }

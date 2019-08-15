@@ -21,7 +21,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.*;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenericInfo implements Serializable {
@@ -32,14 +36,14 @@ public class GenericInfo implements Serializable {
 	 */
 	@NotNull
 	@NotBlank
-	private String group;
+	private String cluster;
 
 	/**
 	 * Name-space(configuration file-name, like spring.profiles)
 	 */
 	@NotNull
 	@NotEmpty
-	private List<String> namespaces;
+	private List<String> namespaces = new ArrayList<>();
 
 	/**
 	 * Version release information
@@ -50,13 +54,13 @@ public class GenericInfo implements Serializable {
 		super();
 	}
 
-	public GenericInfo(String group, List<String> namespace) {
-		this(group, namespace, null);
+	public GenericInfo(String cluster, List<String> namespace) {
+		this(cluster, namespace, null);
 	}
 
-	public GenericInfo(String group, List<String> namespaces, ReleaseMeta meta) {
+	public GenericInfo(String cluster, List<String> namespaces, ReleaseMeta meta) {
 		super();
-		setGroup(group);
+		setCluster(cluster);
 		setNamespaces(namespaces);
 		setMeta(meta);
 	}
@@ -66,16 +70,19 @@ public class GenericInfo implements Serializable {
 	}
 
 	public void setNamespaces(List<String> namespaces) {
-		this.namespaces = namespaces;
+		if (!isEmpty(namespaces)) {
+			this.namespaces.clear();
+			this.namespaces.addAll(namespaces);
+		}
 	}
 
-	public String getGroup() {
-		return group;
+	public String getCluster() {
+		return cluster;
 	}
 
-	public void setGroup(String group) {
-		if (!StringUtils.isEmpty(group) && !"NULL".equalsIgnoreCase(group)) {
-			this.group = group;
+	public void setCluster(String cluster) {
+		if (!StringUtils.isEmpty(cluster) && !"NULL".equalsIgnoreCase(cluster)) {
+			this.cluster = cluster;
 		}
 	}
 
@@ -94,10 +101,10 @@ public class GenericInfo implements Serializable {
 		return JacksonUtils.toJSONString(this);
 	}
 
-	public void validation(boolean versionValidate, boolean releaseIdValidate) {
-		Assert.hasText(getGroup(), "`group` must not be empty");
+	public void validation(boolean validVersion, boolean validRelease) {
+		Assert.hasText(getCluster(), "`cluster` must not be empty");
 		Assert.notEmpty(getNamespaces(), "`namespace` must not be empty");
-		getMeta().validation(versionValidate, releaseIdValidate);
+		getMeta().validation(validVersion, validRelease);
 	}
 
 	public static class ReleaseInstance implements Serializable {
@@ -110,16 +117,16 @@ public class GenericInfo implements Serializable {
 		@Min(1024)
 		@Max(65535)
 		@NotNull
-		private Integer port;
+		private String endpoint;
 
 		public ReleaseInstance() {
 			super();
 		}
 
-		public ReleaseInstance(String host, Integer port) {
+		public ReleaseInstance(String host, String endpoint) {
 			super();
 			this.host = host;
-			this.port = port;
+			this.endpoint = endpoint;
 		}
 
 		public String getHost() {
@@ -132,15 +139,14 @@ public class GenericInfo implements Serializable {
 			}
 		}
 
-		public Integer getPort() {
-			return port;
+		public String getEndpoint() {
+			return endpoint;
 		}
 
-		public void setPort(Integer port) {
-			if (port <= 0 || port > 65535) {
-				throw new IllegalArgumentException("Illegal ports are only allowed to be 0 ~ 65535");
+		public void setEndpoint(String endpoint) {
+			if (!StringUtils.isEmpty(endpoint) && !"NULL".equalsIgnoreCase(endpoint)) {
+				this.endpoint = endpoint;
 			}
-			this.port = port;
 		}
 
 		@Override
@@ -148,7 +154,7 @@ public class GenericInfo implements Serializable {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((host == null) ? 0 : host.hashCode());
-			result = prime * result + ((port == null) ? 0 : port.hashCode());
+			result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
 			return result;
 		}
 
@@ -166,32 +172,27 @@ public class GenericInfo implements Serializable {
 					return false;
 			} else if (!host.equals(other.host))
 				return false;
-			if (port == null) {
-				if (other.port != null)
+			if (endpoint == null) {
+				if (other.endpoint != null)
 					return false;
-			} else if (!port.equals(other.port))
+			} else if (!endpoint.equals(other.endpoint))
 				return false;
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return getHost() + ":" + getPort();
+			return getHost() + ":" + getEndpoint();
 		}
 
 		public void validation() {
 			Assert.notNull(getHost(), "`host` is not allowed to be null.");
-			Assert.notNull(getPort(), "`port` is not allowed to be null.");
+			Assert.notNull(getEndpoint(), "`port` is not allowed to be null.");
 			HostAndPort.fromString(toString());
 		}
 
-		public static ReleaseInstance of(String hostPortString) {
-			HostAndPort hap = HostAndPort.fromString(hostPortString);
-			return new ReleaseInstance(hap.getHostText(), hap.getPort());
-		}
-
-		public static boolean eq(ReleaseInstance instance1, ReleaseInstance instance2) {
-			return (instance1 != null && instance2 != null && StringUtils.equals(instance1.toString(), instance2.toString()));
+		public static boolean eq(ReleaseInstance i1, ReleaseInstance i2) {
+			return (i1 != null && i2 != null && StringUtils.equals(i1.toString(), i2.toString()));
 		}
 
 	}

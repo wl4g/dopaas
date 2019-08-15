@@ -41,7 +41,7 @@ public abstract class SCMDevOpsConstants extends DevOpsConstants {
 	//
 
 	/** Service web root URI. */
-	final public static String URI_S_BASE = "/scm-server";
+	final public static String URI_S_BASE = "/endpoint";
 	/** Get property source URI. */
 	final public static String URI_S_SOURCE_GET = "source";
 	/** Report configuration result URI. */

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -28,6 +27,9 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
 public abstract class AbstractIamProperties<P extends ParamProperties> implements InitializingBean, Serializable {
 	private static final long serialVersionUID = -5858422822181237865L;
+
+	final public static String DEFAULT_AUTHC_STATUS = "Certified";
+	final public static String DEFAULT_UNAUTHC_STATUS = "Uncertified";
 
 	/**
 	 * External custom filter chain pattern matching
@@ -48,15 +50,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * Session configuration properties.
 	 */
 	private SessionProperties session = new SessionProperties();
-
-	/**
-	 * Interactive strategies for successful and unsuccessful login
-	 * authentication, such as: when auto indicates that the client is a
-	 * browser, when the login failure automatically redirects the page, when it
-	 * is a non-browser, it returns JSON unauthorized error code; when native
-	 * logs in, it always redirects; JSON and native are the same.
-	 */
-	private StrategyProperties strategy = new StrategyProperties();
 
 	/**
 	 * Login page URI
@@ -99,14 +92,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	public void setSession(SessionProperties session) {
 		this.session = session;
-	}
-
-	public StrategyProperties getStrategy() {
-		return strategy;
-	}
-
-	public void setStrategy(StrategyProperties interactive) {
-		this.strategy = interactive;
 	}
 
 	/**
@@ -238,58 +223,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setEnableRequestRemember(boolean enableRequestRemember) {
 			this.enableRequestRemember = enableRequestRemember;
-		}
-
-	}
-
-	/**
-	 * Interactive strategies for successful and unsuccessful login etc.
-	 * authentication, such as: when auto indicates that the client is a
-	 * browser, when the login failure automatically redirects the page, when it
-	 * is a non-browser, it returns JSON unauthorized error code; when native
-	 * logs in, it always redirects; JSON and native are the same.
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0
-	 * @date 2018年12月26日
-	 * @since
-	 */
-	public static class StrategyProperties implements Serializable {
-		private static final long serialVersionUID = 7673921548007033936L;
-
-		final public static String PLACEHOLDER_CODE = "${code}";
-		final public static String PLACEHOLDER_STATUS = "${status}";
-		final public static String PLACEHOLDER_MSG = "${message}";
-		final public static String PLACEHOLDER_DATA = "${data}";
-
-		final public static String DEFAULT_AUTHC_STATUS = "Certified";
-		final public static String DEFAULT_UNAUTHC_STATUS = "Uncertified";
-		final public static String DEFAULT_AUTHC_READY_STATUS = "certificateReady";
-		final public static String DEFAULT_SECOND_AUTHC_STATUS = "SecondCertifies";
-
-		final public static String DEFAULT_RESP_JSON_TPL = "{\"code\":" + PLACEHOLDER_CODE + ",\"message\":\"" + PLACEHOLDER_MSG
-				+ "\",\"status\":\"" + PLACEHOLDER_STATUS + "\",\"data\":\"" + PLACEHOLDER_DATA + "\"}";
-
-		private String responseTemplate = DEFAULT_RESP_JSON_TPL;
-
-		public StrategyProperties() {
-			super();
-		}
-
-		public String getResponseTemplate() {
-			return responseTemplate;
-		}
-
-		public void setResponseTemplate(String successAsJson) {
-			this.responseTemplate = successAsJson;
-		}
-
-		public String makeResponse(int code, String status, String message, String data) {
-			Assert.notNull(status, "'status' must not be null");
-			Assert.notNull(message, "'message' must not be null");
-			data = data == null ? "" : data;
-			return getResponseTemplate().replace(PLACEHOLDER_CODE, String.valueOf(code)).replace(PLACEHOLDER_STATUS, status)
-					.replace(PLACEHOLDER_MSG, message).replace(PLACEHOLDER_DATA, data);
 		}
 
 	}

@@ -133,7 +133,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			// Get application instance information.
 			ReleaseInstance releaseInstance = new ReleaseInstance();
 			releaseInstance.setHost(instance.getHost());
-			releaseInstance.setPort(instance.getPort());
+			releaseInstance.setEndpoint(instance.getEndpoint());
 			instances.add(releaseInstance);
 		}
 		// Get application group information.
@@ -148,7 +148,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 		// Request configuration source send to client.
 		PreRelease pre = new PreRelease();
-		pre.setGroup(appCluster.getName());
+		pre.setCluster(appCluster.getName());
 		pre.setNamespaces(namespaces);
 		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		pre.setMeta(meta);

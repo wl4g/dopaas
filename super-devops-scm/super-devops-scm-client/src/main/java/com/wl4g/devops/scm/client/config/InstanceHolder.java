@@ -19,6 +19,7 @@ import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+import static java.net.NetworkInterface.getNetworkInterfaces;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
@@ -53,24 +54,25 @@ public class InstanceHolder {
 		this.appName = environment.getProperty("spring.application.name");
 		String servPort = environment.getProperty("server.port");
 		Assert.isTrue(!isAnyBlank(appName, servPort),
-				"Environment['server.port','spring.application.name'] config is null, Because spring cloud loads bootstrap.yml preferentially, which means that other config files are not loaded at initialization, so configurations other than bootstrap.yml cannot be used at initialization, Therefore, these 3 items must be allocated to bootstrap.yml.");
+				"Failed to obtain application name and server port. Check if bootstrap.yml is configured correctly");
 
-		// Default host-name (Maybe it's not really needed.)
-		String host = getDefaultLocalHost();
+		// Default local host-name.
+		String hostname = getLocalHostname();
+		/*
+		 * Use the specified network card name to correspond to IP.
+		 */
 		if (!isEmpty(config.getNetcard())) {
-			// First ipv4 network card
-			Enumeration<NetworkInterface> netInterfaces;
 			try {
-				netInterfaces = NetworkInterface.getNetworkInterfaces();
-				InetAddress addr;
-				while (netInterfaces.hasMoreElements()) {
-					NetworkInterface ni = netInterfaces.nextElement();
+				// First ipv4 network card
+				Enumeration<NetworkInterface> nis = getNetworkInterfaces();
+				while (nis.hasMoreElements()) {
+					NetworkInterface ni = nis.nextElement();
 					Enumeration<InetAddress> addresses = ni.getInetAddresses();
 					while (addresses.hasMoreElements()) {
-						addr = addresses.nextElement();
+						InetAddress addr = addresses.nextElement();
 						if (!addr.isLoopbackAddress() && addr.getHostAddress().indexOf(':') == -1) { // Ignore-ipv6
 							if (StringUtils.equals(ni.getName(), config.getNetcard())) {
-								host = addr.getHostName();
+								hostname = addr.getHostName();
 								break;
 							}
 						}
@@ -78,13 +80,13 @@ public class InstanceHolder {
 				}
 			} catch (Exception e) {
 				log.warn("Unable to get hostname of network card '{}', used default for '{}' causes by: {}", config.getNetcard(),
-						host, getRootCausesString(e));
+						hostname, getRootCausesString(e));
 			}
 		}
 
-		// Check
-		HostAndPort hap = HostAndPort.fromString(host + ":" + servPort);
-		this.instance = new ReleaseInstance(hap.getHostText(), hap.getPort());
+		// Check & build ReleaseInstance.
+		HostAndPort hap = HostAndPort.fromString(hostname + ":" + servPort);
+		this.instance = new ReleaseInstance(hap.getHostText(), String.valueOf(hap.getPort()));
 	}
 
 	public String getAppName() {
@@ -100,7 +102,7 @@ public class InstanceHolder {
 	 * 
 	 * @return
 	 */
-	private String getDefaultLocalHost() {
+	private String getLocalHostname() {
 		try {
 			return InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
