@@ -6,6 +6,8 @@
 	<version>master</version>
 	<packaging>pom</packaging>
 	<name>Super DevOps UMC</name>
+	<description>UMC - An open source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.</description>
+	<url>https://umc.super-devops.wl4g.com</url>
 	<modules>
 		<module>super-devops-umc-admin</module>
 		<module>super-devops-umc-client</module>
@@ -20,9 +22,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<project.parent.version>master</project.parent.version>
 	</properties>
 	<repositories>
+		<repository>
+			<id>aliyun-public</id>
+			<name>Aliyun public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+		</repository>
 		<repository>
 			<id>spring-snapshots</id>
 			<name>Spring Snapshots</name>
@@ -60,6 +66,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<description>UMC - An open source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.</description>
-	<url>https://umc.super-devops.wl4g.com</url>
 </project>
