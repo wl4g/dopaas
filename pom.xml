@@ -138,6 +138,7 @@
 					<!-- <newVersion>latest</newVersion> -->
 					<allowSnapshots>true</allowSnapshots>
 					<generateBackupPoms>false</generateBackupPoms>
+					<processAllModules>true</processAllModules>
 				</configuration>
 			</plugin>
 			<plugin>
