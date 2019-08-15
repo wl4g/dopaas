@@ -3,6 +3,7 @@ package com.wl4g.devops.share.service;
 import com.wl4g.devops.common.bean.share.Dict;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -19,5 +20,7 @@ public interface DictService {
     Dict getByKey(String key);
 
     List<String> allType();
+
+    Map<String,Object> cache();
 
 }

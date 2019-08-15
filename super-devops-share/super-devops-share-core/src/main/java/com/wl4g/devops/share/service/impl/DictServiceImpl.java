@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
 
@@ -59,6 +62,32 @@ public class DictServiceImpl  implements DictService {
     @Override
     public List<String> allType() {
         return dictDao.allType();
+    }
+
+    @Override
+    public Map<String, Object> cache() {
+        Map<String, Object> result = new HashMap<>();
+        List<Dict> dicts = dictDao.list(null, null, null, null);
+        Map<String, List<Dict>> dictList = new HashMap<>();
+        Map<String, Map<String,Dict>> dictMap = new HashMap<>();
+        for(Dict dict : dicts){
+            String type = dict.getType();
+            List<Dict> list = dictList.get(type);
+            Map<String,Dict> map = dictMap.get(type);
+            if(null==list){
+                list = new ArrayList<>();
+            }
+            if(null==map){
+                map = new HashMap<>();
+            }
+            list.add(dict);
+            map.put(dict.getValue(),dict);
+            dictList.put(type,list);
+            dictMap.put(type,map);
+        }
+        result.put("dictList",dictList);
+        result.put("dictMap",dictMap);
+        return result;
     }
 
 
