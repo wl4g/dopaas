@@ -141,7 +141,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean vcb : vd.getConfigGurations()) {
-			Dict dict = dictDao.selectByPrimaryKey(Integer.valueOf(vcb.getNamespaceId()));
+			Dict dict = dictDao.selectByPrimaryKey((vcb.getNamespaceId()));
 			String namespace = dict.getValue();
 			namespaces.add(namespace);
 		}
