@@ -5,8 +5,8 @@
     <result column="key" property="key" jdbcType="VARCHAR" />
     <result column="value" property="value" jdbcType="VARCHAR" />
     <result column="label" property="label" jdbcType="VARCHAR" />
+    <result column="label_en" property="labelEn" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="themes" property="themes" jdbcType="VARCHAR" />
     <result column="icon" property="icon" jdbcType="VARCHAR" />
     <result column="sort" property="sort" jdbcType="DECIMAL" />
@@ -24,28 +24,28 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-     `key`, value, label, type, themes, icon, sort, status, create_by,
+     `key`, value, label,label_en, type, themes, icon, sort, status, create_by,
     create_date, update_by, update_date, remark, del_flag
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from sys_dict
-    where id = #{id,jdbcType=INTEGER}
+    where `key` = #{key,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from sys_dict
-    where id = #{id,jdbcType=INTEGER}
+    where `key` = #{key,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.share.Dict" >
-    insert into sys_dict (id, `key`, value,
-      label, type, description, 
+    insert into sys_dict ( `key`, value,
+      label,label_en, type,
       themes, icon, sort, 
       status, create_by, create_date, 
       update_by, update_date, remark, 
       del_flag)
-    values (#{id,jdbcType=INTEGER}, #{key,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, 
-      #{label,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+    values (#{key,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR},
+      #{label,jdbcType=VARCHAR},#{labelEn,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
       #{themes,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{sort,jdbcType=DECIMAL}, 
       #{status,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
@@ -54,9 +54,6 @@
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.Dict" >
     insert into sys_dict
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="key != null" >
         `key`,
       </if>
@@ -66,11 +63,11 @@
       <if test="label != null" >
         label,
       </if>
+      <if test="labelEn != null" >
+        label_en,
+      </if>
       <if test="type != null" >
         type,
-      </if>
-      <if test="description != null" >
-        description,
       </if>
       <if test="themes != null" >
         themes,
@@ -104,9 +101,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="key != null" >
         #{key,jdbcType=VARCHAR},
       </if>
@@ -116,11 +110,11 @@
       <if test="label != null" >
         #{label,jdbcType=VARCHAR},
       </if>
+      <if test="labelEn != null" >
+        #{labelEn,jdbcType=VARCHAR},
+      </if>
       <if test="type != null" >
         #{type,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null" >
-        #{description,jdbcType=VARCHAR},
       </if>
       <if test="themes != null" >
         #{themes,jdbcType=VARCHAR},
@@ -157,9 +151,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.share.Dict" >
     update sys_dict
     <set >
-      <if test="key != null" >
-        `key` = #{key,jdbcType=VARCHAR},
-      </if>
       <if test="value != null" >
         value = #{value,jdbcType=VARCHAR},
       </if>
@@ -168,9 +159,6 @@
       </if>
       <if test="type != null" >
         type = #{type,jdbcType=VARCHAR},
-      </if>
-      <if test="description != null" >
-        description = #{description,jdbcType=VARCHAR},
       </if>
       <if test="themes != null" >
         themes = #{themes,jdbcType=VARCHAR},
@@ -203,15 +191,13 @@
         del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where `key` = #{key,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.share.Dict" >
     update sys_dict
-    set `key` = #{key,jdbcType=VARCHAR},
-      value = #{value,jdbcType=VARCHAR},
+    set value = #{value,jdbcType=VARCHAR},
       label = #{label,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
-      description = #{description,jdbcType=VARCHAR},
       themes = #{themes,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=DECIMAL},
@@ -222,7 +208,7 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
+    where `key` = #{key,jdbcType=VARCHAR}
   </update>
 
   <select id="selectByType" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -252,9 +238,6 @@
     </if>
     <if test="type != null and type != ''" >
       AND type = #{type,jdbcType=VARCHAR}
-    </if>
-    <if test="description != null and description != ''" >
-      AND description LIKE CONCAT('%','${description}','%')
     </if>
 
   </select>

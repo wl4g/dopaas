@@ -6,13 +6,13 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface DictDao {
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(String key);
 
     int insert(Dict record);
 
     int insertSelective(Dict record);
 
-    Dict selectByPrimaryKey(Integer id);
+    Dict selectByPrimaryKey(String key);
 
     int updateByPrimaryKeySelective(Dict record);
 
