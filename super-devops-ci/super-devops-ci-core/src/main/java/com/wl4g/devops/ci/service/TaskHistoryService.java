@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.service;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -23,6 +23,8 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.bean.share.AppCluster;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Dict;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;

@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.controller;
+package com.wl4g.devops.share.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.common.bean.share.*;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.scm.service.AppClusterService;
+import com.wl4g.devops.share.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,7 +65,7 @@ public class AppClusterController extends BaseController {
 					insertappInstance.add(u);
 				} else {
 					if (iog.getId() != null) {
-						u.setClusterId(String.valueOf(iog.getId()));
+						u.setAppClusterId(String.valueOf(iog.getId()));
 					}
 					u.setCreateBy(iog.getCreateBy());
 					u.setUpdateBy(iog.getUpdateBy());
@@ -115,7 +116,7 @@ public class AppClusterController extends BaseController {
 				if (u.getId() == null) {
 					insertappInstance.add(u);
 				} else {
-					u.setClusterId(Long.valueOf(iog.getId()));
+					u.setAppClusterId(Long.valueOf(iog.getId()));
 					u.setEnvId(iog.getEnvId());
 					u.setCreateBy(iog.getCreateBy());
 					u.setUpdateBy(iog.getUpdateBy());

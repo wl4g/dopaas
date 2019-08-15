@@ -20,7 +20,7 @@ package com.wl4g.devops.ci.provider;
 // import com.wl4g.devops.ci.config.DeployProperties;
 // import com.wl4g.devops.ci.service.DependencyService;
 // import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-// import com.wl4g.devops.common.bean.scm.AppInstance;
+// import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
  * Native jar deployments provider.

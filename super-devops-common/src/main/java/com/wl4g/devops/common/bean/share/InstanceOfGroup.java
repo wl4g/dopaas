@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.scm;
-
-import com.wl4g.devops.common.bean.BaseBean;
+package com.wl4g.devops.common.bean.share;
 
 import java.util.List;
 
-public class Environment extends BaseBean {
-
-	private String name;
-
-	private String clusterId;
+public class InstanceOfGroup extends AppCluster {
 
 	private List<AppInstance> appInstance;
+
+	private List<Environment> environment;
+
+	private String envId;
 
 	public List<AppInstance> getAppInstance() {
 		return appInstance;
@@ -35,20 +33,19 @@ public class Environment extends BaseBean {
 		this.appInstance = appInstance;
 	}
 
-	public String getName() {
-		return name;
+	public String getEnvId() {
+		return envId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setEnvId(String envId) {
+		this.envId = envId;
 	}
 
-	public String getClusterId() {
-		return clusterId;
+	public List<Environment> getEnvironment() {
+		return environment;
 	}
 
-	public void setClusterId(String clusterId) {
-		this.clusterId = clusterId;
+	public void setEnvironment(List<Environment> environment) {
+		this.environment = environment;
 	}
-
 }

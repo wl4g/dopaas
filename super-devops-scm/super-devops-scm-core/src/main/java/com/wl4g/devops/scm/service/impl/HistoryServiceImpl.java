@@ -19,14 +19,16 @@ import com.wl4g.devops.common.bean.scm.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.devops.common.bean.share.AppCluster;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Dict;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.dao.share.DictDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.scm.service.AppClusterService;
 import com.wl4g.devops.scm.service.HistoryService;
+import com.wl4g.devops.share.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,7 +156,7 @@ public class HistoryServiceImpl implements HistoryService {
 
 		// Get application nodeList information
 		AppInstance appInstance = new AppInstance();
-		appInstance.setClusterId(Long.parseLong(String.valueOf(agl.getClusterId())));
+		appInstance.setAppClusterId(Long.parseLong(String.valueOf(agl.getClusterId())));
 		appInstance.setEnvId(agl.getEnvId());
 		List<AppInstance> nodeList = appClusterService.instancelist(appInstance);
 		// Define release instance list.

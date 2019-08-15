@@ -22,7 +22,7 @@
     <!-- other -->
     <result column="group_name" property="groupName" jdbcType="LONGVARCHAR" />
 
-    <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.scm.AppInstance">
+    <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.share.AppInstance">
       <result column="i.id" property="id" jdbcType="INTEGER" />
       <result column="i.host" property="host" jdbcType="VARCHAR" />
       <result column="i.ip" property="ip" jdbcType="VARCHAR" />

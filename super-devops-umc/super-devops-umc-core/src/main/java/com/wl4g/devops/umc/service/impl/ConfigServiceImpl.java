@@ -1,7 +1,7 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.dao.scm.AppClusterDao;
@@ -57,7 +57,7 @@ public class ConfigServiceImpl implements ConfigService {
         Assert.notNull(alarmTemplate,"not found alarmTemplate");
         alarmConfig.setClassify(alarmTemplate.getClassify());
         AppInstance appInstance = appClusterDao.getAppInstance(alarmConfig.getCollectId().toString());
-        alarmConfig.setGroup(appInstance.getClusterId().intValue());
+        alarmConfig.setGroup(appInstance.getAppClusterId().intValue());
         alarmConfig.setEnvironment(Integer.valueOf(appInstance.getEnvId()));
         return alarmConfig;
     }

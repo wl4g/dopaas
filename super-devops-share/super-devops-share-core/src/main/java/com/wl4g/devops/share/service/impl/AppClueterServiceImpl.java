@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.service.impl;
+package com.wl4g.devops.share.service.impl;
 
-import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.common.bean.share.*;
 import com.wl4g.devops.dao.scm.AppClusterDao;
-import com.wl4g.devops.scm.service.AppClusterService;
+import com.wl4g.devops.share.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

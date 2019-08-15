@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.task;
 import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.scm.AppInstance;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import org.springframework.util.Assert;
 
 import java.util.List;
