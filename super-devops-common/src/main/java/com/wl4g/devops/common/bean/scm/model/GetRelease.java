@@ -31,8 +31,8 @@ public class GetRelease extends GenericInfo {
 		super();
 	}
 
-	public GetRelease(String group, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
-		super(group, namespaces, meta);
+	public GetRelease(String cluster, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
+		super(cluster, namespaces, meta);
 		setInstance(instance);
 	}
 

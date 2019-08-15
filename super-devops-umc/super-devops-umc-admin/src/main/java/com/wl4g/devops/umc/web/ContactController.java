@@ -40,7 +40,7 @@ public class ContactController extends BaseController {
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page<AlarmContact> page = PageHelper.startPage(pageNum, pageSize, true);
+        Page page = PageHelper.startPage(pageNum, pageSize, true);
         List<AlarmContact> list = alarmContactDao.list(name, email,phone);
         customPage.setPageNum(pageNum);
         customPage.setPageSize(pageSize);

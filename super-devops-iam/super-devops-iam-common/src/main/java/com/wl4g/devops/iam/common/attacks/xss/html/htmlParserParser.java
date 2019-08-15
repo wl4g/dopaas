@@ -19,6 +19,8 @@ import org.antlr.runtime.*;
 import java.util.Stack;
 
 import org.antlr.runtime.tree.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class htmlParserParser extends Parser {
 	public static final String[] tokenNames = new String[] { "<invalid>", "<EOR>", "<DOWN>", "<UP>", "TAG_START_OPEN",
@@ -48,6 +50,8 @@ public class htmlParserParser extends Parser {
 		String currentElementName;
 	}
 
+	protected Logger log = LoggerFactory.getLogger(getClass());
+
 	protected Stack<ElementScope_scope> ElementScope_stack = new Stack<>();
 
 	public htmlParserParser(TokenStream input) {
@@ -70,6 +74,38 @@ public class htmlParserParser extends Parser {
 
 	public String getGrammarFileName() {
 		return "/workspace/xssprotect/trunk/grammar/htmlParser.g";
+	}
+
+	@Override
+	public void emitErrorMessage(String msg) {
+		if (log.isDebugEnabled()) {
+			log.debug(msg);
+		}
+	}
+
+	@Override
+	public void recoverFromMismatchedToken(IntStream input, RecognitionException e, int ttype, BitSet follow)
+			throws RecognitionException {
+		if (log.isDebugEnabled()) {
+			log.debug("BR.recoverFromMismatchedToken");
+		}
+
+		// if next token is what we are looking for then "delete" this token
+		if (input.LA(2) == ttype) {
+			reportError(e);
+			/*
+			 * System.err.println("recoverFromMismatchedToken deleting "+input.
+			 * LT(1)+ " since "+input.LT(2)+" is what we want");
+			 */
+			beginResync();
+			input.consume(); // simply delete extra token
+			endResync();
+			input.consume(); // move past ttype token as if all were ok
+			return;
+		}
+		if (!recoverFromMismatchedElement(input, e, follow)) {
+			throw e;
+		}
 	}
 
 	public static class document_return extends ParserRuleReturnScope {

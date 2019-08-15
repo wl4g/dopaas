@@ -3,7 +3,6 @@ package com.wl4g.devops.umc.web;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.scm.CustomPage;
-import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -35,7 +34,7 @@ public class ContactGroupController extends BaseController {
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page<AlarmContact> page = PageHelper.startPage(pageNum, pageSize, true);
+        Page page = PageHelper.startPage(pageNum, pageSize, true);
         List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
         customPage.setPageNum(pageNum);
         customPage.setPageSize(pageSize);
@@ -59,6 +58,14 @@ public class ContactGroupController extends BaseController {
         log.info("into ContactController.del prarms::"+ "id = {} ", id );
         RespBase<Object> resp = RespBase.create();
         contactGroupService.del(id);
+        return resp;
+    }
+
+    @RequestMapping(value = "/all")
+    public RespBase<?> all() {
+        RespBase<Object> resp = RespBase.create();
+        List<AlarmContactGroup> list = alarmContactGroupDao.list(null);
+        resp.getData().put("list", list);
         return resp;
     }
 

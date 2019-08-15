@@ -7,10 +7,9 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps SRM</name>
 	<modules>
-		<!-- <module>super-devops-srm-client</module> -->
-		<module>super-devops-srm-rest</module>
+		<module>super-devops-srm-admin</module>
 		<module>super-devops-srm-core</module>
-		<module>super-devops-srm-starter</module>
+		<module>super-devops-srm-example</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -61,4 +60,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	<description>SRM - A Spring cloud-based software resource management service that integrates EFK distributed log centralized collection and analysis</description>
+	<url>https://srm.super-devops.wl4g.com</url>
 </project>

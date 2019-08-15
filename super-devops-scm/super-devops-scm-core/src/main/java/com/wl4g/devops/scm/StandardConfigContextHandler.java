@@ -74,7 +74,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		 * releaseId will be empty
 		 */
 		get.validation(false, false);
-		ReleaseMessage release = new ReleaseMessage(get.getGroup(), get.getNamespaces(), get.getMeta(), get.getInstance());
+		ReleaseMessage release = new ReleaseMessage(get.getCluster(), get.getNamespaces(), get.getMeta(), get.getInstance());
 
 		ConfigSourceBean config = this.configService.findSource(get);
 		if (config != null) {

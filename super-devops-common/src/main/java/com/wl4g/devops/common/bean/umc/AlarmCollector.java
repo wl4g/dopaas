@@ -16,6 +16,8 @@ public class AlarmCollector extends BaseBean implements Serializable {
 
     private Integer status;
 
+    private String hname;
+
 
     public String getName() {
         return name;
@@ -49,4 +51,21 @@ public class AlarmCollector extends BaseBean implements Serializable {
         this.status = status;
     }
 
+    public String getHname() {
+        return hname;
+    }
+
+    public void setHname(String hname) {
+        this.hname = hname;
+    }
+
+    @Override
+    public String toString() {
+        return "AlarmCollector{" +
+                "name='" + name + '\'' +
+                ", addr='" + addr + '\'' +
+                ", hostId=" + hostId +
+                ", status=" + status +
+                '}';
+    }
 }

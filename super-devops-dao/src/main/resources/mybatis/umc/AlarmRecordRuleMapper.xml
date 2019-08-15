@@ -5,9 +5,10 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="record_id" property="recordId" jdbcType="INTEGER" />
     <result column="rule_id" property="ruleId" jdbcType="INTEGER" />
+    <result column="compare_value" property="compareValue" jdbcType="DOUBLE" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, record_id, rule_id
+    id, record_id, rule_id,compare_value
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -20,9 +21,9 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecordRule" >
-    insert into umc_alarm_record_rule (id, record_id, rule_id
+    insert into umc_alarm_record_rule (id, record_id, rule_id,compare_value
       )
-    values (#{id,jdbcType=INTEGER}, #{recordId,jdbcType=INTEGER}, #{ruleId,jdbcType=INTEGER}
+    values (#{id,jdbcType=INTEGER}, #{recordId,jdbcType=INTEGER}, #{ruleId,jdbcType=INTEGER},#{compareValue,jdbcType=DOUBLE}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecordRule" useGeneratedKeys="true" keyProperty="id">
@@ -37,6 +38,9 @@
       <if test="ruleId != null" >
         rule_id,
       </if>
+      <if test="compareValue != null" >
+        compare_value,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -47,6 +51,9 @@
       </if>
       <if test="ruleId != null" >
         #{ruleId,jdbcType=INTEGER},
+      </if>
+      <if test="compareValue != null" >
+        #{compareValue,jdbcType=DOUBLE},
       </if>
     </trim>
   </insert>
@@ -59,13 +66,17 @@
       <if test="ruleId != null" >
         rule_id = #{ruleId,jdbcType=INTEGER},
       </if>
+      <if test="compareValue != null" >
+        compare_value = #{compareValue,jdbcType=DOUBLE},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecordRule" >
     update umc_alarm_record_rule
     set record_id = #{recordId,jdbcType=INTEGER},
-      rule_id = #{ruleId,jdbcType=INTEGER}
+      rule_id = #{ruleId,jdbcType=INTEGER},
+      compare_value = #{compareValue,jdbcType=DOUBLE}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

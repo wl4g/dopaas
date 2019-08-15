@@ -128,13 +128,13 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	@Override
 	public String connect(Which which, String provider, String state, Map<String, String> connectParams) {
 		// Check parameters
-		this.checkConnectRequireds(provider, state, connectParams);
+		checkConnectRequireds(provider, state, connectParams);
 
 		// Provider connection
-		BindConnection connect = this.connectFactory.getBindConnection(provider);
+		BindConnection connect = connectFactory.getBindConnection(provider);
 
 		// Authorizing code URL query parameters
-		Map<String, String> queryParams = this.getAuthorizeUrlQueryParams(which, provider, state, connectParams);
+		Map<String, String> queryParams = getAuthorizeUrlQueryParams(which, provider, state, connectParams);
 
 		// Build URL
 		String authorizingUrl = connect.getAuthorizeCodeUrl(state, queryParams);
@@ -149,24 +149,24 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	public String callback(Which which, String provider, String state, String code, HttpServletRequest request) {
 		try {
 			// Connect parameters
-			Map<String, String> connectParams = this.getOauth2ConnectParameters(state, request);
+			Map<String, String> connectParams = getOauth2ConnectParameters(state, request);
 
 			// Check parameters
-			this.checkConnectCallbacks(provider, state, code, connectParams);
+			checkConnectCallbacks(provider, state, code, connectParams);
 
 			// Provider connection
-			BindConnection connect = this.connectFactory.getBindConnection(provider);
+			BindConnection connect = connectFactory.getBindConnection(provider);
 
 			// Subsequent processing
-			String result = this.afterCallbackProcess(provider, code, connect, connectParams, request);
+			String result = afterCallbackProcess(provider, code, connect, connectParams, request);
 
 			// Build response message
-			String msg = this.buildResponseMessage(provider, result, connectParams, request);
+			String msg = buildResponseMessage(provider, result, connectParams, request);
 
 			// Wrap response
-			return this.wrapResponse(msg, connectParams, request);
+			return wrapResponse(msg, connectParams, request);
 		} finally {
-			this.releaseConnects(state);
+			releaseConnects(state);
 		}
 	}
 
@@ -208,7 +208,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 */
 	protected void checkConnectCallbacks(String provider, String state, String code, Map<String, String> connectParams) {
 		// Check based parameters
-		this.checkConnectRequireds(provider, state, connectParams);
+		checkConnectRequireds(provider, state, connectParams);
 		// Check 'code'
 		Assert.hasText(code, String.format("Illegal parameter '%s' must not be empty", PARAM_SNS_CODE));
 	}
@@ -240,7 +240,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 		}
 
 		// Save to cache
-		this.cacheManager.getEnhancedCache(CACHE_SNSAUTH)
+		cacheManager.getEnhancedCache(CACHE_SNSAUTH)
 				.put(new EnhancedKey(KEY_SNS_CONNECT_PARAMS + state, snsConfig.getOauth2ConnectExpireMs()), connectParamsAll);
 	}
 
@@ -282,8 +282,8 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 		 * which=login/client_auth)<br/>
 		 * See:xx.realm.Oauth2SnsAuthorizingRealm#doAuthenticationInfo()
 		 */
-		String callbackId = this.generateCallbackId();
-		this.cacheManager.getEnhancedCache(CACHE_SNSAUTH).put(new EnhancedKey(KEY_SNS_CALLBACK_PARAMS + callbackId, 30),
+		String callbackId = generateCallbackId();
+		cacheManager.getEnhancedCache(CACHE_SNSAUTH).put(new EnhancedKey(KEY_SNS_CALLBACK_PARAMS + callbackId, 30),
 				new SocialAuthorizeInfo(provider, openId.openId(), openId.unionId(), BeanMap.create(profile)));
 
 		return callbackId;
@@ -336,7 +336,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 */
 	protected void releaseConnects(String state) {
 		Assert.state(!StringUtils.isEmpty(state), String.format("'%s' must not be empty", config.getParam().getState()));
-		this.cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(KEY_SNS_CONNECT_PARAMS + state));
+		cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(KEY_SNS_CONNECT_PARAMS + state));
 	}
 
 	/**

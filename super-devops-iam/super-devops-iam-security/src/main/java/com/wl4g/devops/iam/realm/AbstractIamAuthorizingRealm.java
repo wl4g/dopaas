@@ -145,7 +145,8 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			 */
 
 			// Get authentication info and save it(Also include token)
-			return bind(KEY_SESSION_ACCOUNT, doAuthenticationInfo((T) bind(KEY_SESSION_TOKEN, token)));
+			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_SESSION_TOKEN, token));
+			return bind(KEY_SESSION_ACCOUNT, info);
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}

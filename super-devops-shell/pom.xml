@@ -47,4 +47,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	<description>Shell-cli is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.</description>
+	<url>https://shell-cli.super-devops.wl4g.com</url>
 </project>

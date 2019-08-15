@@ -63,12 +63,12 @@ public class DelegateSnsHandler implements SnsHandler {
 	@Override
 	public String connect(Which which, String provider, String state, Map<String, String> connectParams) {
 		state = StringUtils.isEmpty(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
-		return this.getTarget(which).connect(which, provider, state, connectParams);
+		return this.getSnsHandler(which).connect(which, provider, state, connectParams);
 	}
 
 	@Override
 	public String callback(Which which, String provider, String state, String code, HttpServletRequest request) {
-		return this.getTarget(which).callback(which, provider, state, code, request);
+		return getSnsHandler(which).callback(which, provider, state, code, request);
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class DelegateSnsHandler implements SnsHandler {
 	 * @param which
 	 * @return
 	 */
-	private SnsHandler getTarget(Which which) {
+	private SnsHandler getSnsHandler(Which which) {
 		Assert.notNull(which, String.format("Illegal parameter %s[%s]", config.getParam().getWhich(), which));
 		if (!this.repository.containsKey(which)) {
 			throw new NoSuchBeanDefinitionException(String.format("No such sns handler of which[%s]", which));

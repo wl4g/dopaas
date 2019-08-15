@@ -18,6 +18,14 @@ public interface DictDao {
 
     int updateByPrimaryKey(Dict record);
 
-    List<Dict> selectByType(@Param("type") String type);
+    List<Dict> selectByType(String type);
 
+    List<String> allType();
+
+    Dict getByKey(String key);
+
+    List<Dict> list(@Param("key") String key,
+                    @Param("label") String label,
+                    @Param("type") String type,
+                    @Param("description") String description);
 }

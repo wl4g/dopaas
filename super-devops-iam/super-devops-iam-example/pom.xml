@@ -20,19 +20,15 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-client</artifactId>
-			<version>master</version>
 		</dependency>
-		<!-- Used for IAM/SSO example login page. -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-share-support</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-freemarker</artifactId>
 			<version>1.5.13.RELEASE</version>
-		</dependency>
-		<!-- Used for IAM client session DAO. -->
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-support</artifactId>
-			<version>master</version>
 		</dependency>
 	</dependencies>
 	<build>

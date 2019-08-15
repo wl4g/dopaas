@@ -228,10 +228,10 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	protected void postValidateFinallySet(){
-		//sms auth need clean session
+	protected void postValidateFinallySet() {
+		// sms auth need clean session
 		log.info("sms auth need clean session");
-		//reset(false); // Reset or create
+		// reset(false); // Reset or create
 	}
 
 	/**

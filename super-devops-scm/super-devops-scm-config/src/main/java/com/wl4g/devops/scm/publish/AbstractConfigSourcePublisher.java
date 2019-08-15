@@ -103,10 +103,10 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 					}
 
 					for (PublishConfigWrapper wrap : next) {
-						Assert.state((wrap != null && isNotBlank(wrap.getGroup())),
+						Assert.state((wrap != null && isNotBlank(wrap.getCluster())),
 								String.format("Published config group must not be blank! - %s", wrap));
 
-						getCreateWithDeferreds(wrap.getGroup()).values().stream().filter(deferred -> {
+						getCreateWithDeferreds(wrap.getCluster()).values().stream().filter(deferred -> {
 							if (deferred != null) {
 								GetRelease watch = deferred.getWatch();
 								// Filters name space
@@ -141,7 +141,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 		Assert.notNull(pre, "Publish release must not be null");
 
 		// Got or create local watching deferredResults.
-		List<WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(pre.getGroup()).values().stream()
+		List<WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(pre.getCluster()).values().stream()
 				.collect(Collectors.toList());
 
 		// Put watch instances(for clustering).
@@ -198,7 +198,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 		// Create watch-deferred
 		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getLongPollTimeout(), watch);
 
-		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getGroup());
+		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getCluster());
 		String watchKey = getWatchKey(watch.getInstance(), watch.getNamespaces());
 		deferreds.put(watchKey, deferred);
 
@@ -271,12 +271,12 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 		private static final long serialVersionUID = 1569807245009223834L;
 
 		public PublishConfigWrapper(PreRelease pre) {
-			super(pre.getGroup(), pre.getNamespaces(), pre.getMeta());
+			super(pre.getCluster(), pre.getNamespaces(), pre.getMeta());
 			setInstances(pre.getInstances());
 		}
 
 		public String asIdentify() {
-			return getGroup() + "_" + getMeta().asText();
+			return getCluster() + "_" + getMeta().asText();
 		}
 
 	}

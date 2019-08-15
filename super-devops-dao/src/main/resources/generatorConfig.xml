@@ -40,8 +40,10 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
 
+        <table tableName="sys_dict" domainObjectName="Dict"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
-        <table tableName="umc_alarm_collector" domainObjectName="AlarmCollector"
+        <!--<table tableName="umc_alarm_collector" domainObjectName="AlarmCollector"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
         <table tableName="umc_alarm_config" domainObjectName="AlarmConfig"
@@ -72,7 +74,7 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
         <table tableName="umc_alarm_template" domainObjectName="AlarmTemplate"
-               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
 
         <!--<table tableName="ci_task" domainObjectName="Task"

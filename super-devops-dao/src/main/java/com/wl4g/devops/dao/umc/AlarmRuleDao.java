@@ -19,4 +19,11 @@ public interface AlarmRuleDao {
 
     List<AlarmRule> selectAll();
 
+    List<AlarmRule> selectByRecordId(Integer id);
+
+    List<AlarmRule> selectByTemplateId(Integer id);
+
+    int deleteByTemplateId(Integer id);
+
+
 }
