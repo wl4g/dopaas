@@ -19,6 +19,7 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-common</artifactId>
+			<version>master</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> 

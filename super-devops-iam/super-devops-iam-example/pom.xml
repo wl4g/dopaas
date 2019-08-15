@@ -20,10 +20,12 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-client</artifactId>
+			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-share-support</artifactId>
+			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

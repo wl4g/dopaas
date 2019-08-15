@@ -19,16 +19,19 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-security</artifactId>
+			<version>master</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-share-support</artifactId>
+			<version>master</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-dao</artifactId>
+			<version>master</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
