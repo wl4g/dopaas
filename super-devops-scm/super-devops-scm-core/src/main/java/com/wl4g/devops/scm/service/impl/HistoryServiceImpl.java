@@ -170,7 +170,7 @@ public class HistoryServiceImpl implements HistoryService {
 		List<VersionContentBean> versionContentBeans = configGurationDao.selectVersion(agl.getId());
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean versionContentBean : versionContentBeans) {
-			Dict dict = dictDao.selectByPrimaryKey(Integer.valueOf(versionContentBean.getNamespaceId()));
+			Dict dict = dictDao.selectByPrimaryKey(versionContentBean.getNamespaceId());
 			String namespace = dict.getValue();
 			namespaces.add(namespace);
 		}
