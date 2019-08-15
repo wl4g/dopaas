@@ -25,6 +25,10 @@
 		<url>https://github.com/wl4g/super-devops</url>
 		<tag>HEAD</tag>
 	</scm>
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/wl4g/super-devops/issues</url>
+	</issueManagement>
 	<developers>
 		<developer>
 			<id>Wangl01</id>
@@ -124,6 +128,19 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<preparationGoals>clean install</preparationGoals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -159,8 +176,4 @@
 			</build>
 		</profile>
 	</profiles>
-	<issueManagement>
-		<system>github</system>
-		<url>https://github.com/wl4g/super-devops/issues</url>
-	</issueManagement>
 </project>
