@@ -21,6 +21,8 @@
 		i.`host_id` as "i.hostId",
 		i.`endpoint` as "i.endpoint",
 		i.remark as "i.remark",
+		i.ssh_user as "i.sshUser",
+		i.ssh_key as "i.sshKey",
 		i.create_by as "i.createBy",
 		i.create_date as "i.createDate",
 		i.update_by as "i.updateBy",
@@ -56,9 +58,11 @@
 			<result column="i.id" property="id" jdbcType="INTEGER" />
 			<result column="i.appClusterId" property="appClusterId" jdbcType="INTEGER" />
 			<result column="i.enable" property="enable" jdbcType="INTEGER" />
-			<result column="i.host_id" property="hostId" jdbcType="VARCHAR" />
+			<result column="i.hostId" property="hostId" jdbcType="VARCHAR" />
 			<result column="i.endpoint" property="endpoint" jdbcType="VARCHAR" />
 			<result column="i.remark" property="remark" jdbcType="VARCHAR" />
+			<result column="i.sshUser" property="sshUser" jdbcType="VARCHAR" />
+			<result column="i.sshKey" property="sshKey" jdbcType="VARCHAR" />
 			<result column="i.createBy" property="createBy" jdbcType="INTEGER" />
 			<result column="i.createDate" property="createDate" jdbcType="TIMESTAMP" />
 			<result column="i.updateBy" property="updateBy" jdbcType="INTEGER" />
@@ -131,7 +135,7 @@
 
 	<insert id ="insertInstance" parameterType="instanceOfGroup" >
 		insert into app_instance
-		(cluster_id, `enable`, `host_id`, `endpoint`, remark, create_by, create_date, update_by, update_date, env_id)
+		(cluster_id, `enable`, `host_id`, `endpoint`,ssh_user,ssh_key, remark, create_by, create_date, update_by, update_date, env_id)
 		values
 		<foreach collection ="appInstance" item="instance" index= "index" separator =",">
 			(
@@ -139,6 +143,8 @@
 			#{instance.enable},
 			#{instance.hostId},
 			#{instance.endpoint},
+			#{instance.sshUser},
+			#{instance.sshKey},
 			#{instance.remark},
 			#{createBy},
 			#{createDate},
@@ -178,14 +184,17 @@
 			<if test="hostId != null and hostId != ''">
 				`host_id` = #{hostId},
 			</if>
-			<if test="ip != null and ip != ''">
-				`ip` = #{ip},
-			</if>
 			<if test="endpoint != null and endpoint != ''">
 				`endpoint` = #{endpoint},
 			</if>
 			<if test="remark != null and remark != ''">
 				remark = #{remark},
+			</if>
+			<if test="sshUser != null and sshUser != ''">
+				ssh_user = #{sshUser},
+			</if>
+			<if test="sshKey != null and sshKey != ''">
+				ssh_key = #{sshKey},
 			</if>
 			<if test="updateBy != null">
 				update_by = #{updateBy},
