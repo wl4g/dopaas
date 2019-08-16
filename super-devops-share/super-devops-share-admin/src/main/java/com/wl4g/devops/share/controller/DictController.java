@@ -63,6 +63,7 @@ public class DictController extends BaseController {
 		}else{
 			dictService.insert(dict);
 		}
+		jedisService.del(REDIS_DICTS_CACHE);//when modify , remove cache from redis
 		return resp;
 	}
 
@@ -78,6 +79,7 @@ public class DictController extends BaseController {
 	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.del(key);
+		jedisService.del(REDIS_DICTS_CACHE);//when modify , remove cache from redis
 		return resp;
 	}
 
