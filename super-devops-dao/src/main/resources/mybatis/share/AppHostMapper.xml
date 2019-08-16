@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.app.HostDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.app.AppHost" >
+<mapper namespace="com.wl4g.devops.dao.share.AppHostDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.share.AppHost" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="hostname" property="hostname" jdbcType="VARCHAR" />
@@ -27,7 +27,7 @@
     delete from app_host
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.app.AppHost" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.share.AppHost" >
     insert into app_host (id, name, hostname, 
       idc_id, status, create_date, 
       create_by, update_date, update_by, 
@@ -37,7 +37,7 @@
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.app.AppHost" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.AppHost" >
     insert into app_host
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -104,7 +104,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.app.AppHost" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.share.AppHost" >
     update app_host
     <set >
       <if test="name != null" >
@@ -137,7 +137,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.app.AppHost" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.share.AppHost" >
     update app_host
     set name = #{name,jdbcType=VARCHAR},
       hostname = #{hostname,jdbcType=VARCHAR},
@@ -151,12 +151,21 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List"/>
     from app_host
     where del_flag!=1
+    <if test="name != null and name != ''" >
+      AND `name` LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="hostname != null and hostname != ''" >
+      AND hostname LIKE CONCAT('%','${hostname}','%')
+    </if>
+    <if test="idcId != null and idcId != ''" >
+      AND idc_id = #{idcId,jdbcType=INTEGER}
+    </if>
+
   </select>
 
 </mapper>

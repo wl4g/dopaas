@@ -38,6 +38,9 @@ public class AppInstance extends BaseBean {
 	private String sshKey;
 
 
+	//other
+	private String host;
+
 
 	public Long getAppClusterId() {
 		return appClusterId;
@@ -87,6 +90,22 @@ public class AppInstance extends BaseBean {
 
 	public void setSshUser(String sshUser) {
 		this.sshUser = sshUser;
+	}
+
+	public Integer getHostId() {
+		return hostId;
+	}
+
+	public void setHostId(Integer hostId) {
+		this.hostId = hostId;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	@Override
