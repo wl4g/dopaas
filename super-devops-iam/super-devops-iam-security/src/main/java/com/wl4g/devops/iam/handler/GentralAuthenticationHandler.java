@@ -41,7 +41,9 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATT
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
@@ -186,7 +188,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx...client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo
 		 * Grant term of validity(end date).
 		 */
-		long expiredMs = SessionBindings.getSessionExpiredTime(session);
+		long expiredMs = getSessionExpiredTime(session);
 		calendar.add(Calendar.MILLISECOND, (int) expiredMs);
 		assertion.setValidUntilDate(calendar.getTime());
 
@@ -210,7 +212,6 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Find authorized roles and permission information settings.
 		assertion.getPrincipal().getAttributes().put(KEY_ROLE_ATTRIBUTE_NAME, getRoles(principal, fromAppName));
 		assertion.getPrincipal().getAttributes().put(KEY_PERMIT_ATTRIBUTE_NAME, getPermits(principal, fromAppName));
-
 		return assertion;
 	}
 
@@ -423,7 +424,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		String storedTicket = info.getApplications().get(param.getApplication());
 		// Validation
 		if (!(StringUtils2.equals(storedTicket, param.getTicket()) && subject.isAuthenticated()
-				&& StringUtils2.isNotBlank((String) subject.getPrincipal()))) {
+				&& isNotBlank((String) subject.getPrincipal()))) {
 			throw new InvalidGrantTicketException(String.format("Invalid grant ticket '%s'", param.getTicket()));
 		}
 	}
