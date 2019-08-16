@@ -25,7 +25,9 @@ import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.util.Assert.hasText;
@@ -262,18 +264,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			/*
 			 * See:i.w.DiabloExtraController#errReads()
 			 */
-			SessionBindings.bind(KEY_ERR_SESSION_SAVED, thw.getMessage());
+			bind(KEY_ERR_SESSION_SAVED, thw.getMessage());
 		}
-
 		// Callback failure redirect URI
 		String failRedirectUrl = determineFailureUrl(tk, ae, request, response);
-
-		// Get binding parameters
-		Map params = SessionBindings.getBindValue(KEY_REQ_AUTH_PARAMS);
 
 		// Post-handling of login failure
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
 
+		// Get binding parameters
+		Map params = getBindValue(KEY_REQ_AUTH_PARAMS);
 		// Response JSON message
 		if (isJSONResponse(request)) {
 			try {
