@@ -214,6 +214,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Response JSON.
 			if (isJSONResponse(request)) {
 				try {
+					// Placing it in http.body makes it easier for Android/iOS
+					// to get token.
+					params.put(config.getCookie().getName(), subject.getSession().getId());
 					// Make logged JSON.
 					String logged = makeLoggedResponse(request, grantTicket, successRedirectUrl, params);
 					if (log.isInfoEnabled()) {

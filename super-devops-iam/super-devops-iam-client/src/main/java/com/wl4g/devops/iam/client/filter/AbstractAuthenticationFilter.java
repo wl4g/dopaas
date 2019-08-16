@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
+import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
@@ -40,6 +41,7 @@ import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.util.Assert.hasText;
+import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
@@ -167,18 +169,18 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Determine success URL
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
-		// Call Logon success handle.
+		// Call logged success handle.
 		coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response);
 
 		// JSON response
 		if (isJSONResponse(request)) {
 			try {
-				// Make logged response json.
-				String logged = makeLoggedResponse(request, successUrl);
+				// Make logged JSON message.
+				String logged = makeLoggedResponse(request, subject, successUrl);
 				if (log.isInfoEnabled()) {
 					log.info("Authenticated response to - {}", logged);
 				}
-				WebUtils2.writeJson(WebUtils.toHttp(response), logged);
+				writeJson(WebUtils.toHttp(response), logged);
 			} catch (IOException e) {
 				log.error("Logged response json error", e);
 			}
@@ -188,7 +190,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			if (log.isInfoEnabled()) {
 				log.info("Authenticated redirect to - {}", successUrl);
 			}
-			WebUtils.issueRedirect(request, response, successUrl);
+			issueRedirect(request, response, successUrl);
 		}
 
 		return false;
@@ -280,12 +282,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 *            login success redirect URL
 	 * @return
 	 */
-	private String makeLoggedResponse(ServletRequest request, String redirectUri) {
+	private String makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
 		hasText(redirectUri, "'redirectUri' must not be null");
 		// Make message
 		RespBase<String> resp = RespBase.create();
 		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Login successful");
 		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
+		// Placing it in http.body makes it easier for Android/iOS to get token.
+		resp.getData().put(config.getCookie().getName(), String.valueOf(subject.getSession().getId()));
 		return toJSONString(resp);
 	}
 
