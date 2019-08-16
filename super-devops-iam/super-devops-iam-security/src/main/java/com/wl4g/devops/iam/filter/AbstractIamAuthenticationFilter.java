@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
@@ -28,6 +29,7 @@ import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_UN
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.util.Assert.hasText;
@@ -56,7 +58,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
@@ -258,9 +259,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			ServletResponse response) {
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
-		Throwable thw = Exceptions.getRootCauses(ae);
+		Throwable thw = getRootCauses(ae);
 		if (thw != null) {
-			log.warn("On failure caused by: ", ae);
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to authenticate caused by: {}", ae);
+			} else {
+				log.warn("Failed to authenticate caused by: ", thw.getMessage());
+			}
 			/*
 			 * See:i.w.DiabloExtraController#errReads()
 			 */
@@ -356,12 +361,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		/*
 		 * Clean See:AuthenticatorAuthenticationFilter#bindRequestParameters()
 		 */
-		SessionBindings.unbind(KEY_REQ_AUTH_PARAMS);
+		unbind(KEY_REQ_AUTH_PARAMS);
 
 		/*
 		 * Clean error messages. See:i.w.DiabloExtraController#errReads()
 		 */
-		SessionBindings.unbind(KEY_ERR_SESSION_SAVED);
+		unbind(KEY_ERR_SESSION_SAVED);
 	}
 
 	/**
