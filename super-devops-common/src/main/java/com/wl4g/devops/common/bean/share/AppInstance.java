@@ -39,8 +39,7 @@ public class AppInstance extends BaseBean {
 
 
 	//other
-	private String host;
-	private String ip;
+	private String hostname;
 
 
 	public Long getAppClusterId() {
@@ -101,20 +100,12 @@ public class AppInstance extends BaseBean {
 		this.hostId = hostId;
 	}
 
-	public String getHost() {
-		return host;
+	public String getHostname() {
+		return hostname;
 	}
 
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
 	}
 
 	@Override
