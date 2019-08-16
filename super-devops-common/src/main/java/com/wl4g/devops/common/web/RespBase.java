@@ -15,11 +15,14 @@
  */
 package com.wl4g.devops.common.web;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
@@ -43,7 +46,33 @@ public class RespBase<T> implements Serializable {
 	private RetCode code;
 	private String status; // Response status
 	private String message;
-	private Map<String, T> data = new LinkedHashMap<>(4);
+	private Map<String, T> data = new LinkedHashMap<String, T>(4) {
+		private static final long serialVersionUID = -6962465829208605525L;
+
+		@Override
+		public T put(String key, T value) {
+			if (isNotBlank(key) && value != null) {
+				return super.put(key, value);
+			}
+			return null;
+		}
+
+		@Override
+		public T putIfAbsent(String key, T value) {
+			if (isNotBlank(key) && value != null) {
+				return super.putIfAbsent(key, value);
+			}
+			return null;
+		}
+
+		@Override
+		public void putAll(Map<? extends String, ? extends T> m) {
+			if (!CollectionUtils.isEmpty(m)) {
+				super.putAll(m);
+			}
+		}
+
+	};
 
 	public RespBase() {
 		this(RetCode.OK);
