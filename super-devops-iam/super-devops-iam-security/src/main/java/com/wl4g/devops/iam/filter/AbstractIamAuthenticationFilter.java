@@ -262,9 +262,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		Throwable thw = getRootCauses(ae);
 		if (thw != null) {
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to authenticate caused by: {}", ae);
+				log.debug("Failed to authenticate.", ae);
 			} else {
-				log.warn("Failed to authenticate caused by: ", thw.getMessage());
+				log.warn("Failed to authenticate. caused by: ", thw.getMessage());
 			}
 			/*
 			 * See:i.w.DiabloExtraController#errReads()
