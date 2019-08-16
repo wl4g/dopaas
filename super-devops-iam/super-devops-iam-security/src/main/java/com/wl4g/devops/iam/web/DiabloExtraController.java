@@ -240,7 +240,12 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 				resp.setCode(RetCode.SYS_ERR);
 			}
 			resp.setMessage(getRootCauseMessage(e));
-			log.error("Failure to apply for captcha", e);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to apply for captcha.", e);
+			} else {
+				log.warn("Failed to apply for captcha. caused by: {}", getRootCauseMessage(e));
+			}
 
 			// Respond to the JSON message that failed to apply for the CAPTCHA
 			write(response, HttpStatus.OK.value(), APPLICATION_JSON_UTF8_VALUE, toJSONString(resp).getBytes(Charsets.UTF_8));
