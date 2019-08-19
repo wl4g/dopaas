@@ -42,6 +42,7 @@ import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
@@ -169,24 +170,29 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Determine success URL
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
-		// Call logged success handle.
-		coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response);
-
 		// JSON response
 		if (isJSONResponse(request)) {
 			try {
-				// Make logged JSON message.
-				String logged = makeLoggedResponse(request, subject, successUrl);
+				// Make logged response JSON.
+				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
+
+				// Callback custom success handling.
+				coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, loggedResp.getData());
+
+				String logged = toJSONString(loggedResp);
 				if (log.isInfoEnabled()) {
-					log.info("Authenticated response to - {}", logged);
+					log.info("Authenticated response to - {}", loggedResp);
 				}
-				writeJson(WebUtils.toHttp(response), logged);
+				writeJson(toHttp(response), logged);
 			} catch (IOException e) {
 				log.error("Logged response json error", e);
 			}
 		}
 		// Redirection
 		else {
+			// Callback custom success handling.
+			coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, null);
+
 			if (log.isInfoEnabled()) {
 				log.info("Authenticated redirect to - {}", successUrl);
 			}
@@ -282,15 +288,16 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 *            login success redirect URL
 	 * @return
 	 */
-	private String makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
+	private RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
 		hasText(redirectUri, "'redirectUri' must not be null");
 		// Make message
 		RespBase<String> resp = RespBase.create();
 		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Login successful");
 		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
-		// Placing it in http.body makes it easier for Android/iOS to get token.
-		resp.getData().put(config.getCookie().getName(), String.valueOf(subject.getSession().getId()));
-		return toJSONString(resp);
+		// Placing it in http.body makes it easier for Android/iOS to get
+		// grant ticket token.
+		resp.getData().put(config.getParam().getGrantTicket(), String.valueOf(subject.getSession().getId()));
+		return resp;
 	}
 
 	/**
