@@ -61,10 +61,10 @@ public interface SecurityCoprocessor {
 	 * @param subject
 	 * @param request
 	 * @param response
-	 * @param params
+	 * @param respParams
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, Map<String, String> params) throws AfterAuthenticatSuccessException {
+			ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
 	}
 
 	/**
