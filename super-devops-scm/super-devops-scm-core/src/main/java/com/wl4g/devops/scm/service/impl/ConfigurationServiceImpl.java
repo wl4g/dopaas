@@ -135,7 +135,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			// Get application instance information.
 			ReleaseInstance releaseInstance = new ReleaseInstance();
 			//TODO
-			releaseInstance.setHost(instance.getHost());
+			releaseInstance.setHost(instance.getHostname());
 			releaseInstance.setEndpoint(instance.getEndpoint());
 			instances.add(releaseInstance);
 		}
