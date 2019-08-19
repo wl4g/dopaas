@@ -15,22 +15,17 @@
  */
 package com.wl4g.devops.ci.git;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * GIT API template.
@@ -59,10 +54,8 @@ public abstract class AbstractGitTemplate implements GitTemplate, InitializingBe
 	 * @return
 	 */
 	protected <T> T doGitExchange(String url, TypeReference<T> typeRef) {
-		HttpEntity<String> entity = new HttpEntity<>(null, new HttpHeaders());
-
 		// PRE call.
-		preGitExchangeSet(entity);
+		HttpEntity<String> entity = preGitExchangeSet();
 
 		// Do request.
 		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -79,8 +72,11 @@ public abstract class AbstractGitTemplate implements GitTemplate, InitializingBe
 	/**
 	 * Pre request GIT exchange set.
 	 */
-	protected void preGitExchangeSet(HttpEntity<String> entity) {
-		entity.getHeaders().add("PRIVATE-TOKEN", config.getGitToken());
+	protected HttpEntity<String> preGitExchangeSet() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("PRIVATE-TOKEN", config.getGitToken());
+		HttpEntity<String> entity = new HttpEntity<>(null, headers);
+		return  entity;
 	}
 
 	@Override

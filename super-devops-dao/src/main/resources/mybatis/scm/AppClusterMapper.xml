@@ -69,8 +69,7 @@
 			<result column="i.updateDate" property="updateDate" jdbcType="TIMESTAMP" />
 			<result column="i.delFlag" property="delFlag" jdbcType="INTEGER" />
 			<result column="i.envId" property="envId" jdbcType="VARCHAR" />
-			<result column="i.sshUser" property="sshUser" jdbcType="VARCHAR" />
-			<result column="i.sshKey" property="sshKey" jdbcType="VARCHAR" />
+			<result column="i.hostname" property="hostname" jdbcType="VARCHAR" />
 		</collection>
 	</resultMap>
 
@@ -374,7 +373,7 @@
 	</select>
 
 	<select id="instancelist" parameterType="appInstance" resultType="appInstance">
-		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",h.hostname host,a.endpoint FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",h.hostname hostname,a.endpoint FROM  app_instance a
 		left join app_host h on h.id = a.host_id
 		<where>
 			a.del_flag = 0
@@ -384,9 +383,6 @@
 			<if test="appClusterId != null and appClusterId != ''">
 				and a.cluster_id=#{appClusterId}
 			</if>
-			<if test="ip != null and ip != ''">
-				and a.ip=#{ip}
-			</if>
 			<if test="endpoint != null and endpoint != ''">
 				and a.endpoint=#{endpoint}
 			</if>
@@ -394,7 +390,7 @@
 	</select>
      <!-- 通過節點ID直接查詢節點 -->
      	<select id="getAppInstance" parameterType="java.lang.String" resultType="appInstance">
-		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",h.hostname host,a.endpoint,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
+		select a.remark,a.id,a.cluster_id as "appClusterId",a.env_id as "envId",h.hostname hostname,a.endpoint,a.version_id as "versionId",a.ssh_user as "sshUser",a.ssh_key as "sshKey" FROM  app_instance a
 			left join app_host h on h.id = a.host_id
 		<where>
 			a.del_flag = 0
