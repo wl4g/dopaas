@@ -19,7 +19,7 @@ import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-public class AnynothingSecurityCoprocessor implements ClientSecurityCoprocessor {
+public class AnynothingClientSecurityCoprocessor implements ClientSecurityCoprocessor {
 
 	@Override
 	public boolean preAuthentication(Filter filter, ServletRequest request, ServletResponse response) {

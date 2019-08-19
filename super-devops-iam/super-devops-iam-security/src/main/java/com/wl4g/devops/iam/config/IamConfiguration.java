@@ -479,7 +479,7 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public IamProperties iamServerProperties() {
+	public IamProperties iamProperties() {
 		return new IamProperties();
 	}
 
@@ -529,7 +529,7 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public CentralAuthenticatorController defaultAuthenticatorController() {
+	public CentralAuthenticatorController centralAuthenticatorController() {
 		return new CentralAuthenticatorController();
 	}
 
@@ -539,13 +539,13 @@ public class IamConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ServerSecurityCoprocessor securityInterceptor() {
+	public ServerSecurityCoprocessor serverSecurityInterceptor() {
 		return new AnynothingSecurityCoprocessor();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ServerSecurityCoprocessor securityCoprocessor() {
+	public ServerSecurityCoprocessor serverSecurityCoprocessor() {
 		return new AnynothingSecurityCoprocessor();
 	}
 
