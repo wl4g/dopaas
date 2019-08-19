@@ -204,9 +204,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				grantTicket = authHandler.loggedin(fromAppName, subject).getGrantTicket();
 			}
 
-			// Post handle of login success.
-			coprocessor.postAuthenticatingSuccess(tk, subject, request, response);
-
 			// Build response parameter.
 			Map params = new HashMap();
 			params.put(config.getParam().getApplication(), fromAppName);
@@ -218,7 +215,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 					// to get token.
 					params.put(config.getCookie().getName(), subject.getSession().getId());
 					// Make logged JSON.
-					String logged = makeLoggedResponse(request, grantTicket, successRedirectUrl, params);
+					RespBase<String> loggedResp = makeLoggedResponse(request, grantTicket, successRedirectUrl, params);
+
+					// Callback custom success handling.
+					coprocessor.postAuthenticatingSuccess(tk, subject, request, response, loggedResp.getData());
+
+					String logged = toJSONString(loggedResp);
 					if (log.isInfoEnabled()) {
 						log.info("Response to success - {}", logged);
 					}
@@ -237,6 +239,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				if (isNotBlank(grantTicket)) {
 					params.put(config.getParam().getGrantTicket(), grantTicket);
 				}
+
+				// Callback custom success handling.
+				coprocessor.postAuthenticatingSuccess(tk, subject, request, response, params);
+
 				if (log.isInfoEnabled()) {
 					log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
 				}
@@ -386,7 +392,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private String makeLoggedResponse(ServletRequest request, String grantTicket, String successRedirectUrl, Map params) {
+	private RespBase<String> makeLoggedResponse(ServletRequest request, String grantTicket, String successRedirectUrl,
+			Map params) {
 		hasText(successRedirectUrl, "'successRedirectUrl' must not be empty");
 
 		// Redirection URL
@@ -411,7 +418,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Authentication success");
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
 		resp.getData().putAll(params);
-		return toJSONString(resp);
+		return resp;
 	}
 
 	/**
