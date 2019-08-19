@@ -24,9 +24,8 @@
 
     <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.share.AppInstance">
       <result column="i.id" property="id" jdbcType="INTEGER" />
-      <result column="i.host" property="host" jdbcType="VARCHAR" />
-      <result column="i.ip" property="ip" jdbcType="VARCHAR" />
-      <result column="i.port" property="port" jdbcType="INTEGER" />
+      <result column="i.hostname" property="hostname" jdbcType="VARCHAR" />
+      <result column="i.endpoint" property="endpoint" jdbcType="INTEGER" />
       <result column="i.remark" property="remark" jdbcType="VARCHAR" />
     </collection>
 
@@ -39,9 +38,7 @@
 
   <sql id="InstanceColumn">
 		,i.id as "i.id",
-		i.`host` as "i.host",
-		i.`ip` as "i.ip",
-		i.`port` as "i.port",
+		h.`hostname` as "i.hostname",
 		i.remark as "i.remark"
 	</sql>
 
@@ -275,6 +272,7 @@
     left join app_cluster g on t.app_cluster_id=g.id
     left join ci_task_detail td on td.task_id=t.id
     left join app_instance i on i.id=td.instance_id
+    left join app_host h on h.id=i.host_id
     where t.del_flag!=1
     <if test="id != null and id != ''" >
       AND t.id = #{id,jdbcType=INTEGER}
