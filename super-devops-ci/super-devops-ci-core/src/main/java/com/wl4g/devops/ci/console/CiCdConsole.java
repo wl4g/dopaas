@@ -204,7 +204,7 @@ public class CiCdConsole {
 				result.append("\t[ID]    [HostAndPort]          [description]\n");
 				for (int i = 0; i < instances.size() && i < 50; i++) {
 					if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
-							&& pattern.matcher(instances.get(i).getIp() + ":" + instances.get(i).getEndpoint()).matches()) {
+							&& pattern.matcher(instances.get(i).getHostname() + ":" + instances.get(i).getEndpoint()).matches()) {
 						appendInstance(result, instances.get(i));
 						if (i == 49) {
 							result.append("\t......");
@@ -241,7 +241,7 @@ public class CiCdConsole {
 		Pattern pattern = Pattern.compile(r);
 		for (int i = 0; i < instances.size() && i < 50; i++) {
 			if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
-					&& pattern.matcher(instances.get(i).getIp() + ":" + instances.get(i).getEndpoint()).matches()) {
+					&& pattern.matcher(instances.get(i).getHostname() + ":" + instances.get(i).getEndpoint()).matches()) {
 				appendInstance(result, instances.get(i));
 				if (i == 49) {
 					result.append("\t......");
@@ -252,7 +252,7 @@ public class CiCdConsole {
 
 	private void appendInstance(StringBuffer result, AppInstance instance) {
 		result.append("\t").append(formatCell(instance.getId().toString(), 8))
-				.append(formatCell((instance.getIp() + ":" + instance.getEndpoint()), 23)).append(instance.getRemark()).append("\n");
+				.append(formatCell((instance.getHostname() + ":" + instance.getEndpoint()), 23)).append(instance.getRemark()).append("\n");
 	}
 
 	private String formatCell(String text, int width) {

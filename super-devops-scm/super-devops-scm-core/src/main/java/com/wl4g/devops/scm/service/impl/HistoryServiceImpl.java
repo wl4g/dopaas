@@ -164,7 +164,7 @@ public class HistoryServiceImpl implements HistoryService {
 		for (AppInstance instance : nodeList) {
 			// Get application instance information.
 			ReleaseInstance releaseInstance = new ReleaseInstance();
-			releaseInstance.setHost(instance.getHost());
+			releaseInstance.setHost(instance.getHostname());
 			releaseInstance.setEndpoint(instance.getEndpoint());
 			instances.add(releaseInstance);
 		}
