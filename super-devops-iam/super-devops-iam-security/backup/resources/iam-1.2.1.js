@@ -159,9 +159,10 @@
 	var resetCaptcha = function(){
 		// 清空验证码输入框
 		$(CommonUtils.checkEmpty("signIn.captcha.input", settings.signIn.captcha.input)).val("");
+		var principal = encodeURIComponent(CommonUtils.empty(settings.getPrincipal()));
 		// 获取图像URL
 		var applyCaptchaUri = CommonUtils.checkEmpty("baseUri",settings.baseUri) 
-			+ CommonUtils.checkEmpty("definition.applyCaptchaUri", settings.definition.applyCaptchaUri) + "?r=" + Math.random();
+			+ CommonUtils.checkEmpty("definition.applyCaptchaUri", settings.definition.applyCaptchaUri) + "?principal="+principal+"&r=" + Math.random();
 		// 新申请一个验证码
 		settings.signIn.captcha.show(applyCaptchaUri);
 	};
@@ -280,8 +281,8 @@
 				} else {
 					var secretKey = CommonUtils.checkEmpty("definition.secretKey",settings.definition.secretKey);
 					var captchaEnabledKey = CommonUtils.checkEmpty("definition.captchaEnabledKey",settings.definition.captchaEnabledKey);
-					var secret = resp.data[secretKey]; // 加密公钥
-					var captchaEnabled = CommonUtils.isEnabled(CommonUtils.checkEmpty("check()=>captchaEnabled",resp.data[captchaEnabledKey]));
+					var secret = resp.data.checkGeneral[secretKey]; // 加密公钥
+					var captchaEnabled = CommonUtils.isEnabled(CommonUtils.checkEmpty("check()=>captchaEnabled",resp.data.checkGeneral[captchaEnabledKey]));
 					callback(captchaEnabled, secret); // 登录继续
 				}
 			},
@@ -319,6 +320,7 @@
 					if(captchaEnabled){ // 仅当启用时，才检查输入的验证码
 						if(CommonUtils.isEmpty(captcha) || captcha.length < imgInput.attr("maxlength")){ // 检查验证码
 							settings.signIn.onError("Illegal length of captcha input");
+							//settings.signIn.captcha.show();
 							return;
 						}
 					}
