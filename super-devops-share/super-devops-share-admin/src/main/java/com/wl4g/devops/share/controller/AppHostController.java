@@ -26,11 +26,9 @@ public class AppHostController extends BaseController {
 	@RequestMapping(value = "/all")
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
-		List<AppHost> list = appHostDao.list(null,null,null);
+		List<AppHost> list = appHostDao.list(null, null, null);
 		resp.getData().put("list", list);
 		return resp;
 	}
-
-
 
 }

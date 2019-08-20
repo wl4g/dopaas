@@ -22,7 +22,7 @@ import java.util.Map;
 import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SYS_DICT_ALL;
 
 /**
- * 字典
+ * Dictionaries controller
  * 
  * @author vjay
  * @date 2019-06-24 14:23:00
@@ -41,12 +41,12 @@ public class DictController extends BaseController {
 	private JedisService jedisService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage,String key,String label,String type,String description) {
+	public RespBase<?> list(CustomPage customPage, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page page = PageHelper.startPage(pageNum, pageSize, true);
-		List<Dict> list = dictDao.list(key,label,type,description);
+		Page<Dict> page = PageHelper.startPage(pageNum, pageSize, true);
+		List<Dict> list = dictDao.list(key, label, type, description);
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
@@ -56,14 +56,15 @@ public class DictController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(Dict dict,Boolean isEdit) {
+	public RespBase<?> save(Dict dict, Boolean isEdit) {
 		RespBase<Object> resp = RespBase.create();
-		if(isEdit){
+		if (isEdit) {
 			dictService.update(dict);
-		}else{
+		} else {
 			dictService.insert(dict);
 		}
-		jedisService.del(KEY_CACHE_SYS_DICT_ALL);//when modify , remove cache from redis
+		jedisService.del(KEY_CACHE_SYS_DICT_ALL);// when modify , remove cache
+													// from redis
 		return resp;
 	}
 
@@ -71,7 +72,7 @@ public class DictController extends BaseController {
 	public RespBase<?> detail(String key) {
 		RespBase<Object> resp = RespBase.create();
 		Dict dict = dictDao.selectByPrimaryKey(key);
-		resp.getData().put("dict",dict);
+		resp.getData().put("dict", dict);
 		return resp;
 	}
 
@@ -79,10 +80,10 @@ public class DictController extends BaseController {
 	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.del(key);
-		jedisService.del(KEY_CACHE_SYS_DICT_ALL);//when modify , remove cache from redis
+		jedisService.del(KEY_CACHE_SYS_DICT_ALL);// when modify , remove cache
+													// from redis
 		return resp;
 	}
-
 
 	@RequestMapping(value = "/getByType")
 	public RespBase<?> getByType(String type) {
@@ -111,20 +112,20 @@ public class DictController extends BaseController {
 	@RequestMapping(value = "/cache")
 	public RespBase<?> cache() {
 		RespBase<Object> resp = RespBase.create();
-		//get from redis first , not found then find from db
+		// get from redis first , not found then find from db
 		String s = jedisService.get(KEY_CACHE_SYS_DICT_ALL);
 		Map<String, Object> result;
-		if(StringUtils.isNotBlank(s)){
-			result = JacksonUtils.parseJSON(s, new TypeReference<Map<String, Object>>() {});
-		}else{
+		if (StringUtils.isNotBlank(s)) {
+			result = JacksonUtils.parseJSON(s, new TypeReference<Map<String, Object>>() {
+			});
+		} else {
 			result = dictService.cache();
-			//cache to redis
+			// cache to redis
 			String s1 = JacksonUtils.toJSONString(result);
-			jedisService.set(KEY_CACHE_SYS_DICT_ALL,s1,0);
+			jedisService.set(KEY_CACHE_SYS_DICT_ALL, s1, 0);
 		}
 		resp.setData(result);
 		return resp;
 	}
-
 
 }
