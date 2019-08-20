@@ -6,97 +6,94 @@ import java.io.Serializable;
 
 public class AlarmConfig extends BaseBean implements Serializable {
 
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
-    private Integer collectId;
+	private Integer collectId;
 
-    private Integer templateId;
+	private Integer templateId;
 
-    private Integer contactGroupId;
+	private Integer contactGroupId;
 
-    private String callbackUrl;
+	private String callbackUrl;
 
+	/* other */
+	private String templateName;
 
-    /*other*/
-    private String templateName;
+	private String contactGroupName;
 
-    private String contactGroupName;
+	private Integer group;
+	private Integer environment;
+	private String classify;
 
+	public Integer getCollectId() {
+		return collectId;
+	}
 
-    private Integer group;
-    private Integer environment;
-    private String classify;
+	public void setCollectId(Integer collectId) {
+		this.collectId = collectId;
+	}
 
-    public Integer getCollectId() {
-        return collectId;
-    }
+	public Integer getTemplateId() {
+		return templateId;
+	}
 
-    public void setCollectId(Integer collectId) {
-        this.collectId = collectId;
-    }
+	public void setTemplateId(Integer templateId) {
+		this.templateId = templateId;
+	}
 
-    public Integer getTemplateId() {
-        return templateId;
-    }
+	public Integer getContactGroupId() {
+		return contactGroupId;
+	}
 
-    public void setTemplateId(Integer templateId) {
-        this.templateId = templateId;
-    }
+	public void setContactGroupId(Integer contactGroupId) {
+		this.contactGroupId = contactGroupId;
+	}
 
-    public Integer getContactGroupId() {
-        return contactGroupId;
-    }
+	public String getCallbackUrl() {
+		return callbackUrl;
+	}
 
-    public void setContactGroupId(Integer contactGroupId) {
-        this.contactGroupId = contactGroupId;
-    }
+	public void setCallbackUrl(String callbackUrl) {
+		this.callbackUrl = callbackUrl;
+	}
 
-    public String getCallbackUrl() {
-        return callbackUrl;
-    }
+	public String getTemplateName() {
+		return templateName;
+	}
 
-    public void setCallbackUrl(String callbackUrl) {
-        this.callbackUrl = callbackUrl;
-    }
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
 
+	public String getContactGroupName() {
+		return contactGroupName;
+	}
 
-    public String getTemplateName() {
-        return templateName;
-    }
+	public void setContactGroupName(String contactGroupName) {
+		this.contactGroupName = contactGroupName;
+	}
 
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
+	public Integer getGroup() {
+		return group;
+	}
 
-    public String getContactGroupName() {
-        return contactGroupName;
-    }
+	public void setGroup(Integer group) {
+		this.group = group;
+	}
 
-    public void setContactGroupName(String contactGroupName) {
-        this.contactGroupName = contactGroupName;
-    }
+	public Integer getEnvironment() {
+		return environment;
+	}
 
-    public Integer getGroup() {
-        return group;
-    }
+	public void setEnvironment(Integer environment) {
+		this.environment = environment;
+	}
 
-    public void setGroup(Integer group) {
-        this.group = group;
-    }
+	public String getClassify() {
+		return classify;
+	}
 
-    public Integer getEnvironment() {
-        return environment;
-    }
-
-    public void setEnvironment(Integer environment) {
-        this.environment = environment;
-    }
-
-    public String getClassify() {
-        return classify;
-    }
-
-    public void setClassify(String classify) {
-        this.classify = classify;
-    }
+	public void setClassify(String classify) {
+		this.classify = classify;
+	}
 }

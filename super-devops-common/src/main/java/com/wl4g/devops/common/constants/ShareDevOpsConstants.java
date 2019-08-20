@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.constants;
 
 /**
- * CI/CD devops constants
+ * Based share constants
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
@@ -24,9 +24,9 @@ package com.wl4g.devops.common.constants;
  */
 public abstract class ShareDevOpsConstants extends DevOpsConstants {
 
-	// redis cache dicts
-	public static final String REDIS_DICTS_CACHE = "dicts_cache";
-
-
+	/**
+	 * System dictionaries cache.
+	 */
+	public static final String KEY_CACHE_SYS_DICT_ALL = "dict_all";
 
 }

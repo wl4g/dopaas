@@ -5,65 +5,64 @@ import com.wl4g.devops.common.bean.BaseBean;
 import java.io.Serializable;
 
 public class AlarmNotificationContact extends BaseBean implements Serializable {
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
+	private Integer notificationId;
 
-    private Integer notificationId;
+	private Integer contactId;
 
-    private Integer contactId;
+	private String status;
 
-    private String status;
+	// other
+	private String name;
+	private String email;
+	private String phone;
 
-    //other
-    private String name;
-    private String email;
-    private String phone;
+	public Integer getNotificationId() {
+		return notificationId;
+	}
 
-    public Integer getNotificationId() {
-        return notificationId;
-    }
+	public void setNotificationId(Integer notificationId) {
+		this.notificationId = notificationId;
+	}
 
-    public void setNotificationId(Integer notificationId) {
-        this.notificationId = notificationId;
-    }
+	public Integer getContactId() {
+		return contactId;
+	}
 
-    public Integer getContactId() {
-        return contactId;
-    }
+	public void setContactId(Integer contactId) {
+		this.contactId = contactId;
+	}
 
-    public void setContactId(Integer contactId) {
-        this.contactId = contactId;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public void setStatus(String status) {
+		this.status = status == null ? null : status.trim();
+	}
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 }

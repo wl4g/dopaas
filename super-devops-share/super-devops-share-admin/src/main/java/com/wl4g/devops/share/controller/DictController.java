@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.common.constants.ShareDevOpsConstants.REDIS_DICTS_CACHE;
+import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SYS_DICT_ALL;
 
 /**
  * 字典
@@ -63,7 +63,7 @@ public class DictController extends BaseController {
 		}else{
 			dictService.insert(dict);
 		}
-		jedisService.del(REDIS_DICTS_CACHE);//when modify , remove cache from redis
+		jedisService.del(KEY_CACHE_SYS_DICT_ALL);//when modify , remove cache from redis
 		return resp;
 	}
 
@@ -79,7 +79,7 @@ public class DictController extends BaseController {
 	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.del(key);
-		jedisService.del(REDIS_DICTS_CACHE);//when modify , remove cache from redis
+		jedisService.del(KEY_CACHE_SYS_DICT_ALL);//when modify , remove cache from redis
 		return resp;
 	}
 
@@ -112,7 +112,7 @@ public class DictController extends BaseController {
 	public RespBase<?> cache() {
 		RespBase<Object> resp = RespBase.create();
 		//get from redis first , not found then find from db
-		String s = jedisService.get(REDIS_DICTS_CACHE);
+		String s = jedisService.get(KEY_CACHE_SYS_DICT_ALL);
 		Map<String, Object> result;
 		if(StringUtils.isNotBlank(s)){
 			result = JacksonUtils.parseJSON(s, new TypeReference<Map<String, Object>>() {});
@@ -120,7 +120,7 @@ public class DictController extends BaseController {
 			result = dictService.cache();
 			//cache to redis
 			String s1 = JacksonUtils.toJSONString(result);
-			jedisService.set(REDIS_DICTS_CACHE,s1,0);
+			jedisService.set(KEY_CACHE_SYS_DICT_ALL,s1,0);
 		}
 		resp.setData(result);
 		return resp;
