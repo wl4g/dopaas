@@ -43,11 +43,12 @@ import com.wl4g.devops.iam.client.context.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.utils.Sessions;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LOGOUT_INFO;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
+import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
+import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -86,44 +87,41 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 	@Override
 	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 		// Using coercion ignores remote exit failures
-		boolean forced = WebUtils2.isTrue(request, config.getParam().getLogoutForced(), true);
-
+		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
 		// Current session-id
-		Serializable sessionId = Sessions.getSessionId();
-
+		Serializable sessionId = getSessionId();
 		if (log.isInfoEnabled()) {
 			log.info("Logout of forced[{}], sessionId[{}]", forced, sessionId);
 		}
 
-		// Execution listener
-		super.coprocessor.preLogout(forced, request, response);
+		// Callback logout
+		coprocessor.preLogout(forced, request, response);
 
 		/*
 		 * Post to remote logout
 		 */
 		LogoutModel logout = null;
 		try {
-			logout = this.doRequestRemoteLogout(forced);
+			logout = doRequestRemoteLogout(forced);
 		} catch (Exception e) {
 			if (e instanceof IamException)
-				log.warn("Remote server logout failure. {}", ExceptionUtils.getRootCauseMessage(e));
+				log.warn("Failed to remote logout. {}", ExceptionUtils.getRootCauseMessage(e));
 			else
-				log.warn("Remote server logout failure.", e);
+				log.warn("Failed to remote logout.", e);
 		}
 
 		/*
 		 * Check remote logout
 		 */
-		if (forced || this.checkLogout(logout)) {
+		if (forced || checkLogout(logout)) {
 			// Local session logout
 			try {
 				// try/catch added for SHIRO-298:
-				super.getSubject(request, response).logout();
+				getSubject(request, response).logout();
 
 				if (log.isInfoEnabled()) {
 					log.info("Local logout finished. sessionId[{}]", sessionId);
 				}
-
 			} catch (SessionException e) {
 				log.warn("Logout exception. This can generally safely be ignored.", e);
 			}
@@ -132,8 +130,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		/*
 		 * Redirection processing
 		 */
-		super.onLoginFailure(LogoutAuthenticationToken.EMPTY, null, request, response);
-
+		onLoginFailure(LogoutAuthenticationToken.EMPTY, null, request, response);
 		return false;
 	}
 
