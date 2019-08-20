@@ -15,11 +15,10 @@
  */
 package com.wl4g.devops.umc.rule;
 
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cache.ScanCursor;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -87,12 +86,12 @@ public class RuleConfigManager implements ApplicationRunner {
 	 * @param clusterId
 	 * @return
 	 */
-	public List<AlarmTemplate> loadAlarmRuleTpls(String collectId) {
-		String key = getCollectIdAlarmRulesCacheKey(collectId);
+	public List<AlarmConfig> loadAlarmRuleTpls(String collectAddr) {
+		String key = getCollectIdAlarmRulesCacheKey(collectAddr);
 		// First get the cache
-		List<AlarmTemplate> alarmTpls = jedisService.getObjectList(key, AlarmTemplate.class);
+		List<AlarmConfig> alarmTpls = jedisService.getObjectList(key, AlarmConfig.class);
 		if (isEmpty(alarmTpls)) {
-			alarmTpls = ruleConfigurer.findAlarmTemplate(Integer.parseInt(collectId));
+			alarmTpls = ruleConfigurer.findAlarmConfigByEndpoint(collectAddr);
 			if (!isEmpty(alarmTpls)) {
 				jedisService.setObjectList(key, alarmTpls, 0);
 			}
@@ -100,11 +99,12 @@ public class RuleConfigManager implements ApplicationRunner {
 		return safeList(alarmTpls);
 	}
 
+
 	// --- Cache key ---
 
-	private static String getCollectIdAlarmRulesCacheKey(String collectId) {
-		Assert.hasText(collectId, "'collectId' must not be empty");
-		return KEY_CACHE_ALARM_TPLS + collectId;
+	private static String getCollectIdAlarmRulesCacheKey(String collectAddr) {
+		Assert.hasText(collectAddr, "'collectAddr' must not be empty");
+		return KEY_CACHE_ALARM_TPLS + collectAddr;
 	}
 
 }

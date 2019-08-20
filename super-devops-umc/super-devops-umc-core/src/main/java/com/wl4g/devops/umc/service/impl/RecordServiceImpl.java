@@ -1,6 +1,5 @@
 package com.wl4g.devops.umc.service.impl;
 
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
@@ -40,12 +39,9 @@ public class RecordServiceImpl implements RecordService {
         AlarmRecord alarmRecord = alarmRecordDao.selectByPrimaryKey(id);
         Assert.notNull(alarmRecord,"alarmRecord is null");
         List<AlarmRule> alarmRules = alarmRuleDao.selectByRecordId(id);
-        AlarmConfig alarmConfig = alarmConfigDao.selectByPrimaryKey(alarmRecord.getConfigId());
-        Assert.notNull(alarmConfig,"alarmConfig is null");
-        AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmConfig.getTemplateId());
+        AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmRecord.getTemplateId());
         Assert.notNull(alarmTemplate,"alarmTemplate is null");
         alarmRecord.setAlarmRules(alarmRules);
-        alarmRecord.setAlarmConfig(alarmConfig);
         alarmRecord.setAlarmTemplate(alarmTemplate);
         return alarmRecord;
     }

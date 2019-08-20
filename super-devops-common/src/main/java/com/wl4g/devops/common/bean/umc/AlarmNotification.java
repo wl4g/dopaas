@@ -6,55 +6,45 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class AlarmNotification extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Integer contactGroupId;
+    private Integer recordId;
 
-	private Integer recordId;
+    private Date alarmTime;
 
-	private Date alarmTime;
+    private String alarmNote;
 
-	private String alarmNote;
+    private String groupName;
 
-	private String groupName;
+    public Integer getRecordId() {
+        return recordId;
+    }
 
-	public Integer getContactGroupId() {
-		return contactGroupId;
-	}
+    public void setRecordId(Integer recordId) {
+        this.recordId = recordId;
+    }
 
-	public void setContactGroupId(Integer contactGroupId) {
-		this.contactGroupId = contactGroupId;
-	}
+    public Date getAlarmTime() {
+        return alarmTime;
+    }
 
-	public Integer getRecordId() {
-		return recordId;
-	}
+    public void setAlarmTime(Date alarmTime) {
+        this.alarmTime = alarmTime;
+    }
 
-	public void setRecordId(Integer recordId) {
-		this.recordId = recordId;
-	}
+    public String getAlarmNote() {
+        return alarmNote;
+    }
 
-	public Date getAlarmTime() {
-		return alarmTime;
-	}
+    public void setAlarmNote(String alarmNote) {
+        this.alarmNote = alarmNote == null ? null : alarmNote.trim();
+    }
 
-	public void setAlarmTime(Date alarmTime) {
-		this.alarmTime = alarmTime;
-	}
+    public String getGroupName() {
+        return groupName;
+    }
 
-	public String getAlarmNote() {
-		return alarmNote;
-	}
-
-	public void setAlarmNote(String alarmNote) {
-		this.alarmNote = alarmNote == null ? null : alarmNote.trim();
-	}
-
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

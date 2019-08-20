@@ -3,20 +3,12 @@
 <mapper namespace="com.wl4g.devops.dao.umc.AlarmNotificationDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmNotification" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
     <result column="alarm_time" property="alarmTime" jdbcType="TIMESTAMP" />
     <result column="alarm_note" property="alarmNote" jdbcType="VARCHAR" />
 
-    <!-- other -->
-    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
-
   </resultMap>
   <sql id="Base_Column_List" >
-    id, contact_group_id, alarm_time, alarm_note
-  </sql>
-
-  <sql id="Base_Column_List_n" >
-    n.id, n.contact_group_id, n.alarm_time, n.alarm_note
+    id,  alarm_time, alarm_note
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -30,9 +22,9 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotification" >
-    insert into umc_alarm_notification (id, contact_group_id,
+    insert into umc_alarm_notification (id,
       alarm_time, alarm_note)
-    values (#{id,jdbcType=INTEGER}, #{contactGroupId,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER},
       #{alarmTime,jdbcType=TIMESTAMP}, #{alarmNote,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotification" useGeneratedKeys="true" keyProperty="id">
@@ -40,9 +32,6 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
-      </if>
-      <if test="contactGroupId != null" >
-        contact_group_id,
       </if>
       <if test="alarmTime != null" >
         alarm_time,
@@ -55,9 +44,6 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="contactGroupId != null" >
-        #{contactGroupId,jdbcType=INTEGER},
-      </if>
       <if test="alarmTime != null" >
         #{alarmTime,jdbcType=TIMESTAMP},
       </if>
@@ -69,9 +55,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotification" >
     update umc_alarm_notification
     <set >
-      <if test="contactGroupId != null" >
-        contact_group_id = #{contactGroupId,jdbcType=INTEGER},
-      </if>
       <if test="alarmTime != null" >
         alarm_time = #{alarmTime,jdbcType=TIMESTAMP},
       </if>
@@ -83,8 +66,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotification" >
     update umc_alarm_notification
-    set contact_group_id = #{contactGroupId,jdbcType=INTEGER},
-      alarm_time = #{alarmTime,jdbcType=TIMESTAMP},
+    set alarm_time = #{alarmTime,jdbcType=TIMESTAMP},
       alarm_note = #{alarmNote,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -92,15 +74,14 @@
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    <include refid="Base_Column_List_n" />,cg.name group_name
-    from umc_alarm_notification n
-    left join umc_alarm_contact_group cg on cg.id=n.contact_group_id
+    <include refid="Base_Column_List" />
+    from umc_alarm_notification
     where 1=1
     <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
-      AND DATE_FORMAT(n.alarm_time,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
-      AND DATE_FORMAT(n.alarm_time,'%Y-%m-%d %H:%i') &lt; DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(alarm_time,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(alarm_time,'%Y-%m-%d %H:%i') &lt; DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
     </if>
-    order by n.alarm_time desc
+    order by alarm_time desc
   </select>
 
 </mapper>

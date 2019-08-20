@@ -19,7 +19,7 @@ public interface AlarmTemplateDao {
 
     int updateByPrimaryKey(AlarmTemplate record);
 
-    List<AlarmTemplate> getByCollectId(@Param("collectId") Serializable collectId);
+    List<AlarmTemplate> getByCollectAddr(@Param("collectAddr") String collectAddr);
 
     List<AlarmTemplate> getByClusterId(@Param("clusterId") Serializable clusterId);
 

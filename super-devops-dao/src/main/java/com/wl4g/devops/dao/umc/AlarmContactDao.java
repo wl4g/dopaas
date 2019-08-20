@@ -20,5 +20,7 @@ public interface AlarmContactDao {
 
     List<AlarmContact> list(@Param("name") String name,@Param("email") String email, @Param("phone") String phone);
 
+    List<AlarmContact> getContactByGroupIds(@Param("groupIds") List<Integer> groupIds);
+
 
 }

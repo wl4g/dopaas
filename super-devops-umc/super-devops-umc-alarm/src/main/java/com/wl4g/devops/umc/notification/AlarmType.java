@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum AlarmType {
 
-	EMAIL("1"), SMS("2"), WECHAT("3"), BARK("4");
+	EMAIL("1"), SMS("2"), WECHAT("3"), BARK("4") , DINGTALK("5"),FACEBOOK("6"), TWITTER("7");
 
 	private String value;
 
@@ -40,7 +40,7 @@ public enum AlarmType {
 
 	public static AlarmType safeOf(String type) {
 		for (AlarmType t : values()) {
-			if (StringUtils.equals(t.getValue(), t.getValue())) {
+			if (StringUtils.equals(t.getValue(), type)) {
 				return t;
 			}
 		}

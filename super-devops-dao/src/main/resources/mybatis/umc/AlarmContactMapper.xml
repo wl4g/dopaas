@@ -403,5 +403,12 @@
     </if>
   </select>
 
+  <select id="getContactByGroupIds" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select * from umc_alarm_contact c
+    where exists(select 1 from umc_alarm_contact_group_ref gr
+    where gr.contact_group_id IN <foreach item="item" index="index" collection="groupIds" open="(" separator="," close=")">#{item}</foreach>
+    and gr.contact_id=c.id);
+  </select>
+
 
 </mapper>

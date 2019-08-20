@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.umc.handler;
 
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmRule;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.common.bean.umc.*;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;
@@ -37,7 +35,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<AlarmTemplate> findAlarmTemplate(Integer collectId) {
+	public List<AlarmConfig> findAlarmConfigByEndpoint(String collectId) {
 		return null;
 	}
 
@@ -47,8 +45,22 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public void saveAlarmRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
-			List<AlarmRule> rules) {
+	public void saveAlarmRecord(Integer templateId, String collectId, Long gatherTime, List<AlarmRule> rules,Integer notificationId) {
+	}
+
+	@Override
+	public void saveNotification(AlarmNotification alarmNotification) {
+
+	}
+
+	@Override
+	public void updateNotification(AlarmNotification alarmNotification) {
+
+	}
+
+	@Override
+	public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
+		return null;
 	}
 
 }
