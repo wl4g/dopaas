@@ -40,8 +40,8 @@ import com.wl4g.devops.iam.client.web.ClientAuthenticatorController;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
 import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateAspect;
 import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateProcessor;
-import com.wl4g.devops.iam.client.context.AnynothingSecurityCoprocessor;
-import com.wl4g.devops.iam.client.context.AnynothingSecurityContext;
+import com.wl4g.devops.iam.client.context.AnynothingClientSecurityCoprocessor;
+import com.wl4g.devops.iam.client.context.AnynothingClientSecurityContext;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
 import com.wl4g.devops.iam.client.context.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter;
@@ -211,8 +211,8 @@ public class IamClientConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public ClientSecurityContext anynothingSecurityContext() {
-		return new AnynothingSecurityContext();
+	public ClientSecurityContext anynothingClientSecurityContext() {
+		return new AnynothingClientSecurityContext();
 	}
 
 	/**
@@ -224,8 +224,8 @@ public class IamClientConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public ClientSecurityCoprocessor anynothingSecurityCoprocessor() {
-		return new AnynothingSecurityCoprocessor();
+	public ClientSecurityCoprocessor anynothingClientSecurityCoprocessor() {
+		return new AnynothingClientSecurityCoprocessor();
 	}
 
 	// ==============================

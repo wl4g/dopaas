@@ -62,22 +62,22 @@ public class DockerBuildDeployTask extends AbstractDeployTask {
 			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 			// Pull
-			String s = provider.dockerPull(instance.getHost(), instance.getSshUser(), "wl4g/" + project.getGroupName()
+			String s = provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
 					+ ":master"/*
 								 * TODO 要改成动态的
 								 * provider.getTaskHistory().getPreCommand()
 								 */, instance.getSshKey());
 			result.append(s).append("\n");
 			// Restart
-			String s1 = provider.dockerStop(instance.getHost(), instance.getSshUser(), project.getGroupName(),
+			String s1 = provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
 					instance.getSshKey());
 			result.append(s1).append("\n");
 			// Remove Container
-			String s2 = provider.dockerRemoveContainer(instance.getHost(), instance.getSshUser(), project.getGroupName(),
+			String s2 = provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
 					instance.getSshKey());
 			result.append(s2).append("\n");
 			// Run
-			String s3 = provider.dockerRun(instance.getHost(), instance.getSshUser(), "docker run wl4g/" + project.getGroupName()
+			String s3 = provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + project.getGroupName()
 					+ ":master"/*
 								 * TODO 要改成动态的
 								 * provider.getTaskHistory().getPostCommand()

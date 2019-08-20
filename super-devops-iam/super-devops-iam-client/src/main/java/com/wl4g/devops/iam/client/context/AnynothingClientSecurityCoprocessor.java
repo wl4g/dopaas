@@ -13,31 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.context;
+package com.wl4g.devops.iam.client.context;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.subject.Subject;
-
-import com.wl4g.devops.iam.common.context.SecurityListener;
-
-public class AnynothingSecurityListener implements SecurityListener {
+public class AnynothingClientSecurityCoprocessor implements ClientSecurityCoprocessor {
 
 	@Override
-	public void onPostLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) {
-	}
-
-	@Override
-	public void onPostLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
-			ServletResponse response) {
-	}
-
-	@Override
-	public void onPreLogout(boolean forced, ServletRequest request, ServletResponse response) {
-
+	public boolean preAuthentication(Filter filter, ServletRequest request, ServletResponse response) {
+		return true;
 	}
 
 }

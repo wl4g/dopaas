@@ -18,10 +18,13 @@ package com.wl4g.devops.iam.common.context;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.iam.AfterAuthenticatFailException;
 import com.wl4g.devops.common.exception.iam.AfterAuthenticatSuccessException;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
+
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
@@ -58,9 +61,10 @@ public interface SecurityCoprocessor {
 	 * @param subject
 	 * @param request
 	 * @param response
+	 * @param respParams
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) throws AfterAuthenticatSuccessException {
+			ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
 	}
 
 	/**

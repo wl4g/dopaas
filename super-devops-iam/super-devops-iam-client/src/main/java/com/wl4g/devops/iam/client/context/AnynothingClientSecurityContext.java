@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 
-public class AnynothingSecurityContext implements ClientSecurityContext {
+public class AnynothingClientSecurityContext implements ClientSecurityContext {
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
