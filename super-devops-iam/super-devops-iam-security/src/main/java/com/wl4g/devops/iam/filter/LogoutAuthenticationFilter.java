@@ -15,13 +15,15 @@
  */
 package com.wl4g.devops.iam.filter;
 
+import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.web.util.WebUtils;
 
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
@@ -55,21 +57,19 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	@Override
 	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 		// Using coercion ignores remote exit failures
-		boolean forced = !WebUtils.isTrue(request, config.getParam().getLogoutForced());
-
+		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
 		if (log.isInfoEnabled()) {
 			log.info("Sign out... for forced[{}], session[{}]", forced, SecurityUtils.getSubject().getSession());
 		}
 
 		// Logout all logged-in external applications
-		super.authHandler.logout(forced, null, WebUtils.toHttp(request), WebUtils.toHttp(response));
+		super.authHandler.logout(forced, null, toHttp(request), toHttp(response));
 
 		/*
 		 * Execute login failure redirect login page logic first, (prevent
 		 * logout from getting binding parameters later)
 		 */
 		super.onLoginFailure(createToken(request, response), null, request, response);
-
 		return false;
 	}
 
