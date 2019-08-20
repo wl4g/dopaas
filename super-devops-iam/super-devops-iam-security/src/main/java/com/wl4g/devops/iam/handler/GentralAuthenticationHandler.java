@@ -42,6 +42,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRI
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
+import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
@@ -241,7 +242,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	@Override
 	public LogoutModel logout(boolean forced, String fromAppName, HttpServletRequest request, HttpServletResponse response) {
 		if (log.isDebugEnabled()) {
-			log.debug("Logout from[{}], forced[{}], sessionId[{}]", fromAppName, forced, Sessions.getSessionId());
+			log.debug("Logout from[{}], forced[{}], sessionId[{}]", fromAppName, forced, getSessionId());
 		}
 		Subject subject = SecurityUtils.getSubject();
 
@@ -249,8 +250,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		coprocessor.preLogout(forced, request, response);
 
 		// Represents all logged-out Tags
-		boolean logoutAll = false;
-
+		boolean logoutAll = true;
 		// Get bind session grant information
 		GrantTicketInfo grantInfo = getGrantTicketSeesion(subject.getSession());
 		if (log.isDebugEnabled()) {
@@ -266,31 +266,26 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			if (apps == null || apps.isEmpty()) {
 				throw new IamException(String.format("Find application information is empty. %s", appNames));
 			}
-
 			// logout all
 			logoutAll = processLogoutAll(subject, grantInfo, apps);
 		}
 
 		if (forced || logoutAll) {
-			/*
-			 * Logout server session
-			 */
+			// Logout server session
 			try {
 				// That's the subject Refer to
 				// com.wl4g.devops.iam.session.mgt.IamSessionManager#getSessionId
 				// try/catch added for SHIRO-298:
 				subject.logout();
-
 				if (log.isDebugEnabled()) {
-					log.debug("Local logout finished. sessionId[{}]", Sessions.getSessionId(subject));
+					log.debug("Gentral logout. sessionId[{}]", Sessions.getSessionId(subject));
 				}
-
 			} catch (SessionException e) {
 				log.warn("Encountered session exception during logout. This can generally safely be ignored.", e);
 			}
 		}
 
-		return StringUtils.hasText(fromAppName) ? new LogoutModel(fromAppName) : new LogoutModel();
+		return isNotBlank(fromAppName) ? new LogoutModel(fromAppName) : new LogoutModel();
 	}
 
 	@Override
