@@ -4,15 +4,14 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmRecord" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="config_id" property="configId" jdbcType="INTEGER" />
+    <result column="template_id" property="templateId" jdbcType="INTEGER" />
     <result column="notification_id" property="notificationId" jdbcType="INTEGER" />
     <result column="gather_time" property="gatherTime" jdbcType="TIMESTAMP" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="alarm_info" property="alarmInfo" jdbcType="VARCHAR" />
     <result column="alarm_type" property="alarmType" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, config_id,notification_id, gather_time, create_time, alarm_info, alarm_type
+    id, name, template_id,notification_id, gather_time, create_time, alarm_type
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -26,11 +25,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" >
-    insert into umc_alarm_record (id, name, config_id, notification_id,
-      gather_time, create_time, alarm_info, 
+    insert into umc_alarm_record (id, name, template_id, notification_id,
+      gather_time, create_time,
       alarm_type)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{configId,jdbcType=INTEGER}, #{notificationId,jdbcType=INTEGER},
-      #{gatherTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{alarmInfo,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{templateId,jdbcType=INTEGER}, #{notificationId,jdbcType=INTEGER},
+      #{gatherTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},
       #{alarmType,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" useGeneratedKeys="true" keyProperty="id">
@@ -42,8 +41,8 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="configId != null" >
-        config_id,
+      <if test="templateId != null" >
+        template_id,
       </if>
       <if test="notificationId != null" >
         notification_id,
@@ -53,9 +52,6 @@
       </if>
       <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="alarmInfo != null" >
-        alarm_info,
       </if>
       <if test="alarmType != null" >
         alarm_type,
@@ -68,8 +64,8 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="configId != null" >
-        #{configId,jdbcType=INTEGER},
+      <if test="templateId != null" >
+        #{templateId,jdbcType=INTEGER},
       </if>
       <if test="notificationId != null" >
         #{notificationId,jdbcType=INTEGER},
@@ -79,9 +75,6 @@
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="alarmInfo != null" >
-        #{alarmInfo,jdbcType=VARCHAR},
       </if>
       <if test="alarmType != null" >
         #{alarmType,jdbcType=VARCHAR},
@@ -94,8 +87,8 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="configId != null" >
-        config_id = #{configId,jdbcType=INTEGER},
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=INTEGER},
       </if>
       <if test="notificationId != null" >
         notification_id = #{notificationId,jdbcType=INTEGER},
@@ -106,9 +99,6 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="alarmInfo != null" >
-        alarm_info = #{alarmInfo,jdbcType=VARCHAR},
-      </if>
       <if test="alarmType != null" >
         alarm_type = #{alarmType,jdbcType=VARCHAR},
       </if>
@@ -118,11 +108,10 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmRecord" >
     update umc_alarm_record
     set name = #{name,jdbcType=VARCHAR},
-      config_id = #{configId,jdbcType=INTEGER},
+      template_id = #{templateId,jdbcType=INTEGER},
       notification_id = #{notificationId,jdbcType=INTEGER},
       gather_time = #{gatherTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      alarm_info = #{alarmInfo,jdbcType=VARCHAR},
       alarm_type = #{alarmType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>

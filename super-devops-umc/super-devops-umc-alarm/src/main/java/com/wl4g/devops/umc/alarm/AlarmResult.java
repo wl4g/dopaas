@@ -15,17 +15,16 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.common.bean.umc.AlarmRule;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Alarm matched result.
@@ -44,7 +43,10 @@ public class AlarmResult {
 	/**
 	 * AlarmTemplate
 	 */
-	final private AlarmTemplate alarmTemplate;
+	//final private AlarmTemplate alarmTemplate;
+
+	//TODO
+	final private AlarmConfig alarmConfig;
 
 	/**
 	 * Alarm matched tags.
@@ -56,22 +58,18 @@ public class AlarmResult {
 	 */
 	final private List<AlarmRule> matchedRules;
 
-	public AlarmResult(MetricAggregateWrapper aggregateWrap, AlarmTemplate alarmTemplate, Map<String, String> matchedTag,
+	public AlarmResult(MetricAggregateWrapper aggregateWrap, AlarmConfig alarmConfig, Map<String, String> matchedTag,
 			List<AlarmRule> matchedRules) {
 		Assert.notNull(aggregateWrap, "Alarm result aggregateWrap must not be null");
-		Assert.notNull(alarmTemplate, "Alarm result alarmTemplate must not be null");
+		Assert.notNull(alarmConfig, "Alarm result alarmTemplate must not be null");
 		this.aggregateWrap = aggregateWrap;
-		this.alarmTemplate = alarmTemplate;
+		this.alarmConfig = alarmConfig;
 		this.matchedTag = matchedTag;
 		this.matchedRules = matchedRules;
 	}
 
 	public MetricAggregateWrapper getAggregateWrap() {
 		return aggregateWrap;
-	}
-
-	public AlarmTemplate getAlarmTemplate() {
-		return alarmTemplate;
 	}
 
 	public Map<String, String> getMatchedTag() {
@@ -82,9 +80,13 @@ public class AlarmResult {
 		return isEmpty(matchedRules) ? emptyList() : matchedRules;
 	}
 
+	public AlarmConfig getAlarmConfig() {
+		return alarmConfig;
+	}
+
 	@Override
 	public String toString() {
-		return "AlarmResult [aggregateWrap=" + aggregateWrap + ", alarmTemplate=" + alarmTemplate + ", matchedTag=" + matchedTag
+		return "AlarmResult [aggregateWrap=" + aggregateWrap + ", alarmConfig=" + alarmConfig + ", matchedTag=" + matchedTag
 				+ ", matchedRules=" + matchedRules + "]";
 	}
 

@@ -7,105 +7,85 @@ import java.util.Date;
 import java.util.List;
 
 public class AlarmRecord extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;
+    private String name;
 
-	private Integer configId;
+    private Integer templateId;
 
-	private Date gatherTime;
+    private Date gatherTime;
 
-	private Date createTime;
+    private Date createTime;
 
-	private String alarmInfo;
+    private String alarmType;
 
-	private String alarmType;
+    private Integer notificationId;
 
-	private Integer notificationId;
+    private List<AlarmRule> alarmRules;
 
-	private List<AlarmRule> alarmRules;
+    private AlarmTemplate alarmTemplate;
 
-	private AlarmConfig alarmConfig;
+    public String getName() {
+        return name;
+    }
 
-	private AlarmTemplate alarmTemplate;
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Integer getTemplateId() {
+        return templateId;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
+    }
 
-	public Integer getConfigId() {
-		return configId;
-	}
+    public Date getGatherTime() {
+        return gatherTime;
+    }
 
-	public void setConfigId(Integer configId) {
-		this.configId = configId;
-	}
+    public void setGatherTime(Date gatherTime) {
+        this.gatherTime = gatherTime;
+    }
 
-	public Date getGatherTime() {
-		return gatherTime;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setGatherTime(Date gatherTime) {
-		this.gatherTime = gatherTime;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public String getAlarmType() {
+        return alarmType;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public void setAlarmType(String alarmType) {
+        this.alarmType = alarmType == null ? null : alarmType.trim();
+    }
 
-	public String getAlarmInfo() {
-		return alarmInfo;
-	}
+    public List<AlarmRule> getAlarmRules() {
+        return alarmRules;
+    }
 
-	public void setAlarmInfo(String alarmInfo) {
-		this.alarmInfo = alarmInfo == null ? null : alarmInfo.trim();
-	}
+    public void setAlarmRules(List<AlarmRule> alarmRules) {
+        this.alarmRules = alarmRules;
+    }
 
-	public String getAlarmType() {
-		return alarmType;
-	}
+    public AlarmTemplate getAlarmTemplate() {
+        return alarmTemplate;
+    }
 
-	public void setAlarmType(String alarmType) {
-		this.alarmType = alarmType == null ? null : alarmType.trim();
-	}
+    public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
+        this.alarmTemplate = alarmTemplate;
+    }
 
-	public List<AlarmRule> getAlarmRules() {
-		return alarmRules;
-	}
+    public Integer getNotificationId() {
+        return notificationId;
+    }
 
-	public void setAlarmRules(List<AlarmRule> alarmRules) {
-		this.alarmRules = alarmRules;
-	}
-
-	public AlarmConfig getAlarmConfig() {
-		return alarmConfig;
-	}
-
-	public void setAlarmConfig(AlarmConfig alarmConfig) {
-		this.alarmConfig = alarmConfig;
-	}
-
-	public AlarmTemplate getAlarmTemplate() {
-		return alarmTemplate;
-	}
-
-	public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
-		this.alarmTemplate = alarmTemplate;
-	}
-
-	public Integer getNotificationId() {
-		return notificationId;
-	}
-
-	public void setNotificationId(Integer notificationId) {
-		this.notificationId = notificationId;
-	}
+    public void setNotificationId(Integer notificationId) {
+        this.notificationId = notificationId;
+    }
 }

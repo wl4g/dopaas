@@ -16,10 +16,8 @@
 package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.*;
-import com.wl4g.devops.dao.umc.AlarmConfigDao;
-import com.wl4g.devops.dao.umc.AlarmRecordDao;
-import com.wl4g.devops.dao.umc.AlarmRecordRuleDao;
-import com.wl4g.devops.dao.umc.AlarmTemplateDao;
+import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,29 +50,35 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	@Autowired
 	private AlarmRecordRuleDao alarmRecordRuleDao;
 
+	@Autowired
+	private AlarmNotificationDao alarmNotificationDao;
+
+	@Autowired
+	private AlarmContactDao alarmContactDao;
+
+	@Autowired
+	private AppClusterDao appClusterDao;
+
 
 	@Override
-	public List<AlarmTemplate> findAlarmTemplate(Integer collectId) {
-		return alarmTemplateDao.getByCollectId(collectId);
+	public List<AlarmConfig> findAlarmConfigByEndpoint(String collectAddr) {// large search from db
+		List<AlarmConfig> alarmConfigs = alarmConfigDao.getAlarmConfigTpls(collectAddr);
+		return alarmConfigs;
 	}
 
 	@Override
-	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId) {
-		return alarmConfigDao.getByCollectIdAndTemplateId(templateId, Integer.parseInt(collectId));
+	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectAddr) {
+		return alarmConfigDao.getByCollectAddrAndTemplateId(templateId, collectAddr);
 	}
 
 	@Transactional
-	public void saveAlarmRecord(AlarmTemplate alarmTemplate, List<AlarmConfig> alarmConfigs, String collectId, Long gatherTime,
-			List<AlarmRule> rules) {
-		for (AlarmConfig alarmConfig : alarmConfigs) {
+	public void saveAlarmRecord(Integer templateId, String collectId, Long gatherTime, List<AlarmRule> rules,Integer notificationId) {
 			AlarmRecord record = new AlarmRecord();
-			record.setConfigId(alarmConfig.getId());
+			record.setTemplateId(templateId);
+			record.setNotificationId(notificationId);
 			record.setGatherTime(new Date(gatherTime));
 			record.setCreateTime(new Date());
-			//TODO
-			record.setAlarmInfo("//TODO");
 			alarmRecordDao.insertSelective(record);
-
 			// Alarm matched rules.
 			for (AlarmRule rule : rules) {
 				AlarmRecordRule recordRule = new AlarmRecordRule();
@@ -82,13 +86,21 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 				recordRule.setRuleId(rule.getId());
 				alarmRecordRuleDao.insertSelective(recordRule);
 			}
+	}
 
-			// Alarm notification users.
-			Integer contactGroupId = alarmConfig.getContactGroupId();
-			//TODO 根据联系分组，找到联系人，生成notification
+	@Override
+	public void saveNotification(AlarmNotification alarmNotification) {
+		alarmNotificationDao.insertSelective(alarmNotification);
+	}
 
-		}
+	@Override
+	public void updateNotification(AlarmNotification alarmNotification) {
+		alarmNotificationDao.updateByPrimaryKeySelective(alarmNotification);
+	}
 
+	@Override
+	public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
+		return alarmContactDao.getContactByGroupIds(groupIds);
 	}
 
 }
