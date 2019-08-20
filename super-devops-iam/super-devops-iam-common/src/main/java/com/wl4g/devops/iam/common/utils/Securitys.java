@@ -51,7 +51,6 @@ public abstract class Securitys {
 				String hostFactor = createHostFactor(remoteHost);
 				if (isNotBlank(hostFactor)) {
 					add(hostFactor);
-
 					// for test::
 					// add(KEY_FAIL_LIMITER_RIP_PREFIX +
 					// System.currentTimeMillis());
@@ -67,7 +66,7 @@ public abstract class Securitys {
 	 * @return
 	 */
 	public static String createHostFactor(String remoteHost) {
-		return isNotBlank(remoteHost) ? (KEY_FAIL_LIMITER_RIP_PREFIX + encodeHexString(remoteHost.getBytes(UTF_8))) : null;
+		return isNotBlank(remoteHost) ? (KEY_FAIL_LIMITER_RIP_PREFIX + encodeHexString(remoteHost.getBytes(UTF_8))) : EMPTY;
 	}
 
 	/**
@@ -77,7 +76,7 @@ public abstract class Securitys {
 	 * @return
 	 */
 	public static String createPrincipalFactor(String principal) {
-		return isNotBlank(principal) ? (KEY_FAIL_LIMITER_USER_PREFIX + principal) : null;
+		return isNotBlank(principal) ? (KEY_FAIL_LIMITER_USER_PREFIX + principal) : EMPTY;
 	}
 
 }

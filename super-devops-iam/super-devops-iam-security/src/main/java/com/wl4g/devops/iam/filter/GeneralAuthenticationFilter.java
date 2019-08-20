@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.iam.filter;
 
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
@@ -38,18 +39,19 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 	@Override
 	protected GeneralAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		if (!RequestMethod.POST.name().equalsIgnoreCase(request.getMethod())) {
-			throw new HttpRequestMethodNotSupportedException(request.getMethod(), RequestMethod.POST.name());
+		if (!POST.name().equalsIgnoreCase(request.getMethod())) {
+			response.setStatus(405);
+			throw new HttpRequestMethodNotSupportedException(request.getMethod(),
+					String.format("No support '%s' request method", request.getMethod()));
 		}
 
-		String username = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
+		String username = getCleanParam(request, config.getParam().getPrincipalName());
 		/*
 		 * The front end IAM JS SDK submits encrypted hexadecimal strings.
 		 */
-		String password = WebUtils.getCleanParam(request, config.getParam().getPasswordName());
-		String clientRef = WebUtils.getCleanParam(request, config.getParam().getClientRefName());
-		String captcha = WebUtils.getCleanParam(request, config.getParam().getCaptchaName());
-
+		String password = getCleanParam(request, config.getParam().getPasswordName());
+		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
+		String captcha = getCleanParam(request, config.getParam().getCaptchaName());
 		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, password, clientRef, captcha);
 	}
 
