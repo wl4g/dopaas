@@ -155,7 +155,8 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 				String errmsg = extractMeaningfulErrorsMessage(model);
 				writeJson(response, toJSONString(new RespBase<>(SYS_ERR, errmsg, null)));
 			} else {
-				write(response, getStatus(request).value(), TEXT_HTML_VALUE, renderErrorPage(model, request).getBytes(UTF_8));
+				write(response, getStatus(request, response).value(), TEXT_HTML_VALUE,
+						renderErrorPage(model, request).getBytes(UTF_8));
 			}
 		} catch (IOException e) {
 			log.error("\n===========>> Global unified errors response failure <<===========\n", e);
@@ -168,14 +169,13 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	 * @param request
 	 * @return
 	 */
-	@Override
-	protected HttpStatus getStatus(HttpServletRequest request) {
-		Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
-		if (statusCode == null) {
-			return HttpStatus.INTERNAL_SERVER_ERROR;
+	protected HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response) {
+		HttpStatus status = super.getStatus(request);
+		if (status != null) {
+			return status;
 		}
 		try {
-			return HttpStatus.valueOf(statusCode);
+			return HttpStatus.valueOf(response.getStatus());
 		} catch (Exception ex) {
 			return HttpStatus.INTERNAL_SERVER_ERROR;
 		}

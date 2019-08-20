@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
@@ -64,33 +66,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
-	 * Control whether the validation code key name is enabled
-	 */
-	final public static String KEY_CAPTCHA_ENABLED = "captchaEnabled";
-
-	/**
-	 * Encrypted public key requested before login returns key name
-	 */
-	final public static String KEY_APPLY_SECRET = "secret";
-
-	/**
-	 * Apply SMS verification code to create a timestamp
-	 */
-	final public static String KEY_VERIFYCODE_CREATE = "verifyCodeCreateTime";
-
-	/**
-	 * The number of milliseconds to wait after applying for an SMS dynamic
-	 * password (you can reapply).
-	 *
-	 */
-	final public static String KEY_VERIFYCODE_DELAY = "verifyCodeDelayMs";
-
-	/**
-	 * The remaining milliseconds to wait to re-apply for SMS dynamic password
-	 */
-	final public static String KEY_VERIFYCODE_REMAIN_DELAY = "verifyCodeRemainDelayMs";
-
-	/**
 	 * Graphic verification handler
 	 */
 	@Resource(name = BEAN_GRAPH_VERIFICATION)
@@ -109,15 +84,15 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	protected IamCredentialsSecurer securer;
 
 	/**
-	 * Check the initial configuration. (e.g: whether to enable the verification
-	 * code etc)
+	 * PreCheck the initial configuration. (e.g: whether to enable the
+	 * verification code etc)
 	 *
 	 * @param request
 	 */
 	@RequestMapping(value = URI_S_EXT_CHECK, method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public RespBase<?> check(HttpServletRequest request) {
-		RespBase<String> resp = RespBase.create();
+		RespBase<Object> resp = RespBase.create();
 		try {
 			// Login account number or mobile number(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
@@ -127,7 +102,6 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 			// Get the CAPTCHA enabled
 			String captchaEnabled = graphVerification.isEnabled(factors) ? "yes" : "no";
-			resp.getData().put(KEY_CAPTCHA_ENABLED, captchaEnabled);
 
 			/*
 			 * When the login page is loaded, the parameter 'principal' will be
@@ -135,23 +109,23 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 * request parameter 'principal' will not be empty, you need to
 			 * generate 'secret'.
 			 */
+			String secret = EMPTY;
 			if (isNotBlank(principal)) {
 				// Apply credentials encryption secret key
-				String secret = securer.applySecret(principal);
-				resp.getData().put(KEY_APPLY_SECRET, secret);
+				secret = securer.applySecret(principal);
 			}
+			resp.getData().put(GeneralCheckResp.KEY_CHECKER, new GeneralCheckResp(captchaEnabled, secret));
 
 			/*
 			 * When the SMS verification code is not empty, this creation
-			 * timestamp is returned (used to display the current remaining
-			 * number of seconds before the front end can resend the SMS
+			 * time-stamp is returned (used to display the current remaining
+			 * number of seconds before the front end can re-send the SMS
 			 * verification code).
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
 			if (verifyCode != null) {
-				resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getCreateTime()));
-				resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
-				resp.getData().put(KEY_VERIFYCODE_REMAIN_DELAY, String.valueOf(getRemainingSmsDelay(verifyCode)));
+				resp.getData().put(SMSVerifyCheckResp.KEY_CHECKER, new SMSVerifyCheckResp(verifyCode.getCreateTime(),
+						config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
 			}
 
 		} catch (Exception e) {
@@ -261,7 +235,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	@RequestMapping(value = URI_S_EXT_VERIFY_APPLY, method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public RespBase<?> applyVerify(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<String> resp = RespBase.create();
+		RespBase<Object> resp = RespBase.create();
 		try {
 			if (!coprocessor.preApplyVerify(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
@@ -288,9 +262,8 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 * code (must exist).
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.getData().put(KEY_VERIFYCODE_CREATE, String.valueOf(verifyCode.getCreateTime()));
-			resp.getData().put(KEY_VERIFYCODE_DELAY, String.valueOf(config.getMatcher().getFailFastSmsDelay()));
-			resp.getData().put(KEY_VERIFYCODE_REMAIN_DELAY, String.valueOf(getRemainingSmsDelay(verifyCode)));
+			resp.getData().put(SMSVerifyCheckResp.KEY_CHECKER, new SMSVerifyCheckResp(verifyCode.getCreateTime(),
+					config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -338,6 +311,122 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
 		return Math.max(now - verifyCode.getCreateTime() - config.getMatcher().getFailFastSmsDelay(), 0);
+	}
+
+	/**
+	 * General PreCheck response.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月20日
+	 * @since
+	 */
+	public static class GeneralCheckResp implements Serializable {
+		private static final long serialVersionUID = -5279195217830694101L;
+
+		final public static String KEY_CHECKER = "checkGeneral";
+
+		/**
+		 * Control whether the validation code key name is enabled
+		 */
+		private String captchaEnabled;
+
+		/**
+		 * Encrypted public key requested before login returns key name
+		 */
+		private String secret;
+
+		public GeneralCheckResp() {
+			super();
+		}
+
+		public GeneralCheckResp(String captchaEnabled, String secret) {
+			super();
+			this.captchaEnabled = captchaEnabled;
+			this.secret = secret;
+		}
+
+		public String getCaptchaEnabled() {
+			return captchaEnabled;
+		}
+
+		public void setCaptchaEnabled(String captchaEnabled) {
+			this.captchaEnabled = captchaEnabled;
+		}
+
+		public String getSecret() {
+			return secret;
+		}
+
+		public void setSecret(String secret) {
+			this.secret = secret;
+		}
+
+	}
+
+	/**
+	 * SMS PreCheck response.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月20日
+	 * @since
+	 */
+	public static class SMSVerifyCheckResp implements Serializable {
+		private static final long serialVersionUID = -5279195217830694103L;
+
+		final public static String KEY_CHECKER = "checkSms";
+
+		/**
+		 * Apply SMS verification code to create a timestamp
+		 */
+		private long createTime;
+
+		/**
+		 * The number of milliseconds to wait after applying for an SMS dynamic
+		 * password (you can reapply).
+		 */
+		private long delayMs;
+
+		/**
+		 * The remaining milliseconds to wait to re-apply for SMS dynamic
+		 * password
+		 */
+		private long remainDelayMs;
+
+		public SMSVerifyCheckResp() {
+			super();
+		}
+
+		public SMSVerifyCheckResp(long createTime, long delayMs, long remainDelayMs) {
+			super();
+			this.createTime = createTime;
+			this.delayMs = delayMs;
+			this.remainDelayMs = remainDelayMs;
+		}
+
+		public long getCreateTime() {
+			return createTime;
+		}
+
+		public void setCreateTime(long createTime) {
+			this.createTime = createTime;
+		}
+
+		public long getDelayMs() {
+			return delayMs;
+		}
+
+		public void setDelayMs(long delayMs) {
+			this.delayMs = delayMs;
+		}
+
+		public long getRemainDelayMs() {
+			return remainDelayMs;
+		}
+
+		public void setRemainDelayMs(long remainDelayMs) {
+			this.remainDelayMs = remainDelayMs;
+		}
+
 	}
 
 }
