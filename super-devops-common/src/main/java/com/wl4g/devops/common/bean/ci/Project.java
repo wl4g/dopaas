@@ -123,16 +123,9 @@ public class Project extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Project{" +
-				"projectName='" + projectName + '\'' +
-				", gitUrl='" + gitUrl + '\'' +
-				", appClusterId=" + appClusterId +
-				", tarPath='" + tarPath + '\'' +
-				", parentAppHome='" + parentAppHome + '\'' +
-				", linkAppHome='" + linkAppHome + '\'' +
-				", groupName='" + groupName + '\'' +
-				", lockStatus=" + lockStatus +
-				", dependencies=" + dependencies +
-				'}';
+		return "Project{" + "projectName='" + projectName + '\'' + ", gitUrl='" + gitUrl + '\'' + ", appClusterId=" + appClusterId
+				+ ", tarPath='" + tarPath + '\'' + ", parentAppHome='" + parentAppHome + '\'' + ", linkAppHome='" + linkAppHome
+				+ '\'' + ", groupName='" + groupName + '\'' + ", lockStatus=" + lockStatus + ", dependencies=" + dependencies
+				+ '}';
 	}
 }

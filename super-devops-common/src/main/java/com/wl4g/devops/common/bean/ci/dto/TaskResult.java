@@ -6,23 +6,23 @@ package com.wl4g.devops.common.bean.ci.dto;
  */
 public class TaskResult {
 
-    private StringBuffer stringBuffer = new StringBuffer();
+	private StringBuffer stringBuffer = new StringBuffer();
 
-    private boolean isSuccess = true;
+	private boolean isSuccess = true;
 
-    public StringBuffer getStringBuffer() {
-        return stringBuffer;
-    }
+	public StringBuffer getStringBuffer() {
+		return stringBuffer;
+	}
 
-    public void setStringBuffer(StringBuffer stringBuffer) {
-        this.stringBuffer = stringBuffer;
-    }
+	public void setStringBuffer(StringBuffer stringBuffer) {
+		this.stringBuffer = stringBuffer;
+	}
 
-    public boolean isSuccess() {
-        return isSuccess;
-    }
+	public boolean isSuccess() {
+		return isSuccess;
+	}
 
-    public void setSuccess(boolean success) {
-        isSuccess = success;
-    }
+	public void setSuccess(boolean success) {
+		isSuccess = success;
+	}
 }

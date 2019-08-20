@@ -89,7 +89,6 @@ public class Dict extends BaseBean implements Serializable {
 		this.status = status;
 	}
 
-
 	public String getLabelEn() {
 		return labelEn;
 	}
@@ -100,8 +99,8 @@ public class Dict extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Dict [key=" + key + ", value=" + value + ", label=" + label + ", type=" + type
-				+ ", themes=" + themes + ", icon=" + icon + ", sort=" + sort + ", status=" + status + "]";
+		return "Dict [key=" + key + ", value=" + value + ", label=" + label + ", type=" + type + ", themes=" + themes + ", icon="
+				+ icon + ", sort=" + sort + ", status=" + status + "]";
 	}
 
 }

@@ -123,18 +123,9 @@ public class Task extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Task{" +
-				"taskName='" + taskName + '\'' +
-				", appClusterId=" + appClusterId +
-				", projectId=" + projectId +
-				", branchName='" + branchName + '\'' +
-				", tarType=" + tarType +
-				", branchType='" + branchType + '\'' +
-				", preCommand='" + preCommand + '\'' +
-				", postCommand='" + postCommand + '\'' +
-				", instances=" + instances +
-				", taskDetails=" + taskDetails +
-				", groupName='" + groupName + '\'' +
-				'}';
+		return "Task{" + "taskName='" + taskName + '\'' + ", appClusterId=" + appClusterId + ", projectId=" + projectId
+				+ ", branchName='" + branchName + '\'' + ", tarType=" + tarType + ", branchType='" + branchType + '\''
+				+ ", preCommand='" + preCommand + '\'' + ", postCommand='" + postCommand + '\'' + ", instances=" + instances
+				+ ", taskDetails=" + taskDetails + ", groupName='" + groupName + '\'' + '}';
 	}
 }

@@ -37,10 +37,8 @@ public class AppInstance extends BaseBean {
 	private String sshUser;// 登录账号
 	private String sshKey;
 
-
-	//other
+	// other
 	private String hostname;
-
 
 	public Long getAppClusterId() {
 		return appClusterId;
@@ -49,7 +47,6 @@ public class AppInstance extends BaseBean {
 	public void setAppClusterId(Long appClusterId) {
 		this.appClusterId = appClusterId;
 	}
-
 
 	public String getEndpoint() {
 		return endpoint;
@@ -66,7 +63,6 @@ public class AppInstance extends BaseBean {
 	public void setEnvId(String envId) {
 		this.envId = envId;
 	}
-
 
 	public String getVersionId() {
 		return versionId;
@@ -110,13 +106,7 @@ public class AppInstance extends BaseBean {
 
 	@Override
 	public String toString() {
-		return "AppInstance{" +
-				"appClusterId=" + appClusterId +
-				", endpoint=" + endpoint +
-				", envId='" + envId + '\'' +
-				", versionId='" + versionId + '\'' +
-				", sshUser='" + sshUser + '\'' +
-				", sshKey='" + sshKey + '\'' +
-				'}';
+		return "AppInstance{" + "appClusterId=" + appClusterId + ", endpoint=" + endpoint + ", envId='" + envId + '\''
+				+ ", versionId='" + versionId + '\'' + ", sshUser='" + sshUser + '\'' + ", sshKey='" + sshKey + '\'' + '}';
 	}
 }
