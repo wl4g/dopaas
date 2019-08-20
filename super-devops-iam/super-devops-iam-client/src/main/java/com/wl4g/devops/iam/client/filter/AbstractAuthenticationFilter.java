@@ -31,7 +31,6 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
-import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_AUTHC_STATUS;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_UNAUTHC_STATUS;
@@ -230,17 +229,17 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			// Response JSON message
 			if (isJSONResponse(request)) {
 				try {
-					final String failMsg = makeFailedResponse(failureRedirectUrl, cause);
+					String failMsg = makeFailedResponse(failureRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
 						log.info("Failed response: {}", failMsg);
 					}
-					WebUtils2.writeJson(WebUtils.toHttp(response), failMsg);
+					writeJson(toHttp(response), failMsg);
 				} catch (IOException e) {
 					log.error("Response json error", e);
 				}
 			} else { // Redirects the login page direct.
 				try {
-					WebUtils.issueRedirect(request, response, failureRedirectUrl);
+					issueRedirect(request, response, failureRedirectUrl);
 				} catch (IOException e) {
 					log.error("Cannot redirect to failure url - {}", failureRedirectUrl, e);
 				}
@@ -250,7 +249,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		else {
 			try {
 				String errmsg = String.format("<b>Iam Server Internal Error</b><br/>%s", Exceptions.getMessage(cause));
-				WebUtils.toHttp(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, errmsg);
+				toHttp(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}
@@ -313,7 +312,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		String errmsg = err != null ? err.getMessage() : "Not logged-in";
 		// Make message
 		RespBase<String> resp = RespBase.create();
-		resp.setCode(UNAUTHC).setStatus(DEFAULT_UNAUTHC_STATUS).setMessage(errmsg);
+		resp.setCode(OK).setStatus(DEFAULT_UNAUTHC_STATUS).setMessage(errmsg);
 		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		return toJSONString(resp);
 	}

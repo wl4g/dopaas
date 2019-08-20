@@ -20,6 +20,7 @@ import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SE
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_ID_SOURCE;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static java.lang.Boolean.TRUE;
@@ -111,7 +112,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		 * parameter. For example:
 		 * http://localhost/project?__sid=xxx&__cookie=yes
 		 */
-		String sid = WebUtils.getCleanParam(request, config.getParam().getSid());
+		String sid = getCleanParam(request, config.getParam().getSid());
 
 		// Using SID mode sessions
 		if (checkSafeBlank(sid)) {
@@ -130,7 +131,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		}
 
 		// Using grantTicket mode sessions
-		String grantTicket = WebUtils.getCleanParam(request, config.getParam().getGrantTicket());
+		String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
 		if (checkSafeBlank(grantTicket)) {
 			/*
 			 * Synchronize with
