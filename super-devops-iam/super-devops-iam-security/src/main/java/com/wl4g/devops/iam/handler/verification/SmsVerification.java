@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.handler.verification;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
-import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
+import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -43,6 +43,7 @@ import java.util.Map;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * SMS verification code handler
@@ -173,9 +174,9 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	 * @param mobile
 	 */
 	private void checkMobileAvailable(HttpServletRequest request, @NotNull long mobile) {
-		String action = WebUtils.getCleanParam(request, config.getParam().getSmsActionName());
+		String action = getCleanParam(request, config.getParam().getSmsActionName());
 		// bind phone , needn't Check account exist
-		if (BIND == (SmsAuthenticationToken.Action.safeOf(action))) {
+		if (BIND == (Action.safeOf(action))) {
 			return;
 		}
 		// Getting account information
@@ -184,7 +185,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		// Check mobile(user) available
 		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {
 			log.warn("Illegal users, because mobile phone number: {} corresponding users do not exist", mobile);
-			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", mobile));
+			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", String.valueOf(mobile)));
 		}
 
 	}

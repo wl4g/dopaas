@@ -45,6 +45,11 @@ public enum ClientRef {
 	WeChatMp("wechatmp"),
 
 	/**
+	 * Client WeChat applet type.
+	 */
+	WeChatApplet("wechatApplet"),
+
+	/**
 	 * Client windows type.
 	 */
 	WINDOWS("windows");
