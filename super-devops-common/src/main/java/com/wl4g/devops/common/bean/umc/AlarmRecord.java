@@ -19,11 +19,13 @@ public class AlarmRecord extends BaseBean implements Serializable {
 
     private String alarmType;
 
-    private Integer notificationId;
-
     private List<AlarmRule> alarmRules;
 
     private AlarmTemplate alarmTemplate;
+
+    private String alarmNote;
+
+    private List<AlarmNotificationContact> notificationContacts;
 
     public String getName() {
         return name;
@@ -81,11 +83,19 @@ public class AlarmRecord extends BaseBean implements Serializable {
         this.alarmTemplate = alarmTemplate;
     }
 
-    public Integer getNotificationId() {
-        return notificationId;
+    public String getAlarmNote() {
+        return alarmNote;
     }
 
-    public void setNotificationId(Integer notificationId) {
-        this.notificationId = notificationId;
+    public void setAlarmNote(String alarmNote) {
+        this.alarmNote = alarmNote;
+    }
+
+    public List<AlarmNotificationContact> getNotificationContacts() {
+        return notificationContacts;
+    }
+
+    public void setNotificationContacts(List<AlarmNotificationContact> notificationContacts) {
+        this.notificationContacts = notificationContacts;
     }
 }
