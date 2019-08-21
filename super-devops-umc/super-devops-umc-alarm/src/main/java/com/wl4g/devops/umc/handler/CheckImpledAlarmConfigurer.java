@@ -35,7 +35,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<AlarmConfig> findAlarmConfigByEndpoint(String collectId) {
+	public List<AlarmConfig> findAlarmConfigByEndpoint(String host,String endpoint) {
 		return null;
 	}
 
@@ -45,7 +45,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public AlarmRecord saveAlarmRecord(Integer templateId, String collectId, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
+	public AlarmRecord saveAlarmRecord(Integer templateId, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
 		return null;
 	}
 

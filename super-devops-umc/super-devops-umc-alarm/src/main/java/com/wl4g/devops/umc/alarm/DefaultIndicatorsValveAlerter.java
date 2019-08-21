@@ -82,14 +82,14 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	@Override
 	protected void doHandleAlarm(MetricAggregateWrapper agwrap) {
 		if (log.isInfoEnabled()) {
-			log.info("Alarm handling for collectId: {}", agwrap.getCollectAddr());
+			log.info("Alarm handling for host: {} endpoint:{}", agwrap.getHost() , agwrap.getEndpoint());
 		}
 
 		// Load alarm templates by collectId.
-		List<AlarmConfig> alarmConfigs = ruleManager.loadAlarmRuleTpls(agwrap.getCollectAddr());
+		List<AlarmConfig> alarmConfigs = ruleManager.loadAlarmRuleTpls(agwrap.getHost(),agwrap.getEndpoint());
 		if (isEmpty(alarmConfigs)) {
 			if (log.isInfoEnabled()) {
-				log.info("No found alarm templates for collect: {}", agwrap.getCollectAddr());
+				log.info("No found alarm templates for host: {} endpoint:{}", agwrap.getHost() , agwrap.getEndpoint());
 			}
 			return;
 		}
@@ -137,7 +137,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		// Maximum metric keep time window of rules.
 		long maxWindowTime = extractMaxRuleWindowTime(alarmConfig.getAlarmTemplate().getRules());
 		// Offer latest metrics in time window queue.
-		List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getCollectAddr(), mwrap.getValue(), agwrap.getTimestamp(), now,
+		List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getHost()+":"+agwrap.getEndpoint(), mwrap.getValue(), agwrap.getTimestamp(), now,
 				maxWindowTime);
 
 		// Match alarm rules of metric values.
@@ -275,12 +275,13 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 			//build alarm note
 			AlarmNote alarmNote = new AlarmNote();
-			alarmNote.setCollectorAddr(templateContactWrapper.getAggregateWrap().getCollectAddr());
+			alarmNote.setHost(templateContactWrapper.getAggregateWrap().getHost());
+			alarmNote.setEndpoint(templateContactWrapper.getAggregateWrap().getEndpoint());
 			alarmNote.setMatchedRules(templateContactWrapper.getMatchedRules());
 			alarmNote.setMatchedTag(templateContactWrapper.getMatchedTag());
 			alarmNote.setMetricName(templateContactWrapper.getAlarmTemplate().getMetric());
 			// save record and record rule
-			AlarmRecord alarmRecord = configurer.saveAlarmRecord(templateContactWrapper.getTemplateId(), templateContactWrapper.getAggregateWrap().getCollectAddr(),
+			AlarmRecord alarmRecord = configurer.saveAlarmRecord(templateContactWrapper.getTemplateId(),
 					templateContactWrapper.getAggregateWrap().getTimestamp(), templateContactWrapper.getMatchedRules(), JacksonUtils.toJSONString(alarmNote));
 
 			// send
