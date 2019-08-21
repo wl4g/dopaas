@@ -271,28 +271,20 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			templateContactWrapperMap.put(alarmConfig.getTemplateId(),templateContactWrapper);
 		}
 
-		//TODO
 		for (TemplateContactWrapper templateContactWrapper : templateContactWrapperMap.values()) {
-			//TODO save notification
-			AlarmNotification alarmNotification = new AlarmNotification();
-			alarmNotification.setAlarmTime(new Date(templateContactWrapper.getAggregateWrap().getTimestamp()));
+
 			//build alarm note
 			AlarmNote alarmNote = new AlarmNote();
 			alarmNote.setCollectorAddr(templateContactWrapper.getAggregateWrap().getCollectAddr());
 			alarmNote.setMatchedRules(templateContactWrapper.getMatchedRules());
 			alarmNote.setMatchedTag(templateContactWrapper.getMatchedTag());
 			alarmNote.setMetricName(templateContactWrapper.getAlarmTemplate().getMetric());
-			alarmNotification.setAlarmNote(JacksonUtils.toJSONString(alarmNote));
-			configurer.saveNotification(alarmNotification);
+			// save record and record rule
+			AlarmRecord alarmRecord = configurer.saveAlarmRecord(templateContactWrapper.getTemplateId(), templateContactWrapper.getAggregateWrap().getCollectAddr(),
+					templateContactWrapper.getAggregateWrap().getTimestamp(), templateContactWrapper.getMatchedRules(), JacksonUtils.toJSONString(alarmNote));
 
-			//TODO save record and record rule
-			configurer.saveAlarmRecord(templateContactWrapper.getTemplateId(), templateContactWrapper.getAggregateWrap().getCollectAddr(),
-					templateContactWrapper.getAggregateWrap().getTimestamp(), templateContactWrapper.getMatchedRules(), alarmNotification.getId());
-
-			//TODO send
-			notification(new ArrayList<>(templateContactWrapper.getContacts()), alarmNotification);
-
-
+			// send
+			notification(new ArrayList<>(templateContactWrapper.getContacts()), alarmRecord);
 		}
 	}
 
@@ -327,42 +319,42 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param alarmConfigs
 	 * @param macthedRules
 	 */
-	protected void notification(List<AlarmContact> alarmContacts,AlarmNotification alarmNotification) {
+	protected void notification(List<AlarmContact> alarmContacts,AlarmRecord alarmRecord) {
 
 		for(AlarmContact alarmContact : alarmContacts){
 
 			//email
 			if(alarmContact.getEmailEnable()==1){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmNotification.getAlarmNote(), AlarmType.EMAIL.getValue(),alarmContact.getEmail()));
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.EMAIL.getValue(),alarmContact.getEmail()));
 			}
 
 			//phone
 			if(alarmContact.getPhoneEnable()==1&&checkNotifyLimit(ALARM_LIMIT_PHONE+alarmContact.getId(),alarmContact.getPhoneNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmNotification.getAlarmNote(), AlarmType.SMS.getValue(),alarmContact.getPhone()));
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.SMS.getValue(),alarmContact.getPhone()));
 				setNotifyLimit(ALARM_LIMIT_PHONE+alarmContact.getPhone(),alarmContact.getPhoneTimeOfFreq());
 			}
 
 			//dingtalk
 			if(alarmContact.getDingtalkEnable()==1&&checkNotifyLimit(ALARM_LIMIT_DINGTALK+alarmContact.getId(),alarmContact.getDingtalkNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmNotification.getAlarmNote(), AlarmType.DINGTALK.getValue(),alarmContact.getDingtalk()));
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.DINGTALK.getValue(),alarmContact.getDingtalk()));
 				setNotifyLimit(ALARM_LIMIT_DINGTALK+alarmContact.getId(),alarmContact.getDingtalkTimeOfFreq());
 			}
 
 			//facebook
 			if(alarmContact.getFacebookEnable()==1&&checkNotifyLimit(ALARM_LIMIT_FACEBOOK+alarmContact.getId(),alarmContact.getFacebookNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmNotification.getAlarmNote(), AlarmType.FACEBOOK.getValue(),alarmContact.getFacebook()));
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.FACEBOOK.getValue(),alarmContact.getFacebook()));
 				setNotifyLimit(ALARM_LIMIT_FACEBOOK+alarmContact.getId(),alarmContact.getFacebookTimeOfFreq());
 			}
 
 			//twitter
 			if(alarmContact.getTwitterEnable()==1&&checkNotifyLimit(ALARM_LIMIT_TWITTER+alarmContact.getId(),alarmContact.getTwitterNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmNotification.getAlarmNote(), AlarmType.TWITTER.getValue(),alarmContact.getTwitter()));
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.TWITTER.getValue(),alarmContact.getTwitter()));
 				setNotifyLimit(ALARM_LIMIT_TWITTER+alarmContact.getId(),alarmContact.getTwitterTimeOfFreq());
 			}
 
 			//wechat
 			if(alarmContact.getWechatEnable()==1&&checkNotifyLimit(ALARM_LIMIT_WECHAT+alarmContact.getId(),alarmContact.getWechatNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmNotification.getAlarmNote(), AlarmType.WECHAT.getValue(),alarmContact.getWechat()));
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.WECHAT.getValue(),alarmContact.getWechat()));
 				setNotifyLimit(ALARM_LIMIT_WECHAT+alarmContact.getId(),alarmContact.getWechatTimeOfFreq());
 			}
 

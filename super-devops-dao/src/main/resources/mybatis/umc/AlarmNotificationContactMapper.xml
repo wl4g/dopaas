@@ -3,7 +3,7 @@
 <mapper namespace="com.wl4g.devops.dao.umc.AlarmNotificationContactDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="notification_id" property="notificationId" jdbcType="INTEGER" />
+    <result column="record_id" property="recordId" jdbcType="INTEGER" />
     <result column="contact_id" property="contactId" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -14,11 +14,11 @@
     <result column="phone" property="phone" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, notification_id, contact_id, status, remark
+    id, record_id, contact_id, status, remark
   </sql>
 
   <sql id="Base_Column_List_nc" >
-    nc.id, nc.notification_id, nc.contact_id, nc.status, nc.remark
+    nc.id, nc.record_id, nc.contact_id, nc.status, nc.remark
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -32,9 +32,9 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
-    insert into umc_alarm_notification_contact (id, notification_id, contact_id, 
+    insert into umc_alarm_notification_contact (id, record_id, contact_id,
       status, remark)
-    values (#{id,jdbcType=INTEGER}, #{notificationId,jdbcType=INTEGER}, #{contactId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{recordId,jdbcType=INTEGER}, #{contactId,jdbcType=INTEGER},
       #{status,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" useGeneratedKeys="true" keyProperty="id">
@@ -43,8 +43,8 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="notificationId != null" >
-        notification_id,
+      <if test="recordId != null" >
+        record_id,
       </if>
       <if test="contactId != null" >
         contact_id,
@@ -60,8 +60,8 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="notificationId != null" >
-        #{notificationId,jdbcType=INTEGER},
+      <if test="recordId != null" >
+        #{recordId,jdbcType=INTEGER},
       </if>
       <if test="contactId != null" >
         #{contactId,jdbcType=INTEGER},
@@ -77,8 +77,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
     update umc_alarm_notification_contact
     <set >
-      <if test="notificationId != null" >
-        notification_id = #{notificationId,jdbcType=INTEGER},
+      <if test="recordId != null" >
+        record_id = #{recordId,jdbcType=INTEGER},
       </if>
       <if test="contactId != null" >
         contact_id = #{contactId,jdbcType=INTEGER},
@@ -94,7 +94,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmNotificationContact" >
     update umc_alarm_notification_contact
-    set notification_id = #{notificationId,jdbcType=INTEGER},
+    set record_id = #{recordId,jdbcType=INTEGER},
       contact_id = #{contactId,jdbcType=INTEGER},
       status = #{status,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR}
@@ -102,12 +102,12 @@
   </update>
 
 
-  <select id="getByNotificationId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="getByRecordId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List_nc" />,c.name,c.email,c.phone
     from umc_alarm_notification_contact nc
     left join umc_alarm_contact c on nc.contact_id=c.id
-    where nc.notification_id = #{id,jdbcType=INTEGER}
+    where nc.record_id = #{id,jdbcType=INTEGER}
   </select>
 
 </mapper>

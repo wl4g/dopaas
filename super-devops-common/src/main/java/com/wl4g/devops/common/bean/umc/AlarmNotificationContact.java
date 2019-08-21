@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class AlarmNotificationContact extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private Integer notificationId;
+	private Integer recordId;
 
 	private Integer contactId;
 
@@ -18,12 +18,12 @@ public class AlarmNotificationContact extends BaseBean implements Serializable {
 	private String email;
 	private String phone;
 
-	public Integer getNotificationId() {
-		return notificationId;
+	public Integer getRecordId() {
+		return recordId;
 	}
 
-	public void setNotificationId(Integer notificationId) {
-		this.notificationId = notificationId;
+	public void setRecordId(Integer recordId) {
+		this.recordId = recordId;
 	}
 
 	public Integer getContactId() {

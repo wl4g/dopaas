@@ -32,11 +32,7 @@ public interface AlarmConfigurer {
 
 	List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId);
 
-	void saveAlarmRecord(Integer templateId,String collectId, Long gatherTime, List<AlarmRule> rules,Integer notificationId);
-
-	void saveNotification(AlarmNotification alarmNotification);
-
-	void updateNotification(AlarmNotification alarmNotification);
+	AlarmRecord saveAlarmRecord(Integer templateId,String collectId, Long gatherTime, List<AlarmRule> rules,String alarmNote);
 
 	List<AlarmContact> getContactByGroupIds(List<Integer> groupIds);
 
