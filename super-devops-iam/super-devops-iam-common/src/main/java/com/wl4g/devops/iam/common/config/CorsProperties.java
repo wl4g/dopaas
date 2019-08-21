@@ -28,6 +28,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
+import static org.springframework.web.cors.CorsConfiguration.ALL;
+
 /**
  * CORS configuration properties
  * 
@@ -108,11 +110,11 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsOrigins(Set<String> allowsOrigins) {
-			return this.merge(this.allowsOrigins, allowsOrigins);
+			return merge(this.allowsOrigins, allowsOrigins);
 		}
 
 		public CorsRule addAllowsOrigin(String allowsOrigin) {
-			return this.merge(this.allowsOrigins, Arrays.asList(allowsOrigin));
+			return merge(this.allowsOrigins, Arrays.asList(allowsOrigin));
 		}
 
 		public Set<String> getAllowsHeaders() {
@@ -120,11 +122,11 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsHeaders(Set<String> allowsHeaders) {
-			return this.merge(this.allowsHeaders, allowsHeaders);
+			return merge(this.allowsHeaders, allowsHeaders);
 		}
 
 		public CorsRule addAllowsHeader(String allowsHeader) {
-			return this.merge(this.allowsHeaders, Arrays.asList(allowsHeader));
+			return merge(this.allowsHeaders, Arrays.asList(allowsHeader));
 		}
 
 		public Set<String> getAllowsMethods() {
@@ -132,11 +134,11 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsMethods(Set<String> allowsMethods) {
-			return this.merge(this.allowsMethods, allowsMethods);
+			return merge(this.allowsMethods, allowsMethods);
 		}
 
 		public CorsRule addAllowsMethod(String allowsMethod) {
-			return this.merge(this.allowsMethods, Arrays.asList(allowsMethod));
+			return merge(this.allowsMethods, Arrays.asList(allowsMethod));
 		}
 
 		public Set<String> getExposedHeaders() {
@@ -144,11 +146,11 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setExposedHeaders(Set<String> exposedHeaders) {
-			return this.merge(this.exposedHeaders, exposedHeaders);
+			return merge(this.exposedHeaders, exposedHeaders);
 		}
 
 		public CorsRule addExposedHeader(String exposedHeader) {
-			return this.merge(this.exposedHeaders, Arrays.asList(exposedHeader));
+			return merge(this.exposedHeaders, Arrays.asList(exposedHeader));
 		}
 
 		public Long getMaxAge() {
@@ -192,18 +194,18 @@ public class CorsProperties implements Serializable {
 		}
 
 		/**
-		 * To CORS configuration
+		 * To Spring CORS configuration
 		 * 
 		 * @return
 		 */
-		public CorsConfiguration toCorsConfiguration() {
+		public CorsConfiguration toSpringCorsConfiguration() {
 			CorsConfiguration cors = new CorsConfiguration();
-			cors.setAllowCredentials(this.isAllowCredentials());
-			cors.setMaxAge(this.getMaxAge());
-			this.getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
-			this.getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
-			this.getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
-			this.getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+			cors.setAllowCredentials(isAllowCredentials());
+			cors.setMaxAge(getMaxAge());
+			getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
+			getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
+			getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
+			getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
 			return cors;
 		}
 
@@ -218,23 +220,13 @@ public class CorsProperties implements Serializable {
 			Assert.notNull(source, "'source' must not be null");
 			if (!CollectionUtils.isEmpty(dest)) {
 				source.addAll(dest);
-				// dest.forEach(val -> {
-				// try {
-				// HttpMethod.valueOf(val.toUpperCase());
-				// source.add(val);
-				// } catch (Exception e) {
-				// throw new IllegalArgumentException(String.format("Illegal
-				// arguments %s", val));
-				// }
-				// });
 			}
-
 			// Clear other specific item configurations if '*' is present
 			Iterator<String> it = source.iterator();
 			while (it.hasNext()) {
-				if (it.next().contains(CorsConfiguration.ALL)) {
+				if (it.next().contains(ALL)) {
 					source.clear();
-					source.add(CorsConfiguration.ALL);
+					source.add(ALL);
 					break;
 				}
 			}

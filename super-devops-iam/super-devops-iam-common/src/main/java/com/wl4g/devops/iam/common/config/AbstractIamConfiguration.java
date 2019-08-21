@@ -46,12 +46,12 @@ import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
+import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
-import com.wl4g.devops.iam.common.filter.CorsResolveSecurityFilter;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
@@ -307,7 +307,7 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		// Merger transformation configuration
-		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toCorsConfiguration()));
+		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
 
 		// Register CORS filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(new CorsResolveSecurityFilter(source));
