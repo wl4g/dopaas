@@ -268,7 +268,7 @@ public class CorsProperties implements Serializable {
 				return null;
 			}
 			if (getAllowedOrigins().contains(ALL)) {
-				if (getAllowCredentials() != Boolean.TRUE) {
+				if (getAllowCredentials()) {
 					return ALL;
 				} else {
 					return requestOrigin;
