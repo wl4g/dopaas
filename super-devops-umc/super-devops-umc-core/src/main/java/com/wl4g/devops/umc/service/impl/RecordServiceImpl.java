@@ -1,12 +1,10 @@
 package com.wl4g.devops.umc.service.impl;
 
+import com.wl4g.devops.common.bean.umc.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.umc.AlarmConfigDao;
-import com.wl4g.devops.dao.umc.AlarmRecordDao;
-import com.wl4g.devops.dao.umc.AlarmRuleDao;
-import com.wl4g.devops.dao.umc.AlarmTemplateDao;
+import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.umc.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +26,10 @@ public class RecordServiceImpl implements RecordService {
     private AlarmRuleDao alarmRuleDao;
 
     @Autowired
-    private AlarmConfigDao alarmConfigDao;
+    private AlarmTemplateDao alarmTemplateDao;
 
     @Autowired
-    private AlarmTemplateDao alarmTemplateDao;
+    private AlarmNotificationContactDao alarmNotificationContactDao;
 
     @Override
     public AlarmRecord detail(Integer id) {
@@ -41,6 +39,8 @@ public class RecordServiceImpl implements RecordService {
         List<AlarmRule> alarmRules = alarmRuleDao.selectByRecordId(id);
         AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmRecord.getTemplateId());
         Assert.notNull(alarmTemplate,"alarmTemplate is null");
+        List<AlarmNotificationContact> notificationContacts = alarmNotificationContactDao.getByRecordId(id);
+        alarmRecord.setNotificationContacts(notificationContacts);
         alarmRecord.setAlarmRules(alarmRules);
         alarmRecord.setAlarmTemplate(alarmTemplate);
         return alarmRecord;

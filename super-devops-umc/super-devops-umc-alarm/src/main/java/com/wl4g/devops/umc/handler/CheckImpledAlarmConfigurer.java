@@ -45,17 +45,8 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public void saveAlarmRecord(Integer templateId, String collectId, Long gatherTime, List<AlarmRule> rules,Integer notificationId) {
-	}
-
-	@Override
-	public void saveNotification(AlarmNotification alarmNotification) {
-
-	}
-
-	@Override
-	public void updateNotification(AlarmNotification alarmNotification) {
-
+	public AlarmRecord saveAlarmRecord(Integer templateId, String collectId, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
+		return null;
 	}
 
 	@Override

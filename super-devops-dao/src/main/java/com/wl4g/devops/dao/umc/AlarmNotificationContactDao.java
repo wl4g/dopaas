@@ -17,6 +17,6 @@ public interface AlarmNotificationContactDao {
 
     int updateByPrimaryKey(AlarmNotificationContact record);
 
-    List<AlarmNotificationContact> getByNotificationId(Integer id);
+    List<AlarmNotificationContact> getByRecordId(Integer id);
 
 }
