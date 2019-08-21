@@ -140,6 +140,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_S_EXT_ERRREAD = "errread";
 
 	/**
+	 * Login authentication cache name.
+	 */
+	final public static String CACHE_LOGIN_AUTHC = "login_authc_";
+	/**
 	 * IAM server authentication session stored cache name.
 	 */
 	final public static String CACHE_SESSION = "session_";
