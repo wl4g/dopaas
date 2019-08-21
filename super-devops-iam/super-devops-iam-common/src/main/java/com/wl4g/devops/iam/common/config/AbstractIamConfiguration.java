@@ -47,6 +47,7 @@ import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
 import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter;
+import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter.AdvancedCorsProcessor;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
@@ -272,6 +273,11 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	//
 	// C O R S _ F I L T E R _ C O N F I G's.
 	//
+
+	@Bean
+	public AdvancedCorsProcessor advancedCorsProcessor() {
+		return new AdvancedCorsProcessor();
+	}
 
 	@Bean
 	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
