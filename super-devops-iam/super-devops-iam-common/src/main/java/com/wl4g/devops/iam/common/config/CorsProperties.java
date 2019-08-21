@@ -26,6 +26,8 @@ import java.util.Set;
 
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
 import static org.springframework.web.cors.CorsConfiguration.ALL;
@@ -199,7 +201,7 @@ public class CorsProperties implements Serializable {
 		 * @return
 		 */
 		public CorsConfiguration toSpringCorsConfiguration() {
-			CorsConfiguration cors = new CorsConfiguration();
+			CorsConfiguration cors = new AdvancedCorsConfiguration();
 			cors.setAllowCredentials(isAllowCredentials());
 			cors.setMaxAge(getMaxAge());
 			getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
@@ -231,6 +233,40 @@ public class CorsProperties implements Serializable {
 				}
 			}
 			return this;
+		}
+
+	}
+
+	/**
+	 * Custom advanced logic CORS configuration processing.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月21日
+	 * @since
+	 */
+	public static class AdvancedCorsConfiguration extends CorsConfiguration {
+
+		@Override
+		public String checkOrigin(String requestOrigin) {
+			if (!StringUtils.hasText(requestOrigin)) {
+				return null;
+			}
+			if (ObjectUtils.isEmpty(getAllowedOrigins())) {
+				return null;
+			}
+			if (getAllowedOrigins().contains(ALL)) {
+				if (getAllowCredentials() != Boolean.TRUE) {
+					return ALL;
+				} else {
+					return requestOrigin;
+				}
+			}
+			for (String allowedOrigin : getAllowedOrigins()) {
+				if (requestOrigin.equalsIgnoreCase(allowedOrigin)) {
+					return requestOrigin;
+				}
+			}
+			return null;
 		}
 
 	}

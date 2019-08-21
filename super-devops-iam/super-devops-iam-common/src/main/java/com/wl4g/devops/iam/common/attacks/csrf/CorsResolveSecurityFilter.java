@@ -15,11 +15,6 @@
  */
 package com.wl4g.devops.iam.common.attacks.csrf;
 
-import java.io.IOException;
-
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.DefaultCorsProcessor;
 import org.springframework.web.filter.CorsFilter;
@@ -44,17 +39,7 @@ public class CorsResolveSecurityFilter extends CorsFilter {
 	 * @version v1.0 2019年8月21日
 	 * @since
 	 */
-	public static class AdvancedMatchesCorsProcessor extends DefaultCorsProcessor {
-
-		@Override
-		protected boolean handleInternal(ServerHttpRequest request, ServerHttpResponse response, CorsConfiguration config,
-				boolean preFlightRequest) throws IOException {
-			/*
-			 * TODO Custom advanced logic CORS processing ...
-			 */
-			return super.handleInternal(request, response, config, preFlightRequest);
-		}
-
+	public static class AdvancedCorsProcessor extends DefaultCorsProcessor {
 	}
 
 }
