@@ -21,20 +21,19 @@ import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
-
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
-import static com.wl4g.devops.common.utils.lang.Collections2.ensureList;
-import static java.lang.Math.abs;
-import static java.util.Collections.emptyList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
+import static com.wl4g.devops.common.utils.lang.Collections2.ensureList;
+import static java.lang.Math.abs;
+import static java.util.Collections.emptyList;
 
 /**
  * Abstract collection metric valve alerter.
@@ -69,7 +68,9 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 
 	@Override
 	public void alarm(MetricAggregateWrapper wrap) {
-		getWorker().execute(() -> doHandleAlarm(wrap));
+		//TODO 没有进入doHandleAlarm方法，要看下这个getworker是否有bug
+		//getWorker().execute(() -> doHandleAlarm(wrap));
+		doHandleAlarm(wrap);
 	}
 
 	/**
