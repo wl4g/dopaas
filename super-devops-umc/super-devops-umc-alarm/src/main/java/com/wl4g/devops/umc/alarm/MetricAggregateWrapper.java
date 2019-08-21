@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import org.springframework.util.Assert;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.util.Assert;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -41,7 +41,9 @@ public class MetricAggregateWrapper implements Serializable {
 	 * collector: defaultRedisCollector, or IOT device collector (DTU custom
 	 * address) e.g.: 11511888
 	 */
-	private String collectAddr = EMPTY;
+	//private String collectAddr = EMPTY;
+	private String host = EMPTY;
+	private String endpoint = EMPTY;
 
 	/** Collect metric type. */
 	private String classify = EMPTY;
@@ -52,13 +54,20 @@ public class MetricAggregateWrapper implements Serializable {
 	/** Collect metric time-stamp. */
 	private Long timestamp = -1L;
 
-	public String getCollectAddr() {
-		return collectAddr;
+	public String getHost() {
+		return host;
 	}
 
-	public void setCollectAddr(String collectId) {
-		Assert.hasText(collectId, "Collect addr must not be empty.");
-		this.collectAddr = collectId;
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
 	}
 
 	public String getClassify() {
@@ -90,8 +99,13 @@ public class MetricAggregateWrapper implements Serializable {
 
 	@Override
 	public String toString() {
-		return "MetricAggregateWrapper [collectAddr=" + collectAddr + ", classify=" + classify + ", metrics=" + metrics
-				+ ", timestamp=" + timestamp + "]";
+		return "MetricAggregateWrapper{" +
+				"host='" + host + '\'' +
+				", endpoint='" + endpoint + '\'' +
+				", classify='" + classify + '\'' +
+				", metrics=" + metrics +
+				", timestamp=" + timestamp +
+				'}';
 	}
 
 	/**

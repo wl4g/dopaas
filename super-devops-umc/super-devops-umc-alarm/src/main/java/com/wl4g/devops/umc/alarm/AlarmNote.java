@@ -11,7 +11,9 @@ import java.util.Map;
  */
 public class AlarmNote {
 
-    private String collectorAddr;
+    private String host;
+
+    private String endpoint;
 
     private String metricName;
 
@@ -19,12 +21,20 @@ public class AlarmNote {
 
     private List<AlarmRule> matchedRules;
 
-    public String getCollectorAddr() {
-        return collectorAddr;
+    public String getHost() {
+        return host;
     }
 
-    public void setCollectorAddr(String collectorAddr) {
-        this.collectorAddr = collectorAddr;
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 
     public String getMetricName() {

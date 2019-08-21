@@ -15,19 +15,18 @@
  */
 package com.wl4g.devops.umc.receiver;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
-
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric;
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.store.MetricStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract metric collect receiver.
@@ -69,7 +68,8 @@ public abstract class AbstractMetricReceiver implements MetricReceiver {
 	 */
 	protected void alarm(MetricAggregate aggregate) {
 		MetricAggregateWrapper wrap = new MetricAggregateWrapper();
-		wrap.setCollectAddr(aggregate.getInstance());
+		wrap.setHost(aggregate.getHost());
+		wrap.setEndpoint(aggregate.getEndpoint());
 		wrap.setTimestamp(aggregate.getTimestamp());
 		wrap.setClassify(aggregate.getClassify());
 

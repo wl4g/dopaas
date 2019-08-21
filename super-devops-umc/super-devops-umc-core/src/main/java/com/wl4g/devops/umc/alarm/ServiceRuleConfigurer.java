@@ -58,8 +58,8 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 
 
     @Override
-    public List<AlarmConfig> findAlarmConfigByEndpoint(String collectAddr) {// large search from db
-        List<AlarmConfig> alarmConfigs = alarmConfigDao.getAlarmConfigTpls(collectAddr);
+    public List<AlarmConfig> findAlarmConfigByEndpoint(String host,String endpoint) {// large search from db
+        List<AlarmConfig> alarmConfigs = alarmConfigDao.getAlarmConfigTpls(host,endpoint);
         return alarmConfigs;
     }
 
@@ -69,7 +69,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
     }
 
     @Transactional
-    public AlarmRecord saveAlarmRecord(Integer templateId, String collectId, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
+    public AlarmRecord saveAlarmRecord(Integer templateId, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
         AlarmRecord record = new AlarmRecord();
         record.setTemplateId(templateId);
         record.setGatherTime(new Date(gatherTime));
