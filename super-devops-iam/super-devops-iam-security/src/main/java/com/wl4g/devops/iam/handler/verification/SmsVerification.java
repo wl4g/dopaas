@@ -34,6 +34,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.Serializable;
@@ -85,27 +86,27 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
-			throws IOException {
+	public void apply(@NotBlank String authenticationCode, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
 		// Create verify-code.
-		reset(true);
+		reset(authenticationCode, true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
+		sender.doSend(determineParameters(request, getVerifyCode(authenticationCode, true).getText()));
 	}
 
 	@Override
-	public boolean isEnabled(@NotNull List<String> factors) {
+	public boolean isEnabled(@NotBlank String authenticationCode, @NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-		return getVerifyCode(false) != null;
+		return getVerifyCode(authenticationCode, false) != null;
 	}
 
 	@Override
-	public VerifyCode getVerifyCode(boolean assertion) {
-		return super.getVerifyCode(assertion);
+	public VerifyCode getVerifyCode(@NotBlank String authenticationCode, boolean assertion) {
+		return super.getVerifyCode(authenticationCode, assertion);
 	}
 
 	@Override
@@ -190,6 +191,14 @@ public class SmsVerification extends AbstractVerification implements Initializin
 
 	}
 
+	@Override
+	protected void postValidateFinallySet(@NotBlank String authenticationCode) {
+		if (log.isInfoEnabled()) {
+			log.info("SMS authc clean with session...");
+		}
+		// reset(false); // Reset or create
+	}
+
 	/**
 	 * SMS verification template handle sender.
 	 * 
@@ -226,13 +235,6 @@ public class SmsVerification extends AbstractVerification implements Initializin
 			log.info("<<<< End Sent SMS verification <<<<");
 		}
 
-	}
-
-	@Override
-	protected void postValidateFinallySet() {
-		// sms auth need clean session
-		log.info("sms auth need clean session");
-		// reset(false); // Reset or create
 	}
 
 	/**
