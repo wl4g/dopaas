@@ -30,6 +30,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
+import static com.wl4g.devops.common.utils.web.WebUtils2.isSameWithOrigin;
 import static org.springframework.web.cors.CorsConfiguration.ALL;
 
 /**
@@ -112,11 +113,17 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsOrigins(Set<String> allowsOrigins) {
-			return merge(this.allowsOrigins, allowsOrigins);
+			// "allowsOrigin" may have a "*" wildcard character.
+			// e.g. http://*.mydomain.com
+			this.allowsOrigins.addAll(allowsOrigins);
+			return this;
 		}
 
 		public CorsRule addAllowsOrigin(String allowsOrigin) {
-			return merge(this.allowsOrigins, Arrays.asList(allowsOrigin));
+			// "allowsOrigin" may have a "*" wildcard character.
+			// e.g. http://*.mydomain.com
+			this.allowsOrigins.add(allowsOrigin);
+			return this;
 		}
 
 		public Set<String> getAllowsHeaders() {
@@ -124,11 +131,11 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsHeaders(Set<String> allowsHeaders) {
-			return merge(this.allowsHeaders, allowsHeaders);
+			return mergeWithSimpleAll(this.allowsHeaders, allowsHeaders);
 		}
 
 		public CorsRule addAllowsHeader(String allowsHeader) {
-			return merge(this.allowsHeaders, Arrays.asList(allowsHeader));
+			return mergeWithSimpleAll(this.allowsHeaders, Arrays.asList(allowsHeader));
 		}
 
 		public Set<String> getAllowsMethods() {
@@ -136,11 +143,11 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsMethods(Set<String> allowsMethods) {
-			return merge(this.allowsMethods, allowsMethods);
+			return mergeWithSimpleAll(this.allowsMethods, allowsMethods);
 		}
 
 		public CorsRule addAllowsMethod(String allowsMethod) {
-			return merge(this.allowsMethods, Arrays.asList(allowsMethod));
+			return mergeWithSimpleAll(this.allowsMethods, Arrays.asList(allowsMethod));
 		}
 
 		public Set<String> getExposedHeaders() {
@@ -148,11 +155,11 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setExposedHeaders(Set<String> exposedHeaders) {
-			return merge(this.exposedHeaders, exposedHeaders);
+			return mergeWithSimpleAll(this.exposedHeaders, exposedHeaders);
 		}
 
 		public CorsRule addExposedHeader(String exposedHeader) {
-			return merge(this.exposedHeaders, Arrays.asList(exposedHeader));
+			return mergeWithSimpleAll(this.exposedHeaders, Arrays.asList(exposedHeader));
 		}
 
 		public Long getMaxAge() {
@@ -212,13 +219,13 @@ public class CorsProperties implements Serializable {
 		}
 
 		/**
-		 * Merge collections
+		 * Simple merge collections.
 		 * 
 		 * @param source
 		 * @param dest
 		 * @return
 		 */
-		private CorsRule merge(Collection<String> source, Collection<String> dest) {
+		private CorsRule mergeWithSimpleAll(Collection<String> source, Collection<String> dest) {
 			Assert.notNull(source, "'source' must not be null");
 			if (!CollectionUtils.isEmpty(dest)) {
 				source.addAll(dest);
@@ -226,7 +233,8 @@ public class CorsProperties implements Serializable {
 			// Clear other specific item configurations if '*' is present
 			Iterator<String> it = source.iterator();
 			while (it.hasNext()) {
-				if (it.next().contains(ALL)) {
+				String s = it.next();
+				if (s.contains(ALL)) {
 					source.clear();
 					source.add(ALL);
 					break;
@@ -246,6 +254,11 @@ public class CorsProperties implements Serializable {
 	 */
 	public static class AdvancedCorsConfiguration extends CorsConfiguration {
 
+		/**
+		 * <font color=red><b>Note:</b> "allowsOrigin" may have a "*" wildcard
+		 * character.</br>
+		 * e.g. http://*.mydomain.com </font>
+		 */
 		@Override
 		public String checkOrigin(String requestOrigin) {
 			if (!StringUtils.hasText(requestOrigin)) {
@@ -263,6 +276,10 @@ public class CorsProperties implements Serializable {
 			}
 			for (String allowedOrigin : getAllowedOrigins()) {
 				if (requestOrigin.equalsIgnoreCase(allowedOrigin)) {
+					return requestOrigin;
+				}
+				// e.g. allowedOrigin is "http://*.aa.mydomain.com"
+				if (isSameWithOrigin(allowedOrigin, requestOrigin, true)) {
 					return requestOrigin;
 				}
 			}

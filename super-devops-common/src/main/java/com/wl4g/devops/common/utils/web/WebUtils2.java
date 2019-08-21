@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
@@ -39,9 +40,16 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.common.utils.lang.StringUtils2;
+
+import static com.wl4g.devops.common.utils.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.split;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * WEB tools
@@ -54,17 +62,30 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 
 	/**
+	 * URL scheme(HTTPS)
+	 */
+	final public static String URL_SCHEME_HTTPS = "https";
+
+	/**
+	 * URL scheme(HTTP)
+	 */
+	final public static String URL_SCHEME_HTTP = "http";
+
+	/**
 	 * URL separator(/)
 	 */
 	final public static String URL_SEPAR_SLASH = "%2f";
+
 	/**
 	 * URL separator(?)
 	 */
 	final public static String URL_SEPAR_QUEST = "%3f";
+
 	/**
 	 * URL colon separator(:)
 	 */
 	final public static String URL_SEPAR_COLON = "%3a";
+
 	/**
 	 * Protocol separators, such as
 	 * https://my.domain.com=>https%3A%2F%2Fmy.domain.com
@@ -369,8 +390,8 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	}
 
 	/**
-	 * Domain names matching two URIs are equal (including secondary and
-	 * tertiary domain names, etc. Exact matching)
+	 * Domain names equals two URIs are equal (including secondary and tertiary
+	 * domain names, etc. Exact matching)
 	 * 
 	 * e.g.<br/>
 	 * isEqualWithDomain("http://my.domin.com/myapp1","http://my.domin.com/myapp2")=true
@@ -390,12 +411,104 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		if (uria == null || urib == null) {
 			return false;
 		}
-
 		try {
 			return new URI(safeDecodeURL(uria)).getHost().equals(new URI(safeDecodeURL(urib)).getHost());
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * Check whether the domain address belongs to the same origin.
+	 * 
+	 * e.g.<br/>
+	 * isMatchWithOrigin("http://*.aa.domain.com/API/v2",
+	 * "http://bb.aa.domain.com/API/v2", true)==true</br>
+	 * isMatchWithOrigin("http://*.aa.domain.com/API/v2",
+	 * "https://bb.aa.domain.com/API/v2", true)==false</br>
+	 * isMatchWithOrigin("http://*.aa.domain.com/api/v2/",
+	 * "http://bb.aa.domain.com/API/v2", true)==true</br>
+	 * isMatchWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com",
+	 * false)==true</br>
+	 * isMatchWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com",
+	 * true)==false</br>
+	 * 
+	 * @param definitionUrl
+	 * @param matchUrl
+	 * @param checkScheme
+	 * @return
+	 */
+	public static boolean isSameWithOrigin(String definitionUrl, String matchUrl, boolean checkScheme) {
+		if (isBlank(definitionUrl) || isBlank(matchUrl)) {
+			return false;
+		}
+		// URL equaled?
+		if (definitionUrl.equals(matchUrl)) {
+			return true;
+		}
+		// Scheme mismatch?
+		boolean schemeMatched = false;
+		try {
+			schemeMatched = new URI(definitionUrl).getScheme().equalsIgnoreCase(new URI(matchUrl).getScheme());
+			if (checkScheme && !schemeMatched) {
+				return false;
+			}
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException(e);
+		}
+
+		// Domain equaled?
+		String domaina = extractDomainString(definitionUrl);
+		String domainb = extractDomainString(matchUrl);
+		if (equalsIgnoreCase(domaina, domainb)) {
+			return true;
+		}
+
+		// Domain wildcard matched?
+		boolean wildcardDomainMatched = false;
+		String[] partsa = split(domaina, ".");
+		String[] partsb = split(domainb, ".");
+		for (int i = 0; i < partsa.length; i++) {
+			if (partsa[i].equalsIgnoreCase("*")) {
+				if (i < (domaina.length() - 1) && i < (domainb.length() - 1)) {
+					String comparea = join(partsa, ".", i + 1, partsa.length);
+					String compareb = join(partsb, ".", i + 1, partsb.length);
+					if (comparea.equalsIgnoreCase(compareb)) {
+						wildcardDomainMatched = true;
+						break;
+					}
+				}
+			}
+		}
+
+		// Check scheme match.
+		if (checkScheme && wildcardDomainMatched) {
+			return schemeMatched;
+		}
+
+		return wildcardDomainMatched;
+	}
+
+	/**
+	 * Extract domain text from URL.
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String extractDomainString(String url) {
+		if (isEmpty(url)) {
+			return EMPTY;
+		}
+		url = trimToEmpty(safeEncodeURL(url)).toLowerCase(Locale.ENGLISH);
+		String noPrefix = url.substring(url.indexOf(URL_SEPAR_PROTO) + URL_SEPAR_PROTO.length());
+		int slashIndex = noPrefix.indexOf(URL_SEPAR_SLASH);
+		String domain = noPrefix;
+		if (slashIndex > 0) {
+			domain = noPrefix.substring(0, slashIndex);
+		}
+		Assert.isTrue(domain.indexOf("*") == domain.lastIndexOf("*"),
+				String.format("Illegal domain name format: %s, contains multiple wildcards!", domain));
+		return safeDecodeURL(domain);
 	}
 
 	/**
@@ -414,19 +527,18 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static boolean withInDomain(String domain, String url) {
 		Assert.notNull(domain, "'domain' must not be null");
 		Assert.notNull(url, "'requestUrl' must not be null");
-
 		try {
 			String hostname = new URI(safeDecodeURL(cleanURI(url))).getHost();
 			if (!domain.contains("*")) {
-				Assert.isTrue(StringUtils2.isDomain(domain), String.format("Illegal domain[%s] name format", domain));
-				return StringUtils.equalsIgnoreCase(domain, hostname);
+				Assert.isTrue(isDomain(domain), String.format("Illegal domain[%s] name format", domain));
+				return equalsIgnoreCase(domain, hostname);
 			}
 			if (domain.startsWith("*")) {
-				return StringUtils.equalsIgnoreCase(domain.substring(1), hostname.substring(hostname.indexOf(".")));
+				return equalsIgnoreCase(domain.substring(1), hostname.substring(hostname.indexOf(".")));
 			}
 			return false;
 		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -629,6 +741,15 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 			}
 		}
 
+	}
+
+	public static void main(String[] args) {
+		System.out.println(extractDomainString("http://*.aaa.anjiancloud.test/API/v2"));
+		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "http://bb.aa.domain.com/API/v2", true));
+		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "https://bb.aa.domain.com/API/v2", true));
+		System.out.println(isSameWithOrigin("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true));
+		System.out.println(isSameWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com", false));
+		System.out.println(isSameWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com", true));
 	}
 
 }
