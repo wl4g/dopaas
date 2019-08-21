@@ -252,7 +252,8 @@ public class CiCdConsole {
 
 	private void appendInstance(StringBuffer result, AppInstance instance) {
 		result.append("\t").append(formatCell(instance.getId().toString(), 8))
-				.append(formatCell((instance.getHostname() + ":" + instance.getEndpoint()), 23)).append(instance.getRemark()).append("\n");
+				.append(formatCell((instance.getHostname() + ":" + instance.getEndpoint()), 23)).append(instance.getRemark())
+				.append("\n");
 	}
 
 	private String formatCell(String text, int width) {

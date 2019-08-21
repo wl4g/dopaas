@@ -54,29 +54,29 @@ public abstract class AbstractGitTemplate implements GitTemplate, InitializingBe
 	 * @return
 	 */
 	protected <T> T doGitExchange(String url, TypeReference<T> typeRef) {
-		// PRE call.
-		HttpEntity<String> entity = preGitExchangeSet();
+		// Create httpEntity.
+		HttpEntity<String> entity = createHttpEntity();
 
 		// Do request.
 		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 		if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
-			throw new IllegalStateException(String.format("Failed to request gitlab remote, status: %s, body: %s",
+			throw new IllegalStateException(String.format("Failed to request git remote, status: %s, body: %s",
 					resp.getStatusCodeValue(), resp.getBody()));
 		}
 		if (log.isInfoEnabled()) {
-			log.info("Gitlab remote response: {}", resp.getBody());
+			log.info("Git remote response <= {}", resp.getBody());
 		}
 		return parseJSON(resp.getBody(), typeRef);
 	}
 
 	/**
-	 * Pre request GIT exchange set.
+	 * Create httpEntity.
 	 */
-	protected HttpEntity<String> preGitExchangeSet() {
+	protected HttpEntity<String> createHttpEntity() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("PRIVATE-TOKEN", config.getGitToken());
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);
-		return  entity;
+		return entity;
 	}
 
 	@Override
