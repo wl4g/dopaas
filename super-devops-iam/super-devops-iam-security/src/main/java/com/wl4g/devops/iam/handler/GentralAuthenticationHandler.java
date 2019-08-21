@@ -37,10 +37,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_S;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
@@ -213,6 +215,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Find authorized roles and permission information settings.
 		assertion.getPrincipal().getAttributes().put(KEY_ROLE_ATTRIBUTE_NAME, getRoles(principal, fromAppName));
 		assertion.getPrincipal().getAttributes().put(KEY_PERMIT_ATTRIBUTE_NAME, getPermits(principal, fromAppName));
+		assertion.getPrincipal().getAttributes().put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
 		return assertion;
 	}
 

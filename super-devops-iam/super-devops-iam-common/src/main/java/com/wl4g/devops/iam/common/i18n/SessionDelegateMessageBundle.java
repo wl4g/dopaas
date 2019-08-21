@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.i18n;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_USE_LOCALE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 
 import java.util.Locale;
 
@@ -45,7 +45,7 @@ public class SessionDelegateMessageBundle extends AbstractDelegateMessageBundle 
 
 	@Override
 	protected Locale getSessionLocale() {
-		return (Locale) SessionBindings.getBindValue(KEY_USE_LOCALE);
+		return (Locale) SessionBindings.getBindValue(KEY_LANG_ATTRIBUTE_NAME);
 	}
 
 }

@@ -83,7 +83,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		String principal = (String) tk.getPrincipal();
 
 		// Fail limiter factor keys
-		List<String> factors = createFactors(tk.getHost(), principal);
+		List<String> factors = createLimitFactors(tk.getHost(), principal);
 		Assert.notEmpty(factors, "'factors' must not be empty");
 
 		Long cumulatedMaxFailCount = 0L;
@@ -151,7 +151,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		if (null == failPrincipalFactors) {
 			failPrincipalFactors = new ArrayList<>();
 		}
-		failPrincipalFactors.add(createPrincipalFactor(principal));
+		failPrincipalFactors.add(createPrincipalLimitFactor(principal));
 		bind(KEY_FAIL_PRINCIPAL_FACTORS, failPrincipalFactors);
 
 		return matchCountMax;

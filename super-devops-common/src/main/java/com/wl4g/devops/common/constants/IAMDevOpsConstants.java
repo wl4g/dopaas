@@ -60,6 +60,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * successfully by fast-CAS server authentication
 	 */
 	final public static String KEY_PERMIT_ATTRIBUTE_NAME = "authzPrincipalPermisstionAttributeName";
+	/**
+	 * Authentication principal language attribute name.
+	 */
+	final public static String KEY_LANG_ATTRIBUTE_NAME = "authzPrincipalLangAttributeName";
 
 	/** authentication token save session key-name */
 	final public static String KEY_SESSION_TOKEN = "authcTokenAttributeName";
@@ -79,7 +83,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * URI login submission base path for processing all shiro authentication
 	 * filters submitted by login.
 	 */
-	final public static String URI_LOGIN_SUBMISSION_BASE = "/login-submission/";
+	final public static String URI_LOGIN_SUBMISSION_BASE = "/authc/";
 	/**
 	 * IAM server base URI. You need to ensure synchronization with the
 	 * configuration in bootstrap.yml [spring.cloud.devops.iam.filter-chain]
@@ -125,11 +129,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String URI_S_EXT_CHECK = "check";
 	/** URI for apply for CAPTCHA. */
-	final public static String URI_S_EXT_CAPTCHA_APPLY = "captcha-apply";
+	final public static String URI_S_EXT_CAPTCHA_APPLY = "applycaptcha";
 	/** URI for apply for verify-code. */
-	final public static String URI_S_EXT_VERIFY_APPLY = "verifycode-apply";
+	final public static String URI_S_EXT_VERIFY_APPLY = "applyverifycode";
 	/** URI for apply for locale. */
-	final public static String URI_S_EXT_LOCALE_APPLY = "locale-apply";
+	final public static String URI_S_EXT_LOCALE_APPLY = "applylocale";
 	/**
 	 * Get the error information stored in the current session
 	 */
@@ -185,11 +189,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeName";
 	/**
-	 * The locale currently stored in the session.
-	 */
-	final public static String KEY_USE_LOCALE = "usageLocale";
-	/**
-	 * Limiter login failure prefix based on username.
+	 * Limiter login failure prefix based on user-name.
 	 */
 	final public static String KEY_FAIL_LIMITER_USER_PREFIX = "u_";
 	/**

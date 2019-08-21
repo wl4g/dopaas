@@ -28,10 +28,10 @@ public interface IamCredentialsSecurer extends CredentialsSecurer {
 	/**
 	 * Apply asymmetric algorithm secret public key
 	 * 
-	 * @param principal
+	 * @param authCode
 	 * @return
 	 */
-	default String applySecret(String principal) {
+	default String applySecret(String authCode) {
 		throw new UnsupportedOperationException();
 	}
 
