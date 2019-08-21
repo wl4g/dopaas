@@ -66,14 +66,14 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 			// pre command
-			String s4 = provider.exceCommand(instance.getHostname(), instance.getSshUser(), provider.getTaskHistory().getPreCommand(),
-					instance.getSshKey());
+			String s4 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+					provider.getTaskHistory().getPreCommand(), instance.getSshKey());
 			result.append(s4).append("\n");
 
 			// Boolean detailSuccess = new Boolean(false);
 			// Scp to tmp,rename,move to webapps
-			String s = provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
-					instance.getSshKey());
+			String s = provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(),
+					project.getParentAppHome(), instance.getSshKey());
 			result.append(s).append("\n");
 
 			// Change link
@@ -82,8 +82,8 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 			result.append(s1).append("\n");
 
 			// post command (restart command)
-			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(), provider.getTaskHistory().getPreCommand(),
-					instance.getSshKey());
+			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+					provider.getTaskHistory().getPreCommand(), instance.getSshKey());
 			result.append(s2).append("\n");
 
 			// Update status
