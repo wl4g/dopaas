@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.web;
 import com.google.common.base.Charsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -127,7 +126,6 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 				resp.getData().put(SMSVerifyCheckResp.KEY_CHECKER, new SMSVerifyCheckResp(verifyCode.getCreateTime(),
 						config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
 			}
-
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				resp.setCode(RetCode.BIZ_ERR);
@@ -283,7 +281,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 * @param request
 	 * @return
 	 */
-	@GetMapping(URI_S_EXT_ERRREAD)
+	@RequestMapping(URI_S_EXT_ERRREAD)
 	@ResponseBody
 	public RespBase<?> errReads(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<String> resp = RespBase.create();
@@ -291,12 +289,11 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			// Get error message in session
 			String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
 			errmsg = isBlank(errmsg) ? "" : errmsg;
-
 			resp.getData().put(KEY_ERR_SESSION_SAVED, errmsg);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(getRootCauseMessage(e));
-			log.error("Get error on session failed", e);
+			log.error("Failed to get errRead.", e);
 		}
 		return resp;
 	}
