@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.client.realm;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -40,6 +39,9 @@ import com.wl4g.devops.iam.client.validation.IamValidator;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRIBUTE_NAME;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.Sessions.getSession;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATTRIBUTE_NAME;
 
 import java.util.Date;
@@ -95,10 +97,10 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 			granticket = (String) fcToken.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketAssertion assertion = this.doRequestRemoteTicketValidation(granticket);
+			TicketAssertion assertion = doRequestRemoteTicketValidation(granticket);
 
 			// Assert ticket validate.
-			this.assertTicketValidation(assertion);
+			assertTicketValidation(assertion);
 
 			// Update settings grant ticket
 			String newGrantTicket = String.valueOf(assertion.getAttributes().get(config.getParam().getGrantTicket()));
@@ -113,7 +115,8 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 			Assert.state(maxIdleTimeMs > 0,
 					String.format("Remote authenticated response session expired time:[%s] invalid, maxIdleTimeMs:[%s]",
 							validUntilDate, maxIdleTimeMs));
-			SecurityUtils.getSubject().getSession().setTimeout(maxIdleTimeMs);
+			getSession().setTimeout(maxIdleTimeMs);
+			bind(KEY_LANG_ATTRIBUTE_NAME, assertion.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
 
 			// Get principal, user id and attributes
 			IamPrincipal principal = assertion.getPrincipal();

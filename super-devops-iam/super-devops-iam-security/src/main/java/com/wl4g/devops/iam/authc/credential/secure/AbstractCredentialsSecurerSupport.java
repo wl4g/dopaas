@@ -147,25 +147,25 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	@Override
-	public String applySecret(@NotNull String principal) {
-		Assert.notNull(principal, "'principal' must not be null");
+	public String applySecret(@NotNull String authCode) {
+		Assert.notNull(authCode, "'authCode' must not be null");
 
 		// Load secret keySpecPairs
 		List<KeySpecPair> keyPairs = loadSecretKeySpecPairs();
 
 		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
-		Integer index = (Integer) pubIdxCache.get(new EnhancedKey(principal, Integer.class));
+		Integer index = (Integer) pubIdxCache.get(new EnhancedKey(authCode, Integer.class));
 		if (index == null) {
 			index = (int) (Math.random() * keyPairs.size());
 		}
 		KeySpecPair keyPair = keyPairs.get(index);
 
 		// Save the applied keyPair to the cache
-		pubIdxCache.put(new EnhancedKey(principal, config.getApplyPubkeyExpireMs()), index);
+		pubIdxCache.put(new EnhancedKey(authCode, config.getApplyPubkeyExpireMs()), index);
 
 		if (log.isInfoEnabled()) {
-			log.info("Apply secret key is principal:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", principal,
-					index, keyPair.getPublicHexString(), keyPair.getPrivateHexString());
+			log.info("Apply secret key is principal:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", authCode, index,
+					keyPair.getPublicHexString(), keyPair.getPrivateHexString());
 		}
 		return keyPair.getPublicHexString();
 	}

@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -34,6 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -178,10 +179,10 @@ public abstract class AbstractVerification implements Verification {
 
 		if (verifyCode instanceof VerifyCode) {
 			VerifyCode vc = (VerifyCode) verifyCode;
-			return StringUtils.equalsIgnoreCase(vc.getText(), (CharSequence) verifyCodeReq);
+			return equalsIgnoreCase(vc.getText(), (CharSequence) verifyCodeReq);
 		}
 
-		return StringUtils.equalsIgnoreCase(String.valueOf(verifyCode), verifyCodeReq);
+		return equalsIgnoreCase(String.valueOf(verifyCode), verifyCodeReq);
 	}
 
 	/**
@@ -190,7 +191,7 @@ public abstract class AbstractVerification implements Verification {
 	 * @return
 	 */
 	protected String generateCode() {
-		return RandomStringUtils.randomAlphabetic(5);
+		return randomAlphabetic(5);
 	}
 
 	/**

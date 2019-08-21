@@ -39,16 +39,16 @@ public abstract class Securitys {
 	 * @param principal
 	 * @return
 	 */
-	public static List<String> createFactors(String remoteHost, String principal) {
+	public static List<String> createLimitFactors(String remoteHost, String principal) {
 		return new ArrayList<String>(2) {
 			private static final long serialVersionUID = -5976569540781454836L;
 			{
-				String principalFactor = createPrincipalFactor(principal);
+				String principalFactor = createPrincipalLimitFactor(principal);
 				if (isNotBlank(principalFactor)) {
 					add(principalFactor);
 				}
 
-				String hostFactor = createHostFactor(remoteHost);
+				String hostFactor = createAddrFactor(remoteHost);
 				if (isNotBlank(hostFactor)) {
 					add(hostFactor);
 					// for test::
@@ -65,7 +65,7 @@ public abstract class Securitys {
 	 * @param remoteHost
 	 * @return
 	 */
-	public static String createHostFactor(String remoteHost) {
+	public static String createAddrFactor(String remoteHost) {
 		return isNotBlank(remoteHost) ? (KEY_FAIL_LIMITER_RIP_PREFIX + encodeHexString(remoteHost.getBytes(UTF_8))) : EMPTY;
 	}
 
@@ -75,7 +75,7 @@ public abstract class Securitys {
 	 * @param principal
 	 * @return
 	 */
-	public static String createPrincipalFactor(String principal) {
+	public static String createPrincipalLimitFactor(String principal) {
 		return isNotBlank(principal) ? (KEY_FAIL_LIMITER_USER_PREFIX + principal) : EMPTY;
 	}
 
