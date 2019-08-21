@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.filter;
+package com.wl4g.devops.iam.common.attacks.csrf;
 
+import java.io.IOException;
+
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.DefaultCorsProcessor;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * Cors(csrf attack) resolve filter
+ * CORS(CSRF attack) resolve filter
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月25日
@@ -29,6 +35,26 @@ public class CorsResolveSecurityFilter extends CorsFilter {
 
 	public CorsResolveSecurityFilter(CorsConfigurationSource configSource) {
 		super(configSource);
+	}
+
+	/**
+	 * Advanced matches CORS processor.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月21日
+	 * @since
+	 */
+	public static class AdvancedMatchesCorsProcessor extends DefaultCorsProcessor {
+
+		@Override
+		protected boolean handleInternal(ServerHttpRequest request, ServerHttpResponse response, CorsConfiguration config,
+				boolean preFlightRequest) throws IOException {
+			/*
+			 * TODO Custom advanced logic CORS processing ...
+			 */
+			return super.handleInternal(request, response, config, preFlightRequest);
+		}
+
 	}
 
 }
