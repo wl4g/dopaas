@@ -31,7 +31,7 @@ import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.iam.annotation.LoginController;
+import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
@@ -60,7 +60,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  * @version v1.0 2019年1月22日
  * @since
  */
-@LoginController
+@LoginAuthController
 public class LoginAuthenticatorController extends AbstractAuthenticatorController {
 
 	/**
