@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.config;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.iam.annotation.LoginController;
+import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.web.LoginAuthenticatorController;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +52,7 @@ public class LoginConfiguration extends AbstractOptionalControllerConfiguration 
 
 	@Override
 	protected Class<? extends Annotation> annotationClass() {
-		return LoginController.class;
+		return LoginAuthController.class;
 	}
 
 }
