@@ -17,7 +17,6 @@ package com.wl4g.devops.iam.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -38,8 +37,6 @@ import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber;
-import com.wl4g.devops.iam.web.model.CaptchaModel;
-import com.wl4g.devops.iam.web.model.SMSVerifyCheckModel;
 
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
@@ -67,14 +64,14 @@ import static org.apache.commons.lang3.StringUtils.*;
 public class LoginAuthenticatorController extends AbstractAuthenticatorController {
 
 	/**
-	 * Login CAPTCHA token for session.
-	 */
-	final public static String KEY_SESSION_CAPTCHA_TOKEN = LoginAuthenticatorController.class.getSimpleName() + ".CAPTCHA_TOKEN";
-
-	/**
 	 * General PreCheck response key-name.
 	 */
 	final public static String KEY_GENERAL_CHECK_NAME = "checkGeneral";
+
+	/**
+	 * Login CAPTCHA token for session.
+	 */
+	final public static String KEY_GENERAL_CAPTCHA_TOKEN = "captchaToken";
 
 	/**
 	 * Encrypted public key requested before login returns key name
@@ -140,13 +137,13 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// Generate CAPTCHA token.
 			String captchaToken = EMPTY;
 			if (graphVerification.isEnabled(factors)) { // Enabled?
-				bind(KEY_SESSION_CAPTCHA_TOKEN, (captchaToken = randomAlphanumeric(16)));
+				bind(KEY_GENERAL_CAPTCHA_TOKEN, (captchaToken = randomAlphanumeric(16)));
 			}
 			String sid = String.valueOf(getSessionId());
 
 			// Apply credentials encryption secret key.
 			String secret = securer.applySecret(sid);
-			resp.build(KEY_GENERAL_CHECK_NAME).andPut(KEY_GENERAL_SECRET, secret).andPut(KEY_SESSION_CAPTCHA_TOKEN, captchaToken);
+			resp.build(KEY_GENERAL_CHECK_NAME).andPut(KEY_GENERAL_SECRET, secret).andPut(KEY_GENERAL_CAPTCHA_TOKEN, captchaToken);
 
 			/*
 			 * When the SMS verification code is not empty, this creation
@@ -213,17 +210,16 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * @param response
 	 */
 	@RequestMapping(value = URI_S_LOGIN_APPLY_CAPTCHA, method = { GET, POST })
-	public void applyCaptcha(@Validated CaptchaModel param, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public void applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			if (!coprocessor.preApplyCapcha(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
 			// Check CAPTCHA token.
-			String capToken = getBindValue(KEY_SESSION_CAPTCHA_TOKEN, true);
+			String reqCapToken = getCleanParam(request, KEY_GENERAL_CAPTCHA_TOKEN);
+			String capToken = getBindValue(KEY_GENERAL_CAPTCHA_TOKEN, true);
 			Assert.state(isNotBlank(capToken), "Invalid captcha token or expired.");
-			Assert.state(trimToEmpty(capToken).equals(param.getCaptchaToken()),
-					String.format("Illegal captcha token for '%s'", param.getCaptchaToken()));
+			Assert.state(trimToEmpty(capToken).equals(reqCapToken), String.format("Illegal captcha token for '%s'", reqCapToken));
 
 			// Login account number or mobile number(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
@@ -276,8 +272,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.getData().put(KEY_SMS_CHECK_NAME, new SMSVerifyCheckModel(verifyCode.getCreateTime(),
-					config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
+			resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_SMS_CREATE, verifyCode.getCreateTime())
+					.andPut(KEY_SMS_DELAY, config.getMatcher().getFailFastSmsDelay())
+					.andPut(KEY_SMS_REMAIN, getRemainingSmsDelay(verifyCode));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
