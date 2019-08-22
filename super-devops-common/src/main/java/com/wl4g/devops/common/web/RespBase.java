@@ -16,12 +16,14 @@
 package com.wl4g.devops.common.web;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -35,7 +37,7 @@ import com.wl4g.devops.common.utils.lang.StringUtils2;
  * @date 2018年3月9日
  * @since
  */
-public class RespBase<T> implements Serializable {
+public class RespBase<T extends Object> implements Serializable {
 	final private static long serialVersionUID = 2647155468624590650L;
 
 	/**
@@ -46,33 +48,7 @@ public class RespBase<T> implements Serializable {
 	private RetCode code;
 	private String status; // Response status
 	private String message;
-	private Map<String, T> data = new LinkedHashMap<String, T>(4) {
-		private static final long serialVersionUID = -6962465829208605525L;
-
-		@Override
-		public T put(String key, T value) {
-			if (isNotBlank(key) && value != null) {
-				return super.put(key, value);
-			}
-			return null;
-		}
-
-		@Override
-		public T putIfAbsent(String key, T value) {
-			if (isNotBlank(key) && value != null) {
-				return super.putIfAbsent(key, value);
-			}
-			return null;
-		}
-
-		@Override
-		public void putAll(Map<? extends String, ? extends T> m) {
-			if (!CollectionUtils.isEmpty(m)) {
-				super.putAll(m);
-			}
-		}
-
-	};
+	private DataMap<T> data = new DataMap<>();
 
 	public RespBase() {
 		this(RetCode.OK);
@@ -82,19 +58,19 @@ public class RespBase<T> implements Serializable {
 		this(retCode, null);
 	}
 
-	public RespBase(Map<String, T> data) {
+	public RespBase(DataMap<T> data) {
 		this(null, data);
 	}
 
-	public RespBase(RetCode retCode, Map<String, T> data) {
+	public RespBase(RetCode retCode, DataMap<T> data) {
 		this(retCode, null, data);
 	}
 
-	public RespBase(RetCode retCode, String message, Map<String, T> data) {
+	public RespBase(RetCode retCode, String message, DataMap<T> data) {
 		this(retCode, null, message, data);
 	}
 
-	public RespBase(RetCode retCode, String status, String message, Map<String, T> data) {
+	public RespBase(RetCode retCode, String status, String message, DataMap<T> data) {
 		setCode(retCode);
 		setStatus(StringUtils2.isEmpty(status) ? DEFAULT_STATUS : status);
 		setMessage(message);
@@ -130,17 +106,27 @@ public class RespBase<T> implements Serializable {
 		return this;
 	}
 
-	public Map<String, T> getData() {
+	public DataMap<T> getData() {
 		return data;
 	}
 
 	public RespBase<T> setData(Map<String, T> data) {
-		data = data != null ? data : this.data;
-		if (this.data != null) {
+		if (!isEmpty(data)) {
 			this.data.putAll(data);
 		}
-		this.data = data;
 		return this;
+	}
+
+	public RespBase<T> setData(DataMap<T> data) {
+		return setData((Map<String, T>) data);
+	}
+
+	@SuppressWarnings("unchecked")
+	public DataMap<Object> build(String name) {
+		Assert.hasText(name, "Build datamap name must not be empty");
+		DataMap<Object> node = new DataMap<>();
+		getData().put(name, (T) node);
+		return node;
 	}
 
 	@Override
@@ -159,6 +145,40 @@ public class RespBase<T> implements Serializable {
 
 	public static boolean eq(RespBase<?> resp, RetCode retCode) {
 		return resp != null && retCode.getCode() == resp.getCode();
+	}
+
+	/**
+	 * Response data model
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月22日
+	 * @since
+	 * @param <V>
+	 */
+	public static class DataMap<V> extends LinkedHashMap<String, V> {
+		private static final long serialVersionUID = 741193108777950437L;
+
+		public DataMap<V> andPut(String key, V value) {
+			if (isNotBlank(key) && value != null) {
+				this.put(key, value);
+			}
+			return this;
+		}
+
+		public DataMap<V> andPutIfAbsent(String key, V value) {
+			if (isNotBlank(key) && value != null) {
+				this.putIfAbsent(key, value);
+			}
+			return this;
+		}
+
+		public DataMap<V> andPutAll(Map<? extends String, ? extends V> m) {
+			if (!CollectionUtils.isEmpty(m)) {
+				this.putAll(m);
+			}
+			return this;
+		}
+
 	}
 
 	/**
