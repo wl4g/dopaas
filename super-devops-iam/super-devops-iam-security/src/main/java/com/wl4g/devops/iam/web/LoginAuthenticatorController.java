@@ -37,9 +37,7 @@ import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber;
-import com.wl4g.devops.iam.web.model.SmsVerifyCheckModel;
 
-import static com.wl4g.devops.iam.web.model.SmsVerifyCheckModel.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
@@ -84,6 +82,17 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * Authentication code key name
 	 */
 	// final public static String KEY_GENERAL_AUTH_CODE = "authentication_code";
+
+	/**
+	 * SMS PreCheck response key-name.
+	 */
+	final public static String KEY_SMS_CHECK_NAME = "checkSms";
+
+	/**
+	 * The remaining milliseconds to wait to re-apply for SMS dynamic password
+	 * key-name.
+	 */
+	final public static String KEY_REMAIN_DEPLAY = "remainDelayMs";
 
 	/**
 	 * Graphic verification handler
@@ -140,8 +149,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
 			if (verifyCode != null) {
-				resp.getData().put(KEY_SMS_CHECK_NAME, new SmsVerifyCheckModel(verifyCode.getCreateTime(),
-						config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
+				resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
 			}
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -258,8 +266,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.getData().put(KEY_SMS_CHECK_NAME, new SmsVerifyCheckModel(verifyCode.getCreateTime(),
-					config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
+			resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {

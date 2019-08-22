@@ -23,6 +23,8 @@ import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_I
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
 import java.io.Serializable;
 import java.util.Collection;
@@ -50,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.utils.lang.StringUtils2;
-import com.wl4g.devops.common.utils.web.UserAgentUtils;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -355,12 +356,12 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param sessionId
 	 */
 	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, String sessionId) {
-		boolean isBrowser = UserAgentUtils.isBrowser(toHttp(request));
-		/*
-		 * When a browser request or display specifies that cookies need to be
-		 * saved.
-		 */
-		if (isBrowser || isTrue(request, config.getParam().getSidSaveCookie())) {
+		// Response JSON type(Non WEB).
+		boolean isJsonType = isJSONResponse(getCleanParam(request, config.getParam().getResponseType()), toHttp(request));
+		// When a browser request or display specifies that cookies need to b
+		// saved.
+		boolean sidSaved = isTrue(request, config.getParam().getSidSaveCookie());
+		if (isBrowser(toHttp(request)) || sidSaved || !isJsonType) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
 			cookie.setValue(sessionId);
 			// Call post properties.
