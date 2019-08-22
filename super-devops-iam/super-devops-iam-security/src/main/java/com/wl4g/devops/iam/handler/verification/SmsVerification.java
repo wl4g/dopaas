@@ -34,7 +34,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.Serializable;
@@ -86,27 +85,27 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	public void apply(@NotBlank String authenticationCode, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
+	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
+			throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
 		// Create verify-code.
-		reset(authenticationCode, true);
+		reset(true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getVerifyCode(authenticationCode, true).getText()));
+		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
 	}
 
 	@Override
-	public boolean isEnabled(@NotBlank String authenticationCode, @NotNull List<String> factors) {
+	public boolean isEnabled(@NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-		return getVerifyCode(authenticationCode, false) != null;
+		return getVerifyCode(false) != null;
 	}
 
 	@Override
-	public VerifyCode getVerifyCode(@NotBlank String authenticationCode, boolean assertion) {
-		return super.getVerifyCode(authenticationCode, assertion);
+	public VerifyCode getVerifyCode(boolean assertion) {
+		return super.getVerifyCode(assertion);
 	}
 
 	@Override
@@ -192,7 +191,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	protected void postValidateFinallySet(@NotBlank String authenticationCode) {
+	protected void postValidateFinallySet() {
 		if (log.isInfoEnabled()) {
 			log.info("SMS authc clean with session...");
 		}
@@ -266,6 +265,10 @@ public class SmsVerification extends AbstractVerification implements Initializin
 
 		public long getNumber() {
 			return number;
+		}
+
+		public String asNumberText() {
+			return String.valueOf(getNumber());
 		}
 
 		/**

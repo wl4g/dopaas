@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
@@ -38,8 +37,6 @@ public abstract interface Verification {
 	/**
 	 * Check Front-end verification code
 	 * 
-	 * @param authenticationCode
-	 *            authentication code.
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -50,16 +47,13 @@ public abstract interface Verification {
 	 *            cumulative amount)
 	 * @throws VerificationException
 	 */
-	default void validate(@NotBlank String authenticationCode, @NotNull List<String> factors, String verifyCodeReq,
-			boolean required) throws VerificationException {
+	default void validate(@NotNull List<String> factors, String verifyCodeReq, boolean required) throws VerificationException {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * New apply and output a verification code
 	 * 
-	 * @param authenticationCode
-	 *            authentication code
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -70,23 +64,21 @@ public abstract interface Verification {
 	 *            HttpServletResponse
 	 * @throws IOException
 	 */
-	default void apply(@NotBlank String authenticationCode, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
+	default void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
+			throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Check whether validation code is turned on
 	 * 
-	 * @param authenticationCode
-	 *            authentication code
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
 	 * @return Return true if the current login account name or principal needs
 	 *         to login with authentication number
 	 */
-	default boolean isEnabled(@NotBlank String authenticationCode, @NotNull List<String> factors) {
+	default boolean isEnabled(@NotNull List<String> factors) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -16,17 +16,15 @@
 package com.wl4g.devops.iam.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,22 +32,31 @@ import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.iam.annotation.ExtraController;
+import com.wl4g.devops.iam.annotation.LoginController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
+import com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber;
+import com.wl4g.devops.iam.web.model.CaptchaModel;
+import com.wl4g.devops.iam.web.model.GeneralCheckModel;
+import com.wl4g.devops.iam.web.model.SMSVerifyCheckModel;
+
+import static com.wl4g.devops.iam.web.model.GeneralCheckModel.*;
+import static com.wl4g.devops.iam.web.model.SMSVerifyCheckModel.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCauseMessage;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
+import static com.wl4g.devops.iam.handler.verification.SmsVerification.*;
 import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -59,8 +66,13 @@ import static org.apache.commons.lang3.StringUtils.*;
  * @version v1.0 2019年1月22日
  * @since
  */
-@ExtraController
-public class DiabloExtraController extends AbstractAuthenticatorController {
+@LoginController
+public class LoginAuthenticatorController extends AbstractAuthenticatorController {
+
+	/**
+	 * Login CAPTCHA token for session.
+	 */
+	final public static String KEY_SESSION_CAPTCHA_TOKEN = LoginAuthenticatorController.class.getSimpleName() + ".CAPTCHA_TOKEN";
 
 	/**
 	 * Graphic verification handler
@@ -86,35 +98,25 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 *
 	 * @param request
 	 */
-	@RequestMapping(value = URI_S_EXT_CHECK, method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> check(HttpServletRequest request) {
 		RespBase<Object> resp = RespBase.create();
 		try {
-			// Login account number or mobile number(Optional)
+			// Login account(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
-
 			// Lock factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
-			// Check generate CAPTCHA token.
+			// Generate CAPTCHA token.
 			String captchaToken = EMPTY;
-			if (graphVerification.isEnabled(factors)) {
-				captchaToken = randomAlphabetic(24);
+			if (graphVerification.isEnabled(factors)) { // Enabled?
+				bind(KEY_SESSION_CAPTCHA_TOKEN, (captchaToken = randomAlphanumeric(16)));
 			}
 
-			/*
-			 * When the login page is loaded, the parameter 'principal' will be
-			 * empty, no need to generate a key. When submitting the login
-			 * request parameter 'principal' will not be empty, you need to
-			 * generate 'secret'.
-			 */
-			String secret = EMPTY;
-			if (isNotBlank(principal)) {
-				// Apply credentials encryption secret key
-				secret = securer.applySecret(principal);
-			}
-			resp.getData().put(GeneralCheckModel.KEY_CHECKER, new GeneralCheckModel(captchaToken, secret));
+			// Apply credentials encryption secret key.
+			String secret = securer.applySecret(String.valueOf(getSessionId()));
+			resp.getData().put(KEY_GENERAL_CHECKER, new GeneralCheckModel(captchaToken, secret));
 
 			/*
 			 * When the SMS verification code is not empty, this creation
@@ -124,7 +126,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
 			if (verifyCode != null) {
-				resp.getData().put(SMSVerifyCheckModel.KEY_CHECKER, new SMSVerifyCheckModel(verifyCode.getCreateTime(),
+				resp.getData().put(KEY_SMS_CHECKER, new SMSVerifyCheckModel(verifyCode.getCreateTime(),
 						config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
 			}
 		} catch (Exception e) {
@@ -133,7 +135,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(getRootCauses(e).getMessage());
+			resp.setMessage(getRootCauseMessage(e));
 			log.error("Failure to initial check", e);
 		}
 		return resp;
@@ -146,19 +148,18 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 *
 	 * @param response
 	 */
-	@GetMapping(value = URI_S_EXT_LOCALE_APPLY)
+	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request) {
 		RespBase<Locale> resp = RespBase.create();
 		try {
 			String lang = getCleanParam(request, config.getParam().getI18nLang());
 
-			Locale locale = request.getLocale(); // default lang
+			Locale locale = request.getLocale(); // by default
 			if (isNotBlank(lang)) {
-				locale = new Locale(lang); // determine lang
+				locale = new Locale(lang);
 			}
 			bind(KEY_LANG_ATTRIBUTE_NAME, locale);
-
 			resp.getData().put(KEY_LANG_ATTRIBUTE_NAME, locale);
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -175,17 +176,28 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	/**
 	 * Apply CAPTCHA graph stream.
 	 *
+	 * @param param
+	 *            CAPTCHA parameter, required
 	 * @param request
 	 * @param response
 	 */
-	@GetMapping(value = URI_S_EXT_CAPTCHA_APPLY)
-	public void applyCaptcha(CaptchaModel param, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping(value = URI_S_LOGIN_APPLY_CAPTCHA, method = { GET, POST })
+	public void applyCaptcha(@Validated CaptchaModel param, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
 			if (!coprocessor.preApplyCapcha(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
+			// Check CAPTCHA token.
+			String capToken = getBindValue(KEY_SESSION_CAPTCHA_TOKEN, true);
+			Assert.state(isNotBlank(capToken), "Invalid captcha token or expired.");
+			Assert.state(trimToEmpty(capToken).equals(param.getCaptchaToken()),
+					String.format("Illegal captcha token for '%s'", param.getCaptchaToken()));
+
+			// Login account number or mobile number(Optional)
+			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 			// Lock factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
 			if (graphVerification.isEnabled(factors)) { // Enabled?
@@ -205,26 +217,22 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 
 	/**
 	 * Apply verification code
-	 *
+	 * 
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = URI_S_EXT_VERIFY_APPLY, method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = URI_S_LOGIN_SMS_APPLY, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> applyVerify(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create();
 		try {
 			if (!coprocessor.preApplyVerify(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
-
 			// Login account number or mobile number(Required)
-			String mobileName = config.getParam().getPrincipalName();
-			String mobileNumber = getCleanParam(request, mobileName);
-			parse(mobileNumber);
-
+			MobileNumber mn = parse(getCleanParam(request, PARAM_MOBILENUM));
 			// Lock factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mobileNumber);
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
 
 			// Request CAPTCHA
 			String captcha = getCleanParam(request, config.getParam().getCaptchaName());
@@ -234,12 +242,10 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 			// Apply SMS verify-code
 			smsVerification.apply(factors, request, response);
 
-			/*
-			 * The creation time of the currently created SMS authentication
-			 * code (must exist).
-			 */
+			// The creation time of the currently created SMS authentication
+			// code (must exist).
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.getData().put(SMSVerifyCheckModel.KEY_CHECKER, new SMSVerifyCheckModel(verifyCode.getCreateTime(),
+			resp.getData().put(KEY_SMS_CHECKER, new SMSVerifyCheckModel(verifyCode.getCreateTime(),
 					config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
 
 		} catch (Exception e) {
@@ -260,7 +266,7 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(URI_S_EXT_ERRREAD)
+	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> errReads(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<String> resp = RespBase.create();
@@ -287,143 +293,6 @@ public class DiabloExtraController extends AbstractAuthenticatorController {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
 		return Math.max(now - verifyCode.getCreateTime() - config.getMatcher().getFailFastSmsDelay(), 0);
-	}
-
-	/**
-	 * CAPTCHA model.
-	 * 
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月20日
-	 * @since
-	 */
-	public static class CaptchaModel implements Serializable {
-		private static final long serialVersionUID = -1335591707696587073L;
-
-		/**
-		 * Control whether the validation code key name is enabled
-		 */
-		@NotBlank(message = "'captchaToken' is required")
-		private String captchaToken;
-
-		public CaptchaModel() {
-			super();
-		}
-
-		public CaptchaModel(String captchaToken) {
-			super();
-			this.captchaToken = captchaToken;
-		}
-
-		public String getCaptchaToken() {
-			return captchaToken;
-		}
-
-		public void setCaptchaToken(String captchaToken) {
-			this.captchaToken = captchaToken;
-		}
-
-	}
-
-	/**
-	 * General PreCheck response.
-	 * 
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月20日
-	 * @since
-	 */
-	public static class GeneralCheckModel extends CaptchaModel {
-		private static final long serialVersionUID = -5279195217830694101L;
-
-		final public static String KEY_CHECKER = "checkGeneral";
-
-		/**
-		 * Encrypted public key requested before login returns key name
-		 */
-		private String secret;
-
-		public GeneralCheckModel() {
-			super();
-		}
-
-		public GeneralCheckModel(String captchaToken, String secret) {
-			super(captchaToken);
-			this.secret = secret;
-		}
-
-		public String getSecret() {
-			return secret;
-		}
-
-		public void setSecret(String secret) {
-			this.secret = secret;
-		}
-
-	}
-
-	/**
-	 * SMS PreCheck response.
-	 * 
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月20日
-	 * @since
-	 */
-	public static class SMSVerifyCheckModel implements Serializable {
-		private static final long serialVersionUID = -5279195217830694103L;
-
-		final public static String KEY_CHECKER = "checkSms";
-
-		/**
-		 * Apply SMS verification code to create a timestamp
-		 */
-		private long createTime;
-
-		/**
-		 * The number of milliseconds to wait after applying for an SMS dynamic
-		 * password (you can reapply).
-		 */
-		private long delayMs;
-
-		/**
-		 * The remaining milliseconds to wait to re-apply for SMS dynamic
-		 * password
-		 */
-		private long remainDelayMs;
-
-		public SMSVerifyCheckModel() {
-			super();
-		}
-
-		public SMSVerifyCheckModel(long createTime, long delayMs, long remainDelayMs) {
-			super();
-			this.createTime = createTime;
-			this.delayMs = delayMs;
-			this.remainDelayMs = remainDelayMs;
-		}
-
-		public long getCreateTime() {
-			return createTime;
-		}
-
-		public void setCreateTime(long createTime) {
-			this.createTime = createTime;
-		}
-
-		public long getDelayMs() {
-			return delayMs;
-		}
-
-		public void setDelayMs(long delayMs) {
-			this.delayMs = delayMs;
-		}
-
-		public long getRemainDelayMs() {
-			return remainDelayMs;
-		}
-
-		public void setRemainDelayMs(long remainDelayMs) {
-			this.remainDelayMs = remainDelayMs;
-		}
-
 	}
 
 }

@@ -16,14 +16,14 @@
 package com.wl4g.devops.iam.config;
 
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.iam.annotation.ExtraController;
-import com.wl4g.devops.iam.web.DiabloExtraController;
+import com.wl4g.devops.iam.annotation.LoginController;
+import com.wl4g.devops.iam.web.LoginAuthenticatorController;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
 import java.lang.annotation.Annotation;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 
 /**
  * IAM extra configuration
@@ -33,16 +33,16 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_BASE
  * @since
  */
 @AutoConfigureAfter({ IamConfiguration.class })
-public class ExtraConfiguration extends AbstractOptionalControllerConfiguration {
+public class LoginConfiguration extends AbstractOptionalControllerConfiguration {
 
 	@Bean
-	public DiabloExtraController diabloExtraController() {
-		return new DiabloExtraController();
+	public LoginAuthenticatorController loginAuthenticatorController() {
+		return new LoginAuthenticatorController();
 	}
 
 	@Override
 	protected String getMappingPrefix() {
-		return URI_S_EXT_BASE;
+		return URI_S_LOGIN_BASE;
 	}
 
 	@Bean
@@ -52,7 +52,7 @@ public class ExtraConfiguration extends AbstractOptionalControllerConfiguration 
 
 	@Override
 	protected Class<? extends Annotation> annotationClass() {
-		return ExtraController.class;
+		return LoginController.class;
 	}
 
 }

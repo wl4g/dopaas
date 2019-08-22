@@ -122,27 +122,23 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
 	/** Based URI with extra needed verification code etc. */
-	final public static String URI_S_EXT_BASE = "/ext";
+	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
 	 */
-	final public static String URI_S_EXT_CHECK = "check";
+	final public static String URI_S_LOGIN_CHECK = "check";
 	/** URI for apply for CAPTCHA. */
-	final public static String URI_S_EXT_CAPTCHA_APPLY = "applycaptcha";
+	final public static String URI_S_LOGIN_APPLY_CAPTCHA = "applycaptcha";
 	/** URI for apply for verify-code. */
-	final public static String URI_S_EXT_VERIFY_APPLY = "applyverifycode";
+	final public static String URI_S_LOGIN_SMS_APPLY = "applysmsverify";
 	/** URI for apply for locale. */
-	final public static String URI_S_EXT_LOCALE_APPLY = "applylocale";
+	final public static String URI_S_LOGIN_APPLY_LOCALE = "applylocale";
 	/**
 	 * Get the error information stored in the current session
 	 */
-	final public static String URI_S_EXT_ERRREAD = "errread";
+	final public static String URI_S_LOGIN_ERRREAD = "errread";
 
-	/**
-	 * Login authentication cache name.
-	 */
-	final public static String CACHE_LOGIN_AUTHC = "login_authc_";
 	/**
 	 * IAM server authentication session stored cache name.
 	 */
@@ -195,11 +191,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Limiter login failure prefix based on user-name.
 	 */
-	final public static String KEY_FAIL_LIMITER_USER_PREFIX = "u_";
+	final public static String KEY_FAIL_LIMIT_UID_PREFIX = "uid_";
 	/**
 	 * Limiter login failure prefix based on remote IP.
 	 */
-	final public static String KEY_FAIL_LIMITER_RIP_PREFIX = "rip_";
+	final public static String KEY_FAIL_LIMIT_RIP_PREFIX = "rip_";
 
 	/**
 	 * Used for record all accounts that have failed to log in in this session.
@@ -224,13 +220,5 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_C_BASE = "/internal";
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
-
-	/** get token */
-	final public static String URI_S_GET_TOKEN = "getToken";
-
-	/** get token */
-	final public static String URI_S_AUTH_TOKEN = "authToken";
-
-	final public static String SERVER_TOKEN_KEY = "server_token:";
 
 }
