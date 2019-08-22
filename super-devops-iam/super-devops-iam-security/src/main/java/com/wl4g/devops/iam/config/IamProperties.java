@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.config;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_EXT_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 
 import java.io.Serializable;
@@ -163,7 +163,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		// SNS request rules
 		super.getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
 		// Extra API request rules
-		super.getFilterChain().put(URI_S_EXT_BASE + "/**", "anon");
+		super.getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
 		// Default view access files request rules
 		super.getFilterChain().put(getDefaultViewBaseUri() + DefaultViewController.URI_STATIC + "/**", "anon");
 	}

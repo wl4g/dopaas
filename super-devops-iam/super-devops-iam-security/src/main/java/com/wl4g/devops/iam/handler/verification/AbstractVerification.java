@@ -21,10 +21,10 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,16 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.utils.Sessions;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -87,8 +85,7 @@ public abstract class AbstractVerification implements Verification {
 	}
 
 	@Override
-	public void validate(@NotBlank String authenticationCode, @NotNull List<String> factors, String verifyCodeReq,
-			boolean required) throws VerificationException {
+	public void validate(@NotNull List<String> factors, String verifyCodeReq, boolean required) throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
 
 		try {
@@ -98,11 +95,11 @@ public abstract class AbstractVerification implements Verification {
 			 * the verification needs to be started only when the number of
 			 * times is retried).
 			 */
-			if (!(required || isEnabled(authenticationCode, factors))) {
+			if (!(required || isEnabled(factors))) {
 				return; // not enabled
 			}
 			// Store the verify-code
-			Object verifyCode = getVerifyCode(authenticationCode, true);
+			Object verifyCode = getVerifyCode(true);
 			if (!doMatching(verifyCode, verifyCodeReq)) {
 				if (log.isErrorEnabled()) {
 					log.error("verification mismatch. {} => {}", verifyCodeReq, verifyCode);
@@ -111,46 +108,42 @@ public abstract class AbstractVerification implements Verification {
 			}
 
 		} finally {
-			postValidateFinallySet(authenticationCode);
+			postValidateFinallySet();
 		}
 	}
 
 	/**
 	 * Post validation finally processed.
 	 * 
-	 * @param authenticationCode
 	 */
-	protected void postValidateFinallySet(@NotBlank String authenticationCode) {
-		reset(authenticationCode, false); // Reset or create
+	protected void postValidateFinallySet() {
+		reset(false); // Reset or create
 	}
 
 	/**
 	 * Reset the verify-code to indicate a new generation when create is true
 	 * 
-	 * @param authenticationCode
 	 * @param create
 	 */
-	protected void reset(@NotBlank String authenticationCode, boolean create) {
-		EnhancedCache cache = getStore(authenticationCode);
-		cache.remove(new EnhancedKey(storageSessionKey()));
-		if (create) { // Store verify-code in the session
-			cache.put(new EnhancedKey(storageSessionKey()), new VerifyCode(generateCode()));
+	protected void reset(boolean create) {
+		getSession().removeAttribute(storageSessionKey());
+		if (create) {
+			// Store verify-code in the session
+			getSession().setAttribute(storageSessionKey(), new VerifyCode(generateCode()));
 		}
 	}
 
 	/**
 	 * Get stored verify-code of session
 	 * 
-	 * @param authenticationCode
-	 *            authentication code
 	 * @param assertion
 	 *            Do you need to assertion
 	 * @return Returns the currently valid verify-code (if create = true, the
 	 *         newly generated value or the old value)
 	 */
-	protected VerifyCode getVerifyCode(@NotBlank String authenticationCode, boolean assertion) {
+	protected VerifyCode getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCode code = (VerifyCode) getStore(authenticationCode).get(new EnhancedKey(storageSessionKey(), VerifyCode.class));
+		VerifyCode code = (VerifyCode) getSession().getAttribute(storageSessionKey());
 
 		// Assertion
 		long now = System.currentTimeMillis();
@@ -230,14 +223,12 @@ public abstract class AbstractVerification implements Verification {
 			@NotNull List<String> factors);
 
 	/**
-	 * Get store cache.
+	 * Get SHIRO session
 	 * 
-	 * @param authenticationCode
 	 * @return
 	 */
-	private EnhancedCache getStore(@NotBlank String authenticationCode) {
-		Assert.hasText(authenticationCode, "'authenticationCode' must not be empty.");
-		return cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER);
+	private Session getSession() {
+		return Sessions.getSession();
 	}
 
 	/**

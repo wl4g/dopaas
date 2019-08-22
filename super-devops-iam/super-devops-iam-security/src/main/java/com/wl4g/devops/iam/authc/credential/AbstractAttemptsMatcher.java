@@ -151,7 +151,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		if (null == failPrincipalFactors) {
 			failPrincipalFactors = new ArrayList<>();
 		}
-		failPrincipalFactors.add(createPrincipalLimitFactor(principal));
+		failPrincipalFactors.add(createUIDLimitFactor(principal));
 		bind(KEY_FAIL_PRINCIPAL_FACTORS, failPrincipalFactors);
 
 		return matchCountMax;

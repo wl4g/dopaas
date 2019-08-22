@@ -26,7 +26,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
@@ -74,8 +73,8 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
-	public void apply(@NotBlank String authenticationCode, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
+	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
+			throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
@@ -91,14 +90,14 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		response.setContentType("image/jpeg");
 
 		// Recreate a CAPTCHA
-		reset(authenticationCode, true);
+		reset(true);
 
 		// Create the text for the image and output CAPTCHA image buffer.
-		write(response, getVerifyCode(authenticationCode, true).getText());
+		write(response, getVerifyCode(true).getText());
 	}
 
 	@Override
-	public boolean isEnabled(@NotBlank String authenticationCode, @NotNull List<String> factors) {
+	public boolean isEnabled(@NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
 		int enabledCaptchaMaxAttempts = config.getMatcher().getEnabledCaptchaMaxAttempts();
 
