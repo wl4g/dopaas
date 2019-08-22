@@ -156,7 +156,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 */
 		bind(SAVE_GRANT_TICKET, grantTicket);
 		if (log.isDebugEnabled()) {
-			log.debug("Authenticated bind grantTicket[{}], sessionId[{}]", grantTicket, getSessionId(subject));
+			log.debug("Authentication bind grantTicket[{}], sessionId[{}]", grantTicket, getSessionId(subject));
 		}
 
 		/**
@@ -293,9 +293,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		RespBase<String> resp = RespBase.create();
 		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Login successful");
 		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
-		// Placing it in http.body makes it easier for Android/iOS to get
-		// grant ticket token.
-		resp.getData().put(config.getParam().getGrantTicket(), String.valueOf(subject.getSession().getId()));
+		// e.g. Used by mobile APP.
+		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
+		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
 		return resp;
 	}
 

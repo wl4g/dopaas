@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
@@ -97,7 +97,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * URI login submission base path for processing all shiro authentication
 	 * filters submitted by login
 	 */
-	final public static String URI_BASE_MAPPING = URI_LOGIN_SUBMISSION_BASE;
+	final public static String URI_BASE_MAPPING = URI_AUTH_BASE;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 

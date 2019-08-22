@@ -40,7 +40,7 @@ import com.wl4g.devops.iam.config.SnsProperties;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
 import com.wl4g.devops.iam.filter.ProviderSupports;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AFTER_CALLBACK_AGENT;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
@@ -359,7 +359,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 		if (connectParams != null && WebUtils2.isTrue(connectParams.get(config.getParam().getAgent()))) {
 			StringBuffer url = new StringBuffer(WebUtils2.getRFCBaseURI(request, true));
 			url.append(URI_S_SNS_BASE).append("/");
-			url.append(URI_AFTER_CALLBACK_AGENT).append("?");
+			url.append(URI_S_AFTER_CALLBACK_AGENT).append("?");
 			url.append(config.getParam().getRefreshUrl()).append("=");
 			url.append(WebUtils2.safeEncodeURL(refreshUrl));
 			return url.toString();

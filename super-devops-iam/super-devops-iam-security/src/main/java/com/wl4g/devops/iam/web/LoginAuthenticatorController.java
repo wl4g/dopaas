@@ -37,7 +37,9 @@ import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber;
+import com.wl4g.devops.iam.web.model.SmsVerifyCheckModel;
 
+import static com.wl4g.devops.iam.web.model.SmsVerifyCheckModel.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
@@ -79,26 +81,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	final public static String KEY_GENERAL_SECRET = "secret";
 
 	/**
-	 * SMS PreCheck response key-name.
+	 * Authentication code key name
 	 */
-	final public static String KEY_SMS_CHECK_NAME = "checkSms";
-
-	/**
-	 * Apply SMS verification code to create a time-stamp key-name.
-	 */
-	final public static String KEY_SMS_CREATE = "createTime";
-
-	/**
-	 * The number of milliseconds to wait after applying for an SMS dynamic
-	 * password (you can reapply)key-name.
-	 */
-	final public static String KEY_SMS_DELAY = "delayMs";
-
-	/**
-	 * The remaining milliseconds to wait to re-apply for SMS dynamic password
-	 * key-name.
-	 */
-	final public static String KEY_SMS_REMAIN = "remainDelayMs";
+	// final public static String KEY_GENERAL_AUTH_CODE = "authentication_code";
 
 	/**
 	 * Graphic verification handler
@@ -139,11 +124,13 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (graphVerification.isEnabled(factors)) { // Enabled?
 				bind(KEY_GENERAL_CAPTCHA_TOKEN, (captchaToken = randomAlphanumeric(16)));
 			}
+			// Because there is no cookie on the mobile side
 			String sid = String.valueOf(getSessionId());
 
-			// Apply credentials encryption secret key.
+			// Apply credentials encrypt secret pubKey.
 			String secret = securer.applySecret(sid);
-			resp.build(KEY_GENERAL_CHECK_NAME).andPut(KEY_GENERAL_SECRET, secret).andPut(KEY_GENERAL_CAPTCHA_TOKEN, captchaToken);
+			resp.build(KEY_GENERAL_CHECK_NAME).andPut(KEY_GENERAL_SECRET, secret).andPut(KEY_GENERAL_CAPTCHA_TOKEN, captchaToken)
+					.andPut(config.getParam().getSid(), sid);
 
 			/*
 			 * When the SMS verification code is not empty, this creation
@@ -153,9 +140,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
 			if (verifyCode != null) {
-				resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_SMS_CREATE, verifyCode.getCreateTime())
-						.andPut(KEY_SMS_DELAY, config.getMatcher().getFailFastSmsDelay())
-						.andPut(KEY_SMS_REMAIN, getRemainingSmsDelay(verifyCode));
+				resp.getData().put(KEY_SMS_CHECK_NAME, new SmsVerifyCheckModel(verifyCode.getCreateTime(),
+						config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
 			}
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -272,9 +258,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_SMS_CREATE, verifyCode.getCreateTime())
-					.andPut(KEY_SMS_DELAY, config.getMatcher().getFailFastSmsDelay())
-					.andPut(KEY_SMS_REMAIN, getRemainingSmsDelay(verifyCode));
+			resp.getData().put(KEY_SMS_CHECK_NAME, new SmsVerifyCheckModel(verifyCode.getCreateTime(),
+					config.getMatcher().getFailFastSmsDelay(), getRemainingSmsDelay(verifyCode)));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {

@@ -83,7 +83,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * URI login submission base path for processing all shiro authentication
 	 * filters submitted by login.
 	 */
-	final public static String URI_LOGIN_SUBMISSION_BASE = "/authc/";
+	final public static String URI_AUTH_BASE = "/auth/";
 	/**
 	 * IAM server base URI. You need to ensure synchronization with the
 	 * configuration in bootstrap.yml [spring.cloud.devops.iam.filter-chain]
@@ -116,7 +116,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * (closing the child forms and passing callback information to the parent
 	 * forms) when the authorization is successful.
 	 */
-	final public static String URI_AFTER_CALLBACK_AGENT = "after_callback_agent";
+	final public static String URI_S_AFTER_CALLBACK_AGENT = "after_callback_agent";
 	/**
 	 * WeChat public platform social services receive message URI.
 	 */
@@ -196,17 +196,14 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Limiter login failure prefix based on remote IP.
 	 */
 	final public static String KEY_FAIL_LIMIT_RIP_PREFIX = "rip_";
-
 	/**
 	 * Used for record all accounts that have failed to log in in this session.
 	 */
-	final public static String KEY_FAIL_PRINCIPAL_FACTORS = "pastFailAccounts";
-
+	final public static String KEY_FAIL_PRINCIPAL_FACTORS = "failPrincipalFactors";
 	/**
 	 * Error information for saving iam-related operations to sessions.
 	 */
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
-
 	/**
 	 * Delegate message source bean name.
 	 */
