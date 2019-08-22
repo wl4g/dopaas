@@ -168,6 +168,13 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	final public static String ALARM_LIMIT_WECHAT = "alarm_limit_wechat";
 
 
+	/*alarm notification contact status*/
+	final public static String ALARM_SATUS_SEND = "1";
+	final public static String ALARM_SATUS_UNSEND = "2";
+	final public static String ALARM_SATUS_ACCEPTED = "3";
+	final public static String ALARM_SATUS_UNACCEPTED = "4";
+
+
 
 
 
