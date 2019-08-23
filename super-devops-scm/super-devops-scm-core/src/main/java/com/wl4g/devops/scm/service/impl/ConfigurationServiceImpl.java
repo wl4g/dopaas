@@ -140,7 +140,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			instances.add(releaseInstance);
 		}
 		// Get application group information.
-		AppCluster appCluster = this.appClusterDao.getAppGroup(vd.getClusterId());
+		AppCluster appCluster = this.appClusterDao.getAppGroup(vd.getAppClusterId());
 
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean vcb : vd.getConfigGurations()) {
