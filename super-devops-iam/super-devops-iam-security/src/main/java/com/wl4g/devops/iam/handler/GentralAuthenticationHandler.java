@@ -203,7 +203,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#logout<br/>
 		 * xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		String newGrantTicket = "st" + randomAlphabetic(30);
+		String newGrantTicket = generateServiceTicket();
 		if (log.isInfoEnabled()) {
 			log.info("New generate grant ticket. [{}]", newGrantTicket);
 		}
@@ -230,7 +230,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			Session session = subject.getSession(); // Session
 
 			// Generate grantTicket. Same: CAS/service-ticket
-			String initGrantTicket = idGenerator.generateId(session).toString();
+			String initGrantTicket = generateServiceTicket();
 			if (log.isInfoEnabled()) {
 				log.info("Generate init grantTicket:[{}] by name:[{}]", initGrantTicket, fromAppName);
 			}
@@ -473,6 +473,15 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		return logoutAll;
+	}
+
+	/**
+	 * Generate service ticket.
+	 * 
+	 * @return
+	 */
+	private String generateServiceTicket() {
+		return "st" + randomAlphabetic(30);
 	}
 
 }
