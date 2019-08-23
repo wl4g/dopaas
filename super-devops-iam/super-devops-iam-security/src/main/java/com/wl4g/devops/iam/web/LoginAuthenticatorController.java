@@ -124,7 +124,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> applySession(HttpServletRequest request) {
-		RespBase<Object> resp = RespBase.create();
+		RespBase<Object> resp = RespBase.create(currentSessionStatus());
 		try {
 			resp.getData().put(config.getParam().getSid(), getSessionId());
 		} catch (Exception e) {
@@ -148,7 +148,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> check(HttpServletRequest request) {
-		RespBase<Object> resp = RespBase.create();
+		RespBase<Object> resp = RespBase.create(currentSessionStatus());
 		try {
 			// LoginId(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
@@ -204,7 +204,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request) {
-		RespBase<Locale> resp = RespBase.create();
+		RespBase<Locale> resp = RespBase.create(currentSessionStatus());
 		try {
 			String lang = getCleanParam(request, config.getParam().getI18nLang());
 
@@ -270,7 +270,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_SMS_APPLY, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<Object> resp = RespBase.create();
+		RespBase<Object> resp = RespBase.create(currentSessionStatus());
 		try {
 			if (!coprocessor.preApplyVerify(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
@@ -316,7 +316,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> errReads(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<String> resp = RespBase.create();
+		RespBase<String> resp = RespBase.create(currentSessionStatus());
 		try {
 			// Get error message in session
 			String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);

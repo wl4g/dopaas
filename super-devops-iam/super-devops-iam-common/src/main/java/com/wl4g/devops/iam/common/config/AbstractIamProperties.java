@@ -28,9 +28,6 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 public abstract class AbstractIamProperties<P extends ParamProperties> implements InitializingBean, Serializable {
 	private static final long serialVersionUID = -5858422822181237865L;
 
-	final public static String DEFAULT_AUTHC_STATUS = "Certified";
-	final public static String DEFAULT_UNAUTHC_STATUS = "Uncertified";
-
 	/**
 	 * External custom filter chain pattern matching
 	 */
