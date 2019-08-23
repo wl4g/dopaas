@@ -46,6 +46,19 @@
       <result column="t.update_date" property="updateDate" jdbcType="TIMESTAMP" />
       <result column="t.update_by" property="updateBy" jdbcType="VARCHAR" />
       <result column="t.del_flag" property="delFlag" jdbcType="CHAR" />
+
+      <collection property="rules" ofType="com.wl4g.devops.common.bean.umc.AlarmRule" javaType="list">
+        <id column="r.id" property="id" jdbcType="INTEGER" />
+        <result column="r.template_id" property="templateId" jdbcType="INTEGER" />
+        <result column="r.aggregator" property="aggregator" jdbcType="VARCHAR" />
+        <result column="r.relate_operator" property="relateOperator" jdbcType="INTEGER" />
+        <result column="r.logical_operator" property="logicalOperator" jdbcType="INTEGER" />
+        <result column="r.queue_time_window" property="queueTimeWindow" jdbcType="BIGINT" />
+        <result column="r.value" property="value" jdbcType="DOUBLE" />
+        <result column="r.alarm_level" property="alarmLevel" jdbcType="INTEGER" />
+        <result column="r.del_flag" property="delFlag" jdbcType="CHAR" />
+      </collection>
+
     </association>
 
     <!-- contacts -->
@@ -110,6 +123,11 @@
     ct.dingtalk_time_of_freq as "ct.dingtalk_time_of_freq", ct.wechat_time_of_freq as "ct.wechat_time_of_freq", ct.twitter_time_of_freq as "ct.twitter_time_of_freq", ct.facebook_time_of_freq as "ct.facebook_time_of_freq",
     ct.phone_num_of_freq as "ct.phone_num_of_freq", ct.dingtalk_num_of_freq as "ct.dingtalk_num_of_freq", ct.wechat_num_of_freq as "ct.wechat_num_of_freq", ct.twitter_num_of_freq as "ct.twitter_num_of_freq",
     ct.facebook_num_of_freq as "ct.facebook_num_of_freq", ct.create_by as "ct.create_by", ct.create_date as "ct.create_date", ct.update_by as "ct.update_by", ct.update_date as "ct.update_date", ct.del_flag as "ct.del_flag"
+  </sql>
+
+  <sql id="rules_alias" >
+    r.id as "r.id", r.template_id as "r.template_id", r.aggregator as "r.aggregator", r.relate_operator as "r.relate_operator", r.logical_operator as "r.logical_operator", r.queue_time_window as "r.queue_time_window",
+    r.value as "r.value", r.alarm_level as "r.alarm_level",r.del_flag as "r.del_flag"
   </sql>
 
 
@@ -307,9 +325,10 @@
   <select id="getAlarmConfigTpls" resultMap="BaseResultMap2" parameterType="java.util.Map">
     select
     <include refid="config_alias"/>,<include refid="template_alias"/>,
-    <include refid="contact_alias"/>
+    <include refid="contact_alias"/>,<include refid="rules_alias"/>
     from umc_alarm_config c
     left join umc_alarm_template t on c.template_id = t.id
+    left join umc_alarm_rule r on t.id = r.template_id
     left join umc_alarm_contact_group_ref gr on gr.contact_group_id = c.contact_group_id
     left join umc_alarm_contact ct on gr.contact_id = ct.id
     left join app_instance i on c.collect_id = i.id

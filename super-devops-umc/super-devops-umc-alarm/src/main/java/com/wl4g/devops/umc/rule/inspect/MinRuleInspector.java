@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
-import static com.wl4g.devops.common.utils.lang.Collections2.safeToList;
-import static java.util.stream.Collectors.summarizingDouble;
-
 import com.wl4g.devops.umc.rule.Aggregator;
 import com.wl4g.devops.umc.rule.LogicalOperator;
 import com.wl4g.devops.umc.rule.RelationOperator;
+
+import static com.wl4g.devops.common.utils.lang.Collections2.safeToList;
+import static java.util.stream.Collectors.summarizingDouble;
 
 /**
  * Minimum rule inspector.
@@ -41,6 +41,7 @@ public class MinRuleInspector extends AbstractRuleInspector {
 		// Minimum
 		double min = safeToList(Double.class, wrap.getValues()).stream().filter(val -> null != val)
 				.collect(summarizingDouble(val -> val)).getMin();
+		wrap.setCompareValue(min);
 		return super.operate(LogicalOperator.of(wrap.getLogicalOperator()), RelationOperator.of(wrap.getRelateOperator()), min,
 				wrap.getBaseline());
 	}
