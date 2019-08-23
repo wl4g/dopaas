@@ -18,7 +18,7 @@
 		vd.type as "type",
 		vd.content as "content",
 		vd.remark as "remark",
-		(SELECT d.`value` FROM sys_dict d WHERE d.id=vd.namespace_id) as "namespace",
+		(SELECT d.`value` FROM sys_dict d WHERE d.key=vd.namespace_id) as "namespace",
 		vd.namespace_id as "namespaceId"
 	</sql>
 
@@ -175,16 +175,16 @@
 	<select id="list" resultMap="queryVersion">
 		SELECT
 			a.*,
-			b.`host`,
-			b.`ip`,
+			h.`hostname` as host,
+			b.`endpoint` as port,
 			b.id as nodeId,
-			b.`port`,
 			c.`name`,
 			c.id as appClusterId,
 			d.`remark` as envRemark,
 			d.id as envId
 		FROM scm_version a
 		JOIN app_instance b ON a.id = b.version_id
+		left join app_host h on h.id=b.host_id
 		JOIN app_cluster c ON b.cluster_id = c.id
 		JOIN app_environment d ON b.env_id = d.id and d.cluster_id = c.id
 		<where>
