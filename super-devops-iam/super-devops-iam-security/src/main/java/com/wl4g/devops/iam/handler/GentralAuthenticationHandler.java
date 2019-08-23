@@ -46,6 +46,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
@@ -202,7 +203,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#logout<br/>
 		 * xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		String newGrantTicket = idGenerator.generateId(session).toString();
+		String newGrantTicket = "st" + randomAlphabetic(30);
 		if (log.isInfoEnabled()) {
 			log.info("New generate grant ticket. [{}]", newGrantTicket);
 		}
