@@ -75,7 +75,6 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	@Override
 	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
 			throws IOException {
-
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
@@ -176,9 +175,6 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 */
 	protected abstract void write(HttpServletResponse response, String verifyCode) throws IOException;
 
-	/**
-	 * Initializing
-	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();

@@ -39,6 +39,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 
 import static com.wl4g.devops.common.utils.lang.StringUtils2.isDomain;
@@ -47,6 +48,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -59,6 +61,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * @date 2018年11月30日
  * @since
  */
+@Beta
 public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 
 	/**
@@ -129,7 +132,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static String getHttpRemoteAddr(HttpServletRequest request) {
 		for (String header : HEADER_REAL_IP) {
 			String ip = request.getHeader(header);
-			if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+			if (isNotBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
 				return ip;
 			}
 		}
@@ -436,22 +439,22 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * "http://bb.aa.domain.com:8080", true)==true</br>
 	 * 
 	 * @param definitionUrl
-	 * @param matchUrl
+	 * @param requestUrl
 	 * @param checkScheme
 	 * @return
 	 */
-	public static boolean isSameWithOrigin(String definitionUrl, String matchUrl, boolean checkScheme) {
-		if (isBlank(definitionUrl) || isBlank(matchUrl)) {
+	public static boolean isSameWithOrigin(String definitionUrl, String requestUrl, boolean checkScheme) {
+		if (isBlank(definitionUrl) || isBlank(requestUrl)) {
 			return false;
 		}
 		// URL equaled?
-		if (definitionUrl.equals(matchUrl)) {
+		if (definitionUrl.equals(requestUrl)) {
 			return true;
 		}
 		// Scheme mismatch?
 		boolean schemeMatched = false;
 		try {
-			schemeMatched = new URI(definitionUrl).getScheme().equalsIgnoreCase(new URI(matchUrl).getScheme());
+			schemeMatched = new URI(definitionUrl).getScheme().equalsIgnoreCase(new URI(requestUrl).getScheme());
 			if (checkScheme && !schemeMatched) {
 				return false;
 			}
@@ -461,7 +464,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 
 		// Domain equaled?
 		String domaina = extractDomainString(definitionUrl);
-		String domainb = extractDomainString(matchUrl);
+		String domainb = extractDomainString(requestUrl);
 		if (equalsIgnoreCase(domaina, domainb)) {
 			return true;
 		}

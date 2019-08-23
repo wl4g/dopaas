@@ -37,13 +37,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_S;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 
@@ -199,7 +203,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#logout<br/>
 		 * xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		String newGrantTicket = idGenerator.generateId(session).toString();
+		String newGrantTicket = generateServiceTicket();
 		if (log.isInfoEnabled()) {
 			log.info("New generate grant ticket. [{}]", newGrantTicket);
 		}
@@ -213,6 +217,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Find authorized roles and permission information settings.
 		assertion.getPrincipal().getAttributes().put(KEY_ROLE_ATTRIBUTE_NAME, getRoles(principal, fromAppName));
 		assertion.getPrincipal().getAttributes().put(KEY_PERMIT_ATTRIBUTE_NAME, getPermits(principal, fromAppName));
+		assertion.getPrincipal().getAttributes().put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
 		return assertion;
 	}
 
@@ -225,7 +230,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			Session session = subject.getSession(); // Session
 
 			// Generate grantTicket. Same: CAS/service-ticket
-			String initGrantTicket = idGenerator.generateId(session).toString();
+			String initGrantTicket = generateServiceTicket();
 			if (log.isInfoEnabled()) {
 				log.info("Generate init grantTicket:[{}] by name:[{}]", initGrantTicket, fromAppName);
 			}
@@ -405,14 +410,14 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param param
 	 */
 	private void checkGrantTicketValidited(Subject subject, TicketValidationModel param) {
-		if (!StringUtils.hasText(param.getTicket())) {
-			throw new InvalidGrantTicketException(String.format("Invalid empty grant ticket '%s'", param.getTicket()));
+		if (isBlank(param.getTicket())) {
+			throw new InvalidGrantTicketException("Invalid granting ticket.");
 		}
 
 		// Get grant information
 		GrantTicketInfo info = getGrantTicketSeesion(subject.getSession());
 		if (log.isDebugEnabled()) {
-			log.debug("Get grant information:{} by sessionId:{}", info, subject.getSession().getId().toString());
+			log.debug("Got granting info:{} by sessionId:{}", info, getSessionId());
 		}
 
 		// Request fromAppName ticket => storedTicket
@@ -420,7 +425,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Validation
 		if (!(StringUtils2.equals(storedTicket, param.getTicket()) && subject.isAuthenticated()
 				&& isNotBlank((String) subject.getPrincipal()))) {
-			throw new InvalidGrantTicketException(String.format("Invalid grant ticket '%s'", param.getTicket()));
+			throw new InvalidGrantTicketException(String.format("Illegal granting ticket %s", param.getTicket()));
 		}
 	}
 
@@ -468,6 +473,15 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		return logoutAll;
+	}
+
+	/**
+	 * Generate service ticket.
+	 * 
+	 * @return
+	 */
+	private String generateServiceTicket() {
+		return "st" + randomAlphabetic(30);
 	}
 
 }

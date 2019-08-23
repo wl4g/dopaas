@@ -19,17 +19,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
+import static org.springframework.http.HttpMethod.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import com.wl4g.devops.common.bean.iam.model.BasedModel;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
@@ -96,11 +95,10 @@ public abstract class AbstractBasedValidator<R extends BasedModel, A> implements
 		};
 
 		// Process URL query parameters
-		this.postQueryParameterSet(req, queryParams);
+		postQueryParameterSet(req, queryParams);
 
 		// Append parameters to URL
 		url.append(BeanMapConvert.toUriParmaters(queryParams));
-
 		if (log.isInfoEnabled()) {
 			log.info("Grant ticket validate url: {}", url);
 		}
@@ -114,9 +112,7 @@ public abstract class AbstractBasedValidator<R extends BasedModel, A> implements
 		});
 
 		// Request execute
-		final RespBase<A> resp = (RespBase<A>) this.restTemplate
-				.exchange(url.toString(), HttpMethod.POST, entity, getTypeReference()).getBody();
-
+		RespBase<A> resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
 		if (log.isInfoEnabled()) {
 			log.info("Validate retrieving: {}", resp);
 		}

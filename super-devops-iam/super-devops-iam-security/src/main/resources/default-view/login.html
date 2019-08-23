@@ -72,11 +72,11 @@
 						</div>
 						<div id="captcha_panel">
 							<i class="icon-code"></i>
-							<input id="captcha_input" class="text4" name="captcha" maxlength=5
-								style="border:1px solid #dad2d2;padding-left:20px;border-radius:2px 2px 2px 2px;">
+							<input id="captcha_input" class="text4" name="captcha" maxlength=5 
+								style="border:1px solid #dad2d2;padding-left:20px;border-radius:2px 2px 2px 2px;display:none;">
 							<img id="codeimg" name="codeimg" border=0
-								style="padding:0 0 5px 0;position:relative;top:18px;margin-left:5px;width:100px;height:35px;cursor:pointer;"
-								title="看不清可单击图片刷新">
+								style="padding:0 0 5px 0;position:relative;top:18px;margin-left:5px;width:100px;height:35px;cursor:pointer;display:none;"
+								title="看不清点击图片刷新">
 						</div>
 						<br />
 						<input id="iam_submit" type="button" style="cursor:pointer;" value="登录"><br /><br /><br />
@@ -199,7 +199,6 @@
 					captcha: {
 						img: document.getElementById("codeimg"), // 验证码显示IMG对象
 						input: document.getElementById("captcha_input"), // 验证码INPUT输入对象
-						enableOption: "captchaEnable", // 可选，控制当前是否启用验证码，默认:captchaEnable（与后台对应）
 						name: "captcha", // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
 						onFallback: function (errmsg) { // 验证码刷新降级处理（被锁定）
 							console.warn(errmsg);
@@ -280,7 +279,7 @@
 	<script type="text/javascript">
 		// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
 		function errTips() {
-			var url = iamBaseURI + "/ext/errread";
+			var url = iamBaseURI + "/login/errread";
 			$.ajax({
 				url: url,
 				success: function (res) {

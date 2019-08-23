@@ -22,7 +22,6 @@ import com.wl4g.devops.common.exception.iam.AfterAuthenticatSuccessException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.servlet.Cookie;
 
 import java.util.Map;
 
@@ -68,15 +67,14 @@ public interface SecurityCoprocessor {
 	}
 
 	/**
-	 * Call post save cookie of authenticating success.
+	 * Before get session ID.
 	 * 
 	 * @param request
 	 * @param response
-	 * @param newCookie
-	 * @throws AfterAuthenticatSuccessException
+	 * @return Returning to a non-empty SID will be preferred.
 	 */
-	default void postRenewCookie(ServletRequest request, ServletResponse response, Cookie newCookie)
-			throws AfterAuthenticatSuccessException {
+	default String preGetSessionId(ServletRequest request, ServletResponse response) {
+		return null;
 	}
 
 	/**

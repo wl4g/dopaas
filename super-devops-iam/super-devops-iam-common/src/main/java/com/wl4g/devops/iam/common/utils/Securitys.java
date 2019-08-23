@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.common.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.shiro.SecurityUtils;
+
 import static com.google.common.base.Charsets.*;
 import static org.apache.commons.codec.binary.Hex.*;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -32,28 +34,29 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
  */
 public abstract class Securitys {
 
+	final public static String DEFAULT_AUTHC_STATUS = "Certified";
+
+	final public static String DEFAULT_UNAUTHC_STATUS = "Uncertified";
+
 	/**
-	 * Safety limiting factor(e.g. Client remote IP and login user-name)
+	 * Safety limiting factor(e.g. Client remote IP and loginId)
 	 * 
 	 * @param remoteHost
-	 * @param principal
+	 * @param uid
 	 * @return
 	 */
-	public static List<String> createFactors(String remoteHost, String principal) {
+	public static List<String> createLimitFactors(String remoteHost, String uid) {
 		return new ArrayList<String>(2) {
 			private static final long serialVersionUID = -5976569540781454836L;
 			{
-				String principalFactor = createPrincipalFactor(principal);
-				if (isNotBlank(principalFactor)) {
-					add(principalFactor);
+				String uidFactor = createUIDLimitFactor(uid);
+				if (isNotBlank(uidFactor)) {
+					add(uidFactor);
 				}
 
-				String hostFactor = createHostFactor(remoteHost);
+				String hostFactor = createAddrFactor(remoteHost);
 				if (isNotBlank(hostFactor)) {
 					add(hostFactor);
-					// for test::
-					// add(KEY_FAIL_LIMITER_RIP_PREFIX +
-					// System.currentTimeMillis());
 				}
 			}
 		};
@@ -65,18 +68,27 @@ public abstract class Securitys {
 	 * @param remoteHost
 	 * @return
 	 */
-	public static String createHostFactor(String remoteHost) {
-		return isNotBlank(remoteHost) ? (KEY_FAIL_LIMITER_RIP_PREFIX + encodeHexString(remoteHost.getBytes(UTF_8))) : EMPTY;
+	public static String createAddrFactor(String remoteHost) {
+		return isNotBlank(remoteHost) ? (KEY_FAIL_LIMIT_RIP_PREFIX + encodeHexString(remoteHost.getBytes(UTF_8))) : EMPTY;
 	}
 
 	/**
-	 * Create limit login principal factor.
+	 * Create limit login UID factor.
 	 * 
-	 * @param principal
+	 * @param uid
 	 * @return
 	 */
-	public static String createPrincipalFactor(String principal) {
-		return isNotBlank(principal) ? (KEY_FAIL_LIMITER_USER_PREFIX + principal) : EMPTY;
+	public static String createUIDLimitFactor(String uid) {
+		return isNotBlank(uid) ? (KEY_FAIL_LIMIT_UID_PREFIX + uid) : EMPTY;
+	}
+
+	/**
+	 * Get current session authenticated status.
+	 * 
+	 * @return
+	 */
+	public static String currentSessionStatus() {
+		return SecurityUtils.getSubject().isAuthenticated() ? DEFAULT_AUTHC_STATUS : DEFAULT_UNAUTHC_STATUS;
 	}
 
 }

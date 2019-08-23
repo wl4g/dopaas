@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.utils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ import org.springframework.util.Assert;
  * @since
  */
 public abstract class SessionBindings extends Sessions {
+
+	final private static String KEY_SESSION_ATTR_TTL_PREFIX = "attributeTTL_";
 
 	/**
 	 * Whether the comparison with the target is equal from the session
@@ -102,10 +105,24 @@ public abstract class SessionBindings extends Sessions {
 	 *            Keys to save and session
 	 * @return
 	 */
+	/**
+	 * @param sessionKey
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getBindValue(String sessionKey) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
-		return (T) getSession().getAttribute(sessionKey);
+		// Get bind value.
+		T value = (T) getSession().getAttribute(sessionKey);
+		// Get value TTL.
+		SessionAttrTTL ttl = (SessionAttrTTL) getSession().getAttribute(getExpireKey(sessionKey));
+		if (ttl != null) { // Need to check expiration
+			if ((System.currentTimeMillis() - ttl.getCreateTime()) >= ttl.getExpireMs()) { // Expired?
+				unbind(sessionKey); // Cleanup
+				return null; // Because it's expired.
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -161,6 +178,20 @@ public abstract class SessionBindings extends Sessions {
 	 * 
 	 * @param sessionKey
 	 * @param value
+	 * @param expireMs
+	 * @return
+	 */
+	public static <T> T bind(String sessionKey, T value, long expireMs) {
+		bind(sessionKey, value);
+		bind(getExpireKey(sessionKey), new SessionAttrTTL(expireMs));
+		return value;
+	}
+
+	/**
+	 * Bind value to session
+	 * 
+	 * @param sessionKey
+	 * @param value
 	 */
 	public static <T> T bind(String sessionKey, T value) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
@@ -176,7 +207,54 @@ public abstract class SessionBindings extends Sessions {
 	 */
 	public static boolean unbind(String sessionKey) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
+		getSession().removeAttribute(getExpireKey(sessionKey)); // TTL-attribute?
 		return getSession().removeAttribute(sessionKey) != null;
+	}
+
+	/**
+	 * Get expire key.
+	 * 
+	 * @param sessionKey
+	 * @return
+	 */
+	private static String getExpireKey(String sessionKey) {
+		Assert.hasText(sessionKey, "'sessionKey' must not be empty");
+		return KEY_SESSION_ATTR_TTL_PREFIX + sessionKey;
+	}
+
+	/**
+	 * Session attribute timeToLive model
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月23日
+	 * @since
+	 */
+	public static class SessionAttrTTL implements Serializable {
+		private static final long serialVersionUID = -5108678535942593956L;
+
+		final private Long createTime;
+
+		final private Long expireMs;
+
+		public SessionAttrTTL(Long expireMs) {
+			this(System.currentTimeMillis(), expireMs);
+		}
+
+		public SessionAttrTTL(Long createTime, Long expireMs) {
+			Assert.state(createTime != null, "'createTime' must not be null.");
+			Assert.state(expireMs != null, "'expireMs' must not be null.");
+			this.createTime = createTime;
+			this.expireMs = expireMs;
+		}
+
+		public Long getCreateTime() {
+			return createTime;
+		}
+
+		public Long getExpireMs() {
+			return expireMs;
+		}
+
 	}
 
 }

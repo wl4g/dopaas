@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AFTER_CALLBACK_AGENT;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.InvalidAuthorizer;
@@ -168,7 +168,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 	protected String wrapResponse(String secondAuthCode, Map<String, String> connectParams, HttpServletRequest request) {
 		StringBuffer url = new StringBuffer(WebUtils2.getRFCBaseURI(request, true));
 		url.append(URI_S_SNS_BASE).append("/");
-		url.append(URI_AFTER_CALLBACK_AGENT).append("?");
+		url.append(URI_S_AFTER_CALLBACK_AGENT).append("?");
 		url.append(config.getParam().getSecondAuthCode()).append("=");
 		url.append(secondAuthCode);
 		return url.toString();

@@ -17,12 +17,15 @@ package com.wl4g.devops.iam.common.session.mgt;
 
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_ID_SOURCE;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
 import java.io.Serializable;
 import java.util.Collection;
@@ -40,7 +43,6 @@ import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SimpleSession;
 import org.apache.shiro.util.Assert;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
@@ -50,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.utils.lang.StringUtils2;
-import com.wl4g.devops.common.utils.web.UserAgentUtils;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -107,52 +108,57 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 	@Override
 	protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
+		// Call extra get SID.
+		Serializable sessionId = coprocessor.preGetSessionId(request, response);
+		if (checkAvailable(sessionId)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Using extra SID for '{}'", sessionId);
+			}
+			return sessionId;
+		}
+
 		/*
 		 * This SID session is used if the parameter contains the "SID"
 		 * parameter. For example:
 		 * http://localhost/project?__sid=xxx&__cookie=yes
 		 */
-		String sid = getCleanParam(request, config.getParam().getSid());
-
-		// Using SID mode sessions
-		if (checkSafeBlank(sid)) {
+		sessionId = getCleanParam(request, config.getParam().getSid());
+		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Using SID session by [{}]", sid);
+				log.debug("Using url SID for '{}'", sessionId);
 			}
-
-			// Storage session token
-			storageTokenIfNecessary(request, response, sid);
+			// Storage session.
+			storageTokenIfNecessary(request, response, sessionId);
 
 			// Set the current session state. (session sources and URL)
 			request.setAttribute(REFERENCED_SESSION_ID_SOURCE, URL_SESSION_ID_SOURCE);
-			request.setAttribute(REFERENCED_SESSION_ID, sid);
+			request.setAttribute(REFERENCED_SESSION_ID, sessionId);
 			request.setAttribute(REFERENCED_SESSION_ID_IS_VALID, TRUE);
-			return sid;
+			return sessionId;
 		}
 
 		// Using grantTicket mode sessions
 		String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
-		if (checkSafeBlank(grantTicket)) {
+		if (checkAvailable(grantTicket)) {
 			/*
 			 * Synchronize with
 			 * See:iam.handler.DefaultAuthenticationHandler#loggedin()
 			 */
-			String sessionId = (String) cacheManager.getCache(cacheName).get(new EnhancedKey(grantTicket, String.class));
+			sessionId = (String) cacheManager.getCache(cacheName).get(new EnhancedKey(grantTicket, String.class));
 			if (log.isDebugEnabled()) {
-				log.debug("Using grantTicket:[{}] sessionId:[{}]", grantTicket, sessionId);
+				log.debug("Using grantTicket: '{}' SID: '{}'", grantTicket, sessionId);
 			}
-			if (checkSafeBlank(sessionId)) {
+			if (checkAvailable(sessionId)) {
 				return sessionId;
 			} else {
-				log.warn("Get sessionId of grantTicket:[{}] is blank", grantTicket);
-				// Continue, trying to using cookie mode sessions
+				log.warn("Get empty SID by grantTicket '{}'", grantTicket);
 			}
 		}
 
 		// Using default cookie mode sessions
-		Serializable sessionId = super.getSessionId(request, response);
+		sessionId = super.getSessionId(request, response);
 		if (log.isDebugEnabled()) {
-			log.debug("Using default sessions by [{}]", sessionId);
+			log.debug("Using default SID for '{}'", sessionId);
 		}
 		return sessionId;
 	}
@@ -343,8 +349,8 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param str
 	 * @return
 	 */
-	protected boolean checkSafeBlank(String str) {
-		return StringUtils.hasText(str) && !str.equalsIgnoreCase("NULL");
+	protected boolean checkAvailable(Serializable str) {
+		return str != null && isNotBlank(str.toString()) && !str.toString().equalsIgnoreCase("NULL");
 	}
 
 	/**
@@ -354,17 +360,15 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param response
 	 * @param sessionId
 	 */
-	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, String sessionId) {
-		boolean isBrowser = UserAgentUtils.isBrowser(toHttp(request));
-		/*
-		 * When a browser request or display specifies that cookies need to be
-		 * saved.
-		 */
-		if (isBrowser || isTrue(request, config.getParam().getSidSaveCookie())) {
+	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, Serializable sessionId) {
+		// Response JSON type(Non WEB).
+		boolean isJsonType = isJSONResponse(getCleanParam(request, config.getParam().getResponseType()), toHttp(request));
+		// When a browser request or display specifies that cookies need to b
+		// saved.
+		boolean sidSaved = isTrue(request, config.getParam().getSidSaveCookie());
+		if (isBrowser(toHttp(request)) || sidSaved || !isJsonType) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
-			cookie.setValue(sessionId);
-			// Call post properties.
-			coprocessor.postRenewCookie(request, response, cookie);
+			cookie.setValue(String.valueOf(sessionId));
 			// Save to response.
 			cookie.saveTo(toHttp(request), toHttp(response));
 			if (log.isTraceEnabled()) {
@@ -373,7 +377,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		}
 		// Addition customize security headers.
 		else {
-			toHttp(response).addHeader(getSessionIdCookie().getName(), sessionId);
+			toHttp(response).addHeader(getSessionIdCookie().getName(), String.valueOf(sessionId));
 		}
 
 	}
