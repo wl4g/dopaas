@@ -38,7 +38,6 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_PUBKEY_IDX;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_KEYPAIRS;
 import static com.wl4g.devops.common.utils.codec.CheckSums.*;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 
@@ -165,7 +164,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		KeySpecPair keyPair = keyPairs.get(index);
 
 		// Save the applied keyPair to the cache
-		bind(CACHE_PUBKEY_IDX, index, config.getApplyPubkeyExpireMs());
+		pubIdxCache.put(new EnhancedKey(uid, config.getApplyPubkeyExpireMs()), index);
 
 		if (log.isInfoEnabled()) {
 			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
