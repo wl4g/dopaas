@@ -121,8 +121,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * WeChat public platform social services receive message URI.
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
+
 	/** Based URI with extra needed verification code etc. */
 	final public static String URI_S_LOGIN_BASE = "/login";
+	/**
+	 * Apply sessionID, For example for mobile use.
+	 */
+	final public static String URI_S_LOGIN_APPLY_SESSION = "sessions";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
