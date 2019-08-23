@@ -27,8 +27,6 @@ import org.springframework.util.Assert;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static com.wl4g.devops.common.utils.lang.Collections2.ensureList;
@@ -85,8 +83,8 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	/**
 	 * Offer metric values in time windows.
 	 * 
-	 * @param collectAddr
-	 *            collector address
+	 * @param cacheKey
+	 *            cacheKey address
 	 * @param value
 	 *            metric value
 	 * @param gatherTime
@@ -97,65 +95,71 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	 *            time-to-live
 	 * @return
 	 */
-	protected List<MetricValue> offerTimeWindowQueue(String collectAddr, Double value, long gatherTime, long now, long ttl) {
-		String timeWindowKey = getTimeWindowQueueCacheKey(collectAddr);
+	protected List<MetricValue> offerTimeWindowQueue(String cacheKey, Double value, long gatherTime, long now, long ttl) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(cacheKey);
 		// To solve the concurrency problem of metric window queue in
 		// distributed environment.
-		Lock lock = lockManager.getLock(timeWindowKey);
+		//Lock lock = lockManager.getLock(timeWindowKey);
 
 		List<MetricValue> metricVals = emptyList();
-		try {
-			if (lock.tryLock(10L, TimeUnit.SECONDS)) {
-				metricVals = ensureList(doPeekMetricValueQueue(collectAddr));
-				metricVals.add(new MetricValue(gatherTime, value));
 
-				// Check & clean expired metrics.
-				Iterator<MetricValue> it = metricVals.iterator();
-				while (it.hasNext()) {
-					if (abs(now - it.next().getGatherTime()) >= ttl) {
-						it.remove();
-					}
-				}
-				// Offer to queue.
-				doOfferMetricValueQueue(collectAddr, ttl, metricVals);
+		metricVals = ensureList(doPeekMetricValueQueue(cacheKey));
+
+		// Check & clean expired metrics.
+		Iterator<MetricValue> it = metricVals.iterator();
+		while (it.hasNext()) {
+			long gatherTime1 = it.next().getGatherTime();
+			if (abs(now - gatherTime1) >= ttl|| gatherTime1==gatherTime) {//remove expire data and repeat data
+				it.remove();
+			}
+		}
+
+		metricVals.add(new MetricValue(gatherTime, value));
+
+		// Offer to queue.
+		doOfferMetricValueQueue(cacheKey, ttl, metricVals);
+		/*try {
+			if (lock.tryLock(10L, TimeUnit.SECONDS)) {
+
 			}
 		} catch (InterruptedException e) {
 			throw new IllegalStateException(e);
 		} finally {
 			lock.unlock();
-		}
+		}*/
 		return metricVals;
 	}
 
 	/**
 	 * GET metric values queue by collect address.
 	 * 
-	 * @param collectAddr
+	 * @param cacheKey
 	 * @return
 	 */
-	protected List<MetricValue> doPeekMetricValueQueue(String collectAddr) {
-		String timeWindowKey = getTimeWindowQueueCacheKey(collectAddr);
+	protected List<MetricValue> doPeekMetricValueQueue(String cacheKey) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(cacheKey);
 		return jedisService.getObjectList(timeWindowKey, MetricValue.class);
 	}
 
 	/**
 	 * Storage metric values to cache.
 	 * 
-	 * @param collectAddr
+	 * @param cacheKey
 	 * @param ttl
 	 * @param metricVals
 	 */
-	protected List<MetricValue> doOfferMetricValueQueue(String collectAddr, long ttl, List<MetricValue> metricVals) {
-		String timeWindowKey = getTimeWindowQueueCacheKey(collectAddr);
-		jedisService.setObjectList(timeWindowKey, metricVals, (int) ttl);
+	protected List<MetricValue> doOfferMetricValueQueue(String cacheKey, long ttl, List<MetricValue> metricVals) {
+		String timeWindowKey = getTimeWindowQueueCacheKey(cacheKey);
+		jedisService.del(timeWindowKey);
+		jedisService.setObjectList(timeWindowKey, metricVals, (int) ttl/1000);
 		return metricVals;
 	}
 
 	// --- Cache key. ---
 
-	protected String getTimeWindowQueueCacheKey(String collectAddr) {
-		Assert.hasText(collectAddr, "Collect addr must not be empty");
-		return KEY_CACHE_ALARM_METRIC_QUEUE + collectAddr;
+	protected String getTimeWindowQueueCacheKey(String cacheKey) {
+		Assert.hasText(cacheKey, "cacheKey must not be empty");
+		return KEY_CACHE_ALARM_METRIC_QUEUE + cacheKey;
 	}
 
 }

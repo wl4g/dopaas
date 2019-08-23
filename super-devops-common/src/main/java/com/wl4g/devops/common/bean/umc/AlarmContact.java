@@ -3,7 +3,6 @@ package com.wl4g.devops.common.bean.umc;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class AlarmContact extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
@@ -250,14 +249,25 @@ public class AlarmContact extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AlarmContact{" + "name='" + name + '\'' + ", email='" + email + '\'' + ", phone='" + phone + '\'' + ", dingtalk='"
-				+ dingtalk + '\'' + ", wechat='" + wechat + '\'' + ", twitter='" + twitter + '\'' + ", facebook='" + facebook
-				+ '\'' + ", emailEnable=" + emailEnable + ", phoneEnable=" + phoneEnable + ", dingtalkEnable=" + dingtalkEnable
-				+ ", wechatEnable=" + wechatEnable + ", twitterEnable=" + twitterEnable + ", facebookEnable=" + facebookEnable
-				+ ", phoneTimeOfFreq=" + phoneTimeOfFreq + ", dingtalkTimeOfFreq=" + dingtalkTimeOfFreq + ", wechatTimeOfFreq="
-				+ wechatTimeOfFreq + ", twitterTimeOfFreq=" + twitterTimeOfFreq + ", facebookTimeOfFreq=" + facebookTimeOfFreq
-				+ ", phoneNumOfFreq=" + phoneNumOfFreq + ", dingtalkNumOfFreq=" + dingtalkNumOfFreq + ", wechatNumOfFreq="
-				+ wechatNumOfFreq + ", twitterNumOfFreq=" + twitterNumOfFreq + ", facebookNumOfFreq=" + facebookNumOfFreq
-				+ ", groups=" + Arrays.toString(groups) + '}';
+		return "AlarmContact{" +
+				"name='" + name + '\'' +
+				", email='" + email + '\'' +
+				", id='" + getId() + '\'' +
+				", phone='" + phone + '\'' +
+				'}';
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		AlarmContact other = (AlarmContact) obj;
+		if(this.getId().equals(other.getId())){
+			return true;
+		}
+		return false;
+	}
+
+
 }

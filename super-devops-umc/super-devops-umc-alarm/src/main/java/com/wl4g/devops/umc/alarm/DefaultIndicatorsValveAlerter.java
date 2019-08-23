@@ -137,7 +137,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		// Maximum metric keep time window of rules.
 		long maxWindowTime = extractMaxRuleWindowTime(alarmConfig.getAlarmTemplate().getRules());
 		// Offer latest metrics in time window queue.
-		List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getHost()+":"+agwrap.getEndpoint(), mwrap.getValue(), agwrap.getTimestamp(), now,
+		List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getHost()+":"+agwrap.getEndpoint()+"@"+alarmConfig.getAlarmTemplate().getId(), mwrap.getValue(), agwrap.getTimestamp(), now,
 				maxWindowTime);
 
 		// Match alarm rules of metric values.
@@ -203,8 +203,27 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @return
 	 */
 	protected List<AlarmRule> matchAlarmRules(List<MetricValue> metricVals, List<AlarmRule> rules, long now) {
+
+		//TODO
+		List<AlarmRule> matchRule = new ArrayList<>();
+		if(isEmpty(metricVals)){
+			return matchRule;
+		}
+		for(AlarmRule rule : rules){
+			// Extract validity metric values.
+			Double[] validityMetricVals = extractValidityMetricValueInQueue(metricVals, rule.getQueueTimeWindow(), now);
+			// Do inspection.
+			InspectWrapper wrap = new InspectWrapper(rule.getLogicalOperator(), rule.getRelateOperator(), rule.getAggregator(),
+					rule.getValue(), validityMetricVals);
+			if (inspector.verify(wrap)) {
+				matchRule.add(rule);
+				rule.setCompareValue(wrap.getCompareValue());
+			}
+		}
+		return matchRule;
+
 		// Match mode for 'OR'/'AND'.
-		return safeList(rules).stream().map(rule -> {
+		/*return safeList(rules).stream().map(rule -> {
 			// Extract validity metric values.
 			Double[] validityMetricVals = extractValidityMetricValueInQueue(metricVals, rule.getQueueTimeWindow(), now);
 			// Do inspection.
@@ -214,7 +233,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				return rule;
 			}
 			return null;
-		}).collect(toList());
+		}).collect(toList());*/
+
 	}
 
 	/**
@@ -262,17 +282,18 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			TemplateContactWrapper templateContactWrapper = templateContactWrapperMap.get(alarmConfig.getTemplateId());
 			if(null== templateContactWrapper){
 				templateContactWrapper = new TemplateContactWrapper(alarmConfig.getTemplateId(),alarmTemplate,
-						new HashSet<>(alarmContacts),result.getMatchedTag(),result.getMatchedRules(),result.getAggregateWrap());
+						new ArrayList(alarmContacts),result.getMatchedTag(),result.getMatchedRules(),result.getAggregateWrap());
 			}else{
-				Set<AlarmContact> contacts = templateContactWrapper.getContacts();
+				List<AlarmContact> contacts = templateContactWrapper.getContacts();
 				contacts.addAll(alarmContacts);
 				templateContactWrapper.setContacts(contacts);
 			}
 			templateContactWrapperMap.put(alarmConfig.getTemplateId(),templateContactWrapper);
 		}
 
-		for (TemplateContactWrapper templateContactWrapper : templateContactWrapperMap.values()) {
 
+		for (TemplateContactWrapper templateContactWrapper : templateContactWrapperMap.values()) {
+			templateContactWrapper.setContacts(removeDupli(templateContactWrapper.getContacts()));//remove repeat
 			//build alarm note
 			AlarmNote alarmNote = new AlarmNote();
 			alarmNote.setHost(templateContactWrapper.getAggregateWrap().getHost());
@@ -281,12 +302,18 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			alarmNote.setMatchedTag(templateContactWrapper.getMatchedTag());
 			alarmNote.setMetricName(templateContactWrapper.getAlarmTemplate().getMetric());
 			// save record and record rule
-			AlarmRecord alarmRecord = configurer.saveAlarmRecord(templateContactWrapper.getTemplateId(),
+			AlarmRecord alarmRecord = configurer.saveAlarmRecord(templateContactWrapper.getAlarmTemplate(),
 					templateContactWrapper.getAggregateWrap().getTimestamp(), templateContactWrapper.getMatchedRules(), JacksonUtils.toJSONString(alarmNote));
 
 			// send
 			notification(new ArrayList<>(templateContactWrapper.getContacts()), alarmRecord);
 		}
+	}
+
+	public static List<AlarmContact> removeDupli(List<AlarmContact> contacts) {
+		Set<AlarmContact> alarmContacts = new TreeSet<>((o1, o2) -> o1.getId().compareTo(o2.getId()));
+		alarmContacts.addAll(contacts);
+		return new ArrayList<>(alarmContacts);
 	}
 
 	/**
@@ -321,8 +348,20 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param macthedRules
 	 */
 	protected void notification(List<AlarmContact> alarmContacts,AlarmRecord alarmRecord) {
+		log.info("into DefaultIndicatorsValveAlerter.notification prarms::"+ "alarmContacts = {} , alarmNote = {} ", alarmContacts, alarmRecord.getAlarmNote() );
 
 		for(AlarmContact alarmContact : alarmContacts){
+
+			//save notification
+			AlarmNotificationContact alarmNotificationContact = new AlarmNotificationContact();
+			alarmNotificationContact.setRecordId(alarmRecord.getId());
+			alarmNotificationContact.setContactId(alarmContact.getId());
+			alarmNotificationContact.setStatus(ALARM_SATUS_SEND);
+			configurer.saveNotificationContact(alarmNotificationContact);
+
+
+			//TODO just for test
+			notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.BARK.getValue(),null));
 
 			//email
 			if(alarmContact.getEmailEnable()==1){
@@ -364,72 +403,5 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 	}
 
-
-	public class TemplateContactWrapper{
-		private int templateId;
-		private AlarmTemplate alarmTemplate;
-		private Set<AlarmContact> contacts;
-		private Map<String, String> matchedTag;
-		private List<AlarmRule> matchedRules;
-		private MetricAggregateWrapper aggregateWrap;
-
-		public TemplateContactWrapper(int templateId, AlarmTemplate alarmTemplate, Set<AlarmContact> contacts, Map<String, String> matchedTag,
-									  List<AlarmRule> matchedRules, MetricAggregateWrapper aggregateWrap) {
-			this.templateId = templateId;
-			this.alarmTemplate = alarmTemplate;
-			this.contacts = contacts;
-			this.matchedTag = matchedTag;
-			this.matchedRules = matchedRules;
-			this.aggregateWrap = aggregateWrap;
-		}
-
-		public int getTemplateId() {
-			return templateId;
-		}
-
-		public void setTemplateId(int templateId) {
-			this.templateId = templateId;
-		}
-
-		public AlarmTemplate getAlarmTemplate() {
-			return alarmTemplate;
-		}
-
-		public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
-			this.alarmTemplate = alarmTemplate;
-		}
-
-		public Set<AlarmContact> getContacts() {
-			return contacts;
-		}
-
-		public void setContacts(Set<AlarmContact> contacts) {
-			this.contacts = contacts;
-		}
-
-		public Map<String, String> getMatchedTag() {
-			return matchedTag;
-		}
-
-		public void setMatchedTag(Map<String, String> matchedTag) {
-			this.matchedTag = matchedTag;
-		}
-
-		public List<AlarmRule> getMatchedRules() {
-			return matchedRules;
-		}
-
-		public void setMatchedRules(List<AlarmRule> matchedRules) {
-			this.matchedRules = matchedRules;
-		}
-
-		public MetricAggregateWrapper getAggregateWrap() {
-			return aggregateWrap;
-		}
-
-		public void setAggregateWrap(MetricAggregateWrapper aggregateWrap) {
-			this.aggregateWrap = aggregateWrap;
-		}
-	}
 
 }

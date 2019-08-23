@@ -45,12 +45,17 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public AlarmRecord saveAlarmRecord(Integer templateId, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
+	public AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
 		return null;
 	}
 
 	@Override
 	public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
+		return null;
+	}
+
+	@Override
+	public AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact) {
 		return null;
 	}
 

@@ -15,11 +15,10 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
-import java.util.Arrays;
-
+import com.wl4g.devops.umc.rule.Aggregator;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.umc.rule.Aggregator;
+import java.util.Arrays;
 
 /**
  * Rule verify inspector.
@@ -59,6 +58,8 @@ public interface RuleInspector {
 
 		final private Double[] values;
 
+		private Double compareValue;
+
 		public InspectWrapper(Integer logicalOperator, Integer relateOperator, String aggregator, Double baseline,
 				Double[] values) {
 			Assert.notNull(logicalOperator, "Logical operator must not be null");
@@ -89,6 +90,14 @@ public interface RuleInspector {
 
 		public Double getBaseline() {
 			return baseline;
+		}
+
+		public Double getCompareValue() {
+			return compareValue;
+		}
+
+		public void setCompareValue(Double compareValue) {
+			this.compareValue = compareValue;
 		}
 
 		@Override

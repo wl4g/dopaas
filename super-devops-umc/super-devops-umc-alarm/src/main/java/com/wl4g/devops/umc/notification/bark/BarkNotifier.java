@@ -17,7 +17,6 @@ package com.wl4g.devops.umc.notification.bark;
 
 import com.wl4g.devops.umc.notification.AbstractAlarmNotifier;
 import com.wl4g.devops.umc.notification.AlarmType;
-
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,7 +35,19 @@ public class BarkNotifier extends AbstractAlarmNotifier {
 
 	@Override
 	public void simpleNotify(SimpleAlarmMessage message) {
+
 		// TODO Auto-generated method stub
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		//factory.setConnectTimeout(5000);
+		RestTemplate restTemplate = new RestTemplate(factory);
+		//TemplateContactWrapper templateContactWrapper = JacksonUtils.parseJSON(message.getMessage(), TemplateContactWrapper.class);
+		//String msg = templateContactWrapper.getAlarmTemplate().getMetric()+ " is up ";
+
+		String url = "http://api.day.app/JZ7L5LcHcZsPxVrsox5AzG/{msg}" + "-time:" + System.currentTimeMillis();
+		String result = restTemplate.getForObject(url, String.class,message.getMessage());
+
+		log.info(result);
+		log.info("fasong");
 
 	}
 

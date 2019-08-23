@@ -53,8 +53,8 @@ spring:
             queue-depth: 4092
             properties:
               group.id: defaultUmcReceiverClusterId
-              #bootstrap.servers: owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092
-              bootstrap.servers: localhost:9092
+              bootstrap.servers: owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092
+              #bootstrap.servers: localhost:9092
         watch:
 #          zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
           zk-servers: safecloud-master:3181

@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
-import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
-
 import com.wl4g.devops.umc.rule.Aggregator;
 import com.wl4g.devops.umc.rule.LogicalOperator;
 import com.wl4g.devops.umc.rule.RelationOperator;
+
+import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
 
 /**
  * Latest rule inspector
@@ -42,6 +42,7 @@ public class LatestRuleInspector extends AbstractRuleInspector {
 		}
 		// Latest/Last
 		double latest = wrap.getValues()[wrap.getValues().length - 1];
+		wrap.setCompareValue(latest);
 		return super.operate(LogicalOperator.of(wrap.getLogicalOperator()), RelationOperator.of(wrap.getRelateOperator()), latest,
 				wrap.getBaseline());
 	}

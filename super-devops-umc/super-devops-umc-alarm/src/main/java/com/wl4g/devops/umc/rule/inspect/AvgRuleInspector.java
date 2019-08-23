@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
-import static com.wl4g.devops.common.utils.lang.Collections2.safeToList;
-import static java.util.stream.Collectors.summarizingDouble;
-
 import com.wl4g.devops.umc.rule.Aggregator;
 import com.wl4g.devops.umc.rule.LogicalOperator;
 import com.wl4g.devops.umc.rule.RelationOperator;
+
+import static com.wl4g.devops.common.utils.lang.Collections2.safeToList;
+import static java.util.stream.Collectors.summarizingDouble;
 
 /**
  * Average rule inspector
@@ -41,6 +41,7 @@ public class AvgRuleInspector extends AbstractRuleInspector {
 		// Average
 		double avg = safeToList(Double.class, wrap.getValues()).stream().filter(val -> null != val)
 				.collect(summarizingDouble(val -> val)).getAverage();
+		wrap.setCompareValue(avg);
 		return super.operate(LogicalOperator.of(wrap.getLogicalOperator()), RelationOperator.of(wrap.getRelateOperator()), avg,
 				wrap.getBaseline());
 	}
