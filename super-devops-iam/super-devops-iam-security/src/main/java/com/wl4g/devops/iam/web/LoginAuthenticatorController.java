@@ -79,11 +79,6 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	final public static String KEY_GENERAL_SECRET = "secret";
 
 	/**
-	 * Authentication code key name
-	 */
-	// final public static String KEY_GENERAL_AUTH_CODE = "authentication_code";
-
-	/**
 	 * SMS PreCheck response key-name.
 	 */
 	final public static String KEY_SMS_CHECK_NAME = "checkSms";
@@ -111,6 +106,29 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@Autowired
 	protected IamCredentialsSecurer securer;
+
+	/**
+	 * Apply session.
+	 * 
+	 * @param request
+	 */
+	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { GET, POST })
+	@ResponseBody
+	public RespBase<?> applySession(HttpServletRequest request) {
+		RespBase<Object> resp = RespBase.create();
+		try {
+			resp.getData().put(config.getParam().getSid(), getSessionId());
+		} catch (Exception e) {
+			if (e instanceof IamException) {
+				resp.setCode(RetCode.BIZ_ERR);
+			} else {
+				resp.setCode(RetCode.SYS_ERR);
+			}
+			resp.setMessage(getRootCauseMessage(e));
+			log.error("Failed to apply session.", e);
+		}
+		return resp;
+	}
 
 	/**
 	 * PreCheck the initial configuration. (e.g: whether to enable the
@@ -158,7 +176,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				resp.setCode(RetCode.SYS_ERR);
 			}
 			resp.setMessage(getRootCauseMessage(e));
-			log.error("Failure to initial check", e);
+			log.error("Failed to initial check", e);
 		}
 		return resp;
 	}
@@ -190,7 +208,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				resp.setCode(RetCode.SYS_ERR);
 			}
 			resp.setMessage(getRootCauseMessage(e));
-			log.error("Failure to apply for locale", e);
+			log.error("Failed to apply for locale", e);
 		}
 		return resp;
 	}
@@ -275,7 +293,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				resp.setCode(RetCode.SYS_ERR);
 			}
 			resp.setMessage(getRootCauseMessage(e));
-			log.error("Failure to apply for sms verify-code", e);
+			log.error("Failed to apply for sms verify-code", e);
 		}
 		return resp;
 	}
