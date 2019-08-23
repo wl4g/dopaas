@@ -86,12 +86,12 @@ public class RuleConfigManager implements ApplicationRunner {
 	 * @param clusterId
 	 * @return
 	 */
-	public List<AlarmConfig> loadAlarmRuleTpls(String collectAddr) {
-		String key = getCollectIdAlarmRulesCacheKey(collectAddr);
+	public List<AlarmConfig> loadAlarmRuleTpls(String host,String endpoint) {
+		String key = getCollectIdAlarmRulesCacheKey(host+":"+endpoint);
 		// First get the cache
 		List<AlarmConfig> alarmTpls = jedisService.getObjectList(key, AlarmConfig.class);
 		if (isEmpty(alarmTpls)) {
-			alarmTpls = ruleConfigurer.findAlarmConfigByEndpoint(collectAddr);
+			alarmTpls = ruleConfigurer.findAlarmConfigByEndpoint(host,endpoint);
 			if (!isEmpty(alarmTpls)) {
 				jedisService.setObjectList(key, alarmTpls, 0);
 			}

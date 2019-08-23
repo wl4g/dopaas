@@ -88,7 +88,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 			}
 
 			// Boss asynchronously execution.(if necessary)
-			if (config.isAsync()) {
+			if (config.isStartup()) {
 				String name = getClass().getSimpleName() + "-boss";
 				boss = new Thread(this, name);
 				boss.setDaemon(false);
@@ -203,7 +203,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		private static final long serialVersionUID = -1996272636830701232L;
 
 		/** Whether to start the boss thread asynchronously. */
-		private boolean async = true;
+		private boolean startup = true;
 
 		/**
 		 * When the concurrency is less than 0, it means that the worker thread
@@ -237,19 +237,19 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		public RunProperties(boolean async, int concurrency, long keepAliveTime, int acceptQueue,
 				RejectedExecutionHandler reject) {
 			super();
-			setAsync(async);
+			setStartup(async);
 			setConcurrency(concurrency);
 			setKeepAliveTime(keepAliveTime);
 			setAcceptQueue(acceptQueue);
 			setReject(reject);
 		}
 
-		public boolean isAsync() {
-			return async;
+		public boolean isStartup() {
+			return startup;
 		}
 
-		public void setAsync(boolean async) {
-			this.async = async;
+		public void setStartup(boolean async) {
+			this.startup = async;
 		}
 
 		public int getConcurrency() {

@@ -58,7 +58,8 @@ public class TsdbMetricStore implements MetricStore {
 				String value = entry.getValue();
 				pointBuilder.tag(key, value);
 			}
-			pointBuilder.tag("instance", aggregate.getInstance());
+			pointBuilder.tag("host", aggregate.getHost());
+			pointBuilder.tag("endpoint", aggregate.getEndpoint());
 			Point point = pointBuilder.build();
 
 			try {

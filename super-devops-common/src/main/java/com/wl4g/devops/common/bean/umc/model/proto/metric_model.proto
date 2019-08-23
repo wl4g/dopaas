@@ -20,10 +20,11 @@ package com.wl4g.devops.common.bean.umc.model.proto;
 
 message MetricAggregate {
     string classify = 1;
-    string instance = 2;
-    string namespace = 3;
-    int64 timestamp = 4;
-    repeated Metric metrics = 5; // Array<Metric>
+    string host = 2;
+    string endpoint = 3;
+    string namespace = 4;
+    int64 timestamp = 5;
+    repeated Metric metrics = 6; // Array<Metric>
 }
 
 message Metric {
@@ -34,20 +35,21 @@ message Metric {
 
 // ------------------- Using description -------------------
 // [Step1]
-//
+
 // go get github.com/gogo/protobuf/protoc-gen-gogo // Required
 // //go get github.com/gogo/protobuf/protoc-gen-gofast // Optional
 // go get github.com/gogo/protobuf/proto // Required
 // //go get github.com/gogo/protobuf/gogoproto // Optional
-//
+
 // [Step2]
 //
-// [golang]
+// --------- Golang ---------
 //
 // cd $PROJECT_HOME/pkg
 // protoc --gogo_out=. indicators/metric_model.proto
-//
-// [java] @SuppressWarnings({ "unused", "unchecked", "deprecation" })
+
+// ---------- Java ----------
 //
 // cd $PROJECT_HOME/src/main/java
 // protoc --java_out=. com/wl4g/devops/common/bean/umc/model/proto/metric_model.proto
+// @SuppressWarnings({ "unused", "unchecked", "deprecation" })

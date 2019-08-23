@@ -28,79 +28,67 @@ import java.util.List;
 
 /**
  * Service metric indicators rule handler.
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年7月5日
  * @since
  */
 public class ServiceRuleConfigurer implements AlarmConfigurer {
 
-	@Autowired
-	protected JedisService jedisService;
+    @Autowired
+    protected JedisService jedisService;
 
-	@Autowired
-	private AlarmTemplateDao alarmTemplateDao;
+    @Autowired
+    private AlarmTemplateDao alarmTemplateDao;
 
-	@Autowired
-	private AlarmConfigDao alarmConfigDao;
+    @Autowired
+    private AlarmConfigDao alarmConfigDao;
 
-	@Autowired
-	private AlarmRecordDao alarmRecordDao;
+    @Autowired
+    private AlarmRecordDao alarmRecordDao;
 
-	@Autowired
-	private AlarmRecordRuleDao alarmRecordRuleDao;
+    @Autowired
+    private AlarmRecordRuleDao alarmRecordRuleDao;
 
-	@Autowired
-	private AlarmNotificationDao alarmNotificationDao;
+    @Autowired
+    private AlarmContactDao alarmContactDao;
 
-	@Autowired
-	private AlarmContactDao alarmContactDao;
-
-	@Autowired
-	private AppClusterDao appClusterDao;
+    @Autowired
+    private AppClusterDao appClusterDao;
 
 
-	@Override
-	public List<AlarmConfig> findAlarmConfigByEndpoint(String collectAddr) {// large search from db
-		List<AlarmConfig> alarmConfigs = alarmConfigDao.getAlarmConfigTpls(collectAddr);
-		return alarmConfigs;
-	}
+    @Override
+    public List<AlarmConfig> findAlarmConfigByEndpoint(String host,String endpoint) {// large search from db
+        List<AlarmConfig> alarmConfigs = alarmConfigDao.getAlarmConfigTpls(host,endpoint);
+        return alarmConfigs;
+    }
 
-	@Override
-	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectAddr) {
-		return alarmConfigDao.getByCollectAddrAndTemplateId(templateId, collectAddr);
-	}
+    @Override
+    public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectAddr) {
+        return alarmConfigDao.getByCollectAddrAndTemplateId(templateId, collectAddr);
+    }
 
-	@Transactional
-	public void saveAlarmRecord(Integer templateId, String collectId, Long gatherTime, List<AlarmRule> rules,Integer notificationId) {
-			AlarmRecord record = new AlarmRecord();
-			record.setTemplateId(templateId);
-			record.setNotificationId(notificationId);
-			record.setGatherTime(new Date(gatherTime));
-			record.setCreateTime(new Date());
-			alarmRecordDao.insertSelective(record);
-			// Alarm matched rules.
-			for (AlarmRule rule : rules) {
-				AlarmRecordRule recordRule = new AlarmRecordRule();
-				recordRule.setRecordId(record.getId());
-				recordRule.setRuleId(rule.getId());
-				alarmRecordRuleDao.insertSelective(recordRule);
-			}
-	}
+    @Transactional
+    public AlarmRecord saveAlarmRecord(Integer templateId, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
+        AlarmRecord record = new AlarmRecord();
+        record.setTemplateId(templateId);
+        record.setGatherTime(new Date(gatherTime));
+        record.setCreateTime(new Date());
+        record.setAlarmNote(alarmNote);
+        alarmRecordDao.insertSelective(record);
+        // Alarm matched rules.
+        for (AlarmRule rule : rules) {
+            AlarmRecordRule recordRule = new AlarmRecordRule();
+            recordRule.setRecordId(record.getId());
+            recordRule.setRuleId(rule.getId());
+            alarmRecordRuleDao.insertSelective(recordRule);
+        }
+        return record;
+    }
 
-	@Override
-	public void saveNotification(AlarmNotification alarmNotification) {
-		alarmNotificationDao.insertSelective(alarmNotification);
-	}
-
-	@Override
-	public void updateNotification(AlarmNotification alarmNotification) {
-		alarmNotificationDao.updateByPrimaryKeySelective(alarmNotification);
-	}
-
-	@Override
-	public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
-		return alarmContactDao.getContactByGroupIds(groupIds);
-	}
+    @Override
+    public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
+        return alarmContactDao.getContactByGroupIds(groupIds);
+    }
 
 }
