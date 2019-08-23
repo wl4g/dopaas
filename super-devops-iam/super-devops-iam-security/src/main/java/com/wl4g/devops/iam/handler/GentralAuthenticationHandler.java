@@ -46,6 +46,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 
@@ -408,14 +409,14 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param param
 	 */
 	private void checkGrantTicketValidited(Subject subject, TicketValidationModel param) {
-		if (!StringUtils.hasText(param.getTicket())) {
-			throw new InvalidGrantTicketException(String.format("Invalid empty grant ticket '%s'", param.getTicket()));
+		if (isBlank(param.getTicket())) {
+			throw new InvalidGrantTicketException("Invalid granting ticket.");
 		}
 
 		// Get grant information
 		GrantTicketInfo info = getGrantTicketSeesion(subject.getSession());
 		if (log.isDebugEnabled()) {
-			log.debug("Get grant information:{} by sessionId:{}", info, subject.getSession().getId().toString());
+			log.debug("Got granting info:{} by sessionId:{}", info, getSessionId());
 		}
 
 		// Request fromAppName ticket => storedTicket
@@ -423,7 +424,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Validation
 		if (!(StringUtils2.equals(storedTicket, param.getTicket()) && subject.isAuthenticated()
 				&& isNotBlank((String) subject.getPrincipal()))) {
-			throw new InvalidGrantTicketException(String.format("Invalid grant ticket '%s'", param.getTicket()));
+			throw new InvalidGrantTicketException(String.format("Illegal granting ticket %s", param.getTicket()));
 		}
 	}
 

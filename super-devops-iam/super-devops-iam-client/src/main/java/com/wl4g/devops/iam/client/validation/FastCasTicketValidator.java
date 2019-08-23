@@ -53,7 +53,7 @@ public class FastCasTicketValidator extends AbstractBasedValidator<TicketValidat
 
 	@Override
 	public TicketAssertion validate(TicketValidationModel req) throws TicketValidateException {
-		final RespBase<TicketAssertion> resp = this.doGetRemoteValidate(URI_S_VALIDATE, req);
+		final RespBase<TicketAssertion> resp = doGetRemoteValidate(URI_S_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
 			/*
 			 * Only if the error is not authenticated, can it be redirected to
