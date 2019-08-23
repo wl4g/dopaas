@@ -83,6 +83,16 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	final public static String KEY_SMS_CHECK_NAME = "checkSms";
 
 	/**
+	 * The create time to re-apply for SMS dynamic password key-name.
+	 */
+	final public static String KEY_SMS_CREATE = "createTime";
+
+	/**
+	 * The milliseconds to delay to re-apply for SMS dynamic password key-name.
+	 */
+	final public static String KEY_SMS_DELAY = "delayMs";
+
+	/**
 	 * The remaining milliseconds to wait to re-apply for SMS dynamic password
 	 * key-name.
 	 */
@@ -168,7 +178,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 */
 			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
 			if (verifyCode != null) {
-				resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
+				resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_SMS_CREATE, verifyCode.getCreateTime())
+						.andPut(KEY_SMS_DELAY, config.getMatcher().getFailFastSmsDelay())
+						.andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
 			}
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -279,7 +291,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
+			resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_SMS_CREATE, verifyCode.getCreateTime())
+					.andPut(KEY_SMS_DELAY, config.getMatcher().getFailFastSmsDelay())
+					.andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
