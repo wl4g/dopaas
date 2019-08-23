@@ -158,24 +158,41 @@ public class RespBase<T extends Object> implements Serializable {
 	public static class DataMap<V> extends LinkedHashMap<String, V> {
 		private static final long serialVersionUID = 741193108777950437L;
 
-		public DataMap<V> andPut(String key, V value) {
+		@Override
+		public V put(String key, V value) {
 			if (isNotBlank(key) && value != null) {
-				this.put(key, value);
+				return super.put(key, value);
 			}
+			return null;
+		}
+
+		@Override
+		public V putIfAbsent(String key, V value) {
+			if (isNotBlank(key) && value != null) {
+				return super.putIfAbsent(key, value);
+			}
+			return null;
+		}
+
+		@Override
+		public void putAll(Map<? extends String, ? extends V> m) {
+			if (!CollectionUtils.isEmpty(m)) {
+				super.putAll(m);
+			}
+		}
+
+		public DataMap<V> andPut(String key, V value) {
+			put(key, value);
 			return this;
 		}
 
 		public DataMap<V> andPutIfAbsent(String key, V value) {
-			if (isNotBlank(key) && value != null) {
-				this.putIfAbsent(key, value);
-			}
+			putIfAbsent(key, value);
 			return this;
 		}
 
 		public DataMap<V> andPutAll(Map<? extends String, ? extends V> m) {
-			if (!CollectionUtils.isEmpty(m)) {
-				this.putAll(m);
-			}
+			putAll(m);
 			return this;
 		}
 
