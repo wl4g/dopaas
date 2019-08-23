@@ -132,7 +132,11 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	public static <T> RespBase<T> create() {
-		return new RespBase<T>();
+		return create(null);
+	}
+
+	public static <T> RespBase<T> create(String status) {
+		return new RespBase<T>().setStatus(status);
 	}
 
 	public static boolean isSuccess(RespBase<?> resp) {

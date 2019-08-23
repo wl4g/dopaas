@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.common.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.shiro.SecurityUtils;
+
 import static com.google.common.base.Charsets.*;
 import static org.apache.commons.codec.binary.Hex.*;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -31,6 +33,10 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
  * @since
  */
 public abstract class Securitys {
+
+	final public static String DEFAULT_AUTHC_STATUS = "Certified";
+
+	final public static String DEFAULT_UNAUTHC_STATUS = "Uncertified";
 
 	/**
 	 * Safety limiting factor(e.g. Client remote IP and loginId)
@@ -74,6 +80,15 @@ public abstract class Securitys {
 	 */
 	public static String createUIDLimitFactor(String uid) {
 		return isNotBlank(uid) ? (KEY_FAIL_LIMIT_UID_PREFIX + uid) : EMPTY;
+	}
+
+	/**
+	 * Get current session authenticated status.
+	 * 
+	 * @return
+	 */
+	public static String currentSessionStatus() {
+		return SecurityUtils.getSubject().isAuthenticated() ? DEFAULT_AUTHC_STATUS : DEFAULT_UNAUTHC_STATUS;
 	}
 
 }
