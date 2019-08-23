@@ -83,7 +83,7 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 	}
 
 	public void setTagMap(List<Map<String, String>> tagMap) {
-		if (isEmpty(tagMap) && isEmpty(tagMap)) {
+		if (isEmpty(tagMap) && StringUtils.isNotBlank(getTags())) {
 			tagMap = parseJSON(getTags(), new TypeReference<List<Map<String, String>>>() {
 			});
 		}
@@ -95,7 +95,11 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 		if (isEmpty(tagMap)) {
 			tagMap = parseJSON(getTags(), List.class);
 		}
+
 		Map<String, String> map = new HashMap<String, String>();
+		if(isEmpty(tagMap)){
+			return map;
+		}
 		for (Map<String, String> m : tagMap) {
 			if (m.get("name") != null && m.get("value") != null && StringUtils.isNotBlank(m.get("name"))
 					&& StringUtils.isNotBlank(m.get("value"))) {
