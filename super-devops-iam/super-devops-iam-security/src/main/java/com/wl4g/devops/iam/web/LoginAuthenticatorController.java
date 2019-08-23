@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -30,6 +29,7 @@ import java.util.Locale;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.DataMap;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
@@ -50,7 +50,6 @@ import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNum
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -71,7 +70,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	/**
 	 * Login CAPTCHA token for session.
 	 */
-	final public static String KEY_GENERAL_CAPTCHA_TOKEN = "captchaToken";
+	final public static String KEY_GENERAL_CAPTCHA_ENABLE = "captchaEnabled";
 
 	/**
 	 * Encrypted public key requested before login returns key name
@@ -141,23 +140,25 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	public RespBase<?> check(HttpServletRequest request) {
 		RespBase<Object> resp = RespBase.create();
 		try {
-			// Login account(Optional)
+			// LoginId(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
-			// Lock factors
+			// Limit factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
 			// Generate CAPTCHA token.
-			String captchaToken = EMPTY;
+			DataMap<Object> checkGeneral = resp.build(KEY_GENERAL_CHECK_NAME);
+			boolean capEnable = false;
 			if (graphVerification.isEnabled(factors)) { // Enabled?
-				bind(KEY_GENERAL_CAPTCHA_TOKEN, (captchaToken = randomAlphanumeric(16)));
+				capEnable = true;
 			}
-			// Because there is no cookie on the mobile side
-			String sid = String.valueOf(getSessionId());
+			checkGeneral.put(KEY_GENERAL_CAPTCHA_ENABLE, capEnable);
 
 			// Apply credentials encrypt secret pubKey.
-			String secret = securer.applySecret(sid);
-			resp.build(KEY_GENERAL_CHECK_NAME).andPut(KEY_GENERAL_SECRET, secret).andPut(KEY_GENERAL_CAPTCHA_TOKEN, captchaToken)
-					.andPut(config.getParam().getSid(), sid);
+			String secret = EMPTY;
+			if (isNotBlank(principal)) {
+				secret = securer.applySecret(principal);
+			}
+			checkGeneral.put(KEY_GENERAL_SECRET, secret);
 
 			/*
 			 * When the SMS verification code is not empty, this creation
@@ -227,15 +228,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (!coprocessor.preApplyCapcha(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
-			// Check CAPTCHA token.
-			String reqCapToken = getCleanParam(request, KEY_GENERAL_CAPTCHA_TOKEN);
-			String capToken = getBindValue(KEY_GENERAL_CAPTCHA_TOKEN, true);
-			Assert.state(isNotBlank(capToken), "Invalid captcha token or expired.");
-			Assert.state(trimToEmpty(capToken).equals(reqCapToken), String.format("Illegal captcha token for '%s'", reqCapToken));
-
-			// Login account number or mobile number(Optional)
+			// LoginId number or mobileNum(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
-			// Lock factors
+			// Limit factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA

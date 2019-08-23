@@ -10,20 +10,17 @@
 		definition: { // 字典参数定义
 			responseType: "response_type", // 控制返回数据格式的参数名
 			responseTypeValue: "json", // 使用返回数据格式
-			applyCaptchaUri: "/ext/captcha-apply", // 验证码URL的后缀
-			checkUri: "/ext/check", // 登录前初始检查接口的URL后缀
-			submissionUri: "/login-submission/general", // 提交登录的URL后缀
+			applyCaptchaUri: "/login/applycaptcha", // 验证码URL的后缀
+			checkUri: "/login/check", // 登录前初始检查接口的URL后缀
+			submissionUri: "/auth/general", // 提交登录的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
-			captchaEnabledKey: "captchaEnabled", // 控制验证码显示的参数名
-			secretKey: "secret", // 控制验证码显示的参数名
 			whichKey: "which", // 请求连接到SNS的参数名
-			refreshUrlKey: "refresh_url", // 提交回调刷新URL参数名
+			redirectUrlKey: "redirect_url", // 重定向URL参数名
+			refreshUrlKey: "refresh_url", // 刷新URL参数名
 			principalKey: "principal", // 提交账号参数名
 			credentialKey: "password", // 提交账号密码参数名
 			captchaKey: "captcha", // 登录提交验证码参数名
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
-			codeKey: "code", // 接口返回状态码参数名
-			msgKey: "message", // 接口返回说明参数名
 			codeOkValue: "200" // 接口返回成功码判定标准
 		},
 		getPrincipal: function(){ // 默认获取账号名实现
@@ -38,7 +35,6 @@
 				img: null, // 验证码显示IMG对象
 				input: null, // 验证码INPUT输入对象
 				url: null, // 验证码图像地址
-				enableOption: "captchaEnable", // 可选，控制当前是否启用验证码，后台默认:captchaEnable（与后台对应）
 				name: "captcha", // 必须，提交时的验证码参数名，后台默认:captcha（与后台对应）
 				hide: function(){ // 默认隐藏验证码实现
 					var img = CommonUtils.checkEmpty("signIn.captcha.img", settings.signIn.captcha.img);
@@ -47,37 +43,13 @@
 					$(img).css({"display" : "none"});
 					$(img).attr({"src": ""});
 				},
-				show: function(captchaUrl){ // 默认显示验证码实现
+				show: function(captchaUrl){ // 显示验证码输入
 					var img = CommonUtils.checkEmpty("signIn.captcha.img", settings.signIn.captcha.img);
 					var imgInput = CommonUtils.checkEmpty("signIn.captcha.input", settings.signIn.captcha.input);
+					// 申请Captcha
+					$(img).attr("src", CommonUtils.checkEmpty("captchaUrl", captchaUrl));
 					$(imgInput).css({"display" : "inline"}); // 可先显示验证码输入框
-
-					// 请求Captcha接口（返回img流，当被锁定时会返回json异常信息，例：message:您刷新太频繁，请稍后再试）
-					fetch(CommonUtils.checkEmpty("captchaUrl", captchaUrl))
-					.then((res) => {
-						var contentType = res.headers.get("Content-Type");
-						if(contentType.indexOf("image") >= 0){
-							return res.blob();
-						} else if (contentType.indexOf("application/json") >= 0){
-							return res.json();
-						}
-						throw Error("Unsupport media content-type '"+ contentType +"");
-					}).then(body => {
-						if(body instanceof Blob){
-							var imgObjURL = URL.createObjectURL(body);
-					    	$(img).attr("src", imgObjURL);
-						}
-						// data是非Blob类直接可断定已被锁定
-						else {
-							var msgName = CommonUtils.checkEmpty("definition.msgKey",settings.definition.msgKey);
-							var title = CommonUtils.isEmpty(body[msgName]) ? "您刷新频率过快，请稍后再试" : body[msgName];
-							$(img).attr("title", title);
-							// 失败降级回调
-							settings.signIn.captcha.onFallback(body[msgName]);
-						}
-						// 最好在img接口返回后再显示img标签，防止闪出破图
-						$(img).css({"display" : "inline"});
-					});
+					$(img).css({"display" : "inline"});
 				},
 				onFallback: function(errmsg){ // 加载captcha失败，降级回调（被锁定）
 					console.error(errmsg);
@@ -272,16 +244,12 @@
 			type: "get",
 			dataType: "json",
 			success: function(resp){
-				var codeKey = CommonUtils.checkEmpty("definition.codeKey",settings.definition.codeKey);
-				var msgName = CommonUtils.checkEmpty("definition.msgKey",settings.definition.msgKey);
 				var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-				if(!CommonUtils.isEmpty(resp) && (resp[codeKey] != codeOkValue)){
-					settings.signIn.onError(resp[msgName]); // 检查失败回调
+				if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
+					settings.signIn.onError(resp.message); // 检查失败回调
 				} else {
-					var secretKey = CommonUtils.checkEmpty("definition.secretKey",settings.definition.secretKey);
-					var captchaEnabledKey = CommonUtils.checkEmpty("definition.captchaEnabledKey",settings.definition.captchaEnabledKey);
-					var secret = resp.data[secretKey]; // 加密公钥
-					var captchaEnabled = CommonUtils.isEnabled(CommonUtils.checkEmpty("check()=>captchaEnabled",resp.data[captchaEnabledKey]));
+					var secret = resp.data.checkGeneral.secret; // 加密公钥
+					var captchaEnabled = resp.data.checkGeneral.captchaEnabled;
 					callback(captchaEnabled, secret); // 登录继续
 				}
 			},
@@ -324,7 +292,7 @@
 						}
 					}
 					// 生成登录提交URL
-					var loginSubmissionUrl = CommonUtils.checkEmpty("baseUri",settings.baseUri)
+					var loginSubmitUrl = CommonUtils.checkEmpty("baseUri",settings.baseUri)
 						+ CommonUtils.checkEmpty("definition.submissionUri",settings.definition.submissionUri) + "?"
 						+ CommonUtils.checkEmpty("definition.responseType",settings.definition.responseType) + "="
 						+ CommonUtils.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
@@ -339,31 +307,28 @@
 
 					// 提交账号登录请求
 					$.ajax({
-						url: loginSubmissionUrl,
+						url: loginSubmitUrl,
 						type: "post",
 						dataType: "json",
 						success: function(resp){
-							var codeKey = CommonUtils.checkEmpty("definition.codeKey",settings.definition.codeKey);
-							var msgKey = CommonUtils.checkEmpty("definition.msgKey",settings.definition.msgKey);
 							var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 							// 登录失败
-							if(!CommonUtils.isEmpty(resp) && (resp[codeKey] != codeOkValue)){
+							if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
 								// 检查当前是否需要graphic验证码
 								checkLogin(function(captchaEnabled, secret){
-									if(captchaEnabled){ // 启用则刷新验证码
+									if(captchaEnabled){ // 有值则刷新验证码
 										resetCaptcha();
 									}
 								});
-								settings.signIn.onError(resp[msgKey]); // 登录失败回调
+								settings.signIn.onError(resp.message); // 登录失败回调
 							} else { // 登录成功，直接重定向
-								var redirectUrl = CommonUtils.checkEmpty("Login successful, response redirectUrl is empty", resp.data);
+								var redirectUrl = CommonUtils.checkEmpty("Login successful, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.signIn.onSuccess(principal, redirectUrl)){
 									window.location.href = redirectUrl;
 								}
 							}
 						},
 						error: function(req, status, errmsg){
-							resetCaptcha(); // 重置验证码
 							settings.signIn.onError(errmsg); // 登录异常回调
 						}
 					});
@@ -410,7 +375,7 @@
 		},
 		generalAuth: function(){
 			generalAuthentication();
-			// 初始化调用check
+			// 初始化页面时检查
 			checkLogin(function(captchaEnabled, secret){
 				if(captchaEnabled){
 					resetCaptcha(); // 刷新验证码

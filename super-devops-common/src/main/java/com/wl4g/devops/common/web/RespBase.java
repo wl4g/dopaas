@@ -117,10 +117,6 @@ public class RespBase<T extends Object> implements Serializable {
 		return this;
 	}
 
-	public RespBase<T> setData(DataMap<T> data) {
-		return setData((Map<String, T>) data);
-	}
-
 	@SuppressWarnings("unchecked")
 	public DataMap<Object> build(String name) {
 		Assert.hasText(name, "Build datamap name must not be empty");
