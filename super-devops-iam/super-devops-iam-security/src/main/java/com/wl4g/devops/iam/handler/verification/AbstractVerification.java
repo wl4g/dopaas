@@ -23,9 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
@@ -34,10 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.utils.Sessions;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -96,10 +98,8 @@ public abstract class AbstractVerification implements Verification {
 			if (!(required || isEnabled(factors))) {
 				return; // not enabled
 			}
-
 			// Store the verify-code
 			Object verifyCode = getVerifyCode(true);
-
 			if (!doMatching(verifyCode, verifyCodeReq)) {
 				if (log.isErrorEnabled()) {
 					log.error("verification mismatch. {} => {}", verifyCodeReq, verifyCode);
@@ -112,6 +112,10 @@ public abstract class AbstractVerification implements Verification {
 		}
 	}
 
+	/**
+	 * Post validation finally processed.
+	 * 
+	 */
 	protected void postValidateFinallySet() {
 		reset(false); // Reset or create
 	}
@@ -127,7 +131,6 @@ public abstract class AbstractVerification implements Verification {
 			// Store verify-code in the session
 			getSession().setAttribute(storageSessionKey(), new VerifyCode(generateCode()));
 		}
-
 	}
 
 	/**
@@ -144,7 +147,7 @@ public abstract class AbstractVerification implements Verification {
 
 		// Assertion
 		long now = System.currentTimeMillis();
-		if (code != null && !StringUtils.isBlank(code.getText())) {
+		if (code != null && !isBlank(code.getText())) {
 			if (Math.abs(now - code.getCreateTime()) < getExpireMs()) { // Expired?
 				return code;
 			}
@@ -178,10 +181,10 @@ public abstract class AbstractVerification implements Verification {
 
 		if (verifyCode instanceof VerifyCode) {
 			VerifyCode vc = (VerifyCode) verifyCode;
-			return StringUtils.equalsIgnoreCase(vc.getText(), (CharSequence) verifyCodeReq);
+			return equalsIgnoreCase(vc.getText(), (CharSequence) verifyCodeReq);
 		}
 
-		return StringUtils.equalsIgnoreCase(String.valueOf(verifyCode), verifyCodeReq);
+		return equalsIgnoreCase(String.valueOf(verifyCode), verifyCodeReq);
 	}
 
 	/**
@@ -190,7 +193,7 @@ public abstract class AbstractVerification implements Verification {
 	 * @return
 	 */
 	protected String generateCode() {
-		return RandomStringUtils.randomAlphabetic(5);
+		return randomAlphabetic(5);
 	}
 
 	/**
@@ -225,7 +228,7 @@ public abstract class AbstractVerification implements Verification {
 	 * @return
 	 */
 	private Session getSession() {
-		return SecurityUtils.getSubject().getSession();
+		return Sessions.getSession();
 	}
 
 	/**

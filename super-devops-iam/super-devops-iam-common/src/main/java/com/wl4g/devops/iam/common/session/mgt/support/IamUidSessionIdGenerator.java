@@ -40,7 +40,8 @@ public class IamUidSessionIdGenerator implements SessionIdGenerator {
 	 *         randomUUID()}.
 	 */
 	public Serializable generateId(Session session) {
-		return UUID.randomUUID().toString().replaceAll("-", "");
+		String sid = UUID.randomUUID().toString().replaceAll("-", "");
+		return "sid" + sid.substring(2);
 	}
 
 }

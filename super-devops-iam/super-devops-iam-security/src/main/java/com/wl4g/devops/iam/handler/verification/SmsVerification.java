@@ -190,6 +190,14 @@ public class SmsVerification extends AbstractVerification implements Initializin
 
 	}
 
+	@Override
+	protected void postValidateFinallySet() {
+		if (log.isInfoEnabled()) {
+			log.info("SMS authc clean with session...");
+		}
+		// reset(false); // Reset or create
+	}
+
 	/**
 	 * SMS verification template handle sender.
 	 * 
@@ -228,13 +236,6 @@ public class SmsVerification extends AbstractVerification implements Initializin
 
 	}
 
-	@Override
-	protected void postValidateFinallySet() {
-		// sms auth need clean session
-		log.info("sms auth need clean session");
-		// reset(false); // Reset or create
-	}
-
 	/**
 	 * Mobile number parser.</br>
 	 * See:<a href=
@@ -264,6 +265,10 @@ public class SmsVerification extends AbstractVerification implements Initializin
 
 		public long getNumber() {
 			return number;
+		}
+
+		public String asNumberText() {
+			return String.valueOf(getNumber());
 		}
 
 		/**

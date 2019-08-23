@@ -60,6 +60,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * successfully by fast-CAS server authentication
 	 */
 	final public static String KEY_PERMIT_ATTRIBUTE_NAME = "authzPrincipalPermisstionAttributeName";
+	/**
+	 * Authentication principal language attribute name.
+	 */
+	final public static String KEY_LANG_ATTRIBUTE_NAME = "authzPrincipalLangAttributeName";
 
 	/** authentication token save session key-name */
 	final public static String KEY_SESSION_TOKEN = "authcTokenAttributeName";
@@ -79,7 +83,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * URI login submission base path for processing all shiro authentication
 	 * filters submitted by login.
 	 */
-	final public static String URI_LOGIN_SUBMISSION_BASE = "/login-submission/";
+	final public static String URI_AUTH_BASE = "/auth/";
 	/**
 	 * IAM server base URI. You need to ensure synchronization with the
 	 * configuration in bootstrap.yml [spring.cloud.devops.iam.filter-chain]
@@ -112,28 +116,33 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * (closing the child forms and passing callback information to the parent
 	 * forms) when the authorization is successful.
 	 */
-	final public static String URI_AFTER_CALLBACK_AGENT = "after_callback_agent";
+	final public static String URI_S_AFTER_CALLBACK_AGENT = "after_callback_agent";
 	/**
 	 * WeChat public platform social services receive message URI.
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
+
 	/** Based URI with extra needed verification code etc. */
-	final public static String URI_S_EXT_BASE = "/ext";
+	final public static String URI_S_LOGIN_BASE = "/login";
+	/**
+	 * Apply sessionID, For example for mobile use.
+	 */
+	final public static String URI_S_LOGIN_APPLY_SESSION = "sessions";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
 	 */
-	final public static String URI_S_EXT_CHECK = "check";
+	final public static String URI_S_LOGIN_CHECK = "check";
 	/** URI for apply for CAPTCHA. */
-	final public static String URI_S_EXT_CAPTCHA_APPLY = "captcha-apply";
+	final public static String URI_S_LOGIN_APPLY_CAPTCHA = "applycaptcha";
 	/** URI for apply for verify-code. */
-	final public static String URI_S_EXT_VERIFY_APPLY = "verifycode-apply";
+	final public static String URI_S_LOGIN_SMS_APPLY = "applysmsverify";
 	/** URI for apply for locale. */
-	final public static String URI_S_EXT_LOCALE_APPLY = "locale-apply";
+	final public static String URI_S_LOGIN_APPLY_LOCALE = "applylocale";
 	/**
 	 * Get the error information stored in the current session
 	 */
-	final public static String URI_S_EXT_ERRREAD = "errread";
+	final public static String URI_S_LOGIN_ERRREAD = "errread";
 
 	/**
 	 * IAM server authentication session stored cache name.
@@ -171,11 +180,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Securer based cache name
 	 */
 	final public static String CACHE_SECURER = "securer_";
+
 	/**
 	 * The public key index by logged-in users
 	 */
 	final public static String CACHE_PUBKEY_IDX = CACHE_SECURER + "pubkey_idx_";
-
 	/**
 	 * The key of cache encryption key pairs
 	 */
@@ -185,28 +194,21 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeName";
 	/**
-	 * The locale currently stored in the session.
+	 * Limiter login failure prefix based on user-name.
 	 */
-	final public static String KEY_USE_LOCALE = "usageLocale";
-	/**
-	 * Limiter login failure prefix based on username.
-	 */
-	final public static String KEY_FAIL_LIMITER_USER_PREFIX = "u_";
+	final public static String KEY_FAIL_LIMIT_UID_PREFIX = "uid_";
 	/**
 	 * Limiter login failure prefix based on remote IP.
 	 */
-	final public static String KEY_FAIL_LIMITER_RIP_PREFIX = "rip_";
-
+	final public static String KEY_FAIL_LIMIT_RIP_PREFIX = "rip_";
 	/**
 	 * Used for record all accounts that have failed to log in in this session.
 	 */
-	final public static String KEY_FAIL_PRINCIPAL_FACTORS = "pastFailAccounts";
-
+	final public static String KEY_FAIL_PRINCIPAL_FACTORS = "failPrincipalFactors";
 	/**
 	 * Error information for saving iam-related operations to sessions.
 	 */
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
-
 	/**
 	 * Delegate message source bean name.
 	 */
@@ -220,13 +222,5 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_C_BASE = "/internal";
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
-
-	/** get token */
-	final public static String URI_S_GET_TOKEN = "getToken";
-
-	/** get token */
-	final public static String URI_S_AUTH_TOKEN = "authToken";
-
-	final public static String SERVER_TOKEN_KEY = "server_token:";
 
 }

@@ -43,7 +43,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONN
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeDecodeURL;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CALLBACK;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AFTER_CALLBACK_AGENT;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 
 import java.io.IOException;
 import java.util.Map;
@@ -184,7 +184,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 	 *            Actual after callback refresh URL
 	 * @throws IOException
 	 */
-	@GetMapping(URI_AFTER_CALLBACK_AGENT)
+	@GetMapping(URI_S_AFTER_CALLBACK_AGENT)
 	public void afterCallbackAgent(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// Get callback parameters
 		Map<String, String> callbackParams = WebUtils2.toQueryParams(request.getQueryString());

@@ -16,16 +16,16 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_LOGIN_SUBMISSION_BASE;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_AUTHC_STATUS;
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.utils.Securitys.DEFAULT_AUTHC_STATUS;
+import static com.wl4g.devops.iam.common.utils.Securitys.DEFAULT_UNAUTHC_STATUS;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
@@ -97,7 +97,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * URI login submission base path for processing all shiro authentication
 	 * filters submitted by login
 	 */
-	final public static String URI_BASE_MAPPING = URI_LOGIN_SUBMISSION_BASE;
+	final public static String URI_BASE_MAPPING = URI_AUTH_BASE;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -268,17 +268,20 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			ServletResponse response) {
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
-		Throwable thw = getRootCauses(ae);
-		if (thw != null) {
+		String errmsg = getRootCausesString(ae);
+		if (isNotBlank(errmsg)) {
+			if (errmsg.contains(":")) {
+				errmsg = errmsg.split(":")[1];
+			}
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to authenticate.", ae);
+				log.debug("Failed to authentication.", ae);
 			} else {
-				log.warn("Failed to authenticate. caused by: ", thw.getMessage());
+				log.warn("Failed to authentication. caused by: ", errmsg);
 			}
 			/*
 			 * See:i.w.DiabloExtraController#errReads()
 			 */
-			bind(KEY_ERR_SESSION_SAVED, thw.getMessage());
+			bind(KEY_ERR_SESSION_SAVED, errmsg);
 		}
 		// Callback failure redirect URI
 		String failRedirectUrl = determineFailureUrl(tk, ae, request, response);
@@ -288,14 +291,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Get binding parameters
 		Map params = getBindValue(KEY_REQ_AUTH_PARAMS);
+
 		// Response JSON message
 		if (isJSONResponse(request)) {
 			try {
-				final String failed = makeFailedResponse(failRedirectUrl, request, params, thw);
+				String failed = makeFailedResponse(failRedirectUrl, request, params, errmsg);
 				if (log.isInfoEnabled()) {
 					log.info("Response unauthentication. {}", failed);
 				}
-				WebUtils2.writeJson(toHttp(response), failed);
+				writeJson(toHttp(response), failed);
 			} catch (IOException e) {
 				log.error("Response unauthentication json error", e);
 			}
@@ -435,8 +439,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map params, Throwable thw) {
-		String errmsg = (thw != null && isNotBlank(thw.getMessage())) ? thw.getMessage() : "Authentication fail";
+	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map params, String errmsg) {
+		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication fail";
 		// Make message
 		RespBase<String> resp = RespBase.create();
 		resp.setCode(UNAUTHC).setStatus(DEFAULT_UNAUTHC_STATUS).setMessage(errmsg);
