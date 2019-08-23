@@ -152,11 +152,11 @@ public class HistoryServiceImpl implements HistoryService {
 		configGurationDao.updateNode(nMap);
 
 		// Get application group information.
-		AppCluster appCluster = this.appClusterDao.getAppGroup(agl.getClusterId());
+		AppCluster appCluster = this.appClusterDao.getAppGroup(agl.getAppClusterId());
 
 		// Get application nodeList information
 		AppInstance appInstance = new AppInstance();
-		appInstance.setAppClusterId(Long.parseLong(String.valueOf(agl.getClusterId())));
+		appInstance.setAppClusterId(Long.parseLong(String.valueOf(agl.getAppClusterId())));
 		appInstance.setEnvId(agl.getEnvId());
 		List<AppInstance> nodeList = appClusterService.instancelist(appInstance);
 		// Define release instance list.
