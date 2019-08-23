@@ -110,7 +110,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
 		// Call extra get SID.
 		Serializable sessionId = coprocessor.preGetSessionId(request, response);
-		if (isAvailable(sessionId)) {
+		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Using extra SID for '{}'", sessionId);
 			}
@@ -123,7 +123,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		 * http://localhost/project?__sid=xxx&__cookie=yes
 		 */
 		sessionId = getCleanParam(request, config.getParam().getSid());
-		if (isAvailable(sessionId)) {
+		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Using url SID for '{}'", sessionId);
 			}
@@ -139,7 +139,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 		// Using grantTicket mode sessions
 		String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
-		if (isAvailable(grantTicket)) {
+		if (checkAvailable(grantTicket)) {
 			/*
 			 * Synchronize with
 			 * See:iam.handler.DefaultAuthenticationHandler#loggedin()
@@ -148,7 +148,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			if (log.isDebugEnabled()) {
 				log.debug("Using grantTicket: '{}' SID: '{}'", grantTicket, sessionId);
 			}
-			if (isAvailable(sessionId)) {
+			if (checkAvailable(sessionId)) {
 				return sessionId;
 			} else {
 				log.warn("Get empty SID by grantTicket '{}'", grantTicket);
@@ -349,7 +349,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param str
 	 * @return
 	 */
-	protected boolean isAvailable(Serializable str) {
+	protected boolean checkAvailable(Serializable str) {
 		return str != null && isNotBlank(str.toString()) && !str.toString().equalsIgnoreCase("NULL");
 	}
 
