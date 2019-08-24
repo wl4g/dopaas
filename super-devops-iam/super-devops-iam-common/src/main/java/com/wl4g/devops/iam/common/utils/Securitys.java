@@ -34,9 +34,15 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
  */
 public abstract class Securitys {
 
-	final public static String DEFAULT_AUTHC_STATUS = "Certified";
+	/**
+	 * Default authentication status.
+	 */
+	final public static String SESSION_STATUS_AUTHC = "Authenticated";
 
-	final public static String DEFAULT_UNAUTHC_STATUS = "Uncertified";
+	/**
+	 * Default Unauthenticated status.
+	 */
+	final public static String SESSION_STATUS_UNAUTHC = "Unauthenticated";
 
 	/**
 	 * Safety limiting factor(e.g. Client remote IP and loginId)
@@ -83,12 +89,12 @@ public abstract class Securitys {
 	}
 
 	/**
-	 * Get current session authenticated status.
+	 * Current session authentication status.
 	 * 
 	 * @return
 	 */
-	public static String currentSessionStatus() {
-		return SecurityUtils.getSubject().isAuthenticated() ? DEFAULT_AUTHC_STATUS : DEFAULT_UNAUTHC_STATUS;
+	public static String sessionStatus() {
+		return SecurityUtils.getSubject().isAuthenticated() ? SESSION_STATUS_AUTHC : SESSION_STATUS_UNAUTHC;
 	}
 
 }

@@ -29,7 +29,6 @@ import java.util.Locale;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.DataMap;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
@@ -37,11 +36,17 @@ import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber;
+import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
+import com.wl4g.devops.iam.web.model.GeneralCheckModel;
+import com.wl4g.devops.iam.web.model.SmsCheckModel;
 
+import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.*;
+import static com.wl4g.devops.iam.web.model.GeneralCheckModel.*;
+import static com.wl4g.devops.iam.web.model.SmsCheckModel.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCauseMessage;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
@@ -53,7 +58,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
- * IAM DIABLO extra controller
+ * IAM login extra controller
  *
  * @author wangl.sir
  * @version v1.0 2019年1月22日
@@ -61,42 +66,6 @@ import static org.apache.commons.lang3.StringUtils.*;
  */
 @LoginAuthController
 public class LoginAuthenticatorController extends AbstractAuthenticatorController {
-
-	/**
-	 * General PreCheck response key-name.
-	 */
-	final public static String KEY_GENERAL_CHECK_NAME = "checkGeneral";
-
-	/**
-	 * Login CAPTCHA token for session.
-	 */
-	final public static String KEY_GENERAL_CAPTCHA_ENABLE = "captchaEnabled";
-
-	/**
-	 * Encrypted public key requested before login returns key name
-	 */
-	final public static String KEY_GENERAL_SECRET = "secret";
-
-	/**
-	 * SMS PreCheck response key-name.
-	 */
-	final public static String KEY_SMS_CHECK_NAME = "checkSms";
-
-	/**
-	 * The create time to re-apply for SMS dynamic password key-name.
-	 */
-	final public static String KEY_SMS_CREATE = "createTime";
-
-	/**
-	 * The milliseconds to delay to re-apply for SMS dynamic password key-name.
-	 */
-	final public static String KEY_SMS_DELAY = "delayMs";
-
-	/**
-	 * The remaining milliseconds to wait to re-apply for SMS dynamic password
-	 * key-name.
-	 */
-	final public static String KEY_REMAIN_DEPLAY = "remainDelayMs";
 
 	/**
 	 * Graphic verification handler
@@ -117,14 +86,14 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	protected IamCredentialsSecurer securer;
 
 	/**
-	 * Apply session.
+	 * Apply session, applicable to mobile token session.
 	 * 
 	 * @param request
 	 */
 	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> applySession(HttpServletRequest request) {
-		RespBase<Object> resp = RespBase.create(currentSessionStatus());
+		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			resp.getData().put(config.getParam().getSid(), getSessionId());
 		} catch (Exception e) {
@@ -133,63 +102,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(getRootCauseMessage(e));
+			resp.setMessage(getRootCausesString(e));
 			log.error("Failed to apply session.", e);
-		}
-		return resp;
-	}
-
-	/**
-	 * PreCheck the initial configuration. (e.g: whether to enable the
-	 * verification code etc)
-	 *
-	 * @param request
-	 */
-	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
-	@ResponseBody
-	public RespBase<?> check(HttpServletRequest request) {
-		RespBase<Object> resp = RespBase.create(currentSessionStatus());
-		try {
-			// LoginId(Optional)
-			String principal = getCleanParam(request, config.getParam().getPrincipalName());
-			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
-
-			// Generate CAPTCHA token.
-			DataMap<Object> checkGeneral = resp.build(KEY_GENERAL_CHECK_NAME);
-			boolean capEnable = false;
-			if (graphVerification.isEnabled(factors)) { // Enabled?
-				capEnable = true;
-			}
-			checkGeneral.put(KEY_GENERAL_CAPTCHA_ENABLE, capEnable);
-
-			// Apply credentials encrypt secret pubKey.
-			String secret = EMPTY;
-			if (isNotBlank(principal)) {
-				secret = securer.applySecret(principal);
-			}
-			checkGeneral.put(KEY_GENERAL_SECRET, secret);
-
-			/*
-			 * When the SMS verification code is not empty, this creation
-			 * time-stamp is returned (used to display the current remaining
-			 * number of seconds before the front end can re-send the SMS
-			 * verification code).
-			 */
-			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
-			if (verifyCode != null) {
-				resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_SMS_CREATE, verifyCode.getCreateTime())
-						.andPut(KEY_SMS_DELAY, config.getMatcher().getFailFastSmsDelay())
-						.andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
-			}
-		} catch (Exception e) {
-			if (e instanceof IamException) {
-				resp.setCode(RetCode.BIZ_ERR);
-			} else {
-				resp.setCode(RetCode.SYS_ERR);
-			}
-			resp.setMessage(getRootCauseMessage(e));
-			log.error("Failed to initial check", e);
 		}
 		return resp;
 	}
@@ -204,7 +118,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request) {
-		RespBase<Locale> resp = RespBase.create(currentSessionStatus());
+		RespBase<Locale> resp = RespBase.create(sessionStatus());
 		try {
 			String lang = getCleanParam(request, config.getParam().getI18nLang());
 
@@ -220,8 +134,61 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(getRootCauseMessage(e));
+			resp.setMessage(getRootCausesString(e));
 			log.error("Failed to apply for locale", e);
+		}
+		return resp;
+	}
+
+	/**
+	 * Login before environmental security check.
+	 *
+	 * @param request
+	 */
+	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
+	@ResponseBody
+	public RespBase<?> check(HttpServletRequest request) {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		try {
+			// LoginId(Optional)
+			String principal = getCleanParam(request, config.getParam().getPrincipalName());
+			// Limit factors
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
+
+			// CAPTCHA.
+			CaptchaCheckModel capModel = new CaptchaCheckModel(false);
+			if (graphVerification.isEnabled(factors)) { // Enabled?
+				capModel.setEnabled(true);
+				capModel.setType(CAPTCHA_SIMPLE_TPYE); // Default
+				capModel.setApplyUrl("");
+			}
+			resp.getData().put(KEY_CAPTCHA_CHECK, capModel);
+
+			// Secret credentials(pubKey).
+			String secret = EMPTY;
+			if (isNotBlank(principal)) {
+				secret = securer.applySecret(principal);
+			}
+			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(secret));
+
+			/*
+			 * When the SMS verification code is not empty, this creation
+			 * time-stamp is returned (used to display the current remaining
+			 * number of seconds before the front end can re-send the SMS
+			 * verification code).
+			 */
+			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
+			if (verifyCode != null) {
+				resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(verifyCode)));
+			}
+		} catch (Exception e) {
+			if (e instanceof IamException) {
+				resp.setCode(RetCode.BIZ_ERR);
+			} else {
+				resp.setCode(RetCode.SYS_ERR);
+			}
+			resp.setMessage(getRootCausesString(e));
+			log.error("Failed to safety check.", e);
 		}
 		return resp;
 	}
@@ -256,7 +223,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to apply captcha.", e);
 			} else {
-				log.warn("Failed to apply captcha. caused by: {}", getRootCauseMessage(e));
+				log.warn("Failed to apply captcha. caused by: {}", getRootCausesString(e));
 			}
 		}
 	}
@@ -270,7 +237,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_SMS_APPLY, method = { GET, POST })
 	@ResponseBody
 	public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<Object> resp = RespBase.create(currentSessionStatus());
+		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			if (!coprocessor.preApplyVerify(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
@@ -291,9 +258,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.build(KEY_SMS_CHECK_NAME).andPut(KEY_SMS_CREATE, verifyCode.getCreateTime())
-					.andPut(KEY_SMS_DELAY, config.getMatcher().getFailFastSmsDelay())
-					.andPut(KEY_REMAIN_DEPLAY, getRemainingSmsDelay(verifyCode));
+			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(verifyCode)));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -301,7 +266,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(getRootCauseMessage(e));
+			resp.setMessage(getRootCausesString(e));
 			log.error("Failed to apply for sms verify-code", e);
 		}
 		return resp;
@@ -315,8 +280,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> errReads(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<String> resp = RespBase.create(currentSessionStatus());
+	public RespBase<?> errorRead(HttpServletRequest request, HttpServletResponse response) {
+		RespBase<String> resp = RespBase.create(sessionStatus());
 		try {
 			// Get error message in session
 			String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
@@ -324,8 +289,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			resp.getData().put(KEY_ERR_SESSION_SAVED, errmsg);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(getRootCauseMessage(e));
-			log.error("Failed to get errRead.", e);
+			resp.setMessage(getRootCausesString(e));
+			log.error("Failed to error reads.", e);
 		}
 		return resp;
 	}
@@ -336,7 +301,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * @param verifyCode
 	 * @return
 	 */
-	private long getRemainingSmsDelay(VerifyCode verifyCode) {
+	private long getSmsRemainingDelay(VerifyCode verifyCode) {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
 		return Math.max(now - verifyCode.getCreateTime() - config.getMatcher().getFailFastSmsDelay(), 0);

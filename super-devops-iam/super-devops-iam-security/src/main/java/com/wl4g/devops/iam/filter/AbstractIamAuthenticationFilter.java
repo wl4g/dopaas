@@ -24,8 +24,8 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
-import static com.wl4g.devops.iam.common.utils.Securitys.DEFAULT_AUTHC_STATUS;
-import static com.wl4g.devops.iam.common.utils.Securitys.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_AUTHC;
+import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
@@ -419,7 +419,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Make message
 		RespBase<String> resp = RespBase.create();
-		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Authentication success");
+		resp.setCode(OK).setStatus(SESSION_STATUS_AUTHC).setMessage("Authentication success");
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
 		resp.getData().putAll(params);
 		return resp;
@@ -443,7 +443,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication fail";
 		// Make message
 		RespBase<String> resp = RespBase.create();
-		resp.setCode(UNAUTHC).setStatus(DEFAULT_UNAUTHC_STATUS).setMessage(errmsg);
+		resp.setCode(UNAUTHC).setStatus(SESSION_STATUS_UNAUTHC).setMessage(errmsg);
 		resp.getData().putAll(params);
 		return toJSONString(resp);
 	}
