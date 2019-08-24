@@ -93,7 +93,7 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		reset(true);
 
 		// Create the text for the image and output CAPTCHA image buffer.
-		write(response, getVerifyCode(true).getText());
+		write(response, getValidateCode(true).getText());
 	}
 
 	@Override

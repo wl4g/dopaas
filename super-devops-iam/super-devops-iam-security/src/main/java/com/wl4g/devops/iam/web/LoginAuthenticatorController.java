@@ -32,7 +32,6 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.handler.verification.AbstractVerification.VerifyCode;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber;
@@ -151,10 +150,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	public RespBase<?> safeCheck(HttpServletRequest request) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
-			// LoginId(Optional)
-			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
 
 			// CAPTCHA.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
@@ -167,11 +164,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			resp.getData().put(KEY_CAPTCHA_CHECK, model);
 
 			// Secret credentials(pubKey).
-			String secret = EMPTY;
-			if (isNotBlank(principal)) {
-				secret = securer.applySecret(principal);
-			}
-			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(secret));
+			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
 
 			/*
 			 * When the SMS verification code is not empty, this creation
@@ -179,9 +172,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * number of seconds before the front end can re-send the SMS
 			 * verification code).
 			 */
-			VerifyCode verifyCode = smsVerification.getVerifyCode(false);
-			if (verifyCode != null) {
-				resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(verifyCode)));
+			ValidateCode code = smsVerification.getValidateCode(false);
+			if (code != null) {
+				resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(code)));
 			}
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -259,8 +252,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
-			VerifyCode verifyCode = smsVerification.getVerifyCode(true);
-			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(verifyCode)));
+			ValidateCode code = smsVerification.getValidateCode(true);
+			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(code)));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -300,13 +293,13 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	/**
 	 * Get remaining SMS delay
 	 *
-	 * @param verifyCode
+	 * @param code
 	 * @return
 	 */
-	private long getSmsRemainingDelay(VerifyCode verifyCode) {
+	private long getSmsRemainingDelay(ValidateCode code) {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
-		return Math.max(now - verifyCode.getCreateTime() - config.getMatcher().getFailFastSmsDelay(), 0);
+		return Math.max(now - code.getCreateTime() - config.getMatcher().getFailFastSmsDelay(), 0);
 	}
 
 }

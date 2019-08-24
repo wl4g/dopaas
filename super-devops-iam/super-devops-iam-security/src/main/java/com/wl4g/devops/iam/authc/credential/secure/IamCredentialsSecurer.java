@@ -28,11 +28,9 @@ public interface IamCredentialsSecurer extends CredentialsSecurer {
 	/**
 	 * Apply asymmetric algorithm secret public key
 	 * 
-	 * @param uid
-	 *            Login ID or other identifier that can represent a unique user
 	 * @return
 	 */
-	default String applySecret(String uid) {
+	default String applySecret() {
 		throw new UnsupportedOperationException();
 	}
 

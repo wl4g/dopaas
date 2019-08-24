@@ -21,7 +21,6 @@ import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.web.util.WebUtils;
@@ -43,6 +42,7 @@ import java.util.Map;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
@@ -94,18 +94,13 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		reset(true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
+		sender.doSend(determineParameters(request, getValidateCode(true).getText()));
 	}
 
 	@Override
 	public boolean isEnabled(@NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-		return getVerifyCode(false) != null;
-	}
-
-	@Override
-	public VerifyCode getVerifyCode(boolean assertion) {
-		return super.getVerifyCode(assertion);
+		return getValidateCode(false) != null;
 	}
 
 	@Override
@@ -114,8 +109,13 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
+	public ValidateCode getValidateCode(boolean assertion) {
+		return super.getValidateCode(assertion);
+	}
+
+	@Override
 	protected String generateCode() {
-		return RandomStringUtils.randomNumeric(6);
+		return randomNumeric(6);
 	}
 
 	/**
