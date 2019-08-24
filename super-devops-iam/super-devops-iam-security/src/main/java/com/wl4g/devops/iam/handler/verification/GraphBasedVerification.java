@@ -41,6 +41,11 @@ import java.util.List;
 public abstract class GraphBasedVerification extends AbstractVerification implements InitializingBean {
 
 	/**
+	 * Key name used to store authentication code to session
+	 */
+	final protected static String KEY_CAPTCHA_SESSION = GraphBasedVerification.class.getSimpleName() + ".VERIFYCODE";
+
+	/**
 	 * Matching attempts accumulator
 	 */
 	private Cumulator matchCumulator;
@@ -59,11 +64,6 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 * Apply CAPTCHA attempts accumulator.(Session-based)
 	 */
 	private Cumulator sessionApplyCaptchaCumulator;
-
-	/**
-	 * Key name used to store authentication code to session
-	 */
-	final protected static String KEY_CAPTCHA_SESSION = GraphBasedVerification.class.getSimpleName() + ".VERIFYCODE";
 
 	public GraphBasedVerification(IamContextManager manager) {
 		super(manager);

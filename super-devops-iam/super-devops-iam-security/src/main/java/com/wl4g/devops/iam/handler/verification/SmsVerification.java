@@ -191,7 +191,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	protected void postValidateFinallySet() {
+	protected void postValidateProperties() {
 		if (log.isInfoEnabled()) {
 			log.info("SMS authc clean with session...");
 		}

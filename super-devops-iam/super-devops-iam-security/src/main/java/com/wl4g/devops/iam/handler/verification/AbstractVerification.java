@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +31,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.common.utils.Sessions;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -108,15 +109,15 @@ public abstract class AbstractVerification implements Verification {
 			}
 
 		} finally {
-			postValidateFinallySet();
+			postValidateProperties();
 		}
 	}
 
 	/**
-	 * Post validation finally processed.
+	 * Post validation properties.
 	 * 
 	 */
-	protected void postValidateFinallySet() {
+	protected void postValidateProperties() {
 		reset(false); // Reset or create
 	}
 
@@ -126,10 +127,10 @@ public abstract class AbstractVerification implements Verification {
 	 * @param create
 	 */
 	protected void reset(boolean create) {
-		getSession().removeAttribute(storageSessionKey());
+		unbind(storageSessionKey());
 		if (create) {
 			// Store verify-code in the session
-			getSession().setAttribute(storageSessionKey(), new VerifyCode(generateCode()));
+			bind(storageSessionKey(), new VerifyCode(generateCode()));
 		}
 	}
 
@@ -143,18 +144,18 @@ public abstract class AbstractVerification implements Verification {
 	 */
 	protected VerifyCode getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCode code = (VerifyCode) getSession().getAttribute(storageSessionKey());
+		VerifyCode code = getBindValue(storageSessionKey());
 
 		// Assertion
 		long now = System.currentTimeMillis();
-		if (code != null && !isBlank(code.getText())) {
-			if (Math.abs(now - code.getCreateTime()) < getExpireMs()) { // Expired?
+		if (code != null && isNotBlank(code.getText())) {
+			if ((now - code.getCreateTime()) < getExpireMs()) { // Expired?
 				return code;
 			}
 		}
 
 		if (assertion) {
-			log.warn("Assertion verify-code expired. now: {}, createTime: {}, expireMs: {}", now,
+			log.warn("Assertion verifyCode expired. now: {}, createTime: {}, expireMs: {}", now,
 					(code != null ? code.getCreateTime() : null), getExpireMs());
 			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
 		}
@@ -221,15 +222,6 @@ public abstract class AbstractVerification implements Verification {
 	 */
 	protected abstract void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
 			@NotNull List<String> factors);
-
-	/**
-	 * Get SHIRO session
-	 * 
-	 * @return
-	 */
-	private Session getSession() {
-		return Sessions.getSession();
-	}
 
 	/**
 	 * Wrap verification code
