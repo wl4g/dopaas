@@ -48,6 +48,7 @@ import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
 import static com.wl4g.devops.iam.handler.verification.SmsVerification.*;
@@ -147,7 +148,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> check(HttpServletRequest request) {
+	public RespBase<?> safeCheck(HttpServletRequest request) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			// LoginId(Optional)
@@ -156,13 +157,14 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
 			// CAPTCHA.
-			CaptchaCheckModel capModel = new CaptchaCheckModel(false);
+			CaptchaCheckModel model = new CaptchaCheckModel(false);
 			if (graphVerification.isEnabled(factors)) { // Enabled?
-				capModel.setEnabled(true);
-				capModel.setType(CAPTCHA_SIMPLE_TPYE); // Default
-				capModel.setApplyUrl("");
+				model.setEnabled(true);
+				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
+				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_APPLY_CAPTCHA;
+				model.setApplyUrl(url);
 			}
-			resp.getData().put(KEY_CAPTCHA_CHECK, capModel);
+			resp.getData().put(KEY_CAPTCHA_CHECK, model);
 
 			// Secret credentials(pubKey).
 			String secret = EMPTY;
