@@ -3,11 +3,11 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<title>IAM Authentication</title>
+	<title>IAM Central Authentication</title>
+	<link rel="shortcut icon" href="./favicon.ico">
 	<link rel="stylesheet" href="./static/css/login.css">
 	<link rel="stylesheet" href="./static/css/lanren.css">
-	<link rel="shortcut icon" href="./favicon.ico">
-	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="./static/js/jquery-3.3.1.min.js"></script>
 	<script src="./static/js/iam-1.2.1.js"></script>
 	<script src="./static/js/login.js"></script>
 </head>
@@ -185,16 +185,16 @@
 		(function () {
 			window.IAM.config({
 				baseUri: iamBaseURI, // IAM认证服务接口的基础URI
-				// 定义获取账号名函数
-				getPrincipal: function () { // 必填，获取填写的登录用户名
-					return document.getElementById("user_name").value;
-				},
-				getCredential: function () { // 可选，获取填写的登录用户密码，which=which_login时必填
-					return document.getElementById("password").value;
-				},
 				// 登录认证配置
-				signIn: {
-					submission: document.getElementById("iam_submit"), // 登录提交点击对象（支持非表单提交）
+				account: {
+					submission: document.getElementById("iam_submit"), // 登录提交触发对象
+					// 定义获取账号名函数
+					getPrincipal: function () { // 必填，获取填写的登录用户名
+						return document.getElementById("user_name").value;
+					},
+					getCredential: function () { // 获取登录账号密码，账号登录时必填
+						return document.getElementById("password").value;
+					},
 					// 定义验证码显示面板配置
 					captcha: {
 						img: document.getElementById("codeimg"), // 验证码显示IMG对象
@@ -210,7 +210,7 @@
 						}
 					},
 					// 提交之前
-					onSubmissionBefore: function (principal, plainPasswd, captcha) {
+					onBeforeSubmit: function (principal, plainPasswd, captcha) {
 						//console.log("准备提交登录....");
 						return true;
 					},
@@ -221,6 +221,30 @@
 					onError: function (errmsg) {
 						// console.error("登录失败. " + errmsg);
 						errTips(); // 加载err_tip
+					}
+				},
+				sms: { // SMS认证配置
+					submission: document.getElementById("iam_submit"), // 登录提交触发对象
+					applySmsCode: document.getElementById("code-get"), // 申请SMS验证码触发对象
+					getMobile: function(){ // 获取手机号
+						var areaNum = $(".select-area").val();
+						return areaNum+document.getElementById("user_phone").value;
+					},
+					getSMSCode: function () { // 获取手机号动态密码
+						return document.getElementById("codeNumber").value;
+					},
+					onSuccess: function(resp){
+						$('.err-tip').text('');
+						$('.code-write').hide();
+						
+						//$('#err_tip').show();
+						//$('#err_tip').text(res.message);
+						//setTimeout(function () {
+						//	$('#err_tip').hide();
+						//}, 3000)
+					},
+					onError: function(errmsg){
+						$('.err-tip').text(errmsg);
 					}
 				},
 				// SNS授权配置
@@ -265,7 +289,7 @@
 						return true;
 					}
 				}
-			}).snsAuth().generalAuth();
+			}).accountAuth().smsAuth().snsAuth();
 		})();
 	</script>
 	<script type="text/javascript">

@@ -4,15 +4,23 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+	// 运行时缓存
+	var runtime = {
+		secret: "", // (初始页面/登录失败)预检接口返回的密钥
+		captchaEnabled: false, // 验证码启用状态
+		applyCaptchaUrl: "" // (初始页面/登录失败)预检接口返回的验证码申请URL
+	};
+
 	// 全局配置
 	var settings = {
 		baseUri: null, // 默认获取SNS接口baseURI实现
 		definition: { // 字典参数定义
 			responseType: "response_type", // 控制返回数据格式的参数名
 			responseTypeValue: "json", // 使用返回数据格式
-			applyCaptchaUri: "/login/applycaptcha", // 验证码URL的后缀
+			accountSubmitUri: "/auth/general", // 账号登录提交的URL后缀
+			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			checkUri: "/login/check", // 登录前初始检查接口的URL后缀
-			submissionUri: "/auth/general", // 提交登录的URL后缀
+			smsApplyUri: "/login/applysmsverify", // SMS申请验证码的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			whichKey: "which", // 请求连接到SNS的参数名
 			redirectUrlKey: "redirect_url", // 重定向URL参数名
@@ -23,39 +31,41 @@
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			codeOkValue: "200" // 接口返回成功码判定标准
 		},
-		getPrincipal: function(){ // 默认获取账号名实现
-			throw "Unsupported errors, please implement to support get principal function";
-		},
-		getCredential: function(){ // 默认获取验证码实现
-			throw "Unsupported errors, please implement to support get credential function";
-		},
-		signIn: { // 登录认证配置
-			submission: null, // 登录提交点击对象（支持非表单提交）
+		account: { // 密码认证配置
+			submission: null, // 登录提交触发对象
+			getPrincipal: function(){ // 默认获取账号名实现
+				throw "Unsupported error, please implement to get principal function";
+			},
+			getCredential: function(){ // 默认获取验证码实现
+				throw "Unsupported error, please implement to get credential function";
+			},
 			captcha: { // 验证码配置
 				img: null, // 验证码显示IMG对象
 				input: null, // 验证码INPUT输入对象
 				url: null, // 验证码图像地址
 				name: "captcha", // 必须，提交时的验证码参数名，后台默认:captcha（与后台对应）
 				hide: function(){ // 默认隐藏验证码实现
-					var img = CommonUtils.checkEmpty("signIn.captcha.img", settings.signIn.captcha.img);
-					var imgInput = CommonUtils.checkEmpty("signIn.captcha.input", settings.signIn.captcha.input);
+					var img = CommonUtils.checkEmpty("account.captcha.img", settings.account.captcha.img);
+					var imgInput = CommonUtils.checkEmpty("account.captcha.input", settings.account.captcha.input);
 					$(imgInput).css({"display" : "none"});
 					$(img).css({"display" : "none"});
 					$(img).attr({"src": ""});
 				},
 				show: function(captchaUrl){ // 显示验证码输入
-					var img = CommonUtils.checkEmpty("signIn.captcha.img", settings.signIn.captcha.img);
-					var imgInput = CommonUtils.checkEmpty("signIn.captcha.input", settings.signIn.captcha.input);
+					// 清空验证码输入框
+					$(CommonUtils.checkEmpty("account.captcha.input", settings.account.captcha.input)).val("");
+					var img = CommonUtils.checkEmpty("account.captcha.img", settings.account.captcha.img);
+					var imgInput = CommonUtils.checkEmpty("account.captcha.input", settings.account.captcha.input);
 					// 申请Captcha
 					$(img).attr("src", CommonUtils.checkEmpty("captchaUrl", captchaUrl));
-					$(imgInput).css({"display" : "inline"}); // 可先显示验证码输入框
+					$(imgInput).css({"display" : "inline"}); // 先显示验证码输入框
 					$(img).css({"display" : "inline"});
 				},
 				onFallback: function(errmsg){ // 加载captcha失败，降级回调（被锁定）
 					console.error(errmsg);
 				}
 			},
-			onSubmissionBefore: function(principal, plainPasswd, captcha){ // 默认提交之前回调实现
+			onBeforeSubmit: function(principal, plainPasswd, captcha){ // 默认提交之前回调实现
 				//throw "Unsupported errors, please implement to support login submission";
 				console.log("Prepare to submit login request. principal=" + principal + ", captcha=" + captcha);
 				return true;
@@ -68,7 +78,23 @@
 				throw "Sign in error. " + errmsg;
 			}
 		},
-		sns: { // SNS授权配置
+		sms: { // SMS认证配置
+			submission: null, // 登录提交触发对象
+			applySmsCode: null, // 申请SMS验证码触发对象
+			getMobile: function(){ // 默认获取手机号实现
+				throw "Unsupported errors, please implement to get mobile function";
+			},
+			getSMSCode: function(){ // 默认获取验证码实现
+				throw "Unsupported error, please implement to get mobile credential function";
+			},
+			onSuccess: function(resp){
+				console.log("SMS success. " + resp.message);
+			},
+			onError: function(errmsg){ // SMS登录异常回调
+				throw "SMS login error. " + errmsg;
+			}
+		},
+		sns: { // SNS授权认证配置
 			// 具体操作接口必要的参数
 			required: {
 				// 参数'which'
@@ -111,7 +137,7 @@
 			+ "?" + CommonUtils.checkEmpty("definition.whichKey",settings.definition.whichKey) + "=" + which;
 		// 若当前是绑定操作，则需传入 principal、refreshUrl
 		if(which.toLowerCase() == "bind" || which.toLowerCase() == "unbind"){
-			var principal = encodeURIComponent(CommonUtils.checkEmpty("getPrincipal()", settings.getPrincipal())); // 登录名
+			var principal = encodeURIComponent(CommonUtils.checkEmpty("account.getPrincipal()", settings.account.getPrincipal())); // 登录名
 			var refreshUrl = encodeURIComponent(CommonUtils.checkEmpty("sns.required.refreshUrl", settings.sns.required.refreshUrl)); // 回调刷新URL
 			url += "&" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal;
 			url += "&" + CommonUtils.checkEmpty("definition.refreshUrlKey",settings.definition.refreshUrlKey) + "=" + refreshUrl;
@@ -128,14 +154,10 @@
 
 	// 重置验证码
 	var resetCaptcha = function(){
-		// 清空验证码输入框
-		$(CommonUtils.checkEmpty("signIn.captcha.input", settings.signIn.captcha.input)).val("");
-		var principal = encodeURIComponent(CommonUtils.empty(settings.getPrincipal()));
 		// 获取图像URL
-		var applyCaptchaUri = CommonUtils.checkEmpty("baseUri",settings.baseUri) 
-			+ CommonUtils.checkEmpty("definition.applyCaptchaUri", settings.definition.applyCaptchaUri) + "?principal="+principal+"&r=" + Math.random();
+		var url = runtime.applyCaptchaUrl+"?r="+Math.random();
 		// 新申请一个验证码
-		settings.signIn.captcha.show(applyCaptchaUri);
+		settings.account.captcha.show(url);
 	};
 
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
@@ -232,113 +254,194 @@
 	 * @param isSubmission 是否提交登录请求（区别提交登录请求和初始化页面时的请求）
 	 * @param callback 回调函数 
 	 */
-	var checkLogin = function(callback){
-		var principal = encodeURIComponent(CommonUtils.empty(settings.getPrincipal()));
+	var safeCheck = function(callback){
+		var principal = encodeURIComponent(CommonUtils.empty(settings.account.getPrincipal()));
 		var checkUrl = CommonUtils.checkEmpty("baseUri",settings.baseUri)
 			+ CommonUtils.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
 			+ CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal;
 
-		// 请求检查
+		// 请求安全预检
 		$.ajax({
 			url: checkUrl,
-			type: "get",
+			type: "post",
 			dataType: "json",
 			success: function(resp){
 				var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 				if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
-					settings.signIn.onError(resp.message); // 检查失败回调
+					settings.account.onError(resp.message); // 检查失败回调
 				} else {
-					var secret = resp.data.checkGeneral.secret; // 加密公钥
-					var captchaEnabled = resp.data.checkGeneral.captchaEnabled;
-					callback(captchaEnabled, secret); // 登录继续
+					runtime.secret = resp.data.checkGeneral.secret; // 加密公钥
+					var enable = resp.data.checkCaptcha.enabled;
+					if(enable){
+						runtime.applyCaptchaUrl=resp.data.checkCaptcha.applyUrl;
+					}
+					callback(enable, runtime.secret); // 登录继续
 				}
 			},
 			error: function(req, status, errmsg){
 				console.log("Initialization failed, " + errmsg);
-				settings.signIn.onError(errmsg); // 登录异常回调
+				settings.account.onError(errmsg); // 登录异常回调
 			}
 		});
 	};
 
 	// 账号登录
-	var generalAuthentication = function(){
+	var accountAuthentication = function(){
 		$(function(){
-			settings.signIn.captcha.hide(); // 隐藏验证码
-			// 绑定验证码点击刷新事件
-			$(CommonUtils.checkEmpty("signIn.captcha.img", settings.signIn.captcha.img)).click(function(){
-				resetCaptcha();
-			});
-			// 绑定登录按钮点击事件
-			$(CommonUtils.checkEmpty("signIn.submission", settings.signIn.submission)).click(function(){
-				// Synchronized check captcha and secret call request
-				checkLogin(function(captchaEnabled, secret){
-					// 获取登录账号
-					var principal = encodeURIComponent(CommonUtils.checkEmpty("getPrincipal()", settings.getPrincipal()));
-					// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
-					var plainPasswd = CommonUtils.checkEmpty("getCredential()", settings.getCredential());
-					var credentials = encodeURIComponent(CommonUtils.signature(secret, plainPasswd));
-					// 检查登录账号、密码
-					if(CommonUtils.isAnyEmpty(principal, credentials)){
-						settings.signIn.onError("No empty login name or password allowed");
-						return;
-					}
-					var imgInput = $(CommonUtils.checkEmpty("signIn.captcha.input", settings.signIn.captcha.input));
-					var captcha = imgInput.val();
-					if(captchaEnabled){ // 仅当启用时，才检查输入的验证码
-						if(CommonUtils.isEmpty(captcha) || captcha.length < imgInput.attr("maxlength")){ // 检查验证码
-							settings.signIn.onError("Illegal length of captcha input");
-							//settings.signIn.captcha.show();
-							return;
-						}
-					}
-					// 生成登录提交URL
-					var loginSubmitUrl = CommonUtils.checkEmpty("baseUri",settings.baseUri)
-						+ CommonUtils.checkEmpty("definition.submissionUri",settings.definition.submissionUri) + "?"
-						+ CommonUtils.checkEmpty("definition.responseType",settings.definition.responseType) + "="
-						+ CommonUtils.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
-						+ "&" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
-						+ "&" + CommonUtils.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
-						+ "&" + CommonUtils.checkEmpty("definition.captchaKey",settings.definition.captchaKey) + "=" + captcha
-						+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
-					// 执行登录请求之前回调
-					if(!settings.signIn.onSubmissionBefore(principal, plainPasswd, captcha)){
-						return;
-					}
-
-					// 提交账号登录请求
-					$.ajax({
-						url: loginSubmitUrl,
-						type: "post",
-						dataType: "json",
-						success: function(resp){
-							var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-							// 登录失败
-							if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
-								// 检查当前是否需要graphic验证码
-								checkLogin(function(captchaEnabled, secret){
-									if(captchaEnabled){ // 有值则刷新验证码
-										resetCaptcha();
-									}
-								});
-								settings.signIn.onError(resp.message); // 登录失败回调
-							} else { // 登录成功，直接重定向
-								var redirectUrl = CommonUtils.checkEmpty("Login successful, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
-								if(settings.signIn.onSuccess(principal, redirectUrl)){
-									window.location.href = redirectUrl;
-								}
-							}
-						},
-						error: function(req, status, errmsg){
-							settings.signIn.onError(errmsg); // 登录异常回调
-						}
-					});
-				});
-			});
 			// 绑定登录按钮Enter按键事件
 			$(document).keydown(function(event){
 				if(event.keyCode == 13){
-					$(CommonUtils.checkEmpty("signIn.submission", settings.signIn.submission)).click();
+					$(CommonUtils.checkEmpty("account.submission", settings.account.submission)).click();
 				}
+			});
+			// 绑定验证码点击刷新事件
+			$(CommonUtils.checkEmpty("account.captcha.img", settings.account.captcha.img)).click(function(){
+				resetCaptcha();
+			});
+			// 绑定登录按钮点击事件
+			$(CommonUtils.checkEmpty("account.submission", settings.account.submission)).click(function(){
+				// 获取登录账号
+				var principal=encodeURIComponent(CommonUtils.checkEmpty("getPrincipal()", settings.account.getPrincipal()));
+				// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
+				var plainPasswd=CommonUtils.checkEmpty("getCredential()", settings.account.getCredential());
+				var secret=CommonUtils.checkEmpty("Error for secret is empty", runtime.secret);
+				var credentials=encodeURIComponent(CommonUtils.signature(secret, plainPasswd));
+				// 检查登录账号、密码
+				if(CommonUtils.isAnyEmpty(principal, credentials)){
+					settings.account.onError("No empty login name or password allowed");
+					return;
+				}
+
+				// 执行登录请求之前回调
+				if(!settings.account.onBeforeSubmit(principal, plainPasswd, captcha)){
+					return;
+				}
+
+				// 检查输入的验证码
+				var imgInput = $(CommonUtils.checkEmpty("account.captcha.input", settings.account.captcha.input));
+				var captcha = imgInput.val();
+				if(runtime.captchaEnabled){ // 启用才检查
+					if(CommonUtils.isEmpty(captcha) || captcha.length < imgInput.attr("maxlength")){ // 检查验证码
+						settings.account.onError("Illegal length of captcha input");
+						return;
+					}
+				}
+				// 生成登录提交URL
+				var loginSubmitUrl = CommonUtils.checkEmpty("baseUri",settings.baseUri)
+					+ CommonUtils.checkEmpty("definition.accountSubmitUri",settings.definition.accountSubmitUri) + "?"
+					+ CommonUtils.checkEmpty("definition.responseType",settings.definition.responseType) + "="
+					+ CommonUtils.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
+					+ "&" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
+					+ "&" + CommonUtils.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
+					+ "&" + CommonUtils.checkEmpty("definition.captchaKey",settings.definition.captchaKey) + "=" + captcha
+					+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
+
+				// 提交账号登录请求
+				$.ajax({
+					url: loginSubmitUrl,
+					type: "post",
+					dataType: "json",
+					success: function(resp){
+						var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+						// 登录失败
+						if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
+							// 检查当前是否需要graphic验证码
+							safeCheck(function(capEnabled, secret){
+								if(capEnabled){ // 有值则刷新验证码
+									resetCaptcha();
+								}
+							});
+							settings.account.onError(resp.message); // 登录失败回调
+						} else { // 登录成功，直接重定向
+							var redirectUrl = CommonUtils.checkEmpty("Login successful, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
+							if(settings.account.onSuccess(principal, redirectUrl)){
+								window.location.href = redirectUrl;
+							}
+						}
+					},
+					error: function(req, status, errmsg){
+						settings.account.onError(errmsg); // 登录异常回调
+					}
+				});
+			});
+		});
+	};
+
+	// SMS登录
+	var smsAuthentication = function(){
+		$(function(){
+			// 绑定登录按钮Enter按键事件
+			$(document).keydown(function(event){
+				if(event.keyCode == 13){
+					$(CommonUtils.checkEmpty("sms.submission", settings.sms.submission)).click();
+				}
+			});
+			// 绑定申请SMS验证码按钮点击事件
+			$(CommonUtils.checkEmpty("sms.applySmsCode", settings.sms.applySmsCode)).click(function(){
+				// 获取手机号
+				var mobileNum=encodeURIComponent(CommonUtils.checkEmpty("sms.getMobile()", settings.sms.getMobile()));
+				if(CommonUtils.isEmpty(mobileNum)){
+					settings.sms.onError("SMS login for mobile number is required.");
+					return;
+				}
+				
+				var url=CommonUtils.checkEmpty("baseUri",settings.baseUri)
+					+CommonUtils.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)+"?mobileNum="+mobileNum;
+				// 请求申请SMS验证码
+				$.ajax({
+					url: url,
+					type: "post",
+					dataType: "json",
+					success: function (resp) {
+						var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+						// 登录失败
+						if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
+							settings.sms.onError(resp.message); // 申请失败回调
+						} else {
+							settings.sms.onSuccess(resp); // 申请成功回调
+							var remainDelaySec = resp.data.remainDelayMs/1000;
+							var num = remainDelaySec;
+							var timer = setInterval(() => {
+								if (num < 1) {
+									$(this).attr('disabled', false);
+									$(this).text('->');
+									clearInterval(timer);
+								} else {
+									$(this).attr('disabled', true);
+									$(this).text(num + 's');
+									num--;
+								}
+							}, 1000);
+						}
+					},
+					error(req, status, errmsg) {
+						settings.sms.onError(errmsg); // 申请失败回调
+					}
+				});
+			});
+			// 绑定SMS登录提交按钮点击事件
+			$(CommonUtils.checkEmpty("sms.submission", settings.sms.submission)).click(function(){
+				// 获取手机号
+				var mobileNum=CommonUtils.checkEmpty("sms.getMobile()", settings.sms.getMobile());
+				var smsCode=CommonUtils.checkEmpty("sms.getSMSCode()", settings.sms.getSMSCode());
+				var url=CommonUtils.checkEmpty("baseUri",settings.baseUri)
+					+CommonUtils.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)+"?mobileNum="+mobileNum+"&passcode="+smsCode;
+				$.ajax({
+					url: url,
+					success: function (resp) {
+						var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+						// 登录失败
+						if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
+							settings.sms.onError(resp.message); // 申请失败回调
+						} else {
+							settings.sms.onSuccess(resp); // 申请成功回调
+							window.location.href = resp.data.redirect_url;
+						}
+					},
+					error(req, status, errmsg) {
+						settings.sms.onError(errmsg); // 申请失败回调
+					}
+				});
 			});
 		});
 	};
@@ -365,22 +468,26 @@
 
 	// 提供对外调用接口
 	window.IAM = {
-		config: function(obj){
-			configure(obj);
+		config: function(opt){
+			configure(opt);
+			return this;
+		},
+		accountAuth: function(){
+			accountAuthentication();
+			// 初始安全预检
+			safeCheck(function(capEnabled, secret){
+				if(capEnabled){
+					resetCaptcha(); // 刷新验证码
+				}
+			});
+			return this;
+		},
+		smsAuth: function(){
+			smsAuthentication();
 			return this;
 		},
 		snsAuth: function(){
 			snsAuthentication();
-			return this;
-		},
-		generalAuth: function(){
-			generalAuthentication();
-			// 初始化页面时检查
-			checkLogin(function(captchaEnabled, secret){
-				if(captchaEnabled){
-					resetCaptcha(); // 刷新验证码
-				}
-			});
 			return this;
 		},
 		util: function(){
@@ -388,7 +495,6 @@
 		}
 	};
 
-	// 通用工具
 	var CommonUtils = {
 		checkEmpty: function(name, param){
 			if(CommonUtils.isEmpty(param)){
