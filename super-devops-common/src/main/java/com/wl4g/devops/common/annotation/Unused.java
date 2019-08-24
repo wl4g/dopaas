@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * Methods, classes, parameters, etc., annotated by @Unused, indicate code
  * snippets that are not currently used but are likely to be used in the future
  * 
- * @author wangl.sir
+ * @author Wangl.sir
  * @version v1.0 2019年7月4日
  * @since
  */
