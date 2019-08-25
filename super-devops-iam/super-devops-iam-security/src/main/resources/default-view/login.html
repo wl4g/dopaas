@@ -62,13 +62,13 @@
 							<i class="icon-user"></i>
 							<input id="user_name" class="text1" name="username" placeholder="请输入账号"
 								style="color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
-								maxlength=40>
+								maxlength=20>
 						</div>
 						<div class="pass-word">
 							<i class="icon-pass"></i>
 							<input placeholder="请输入密码" id="password" class="text1 text2"
 								style="color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
-								name="password" type="password" maxlength=30>
+								name="password" type="password" maxlength=25>
 						</div>
 						<div id="captcha_panel">
 							<i class="icon-code"></i>
@@ -132,7 +132,7 @@
 						<i class="icon-codeNumber"></i>
 						<input placeholder="请输入短信动态码" id="codeNumber" class="text1 text2"
 							style="box-sizing:border-box;width:240px;color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
-							name="codeNumber" type="text" maxlength=30>
+							name="codeNumber" type="text" maxlength=6>
 						<button type="button" id="code-get">获取</button>
 					</div>
 					<p class="err-info pass-err">请输入短信验证码</p>
@@ -185,30 +185,26 @@
 		(function () {
 			window.IAM.config({
 				baseUri: iamBaseURI, // IAM认证服务接口的基础URI
+				// 定义验证码显示面板配置
+				captcha: {
+					img: document.getElementById("codeimg"), // 验证码显示IMG对象
+					input: document.getElementById("captcha_input"), // 验证码INPUT输入对象
+					name: "captcha", // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
+					onFallback: function (errmsg) { // 验证码刷新降级处理（被锁定）
+						console.warn(errmsg);
+						// 加载默认破图
+						document.getElementById("codeimg").src = "./static/images/bg_icon/broken.png";
+						//禁止输入验证码
+						$('#captcha_input').attr('disabled', true);
+						$('#captcha_input').css('cursor', 'no-drop');
+					}
+				},
 				// 登录认证配置
 				account: {
-					submission: document.getElementById("iam_submit"), // 登录提交触发对象
+					submitBtn: document.getElementById("iam_submit"), // 登录提交触发对象
 					// 定义获取账号名函数
-					getPrincipal: function () { // 必填，获取填写的登录用户名
-						return document.getElementById("user_name").value;
-					},
-					getCredential: function () { // 获取登录账号密码，账号登录时必填
-						return document.getElementById("password").value;
-					},
-					// 定义验证码显示面板配置
-					captcha: {
-						img: document.getElementById("codeimg"), // 验证码显示IMG对象
-						input: document.getElementById("captcha_input"), // 验证码INPUT输入对象
-						name: "captcha", // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
-						onFallback: function (errmsg) { // 验证码刷新降级处理（被锁定）
-							console.warn(errmsg);
-							// 加载默认破图
-							document.getElementById("codeimg").src = "./static/images/bg_icon/broken.png";
-							//禁止输入验证码
-							$('#captcha_input').attr('disabled', true);
-							$('#captcha_input').css('cursor', 'no-drop');
-						}
-					},
+					principal: document.getElementById("user_name"), // 必填，获取填写的登录用户名
+					credential: document.getElementById("password"), // 获取登录账号密码，账号登录时必填
 					// 提交之前
 					onBeforeSubmit: function (principal, plainPasswd, captcha) {
 						//console.log("准备提交登录....");
@@ -224,14 +220,14 @@
 					}
 				},
 				sms: { // SMS认证配置
-					submission: document.getElementById("phone_submit"), // 登录提交触发对象
-					applySmsCode: document.getElementById("code-get"), // 申请SMS验证码触发对象
-					getMobile: function(){ // 获取手机号
-						var areaNum = $(".select-area").val();
-						return areaNum+document.getElementById("user_phone").value;
-					},
-					getSMSCode: function () { // 获取手机号动态密码
-						return document.getElementById("codeNumber").value;
+					submitBtn: document.getElementById("phone_submit"), // 登录提交触发对象
+					sendSmsBtn: document.getElementById("code-get"), // 发送SMS验证码对象
+					mobileArea: $(".select-area"), // 手机号区域select对象
+					mobile: document.getElementById("user_phone"), // 手机号input对象
+					smsCode: document.getElementById("codeNumber"), // SMS验证码input对象
+					onBeforeSubmit: function (mobileNum, smsCode) {
+						//console.log("准备提交登录....");
+						return true;
 					},
 					onSuccess: function(resp){
 						$('.err-tip').text('');
@@ -244,7 +240,8 @@
 						//}, 3000)
 					},
 					onError: function(errmsg){
-						$('.err-tip').text(errmsg);
+						console.error(errmsg);
+						$("#err_tip").text(errmsg).show().delay(8000).hide(100);
 					}
 				},
 				// SNS授权配置

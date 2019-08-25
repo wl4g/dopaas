@@ -89,6 +89,7 @@ public abstract class AbstractVerification implements Verification {
 	public void validate(@NotNull List<String> factors, String validateCodeReq, boolean required) throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
 
+		ValidateCode code = null;
 		try {
 			/*
 			 * If required is true, the forced verification policy is executed,
@@ -100,7 +101,7 @@ public abstract class AbstractVerification implements Verification {
 				return; // not enabled
 			}
 			// Store the validate code
-			Object code = getValidateCode(true);
+			code = getValidateCode(true);
 			if (!doMatch(code, validateCodeReq)) {
 				if (log.isErrorEnabled()) {
 					log.error("Verification mismatched. {} => {}", validateCodeReq, code);
@@ -108,28 +109,33 @@ public abstract class AbstractVerification implements Verification {
 				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", validateCodeReq));
 			}
 		} finally {
-			postValidateProperties();
+			postValidateProperties((code != null) ? code.getText() : null);
 		}
 	}
 
 	/**
 	 * Post validation properties.
 	 * 
+	 * @param owner
+	 *            Validate code owner(Optional).
 	 */
-	protected void postValidateProperties() {
-		reset(false); // Reset or create
+	protected void postValidateProperties(String owner) {
+		reset(owner, false); // Reset or create
 	}
 
 	/**
-	 * Reset the verify-code to indicate a new generation when create is true
+	 * Reset the validate code to indicate a new generation when create is true
 	 * 
+	 * @param owner
+	 *            Validate code owner(Optional).
 	 * @param create
+	 *            is new create.
 	 */
-	protected void reset(boolean create) {
+	protected void reset(Object owner, boolean create) {
 		unbind(storageSessionKey());
 		if (create) {
 			// Store verify-code in the session
-			bind(storageSessionKey(), new ValidateCode(generateCode()));
+			bind(storageSessionKey(), new ValidateCode(owner, generateCode()));
 		}
 	}
 
@@ -230,19 +236,34 @@ public abstract class AbstractVerification implements Verification {
 	public static class ValidateCode implements Serializable {
 		private static final long serialVersionUID = -7643664591972701966L;
 
+		private Object owner;
+
 		private String text;
 
 		private Long createTime;
 
 		public ValidateCode(String text) {
-			this(text, System.currentTimeMillis());
+			this(null, text, System.currentTimeMillis());
 		}
 
-		public ValidateCode(String text, Long createTime) {
-			Assert.hasText(text, "Verify-code text is empty, please check configure");
+		public ValidateCode(Object owner, String text) {
+			this(owner, text, System.currentTimeMillis());
+		}
+
+		public ValidateCode(Object owner, String text, Long createTime) {
+			Assert.hasText(text, "Validte code value is empty, please check configure");
 			Assert.notNull(createTime, "CreateTime is null, please check configure");
+			this.owner = owner;
 			this.text = text;
 			this.createTime = createTime;
+		}
+
+		public Object getOwner() {
+			return owner;
+		}
+
+		public void setOwner(Object owner) {
+			this.owner = owner;
 		}
 
 		public String getText() {

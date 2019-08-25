@@ -73,8 +73,8 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
-	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
-			throws IOException {
+	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
@@ -90,7 +90,7 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		response.setContentType("image/jpeg");
 
 		// Recreate a CAPTCHA
-		reset(true);
+		reset(owner, true);
 
 		// Create the text for the image and output CAPTCHA image buffer.
 		write(response, getValidateCode(true).getText());

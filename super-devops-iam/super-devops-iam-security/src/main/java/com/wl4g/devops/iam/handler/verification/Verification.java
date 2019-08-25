@@ -54,6 +54,8 @@ public abstract interface Verification {
 	/**
 	 * New apply and output a verification code
 	 * 
+	 * @param owner
+	 *            Validate code owner(Optional).
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -64,8 +66,8 @@ public abstract interface Verification {
 	 *            HttpServletResponse
 	 * @throws IOException
 	 */
-	default void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
-			throws IOException {
+	default void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
