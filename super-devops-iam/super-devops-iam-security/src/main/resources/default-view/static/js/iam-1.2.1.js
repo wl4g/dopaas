@@ -17,18 +17,18 @@
 		definition: { // 字典参数定义
 			responseType: "response_type", // 控制返回数据格式的参数名
 			responseTypeValue: "json", // 使用返回数据格式
+			whichKey: "which", // 请求连接到SNS的参数名
+			redirectUrlKey: "redirect_url", // 重定向URL参数名
+			refreshUrlKey: "refresh_url", // 刷新URL参数名
+			principalKey: "principal", // 提交账号参数名
+			credentialKey: "credential", // 提交账号凭据(如：静态密码/SMS验证码)参数名
+			attachKey: "attachCode", // 登录附加码(如：验证码)参数名
+			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			accountSubmitUri: "/auth/general", // 账号登录提交的URL后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			checkUri: "/login/check", // 登录前初始检查接口的URL后缀
 			smsApplyUri: "/login/applysmsverify", // SMS申请验证码的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
-			whichKey: "which", // 请求连接到SNS的参数名
-			redirectUrlKey: "redirect_url", // 重定向URL参数名
-			refreshUrlKey: "refresh_url", // 刷新URL参数名
-			principalKey: "principal", // 提交账号参数名
-			credentialKey: "password", // 提交账号密码参数名
-			captchaKey: "captcha", // 登录提交验证码参数名
-			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			codeOkValue: "200" // 接口返回成功码判定标准
 		},
 		account: { // 密码认证配置
@@ -333,7 +333,7 @@
 					+ CommonUtils.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
 					+ "&" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 					+ "&" + CommonUtils.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
-					+ "&" + CommonUtils.checkEmpty("definition.captchaKey",settings.definition.captchaKey) + "=" + captcha
+					+ "&" + CommonUtils.checkEmpty("definition.attachKey",settings.definition.attachKey) + "=" + captcha
 					+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
 
 				// 提交账号登录请求
@@ -370,12 +370,6 @@
 	// SMS登录
 	var smsAuthentication = function(){
 		$(function(){
-			// 绑定登录按钮Enter按键事件
-			$(document).keydown(function(event){
-				if(event.keyCode == 13){
-					$(CommonUtils.checkEmpty("sms.submission", settings.sms.submission)).click();
-				}
-			});
 			// 绑定申请SMS验证码按钮点击事件
 			$(CommonUtils.checkEmpty("sms.applySmsCode", settings.sms.applySmsCode)).click(function(){
 				// 获取手机号
@@ -385,8 +379,9 @@
 					return;
 				}
 				
-				var url=CommonUtils.checkEmpty("baseUri",settings.baseUri)
-					+CommonUtils.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)+"?mobileNum="+mobileNum;
+				var url = CommonUtils.checkEmpty("baseUri",settings.baseUri) + CommonUtils.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
+					+ "?" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + mobileNum
+					+ "&" + CommonUtils.checkEmpty("definition.attachKey",settings.definition.attachKey) + "=" + captcha;
 				// 请求申请SMS验证码
 				$.ajax({
 					url: url,
@@ -422,24 +417,26 @@
 			// 绑定SMS登录提交按钮点击事件
 			$(CommonUtils.checkEmpty("sms.submission", settings.sms.submission)).click(function(){
 				// 获取手机号
-				var mobileNum=CommonUtils.checkEmpty("sms.getMobile()", settings.sms.getMobile());
-				var smsCode=CommonUtils.checkEmpty("sms.getSMSCode()", settings.sms.getSMSCode());
-				var url=CommonUtils.checkEmpty("baseUri",settings.baseUri)
-					+CommonUtils.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)+"?mobileNum="+mobileNum+"&passcode="+smsCode;
+				var mobileNum = CommonUtils.checkEmpty("sms.getMobile()", settings.sms.getMobile());
+				var smsCode = CommonUtils.checkEmpty("sms.getSMSCode()", settings.sms.getSMSCode());
+				var url = CommonUtils.checkEmpty("baseUri",settings.baseUri)+CommonUtils.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)
+					+ "?" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + mobileNum
+					+ "&" + CommonUtils.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + smsCode;
 				$.ajax({
 					url: url,
+					type: "post",
+					dataType: "json",
 					success: function (resp) {
 						var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-						// 登录失败
 						if(!CommonUtils.isEmpty(resp) && (resp.code != codeOkValue)){
-							settings.sms.onError(resp.message); // 申请失败回调
+							settings.sms.onError(resp.message); // SMS登录失败回调
 						} else {
-							settings.sms.onSuccess(resp); // 申请成功回调
+							settings.sms.onSuccess(resp); // SMS登录成功回调
 							window.location.href = resp.data.redirect_url;
 						}
 					},
 					error(req, status, errmsg) {
-						settings.sms.onError(errmsg); // 申请失败回调
+						settings.sms.onError(errmsg); // SMS登录失败回调
 					}
 				});
 			});
