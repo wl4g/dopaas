@@ -49,9 +49,9 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 		/*
 		 * The front end IAM JS SDK submits encrypted hexadecimal strings.
 		 */
-		String password = getCleanParam(request, config.getParam().getPasswordName());
+		String password = getCleanParam(request, config.getParam().getCredentialName());
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
-		String captcha = getCleanParam(request, config.getParam().getCaptchaName());
+		String captcha = getCleanParam(request, config.getParam().getAttachCodeName());
 		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, password, clientRef, captcha);
 	}
 

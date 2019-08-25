@@ -238,12 +238,12 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
 			// Login account number or mobile number(Required)
-			MobileNumber mn = parse(getCleanParam(request, PARAM_MOBILENUM));
+			MobileNumber mn = parse(getCleanParam(request, config.getParam().getPrincipalName()));
 			// Lock factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
 
 			// Request CAPTCHA
-			String captcha = getCleanParam(request, config.getParam().getCaptchaName());
+			String captcha = getCleanParam(request, config.getParam().getAttachCodeName());
 			// Graph validation
 			graphVerification.validate(factors, captcha, false);
 

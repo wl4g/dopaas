@@ -23,7 +23,6 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -122,21 +121,21 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	 * Determine SMS send parameters
 	 * 
 	 * @param request
-	 * @param verifyCode
+	 * @param smsCode
 	 * @return
 	 */
-	protected Map<String, Object> determineParameters(HttpServletRequest request, String verifyCode) {
+	protected Map<String, Object> determineParameters(HttpServletRequest request, String smsCode) {
 		return new HashMap<String, Object>() {
 			private static final long serialVersionUID = 8964694616018054906L;
 			{
-				String mobileNum = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
-				put(PARAM_VERIFYCODE, verifyCode);
+				// SMS code.
+				put(PARAM_VERIFYCODE, smsCode);
 
-				// Parsing mobile number.
+				// Mobile number.
+				String mobileNum = getCleanParam(request, config.getParam().getPrincipalName());
 				MobileNumber mn = MobileNumber.parse(mobileNum);
 				// Check mobile available.
 				checkMobileAvailable(request, mn.getNumber());
-
 				put(PARAM_MOBILENUM, mn);
 			}
 		};

@@ -38,23 +38,23 @@ public class SmsAuthenticationToken extends AbstractIamAuthenticationToken {
 	/**
 	 * Dynamic verification code
 	 */
-	final private String verifyCode;
+	final private String smsCode;
 
 	final private Action action;
 
 	public SmsAuthenticationToken() {
 		this.principal = null;
-		this.verifyCode = null;
+		this.smsCode = null;
 		this.action = null;
 	}
 
-	public SmsAuthenticationToken(final String remoteHost, final String action, final String principal, final String verifyCode) {
+	public SmsAuthenticationToken(final String remoteHost, final String action, final String principal, final String smsCode) {
 		super(remoteHost);
 		Assert.hasText(principal, "Dynamic principal must not be empty");
-		Assert.hasText(verifyCode, "Dynamic credentials must not be empty");
+		Assert.hasText(smsCode, "Dynamic smsCode credentials must not be empty");
 		this.action = Action.of(action);
 		this.principal = principal;
-		this.verifyCode = verifyCode;
+		this.smsCode = smsCode;
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class SmsAuthenticationToken extends AbstractIamAuthenticationToken {
 
 	@Override
 	public Object getCredentials() {
-		return verifyCode;
+		return smsCode;
 	}
 
 	public Action getAction() {
