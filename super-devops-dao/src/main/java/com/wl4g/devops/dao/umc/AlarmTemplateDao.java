@@ -23,5 +23,5 @@ public interface AlarmTemplateDao {
 
     List<AlarmTemplate> getByClusterId(@Param("clusterId") Serializable clusterId);
 
-    List<AlarmTemplate> list(@Param("name") String name,@Param("metric") String metric,@Param("classify") String classify);
+    List<AlarmTemplate> list(@Param("name") String name,@Param("metricId") Integer metricId,@Param("classify") String classify);
 }

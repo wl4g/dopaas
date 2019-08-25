@@ -9,6 +9,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.umc.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +48,10 @@ public class ConfigController extends BaseController {
 
     @RequestMapping(value = "/save")
     public RespBase<?> save(@RequestBody AlarmConfig alarmConfig) {
+        Assert.notNull(alarmConfig,"config is null");
+        Assert.notNull(alarmConfig.getCollectId(),"instance is null");
+        Assert.notNull(alarmConfig.getContactGroupId(),"contact is null");
+        Assert.notNull(alarmConfig.getTemplateId(),"template is null");
         RespBase<Object> resp = RespBase.create();
         configService.save(alarmConfig);
         return resp;

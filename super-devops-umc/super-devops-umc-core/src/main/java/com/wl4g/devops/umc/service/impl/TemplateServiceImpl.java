@@ -87,7 +87,7 @@ public class TemplateServiceImpl implements TemplateService {
             }else{
                 alarmRule.preInsert();
                 alarmRule.setTemplateId(alarmTemplate.getId());
-                alarmRuleDao.insert(alarmRule);
+                alarmRuleDao.insertSelective(alarmRule);
             }
         }
 

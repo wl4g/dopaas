@@ -7,6 +7,8 @@ import com.wl4g.devops.umc.service.MetricTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author vjay
  * @date 2019-08-09 14:06:00
@@ -35,5 +37,10 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
         metricTemplate.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         metricTemplate.preUpdate();
         metricTemplateDao.updateByPrimaryKeySelective(metricTemplate);
+    }
+
+    @Override
+    public List<MetricTemplate> getByClassify(String classify) {
+        return metricTemplateDao.list(null,classify);
     }
 }

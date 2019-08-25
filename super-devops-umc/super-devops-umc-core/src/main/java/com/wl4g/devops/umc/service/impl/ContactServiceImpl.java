@@ -40,7 +40,7 @@ public class ContactServiceImpl implements ContactService {
             alarmContact.preInsert();
             alarmContact.setDelFlag(DEL_FLAG_NORMAL);
             alarmContact.setEnable(ENABLED);
-            alarmContactDao.insert(alarmContact);
+            alarmContactDao.insertSelective(alarmContact);
         }
         Integer[] groups = alarmContact.getGroups();
         if(null!=groups){
@@ -48,7 +48,7 @@ public class ContactServiceImpl implements ContactService {
                 AlarmContactGroupRef alarmContactGroupRef = new AlarmContactGroupRef();
                 alarmContactGroupRef.setContactGroupId(group);
                 alarmContactGroupRef.setContactId(alarmContact.getId());
-                alarmContactGroupRefDao.insert(alarmContactGroupRef);
+                alarmContactGroupRefDao.insertSelective(alarmContactGroupRef);
             }
         }
 
