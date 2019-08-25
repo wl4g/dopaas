@@ -95,7 +95,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	public RespBase<?> applySession(HttpServletRequest request) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
-			resp.getData().put(config.getParam().getSid(), getSessionId());
+			resp.getData().put(config.getCookie().getName(), getSessionId());
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				resp.setCode(RetCode.BIZ_ERR);
@@ -172,10 +172,19 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * number of seconds before the front end can re-send the SMS
 			 * verification code).
 			 */
+			Long remainingDelay = null;
 			ValidateCode code = smsVerification.getValidateCode(false);
 			if (code != null) {
-				resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(code)));
+				remainingDelay = getSmsRemainingDelay(code);
 			}
+
+			// SMS apply owner(mobile number).
+			Long mobileNum = null;
+			if (code != null && code.getOwner() != null && isNumeric(code.getOwner().toString())) {
+				mobileNum = Long.parseLong(code.getOwner().toString());
+			}
+			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainingDelay));
+
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				resp.setCode(RetCode.BIZ_ERR);
@@ -209,7 +218,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// Apply CAPTCHA
 			if (graphVerification.isEnabled(factors)) { // Enabled?
-				graphVerification.apply(factors, request, response);
+				graphVerification.apply(null, factors, request, response);
 			} else { // Invalid request
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -248,12 +257,12 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			graphVerification.validate(factors, captcha, false);
 
 			// Apply SMS verify-code
-			smsVerification.apply(factors, request, response);
+			smsVerification.apply(mn.getNumber(), factors, request, response);
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			ValidateCode code = smsVerification.getValidateCode(true);
-			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(getSmsRemainingDelay(code)));
+			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mn.getNumber(), getSmsRemainingDelay(code)));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -299,7 +308,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	private long getSmsRemainingDelay(ValidateCode code) {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
-		return Math.max(now - code.getCreateTime() - config.getMatcher().getFailFastSmsDelay(), 0);
+		return Math.max(config.getMatcher().getFailFastSmsDelay() - (now - code.getCreateTime()), 0);
 	}
 
 }

@@ -18,20 +18,56 @@ public class SmsCheckModel implements Serializable {
 	final public static String KEY_SMS_CHECK = "checkSms";
 
 	/**
+	 * Enable SMS login apply for session.
+	 */
+	private boolean enabled;
+
+	/**
+	 * Mobile number.
+	 */
+	private Long mobileNum;
+
+	/**
 	 * The remaining milliseconds to wait to re-apply for SMS dynamic password.
 	 */
-	private long remainDelayMs;
+	private Long remainDelayMs;
 
-	public SmsCheckModel(long remainDelayMs) {
+	public SmsCheckModel() {
 		super();
+	}
+
+	public SmsCheckModel(Long mobileNum, Long remainDelayMs) {
+		this(true, mobileNum, remainDelayMs);
+	}
+
+	public SmsCheckModel(boolean enabled, Long mobileNum, Long remainDelayMs) {
+		super();
+		this.enabled = enabled;
+		this.mobileNum = mobileNum;
 		this.remainDelayMs = remainDelayMs;
 	}
 
-	public long getRemainDelayMs() {
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public Long getMobileNum() {
+		return mobileNum;
+	}
+
+	public void setMobileNum(Long mobileNum) {
+		this.mobileNum = mobileNum;
+	}
+
+	public Long getRemainDelayMs() {
 		return remainDelayMs;
 	}
 
-	public void setRemainDelayMs(long remainDelayMs) {
+	public void setRemainDelayMs(Long remainDelayMs) {
 		this.remainDelayMs = remainDelayMs;
 	}
 

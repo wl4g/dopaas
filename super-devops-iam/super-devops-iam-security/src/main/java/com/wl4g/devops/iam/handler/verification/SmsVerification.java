@@ -84,13 +84,13 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
-			throws IOException {
+	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
 		// Create verify-code.
-		reset(true);
+		reset(owner, true);
 
 		// Ready send to SMS gateway.
 		sender.doSend(determineParameters(request, getValidateCode(true).getText()));
@@ -190,7 +190,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	protected void postValidateProperties() {
+	protected void postValidateProperties(String owner) {
 		if (log.isInfoEnabled()) {
 			log.info("SMS authc clean with session...");
 		}
