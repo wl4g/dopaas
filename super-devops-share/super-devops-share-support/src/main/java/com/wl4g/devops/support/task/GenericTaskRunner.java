@@ -15,7 +15,13 @@
  */
 package com.wl4g.devops.support.task;
 
-import static java.util.concurrent.TimeUnit.*;
+import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.util.Assert;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -28,14 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
 
 /**
  * Generic task schedule runner.
@@ -124,8 +123,10 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 				}
 			}
 			try {
-				boss.interrupt();
-				boss = null;
+				if (boss != null) {
+					boss.interrupt();
+					boss = null;
+				}
 			} catch (Exception e) {
 				log.error("Runner boss interrupt failed!", e);
 			}
