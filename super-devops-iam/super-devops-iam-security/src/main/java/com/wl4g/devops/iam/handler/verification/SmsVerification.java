@@ -21,10 +21,8 @@ import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,6 +41,7 @@ import java.util.Map;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
@@ -85,27 +84,22 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
-			throws IOException {
+	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
 		// Create verify-code.
-		reset(true);
+		reset(owner, true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
+		sender.doSend(determineParameters(request, getValidateCode(true).getText()));
 	}
 
 	@Override
 	public boolean isEnabled(@NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-		return getVerifyCode(false) != null;
-	}
-
-	@Override
-	public VerifyCode getVerifyCode(boolean assertion) {
-		return super.getVerifyCode(assertion);
+		return getValidateCode(false) != null;
 	}
 
 	@Override
@@ -114,29 +108,34 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
+	public ValidateCode getValidateCode(boolean assertion) {
+		return super.getValidateCode(assertion);
+	}
+
+	@Override
 	protected String generateCode() {
-		return RandomStringUtils.randomNumeric(6);
+		return randomNumeric(6);
 	}
 
 	/**
 	 * Determine SMS send parameters
 	 * 
 	 * @param request
-	 * @param verifyCode
+	 * @param smsCode
 	 * @return
 	 */
-	protected Map<String, Object> determineParameters(HttpServletRequest request, String verifyCode) {
+	protected Map<String, Object> determineParameters(HttpServletRequest request, String smsCode) {
 		return new HashMap<String, Object>() {
 			private static final long serialVersionUID = 8964694616018054906L;
 			{
-				String mobileNum = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
-				put(PARAM_VERIFYCODE, verifyCode);
+				// SMS code.
+				put(PARAM_VERIFYCODE, smsCode);
 
-				// Parsing mobile number.
+				// Mobile number.
+				String mobileNum = getCleanParam(request, config.getParam().getPrincipalName());
 				MobileNumber mn = MobileNumber.parse(mobileNum);
 				// Check mobile available.
 				checkMobileAvailable(request, mn.getNumber());
-
 				put(PARAM_MOBILENUM, mn);
 			}
 		};
@@ -191,7 +190,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	protected void postValidateFinallySet() {
+	protected void postValidateProperties(String owner) {
 		if (log.isInfoEnabled()) {
 			log.info("SMS authc clean with session...");
 		}

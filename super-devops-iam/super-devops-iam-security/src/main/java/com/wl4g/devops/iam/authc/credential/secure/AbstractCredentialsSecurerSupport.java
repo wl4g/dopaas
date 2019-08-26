@@ -35,14 +35,15 @@ import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SECURER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_PUBKEY_IDX;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SECRET_INDEX;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_KEYPAIRS;
 import static com.wl4g.devops.common.utils.codec.CheckSums.*;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 
 import com.wl4g.devops.iam.authc.credential.secure.Cryptos.KeySpecPair;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -149,22 +150,21 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	@Override
-	public String applySecret(String uid) {
+	public String applySecret() {
 		// Load secret keySpecPairs
 		List<KeySpecPair> keyPairs = loadSecretKeySpecPairs();
 
-		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
-		Integer index = (Integer) pubIdxCache.get(new EnhancedKey(uid, Integer.class));
+		Integer index = getBindValue(KEY_SECRET_INDEX);
 		if (index == null) {
 			index = nextInt(0, keyPairs.size());
 		}
 		if (log.isDebugEnabled()) {
-			log.debug("Apply secret for uid: {}, index: {}", uid, index);
+			log.debug("Apply secret for index: {}", index);
 		}
-		KeySpecPair keyPair = keyPairs.get(index);
 
-		// Save the applied keyPair to the cache
-		pubIdxCache.put(new EnhancedKey(uid, config.getApplyPubkeyExpireMs()), index);
+		KeySpecPair keyPair = keyPairs.get(index);
+		// Save the applied keyPair index.
+		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
 		if (log.isInfoEnabled()) {
 			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
@@ -262,20 +262,16 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		// Get the generated key pair
 		List<KeySpecPair> keyPairs = loadSecretKeySpecPairs();
 
-		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
-		try {
-			// Choose the best one from the candidate key pair
-			Integer index = (Integer) pubIdxCache.get(new EnhancedKey(principal, Integer.class));
-			if (index != null) {
-				return keyPairs.get(index);
-			}
-			if (log.isWarnEnabled()) {
-				log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
-			}
-			throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
-		} finally { // Cleanup
-			pubIdxCache.remove(new EnhancedKey(principal));
+		// Choose the best one from the candidate key pair
+		Integer index = getBindValue(KEY_SECRET_INDEX, true);
+		if (index != null) {
+			return keyPairs.get(index);
 		}
+
+		if (log.isWarnEnabled()) {
+			log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
+		}
+		throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
 	}
 
 	/**

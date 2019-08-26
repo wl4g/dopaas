@@ -41,6 +41,11 @@ import java.util.List;
 public abstract class GraphBasedVerification extends AbstractVerification implements InitializingBean {
 
 	/**
+	 * Key name used to store authentication code to session
+	 */
+	final protected static String KEY_CAPTCHA_SESSION = GraphBasedVerification.class.getSimpleName() + ".VERIFYCODE";
+
+	/**
 	 * Matching attempts accumulator
 	 */
 	private Cumulator matchCumulator;
@@ -60,11 +65,6 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 */
 	private Cumulator sessionApplyCaptchaCumulator;
 
-	/**
-	 * Key name used to store authentication code to session
-	 */
-	final protected static String KEY_CAPTCHA_SESSION = GraphBasedVerification.class.getSimpleName() + ".VERIFYCODE";
-
 	public GraphBasedVerification(IamContextManager manager) {
 		super(manager);
 	}
@@ -73,8 +73,8 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
-	public void apply(@NotNull List<String> factors, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response)
-			throws IOException {
+	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
 
@@ -90,10 +90,10 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		response.setContentType("image/jpeg");
 
 		// Recreate a CAPTCHA
-		reset(true);
+		reset(owner, true);
 
 		// Create the text for the image and output CAPTCHA image buffer.
-		write(response, getVerifyCode(true).getText());
+		write(response, getValidateCode(true).getText());
 	}
 
 	@Override

@@ -32,8 +32,8 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.iam.common.utils.Securitys.DEFAULT_AUTHC_STATUS;
-import static com.wl4g.devops.iam.common.utils.Securitys.DEFAULT_UNAUTHC_STATUS;
+import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_AUTHC;
+import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
@@ -291,7 +291,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		hasText(redirectUri, "'redirectUri' must not be null");
 		// Make message
 		RespBase<String> resp = RespBase.create();
-		resp.setCode(OK).setStatus(DEFAULT_AUTHC_STATUS).setMessage("Login successful");
+		resp.setCode(OK).setStatus(SESSION_STATUS_AUTHC).setMessage("Login successful");
 		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
 		// e.g. Used by mobile APP.
 		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
@@ -312,7 +312,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		String errmsg = err != null ? err.getMessage() : "Not logged-in";
 		// Make message
 		RespBase<String> resp = RespBase.create();
-		resp.setCode(OK).setStatus(DEFAULT_UNAUTHC_STATUS).setMessage(errmsg);
+		resp.setCode(OK).setStatus(SESSION_STATUS_UNAUTHC).setMessage(errmsg);
 		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		return toJSONString(resp);
 	}

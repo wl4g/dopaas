@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +30,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.common.utils.Sessions;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.context.ServerSecurityContext;
@@ -85,9 +86,10 @@ public abstract class AbstractVerification implements Verification {
 	}
 
 	@Override
-	public void validate(@NotNull List<String> factors, String verifyCodeReq, boolean required) throws VerificationException {
+	public void validate(@NotNull List<String> factors, String validateCodeReq, boolean required) throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
 
+		ValidateCode code = null;
 		try {
 			/*
 			 * If required is true, the forced verification policy is executed,
@@ -98,63 +100,67 @@ public abstract class AbstractVerification implements Verification {
 			if (!(required || isEnabled(factors))) {
 				return; // not enabled
 			}
-			// Store the verify-code
-			Object verifyCode = getVerifyCode(true);
-			if (!doMatching(verifyCode, verifyCodeReq)) {
+			// Store the validate code
+			code = getValidateCode(true);
+			if (!doMatch(code, validateCodeReq)) {
 				if (log.isErrorEnabled()) {
-					log.error("verification mismatch. {} => {}", verifyCodeReq, verifyCode);
+					log.error("Verification mismatched. {} => {}", validateCodeReq, code);
 				}
-				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", verifyCodeReq));
+				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", validateCodeReq));
 			}
-
 		} finally {
-			postValidateFinallySet();
+			postValidateProperties((code != null) ? code.getText() : null);
 		}
 	}
 
 	/**
-	 * Post validation finally processed.
+	 * Post validation properties.
 	 * 
+	 * @param owner
+	 *            Validate code owner(Optional).
 	 */
-	protected void postValidateFinallySet() {
-		reset(false); // Reset or create
+	protected void postValidateProperties(String owner) {
+		reset(owner, false); // Reset or create
 	}
 
 	/**
-	 * Reset the verify-code to indicate a new generation when create is true
+	 * Reset the validate code to indicate a new generation when create is true
 	 * 
+	 * @param owner
+	 *            Validate code owner(Optional).
 	 * @param create
+	 *            is new create.
 	 */
-	protected void reset(boolean create) {
-		getSession().removeAttribute(storageSessionKey());
+	protected void reset(Object owner, boolean create) {
+		unbind(storageSessionKey());
 		if (create) {
 			// Store verify-code in the session
-			getSession().setAttribute(storageSessionKey(), new VerifyCode(generateCode()));
+			bind(storageSessionKey(), new ValidateCode(owner, generateCode()));
 		}
 	}
 
 	/**
-	 * Get stored verify-code of session
+	 * Get stored validate code of session
 	 * 
 	 * @param assertion
 	 *            Do you need to assertion
 	 * @return Returns the currently valid verify-code (if create = true, the
 	 *         newly generated value or the old value)
 	 */
-	protected VerifyCode getVerifyCode(boolean assertion) {
+	protected ValidateCode getValidateCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCode code = (VerifyCode) getSession().getAttribute(storageSessionKey());
+		ValidateCode code = getBindValue(storageSessionKey());
 
 		// Assertion
 		long now = System.currentTimeMillis();
-		if (code != null && !isBlank(code.getText())) {
-			if (Math.abs(now - code.getCreateTime()) < getExpireMs()) { // Expired?
+		if (code != null && isNotBlank(code.getText())) {
+			if ((now - code.getCreateTime()) < getExpireMs()) { // Expired?
 				return code;
 			}
 		}
 
 		if (assertion) {
-			log.warn("Assertion verify-code expired. now: {}, createTime: {}, expireMs: {}", now,
+			log.warn("Assertion verifyCode expired. now: {}, createTime: {}, expireMs: {}", now,
 					(code != null ? code.getCreateTime() : null), getExpireMs());
 			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
 		}
@@ -163,28 +169,26 @@ public abstract class AbstractVerification implements Verification {
 	}
 
 	/**
-	 * Match submitted verification code
+	 * Match submitted validation code
 	 * 
 	 * @param verifyCode
 	 * @param verifyCodeReq
 	 * @return
 	 */
 	/**
-	 * @param verifyCode
-	 * @param verifyCodeReq
+	 * @param validateCode
+	 * @param validateCodeReq
 	 * @return
 	 */
-	protected boolean doMatching(Object verifyCode, String verifyCodeReq) {
-		if (StringUtils.isEmpty(verifyCodeReq)) {
+	protected boolean doMatch(Object validateCode, String validateCodeReq) {
+		if (isBlank(validateCodeReq)) {
 			return false;
 		}
-
-		if (verifyCode instanceof VerifyCode) {
-			VerifyCode vc = (VerifyCode) verifyCode;
-			return equalsIgnoreCase(vc.getText(), (CharSequence) verifyCodeReq);
+		if (validateCode instanceof ValidateCode) {
+			ValidateCode vc = (ValidateCode) validateCode;
+			return equalsIgnoreCase(vc.getText(), (CharSequence) validateCodeReq);
 		}
-
-		return equalsIgnoreCase(String.valueOf(verifyCode), verifyCodeReq);
+		return equalsIgnoreCase(String.valueOf(validateCode), validateCodeReq);
 	}
 
 	/**
@@ -223,37 +227,43 @@ public abstract class AbstractVerification implements Verification {
 			@NotNull List<String> factors);
 
 	/**
-	 * Get SHIRO session
-	 * 
-	 * @return
-	 */
-	private Session getSession() {
-		return Sessions.getSession();
-	}
-
-	/**
-	 * Wrap verification code
+	 * Wrap validation code
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年4月18日
 	 * @since
 	 */
-	public static class VerifyCode implements Serializable {
+	public static class ValidateCode implements Serializable {
 		private static final long serialVersionUID = -7643664591972701966L;
+
+		private Object owner;
 
 		private String text;
 
 		private Long createTime;
 
-		public VerifyCode(String text) {
-			this(text, System.currentTimeMillis());
+		public ValidateCode(String text) {
+			this(null, text, System.currentTimeMillis());
 		}
 
-		public VerifyCode(String text, Long createTime) {
-			Assert.hasText(text, "Verify-code text is empty, please check configure");
+		public ValidateCode(Object owner, String text) {
+			this(owner, text, System.currentTimeMillis());
+		}
+
+		public ValidateCode(Object owner, String text, Long createTime) {
+			Assert.hasText(text, "Validte code value is empty, please check configure");
 			Assert.notNull(createTime, "CreateTime is null, please check configure");
+			this.owner = owner;
 			this.text = text;
 			this.createTime = createTime;
+		}
+
+		public Object getOwner() {
+			return owner;
+		}
+
+		public void setOwner(Object owner) {
+			this.owner = owner;
 		}
 
 		public String getText() {
