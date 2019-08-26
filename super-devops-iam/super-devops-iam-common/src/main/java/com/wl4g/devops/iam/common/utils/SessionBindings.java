@@ -111,11 +111,11 @@ public abstract class SessionBindings extends Sessions {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getBindValue(String sessionKey) {
-		Assert.notNull(sessionKey, "'sessionKey' must not be null");
+		Assert.hasText(sessionKey, "Session key must not be empty.");
 		// Get bind value.
 		T value = (T) getSession().getAttribute(sessionKey);
 		// Get value TTL.
-		SessionAttrTTL ttl = (SessionAttrTTL) getSession().getAttribute(getExpireKey(sessionKey));
+		SessionValueTTL ttl = (SessionValueTTL) getSession().getAttribute(getExpireKey(sessionKey));
 		if (ttl != null) { // Need to check expiration
 			if ((System.currentTimeMillis() - ttl.getCreateTime()) >= ttl.getExpireMs()) { // Expired?
 				unbind(sessionKey); // Cleanup
@@ -182,8 +182,9 @@ public abstract class SessionBindings extends Sessions {
 	 * @return
 	 */
 	public static <T> T bind(String sessionKey, T value, long expireMs) {
+		Assert.isTrue(expireMs > 0, "Expire time must be greater than 0");
 		bind(sessionKey, value);
-		bind(getExpireKey(sessionKey), new SessionAttrTTL(expireMs));
+		bind(getExpireKey(sessionKey), new SessionValueTTL(expireMs));
 		return value;
 	}
 
@@ -194,7 +195,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @param value
 	 */
 	public static <T> T bind(String sessionKey, T value) {
-		Assert.notNull(sessionKey, "'sessionKey' must not be null");
+		Assert.hasText(sessionKey, "Session key must not be empty.");
 		getSession().setAttribute(sessionKey, value);
 		return value;
 	}
@@ -229,18 +230,18 @@ public abstract class SessionBindings extends Sessions {
 	 * @version v1.0 2019年8月23日
 	 * @since
 	 */
-	public static class SessionAttrTTL implements Serializable {
+	public static class SessionValueTTL implements Serializable {
 		private static final long serialVersionUID = -5108678535942593956L;
 
 		final private Long createTime;
 
 		final private Long expireMs;
 
-		public SessionAttrTTL(Long expireMs) {
+		public SessionValueTTL(Long expireMs) {
 			this(System.currentTimeMillis(), expireMs);
 		}
 
-		public SessionAttrTTL(Long createTime, Long expireMs) {
+		public SessionValueTTL(Long createTime, Long expireMs) {
 			Assert.state(createTime != null, "'createTime' must not be null.");
 			Assert.state(expireMs != null, "'expireMs' must not be null.");
 			this.createTime = createTime;

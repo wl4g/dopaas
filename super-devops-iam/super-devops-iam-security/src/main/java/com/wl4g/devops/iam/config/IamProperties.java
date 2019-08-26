@@ -376,7 +376,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		/**
 		 * Password parameter name at login time of account password.
 		 */
-		private String passwordName = "password";
+		private String credentialName = "credential";
 
 		/**
 		 * Client type reference parameter name at login time of account
@@ -385,14 +385,9 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		private String clientRefName = "client_ref";
 
 		/**
-		 * Captcha parameter name at login time of account password
+		 * Dynamic additional code(e.g. graphCode/smsCode).
 		 */
-		private String captchaName = "captcha";
-
-		/**
-		 * Dynamic verification pass code key-name.
-		 */
-		private String verifyCodeName = "passcode";
+		private String attachCodeName = "attachCode";
 
 		/**
 		 * Dynamic verification code operation action type parameter key-name.
@@ -407,12 +402,12 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 			this.principalName = loginUsername;
 		}
 
-		public String getPasswordName() {
-			return passwordName;
+		public String getCredentialName() {
+			return credentialName;
 		}
 
-		public void setPasswordName(String loginPassword) {
-			this.passwordName = loginPassword;
+		public void setCredentialName(String loginPassword) {
+			this.credentialName = loginPassword;
 		}
 
 		public String getClientRefName() {
@@ -423,20 +418,12 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 			this.clientRefName = clientRefName;
 		}
 
-		public String getCaptchaName() {
-			return captchaName;
+		public String getAttachCodeName() {
+			return attachCodeName;
 		}
 
-		public void setCaptchaName(String loginCaptcha) {
-			this.captchaName = loginCaptcha;
-		}
-
-		public String getVerifyCodeName() {
-			return verifyCodeName;
-		}
-
-		public void setVerifyCodeName(String verifyCodeName) {
-			this.verifyCodeName = verifyCodeName;
+		public void setAttachCodeName(String loginCaptcha) {
+			this.attachCodeName = loginCaptcha;
 		}
 
 		public String getSmsActionName() {
