@@ -37,8 +37,8 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String action = WebUtils.getCleanParam(request, config.getParam().getSmsActionName());
 		String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
-		String verifyCode = WebUtils.getCleanParam(request, config.getParam().getVerifyCodeName());
-		return new SmsAuthenticationToken(remoteHost, action, principal, verifyCode);
+		String smsCode = WebUtils.getCleanParam(request, config.getParam().getCredentialName());
+		return new SmsAuthenticationToken(remoteHost, action, principal, smsCode);
 	}
 
 	@Override

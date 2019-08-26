@@ -137,7 +137,16 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			return sessionId;
 		}
 
-		// Using grantTicket mode sessions
+		// Using cookie in URL session.(Android/iOS/WechatApplet)
+		sessionId = getCleanParam(request, config.getCookie().getName());
+		if (checkAvailable(sessionId)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Using url cookieId for '{}'", sessionId);
+			}
+			return sessionId;
+		}
+
+		// Using grant ticket session.
 		String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
 		if (checkAvailable(grantTicket)) {
 			/*
@@ -155,7 +164,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			}
 		}
 
-		// Using default cookie mode sessions
+		// Using default cookie session.
 		sessionId = super.getSessionId(request, response);
 		if (log.isDebugEnabled()) {
 			log.debug("Using default SID for '{}'", sessionId);

@@ -24,12 +24,12 @@ import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import com.wl4g.devops.iam.handler.verification.Verification;
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.util.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -95,7 +95,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			assertRequestVerify(tk, principal, factors);
 
 		} catch (RuntimeException e) {
-			cumulatedMaxFailCount = postFailureProcess(principal, factors);
+			postFailureProcess(principal, factors);
 			throw e;
 		}
 
@@ -111,7 +111,6 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			log.info("Credentials[{}], matched[{}], principal[{}], anyFailCount[{}]", String.valueOf(token.getCredentials()),
 					matched, principal, cumulatedMaxFailCount);
 		}
-
 		// This is an accident.
 		return matched;
 	}
@@ -134,13 +133,11 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * @return
 	 */
 	protected Long postFailureProcess(String principal, List<String> factors) {
-
 		// Cumulative increment of cache matching count by 1
 		long matchCountMax = matchCumulator.accumulate(factors, 1);
 
 		// Cumulative increase of session matching count by 1
 		long sessioinMatchCountMax = sessionMatchCumulator.accumulate(factors, 1);
-
 		if (log.isInfoEnabled()) {
 			log.info("Principal {} matched failure accumulative limiter matchCountMax: {}, sessioinMatchCountMax: {}, factor: {}",
 					principal, matchCountMax, sessioinMatchCountMax, factors);
@@ -215,7 +212,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			String lockedPrincipal = (String) lockCache.get(new EnhancedKey(factor, String.class));
 
 			// Previous locks have not expired
-			if (StringUtils.hasText(lockedPrincipal)) {
+			if (isNotBlank(lockedPrincipal)) {
 				factorLock = true;
 			}
 
