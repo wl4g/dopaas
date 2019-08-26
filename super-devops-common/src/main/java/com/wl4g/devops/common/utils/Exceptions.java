@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.common.utils;
 
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.io.PrintWriter;
@@ -120,11 +121,26 @@ public abstract class Exceptions extends ExceptionUtils {
 	 * @return
 	 */
 	public static String getRootCausesString(Throwable th) {
+		return getRootCausesString(th, true);
+	}
+
+	/**
+	 * Getting root causes string message
+	 * 
+	 * @param th
+	 * @param extra
+	 * @return
+	 */
+	public static String getRootCausesString(Throwable th, boolean extra) {
 		if (th == null) {
 			return null;
 		}
 		String causes = getRootCauseMessage(th);
-		return isEmpty(causes) ? getMessage(th) : causes;
+		String errmsg = isEmpty(causes) ? getMessage(th) : causes;
+		if (extra && contains(errmsg, ":")) {
+			errmsg = errmsg.split(":")[1];
+		}
+		return errmsg;
 	}
 
 }
