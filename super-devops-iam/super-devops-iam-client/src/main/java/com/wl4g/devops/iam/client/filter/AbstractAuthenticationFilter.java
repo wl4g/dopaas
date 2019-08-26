@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
@@ -39,6 +40,7 @@ import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -50,6 +52,7 @@ import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.context.ClientSecurityContext;
@@ -207,14 +210,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		Throwable cause = Exceptions.getRootCause(ae);
 		if (cause != null) {
 			if (cause instanceof RuntimeException) {
-				log.error("Failed to caused by: {}", Exceptions.getMessage(cause));
+				log.error("Failed to caused by: {}", getMessage(cause));
 			} else {
 				log.error("Failed to authentication.", cause);
 			}
 		}
 
 		// Failure redirect URL
-		String failureRedirectUrl = makeFailureRedirectUrl(cause, WebUtils.toHttp(request));
+		String failureRedirectUrl = makeFailureRedirectUrl(cause, toHttp(request));
 
 		// Post handle of authenticate failure.
 		coprocessor.postAuthenticatingFailure(token, ae, request, response);
@@ -248,7 +251,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// If it is an error caused by interface connection, etc.
 		else {
 			try {
-				String errmsg = String.format("<b>Iam Server Internal Error</b><br/>%s", Exceptions.getMessage(cause));
+				String errmsg = String.format("<b>Iam Server Internal Error</b><br/>%s", getMessage(cause));
 				toHttp(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
@@ -312,7 +315,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		String errmsg = err != null ? err.getMessage() : "Not logged-in";
 		// Make message
 		RespBase<String> resp = RespBase.create();
-		resp.setCode(OK).setStatus(SESSION_STATUS_UNAUTHC).setMessage(errmsg);
+		resp.setCode(RetCode.UNAUTHC).setStatus(SESSION_STATUS_UNAUTHC).setMessage(errmsg);
 		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		return toJSONString(resp);
 	}
@@ -326,8 +329,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	protected String makeFailureRedirectUrl(Throwable cause, HttpServletRequest request) {
 		// Redirect URL
-		String callbackRedirectUrl = new StringBuffer(WebUtils2.getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR)
-				.toString();
+		String callbackRedirectUrl = new StringBuffer(getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR).toString();
 
 		// Redirect URL with callback
 		StringBuffer fullRedirectUrl = new StringBuffer();
