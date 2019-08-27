@@ -69,6 +69,7 @@ public class BasedContextConfiguration {
 	//
 
 	@Bean
+	@ConditionalOnMissingBean
 	public ServerSecurityConfigurer serverSecurityConfigurer() {
 		return new CheckImpledServerSecurityConfigurer();
 	}
