@@ -151,26 +151,26 @@ public abstract class SessionBindings extends Sessions {
 	 * @param sessionKey
 	 * @param keyValues
 	 */
-	public static void bindKVParameters(String sessionKey, Object[] keyValues) {
+	public static void bindKVParameters(String sessionKey, Object... keyValues) {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
 		Assert.notEmpty(keyValues, "'keyValues' must not be null");
 		Assert.isTrue(keyValues.length % 2 == 0, "Illegal 'keyValues' length");
 
 		// Extract key values
-		Map<Object, Object> paramster = new HashMap<>();
+		Map<Object, Object> parameters = new HashMap<>();
 		for (int i = 0; i < keyValues.length - 1; i++) {
 			if (i % 2 == 0) {
 				Object key = keyValues[i];
 				Object value = keyValues[i + 1];
 				if (key != null && StringUtils.hasText(key.toString()) && value != null
 						&& StringUtils.hasText(value.toString())) {
-					paramster.put(key, value);
+					parameters.put(key, value);
 				}
 			}
 		}
 
 		// Binding
-		bind(sessionKey, paramster);
+		bind(sessionKey, parameters);
 	}
 
 	/**
