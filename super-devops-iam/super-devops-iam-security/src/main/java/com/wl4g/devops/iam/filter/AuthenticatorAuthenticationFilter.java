@@ -99,19 +99,19 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	 */
 	private void bindingRequestParameters(ServletRequest request, ServletResponse response) {
 		// Parameter names
-		String sourceAppKey = config.getParam().getApplication();
-		String responseTypeKey = config.getParam().getResponseType();
+		String fromAppKey = config.getParam().getApplication();
+		String respTypeKey = config.getParam().getResponseType();
 		String redirectUrlKey = config.getParam().getRedirectUrl();
 
 		// Parameter values
-		String sourceApp = getCleanParam(request, sourceAppKey);
-		String respType = getCleanParam(request, responseTypeKey);
+		String fromApp = getCleanParam(request, fromAppKey);
+		String respType = getCleanParam(request, respTypeKey);
 		String redirectUrl = getCleanParam(request, redirectUrlKey);
 
 		// Overlay to save the latest parameters
-		bindKVParameters(KEY_REQ_AUTH_PARAMS, sourceAppKey, sourceApp, responseTypeKey, respType, redirectUrlKey, redirectUrl);
+		bindKVParameters(KEY_REQ_AUTH_PARAMS, fromAppKey, fromApp, respTypeKey, respType, redirectUrlKey, redirectUrl);
 		if (log.isDebugEnabled()) {
-			log.debug("Bind requests. sourceApp[{}], respType[{}], redirectUrl[{}]", sourceApp, respType, redirectUrl);
+			log.debug("Binding for fromApp[{}], respType[{}], redirectUrl[{}]", fromApp, respType, redirectUrl);
 		}
 	}
 
