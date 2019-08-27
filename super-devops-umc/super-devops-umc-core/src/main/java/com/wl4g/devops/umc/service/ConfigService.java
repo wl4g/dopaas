@@ -8,10 +8,10 @@ import com.wl4g.devops.common.bean.umc.AlarmConfig;
  */
 public interface ConfigService {
 
-    void save(AlarmConfig alarmConfig);
+	void save(AlarmConfig alarmConfig);
 
-    void del(Integer id);
+	void del(Integer id);
 
-    AlarmConfig detail(Integer id);
+	AlarmConfig detail(Integer id);
 
 }

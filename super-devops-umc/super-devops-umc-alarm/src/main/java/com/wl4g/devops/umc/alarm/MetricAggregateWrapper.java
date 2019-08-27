@@ -41,7 +41,7 @@ public class MetricAggregateWrapper implements Serializable {
 	 * collector: defaultRedisCollector, or IOT device collector (DTU custom
 	 * address) e.g.: 11511888
 	 */
-	//private String collectAddr = EMPTY;
+	// private String collectAddr = EMPTY;
 	private String host = EMPTY;
 	private String endpoint = EMPTY;
 
@@ -99,13 +99,8 @@ public class MetricAggregateWrapper implements Serializable {
 
 	@Override
 	public String toString() {
-		return "MetricAggregateWrapper{" +
-				"host='" + host + '\'' +
-				", endpoint='" + endpoint + '\'' +
-				", classify='" + classify + '\'' +
-				", metrics=" + metrics +
-				", timestamp=" + timestamp +
-				'}';
+		return "MetricAggregateWrapper{" + "host='" + host + '\'' + ", endpoint='" + endpoint + '\'' + ", classify='" + classify
+				+ '\'' + ", metrics=" + metrics + ", timestamp=" + timestamp + '}';
 	}
 
 	/**

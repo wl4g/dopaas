@@ -16,31 +16,31 @@ import java.util.List;
 @Service
 public class MetricTemplateServiceImpl implements MetricTemplateService {
 
-    @Autowired
-    private MetricTemplateDao metricTemplateDao;
+	@Autowired
+	private MetricTemplateDao metricTemplateDao;
 
-    @Override
-    public void save(MetricTemplate metricTemplate) {
-        if(metricTemplate.getId()!=null){
-            metricTemplate.preUpdate();
-            metricTemplateDao.updateByPrimaryKeySelective(metricTemplate);
-        }else{
-            metricTemplate.preInsert();
-            metricTemplateDao.insertSelective(metricTemplate);
-        }
-    }
+	@Override
+	public void save(MetricTemplate metricTemplate) {
+		if (metricTemplate.getId() != null) {
+			metricTemplate.preUpdate();
+			metricTemplateDao.updateByPrimaryKeySelective(metricTemplate);
+		} else {
+			metricTemplate.preInsert();
+			metricTemplateDao.insertSelective(metricTemplate);
+		}
+	}
 
-    @Override
-    public void del(Integer id) {
-        MetricTemplate metricTemplate = new MetricTemplate();
-        metricTemplate.setId(id);
-        metricTemplate.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        metricTemplate.preUpdate();
-        metricTemplateDao.updateByPrimaryKeySelective(metricTemplate);
-    }
+	@Override
+	public void del(Integer id) {
+		MetricTemplate metricTemplate = new MetricTemplate();
+		metricTemplate.setId(id);
+		metricTemplate.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		metricTemplate.preUpdate();
+		metricTemplateDao.updateByPrimaryKeySelective(metricTemplate);
+	}
 
-    @Override
-    public List<MetricTemplate> getByClassify(String classify) {
-        return metricTemplateDao.list(null,classify);
-    }
+	@Override
+	public List<MetricTemplate> getByClassify(String classify) {
+		return metricTemplateDao.list(null, classify);
+	}
 }

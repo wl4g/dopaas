@@ -43,9 +43,9 @@ public class AlarmResult {
 	/**
 	 * AlarmTemplate
 	 */
-	//final private AlarmTemplate alarmTemplate;
+	// final private AlarmTemplate alarmTemplate;
 
-	//TODO
+	// TODO
 	final private AlarmConfig alarmConfig;
 
 	/**

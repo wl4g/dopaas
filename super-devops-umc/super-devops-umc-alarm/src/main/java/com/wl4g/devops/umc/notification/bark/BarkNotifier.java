@@ -38,13 +38,16 @@ public class BarkNotifier extends AbstractAlarmNotifier {
 
 		// TODO Auto-generated method stub
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		//factory.setConnectTimeout(5000);
+		// factory.setConnectTimeout(5000);
 		RestTemplate restTemplate = new RestTemplate(factory);
-		//TemplateContactWrapper templateContactWrapper = JacksonUtils.parseJSON(message.getMessage(), TemplateContactWrapper.class);
-		//String msg = templateContactWrapper.getAlarmTemplate().getMetric()+ " is up ";
+		// TemplateContactWrapper templateContactWrapper =
+		// JacksonUtils.parseJSON(message.getMessage(),
+		// TemplateContactWrapper.class);
+		// String msg = templateContactWrapper.getAlarmTemplate().getMetric()+ "
+		// is up ";
 
 		String url = "http://api.day.app/JZ7L5LcHcZsPxVrsox5AzG/{msg}" + "-time:" + System.currentTimeMillis();
-		String result = restTemplate.getForObject(url, String.class,message.getMessage());
+		String result = restTemplate.getForObject(url, String.class, message.getMessage());
 
 		log.info(result);
 		log.info("fasong");
