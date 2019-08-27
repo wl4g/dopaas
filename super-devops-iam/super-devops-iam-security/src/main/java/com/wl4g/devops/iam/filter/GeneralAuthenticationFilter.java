@@ -24,17 +24,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 
 @IamFilter
 public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter<GeneralAuthenticationToken> {
 
 	final public static String NAME = "general";
-
-	public GeneralAuthenticationFilter(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	protected GeneralAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,

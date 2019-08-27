@@ -72,7 +72,7 @@ import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.common.utils.Sessions;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
@@ -96,7 +96,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	@Autowired
 	protected IamSessionDAO sessionDAO;
 
-	public GentralAuthenticationHandler(ServerSecurityContext context, RestTemplate restTemplate) {
+	public GentralAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
 		super(context, restTemplate);
 	}
 

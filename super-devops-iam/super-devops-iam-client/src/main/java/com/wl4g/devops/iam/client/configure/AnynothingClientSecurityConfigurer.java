@@ -13,42 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.context;
+package com.wl4g.devops.iam.client.configure;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
 
-/**
- * IAM server security coprocessor
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年4月5日
- * @since
- */
-public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
+public class AnynothingClientSecurityConfigurer implements ClientSecurityConfigurer {
 
-	/**
-	 * Before apply CAPTCHA handle
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	default boolean preApplyCapcha(ServletRequest request, ServletResponse response) {
-		return true;
+	@Override
+	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
+			ServletResponse response) {
+		return successUrl;
 	}
 
-	/**
-	 * Before apply verify-code handle
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	default boolean preApplyVerify(ServletRequest request, ServletResponse response) {
-		return true;
+	@Override
+	public String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+			ServletRequest request, ServletResponse response) {
+		return loginUrl;
 	}
 
 }

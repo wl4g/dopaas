@@ -30,7 +30,6 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo.SnsAuthorizingParameter;
 import com.wl4g.devops.iam.authc.EmptyOauth2AuthorizationInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.filter.ProviderSupports;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
@@ -50,8 +49,8 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 	@Autowired
 	protected SocialConnectionFactory connectFactory;
 
-	public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		super(matcher, manager);
+	public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
 	}
 
 	/**
@@ -75,7 +74,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		 */
 		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
 				token.getSocial().getUnionId());
-		IamAccountInfo account = this.context.getIamAccount(parameter);
+		IamAccountInfo account = this.configurer.getIamAccount(parameter);
 		if (account != null && !StringUtils.isEmpty(account.getPrincipal())) {
 			return new SimpleAuthenticationInfo(account.getPrincipal(), null, this.getName());
 		}

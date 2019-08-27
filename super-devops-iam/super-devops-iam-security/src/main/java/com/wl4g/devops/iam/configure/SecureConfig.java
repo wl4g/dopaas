@@ -27,7 +27,7 @@ import org.springframework.util.StringUtils;
  * @version v1.0 2019年3月20日
  * @since
  */
-public final class SecurerConfig implements Serializable {
+public final class SecureConfig implements Serializable {
 	private static final long serialVersionUID = -6194767776312196342L;
 
 	/**
@@ -61,7 +61,7 @@ public final class SecurerConfig implements Serializable {
 	 */
 	final private Long applyPubkeyExpireMs;
 
-	public SecurerConfig(String[] hashAlgorithms, String privateSalt, Integer preCryptPoolSize, Long cryptosExpireMs,
+	public SecureConfig(String[] hashAlgorithms, String privateSalt, Integer preCryptPoolSize, Long cryptosExpireMs,
 			Long applyPubkeyExpireMs) {
 		Assert.isTrue((hashAlgorithms != null && hashAlgorithms.length > 0), "'hashAlgorithms' empty, please check configure");
 		Assert.hasText(privateSalt, "'privateSalt' empty, please check configure");

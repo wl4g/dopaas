@@ -19,7 +19,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 
 import com.wl4g.devops.iam.authc.DingtalkAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -46,8 +45,8 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
  */
 public class DingtalkAuthorizingRealm extends Oauth2SnsAuthorizingRealm<DingtalkAuthenticationToken> {
 
-	public DingtalkAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		super(matcher, manager);
+	public DingtalkAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
 	}
 
 }

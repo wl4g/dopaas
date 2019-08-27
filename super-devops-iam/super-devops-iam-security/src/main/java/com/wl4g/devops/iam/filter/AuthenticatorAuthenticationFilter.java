@@ -31,7 +31,6 @@ import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * IAM client authenticator authorization filter.<br/>
@@ -45,10 +44,6 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 @IamFilter
 public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter {
 	final public static String NAME = "authenticatorFilter";
-
-	public AuthenticatorAuthenticationFilter(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {

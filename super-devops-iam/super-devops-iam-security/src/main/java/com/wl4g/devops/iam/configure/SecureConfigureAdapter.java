@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.context;
+package com.wl4g.devops.iam.configure;
 
 /**
- * IAM default anynothing security processor
+ * Securer configure adapter
  * 
  * @author wangl.sir
- * @version v1.0 2019年1月18日
+ * @version v1.0 2019年3月19日
  * @since
  */
-public class AnynothingSecurityCoprocessor implements ServerSecurityCoprocessor {
+public interface SecureConfigureAdapter {
+
+	SecureConfig configure();
 
 }

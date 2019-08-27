@@ -42,8 +42,7 @@ import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 
 /**
  * Abstract IAM verification handler
@@ -58,15 +57,15 @@ public abstract class AbstractVerification implements Verification {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * IAM security context handler
-	 */
-	final protected ServerSecurityContext context;
-
-	/**
 	 * Server configuration properties
 	 */
 	@Autowired
 	protected IamProperties config;
+
+	/**
+	 * IAM security configure handler
+	 */
+	protected ServerSecurityConfigurer configurer;
 
 	/**
 	 * Enhanced cache manager.
@@ -79,11 +78,6 @@ public abstract class AbstractVerification implements Verification {
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
-
-	public AbstractVerification(IamContextManager manager) {
-		Assert.notNull(manager, "'manager' must not be null");
-		this.context = manager.getServerSecurityContext();
-	}
 
 	@Override
 	public void validate(@NotNull List<String> factors, String validateCodeReq, boolean required) throws VerificationException {

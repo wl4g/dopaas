@@ -29,7 +29,7 @@ import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.sns.BindConnection;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
@@ -48,7 +48,7 @@ import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
 
 	public BasedBindSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext context) {
+			ServerSecurityConfigurer context) {
 		super(config, snsConfig, connectFactory, context);
 	}
 

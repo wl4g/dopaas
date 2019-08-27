@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.client.context;
+package com.wl4g.devops.iam.client.configure;
 
-import com.wl4g.devops.iam.common.context.SecurityContext;
+import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
-/**
- * IAM client security handler context.
- * 
- * @author wangl.sir
- * @version v1.0 2019年1月18日
- * @since
- */
-public interface ClientSecurityContext extends SecurityContext {
+public class AnynothingClientSecurityCoprocessor implements ClientSecurityCoprocessor {
+
+	@Override
+	public boolean preAuthentication(Filter filter, ServletRequest request, ServletResponse response) {
+		return true;
+	}
 
 }

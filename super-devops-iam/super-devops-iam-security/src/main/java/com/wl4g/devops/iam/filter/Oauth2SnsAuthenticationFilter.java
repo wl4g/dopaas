@@ -28,7 +28,6 @@ import org.springframework.util.Assert;
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.KEY_SNS_CALLBACK_PARAMS;
@@ -49,10 +48,6 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 	 * Oauth2 authentication token constructor.
 	 */
 	private Constructor<T> authenticationTokenConstructor;
-
-	public Oauth2SnsAuthenticationFilter(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

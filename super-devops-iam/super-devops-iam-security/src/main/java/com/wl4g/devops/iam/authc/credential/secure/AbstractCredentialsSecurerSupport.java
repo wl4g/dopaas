@@ -47,7 +47,7 @@ import com.wl4g.devops.iam.authc.credential.secure.Cryptos.KeySpecPair;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.configure.SecurerConfig;
+import com.wl4g.devops.iam.configure.SecureConfig;
 
 /**
  * Abstract credentials securer adapter
@@ -69,7 +69,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Pre-asymmetric cryptic count size.
 	 */
-	final private SecurerConfig config;
+	final private SecureConfig config;
 
 	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under multiple-node
@@ -98,7 +98,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Autowired(required = false)
 	protected CredentialsSecurerAdapter delegate;
 
-	protected AbstractCredentialsSecurerSupport(SecurerConfig config, EnhancedCacheManager cacheManager) {
+	protected AbstractCredentialsSecurerSupport(SecureConfig config, EnhancedCacheManager cacheManager) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(config.getPrivateSalt(), "'privateSalt' must not be null");
 		Assert.notNull(config.getPreCryptPoolSize(), "'cryptSize' must not be null");

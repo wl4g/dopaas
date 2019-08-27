@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
 /**
@@ -39,7 +39,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 public class ClientAuthcSnsHandler extends AbstractSnsHandler {
 
 	public ClientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext context) {
+			ServerSecurityConfigurer context) {
 		super(config, snsConfig, connectFactory, context);
 	}
 

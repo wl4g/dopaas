@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.client.context;
+package com.wl4g.devops.iam.configure;
 
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
-
-public interface ClientSecurityCoprocessor extends SecurityCoprocessor {
+/**
+ * IAM default anynothing security processor
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年1月18日
+ * @since
+ */
+public class AnynothingSecurityCoprocessor implements ServerSecurityCoprocessor {
 
 }

@@ -29,8 +29,8 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
-import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 
 /**
  * Abstract IAM authentication handler.
@@ -52,7 +52,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	/**
 	 * IAM security context handler
 	 */
-	final protected ServerSecurityContext context;
+	final protected ServerSecurityConfigurer context;
 
 	/**
 	 * IAM server configuration properties
@@ -84,7 +84,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
-	public AbstractAuthenticationHandler(ServerSecurityContext context, RestTemplate restTemplate) {
+	public AbstractAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
 		Assert.notNull(context, "'context' must not be null");
 		Assert.notNull(restTemplate, "'restTemplate' must not be null");
 		this.restTemplate = restTemplate;

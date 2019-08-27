@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.context;
+package com.wl4g.devops.iam.configure;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
-import com.wl4g.devops.iam.common.context.SecurityContext;
+import com.wl4g.devops.iam.common.configure.SecurityConfigurer;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 
 /**
@@ -32,7 +32,7 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
  * @date 2018年12月21日
  * @since
  */
-public interface ServerSecurityContext extends SecurityContext {
+public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	//
 	// B A S E D _ M E T H O D

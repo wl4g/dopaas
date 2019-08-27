@@ -15,18 +15,28 @@
  */
 package com.wl4g.devops.iam.config;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+
+import java.util.List;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import com.wl4g.devops.common.bean.iam.ApplicationInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
+import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
+import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 
 /**
  * Based context configuration
@@ -59,40 +69,81 @@ public class BasedContextConfiguration {
 	//
 
 	@Bean
-	public IamContextManager iamContextManager() {
-		return new IamContextManager();
+	public ServerSecurityConfigurer serverSecurityConfigurer() {
+		return new CheckImpledServerSecurityConfigurer();
 	}
 
-	public static class IamContextManager implements ApplicationContextAware {
-		protected ApplicationContext actx;
+	/**
+	 * Check whether ServerSecurityConfigurer has been implemented.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019-07-27
+	 * @since
+	 */
+	public static class CheckImpledServerSecurityConfigurer implements ServerSecurityConfigurer, InitializingBean {
 
 		@Override
-		public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-			Assert.notNull(applicationContext, "'applicationContext' must not be null");
-			this.actx = applicationContext;
+		public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
+				ServletRequest request, ServletResponse response) {
+			return null;
 		}
 
-		/**
-		 * IAM security context handler Instance can be implemented by external
-		 * customization
-		 * 
-		 * @return
-		 */
-		public ServerSecurityContext getServerSecurityContext() {
-			/*
-			 * Get system service instance(requirements must be implemented
-			 * externally)
-			 */
-			ServerSecurityContext context = null;
-			try {
-				context = this.actx.getBean(ServerSecurityContext.class);
-			} catch (NoSuchBeanDefinitionException e) {
-				String errmsg = "\n\n==>>\tWhen you rely on Iam security as a plug-in, you must implement the '"
-						+ ServerSecurityContext.class.getName() + "' interface yourself !\n";
-				throw new IamException(errmsg, e);
-			}
-			return context;
+		@Override
+		public String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+				ServletRequest request, ServletResponse response) {
+			return null;
 		}
+
+		@Override
+		public ApplicationInfo getApplicationInfo(String applicationName) {
+			return null;
+		}
+
+		@Override
+		public List<ApplicationInfo> findApplicationInfo(String... applicationNames) {
+			return null;
+		}
+
+		@Override
+		public IamAccountInfo getIamAccount(Parameter parameter) {
+			return null;
+		}
+
+		@Override
+		public boolean isApplicationAccessAuthorized(String principal, String application) {
+			return false;
+		}
+
+		@Override
+		public String findRoles(String principal, String application) {
+			return null;
+		}
+
+		@Override
+		public String findPermissions(String principal, String application) {
+			return null;
+		}
+
+		@Override
+		public <T extends SocialConnectInfo> List<T> findSocialConnections(String principal, String provider) {
+			return null;
+		}
+
+		@Override
+		public void bindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
+		}
+
+		@Override
+		public void unbindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
+		}
+
+		@Override
+		public void afterPropertiesSet() throws Exception {
+			String errmsg = "\n\n==>>\tWhen you rely on Iam security as a plug-in, you must implement the '"
+					+ ServerSecurityConfigurer.class.getName() + "' interface yourself !\n";
+			throw new IamException(errmsg);
+		}
+
 	}
 
 }

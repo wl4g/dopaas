@@ -28,8 +28,8 @@ import java.util.List;
 import com.wl4g.devops.iam.annotation.SnsController;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
-import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.sns.BindConnection;
 import com.wl4g.devops.iam.sns.DefaultSocialConnectionFactory;
 import com.wl4g.devops.iam.sns.SocialConfigureRepository;
@@ -103,31 +103,31 @@ public class SnsConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext context, ServerSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		return new LoginSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext context, ServerSecurityCoprocessor coprocessor) {
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext context, ServerSecurityCoprocessor coprocessor) {
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new BindingSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext context, ServerSecurityCoprocessor coprocessor) {
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public SecondAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityContext context, ServerSecurityCoprocessor coprocessor) {
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, context);
 	}
 

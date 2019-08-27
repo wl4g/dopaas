@@ -56,7 +56,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
+import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 
 /**
  * Abstract custom WEB session management

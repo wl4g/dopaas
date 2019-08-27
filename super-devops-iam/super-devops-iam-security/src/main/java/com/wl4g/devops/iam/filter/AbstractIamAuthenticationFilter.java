@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.slf4j.Logger;
@@ -65,10 +64,9 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
-import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
@@ -102,11 +100,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * IAM security context handler
-	 */
-	final protected ServerSecurityContext context;
-
-	/**
 	 * IAM server configuration properties
 	 */
 	@Autowired
@@ -119,6 +112,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected AuthenticationHandler authHandler;
 
 	/**
+	 * IAM security configure handler
+	 */
+	protected ServerSecurityConfigurer configurer;
+
+	/**
 	 * IAM server security processor
 	 */
 	@Autowired
@@ -129,11 +127,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@Autowired
 	protected EnhancedCacheManager cacheManager;
-
-	public AbstractIamAuthenticationFilter(IamContextManager manager) {
-		Assert.notNull(manager, "'manager' is null, please check configure");
-		this.context = manager.getServerSecurityContext();
-	}
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -463,7 +456,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			successRedirectUrl = getSuccessUrl(); // fall-back
 		}
 		// Determine success URL
-		successRedirectUrl = context.determineLoginSuccessUrl(successRedirectUrl, token, subject, request, response);
+		successRedirectUrl = configurer.determineLoginSuccessUrl(successRedirectUrl, token, subject, request, response);
 
 		hasText(successRedirectUrl, "'successRedirectUrl' is empty, please check the configure");
 		cleanURI(successRedirectUrl); // symbol check
@@ -493,7 +486,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			failRedirectUrl = getLoginUrl();
 		}
 
-		String loginUrl = context.determineLoginFailureUrl(failRedirectUrl, token, ae, request, response);
+		String loginUrl = configurer.determineLoginFailureUrl(failRedirectUrl, token, ae, request, response);
 		hasText(loginUrl, "'loginUrl' is empty, please check the configure");
 		cleanURI(loginUrl); // check
 		return loginUrl;

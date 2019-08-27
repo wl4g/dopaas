@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -78,10 +77,6 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	 * Attempts SMS accumulator
 	 */
 	private Cumulator applySmsCumulator;
-
-	public SmsVerification(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
@@ -179,7 +174,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 			return;
 		}
 		// Getting account information
-		IamAccountInfo acc = context.getIamAccount(new SmsParameter(String.valueOf(mobile)));
+		IamAccountInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
 
 		// Check mobile(user) available
 		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {
