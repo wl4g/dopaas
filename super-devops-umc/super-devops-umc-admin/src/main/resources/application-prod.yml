@@ -12,14 +12,12 @@
 #
 spring:
   web:
-    xss:
-      enabled: true # Defualt: true
     cors:
       enabled: true # Defualt: true
       rules:
       - path: /**
         allowCredentials: true
-        allowsOrigins: '*'
+        allowsOrigins: http://*.mydomain.com
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
 
