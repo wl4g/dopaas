@@ -10,7 +10,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.devops.common.exception.iam.AfterAuthenticatSuccessException;
-import com.wl4g.devops.iam.client.context.ClientSecurityCoprocessor;
+import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 
 @Service
 public class ExampleClientSecurityCoprocessor implements ClientSecurityCoprocessor {

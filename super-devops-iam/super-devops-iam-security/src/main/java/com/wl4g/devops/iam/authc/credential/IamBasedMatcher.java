@@ -27,7 +27,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.context.SecurityCoprocessor;
+import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.handler.verification.Verification;

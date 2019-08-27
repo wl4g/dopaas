@@ -42,9 +42,8 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
@@ -59,11 +58,6 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
 public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken> extends AuthorizingRealm {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	/**
-	 * IAM security context handler
-	 */
-	final protected ServerSecurityContext context;
 
 	/**
 	 * Credential matcher
@@ -95,15 +89,19 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	protected AuthenticationHandler authHandler;
 
 	/**
+	 * IAM security configure handler
+	 */
+	@Autowired
+	protected ServerSecurityConfigurer configurer;
+
+	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
-	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		Assert.notNull(manager, "'manager' must not be null");
+	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher) {
 		Assert.notNull(matcher, "'matcher' must not be null");
-		this.context = manager.getServerSecurityContext();
 		this.matcher = matcher;
 	}
 

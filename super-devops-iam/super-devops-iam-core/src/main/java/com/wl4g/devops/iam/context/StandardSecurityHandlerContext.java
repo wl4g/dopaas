@@ -30,7 +30,7 @@ import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 
 /**
  * Standard IAM Security context handler
@@ -41,7 +41,7 @@ import com.wl4g.devops.iam.context.ServerSecurityContext;
  * @since
  */
 @Service
-public class StandardSecurityHandlerContext implements ServerSecurityContext {
+public class StandardSecurityHandlerContext implements ServerSecurityConfigurer {
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,

@@ -47,11 +47,11 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
-import com.wl4g.devops.iam.configure.DefaultSecurerConfigureAdapter;
-import com.wl4g.devops.iam.configure.SecurerConfigureAdapter;
-import com.wl4g.devops.iam.context.AnynothingSecurityCoprocessor;
-import com.wl4g.devops.iam.context.ServerSecurityCoprocessor;
+import com.wl4g.devops.iam.configure.AnynothingSecurityCoprocessor;
+import com.wl4g.devops.iam.configure.DefaultSecureConfigureAdapter;
+import com.wl4g.devops.iam.configure.SecureConfigureAdapter;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.filter.DingtalkAuthenticationFilter;
 import com.wl4g.devops.iam.filter.FacebookAuthenticationFilter;
@@ -175,13 +175,13 @@ public class IamConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SecurerConfigureAdapter securerConfigureAdapter() {
-		return new DefaultSecurerConfigureAdapter();
+	public SecureConfigureAdapter securerConfigureAdapter() {
+		return new DefaultSecureConfigureAdapter();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public IamCredentialsSecurer iamCredentialsSecurer(SecurerConfigureAdapter adapter, JedisCacheManager cacheManager) {
+	public IamCredentialsSecurer iamCredentialsSecurer(SecureConfigureAdapter adapter, JedisCacheManager cacheManager) {
 		return new DefaultCredentialsSecurer(adapter.configure(), cacheManager);
 	}
 
@@ -190,13 +190,13 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean(BEAN_AUTH_FILTER)
-	public AuthenticatorAuthenticationFilter authenticatorAuthenticationFilter(IamContextManager manager) {
-		return new AuthenticatorAuthenticationFilter(manager);
+	public AuthenticatorAuthenticationFilter authenticatorAuthenticationFilter() {
+		return new AuthenticatorAuthenticationFilter();
 	}
 
 	@Bean(BEAN_ROOT_FILTER)
-	public ROOTAuthenticationFilter rootAuthenticationFilter(IamContextManager manager) {
-		return new ROOTAuthenticationFilter(manager);
+	public ROOTAuthenticationFilter rootAuthenticationFilter() {
+		return new ROOTAuthenticationFilter();
 	}
 
 	@Bean
@@ -206,68 +206,68 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public QrcodeAuthenticationFilter qrcodeAuthenticationFilter(IamContextManager manager) {
-		return new QrcodeAuthenticationFilter(manager);
+	public QrcodeAuthenticationFilter qrcodeAuthenticationFilter() {
+		return new QrcodeAuthenticationFilter();
 	}
 
 	@Bean
-	public FacebookAuthenticationFilter facebookAuthenticationFilter(IamContextManager manager) {
-		return new FacebookAuthenticationFilter(manager);
+	public FacebookAuthenticationFilter facebookAuthenticationFilter() {
+		return new FacebookAuthenticationFilter();
 	}
 
 	@Bean
-	public SmsAuthenticationFilter smsAuthenticationFilter(IamContextManager manager) {
-		return new SmsAuthenticationFilter(manager);
+	public SmsAuthenticationFilter smsAuthenticationFilter() {
+		return new SmsAuthenticationFilter();
 	}
 
 	@Bean
-	public WechatAuthenticationFilter wechatAuthenticationFilter(IamContextManager manager) {
-		return new WechatAuthenticationFilter(manager);
+	public WechatAuthenticationFilter wechatAuthenticationFilter() {
+		return new WechatAuthenticationFilter();
 	}
 
 	@Bean
-	public WechatMpAuthenticationFilter wechatMpAuthenticationFilter(IamContextManager manager) {
-		return new WechatMpAuthenticationFilter(manager);
+	public WechatMpAuthenticationFilter wechatMpAuthenticationFilter() {
+		return new WechatMpAuthenticationFilter();
 	}
 
 	@Bean
-	public GeneralAuthenticationFilter generalAuthenticationFilter(IamContextManager manager) {
-		return new GeneralAuthenticationFilter(manager);
+	public GeneralAuthenticationFilter generalAuthenticationFilter() {
+		return new GeneralAuthenticationFilter();
 	}
 
 	@Bean
-	public LogoutAuthenticationFilter logoutAuthenticationFilter(IamContextManager manager) {
-		return new LogoutAuthenticationFilter(manager);
+	public LogoutAuthenticationFilter logoutAuthenticationFilter() {
+		return new LogoutAuthenticationFilter();
 	}
 
 	@Bean
-	public DingtalkAuthenticationFilter dingtalkAuthenticationFilter(IamContextManager manager) {
-		return new DingtalkAuthenticationFilter(manager);
+	public DingtalkAuthenticationFilter dingtalkAuthenticationFilter() {
+		return new DingtalkAuthenticationFilter();
 	}
 
 	@Bean
-	public GoogleAuthenticationFilter googleAuthenticationFilter(IamContextManager manager) {
-		return new GoogleAuthenticationFilter(manager);
+	public GoogleAuthenticationFilter googleAuthenticationFilter() {
+		return new GoogleAuthenticationFilter();
 	}
 
 	@Bean
-	public TwitterAuthenticationFilter twitterAuthenticationFilter(IamContextManager manager) {
-		return new TwitterAuthenticationFilter(manager);
+	public TwitterAuthenticationFilter twitterAuthenticationFilter() {
+		return new TwitterAuthenticationFilter();
 	}
 
 	@Bean
-	public QQAuthenticationFilter qqAuthenticationFilter(IamContextManager manager) {
-		return new QQAuthenticationFilter(manager);
+	public QQAuthenticationFilter qqAuthenticationFilter() {
+		return new QQAuthenticationFilter();
 	}
 
 	@Bean
-	public GithubAuthenticationFilter githubAuthenticationFilter(IamContextManager manager) {
-		return new GithubAuthenticationFilter(manager);
+	public GithubAuthenticationFilter githubAuthenticationFilter() {
+		return new GithubAuthenticationFilter();
 	}
 
 	@Bean
-	public SinaAuthenticationFilter sinaAuthenticationFilter(IamContextManager manager) {
-		return new SinaAuthenticationFilter(manager);
+	public SinaAuthenticationFilter sinaAuthenticationFilter() {
+		return new SinaAuthenticationFilter();
 	}
 
 	// ==============================
@@ -395,83 +395,78 @@ public class IamConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GeneralAuthorizingRealm generalAuthorizingRealm(GeneralCredentialsHashedMatcher matcher, IamContextManager manager) {
-		return new GeneralAuthorizingRealm(matcher, manager);
+	public GeneralAuthorizingRealm generalAuthorizingRealm(GeneralCredentialsHashedMatcher matcher) {
+		return new GeneralAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SmsAuthorizingRealm smsAuthorizingRealm(SmsCredentialsHashedMatcher matcher, IamContextManager manager) {
-		return new SmsAuthorizingRealm(matcher, manager);
+	public SmsAuthorizingRealm smsAuthorizingRealm(SmsCredentialsHashedMatcher matcher) {
+		return new SmsAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(GeneralCredentialsHashedMatcher matcher, IamContextManager manager) {
-		return new QrcodeAuthorizingRealm(matcher, manager);
+	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(GeneralCredentialsHashedMatcher matcher) {
+		return new QrcodeAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public FacebookAuthorizingRealm facebookAuthorizingRealm(
-			@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher, IamContextManager manager) {
-		return new FacebookAuthorizingRealm(matcher, manager);
+			@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new FacebookAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public WechatAuthorizingRealm wechatAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher,
-			IamContextManager manager) {
-		return new WechatAuthorizingRealm(matcher, manager);
+	public WechatAuthorizingRealm wechatAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new WechatAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public WechatMpAuthorizingRealm wechatMpAuthorizingRealm(
-			@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher, IamContextManager manager) {
-		return new WechatMpAuthorizingRealm(matcher, manager);
+			@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new WechatMpAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public DingtalkAuthorizingRealm dingtalkAuthorizingRealm(
-			@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher, IamContextManager manager) {
-		return new DingtalkAuthorizingRealm(matcher, manager);
+			@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new DingtalkAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GoogleAuthorizingRealm googleAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher,
-			IamContextManager manager) {
-		return new GoogleAuthorizingRealm(matcher, manager);
+	public GoogleAuthorizingRealm googleAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new GoogleAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public QQAuthorizingRealm qqAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher,
-			IamContextManager manager) {
-		return new QQAuthorizingRealm(matcher, manager);
+	public QQAuthorizingRealm qqAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new QQAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public TwitterAuthorizingRealm twitterAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher,
-			IamContextManager manager) {
-		return new TwitterAuthorizingRealm(matcher, manager);
+	public TwitterAuthorizingRealm twitterAuthorizingRealm(
+			@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new TwitterAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SinaAuthorizingRealm sinaAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher,
-			IamContextManager manager) {
-		return new SinaAuthorizingRealm(matcher, manager);
+	public SinaAuthorizingRealm sinaAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new SinaAuthorizingRealm(matcher);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GithubAuthorizingRealm githubAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher,
-			IamContextManager manager) {
-		return new GithubAuthorizingRealm(matcher, manager);
+	public GithubAuthorizingRealm githubAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
+		return new GithubAuthorizingRealm(matcher);
 	}
 
 	// ==============================
@@ -488,8 +483,9 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public GentralAuthenticationHandler gentralAuthenticationHandler(RestTemplate restTemplate, IamContextManager manager) {
-		return new GentralAuthenticationHandler(manager.getServerSecurityContext(), restTemplate);
+	public GentralAuthenticationHandler gentralAuthenticationHandler(RestTemplate restTemplate,
+			ServerSecurityConfigurer configurer) {
+		return new GentralAuthenticationHandler(configurer, restTemplate);
 	}
 
 	/**
@@ -503,14 +499,14 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean(BEAN_GRAPH_VERIFICATION)
 	@ConditionalOnMissingBean
-	public GraphBasedVerification graphBasedVerification(IamContextManager manager) {
-		return new DefaultJdkImgVerification(manager);
+	public GraphBasedVerification graphBasedVerification() {
+		return new DefaultJdkImgVerification();
 	}
 
 	@Bean(BEAN_SMS_VERIFICATION)
 	@ConditionalOnMissingBean
-	public SmsVerification smsVerification(IamContextManager manager) {
-		return new SmsVerification(manager);
+	public SmsVerification smsVerification() {
+		return new SmsVerification();
 	}
 
 	@Bean
@@ -534,14 +530,8 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	}
 
 	// ==============================
-	// IAM context's
+	// IAM configure's
 	// ==============================
-
-	@Bean
-	@ConditionalOnMissingBean
-	public ServerSecurityCoprocessor serverSecurityInterceptor() {
-		return new AnynothingSecurityCoprocessor();
-	}
 
 	@Bean
 	@ConditionalOnMissingBean

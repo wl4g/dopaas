@@ -20,7 +20,7 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.iam.authc.SmsAuthenticationInfo;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -58,8 +58,8 @@ import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.LOGIN;
  */
 public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenticationToken> {
 
-	public SmsAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		super(matcher, manager);
+	public SmsAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
 		// Get account by mobile phone
-		IamAccountInfo acc = context.getIamAccount(new SmsParameter((String) token.getPrincipal()));
+		IamAccountInfo acc = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
 			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
 		}

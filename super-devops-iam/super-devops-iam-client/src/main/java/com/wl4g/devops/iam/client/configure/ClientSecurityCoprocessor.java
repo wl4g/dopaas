@@ -13,17 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.configure;
+package com.wl4g.devops.iam.client.configure;
 
-/**
- * Securer configure adapter
- * 
- * @author wangl.sir
- * @version v1.0 2019年3月19日
- * @since
- */
-public interface SecurerConfigureAdapter {
+import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 
-	SecurerConfig configure();
+public interface ClientSecurityCoprocessor extends SecurityCoprocessor {
 
 }

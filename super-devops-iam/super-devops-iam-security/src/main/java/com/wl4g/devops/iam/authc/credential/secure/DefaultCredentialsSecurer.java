@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.utils.codec.CheckSums;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.configure.SecurerConfig;
+import com.wl4g.devops.iam.configure.SecureConfig;
 
 /**
  * Default credentials securer
@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.configure.SecurerConfig;
  */
 public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport {
 
-	public DefaultCredentialsSecurer(SecurerConfig config, EnhancedCacheManager cacheManager) {
+	public DefaultCredentialsSecurer(SecureConfig config, EnhancedCacheManager cacheManager) {
 		super(config, cacheManager);
 	}
 

@@ -21,8 +21,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -45,10 +43,6 @@ public class DefaultJdkImgVerification extends GraphBasedVerification {
 	final private static int DEFAULT_HEIGHT = 28;
 	final private static int DEFAULT_DROW_NUM = 5;
 	final private static Font DEFAULT_FONT = defaultFont();
-
-	public DefaultJdkImgVerification(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	protected String generateCode() {

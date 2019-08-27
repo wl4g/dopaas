@@ -23,7 +23,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 
 import com.wl4g.devops.iam.authc.QrcodeAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -50,8 +49,8 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
  */
 public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAuthenticationToken> {
 
-	public QrcodeAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		super(matcher, manager);
+	public QrcodeAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
 	}
 
 	/**

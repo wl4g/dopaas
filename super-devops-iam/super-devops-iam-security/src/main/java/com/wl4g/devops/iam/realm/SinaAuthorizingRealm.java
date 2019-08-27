@@ -19,7 +19,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 
 import com.wl4g.devops.iam.authc.SinaAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -46,8 +45,8 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
  */
 public class SinaAuthorizingRealm extends Oauth2SnsAuthorizingRealm<SinaAuthenticationToken> {
 
-	public SinaAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		super(matcher, manager);
+	public SinaAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
 	}
 
 }

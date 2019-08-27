@@ -41,7 +41,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.sns.BindConnection;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
@@ -62,7 +62,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 	final public static String SECOND_AUTHC_CACHE = "second_auth_";
 
 	public SecondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext context) {
+			ServerSecurityConfigurer context) {
 		super(config, snsConfig, connectFactory, context);
 	}
 

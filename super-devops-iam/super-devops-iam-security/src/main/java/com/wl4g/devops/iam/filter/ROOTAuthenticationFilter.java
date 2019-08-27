@@ -27,7 +27,6 @@ import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.authc.RootAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * Root path authentication routing filter.<br/>
@@ -44,10 +43,6 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 @IamFilter
 public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<IamAuthenticationToken> {
 	final public static String NAME = "rootFilter";
-
-	public ROOTAuthenticationFilter(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {

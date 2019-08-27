@@ -19,7 +19,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 
 import com.wl4g.devops.iam.authc.GoogleAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -46,8 +45,8 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
  */
 public class GoogleAuthorizingRealm extends Oauth2SnsAuthorizingRealm<GoogleAuthenticationToken> {
 
-	public GoogleAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		super(matcher, manager);
+	public GoogleAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.context;
+package com.wl4g.devops.iam.common.configure;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -25,14 +25,14 @@ import org.apache.shiro.subject.Subject;
 import com.google.common.annotations.Beta;
 
 /**
- * IAM security context handler
+ * IAM security configure handler
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月10日
  * @since
  */
 @Beta
-public interface SecurityContext {
+public interface SecurityConfigurer {
 
 	//
 	// A U T H E N T I C A T I N G _ M E T H O D

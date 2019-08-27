@@ -55,8 +55,8 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
-import com.wl4g.devops.iam.client.context.ClientSecurityContext;
-import com.wl4g.devops.iam.client.context.ClientSecurityCoprocessor;
+import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
+import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
@@ -107,7 +107,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Client security context handler.
 	 */
-	final protected ClientSecurityContext context;
+	final protected ClientSecurityConfigurer context;
 
 	/**
 	 * Client security processor.
@@ -120,7 +120,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	final private EnhancedCache cache;
 
-	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityContext context,
+	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(context, "'context' must not be null");

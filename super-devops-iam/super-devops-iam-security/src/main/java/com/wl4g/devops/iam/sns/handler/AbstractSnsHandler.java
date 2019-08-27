@@ -37,7 +37,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
-import com.wl4g.devops.iam.context.ServerSecurityContext;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.filter.ProviderSupports;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
@@ -92,13 +92,13 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	/**
 	 * IAM security context handler
 	 */
-	final protected ServerSecurityContext context;
+	final protected ServerSecurityConfigurer context;
 
 	/**
 	 * IAM server security coprocessor
 	 */
 	@Autowired
-	protected ServerSecurityContext coprocessor;
+	protected ServerSecurityConfigurer coprocessor;
 
 	/**
 	 * Enhanced cache manager.
@@ -113,7 +113,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityContext context) {
+			ServerSecurityConfigurer context) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(snsConfig, "'snsConfig' must not be null");
 		Assert.notNull(connectFactory, "'connectFactory' must not be null");

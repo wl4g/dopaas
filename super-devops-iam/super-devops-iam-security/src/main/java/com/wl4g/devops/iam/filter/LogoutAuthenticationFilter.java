@@ -28,7 +28,6 @@ import org.apache.shiro.SecurityUtils;
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * Logout authentication filter
@@ -43,10 +42,6 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 		implements IamAuthenticationFilter {
 
 	final public static String NAME = "logout";
-
-	public LogoutAuthenticationFilter(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	protected LogoutAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,

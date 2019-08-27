@@ -16,15 +16,10 @@
 package com.wl4g.devops.iam.filter;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.authc.DingtalkAuthenticationToken;
 
 @IamFilter
 public class DingtalkAuthenticationFilter extends Oauth2SnsAuthenticationFilter<DingtalkAuthenticationToken> {
-
-	public DingtalkAuthenticationFilter(IamContextManager manager) {
-		super(manager);
-	}
 
 	@Override
 	public String getName() {

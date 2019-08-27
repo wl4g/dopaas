@@ -17,7 +17,6 @@ package com.wl4g.devops.iam.handler.verification;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
 import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
 import org.apache.shiro.util.Assert;
@@ -64,10 +63,6 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 * Apply CAPTCHA attempts accumulator.(Session-based)
 	 */
 	private Cumulator sessionApplyCaptchaCumulator;
-
-	public GraphBasedVerification(IamContextManager manager) {
-		super(manager);
-	}
 
 	/**
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}

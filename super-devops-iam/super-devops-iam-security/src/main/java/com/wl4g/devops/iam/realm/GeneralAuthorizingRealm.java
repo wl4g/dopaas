@@ -29,7 +29,6 @@ import com.wl4g.devops.iam.authc.GeneralAuthenticationInfo;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.authz.GeneralAuthorizationInfo;
-import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -56,8 +55,8 @@ import com.wl4g.devops.iam.config.BasedContextConfiguration.IamContextManager;
  */
 public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<GeneralAuthenticationToken> {
 
-	public GeneralAuthorizingRealm(IamBasedMatcher matcher, IamContextManager manager) {
-		super(matcher, manager);
+	public GeneralAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
 	}
 
 	/**
@@ -71,7 +70,7 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
 		// Get account by loginId(user-name)
-		IamAccountInfo acc = context.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+		IamAccountInfo acc = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
 			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
 		}
