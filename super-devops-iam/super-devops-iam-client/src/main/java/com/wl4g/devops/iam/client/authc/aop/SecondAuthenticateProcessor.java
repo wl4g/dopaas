@@ -21,8 +21,13 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
+import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.web.RespBase.RetCode.SECOND_UNAUTH;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.web.util.WebUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +52,6 @@ import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.SecondAuthenticationException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-import com.wl4g.devops.common.utils.web.WebUtils2;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.annotation.SecondAuthenticate;
 import com.wl4g.devops.iam.common.aop.AdviceProcessor;
@@ -104,7 +106,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 	@Override
 	public Object doIntercept(ProceedingJoinPoint jp, SecondAuthenticate annotation) throws Throwable {
 		// Get required request response
-		RequestResponse http = this.getRequestResponse(jp);
+		RequestResponse http = getRequestResponse(jp);
 
 		// Get second authenticate code
 		String authCode = http.getRequest().getParameter(config.getParam().getSecondAuthCode());
@@ -112,7 +114,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		// Validation
 		String errdesc = null;
 		try {
-			this.doRemoteValidate(authCode, annotation);
+			doRemoteValidate(authCode, annotation);
 			return jp.proceed(); // Second authenticated, be pass
 		} catch (Exception e) {
 			errdesc = e.getMessage();
@@ -120,19 +122,19 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		}
 
 		// Redirecting secondary authentication URLs
-		String redirectUrl = this.buildConnectAuthenticatingUrl(http, annotation);
+		String redirectUrl = buildConnectAuthenticatingUrl(http, annotation);
 
 		// Response JSON message
-		String respType = WebUtils.getCleanParam(http.getRequest(), config.getParam().getResponseType());
-		if (ResponseType.isJSONResponse(respType, http.getRequest())) {
+		String respType = getCleanParam(http.getRequest(), config.getParam().getResponseType());
+		if (isJSONResponse(respType, http.getRequest())) {
 			RespBase<String> resp = new RespBase<>(SECOND_UNAUTH, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
 			resp.getData().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);
-			WebUtils2.writeJson(http.getResponse(), JacksonUtils.toJSONString(resp));
+			writeJson(http.getResponse(), toJSONString(resp));
 		}
 		// Redirection
 		else {
-			WebUtils.issueRedirect(http.getRequest(), http.getResponse(), redirectUrl, null, false);
+			issueRedirect(http.getRequest(), http.getResponse(), redirectUrl, null, false);
 		}
 
 		return null;
@@ -236,9 +238,9 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		}
 
 		// Validation URL
-		String validateUrl = this.buildValidateUrl(authCode);
+		String validateUrl = buildValidateUrl(authCode);
 		// Request remote
-		RespBase<SecondAuthcAssertion> resp = this.restTemplate.exchange(validateUrl.toString(), HttpMethod.GET, null,
+		RespBase<SecondAuthcAssertion> resp = restTemplate.exchange(validateUrl.toString(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<RespBase<SecondAuthcAssertion>>() {
 				}).getBody();
 
@@ -262,7 +264,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 	 */
 	private String getAuthorizersString(SecondAuthenticate annotation) {
 		try {
-			SecondAuthenticateHandler handler = this.beanFactory.getBean(annotation.handleClass());
+			SecondAuthenticateHandler handler = beanFactory.getBean(annotation.handleClass());
 			return StringUtils.arrayToDelimitedString(handler.doGetAuthorizers(annotation.funcId()), ",");
 		} catch (NoSuchBeanDefinitionException e) {
 			throw new NoSuchBeanDefinitionException(SecondAuthenticateHandler.class,

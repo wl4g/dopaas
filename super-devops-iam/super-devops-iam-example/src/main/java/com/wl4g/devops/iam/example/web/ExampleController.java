@@ -28,16 +28,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.devops.iam.client.annotation.SecondAuthenticate;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
 import com.wl4g.devops.iam.example.ExampleClientSecurityCoprocessor;
-import com.wl4g.devops.iam.example.handler.TestSecondAuthenticateHandler;
 import com.wl4g.devops.iam.example.service.ExampleService;
 
 @Controller
 @RequestMapping("/public/")
 public class ExampleController {
-	final private static Logger log = LoggerFactory.getLogger(ExampleController.class);
+	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private ExampleService exampleService;
@@ -90,14 +88,6 @@ public class ExampleController {
 	@ResponseBody
 	public String test5(String name) {
 		log.info("Request test5... {}", name);
-		return "ok";
-	}
-
-	@RequestMapping("sensitiveApi")
-	@SecondAuthenticate(funcId = "FunSensitiveApi", handleClass = TestSecondAuthenticateHandler.class)
-	@ResponseBody
-	public String sensitiveApi(String name, HttpServletRequest request, HttpServletResponse response) {
-		log.info("Request sensitiveApi... {}", name);
 		return "ok";
 	}
 
