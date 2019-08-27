@@ -19,31 +19,31 @@ import java.util.List;
 @Service
 public class RecordServiceImpl implements RecordService {
 
-    @Autowired
-    private AlarmRecordDao alarmRecordDao;
+	@Autowired
+	private AlarmRecordDao alarmRecordDao;
 
-    @Autowired
-    private AlarmRuleDao alarmRuleDao;
+	@Autowired
+	private AlarmRuleDao alarmRuleDao;
 
-    @Autowired
-    private AlarmTemplateDao alarmTemplateDao;
+	@Autowired
+	private AlarmTemplateDao alarmTemplateDao;
 
-    @Autowired
-    private AlarmNotificationContactDao alarmNotificationContactDao;
+	@Autowired
+	private AlarmNotificationContactDao alarmNotificationContactDao;
 
-    @Override
-    public AlarmRecord detail(Integer id) {
-        Assert.notNull(id,"id is null");
-        AlarmRecord alarmRecord = alarmRecordDao.selectByPrimaryKey(id);
-        Assert.notNull(alarmRecord,"alarmRecord is null");
-        List<AlarmRule> alarmRules = alarmRuleDao.selectByRecordId(id);
-        AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmRecord.getTemplateId());
-        Assert.notNull(alarmTemplate,"alarmTemplate is null");
-        List<AlarmNotificationContact> notificationContacts = alarmNotificationContactDao.getByRecordId(id);
-        alarmRecord.setNotificationContacts(notificationContacts);
-        alarmRecord.setAlarmRules(alarmRules);
-        alarmRecord.setAlarmTemplate(alarmTemplate);
-        return alarmRecord;
-    }
+	@Override
+	public AlarmRecord detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		AlarmRecord alarmRecord = alarmRecordDao.selectByPrimaryKey(id);
+		Assert.notNull(alarmRecord, "alarmRecord is null");
+		List<AlarmRule> alarmRules = alarmRuleDao.selectByRecordId(id);
+		AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmRecord.getTemplateId());
+		Assert.notNull(alarmTemplate, "alarmTemplate is null");
+		List<AlarmNotificationContact> notificationContacts = alarmNotificationContactDao.getByRecordId(id);
+		alarmRecord.setNotificationContacts(notificationContacts);
+		alarmRecord.setAlarmRules(alarmRules);
+		alarmRecord.setAlarmTemplate(alarmTemplate);
+		return alarmRecord;
+	}
 
 }

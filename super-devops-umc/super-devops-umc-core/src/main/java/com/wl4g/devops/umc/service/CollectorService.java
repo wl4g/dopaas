@@ -8,8 +8,8 @@ import com.wl4g.devops.common.bean.umc.AlarmCollector;
  */
 public interface CollectorService {
 
-    void save(AlarmCollector alarmCollector);
+	void save(AlarmCollector alarmCollector);
 
-    void del(Integer id);
+	void del(Integer id);
 
 }

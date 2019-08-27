@@ -4,8 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="metric" property="metric" jdbcType="VARCHAR" />
-    <result column="classify" property="classify" jdbcType="VARCHAR" />
+    <result column="metric_id" property="metricId" jdbcType="INTEGER" />
     <result column="tags" property="tags" jdbcType="VARCHAR" />
     <result column="notify_level" property="notifyLevel" jdbcType="INTEGER" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
@@ -15,6 +14,10 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+
+    <!-- other -->
+    <result column="metric" property="metric" jdbcType="VARCHAR" />
+    <result column="classify" property="classify" jdbcType="VARCHAR" />
 
     <collection property="rules" javaType="list" ofType="com.wl4g.devops.common.bean.umc.AlarmRule">
       <id column="rid" property="id" jdbcType="INTEGER" />
@@ -29,12 +32,12 @@
     </collection>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, metric, classify, tags, notify_level, enable, remark, create_date, create_by, 
+    id, name, metric_id,  tags, notify_level, enable, remark, create_date, create_by,
     update_date, update_by, del_flag
   </sql>
 
   <sql id="Base_Column_List_t" >
-    t.id, t.name, t.metric, t.classify, t.tags, t.notify_level,t.enable, t.remark, t.del_flag, t.create_date, t.create_by,
+    t.id, t.name, t.metric_id, t.tags, t.notify_level,t.enable, t.remark, t.del_flag, t.create_date, t.create_by,
     t.update_date, t.update_by
   </sql>
 
@@ -44,22 +47,23 @@
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List" />
-    from umc_alarm_template
-    where id = #{id,jdbcType=INTEGER}
+    <include refid="Base_Column_List_t" />,mt.metric,mt.classify
+    from umc_alarm_template t
+    left join umc_metric_template mt on mt.id=t.metric_id
+    where t.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from umc_alarm_template
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
-    insert into umc_alarm_template (id, name, metric, 
-      classify, tags, notify_level, 
+    insert into umc_alarm_template (id, name, metric_id,
+      tags, notify_level,
       enable, remark, create_date, 
       create_by, update_date, update_by, 
       del_flag)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{metric,jdbcType=VARCHAR}, 
-      #{classify,jdbcType=VARCHAR}, #{tags,jdbcType=VARCHAR}, #{notifyLevel,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{metricId,jdbcType=INTEGER},
+      #{tags,jdbcType=VARCHAR}, #{notifyLevel,jdbcType=INTEGER},
       #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=CHAR})
@@ -73,11 +77,8 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="metric != null" >
-        metric,
-      </if>
-      <if test="classify != null" >
-        classify,
+      <if test="metricId != null" >
+        metric_id,
       </if>
       <if test="tags != null" >
         tags,
@@ -114,11 +115,8 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="metric != null" >
-        #{metric,jdbcType=VARCHAR},
-      </if>
-      <if test="classify != null" >
-        #{classify,jdbcType=VARCHAR},
+      <if test="metricId != null" >
+        #{metricId,jdbcType=INTEGER},
       </if>
       <if test="tags != null" >
         #{tags,jdbcType=VARCHAR},
@@ -155,11 +153,8 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="metric != null" >
-        metric = #{metric,jdbcType=VARCHAR},
-      </if>
-      <if test="classify != null" >
-        classify = #{classify,jdbcType=VARCHAR},
+      <if test="metricId != null" >
+        metric_id = #{metricId,jdbcType=INTEGER},
       </if>
       <if test="tags != null" >
         tags = #{tags,jdbcType=VARCHAR},
@@ -194,8 +189,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" >
     update umc_alarm_template
     set name = #{name,jdbcType=VARCHAR},
-      metric = #{metric,jdbcType=VARCHAR},
-      classify = #{classify,jdbcType=VARCHAR},
+      metric_id = #{metricId,jdbcType=INTEGER},
       tags = #{tags,jdbcType=VARCHAR},
       notify_level = #{notifyLevel,jdbcType=INTEGER},
       enable = #{enable,jdbcType=INTEGER},
@@ -211,11 +205,12 @@
 
   <select id="getByCollectAddr" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
-    <include refid="Base_Column_List_t" />
+    <include refid="Base_Column_List_t" />,mt.metric,mt.classify
     ,
     <include refid="Rule_Column_List" />
     from umc_alarm_template t
     left join umc_alarm_config uac on t.id=uac.template_id
+    left join umc_metric_template mt on mt.id=t.metric_id
     left join app_instance i on i.id=uac.collect_id
     LEFT JOIN umc_alarm_rule r on t.id=r.template_id
     where uac.enable=1 and t.enable=1 and t.del_flag!=1
@@ -226,11 +221,12 @@
 
   <select id="getByClusterId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
-    <include refid="Base_Column_List_t" />
+    <include refid="Base_Column_List_t" />,mt.metric,mt.classify
     ,
     <include refid="Rule_Column_List" />
     from umc_alarm_template t
     left join umc_alarm_config uac on t.id=uac.template_id
+    left join umc_metric_template mt on mt.id=t.metric_id
     LEFT JOIN umc_alarm_rule r on t.id=r.template_id
     where uac.enable=1 and t.enable=1 and t.del_flag!=1
     and  uac.cluster_id=#{appClusterId,jdbcType=INTEGER}
@@ -238,17 +234,18 @@
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    <include refid="Base_Column_List" />
-    from umc_alarm_template
-    where del_flag!=1
+    <include refid="Base_Column_List_t" />,mt.metric,mt.classify
+    from umc_alarm_template t
+    left join umc_metric_template mt on mt.id=t.metric_id
+    where t.del_flag!=1
     <if test="name != null and name != ''" >
-      AND name LIKE CONCAT('%','${name}','%')
+      AND t.name LIKE CONCAT('%','${name}','%')
     </if>
-    <if test="metric != null and metric != ''" >
-      AND metric LIKE CONCAT('%','${metric}','%')
+    <if test="metricId != null and metricId != ''" >
+      AND t.metric_id  = #{metricId,jdbcType=INTEGER}
     </if>
     <if test="classify != null and classify != ''" >
-      AND classify=#{classify,jdbcType=VARCHAR}
+      AND mt.classify=#{classify,jdbcType=VARCHAR}
     </if>
   </select>
 

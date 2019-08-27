@@ -12,34 +12,33 @@ import java.util.List;
  */
 public class AlarmConfigTpls {
 
-    private AlarmConfig alarmConfig;
+	private AlarmConfig alarmConfig;
 
-    private AlarmTemplate alarmTemplate;
+	private AlarmTemplate alarmTemplate;
 
-    private List<AlarmContact> alarmContacts;
+	private List<AlarmContact> alarmContacts;
 
+	public AlarmConfig getAlarmConfig() {
+		return alarmConfig;
+	}
 
-    public AlarmConfig getAlarmConfig() {
-        return alarmConfig;
-    }
+	public void setAlarmConfig(AlarmConfig alarmConfig) {
+		this.alarmConfig = alarmConfig;
+	}
 
-    public void setAlarmConfig(AlarmConfig alarmConfig) {
-        this.alarmConfig = alarmConfig;
-    }
+	public AlarmTemplate getAlarmTemplate() {
+		return alarmTemplate;
+	}
 
-    public AlarmTemplate getAlarmTemplate() {
-        return alarmTemplate;
-    }
+	public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
+		this.alarmTemplate = alarmTemplate;
+	}
 
-    public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
-        this.alarmTemplate = alarmTemplate;
-    }
+	public List<AlarmContact> getAlarmContacts() {
+		return alarmContacts;
+	}
 
-    public List<AlarmContact> getAlarmContacts() {
-        return alarmContacts;
-    }
-
-    public void setAlarmContacts(List<AlarmContact> alarmContacts) {
-        this.alarmContacts = alarmContacts;
-    }
+	public void setAlarmContacts(List<AlarmContact> alarmContacts) {
+		this.alarmContacts = alarmContacts;
+	}
 }

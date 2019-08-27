@@ -11,6 +11,16 @@
 # #### Environment(Prod) configuration. ####
 #
 spring:
+  web:
+    cors:
+      enabled: true # Defualt: true
+      rules:
+      - path: /**
+        allowCredentials: true
+        allowsOrigins: http://*.mydomain.com
+        allowsHeaders: '*'
+        allowsMethods: GET,POST,OPTION
+
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver

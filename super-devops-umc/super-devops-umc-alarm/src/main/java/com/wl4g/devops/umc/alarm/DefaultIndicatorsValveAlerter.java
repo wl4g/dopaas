@@ -17,13 +17,13 @@ package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.notification.AlarmNotifier;
+import com.wl4g.devops.umc.notification.AlarmNotifier.SimpleAlarmMessage;
 import com.wl4g.devops.umc.notification.AlarmType;
 import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
@@ -82,14 +82,14 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	@Override
 	protected void doHandleAlarm(MetricAggregateWrapper agwrap) {
 		if (log.isInfoEnabled()) {
-			log.info("Alarm handling for host: {} endpoint:{}", agwrap.getHost() , agwrap.getEndpoint());
+			log.info("Alarm handling for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
 		}
 
 		// Load alarm templates by collectId.
-		List<AlarmConfig> alarmConfigs = ruleManager.loadAlarmRuleTpls(agwrap.getHost(),agwrap.getEndpoint());
+		List<AlarmConfig> alarmConfigs = ruleManager.loadAlarmRuleTpls(agwrap.getHost(), agwrap.getEndpoint());
 		if (isEmpty(alarmConfigs)) {
 			if (log.isInfoEnabled()) {
-				log.info("No found alarm templates for host: {} endpoint:{}", agwrap.getHost() , agwrap.getEndpoint());
+				log.info("No found alarm templates for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
 			}
 			return;
 		}
@@ -129,28 +129,29 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		// Match tags
 		Map<String, String> matchedTag = matchTag(mwrap.getTags(), alarmConfig.getAlarmTemplate().getTagsMap());
 		if (isEmpty(matchedTag)) {
-			log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", mwrap.getMetric(), alarmConfig.getAlarmTemplate().getId(),
-					mwrap.getTags());
+			log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", mwrap.getMetric(),
+					alarmConfig.getAlarmTemplate().getId(), mwrap.getTags());
 			return Optional.empty();
 		}
 
 		// Maximum metric keep time window of rules.
 		long maxWindowTime = extractMaxRuleWindowTime(alarmConfig.getAlarmTemplate().getRules());
 		// Offer latest metrics in time window queue.
-		List<MetricValue> metricVals = offerTimeWindowQueue(agwrap.getHost()+":"+agwrap.getEndpoint()+"@"+alarmConfig.getAlarmTemplate().getId(), mwrap.getValue(), agwrap.getTimestamp(), now,
-				maxWindowTime);
+		List<MetricValue> metricVals = offerTimeWindowQueue(
+				agwrap.getHost() + ":" + agwrap.getEndpoint() + "@" + alarmConfig.getAlarmTemplate().getId(), mwrap.getValue(),
+				agwrap.getTimestamp(), now, maxWindowTime);
 
 		// Match alarm rules of metric values.
 		List<AlarmRule> matchedRules = matchAlarmRules(metricVals, alarmConfig.getAlarmTemplate().getRules(), now);
 		if (isEmpty(matchedRules)) {
-			log.debug("No match rule to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(), alarmConfig.getAlarmTemplate().getId(),
-					toJSONString(metricVals));
+			log.debug("No match rule to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(),
+					alarmConfig.getAlarmTemplate().getId(), toJSONString(metricVals));
 			return Optional.empty();
 		}
 
 		if (log.isInfoEnabled()) {
-			log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(), alarmConfig.getAlarmTemplate().getId(),
-					toJSONString(metricVals));
+			log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(),
+					alarmConfig.getAlarmTemplate().getId(), toJSONString(metricVals));
 		}
 		return Optional.of(new AlarmResult(agwrap, alarmConfig, matchedTag, matchedRules));
 	}
@@ -203,38 +204,19 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @return
 	 */
 	protected List<AlarmRule> matchAlarmRules(List<MetricValue> metricVals, List<AlarmRule> rules, long now) {
-
-		//TODO
-		List<AlarmRule> matchRule = new ArrayList<>();
-		if(isEmpty(metricVals)){
-			return matchRule;
-		}
-		for(AlarmRule rule : rules){
-			// Extract validity metric values.
-			Double[] validityMetricVals = extractValidityMetricValueInQueue(metricVals, rule.getQueueTimeWindow(), now);
-			// Do inspection.
-			InspectWrapper wrap = new InspectWrapper(rule.getLogicalOperator(), rule.getRelateOperator(), rule.getAggregator(),
-					rule.getValue(), validityMetricVals);
-			if (inspector.verify(wrap)) {
-				matchRule.add(rule);
-				rule.setCompareValue(wrap.getCompareValue());
-			}
-		}
-		return matchRule;
-
 		// Match mode for 'OR'/'AND'.
-		/*return safeList(rules).stream().map(rule -> {
-			// Extract validity metric values.
-			Double[] validityMetricVals = extractValidityMetricValueInQueue(metricVals, rule.getQueueTimeWindow(), now);
+		return safeList(rules).stream().map(rule -> {
+			// Get latest time window metric values.
+			Double[] vals = extractValidityMetricValueInQueue(metricVals, rule.getQueueTimeWindow(), now);
 			// Do inspection.
 			InspectWrapper wrap = new InspectWrapper(rule.getLogicalOperator(), rule.getRelateOperator(), rule.getAggregator(),
-					rule.getValue(), validityMetricVals);
+					rule.getValue(), vals);
 			if (inspector.verify(wrap)) {
+				rule.setCompareValue(wrap.getCompareValue());
 				return rule;
 			}
 			return null;
-		}).collect(toList());*/
-
+		}).collect(toList());
 	}
 
 	/**
@@ -261,59 +243,60 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param macthedRules
 	 */
 	protected void postAlarmResultProcessed(List<AlarmResult> results) {
-
-		Map<Integer,TemplateContactWrapper> templateContactWrapperMap = new HashMap();
+		Map<Integer, TemplateContactWrapper> contactMap = new HashMap<>();
 		for (AlarmResult result : results) {
-			// Check null
-			AlarmConfig alarmConfig = result.getAlarmConfig();
-			if(alarmConfig==null){
+			// Check
+			AlarmConfig config = result.getAlarmConfig();
+			if (config == null) {
 				continue;
 			}
-			AlarmTemplate alarmTemplate = alarmConfig.getAlarmTemplate();
-			if(alarmTemplate==null){
-				continue;
-			}
-			List<AlarmContact> alarmContacts = alarmConfig.getAlarmContacts();
-			if (alarmContacts == null) {
+			AlarmTemplate tpl = config.getAlarmTemplate();
+			if (tpl == null || isEmpty(config.getAlarmContacts())) {
 				continue;
 			}
 
-			// meger template and contact
-			TemplateContactWrapper templateContactWrapper = templateContactWrapperMap.get(alarmConfig.getTemplateId());
-			if(null== templateContactWrapper){
-				templateContactWrapper = new TemplateContactWrapper(alarmConfig.getTemplateId(),alarmTemplate,
-						new ArrayList(alarmContacts),result.getMatchedTag(),result.getMatchedRules(),result.getAggregateWrap());
-			}else{
-				List<AlarmContact> contacts = templateContactWrapper.getContacts();
-				contacts.addAll(alarmContacts);
-				templateContactWrapper.setContacts(contacts);
+			// Merge template and contact
+			TemplateContactWrapper contactWrap = contactMap.get(config.getTemplateId());
+			if (null == contactWrap) {
+				contactWrap = new TemplateContactWrapper(config.getTemplateId(), tpl, config.getAlarmContacts(),
+						result.getMatchedTag(), result.getMatchedRules(), result.getAggregateWrap());
+			} else {
+				List<AlarmContact> contacts = contactWrap.getContacts();
+				contacts.addAll(config.getAlarmContacts());
+				contactWrap.setContacts(contacts);
 			}
-			templateContactWrapperMap.put(alarmConfig.getTemplateId(),templateContactWrapper);
+			contactMap.put(config.getTemplateId(), contactWrap);
 		}
 
+		for (TemplateContactWrapper contactWrap : contactMap.values()) {
+			contactWrap.setContacts(distinctContacts(contactWrap.getContacts())); // Repeat
+			// build alarm note
+			AlarmNote note = new AlarmNote();
+			note.setHost(contactWrap.getAggregateWrap().getHost());
+			note.setEndpoint(contactWrap.getAggregateWrap().getEndpoint());
+			note.setMatchedRules(contactWrap.getMatchedRules());
+			note.setMatchedTag(contactWrap.getMatchedTag());
+			note.setMetricName(contactWrap.getAlarmTemplate().getMetric());
 
-		for (TemplateContactWrapper templateContactWrapper : templateContactWrapperMap.values()) {
-			templateContactWrapper.setContacts(removeDupli(templateContactWrapper.getContacts()));//remove repeat
-			//build alarm note
-			AlarmNote alarmNote = new AlarmNote();
-			alarmNote.setHost(templateContactWrapper.getAggregateWrap().getHost());
-			alarmNote.setEndpoint(templateContactWrapper.getAggregateWrap().getEndpoint());
-			alarmNote.setMatchedRules(templateContactWrapper.getMatchedRules());
-			alarmNote.setMatchedTag(templateContactWrapper.getMatchedTag());
-			alarmNote.setMetricName(templateContactWrapper.getAlarmTemplate().getMetric());
-			// save record and record rule
-			AlarmRecord alarmRecord = configurer.saveAlarmRecord(templateContactWrapper.getAlarmTemplate(),
-					templateContactWrapper.getAggregateWrap().getTimestamp(), templateContactWrapper.getMatchedRules(), JacksonUtils.toJSONString(alarmNote));
+			// Save record and record rule
+			AlarmRecord record = configurer.saveAlarmRecord(contactWrap.getAlarmTemplate(),
+					contactWrap.getAggregateWrap().getTimestamp(), contactWrap.getMatchedRules(), toJSONString(note));
 
-			// send
-			notification(new ArrayList<>(templateContactWrapper.getContacts()), alarmRecord);
+			// Send notification
+			notification(new ArrayList<>(contactWrap.getContacts()), record);
 		}
 	}
 
-	public static List<AlarmContact> removeDupli(List<AlarmContact> contacts) {
-		Set<AlarmContact> alarmContacts = new TreeSet<>((o1, o2) -> o1.getId().compareTo(o2.getId()));
-		alarmContacts.addAll(contacts);
-		return new ArrayList<>(alarmContacts);
+	/**
+	 * Remove duplicate notification contacts
+	 * 
+	 * @param contacts
+	 * @return
+	 */
+	public static List<AlarmContact> distinctContacts(List<AlarmContact> contacts) {
+		Set<AlarmContact> _contacts = new TreeSet<>((o1, o2) -> o1.getId().compareTo(o2.getId()));
+		_contacts.addAll(contacts);
+		return new ArrayList<>(_contacts);
 	}
 
 	/**
@@ -322,22 +305,23 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param result
 	 * @return
 	 */
-	protected boolean checkNotifyLimit(String key,int numOfFreq) {
+	protected boolean checkNotifyLimit(String key, int numOfFreq) {
 		String s = jedisService.get(key);
-		if(StringUtils.isNotBlank(s)&&Integer.valueOf(s)>numOfFreq){
+		if (StringUtils.isNotBlank(s) && Integer.valueOf(s) > numOfFreq) {
 			return false;
 		}
 		return true;
 	}
 
-	protected void setNotifyLimit(String key,int timeOfFreq) {
-		String s = jedisService.get(key);
-		int num = 0;
-		if(StringUtils.isNotBlank(s)){
-			num = Integer.valueOf(s);
-			num++;
-		}
-		jedisService.set(key,""+num,timeOfFreq);
+	/**
+	 * Handle rate limit.
+	 * 
+	 * @param key
+	 * @param timeOfFreq
+	 */
+	protected void handleRateLimit(String key, int timeOfFreq) {
+		jedisService.getJedisCluster().incrBy(key, 1);
+		jedisService.getJedisCluster().expire(key, timeOfFreq);
 	}
 
 	/**
@@ -347,61 +331,69 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param alarmConfigs
 	 * @param macthedRules
 	 */
-	protected void notification(List<AlarmContact> alarmContacts,AlarmRecord alarmRecord) {
-		log.info("into DefaultIndicatorsValveAlerter.notification prarms::"+ "alarmContacts = {} , alarmNote = {} ", alarmContacts, alarmRecord.getAlarmNote() );
+	protected void notification(List<AlarmContact> alarmContacts, AlarmRecord alarmRecord) {
+		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "alarmContacts = {} , alarmNote = {} ",
+				alarmContacts, alarmRecord.getAlarmNote());
 
-		for(AlarmContact alarmContact : alarmContacts){
-
-			//save notification
+		for (AlarmContact alarmContact : alarmContacts) {
+			// save notification
 			AlarmNotificationContact alarmNotificationContact = new AlarmNotificationContact();
 			alarmNotificationContact.setRecordId(alarmRecord.getId());
 			alarmNotificationContact.setContactId(alarmContact.getId());
 			alarmNotificationContact.setStatus(ALARM_SATUS_SEND);
 			configurer.saveNotificationContact(alarmNotificationContact);
 
+			// TODO just for test
+			notifier.simpleNotify(new SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.BARK.getValue(), ""));
 
-			//TODO just for test
-			notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.BARK.getValue(),null));
-
-			//email
-			if(alarmContact.getEmailEnable()==1){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.EMAIL.getValue(),alarmContact.getEmail()));
+			// email
+			if (alarmContact.getEmailEnable() == 1) {
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.EMAIL.getValue(),
+						alarmContact.getEmail()));
 			}
 
-			//phone
-			if(alarmContact.getPhoneEnable()==1&&checkNotifyLimit(ALARM_LIMIT_PHONE+alarmContact.getId(),alarmContact.getPhoneNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.SMS.getValue(),alarmContact.getPhone()));
-				setNotifyLimit(ALARM_LIMIT_PHONE+alarmContact.getPhone(),alarmContact.getPhoneTimeOfFreq());
+			// phone
+			if (alarmContact.getPhoneEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.SMS.getValue(),
+						alarmContact.getPhone()));
+				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
 			}
 
-			//dingtalk
-			if(alarmContact.getDingtalkEnable()==1&&checkNotifyLimit(ALARM_LIMIT_DINGTALK+alarmContact.getId(),alarmContact.getDingtalkNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.DINGTALK.getValue(),alarmContact.getDingtalk()));
-				setNotifyLimit(ALARM_LIMIT_DINGTALK+alarmContact.getId(),alarmContact.getDingtalkTimeOfFreq());
+			// dingtalk
+			if (alarmContact.getDingtalkEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+						AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
+				handleRateLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkTimeOfFreq());
 			}
 
-			//facebook
-			if(alarmContact.getFacebookEnable()==1&&checkNotifyLimit(ALARM_LIMIT_FACEBOOK+alarmContact.getId(),alarmContact.getFacebookNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.FACEBOOK.getValue(),alarmContact.getFacebook()));
-				setNotifyLimit(ALARM_LIMIT_FACEBOOK+alarmContact.getId(),alarmContact.getFacebookTimeOfFreq());
+			// facebook
+			if (alarmContact.getFacebookEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+						AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
+				handleRateLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookTimeOfFreq());
 			}
 
-			//twitter
-			if(alarmContact.getTwitterEnable()==1&&checkNotifyLimit(ALARM_LIMIT_TWITTER+alarmContact.getId(),alarmContact.getTwitterNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.TWITTER.getValue(),alarmContact.getTwitter()));
-				setNotifyLimit(ALARM_LIMIT_TWITTER+alarmContact.getId(),alarmContact.getTwitterTimeOfFreq());
+			// twitter
+			if (alarmContact.getTwitterEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+						AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
+				handleRateLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterTimeOfFreq());
 			}
 
-			//wechat
-			if(alarmContact.getWechatEnable()==1&&checkNotifyLimit(ALARM_LIMIT_WECHAT+alarmContact.getId(),alarmContact.getWechatNumOfFreq())){
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.WECHAT.getValue(),alarmContact.getWechat()));
-				setNotifyLimit(ALARM_LIMIT_WECHAT+alarmContact.getId(),alarmContact.getWechatTimeOfFreq());
+			// wechat
+			if (alarmContact.getWechatEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
+				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+						AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
+				handleRateLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatTimeOfFreq());
 			}
 
 		}
 
-
 	}
-
 
 }

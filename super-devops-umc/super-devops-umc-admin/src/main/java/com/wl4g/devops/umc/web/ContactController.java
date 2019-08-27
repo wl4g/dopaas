@@ -11,6 +11,7 @@ import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.dao.umc.AlarmContactGroupDao;
 import com.wl4g.devops.umc.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,7 +55,10 @@ public class ContactController extends BaseController {
     public RespBase<?> save(@RequestBody AlarmContact alarmContact) {
         log.info("into ProjectController.save prarms::" + "alarmContact = {} ", alarmContact);
         RespBase<Object> resp = RespBase.create();
-
+        Assert.notNull(alarmContact,"contact is null");
+        Assert.hasText(alarmContact.getName(),"name is null");
+        Assert.hasText(alarmContact.getEmail(),"email is null");
+        Assert.notEmpty(alarmContact.getGroups(),"contactGroup is null");
         contactService.save(alarmContact);
         return resp;
     }

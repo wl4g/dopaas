@@ -18,6 +18,8 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 
 	private String name;
 
+	private Integer metricId;
+
 	private String metric;
 
 	private String classify;
@@ -88,6 +90,14 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 			});
 		}
 		this.tagMap = tagMap;
+	}
+
+	public Integer getMetricId() {
+		return metricId;
+	}
+
+	public void setMetricId(Integer metricId) {
+		this.metricId = metricId;
 	}
 
 	@SuppressWarnings("unchecked")

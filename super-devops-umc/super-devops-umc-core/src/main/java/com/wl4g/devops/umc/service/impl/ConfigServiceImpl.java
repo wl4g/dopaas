@@ -19,46 +19,46 @@ import org.springframework.util.Assert;
 @Service
 public class ConfigServiceImpl implements ConfigService {
 
-    @Autowired
-    private AlarmConfigDao alarmConfigDao;
+	@Autowired
+	private AlarmConfigDao alarmConfigDao;
 
-    @Autowired
-    private AlarmTemplateDao alarmTemplateDao;
+	@Autowired
+	private AlarmTemplateDao alarmTemplateDao;
 
-    @Autowired
-    private AppClusterDao appClusterDao;
+	@Autowired
+	private AppClusterDao appClusterDao;
 
-    @Override
-    public void save(AlarmConfig alarmConfig) {
-        if(alarmConfig.getId()!=null){
-            alarmConfig.preUpdate();
-            alarmConfigDao.updateByPrimaryKeySelective(alarmConfig);
-        }else{
-            alarmConfig.preInsert();
-            alarmConfigDao.insertSelective(alarmConfig);
-        }
-    }
+	@Override
+	public void save(AlarmConfig alarmConfig) {
+		if (alarmConfig.getId() != null) {
+			alarmConfig.preUpdate();
+			alarmConfigDao.updateByPrimaryKeySelective(alarmConfig);
+		} else {
+			alarmConfig.preInsert();
+			alarmConfigDao.insertSelective(alarmConfig);
+		}
+	}
 
-    @Override
-    public void del(Integer id) {
-        AlarmConfig alarmConfig = new AlarmConfig();
-        alarmConfig.setId(id);
-        alarmConfig.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        alarmConfig.preUpdate();
-        alarmConfigDao.updateByPrimaryKeySelective(alarmConfig);
-    }
+	@Override
+	public void del(Integer id) {
+		AlarmConfig alarmConfig = new AlarmConfig();
+		alarmConfig.setId(id);
+		alarmConfig.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		alarmConfig.preUpdate();
+		alarmConfigDao.updateByPrimaryKeySelective(alarmConfig);
+	}
 
-    @Override
-    public AlarmConfig detail(Integer id) {
-        Assert.notNull(id,"id is null");
-        AlarmConfig alarmConfig = alarmConfigDao.selectByPrimaryKey(id);
-        Assert.notNull(alarmConfig,"not found alarmConfig");
-        AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmConfig.getTemplateId());
-        Assert.notNull(alarmTemplate,"not found alarmTemplate");
-        alarmConfig.setClassify(alarmTemplate.getClassify());
-        AppInstance appInstance = appClusterDao.getAppInstance(alarmConfig.getCollectId().toString());
-        alarmConfig.setGroup(appInstance.getAppClusterId().intValue());
-        alarmConfig.setEnvironment(Integer.valueOf(appInstance.getEnvId()));
-        return alarmConfig;
-    }
+	@Override
+	public AlarmConfig detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		AlarmConfig alarmConfig = alarmConfigDao.selectByPrimaryKey(id);
+		Assert.notNull(alarmConfig, "not found alarmConfig");
+		AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmConfig.getTemplateId());
+		Assert.notNull(alarmTemplate, "not found alarmTemplate");
+		alarmConfig.setClassify(alarmTemplate.getClassify());
+		AppInstance appInstance = appClusterDao.getAppInstance(alarmConfig.getCollectId().toString());
+		alarmConfig.setGroup(appInstance.getAppClusterId().intValue());
+		alarmConfig.setEnvironment(Integer.valueOf(appInstance.getEnvId()));
+		return alarmConfig;
+	}
 }

@@ -8,6 +8,6 @@ import com.wl4g.devops.common.bean.umc.AlarmRecord;
  */
 public interface RecordService {
 
-    AlarmRecord detail(Integer id);
+	AlarmRecord detail(Integer id);
 
 }

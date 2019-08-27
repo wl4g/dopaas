@@ -9,6 +9,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.umc.AlarmContactGroupDao;
 import com.wl4g.devops.umc.service.ContactGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,6 +48,8 @@ public class ContactGroupController extends BaseController {
     @RequestMapping(value = "/save")
     public RespBase<?> save(AlarmContactGroup alarmContactGroup) {
         log.info("into ContactGroupController.save prarms::"+ "alarmContactGroup = {} ", alarmContactGroup );
+        Assert.notNull(alarmContactGroup,"group is null");
+        Assert.hasText(alarmContactGroup.getName(),"groupName is null");
         RespBase<Object> resp = RespBase.create();
         contactGroupService.save(alarmContactGroup);
         return resp;

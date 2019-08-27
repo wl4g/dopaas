@@ -16,7 +16,6 @@
 package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.*;
-import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
@@ -34,72 +33,68 @@ import java.util.List;
  */
 public class ServiceRuleConfigurer implements AlarmConfigurer {
 
-    @Autowired
-    protected JedisService jedisService;
+	@Autowired
+	protected JedisService jedisService;
 
-    @Autowired
-    private AlarmTemplateDao alarmTemplateDao;
+	@Autowired
+	private AlarmConfigDao alarmConfigDao;
 
-    @Autowired
-    private AlarmConfigDao alarmConfigDao;
+	@Autowired
+	private AlarmRecordDao alarmRecordDao;
 
-    @Autowired
-    private AlarmRecordDao alarmRecordDao;
+	@Autowired
+	private AlarmRecordRuleDao alarmRecordRuleDao;
 
-    @Autowired
-    private AlarmRecordRuleDao alarmRecordRuleDao;
+	@Autowired
+	private AlarmContactDao alarmContactDao;
 
-    @Autowired
-    private AlarmContactDao alarmContactDao;
+	@Autowired
+	private AlarmNotificationContactDao alarmNotificationContactDao;
 
-    @Autowired
-    private AppClusterDao appClusterDao;
+	/**
+	 * Large search from db
+	 */
+	@Override
+	public List<AlarmConfig> findAlarmConfigByEndpoint(String host, String endpoint) {
+		List<AlarmConfig> configs = alarmConfigDao.getAlarmConfigTpls(host, endpoint);
+		return configs;
+	}
 
-    @Autowired
-    private AlarmNotificationContactDao alarmNotificationContactDao;
+	@Override
+	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectAddr) {
+		return alarmConfigDao.getByCollectAddrAndTemplateId(templateId, collectAddr);
+	}
 
+	@Override
+	// @Transactional
+	public AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
+		AlarmRecord record = new AlarmRecord();
+		record.setName(alarmTemplate.getMetric());
+		record.setTemplateId(alarmTemplate.getId());
+		record.setGatherTime(new Date(gatherTime));
+		record.setCreateTime(new Date());
+		record.setAlarmNote(alarmNote);
+		alarmRecordDao.insertSelective(record);
+		// Alarm matched rules.
+		for (AlarmRule rule : rules) {
+			AlarmRecordRule recordRule = new AlarmRecordRule();
+			recordRule.setRecordId(record.getId());
+			recordRule.setRuleId(rule.getId());
+			recordRule.setCompareValue(rule.getCompareValue());
+			alarmRecordRuleDao.insertSelective(recordRule);
+		}
+		return record;
+	}
 
-    @Override
-    public List<AlarmConfig> findAlarmConfigByEndpoint(String host,String endpoint) {// large search from db
-        List<AlarmConfig> alarmConfigs = alarmConfigDao.getAlarmConfigTpls(host,endpoint);
-        return alarmConfigs;
-    }
+	@Override
+	public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
+		return alarmContactDao.getContactByGroupIds(groupIds);
+	}
 
-    @Override
-    public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectAddr) {
-        return alarmConfigDao.getByCollectAddrAndTemplateId(templateId, collectAddr);
-    }
-
-    @Override
-    //@Transactional
-    public AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
-        AlarmRecord record = new AlarmRecord();
-        record.setName(alarmTemplate.getMetric());
-        record.setTemplateId(alarmTemplate.getId());
-        record.setGatherTime(new Date(gatherTime));
-        record.setCreateTime(new Date());
-        record.setAlarmNote(alarmNote);
-        alarmRecordDao.insertSelective(record);
-        // Alarm matched rules.
-        for (AlarmRule rule : rules) {
-            AlarmRecordRule recordRule = new AlarmRecordRule();
-            recordRule.setRecordId(record.getId());
-            recordRule.setRuleId(rule.getId());
-            recordRule.setCompareValue(rule.getCompareValue());
-            alarmRecordRuleDao.insertSelective(recordRule);
-        }
-        return record;
-    }
-
-    @Override
-    public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
-        return alarmContactDao.getContactByGroupIds(groupIds);
-    }
-
-    @Override
-    public AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact) {
-        alarmNotificationContactDao.insertSelective(alarmNotificationContact);
-        return alarmNotificationContact;
-    }
+	@Override
+	public AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact) {
+		alarmNotificationContactDao.insertSelective(alarmNotificationContact);
+		return alarmNotificationContact;
+	}
 
 }
