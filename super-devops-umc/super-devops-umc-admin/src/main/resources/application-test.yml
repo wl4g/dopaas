@@ -19,7 +19,7 @@ spring:
       rules:
       - path: /**
         allowCredentials: true
-        allowsOrigins: '*'
+        allowsOrigins: http://10.0.0.183:8080
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
 
