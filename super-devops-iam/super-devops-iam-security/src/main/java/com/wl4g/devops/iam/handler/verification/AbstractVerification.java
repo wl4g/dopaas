@@ -65,6 +65,7 @@ public abstract class AbstractVerification implements Verification {
 	/**
 	 * IAM security configure handler
 	 */
+	@Autowired
 	protected ServerSecurityConfigurer configurer;
 
 	/**
