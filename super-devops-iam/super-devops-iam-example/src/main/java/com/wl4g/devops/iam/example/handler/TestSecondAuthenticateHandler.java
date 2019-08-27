@@ -24,7 +24,7 @@ public class TestSecondAuthenticateHandler implements SecondAuthenticateHandler 
 
 	@Override
 	public String[] doGetAuthorizers(String funcId) {
-		if (funcId.equals("FunSensitiveApi")) {
+		if (funcId.equals("funSensitiveApi")) {
 			return new String[] { "bl001", "bl002", "admin" };
 		}
 		throw new IllegalStateException(String.format("Illegal function id [%s]", funcId));
