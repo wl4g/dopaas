@@ -24,23 +24,8 @@ spring:
         # unauthorized-uri: /default-view/403.html
         filter-chain: 
           /public/**: anon # Public rule release
-          /test/**: anon # Testing rule release
         param: # Must be consistent with the client, otherwise authentication will never succeed
           sid: __sid
-          sid-save-cookie: __cookie
-          logout-forced: forced
-          application: service
-          grant-ticket: st
-          response-type: response_type
-          redirect-url: redirect_url
-          which: which
-          state: state
-          refreshUrl: refresh_url
-          agent: agent
-          authorizers: authorizers
-          second-auth-code: secondAuthCode
-          funcId: function
-          i18n-lang: lang
         matcher:
           fail-fast-match-max-attempts: 10
           fail-fast-match-delay: 3600000
