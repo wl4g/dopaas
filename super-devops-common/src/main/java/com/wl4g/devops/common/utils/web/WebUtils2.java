@@ -436,7 +436,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * isMatchWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com",
 	 * true)==false</br>
 	 * isSameWithOrigin("http://*.aa.domain.com:8080",
-	 * "http://bb.aa.domain.com:8080", true)==true</br>
+	 * "http://bb.aa.domain.com:8080/", true)==true</br>
 	 * 
 	 * @param definitionUrl
 	 * @param requestUrl
@@ -755,7 +755,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		System.out.println(isSameWithOrigin("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true));
 		System.out.println(isSameWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com", false));
 		System.out.println(isSameWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080", true));
+		System.out.println(isSameWithOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080/", true));
 	}
 
 }
