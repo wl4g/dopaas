@@ -114,6 +114,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	/**
 	 * IAM security configure handler
 	 */
+	@Autowired
 	protected ServerSecurityConfigurer configurer;
 
 	/**
