@@ -23,63 +23,62 @@ import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 @Service
 public class ContactServiceImpl implements ContactService {
 
-    @Autowired
-    private AlarmContactDao alarmContactDao;
+	@Autowired
+	private AlarmContactDao alarmContactDao;
 
-    @Autowired
-    private AlarmContactGroupRefDao alarmContactGroupRefDao;
+	@Autowired
+	private AlarmContactGroupRefDao alarmContactGroupRefDao;
 
-    @Override
-    @Transactional
-    public void save(AlarmContact alarmContact) {
-        if (null != alarmContact.getId() && alarmContact.getId() > 0) {
-            alarmContact.preUpdate();
-            alarmContactGroupRefDao.deleteByContactId(alarmContact.getId());
-            alarmContactDao.updateByPrimaryKeySelective(alarmContact);
-        } else {
-            alarmContact.preInsert();
-            alarmContact.setDelFlag(DEL_FLAG_NORMAL);
-            alarmContact.setEnable(ENABLED);
-            alarmContactDao.insertSelective(alarmContact);
-        }
-        Integer[] groups = alarmContact.getGroups();
-        if(null!=groups){
-            for(Integer group : groups){
-                AlarmContactGroupRef alarmContactGroupRef = new AlarmContactGroupRef();
-                alarmContactGroupRef.setContactGroupId(group);
-                alarmContactGroupRef.setContactId(alarmContact.getId());
-                alarmContactGroupRefDao.insertSelective(alarmContactGroupRef);
-            }
-        }
+	@Override
+	@Transactional
+	public void save(AlarmContact alarmContact) {
+		if (null != alarmContact.getId() && alarmContact.getId() > 0) {
+			alarmContact.preUpdate();
+			alarmContactGroupRefDao.deleteByContactId(alarmContact.getId());
+			alarmContactDao.updateByPrimaryKeySelective(alarmContact);
+		} else {
+			alarmContact.preInsert();
+			alarmContact.setDelFlag(DEL_FLAG_NORMAL);
+			alarmContact.setEnable(ENABLED);
+			alarmContactDao.insertSelective(alarmContact);
+		}
+		Integer[] groups = alarmContact.getGroups();
+		if (null != groups) {
+			for (Integer group : groups) {
+				AlarmContactGroupRef alarmContactGroupRef = new AlarmContactGroupRef();
+				alarmContactGroupRef.setContactGroupId(group);
+				alarmContactGroupRef.setContactId(alarmContact.getId());
+				alarmContactGroupRefDao.insertSelective(alarmContactGroupRef);
+			}
+		}
 
-    }
+	}
 
-    @Override
-    public AlarmContact detail(Integer id) {
-        Assert.notNull(id,"id can not be null");
-        AlarmContact alarmContact = alarmContactDao.selectByPrimaryKey(id);
-        List<AlarmContactGroupRef> alarmContactGroupRefs = alarmContactGroupRefDao.selectByContactId(id);
-        if(CollectionUtils.isNotEmpty(alarmContactGroupRefs)){
-            Integer[] groups = new Integer[alarmContactGroupRefs.size()];
-            for(int i = 0; i< alarmContactGroupRefs.size();i++){
-                groups[i] = alarmContactGroupRefs.get(i).getContactGroupId();
-            }
-            alarmContact.setGroups(groups);
-        }else{
-            alarmContact.setGroups(new Integer[0]);
-        }
-        return alarmContact;
-    }
+	@Override
+	public AlarmContact detail(Integer id) {
+		Assert.notNull(id, "id can not be null");
+		AlarmContact alarmContact = alarmContactDao.selectByPrimaryKey(id);
+		List<AlarmContactGroupRef> alarmContactGroupRefs = alarmContactGroupRefDao.selectByContactId(id);
+		if (CollectionUtils.isNotEmpty(alarmContactGroupRefs)) {
+			Integer[] groups = new Integer[alarmContactGroupRefs.size()];
+			for (int i = 0; i < alarmContactGroupRefs.size(); i++) {
+				groups[i] = alarmContactGroupRefs.get(i).getContactGroupId();
+			}
+			alarmContact.setGroups(groups);
+		} else {
+			alarmContact.setGroups(new Integer[0]);
+		}
+		return alarmContact;
+	}
 
-    @Override
-    public void del(Integer id) {
-        Assert.notNull(id,"id can not be null");
-        AlarmContact alarmContact = new AlarmContact();
-        alarmContact.preUpdate();
-        alarmContact.setId(id);
-        alarmContact.setDelFlag(1);
-        alarmContactDao.updateByPrimaryKeySelective(alarmContact);
-    }
-
+	@Override
+	public void del(Integer id) {
+		Assert.notNull(id, "id can not be null");
+		AlarmContact alarmContact = new AlarmContact();
+		alarmContact.preUpdate();
+		alarmContact.setId(id);
+		alarmContact.setDelFlag(1);
+		alarmContactDao.updateByPrimaryKeySelective(alarmContact);
+	}
 
 }

@@ -10,10 +10,10 @@ import java.util.List;
  */
 public interface MetricTemplateService {
 
-    void save(MetricTemplate metricTemplate);
+	void save(MetricTemplate metricTemplate);
 
-    void del(Integer id);
+	void del(Integer id);
 
-    List<MetricTemplate> getByClassify(String classify);
+	List<MetricTemplate> getByClassify(String classify);
 
 }

@@ -17,29 +17,29 @@ import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 @Service
 public class ContactGroupServiceImpl implements ContactGroupService {
 
-    @Autowired
-    private AlarmContactGroupDao alarmContactGroupDao;
+	@Autowired
+	private AlarmContactGroupDao alarmContactGroupDao;
 
-    @Override
-    public void save(AlarmContactGroup alarmContactGroup) {
-        Assert.notNull(alarmContactGroup,"alarmContactGroup is null");
-        if(alarmContactGroup.getId()!=null){
-            alarmContactGroup.preUpdate();
-            alarmContactGroupDao.updateByPrimaryKeySelective(alarmContactGroup);
-        }else{
-            alarmContactGroup.preInsert();
-            alarmContactGroup.setDelFlag(DEL_FLAG_NORMAL);
-            alarmContactGroup.setEnable(ENABLED);
-            alarmContactGroupDao.insertSelective(alarmContactGroup);
-        }
-    }
+	@Override
+	public void save(AlarmContactGroup alarmContactGroup) {
+		Assert.notNull(alarmContactGroup, "alarmContactGroup is null");
+		if (alarmContactGroup.getId() != null) {
+			alarmContactGroup.preUpdate();
+			alarmContactGroupDao.updateByPrimaryKeySelective(alarmContactGroup);
+		} else {
+			alarmContactGroup.preInsert();
+			alarmContactGroup.setDelFlag(DEL_FLAG_NORMAL);
+			alarmContactGroup.setEnable(ENABLED);
+			alarmContactGroupDao.insertSelective(alarmContactGroup);
+		}
+	}
 
-    @Override
-    public void del(Integer id) {
-        AlarmContactGroup alarmContactGroup = new AlarmContactGroup();
-        alarmContactGroup.preUpdate();
-        alarmContactGroup.setId(id);
-        alarmContactGroup.setDelFlag(1);
-        alarmContactGroupDao.updateByPrimaryKeySelective(alarmContactGroup);
-    }
+	@Override
+	public void del(Integer id) {
+		AlarmContactGroup alarmContactGroup = new AlarmContactGroup();
+		alarmContactGroup.preUpdate();
+		alarmContactGroup.setId(id);
+		alarmContactGroup.setDelFlag(1);
+		alarmContactGroupDao.updateByPrimaryKeySelective(alarmContactGroup);
+	}
 }

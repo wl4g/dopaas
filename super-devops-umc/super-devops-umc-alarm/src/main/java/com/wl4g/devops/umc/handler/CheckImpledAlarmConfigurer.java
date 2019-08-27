@@ -35,7 +35,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<AlarmConfig> findAlarmConfigByEndpoint(String host,String endpoint) {
+	public List<AlarmConfig> findAlarmConfigByEndpoint(String host, String endpoint) {
 		return null;
 	}
 

@@ -8,10 +8,10 @@ import com.wl4g.devops.common.bean.umc.AlarmContact;
  */
 public interface ContactService {
 
-    void save(AlarmContact alarmContact);
+	void save(AlarmContact alarmContact);
 
-    AlarmContact detail(Integer id);
+	AlarmContact detail(Integer id);
 
-    void del(Integer id);
+	void del(Integer id);
 
 }
