@@ -7,9 +7,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 # #### Environment base configuration. ####
-#
+
+spring:
+  web.xss:
+    enabled: true # Default: true
+    internal-protect: true # Default: true
+    expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
+      execution(* com.wl4g.devops.iam.example.*.*Controller.*(..))
+
+
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log

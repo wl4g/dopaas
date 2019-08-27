@@ -16,9 +16,21 @@ spring:
     rules:
       - path: /**
         allowCredentials: true
-        allowsOrigins: '*'
+        allowsOrigins: http://localhost.com:8080/
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
+  cloud:
+    devops:
+      iam:
+        authc-internal-access:
+          secure: true
+          allow-ip: 127.0.0.1
+          deny-ip:
+        client:
+          base-uri: http://localhost.com:14040/iam-server
+          login-uri: http://localhost.com:14040/iam-server/authenticator
+          success-uri: http://localhost.com:8080/#/umc/config
+          unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
