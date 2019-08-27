@@ -55,6 +55,3 @@ redis:
     - safecloud-test:7379
     - safecloud-test:7380
     - safecloud-test:7381
-
-
-
