@@ -261,6 +261,9 @@
 		$.ajax({
 			url: checkUrl,
 			type: "post",
+			xhrFields: {
+				withCredentials: true // 跨域调用时，必须设置才会发送cookie
+			},
 			dataType: "json",
 			success: function(resp){
 				var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
@@ -339,6 +342,9 @@
 					$.ajax({
 						url: loginSubmitUrl,
 						type: "post",
+						xhrFields: {
+							withCredentials: true // 跨域调用时，必须设置才会发送cookie
+						},
 						dataType: "json",
 						success: function(resp){
 							var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
@@ -397,6 +403,9 @@
 				$.ajax({
 					url: url,
 					type: "post",
+					xhrFields: {
+						withCredentials: true // 跨域调用时，必须设置才会发送cookie
+					},
 					dataType: "json",
 					success: function (resp) {
 						var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
@@ -444,6 +453,9 @@
 				$.ajax({
 					url: url,
 					type: "post",
+					xhrFields: {
+						withCredentials: true // 跨域调用时，必须设置才会发送cookie
+					},
 					dataType: "json",
 					success: function (resp) {
 						var codeOkValue = CommonUtils.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
