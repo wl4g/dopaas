@@ -72,6 +72,9 @@ public abstract class JacksonUtils {
 	 * @return
 	 */
 	public static <T> T parseJSON(String content, TypeReference<T> valueTypeRef) {
+		if (content == null) {
+			return null;
+		}
 		try {
 			return mapper.readValue(content, valueTypeRef);
 		} catch (Exception e) {
