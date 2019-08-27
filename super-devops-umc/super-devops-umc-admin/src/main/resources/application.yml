@@ -14,12 +14,8 @@ spring:
   web.xss:
     enabled: true # Default: true
     internal-protect: true # Default: true
-    expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
-      execution(* com.wl4g.devops.iam.example.*.*Controller.*(..))
-
-  resources.static-locations: classpath:/static/
-  profiles:
-    include: common,support,util
+    expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..))
+             or execution(* com.wl4g.devops.iam.example.*.*Controller.*(..))
 
 # Mybatis configuration.
 mybatis:

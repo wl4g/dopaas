@@ -13,46 +13,18 @@
 spring:
   application.name: umc-admin
   profiles:
+    include: common,support,util
     active: test
-
-  cloud: # Spring cloud configuration.
+  cloud:
     devops:
       iam: # IAM client configuration.
-        # authc-internal-access:
-        # enable: true
-        # allow-ip: 127.0.0.1
-        # deny-ip:
         client: # IAM client configuration.
           service-name: ${spring.application.name}
-          # Authentication center api base uri
-          # base-uri: http://localhost:14040/devops-iam
-          # login-uri: ${spring.cloud.devops.iam.client.base-uri}/view/login.html
-          # success-uri: http://localhost:${server.port}${server.contextPath}/index.html
-          # unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
-          param:
-            # Must be consistent with the server, otherwise authentication will never succeed
-            sid: __sid
-            sid-save-cookie: __cookie
-            logout-forced: forced
-            application: service
-            grant-ticket: st
-            response-type: response_type
-            redirect-url: redirect_url
-            which: which
-            state: state
-            refreshUrl: refresh_url
-            agent: agent
-            authorizers: authorizers
-            second-auth-code: secondAuthCode
-            funcId: function
           cache:
             prefix: ${spring.application.name}
-          session:
-            global-session-timeout: 1500000
-            session-validation-interval: 1500000
           cookie:
             name: IAMTOKEN_${spring.application.name}
 
