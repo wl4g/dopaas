@@ -24,6 +24,10 @@ spring: # Base configuration.
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
+          param: # Must be consistent with the client, otherwise authentication will never succeed
+            sid: __sid
+            application: service
+            grant-ticket: st
           cache:
             prefix: ${spring.application.name}
           cookie:

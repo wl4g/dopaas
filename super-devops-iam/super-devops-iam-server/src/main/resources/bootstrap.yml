@@ -26,6 +26,8 @@ spring:
           /public/**: anon # Public rule release
         param: # Must be consistent with the client, otherwise authentication will never succeed
           sid: __sid
+          application: service
+          grant-ticket: st
         matcher:
           fail-fast-match-max-attempts: 10
           fail-fast-match-delay: 3600000
