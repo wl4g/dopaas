@@ -109,8 +109,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		String redirectUrl = getCleanParam(request, redirectUrlKey);
 
 		// Overlay to save the latest parameters
-		bindKVParameters(KEY_REQ_AUTH_PARAMS,
-				new Object[] { sourceAppKey, sourceApp, responseTypeKey, respType, redirectUrlKey, redirectUrl });
+		bindKVParameters(KEY_REQ_AUTH_PARAMS, sourceAppKey, sourceApp, responseTypeKey, respType, redirectUrlKey, redirectUrl);
 		if (log.isDebugEnabled()) {
 			log.debug("Bind requests. sourceApp[{}], respType[{}], redirectUrl[{}]", sourceApp, respType, redirectUrl);
 		}
