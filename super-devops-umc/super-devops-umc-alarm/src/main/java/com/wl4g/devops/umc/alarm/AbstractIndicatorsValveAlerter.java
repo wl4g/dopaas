@@ -27,6 +27,8 @@ import org.springframework.util.Assert;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static com.wl4g.devops.common.utils.lang.Collections2.ensureList;
@@ -66,8 +68,8 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 
 	@Override
 	public void alarm(MetricAggregateWrapper wrap) {
-		//TODO 没有进入doHandleAlarm方法，要看下这个getworker是否有bug
-		//getWorker().execute(() -> doHandleAlarm(wrap));
+		// TODO 没有进入doHandleAlarm方法，要看下这个getworker是否有bug
+		// getWorker().execute(() -> doHandleAlarm(wrap));
 		doHandleAlarm(wrap);
 	}
 
@@ -96,37 +98,35 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	 * @return
 	 */
 	protected List<MetricValue> offerTimeWindowQueue(String cacheKey, Double value, long gatherTime, long now, long ttl) {
-		String timeWindowKey = getTimeWindowQueueCacheKey(cacheKey);
-		// To solve the concurrency problem of metric window queue in
-		// distributed environment.
-		//Lock lock = lockManager.getLock(timeWindowKey);
-
 		List<MetricValue> metricVals = emptyList();
 
-		metricVals = ensureList(doPeekMetricValueQueue(cacheKey));
+		// To solve the concurrency problem of metric window queue in
+		// distributed environment.
+		Lock lock = lockManager.getLock(getTimeWindowQueueCacheKey(cacheKey));
+		try {
+			if (lock.tryLock(6L, TimeUnit.SECONDS)) {
+				metricVals = ensureList(doPeekMetricValueQueue(cacheKey));
 
-		// Check & clean expired metrics.
-		Iterator<MetricValue> it = metricVals.iterator();
-		while (it.hasNext()) {
-			long gatherTime1 = it.next().getGatherTime();
-			if (abs(now - gatherTime1) >= ttl|| gatherTime1==gatherTime) {//remove expire data and repeat data
-				it.remove();
-			}
-		}
+				// Check & clean expired metrics.
+				Iterator<MetricValue> it = metricVals.iterator();
+				while (it.hasNext()) {
+					long gatherTime1 = it.next().getGatherTime();
+					// Remove expire data and repeat data
+					if (abs(now - gatherTime1) >= ttl || gatherTime1 == gatherTime) {
+						it.remove();
+					}
+				}
+				metricVals.add(new MetricValue(gatherTime, value));
 
-		metricVals.add(new MetricValue(gatherTime, value));
-
-		// Offer to queue.
-		doOfferMetricValueQueue(cacheKey, ttl, metricVals);
-		/*try {
-			if (lock.tryLock(10L, TimeUnit.SECONDS)) {
-
+				// Offer to queue.
+				doOfferMetricValueQueue(cacheKey, ttl, metricVals);
 			}
 		} catch (InterruptedException e) {
 			throw new IllegalStateException(e);
 		} finally {
 			lock.unlock();
-		}*/
+		}
+
 		return metricVals;
 	}
 
@@ -151,7 +151,7 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	protected List<MetricValue> doOfferMetricValueQueue(String cacheKey, long ttl, List<MetricValue> metricVals) {
 		String timeWindowKey = getTimeWindowQueueCacheKey(cacheKey);
 		jedisService.del(timeWindowKey);
-		jedisService.setObjectList(timeWindowKey, metricVals, (int) ttl/1000);
+		jedisService.setObjectList(timeWindowKey, metricVals, (int) ttl / 1000);
 		return metricVals;
 	}
 

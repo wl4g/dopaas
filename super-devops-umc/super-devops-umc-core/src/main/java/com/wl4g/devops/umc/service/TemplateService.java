@@ -8,10 +8,10 @@ import com.wl4g.devops.common.bean.umc.AlarmTemplate;
  */
 public interface TemplateService {
 
-    void save(AlarmTemplate alarmTemplate);
+	void save(AlarmTemplate alarmTemplate);
 
-    AlarmTemplate detail(Integer id);
+	AlarmTemplate detail(Integer id);
 
-    void del(Integer id);
+	void del(Integer id);
 
 }

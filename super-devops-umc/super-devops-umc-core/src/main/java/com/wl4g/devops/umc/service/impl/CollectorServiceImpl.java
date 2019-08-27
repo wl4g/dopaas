@@ -18,30 +18,30 @@ import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 @Service
 public class CollectorServiceImpl implements CollectorService {
 
-    @Autowired
-    private AlarmCollectorDao alarmCollectorDao;
+	@Autowired
+	private AlarmCollectorDao alarmCollectorDao;
 
-    @Override
-    public void save(AlarmCollector alarmCollector) {
-        Assert.notNull(alarmCollector,"alarmCollector is null");
-        if(null == alarmCollector.getId()){//insert
-            alarmCollector.preInsert();
-            alarmCollector.setDelFlag(DEL_FLAG_NORMAL);
-            alarmCollector.setEnable(ENABLED);
-            alarmCollectorDao.insertSelective(alarmCollector);
-        }else{//update
-            alarmCollector.preUpdate();
-            alarmCollectorDao.updateByPrimaryKeySelective(alarmCollector);
-        }
-    }
+	@Override
+	public void save(AlarmCollector alarmCollector) {
+		Assert.notNull(alarmCollector, "alarmCollector is null");
+		if (null == alarmCollector.getId()) {// insert
+			alarmCollector.preInsert();
+			alarmCollector.setDelFlag(DEL_FLAG_NORMAL);
+			alarmCollector.setEnable(ENABLED);
+			alarmCollectorDao.insertSelective(alarmCollector);
+		} else {// update
+			alarmCollector.preUpdate();
+			alarmCollectorDao.updateByPrimaryKeySelective(alarmCollector);
+		}
+	}
 
-    @Override
-    public void del(Integer id) {
-        Assert.notNull(id,"id is null");
-        AlarmCollector alarmCollector = new AlarmCollector();
-        alarmCollector.setId(id);
-        alarmCollector.setDelFlag(DEL_FLAG_DELETE);
-        alarmCollector.preUpdate();
-        alarmCollectorDao.updateByPrimaryKeySelective(alarmCollector);
-    }
+	@Override
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		AlarmCollector alarmCollector = new AlarmCollector();
+		alarmCollector.setId(id);
+		alarmCollector.setDelFlag(DEL_FLAG_DELETE);
+		alarmCollector.preUpdate();
+		alarmCollectorDao.updateByPrimaryKeySelective(alarmCollector);
+	}
 }

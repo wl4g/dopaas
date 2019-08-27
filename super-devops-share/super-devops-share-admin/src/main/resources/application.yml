@@ -7,9 +7,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 # #### Environment base configuration. ####
-#
+
+spring:
+  web.xss:
+    enabled: true # Default: true
+    internal-protect: true # Default: true
+    expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..))
+
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
@@ -28,6 +33,5 @@ logging:
 # Mybatis configuration.
 mybatis:
   configLocation: mybatis/mybatis-config.xml
-#  mapperLocations: classpath:mybatis/mapper/*Mapper.xml
   mapperLocations: classpath:mybatis/**/*Mapper.xml
   typeAliasesPackage: com.wl4g.devops.common.bean.*,com.wl4g.devops.common.bean.*.*

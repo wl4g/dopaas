@@ -9,6 +9,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.umc.MetricTemplateDao;
 import com.wl4g.devops.umc.service.MetricTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +49,9 @@ public class MetricTemplateController extends BaseController {
     @RequestMapping(value = "/save")
     public RespBase<?> save(@RequestBody MetricTemplate metricTemplate) {
         log.info("into MetricTemplateController.save prarms::"+ "metricTemplate = {} ", metricTemplate );
+        Assert.notNull(metricTemplate,"metricTemplate is null");
+        Assert.hasText(metricTemplate.getClassify(),"classify is null");
+        Assert.hasText(metricTemplate.getMetric(),"metric is null");
         RespBase<Object> resp = RespBase.create();
         metricTemplateService.save(metricTemplate);
         return resp;
@@ -69,6 +73,16 @@ public class MetricTemplateController extends BaseController {
         metricTemplateService.del(id);
         return resp;
     }
+
+    @RequestMapping(value = "/getByClassify")
+    public RespBase<?> getByClassify(String classify) {
+        RespBase<Object> resp = RespBase.create();
+        List<MetricTemplate> metricTemplate = metricTemplateService.getByClassify(classify);
+        resp.getData().put("list",metricTemplate);
+        return resp;
+    }
+
+
 
 
 

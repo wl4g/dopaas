@@ -10,6 +10,7 @@ import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.umc.service.TemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,13 +34,13 @@ public class TemplateController extends BaseController {
     private TemplateService templateService;
 
     @RequestMapping(value = "/list")
-    public RespBase<?> list(String name,String metric,String classify, CustomPage customPage) {
-        log.info("into TemplateController.list prarms::"+ "name = {} , metric = {} , classify = {} , customPage = {} ", name, metric, classify, customPage );
+    public RespBase<?> list(String name,Integer metricId,String classify, CustomPage customPage) {
+        log.info("into TemplateController.list prarms::"+ "name = {} , metric = {} , classify = {} , customPage = {} ", name, metricId, classify, customPage );
         RespBase<Object> resp = RespBase.create();
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
         Page page = PageHelper.startPage(pageNum, pageSize, true);
-        List<AlarmTemplate> list = alarmTemplateDao.list(name, metric,classify);
+        List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId,classify);
         for(AlarmTemplate alarmTemplate : list){
             String tags = alarmTemplate.getTags();
             if(StringUtils.isNotBlank(tags)){
@@ -57,6 +58,9 @@ public class TemplateController extends BaseController {
     @RequestMapping(value = "/save")
     public RespBase<?> save(@RequestBody AlarmTemplate alarmTemplate) {
         log.info("into TemplateController.save prarms::"+ "alarmTemplate = {} ", alarmTemplate );
+        Assert.notNull(alarmTemplate,"template is null");
+        Assert.notNull(alarmTemplate.getMetricId(),"meetric is null");
+        Assert.notEmpty(alarmTemplate.getRules(),"rules is null");
         RespBase<Object> resp = RespBase.create();
         templateService.save(alarmTemplate);
         return resp;

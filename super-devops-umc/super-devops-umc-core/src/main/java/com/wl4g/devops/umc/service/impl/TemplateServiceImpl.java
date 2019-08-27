@@ -1,12 +1,11 @@
 package com.wl4g.devops.umc.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.umc.service.TemplateService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +19,9 @@ import java.util.Map;
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * @author vjay
@@ -28,94 +30,89 @@ import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 @Service
 public class TemplateServiceImpl implements TemplateService {
 
-    @Autowired
-    private AlarmTemplateDao alarmTemplateDao;
+	@Autowired
+	private AlarmTemplateDao alarmTemplateDao;
 
-    @Autowired
-    private AlarmRuleDao alarmRuleDao;
+	@Autowired
+	private AlarmRuleDao alarmRuleDao;
 
-    @Override
-    @Transactional
-    public void save(AlarmTemplate alarmTemplate) {
-        //template
-        Assert.notNull(alarmTemplate,"alarmTemplate is null");
+	@Override
+	@Transactional
+	public void save(AlarmTemplate tpl) {
+		Assert.notNull(tpl, "alarmTemplate is null");
 
-        List<Map<String, String>> tagMap = alarmTemplate.getTagMap();
-        if(!CollectionUtils.isEmpty(tagMap)){
-            String tags = JacksonUtils.toJSONString(tagMap);
-            alarmTemplate.setTags(tags);
-        }
+		List<Map<String, String>> tagMap = tpl.getTagMap();
+		if (!CollectionUtils.isEmpty(tagMap)) {
+			tpl.setTags(toJSONString(tagMap));
+		}
 
-        if(alarmTemplate.getId()!=null){//update
-            alarmTemplate.preUpdate();
-            alarmTemplateDao.updateByPrimaryKeySelective(alarmTemplate);
-        }else{
-            alarmTemplate.preInsert();
-            alarmTemplate.setDelFlag(DEL_FLAG_NORMAL);
-            alarmTemplate.setEnable(ENABLED);
-            alarmTemplateDao.insertSelective(alarmTemplate);
-        }
+		if (tpl.getId() != null) {// update
+			tpl.preUpdate();
+			alarmTemplateDao.updateByPrimaryKeySelective(tpl);
+		} else {
+			tpl.preInsert();
+			tpl.setDelFlag(DEL_FLAG_NORMAL);
+			tpl.setEnable(ENABLED);
+			alarmTemplateDao.insertSelective(tpl);
+		}
 
+		// 找到旧的规则，如果发现新规则列表中没有旧的规则，则删掉缺少的旧规则
+		List<AlarmRule> oldAlarmRules = alarmRuleDao.selectByTemplateId(tpl.getId());
+		List<AlarmRule> temp = new ArrayList<>();
+		if (!CollectionUtils.isEmpty(oldAlarmRules)) {
+			for (AlarmRule oldAlarmRule : oldAlarmRules) {
+				for (AlarmRule newAlarmRule : tpl.getRules()) {
+					if (newAlarmRule.getId() != null && oldAlarmRule.getId().equals(newAlarmRule.getId())) {
+						temp.add(oldAlarmRule);
+					}
+				}
+			}
+		}
+		oldAlarmRules.removeAll(temp);
+		for (AlarmRule alarmRule : oldAlarmRules) {
+			alarmRule.setDelFlag(DEL_FLAG_DELETE);
+			alarmRuleDao.updateByPrimaryKeySelective(alarmRule);
+		}
 
-        //找到旧的规则，如果发现新规则列表中没有旧的规则，则删掉缺少的旧规则
-        List<AlarmRule> oldAlarmRules = alarmRuleDao.selectByTemplateId(alarmTemplate.getId());
-        List<AlarmRule> temp = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(oldAlarmRules)){
-            for(AlarmRule oldAlarmRule : oldAlarmRules){
-                for(AlarmRule newAlarmRule : alarmTemplate.getRules()){
-                    if(newAlarmRule.getId()!=null&& oldAlarmRule.getId().equals(newAlarmRule.getId())){
-                        temp.add(oldAlarmRule);
-                    }
-                }
-            }
-        }
-        oldAlarmRules.removeAll(temp);
-        for(AlarmRule alarmRule : oldAlarmRules){
-            alarmRule.setDelFlag(DEL_FLAG_DELETE);
-            alarmRuleDao.updateByPrimaryKeySelective(alarmRule);
-        }
+		// rules
+		List<AlarmRule> rules = tpl.getRules();
+		Assert.notEmpty(rules, "rules is empty");
+		for (AlarmRule _rule : rules) {
+			if (_rule.getId() != null) {
+				_rule.preUpdate();
+				_rule.setTemplateId(tpl.getId());
+				alarmRuleDao.updateByPrimaryKeySelective(_rule);
+			} else {
+				_rule.preInsert();
+				_rule.setTemplateId(tpl.getId());
+				alarmRuleDao.insertSelective(_rule);
+			}
+		}
+	}
 
+	@Override
+	public AlarmTemplate detail(Integer id) {
+		Assert.notNull(id, "AlarmTemplate id must not be null");
+		AlarmTemplate tpl = alarmTemplateDao.selectByPrimaryKey(id);
+		Assert.notNull(tpl, "alarmTemplate is null");
+		List<AlarmRule> alarmRules = alarmRuleDao.selectByTemplateId(id);
+		tpl.setRules(alarmRules);
 
-        //rules
-        List<AlarmRule> rules = alarmTemplate.getRules();
-        Assert.notEmpty(rules,"rules is empty");
-        for(AlarmRule alarmRule : rules){
-            if(alarmRule.getId()!=null){
-                alarmRule.preUpdate();
-                alarmRule.setTemplateId(alarmTemplate.getId());
-                alarmRuleDao.updateByPrimaryKeySelective(alarmRule);
-            }else{
-                alarmRule.preInsert();
-                alarmRule.setTemplateId(alarmTemplate.getId());
-                alarmRuleDao.insert(alarmRule);
-            }
-        }
+		if (isNotBlank(tpl.getTags())) {
+			List<Map<String, String>> list = parseJSON(tpl.getTags(), new TypeReference<List<Map<String, String>>>() {
+			});
+			tpl.setTagMap(list);
+		}
+		return tpl;
+	}
 
-    }
-
-    @Override
-    public AlarmTemplate detail(Integer id) {
-        Assert.notNull(id,"id is null");
-        AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(id);
-        Assert.notNull(alarmTemplate,"alarmTemplate is null");
-        List<AlarmRule> alarmRules = alarmRuleDao.selectByTemplateId(id);
-        alarmTemplate.setRules(alarmRules);
-
-        if(StringUtils.isNotBlank(alarmTemplate.getTags())){
-            List list = JacksonUtils.parseJSON(alarmTemplate.getTags(), List.class);
-            alarmTemplate.setTagMap(list);
-        }
-
-        return alarmTemplate;
-    }
-
-    @Override
-    public void del(Integer id) {
-        Assert.notNull(id,"id is null");
-        AlarmTemplate alarmTemplate = new AlarmTemplate();
-        alarmTemplate.setId(id);
-        alarmTemplate.setDelFlag(DEL_FLAG_DELETE);
-        alarmTemplate.preUpdate();
-        alarmTemplateDao.updateByPrimaryKeySelective(alarmTemplate);
-    }
+	@Override
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		AlarmTemplate alarmTemplate = new AlarmTemplate();
+		alarmTemplate.setId(id);
+		alarmTemplate.setDelFlag(DEL_FLAG_DELETE);
+		alarmTemplate.preUpdate();
+		alarmTemplateDao.updateByPrimaryKeySelective(alarmTemplate);
+	}
 }

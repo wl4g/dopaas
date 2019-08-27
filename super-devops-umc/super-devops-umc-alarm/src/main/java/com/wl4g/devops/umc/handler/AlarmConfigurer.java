@@ -28,17 +28,14 @@ import java.util.List;
  */
 public interface AlarmConfigurer {
 
-	List<AlarmConfig> findAlarmConfigByEndpoint(String host,String endpoint);
+	List<AlarmConfig> findAlarmConfigByEndpoint(String host, String endpoint);
 
 	List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId);
 
-	AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules,String alarmNote);
+	AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote);
 
 	List<AlarmContact> getContactByGroupIds(List<Integer> groupIds);
 
 	AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact);
-
-
-
 
 }
