@@ -117,11 +117,8 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			return sessionId;
 		}
 
-		/*
-		 * This SID session is used if the parameter contains the "SID"
-		 * parameter. For example:
-		 * http://localhost/project?__sid=xxx&__cookie=yes
-		 */
+		// Using URLs session. e.g.
+		// http://localhost/project?__sid=xxx&__cookie=yes
 		sessionId = getCleanParam(request, config.getParam().getSid());
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
@@ -137,8 +134,17 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			return sessionId;
 		}
 
-		// Using cookie in URL session.(Android/iOS/WechatApplet)
+		// Using cookie in URLs session.(e.g. Android/iOS/WechatApplet)
 		sessionId = getCleanParam(request, config.getCookie().getName());
+		if (checkAvailable(sessionId)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Using url cookieId for '{}'", sessionId);
+			}
+			return sessionId;
+		}
+
+		// Using header session.(e.g. Android/iOS/WechatApplet)
+		sessionId = toHttp(request).getHeader(config.getCookie().getName());
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
 				log.debug("Using url cookieId for '{}'", sessionId);
@@ -371,11 +377,11 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 */
 	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, Serializable sessionId) {
 		// Response JSON type(Non WEB).
-		boolean isJsonType = isJSONResponse(getCleanParam(request, config.getParam().getResponseType()), toHttp(request));
+		boolean isJSONType = isJSONResponse(getCleanParam(request, config.getParam().getResponseType()), toHttp(request));
 		// When a browser request or display specifies that cookies need to b
 		// saved.
 		boolean sidSaved = isTrue(request, config.getParam().getSidSaveCookie());
-		if (isBrowser(toHttp(request)) || sidSaved || !isJsonType) {
+		if (isBrowser(toHttp(request)) || sidSaved || !isJSONType) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
 			cookie.setValue(String.valueOf(sessionId));
 			// Save to response.
@@ -383,9 +389,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			if (log.isTraceEnabled()) {
 				log.trace("Set session ID cookie for session with id {}", sessionId);
 			}
-		}
-		// Addition customize security headers.
-		else {
+		} else { // Addition customize security headers.
 			toHttp(response).addHeader(getSessionIdCookie().getName(), String.valueOf(sessionId));
 		}
 
