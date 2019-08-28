@@ -13,15 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.captcha.gif;
-
-import java.io.FileOutputStream;
-
-public class Test {
-
-	public static void main(String[] args) throws Exception {
-		Captcha captcha = new GifCaptcha("abcde");// gif格式动画验证码
-		captcha.out(new FileOutputStream("E:/1.gif"));
-	}
-
-}
+package com.wl4g.devops.iam.captcha.slider;
