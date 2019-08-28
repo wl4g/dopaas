@@ -259,7 +259,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		/**
 		 * Authentication parameter grant ticket name
 		 */
-		private String grantTicket = "grant_ticket";
+		private String grantTicket = "gt";
 
 		/**
 		 * Authentication center sets the parameter name of authentication
