@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.cache;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -23,7 +25,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.wl4g.devops.support.config.JedisConfiguration.RedisProperties;
 
@@ -68,17 +69,21 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// Parse cluster node's
-		Set<HostAndPort> haps = this.config.parseHostAndPort();
-		// Create Jedis cluster
-		if (StringUtils.isEmpty(this.config.getPasswd())) {
-			this.jedisCluster = new JedisCluster(haps, config.getConnTimeout(), config.getSoTimeout(), config.getMaxAttempts(),
-					config.getPoolConfig());
-		} else {
-			this.jedisCluster = new JedisCluster(haps, config.getConnTimeout(), config.getSoTimeout(), config.getMaxAttempts(),
-					config.getPasswd(), config.getPoolConfig());
-		}
-		if (log.isInfoEnabled()) {
-			log.info("Instantiated redis cluster: {}", haps);
+		Set<HostAndPort> haps = config.parseHostAndPort();
+		try {
+			// Create REDIS cluster
+			if (isBlank(config.getPasswd())) {
+				jedisCluster = new JedisCluster(haps, config.getConnTimeout(), config.getSoTimeout(), config.getMaxAttempts(),
+						config.getPoolConfig());
+			} else {
+				jedisCluster = new JedisCluster(haps, config.getConnTimeout(), config.getSoTimeout(), config.getMaxAttempts(),
+						config.getPasswd(), config.getPoolConfig());
+			}
+			if (log.isInfoEnabled()) {
+				log.info("Connected to redis cluster to: {}", haps);
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(String.format("Can't connect to redis cluster: ", haps), e);
 		}
 	}
 
