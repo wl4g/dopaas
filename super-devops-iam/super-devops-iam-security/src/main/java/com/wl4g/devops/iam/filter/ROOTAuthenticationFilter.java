@@ -15,15 +15,17 @@
  */
 package com.wl4g.devops.iam.filter;
 
+import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.web.util.WebUtils;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.authc.RootAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -47,13 +49,13 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		if (log.isInfoEnabled()) {
-			String url = WebUtils2.getFullRequestURL(WebUtils.toHttp(request));
+			String url = getFullRequestURL(toHttp(request));
 			log.info("Root request URL: {}", url);
 		}
 
 		// Logged-in or login page request passed
 		return (getSubject(request, response).isAuthenticated() || isLoginRequest(request, response)
-				|| WebUtils2.isMediaRequest((HttpServletRequest) request));
+				|| isMediaRequest((HttpServletRequest) request));
 	}
 
 	/**
@@ -92,19 +94,16 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	 * matched successfully, but it is indeed embedded in its own page, which
 	 * needs to continue matching (to be compatible).
 	 * 
-	 * @param definitionUrl
+	 * @param defineUrl
 	 *            Configuration defined URLs
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	protected boolean matchRequest(String definitionUrl, ServletRequest request, ServletResponse response) {
-		Assert.hasText(definitionUrl, "'definitionUrl' is empty");
-		/*
-		 * Relative path and complete path matching
-		 */
-		return (pathsMatch(definitionUrl, request)
-				|| definitionUrl.equals(WebUtils2.getFullRequestURL(WebUtils.toHttp(request), false)));
+	protected boolean matchRequest(String defineUrl, ServletRequest request, ServletResponse response) {
+		Assert.hasText(defineUrl, "'defineUrl' is empty");
+		// Relative path and complete path matching
+		return (pathsMatch(defineUrl, request) || defineUrl.equals(getFullRequestURL(toHttp(request), false)));
 	}
 
 	@Override

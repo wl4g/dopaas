@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.iam.common.utils;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.shiro.util.StringUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -152,7 +153,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @param keyValues
 	 */
 	public static void bindKVParameters(String sessionKey, Object... keyValues) {
-		Assert.notNull(sessionKey, "'sessionKey' must not be null");
+		Assert.hasText(sessionKey, "'sessionKey' must not be null");
 		Assert.notEmpty(keyValues, "'keyValues' must not be null");
 		Assert.isTrue(keyValues.length % 2 == 0, "Illegal 'keyValues' length");
 
@@ -162,8 +163,7 @@ public abstract class SessionBindings extends Sessions {
 			if (i % 2 == 0) {
 				Object key = keyValues[i];
 				Object value = keyValues[i + 1];
-				if (key != null && StringUtils.hasText(key.toString()) && value != null
-						&& StringUtils.hasText(value.toString())) {
+				if (key != null && isNotBlank(key.toString()) && value != null && isNotBlank(value.toString())) {
 					parameters.put(key, value);
 				}
 			}
