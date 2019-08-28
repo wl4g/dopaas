@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,7 @@ import org.springframework.context.annotation.Configuration;
 
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 
-//import com.google.code.kaptcha.impl.DefaultKaptcha;
-//import com.google.code.kaptcha.util.Config;
-//import com.wl4g.devops.iam.captcha.handler.KaptchaVerification;
-import com.wl4g.devops.iam.captcha.handler.GifVerification;
+import com.wl4g.devops.iam.captcha.verification.GifVerification;
 import com.wl4g.devops.iam.handler.verification.DefaultJdkImgVerification;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 
