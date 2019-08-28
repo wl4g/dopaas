@@ -205,7 +205,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 */
 	protected List<AlarmRule> matchAlarmRules(List<MetricValue> metricVals, List<AlarmRule> rules, long now) {
 		// Match mode for 'OR'/'AND'.
-		return safeList(rules).stream().map(rule -> {
+		return safeList(rules).stream().filter(rule -> {
 			// Get latest time window metric values.
 			Double[] vals = extractValidityMetricValueInQueue(metricVals, rule.getQueueTimeWindow(), now);
 			// Do inspection.
@@ -213,9 +213,9 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					rule.getValue(), vals);
 			if (inspector.verify(wrap)) {
 				rule.setCompareValue(wrap.getCompareValue());
-				return rule;
+				return true;
 			}
-			return null;
+			return false;
 		}).collect(toList());
 	}
 
