@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
-import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -53,11 +53,10 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			// Check authentication login request parameters
 			authHandler.checkAuthenticateRequests(getFromAppName(request), getFromRedirectUrl(request));
 
-			// Binding request parameters
-			bindingRequestParameters(request, response);
-
+			// Remember request parameters
+			rememberRequestParameters(request, response);
 		} catch (IllegalCallbackDomainException e) {
-			log.warn("Using default callback URI. cause by: {}", Exceptions.getMessage(e));
+			log.warn("Using default callback URI. cause by: {}", getRootCausesString(e));
 		}
 
 		/*
@@ -69,7 +68,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 				// No need to continue
 				return onLoginSuccess(createToken(request, response), subject, request, response);
 			} catch (Exception e) {
-				log.error("Logged-in auto redirect to other applications failed", e);
+				log.error("Unauthenticated, automatically redirection application.", e);
 			}
 		}
 
@@ -78,7 +77,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	}
 
 	/**
-	 * Bind the latest authentication request configuration, such as
+	 * Remember the latest authentication request configuration, such as
 	 * response_type, source application, etc.<br/>
 	 * e.g:<br/>
 	 * <b>Req1：</b>http://localhost:14040/devops-iam/view/login.html?service=devops-iam-example&redirect_url=http://localhost:14041/devops-iam-example/index.html<br/>
@@ -97,7 +96,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	 * @param request
 	 * @param response
 	 */
-	private void bindingRequestParameters(ServletRequest request, ServletResponse response) {
+	private void rememberRequestParameters(ServletRequest request, ServletResponse response) {
 		// Parameter names
 		String fromAppKey = config.getParam().getApplication();
 		String respTypeKey = config.getParam().getResponseType();
