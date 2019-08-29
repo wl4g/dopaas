@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.iam.authc.CaptchaAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
-import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.SecurityVerifier;
 
 /**
  * General account credential matcher

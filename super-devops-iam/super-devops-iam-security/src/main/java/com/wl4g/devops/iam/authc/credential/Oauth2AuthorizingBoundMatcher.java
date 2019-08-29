@@ -19,7 +19,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
-import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.SecurityVerifier;
 
 /**
  * Oauth2 are bound matcher

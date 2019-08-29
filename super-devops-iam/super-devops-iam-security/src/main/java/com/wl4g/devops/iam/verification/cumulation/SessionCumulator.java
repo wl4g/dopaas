@@ -1,4 +1,4 @@
-package com.wl4g.devops.iam.handler.verification.cumulation;
+package com.wl4g.devops.iam.verification.cumulation;
 
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;

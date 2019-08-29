@@ -1,4 +1,4 @@
-package com.wl4g.devops.iam.handler.verification.cumulation;
+package com.wl4g.devops.iam.verification.cumulation;
 
 import java.util.List;
 

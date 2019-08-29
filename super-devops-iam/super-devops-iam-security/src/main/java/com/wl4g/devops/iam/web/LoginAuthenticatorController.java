@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,9 +31,8 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
-import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier;
-import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.MobileNumber;
+import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
+import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
@@ -48,10 +46,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
-import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
-import static com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.*;
-import static com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.MobileNumber.parse;
+import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.*;
+import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -68,16 +64,10 @@ import static org.apache.commons.lang3.StringUtils.*;
 public class LoginAuthenticatorController extends AbstractAuthenticatorController {
 
 	/**
-	 * Graphic verification handler
+	 * Composite verification handler.
 	 */
-	@Resource(name = BEAN_GRAPH_VERIFICATION)
-	protected GraphBasedSecurityVerifier graphVerification;
-
-	/**
-	 * SMS verification handler
-	 */
-	@Resource(name = BEAN_SMS_VERIFICATION)
-	protected SmsSecurityVerifier smsVerification;
+	@Autowired
+	protected CompositeSecurityVerifierAdapter verifier;
 
 	/**
 	 * IAM credentials securer
@@ -155,7 +145,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// CAPTCHA.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
-			if (graphVerification.isEnabled(factors)) { // Enabled?
+			if (verifier.isEnabled(factors)) { // Enabled?
 				model.setEnabled(true);
 				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
 				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_APPLY_CAPTCHA;
@@ -173,7 +163,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * verification code).
 			 */
 			Long remainingDelay = null;
-			VerifyCode code = smsVerification.getVerifyCode(false);
+			VerifyCodeWrapper<?> code = verifier.getVerifyCode(false);
 			if (code != null) {
 				remainingDelay = getSmsRemainingDelay(code);
 			}
@@ -217,8 +207,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
-			if (graphVerification.isEnabled(factors)) { // Enabled?
-				graphVerification.apply(null, factors, request, response);
+			if (verifier.isEnabled(factors)) { // Enabled?
+				verifier.apply(null, factors, request, response);
 			} else { // Invalid request
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -252,14 +242,14 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
 
 			// Graph validation
-			graphVerification.validate(factors, getCleanParam(request, config.getParam().getAttachCodeName()), false);
+			verifier.validate(factors, getCleanParam(request, config.getParam().getAttachCodeName()), false);
 
 			// Apply SMS verify code.
-			smsVerification.apply(mn.asNumberText(), factors, request, response);
+			verifier.apply(mn.asNumberText(), factors, request, response);
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
-			VerifyCode code = smsVerification.getVerifyCode(true);
+			VerifyCodeWrapper<?> code = verifier.getVerifyCode(true);
 			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mn.getNumber(), getSmsRemainingDelay(code)));
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -302,7 +292,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * @param code
 	 * @return
 	 */
-	private long getSmsRemainingDelay(VerifyCode code) {
+	private long getSmsRemainingDelay(VerifyCodeWrapper<?> code) {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
 		return Math.max(config.getMatcher().getFailFastSmsDelay() - (now - code.getCreateTime()), 0);

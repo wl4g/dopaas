@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler.verification;
+package com.wl4g.devops.iam.verification;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,16 +39,16 @@ import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
  * @version v1.0 2019年8月29日
  * @since
  */
-public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
+public class CompositeSecurityVerifierAdapter implements SecurityVerifier<Serializable> {
 
 	/**
-	 * Verification definitions.
+	 * Verification registry.
 	 */
-	final protected Map<VerifyType, SecurityVerifier> verifications = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<VerifyType, SecurityVerifier<Serializable>> registry = new OnceModifiableMap<>(new HashMap<>());
 
-	public CompositeSecurityVerifierAdapter(Map<VerifyType, SecurityVerifier> verifications) {
+	public CompositeSecurityVerifierAdapter(Map<VerifyType, SecurityVerifier<Serializable>> verifications) {
 		Assert.state(!isEmpty(verifications), "Verifications has at least one.");
-		this.verifications.putAll(verifications);
+		this.registry.putAll(verifications);
 	}
 
 	@Override
@@ -56,19 +57,28 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 	}
 
 	@Override
-	public void validate(@NotNull List<String> factors, String verifyCodeReq, boolean required) throws VerificationException {
-
+	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException {
 	}
 
 	@Override
-	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
-
+	public VerifyCodeWrapper<Serializable> getVerifyCode(boolean assertion) {
+		return null;
 	}
 
 	@Override
 	public boolean isEnabled(@NotNull List<String> factors) {
-		return SecurityVerifier.super.isEnabled(factors);
+		return false;
+	}
+
+	@Override
+	public String verify(@NotNull List<String> factors, @NotNull Serializable reqCode) throws VerificationException {
+		return null;
+	}
+
+	@Override
+	public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
+			throws VerificationException {
 	}
 
 }

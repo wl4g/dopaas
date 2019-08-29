@@ -15,44 +15,46 @@
  */
 package com.wl4g.devops.iam.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.iam.annotation.LoginAuthController;
-import com.wl4g.devops.iam.web.LoginAuthenticatorController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
 import java.lang.annotation.Annotation;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
+import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.iam.web.DefaultViewController;
 
 /**
- * IAM extra configuration
+ * Default view configuration
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({ IamConfiguration.class })
-public class LoginConfiguration extends AbstractOptionalControllerConfiguration {
+@AutoConfigureAfter({ IamAutoConfiguration.class })
+public class DefaultViewAutoConfiguration extends AbstractOptionalControllerConfiguration {
+
+	@Autowired
+	private IamProperties config;
 
 	@Bean
-	public LoginAuthenticatorController loginAuthenticatorController() {
-		return new LoginAuthenticatorController();
+	public DefaultViewController defaultViewController() {
+		return new DefaultViewController();
 	}
 
 	@Override
 	protected String getMappingPrefix() {
-		return URI_S_LOGIN_BASE;
+		return this.config.getDefaultViewBaseUri();
 	}
 
 	@Bean
-	public PrefixHandlerMapping extraControllerPrefixHandlerMapping() {
+	public PrefixHandlerMapping defaultViewControllerPrefixHandlerMapping() {
 		return super.createPrefixHandlerMapping();
 	}
 
 	@Override
 	protected Class<? extends Annotation> annotationClass() {
-		return LoginAuthController.class;
+		return com.wl4g.devops.iam.annotation.DefaultViewController.class;
 	}
 
 }

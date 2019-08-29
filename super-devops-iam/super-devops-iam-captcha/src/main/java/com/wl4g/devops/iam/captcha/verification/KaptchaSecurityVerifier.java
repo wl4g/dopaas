@@ -17,41 +17,47 @@ package com.wl4g.devops.iam.captcha.verification;
 
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wl4g.devops.iam.captcha.gif.Captcha;
-import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
-import com.wl4g.devops.iam.captcha.gif.Randoms;
-import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
+import org.springframework.util.Assert;
+
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
- * GIF CAPTCHA verification handler.
+ * Google KAPTCHA handler.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月28日
  * @since
  */
-public class GifVerification extends GraphBasedSecurityVerifier {
+public class KaptchaSecurityVerifier extends GraphBasedSecurityVerifier<String> {
+
+	private DefaultKaptcha kaptchaProducer;
 
 	@Override
 	public VerifyType verifyType() {
-		return VerifyType.GRAPH_GIF;
+		return VerifyType.GRAPH_SIMPLE;
+	}
+
+	public KaptchaSecurityVerifier(DefaultKaptcha kaptchaProducer) {
+		Assert.notNull(kaptchaProducer, "'kaptchaProducer' must not be null");
+		this.kaptchaProducer = kaptchaProducer;
 	}
 
 	@Override
 	protected String generateCode() {
-		StringBuffer alpha = new StringBuffer();
-		for (int i = 0; i < 5; i++) {
-			alpha.append(Randoms.alpha());
-		}
-		return alpha.toString();
+		return this.kaptchaProducer.createText();
 	}
 
 	@Override
 	protected void write(HttpServletResponse response, String verifyCode) throws IOException {
-		Captcha captcha = new GifCaptcha(verifyCode);
-		captcha.out(response.getOutputStream());
+		ServletOutputStream out = response.getOutputStream();
+		// Write the data out
+		ImageIO.write(kaptchaProducer.createImage(verifyCode), "JPEG", out);
 	}
 
 }
