@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
  */
 public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
-	public GeneralCredentialsHashedMatcher(SecurityVerifier verification) {
+	public GeneralCredentialsHashedMatcher(SecurityVerifier<?> verification) {
 		super(verification);
 	}
 

@@ -83,8 +83,8 @@ import com.wl4g.devops.support.cache.ScanCursor;
  * @date 2018年11月22日
  * @since
  */
-public class GentralAuthenticationHandler extends AbstractAuthenticationHandler {
-	final public static String SAVE_GRANT_SESSION = GentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
+public class CentralAuthenticationHandler extends AbstractAuthenticationHandler {
+	final public static String SAVE_GRANT_SESSION = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
 
 	final private static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1" };
 
@@ -96,7 +96,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	@Autowired
 	protected IamSessionDAO sessionDAO;
 
-	public GentralAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
+	public CentralAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
 		super(context, restTemplate);
 	}
 
@@ -404,7 +404,7 @@ public class GentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	/**
 	 * Check grant ticket validity <br/>
-	 * {@link com.wl4g.devops.iam.handler.GentralAuthenticationHandler#loggedin}
+	 * {@link com.wl4g.devops.iam.handler.CentralAuthenticationHandler#loggedin}
 	 * 
 	 * @param subject
 	 * @param param

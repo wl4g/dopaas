@@ -180,8 +180,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;
-			if (code != null && code.getOwner() != null && isNumeric(code.getOwner().toString())) {
-				mobileNum = Long.parseLong(code.getOwner().toString());
+			if (code != null && code.getOwner() != null && isNumeric(code.getOwner())) {
+				mobileNum = Long.parseLong(code.getOwner());
 			}
 			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainingDelay));
 

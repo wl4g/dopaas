@@ -160,8 +160,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 		if (matcher != null) {
 			if (!matcher.doCredentialsMatch(tk, info)) {
 				// not successful - throw an exception to indicate this:
-				throw new IncorrectCredentialsException(
-						bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch", token.getPrincipal()));
+				throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
 			}
 
 			/*

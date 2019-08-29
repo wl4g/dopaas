@@ -17,12 +17,14 @@ package com.wl4g.devops.iam.handler.verification;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +36,6 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -53,7 +51,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
  * @date 2018年12月28日
  * @since
  */
-public abstract class AbstractSecurityVerifier implements SecurityVerifier {
+public abstract class AbstractSecurityVerifier<T extends Serializable> implements SecurityVerifier<T> {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -82,10 +80,10 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	protected SessionDelegateMessageBundle bundle;
 
 	@Override
-	public String verify(@NotNull List<String> factors, @NotNull HttpServletRequest request) throws VerificationException {
-		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
+	public String verify(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException {
+		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty");
 
-		VerifyCode storedAttachCode = null;
+		VerifyCodeWrapper<T> storedCode = null;
 		try {
 			/*
 			 * If required is true, the forced verification policy is executed,
@@ -97,27 +95,34 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 				return null; // not enabled
 			}
 
-			// Request attach code
-			String reqAttachCode = getCleanParam(request, config.getParam().getAttachCodeName());
-			// Store validate code
-			storedAttachCode = getVerifyCode(true);
-			if (!doMatch(storedAttachCode, reqAttachCode)) {
-				if (log.isErrorEnabled()) {
-					log.error("Verification mismatched. {} => {}", reqAttachCode, storedAttachCode);
-				}
-				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", reqAttachCode));
+			// Verification
+			storedCode = getVerifyCode(true);
+			if (!doMatch(storedCode, reqCode)) {
+				log.error("Verification mismatched. {} => {}", reqCode, storedCode);
+				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", reqCode));
+			}
+
+			// Storage verified token.
+			String verifiedToken = randomAlphabetic(128);
+			bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
+			if (log.isInfoEnabled()) {
+				log.info("Saving to verified token: {}", verifiedToken);
 			}
 		} finally {
-			postVerifyProperties((storedAttachCode != null) ? storedAttachCode.getText() : null);
+			if (storedCode != null) {
+				postVerifyProperties(storedCode.getOwner());
+			}
 		}
 
 		return null;
 	}
 
 	@Override
-	public void validate(@NotNull List<String> factors, @NotNull String verifyToken, boolean required)
+	public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
 			throws VerificationException {
-
+		String storedVerifiedToken = getBindValue(getVerifiedTokenStoredKey(), true);
+		Assert.hasText(storedVerifiedToken, bundle.getMessage("General.parameter.invalid"));
+		Assert.state(StringUtils.equals(storedVerifiedToken, verifiedToken), bundle.getMessage("General.parameter.illegal"));
 	}
 
 	/**
@@ -139,10 +144,10 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 *            is new create.
 	 */
 	protected void reset(String owner, boolean renew) {
-		unbind(storedSessionKey());
+		unbind(getVerifyCodeStoredKey());
 		if (renew) {
 			// Store verify-code in the session
-			bind(storedSessionKey(), new VerifyCode(owner, generateCode()));
+			bind(getVerifyCodeStoredKey(), new VerifyCodeWrapper<T>(owner, generateCode()), getVerifyCodeExpireMs());
 		}
 	}
 
@@ -154,20 +159,17 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @return Returns the currently valid verify-code (if create = true, the
 	 *         newly generated value or the old value)
 	 */
-	protected VerifyCode getVerifyCode(boolean assertion) {
+	protected VerifyCodeWrapper<T> getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCode code = getBindValue(storedSessionKey());
-
-		// Assertion
-		long now = System.currentTimeMillis();
-		if (code != null && isNotBlank(code.getText())) {
-			if ((now - code.getCreateTime()) < getExpireMs()) { // Expired?
-				return code;
-			}
+		VerifyCodeWrapper<T> code = getBindValue(getVerifyCodeStoredKey());
+		if (code != null && code.getCode() != null) { // Assertion
+			return code;
 		}
+
 		if (assertion) {
+			long now = System.currentTimeMillis();
 			log.warn("Assertion verifyCode expired. now: {}, createTime: {}, expireMs: {}", now,
-					(code != null ? code.getCreateTime() : null), getExpireMs());
+					(code != null ? code.getCreateTime() : null), getVerifyCodeExpireMs());
 			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
 		}
 		return null;
@@ -176,43 +178,26 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	/**
 	 * Match submitted validation code
 	 * 
-	 * @param storedAttachCode
-	 * @param reqAttachCode
+	 * @param storedCode
+	 * @param reqCode
 	 * @return
 	 */
-	protected boolean doMatch(Object storedAttachCode, String reqAttachCode) {
-		if (isBlank(reqAttachCode)) {
+	protected boolean doMatch(VerifyCodeWrapper<T> storedCode, T reqCode) {
+		if (Objects.isNull(reqCode)) {
 			return false;
 		}
-		if (storedAttachCode instanceof VerifyCode) {
-			VerifyCode vc = (VerifyCode) storedAttachCode;
-			return equalsIgnoreCase(vc.getText(), (CharSequence) reqAttachCode);
-		}
-		return equalsIgnoreCase(String.valueOf(storedAttachCode), reqAttachCode);
+		return String.valueOf(storedCode.getCode()).equalsIgnoreCase(String.valueOf(reqCode));
 	}
 
 	/**
-	 * Generate verify-code text
+	 * Generate verify code
 	 * 
-	 * @return
+	 * @return Verify code object
 	 */
-	protected String generateCode() {
-		return randomAlphabetic(5);
+	@SuppressWarnings("unchecked")
+	protected T generateCode() {
+		return (T) randomAlphabetic(5); // By-default
 	}
-
-	/**
-	 * Stored verification code sessionKey.
-	 * 
-	 * @return
-	 */
-	protected abstract String storedSessionKey();
-
-	/**
-	 * Validity of the verification code (in milliseconds).
-	 * 
-	 * @return
-	 */
-	protected abstract long getExpireMs();
 
 	/**
 	 * Check the number of attempts to apply.
@@ -227,64 +212,106 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			@NotNull List<String> factors);
 
 	/**
-	 * Wrap validation code
+	 * Validity of the verification code (in milliseconds).
+	 * 
+	 * @return
+	 */
+	protected abstract long getVerifyCodeExpireMs();
+
+	/**
+	 * Validity of the verified token (in milliseconds).
+	 * 
+	 * @return
+	 */
+	protected abstract long getVerifiedTokenExpireMs();
+
+	/**
+	 * Get verification code stored sessionKey.
+	 * 
+	 * @return
+	 */
+	private String getVerifyCodeStoredKey() {
+		return "VERIFY_CODE." + verifyType().name();
+	}
+
+	/**
+	 * Get verification code stored sessionKey.
+	 * 
+	 * @return
+	 */
+	private String getVerifiedTokenStoredKey() {
+		return "VERIFIED_TOKEN." + verifyType().name();
+	}
+
+	/**
+	 * Wrapper verify code
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年4月18日
 	 * @since
 	 */
-	public static class VerifyCode implements Serializable {
+	public static class VerifyCodeWrapper<T> implements Serializable {
 		private static final long serialVersionUID = -7643664591972701966L;
 
-		private Object owner;
+		/**
+		 * Authentication code owners, i.e. applicants, such as UUID, session
+		 * Id, principal
+		 */
+		private String owner;
 
-		private String text;
+		/**
+		 * Value of verification code data.
+		 */
+		private T code;
 
+		/**
+		 * Verification code creation time.
+		 */
 		private Long createTime;
 
-		public VerifyCode(String text) {
-			this(null, text, System.currentTimeMillis());
+		public VerifyCodeWrapper(T code) {
+			this(null, code, System.currentTimeMillis());
 		}
 
-		public VerifyCode(Object owner, String text) {
-			this(owner, text, System.currentTimeMillis());
+		public VerifyCodeWrapper(String owner, T code) {
+			this(owner, code, System.currentTimeMillis());
 		}
 
-		public VerifyCode(Object owner, String text, Long createTime) {
-			Assert.hasText(text, "Validte code value is empty, please check configure");
+		public VerifyCodeWrapper(String owner, T code, Long createTime) {
+			Assert.notNull(code, "Verify code is null, please check configure");
 			Assert.notNull(createTime, "CreateTime is null, please check configure");
 			this.owner = owner;
-			this.text = text;
+			this.code = code;
 			this.createTime = createTime;
 		}
 
-		public Object getOwner() {
+		public String getOwner() {
 			return owner;
 		}
 
-		public void setOwner(Object owner) {
+		public void setOwner(String owner) {
 			this.owner = owner;
 		}
 
-		public String getText() {
-			return text;
+		public T getCode() {
+			return code;
 		}
 
-		public void setText(String verifyText) {
-			this.text = verifyText;
+		public void setCode(T code) {
+			this.code = code;
 		}
 
 		public Long getCreateTime() {
 			return createTime;
 		}
 
-		public void setCreateTime(Long timestamp) {
-			this.createTime = timestamp;
+		public void setCreateTime(Long createTime) {
+			this.createTime = createTime;
 		}
 
 		@Override
 		public String toString() {
-			return "VerifyCodeWrap [verifyText=" + text + ", timestamp=" + createTime + "]";
+			return "VerifyCodeWrapper [owner=" + owner + ", code=" + code + ", createTime=" + createTime + "]";
 		}
 
 	}
