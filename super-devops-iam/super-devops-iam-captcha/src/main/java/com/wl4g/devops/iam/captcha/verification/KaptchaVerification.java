@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.Assert;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
-import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
+import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
 
 /**
  * Google KAPTCHA handler.
@@ -34,9 +34,14 @@ import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
  * @date 2018年12月28日
  * @since
  */
-public class KaptchaVerification extends GraphBasedVerification {
+public class KaptchaVerification extends GraphBasedSecurityVerifier {
 
 	private DefaultKaptcha kaptchaProducer;
+
+	@Override
+	public VerifyType verifyType() {
+		return VerifyType.GRAPH_SIMPLE;
+	}
 
 	public KaptchaVerification(DefaultKaptcha kaptchaProducer) {
 		Assert.notNull(kaptchaProducer, "'kaptchaProducer' must not be null");

@@ -19,7 +19,9 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
-import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
+import com.wl4g.devops.iam.handler.verification.cumulation.Cumulator;
+import com.wl4g.devops.iam.handler.verification.cumulation.CumulateHolder;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.slf4j.Logger;
@@ -50,12 +52,12 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
  * @version v1.0 2019年4月16日
  * @since
  */
-public class SmsVerification extends AbstractVerification implements InitializingBean {
+public class SmsSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
 	/**
 	 * Key name used to store authentication code to session
 	 */
-	final public static String KEY_VERIFYCODE_SESSION = SmsVerification.class.getSimpleName() + ".VERIFYCODE";
+	final public static String KEY_VERIFYCODE_SESSION = SmsSecurityVerifier.class.getSimpleName() + ".VERIFYCODE";
 
 	/**
 	 * SMS verification code parameter name,
@@ -79,7 +81,12 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	private Cumulator applySmsCumulator;
 
 	@Override
-	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+	public VerifyType verifyType() {
+		return VerifyType.SMS;
+	}
+
+	@Override
+	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
 			@NotNull HttpServletResponse response) throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
@@ -88,13 +95,13 @@ public class SmsVerification extends AbstractVerification implements Initializin
 		reset(owner, true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getValidateCode(true).getText()));
+		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
 	}
 
 	@Override
 	public boolean isEnabled(@NotNull List<String> factors) {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-		return getValidateCode(false) != null;
+		return getVerifyCode(false) != null;
 	}
 
 	@Override
@@ -103,8 +110,8 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	public ValidateCode getValidateCode(boolean assertion) {
-		return super.getValidateCode(assertion);
+	public VerifyCode getVerifyCode(boolean assertion) {
+		return super.getVerifyCode(assertion);
 	}
 
 	@Override
@@ -137,7 +144,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	protected String storageSessionKey() {
+	protected String storedSessionKey() {
 		return KEY_VERIFYCODE_SESSION;
 	}
 
@@ -157,7 +164,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.applySmsCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+		this.applySmsCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
 				config.getMatcher().getFailFastSmsMaxDelay());
 		Assert.notNull(applySmsCumulator, "applyCumulator is null, please check configure");
 	}
@@ -185,7 +192,7 @@ public class SmsVerification extends AbstractVerification implements Initializin
 	}
 
 	@Override
-	protected void postValidateProperties(String owner) {
+	protected void postVerifyProperties(String owner) {
 		if (log.isInfoEnabled()) {
 			log.info("SMS authc clean with session...");
 		}

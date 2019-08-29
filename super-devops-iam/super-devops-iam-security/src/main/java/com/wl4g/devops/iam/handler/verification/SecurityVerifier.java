@@ -25,29 +25,55 @@ import javax.validation.constraints.NotNull;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 
 /**
- * Verification code handler
+ * Verification handler
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月28日
  * @since
  */
-public abstract interface Verification {
+public abstract interface SecurityVerifier {
 
 	/**
-	 * Check Front-end verification code
+	 * Verifier type definition.
+	 * 
+	 * @return
+	 */
+	VerifyType verifyType();
+
+	/**
+	 * PreCheck and verification of additional code.
 	 * 
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
-	 * @param verifyCodeReq
-	 *            Submitted authentication code token
+	 * @param request
+	 *            HTTP request.
+	 * @return If the check is successful, the token credentials will be
+	 *         returned. If no validation is required, the token credentials
+	 *         will be returned to null, otherwise the exception will be thrown.
+	 * @throws VerificationException
+	 */
+	default String verify(@NotNull List<String> factors, @NotNull HttpServletRequest request) throws VerificationException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Validation front-end verified token.
+	 * 
+	 * @param factors
+	 *            Safety limiting factor(e.g. Client remote IP and login
+	 *            user-name)
+	 * @param verifiedToken
+	 *            The token verified in the previous step. See:
+	 *            {@link #verify(List, HttpServletRequest, boolean)}
 	 * @param required
 	 *            Whether it is necessary to validation (ignore the retry failed
 	 *            cumulative amount)
 	 * @throws VerificationException
 	 */
-	default void validate(@NotNull List<String> factors, String verifyCodeReq, boolean required) throws VerificationException {
+	default void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
+			throws VerificationException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -66,7 +92,7 @@ public abstract interface Verification {
 	 *            HttpServletResponse
 	 * @throws IOException
 	 */
-	default void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+	default void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
 			@NotNull HttpServletResponse response) throws IOException {
 		throw new UnsupportedOperationException();
 	}
@@ -93,7 +119,9 @@ public abstract interface Verification {
 	 */
 	public static enum VerifyType {
 
-		GRAPH_JPEG,
+		GRAPH_DEFAULT,
+
+		GRAPH_SIMPLE,
 
 		GRAPH_GIF,
 

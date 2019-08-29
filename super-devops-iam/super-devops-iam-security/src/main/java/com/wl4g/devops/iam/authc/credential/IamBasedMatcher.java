@@ -30,7 +30,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.handler.verification.Verification;
+import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
 
 /**
  * IAM based matcher
@@ -47,7 +47,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	/**
 	 * IAM verification handler
 	 */
-	final protected Verification verification;
+	final protected SecurityVerifier verification;
 
 	/**
 	 * Matcher configuration properties
@@ -79,7 +79,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
-	public IamBasedMatcher(Verification verification) {
+	public IamBasedMatcher(SecurityVerifier verification) {
 		Assert.notNull(verification, "Verification must not be null");
 		this.verification = verification;
 	}

@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
-import com.wl4g.devops.iam.handler.verification.Verification;
+import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
 
 /**
  * SMS dynamic credential matcher
@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.handler.verification.Verification;
  */
 public class SmsCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
-	public SmsCredentialsHashedMatcher(Verification verification) {
+	public SmsCredentialsHashedMatcher(SecurityVerifier verification) {
 		super(verification);
 	}
 

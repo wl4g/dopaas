@@ -22,20 +22,20 @@ import org.springframework.context.annotation.Configuration;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 
 import com.wl4g.devops.iam.captcha.verification.GifVerification;
-import com.wl4g.devops.iam.handler.verification.DefaultJDKJPEGVerification;
-import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
+import com.wl4g.devops.iam.handler.verification.DefaultJdkJPEGSecurityVerifier;
+import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
 
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.devops.iam.captcha.enabled", matchIfMissing = false)
 public class CaptchaConfiguration {
 
 	/**
-	 * {@link DefaultJDKJPEGVerification} {@link IamConfiguration#captchaHandler}
+	 * {@link DefaultJdkJPEGSecurityVerifier} {@link IamConfiguration#captchaHandler}
 	 * 
 	 * @return
 	 */
 	@Bean(BEAN_GRAPH_VERIFICATION)
-	public GraphBasedVerification graphBasedVerification() {
+	public GraphBasedSecurityVerifier graphBasedVerification() {
 		return new GifVerification();
 	}
 

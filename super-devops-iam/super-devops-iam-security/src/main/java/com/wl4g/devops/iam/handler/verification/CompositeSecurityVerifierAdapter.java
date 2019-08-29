@@ -38,16 +38,21 @@ import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
  * @version v1.0 2019年8月29日
  * @since
  */
-public class CompositeVerificationAdapter implements Verification {
+public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 
 	/**
 	 * Verification definitions.
 	 */
-	final protected Map<VerifyType, Verification> verifications = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<VerifyType, SecurityVerifier> verifications = new OnceModifiableMap<>(new HashMap<>());
 
-	public CompositeVerificationAdapter(Map<VerifyType, Verification> verifications) {
+	public CompositeSecurityVerifierAdapter(Map<VerifyType, SecurityVerifier> verifications) {
 		Assert.state(!isEmpty(verifications), "Verifications has at least one.");
 		this.verifications.putAll(verifications);
+	}
+
+	@Override
+	public VerifyType verifyType() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -56,14 +61,14 @@ public class CompositeVerificationAdapter implements Verification {
 	}
 
 	@Override
-	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
 			@NotNull HttpServletResponse response) throws IOException {
 
 	}
 
 	@Override
 	public boolean isEnabled(@NotNull List<String> factors) {
-		return Verification.super.isEnabled(factors);
+		return SecurityVerifier.super.isEnabled(factors);
 	}
 
 }
