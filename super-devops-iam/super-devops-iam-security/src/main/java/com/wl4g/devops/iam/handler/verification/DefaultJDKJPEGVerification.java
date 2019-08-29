@@ -35,7 +35,7 @@ import java.io.IOException;
  * @date 2018年12月29日
  * @since
  */
-public class DefaultJdkImgVerification extends GraphBasedVerification {
+public class DefaultJDKJPEGVerification extends GraphBasedVerification {
 
 	final private static Random RANDOM = new Random();
 	final private static String DEFAULT_SEED = "abcdefghijklmnopqrstuvwxyz1234567890";

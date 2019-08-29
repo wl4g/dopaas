@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.authc.credential.secure;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
 
 /**
@@ -47,11 +48,11 @@ interface CredentialsSecurer {
 	 * 
 	 * @param token
 	 *            External input principal and credentials
-	 * @param storedCredentials
-	 *            Database storage credentials
+	 * @param info
+	 *            Database storage credentials information.
 	 * @return
 	 */
-	default boolean validate(@NotNull CredentialsToken token, @NotNull String storedCredentials)
+	default boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
 			throws CredentialsException, RuntimeException {
 		throw new UnsupportedOperationException();
 	}
