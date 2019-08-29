@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.handler.verification;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ import com.wl4g.devops.common.exception.iam.VerificationException;
  * @date 2018年12月28日
  * @since
  */
-public abstract interface SecurityVerifier {
+public abstract interface SecurityVerifier<T extends Serializable> {
 
 	/**
 	 * Verifier type definition.
@@ -40,42 +41,6 @@ public abstract interface SecurityVerifier {
 	 * @return
 	 */
 	VerifyType verifyType();
-
-	/**
-	 * PreCheck and verification of additional code.
-	 * 
-	 * @param factors
-	 *            Safety limiting factor(e.g. Client remote IP and login
-	 *            user-name)
-	 * @param request
-	 *            HTTP request.
-	 * @return If the check is successful, the token credentials will be
-	 *         returned. If no validation is required, the token credentials
-	 *         will be returned to null, otherwise the exception will be thrown.
-	 * @throws VerificationException
-	 */
-	default String verify(@NotNull List<String> factors, @NotNull HttpServletRequest request) throws VerificationException {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Validation front-end verified token.
-	 * 
-	 * @param factors
-	 *            Safety limiting factor(e.g. Client remote IP and login
-	 *            user-name)
-	 * @param verifiedToken
-	 *            The token verified in the previous step. See:
-	 *            {@link #verify(List, HttpServletRequest, boolean)}
-	 * @param required
-	 *            Whether it is necessary to validation (ignore the retry failed
-	 *            cumulative amount)
-	 * @throws VerificationException
-	 */
-	default void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
-			throws VerificationException {
-		throw new UnsupportedOperationException();
-	}
 
 	/**
 	 * New apply and output a verification code
@@ -107,6 +72,42 @@ public abstract interface SecurityVerifier {
 	 *         to login with authentication number
 	 */
 	default boolean isEnabled(@NotNull List<String> factors) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * PreCheck and verification of additional code.
+	 * 
+	 * @param factors
+	 *            Safety limiting factor(e.g. Client remote IP and login
+	 *            user-name)
+	 * @param reqCode
+	 *            Request verify code.
+	 * @return If the check is successful, the token credentials will be
+	 *         returned. If no validation is required, the token credentials
+	 *         will be returned to null, otherwise the exception will be thrown.
+	 * @throws VerificationException
+	 */
+	default String verify(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Validation front-end verified token.
+	 * 
+	 * @param factors
+	 *            Safety limiting factor(e.g. Client remote IP and login
+	 *            user-name)
+	 * @param verifiedToken
+	 *            The token verified in the previous step. See:
+	 *            {@link #verify(List, HttpServletRequest, boolean)}
+	 * @param required
+	 *            Whether it is necessary to validation (ignore the retry failed
+	 *            cumulative amount)
+	 * @throws VerificationException
+	 */
+	default void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
+			throws VerificationException {
 		throw new UnsupportedOperationException();
 	}
 

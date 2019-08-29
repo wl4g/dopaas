@@ -52,12 +52,12 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
  * @version v1.0 2019年4月16日
  * @since
  */
-public class SmsSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
+public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implements InitializingBean {
 
 	/**
 	 * Key name used to store authentication code to session
 	 */
-	final public static String KEY_VERIFYCODE_SESSION = SmsSecurityVerifier.class.getSimpleName() + ".VERIFYCODE";
+	final public static String KEY_SESSION_SMS_CODE = SmsSecurityVerifier.class.getSimpleName() + ".SMS_CODE";
 
 	/**
 	 * SMS verification code parameter name,
@@ -95,7 +95,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 		reset(owner, true);
 
 		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getVerifyCode(true).getText()));
+		sender.doSend(determineParameters(request, getVerifyCode(true).getCode()));
 	}
 
 	@Override
@@ -105,12 +105,12 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	}
 
 	@Override
-	public long getExpireMs() {
+	public long getVerifyCodeExpireMs() {
 		return config.getMatcher().getSmsExpireMs();
 	}
 
 	@Override
-	public VerifyCode getVerifyCode(boolean assertion) {
+	public VerifyCodeWrapper<String> getVerifyCode(boolean assertion) {
 		return super.getVerifyCode(assertion);
 	}
 
@@ -145,7 +145,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 	@Override
 	protected String storedSessionKey() {
-		return KEY_VERIFYCODE_SESSION;
+		return KEY_SESSION_SMS_CODE;
 	}
 
 	@Override

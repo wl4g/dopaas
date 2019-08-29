@@ -233,8 +233,14 @@ public abstract class SessionBindings extends Sessions {
 	public static class SessionValueTTL implements Serializable {
 		private static final long serialVersionUID = -5108678535942593956L;
 
+		/**
+		 * Create time.
+		 */
 		final private Long createTime;
 
+		/**
+		 * Expire time.
+		 */
 		final private Long expireMs;
 
 		public SessionValueTTL(Long expireMs) {

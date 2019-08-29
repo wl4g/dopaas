@@ -68,9 +68,8 @@ import com.wl4g.devops.iam.filter.SmsAuthenticationFilter;
 import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
-import com.wl4g.devops.iam.handler.GentralAuthenticationHandler;
+import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
 import com.wl4g.devops.iam.handler.verification.DefaultJdkJPEGSecurityVerifier;
-import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
 import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier;
 import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.SmsHandleSender;
 import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
@@ -154,18 +153,19 @@ public class IamConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher(
-			@Qualifier(BEAN_GRAPH_VERIFICATION) SecurityVerifier verification) {
+			@Qualifier(BEAN_GRAPH_VERIFICATION) SecurityVerifier<?> verification) {
 		return new GeneralCredentialsHashedMatcher(verification);
 	}
 
 	@Bean
-	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(@Qualifier(BEAN_SMS_VERIFICATION) SecurityVerifier verification) {
+	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(
+			@Qualifier(BEAN_SMS_VERIFICATION) SecurityVerifier<?> verification) {
 		return new SmsCredentialsHashedMatcher(verification);
 	}
 
 	@Bean(BEAN_OAUTH2_MATCHER)
 	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher(
-			@Qualifier(BEAN_GRAPH_VERIFICATION) SecurityVerifier verification) {
+			@Qualifier(BEAN_GRAPH_VERIFICATION) SecurityVerifier<?> verification) {
 		return new Oauth2AuthorizingBoundMatcher(verification);
 	}
 
@@ -483,9 +483,9 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public GentralAuthenticationHandler gentralAuthenticationHandler(RestTemplate restTemplate,
+	public CentralAuthenticationHandler centralAuthenticationHandler(RestTemplate restTemplate,
 			ServerSecurityConfigurer configurer) {
-		return new GentralAuthenticationHandler(configurer, restTemplate);
+		return new CentralAuthenticationHandler(configurer, restTemplate);
 	}
 
 	/**
@@ -499,7 +499,7 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean(BEAN_GRAPH_VERIFICATION)
 	@ConditionalOnMissingBean
-	public GraphBasedSecurityVerifier graphBasedVerification() {
+	public DefaultJdkJPEGSecurityVerifier defaultJdkJpegSecurityVerifier() {
 		return new DefaultJdkJPEGSecurityVerifier();
 	}
 

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -39,7 +40,8 @@ import java.util.List;
  * @date 2018年12月28日
  * @since
  */
-public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
+public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends AbstractSecurityVerifier<T>
+		implements InitializingBean {
 
 	/**
 	 * Key name used to store authentication code to session
@@ -90,7 +92,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		reset(owner, true);
 
 		// Create the text for the image and output CAPTCHA image buffer.
-		write(response, getVerifyCode(true).getText());
+		write(response, getVerifyCode(true).getCode());
 	}
 
 	@Override
@@ -129,7 +131,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	}
 
 	@Override
-	protected long getExpireMs() {
+	protected long getVerifyCodeExpireMs() {
 		return config.getMatcher().getCaptchaExpireMs();
 	}
 
