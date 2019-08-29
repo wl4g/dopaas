@@ -18,7 +18,9 @@ package com.wl4g.devops.iam.handler.verification;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
-import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
+import com.wl4g.devops.iam.handler.verification.cumulation.Cumulator;
+import com.wl4g.devops.iam.handler.verification.cumulation.CumulateHolder;
+
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
@@ -37,12 +39,12 @@ import java.util.List;
  * @date 2018年12月28日
  * @since
  */
-public abstract class GraphBasedVerification extends AbstractVerification implements InitializingBean {
+public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
 	/**
 	 * Key name used to store authentication code to session
 	 */
-	final protected static String KEY_CAPTCHA_SESSION = GraphBasedVerification.class.getSimpleName() + ".VERIFYCODE";
+	final protected static String KEY_CAPTCHA_SESSION = GraphBasedSecurityVerifier.class.getSimpleName() + ".VERIFYCODE";
 
 	/**
 	 * Matching attempts accumulator
@@ -68,7 +70,7 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
-	public void apply(Object owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
 			@NotNull HttpServletResponse response) throws IOException {
 		// Check limit attempts
 		checkApplyAttempts(request, response, factors);
@@ -88,7 +90,7 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 		reset(owner, true);
 
 		// Create the text for the image and output CAPTCHA image buffer.
-		write(response, getValidateCode(true).getText());
+		write(response, getVerifyCode(true).getText());
 	}
 
 	@Override
@@ -122,7 +124,7 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	}
 
 	@Override
-	protected String storageSessionKey() {
+	protected String storedSessionKey() {
 		return KEY_CAPTCHA_SESSION;
 	}
 
@@ -173,14 +175,14 @@ public abstract class GraphBasedVerification extends AbstractVerification implem
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();
-		this.matchCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
+		this.matchCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
 				matcher.getFailFastMatchDelay());
-		this.applyCaptchaCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
+		this.applyCaptchaCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
 				matcher.getFailFastCaptchaDelay());
 
-		this.sessionMatchCumulator = Cumulators.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
+		this.sessionMatchCumulator = CumulateHolder.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
 				matcher.getFailFastMatchDelay());
-		this.sessionApplyCaptchaCumulator = Cumulators.newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
+		this.sessionApplyCaptchaCumulator = CumulateHolder.newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
 				matcher.getFailFastCaptchaDelay());
 
 		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");

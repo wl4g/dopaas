@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.iam.authc.CaptchaAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
-import com.wl4g.devops.iam.handler.verification.Verification;
+import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
 
 /**
  * General account credential matcher
@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.handler.verification.Verification;
  */
 public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
-	public GeneralCredentialsHashedMatcher(Verification verification) {
+	public GeneralCredentialsHashedMatcher(SecurityVerifier verification) {
 		super(verification);
 	}
 

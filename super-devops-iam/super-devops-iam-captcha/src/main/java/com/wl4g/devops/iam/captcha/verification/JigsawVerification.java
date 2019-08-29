@@ -25,18 +25,17 @@ import com.wl4g.devops.iam.captcha.gif.Randoms;
 import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
 
 /**
- * GIF CAPTCHA verification handler.
+ * Jigsaw slider CAPTCHA verification handler.
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年12月28日
+ * @author Wangl.sir
+ * @version v1.0 2019年8月28日
  * @since
  */
-public class GifVerification extends GraphBasedSecurityVerifier {
+public class JigsawVerification extends GraphBasedSecurityVerifier {
 
 	@Override
 	public VerifyType verifyType() {
-		return VerifyType.GRAPH_GIF;
+		return VerifyType.GRAPH_JIGSAW;
 	}
 
 	@Override

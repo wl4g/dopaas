@@ -28,14 +28,14 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Default JDK captcha handler
+ * Default JDK CAPTCHA handler.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月29日
  * @since
  */
-public class DefaultJDKJPEGVerification extends GraphBasedVerification {
+public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	final private static Random RANDOM = new Random();
 	final private static String DEFAULT_SEED = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -43,6 +43,11 @@ public class DefaultJDKJPEGVerification extends GraphBasedVerification {
 	final private static int DEFAULT_HEIGHT = 28;
 	final private static int DEFAULT_DROW_NUM = 5;
 	final private static Font DEFAULT_FONT = defaultFont();
+
+	@Override
+	public VerifyType verifyType() {
+		return VerifyType.GRAPH_DEFAULT;
+	}
 
 	@Override
 	protected String generateCode() {

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +34,6 @@ import java.security.spec.RSAPublicKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.shiro.codec.Hex;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import javax.crypto.Cipher;
 
@@ -114,7 +115,7 @@ abstract class Cryptos {
 	final public KeySpecPair generateKeySpecPair() {
 		try {
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance(getAlgorithmPrimary());
-			kpg.initialize(this.getKeyBit());
+			kpg.initialize(getKeyBit());
 			KeyPair keyPair = kpg.generateKeyPair();
 			KeySpec pubKeySepc = keyFactory.getKeySpec(keyPair.getPublic(), getPublicKeySpecClass());
 			KeySpec privKeySepc = keyFactory.getKeySpec(keyPair.getPrivate(), getPrivateKeySpecClass());
@@ -131,7 +132,7 @@ abstract class Cryptos {
 	 * @return
 	 */
 	final public String encrypt(String plaintext) {
-		if (StringUtils.isEmpty(plaintext)) {
+		if (isBlank(plaintext)) {
 			return null;
 		}
 		try {
@@ -151,7 +152,7 @@ abstract class Cryptos {
 	 * @return
 	 */
 	final public String decrypt(String ciphertext) {
-		if (StringUtils.isEmpty(ciphertext)) {
+		if (isBlank(ciphertext)) {
 			return null;
 		}
 		try {
@@ -176,8 +177,8 @@ abstract class Cryptos {
 		Assert.notNull(keySpecPair, "'keySpecPair' must not be null");
 		try {
 			// Get keyPair caching by publicKey and privateKey
-			PublicKey publicKey = this.keyFactory.generatePublic(keySpecPair.getPublicKeySpec());
-			PrivateKey privateKey = this.keyFactory.generatePrivate(keySpecPair.getPrivateKeySpec());
+			PrivateKey key = keyFactory.generatePrivate(keySpecPair.getKeySpec());
+			PublicKey pubKey = keyFactory.generatePublic(keySpecPair.getPubKeySpec());
 
 			// Get current use cipherPair
 			Cipher[] cipherPair = CURRENT_CIPHER_PAIR.get();
@@ -189,8 +190,8 @@ abstract class Cryptos {
 				encryptCipher = Cipher.getInstance(getPadAlgorithm());
 				decryptCipher = Cipher.getInstance(getPadAlgorithm());
 			}
-			encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
-			decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+			decryptCipher.init(Cipher.DECRYPT_MODE, key);
+			encryptCipher.init(Cipher.ENCRYPT_MODE, pubKey);
 
 			// Save to current thread cache
 			CURRENT_CIPHER_PAIR.set(new Cipher[] { encryptCipher, decryptCipher });
@@ -284,27 +285,25 @@ abstract class Cryptos {
 
 		final private int sort;
 		final private String algorithm;
-		final private KeySpec publicKeySpec;
-		final private KeySpec privateKeySpec;
+		final private KeySpec keySpec;
+		final private KeySpec pubKeySpec;
 
 		// Temporary hex string.
-
-		private transient String publicKeyHexString;
-		private transient String privateKeyHexString;
+		private transient String keyHexString;
+		private transient String pubKeyHexString;
 
 		// Temporary base64 string.
+		private transient String keyBase64String;
+		private transient String pubKeyBase64String;
 
-		private transient String publicKeyBase64String;
-		private transient String privateKeyBase64String;
-
-		public KeySpecPair(String algorithm, KeySpec publicKeySpec, KeySpec privateKeySpec) {
+		public KeySpecPair(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
 			Assert.notNull(algorithm, "'algorithm' must not be null");
-			Assert.notNull(publicKeySpec, "'publicKeySpec' must not be null");
-			Assert.notNull(privateKeySpec, "'privateKeySpec' must not be null");
+			Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
+			Assert.notNull(keySpec, "'privateKeySpec' must not be null");
 			this.sort = (int) (Math.random() * 10_0000);
 			this.algorithm = algorithm;
-			this.publicKeySpec = publicKeySpec;
-			this.privateKeySpec = privateKeySpec;
+			this.pubKeySpec = pubKeySpec;
+			this.keySpec = keySpec;
 		}
 
 		public int getSort() {
@@ -315,59 +314,57 @@ abstract class Cryptos {
 			return algorithm;
 		}
 
-		public KeySpec getPublicKeySpec() {
-			return publicKeySpec;
+		public KeySpec getKeySpec() {
+			return keySpec;
 		}
 
-		public KeySpec getPrivateKeySpec() {
-			return privateKeySpec;
+		public KeySpec getPubKeySpec() {
+			return pubKeySpec;
 		}
 
-		public String getPublicHexString() {
-			if (this.publicKeyHexString == null) {
+		public String getHexString() {
+			if (this.keyHexString == null) {
 				try {
-					this.publicKeyHexString = Hex.encodeToString(getKeyFactory().generatePublic(getPublicKeySpec()).getEncoded());
+					this.keyHexString = Hex.encodeToString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
 			}
-			return publicKeyHexString;
+			return keyHexString;
 		}
 
-		public String getPrivateHexString() {
-			if (this.privateKeyHexString == null) {
+		public String getPubHexString() {
+			if (this.pubKeyHexString == null) {
 				try {
-					this.privateKeyHexString = Hex
-							.encodeToString(getKeyFactory().generatePrivate(getPrivateKeySpec()).getEncoded());
+					this.pubKeyHexString = Hex.encodeToString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
 			}
-			return privateKeyHexString;
+			return pubKeyHexString;
 		}
 
-		public String getPublicBase64String() {
-			if (this.publicKeyBase64String == null) {
+		public String getBase64String() {
+			if (this.keyBase64String == null) {
 				try {
-					this.publicKeyBase64String = Base64
-							.encodeBase64String(getKeyFactory().generatePublic(getPublicKeySpec()).getEncoded());
+					this.keyBase64String = Base64.encodeBase64String(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
 			}
-			return publicKeyBase64String;
+			return keyBase64String;
 		}
 
-		public String getPrivateBase64String() {
-			if (this.privateKeyBase64String == null) {
+		public String getPubBase64String() {
+			if (this.pubKeyBase64String == null) {
 				try {
-					this.privateKeyBase64String = Base64
-							.encodeBase64String(getKeyFactory().generatePrivate(getPrivateKeySpec()).getEncoded());
+					this.pubKeyBase64String = Base64
+							.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
 			}
-			return privateKeyBase64String;
+			return pubKeyBase64String;
 		}
 
 		private KeyFactory getKeyFactory() {
@@ -389,8 +386,8 @@ abstract class Cryptos {
 
 		@Override
 		public String toString() {
-			return "KeySpecPair [sort=" + getSort() + "algorithm=" + getAlgorithm() + ", publicKeyString=" + getPublicHexString()
-					+ ", privateKeyString=" + getPrivateHexString() + "]";
+			return "KeySpecPair [sort=" + getSort() + "algorithm=" + getAlgorithm() + ", publicKeyString=" + getPubHexString()
+					+ ", privateKeyString=" + getHexString() + "]";
 		}
 
 	}

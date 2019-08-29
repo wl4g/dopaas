@@ -32,9 +32,9 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
-import com.wl4g.devops.iam.handler.verification.SmsVerification;
-import com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber;
+import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
+import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier;
+import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.MobileNumber;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
@@ -50,8 +50,8 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_SMS_VERIFICATION;
-import static com.wl4g.devops.iam.handler.verification.SmsVerification.*;
-import static com.wl4g.devops.iam.handler.verification.SmsVerification.MobileNumber.parse;
+import static com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.*;
+import static com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.MobileNumber.parse;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -71,13 +71,13 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * Graphic verification handler
 	 */
 	@Resource(name = BEAN_GRAPH_VERIFICATION)
-	protected GraphBasedVerification graphVerification;
+	protected GraphBasedSecurityVerifier graphVerification;
 
 	/**
 	 * SMS verification handler
 	 */
 	@Resource(name = BEAN_SMS_VERIFICATION)
-	protected SmsVerification smsVerification;
+	protected SmsSecurityVerifier smsVerification;
 
 	/**
 	 * IAM credentials securer
@@ -173,7 +173,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * verification code).
 			 */
 			Long remainingDelay = null;
-			ValidateCode code = smsVerification.getValidateCode(false);
+			VerifyCode code = smsVerification.getVerifyCode(false);
 			if (code != null) {
 				remainingDelay = getSmsRemainingDelay(code);
 			}
@@ -251,19 +251,16 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// Lock factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
 
-			// Request CAPTCHA
-			String captcha = getCleanParam(request, config.getParam().getAttachCodeName());
 			// Graph validation
-			graphVerification.validate(factors, captcha, false);
+			graphVerification.validate(factors, getCleanParam(request, config.getParam().getAttachCodeName()), false);
 
-			// Apply SMS verify-code
-			smsVerification.apply(mn.getNumber(), factors, request, response);
+			// Apply SMS verify code.
+			smsVerification.apply(mn.asNumberText(), factors, request, response);
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
-			ValidateCode code = smsVerification.getValidateCode(true);
+			VerifyCode code = smsVerification.getVerifyCode(true);
 			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mn.getNumber(), getSmsRemainingDelay(code)));
-
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				resp.setCode(RetCode.BIZ_ERR);
@@ -305,7 +302,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * @param code
 	 * @return
 	 */
-	private long getSmsRemainingDelay(ValidateCode code) {
+	private long getSmsRemainingDelay(VerifyCode code) {
 		// remainMs = NowTime - CreateTime - DelayTime
 		long now = System.currentTimeMillis();
 		return Math.max(config.getMatcher().getFailFastSmsDelay() - (now - code.getCreateTime()), 0);

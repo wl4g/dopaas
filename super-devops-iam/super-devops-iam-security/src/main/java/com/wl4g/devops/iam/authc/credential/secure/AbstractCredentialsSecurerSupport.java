@@ -170,9 +170,9 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 		if (log.isInfoEnabled()) {
 			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
-					index, keyPair.getPublicHexString(), keyPair.getPrivateHexString());
+					index, keyPair.getPubHexString(), keyPair.getHexString());
 		}
-		return keyPair.getPublicHexString();
+		return keyPair.getPubHexString();
 	}
 
 	/**
@@ -237,13 +237,13 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		KeySpecPair keySpecPair = determineSecretKeySpecPair(token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
-			String publicBase64String = keySpecPair.getPublicHexString();
+			String publicBase64String = keySpecPair.getPubHexString();
 			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
 			String privateBase64String = "Not output";
 			boolean output = true;
 
 			if (log.isDebugEnabled() || output) {
-				privateBase64String = keySpecPair.getPrivateBase64String();
+				privateBase64String = keySpecPair.getBase64String();
 				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			} else {
 				log.info(pattern, token.getPrincipal(), publicBase64String, privateBase64String);

@@ -37,6 +37,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -52,7 +53,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
  * @date 2018年12月28日
  * @since
  */
-public abstract class AbstractVerification implements Verification {
+public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -81,10 +82,10 @@ public abstract class AbstractVerification implements Verification {
 	protected SessionDelegateMessageBundle bundle;
 
 	@Override
-	public void validate(@NotNull List<String> factors, String validateCodeReq, boolean required) throws VerificationException {
+	public String verify(@NotNull List<String> factors, @NotNull HttpServletRequest request) throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
 
-		ValidateCode code = null;
+		VerifyCode storedAttachCode = null;
 		try {
 			/*
 			 * If required is true, the forced verification policy is executed,
@@ -92,29 +93,40 @@ public abstract class AbstractVerification implements Verification {
 			 * the verification needs to be started only when the number of
 			 * times is retried).
 			 */
-			if (!(required || isEnabled(factors))) {
-				return; // not enabled
+			if (!isEnabled(factors)) {
+				return null; // not enabled
 			}
-			// Store the validate code
-			code = getValidateCode(true);
-			if (!doMatch(code, validateCodeReq)) {
+
+			// Request attach code
+			String reqAttachCode = getCleanParam(request, config.getParam().getAttachCodeName());
+			// Store validate code
+			storedAttachCode = getVerifyCode(true);
+			if (!doMatch(storedAttachCode, reqAttachCode)) {
 				if (log.isErrorEnabled()) {
-					log.error("Verification mismatched. {} => {}", validateCodeReq, code);
+					log.error("Verification mismatched. {} => {}", reqAttachCode, storedAttachCode);
 				}
-				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", validateCodeReq));
+				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", reqAttachCode));
 			}
 		} finally {
-			postValidateProperties((code != null) ? code.getText() : null);
+			postVerifyProperties((storedAttachCode != null) ? storedAttachCode.getText() : null);
 		}
+
+		return null;
+	}
+
+	@Override
+	public void validate(@NotNull List<String> factors, @NotNull String verifyToken, boolean required)
+			throws VerificationException {
+
 	}
 
 	/**
-	 * Post validation properties.
+	 * Post verification properties.
 	 * 
 	 * @param owner
 	 *            Validate code owner(Optional).
 	 */
-	protected void postValidateProperties(String owner) {
+	protected void postVerifyProperties(String owner) {
 		reset(owner, false); // Reset or create
 	}
 
@@ -123,28 +135,28 @@ public abstract class AbstractVerification implements Verification {
 	 * 
 	 * @param owner
 	 *            Validate code owner(Optional).
-	 * @param create
+	 * @param renew
 	 *            is new create.
 	 */
-	protected void reset(Object owner, boolean create) {
-		unbind(storageSessionKey());
-		if (create) {
+	protected void reset(String owner, boolean renew) {
+		unbind(storedSessionKey());
+		if (renew) {
 			// Store verify-code in the session
-			bind(storageSessionKey(), new ValidateCode(owner, generateCode()));
+			bind(storedSessionKey(), new VerifyCode(owner, generateCode()));
 		}
 	}
 
 	/**
-	 * Get stored validate code of session
+	 * Get stored verify code of session
 	 * 
 	 * @param assertion
 	 *            Do you need to assertion
 	 * @return Returns the currently valid verify-code (if create = true, the
 	 *         newly generated value or the old value)
 	 */
-	protected ValidateCode getValidateCode(boolean assertion) {
+	protected VerifyCode getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		ValidateCode code = getBindValue(storageSessionKey());
+		VerifyCode code = getBindValue(storedSessionKey());
 
 		// Assertion
 		long now = System.currentTimeMillis();
@@ -153,37 +165,30 @@ public abstract class AbstractVerification implements Verification {
 				return code;
 			}
 		}
-
 		if (assertion) {
 			log.warn("Assertion verifyCode expired. now: {}, createTime: {}, expireMs: {}", now,
 					(code != null ? code.getCreateTime() : null), getExpireMs());
 			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
 		}
-
 		return null;
 	}
 
 	/**
 	 * Match submitted validation code
 	 * 
-	 * @param verifyCode
-	 * @param verifyCodeReq
+	 * @param storedAttachCode
+	 * @param reqAttachCode
 	 * @return
 	 */
-	/**
-	 * @param validateCode
-	 * @param validateCodeReq
-	 * @return
-	 */
-	protected boolean doMatch(Object validateCode, String validateCodeReq) {
-		if (isBlank(validateCodeReq)) {
+	protected boolean doMatch(Object storedAttachCode, String reqAttachCode) {
+		if (isBlank(reqAttachCode)) {
 			return false;
 		}
-		if (validateCode instanceof ValidateCode) {
-			ValidateCode vc = (ValidateCode) validateCode;
-			return equalsIgnoreCase(vc.getText(), (CharSequence) validateCodeReq);
+		if (storedAttachCode instanceof VerifyCode) {
+			VerifyCode vc = (VerifyCode) storedAttachCode;
+			return equalsIgnoreCase(vc.getText(), (CharSequence) reqAttachCode);
 		}
-		return equalsIgnoreCase(String.valueOf(validateCode), validateCodeReq);
+		return equalsIgnoreCase(String.valueOf(storedAttachCode), reqAttachCode);
 	}
 
 	/**
@@ -200,7 +205,7 @@ public abstract class AbstractVerification implements Verification {
 	 * 
 	 * @return
 	 */
-	protected abstract String storageSessionKey();
+	protected abstract String storedSessionKey();
 
 	/**
 	 * Validity of the verification code (in milliseconds).
@@ -228,7 +233,7 @@ public abstract class AbstractVerification implements Verification {
 	 * @version v1.0 2019年4月18日
 	 * @since
 	 */
-	public static class ValidateCode implements Serializable {
+	public static class VerifyCode implements Serializable {
 		private static final long serialVersionUID = -7643664591972701966L;
 
 		private Object owner;
@@ -237,15 +242,15 @@ public abstract class AbstractVerification implements Verification {
 
 		private Long createTime;
 
-		public ValidateCode(String text) {
+		public VerifyCode(String text) {
 			this(null, text, System.currentTimeMillis());
 		}
 
-		public ValidateCode(Object owner, String text) {
+		public VerifyCode(Object owner, String text) {
 			this(owner, text, System.currentTimeMillis());
 		}
 
-		public ValidateCode(Object owner, String text, Long createTime) {
+		public VerifyCode(Object owner, String text, Long createTime) {
 			Assert.hasText(text, "Validte code value is empty, please check configure");
 			Assert.notNull(createTime, "CreateTime is null, please check configure");
 			this.owner = owner;
