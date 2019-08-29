@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.context;
+package com.wl4g.devops.iam.configure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
  * @since
  */
 @Service
-public class StandardSecurityHandlerContext implements ServerSecurityConfigurer {
+public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,

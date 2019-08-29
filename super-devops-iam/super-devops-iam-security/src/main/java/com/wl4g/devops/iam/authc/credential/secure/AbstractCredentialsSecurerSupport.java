@@ -23,6 +23,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
+import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.crypto.hash.Hash;
@@ -132,21 +133,22 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	@Override
-	public boolean validate(@NotNull CredentialsToken token, @NotNull String storedCredentials)
+	public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
 			throws CredentialsException, RuntimeException {
 		/*
 		 * Password is a string that may be set to empty.
 		 * See:xx.realm.GeneralAuthorizingRealm#doAuthenticationInfo
 		 */
-		Assert.notNull(storedCredentials, "Stored credentials is null, please check configure");
+		Assert.notNull(info, "Stored credentials info is null, please check configure");
+		Assert.notNull(info.getCredentials(), "Stored credentials is null, please check configure");
 
 		// Delegate validate
 		if (delegate != null && !token.isResolved()) {
-			return delegate.validate(resolves(token), storedCredentials);
+			return delegate.validate(resolves(token), info);
 		}
 
 		// Compare request credentials with storage credentials
-		return MessageDigest.isEqual(toBytes(signature(token)), toBytes(storedCredentials));
+		return MessageDigest.isEqual(toBytes(signature(token)), toBytes(info.getCredentials()));
 	}
 
 	@Override

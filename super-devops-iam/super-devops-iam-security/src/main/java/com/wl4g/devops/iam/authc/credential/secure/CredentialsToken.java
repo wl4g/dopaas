@@ -28,12 +28,22 @@ import org.springframework.util.Assert;
  */
 public final class CredentialsToken {
 
+	/**
+	 * Request authentication principal.
+	 */
 	@NotBlank
 	final private String principal;
 
+	/**
+	 * Request authentication credentials.
+	 */
 	@NotBlank
 	final private String credentials;
 
+	/**
+	 * Whether the tag has resolved the encrypted password passed from the front
+	 * end.
+	 */
 	final private boolean resolved;
 
 	public CredentialsToken(CredentialsToken token, boolean solved) {

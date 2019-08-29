@@ -41,7 +41,7 @@ public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 	@Override
 	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
 		CredentialsToken credentialsToken = new CredentialsToken((String) token.getPrincipal(), (String) token.getCredentials());
-		return securer.validate(credentialsToken, (String) info.getCredentials());
+		return securer.validate(credentialsToken, info);
 	}
 
 	@Override
