@@ -83,7 +83,7 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 				log.info("Connected to redis cluster to: {}", haps);
 			}
 		} catch (Exception e) {
-			throw new IllegalStateException(String.format("Can't connect to redis cluster: ", haps), e);
+			throw new IllegalStateException(String.format("Can't connect to redis cluster: %s", haps), e);
 		}
 	}
 
