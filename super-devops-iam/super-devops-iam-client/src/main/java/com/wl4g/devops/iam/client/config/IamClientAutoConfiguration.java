@@ -58,7 +58,7 @@ import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 
-public class IamClientConfiguration extends AbstractIamConfiguration {
+public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
 	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
 	final private static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";

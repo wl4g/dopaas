@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.config;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,6 +84,7 @@ import com.wl4g.devops.iam.realm.TwitterAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatMpAuthorizingRealm;
 import com.wl4g.devops.iam.session.mgt.IamServerSessionManager;
+import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.DefaultJdkJPEGSecurityVerifier;
 import com.wl4g.devops.iam.verification.SecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
@@ -150,18 +152,18 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher(SecurityVerifier<?> verification) {
-		return new GeneralCredentialsHashedMatcher(verification);
+	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher(CompositeSecurityVerifierAdapter verifier) {
+		return new GeneralCredentialsHashedMatcher(verifier);
 	}
 
 	@Bean
-	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(SecurityVerifier<?> verification) {
-		return new SmsCredentialsHashedMatcher(verification);
+	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(CompositeSecurityVerifierAdapter verifier) {
+		return new SmsCredentialsHashedMatcher(verifier);
 	}
 
 	@Bean(BEAN_OAUTH2_MATCHER)
-	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher(SecurityVerifier<?> verification) {
-		return new Oauth2AuthorizingBoundMatcher(verification);
+	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher(CompositeSecurityVerifierAdapter verifier) {
+		return new Oauth2AuthorizingBoundMatcher(verifier);
 	}
 
 	// ==============================
@@ -483,15 +485,23 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 		return new CentralAuthenticationHandler(configurer, restTemplate);
 	}
 
+	// ==============================
+	// Security verification's
+	// ==============================
+
 	/**
-	 * {@link com.wl4g.devops.iam.captcha.config.KaptchaConfiguration#verification}
-	 * {@link com.wl4g.devops.iam.captcha.handler.KaptchaCaptchaHandler}. <br/>
-	 * Notes for using `@ConditionalOnMissingBean': 1, `@Bean'method return
-	 * value type must be the type using `@Autowired' annotation; 2, or use
-	 * `Conditional OnMissing Bean'(MyInterface. class) in this way.`
+	 * {@link com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier}.
+	 * {@link com.wl4g.devops.iam.captcha.verification.KaptchaSecurityVerifier}.
+	 * {@link com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier}.
 	 * 
 	 * @return
 	 */
+	@Bean
+	public CompositeSecurityVerifierAdapter compositeSecurityVerifierAdapter(
+			List<SecurityVerifier<? extends Serializable>> verifiers) {
+		return new CompositeSecurityVerifierAdapter(verifiers);
+	}
+
 	@Bean
 	public DefaultJdkJPEGSecurityVerifier defaultJdkJPEGSecurityVerifier() {
 		return new DefaultJdkJPEGSecurityVerifier();

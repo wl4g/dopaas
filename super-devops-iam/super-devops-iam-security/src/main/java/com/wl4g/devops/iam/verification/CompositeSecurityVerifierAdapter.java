@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.verification;
 
+import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.IOException;
@@ -44,11 +45,11 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier<Serial
 	/**
 	 * Verification registry.
 	 */
-	final protected Map<VerifyType, SecurityVerifier<Serializable>> registry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<VerifyType, SecurityVerifier<? extends Serializable>> registry = new OnceModifiableMap<>(new HashMap<>());
 
-	public CompositeSecurityVerifierAdapter(Map<VerifyType, SecurityVerifier<Serializable>> verifications) {
-		Assert.state(!isEmpty(verifications), "Verifications has at least one.");
-		this.registry.putAll(verifications);
+	public CompositeSecurityVerifierAdapter(List<SecurityVerifier<? extends Serializable>> verifiers) {
+		Assert.state(!isEmpty(verifiers), "Verifications has at least one.");
+		this.registry.putAll(verifiers.stream().collect(toMap(SecurityVerifier::verifyType, verifier -> verifier)));
 	}
 
 	@Override
