@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.authc.credential.secure;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,9 +39,9 @@ public abstract class CredentialsSecurerAdapter implements CredentialsSecurer {
 	}
 
 	@Override
-	public boolean validate(@NotNull CredentialsToken token, String storedCredentials)
+	public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
 			throws CredentialsException, RuntimeException {
-		return securer.validate(token, storedCredentials);
+		return securer.validate(token, info);
 	}
 
 }

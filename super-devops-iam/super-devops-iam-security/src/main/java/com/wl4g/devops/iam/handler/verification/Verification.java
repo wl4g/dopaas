@@ -84,4 +84,23 @@ public abstract interface Verification {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Verification type definition.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月29日
+	 * @since
+	 */
+	public static enum VerifyType {
+
+		GRAPH_JPEG,
+
+		GRAPH_GIF,
+
+		GRAPH_JIGSAW,
+
+		SMS;
+
+	}
+
 }

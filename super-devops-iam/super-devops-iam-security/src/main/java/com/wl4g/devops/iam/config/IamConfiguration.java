@@ -69,7 +69,7 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.GentralAuthenticationHandler;
-import com.wl4g.devops.iam.handler.verification.DefaultJdkImgVerification;
+import com.wl4g.devops.iam.handler.verification.DefaultJDKJPEGVerification;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification;
 import com.wl4g.devops.iam.handler.verification.SmsVerification.SmsHandleSender;
@@ -500,7 +500,7 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	@Bean(BEAN_GRAPH_VERIFICATION)
 	@ConditionalOnMissingBean
 	public GraphBasedVerification graphBasedVerification() {
-		return new DefaultJdkImgVerification();
+		return new DefaultJDKJPEGVerification();
 	}
 
 	@Bean(BEAN_SMS_VERIFICATION)

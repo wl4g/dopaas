@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import static com.wl4g.devops.iam.config.IamConfiguration.BEAN_GRAPH_VERIFICATION;
 
 import com.wl4g.devops.iam.captcha.verification.GifVerification;
-import com.wl4g.devops.iam.handler.verification.DefaultJdkImgVerification;
+import com.wl4g.devops.iam.handler.verification.DefaultJDKJPEGVerification;
 import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 
 @Configuration
@@ -30,7 +30,7 @@ import com.wl4g.devops.iam.handler.verification.GraphBasedVerification;
 public class CaptchaConfiguration {
 
 	/**
-	 * {@link DefaultJdkImgVerification} {@link IamConfiguration#captchaHandler}
+	 * {@link DefaultJDKJPEGVerification} {@link IamConfiguration#captchaHandler}
 	 * 
 	 * @return
 	 */

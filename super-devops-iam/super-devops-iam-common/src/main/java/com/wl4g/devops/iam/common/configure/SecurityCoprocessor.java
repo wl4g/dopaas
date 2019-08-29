@@ -40,6 +40,17 @@ import javax.servlet.ServletResponse;
 public interface SecurityCoprocessor {
 
 	/**
+	 * Before get session ID.
+	 * 
+	 * @param request
+	 * @param response
+	 * @return Returning to a non-empty SID will be preferred.
+	 */
+	default String preGetSessionId(ServletRequest request, ServletResponse response) {
+		return null;
+	}
+
+	/**
 	 * Call pre authentication, For example, the implementation of restricting
 	 * client IP white-list to prevent violent cracking of large number of
 	 * submission login requests.
@@ -64,17 +75,6 @@ public interface SecurityCoprocessor {
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
-	}
-
-	/**
-	 * Before get session ID.
-	 * 
-	 * @param request
-	 * @param response
-	 * @return Returning to a non-empty SID will be preferred.
-	 */
-	default String preGetSessionId(ServletRequest request, ServletResponse response) {
-		return null;
 	}
 
 	/**
