@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler.verification;
+package com.wl4g.devops.iam.verification;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,6 +36,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -79,6 +80,29 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
+	/**
+	 * Get stored verify code of session
+	 * 
+	 * @param assertion
+	 *            Do you need to assertion
+	 * @return Returns the currently valid verify-code (if create = true, the
+	 *         newly generated value or the old value)
+	 */
+	@Override
+	public VerifyCodeWrapper<T> getVerifyCode(boolean assertion) {
+		// Already created verify-code
+		VerifyCodeWrapper<T> code = getBindValue(getVerifyCodeStoredKey());
+		if (code != null && code.getCode() != null) { // Assertion
+			return code;
+		}
+
+		if (assertion) {
+			log.warn("Assertion verifyCode expired. expireMs: {}", getVerifyCodeExpireMs());
+			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
+		}
+		return null;
+	}
+
 	@Override
 	public String verify(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty");
@@ -120,9 +144,20 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	@Override
 	public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
 			throws VerificationException {
+		// No verification required.
+		if (!(required || isEnabled(factors))) {
+			return;
+		}
+
+		// Check stored token.
 		String storedVerifiedToken = getBindValue(getVerifiedTokenStoredKey(), true);
-		Assert.hasText(storedVerifiedToken, bundle.getMessage("General.parameter.invalid"));
-		Assert.state(StringUtils.equals(storedVerifiedToken, verifiedToken), bundle.getMessage("General.parameter.illegal"));
+		if (isBlank(storedVerifiedToken)) {
+			throw new VerificationException(bundle.getMessage("General.parameter.invalid"));
+		}
+		// Assertion verified token.
+		if (!StringUtils.equals(storedVerifiedToken, verifiedToken)) {
+			throw new VerificationException(bundle.getMessage("General.parameter.illegal"));
+		}
 	}
 
 	/**
@@ -149,30 +184,6 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 			// Store verify-code in the session
 			bind(getVerifyCodeStoredKey(), new VerifyCodeWrapper<T>(owner, generateCode()), getVerifyCodeExpireMs());
 		}
-	}
-
-	/**
-	 * Get stored verify code of session
-	 * 
-	 * @param assertion
-	 *            Do you need to assertion
-	 * @return Returns the currently valid verify-code (if create = true, the
-	 *         newly generated value or the old value)
-	 */
-	protected VerifyCodeWrapper<T> getVerifyCode(boolean assertion) {
-		// Already created verify-code
-		VerifyCodeWrapper<T> code = getBindValue(getVerifyCodeStoredKey());
-		if (code != null && code.getCode() != null) { // Assertion
-			return code;
-		}
-
-		if (assertion) {
-			long now = System.currentTimeMillis();
-			log.warn("Assertion verifyCode expired. now: {}, createTime: {}, expireMs: {}", now,
-					(code != null ? code.getCreateTime() : null), getVerifyCodeExpireMs());
-			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
-		}
-		return null;
 	}
 
 	/**
@@ -241,79 +252,6 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	 */
 	private String getVerifiedTokenStoredKey() {
 		return "VERIFIED_TOKEN." + verifyType().name();
-	}
-
-	/**
-	 * Wrapper verify code
-	 * 
-	 * @author wangl.sir
-	 * @version v1.0 2019年4月18日
-	 * @since
-	 */
-	public static class VerifyCodeWrapper<T> implements Serializable {
-		private static final long serialVersionUID = -7643664591972701966L;
-
-		/**
-		 * Authentication code owners, i.e. applicants, such as UUID, session
-		 * Id, principal
-		 */
-		private String owner;
-
-		/**
-		 * Value of verification code data.
-		 */
-		private T code;
-
-		/**
-		 * Verification code creation time.
-		 */
-		private Long createTime;
-
-		public VerifyCodeWrapper(T code) {
-			this(null, code, System.currentTimeMillis());
-		}
-
-		public VerifyCodeWrapper(String owner, T code) {
-			this(owner, code, System.currentTimeMillis());
-		}
-
-		public VerifyCodeWrapper(String owner, T code, Long createTime) {
-			Assert.notNull(code, "Verify code is null, please check configure");
-			Assert.notNull(createTime, "CreateTime is null, please check configure");
-			this.owner = owner;
-			this.code = code;
-			this.createTime = createTime;
-		}
-
-		public String getOwner() {
-			return owner;
-		}
-
-		public void setOwner(String owner) {
-			this.owner = owner;
-		}
-
-		public T getCode() {
-			return code;
-		}
-
-		public void setCode(T code) {
-			this.code = code;
-		}
-
-		public Long getCreateTime() {
-			return createTime;
-		}
-
-		public void setCreateTime(Long createTime) {
-			this.createTime = createTime;
-		}
-
-		@Override
-		public String toString() {
-			return "VerifyCodeWrapper [owner=" + owner + ", code=" + code + ", createTime=" + createTime + "]";
-		}
-
 	}
 
 }

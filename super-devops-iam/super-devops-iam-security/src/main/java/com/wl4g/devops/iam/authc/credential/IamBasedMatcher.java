@@ -30,7 +30,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.SecurityVerifier;
 
 /**
  * IAM based matcher

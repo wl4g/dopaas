@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler.verification;
+package com.wl4g.devops.iam.verification;
 
+import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import com.wl4g.devops.common.exception.iam.VerificationException;
+import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
-import com.wl4g.devops.iam.handler.verification.cumulation.Cumulator;
-import com.wl4g.devops.iam.handler.verification.cumulation.CumulateHolder;
+import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,24 +45,19 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 		implements InitializingBean {
 
 	/**
-	 * Key name used to store authentication code to session
-	 */
-	final protected static String KEY_CAPTCHA_SESSION = GraphBasedSecurityVerifier.class.getSimpleName() + ".VERIFYCODE";
-
-	/**
 	 * Matching attempts accumulator
 	 */
 	private Cumulator matchCumulator;
 
 	/**
-	 * Apply CAPTCHA attempts accumulator
-	 */
-	private Cumulator applyCaptchaCumulator;
-
-	/**
 	 * Apply CAPTCHA attempts accumulator.(Session-based)
 	 */
 	private Cumulator sessionMatchCumulator;
+
+	/**
+	 * Apply CAPTCHA attempts accumulator
+	 */
+	private Cumulator applyCaptchaCumulator;
 
 	/**
 	 * Apply CAPTCHA attempts accumulator.(Session-based)
@@ -126,13 +122,13 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 	}
 
 	@Override
-	protected String storedSessionKey() {
-		return KEY_CAPTCHA_SESSION;
+	protected long getVerifyCodeExpireMs() {
+		return config.getMatcher().getCaptchaExpireMs();
 	}
 
 	@Override
-	protected long getVerifyCodeExpireMs() {
-		return config.getMatcher().getCaptchaExpireMs();
+	protected long getVerifiedTokenExpireMs() {
+		return 30_000;
 	}
 
 	@Override
@@ -172,25 +168,34 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 	 * @param verifyCode
 	 * @return
 	 */
-	protected abstract void write(HttpServletResponse response, String verifyCode) throws IOException;
+	protected abstract void write(HttpServletResponse response, T verifyCode) throws IOException;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();
-		this.matchCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
-				matcher.getFailFastMatchDelay());
-		this.applyCaptchaCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
-				matcher.getFailFastCaptchaDelay());
+		// Match accumulator.
+		this.matchCumulator = newCumulator(getCache(CACHE_FAILFAST_MATCH_COUNTER), matcher.getFailFastMatchDelay());
+		this.sessionMatchCumulator = newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER, matcher.getFailFastMatchDelay());
 
-		this.sessionMatchCumulator = CumulateHolder.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
-				matcher.getFailFastMatchDelay());
-		this.sessionApplyCaptchaCumulator = CumulateHolder.newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
+		// CAPTCHA accumulator.
+		this.applyCaptchaCumulator = newCumulator(getCache(CACHE_FAILFAST_CAPTCHA_COUNTER), matcher.getFailFastCaptchaDelay());
+		this.sessionApplyCaptchaCumulator = newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
 				matcher.getFailFastCaptchaDelay());
 
 		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
-		Assert.notNull(applyCaptchaCumulator, "applyCumulator is null, please check configure");
 		Assert.notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
+		Assert.notNull(applyCaptchaCumulator, "applyCumulator is null, please check configure");
 		Assert.notNull(sessionApplyCaptchaCumulator, "sessionApplyCumulator is null, please check configure");
+	}
+
+	/**
+	 * Get enhanced cache.
+	 * 
+	 * @param suffix
+	 * @return
+	 */
+	private EnhancedCache getCache(String suffix) {
+		return cacheManager.getEnhancedCache(verifyType().name() + suffix);
 	}
 
 }

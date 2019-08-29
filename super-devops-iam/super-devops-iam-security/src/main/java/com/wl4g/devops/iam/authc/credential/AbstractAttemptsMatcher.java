@@ -19,9 +19,9 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
-import com.wl4g.devops.iam.handler.verification.cumulation.Cumulator;
-import com.wl4g.devops.iam.handler.verification.cumulation.CumulateHolder;
+import com.wl4g.devops.iam.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.cumulation.CumulateHolder;
+import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;

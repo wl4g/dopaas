@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.shiro.session.InvalidSessionException;
 import org.springframework.util.Assert;
 
 /**
@@ -91,7 +92,7 @@ public abstract class SessionBindings extends Sessions {
 	 *            Whether to UN-bundle
 	 * @return
 	 */
-	public static <T> T getBindValue(String sessionKey, boolean unbind) {
+	public static <T> T getBindValue(String sessionKey, boolean unbind) throws InvalidSessionException {
 		try {
 			return getBindValue(sessionKey);
 		} finally {
@@ -111,7 +112,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getBindValue(String sessionKey) {
+	public static <T> T getBindValue(String sessionKey) throws InvalidSessionException {
 		Assert.hasText(sessionKey, "Session key must not be empty.");
 		// Get bind value.
 		T value = (T) getSession().getAttribute(sessionKey);
@@ -134,7 +135,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> T extParameterValue(String sessionKey, String paramKey) {
+	public static <T> T extParameterValue(String sessionKey, String paramKey) throws InvalidSessionException {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
 		Assert.notNull(paramKey, "'paramKey' must not be null");
 
@@ -152,7 +153,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @param sessionKey
 	 * @param keyValues
 	 */
-	public static void bindKVParameters(String sessionKey, Object... keyValues) {
+	public static void bindKVParameters(String sessionKey, Object... keyValues) throws InvalidSessionException {
 		Assert.hasText(sessionKey, "'sessionKey' must not be null");
 		Assert.notEmpty(keyValues, "'keyValues' must not be null");
 		Assert.isTrue(keyValues.length % 2 == 0, "Illegal 'keyValues' length");
@@ -181,7 +182,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @param expireMs
 	 * @return
 	 */
-	public static <T> T bind(String sessionKey, T value, long expireMs) {
+	public static <T> T bind(String sessionKey, T value, long expireMs) throws InvalidSessionException {
 		Assert.isTrue(expireMs > 0, "Expire time must be greater than 0");
 		bind(sessionKey, value);
 		bind(getExpireKey(sessionKey), new SessionValueTTL(expireMs));
@@ -194,7 +195,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @param sessionKey
 	 * @param value
 	 */
-	public static <T> T bind(String sessionKey, T value) {
+	public static <T> T bind(String sessionKey, T value) throws InvalidSessionException {
 		Assert.hasText(sessionKey, "Session key must not be empty.");
 		getSession().setAttribute(sessionKey, value);
 		return value;
@@ -206,7 +207,7 @@ public abstract class SessionBindings extends Sessions {
 	 * @param sessionKey
 	 * @return
 	 */
-	public static boolean unbind(String sessionKey) {
+	public static boolean unbind(String sessionKey) throws InvalidSessionException {
 		Assert.notNull(sessionKey, "'sessionKey' must not be null");
 		getSession().removeAttribute(getExpireKey(sessionKey)); // TTL-attribute?
 		return getSession().removeAttribute(sessionKey) != null;

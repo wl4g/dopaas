@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler.verification;
+package com.wl4g.devops.iam.verification;
 
 import java.util.Random;
 
@@ -35,7 +35,7 @@ import java.io.IOException;
  * @date 2018年12月29日
  * @since
  */
-public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
+public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier<String> {
 
 	final private static Random RANDOM = new Random();
 	final private static String DEFAULT_SEED = "abcdefghijklmnopqrstuvwxyz1234567890";

@@ -69,10 +69,6 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
-import com.wl4g.devops.iam.handler.verification.DefaultJdkJPEGSecurityVerifier;
-import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier;
-import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.SmsHandleSender;
-import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
 import com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
@@ -87,16 +83,18 @@ import com.wl4g.devops.iam.realm.TwitterAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatMpAuthorizingRealm;
 import com.wl4g.devops.iam.session.mgt.IamServerSessionManager;
+import com.wl4g.devops.iam.verification.DefaultJdkJPEGSecurityVerifier;
+import com.wl4g.devops.iam.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
+import com.wl4g.devops.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
+import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
 import com.wl4g.devops.iam.web.CentralAuthenticatorController;
-import com.wl4g.devops.iam.handler.verification.SmsSecurityVerifier.PrintSmsHandleSender;
 
-public class IamConfiguration extends AbstractIamConfiguration {
+public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
 	final public static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
 	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
-	final public static String BEAN_GRAPH_VERIFICATION = "graphBasedVerification";
-	final public static String BEAN_SMS_VERIFICATION = "smsVerification";
 
 	// ==============================
 	// SHIRO manager and filter's
@@ -152,20 +150,17 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher(
-			@Qualifier(BEAN_GRAPH_VERIFICATION) SecurityVerifier<?> verification) {
+	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher(SecurityVerifier<?> verification) {
 		return new GeneralCredentialsHashedMatcher(verification);
 	}
 
 	@Bean
-	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(
-			@Qualifier(BEAN_SMS_VERIFICATION) SecurityVerifier<?> verification) {
+	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(SecurityVerifier<?> verification) {
 		return new SmsCredentialsHashedMatcher(verification);
 	}
 
 	@Bean(BEAN_OAUTH2_MATCHER)
-	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher(
-			@Qualifier(BEAN_GRAPH_VERIFICATION) SecurityVerifier<?> verification) {
+	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher(SecurityVerifier<?> verification) {
 		return new Oauth2AuthorizingBoundMatcher(verification);
 	}
 
@@ -497,14 +492,12 @@ public class IamConfiguration extends AbstractIamConfiguration {
 	 * 
 	 * @return
 	 */
-	@Bean(BEAN_GRAPH_VERIFICATION)
-	@ConditionalOnMissingBean
-	public DefaultJdkJPEGSecurityVerifier defaultJdkJpegSecurityVerifier() {
+	@Bean
+	public DefaultJdkJPEGSecurityVerifier defaultJdkJPEGSecurityVerifier() {
 		return new DefaultJdkJPEGSecurityVerifier();
 	}
 
-	@Bean(BEAN_SMS_VERIFICATION)
-	@ConditionalOnMissingBean
+	@Bean
 	public SmsSecurityVerifier smsVerification() {
 		return new SmsSecurityVerifier();
 	}

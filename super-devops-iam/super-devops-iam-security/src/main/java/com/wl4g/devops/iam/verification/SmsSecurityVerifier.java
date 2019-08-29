@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler.verification;
+package com.wl4g.devops.iam.verification;
 
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
-import com.wl4g.devops.iam.handler.verification.cumulation.Cumulator;
-import com.wl4g.devops.iam.handler.verification.cumulation.CumulateHolder;
+import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -40,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
@@ -55,19 +55,14 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implements InitializingBean {
 
 	/**
-	 * Key name used to store authentication code to session
-	 */
-	final public static String KEY_SESSION_SMS_CODE = SmsSecurityVerifier.class.getSimpleName() + ".SMS_CODE";
-
-	/**
 	 * SMS verification code parameter name,
 	 */
-	final public static String PARAM_VERIFYCODE = "code";
+	final public static String PARAM_VERIFYCODE = "smsCode";
 
 	/**
 	 * Target phone number parameter name sent by SMS verification code.
 	 */
-	final public static String PARAM_MOBILENUM = "mobileNum";
+	final public static String PARAM_MOBILENUM = "mobileNumber";
 
 	/**
 	 * SMS hander sender.
@@ -82,7 +77,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 
 	@Override
 	public VerifyType verifyType() {
-		return VerifyType.SMS;
+		return VerifyType.TEXT_SMS;
 	}
 
 	@Override
@@ -107,6 +102,11 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 	@Override
 	public long getVerifyCodeExpireMs() {
 		return config.getMatcher().getSmsExpireMs();
+	}
+
+	@Override
+	protected long getVerifiedTokenExpireMs() {
+		return 30_000;
 	}
 
 	@Override
@@ -144,11 +144,6 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 	}
 
 	@Override
-	protected String storedSessionKey() {
-		return KEY_SESSION_SMS_CODE;
-	}
-
-	@Override
 	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
 			@NotNull List<String> factors) {
 		long failFastSmsMaxAttempts = config.getMatcher().getFailFastSmsMaxAttempts();
@@ -164,9 +159,17 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.applySmsCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+		this.applySmsCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
 				config.getMatcher().getFailFastSmsMaxDelay());
 		Assert.notNull(applySmsCumulator, "applyCumulator is null, please check configure");
+	}
+
+	@Override
+	protected void postVerifyProperties(String owner) {
+		if (log.isInfoEnabled()) {
+			log.info("SMS authc clean with session...");
+		}
+		// reset(false); // Reset or create
 	}
 
 	/**
@@ -189,14 +192,6 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", String.valueOf(mobile)));
 		}
 
-	}
-
-	@Override
-	protected void postVerifyProperties(String owner) {
-		if (log.isInfoEnabled()) {
-			log.info("SMS authc clean with session...");
-		}
-		// reset(false); // Reset or create
 	}
 
 	/**

@@ -45,7 +45,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
  * @version v1.0 2019年3月24日
  * @since
  */
-public class BasedContextConfiguration {
+public class BasedConfigAutoConfiguration {
 
 	//
 	// Locale i18n configuration.

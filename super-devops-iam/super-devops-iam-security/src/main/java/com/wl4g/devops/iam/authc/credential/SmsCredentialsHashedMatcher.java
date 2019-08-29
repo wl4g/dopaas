@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
-import com.wl4g.devops.iam.handler.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.SecurityVerifier;
 
 /**
  * SMS dynamic credential matcher

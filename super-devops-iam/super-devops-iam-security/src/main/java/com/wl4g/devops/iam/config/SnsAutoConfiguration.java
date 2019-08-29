@@ -53,8 +53,8 @@ import com.wl4g.devops.iam.sns.wechat.WechatOauth2Template;
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({ IamConfiguration.class })
-public class SnsConfiguration extends AbstractIamConfiguration {
+@AutoConfigureAfter({ IamAutoConfiguration.class })
+public class SnsAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public SnsProperties snsProperties() {

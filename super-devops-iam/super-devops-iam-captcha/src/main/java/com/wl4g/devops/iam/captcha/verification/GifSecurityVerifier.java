@@ -22,20 +22,21 @@ import javax.servlet.http.HttpServletResponse;
 import com.wl4g.devops.iam.captcha.gif.Captcha;
 import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
 import com.wl4g.devops.iam.captcha.gif.Randoms;
-import com.wl4g.devops.iam.handler.verification.GraphBasedSecurityVerifier;
+import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
- * Jigsaw slider CAPTCHA verification handler.
+ * GIF CAPTCHA verification handler.
  * 
- * @author Wangl.sir
- * @version v1.0 2019年8月28日
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2018年12月28日
  * @since
  */
-public class JigsawVerification extends GraphBasedSecurityVerifier {
+public class GifSecurityVerifier extends GraphBasedSecurityVerifier<String> {
 
 	@Override
 	public VerifyType verifyType() {
-		return VerifyType.GRAPH_JIGSAW;
+		return VerifyType.GRAPH_GIF;
 	}
 
 	@Override

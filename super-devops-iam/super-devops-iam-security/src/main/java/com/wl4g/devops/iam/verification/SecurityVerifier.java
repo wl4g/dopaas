@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler.verification;
+package com.wl4g.devops.iam.verification;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -22,6 +22,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+
+import org.apache.shiro.util.Assert;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 
@@ -57,10 +59,10 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 *            HttpServletResponse
 	 * @throws IOException
 	 */
-	default void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
-		throw new UnsupportedOperationException();
-	}
+	void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
+			@NotNull HttpServletResponse response) throws IOException;
+
+	VerifyCodeWrapper<T> getVerifyCode(boolean assertion);
 
 	/**
 	 * Check whether validation code is turned on
@@ -71,9 +73,7 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 * @return Return true if the current login account name or principal needs
 	 *         to login with authentication number
 	 */
-	default boolean isEnabled(@NotNull List<String> factors) {
-		throw new UnsupportedOperationException();
-	}
+	boolean isEnabled(@NotNull List<String> factors);
 
 	/**
 	 * PreCheck and verification of additional code.
@@ -88,9 +88,7 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 *         will be returned to null, otherwise the exception will be thrown.
 	 * @throws VerificationException
 	 */
-	default String verify(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException {
-		throw new UnsupportedOperationException();
-	}
+	String verify(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException;
 
 	/**
 	 * Validation front-end verified token.
@@ -106,10 +104,7 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 *            cumulative amount)
 	 * @throws VerificationException
 	 */
-	default void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
-			throws VerificationException {
-		throw new UnsupportedOperationException();
-	}
+	void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required) throws VerificationException;
 
 	/**
 	 * Verification type definition.
@@ -120,15 +115,98 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 */
 	public static enum VerifyType {
 
-		GRAPH_DEFAULT,
+		GRAPH_DEFAULT("VerifyWithDefaultGraph"),
 
-		GRAPH_SIMPLE,
+		GRAPH_SIMPLE("VerifyWithSimpleGraph"),
 
-		GRAPH_GIF,
+		GRAPH_GIF("VerifyWithGifGraph"),
 
-		GRAPH_JIGSAW,
+		GRAPH_JIGSAW("VerifyWithJigsawGraph"),
 
-		SMS;
+		TEXT_SMS("VerifyWithSmsText");
+
+		final private String alias;
+
+		private VerifyType(String alias) {
+			this.alias = alias;
+		}
+
+		public String getAlias() {
+			return alias;
+		}
+
+	}
+
+	/**
+	 * Wrapper verify code
+	 * 
+	 * @author wangl.sir
+	 * @version v1.0 2019年4月18日
+	 * @since
+	 */
+	public static class VerifyCodeWrapper<T> implements Serializable {
+		private static final long serialVersionUID = -7643664591972701966L;
+
+		/**
+		 * Authentication code owners, i.e. applicants, such as UUID, session
+		 * Id, principal
+		 */
+		private String owner;
+
+		/**
+		 * Value of verification code data.
+		 */
+		private T code;
+
+		/**
+		 * Verification code creation time.
+		 */
+		private Long createTime;
+
+		public VerifyCodeWrapper(T code) {
+			this(null, code, System.currentTimeMillis());
+		}
+
+		public VerifyCodeWrapper(String owner, T code) {
+			this(owner, code, System.currentTimeMillis());
+		}
+
+		public VerifyCodeWrapper(String owner, T code, Long createTime) {
+			Assert.notNull(code, "Verify code is null, please check configure");
+			Assert.notNull(createTime, "CreateTime is null, please check configure");
+			this.owner = owner;
+			this.code = code;
+			this.createTime = createTime;
+		}
+
+		public String getOwner() {
+			return owner;
+		}
+
+		public void setOwner(String owner) {
+			this.owner = owner;
+		}
+
+		public T getCode() {
+			return code;
+		}
+
+		public void setCode(T code) {
+			this.code = code;
+		}
+
+		public Long getCreateTime() {
+			return createTime;
+		}
+
+		public void setCreateTime(Long createTime) {
+			this.createTime = createTime;
+		}
+
+		@Override
+		public String toString() {
+			return "VerifyCodeWrapper [owner=" + owner + ", code=" + code + ", createTime=" + createTime + "]";
+		}
 
 	}
 
