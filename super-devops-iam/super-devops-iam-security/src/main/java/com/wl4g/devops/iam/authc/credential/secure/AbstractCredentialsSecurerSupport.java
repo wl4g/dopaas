@@ -70,14 +70,15 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	final protected EnhancedCacheManager cacheManager;
 
 	/**
-	 * Cryptic service.
-	 */
-	protected CryptographicService cryptogaphicService;
-
-	/**
 	 * The 'private' part of the hash salt.
 	 */
 	final private ByteSource privateSalt;
+
+	/**
+	 * Cryptic service.
+	 */
+	@Autowired
+	protected CryptographicService cryptogaphicService;
 
 	/**
 	 * Delegate message source.
