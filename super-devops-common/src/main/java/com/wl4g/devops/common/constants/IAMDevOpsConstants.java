@@ -122,7 +122,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
 
-	/** Based URI with extra needed verification code etc. */
+	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
 	 * Apply sessionID, For example for mobile use.
