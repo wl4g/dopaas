@@ -103,7 +103,7 @@ public class ImageUtil {
 		image.setMoveImage(newSrc);
 		image.setX(x);
 		image.setY(y-c_r>=0?y-c_r:0);
-		System.out.println("get image y="+y);
+		System.out.println("get image x="+x+" y="+y);
 		return image;
 	}
 

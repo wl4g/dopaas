@@ -3,8 +3,12 @@ package com.wl4g.devops.iam.captcha.jigsaw;
 import com.wl4g.devops.iam.captcha.jigsaw.Image.ImageInfo;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * @author vjay
@@ -17,7 +21,7 @@ public class ImageManager {
     private static int cacheSize = 100;
 
     //store random size
-    private static int storeSize = 4;
+    private static int storeSize = 5;
 
     //file base path
     private static String fileBasePath = "/Users/vjay/Downloads/images/Pic";
@@ -31,9 +35,13 @@ public class ImageManager {
     //is image get from net
     private static boolean isGetFromNet = false;
 
-    //cache
+    //deviation
+    private int deviation = 5;
+
+    //cache , cache source image , auto clean is done
     public static List<ImageInfo> list = new Vector<>();
 
+    //TODO cache , cache user image , auto clean not yet
     public static Map<String,ImageInfo>  map = new HashMap<>();
 
     public ImageInfo getImageRandom() throws Exception {
@@ -68,9 +76,29 @@ public class ImageManager {
         }
     }
 
+
+    public boolean verify(VerifyInfo verifyInfo)throws Exception{
+        Assert.notNull(verifyInfo,"verifyInfo is null");
+        Assert.hasText(verifyInfo.getUuid(),"uuid is null");
+        Assert.notNull(verifyInfo.getX(),"x is null");
+
+        ImageInfo imageRandom = getImageRandom(verifyInfo.getUuid());
+        int xReal = imageRandom.getX();
+        if(Math.abs(verifyInfo.getX()-xReal)>deviation){
+            return false;
+        }
+        return true;
+    }
+
+    //TODO clean map
     public void cleanCache(){
 
     }
+
+
+
+
+
 
 
 
