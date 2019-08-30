@@ -21,7 +21,6 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -104,7 +103,7 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	}
 
 	@Override
-	public String verify(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException {
+	public String analyze(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty");
 
 		VerifyCodeWrapper<T> storedCode = null;
@@ -134,7 +133,7 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 			}
 		} finally {
 			if (storedCode != null) {
-				postVerifyProperties(storedCode.getOwner());
+				reset(storedCode.getOwner(), false); // Reset or create
 			}
 		}
 
@@ -158,16 +157,6 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 		if (!StringUtils.equals(storedVerifiedToken, verifiedToken)) {
 			throw new VerificationException(bundle.getMessage("General.parameter.illegal"));
 		}
-	}
-
-	/**
-	 * Post verification properties.
-	 * 
-	 * @param owner
-	 *            Validate code owner(Optional).
-	 */
-	protected void postVerifyProperties(String owner) {
-		reset(owner, false); // Reset or create
 	}
 
 	/**
@@ -219,8 +208,7 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
 	 */
-	protected abstract void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
-			@NotNull List<String> factors);
+	protected abstract void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors);
 
 	/**
 	 * Validity of the verification code (in milliseconds).
@@ -234,7 +222,9 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	 * 
 	 * @return
 	 */
-	protected abstract long getVerifiedTokenExpireMs();
+	protected long getVerifiedTokenExpireMs() {
+		return 60_000;
+	}
 
 	/**
 	 * Get verification code stored sessionKey.

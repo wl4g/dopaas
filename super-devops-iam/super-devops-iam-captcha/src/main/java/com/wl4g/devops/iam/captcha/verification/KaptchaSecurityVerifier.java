@@ -19,7 +19,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.util.Assert;
 
@@ -49,12 +51,8 @@ public class KaptchaSecurityVerifier extends GraphBasedSecurityVerifier<String> 
 	}
 
 	@Override
-	protected String generateCode() {
-		return this.kaptchaProducer.createText();
-	}
-
-	@Override
-	protected void write(HttpServletResponse response, String verifyCode) throws IOException {
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String verifyCode)
+			throws IOException {
 		ServletOutputStream out = response.getOutputStream();
 		// Write the data out
 		ImageIO.write(kaptchaProducer.createImage(verifyCode), "JPEG", out);

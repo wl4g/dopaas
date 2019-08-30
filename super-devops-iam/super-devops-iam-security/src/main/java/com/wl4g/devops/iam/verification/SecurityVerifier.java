@@ -45,7 +45,7 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	VerifyType verifyType();
 
 	/**
-	 * New apply and output a verification code
+	 * New create verification meta information.
 	 * 
 	 * @param owner
 	 *            Validate code owner(Optional).
@@ -55,13 +55,31 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 * 
 	 * @param request
 	 *            HttpServletRequest
+	 * @throws IOException
+	 */
+	void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request);
+
+	/**
+	 * Rendering output a verification code stream.
+	 * 
+	 * @param request
+	 *            HttpServletRequest
 	 * @param response
 	 *            HttpServletResponse
 	 * @throws IOException
 	 */
-	void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException;
+	default void render(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
+	/**
+	 * Get verification code
+	 * 
+	 * @param assertion
+	 *            If assertion is enabled, an exception is thrown when the
+	 *            authentication code is not obtained
+	 * @return
+	 */
 	VerifyCodeWrapper<T> getVerifyCode(boolean assertion);
 
 	/**
@@ -76,7 +94,7 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	boolean isEnabled(@NotNull List<String> factors);
 
 	/**
-	 * PreCheck and verification of additional code.
+	 * Analyze and verification.
 	 * 
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
@@ -88,10 +106,10 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 *         will be returned to null, otherwise the exception will be thrown.
 	 * @throws VerificationException
 	 */
-	String verify(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException;
+	String analyze(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException;
 
 	/**
-	 * Validation front-end verified token.
+	 * Validation verified token.
 	 * 
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
@@ -148,8 +166,8 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 		private static final long serialVersionUID = -7643664591972701966L;
 
 		/**
-		 * Authentication code owners, i.e. applicants, such as UUID, session
-		 * Id, principal
+		 * (Optional) Authentication code owners, i.e. applicants, such as UUID,
+		 * session Id, principal
 		 */
 		private String owner;
 

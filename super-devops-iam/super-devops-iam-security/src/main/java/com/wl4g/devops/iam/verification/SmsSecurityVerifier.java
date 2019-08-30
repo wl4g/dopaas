@@ -31,9 +31,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -81,14 +79,11 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 	}
 
 	@Override
-	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
+	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
 		// Check limit attempts
-		checkApplyAttempts(request, response, factors);
-
+		checkApplyAttempts(request, factors);
 		// Create verify-code.
 		reset(owner, true);
-
 		// Ready send to SMS gateway.
 		sender.doSend(determineParameters(request, getVerifyCode(true).getCode()));
 	}
@@ -102,11 +97,6 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 	@Override
 	public long getVerifyCodeExpireMs() {
 		return config.getMatcher().getSmsExpireMs();
-	}
-
-	@Override
-	protected long getVerifiedTokenExpireMs() {
-		return 30_000;
 	}
 
 	@Override
@@ -132,7 +122,6 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 			{
 				// SMS code.
 				put(PARAM_VERIFYCODE, smsCode);
-
 				// Mobile number.
 				String mobileNum = getCleanParam(request, config.getParam().getPrincipalName());
 				MobileNumber mn = MobileNumber.parse(mobileNum);
@@ -144,8 +133,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 	}
 
 	@Override
-	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
-			@NotNull List<String> factors) {
+	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors) {
 		long failFastSmsMaxAttempts = config.getMatcher().getFailFastSmsMaxAttempts();
 
 		// Accumulated number of apply
@@ -162,14 +150,6 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 		this.applySmsCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
 				config.getMatcher().getFailFastSmsMaxDelay());
 		Assert.notNull(applySmsCumulator, "applyCumulator is null, please check configure");
-	}
-
-	@Override
-	protected void postVerifyProperties(String owner) {
-		if (log.isInfoEnabled()) {
-			log.info("SMS authc clean with session...");
-		}
-		// reset(false); // Reset or create
 	}
 
 	/**

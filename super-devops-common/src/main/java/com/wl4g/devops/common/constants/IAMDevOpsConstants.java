@@ -135,6 +135,8 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_S_LOGIN_CHECK = "check";
 	/** URI for apply for CAPTCHA. */
 	final public static String URI_S_LOGIN_APPLY_CAPTCHA = "applycaptcha";
+	/** URI for render for CAPTCHA. */
+	final public static String URI_S_LOGIN_RENDER_CAPTCHA = "rendercaptcha";
 	/** URI for apply for verify-code. */
 	final public static String URI_S_LOGIN_SMS_APPLY = "applysmsverify";
 	/** URI for apply for locale. */

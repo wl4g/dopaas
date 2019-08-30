@@ -143,7 +143,10 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// Limit factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
 
-			// CAPTCHA.
+			// Secret(pubKey).
+			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
+
+			// CAPTCHA check.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
 			if (verifier.isEnabled(factors)) { // Enabled?
 				model.setEnabled(true);
@@ -153,9 +156,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			}
 			resp.getData().put(KEY_CAPTCHA_CHECK, model);
 
-			// Secret credentials(pubKey).
-			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
-
+			// SMS check.
 			/*
 			 * When the SMS verification code is not empty, this creation
 			 * time-stamp is returned (used to display the current remaining
@@ -188,7 +189,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	}
 
 	/**
-	 * Apply CAPTCHA graph stream.
+	 * Apply CAPTCHA.
 	 *
 	 * @param param
 	 *            CAPTCHA parameter, required
@@ -208,7 +209,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// Apply CAPTCHA
 			if (verifier.isEnabled(factors)) { // Enabled?
-				verifier.apply(null, factors, request, response);
+				verifier.apply(null, factors, request);
 			} else { // Invalid request
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -218,6 +219,37 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				log.debug("Failed to apply captcha.", e);
 			} else {
 				log.warn("Failed to apply captcha. caused by: {}", getRootCausesString(e));
+			}
+		}
+	}
+
+	/**
+	 * Rendering CAPTCHA graph stream.
+	 *
+	 * @param param
+	 *            CAPTCHA parameter, required
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = URI_S_LOGIN_RENDER_CAPTCHA, method = { GET, POST })
+	public void renderCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		try {
+			// LoginId number or mobileNum(Optional)
+			String principal = getCleanParam(request, config.getParam().getPrincipalName());
+			// Limit factors
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
+
+			// Apply CAPTCHA
+			if (verifier.isEnabled(factors)) { // Enabled?
+				verifier.apply(null, factors, request);
+			} else { // Invalid request
+				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
+			}
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to render captcha.", e);
+			} else {
+				log.warn("Failed to render captcha. caused by: {}", getRootCausesString(e));
 			}
 		}
 	}
@@ -245,7 +277,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			verifier.validate(factors, getCleanParam(request, config.getParam().getAttachCodeName()), false);
 
 			// Apply SMS verify code.
-			verifier.apply(mn.asNumberText(), factors, request, response);
+			verifier.apply(mn.asNumberText(), factors, request);
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
