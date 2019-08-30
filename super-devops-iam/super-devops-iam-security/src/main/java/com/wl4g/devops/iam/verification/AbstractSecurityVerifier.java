@@ -61,6 +61,11 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	final public static int VERIFIED_TOKEN_BIT = 128;
 
 	/**
+	 * Verified token expiredMs.
+	 */
+	final public static long VERIFIED_TOKEN_EXPIREDMS = 60_000;
+
+	/**
 	 * Server configuration properties
 	 */
 	@Autowired
@@ -228,7 +233,7 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	 * @return
 	 */
 	protected long getVerifiedTokenExpireMs() {
-		return 60_000;
+		return VERIFIED_TOKEN_EXPIREDMS;
 	}
 
 	/**

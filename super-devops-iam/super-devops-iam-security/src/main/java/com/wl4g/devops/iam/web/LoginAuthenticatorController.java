@@ -210,7 +210,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// Apply CAPTCHA
 			if (verifier.isEnabled(factors)) { // Enabled?
 				verifier.apply(null, factors, request);
-			} else { // Invalid request
+			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
 
@@ -234,17 +234,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@RequestMapping(value = URI_S_LOGIN_RENDER_CAPTCHA, method = { GET, POST })
 	public void renderCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
-			// LoginId number or mobileNum(Optional)
-			String principal = getCleanParam(request, config.getParam().getPrincipalName());
-			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
-
-			// Apply CAPTCHA
-			if (verifier.isEnabled(factors)) { // Enabled?
-				verifier.apply(null, factors, request);
-			} else { // Invalid request
-				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
-			}
+			verifier.render(request, response);
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to render captcha.", e);

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.verification;
 
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -73,16 +75,6 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	}
 
 	/**
-	 * Get verification code
-	 * 
-	 * @param assertion
-	 *            If assertion is enabled, an exception is thrown when the
-	 *            authentication code is not obtained
-	 * @return
-	 */
-	VerifyCodeWrapper<T> getVerifyCode(boolean assertion);
-
-	/**
 	 * Check whether validation code is turned on
 	 * 
 	 * @param factors
@@ -92,6 +84,16 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 *         to login with authentication number
 	 */
 	boolean isEnabled(@NotNull List<String> factors);
+
+	/**
+	 * Get verification code
+	 * 
+	 * @param assertion
+	 *            If assertion is enabled, an exception is thrown when the
+	 *            authentication code is not obtained
+	 * @return
+	 */
+	VerifyCodeWrapper<T> getVerifyCode(boolean assertion);
 
 	/**
 	 * Analyze and verification.
@@ -151,6 +153,19 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 
 		public String getAlias() {
 			return alias;
+		}
+
+		public static VerifyType of(String type) {
+			for (VerifyType t : values()) {
+				if (t.getAlias().equals(type) || t.name().equals(type)) {
+					return t;
+				}
+			}
+			throw new IllegalArgumentException(String.format("Invalid verify type '%s'", type));
+		}
+
+		public static VerifyType of(HttpServletRequest request, String paramName) {
+			return of(getCleanParam(request, paramName));
 		}
 
 	}
