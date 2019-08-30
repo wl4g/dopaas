@@ -179,18 +179,19 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_MATCH_LOCK = "matcher_lock_";
 	/**
-	 * Securer based cache name
+	 * Cryptographic service cache name.
 	 */
-	final public static String CACHE_SECURER = "securer_";
+	final public static String CACHE_CRYPTO = "crypto_";
+
+	/**
+	 * The key of cache encryption key pairs
+	 */
+	final public static String KEY_KEYPAIRS = "keypairs";
 
 	/**
 	 * The public key index by logged-in users
 	 */
 	final public static String KEY_SECRET_INDEX = "securerSecretKeyPairIndex";
-	/**
-	 * The key of cache encryption key pairs
-	 */
-	final public static String KEY_KEYPAIRS = "keypairs";
 	/**
 	 * Token used to save current session authenticating
 	 */

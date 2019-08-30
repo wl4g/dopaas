@@ -53,6 +53,7 @@ import com.wl4g.devops.iam.configure.DefaultSecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.SecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.devops.iam.crypto.DefaultCryptographicService;
 import com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.filter.DingtalkAuthenticationFilter;
 import com.wl4g.devops.iam.filter.FacebookAuthenticationFilter;
@@ -97,6 +98,20 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
 	final public static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
 	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
+
+	// ==============================
+	// Cryptic graphic's
+	// ==============================
+
+	@Bean
+	public CryptoProperties cryptoProperties() {
+		return new CryptoProperties();
+	}
+
+	@Bean
+	public DefaultCryptographicService defaultCryptogaphicService() {
+		return new DefaultCryptographicService();
+	}
 
 	// ==============================
 	// SHIRO manager and filter's
