@@ -56,6 +56,11 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
+	 * Verified token bit.
+	 */
+	final public static int VERIFIED_TOKEN_BIT = 128;
+
+	/**
 	 * Server configuration properties
 	 */
 	@Autowired
@@ -126,7 +131,7 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 			}
 
 			// Storage verified token.
-			String verifiedToken = randomAlphabetic(128);
+			String verifiedToken = randomAlphabetic(VERIFIED_TOKEN_BIT);
 			bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
 			if (log.isInfoEnabled()) {
 				log.info("Saving to verified token: {}", verifiedToken);

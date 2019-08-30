@@ -54,6 +54,16 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 	final public static String PARAM_APPLY_UUID = "applyUuid";
 
 	/**
+	 * Apply UUID expireMs.
+	 */
+	final public static long APPLY_UUID_EXPIREMS = 15_000;
+
+	/**
+	 * Apply UUID bit.
+	 */
+	final public static int APPLY_UUID_BIT = 32;
+
+	/**
 	 * Matching attempts accumulator
 	 */
 	private Cumulator matchCumulator;
@@ -85,7 +95,7 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 
 		// Check and generate apply UUID.
 		if (getVerifyCode(true) != null) {
-			bind(PARAM_APPLY_UUID, randomAlphabetic(32), 10_000);
+			bind(PARAM_APPLY_UUID, randomAlphabetic(APPLY_UUID_BIT), APPLY_UUID_EXPIREMS);
 		}
 	}
 

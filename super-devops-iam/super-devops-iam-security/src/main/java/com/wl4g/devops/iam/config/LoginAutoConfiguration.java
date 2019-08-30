@@ -46,7 +46,7 @@ public class LoginAutoConfiguration extends AbstractOptionalControllerConfigurat
 	}
 
 	@Bean
-	public PrefixHandlerMapping extraControllerPrefixHandlerMapping() {
+	public PrefixHandlerMapping loginAuthenticatorControllerPrefixHandlerMapping() {
 		return super.createPrefixHandlerMapping();
 	}
 
