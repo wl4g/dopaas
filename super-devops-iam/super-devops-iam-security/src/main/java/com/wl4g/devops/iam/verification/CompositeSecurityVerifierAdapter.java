@@ -58,8 +58,12 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier<Serial
 	}
 
 	@Override
-	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
+	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
+	}
+
+	@Override
+	public void render(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
+
 	}
 
 	@Override
@@ -73,7 +77,7 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier<Serial
 	}
 
 	@Override
-	public String verify(@NotNull List<String> factors, @NotNull Serializable reqCode) throws VerificationException {
+	public String analyze(@NotNull List<String> factors, @NotNull Serializable reqCode) throws VerificationException {
 		return null;
 	}
 

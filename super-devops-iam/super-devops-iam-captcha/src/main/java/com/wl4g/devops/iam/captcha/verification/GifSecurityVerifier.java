@@ -17,11 +17,12 @@ package com.wl4g.devops.iam.captcha.verification;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.iam.captcha.gif.Captcha;
 import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
-import com.wl4g.devops.iam.captcha.gif.Randoms;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
@@ -40,16 +41,8 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier<String> {
 	}
 
 	@Override
-	protected String generateCode() {
-		StringBuffer alpha = new StringBuffer();
-		for (int i = 0; i < 5; i++) {
-			alpha.append(Randoms.alpha());
-		}
-		return alpha.toString();
-	}
-
-	@Override
-	protected void write(HttpServletResponse response, String verifyCode) throws IOException {
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String verifyCode)
+			throws IOException {
 		Captcha captcha = new GifCaptcha(verifyCode);
 		captcha.out(response.getOutputStream());
 	}

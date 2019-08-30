@@ -19,7 +19,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -38,10 +40,8 @@ import java.io.IOException;
 public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier<String> {
 
 	final private static Random RANDOM = new Random();
-	final private static String DEFAULT_SEED = "abcdefghijklmnopqrstuvwxyz1234567890";
 	final private static int DEFAULT_WIDTH = 60;
 	final private static int DEFAULT_HEIGHT = 28;
-	final private static int DEFAULT_DROW_NUM = 5;
 	final private static Font DEFAULT_FONT = defaultFont();
 
 	@Override
@@ -50,12 +50,8 @@ public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier<S
 	}
 
 	@Override
-	protected String generateCode() {
-		return createRandomString();
-	}
-
-	@Override
-	protected void write(HttpServletResponse response, String verifyCode) throws IOException {
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String verifyCode)
+			throws IOException {
 		ServletOutputStream out = response.getOutputStream();
 		// Write the data out
 		ImageIO.write(createImage(verifyCode), "JPEG", out);
@@ -113,19 +109,6 @@ public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier<S
 		int xl = RANDOM.nextInt(13);
 		int yl = RANDOM.nextInt(15);
 		g.drawLine(x, y, x + xl, y + yl);
-	}
-
-	/**
-	 * Get random characters
-	 * 
-	 * @return
-	 */
-	private String createRandomString() {
-		StringBuffer randoms = new StringBuffer();
-		for (int i = 0; i < DEFAULT_DROW_NUM; i++) {
-			randoms.append(String.valueOf(DEFAULT_SEED.charAt(RANDOM.nextInt(DEFAULT_SEED.length()))));
-		}
-		return randoms.toString();
 	}
 
 	/**

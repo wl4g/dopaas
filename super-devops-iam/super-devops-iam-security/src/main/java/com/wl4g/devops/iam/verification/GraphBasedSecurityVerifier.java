@@ -15,14 +15,18 @@
  */
 package com.wl4g.devops.iam.verification;
 
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.*;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
-import org.apache.shiro.util.Assert;
+import org.springframework.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 
@@ -43,6 +47,11 @@ import java.util.List;
  */
 public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends AbstractSecurityVerifier<T>
 		implements InitializingBean {
+
+	/**
+	 * Apply CAPTCHA image UUID parameter name.
+	 */
+	final public static String PARAM_APPLY_UUID = "applyUuid";
 
 	/**
 	 * Matching attempts accumulator
@@ -68,10 +77,24 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
-	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request,
-			@NotNull HttpServletResponse response) throws IOException {
+	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
 		// Check limit attempts
-		checkApplyAttempts(request, response, factors);
+		checkApplyAttempts(request, factors);
+		// Renew or cleanup CAPTCHA
+		reset(owner, true);
+
+		// Check and generate apply UUID.
+		if (getVerifyCode(true) != null) {
+			bind(PARAM_APPLY_UUID, randomAlphabetic(32), 10_000);
+		}
+	}
+
+	@Override
+	public void render(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
+		// Check apply UUID.
+		String storedApplyUuid = getBindValue(PARAM_APPLY_UUID, true);
+		Assert.hasText(storedApplyUuid, "Apply graphic captcha uuid has expired.");
+		Assert.isTrue(storedApplyUuid.equals(getCleanParam(request, PARAM_APPLY_UUID)), "Invalid graphic captcha apply uuid.");
 
 		// Set to expire far in the past.
 		response.setDateHeader("Expires", 0);
@@ -84,11 +107,8 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 		// Response a JPEG
 		response.setContentType("image/jpeg");
 
-		// Recreate a CAPTCHA
-		reset(owner, true);
-
 		// Create the text for the image and output CAPTCHA image buffer.
-		write(response, getVerifyCode(true).getCode());
+		imageWrite(request, response, getVerifyCode(true).getCode());
 	}
 
 	@Override
@@ -127,13 +147,7 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 	}
 
 	@Override
-	protected long getVerifiedTokenExpireMs() {
-		return 30_000;
-	}
-
-	@Override
-	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
-			@NotNull List<String> factors) {
+	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors) {
 		int failFastCaptchaMaxAttempts = config.getMatcher().getFailFastCaptchaMaxAttempts();
 
 		// Cumulative number of applications based on caching.
@@ -162,13 +176,15 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 	}
 
 	/**
-	 * Write output verify-code buffer image
+	 * Write output CAPTCHA buffer image
 	 * 
+	 * @param request
 	 * @param response
 	 * @param verifyCode
 	 * @return
 	 */
-	protected abstract void write(HttpServletResponse response, T verifyCode) throws IOException;
+	protected abstract void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, T verifyCode)
+			throws IOException;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

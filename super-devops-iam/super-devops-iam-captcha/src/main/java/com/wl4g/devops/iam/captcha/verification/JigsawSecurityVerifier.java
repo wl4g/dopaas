@@ -16,11 +16,12 @@
 package com.wl4g.devops.iam.captcha.verification;
 
 import java.io.IOException;
-import java.io.Serializable;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.iam.captcha.gif.Randoms;
+import com.wl4g.devops.iam.captcha.jigsaw.JigsawImgCode;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
@@ -30,7 +31,7 @@ import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
  * @version v1.0 2019年8月28日
  * @since
  */
-public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier<Serializable> {
+public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier<JigsawImgCode> {
 
 	@Override
 	public VerifyType verifyType() {
@@ -38,17 +39,9 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier<Serializa
 	}
 
 	@Override
-	protected String generateCode() {
-		StringBuffer alpha = new StringBuffer();
-		for (int i = 0; i < 5; i++) {
-			alpha.append(Randoms.alpha());
-		}
-		return alpha.toString();
-	}
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+			JigsawImgCode verifyCode) throws IOException {
 
-	@Override
-	protected void write(HttpServletResponse response, Serializable verifyCode) throws IOException {
-		// TODO
 	}
 
 }
