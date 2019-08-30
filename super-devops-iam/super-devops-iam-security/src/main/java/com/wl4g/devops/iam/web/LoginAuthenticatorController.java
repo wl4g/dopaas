@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -33,7 +32,6 @@ import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
-import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
@@ -47,7 +45,6 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -151,7 +148,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (verifier.isEnabled(factors)) { // Enabled?
 				model.setEnabled(true);
 				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
-				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_APPLY_CAPTCHA;
+				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA;
 				model.setApplyUrl(url);
 			}
 			resp.getData().put(KEY_CAPTCHA_CHECK, model);
@@ -163,16 +160,18 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * number of seconds before the front end can re-send the SMS
 			 * verification code).
 			 */
-			Long remainingDelay = null;
 			VerifyCodeWrapper<?> code = verifier.getVerifyCode(false);
-			if (code != null) {
-				remainingDelay = getSmsRemainingDelay(code);
-			}
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;
 			if (code != null && code.getOwner() != null && isNumeric(code.getOwner())) {
 				mobileNum = Long.parseLong(code.getOwner());
+			}
+
+			// Remaining delay.
+			Long remainingDelay = null;
+			if (code != null) {
+				remainingDelay = code.getRemainingDelay(config.getMatcher().getFailFastSmsDelay());
 			}
 			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainingDelay));
 
@@ -184,103 +183,6 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			}
 			resp.setMessage(getRootCausesString(e));
 			log.error("Failed to safety check.", e);
-		}
-		return resp;
-	}
-
-	/**
-	 * Apply CAPTCHA.
-	 *
-	 * @param param
-	 *            CAPTCHA parameter, required
-	 * @param request
-	 * @param response
-	 */
-	@RequestMapping(value = URI_S_LOGIN_APPLY_CAPTCHA, method = { GET, POST })
-	public void applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		try {
-			if (!coprocessor.preApplyCapcha(request, response)) {
-				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
-			}
-			// LoginId number or mobileNum(Optional)
-			String principal = getCleanParam(request, config.getParam().getPrincipalName());
-			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
-
-			// Apply CAPTCHA
-			if (verifier.isEnabled(factors)) { // Enabled?
-				verifier.apply(null, factors, request);
-			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
-				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
-			}
-
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Failed to apply captcha.", e);
-			} else {
-				log.warn("Failed to apply captcha. caused by: {}", getRootCausesString(e));
-			}
-		}
-	}
-
-	/**
-	 * Rendering CAPTCHA graph stream.
-	 *
-	 * @param param
-	 *            CAPTCHA parameter, required
-	 * @param request
-	 * @param response
-	 */
-	@RequestMapping(value = URI_S_LOGIN_RENDER_CAPTCHA, method = { GET, POST })
-	public void renderCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		try {
-			verifier.render(request, response);
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Failed to render captcha.", e);
-			} else {
-				log.warn("Failed to render captcha. caused by: {}", getRootCausesString(e));
-			}
-		}
-	}
-
-	/**
-	 * Apply verification code
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	@RequestMapping(value = URI_S_LOGIN_SMS_APPLY, method = { GET, POST })
-	@ResponseBody
-	public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<Object> resp = RespBase.create(sessionStatus());
-		try {
-			if (!coprocessor.preApplyVerify(request, response)) {
-				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
-			}
-			// Login account number or mobile number(Required)
-			MobileNumber mn = parse(getCleanParam(request, config.getParam().getPrincipalName()));
-			// Lock factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
-
-			// Graph validation
-			verifier.validate(factors, getCleanParam(request, config.getParam().getAttachCodeName()), false);
-
-			// Apply SMS verify code.
-			verifier.apply(mn.asNumberText(), factors, request);
-
-			// The creation time of the currently created SMS authentication
-			// code (must exist).
-			VerifyCodeWrapper<?> code = verifier.getVerifyCode(true);
-			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mn.getNumber(), getSmsRemainingDelay(code)));
-		} catch (Exception e) {
-			if (e instanceof IamException) {
-				resp.setCode(RetCode.BIZ_ERR);
-			} else {
-				resp.setCode(RetCode.SYS_ERR);
-			}
-			resp.setMessage(getRootCausesString(e));
-			log.error("Failed to apply for sms verify-code", e);
 		}
 		return resp;
 	}
@@ -306,18 +208,6 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			log.error("Failed to error reads.", e);
 		}
 		return resp;
-	}
-
-	/**
-	 * Get remaining SMS delay
-	 *
-	 * @param code
-	 * @return
-	 */
-	private long getSmsRemainingDelay(VerifyCodeWrapper<?> code) {
-		// remainMs = NowTime - CreateTime - DelayTime
-		long now = System.currentTimeMillis();
-		return Math.max(config.getMatcher().getFailFastSmsDelay() - (now - code.getCreateTime()), 0);
 	}
 
 }

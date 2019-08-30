@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.util.Assert;
-
 import com.wl4g.devops.common.exception.iam.VerificationException;
 
 /**
@@ -239,6 +238,18 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 		@Override
 		public String toString() {
 			return "VerifyCodeWrapper [owner=" + owner + ", code=" + code + ", createTime=" + createTime + "]";
+		}
+
+		/**
+		 * Get remaining delay.
+		 *
+		 * @param code
+		 * @return
+		 */
+		public long getRemainingDelay(long delayMs) {
+			// remainMs = NowTime - CreateTime - DelayTime
+			long now = System.currentTimeMillis();
+			return Math.max(delayMs - (now - getCreateTime()), 0);
 		}
 
 	}

@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.config;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
 
 import java.io.Serializable;
 
@@ -160,12 +161,14 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 * {@link DefaultOauth2SnsController#connect}<br/>
 	 */
 	public void addDefaultFilterChain() {
-		// SNS request rules
-		super.getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
-		// Extra API request rules
-		super.getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
-		// Default view access files request rules
-		super.getFilterChain().put(getDefaultViewBaseUri() + DefaultViewController.URI_STATIC + "/**", "anon");
+		// SNS authenticator rules.
+		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
+		// Login authenticator rules.
+		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
+		// Verify(CAPTCHA/SMS) authenticator rules.
+		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
+		// Default view access files request rules.
+		getFilterChain().put(getDefaultViewBaseUri() + DefaultViewController.URI_STATIC + "/**", "anon");
 	}
 
 	@Override
