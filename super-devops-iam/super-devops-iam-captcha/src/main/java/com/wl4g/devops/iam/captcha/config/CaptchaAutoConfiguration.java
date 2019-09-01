@@ -15,23 +15,30 @@
  */
 package com.wl4g.devops.iam.captcha.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier;
+import com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier;
 import com.wl4g.devops.iam.captcha.verification.KaptchaSecurityVerifier;
 import com.wl4g.devops.iam.verification.DefaultJdkJPEGSecurityVerifier;
 
 @Configuration
-@ConditionalOnProperty(value = "spring.cloud.devops.iam.captcha.enabled", matchIfMissing = false)
 public class CaptchaAutoConfiguration {
 
 	@Bean
 	public CaptchaProperties captchaProperties() {
 		return new CaptchaProperties();
+	}
+
+	@Bean
+	public DefaultKaptcha defaultKaptcha(CaptchaProperties config) {
+		DefaultKaptcha kaptcha = new DefaultKaptcha();
+		kaptcha.setConfig(new Config(config.getKaptcha().getProperties()));
+		return kaptcha;
 	}
 
 	/**
@@ -51,15 +58,20 @@ public class CaptchaAutoConfiguration {
 	 * @return
 	 */
 	@Bean
-	public KaptchaSecurityVerifier kaptchaSecurityVerifier(DefaultKaptcha kaptchaProducer) {
-		return new KaptchaSecurityVerifier(kaptchaProducer);
+	public KaptchaSecurityVerifier kaptchaSecurityVerifier(DefaultKaptcha kaptcha) {
+		return new KaptchaSecurityVerifier(kaptcha);
+	}
+
+	// --- Jigsaw ---
+
+	@Bean
+	public JigsawImageManager jigsawImageManager(CaptchaProperties config) {
+		return new JigsawImageManager(config);
 	}
 
 	@Bean
-	public DefaultKaptcha kaptchaProducer(CaptchaProperties properties) {
-		DefaultKaptcha kaptcha = new DefaultKaptcha();
-		kaptcha.setConfig(new Config(properties.getProperties()));
-		return kaptcha;
+	public JigsawSecurityVerifier jigsawSecurityVerifier() {
+		return new JigsawSecurityVerifier();
 	}
 
 }
