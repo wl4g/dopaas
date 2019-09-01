@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -45,8 +44,7 @@ import java.util.List;
  * @date 2018年12月28日
  * @since
  */
-public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends AbstractSecurityVerifier<T>
-		implements InitializingBean {
+public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
 	/**
 	 * Apply CAPTCHA image UUID parameter name.
@@ -190,10 +188,10 @@ public abstract class GraphBasedSecurityVerifier<T extends Serializable> extends
 	 * 
 	 * @param request
 	 * @param response
-	 * @param verifyCode
+	 * @param reqCode
 	 * @return
 	 */
-	protected abstract void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, T verifyCode)
+	protected abstract void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object reqCode)
 			throws IOException;
 
 	@Override

@@ -50,7 +50,7 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
  * @version v1.0 2019年4月16日
  * @since
  */
-public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implements InitializingBean {
+public class SmsSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
 	/**
 	 * SMS verification code parameter name,
@@ -100,7 +100,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier<String> implem
 	}
 
 	@Override
-	public VerifyCodeWrapper<String> getVerifyCode(boolean assertion) {
+	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
 		return super.getVerifyCode(assertion);
 	}
 

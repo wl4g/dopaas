@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier;
  */
 public class SmsCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
-	public SmsCredentialsHashedMatcher(SecurityVerifier<?> verification) {
+	public SmsCredentialsHashedMatcher(SecurityVerifier verification) {
 		super(verification);
 	}
 

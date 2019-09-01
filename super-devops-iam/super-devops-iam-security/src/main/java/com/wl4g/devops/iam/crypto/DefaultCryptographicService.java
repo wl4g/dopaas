@@ -22,7 +22,7 @@ package com.wl4g.devops.iam.crypto;
  * @version v1.0 2019-08-30
  * @since
  */
-public class DefaultCryptographicService extends AbstractCryptographicService {
+public final class DefaultCryptographicService extends AbstractCryptographicService {
 
 	public DefaultCryptographicService() {
 		super(Cryptos.getInstance("RSA"));

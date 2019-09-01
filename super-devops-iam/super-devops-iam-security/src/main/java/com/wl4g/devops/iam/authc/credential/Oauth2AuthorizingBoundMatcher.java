@@ -31,7 +31,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier;
  */
 public class Oauth2AuthorizingBoundMatcher extends IamBasedMatcher {
 
-	public Oauth2AuthorizingBoundMatcher(SecurityVerifier<?> verification) {
+	public Oauth2AuthorizingBoundMatcher(SecurityVerifier verification) {
 		super(verification);
 	}
 

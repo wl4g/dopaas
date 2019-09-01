@@ -37,7 +37,7 @@ import java.io.IOException;
  * @date 2018年12月29日
  * @since
  */
-public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier<String> {
+public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	final private static Random RANDOM = new Random();
 	final private static int DEFAULT_WIDTH = 60;
@@ -50,11 +50,11 @@ public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier<S
 	}
 
 	@Override
-	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String verifyCode)
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object verifyCode)
 			throws IOException {
 		ServletOutputStream out = response.getOutputStream();
 		// Write the data out
-		ImageIO.write(createImage(verifyCode), "JPEG", out);
+		ImageIO.write(createImage((String) verifyCode), "JPEG", out);
 	}
 
 	/**
