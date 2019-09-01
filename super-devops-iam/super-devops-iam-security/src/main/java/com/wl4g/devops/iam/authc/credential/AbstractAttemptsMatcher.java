@@ -73,7 +73,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	private Cumulator applySmsCumulator;
 
-	public AbstractAttemptsMatcher(SecurityVerifier<?> verification) {
+	public AbstractAttemptsMatcher(SecurityVerifier verification) {
 		super(verification);
 	}
 

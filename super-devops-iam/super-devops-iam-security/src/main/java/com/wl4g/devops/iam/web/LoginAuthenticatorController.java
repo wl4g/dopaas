@@ -145,7 +145,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// CAPTCHA check.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
-			if (verifier.isEnabled(factors)) { // Enabled?
+			if (verifier.forAdapts(request).isEnabled(factors)) { // Enabled?
 				model.setEnabled(true);
 				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
 				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA;
@@ -160,7 +160,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * number of seconds before the front end can re-send the SMS
 			 * verification code).
 			 */
-			VerifyCodeWrapper<?> code = verifier.getVerifyCode(false);
+			VerifyCodeWrapper code = verifier.forAdapts(request).getVerifyCode(false);
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;

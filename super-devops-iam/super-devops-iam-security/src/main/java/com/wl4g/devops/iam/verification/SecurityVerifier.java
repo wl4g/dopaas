@@ -36,7 +36,7 @@ import com.wl4g.devops.common.exception.iam.VerificationException;
  * @date 2018年12月28日
  * @since
  */
-public abstract interface SecurityVerifier<T extends Serializable> {
+public abstract interface SecurityVerifier {
 
 	/**
 	 * Verifier type definition.
@@ -92,11 +92,13 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 *            authentication code is not obtained
 	 * @return
 	 */
-	VerifyCodeWrapper<T> getVerifyCode(boolean assertion);
+	VerifyCodeWrapper getVerifyCode(boolean assertion);
 
 	/**
 	 * Analyze and verification.
 	 * 
+	 * @param request
+	 *            HttpServletRequest
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -107,7 +109,8 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 *         will be returned to null, otherwise the exception will be thrown.
 	 * @throws VerificationException
 	 */
-	String analyze(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException;
+	String analyze(@NotNull HttpServletRequest request, @NotNull List<String> factors, @NotNull Object reqCode)
+			throws VerificationException;
 
 	/**
 	 * Validation verified token.
@@ -144,23 +147,36 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 
 		TEXT_SMS("VerifyWithSmsText");
 
-		final private String alias;
+		/**
+		 * Request verify type parameter name.
+		 */
+		final public static String PARAM_VERIFYTYPE = "verifyType";
+
+		/**
+		 * Verifier type alias value.
+		 */
+		final private String type;
 
 		private VerifyType(String alias) {
-			this.alias = alias;
+			this.type = alias;
 		}
 
-		public String getAlias() {
-			return alias;
+		public String getType() {
+			return type;
 		}
 
 		public static VerifyType of(String type) {
+			Assert.hasText(type, String.format("Parameter '%s' is required.", PARAM_VERIFYTYPE));
 			for (VerifyType t : values()) {
-				if (t.getAlias().equals(type) || t.name().equals(type)) {
+				if (t.getType().equals(type) || t.name().equals(type)) {
 					return t;
 				}
 			}
 			throw new IllegalArgumentException(String.format("Invalid verify type '%s'", type));
+		}
+
+		public static VerifyType of(HttpServletRequest request) {
+			return of(getCleanParam(request, PARAM_VERIFYTYPE));
 		}
 
 		public static VerifyType of(HttpServletRequest request, String paramName) {
@@ -176,7 +192,7 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 	 * @version v1.0 2019年4月18日
 	 * @since
 	 */
-	public static class VerifyCodeWrapper<T> implements Serializable {
+	public static class VerifyCodeWrapper implements Serializable {
 		private static final long serialVersionUID = -7643664591972701966L;
 
 		/**
@@ -188,22 +204,22 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 		/**
 		 * Value of verification code data.
 		 */
-		private T code;
+		private Object code;
 
 		/**
 		 * Verification code creation time.
 		 */
 		private Long createTime;
 
-		public VerifyCodeWrapper(T code) {
+		public VerifyCodeWrapper(Object code) {
 			this(null, code, System.currentTimeMillis());
 		}
 
-		public VerifyCodeWrapper(String owner, T code) {
+		public VerifyCodeWrapper(String owner, Object code) {
 			this(owner, code, System.currentTimeMillis());
 		}
 
-		public VerifyCodeWrapper(String owner, T code, Long createTime) {
+		public VerifyCodeWrapper(String owner, Object code, Long createTime) {
 			Assert.notNull(code, "Verify code is null, please check configure");
 			Assert.notNull(createTime, "CreateTime is null, please check configure");
 			this.owner = owner;
@@ -219,11 +235,12 @@ public abstract interface SecurityVerifier<T extends Serializable> {
 			this.owner = owner;
 		}
 
-		public T getCode() {
-			return code;
+		@SuppressWarnings({ "unchecked" })
+		public <T> T getCode() {
+			return (T) code;
 		}
 
-		public void setCode(T code) {
+		public void setCode(Object code) {
 			this.code = code;
 		}
 

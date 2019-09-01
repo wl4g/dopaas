@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.verification;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,7 +50,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
  * @date 2018年12月28日
  * @since
  */
-public abstract class AbstractSecurityVerifier<T extends Serializable> implements SecurityVerifier<T> {
+public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -98,9 +97,9 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	 *         newly generated value or the old value)
 	 */
 	@Override
-	public VerifyCodeWrapper<T> getVerifyCode(boolean assertion) {
+	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCodeWrapper<T> code = getBindValue(getVerifyCodeStoredKey());
+		VerifyCodeWrapper code = getBindValue(getVerifyCodeStoredKey());
 		if (code != null && code.getCode() != null) { // Assertion
 			return code;
 		}
@@ -113,10 +112,11 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	}
 
 	@Override
-	public String analyze(@NotNull List<String> factors, @NotNull T reqCode) throws VerificationException {
+	public String analyze(@NotNull HttpServletRequest request, @NotNull List<String> factors, @NotNull Object reqCode)
+			throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty");
 
-		VerifyCodeWrapper<T> storedCode = null;
+		VerifyCodeWrapper storedCode = null;
 		try {
 			/*
 			 * If required is true, the forced verification policy is executed,
@@ -181,7 +181,7 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 		unbind(getVerifyCodeStoredKey());
 		if (renew) {
 			// Store verify-code in the session
-			bind(getVerifyCodeStoredKey(), new VerifyCodeWrapper<T>(owner, generateCode()), getVerifyCodeExpireMs());
+			bind(getVerifyCodeStoredKey(), new VerifyCodeWrapper(owner, generateCode()), getVerifyCodeExpireMs());
 		}
 	}
 
@@ -192,7 +192,7 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	 * @param reqCode
 	 * @return
 	 */
-	protected boolean doMatch(VerifyCodeWrapper<T> storedCode, T reqCode) {
+	protected boolean doMatch(VerifyCodeWrapper storedCode, Object reqCode) {
 		if (Objects.isNull(reqCode)) {
 			return false;
 		}
@@ -204,9 +204,8 @@ public abstract class AbstractSecurityVerifier<T extends Serializable> implement
 	 * 
 	 * @return Verify code object
 	 */
-	@SuppressWarnings("unchecked")
-	protected T generateCode() {
-		return (T) randomAlphabetic(5); // By-default
+	protected Object generateCode() {
+		return randomAlphabetic(5); // By-default
 	}
 
 	/**

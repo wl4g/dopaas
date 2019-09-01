@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.config;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -512,8 +511,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	 * @return
 	 */
 	@Bean
-	public CompositeSecurityVerifierAdapter compositeSecurityVerifierAdapter(
-			List<SecurityVerifier<? extends Serializable>> verifiers) {
+	public CompositeSecurityVerifierAdapter compositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
 		return new CompositeSecurityVerifierAdapter(verifiers);
 	}
 

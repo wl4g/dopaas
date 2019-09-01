@@ -31,6 +31,7 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.VerifyAuthController;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
 
@@ -80,8 +81,8 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
-			if (verifier.isEnabled(factors)) { // Enabled?
-				verifier.apply(null, factors, request);
+			if (verifier.forAdapts(request).isEnabled(factors)) { // Enabled?
+				verifier.forAdapts(request).apply(null, factors, request);
 			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -106,7 +107,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	@RequestMapping(value = URI_S_LOGIN_RENDER_CAPTCHA, method = { GET, POST })
 	public void renderCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
-			verifier.render(request, response);
+			verifier.forAdapts(request).render(request, response);
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to render captcha.", e);
@@ -136,14 +137,14 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
 
 			// Graph validation
-			verifier.validate(factors, getCleanParam(request, config.getParam().getAttachCodeName()), false);
+			verifier.forAdapts(request).validate(factors, getCleanParam(request, config.getParam().getAttachCodeName()), false);
 
 			// Apply SMS verify code.
-			verifier.apply(mn.asNumberText(), factors, request);
+			verifier.forAdapts(VerifyType.TEXT_SMS).apply(mn.asNumberText(), factors, request);
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
-			VerifyCodeWrapper<?> code = verifier.getVerifyCode(true);
+			VerifyCodeWrapper code = verifier.forAdapts(VerifyType.TEXT_SMS).getVerifyCode(true);
 			resp.getData().put(KEY_SMS_CHECK,
 					new SmsCheckModel(mn.getNumber(), code.getRemainingDelay(config.getMatcher().getFailFastSmsDelay())));
 		} catch (Exception e) {
