@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
  * @date 2018年12月28日
  * @since
  */
-public class GifSecurityVerifier extends GraphBasedSecurityVerifier<String> {
+public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	public VerifyType verifyType() {
@@ -41,9 +41,9 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier<String> {
 	}
 
 	@Override
-	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String verifyCode)
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object verifyCode)
 			throws IOException {
-		Captcha captcha = new GifCaptcha(verifyCode);
+		Captcha captcha = new GifCaptcha((String) verifyCode);
 		captcha.out(response.getOutputStream());
 	}
 

@@ -35,6 +35,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -55,14 +56,19 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
+	 * Submitted verify code parameter name.
+	 */
+	final public static String DEFAULT_PARAM_VERIFYCODE = "verifyCode";
+
+	/**
 	 * Verified token bit.
 	 */
-	final public static int VERIFIED_TOKEN_BIT = 128;
+	final public static int DEFAULT_VERIFIED_TOKEN_BIT = 128;
 
 	/**
 	 * Verified token expiredMs.
 	 */
-	final public static long VERIFIED_TOKEN_EXPIREDMS = 60_000;
+	final public static long DEFAULT_VERIFIED_TOKEN_EXPIREDMS = 60_000;
 
 	/**
 	 * Server configuration properties
@@ -112,10 +118,8 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	}
 
 	@Override
-	public String analyze(@NotNull HttpServletRequest request, @NotNull List<String> factors, @NotNull Object reqCode)
-			throws VerificationException {
-		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty");
-
+	public String verify(@NotNull HttpServletRequest request, @NotNull List<String> factors) throws VerificationException {
+		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty.");
 		VerifyCodeWrapper storedCode = null;
 		try {
 			/*
@@ -129,25 +133,24 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			}
 
 			// Verification
+			Object submitCode = getSubmittedCode(request);
 			storedCode = getVerifyCode(true);
-			if (!doMatch(storedCode, reqCode)) {
-				log.error("Verification mismatched. {} => {}", reqCode, storedCode);
-				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch", reqCode));
+			if (!doMatch(storedCode, submitCode)) {
+				log.error("Verification mismatched. {} => {}", submitCode, storedCode);
+				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch"));
 			}
 
 			// Storage verified token.
-			String verifiedToken = randomAlphabetic(VERIFIED_TOKEN_BIT);
-			bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
+			String verifiedToken = randomAlphabetic(DEFAULT_VERIFIED_TOKEN_BIT);
 			if (log.isInfoEnabled()) {
 				log.info("Saving to verified token: {}", verifiedToken);
 			}
+			return bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
 		} finally {
 			if (storedCode != null) {
 				reset(storedCode.getOwner(), false); // Reset or create
 			}
 		}
-
-		return null;
 	}
 
 	@Override
@@ -186,17 +189,27 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	}
 
 	/**
+	 * Get submitted verify code.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
+		return getCleanParam(request, DEFAULT_PARAM_VERIFYCODE);
+	}
+
+	/**
 	 * Match submitted validation code
 	 * 
 	 * @param storedCode
-	 * @param reqCode
+	 * @param submitCode
 	 * @return
 	 */
-	protected boolean doMatch(VerifyCodeWrapper storedCode, Object reqCode) {
-		if (Objects.isNull(reqCode)) {
+	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
+		if (Objects.isNull(submitCode)) {
 			return false;
 		}
-		return String.valueOf(storedCode.getCode()).equalsIgnoreCase(String.valueOf(reqCode));
+		return String.valueOf(storedCode.getCode()).equalsIgnoreCase(String.valueOf(submitCode));
 	}
 
 	/**
@@ -232,7 +245,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @return
 	 */
 	protected long getVerifiedTokenExpireMs() {
-		return VERIFIED_TOKEN_EXPIREDMS;
+		return DEFAULT_VERIFIED_TOKEN_EXPIREDMS;
 	}
 
 	/**

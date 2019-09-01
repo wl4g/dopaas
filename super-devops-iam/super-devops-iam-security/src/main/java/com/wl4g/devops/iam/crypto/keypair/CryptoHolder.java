@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.crypto;
+package com.wl4g.devops.iam.crypto.keypair;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -46,12 +46,12 @@ import javax.crypto.Cipher;
  * @version v1.0 2019年1月21日
  * @since
  */
-abstract class Cryptos {
+abstract class CryptoHolder {
 
 	/**
 	 * List of instances for caching all encryption algorithms.<br/>
 	 */
-	final private static Map<String, Cryptos> INSTANCES = new ConcurrentHashMap<>();
+	final private static Map<String, CryptoHolder> INSTANCES = new ConcurrentHashMap<>();
 
 	/*
 	 * Current used encryption and decryption cipher
@@ -72,7 +72,7 @@ abstract class Cryptos {
 	 * 
 	 * @param crypto
 	 */
-	final private static void register(Cryptos crypto) {
+	final private static void register(CryptoHolder crypto) {
 		if (null != INSTANCES.putIfAbsent(crypto.getAlgorithmPrimary(), crypto)) {
 			throw new IllegalStateException(String.format("Already registed algorithm [%s]", crypto.getAlgorithmPrimary()));
 		}
@@ -84,7 +84,7 @@ abstract class Cryptos {
 	 * @param algorithm
 	 * @return
 	 */
-	final public static Cryptos getInstance(String algorithm) {
+	final public static CryptoHolder getInstance(String algorithm) {
 		if (!INSTANCES.containsKey(algorithm)) {
 			throw new IllegalStateException(String.format("No such cryptic algorithm:[%s]", algorithm));
 		}
@@ -96,7 +96,7 @@ abstract class Cryptos {
 	 * 
 	 * @param keyWrap
 	 */
-	private Cryptos() {
+	private CryptoHolder() {
 		try {
 			this.keyFactory = KeyFactory.getInstance(getAlgorithmPrimary());
 		} catch (Exception e) {
@@ -109,14 +109,14 @@ abstract class Cryptos {
 	 * 
 	 * @return
 	 */
-	final public KeySpecPair generateKeySpecPair() {
+	final public RSAKeySpecWrapper generateKeySpecPair() {
 		try {
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance(getAlgorithmPrimary());
 			kpg.initialize(getKeyBit());
 			KeyPair keyPair = kpg.generateKeyPair();
 			KeySpec pubKeySepc = keyFactory.getKeySpec(keyPair.getPublic(), getPublicKeySpecClass());
 			KeySpec privKeySepc = keyFactory.getKeySpec(keyPair.getPrivate(), getPrivateKeySpecClass());
-			return new KeySpecPair(getAlgorithmPrimary(), pubKeySepc, privKeySepc);
+			return new RSAKeySpecWrapper(getAlgorithmPrimary(), pubKeySepc, privKeySepc);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -170,7 +170,7 @@ abstract class Cryptos {
 	 * @param keySpecPair
 	 * @return
 	 */
-	final public Cryptos build(KeySpecPair keySpecPair) {
+	final public CryptoHolder build(RSAKeySpecWrapper keySpecPair) {
 		Assert.notNull(keySpecPair, "'keySpecPair' must not be null");
 		try {
 			// Get keyPair caching by publicKey and privateKey
@@ -240,7 +240,7 @@ abstract class Cryptos {
 	 * @version v1.0 2019年1月20日
 	 * @since
 	 */
-	final private static class RSA extends Cryptos {
+	final private static class RSA extends CryptoHolder {
 
 		@Override
 		protected String getAlgorithmPrimary() {

@@ -46,7 +46,7 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 		 */
 		String password = getCleanParam(request, config.getParam().getCredentialName());
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
-		String captcha = getCleanParam(request, config.getParam().getAttachCodeName());
+		String captcha = getCleanParam(request, config.getParam().getVerifiedTokenName());
 		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, password, clientRef, captcha);
 	}
 

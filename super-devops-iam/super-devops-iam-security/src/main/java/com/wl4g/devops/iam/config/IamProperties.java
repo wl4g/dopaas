@@ -388,9 +388,9 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		private String clientRefName = "client_ref";
 
 		/**
-		 * Dynamic additional code(e.g. graphCode/smsCode).
+		 * Verification verifiedToken parameter name.
 		 */
-		private String attachCodeName = "attachCode";
+		private String verifiedTokenName = "verifiedToken";
 
 		/**
 		 * Dynamic verification code operation action type parameter key-name.
@@ -421,12 +421,12 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 			this.clientRefName = clientRefName;
 		}
 
-		public String getAttachCodeName() {
-			return attachCodeName;
+		public String getVerifiedTokenName() {
+			return verifiedTokenName;
 		}
 
-		public void setAttachCodeName(String loginCaptcha) {
-			this.attachCodeName = loginCaptcha;
+		public void setVerifiedTokenName(String verifiedTokenName) {
+			this.verifiedTokenName = verifiedTokenName;
 		}
 
 		public String getSmsActionName() {

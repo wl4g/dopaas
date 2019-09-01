@@ -13,57 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.crypto;
+package com.wl4g.devops.iam.verification.model;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * Cryptographic Services.
+ * Verify code based model, e.g. apply jigsaw CAPTCHA uuid.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019-08-30
+ * @version v1.0 2019-09-01
  * @since
  */
-public interface CryptographicService<K extends KeySpecWrapper> {
+public abstract class VerifyCodeBasedModel implements Serializable {
+	private static final long serialVersionUID = -333742824989510195L;
 
-	/**
-	 * Encryption with hex plain.
-	 * 
-	 * @param keySpec
-	 * @param hexPlain
-	 * @return
-	 */
-	String encryptWithHex(K keySpec, String hexPlain);
+	private String applyUuid;
 
-	/**
-	 * Decryption with hex cipher.
-	 * 
-	 * @param keySpec
-	 * @param hexCipher
-	 * @return
-	 */
-	String decryptWithHex(K keySpec, String hexCipher);
+	public VerifyCodeBasedModel() {
+		super();
+	}
 
-	/**
-	 * Apply keySpec resource.
-	 * 
-	 * @return
-	 */
-	K borrow();
+	public VerifyCodeBasedModel(String applyUuid) {
+		super();
+		this.applyUuid = applyUuid;
+	}
 
-	/**
-	 * Apply keySpec resource.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	K borrow(int index);
+	public String getApplyUuid() {
+		return applyUuid;
+	}
 
-	/**
-	 * Get keySpecPairs.
-	 * 
-	 * @return
-	 */
-	List<K> getKeySpecs();
+	public void setApplyUuid(String applyUuid) {
+		this.applyUuid = applyUuid;
+	}
 
 }

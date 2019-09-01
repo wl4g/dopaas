@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import java.io.Serializable;
+import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
 
 /**
  * Apply jigsaw image model
@@ -24,21 +24,12 @@ import java.io.Serializable;
  * @version v1.0 2019年8月30日
  * @since
  */
-public class ApplyJigsawImgModel implements Serializable {
+public class ApplyJigsawImgModel extends VerifyCodeBasedModel {
 	private static final long serialVersionUID = 4975604164412626949L;
 
-	private String applyUuid;
 	private int y;
 	private String primaryImgUrl;
 	private String blockImgUrl;
-
-	public String getApplyUuid() {
-		return applyUuid;
-	}
-
-	public void setApplyUuid(String applyUuid) {
-		this.applyUuid = applyUuid;
-	}
 
 	public int getY() {
 		return y;

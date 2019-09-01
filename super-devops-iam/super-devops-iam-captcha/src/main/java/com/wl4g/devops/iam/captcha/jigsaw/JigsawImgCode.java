@@ -28,18 +28,18 @@ import java.io.Serializable;
 public class JigsawImgCode implements Serializable {
 	private static final long serialVersionUID = 4975604362812626949L;
 
-	private long codeId;
+	private long imgId;
 	private int x;
 	private int y;
 	private BufferedImage primaryImg;
 	private BufferedImage blockImg;
 
-	public long getCodeId() {
-		return codeId;
+	public long getImgId() {
+		return imgId;
 	}
 
-	public void setCodeId(long codeId) {
-		this.codeId = codeId;
+	public void setImgId(long imgId) {
+		this.imgId = imgId;
 	}
 
 	public int getX() {

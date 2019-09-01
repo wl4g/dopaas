@@ -15,17 +15,40 @@
  */
 package com.wl4g.devops.iam.crypto;
 
+import java.util.UUID;
+
+import org.springframework.util.Assert;
+
 /**
- * Default cryptographic service
+ * KeySpec wrapper, include e.g.: RSA key pair algorithm and AES single key
+ * algorithm key packaging.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019-08-30
+ * @version v1.0 2019-08-28
  * @since
  */
-public final class DefaultCryptographicService extends AbstractCryptographicService {
+public abstract class KeySpecWrapper {
 
-	public DefaultCryptographicService() {
-		super(Cryptos.getInstance("RSA"));
+	/**
+	 * KeySpec unique identification.
+	 */
+	private String keySpecId;
+
+	public KeySpecWrapper() {
+		setKeySpecId("keySpec" + UUID.randomUUID().toString().replaceAll("-", "").substring(12));
+	}
+
+	public KeySpecWrapper(String keySpecId) {
+		Assert.hasText(keySpecId, "KeySpecId must not be empty.");
+		this.keySpecId = keySpecId;
+	}
+
+	public String getKeySpecId() {
+		return keySpecId;
+	}
+
+	public void setKeySpecId(String keySpecId) {
+		this.keySpecId = keySpecId;
 	}
 
 }

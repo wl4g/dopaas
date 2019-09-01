@@ -15,29 +15,25 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import java.io.Serializable;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
 
 /**
- * Analyze jigsaw image model.
+ * Analyze verify jigsaw image model.
  * 
  * @author Wangl.sir
  * @version v1.0 2019年8月30日
  * @since
  */
-public class AnylyzeJigsawImgModel implements Serializable {
+public class VerifyJigsawImgModel extends VerifyCodeBasedModel {
 	private static final long serialVersionUID = 4975604364412626949L;
 
-	private String applyUuid;
 	private Integer x;
-	private Trail[] trails; // Enhanced check
-
-	public String getApplyUuid() {
-		return applyUuid;
-	}
-
-	public void setApplyUuid(String applyUuid) {
-		this.applyUuid = applyUuid;
-	}
+	private Map<Integer, Integer> trails = new HashMap<>(); // AI enhanced check
 
 	public Integer getX() {
 		return x;
@@ -47,43 +43,14 @@ public class AnylyzeJigsawImgModel implements Serializable {
 		this.x = x;
 	}
 
-	public Trail[] getTrails() {
+	public Map<Integer, Integer> getTrails() {
 		return trails;
 	}
 
-	public void setTrails(Trail[] trails) {
-		this.trails = trails;
-	}
-
-	/**
-	 * Mouse trail information.
-	 * 
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月30日
-	 * @since
-	 */
-	public static class Trail implements Serializable {
-		private static final long serialVersionUID = 4975604364422626949L;
-
-		private Integer trailX;
-		private Integer trailY;
-
-		public Integer getTrailX() {
-			return trailX;
+	public void setTrails(Map<Integer, Integer> trails) {
+		if (!isEmpty(trails)) {
+			this.trails = trails;
 		}
-
-		public void setTrailX(Integer trailX) {
-			this.trailX = trailX;
-		}
-
-		public Integer getTrailY() {
-			return trailY;
-		}
-
-		public void setTrailY(Integer trailY) {
-			this.trailY = trailY;
-		}
-
 	}
 
 }

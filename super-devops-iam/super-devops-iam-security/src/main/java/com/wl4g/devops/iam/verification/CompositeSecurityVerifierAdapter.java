@@ -19,7 +19,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +67,7 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 	 * @param type
 	 * @return
 	 */
-	public SecurityVerifier forAdapts(@NotNull VerifyType type) {
+	public SecurityVerifier forAdapt(@NotNull VerifyType type) {
 		SecurityVerifier verifier = registry.get(type);
 		Assert.notNull(verifier, String.format("Unsupport securityVerifier for '%s'", type));
 		delegate.set(verifier);
@@ -81,40 +80,39 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 	 * @param request
 	 * @return
 	 */
-	public SecurityVerifier forAdapts(@NotNull HttpServletRequest request) {
-		return forAdapts(VerifyType.of(request));
+	public SecurityVerifier forAdapt(@NotNull HttpServletRequest request) {
+		return forAdapt(VerifyType.of(request));
 	}
 
 	@Override
-	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
-		getAdaptedVerifier().apply(owner, factors, request);
+	public Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
+		return getAdapted().apply(owner, factors, request);
 	}
 
 	@Override
 	public void render(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
-		getAdaptedVerifier().render(request, response);
+		getAdapted().render(request, response);
 	}
 
 	@Override
 	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
-		return getAdaptedVerifier().getVerifyCode(assertion);
+		return getAdapted().getVerifyCode(assertion);
 	}
 
 	@Override
 	public boolean isEnabled(@NotNull List<String> factors) {
-		return getAdaptedVerifier().isEnabled(factors);
+		return getAdapted().isEnabled(factors);
 	}
 
 	@Override
-	public String analyze(@NotNull HttpServletRequest request, @NotNull List<String> factors, @NotNull Object reqCode)
-			throws VerificationException {
-		return getAdaptedVerifier().analyze(request, factors, (Serializable) reqCode);
+	public String verify(@NotNull HttpServletRequest request, @NotNull List<String> factors) throws VerificationException {
+		return getAdapted().verify(request, factors);
 	}
 
 	@Override
 	public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
 			throws VerificationException {
-		getAdaptedVerifier().validate(factors, verifiedToken, required);
+		getAdapted().validate(factors, verifiedToken, required);
 	}
 
 	/**
@@ -123,10 +121,10 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 	 * @param type
 	 * @return
 	 */
-	private SecurityVerifier getAdaptedVerifier() {
+	private SecurityVerifier getAdapted() {
 		SecurityVerifier verifier = delegate.get();
 		Assert.state(verifier != null,
-				"Not adapted to specify actual securityVerifier, You must use forAdapts() to adapt before you can.");
+				"Not adapted to specify actual securityVerifier, You must use adapted() to adapt before you can.");
 		return verifier;
 	}
 
