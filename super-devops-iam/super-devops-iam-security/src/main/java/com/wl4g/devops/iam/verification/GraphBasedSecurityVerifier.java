@@ -34,7 +34,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Abstract graphic verification code handler
@@ -49,17 +52,17 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	/**
 	 * Apply CAPTCHA image UUID parameter name.
 	 */
-	final public static String PARAM_APPLY_UUID = "applyUuid";
+	final public static String DEFAULT_PARAM_APPLY_UUID = "captchaApplyUuid";
 
 	/**
 	 * Apply UUID expireMs.
 	 */
-	final public static long APPLY_UUID_EXPIREMS = 15_000;
+	final public static long DEFAULT_APPLY_UUID_EXPIREMS = 15_000;
 
 	/**
 	 * Apply UUID bit.
 	 */
-	final public static int APPLY_UUID_BIT = 32;
+	final public static int DEFAULT_APPLY_UUID_BIT = 32;
 
 	/**
 	 * Matching attempts accumulator
@@ -85,24 +88,30 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
-	public void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
+	public Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
 		// Check limit attempts
 		checkApplyAttempts(request, factors);
 		// Renew or cleanup CAPTCHA
 		reset(owner, true);
 
 		// Check and generate apply UUID.
-		if (getVerifyCode(true) != null) {
-			bind(PARAM_APPLY_UUID, randomAlphabetic(APPLY_UUID_BIT), APPLY_UUID_EXPIREMS);
-		}
+		Assert.state(Objects.nonNull(getVerifyCode(true)), "Failed to apply captcha.");
+		String applyUuid = bind(DEFAULT_PARAM_APPLY_UUID, randomAlphabetic(DEFAULT_APPLY_UUID_BIT), DEFAULT_APPLY_UUID_EXPIREMS);
+		return new HashMap<String, Object>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put(DEFAULT_PARAM_APPLY_UUID, applyUuid);
+			}
+		};
 	}
 
 	@Override
 	public void render(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
 		// Check apply UUID.
-		String storedApplyUuid = getBindValue(PARAM_APPLY_UUID, true);
+		String storedApplyUuid = getBindValue(DEFAULT_PARAM_APPLY_UUID, true);
 		Assert.hasText(storedApplyUuid, "Apply graphic captcha uuid has expired.");
-		Assert.isTrue(storedApplyUuid.equals(getCleanParam(request, PARAM_APPLY_UUID)), "Invalid graphic captcha apply uuid.");
+		Assert.isTrue(storedApplyUuid.equals(getCleanParam(request, DEFAULT_PARAM_APPLY_UUID)),
+				"Invalid graphic captcha apply uuid.");
 
 		// Set to expire far in the past.
 		response.setDateHeader("Expires", 0);
@@ -188,11 +197,11 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * 
 	 * @param request
 	 * @param response
-	 * @param reqCode
+	 * @param storedCode
 	 * @return
 	 */
-	protected abstract void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object reqCode)
-			throws IOException;
+	protected abstract void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+			Object storedCode) throws IOException;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

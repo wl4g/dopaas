@@ -36,7 +36,7 @@ import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
  * @date 2018年12月28日
  * @since
  */
-public class KaptchaSecurityVerifier extends GraphBasedSecurityVerifier<String> {
+public class KaptchaSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	private DefaultKaptcha kaptchaProducer;
 
@@ -51,11 +51,11 @@ public class KaptchaSecurityVerifier extends GraphBasedSecurityVerifier<String> 
 	}
 
 	@Override
-	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String verifyCode)
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object verifyCode)
 			throws IOException {
 		ServletOutputStream out = response.getOutputStream();
 		// Write the data out
-		ImageIO.write(kaptchaProducer.createImage(verifyCode), "JPEG", out);
+		ImageIO.write(kaptchaProducer.createImage((String) verifyCode), "JPEG", out);
 	}
 
 }

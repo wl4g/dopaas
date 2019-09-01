@@ -31,7 +31,7 @@ import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
  * @version v1.0 2019年8月28日
  * @since
  */
-public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier<JigsawImgCode> {
+public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	public VerifyType verifyType() {
@@ -39,9 +39,29 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier<JigsawImg
 	}
 
 	@Override
-	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
-			JigsawImgCode verifyCode) throws IOException {
+	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object storedCode)
+			throws IOException {
+		JigsawImgCode code = (JigsawImgCode) storedCode;
+		if (log.isInfoEnabled()) {
+			log.info(code.toString());
+		}
+		// TODO
+	}
 
+	@Override
+	protected Object generateCode() {
+		// TODO
+		return null;
+	}
+
+	@Override
+	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
+		JigsawImgCode code = (JigsawImgCode) submitCode;
+		if (log.isInfoEnabled()) {
+			log.info(code.toString());
+		}
+		// TODO
+		return false;
 	}
 
 }

@@ -43,8 +43,8 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
-import com.wl4g.devops.iam.crypto.CryptographicService;
-import com.wl4g.devops.iam.crypto.KeySpecPair;
+import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
+import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 
 /**
  * Abstract credentials securer adapter
@@ -78,7 +78,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * Cryptic service.
 	 */
 	@Autowired
-	protected CryptographicService cryptogaphicService;
+	protected RSACryptographicService rsaCryptoService;
 
 	/**
 	 * Delegate message source.
@@ -145,7 +145,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Override
 	public String applySecret() {
 		// Load secret keySpecPairs
-		List<KeySpecPair> keyPairs = cryptogaphicService.getKeySpecPairs();
+		List<RSAKeySpecWrapper> keyPairs = rsaCryptoService.getKeySpecs();
 
 		Integer index = getBindValue(KEY_SECRET_INDEX);
 		if (index == null) {
@@ -155,7 +155,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 			log.debug("Apply secret for index: {}", index);
 		}
 
-		KeySpecPair keyPair = keyPairs.get(index);
+		RSAKeySpecWrapper keyPair = keyPairs.get(index);
 		// Save the applied keyPair index.
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
@@ -225,7 +225,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
-		KeySpecPair keySpecPair = determineSecretKeySpecPair(token.getPrincipal());
+		RSAKeySpecWrapper keySpecPair = determineSecretKeySpecPair(token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
 			String publicBase64String = keySpecPair.getPubHexString();
@@ -242,7 +242,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		}
 
 		// Mysterious decrypt them.
-		final String plainCredentials = cryptogaphicService.decryptWithHex(keySpecPair, token.getCredentials());
+		final String plainCredentials = rsaCryptoService.decryptWithHex(keySpecPair, token.getCredentials());
 		return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
 	}
 
@@ -252,9 +252,9 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @param checkCode
 	 * @return
 	 */
-	private KeySpecPair determineSecretKeySpecPair(@NotNull String principal) {
+	private RSAKeySpecWrapper determineSecretKeySpecPair(@NotNull String principal) {
 		// Get the generated key pair
-		List<KeySpecPair> keyPairs = cryptogaphicService.getKeySpecPairs();
+		List<RSAKeySpecWrapper> keyPairs = rsaCryptoService.getKeySpecs();
 
 		// Choose the best one from the candidate key pair
 		Integer index = getBindValue(KEY_SECRET_INDEX, true);

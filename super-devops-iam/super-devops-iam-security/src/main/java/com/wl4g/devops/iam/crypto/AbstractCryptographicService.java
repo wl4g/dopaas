@@ -17,11 +17,9 @@ package com.wl4g.devops.iam.crypto;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_CRYPTO;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_KEYPAIRS;
-import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +36,7 @@ import com.wl4g.devops.iam.config.CryptoProperties;
  * @version v1.0 2019-08-30
  * @since
  */
-abstract class AbstractCryptographicService implements CryptographicService {
-
-	/**
-	 * Cryptic algorithm.
-	 */
-	final protected Cryptos crypto;
+public abstract class AbstractCryptographicService<K extends KeySpecWrapper> implements CryptographicService<K> {
 
 	/**
 	 * Cryptic properties.
@@ -57,37 +50,6 @@ abstract class AbstractCryptographicService implements CryptographicService {
 	@Autowired
 	protected EnhancedCacheManager cacheManager;
 
-	public AbstractCryptographicService(Cryptos crypto) {
-		this.crypto = crypto;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.wl4g.devops.iam.crypto.CryptographicService#encryptWithHex(com.wl4g.
-	 * devops.iam.crypto.Cryptos.KeySpecPair, java.lang.String)
-	 */
-	@Override
-	public String encryptWithHex(KeySpecPair keySpecPair, String hexPlain) {
-		return crypto.build(keySpecPair).encrypt(hexPlain);
-	}
-
-	@Override
-	public String decryptWithHex(KeySpecPair keySpecPair, String hexCipher) {
-		return crypto.build(keySpecPair).decrypt(hexCipher);
-	}
-
-	@Override
-	public KeySpecPair borrow() {
-		return borrow(nextInt(0, config.getKeyPairPools()));
-	}
-
-	@Override
-	public KeySpecPair borrow(int index) throws IndexOutOfBoundsException {
-		return getKeySpecPairs().get(index);
-	}
-
 	/**
 	 * Get the generated key-pairs allconfig.getKeyPairPools()
 	 * 
@@ -96,37 +58,41 @@ abstract class AbstractCryptographicService implements CryptographicService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<KeySpecPair> getKeySpecPairs() {
-		List<KeySpecPair> keyPairs = (List<KeySpecPair>) cacheManager.getEnhancedCache(CACHE_CRYPTO)
+	public List<K> getKeySpecs() {
+		List<K> keySpecs = (List<K>) cacheManager.getEnhancedCache(CACHE_CRYPTO)
 				.get(new EnhancedKey(KEY_KEYPAIRS, ArrayList.class));
-		if (isEmpty(keyPairs)) {
+		if (isEmpty(keySpecs)) {
 			// Initialize create generated key pairs.
-			keyPairs = initKeySpecPairPool();
+			keySpecs = initKeySpecPool();
 		}
-		Assert.notEmpty(keyPairs, "'keyPairs' must not be empty");
-
-		// By keySpecPair.sort
-		Collections.sort(keyPairs);
-		return keyPairs;
+		Assert.notEmpty(keySpecs, "'keySpecs' must not be empty");
+		return keySpecs;
 	}
 
 	/**
-	 * Create keySpec pair pool.
+	 * Generate keySpec.
 	 * 
 	 * @return
 	 */
-	private synchronized List<KeySpecPair> initKeySpecPairPool() {
+	protected abstract K generateKeySpec();
+
+	/**
+	 * Create keySpec pool.
+	 * 
+	 * @return
+	 */
+	private synchronized List<K> initKeySpecPool() {
 		// Create generate cryptic keyPairs
-		List<KeySpecPair> keyPairs = new ArrayList<>(config.getKeyPairPools());
+		List<K> keySpecs = new ArrayList<>(config.getKeyPairPools());
 		for (int i = 0; i < config.getKeyPairPools(); i++) {
-			keyPairs.add(crypto.generateKeySpecPair());
+			keySpecs.add(generateKeySpec());
 		}
 
 		// The key pairs of candidate asymmetric algorithms are valid.
 		cacheManager.getEnhancedCache(CACHE_CRYPTO).putIfAbsent(new EnhancedKey(KEY_KEYPAIRS, config.getKeyPairExpireMs()),
-				keyPairs);
-		Assert.notEmpty(keyPairs, "'keyPairs' must not be empty");
-		return keyPairs;
+				keySpecs);
+		Assert.notEmpty(keySpecs, "'keySpecs' must not be empty");
+		return keySpecs;
 	}
 
 }

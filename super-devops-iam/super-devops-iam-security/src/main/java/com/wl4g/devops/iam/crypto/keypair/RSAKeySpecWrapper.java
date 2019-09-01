@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.crypto;
+package com.wl4g.devops.iam.crypto.keypair;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -26,6 +28,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.shiro.codec.Hex;
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.iam.crypto.KeySpecWrapper;
+
 /**
  * Packaging classes of asymmetric algorithmic key pairs
  * 
@@ -33,11 +37,10 @@ import org.springframework.util.Assert;
  * @version v1.0 2019年1月22日
  * @since
  */
-final public class KeySpecPair implements Comparable<KeySpecPair>, Serializable {
+final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializable {
 	final private static long serialVersionUID = -6748188131949785684L;
 	final transient private static Map<String, KeyFactory> keyFactoryCache = new ConcurrentHashMap<>();
 
-	final private int sort;
 	final private String algorithm;
 	final private KeySpec keySpec;
 	final private KeySpec pubKeySpec;
@@ -50,18 +53,23 @@ final public class KeySpecPair implements Comparable<KeySpecPair>, Serializable 
 	private transient String keyBase64String;
 	private transient String pubKeyBase64String;
 
-	public KeySpecPair(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+	public RSAKeySpecWrapper(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
 		Assert.notNull(algorithm, "'algorithm' must not be null");
 		Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
 		Assert.notNull(keySpec, "'privateKeySpec' must not be null");
-		this.sort = (int) (Math.random() * 10_0000);
 		this.algorithm = algorithm;
 		this.pubKeySpec = pubKeySpec;
 		this.keySpec = keySpec;
 	}
 
-	public int getSort() {
-		return sort;
+	public RSAKeySpecWrapper(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		super(keySpecId);
+		Assert.notNull(algorithm, "'algorithm' must not be null");
+		Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
+		Assert.notNull(keySpec, "'privateKeySpec' must not be null");
+		this.algorithm = algorithm;
+		this.pubKeySpec = pubKeySpec;
+		this.keySpec = keySpec;
 	}
 
 	public String getAlgorithm() {
@@ -77,9 +85,9 @@ final public class KeySpecPair implements Comparable<KeySpecPair>, Serializable 
 	}
 
 	public String getHexString() {
-		if (this.keyHexString == null) {
+		if (isBlank(keyHexString)) {
 			try {
-				this.keyHexString = Hex.encodeToString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
+				keyHexString = Hex.encodeToString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
@@ -88,9 +96,9 @@ final public class KeySpecPair implements Comparable<KeySpecPair>, Serializable 
 	}
 
 	public String getPubHexString() {
-		if (this.pubKeyHexString == null) {
+		if (isBlank(pubKeyHexString)) {
 			try {
-				this.pubKeyHexString = Hex.encodeToString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
+				pubKeyHexString = Hex.encodeToString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
@@ -99,9 +107,9 @@ final public class KeySpecPair implements Comparable<KeySpecPair>, Serializable 
 	}
 
 	public String getBase64String() {
-		if (this.keyBase64String == null) {
+		if (isBlank(keyBase64String)) {
 			try {
-				this.keyBase64String = Base64.encodeBase64String(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
+				keyBase64String = Base64.encodeBase64String(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
@@ -110,9 +118,9 @@ final public class KeySpecPair implements Comparable<KeySpecPair>, Serializable 
 	}
 
 	public String getPubBase64String() {
-		if (this.pubKeyBase64String == null) {
+		if (isBlank(pubKeyBase64String)) {
 			try {
-				this.pubKeyBase64String = Base64.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
+				pubKeyBase64String = Base64.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
@@ -133,14 +141,9 @@ final public class KeySpecPair implements Comparable<KeySpecPair>, Serializable 
 	}
 
 	@Override
-	public int compareTo(KeySpecPair o) {
-		return getSort() - o.getSort();
-	}
-
-	@Override
 	public String toString() {
-		return "KeySpecPair [sort=" + getSort() + "algorithm=" + getAlgorithm() + ", publicKeyString=" + getPubHexString()
-				+ ", privateKeyString=" + getHexString() + "]";
+		return "KeySpecPair [algorithm=" + getAlgorithm() + ", pubKeyString=" + getPubHexString() + ", keyString="
+				+ getHexString() + "]";
 	}
 
 }

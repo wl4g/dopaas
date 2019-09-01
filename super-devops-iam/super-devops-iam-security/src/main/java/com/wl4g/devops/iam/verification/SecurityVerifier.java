@@ -20,6 +20,7 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,9 +57,10 @@ public abstract interface SecurityVerifier {
 	 * 
 	 * @param request
 	 *            HttpServletRequest
+	 * @return apply meta information.
 	 * @throws IOException
 	 */
-	void apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request);
+	Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request);
 
 	/**
 	 * Rendering output a verification code stream.
@@ -100,17 +102,13 @@ public abstract interface SecurityVerifier {
 	 * @param request
 	 *            HttpServletRequest
 	 * @param factors
-	 *            Safety limiting factor(e.g. Client remote IP and login
-	 *            user-name)
-	 * @param reqCode
-	 *            Request verify code.
-	 * @return If the check is successful, the token credentials will be
-	 *         returned. If no validation is required, the token credentials
-	 *         will be returned to null, otherwise the exception will be thrown.
+	 *            Safety limiting factor(e.g. Client remote IP and login name)
+	 * @return If the check is successful, return <b>verifiedToken</b>. If no
+	 *         validation is required, the token credentials will be returned to
+	 *         null, otherwise the exception will be thrown.
 	 * @throws VerificationException
 	 */
-	String analyze(@NotNull HttpServletRequest request, @NotNull List<String> factors, @NotNull Object reqCode)
-			throws VerificationException;
+	String verify(@NotNull HttpServletRequest request, @NotNull List<String> factors) throws VerificationException;
 
 	/**
 	 * Validation verified token.
@@ -263,7 +261,7 @@ public abstract interface SecurityVerifier {
 		 * @param code
 		 * @return
 		 */
-		public long getRemainingDelay(long delayMs) {
+		public long getRemainDelay(long delayMs) {
 			// remainMs = NowTime - CreateTime - DelayTime
 			long now = System.currentTimeMillis();
 			return Math.max(delayMs - (now - getCreateTime()), 0);
