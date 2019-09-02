@@ -15,10 +15,14 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import static org.apache.commons.lang3.RandomStringUtils.random;
+import static io.netty.util.internal.ThreadLocalRandom.current;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -58,9 +62,6 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 
 	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
-		if (log.isInfoEnabled()) {
-			log.info("Initialize jigsaw image cache pool...");
-		}
 		initJigsawImageCache();
 	}
 
@@ -68,6 +69,9 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * Clear cache.
 	 */
 	public void clearCache() {
+		if (log.isInfoEnabled()) {
+			log.info("Clear jigsaw image pool for {} ...", cachePool.size());
+		}
 		this.cachePool.clear();
 	}
 
@@ -77,8 +81,8 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * @return
 	 */
 	public JigsawImgCode borrow() {
-		Assert.state(cachePool.size() > 0, "Unable to borrow jigsaw image resource.");
-		return cachePool.get(random(cachePool.size()));
+		Assert.state(!cachePool.isEmpty(), "Unable to borrow jigsaw image resource.");
+		return cachePool.get(current().nextInt(cachePool.size()));
 	}
 
 	/**
@@ -86,11 +90,42 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * 
 	 * @throws Exception
 	 */
-	private void initJigsawImageCache() throws Exception {
-		for (int i = 0; i < config.getJigsaw().getPoolSize(); i++) {
-			ImageTailor tailor = new ImageTailor();
-			this.cachePool.put(i, tailor.cutImageFile("f:\\a.png"));
+	private void initJigsawImageCache() throws IOException {
+		if (log.isInfoEnabled()) {
+			log.info("Initializing jigsaw image buffer pool...");
 		}
+
+		File srcDir = new File(config.getJigsaw().getSourceDir());
+		Assert.state((srcDir.canRead() && srcDir.exists()),
+				String.format("Failed to initialize jigsaw images, please check the path: %s is correct and has read permission",
+						srcDir.getAbsolutePath()));
+		// Read files.
+		File[] files = srcDir.listFiles();
+		Assert.state((files != null && files.length > 0),
+				String.format("Failed to initialize jigsaw images, path: %s material is empty", srcDir.getAbsolutePath()));
+
+		// Statistic use material.
+		Set<Integer> indexs = new HashSet<>();
+		// Initialize jigsaw images.
+		ImageTailor tailor = new ImageTailor();
+		for (int i = 0; i < config.getJigsaw().getPoolSize(); i++) {
+			int index = i;
+			if (index >= files.length) { // Inadequate material, random reuse.
+				index = current().nextInt(files.length);
+			}
+			indexs.add(index);
+			String path = files[index].getAbsolutePath();
+			if (log.isDebugEnabled()) {
+				log.debug("Generate jigsaw image from material: {}", path);
+			}
+			this.cachePool.put(i, tailor.getJigsawImageFile(path));
+		}
+
+		if (log.isInfoEnabled()) {
+			log.info("Initialized jigsaw images buffer total: {}, expend material: {}", config.getJigsaw().getPoolSize(),
+					indexs.size());
+		}
+
 	}
 
 }
