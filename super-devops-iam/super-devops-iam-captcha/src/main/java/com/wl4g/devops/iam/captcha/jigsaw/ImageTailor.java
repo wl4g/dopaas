@@ -18,14 +18,13 @@ package com.wl4g.devops.iam.captcha.jigsaw;
 import org.springframework.util.Assert;
 
 import javax.imageio.ImageIO;
-
-import static io.netty.util.internal.ThreadLocalRandom.current;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import static io.netty.util.internal.ThreadLocalRandom.current;
 
 /**
  * Image tailor.
