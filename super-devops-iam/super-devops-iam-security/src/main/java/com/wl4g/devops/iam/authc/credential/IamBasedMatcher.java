@@ -47,7 +47,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	/**
 	 * IAM verification handler
 	 */
-	final protected SecurityVerifier verification;
+	final protected SecurityVerifier verifier;
 
 	/**
 	 * Matcher configuration properties
@@ -79,9 +79,9 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
-	public IamBasedMatcher(SecurityVerifier verification) {
-		Assert.notNull(verification, "Verification must not be null");
-		this.verification = verification;
+	public IamBasedMatcher(SecurityVerifier verifier) {
+		Assert.notNull(verifier, "Verification must not be null");
+		this.verifier = verifier;
 	}
 
 }

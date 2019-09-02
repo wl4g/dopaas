@@ -47,7 +47,7 @@ public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 	@Override
 	protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
 		if (token instanceof CaptchaAuthenticationToken) {
-			verification.validate(factors, ((CaptchaAuthenticationToken) token).getCaptcha(), false);
+			verifier.validate(factors, ((CaptchaAuthenticationToken) token).getCaptcha(), false);
 		}
 	}
 
