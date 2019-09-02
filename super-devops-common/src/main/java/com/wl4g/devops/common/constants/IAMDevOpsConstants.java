@@ -117,12 +117,24 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * forms) when the authorization is successful.
 	 */
 	final public static String URI_S_AFTER_CALLBACK_AGENT = "after_callback_agent";
+
 	/**
 	 * WeChat public platform social services receive message URI.
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
 
-	/** Based URI with extra needed verification code etc. */
+	/** Based URI with verifier authenticator controller. */
+	final public static String URI_S_VERIFY_BASE = "/verify";
+	/** URI for apply for CAPTCHA. */
+	final public static String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
+	/** URI for render for CAPTCHA. */
+	final public static String URI_S_VERIFY_RENDER_CAPTCHA = "rendercaptcha";
+	/** URI for verify analyze for CAPTCHA. */
+	final public static String URI_S_VERIFY_ANALYZE_CAPTCHA = "verifyAnalyze";
+	/** URI for apply for verify-code. */
+	final public static String URI_S_VERIFY_SMS_APPLY = "applysmsverify";
+
+	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
 	 * Apply sessionID, For example for mobile use.
@@ -133,10 +145,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * enabled, etc.
 	 */
 	final public static String URI_S_LOGIN_CHECK = "check";
-	/** URI for apply for CAPTCHA. */
-	final public static String URI_S_LOGIN_APPLY_CAPTCHA = "applycaptcha";
-	/** URI for apply for verify-code. */
-	final public static String URI_S_LOGIN_SMS_APPLY = "applysmsverify";
 	/** URI for apply for locale. */
 	final public static String URI_S_LOGIN_APPLY_LOCALE = "applylocale";
 	/**
@@ -156,6 +164,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * IAM client authentication authorization information storage cache name.
 	 */
 	final public static String CACHE_TICKET_C = "ticket_c_";
+
 	/**
 	 * Login authentication related processing cache name.
 	 */
@@ -176,19 +185,21 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Login failure overrun, lock cache name.
 	 */
 	final public static String CACHE_MATCH_LOCK = "matcher_lock_";
+
 	/**
-	 * Securer based cache name
+	 * Cryptographic service cache name.
 	 */
-	final public static String CACHE_SECURER = "securer_";
+	final public static String CACHE_CRYPTO = "crypto_";
+
+	/**
+	 * The key of cache encryption key pairs
+	 */
+	final public static String KEY_KEYPAIRS = "keypairs";
 
 	/**
 	 * The public key index by logged-in users
 	 */
 	final public static String KEY_SECRET_INDEX = "securerSecretKeyPairIndex";
-	/**
-	 * The key of cache encryption key pairs
-	 */
-	final public static String KEY_KEYPAIRS = "keypairs";
 	/**
 	 * Token used to save current session authenticating
 	 */
@@ -209,6 +220,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Error information for saving iam-related operations to sessions.
 	 */
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
+
 	/**
 	 * Delegate message source bean name.
 	 */

@@ -16,8 +16,6 @@
 package com.wl4g.devops.iam.authc.credential.secure;
 
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -34,31 +32,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SECURER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SECRET_INDEX;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_KEYPAIRS;
 import static com.wl4g.devops.common.utils.codec.CheckSums.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 
-import com.wl4g.devops.iam.authc.credential.secure.Cryptos.KeySpecPair;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
+import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
+import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 
 /**
  * Abstract credentials securer adapter
+ * 
  * @see {@link org.apache.shiro.crypto.hash.DefaultHashService}
  * 
- * @author wangl.sir
- * @version v1.0 2019年1月16日
- * @since
- */
-/**
  * @author wangl.sir
  * @version v1.0 2019年3月11日
  * @since
@@ -68,7 +60,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * Pre-asymmetric cryptic count size.
+	 * Secure configuration.
 	 */
 	final private SecureConfig config;
 
@@ -78,14 +70,15 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	final protected EnhancedCacheManager cacheManager;
 
 	/**
-	 * Cryptic algorithm
-	 */
-	final protected Cryptos crypto;
-
-	/**
 	 * The 'private' part of the hash salt.
 	 */
 	final private ByteSource privateSalt;
+
+	/**
+	 * Cryptic service.
+	 */
+	@Autowired
+	protected RSACryptographicService rsaCryptoService;
 
 	/**
 	 * Delegate message source.
@@ -110,8 +103,6 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		this.privateSalt = ByteSource.Util.bytes(config.getPrivateSalt());
 		this.config = config;
 		this.cacheManager = cacheManager;
-		this.crypto = Cryptos.getInstance("RSA");
-		Assert.notNull(this.crypto, "'crypto' must not be null");
 	}
 
 	@Override
@@ -154,7 +145,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Override
 	public String applySecret() {
 		// Load secret keySpecPairs
-		List<KeySpecPair> keyPairs = loadSecretKeySpecPairs();
+		List<RSAKeySpecWrapper> keyPairs = rsaCryptoService.getKeySpecs();
 
 		Integer index = getBindValue(KEY_SECRET_INDEX);
 		if (index == null) {
@@ -164,15 +155,15 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 			log.debug("Apply secret for index: {}", index);
 		}
 
-		KeySpecPair keyPair = keyPairs.get(index);
+		RSAKeySpecWrapper keyPair = keyPairs.get(index);
 		// Save the applied keyPair index.
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
 		if (log.isInfoEnabled()) {
 			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
-					index, keyPair.getPublicHexString(), keyPair.getPrivateHexString());
+					index, keyPair.getPubHexString(), keyPair.getHexString());
 		}
-		return keyPair.getPublicHexString();
+		return keyPair.getPubHexString();
 	}
 
 	/**
@@ -234,24 +225,25 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
-		KeySpecPair keySpecPair = determineSecretKeySpecPair(token.getPrincipal());
+		RSAKeySpecWrapper keySpecPair = determineSecretKeySpecPair(token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
-			String publicBase64String = keySpecPair.getPublicHexString();
+			String publicBase64String = keySpecPair.getPubHexString();
 			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
 			String privateBase64String = "Not output";
 			boolean output = true;
 
 			if (log.isDebugEnabled() || output) {
-				privateBase64String = keySpecPair.getPrivateBase64String();
+				privateBase64String = keySpecPair.getBase64String();
 				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			} else {
 				log.info(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			}
 		}
 
-		// Mysterious decrypt them
-		return new CredentialsToken(token.getPrincipal(), crypto.build(keySpecPair).decrypt(token.getCredentials()), true);
+		// Mysterious decrypt them.
+		final String plainCredentials = rsaCryptoService.decryptWithHex(keySpecPair, token.getCredentials());
+		return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
 	}
 
 	/**
@@ -260,9 +252,9 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @param checkCode
 	 * @return
 	 */
-	private KeySpecPair determineSecretKeySpecPair(@NotNull String principal) {
+	private RSAKeySpecWrapper determineSecretKeySpecPair(@NotNull String principal) {
 		// Get the generated key pair
-		List<KeySpecPair> keyPairs = loadSecretKeySpecPairs();
+		List<RSAKeySpecWrapper> keyPairs = rsaCryptoService.getKeySpecs();
 
 		// Choose the best one from the candidate key pair
 		Integer index = getBindValue(KEY_SECRET_INDEX, true);
@@ -274,50 +266,6 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 			log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
 		}
 		throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
-	}
-
-	/**
-	 * Get the generated key-pairs all
-	 * 
-	 * @param checkCode
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	private List<KeySpecPair> loadSecretKeySpecPairs() {
-		List<KeySpecPair> keyPairs = (List<KeySpecPair>) cacheManager.getEnhancedCache(CACHE_SECURER)
-				.get(new EnhancedKey(KEY_KEYPAIRS, ArrayList.class));
-
-		if (keyPairs == null) {
-			// Create a list of newly generated key pairs
-			keyPairs = createKeySpecPairs();
-		}
-		Assert.notEmpty(keyPairs, "'keyPairs' must not be empty");
-
-		// By keySpecPair.sort
-		Collections.sort(keyPairs);
-		return keyPairs;
-	}
-
-	/**
-	 * Re-create key spec pairs
-	 * 
-	 * @return
-	 */
-	private synchronized List<KeySpecPair> createKeySpecPairs() {
-		// Re-create cryptic keyPairs
-		List<KeySpecPair> keyPairs = new ArrayList<>(config.getPreCryptPoolSize());
-
-		// Generate keySpec pairs
-		for (int i = 0; i < config.getPreCryptPoolSize(); i++) {
-			keyPairs.add(crypto.generateKeySpecPair());
-		}
-
-		// The key pairs of candidate asymmetric algorithms are valid.
-		cacheManager.getEnhancedCache(CACHE_SECURER).putIfAbsent(new EnhancedKey(KEY_KEYPAIRS, config.getCryptosExpireMs()),
-				keyPairs);
-
-		Assert.notEmpty(keyPairs, "'keyPairs' must not be empty");
-		return keyPairs;
 	}
 
 	/**

@@ -15,42 +15,126 @@
  */
 package com.wl4g.devops.iam.captcha.config;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import java.io.IOException;
 import java.util.Properties;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.ClassPathResource;
 
-@ConfigurationProperties(prefix = "spring.cloud.devops.iam.kaptcha")
+@ConfigurationProperties(prefix = "spring.cloud.devops.iam.captcha")
 public class CaptchaProperties {
 
-	private Properties properties = new Properties();
+	/**
+	 * Default jigsaw source image path.
+	 */
+	final public static String DEFAULT_JIGSAW_SOURCE_PATH = "static/jigsaw";
 
-	public CaptchaProperties() {
-		// Default kaptcha settings
-		this.getProperties().put("kaptcha.border", "no");
-		this.getProperties().put("kaptcha.border.color", "red");
-		this.getProperties().put("kaptcha.border.thickness", "5");
-		this.getProperties().put("kaptcha.image.width", "150");
-		this.getProperties().put("kaptcha.image.height", "50");
-		// 0,0,205 black
-		this.getProperties().put("kaptcha.noise.color", "0,0,205");
-		// 255,250,205
-		this.getProperties().put("kaptcha.background.clear.from", "178,223,238");
-		this.getProperties().put("kaptcha.background.clear.to", "240,255,240");
-		this.getProperties().put("kaptcha.textproducer.font.names", "微软雅黑");
-		this.getProperties().put("kaptcha.textproducer.font.size", "30");
-		// 255,110,180
-		this.getProperties().put("kaptcha.textproducer.font.color", "72,118,255");
-		this.getProperties().put("kaptcha.textproducer.char.space", "3");
-		this.getProperties().put("kaptcha.textproducer.char.string", "ABCDEFGHJKMNQRSTUVWXYZ123456789");
-		this.getProperties().put("kaptcha.textproducer.char.length", "5");
+	private KaptchaProperties kaptcha = new KaptchaProperties();
+
+	private JigsawProperties jigsaw = new JigsawProperties();
+
+	public KaptchaProperties getKaptcha() {
+		return kaptcha;
 	}
 
-	public Properties getProperties() {
-		return properties;
+	public void setKaptcha(KaptchaProperties kaptcha) {
+		this.kaptcha = kaptcha;
 	}
 
-	public void setProperties(Properties properties) {
-		this.properties = properties;
+	public JigsawProperties getJigsaw() {
+		return jigsaw;
+	}
+
+	public void setJigsaw(JigsawProperties jigsaw) {
+		this.jigsaw = jigsaw;
+	}
+
+	/**
+	 * Kaptcha configuration properties
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019-09-02
+	 * @since
+	 */
+	public static class KaptchaProperties {
+		private Properties properties = new Properties();
+
+		public KaptchaProperties() {
+			// Default kaptcha settings
+			this.getProperties().put("kaptcha.border", "no");
+			this.getProperties().put("kaptcha.border.color", "red");
+			this.getProperties().put("kaptcha.border.thickness", "5");
+			this.getProperties().put("kaptcha.image.width", "150");
+			this.getProperties().put("kaptcha.image.height", "50");
+			// 0,0,205 black
+			this.getProperties().put("kaptcha.noise.color", "0,0,205");
+			// 255,250,205
+			this.getProperties().put("kaptcha.background.clear.from", "178,223,238");
+			this.getProperties().put("kaptcha.background.clear.to", "240,255,240");
+			this.getProperties().put("kaptcha.textproducer.font.names", "微软雅黑");
+			this.getProperties().put("kaptcha.textproducer.font.size", "30");
+			// 255,110,180
+			this.getProperties().put("kaptcha.textproducer.font.color", "72,118,255");
+			this.getProperties().put("kaptcha.textproducer.char.space", "3");
+			this.getProperties().put("kaptcha.textproducer.char.string", "ABCDEFGHJKMNQRSTUVWXYZ123456789");
+			this.getProperties().put("kaptcha.textproducer.char.length", "5");
+		}
+
+		public Properties getProperties() {
+			return properties;
+		}
+
+		public void setProperties(Properties properties) {
+			this.properties = properties;
+		}
+	}
+
+	/**
+	 * Jigsaw configuration.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019-09-02
+	 * @since
+	 */
+	public static class JigsawProperties {
+
+		final protected Logger log = LoggerFactory.getLogger(getClass());
+
+		/** Jigsaw image cache pool size. */
+		private int poolSize = 64;
+
+		/** Source image directory. */
+		private String sourceDir;
+
+		public int getPoolSize() {
+			return poolSize;
+		}
+
+		public void setPoolSize(int poolSize) {
+			this.poolSize = poolSize;
+		}
+
+		public String getSourceDir() {
+			if (!isBlank(sourceDir)) {
+				return sourceDir;
+			}
+
+			try {
+				String _sourceDir = new ClassPathResource(DEFAULT_JIGSAW_SOURCE_PATH).getFile().getAbsolutePath();
+				log.warn("Using jigsaw default material, directory: {}", _sourceDir);
+				return _sourceDir;
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
+		public void setSourceDir(String sourceDir) {
+			this.sourceDir = sourceDir;
+		}
+
 	}
 
 }

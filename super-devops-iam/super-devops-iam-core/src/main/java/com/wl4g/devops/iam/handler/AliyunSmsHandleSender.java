@@ -17,9 +17,7 @@ package com.wl4g.devops.iam.handler;
 
 import java.util.Map;
 
-//import org.springframework.stereotype.Service;
-
-import com.wl4g.devops.iam.handler.verification.SmsVerification.SmsHandleSender;
+import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
 
 //@Service
 public class AliyunSmsHandleSender implements SmsHandleSender {
