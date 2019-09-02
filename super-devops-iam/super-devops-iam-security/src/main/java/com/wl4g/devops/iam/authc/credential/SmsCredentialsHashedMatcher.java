@@ -43,7 +43,7 @@ public class SmsCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 		SmsAuthenticationToken tk = (SmsAuthenticationToken) token;
 		try {
 			// Validation
-			verification.validate(factors, (String) tk.getCredentials(), true);
+			verifier.validate(factors, (String) tk.getCredentials(), true);
 			return true;
 		} catch (Throwable th) {
 			throw new VerificationException(th);
