@@ -51,7 +51,7 @@ spring:
         denyIp:
       captcha:
         jigsaw:
-          source-dir: f:\\jigsaw-source
+          source-dir: /Users/vjay/Downloads/images
       sns: # SNS configuration.
         oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
         wechat-mp:

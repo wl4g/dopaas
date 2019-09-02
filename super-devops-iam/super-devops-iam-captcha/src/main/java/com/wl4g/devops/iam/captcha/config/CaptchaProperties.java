@@ -15,22 +15,13 @@
  */
 package com.wl4g.devops.iam.captcha.config;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import java.io.IOException;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.ClassPathResource;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.captcha")
 public class CaptchaProperties {
-
-	/**
-	 * Default jigsaw source image path.
-	 */
-	final public static String DEFAULT_JIGSAW_SOURCE_PATH = "static/jigsaw";
 
 	private KaptchaProperties kaptcha = new KaptchaProperties();
 
@@ -118,17 +109,7 @@ public class CaptchaProperties {
 		}
 
 		public String getSourceDir() {
-			if (!isBlank(sourceDir)) {
-				return sourceDir;
-			}
-
-			try {
-				String _sourceDir = new ClassPathResource(DEFAULT_JIGSAW_SOURCE_PATH).getFile().getAbsolutePath();
-				log.warn("Using jigsaw default material, directory: {}", _sourceDir);
-				return _sourceDir;
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
+			return sourceDir;
 		}
 
 		public void setSourceDir(String sourceDir) {
