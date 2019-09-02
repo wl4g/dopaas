@@ -24,6 +24,7 @@ import static io.netty.util.internal.ThreadLocalRandom.current;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -101,8 +102,20 @@ public class ImageTailor {
 	 * @return
 	 * @throws IOException
 	 */
-	public JigsawImgCode getJigsawImageHttp(String url) throws IOException {
+	public JigsawImgCode getJigsawImageUrl(String url) throws IOException {
 		BufferedImage source = ImageIO.read(new URL(url));
+		return doProcess(source);
+	}
+
+	/**
+	 * Get jigsaw cut image from input stream
+	 * 
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	public JigsawImgCode getJigsawImageInputStream(InputStream in) throws IOException {
+		BufferedImage source = ImageIO.read(in);
 		return doProcess(source);
 	}
 
@@ -229,7 +242,7 @@ public class ImageTailor {
 		// 从本地文件获取图片
 		// JigsawImgCode img =
 		// imageUtil.getJigsawImageFile("/Users/vjay/Downloads/0.jpg");
-		JigsawImgCode img = tailor.getJigsawImageHttp("http://vps.vjay.pw/1.jpg");
+		JigsawImgCode img = tailor.getJigsawImageUrl("http://vps.vjay.pw/1.jpg");
 
 		writeImage(img.getPrimaryImg(), "f:\\a.png");
 		writeImage(img.getBlockImg(), "f:\\b.png");
