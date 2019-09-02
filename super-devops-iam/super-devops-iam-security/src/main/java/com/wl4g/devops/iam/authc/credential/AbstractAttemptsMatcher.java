@@ -19,9 +19,10 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.handler.verification.Cumulators;
-import com.wl4g.devops.iam.handler.verification.Cumulators.Cumulator;
-import com.wl4g.devops.iam.handler.verification.Verification;
+import com.wl4g.devops.iam.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.cumulation.CumulateHolder;
+import com.wl4g.devops.iam.verification.cumulation.Cumulator;
+
 import static com.wl4g.devops.iam.common.utils.Securitys.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -72,7 +73,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	private Cumulator applySmsCumulator;
 
-	public AbstractAttemptsMatcher(Verification verification) {
+	public AbstractAttemptsMatcher(SecurityVerifier verification) {
 		super(verification);
 	}
 
@@ -269,16 +270,16 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		IamProperties.MatcherProperties matcher = config.getMatcher();
 		this.lockCache = cacheManager.getEnhancedCache(CACHE_MATCH_LOCK);
 
-		this.matchCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
+		this.matchCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
 				matcher.getFailFastMatchDelay());
 
-		this.applyCaptchaCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
+		this.applyCaptchaCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
 				matcher.getFailFastCaptchaDelay());
 
-		this.applySmsCumulator = Cumulators.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+		this.applySmsCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
 				matcher.getFailFastSmsMaxDelay());
 
-		this.sessionMatchCumulator = Cumulators.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
+		this.sessionMatchCumulator = CumulateHolder.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
 				matcher.getFailFastMatchDelay());
 
 		Assert.notNull(lockCache, "lockCache is null, please check configure");

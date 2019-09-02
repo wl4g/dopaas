@@ -78,4 +78,5 @@ public class VerificationException extends IamException {
 	public VerificationException(Throwable cause) {
 		super(cause);
 	}
+
 }

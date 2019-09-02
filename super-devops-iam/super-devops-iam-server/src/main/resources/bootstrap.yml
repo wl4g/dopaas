@@ -49,7 +49,10 @@ spring:
 #          allowIp: 127.0.0.1
 #          denyIp:
         captcha:
-          enabled: true
+          #kaptcha:
+          #gif:
+          jigsaw:
+            pool-size: 64
 
 # ### Server configuration. ###
 server:
