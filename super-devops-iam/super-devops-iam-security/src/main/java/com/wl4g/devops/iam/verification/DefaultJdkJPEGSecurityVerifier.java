@@ -46,7 +46,7 @@ public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	public VerifyType verifyType() {
-		return VerifyType.GRAPH_DEFAULT;
+		return VerifyType.GRAPH_SIMPLE;
 	}
 
 	@Override

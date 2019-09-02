@@ -135,9 +135,7 @@ public abstract interface SecurityVerifier {
 	 */
 	public static enum VerifyType {
 
-		GRAPH_DEFAULT("VerifyWithDefaultGraph"),
-
-		// GRAPH_SIMPLE("VerifyWithSimpleGraph"),
+		GRAPH_SIMPLE("VerifyWithSimpleGraph"),
 
 		GRAPH_GIF("VerifyWithGifGraph"),
 
