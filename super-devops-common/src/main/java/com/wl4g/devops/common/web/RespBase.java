@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.common.web;
 
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -27,6 +28,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.wl4g.devops.common.exception.BizRequiredArgumentException;
+import com.wl4g.devops.common.exception.BizRuleRestrictionException;
+import com.wl4g.devops.common.exception.ServiceUnavailableException;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
 
 /**
@@ -103,6 +107,18 @@ public class RespBase<T extends Object> implements Serializable {
 
 	public RespBase<T> setMessage(String message) {
 		this.message = message != null ? message : this.message;
+		return this;
+	}
+
+	public RespBase<T> setThrowable(Throwable th) {
+		this.message = getRootCausesString(th);
+		if (th instanceof BizRuleRestrictionException) {
+			this.code = ((BizRuleRestrictionException) th).getCode();
+		} else if (th instanceof BizRequiredArgumentException) {
+			this.code = ((BizRequiredArgumentException) th).getCode();
+		} else if (th instanceof ServiceUnavailableException) {
+			this.code = ((ServiceUnavailableException) th).getCode();
+		}
 		return this;
 	}
 
@@ -251,9 +267,9 @@ public class RespBase<T extends Object> implements Serializable {
 
 		/**
 		 * System abnormality<br/>
-		 * {@link HttpStatus.INTERNAL_SERVER_ERROR}
+		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
-		SYS_ERR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Busy system, please try-again later");
+		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try-again later");
 
 		private int code;
 		private String msg;
