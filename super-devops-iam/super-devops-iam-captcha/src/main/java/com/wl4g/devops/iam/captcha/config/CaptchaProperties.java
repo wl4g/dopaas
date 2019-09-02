@@ -91,7 +91,11 @@ public class CaptchaProperties {
 	 */
 	public static class JigsawProperties {
 
+		/** Jigsaw image cache pool size. */
 		private int poolSize = 64;
+
+		/** Source image directory. */
+		private String sourceDir;
 
 		public int getPoolSize() {
 			return poolSize;
@@ -99,6 +103,14 @@ public class CaptchaProperties {
 
 		public void setPoolSize(int poolSize) {
 			this.poolSize = poolSize;
+		}
+
+		public String getSourceDir() {
+			return sourceDir;
+		}
+
+		public void setSourceDir(String sourceDir) {
+			this.sourceDir = sourceDir;
 		}
 
 	}
