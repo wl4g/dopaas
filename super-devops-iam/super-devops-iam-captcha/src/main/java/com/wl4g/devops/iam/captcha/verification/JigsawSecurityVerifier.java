@@ -25,7 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImgCode;
+import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
@@ -41,6 +45,12 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	final public static String IMGTYPE_PRIMARY = "primary";
 	final public static String IMGTYPE_BLOCK = "block";
 
+	@Autowired
+	protected JigsawImageManager jigsawManager;
+
+	@Autowired
+	protected RSACryptographicService rsaCryptoService;
+
 	@Override
 	public VerifyType verifyType() {
 		return VerifyType.GRAPH_JIGSAW;
@@ -50,8 +60,8 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object storedCode)
 			throws IOException {
 		JigsawImgCode code = (JigsawImgCode) storedCode;
-		if (log.isInfoEnabled()) {
-			log.info(code.toString());
+		if (log.isDebugEnabled()) {
+			log.debug("Write captcha image for: {}", code.toString());
 		}
 		ServletOutputStream out = response.getOutputStream();
 
@@ -59,23 +69,20 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		String imgType = getCleanParam(request, PARAM_IMGTYPE_NAME);
 		switch (String.valueOf(imgType)) {
 		case IMGTYPE_PRIMARY:
-			// TODO
-			ImageIO.write(null, "JPEG", out);
+			ImageIO.write(code.getPrimaryImg(), "JPEG", out);
 			break;
 		case IMGTYPE_BLOCK:
-			// TODO
-			ImageIO.write(null, "JPEG", out);
+			ImageIO.write(code.getBlockImg(), "JPEG", out);
 			break;
 		default:
-			throw new IllegalArgumentException(String.format("Invalid imgType '%s'", imgType));
+			throw new IllegalArgumentException(String.format("Unknown jigsaw image type '%s'", imgType));
 		}
 
 	}
 
 	@Override
 	protected Object generateCode() {
-		// TODO
-		return null;
+		return jigsawManager.borrow();
 	}
 
 	@Override

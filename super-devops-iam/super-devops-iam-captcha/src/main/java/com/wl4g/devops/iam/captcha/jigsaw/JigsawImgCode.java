@@ -65,4 +65,9 @@ public class JigsawImgCode implements Serializable {
 		this.blockImg = blockImg;
 	}
 
+	@Override
+	public String toString() {
+		return "JigsawImgCode [x=" + x + ", y=" + y + ", primaryImg=" + primaryImg + ", blockImg=" + blockImg + "]";
+	}
+
 }
