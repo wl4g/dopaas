@@ -100,6 +100,9 @@ public class CaptchaProperties {
 		/** Source image directory. */
 		private String sourceDir;
 
+		/** Analyze verification of pixels allowing X-offset. */
+		private int allowOffsetX = 4;
+
 		public int getPoolSize() {
 			return poolSize;
 		}
@@ -114,6 +117,14 @@ public class CaptchaProperties {
 
 		public void setSourceDir(String sourceDir) {
 			this.sourceDir = sourceDir;
+		}
+
+		public int getAllowOffsetX() {
+			return allowOffsetX;
+		}
+
+		public void setAllowOffsetX(int allowOffsetX) {
+			this.allowOffsetX = allowOffsetX;
 		}
 
 	}

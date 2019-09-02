@@ -128,16 +128,17 @@ public abstract class Exceptions extends ExceptionUtils {
 	 * Getting root causes string message
 	 * 
 	 * @param th
-	 * @param extra
+	 * @param extract
+	 *            Whether to extract the root cause of anomalies
 	 * @return
 	 */
-	public static String getRootCausesString(Throwable th, boolean extra) {
+	public static String getRootCausesString(Throwable th, boolean extract) {
 		if (th == null) {
 			return null;
 		}
 		String causes = getRootCauseMessage(th);
 		String errmsg = isEmpty(causes) ? getMessage(th) : causes;
-		if (extra && contains(errmsg, ":")) {
+		if (extract && contains(errmsg, ":")) {
 			errmsg = errmsg.split(":")[1];
 		}
 		return errmsg;
