@@ -15,9 +15,11 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -27,9 +29,12 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImgCode;
+import com.wl4g.devops.iam.captcha.jigsaw.VerifyJigsawImgModel;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
+import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
@@ -45,11 +50,22 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	final public static String IMGTYPE_PRIMARY = "primary";
 	final public static String IMGTYPE_BLOCK = "block";
 
+	/**
+	 * Jigsaw image manager.
+	 */
 	@Autowired
 	protected JigsawImageManager jigsawManager;
 
+	/**
+	 * RSA cryptographic service.
+	 */
 	@Autowired
 	protected RSACryptographicService rsaCryptoService;
+
+	/**
+	 * CAPTCHA config properties.
+	 */
+	protected CaptchaProperties captchaConfig;
 
 	@Override
 	public VerifyType verifyType() {
@@ -87,12 +103,38 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
-		JigsawImgCode code = (JigsawImgCode) submitCode;
+		JigsawImgCode code = (JigsawImgCode) storedCode.getCode();
+		VerifyJigsawImgModel model = (VerifyJigsawImgModel) submitCode;
+
+		// Analyze & verification jigsaw image.
+		boolean matched = doAnalyzeJigsaw(code, model);
 		if (log.isInfoEnabled()) {
-			log.info(code.toString());
+			log.info("Jigsaw match result: {}, storedCode: {}, submitCode: {}", matched, code.toString(), model.toString());
 		}
-		// TODO
-		return false;
+		return matched;
+	}
+
+	/**
+	 * Analyze and verification jigsaw image.
+	 * 
+	 * @param code
+	 * @param model
+	 * @return
+	 */
+	private boolean doAnalyzeJigsaw(JigsawImgCode code, VerifyJigsawImgModel model) {
+		if (Objects.isNull(model.getX())) {
+			return false;
+		}
+
+		// Decryption slider block X-position.
+		RSAKeySpecWrapper keySpec = getBindValue(DEFAULT_PARAM_APPLY_UUID, true);
+		String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
+		if (log.isDebugEnabled()) {
+			log.debug("Jigsaw analyze decrypt plain-X: {}, cipher-X", plainX, model.getX());
+		}
+
+		// Matching
+		return Math.abs(Integer.parseInt(plainX) - code.getX()) <= captchaConfig.getJigsaw().getAllowOffsetX();
 	}
 
 }
