@@ -108,9 +108,9 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Get RSA key.(Used to encrypt sliding X position)
 		RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();
-		String applyUuid = randomAlphabetic(DEFAULT_APPLY_UUID_BIT);
-		// Binding
 		bind(DEFAULT_PARAM_APPLY_UUID, keySpec, DEFAULT_APPLY_UUID_EXPIREMS);
+
+		String applyUuid = randomAlphabetic(DEFAULT_APPLY_UUID_BIT);
 		if (log.isDebugEnabled()) {
 			log.debug("Apply captcha for applyUuid: {}, secretKey: {}", applyUuid, keySpec);
 		}

@@ -19,7 +19,6 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
-import com.wl4g.devops.iam.verification.SecurityVerifier;
 
 /**
  * Oauth2 are bound matcher
@@ -30,10 +29,6 @@ import com.wl4g.devops.iam.verification.SecurityVerifier;
  * @since
  */
 public class Oauth2AuthorizingBoundMatcher extends IamBasedMatcher {
-
-	public Oauth2AuthorizingBoundMatcher(SecurityVerifier verification) {
-		super(verification);
-	}
 
 	/**
 	 * Oauth2 authorized matches.

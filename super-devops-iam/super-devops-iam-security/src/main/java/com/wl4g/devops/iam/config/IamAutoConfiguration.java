@@ -166,18 +166,18 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher(CompositeSecurityVerifierAdapter verifier) {
-		return new GeneralCredentialsHashedMatcher(verifier);
+	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher() {
+		return new GeneralCredentialsHashedMatcher();
 	}
 
 	@Bean
-	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher(CompositeSecurityVerifierAdapter verifier) {
-		return new SmsCredentialsHashedMatcher(verifier);
+	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher() {
+		return new SmsCredentialsHashedMatcher();
 	}
 
 	@Bean(BEAN_OAUTH2_MATCHER)
-	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher(CompositeSecurityVerifierAdapter verifier) {
-		return new Oauth2AuthorizingBoundMatcher(verifier);
+	public Oauth2AuthorizingBoundMatcher oauth2AuthorizingBoundMatcher() {
+		return new Oauth2AuthorizingBoundMatcher();
 	}
 
 	// ==============================

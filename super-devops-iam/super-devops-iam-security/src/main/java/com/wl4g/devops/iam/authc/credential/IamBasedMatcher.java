@@ -21,7 +21,6 @@ import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 
@@ -30,7 +29,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.verification.SecurityVerifier;
+import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 
 /**
  * IAM based matcher
@@ -47,7 +46,8 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	/**
 	 * IAM verification handler
 	 */
-	final protected SecurityVerifier verifier;
+	@Autowired
+	protected CompositeSecurityVerifierAdapter verifier;
 
 	/**
 	 * Matcher configuration properties
@@ -78,10 +78,5 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
-
-	public IamBasedMatcher(SecurityVerifier verifier) {
-		Assert.notNull(verifier, "Verification must not be null");
-		this.verifier = verifier;
-	}
 
 }

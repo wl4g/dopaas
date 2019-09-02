@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 
 @IamFilter
@@ -41,13 +42,14 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 		}
 
 		String username = getCleanParam(request, config.getParam().getPrincipalName());
-		/*
-		 * The front end IAM JS SDK submits encrypted hexadecimal strings.
-		 */
-		String password = getCleanParam(request, config.getParam().getCredentialName());
+		String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
-		String captcha = getCleanParam(request, config.getParam().getVerifiedTokenName());
-		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, password, clientRef, captcha);
+		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
+		// TODO
+		// VerifyType verityType = VerifyType.of(request);
+		VerifyType verityType = VerifyType.GRAPH_GIF;
+		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, cipherPassword, clientRef,
+				verifiedToken, verityType);
 	}
 
 	@Override

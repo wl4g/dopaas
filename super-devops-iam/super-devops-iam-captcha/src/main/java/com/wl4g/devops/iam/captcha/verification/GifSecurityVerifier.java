@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.captcha.verification;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +46,12 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 			throws IOException {
 		Captcha captcha = new GifCaptcha((String) verifyCode);
 		captcha.out(response.getOutputStream());
+	}
+
+	@Override
+	public boolean isEnabled(@NotNull List<String> factors) {
+		// TODO
+		return false; // for testing.
 	}
 
 }
