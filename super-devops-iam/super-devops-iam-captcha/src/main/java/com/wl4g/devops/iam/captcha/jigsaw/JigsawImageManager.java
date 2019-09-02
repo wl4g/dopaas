@@ -15,17 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import static io.netty.util.internal.ThreadLocalRandom.current;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -34,7 +24,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static io.netty.util.internal.ThreadLocalRandom.current;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Jigsaw image manager.
@@ -115,7 +115,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 							"Failed to initialize jigsaw images, please check the path: %s is correct and has read permission",
 							srcDir.getAbsolutePath()));
 			// Read files.
-			File[] files = srcDir.listFiles();
+			File[] files = srcDir.listFiles(new HideFileFilter());
 			Assert.state((files != null && files.length > 0),
 					String.format("Failed to initialize jigsaw images, path: %s material is empty", srcDir.getAbsolutePath()));
 			// Loading
@@ -123,6 +123,16 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		}
 
 	}
+
+	/**
+	 * Filter , filter hide file which start with "."
+	 */
+	public class HideFileFilter implements FileFilter {
+		public boolean accept(File pathname) {
+			return pathname.getName().startsWith(".");
+		}
+	}
+
 
 	/**
 	 * Do load buffer image.
@@ -137,6 +147,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		// Initialize jigsaw images.
 		ImageTailor tailor = new ImageTailor();
 		for (int i = 0; i < config.getJigsaw().getPoolSize(); i++) {
+
 			int index = i;
 			if (index >= sources.length) { // Inadequate material, random reuse.
 				index = current().nextInt(sources.length);
