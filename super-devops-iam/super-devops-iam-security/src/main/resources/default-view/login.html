@@ -7,6 +7,12 @@
 	<link rel="shortcut icon" href="./favicon.ico">
 	<link rel="stylesheet" href="./static/css/login.css">
 	<link rel="stylesheet" href="./static/css/lanren.css">
+
+	<!--0902 add-->
+	<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+	<link href="./static/css/slidercaptcha.css" rel="stylesheet" />
+
 	<script src="./static/js/jquery-3.3.1.min.js"></script>
 	<script src="./static/js/iam-1.2.1.js"></script>
 	<script src="./static/js/login.js"></script>
@@ -70,6 +76,8 @@
 								style="color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
 								name="password" type="password" maxlength=25>
 						</div>
+						<div id="mycaptcha"  class="mycaptcha"></div>
+
 						<div id="captcha_panel">
 							<i class="icon-code"></i>
 							<input id="captcha_input" class="text4" name="captcha" maxlength=5 
@@ -314,6 +322,24 @@
 		};
 		errTips();
 	</script>
+
+	<!--0902 add-->
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="./static/js/longbow.slidercaptcha.js"></script>
+	<script>
+        $('#mycaptcha').sliderCaptcha({
+            repeatIcon: 'fa fa-redo',
+            /*setSrc: function () {
+                return 'http://images.sdgxgz.com/Pic' + Math.round(Math.random() * 136) + '.jpg';
+            },*/
+            onSuccess: function () {
+                //window.location.href = 'https://gitee.com/LongbowEnterprise/SliderCaptcha';
+                alert("认证成功");
+            }
+        });
+	</script>
+
+
 </body>
 
 </html>

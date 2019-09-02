@@ -30,8 +30,15 @@ public class ImageUtil {
 	// 固定圆半径为5
 	private int c_r = 10;
 
+	//拼图在原图中的位置范围
+	private int  marginLeft = 10;
+	private int  marginRight = 10;
+	private int  marginTop = 10;
+	private int  marginBottom = 10;
+
+
 	public ImageUtil() {
-		System.out.println("into");
+		//System.out.println("into");
 	}
 
 	public ImageUtil(int maxWidth, int maxHeight, int minWidth, int minHeight, int blockWidth, int blockHeight, int c_r) {
@@ -91,8 +98,8 @@ public class ImageUtil {
 		// 对比图
 		BufferedImage newSrc2 = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);// 新建一个类型支持透明的BufferedImage
 		//截取坐标
-		int x = RandomUtils.nextInt(0, width - blockWidth);
-		int y = RandomUtils.nextInt(0, height - blockHeight);
+		int x = RandomUtils.nextInt(marginLeft, width - blockWidth-marginRight);
+		int y = RandomUtils.nextInt(marginTop, height - blockHeight-marginBottom);
 		//生成
 		cutByTemplate(originalImg, newSrc, newSrc2, x, y, blockWidth, blockHeight);// 图片大小是固定，位置是随机
 		//截取
@@ -103,7 +110,7 @@ public class ImageUtil {
 		image.setMoveImage(newSrc);
 		image.setX(x);
 		image.setY(y-c_r>=0?y-c_r:0);
-		System.out.println("get image x="+x+" y="+y);
+		//System.out.println("get image x="+x+" y="+y);
 		return image;
 	}
 
