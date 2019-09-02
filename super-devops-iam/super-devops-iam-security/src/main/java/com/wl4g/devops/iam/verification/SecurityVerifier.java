@@ -137,7 +137,7 @@ public abstract interface SecurityVerifier {
 
 		GRAPH_DEFAULT("VerifyWithDefaultGraph"),
 
-		GRAPH_SIMPLE("VerifyWithSimpleGraph"),
+		// GRAPH_SIMPLE("VerifyWithSimpleGraph"),
 
 		GRAPH_GIF("VerifyWithGifGraph"),
 

@@ -70,6 +70,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * @param response
 	 */
 	@RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = { GET, POST })
+	@ResponseBody
 	public RespBase<?> applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
@@ -109,7 +110,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = URI_S_LOGIN_RENDER_CAPTCHA, method = { GET, POST })
+	@RequestMapping(value = URI_S_VERIFY_RENDER_CAPTCHA, method = { GET, POST })
 	public void renderCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			verifier.forAdapt(request).render(request, response);
@@ -129,6 +130,8 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * @param response
 	 * @throws Exception
 	 */
+	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { GET, POST })
+	@ResponseBody
 	public void verifyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		try {
 			// Limit factors

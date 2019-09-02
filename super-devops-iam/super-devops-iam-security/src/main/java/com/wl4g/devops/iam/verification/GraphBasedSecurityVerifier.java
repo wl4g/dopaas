@@ -91,12 +91,14 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	public Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
 		// Check limit attempts
 		checkApplyAttempts(request, factors);
+
 		// Renew or cleanup CAPTCHA
 		reset(owner, true);
 
 		// Check and generate apply UUID.
 		Assert.state(Objects.nonNull(getVerifyCode(true)), "Failed to apply captcha.");
 		String applyUuid = bind(DEFAULT_PARAM_APPLY_UUID, randomAlphabetic(DEFAULT_APPLY_UUID_BIT), DEFAULT_APPLY_UUID_EXPIREMS);
+
 		return new HashMap<String, Object>() {
 			private static final long serialVersionUID = 1L;
 			{
