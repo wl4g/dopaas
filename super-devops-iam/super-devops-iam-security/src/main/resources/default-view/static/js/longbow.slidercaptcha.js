@@ -91,6 +91,18 @@
         var card = createElement('div', 'slidercaptcha card');
         card.style.display="none";
 
+        /*card.style.position="absolute";
+        card.style.bottom="123px";
+        card.css({
+            display: "none",
+            position: "absolute",
+            bottom: "123px",
+        });*/
+
+
+
+
+
         var cardHeader = createElement('div', 'card-header');
         var cardHeaderText = createElementValue('span', '请完成安全验证');
         var cardBody = createElement('div', 'card-body2');
@@ -246,14 +258,21 @@
 
         var handleOnmouseenter = function () {
             //console.info("into in");
-            that.card.style.display="";
+            //that.card.style.display="";
+            $(that.card).delay(2000).show();
+
         };
 
         var handleOnmouseleave = function () {
             //console.info("into out");
             if(!that.sliderContainer.hasClass('sliderContainer_active')){
                 //console.info("shout out");
-                that.card.style.display="none";
+
+                //that.card.style.display="none";
+                $(that.card).delay(2000).hide();
+
+
+
             }
         };
 
@@ -298,7 +317,9 @@
         this.slider.addEventListener('mousedown', handleDragStart);
         this.slider.addEventListener('touchstart', handleDragStart);
 
-        this.$element.on('mouseenter',handleOnmouseenter);
+        //this.$element.on('mouseenter',handleOnmouseenter);
+        this.slider.addEventListener('mouseenter',handleOnmouseenter);
+
         this.$element.on('mouseleave',handleOnmouseleave);
 
 

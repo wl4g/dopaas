@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import static io.netty.util.internal.ThreadLocalRandom.current;
+import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
+import static io.netty.util.internal.ThreadLocalRandom.current;
 
 /**
  * Jigsaw image manager.
@@ -113,6 +112,11 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 			if (index >= files.length) { // Inadequate material, random reuse.
 				index = current().nextInt(files.length);
 			}
+			//filter
+			if(files[index].getName().toCharArray()[0]=='.'){
+				continue;
+			}
+
 			indexs.add(index);
 			String path = files[index].getAbsolutePath();
 			if (log.isDebugEnabled()) {
