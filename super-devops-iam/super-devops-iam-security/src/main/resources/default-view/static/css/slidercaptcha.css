@@ -148,15 +148,24 @@ body {
     /*border: 1px solid #e6e8eb;*/
 }
 
+/*TODO */
+.slidercaptcha.card{
+    position: absolute;
+    bottom: 126px;
+    z-index: 10000;
+    display: none;
+}
+
 .slidercaptcha.card .card-header {
     background-image: none;
     background-color: rgba(0, 0, 0, 0.03);
 }
 
 .mycaptcha {
-    position:absolute;
-    bottom:0;
-    left: 40%;
+    /*position:absolute;*/
+    top: 0;
+    /*bottom:0;
+    left: 40%;*/
 }
 
 .refreshIcon {
