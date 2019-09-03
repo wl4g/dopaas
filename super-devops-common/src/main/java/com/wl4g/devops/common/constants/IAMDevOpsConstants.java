@@ -235,4 +235,8 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
 
+
+	//jigsaw redis cache key
+	public static String JIGSAW_REDIS_CACHE_KEY = "jigsaw_cache_";
+
 }

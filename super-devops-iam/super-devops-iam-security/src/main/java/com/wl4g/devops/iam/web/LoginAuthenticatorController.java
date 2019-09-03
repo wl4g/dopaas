@@ -150,7 +150,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (verifier.forAdapt(request).isEnabled(factors)) {
 				model.setEnabled(true);
 				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
-				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA;
+				String url = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA;
 				model.setApplyUrl(url);
 			}
 			resp.getData().put(KEY_CAPTCHA_CHECK, model);
