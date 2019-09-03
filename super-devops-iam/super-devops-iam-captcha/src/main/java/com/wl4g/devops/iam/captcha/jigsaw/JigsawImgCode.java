@@ -29,7 +29,7 @@ public class JigsawImgCode implements Serializable {
 
 	private int x;
 	private int y;
-	private String primaryImg;
+	private String primaryImg; // Base64
 	private String blockImg;
 
 	public int getX() {

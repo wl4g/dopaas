@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import com.wl4g.devops.common.utils.codec.Encodes;
 import org.springframework.util.Assert;
 
 import javax.imageio.ImageIO;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import static com.wl4g.devops.common.utils.codec.Encodes.encodeBase64;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 
 /**
@@ -147,20 +147,17 @@ public class ImageTailor {
 		drawing(source, blockImg, primaryImg, x, y, blockWidth, blockHeight);// 图片大小是固定，位置是随机
 		// 截取
 		blockImg = blockImg.getSubimage(x, y - circleR >= 0 ? y - circleR : 0, blockWidth, blockHeight + circleR);
-		// 封装
+
 		JigsawImgCode img = new JigsawImgCode();
-
-		//0903 case to base64
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ImageIO.write(primaryImg, "png",out);
-		String primaryImgBase64 = Encodes.encodeBase64(out.toByteArray());
-
-		ByteArrayOutputStream out2 = new ByteArrayOutputStream();
-		ImageIO.write(blockImg, "png",out2);
-		String blockImgBase64 = Encodes.encodeBase64(out2.toByteArray());
-
-		img.setPrimaryImg(primaryImgBase64);
-		img.setBlockImg(blockImgBase64);
+		// Primary image.
+		ByteArrayOutputStream primaryData = new ByteArrayOutputStream();
+		ImageIO.write(primaryImg, "PNG", primaryData);
+		img.setPrimaryImg(encodeBase64(primaryData.toByteArray()));
+		// Block image.
+		ByteArrayOutputStream blockData = new ByteArrayOutputStream();
+		ImageIO.write(blockImg, "PNG", blockData);
+		img.setBlockImg(encodeBase64(blockData.toByteArray()));
+		// Position
 		img.setX(x);
 		img.setY(y - circleR >= 0 ? y - circleR : 0);
 		return img;
@@ -254,9 +251,10 @@ public class ImageTailor {
 		// JigsawImgCode img =
 		// imageUtil.getJigsawImageFile("/Users/vjay/Downloads/0.jpg");
 		JigsawImgCode img = tailor.getJigsawImageUrl("http://vps.vjay.pw/1.jpg");
+		System.out.println(img);
 
-		//writeImage(img.getPrimaryImg(), "f:\\a.png");
-		//writeImage(img.getBlockImg(), "f:\\b.png");
+		// writeImage(img.getPrimaryImg(), "f:\\a.png");
+		// writeImage(img.getBlockImg(), "f:\\b.png");
 	}
 
 }
