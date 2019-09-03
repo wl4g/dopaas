@@ -50,8 +50,8 @@ spring:
         allowIp: 127.0.0.1
         denyIp:
       captcha:
-        jigsaw:
-          source-dir: ${server.tomcat.basedir}/data/jigsaw-source
+        #jigsaw:
+          #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
       sns: # SNS configuration.
         oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
         wechat-mp:

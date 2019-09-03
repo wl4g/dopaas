@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.authc;
+package com.wl4g.devops.common.exception;
+
+import org.springframework.http.HttpStatus;
+
+import com.wl4g.devops.common.web.RespBase.RetCode;
 
 /**
- * Captcha authentication token
+ * Business required argument exception, When this exception API is caught, the
+ * response code is {@link HttpStatus.BAD_REQUEST}
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年11月19日
+ * @author Wangl.sir
+ * @version v1.0 2019年9月2日
  * @since
  */
-public interface CaptchaAuthenticationToken {
+public interface BizRequiredArgumentException {
 
 	/**
-	 * Get submission captcha
+	 * Get exception response code.
 	 * 
 	 * @return
 	 */
-	String getCaptcha();
+	default RetCode getCode() {
+		return RetCode.PARAM_ERR;
+	}
 
 }
