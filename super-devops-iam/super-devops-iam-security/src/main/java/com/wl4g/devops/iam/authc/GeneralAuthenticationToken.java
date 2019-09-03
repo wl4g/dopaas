@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.authc.ClientRef;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 
 /**
  * General (Username/Password) authentication token
@@ -30,30 +31,43 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
  * @since
  */
 public class GeneralAuthenticationToken extends UsernamePasswordToken
-		implements IamAuthenticationToken, CaptchaAuthenticationToken {
+		implements IamAuthenticationToken, VerifyAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/**
-	 * Source application name
+	 * From client application name
 	 */
 	final private String fromAppName;
 
 	/**
-	 * Source application callback URL
+	 * From client application callback URL
 	 */
 	final private String redirectUrl;
 
-	final private String captcha;
-
+	/**
+	 * User client type.
+	 */
 	final private ClientRef clientRef;
 
+	/**
+	 * Verification code verifiedToken.
+	 */
+	final private String verifiedToken;
+
+	/**
+	 * Verifier type.
+	 */
+	final private VerifyType verifyType;
+
 	public GeneralAuthenticationToken(final String remoteHost, final String fromAppName, final String redirectUrl,
-			final String username, final String password, String clientRef, final String captcha) {
+			final String username, final String password, String clientRef, final String verifiedToken,
+			final VerifyType verifyType) {
 		super(username, password, remoteHost);
 		this.fromAppName = fromAppName;
 		this.redirectUrl = redirectUrl;
 		this.clientRef = ClientRef.of(clientRef);
-		this.captcha = captcha;
+		this.verifiedToken = verifiedToken;
+		this.verifyType = verifyType;
 	}
 
 	@Override
@@ -61,11 +75,6 @@ public class GeneralAuthenticationToken extends UsernamePasswordToken
 		Object credentials = super.getCredentials();
 		Assert.notNull(credentials, "Credentials must not be null");
 		return new String((char[]) credentials);
-	}
-
-	@Override
-	public String getCaptcha() {
-		return captcha;
 	}
 
 	public ClientRef getClientRef() {
@@ -80,6 +89,16 @@ public class GeneralAuthenticationToken extends UsernamePasswordToken
 	@Override
 	public String getRedirectUrl() {
 		return redirectUrl;
+	}
+
+	@Override
+	public String getVerifiedToken() {
+		return verifiedToken;
+	}
+
+	@Override
+	public VerifyType getVerifyType() {
+		return verifyType;
 	}
 
 }

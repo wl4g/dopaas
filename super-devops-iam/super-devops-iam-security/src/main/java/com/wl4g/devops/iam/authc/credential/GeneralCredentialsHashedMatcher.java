@@ -20,9 +20,8 @@ import java.util.List;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
-import com.wl4g.devops.iam.authc.CaptchaAuthenticationToken;
+import com.wl4g.devops.iam.authc.VerifyAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
-import com.wl4g.devops.iam.verification.SecurityVerifier;
 
 /**
  * General account credential matcher
@@ -34,10 +33,6 @@ import com.wl4g.devops.iam.verification.SecurityVerifier;
  */
 public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
-	public GeneralCredentialsHashedMatcher(SecurityVerifier verification) {
-		super(verification);
-	}
-
 	@Override
 	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
 		CredentialsToken credentialsToken = new CredentialsToken((String) token.getPrincipal(), (String) token.getCredentials());
@@ -46,8 +41,9 @@ public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
 	protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
-		if (token instanceof CaptchaAuthenticationToken) {
-			verifier.validate(factors, ((CaptchaAuthenticationToken) token).getCaptcha(), false);
+		if (token instanceof VerifyAuthenticationToken) {
+			VerifyAuthenticationToken tk = ((VerifyAuthenticationToken) token);
+			verifier.forAdapt(tk.getVerifyType()).validate(factors, tk.getVerifiedToken(), false);
 		}
 	}
 

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
@@ -32,6 +33,7 @@ import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
@@ -145,7 +147,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// CAPTCHA check.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
-			if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
+			// TODO
+			// if (verifier.forAdapt(request).isEnabled(factors)) {
+			if (verifier.forAdapt(VerifyType.GRAPH_GIF).isEnabled(factors)) {
 				model.setEnabled(true);
 				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
 				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA;
@@ -160,7 +164,10 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * number of seconds before the front end can re-send the SMS
 			 * verification code).
 			 */
-			VerifyCodeWrapper code = verifier.forAdapt(request).getVerifyCode(false);
+			// TODO
+			// VerifyCodeWrapper code =
+			// verifier.forAdapt(request).getVerifyCode(false);
+			VerifyCodeWrapper code = verifier.forAdapt(VerifyType.GRAPH_GIF).getVerifyCode(false);
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;
@@ -170,7 +177,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// Remaining delay.
 			Long remainingDelay = null;
-			if (code != null) {
+			if (Objects.nonNull(code)) {
 				remainingDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
 			}
 			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainingDelay));
