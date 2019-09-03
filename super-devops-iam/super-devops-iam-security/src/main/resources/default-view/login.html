@@ -76,7 +76,7 @@
 								style="color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
 								name="password" type="password" maxlength=25>
 						</div>
-						<div id="mycaptcha"  class="mycaptcha"></div>
+						<div id="jigsaw"  class="jigsaw" style="display:none"></div>
 
 						<div id="captcha_panel">
 							<i class="icon-code"></i>
@@ -207,6 +207,9 @@
 						$('#captcha_input').css('cursor', 'no-drop');
 					}
 				},
+                jigsaw:{
+				    div: document.getElementById("jigsaw"),
+				},
 				// 登录认证配置
 				account: {
 					submitBtn: document.getElementById("iam_submit"), // 登录提交触发对象
@@ -324,10 +327,10 @@
 	</script>
 
 	<!--0902 add-->
-	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-	<script src="./static/js/longbow.slidercaptcha.js"></script>
+	<!--<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="static/js/iam-captcha-1.2.1.js"></script>
 	<script>
-        $('#mycaptcha').sliderCaptcha({
+        $('#jigsaw').sliderCaptcha({
             repeatIcon: 'fa fa-redo',
             /*setSrc: function () {
                 return 'http://images.sdgxgz.com/Pic' + Math.round(Math.random() * 136) + '.jpg';
@@ -337,7 +340,7 @@
                 alert("认证成功");
             }
         });
-	</script>
+	</script>-->
 
 
 </body>
