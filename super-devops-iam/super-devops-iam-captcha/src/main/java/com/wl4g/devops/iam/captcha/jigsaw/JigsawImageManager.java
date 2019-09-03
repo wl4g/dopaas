@@ -129,7 +129,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 */
 	public class HideFileFilter implements FileFilter {
 		public boolean accept(File pathname) {
-			return pathname.getName().startsWith(".");
+			return !pathname.getName().startsWith(".");
 		}
 	}
 
