@@ -15,14 +15,11 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
 
 import javax.validation.constraints.NotNull;
-
-import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Analyze verify jigsaw image model.
@@ -37,7 +34,7 @@ public class VerifyJigsawImgModel extends VerifyCodeBasedModel {
 	@NotNull
 	private String x;
 
-	private Map<Integer, Integer> trails = new HashMap<>(); // AI enhanced check
+	private List<Trail> trails = new ArrayList<>(); // AI enhanced check
 
 	public String getX() {
 		return x;
@@ -47,13 +44,41 @@ public class VerifyJigsawImgModel extends VerifyCodeBasedModel {
 		this.x = x;
 	}
 
-	public Map<Integer, Integer> getTrails() {
+	public List<Trail> getTrails() {
 		return trails;
 	}
 
-	public void setTrails(Map<Integer, Integer> trails) {
-		if (!isEmpty(trails)) {
-			this.trails = trails;
+	public void setTrails(List<Trail> trails) {
+		this.trails = trails;
+	}
+
+	public static class Trail{
+		private Long timestamp;
+		private Integer x;
+		private Integer y;
+
+		public Long getTimestamp() {
+			return timestamp;
+		}
+
+		public void setTimestamp(Long timestamp) {
+			this.timestamp = timestamp;
+		}
+
+		public Integer getX() {
+			return x;
+		}
+
+		public void setX(Integer x) {
+			this.x = x;
+		}
+
+		public Integer getY() {
+			return y;
+		}
+
+		public void setY(Integer y) {
+			this.y = y;
 		}
 	}
 

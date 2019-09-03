@@ -15,22 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
-import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.ApplyJigsawImgModel;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
@@ -39,6 +24,24 @@ import com.wl4g.devops.iam.captcha.jigsaw.VerifyJigsawImgModel;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_RENDER_CAPTCHA;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
+import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.PARAM_VERIFYTYPE;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * Jigsaw slider CAPTCHA verification handler.
@@ -82,11 +85,26 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		VerifyCodeWrapper wrap = getVerifyCode(true);
 		JigsawImgCode code = (JigsawImgCode) wrap.getCode();
 
+		Map<String, Object> primaryParams = new HashMap<>();
+		primaryParams.put(PARAM_IMGTYPE_NAME,IMGTYPE_PRIMARY);
+		primaryParams.put(PARAM_VERIFYTYPE,verifyType().getType());
+		primaryParams.put(DEFAULT_PARAM_APPLY_UUID,applyResp.get(DEFAULT_PARAM_APPLY_UUID));
+
+		Map<String, Object> blockParams = new HashMap<>();
+		blockParams.put(PARAM_IMGTYPE_NAME,IMGTYPE_BLOCK);
+		blockParams.put(PARAM_VERIFYTYPE,verifyType().getType());
+		blockParams.put(DEFAULT_PARAM_APPLY_UUID,applyResp.get(DEFAULT_PARAM_APPLY_UUID));
+
+		String primaryImgUrl = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE +"/"+URI_S_VERIFY_RENDER_CAPTCHA+ "?" + BeanMapConvert.toUriParmaters(primaryParams);
+		String blockImgUrl = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/"+URI_S_VERIFY_RENDER_CAPTCHA+"?"+BeanMapConvert.toUriParmaters(blockParams);
+
 		// Build apply model.
 		ApplyJigsawImgModel model = new ApplyJigsawImgModel();
 		model.setY(code.getY());
-		model.setPrimaryImgUrl("");// TODO
-		applyResp.put("y", model); // TODO
+		model.setPrimaryImgUrl(primaryImgUrl);
+		model.setBlockImgUrl(blockImgUrl);
+
+		applyResp.put("y", model);
 		return applyResp;
 	}
 
@@ -103,10 +121,12 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		String imgType = getCleanParam(request, PARAM_IMGTYPE_NAME);
 		switch (String.valueOf(imgType)) {
 		case IMGTYPE_PRIMARY:
-			ImageIO.write(code.getPrimaryImg(), "JPEG", out);
+			//TODO
+			//ImageIO.write(code.getPrimaryImg(), "JPEG", out);
 			break;
 		case IMGTYPE_BLOCK:
-			ImageIO.write(code.getBlockImg(), "JPEG", out);
+			//TODO
+			//ImageIO.write(code.getBlockImg(), "JPEG", out);
 			break;
 		default:
 			throw new IllegalArgumentException(String.format("Unknown jigsaw image type '%s'", imgType));
