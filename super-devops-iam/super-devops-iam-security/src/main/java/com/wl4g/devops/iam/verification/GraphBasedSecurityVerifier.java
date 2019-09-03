@@ -24,10 +24,13 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
+import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
+import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
 import org.springframework.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,24 +68,30 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	final public static int DEFAULT_APPLY_UUID_BIT = 32;
 
 	/**
+	 * RSA cryptoGrapic service.
+	 */
+	@Autowired
+	protected RSACryptographicService rsaCryptoService;
+
+	/**
 	 * Matching attempts accumulator
 	 */
-	private Cumulator matchCumulator;
+	protected Cumulator matchCumulator;
 
 	/**
 	 * Apply CAPTCHA attempts accumulator.(Session-based)
 	 */
-	private Cumulator sessionMatchCumulator;
+	protected Cumulator sessionMatchCumulator;
 
 	/**
 	 * Apply CAPTCHA attempts accumulator
 	 */
-	private Cumulator applyCaptchaCumulator;
+	protected Cumulator applyCaptchaCumulator;
 
 	/**
 	 * Apply CAPTCHA attempts accumulator.(Session-based)
 	 */
-	private Cumulator sessionApplyCaptchaCumulator;
+	protected Cumulator sessionApplyCaptchaCumulator;
 
 	/**
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
@@ -94,10 +103,17 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Renew or cleanup CAPTCHA
 		reset(owner, true);
-
 		// Check and generate apply UUID.
 		Assert.state(Objects.nonNull(getVerifyCode(true)), "Failed to apply captcha.");
-		String applyUuid = bind(DEFAULT_PARAM_APPLY_UUID, randomAlphabetic(DEFAULT_APPLY_UUID_BIT), DEFAULT_APPLY_UUID_EXPIREMS);
+
+		// Get RSA key.(Used to encrypt sliding X position)
+		RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();
+		bind(DEFAULT_PARAM_APPLY_UUID, keySpec, DEFAULT_APPLY_UUID_EXPIREMS);
+
+		String applyUuid = randomAlphabetic(DEFAULT_APPLY_UUID_BIT);
+		if (log.isDebugEnabled()) {
+			log.debug("Apply captcha for applyUuid: {}, secretKey: {}", applyUuid, keySpec);
+		}
 
 		return new HashMap<String, Object>() {
 			private static final long serialVersionUID = 1L;

@@ -20,6 +20,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
 
 /**
@@ -32,14 +34,16 @@ import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
 public class VerifyJigsawImgModel extends VerifyCodeBasedModel {
 	private static final long serialVersionUID = 4975604364412626949L;
 
-	private Integer x;
+	@NotNull
+	private String x;
+
 	private Map<Integer, Integer> trails = new HashMap<>(); // AI enhanced check
 
-	public Integer getX() {
+	public String getX() {
 		return x;
 	}
 
-	public void setX(Integer x) {
+	public void setX(String x) {
 		this.x = x;
 	}
 
