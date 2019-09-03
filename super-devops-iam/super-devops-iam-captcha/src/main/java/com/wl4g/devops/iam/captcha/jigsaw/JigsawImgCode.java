@@ -30,8 +30,8 @@ public class JigsawImgCode implements Serializable {
 
 	private int x;
 	private int y;
-	private BufferedImage primaryImg;
-	private BufferedImage blockImg;
+	private transient BufferedImage primaryImg;
+	private transient BufferedImage blockImg;
 
 	public int getX() {
 		return x;
