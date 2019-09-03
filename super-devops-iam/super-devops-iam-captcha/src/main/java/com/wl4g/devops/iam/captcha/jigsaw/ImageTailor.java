@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
+import com.wl4g.devops.common.utils.codec.Encodes;
 import org.springframework.util.Assert;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -147,8 +149,18 @@ public class ImageTailor {
 		blockImg = blockImg.getSubimage(x, y - circleR >= 0 ? y - circleR : 0, blockWidth, blockHeight + circleR);
 		// 封装
 		JigsawImgCode img = new JigsawImgCode();
-		img.setPrimaryImg(primaryImg);
-		img.setBlockImg(blockImg);
+
+		//0903 case to base64
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ImageIO.write(primaryImg, "png",out);
+		String primaryImgBase64 = Encodes.encodeBase64(out.toByteArray());
+
+		ByteArrayOutputStream out2 = new ByteArrayOutputStream();
+		ImageIO.write(blockImg, "png",out2);
+		String blockImgBase64 = Encodes.encodeBase64(out2.toByteArray());
+
+		img.setPrimaryImg(primaryImgBase64);
+		img.setBlockImg(blockImgBase64);
 		img.setX(x);
 		img.setY(y - circleR >= 0 ? y - circleR : 0);
 		return img;
@@ -243,8 +255,8 @@ public class ImageTailor {
 		// imageUtil.getJigsawImageFile("/Users/vjay/Downloads/0.jpg");
 		JigsawImgCode img = tailor.getJigsawImageUrl("http://vps.vjay.pw/1.jpg");
 
-		writeImage(img.getPrimaryImg(), "f:\\a.png");
-		writeImage(img.getBlockImg(), "f:\\b.png");
+		//writeImage(img.getPrimaryImg(), "f:\\a.png");
+		//writeImage(img.getBlockImg(), "f:\\b.png");
 	}
 
 }

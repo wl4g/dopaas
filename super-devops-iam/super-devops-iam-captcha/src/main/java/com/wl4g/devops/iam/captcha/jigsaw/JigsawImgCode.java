@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 /**
@@ -30,8 +29,8 @@ public class JigsawImgCode implements Serializable {
 
 	private int x;
 	private int y;
-	private BufferedImage primaryImg;
-	private BufferedImage blockImg;
+	private String primaryImg;
+	private String blockImg;
 
 	public int getX() {
 		return x;
@@ -49,19 +48,19 @@ public class JigsawImgCode implements Serializable {
 		this.y = y;
 	}
 
-	public BufferedImage getPrimaryImg() {
+	public String getPrimaryImg() {
 		return primaryImg;
 	}
 
-	public void setPrimaryImg(BufferedImage primaryImg) {
+	public void setPrimaryImg(String primaryImg) {
 		this.primaryImg = primaryImg;
 	}
 
-	public BufferedImage getBlockImg() {
+	public String getBlockImg() {
 		return blockImg;
 	}
 
-	public void setBlockImg(BufferedImage blockImg) {
+	public void setBlockImg(String blockImg) {
 		this.blockImg = blockImg;
 	}
 

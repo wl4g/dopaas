@@ -1,6 +1,8 @@
+//import
+document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'></script>");
 /**
  * Iam v1.2.1 | (c) 2017, 2022 wl4g Foundation, Inc.
- * Copyright 2017-2032 Wangl.sir<983708408@qq.com>, Inc. 
+ * Copyright 2017-2032 Wangl.sir<983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
@@ -56,6 +58,18 @@
 			onFallback: function(errmsg){ // 加载captcha失败，降级回调（如：申请过于频繁）
 				console.error(errmsg);
 			}
+		},
+
+        jigsaw: {
+			div: null,
+			hide: function () {
+                var jigsawDiv = CommonUtils.checkEmpty("jigsaw.div", settings.jigsaw.div);
+                $(jigsawDiv).css({"display" : "none"});
+            },
+			show: function () {
+			    console.info("show jigsaw0");
+            },
+
 		},
 		account: { // 密码认证配置
 			submitBtn: null, // 登录提交触发对象
@@ -157,6 +171,12 @@
 		settings.captcha.show(url);
 	};
 
+	//显示拼图验证码
+    var resetJigsaw = function(){
+    	console.info("into reset Jigsaw");
+        settings.jigsaw.show();
+    };
+
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
 	var reader = function(connectUrl, panelType) {
 		// 渲染授权二维码面板配置
@@ -255,7 +275,8 @@
 		var principal = encodeURIComponent(CommonUtils.getEleValue("account.principal", settings.account.principal, false));
 		var checkUrl = CommonUtils.checkEmpty("baseUri",settings.baseUri)
 			+ CommonUtils.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
-			+ CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal;
+			+ CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
+			+"&verifyType=VerifyWithJigsawGraph";
 
 		// 请求安全预检
 		$.ajax({
@@ -336,7 +357,8 @@
 						+ "&" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 						+ "&" + CommonUtils.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
 						+ "&" + CommonUtils.checkEmpty("definition.attachKey",settings.definition.attachKey) + "=" + captcha
-						+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
+						+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef()
+						+ "&verifyType=VerifyWithJigsawGraph";
 
 					// 提交账号登录请求
 					$.ajax({
@@ -353,7 +375,8 @@
 								// 检查当前是否需要graphic验证码
 								safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 									if(checkCaptcha.enabled){ // 有值则刷新验证码
-										resetCaptcha();
+										//resetCaptcha();
+                                        resetJigsaw();
 									}
 								});
 								settings.account.onError(resp.message); // 登录失败回调
@@ -505,7 +528,8 @@
 			// 初始安全预检
 			safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 				if(checkCaptcha.enabled){ // 启用了验证码
-					resetCaptcha(); // 刷新
+					//resetCaptcha(); // 刷新
+					resetJigsaw();
 				}
 				if(checkSms.enabled){ // 申请过SMS验证码
 					// 回填mobile number.
