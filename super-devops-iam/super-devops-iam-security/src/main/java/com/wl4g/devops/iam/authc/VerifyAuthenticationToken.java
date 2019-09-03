@@ -15,21 +15,30 @@
  */
 package com.wl4g.devops.iam.authc;
 
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
+
 /**
- * Captcha authentication token
+ * Captcha & verification authentication token
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
  * @since
  */
-public interface CaptchaAuthenticationToken {
+public interface VerifyAuthenticationToken {
 
 	/**
-	 * Get submission captcha
+	 * Get verifyType.
 	 * 
 	 * @return
 	 */
-	String getCaptcha();
+	VerifyType getVerifyType();
+
+	/**
+	 * Get submitted verifiedToken.
+	 * 
+	 * @return
+	 */
+	String getVerifiedToken();
 
 }

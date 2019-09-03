@@ -19,7 +19,6 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.verification.SecurityVerifier;
 import com.wl4g.devops.iam.verification.cumulation.CumulateHolder;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
@@ -72,10 +71,6 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * Attempts SMS accumulator
 	 */
 	private Cumulator applySmsCumulator;
-
-	public AbstractAttemptsMatcher(SecurityVerifier verification) {
-		super(verification);
-	}
 
 	@Override
 	public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
