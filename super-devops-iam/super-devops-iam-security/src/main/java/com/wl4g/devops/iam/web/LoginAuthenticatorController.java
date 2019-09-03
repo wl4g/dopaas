@@ -15,17 +15,6 @@
  */
 package com.wl4g.devops.iam.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -37,20 +26,31 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.*;
-import static com.wl4g.devops.iam.web.model.GeneralCheckModel.*;
-import static com.wl4g.devops.iam.web.model.SmsCheckModel.*;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
-import static com.wl4g.devops.iam.common.utils.Securitys.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.devops.iam.common.utils.Securitys.createLimitFactors;
+import static com.wl4g.devops.iam.common.utils.Securitys.sessionStatus;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
+import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.CAPTCHA_SIMPLE_TPYE;
+import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.KEY_CAPTCHA_CHECK;
+import static com.wl4g.devops.iam.web.model.GeneralCheckModel.KEY_GENERAL_CHECK;
+import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * IAM login extra controller
@@ -147,9 +147,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// CAPTCHA check.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
-			// TODO
-			// if (verifier.forAdapt(request).isEnabled(factors)) {
-			if (verifier.forAdapt(VerifyType.GRAPH_GIF).isEnabled(factors)) {
+			if (verifier.forAdapt(request).isEnabled(factors)) {
 				model.setEnabled(true);
 				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
 				String url = getRFCBaseURI(request, true) + URI_S_LOGIN_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA;
@@ -164,10 +162,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			 * number of seconds before the front end can re-send the SMS
 			 * verification code).
 			 */
-			// TODO
-			// VerifyCodeWrapper code =
-			// verifier.forAdapt(request).getVerifyCode(false);
-			VerifyCodeWrapper code = verifier.forAdapt(VerifyType.GRAPH_GIF).getVerifyCode(false);
+			VerifyCodeWrapper code = verifier.forAdapt(VerifyType.TEXT_SMS).getVerifyCode(false);
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;

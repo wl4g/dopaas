@@ -67,20 +67,7 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
                 $(jigsawDiv).css({"display" : "none"});
             },
 			show: function () {
-                var jigsawDiv = CommonUtils.checkEmpty("jigsaw.div", settings.jigsaw.div);
-                $(jigsawDiv).css({"display" : "inline"});
-
-                jigsawDiv.sliderCaptcha({
-                    repeatIcon: 'fa fa-redo',
-                    /*setSrc: function () {
-                        return 'http://images.sdgxgz.com/Pic' + Math.round(Math.random() * 136) + '.jpg';
-                    },*/
-                    onSuccess: function () {
-                        //window.location.href = 'https://gitee.com/LongbowEnterprise/SliderCaptcha';
-                        alert("认证成功");
-                    }
-                });
-                jigsawDiv.applycaptcha();
+			    console.info("show jigsaw0");
             },
 
 		},
@@ -370,7 +357,8 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 						+ "&" + CommonUtils.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 						+ "&" + CommonUtils.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
 						+ "&" + CommonUtils.checkEmpty("definition.attachKey",settings.definition.attachKey) + "=" + captcha
-						+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
+						+ "&" + CommonUtils.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef()
+						+ "&verifyType=VerifyWithJigsawGraph";
 
 					// 提交账号登录请求
 					$.ajax({

@@ -209,6 +209,23 @@
 				},
                 jigsaw:{
 				    div: document.getElementById("jigsaw"),
+                    show: function () {
+                        console.info("show jigsaw");
+                        var jigsawDiv = document.getElementById("jigsaw");
+                        $(jigsawDiv).css({"display" : "inline"});
+
+                        $('#jigsaw').sliderCaptcha({
+                            repeatIcon: 'fa fa-redo',
+                            /*setSrc: function () {
+                                return 'http://images.sdgxgz.com/Pic' + Math.round(Math.random() * 136) + '.jpg';
+                            },*/
+                            onSuccess: function () {
+                                //window.location.href = 'https://gitee.com/LongbowEnterprise/SliderCaptcha';
+                                alert("认证成功");
+                            }
+                        });
+
+                    },
 				},
 				// 登录认证配置
 				account: {

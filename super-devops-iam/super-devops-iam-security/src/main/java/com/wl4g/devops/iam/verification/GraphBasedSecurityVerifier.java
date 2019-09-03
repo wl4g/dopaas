@@ -15,22 +15,15 @@
  */
 package com.wl4g.devops.iam.verification;
 
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
-import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.*;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;
-
-import org.springframework.util.Assert;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +33,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
+import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newCumulator;
+import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newSessionCumulator;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * Abstract graphic verification code handler
@@ -246,7 +248,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @return
 	 */
 	private EnhancedCache getCache(String suffix) {
-		return cacheManager.getEnhancedCache(verifyType().name() + suffix);
+		return cacheManager.getEnhancedCache(/*verifyType().name() +*/ suffix);
 	}
 
 }
