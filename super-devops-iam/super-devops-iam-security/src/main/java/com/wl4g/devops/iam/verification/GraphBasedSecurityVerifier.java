@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Abstract graphic verification code handler
@@ -104,7 +103,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		// Renew or cleanup CAPTCHA
 		reset(owner, true);
 		// Check and generate apply UUID.
-		Assert.state(Objects.nonNull(getVerifyCode(true)), "Failed to apply captcha.");
+		// Assert.state(Objects.nonNull(getVerifyCode(true)), "Failed to apply
+		// captcha.");
 
 		// Get RSA key.(Used to encrypt sliding X position)
 		RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();

@@ -19,6 +19,8 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
@@ -30,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
+import com.wl4g.devops.iam.captcha.jigsaw.ApplyJigsawImgModel;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImgCode;
 import com.wl4g.devops.iam.captcha.jigsaw.VerifyJigsawImgModel;
@@ -70,6 +73,21 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	@Override
 	public VerifyType verifyType() {
 		return VerifyType.GRAPH_JIGSAW;
+	}
+
+	@Override
+	public Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
+		Map<String, Object> applyResp = super.apply(owner, factors, request);
+		// Get generated verifyCode.
+		VerifyCodeWrapper wrap = getVerifyCode(true);
+		JigsawImgCode code = (JigsawImgCode) wrap.getCode();
+
+		// Build apply model.
+		ApplyJigsawImgModel model = new ApplyJigsawImgModel();
+		model.setY(code.getY());
+		model.setPrimaryImgUrl("");// TODO
+		applyResp.put("y", model); // TODO
+		return applyResp;
 	}
 
 	@Override
