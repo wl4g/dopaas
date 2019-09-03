@@ -184,7 +184,12 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Login failure overrun, lock cache name.
 	 */
-	final public static String CACHE_MATCH_LOCK = "matcher_lock_";
+	final public static String CACHE_MATCH_LOCK = "match_lock_";
+
+	/**
+	 * Security verifier for jigsaw captcha image cache name.
+	 */
+	final public static String CACHE_VERIFY_JIGSAW_IMG = "jigsaw_cache_";
 
 	/**
 	 * Cryptographic service cache name.
@@ -234,9 +239,5 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_C_BASE = "/internal";
 	/** Fast-CAS client logout URI. */
 	final public static String URI_C_LOGOUT = "logout";
-
-
-	//jigsaw redis cache key
-	public static String JIGSAW_REDIS_CACHE_KEY = "jigsaw_cache_";
 
 }

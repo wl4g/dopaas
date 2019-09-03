@@ -28,15 +28,16 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.JIGSAW_REDIS_CACHE_KEY;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * Jigsaw image manager.
@@ -60,18 +61,8 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 */
 	final protected CaptchaProperties config;
 
-	private static int poolSize;
-
-
 	@Autowired
-	private JedisService jedisService;
-
-	/**
-	 * Jigsaw image cache pool.
-	 */
-	//final protected Map<Integer, JigsawImgCode> cachePool = new ConcurrentHashMap<>();
-
-
+	protected JedisService jedisService;
 
 	public JigsawImageManager(CaptchaProperties config) {
 		Assert.notNull(config, "Captcha properties must not be null.");
@@ -80,18 +71,17 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 
 	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
-		initJigsawImagePool();
+		initializingJigsawImagePool();
 	}
 
 	/**
 	 * Clear cache.
 	 */
-	//TODO
 	public void clearCache() {
 		if (log.isInfoEnabled()) {
-			//log.info("Clear jigsaw image pool for {} ...", cachePool.size());
+			// log.info("Clear jigsaw image pool for {} ...", cachePool.size());
 		}
-		//this.cachePool.clear();
+		// this.cachePool.clear();
 	}
 
 	/**
@@ -100,17 +90,17 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * @return
 	 */
 	public JigsawImgCode borrow() {
-		String s = jedisService.get(JIGSAW_REDIS_CACHE_KEY + current().nextInt(config.getJigsaw().getPoolSize()));
-		Assert.hasText(s,"Unable to borrow jigsaw image resource.");
-		return JacksonUtils.parseJSON(s,JigsawImgCode.class);
+		String s = jedisService.get(CACHE_VERIFY_JIGSAW_IMG + current().nextInt(config.getJigsaw().getPoolSize()));
+		Assert.hasText(s, "Unable to borrow jigsaw image resource.");
+		return JacksonUtils.parseJSON(s, JigsawImgCode.class);
 	}
 
 	/**
-	 * Initialize jigsaw image buffer cache.
+	 * Initializing jigsaw image buffer cache.
 	 * 
 	 * @throws Exception
 	 */
-	private void initJigsawImagePool() throws IOException {
+	private void initializingJigsawImagePool() throws IOException {
 		if (log.isInfoEnabled()) {
 			log.info("Initializing jigsaw image buffer pool...");
 		}
@@ -118,8 +108,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		if (isBlank(config.getJigsaw().getSourceDir())) {
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 			Resource[] resources = resolver.getResources(DEFAULT_JIGSAW_SOURCE_CLASSPATH);
-			// Loading
-			doLoadBufferImage(resources);
+			storageJigsawImageCache(resources);
 		} else {
 			File srcDir = new File(config.getJigsaw().getSourceDir());
 			Assert.state((srcDir.canRead() && srcDir.exists()),
@@ -127,44 +116,32 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 							"Failed to initialize jigsaw images, please check the path: %s is correct and has read permission",
 							srcDir.getAbsolutePath()));
 			// Read files.
-			File[] files = srcDir.listFiles(new HideFileFilter());
+			File[] files = srcDir.listFiles(f -> !startsWith(f.getName(), "."));
 			Assert.state((files != null && files.length > 0),
 					String.format("Failed to initialize jigsaw images, path: %s material is empty", srcDir.getAbsolutePath()));
-			// Loading
-			doLoadBufferImage(files);
+			storageJigsawImageCache(files);
 		}
 
 	}
 
 	/**
-	 * Filter , filter hide file which start with "."
-	 */
-	public class HideFileFilter implements FileFilter {
-		public boolean accept(File pathname) {
-			return !pathname.getName().startsWith(".");
-		}
-	}
-
-
-	/**
-	 * Do load buffer image.
+	 * Storage put buffer image to cache.
 	 * 
 	 * @param sources
 	 * @throws IOException
 	 */
-	private void doLoadBufferImage(Object[] sources) throws IOException {
+	private void storageJigsawImageCache(Object[] sources) throws IOException {
 		// Statistic use material.
 		Set<Integer> indexs = new HashSet<>();
 
 		// Initialize jigsaw images.
 		ImageTailor tailor = new ImageTailor();
 		for (int i = 0; i < config.getJigsaw().getPoolSize(); i++) {
-
 			int index = i;
 			if (index >= sources.length) { // Inadequate material, random reuse.
 				index = current().nextInt(sources.length);
 			}
-			indexs.add(index); // Statistic
+			indexs.add(index); // For statistic
 
 			// Generate image.
 			Object source = sources[index];
@@ -174,12 +151,10 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 
 			if (source instanceof File) {
 				String path = ((File) sources[index]).getAbsolutePath();
-				jedisService.set(JIGSAW_REDIS_CACHE_KEY+i, JacksonUtils.toJSONString(tailor.getJigsawImageFile(path)),0);
-				//this.cachePool.put(i, tailor.getJigsawImageFile(path));
+				putJigsawImage(tailor.getJigsawImageFile(path), i);
 			} else if (source instanceof Resource) {
 				Resource resource = (Resource) source;
-				jedisService.set(JIGSAW_REDIS_CACHE_KEY+i, JacksonUtils.toJSONString(tailor.getJigsawImageInputStream(resource.getInputStream())),0);
-				//this.cachePool.put(i, tailor.getJigsawImageInputStream(resource.getInputStream()));
+				putJigsawImage(tailor.getJigsawImageInputStream(resource.getInputStream()), i);
 			} else {
 				throw new IllegalStateException(String.format("Unsupported jigsaw image source: %s", source));
 			}
@@ -189,6 +164,17 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 			log.info("Initialized jigsaw images buffer total: {}, expend material: {}", config.getJigsaw().getPoolSize(),
 					indexs.size());
 		}
+	}
+
+	/**
+	 * Put image to cache.
+	 * 
+	 * @param code
+	 * @param index
+	 */
+	private void putJigsawImage(JigsawImgCode code, int index) {
+		jedisService.getJedisCluster().hset(CACHE_VERIFY_JIGSAW_IMG, String.valueOf(index), toJSONString(code));
+		jedisService.getJedisCluster().expire(CACHE_VERIFY_JIGSAW_IMG, 1800);
 	}
 
 }
