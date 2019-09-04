@@ -70,10 +70,10 @@ a {
     background: url('../images/bg_icon/dl-bg.png') no-repeat;
     background-size: 100%;
     position: absolute;
-    right: 0;
-    top: 50%;
+    right: 60px;
+    top: 47%;
     transform: translate(0, -50%);
-    z-index: 1000;
+    z-index: 100;
 }
 
 #content-right:hover {
@@ -145,7 +145,7 @@ span a {
 }
 
 .text1 {
-    width: 204px;
+    width: 247px;
     height: 44px
 }
 
@@ -206,12 +206,15 @@ span a {
 
 .rightimageBox {
     position: relative;
-    width: 155px;
+    width: 158px;
+    height: 190px;
     border: 1px solid #eee;
     text-align: center;
-    margin: 200px 0 0 0px;
+    margin: 140px 20px 0 0px;
     color: #000;
     background: #eee;
+    z-index: 1000;
+    box-shadow: #886868 1px 1px 18px;
 }
 
 #qrcode-title {
@@ -220,10 +223,11 @@ span a {
 
 .rightImage {
     position: relative;
-    width: 155px;
-    height: 155px;
+    width: 145px;
+    height: 145px;
     text-align: center;
     margin: 0 0 0 0px;
+    z-index: 1000;
 }
 
 .icon-user {
@@ -367,13 +371,13 @@ span a {
 .cloud img {
     animation: cloudmove .5s 1 both;
     -webkit-animation: cloudmove .5s 1 both;
-    /* Safari 和 Chrome */
+    /* Safari 鍜� Chrome */
 }
 
 .base img {
     animation: basemove .5s 1;
     -webkit-animation: basemove .5s 1;
-    /* Safari 和 Chrome */
+    /* Safari 鍜� Chrome */
     bottom: -10vh;
 }
 

@@ -185,7 +185,17 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * @return
 	 */
 	public static boolean isMediaRequest(HttpServletRequest request) {
-		String ext = org.springframework.util.StringUtils.getFilenameExtension(request.getRequestURI());
+		return isMediaRequest(request.getRequestURI());
+	}
+
+	/**
+	 * Check that the requested resource is a base media file?
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static boolean isMediaRequest(String path) {
+		String ext = org.springframework.util.StringUtils.getFilenameExtension(path);
 		for (String media : MEDIA_BASE) {
 			if (StringUtils.equalsIgnoreCase(ext, media)) {
 				return true;
