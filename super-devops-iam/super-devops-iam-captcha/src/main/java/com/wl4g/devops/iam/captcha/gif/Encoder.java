@@ -25,7 +25,7 @@ import java.io.OutputStream;
  * @version v1.0 2019年2月26日
  * @since
  */
-public class Encoder {
+class Encoder {
 	private static final int EOF = -1;
 
 	private int imgW, imgH;

@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier;
 import com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier;
-import com.wl4g.devops.iam.verification.DefaultJdkJPEGSecurityVerifier;
+import com.wl4g.devops.iam.verification.SimpleJdkJPEGSecurityVerifier;
 
 @Configuration
 public class CaptchaAutoConfiguration {
@@ -32,7 +32,7 @@ public class CaptchaAutoConfiguration {
 	}
 
 	/**
-	 * {@link DefaultJdkJPEGSecurityVerifier}
+	 * {@link SimpleJdkJPEGSecurityVerifier}
 	 * {@link IamAutoConfiguration#captchaHandler}
 	 * 
 	 * @return

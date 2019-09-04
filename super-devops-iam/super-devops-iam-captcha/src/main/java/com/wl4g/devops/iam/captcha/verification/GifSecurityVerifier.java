@@ -15,15 +15,9 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
-import java.io.IOException;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.iam.captcha.gif.Captcha;
-import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
@@ -42,16 +36,16 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object verifyCode)
-			throws IOException {
-		Captcha captcha = new GifCaptcha((String) verifyCode);
-		captcha.out(response.getOutputStream());
+	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap) {
+//		Captcha captcha = new GifCaptcha((String) verifyCode);
+//		captcha.out(response.getOutputStream());
+		return null;
 	}
 
 	@Override
-	public boolean isEnabled(@NotNull List<String> factors) {
+	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
 		// TODO
-		return false; // for testing.
+		return null;
 	}
 
 }

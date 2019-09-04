@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.captcha.jigsaw;
+package com.wl4g.devops.iam.captcha.jigsaw.model;
 
 import java.io.Serializable;
 

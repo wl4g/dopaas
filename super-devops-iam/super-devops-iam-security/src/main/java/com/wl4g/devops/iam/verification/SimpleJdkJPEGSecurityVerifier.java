@@ -18,15 +18,15 @@ package com.wl4g.devops.iam.verification;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
+
+import com.wl4g.devops.iam.verification.model.ApplySimpleImgModel;
+import com.wl4g.devops.iam.verification.model.SimpleImgCode;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -37,7 +37,7 @@ import java.io.IOException;
  * @date 2018年12月29日
  * @since
  */
-public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
+public class SimpleJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	final private static Random RANDOM = new Random();
 	final private static int DEFAULT_WIDTH = 60;
@@ -50,11 +50,16 @@ public class DefaultJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected void imageWrite(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, Object verifyCode)
-			throws IOException {
-		ServletOutputStream out = response.getOutputStream();
-		// Write the data out
-		ImageIO.write(createImage((String) verifyCode), "JPEG", out);
+	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap) throws IOException {
+		SimpleImgCode code = codeWrap.getCode();
+		// Generate image & to base64 string.
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ImageIO.write(createImage(code.getVerifyCode()), "JPEG", out);
+
+		// Build model
+		ApplySimpleImgModel model = new ApplySimpleImgModel(applyToken, verifyType().getType());
+		model.setPrimaryImg(convertToBase64(out.toByteArray()));
+		return model;
 	}
 
 	/**

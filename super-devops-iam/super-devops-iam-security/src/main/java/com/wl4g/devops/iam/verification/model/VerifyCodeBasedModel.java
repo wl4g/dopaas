@@ -17,6 +17,10 @@ package com.wl4g.devops.iam.verification.model;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.util.Assert;
+
 /**
  * Verify code based model, e.g. apply jigsaw CAPTCHA uuid.
  * 
@@ -27,23 +31,43 @@ import java.io.Serializable;
 public abstract class VerifyCodeBasedModel implements Serializable {
 	private static final long serialVersionUID = -333742824989510195L;
 
-	private String applyUuid;
+	/**
+	 * Applied CAPTCHA graph token.
+	 */
+	@NotBlank
+	private String applyToken;
+
+	/**
+	 * Applied verification type.
+	 */
+	@NotBlank
+	private String verifyType;
 
 	public VerifyCodeBasedModel() {
 		super();
 	}
 
-	public VerifyCodeBasedModel(String applyUuid) {
-		super();
-		this.applyUuid = applyUuid;
+	public VerifyCodeBasedModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+		setApplyToken(applyToken);
+		setVerifyType(verifyType);
 	}
 
-	public String getApplyUuid() {
-		return applyUuid;
+	public String getApplyToken() {
+		return applyToken;
 	}
 
-	public void setApplyUuid(String applyUuid) {
-		this.applyUuid = applyUuid;
+	public void setApplyToken(String applyToken) {
+		Assert.hasText(applyToken, "applyToken must not be empty");
+		this.applyToken = applyToken;
+	}
+
+	public String getVerifyType() {
+		return verifyType;
+	}
+
+	public void setVerifyType(String verifyType) {
+		Assert.hasText(verifyType, "verifyType must not be empty");
+		this.verifyType = verifyType;
 	}
 
 }

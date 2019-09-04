@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.captcha.jigsaw;
+package com.wl4g.devops.iam.captcha.jigsaw.model;
+
+import javax.validation.constraints.NotBlank;
 
 import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
 
@@ -28,8 +30,21 @@ public class ApplyJigsawImgModel extends VerifyCodeBasedModel {
 	private static final long serialVersionUID = 4975604164412626949L;
 
 	private int y;
-	private String primaryImgUrl;
-	private String blockImgUrl;
+
+	@NotBlank
+	private String primaryImg; // Image base64
+
+	@NotBlank
+	private String blockImg;
+
+	public ApplyJigsawImgModel() {
+		super();
+	}
+
+	public ApplyJigsawImgModel(String graphToken, String verifyType) {
+		setApplyToken(graphToken);
+		setVerifyType(verifyType);
+	}
 
 	public int getY() {
 		return y;
@@ -39,20 +54,20 @@ public class ApplyJigsawImgModel extends VerifyCodeBasedModel {
 		this.y = y;
 	}
 
-	public String getPrimaryImgUrl() {
-		return primaryImgUrl;
+	public String getPrimaryImg() {
+		return primaryImg;
 	}
 
-	public void setPrimaryImgUrl(String primaryUrl) {
-		this.primaryImgUrl = primaryUrl;
+	public void setPrimaryImg(String primaryImg) {
+		this.primaryImg = primaryImg;
 	}
 
-	public String getBlockImgUrl() {
-		return blockImgUrl;
+	public String getBlockImg() {
+		return blockImg;
 	}
 
-	public void setBlockImgUrl(String blockUrl) {
-		this.blockImgUrl = blockUrl;
+	public void setBlockImg(String blockImg) {
+		this.blockImg = blockImg;
 	}
 
 }

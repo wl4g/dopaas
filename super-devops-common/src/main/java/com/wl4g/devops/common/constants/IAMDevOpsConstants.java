@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.constants;
 
+import com.google.common.base.Charsets;
+
 /**
  * DevOps SCM Constants.
  * 
@@ -127,8 +129,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_S_VERIFY_BASE = "/verify";
 	/** URI for apply for CAPTCHA. */
 	final public static String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
-	/** URI for render for CAPTCHA. */
-	final public static String URI_S_VERIFY_RENDER_CAPTCHA = "rendercaptcha";
 	/** URI for verify analyze for CAPTCHA. */
 	final public static String URI_S_VERIFY_ANALYZE_CAPTCHA = "verifyAnalyze";
 	/** URI for apply for verify-code. */
@@ -189,7 +189,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Security verifier for jigsaw captcha image cache name.
 	 */
-	final public static String CACHE_VERIFY_JIGSAW_IMG = "jigsaw_cache_";
+	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "jigsaw_cache_".getBytes(Charsets.UTF_8);
 
 	/**
 	 * Cryptographic service cache name.

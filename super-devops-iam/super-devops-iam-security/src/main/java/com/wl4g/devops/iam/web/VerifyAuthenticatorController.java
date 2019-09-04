@@ -56,6 +56,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class VerifyAuthenticatorController extends AbstractAuthenticatorController {
 
 	/**
+	 * Verify CAPTCHA apply model key-name.
+	 */
+	final public static String KEY_APPLY_MODEL = "applyModel";
+
+	/**
 	 * Composite verification handler.
 	 */
 	@Autowired
@@ -84,7 +89,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 
 			// Apply CAPTCHA
 			if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
-				resp.setData(verifier.forAdapt(request).apply(principal, factors, request));
+				resp.getData().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
 			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -100,27 +105,6 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 		}
 
 		return resp;
-	}
-
-	/**
-	 * Rendering CAPTCHA graph stream.
-	 *
-	 * @param param
-	 *            CAPTCHA parameter, required
-	 * @param request
-	 * @param response
-	 */
-	@RequestMapping(value = URI_S_VERIFY_RENDER_CAPTCHA, method = { GET, POST })
-	public void renderCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		try {
-			verifier.forAdapt(request).render(request, response);
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Failed to render captcha.", e);
-			} else {
-				log.warn("Failed to render captcha. caused by: {}", getRootCausesString(e));
-			}
-		}
 	}
 
 	/**
@@ -169,7 +153,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			verifier.forAdapt(request).validate(factors, getCleanParam(request, config.getParam().getVerifiedTokenName()), false);
 
 			// Apply SMS verify code.
-			resp.setData(verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
+			resp.getData().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
