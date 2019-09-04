@@ -209,12 +209,14 @@
 				},
                 jigsaw:{
 				    div: document.getElementById("jigsaw"),
-                    show: function () {
+
+                    show: function (applycaptchaUrl) {
                         console.info("show jigsaw");
                         var jigsawDiv = document.getElementById("jigsaw");
                         $(jigsawDiv).css({"display" : "inline"});
 
                         $('#jigsaw').sliderCaptcha({
+                            applycaptchaUrl: applycaptchaUrl,
                             repeatIcon: 'fa fa-redo',
                             /*setSrc: function () {
                                 return 'http://images.sdgxgz.com/Pic' + Math.round(Math.random() * 136) + '.jpg';

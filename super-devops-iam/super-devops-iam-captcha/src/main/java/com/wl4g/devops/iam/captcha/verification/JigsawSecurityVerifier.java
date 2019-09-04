@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
-import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.ApplyJigsawImgModel;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
@@ -36,9 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_RENDER_CAPTCHA;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.PARAM_VERIFYTYPE;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
@@ -95,16 +91,16 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		blockParams.put(PARAM_VERIFYTYPE,verifyType().getType());
 		blockParams.put(DEFAULT_PARAM_APPLY_UUID,applyResp.get(DEFAULT_PARAM_APPLY_UUID));
 
-		String primaryImgUrl = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE +"/"+URI_S_VERIFY_RENDER_CAPTCHA+ "?" + BeanMapConvert.toUriParmaters(primaryParams);
-		String blockImgUrl = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/"+URI_S_VERIFY_RENDER_CAPTCHA+"?"+BeanMapConvert.toUriParmaters(blockParams);
+		//String primaryImgUrl = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE +"/"+URI_S_VERIFY_RENDER_CAPTCHA+ "?" + BeanMapConvert.toUriParmaters(primaryParams);
+		//String blockImgUrl = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/"+URI_S_VERIFY_RENDER_CAPTCHA+"?"+BeanMapConvert.toUriParmaters(blockParams);
 
 		// Build apply model.
 		ApplyJigsawImgModel model = new ApplyJigsawImgModel();
 		model.setY(code.getY());
-		model.setPrimaryImgUrl(primaryImgUrl);
-		model.setBlockImgUrl(blockImgUrl);
+		model.setPrimaryImg(code.getPrimaryImg());
+		model.setBlockImg(code.getBlockImg());
 
-		applyResp.put("y", model);
+		applyResp.put("jigsaw", model);
 		return applyResp;
 	}
 

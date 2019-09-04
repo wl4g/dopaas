@@ -28,8 +28,8 @@ public class ApplyJigsawImgModel extends VerifyCodeBasedModel {
 	private static final long serialVersionUID = 4975604164412626949L;
 
 	private int y;
-	private String primaryImgUrl;
-	private String blockImgUrl;
+	private String primaryImg;
+	private String blockImg;
 
 	public int getY() {
 		return y;
@@ -39,20 +39,19 @@ public class ApplyJigsawImgModel extends VerifyCodeBasedModel {
 		this.y = y;
 	}
 
-	public String getPrimaryImgUrl() {
-		return primaryImgUrl;
+	public String getPrimaryImg() {
+		return primaryImg;
 	}
 
-	public void setPrimaryImgUrl(String primaryUrl) {
-		this.primaryImgUrl = primaryUrl;
+	public void setPrimaryImg(String primaryImg) {
+		this.primaryImg = primaryImg;
 	}
 
-	public String getBlockImgUrl() {
-		return blockImgUrl;
+	public String getBlockImg() {
+		return blockImg;
 	}
 
-	public void setBlockImgUrl(String blockUrl) {
-		this.blockImgUrl = blockUrl;
+	public void setBlockImg(String blockImg) {
+		this.blockImg = blockImg;
 	}
-
 }
