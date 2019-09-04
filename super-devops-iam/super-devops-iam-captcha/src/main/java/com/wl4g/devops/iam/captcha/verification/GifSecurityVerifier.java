@@ -23,11 +23,12 @@ import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * GIF CAPTCHA verification handler.
@@ -39,28 +40,30 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
  */
 public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 
-    @Override
-    public VerifyType verifyType() {
-        return VerifyType.GRAPH_GIF;
-    }
+	@Override
+	public VerifyType verifyType() {
+		return VerifyType.GRAPH_GIF;
+	}
 
-    @Override
-    protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) throws IOException {
-        // Generate image & to base64 string.
-        Captcha captcha = new GifCaptcha(codeWrap.getCode());
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        captcha.out(out);
+	@Override
+	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec)
+			throws IOException {
+		// Generate image & to base64 string.
+		Captcha captcha = new GifCaptcha(codeWrap.getCode());
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		captcha.out(out);
 
-        // Build model
-        GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getType());
-        model.setPrimaryImg(convertToBase64(out.toByteArray()));
-        return model;
-    }
+		// Build model
+		GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getType());
+		model.setPrimaryImg(convertToBase64(out.toByteArray()));
+		return model;
+	}
 
-    @Override
-    protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-        // TODO
-        return new GifVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
-    }
+	@Override
+	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
+		GifVerifyImgModel model = parseJSON(params, GifVerifyImgModel.class);
+		validator.validate(model);
+		return model;
+	}
 
 }

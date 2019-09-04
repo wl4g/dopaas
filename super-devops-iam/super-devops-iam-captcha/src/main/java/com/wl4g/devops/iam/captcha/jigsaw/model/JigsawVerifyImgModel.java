@@ -52,7 +52,7 @@ public class JigsawVerifyImgModel extends BasedVerifyCodeModel {
 		this.trails = trails;
 	}
 
-	public static class Trail{
+	public static class Trail {
 		private Long timestamp;
 		private Integer x;
 		private Integer y;

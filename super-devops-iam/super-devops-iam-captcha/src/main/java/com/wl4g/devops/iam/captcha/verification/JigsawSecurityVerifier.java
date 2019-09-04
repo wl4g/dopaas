@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgModel;
@@ -27,16 +26,15 @@ import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Objects;
 
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
- * Jigsaw slider CAPTCHA verification handler.
+ * JIGSAW slider CAPTCHA verification handler.
  * 
  * @author Wangl.sir
  * @version v1.0 2019年8月28日
@@ -45,7 +43,7 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	/**
-	 * Jigsaw image manager.
+	 * JIGSAW image manager.
 	 */
 	@Autowired
 	protected JigsawImageManager jigsawManager;
@@ -57,10 +55,10 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected RSACryptographicService rsaCryptoService;
 
 	/**
-	 * CAPTCHA config properties.
+	 * CAPTCHA configuration.
 	 */
 	@Autowired
-	protected CaptchaProperties captchaConfig;
+	protected CaptchaProperties capConfig;
 
 	@Override
 	public VerifyType verifyType() {
@@ -68,7 +66,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap,RSAKeySpecWrapper keySpec) {
+	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) {
 		JigsawImgCode code = codeWrap.getCode();
 		// Build model
 		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getType());
@@ -86,23 +84,10 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-		String x = getCleanParam(request, "x");
-
-		BufferedReader br = null;
-		StringBuffer stringBuffer = new StringBuffer();
-		try {
-			br = request.getReader();
-
-			String str = null;
-			while((str = br.readLine()) != null){
-				stringBuffer.append(str);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		JigsawVerifyImgModel jigsawVerifyImgModel = JacksonUtils.parseJSON(stringBuffer.toString(), JigsawVerifyImgModel.class);
-		return jigsawVerifyImgModel;
+	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
+		JigsawVerifyImgModel model = parseJSON(params, JigsawVerifyImgModel.class);
+		validator.validate(model);
+		return model;
 	}
 
 	@Override
@@ -119,7 +104,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	/**
-	 * Analyze and verification jigsaw graph.
+	 * Analyzing & verification JIGSAW graph.
 	 * 
 	 * @param code
 	 * @param model
@@ -130,16 +115,16 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;
 		}
-		// Decryption slider block x-position.
+
+		// DECRYPT slider block x-position.
 		RSAKeySpecWrapper keySpec = getBindValue(model.getApplyToken(), true);
-		//String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
-		String plainX = model.getX();
+		String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
 		if (log.isDebugEnabled()) {
 			log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 		}
 
-		// Do matching
-		return Math.abs(Integer.parseInt(plainX) - code.getX()) <= captchaConfig.getJigsaw().getAllowOffsetX();
+		// Do match
+		return Math.abs(Integer.parseInt(plainX) - code.getX()) <= capConfig.getJigsaw().getAllowOffsetX();
 	}
 
 }

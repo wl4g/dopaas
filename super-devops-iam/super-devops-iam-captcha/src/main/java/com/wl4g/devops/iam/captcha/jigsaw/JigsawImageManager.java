@@ -90,7 +90,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	public JigsawImgCode borrow() {
 		final int index = current().nextInt(config.getJigsaw().getPoolImgSize());
 		byte[] data = jedisService.getJedisCluster().hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
-		if(Objects.isNull(data)){// expired?
+		if (Objects.isNull(data)) {// expired?
 			try {
 				initJigsawImagePool();
 			} catch (IOException e) {

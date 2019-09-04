@@ -111,7 +111,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		}
 
 		// Custom processing.
-		return postApplyGraphProperties(applyToken, wrap,keySpec);
+		return postApplyGraphProperties(applyToken, wrap, keySpec);
 	}
 
 	@Override
@@ -153,7 +153,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap,RSAKeySpecWrapper keySpec) throws IOException;
+	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec)
+			throws IOException;
 
 	@Override
 	protected long getVerifyCodeExpireMs() {
