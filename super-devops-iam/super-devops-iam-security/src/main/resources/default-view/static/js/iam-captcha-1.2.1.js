@@ -21,6 +21,7 @@
         failedText: '再试一次',
         barText: '向右滑动填充拼图',
         repeatIcon: 'fa fa-repeat',
+        applycaptchaUrl: null,
 
         verify: function (arr, left) {
             var ret = false;
@@ -181,23 +182,30 @@
 
         };
 
-        img1.setSrc = function (url) {
+        img1.setSrc = function (imgBase64) {
             that.text.removeClass('text-danger');
             //img1.src = 'http://localhost:14040/iam-server/public/image1?uuid='+uuid;
-            img1.src = url;
+            //img1.src = url;
+            //img1.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAFYklEQVR42sVXfUyUdRz/8XKhMZQO7nmeuwMFwrBEVJqgDOcUHZvNuTarrdKam0zdKrckAy4goowxbaM5hE1yjVVzLjLRokBFz2qsQPGFF8vmamtkL4s4OHDy6ff5EQcXx91hf/jHB777fj8v3+d57p7nOQFA3EuoPxcLhV90SlxziOSeUrHdWRz5fv1uc1fl03OGizdGgmBd/5K5mzNyyO0M4EkEXqBAiI58Ed9WEFp1+MXYm1vW68hKM7AwJR5Wmx3RZqsCa/Y4I4dcaqilx10t0PGqCOssEjuvH7H9vW1zEgzNgK5ZYVh02HUN86w65tvGwJo9zhRHcqmhlh70mtEC7a8Ie2ep6dPfW5eM3OnbhMo9S6GbLV6h04Eccqmhlh70omdQC3TsFbbLZaYL/W2ZwA+PYbQ9B780rUJu1nxoMZaAC5BDLjXU0oNe9KS33wXkqRKXXguv+as1HejOxYhzNdwS+G4NjlUsU0cX7+cscEYOudRQSw960ZPezPC9QIE69dv6Pk4exLX1GDm/Cu5z2Qojzmy4WrOxZUOSPELNz9FrikMuNR699KInvZkx/sH0WqB9rzCuH5j7Mzrk1uel8HQW3GcmgK+y4axOR0qCVX7gpoazxxk55E7W0oue9GYGs7wXKFCnP7+/cdEovs7GUHMm3C0rvHD7jMTZFSjYugAW89RvAXuckUPuf/X0pDczmMVMzwJyI8v3lVFX7pzLxMiXGXB/sdwncDoDvfXLkJFqh1WbuBSs2eOMnOn09GYGs5g5eYHcXw/HAWczMfRZOtwSQz7APloexcHdD0GLnVhAlzV7nPnT8j8zmMVMzwKdjtCy/qPJuN0kSY1L/OL250tw61gaNqy0Q7doCqzZ4yygXmYwi5meBa6Wmk4NNaRgpDEVQ8cX+YVbAk2L0VCcrL52BGv23AG0hMqQWcz0LNBTHtGFkw9D4UQQkLxR+X/LujiF0RMz0xIqc3yBb4sifmp+80G0lCcFhWYJZ0USDu6ar8C6OUit0sssZnoWaNhh+tFqGIg3dM9p9QvJM5t1vP1cvALrmWiZxUzPAidfMLWlJBjqZhKMiRarY+UiAzer5ymwZi8Y7dgNywAzPQuc3xNet3Ypv8+Bn3Y0sUqTQ3k24MM4BdZW3f9zYuKeoYNZzPQscNkRsv351WbExhoBDXT5zN+4XMcfNVYMv2dTYM0eZ4H0zGAWMz0L9JaK1P1PRQ7EWa0Bn3aJdh2NL2vAEQ2u2jGwZo+zQHq7zJBZrusyc9IZEOEX8sM/yFxokafI8LO9jrx1GgaqY+CujYHr0BhYs5eXoynO9KffADOc+eEfyUyT19Owp0SsKd0U5eYrlU+xvMaLk3S0OcxAbTRcB73BHmdpSWNcn5dPejNDZq2d8jiWG4W07Q39JCctVr3T+br2ZY+bcac6CoPvzoGryhvscUaOr88CPenNDGb5fCPqKha2o3kRF1MTKfA++uxHNNx4IwrDVZFwveMbnJFD7uSzQC960psZft8Je4rFkzXPzh5eME+HTTfUs94mbxx1W+cCVbMwuH82XNOAM3LIpUZppQe96EnvoN6K5TXaVfPMbCxO1BAVbeCJzBj89tYsDO+/DwOVEX5BDrmbpYZaetCLnkG/ll8qEqK7WOQe32lybs54AKd23I/RA+EYqDAFBXJPSg219KAXPWf8y+iKQxhXHaLyRklI363yUAzsC8OghGtfqE9wRg651FBLj7v/aTb+ul4oUi4VipIuh+i+WSKG+spC8Gd5CPr/BWv2OJOcHsl9XWoW/v/fht5LhLUXiARZb71cJOquFIlv5BH2EqzZ40xyEsm9OJMfp/cS/wC6xRqbyM2GFQAAAABJRU5ErkJggg==';
+            img1.src='data:image/png;base64,'+imgBase64;
         };
-        img2.setSrc = function (url) {
+        img2.setSrc = function (imgBase64) {
             that.text.removeClass('text-danger');
             //img2.src = 'http://localhost:14040/iam-server/public/image2?uuid='+uuid;
-            img2.src = url;
+            //img2.src = url;
+            img2.src='data:image/png;base64,'+imgBase64;
         };
 
         //img1.setSrc();
         //img2.setSrc();
 
         var applycaptcha = function(){
+            var url = "http://localhost:14040/iam-server/verify/applycaptcha?verifyType=VerifyWithJigsawGraph";
+            if(that.options.applycaptchaUrl){
+                url = that.options.applycaptchaUrl+"?verifyType=VerifyWithJigsawGraph";
+            }
             $.ajax({
-                url: 'http://localhost:14040/iam-server/public/applycaptcha',
+                url: url,
                 // data: JSON.stringify(arr),
                 // async: false,
                 cache: false,
@@ -206,8 +214,9 @@
                 dataType: 'json',
                 success: function (result) {
                     console.info(result);
-                    img1.setSrc(result.image1);
-                    img2.setSrc(result.image2);
+                    result = result.data.jigsaw;
+                    img1.setSrc(result.primaryImg);
+                    img2.setSrc(result.blockImg);
                     img2.imagey = result.y;
                     uuid = result.uuid;
 
