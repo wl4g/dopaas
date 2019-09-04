@@ -62,11 +62,12 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 
         jigsaw: {
 			div: null,
+            applycaptchaUrl: null,
 			hide: function () {
                 var jigsawDiv = CommonUtils.checkEmpty("jigsaw.div", settings.jigsaw.div);
                 $(jigsawDiv).css({"display" : "none"});
             },
-			show: function () {
+			show: function (applycaptchaUrl) {
 			    console.info("show jigsaw0");
             },
 
@@ -172,9 +173,9 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 	};
 
 	//显示拼图验证码
-    var resetJigsaw = function(){
+    var resetJigsaw = function(applyUrl){
     	console.info("into reset Jigsaw");
-        settings.jigsaw.show();
+        settings.jigsaw.show(applyUrl);
     };
 
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
@@ -376,7 +377,7 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 								safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 									if(checkCaptcha.enabled){ // 有值则刷新验证码
 										//resetCaptcha();
-                                        resetJigsaw();
+                                        resetJigsaw(checkCaptcha.applyUrl);
 									}
 								});
 								settings.account.onError(resp.message); // 登录失败回调
@@ -529,7 +530,7 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 			safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 				if(checkCaptcha.enabled){ // 启用了验证码
 					//resetCaptcha(); // 刷新
-					resetJigsaw();
+					resetJigsaw(checkCaptcha.applyUrl);
 				}
 				if(checkSms.enabled){ // 申请过SMS验证码
 					// 回填mobile number.
