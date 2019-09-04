@@ -15,12 +15,18 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+
 import com.wl4g.devops.iam.captcha.gif.Captcha;
 import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
-import com.wl4g.devops.iam.captcha.gif.model.ApplyGifImgModel;
+import com.wl4g.devops.iam.captcha.gif.model.GifApplyImgModel;
+import com.wl4g.devops.iam.captcha.gif.model.GifVerifyImgModel;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
@@ -46,9 +52,15 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 		captcha.out(out);
 
 		// Build model
-		ApplyGifImgModel model = new ApplyGifImgModel(applyToken, verifyType().getType());
+		GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getType());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
+	}
+
+	@Override
+	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
+		// TODO
+		return new GifVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
 	}
 
 }

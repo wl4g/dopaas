@@ -53,9 +53,14 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
 	/**
-	 * Apply UUID expireMs.
+	 * Apply token parameter name.
 	 */
-	final public static long DEFAULT_APPLY_UUID_EXPIREMS = 60_000;
+	final public static String DEFAULT_APPLY_TOKEN = "applyToken";
+
+	/**
+	 * Apply token expireMs.
+	 */
+	final public static long DEFAULT_APPLY_TOKEN_EXPIREMS = 60_000;
 
 	/**
 	 * Apply UUID bit.
@@ -100,7 +105,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		// Get RSA key.(Used to encrypt sliding X position)
 		RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();
 		String applyToken = randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
-		bind(applyToken, keySpec, DEFAULT_APPLY_UUID_EXPIREMS);
+		bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
 		if (log.isDebugEnabled()) {
 			log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
 		}

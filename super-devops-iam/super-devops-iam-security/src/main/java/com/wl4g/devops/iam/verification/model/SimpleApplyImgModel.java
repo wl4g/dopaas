@@ -13,28 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.captcha.gif.model;
+package com.wl4g.devops.iam.verification.model;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.devops.iam.verification.model.ApplySimpleImgModel;
-
 /**
- * Apply GIF image CAPTCHA model
+ * Apply simple image model.
  * 
  * @author Wangl.sir
  * @version v1.0 2019年9月4日
  * @since
  */
-public class ApplyGifImgModel extends ApplySimpleImgModel {
-	private static final long serialVersionUID = 7017420698604587374L;
+public class SimpleApplyImgModel extends BasedVerifyCodeModel {
+	private static final long serialVersionUID = -5065908011134214117L;
 
-	public ApplyGifImgModel() {
+	@NotBlank
+	private String primaryImg;
+
+	public SimpleApplyImgModel() {
 		super();
 	}
 
-	public ApplyGifImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+	public SimpleApplyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
 		super(applyToken, verifyType);
+	}
+
+	public String getPrimaryImg() {
+		return primaryImg;
+	}
+
+	public void setPrimaryImg(String primaryImg) {
+		this.primaryImg = primaryImg;
 	}
 
 }
