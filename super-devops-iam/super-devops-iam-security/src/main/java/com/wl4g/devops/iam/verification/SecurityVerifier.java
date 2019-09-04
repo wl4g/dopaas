@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.util.Assert;
@@ -84,6 +85,8 @@ public abstract interface SecurityVerifier {
 	/**
 	 * Analyze and verification.
 	 * 
+	 * @param params
+	 *            parameter DTO model
 	 * @param request
 	 *            HttpServletRequest
 	 * @param factors
@@ -93,7 +96,8 @@ public abstract interface SecurityVerifier {
 	 *         null, otherwise the exception will be thrown.
 	 * @throws VerificationException
 	 */
-	String verify(@NotNull HttpServletRequest request, @NotNull List<String> factors) throws VerificationException;
+	String verify(@NotBlank String params, @NotNull HttpServletRequest request, @NotNull List<String> factors)
+			throws VerificationException;
 
 	/**
 	 * Validation verified token.

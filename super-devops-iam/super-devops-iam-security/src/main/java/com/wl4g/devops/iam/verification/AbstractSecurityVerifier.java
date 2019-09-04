@@ -21,6 +21,8 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Validator;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -90,6 +92,12 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	protected SessionDelegateMessageBundle bundle;
 
 	/**
+	 * Validation
+	 */
+	@Autowired
+	protected Validator validator;
+
+	/**
 	 * Get stored verify code of session
 	 * 
 	 * @param assertion
@@ -136,7 +144,8 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			throws IOException;
 
 	@Override
-	public String verify(@NotNull HttpServletRequest request, @NotNull List<String> factors) throws VerificationException {
+	public String verify(@NotBlank String params, @NotNull HttpServletRequest request, @NotNull List<String> factors)
+			throws VerificationException {
 		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty.");
 		VerifyCodeWrapper storedCode = null;
 		try {
@@ -151,7 +160,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			}
 
 			// Verification
-			Object submitCode = getSubmittedCode(request);
+			Object submitCode = getRequestVerifyCode(params, request);
 			storedCode = getVerifyCode(true);
 			if (!doMatch(storedCode, submitCode)) {
 				log.error("Verification mismatched. {} => {}", submitCode, storedCode);
@@ -209,10 +218,11 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	/**
 	 * Get submitted verify code.
 	 * 
+	 * @param params
 	 * @param request
 	 * @return
 	 */
-	protected abstract Object getSubmittedCode(@NotNull HttpServletRequest request);
+	protected abstract Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request);
 
 	/**
 	 * Match submitted validation code

@@ -31,6 +31,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,23 +115,19 @@ public class DefaultViewController extends BaseController {
 		basePath = basePath == null ? "" : basePath;
 
 		// Get buffer cache
-		byte[] buffer = bufferCache.get(filepath);
-
-		if (buffer == null) {
+		byte[] buf = bufferCache.get(filepath);
+		if (Objects.isNull(buf)) {
 			Resource resource = getResource(basePath, filepath);
 			if (resource.exists()) {
 				if (log.isInfoEnabled()) {
 					log.info("Read file url:[{}]", resource.getURL());
 				}
-				buffer = ByteStreams.toByteArray(resource.getInputStream());
-
+				buf = ByteStreams.toByteArray(resource.getInputStream());
 				// Caching is enabled when in non-debug mode.
-				if (!JVMRuntimeKit.isJVMDebuging()) {
-					bufferCache.put(filepath, buffer);
+				if (!JVMRuntimeKit.isJVMDebugging) {
+					bufferCache.put(filepath, buf);
 				}
-			}
-			// Not found
-			else {
+			} else { // Not found
 				write(response, HttpStatus.NOT_FOUND.value(), MediaType.TEXT_HTML_VALUE, "Not Found".getBytes(Charsets.UTF_8));
 				return;
 			}
@@ -139,7 +136,7 @@ public class DefaultViewController extends BaseController {
 		// Response file buffer
 		String contentType = endsWithIgnoreCase(filepath, "HTML") ? MediaType.TEXT_HTML_VALUE
 				: /* MediaType.TEXT_PLAIN_VALUE */EMPTY;
-		write(response, HttpStatus.OK.value(), contentType, buffer);
+		write(response, HttpStatus.OK.value(), contentType, buf);
 	}
 
 	/**

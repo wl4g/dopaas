@@ -26,6 +26,7 @@ import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
 import com.wl4g.devops.iam.verification.model.VerifiedTokenModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -79,7 +80,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = { GET, POST })
+	@RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = { GET })
 	@ResponseBody
 	public RespBase<?> applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
@@ -119,16 +120,17 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * @param response
 	 * @throws Exception
 	 */
-	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { GET, POST })
+	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { POST })
 	@ResponseBody
-	public RespBase<?> verifyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public RespBase<?> verifyCaptcha(@RequestBody String params, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			// Limit factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
-			String verifiedToken = verifier.forAdapt(request).verify(request, factors);
-			VerifiedTokenModel model = new VerifiedTokenModel(true,verifiedToken);
-			resp.getData().put(KEY_VWEIFIED_MODEL,model);
+			// Verifying
+			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
+			resp.getData().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to verify captcha.", e);
@@ -145,7 +147,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = { GET, POST })
+	@RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = { GET })
 	@ResponseBody
 	public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());

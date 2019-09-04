@@ -21,6 +21,7 @@ import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,7 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * Default JDK CAPTCHA handler.
@@ -38,7 +39,7 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
  * @date 2018年12月29日
  * @since
  */
-public class SimpleJDKJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
+public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	final private static Random RANDOM = new Random();
 	final private static int DEFAULT_WIDTH = 60;
@@ -51,7 +52,8 @@ public class SimpleJDKJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) throws IOException {
+	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec)
+			throws IOException {
 		// Generate image & to base64 string.
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ImageIO.write(createImage(codeWrap.getCode()), "JPEG", out);
@@ -63,9 +65,10 @@ public class SimpleJDKJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-		// TODO
-		return new SimpleVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
+	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
+		SimpleVerifyImgModel model = parseJSON(params, SimpleVerifyImgModel.class);
+		validator.validate(model);
+		return model;
 	}
 
 	/**

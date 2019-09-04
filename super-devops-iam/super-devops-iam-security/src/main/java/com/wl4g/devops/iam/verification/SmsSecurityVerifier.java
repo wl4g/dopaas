@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import java.util.Map;
 
 import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
@@ -87,9 +89,10 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	}
 
 	@Override
-	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-		// TODO
-		return new SimpleVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
+	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
+		SimpleVerifyImgModel model = parseJSON(params, SimpleVerifyImgModel.class);
+		validator.validate(model);
+		return model;
 	}
 
 	@Override

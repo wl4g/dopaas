@@ -85,7 +85,7 @@ import com.wl4g.devops.iam.realm.WechatAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatMpAuthorizingRealm;
 import com.wl4g.devops.iam.session.mgt.IamServerSessionManager;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
-import com.wl4g.devops.iam.verification.SimpleJDKJPEGSecurityVerifier;
+import com.wl4g.devops.iam.verification.SimpleJPEGSecurityVerifier;
 import com.wl4g.devops.iam.verification.SecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
@@ -516,8 +516,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public SimpleJDKJPEGSecurityVerifier defaultJdkJPEGSecurityVerifier() {
-		return new SimpleJDKJPEGSecurityVerifier();
+	public SimpleJPEGSecurityVerifier simpleJPEGSecurityVerifier() {
+		return new SimpleJPEGSecurityVerifier();
 	}
 
 	@Bean

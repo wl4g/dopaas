@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.util.Assert;
@@ -99,8 +100,9 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 	}
 
 	@Override
-	public String verify(@NotNull HttpServletRequest request, @NotNull List<String> factors) throws VerificationException {
-		return getAdapted().verify(request, factors);
+	public String verify(@NotBlank String params, @NotNull HttpServletRequest request, @NotNull List<String> factors)
+			throws VerificationException {
+		return getAdapted().verify(params, request, factors);
 	}
 
 	@Override

@@ -15,8 +15,11 @@
  */
 package com.wl4g.devops.common.kit.jvm;
 
+import static org.apache.commons.lang3.StringUtils.startsWithAny;
+
 import java.lang.management.ManagementFactory;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * JVM runtime kit utility
@@ -25,22 +28,28 @@ import java.util.List;
  * @version v1.0 2019年1月12日
  * @since
  */
-public class JVMRuntimeKit {
+public abstract class JVMRuntimeKit {
 
 	/**
-	 * Whether current JVM runtime debuging mode
+	 * Current runtime in debugging.
+	 */
+	final public static boolean isJVMDebugging = checkJVMDebugging();
+
+	/**
+	 * Check current JVM runtime debug status. See: <a href=
+	 * "http://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/c30db4c968f6/src/share/classes/com/sun/tools/jdi/SunCommandLineLauncher.java#l216">OpenJDK8
+	 * source</a>
 	 * 
 	 * @return
 	 */
-	public static boolean isJVMDebuging() {
+	private static boolean checkJVMDebugging() {
 		List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-		boolean debuging = false;
 		for (String str : arguments) {
-			if (str.startsWith("-agentlib")) {
-				debuging = true;
+			if (startsWithAny(str.toLowerCase(Locale.US), "-agentlib", "-Xrunjdwp", "-Xdebug")) {
+				return true;
 			}
 		}
-		return debuging;
+		return false;
 	}
 
 }
