@@ -1,23 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<meta charset="UTF-8" />
-	<title>IAM Central Authentication</title>
-	<link rel="shortcut icon" href="./favicon.ico">
-	<link rel="stylesheet" href="./static/css/login.css">
-	<link rel="stylesheet" href="./static/css/lanren.css">
-
-	<!--0902 add-->
-	<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-	<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
-	<link href="./static/css/slidercaptcha.css" rel="stylesheet" />
-
-	<script src="./static/js/jquery-3.3.1.min.js"></script>
-	<script src="./static/js/iam-1.2.1.js"></script>
-	<script src="./static/js/login.js"></script>
+	<title>Sign in for IAM Authentication Central</title>
+	<link rel="shortcut icon" href="./favicon.ico"/>
+	<link rel="stylesheet" href="./static/css/font-awesome-all.5.7.2.min.css"/>
+	<link rel="stylesheet" href="./static/css/bootstrap-3.3.7.min.css"/>
+	<link rel="stylesheet" href="./static/css/login.css"/>
+	<link rel="stylesheet" href="./static/css/lanren.css"/>
+	<link rel="stylesheet" href="./static/css/slidercaptcha.css"/>
+  	<script src="./static/js/jquery-3.3.1.min.js"></script>
+	<script src="./static/js/bootstrap-3.3.7.min.js"></script>
 </head>
-
 <body>
 	<div id="wrap" style="background:url('./static/images/bg_icon/background.png') no-repeat;background-size: cover;">
 		<div id="top">
@@ -114,7 +108,6 @@
 							style="color: #fff;">微信’扫一扫’</b>&nbsp;&nbsp;扫描二维码</div>
 				</div>
 				<div id="login_phone">
-					<!-- <form action="#"> -->
 					<div>
 						<i class="icon-phone"></i>
 						<select class="select-area">
@@ -122,18 +115,15 @@
 							<option value="+852">香港+852</option>
 							<option value="+853">澳门+853</option>
 							<option value="+084">越南+084</option>
-							<!-- <option value="+092">巴基斯坦+092</option> -->
-							<!-- <option value="+065">新加坡+065</option> -->
+							<option value="+092">巴基斯坦+092</option>
+							<option value="+065">新加坡+065</option>
 							<option value="+358">法国+358</option>
 							<option value="+066">泰国+066</option>
 						</select>
-						<!-- <input id="user_phone" class="text1" name="phone" placeholder="请输入手机号"
-								style="box-sizing:border-box;width:240px;color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:125px;border-radius:2px 2px 2px 2px;"
-								maxlength=40> -->
 						<input id="user_phone" class="text1" name="phone" placeholder="请输入手机号"
 							style="box-sizing:border-box;width:240px;color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:125px;border-radius:2px 2px 2px 2px;"
 							maxlength="11" onkeypress="return event.keyCode>=48&amp;&amp;event.keyCode<=57"
-							onkeyup="value=value.replace(/[^\d]/g,'') " ng-pattern="/[^a-zA-Z]/">
+							onkeyup="value=value.replace(/[^\d]/g,'')">
 					</div>
 					<p class="err-info phone-err">请输入正确的手机号</p>
 					<div class="pass-word code-number">
@@ -146,23 +136,17 @@
 					<p class="err-info pass-err">请输入短信验证码</p>
 					<br>
 					<input id="phone_submit" type="button" style="cursor:pointer;" value="登录">
-					<!-- </form> -->
 					<div id="code-write" class="code-write">
-						<p>
-							<span class="err-tip"></span>
-							<span class="code-close">x</span>
-						</p>
-						<p>
-							<span>图文验证码</span>
-						</p>
+						<p><span class="err-tip"></span>
+							<span class="code-close">x</span></p>
+						<p><span>图文验证码</span></p>
 						<div style="margin: 10px 10px 0 10px;">
 							<i class="icon-codecode"></i>
 							<input id="user_code" class="text1" name="code" placeholder="请输入验证码"
 								style="width:100px;color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
 								maxlength=40>
 							<img class="code-image" src=""  alt="图片">
-						</div>
-						<br>
+						</div><br>
 						<div style="text-align: center">
 							<input id="code_submit" type="button" style="cursor:pointer;width:90%;" value="确定">
 						</div>
@@ -172,17 +156,20 @@
 		</div>
 		<div id="foot" style="line-height:24px; position:relative;">
 			<div>Copyright © 2016 - 2020 XXXX科技有限公司· XXX云平台 ● 京ICP备xxxxx号-1</div>
-			<!--<div style="position:absolute;width:120px;top:-25px;right:10%">关注我们<img src="static/qrcode2.png"></div> -->
 		</div>
-		<!-- <div class="main-right">
+		<div class="main-right">
 			<div class="rightimageBox">
 				<div id="qrcode-title">微信扫码关注</div>
-				<img class="rightImage" src="static/qrcode-safecloud-mp.jpg">
+				<img class="rightImage" src="static/images/qrcode.jpg">
 			</div>
-		</div> -->
+		</div>
 	</div>
 	<div class="gb_box"></div>
-	<script type="text/javascript" src="./static/js/tech-anima.js" opacity=0.6></script>
+	<script type="text/javascript" src="./static/js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="./static/js/iam-core-1.2.1.js"></script>
+	<script type="text/javascript" src="./static/js/iam-core-1.2.1.js"></script>
+	<script type="text/javascript" src="./static/js/login.js"></script>
+	<script type="text/javascript" src="./static/js/tech-anima.js"></script>
 	<script type="text/javascript">
 		// IAM认证服务based URI
 		//var iamBaseURI = "http://passport.anjiancloud.test/sso";
@@ -209,7 +196,6 @@
 				},
                 jigsaw:{
 				    div: document.getElementById("jigsaw"),
-
                     show: function (applycaptchaUrl) {
                         console.info("show jigsaw");
                         var jigsawDiv = document.getElementById("jigsaw");
@@ -226,7 +212,6 @@
                                 alert("认证成功"+verifiedToken);
                             }
                         });
-
                     },
 				},
 				// 登录认证配置
@@ -344,24 +329,5 @@
 		};
 		errTips();
 	</script>
-
-	<!--0902 add-->
-	<!--<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-	<script src="static/js/iam-captcha-1.2.1.js"></script>
-	<script>
-        $('#jigsaw').sliderCaptcha({
-            repeatIcon: 'fa fa-redo',
-            /*setSrc: function () {
-                return 'http://images.sdgxgz.com/Pic' + Math.round(Math.random() * 136) + '.jpg';
-            },*/
-            onSuccess: function () {
-                //window.location.href = 'https://gitee.com/LongbowEnterprise/SliderCaptcha';
-                alert("认证成功");
-            }
-        });
-	</script>-->
-
-
 </body>
-
 </html>

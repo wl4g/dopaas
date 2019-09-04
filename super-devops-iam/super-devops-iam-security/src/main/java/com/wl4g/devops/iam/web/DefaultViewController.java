@@ -27,9 +27,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
+import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.endsWithAny;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,7 +115,7 @@ public class DefaultViewController extends BaseController {
 	 */
 	protected void responseFile(String basePath, String filepath, HttpServletResponse response) throws Exception {
 		Assert.notNull(filepath, "'filename' must not be null");
-		basePath = basePath == null ? "" : basePath;
+		basePath = trimToEmpty(basePath);
 
 		// Get buffer cache
 		byte[] buf = bufferCache.get(filepath);
@@ -133,10 +136,8 @@ public class DefaultViewController extends BaseController {
 			}
 		}
 
-		// Response file buffer
-		String contentType = endsWithIgnoreCase(filepath, "HTML") ? MediaType.TEXT_HTML_VALUE
-				: /* MediaType.TEXT_PLAIN_VALUE */EMPTY;
-		write(response, HttpStatus.OK.value(), contentType, buf);
+		// Response file buffer.
+		write(response, HttpStatus.OK.value(), getContentType(filepath), buf);
 	}
 
 	/**
@@ -146,10 +147,31 @@ public class DefaultViewController extends BaseController {
 	 * @param filepath
 	 * @return
 	 */
-	protected Resource getResource(String basePath, String filepath) {
+	private Resource getResource(String basePath, String filepath) {
 		String location = new StringBuffer(config.getDefaultViewLoaderPath()).append(basePath).append("/").append(filepath)
 				.toString();
 		return loader.getResource(cleanURI(location));
+	}
+
+	/**
+	 * Get content type by file path.
+	 * 
+	 * @param filepath
+	 * @return
+	 */
+	private String getContentType(String filepath) {
+		filepath = filepath.toLowerCase(Locale.US);
+		String contentType = EMPTY;
+		if (endsWithAny(filepath, "html", "shtml", "htm")) {
+			contentType = MediaType.TEXT_HTML_VALUE;
+		} else if (endsWithAny(filepath, "css")) {
+			contentType = "text/css";
+		} else if (endsWithAny(filepath, "js")) {
+			contentType = "application/javascript";
+		} else if (isMediaRequest(filepath)) {
+			contentType = "image/" + org.springframework.util.StringUtils.getFilenameExtension(filepath);
+		}
+		return contentType;
 	}
 
 }
