@@ -317,7 +317,7 @@
             //TODO 认证是否要抽离出去html
             if (data&&data.verified) {
                 that.sliderContainer.addClass('sliderContainer_success');
-                if ($.isFunction(that.options.onSuccess)) that.options.onSuccess.call(that.$element);
+                if ($.isFunction(that.options.onSuccess(data.verifiedToken))) that.options.onSuccess.call(that.$element);
             } else {
                 that.sliderContainer.addClass('sliderContainer_fail');
                 if ($.isFunction(that.options.onFail)) that.options.onFail.call(that.$element);

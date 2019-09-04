@@ -221,9 +221,9 @@
                             /*setSrc: function () {
                                 return 'http://images.sdgxgz.com/Pic' + Math.round(Math.random() * 136) + '.jpg';
                             },*/
-                            onSuccess: function () {
+                            onSuccess: function (verifiedToken) {
                                 //window.location.href = 'https://gitee.com/LongbowEnterprise/SliderCaptcha';
-                                alert("认证成功");
+                                alert("认证成功"+verifiedToken);
                             }
                         });
 
