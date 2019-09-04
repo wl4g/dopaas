@@ -1,8 +1,9 @@
 ﻿(function ($) {
     'use strict';
 
-    var uuid;
+    var applyToken;
     var y = 0;
+    var secret;
 
     var SliderCaptcha = function (element, options) {
         this.$element = $(element);
@@ -24,10 +25,11 @@
         applycaptchaUrl: null,
 
         verify: function (arr, left) {
-            var ret = false;
-            var url = 'http://localhost:14040/iam-server/public/verify';
+            //left = window.IAM.util().signature(secret,left);
+            var ret = null;
+            var url = 'http://localhost:14040/iam-server/verify/verifyAnalyze?verifyType=VerifyWithJigsawGraph';
             var verifyInfo = {
-                uuid: uuid,
+                applyToken: applyToken,
                 x: left,
                 trail: arr,
             }
@@ -40,6 +42,9 @@
                 contentType: 'application/json',
                 dataType: 'json',
                 success: function (result) {
+                    console.info(result);
+                    result = result.data.verifiedModel;
+
                     ret = result;
                 }
             });
@@ -214,12 +219,12 @@
                 dataType: 'json',
                 success: function (result) {
                     console.info(result);
-                    result = result.data.jigsaw;
+                    result = result.data.applyModel;
                     img1.setSrc(result.primaryImg);
                     img2.setSrc(result.blockImg);
                     img2.imagey = result.y;
-                    uuid = result.uuid;
-
+                    applyToken = result.applyToken;
+                    secret = result.secret;
                 }
             });
         };
@@ -310,7 +315,7 @@
             that.trail = trail;
             var data = that.verify();
             //TODO 认证是否要抽离出去html
-            if (data) {
+            if (data&&data.verified) {
                 that.sliderContainer.addClass('sliderContainer_success');
                 if ($.isFunction(that.options.onSuccess)) that.options.onSuccess.call(that.$element);
             } else {
@@ -330,11 +335,6 @@
         this.slider.addEventListener('mouseenter',handleOnmouseenter);
 
         this.$element.on('mouseleave',handleOnmouseleave);
-
-
-
-
-
 
         document.addEventListener('mousemove', handleDragMove);
         document.addEventListener('touchmove', handleDragMove);

@@ -15,15 +15,6 @@
  */
 package com.wl4g.devops.iam.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
-
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
@@ -32,15 +23,24 @@ import com.wl4g.devops.iam.annotation.VerifyAuthController;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
+import com.wl4g.devops.iam.verification.model.VerifiedTokenModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.*;
-import static com.wl4g.devops.iam.web.model.SmsCheckModel.*;
-import static com.wl4g.devops.iam.common.utils.Securitys.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.devops.iam.common.utils.Securitys.createLimitFactors;
+import static com.wl4g.devops.iam.common.utils.Securitys.sessionStatus;
+import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.TEXT_SMS;
 import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
+import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -59,6 +59,11 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * Verify CAPTCHA apply model key-name.
 	 */
 	final public static String KEY_APPLY_MODEL = "applyModel";
+
+	/**
+	 * Verify CAPTCHA verified model key-name.
+	 */
+	final public static String KEY_VWEIFIED_MODEL = "verifiedModel";
 
 	/**
 	 * Composite verification handler.
@@ -116,11 +121,14 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 */
 	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { GET, POST })
 	@ResponseBody
-	public void verifyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public RespBase<?> verifyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			// Limit factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
-			verifier.forAdapt(request).verify(request, factors);
+			String verifiedToken = verifier.forAdapt(request).verify(request, factors);
+			VerifiedTokenModel model = new VerifiedTokenModel(true,verifiedToken);
+			resp.getData().put(KEY_VWEIFIED_MODEL,model);
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to verify captcha.", e);
@@ -128,6 +136,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 				log.warn("Failed to verify captcha. caused by: {}", getRootCausesString(e));
 			}
 		}
+		return resp;
 	}
 
 	/**

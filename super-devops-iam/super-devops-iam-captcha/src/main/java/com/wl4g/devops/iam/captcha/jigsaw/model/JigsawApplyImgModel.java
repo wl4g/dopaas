@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw.model;
 
-import javax.validation.constraints.NotBlank;
-
 import com.wl4g.devops.iam.verification.model.BasedVerifyCodeModel;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * Apply jigsaw image model
@@ -36,6 +36,9 @@ public class JigsawApplyImgModel extends BasedVerifyCodeModel {
 
 	@NotBlank
 	private String blockImg;
+
+	@NotBlank
+	private String secret;
 
 	public JigsawApplyImgModel() {
 		super();
@@ -70,4 +73,11 @@ public class JigsawApplyImgModel extends BasedVerifyCodeModel {
 		this.blockImg = blockImg;
 	}
 
+	public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
 }
