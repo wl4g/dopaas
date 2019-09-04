@@ -93,7 +93,6 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		String i = String.valueOf(current().nextInt(config.getJigsaw().getPoolSize()));
 		String s = jedisService.getJedisCluster().hget(CACHE_VERIFY_JIGSAW_IMG, i);
 		Assert.hasText(s, "Unable to borrow jigsaw image resource.");
-		Assert.hasText(s, "Unable to borrow jigsaw image resource.");
 		return JacksonUtils.parseJSON(s, JigsawImgCode.class);
 	}
 
