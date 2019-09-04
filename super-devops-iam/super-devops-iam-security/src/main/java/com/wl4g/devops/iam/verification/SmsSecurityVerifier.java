@@ -20,6 +20,7 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;
+import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -83,6 +84,12 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 		// Ready send to SMS gateway.
 		sender.doSend(determineParameters(request, getVerifyCode(true).getCode()));
 		return null;
+	}
+
+	@Override
+	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
+		// TODO
+		return new SimpleVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
 	}
 
 	@Override

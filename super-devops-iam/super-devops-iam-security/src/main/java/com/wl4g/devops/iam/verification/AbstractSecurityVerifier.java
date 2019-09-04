@@ -36,7 +36,6 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -55,11 +54,6 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	/**
-	 * Submitted verify code parameter name.
-	 */
-	final public static String DEFAULT_PARAM_VERIFYCODE = "verifyCode";
 
 	/**
 	 * Verified token bit.
@@ -218,9 +212,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @param request
 	 * @return
 	 */
-	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-		return getCleanParam(request, DEFAULT_PARAM_VERIFYCODE);
-	}
+	protected abstract Object getSubmittedCode(@NotNull HttpServletRequest request);
 
 	/**
 	 * Match submitted validation code

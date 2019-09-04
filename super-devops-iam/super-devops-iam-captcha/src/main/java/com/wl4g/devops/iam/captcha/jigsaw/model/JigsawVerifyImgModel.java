@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw.model;
 
-import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
+import com.wl4g.devops.iam.verification.model.BasedVerifyCodeModel;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.List;
  * @version v1.0 2019年8月30日
  * @since
  */
-public class VerifyJigsawImgModel extends VerifyCodeBasedModel {
+public class JigsawVerifyImgModel extends BasedVerifyCodeModel {
 	private static final long serialVersionUID = 4975604364412626949L;
 
 	@NotNull

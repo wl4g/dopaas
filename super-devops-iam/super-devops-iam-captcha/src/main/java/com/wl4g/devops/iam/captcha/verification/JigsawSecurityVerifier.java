@@ -17,9 +17,9 @@ package com.wl4g.devops.iam.captcha.verification;
 
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
-import com.wl4g.devops.iam.captcha.jigsaw.model.ApplyJigsawImgModel;
+import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgModel;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
-import com.wl4g.devops.iam.captcha.jigsaw.model.VerifyJigsawImgModel;
+import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgModel;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
@@ -67,7 +67,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap) {
 		JigsawImgCode code = codeWrap.getCode();
 		// Build model
-		ApplyJigsawImgModel model = new ApplyJigsawImgModel(graphToken, verifyType().getType());
+		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getType());
 		model.setY(code.getY());
 		model.setPrimaryImg(code.getPrimaryImg());
 		model.setBlockImg(code.getBlockImg());
@@ -88,7 +88,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	@Override
 	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
 		JigsawImgCode code = (JigsawImgCode) storedCode.getCode();
-		VerifyJigsawImgModel model = (VerifyJigsawImgModel) submitCode;
+		JigsawVerifyImgModel model = (JigsawVerifyImgModel) submitCode;
 
 		// Analyze & verification jigsaw image.
 		boolean matched = doAnalyzingJigsawGraph(code, model);
@@ -105,7 +105,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * @param model
 	 * @return
 	 */
-	private boolean doAnalyzingJigsawGraph(JigsawImgCode code, VerifyJigsawImgModel model) {
+	private boolean doAnalyzingJigsawGraph(JigsawImgCode code, JigsawVerifyImgModel model) {
 		if (Objects.isNull(model.getX())) {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;
@@ -114,7 +114,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		RSAKeySpecWrapper keySpec = getBindValue(model.getApplyToken(), true);
 		String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
 		if (log.isDebugEnabled()) {
-			log.debug("Jigsaw analyze decrypt plain-X: {}, cipher-X", plainX, model.getX());
+			log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 		}
 
 		// Do matching

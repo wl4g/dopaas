@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.captcha.jigsaw.model;
+package com.wl4g.devops.iam.captcha.jigsaw;
 
-import javax.validation.constraints.NotBlank;
-
-import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
+import com.wl4g.devops.iam.verification.model.BasedVerifyCodeModel;
 
 /**
  * Apply jigsaw image model
@@ -26,25 +24,12 @@ import com.wl4g.devops.iam.verification.model.VerifyCodeBasedModel;
  * @version v1.0 2019年8月30日
  * @since
  */
-public class ApplyJigsawImgModel extends VerifyCodeBasedModel {
+public class JigsawApplyImgModel extends BasedVerifyCodeModel {
 	private static final long serialVersionUID = 4975604164412626949L;
 
 	private int y;
-
-	@NotBlank
-	private String primaryImg; // Image base64
-
-	@NotBlank
+	private String primaryImg;
 	private String blockImg;
-
-	public ApplyJigsawImgModel() {
-		super();
-	}
-
-	public ApplyJigsawImgModel(String graphToken, String verifyType) {
-		setApplyToken(graphToken);
-		setVerifyType(verifyType);
-	}
 
 	public int getY() {
 		return y;
@@ -69,5 +54,4 @@ public class ApplyJigsawImgModel extends VerifyCodeBasedModel {
 	public void setBlockImg(String blockImg) {
 		this.blockImg = blockImg;
 	}
-
 }

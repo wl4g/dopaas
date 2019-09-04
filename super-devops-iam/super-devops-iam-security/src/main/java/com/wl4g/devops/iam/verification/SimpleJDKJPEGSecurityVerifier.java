@@ -18,8 +18,13 @@ package com.wl4g.devops.iam.verification;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.iam.verification.model.ApplySimpleImgModel;
+import com.wl4g.devops.iam.verification.model.SimpleApplyImgModel;
+import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -55,9 +60,15 @@ public class SimpleJDKJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 		ImageIO.write(createImage(codeWrap.getCode()), "JPEG", out);
 
 		// Build model
-		ApplySimpleImgModel model = new ApplySimpleImgModel(applyToken, verifyType().getType());
+		SimpleApplyImgModel model = new SimpleApplyImgModel(applyToken, verifyType().getType());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
+	}
+
+	@Override
+	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
+		// TODO
+		return new SimpleVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
 	}
 
 	/**

@@ -18,32 +18,22 @@ package com.wl4g.devops.iam.verification.model;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Apply simple image model.
+ * Verify simple image model
  * 
  * @author Wangl.sir
  * @version v1.0 2019年9月4日
  * @since
  */
-public class ApplySimpleImgModel extends VerifyCodeBasedModel {
-	private static final long serialVersionUID = -5065908011134214117L;
+public class SimpleVerifyImgModel extends BasedVerifyCodeModel {
+	private static final long serialVersionUID = -5475719110868579286L;
 
-	@NotBlank
-	private String primaryImg;
-
-	public ApplySimpleImgModel() {
+	public SimpleVerifyImgModel() {
 		super();
 	}
 
-	public ApplySimpleImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
-		super(applyToken, verifyType);
-	}
-
-	public String getPrimaryImg() {
-		return primaryImg;
-	}
-
-	public void setPrimaryImg(String primaryImg) {
-		this.primaryImg = primaryImg;
+	public SimpleVerifyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+		setApplyToken(applyToken);
+		setVerifyType(verifyType);
 	}
 
 }
