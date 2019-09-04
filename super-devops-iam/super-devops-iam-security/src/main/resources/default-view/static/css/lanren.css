@@ -3,7 +3,6 @@
 	-moz-transition: All 1s 0s;
 	-ms-transition: All 1s 0s;
 }
-
 .lanren ul {
 	position: absolute;
 	width: 100%;
@@ -12,29 +11,24 @@
 	-moz-transform: translateX(0px) translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scaleX(1) scaleY(1) scaleZ(1);
 	-ms-transform: translateX(0px) translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scaleX(1) scaleY(1) scaleZ(1);
 }
-
-
 @keyframes rollOne {
 	from {
 		right: 10vw;
 		top: 40vh;
 		opacity: 0;
 	}
-
 	to {
 		right: 3vw;
 		top: 42vh;
 		opacity: 100%;
 	}
 }
-
 @keyframes rollSecond {
 	from {
 		right: 15vw;
 		top: 20vh;
 		opacity: 0;
 	}
-
 	to {
 		right: 8vw;
 		top: 13vh;
@@ -47,7 +41,6 @@
 		top: 25vh;
 		opacity: 0;
 	}
-
 	to {
 		left: 8vw;
 		top: 10vh;

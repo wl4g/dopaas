@@ -5,22 +5,22 @@
     var y = 0;
     var secret;
 
-    var SliderCaptcha = function (element, options) {
+    var JigsawIamCaptcha = function (element, options) {
         this.$element = $(element);
-        this.options = $.extend({}, SliderCaptcha.DEFAULTS, options);
+        this.options = $.extend({}, JigsawIamCaptcha.DEFAULTS, options);
         this.$element.css({'width': this.options.width + 'px', 'margin': '0 auto' });
         this.init();
     };
 
-    SliderCaptcha.VERSION = '1.0';
-    SliderCaptcha.Author = 'argo@163.com';
+    JigsawIamCaptcha.VERSION = '1.0';
+    JigsawIamCaptcha.Author = 'argo@163.com';
 
-    SliderCaptcha.DEFAULTS = {
+    JigsawIamCaptcha.DEFAULTS = {
         width: 280,     // canvas宽度
         height: 155,    // canvas高度
-        loadingText: '正在加载中...',
+        loadingText: '加载中...',
         failedText: '再试一次',
-        barText: '向右滑动填充拼图',
+        barText: '按住滑块拖动完成拼图',
         repeatIcon: 'fa fa-repeat',
         applycaptchaUrl: null,
 
@@ -41,33 +41,30 @@
                 type: 'post',
                 contentType: 'application/json',
                 dataType: 'json',
-                success: function (result) {
-                    console.info(result);
-                    result = result.data.verifiedModel;
-
-                    ret = result;
+                success: function (data) {
+                    data = data.data.verifiedModel;
+                    ret = data;
                 }
             });
             return ret;
         },
-        //remoteUrl: 'http://localhost:14040/iam-server/public/verify'
     };
 
     function Plugin(option) {
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('lgb.SliderCaptcha');
+            var data = $this.data('lgb.JigsawIamCaptcha');
             var options = typeof option === 'object' && option;
             if (data && !/reset/.test(option)) return;
-            if (!data) $this.data('lgb.SliderCaptcha', data = new SliderCaptcha(this, options));
+            if (!data) $this.data('lgb.JigsawIamCaptcha', data = new JigsawIamCaptcha(this, options));
             if (typeof option === 'string') data[option]();
         });
     }
 
-    $.fn.sliderCaptcha = Plugin;
-    $.fn.sliderCaptcha.Constructor = SliderCaptcha;
+    $.fn.JigsawIamCaptcha = Plugin;
+    $.fn.JigsawIamCaptcha.Constructor = JigsawIamCaptcha;
 
-    var _proto = SliderCaptcha.prototype;
+    var _proto = JigsawIamCaptcha.prototype;
     _proto.init = function () {
         this.initDOM();
         this.initImg();
@@ -94,22 +91,12 @@
             return canvas;
         };
 
-        var card = createElement('div', 'slidercaptcha card');
+        var card = createElement('div', 'JigsawIamCaptcha card');
         card.style.display="none";
-
-        /*card.style.position="absolute";
-        card.style.bottom="123px";
-        card.css({
-            display: "none",
-            position: "absolute",
-            bottom: "123px",
-        });*/
-
-
-
-
+		card.style.backgroundColor="rgb(254,249,249)"
 
         var cardHeader = createElement('div', 'card-header');
+		cardHeader.style.paddingLeft="90px";
         var cardHeaderText = createElementValue('span', '请完成安全验证');
         var cardBody = createElement('div', 'card-body2');
 
@@ -168,8 +155,6 @@
 
     _proto.initImg = function () {
         var that = this;
-
-        //TODO my add
         var img1 = new Image();
         img1.crossOrigin = "Anonymous";
 
@@ -183,26 +168,16 @@
             that.blockCtx.drawImage(img2, 0, img2.imagey);
             console.info(img2.imagey);
             that.text.text(that.text.attr('data-text'));
-
-
         };
 
         img1.setSrc = function (imgBase64) {
             that.text.removeClass('text-danger');
-            //img1.src = 'http://localhost:14040/iam-server/public/image1?uuid='+uuid;
-            //img1.src = url;
-            //img1.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAFYklEQVR42sVXfUyUdRz/8XKhMZQO7nmeuwMFwrBEVJqgDOcUHZvNuTarrdKam0zdKrckAy4goowxbaM5hE1yjVVzLjLRokBFz2qsQPGFF8vmamtkL4s4OHDy6ff5EQcXx91hf/jHB777fj8v3+d57p7nOQFA3EuoPxcLhV90SlxziOSeUrHdWRz5fv1uc1fl03OGizdGgmBd/5K5mzNyyO0M4EkEXqBAiI58Ed9WEFp1+MXYm1vW68hKM7AwJR5Wmx3RZqsCa/Y4I4dcaqilx10t0PGqCOssEjuvH7H9vW1zEgzNgK5ZYVh02HUN86w65tvGwJo9zhRHcqmhlh70mtEC7a8Ie2ep6dPfW5eM3OnbhMo9S6GbLV6h04Eccqmhlh70omdQC3TsFbbLZaYL/W2ZwA+PYbQ9B780rUJu1nxoMZaAC5BDLjXU0oNe9KS33wXkqRKXXguv+as1HejOxYhzNdwS+G4NjlUsU0cX7+cscEYOudRQSw960ZPezPC9QIE69dv6Pk4exLX1GDm/Cu5z2Qojzmy4WrOxZUOSPELNz9FrikMuNR699KInvZkx/sH0WqB9rzCuH5j7Mzrk1uel8HQW3GcmgK+y4axOR0qCVX7gpoazxxk55E7W0oue9GYGs7wXKFCnP7+/cdEovs7GUHMm3C0rvHD7jMTZFSjYugAW89RvAXuckUPuf/X0pDczmMVMzwJyI8v3lVFX7pzLxMiXGXB/sdwncDoDvfXLkJFqh1WbuBSs2eOMnOn09GYGs5g5eYHcXw/HAWczMfRZOtwSQz7APloexcHdD0GLnVhAlzV7nPnT8j8zmMVMzwKdjtCy/qPJuN0kSY1L/OL250tw61gaNqy0Q7doCqzZ4yygXmYwi5meBa6Wmk4NNaRgpDEVQ8cX+YVbAk2L0VCcrL52BGv23AG0hMqQWcz0LNBTHtGFkw9D4UQQkLxR+X/LujiF0RMz0xIqc3yBb4sifmp+80G0lCcFhWYJZ0USDu6ar8C6OUit0sssZnoWaNhh+tFqGIg3dM9p9QvJM5t1vP1cvALrmWiZxUzPAidfMLWlJBjqZhKMiRarY+UiAzer5ymwZi8Y7dgNywAzPQuc3xNet3Ypv8+Bn3Y0sUqTQ3k24MM4BdZW3f9zYuKeoYNZzPQscNkRsv351WbExhoBDXT5zN+4XMcfNVYMv2dTYM0eZ4H0zGAWMz0L9JaK1P1PRQ7EWa0Bn3aJdh2NL2vAEQ2u2jGwZo+zQHq7zJBZrusyc9IZEOEX8sM/yFxokafI8LO9jrx1GgaqY+CujYHr0BhYs5eXoynO9KffADOc+eEfyUyT19Owp0SsKd0U5eYrlU+xvMaLk3S0OcxAbTRcB73BHmdpSWNcn5dPejNDZq2d8jiWG4W07Q39JCctVr3T+br2ZY+bcac6CoPvzoGryhvscUaOr88CPenNDGb5fCPqKha2o3kRF1MTKfA++uxHNNx4IwrDVZFwveMbnJFD7uSzQC960psZft8Je4rFkzXPzh5eME+HTTfUs94mbxx1W+cCVbMwuH82XNOAM3LIpUZppQe96EnvoN6K5TXaVfPMbCxO1BAVbeCJzBj89tYsDO+/DwOVEX5BDrmbpYZaetCLnkG/ll8qEqK7WOQe32lybs54AKd23I/RA+EYqDAFBXJPSg219KAXPWf8y+iKQxhXHaLyRklI363yUAzsC8OghGtfqE9wRg651FBLj7v/aTb+ul4oUi4VipIuh+i+WSKG+spC8Gd5CPr/BWv2OJOcHsl9XWoW/v/fht5LhLUXiARZb71cJOquFIlv5BH2EqzZ40xyEsm9OJMfp/cS/wC6xRqbyM2GFQAAAABJRU5ErkJggg==';
             img1.src='data:image/png;base64,'+imgBase64;
         };
         img2.setSrc = function (imgBase64) {
             that.text.removeClass('text-danger');
-            //img2.src = 'http://localhost:14040/iam-server/public/image2?uuid='+uuid;
-            //img2.src = url;
             img2.src='data:image/png;base64,'+imgBase64;
         };
-
-        //img1.setSrc();
-        //img2.setSrc();
 
         var applycaptcha = function(){
             var url = "http://localhost:14040/iam-server/verify/applycaptcha?verifyType=VerifyWithJigsawGraph";
@@ -211,12 +186,7 @@
             }
             $.ajax({
                 url: url,
-                // data: JSON.stringify(arr),
-                // async: false,
-                cache: false,
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
+				type: 'GET',
                 success: function (result) {
                     console.info(result);
                     result = result.data.applyModel;
@@ -228,17 +198,11 @@
                 }
             });
         };
-
         applycaptcha();
-
-
-
         this.text.attr('data-text', this.options.barText);
         this.text.text(this.options.loadingText);
-
         this.img1 = img1;
         this.img2 = img2;
-
         this.applycaptcha = applycaptcha;
     };
 
@@ -260,8 +224,7 @@
             if ($.isFunction(that.options.onRefresh)) that.options.onRefresh.call(that.$element);
         });
 
-        var originX, originY, trail = [],
-            isMouseDown = false;
+        var originX, originY, trail = [], isMouseDown = false;
 
         var handleDragStart = function (e) {
             if (that.text.hasClass('text-danger')) return;
@@ -271,22 +234,13 @@
         };
 
         var handleOnmouseenter = function () {
-            //console.info("into in");
-            //that.card.style.display="";
-            $(that.card).delay(2000).show();
-
+            $(that.card).fadeIn(200);
         };
 
         var handleOnmouseleave = function () {
             //console.info("into out");
             if(!that.sliderContainer.hasClass('sliderContainer_active')){
-                //console.info("shout out");
-
-                //that.card.style.display="none";
-                $(that.card).delay(2000).hide();
-
-
-
+                $(that.card).fadeOut(200);
             }
         };
 
@@ -330,8 +284,6 @@
 
         this.slider.addEventListener('mousedown', handleDragStart);
         this.slider.addEventListener('touchstart', handleDragStart);
-
-        //this.$element.on('mouseenter',handleOnmouseenter);
         this.slider.addEventListener('mouseenter',handleOnmouseenter);
 
         this.$element.on('mouseleave',handleOnmouseleave);

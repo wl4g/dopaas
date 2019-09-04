@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.common.config;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * External custom filter chain pattern matching
 	 */
-	private Map<String, String> filterChain = new HashMap<>();
+	private Map<String, String> filterChain = new LinkedHashMap<>();
 
 	/**
 	 * Session cache configuration properties.
