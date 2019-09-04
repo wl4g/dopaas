@@ -92,12 +92,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
 	 */
 	@Override
-	public Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
-		// Check limit attempts
-		checkApplyAttempts(request, factors);
-		// Renew or cleanup CAPTCHA
-		reset(owner, true);
-
+	public Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
 		// Check and generate apply UUID.
 		VerifyCodeWrapper wrap = getVerifyCode(true);
 		Assert.state(Objects.nonNull(wrap), "Failed to apply captcha.");

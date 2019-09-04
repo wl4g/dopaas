@@ -20,7 +20,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import com.wl4g.devops.iam.verification.model.ApplySimpleImgModel;
-import com.wl4g.devops.iam.verification.model.SimpleImgCode;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -37,7 +36,7 @@ import java.io.IOException;
  * @date 2018年12月29日
  * @since
  */
-public class SimpleJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
+public class SimpleJDKJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	final private static Random RANDOM = new Random();
 	final private static int DEFAULT_WIDTH = 60;
@@ -51,10 +50,9 @@ public class SimpleJdkJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap) throws IOException {
-		SimpleImgCode code = codeWrap.getCode();
 		// Generate image & to base64 string.
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ImageIO.write(createImage(code.getVerifyCode()), "JPEG", out);
+		ImageIO.write(createImage(codeWrap.getCode()), "JPEG", out);
 
 		// Build model
 		ApplySimpleImgModel model = new ApplySimpleImgModel(applyToken, verifyType().getType());

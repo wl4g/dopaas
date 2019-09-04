@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.captcha.gif.model;
 
+import javax.validation.constraints.NotBlank;
+
 import com.wl4g.devops.iam.verification.model.ApplySimpleImgModel;
 
 /**
@@ -26,5 +28,13 @@ import com.wl4g.devops.iam.verification.model.ApplySimpleImgModel;
  */
 public class ApplyGifImgModel extends ApplySimpleImgModel {
 	private static final long serialVersionUID = 7017420698604587374L;
+
+	public ApplyGifImgModel() {
+		super();
+	}
+
+	public ApplyGifImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+		super(applyToken, verifyType);
+	}
 
 }

@@ -79,12 +79,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	}
 
 	@Override
-	public Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
-		// Check limit attempts
-		checkApplyAttempts(request, factors);
-		// Create verify-code.
-		reset(owner, true);
-
+	public Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
 		// Ready send to SMS gateway.
 		sender.doSend(determineParameters(request, getVerifyCode(true).getCode()));
 		return null;

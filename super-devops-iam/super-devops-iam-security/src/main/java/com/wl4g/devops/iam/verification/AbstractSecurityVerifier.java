@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.verification;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -116,6 +117,29 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 		}
 		return null;
 	}
+
+	@Override
+	public Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
+		// Check limit attempts
+		checkApplyAttempts(request, factors);
+		// Renew or verify-code.
+		reset(owner, true);
+
+		// Do apply processing.
+		return doApply(owner, factors, request);
+	}
+
+	/**
+	 * Apply verify code processing.
+	 * 
+	 * @param owner
+	 * @param factors
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request)
+			throws IOException;
 
 	@Override
 	public String verify(@NotNull HttpServletRequest request, @NotNull List<String> factors) throws VerificationException {
