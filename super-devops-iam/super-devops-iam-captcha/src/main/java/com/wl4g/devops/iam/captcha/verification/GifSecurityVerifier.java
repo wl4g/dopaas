@@ -15,23 +15,23 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-
 import com.wl4g.devops.iam.captcha.gif.Captcha;
 import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
 import com.wl4g.devops.iam.captcha.gif.model.GifApplyImgModel;
 import com.wl4g.devops.iam.captcha.gif.model.GifVerifyImgModel;
+import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * GIF CAPTCHA verification handler.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月28日
@@ -39,28 +39,28 @@ import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
  */
 public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 
-	@Override
-	public VerifyType verifyType() {
-		return VerifyType.GRAPH_GIF;
-	}
+    @Override
+    public VerifyType verifyType() {
+        return VerifyType.GRAPH_GIF;
+    }
 
-	@Override
-	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap) throws IOException {
-		// Generate image & to base64 string.
-		Captcha captcha = new GifCaptcha(codeWrap.getCode());
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		captcha.out(out);
+    @Override
+    protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) throws IOException {
+        // Generate image & to base64 string.
+        Captcha captcha = new GifCaptcha(codeWrap.getCode());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        captcha.out(out);
 
-		// Build model
-		GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getType());
-		model.setPrimaryImg(convertToBase64(out.toByteArray()));
-		return model;
-	}
+        // Build model
+        GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getType());
+        model.setPrimaryImg(convertToBase64(out.toByteArray()));
+        return model;
+    }
 
-	@Override
-	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-		// TODO
-		return new GifVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
-	}
+    @Override
+    protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
+        // TODO
+        return new GifVerifyImgModel(getCleanParam(request, "applyToken"), getCleanParam(request, "verityCode"));
+    }
 
 }

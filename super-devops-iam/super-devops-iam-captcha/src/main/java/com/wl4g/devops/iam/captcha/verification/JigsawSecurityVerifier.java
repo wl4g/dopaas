@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgModel;
@@ -23,14 +24,16 @@ import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgModel;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Objects;
 
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * Jigsaw slider CAPTCHA verification handler.
@@ -56,6 +59,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	/**
 	 * CAPTCHA config properties.
 	 */
+	@Autowired
 	protected CaptchaProperties captchaConfig;
 
 	@Override
@@ -64,13 +68,15 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap) {
+	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap,RSAKeySpecWrapper keySpec) {
 		JigsawImgCode code = codeWrap.getCode();
 		// Build model
 		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getType());
 		model.setY(code.getY());
 		model.setPrimaryImg(code.getPrimaryImg());
 		model.setBlockImg(code.getBlockImg());
+
+		model.setSecret(keySpec.getPubHexString());
 		return model;
 	}
 
@@ -81,8 +87,22 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-		// TODO
-		return null;
+		String x = getCleanParam(request, "x");
+
+		BufferedReader br = null;
+		StringBuffer stringBuffer = new StringBuffer();
+		try {
+			br = request.getReader();
+
+			String str = null;
+			while((str = br.readLine()) != null){
+				stringBuffer.append(str);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JigsawVerifyImgModel jigsawVerifyImgModel = JacksonUtils.parseJSON(stringBuffer.toString(), JigsawVerifyImgModel.class);
+		return jigsawVerifyImgModel;
 	}
 
 	@Override
@@ -112,7 +132,8 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		}
 		// Decryption slider block x-position.
 		RSAKeySpecWrapper keySpec = getBindValue(model.getApplyToken(), true);
-		String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
+		//String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
+		String plainX = model.getX();
 		if (log.isDebugEnabled()) {
 			log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 		}

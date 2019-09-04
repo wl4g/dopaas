@@ -111,7 +111,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		}
 
 		// Custom processing.
-		return postApplyGraphProperties(applyToken, wrap);
+		return postApplyGraphProperties(applyToken, wrap,keySpec);
 	}
 
 	@Override
@@ -149,10 +149,11 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * 
 	 * @param applyToken
 	 * @param codeWrap
+	 * @param keySpec
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap) throws IOException;
+	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap,RSAKeySpecWrapper keySpec) throws IOException;
 
 	@Override
 	protected long getVerifyCodeExpireMs() {
@@ -195,7 +196,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @return
 	 */
 	protected String convertToBase64(byte[] data) {
-		return "data:image/jpeg;" + encodeBase64(data);
+		return encodeBase64(data);
 	}
 
 	@Override
@@ -223,7 +224,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @return
 	 */
 	private EnhancedCache getCache(String suffix) {
-		return cacheManager.getEnhancedCache(verifyType().name() + suffix);
+		return cacheManager.getEnhancedCache(suffix);
 	}
 
 }

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
+import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
 import com.wl4g.devops.support.cache.JedisService;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
@@ -88,6 +90,14 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	public JigsawImgCode borrow() {
 		final int index = current().nextInt(config.getJigsaw().getPoolImgSize());
 		byte[] data = jedisService.getJedisCluster().hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
+		if(Objects.isNull(data)){// expired?
+			try {
+				initJigsawImagePool();
+			} catch (IOException e) {
+				Exceptions.wrapAndThrow(e);
+			}
+			data = jedisService.getJedisCluster().hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
+		}
 		JigsawImgCode code = deserialize(data, JigsawImgCode.class);
 		Assert.notNull(code, "Unable to borrow jigsaw image resource.");
 		return code;
