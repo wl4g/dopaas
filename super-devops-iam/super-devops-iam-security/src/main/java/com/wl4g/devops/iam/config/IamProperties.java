@@ -190,6 +190,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	public static class MatcherProperties implements InitializingBean, Serializable {
 		private static final long serialVersionUID = -6194767776312196341L;
 
+		// --- Credentials ---
+
 		/**
 		 * Maximum attempt request login count limit
 		 */
@@ -201,11 +203,18 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		 */
 		private long failFastMatchDelay = 60 * 60 * 1000L;
 
+		// --- CAPTCHA ---
+
 		/**
 		 * Continuous match error begins the maximum attempt to enable the
 		 * verification code.
 		 */
 		private int enabledCaptchaMaxAttempts = 3;
+
+		/**
+		 * Apply CAPTCHA graph token name.
+		 */
+		private String applyGraphTokenName = "graphToken";
 
 		/**
 		 * Maximum number of consecutive attempts to request an graph
@@ -224,6 +233,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		 * milliseconds.
 		 */
 		private long captchaExpireMs = 1 * 60 * 1000L;
+
+		// --- SMS ---
 
 		/**
 		 * Try to apply for the maximum number of SMS dynamic passwords multiple
@@ -273,6 +284,14 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 		public void setEnabledCaptchaMaxAttempts(int enabledCaptchaMaxAttempts) {
 			this.enabledCaptchaMaxAttempts = enabledCaptchaMaxAttempts;
+		}
+
+		public String getApplyGraphTokenName() {
+			return applyGraphTokenName;
+		}
+
+		public void setApplyGraphTokenName(String applyGraphTokenName) {
+			this.applyGraphTokenName = applyGraphTokenName;
 		}
 
 		public int getFailFastCaptchaMaxAttempts() {

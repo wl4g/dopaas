@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
+import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
 import com.wl4g.devops.support.cache.JedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
+import static com.wl4g.devops.common.utils.codec.Encodes.toBytes;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.deserialize;
+import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -61,6 +64,9 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 */
 	final protected CaptchaProperties config;
 
+	/**
+	 * REDIS service.
+	 */
 	@Autowired
 	protected JedisService jedisService;
 
@@ -71,17 +77,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 
 	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
-		initializingJigsawImagePool();
-	}
-
-	/**
-	 * Clear cache.
-	 */
-	public void clearCache() {
-		if (log.isInfoEnabled()) {
-			// log.info("Clear jigsaw image pool for {} ...", cachePool.size());
-		}
-		// this.cachePool.clear();
+		initJigsawImagePool();
 	}
 
 	/**
@@ -90,9 +86,21 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * @return
 	 */
 	public JigsawImgCode borrow() {
-		String s = jedisService.get(CACHE_VERIFY_JIGSAW_IMG + current().nextInt(config.getJigsaw().getPoolSize()));
-		Assert.hasText(s, "Unable to borrow jigsaw image resource.");
-		return JacksonUtils.parseJSON(s, JigsawImgCode.class);
+		final int index = current().nextInt(config.getJigsaw().getPoolImgSize());
+		byte[] data = jedisService.getJedisCluster().hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
+		JigsawImgCode code = deserialize(data, JigsawImgCode.class);
+		Assert.notNull(code, "Unable to borrow jigsaw image resource.");
+		return code;
+	}
+
+	/**
+	 * Clear cache.
+	 */
+	public void clearCache() {
+		if (log.isInfoEnabled()) {
+			log.info("Clear jigsaw image pool ...");
+		}
+		jedisService.getJedisCluster().del(CACHE_VERIFY_JIGSAW_IMG);
 	}
 
 	/**
@@ -100,7 +108,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * 
 	 * @throws Exception
 	 */
-	private void initializingJigsawImagePool() throws IOException {
+	private void initJigsawImagePool() throws IOException {
 		if (log.isInfoEnabled()) {
 			log.info("Initializing jigsaw image buffer pool...");
 		}
@@ -136,7 +144,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 
 		// Initialize jigsaw images.
 		ImageTailor tailor = new ImageTailor();
-		for (int i = 0; i < config.getJigsaw().getPoolSize(); i++) {
+		for (int i = 0; i < config.getJigsaw().getPoolImgSize(); i++) {
 			int index = i;
 			if (index >= sources.length) { // Inadequate material, random reuse.
 				index = current().nextInt(sources.length);
@@ -161,7 +169,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		}
 
 		if (log.isInfoEnabled()) {
-			log.info("Initialized jigsaw images buffer total: {}, expend material: {}", config.getJigsaw().getPoolSize(),
+			log.info("Initialized jigsaw images buffer total: {}, expend material: {}", config.getJigsaw().getPoolImgSize(),
 					indexs.size());
 		}
 	}
@@ -173,8 +181,11 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * @param index
 	 */
 	private void putJigsawImage(JigsawImgCode code, int index) {
-		jedisService.getJedisCluster().hset(CACHE_VERIFY_JIGSAW_IMG, String.valueOf(index), toJSONString(code));
-		jedisService.getJedisCluster().expire(CACHE_VERIFY_JIGSAW_IMG, 1800);
+		jedisService.getJedisCluster().hset(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)), serialize(code));
+		jedisService.getJedisCluster().expire(CACHE_VERIFY_JIGSAW_IMG, config.getJigsaw().getPoolImgExpireSec());
+		if (log.isDebugEnabled()) {
+			log.debug("Put jigsaw image to cache, index {}, jigsawImage => {}", index, toJSONString(code));
+		}
 	}
 
 }

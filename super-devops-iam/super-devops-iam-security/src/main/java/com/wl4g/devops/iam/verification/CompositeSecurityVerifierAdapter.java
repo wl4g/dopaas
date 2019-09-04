@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.util.Assert;
@@ -85,13 +84,8 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 	}
 
 	@Override
-	public Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
+	public Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
 		return getAdapted().apply(owner, factors, request);
-	}
-
-	@Override
-	public void render(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
-		getAdapted().render(request, response);
 	}
 
 	@Override

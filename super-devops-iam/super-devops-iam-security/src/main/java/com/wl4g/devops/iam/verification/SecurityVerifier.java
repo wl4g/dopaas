@@ -20,10 +20,8 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.util.Assert;
@@ -60,20 +58,7 @@ public abstract interface SecurityVerifier {
 	 * @return apply meta information.
 	 * @throws IOException
 	 */
-	Map<String, Object> apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request);
-
-	/**
-	 * Rendering output a verification code stream.
-	 * 
-	 * @param request
-	 *            HttpServletRequest
-	 * @param response
-	 *            HttpServletResponse
-	 * @throws IOException
-	 */
-	default void render(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws IOException {
-		throw new UnsupportedOperationException();
-	}
+	Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException;
 
 	/**
 	 * Check whether validation code is turned on

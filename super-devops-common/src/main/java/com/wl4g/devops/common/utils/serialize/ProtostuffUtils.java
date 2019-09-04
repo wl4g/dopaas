@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -142,7 +143,7 @@ public abstract class ProtostuffUtils {
 	 * @return Deserialized object set
 	 */
 	public static <T> T deserialize(byte[] data, Class<T> clazz) {
-		if (data == null || clazz == null) {
+		if (Objects.isNull(data) || Objects.isNull(clazz)) {
 			return null;
 		}
 

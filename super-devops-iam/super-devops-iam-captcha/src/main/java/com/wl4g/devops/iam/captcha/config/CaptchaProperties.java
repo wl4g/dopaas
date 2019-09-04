@@ -95,7 +95,10 @@ public class CaptchaProperties {
 		final protected Logger log = LoggerFactory.getLogger(getClass());
 
 		/** Jigsaw image cache pool size. */
-		private int poolSize = 64;
+		private int poolImgSize = 64;
+
+		/** Jigsaw image cache expireMs. */
+		private int poolImgExpireSec = 2 * 60;
 
 		/** Source image directory. */
 		private String sourceDir;
@@ -103,12 +106,20 @@ public class CaptchaProperties {
 		/** Analyze verification of pixels allowing X-offset. */
 		private int allowOffsetX = 4;
 
-		public int getPoolSize() {
-			return poolSize;
+		public int getPoolImgSize() {
+			return poolImgSize;
 		}
 
-		public void setPoolSize(int poolSize) {
-			this.poolSize = poolSize;
+		public void setPoolImgSize(int poolSize) {
+			this.poolImgSize = poolSize;
+		}
+
+		public int getPoolImgExpireSec() {
+			return poolImgExpireSec;
+		}
+
+		public void setPoolImgExpireSec(int poolExpireMs) {
+			this.poolImgExpireSec = poolExpireMs;
 		}
 
 		public String getSourceDir() {

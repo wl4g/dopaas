@@ -17,6 +17,8 @@ package com.wl4g.devops.iam.captcha.jigsaw;
 
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;

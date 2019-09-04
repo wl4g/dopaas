@@ -18,12 +18,14 @@ package com.wl4g.devops.common.utils.codec;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Objects;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.google.common.base.Charsets;
 import com.wl4g.devops.common.utils.Exceptions;
 
 /**
@@ -39,6 +41,16 @@ import com.wl4g.devops.common.utils.Exceptions;
 public abstract class Encodes {
 	private static final String DEFAULT_URL_ENCODING = "UTF-8";
 	private static final char[] BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
+
+	/**
+	 * Get string bytes.
+	 */
+	public static byte[] toBytes(String input) {
+		if (Objects.isNull(input)) {
+			return null;
+		}
+		return input.getBytes(Charsets.UTF_8);
+	}
 
 	/**
 	 * Hex编码.
