@@ -15,9 +15,12 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import com.wl4g.devops.iam.captcha.gif.Captcha;
+import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
+import com.wl4g.devops.iam.captcha.gif.model.ApplyGifImgModel;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 
 /**
@@ -36,16 +39,16 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap) {
-//		Captcha captcha = new GifCaptcha((String) verifyCode);
-//		captcha.out(response.getOutputStream());
-		return null;
-	}
+	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap) throws IOException {
+		// Generate image & to base64 string.
+		Captcha captcha = new GifCaptcha(codeWrap.getCode());
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		captcha.out(out);
 
-	@Override
-	protected Object getSubmittedCode(@NotNull HttpServletRequest request) {
-		// TODO
-		return null;
+		// Build model
+		ApplyGifImgModel model = new ApplyGifImgModel(applyToken, verifyType().getType());
+		model.setPrimaryImg(convertToBase64(out.toByteArray()));
+		return model;
 	}
 
 }
