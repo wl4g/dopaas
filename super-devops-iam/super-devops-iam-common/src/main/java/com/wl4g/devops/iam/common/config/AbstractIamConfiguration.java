@@ -24,7 +24,7 @@ import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -102,9 +102,9 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 		shiroFilter.setUnauthorizedUrl(config.getUnauthorizedUri());
 
 		// Register define filters.
-		Map<String, Filter> filters = new HashMap<>();
+		Map<String, Filter> filters = new LinkedHashMap<>();
 		// Register define filter mapping.
-		Map<String, String> filterChain = new HashMap<>();
+		Map<String, String> filterChain = new LinkedHashMap<>();
 		actx.getBeansWithAnnotation(IamFilter.class).values().stream().forEach(filter -> {
 			String filterName = null, uriPertten = null;
 			if (filter instanceof NameableFilter) {

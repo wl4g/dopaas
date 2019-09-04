@@ -25,6 +25,7 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
 import java.io.Serializable;
@@ -108,6 +109,11 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 	@Override
 	protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
+		// Static resource direct pass(ignore).
+		if (isMediaRequest(toHttp(request))) {
+			return null;
+		}
+
 		// Call extra get SID.
 		Serializable sessionId = coprocessor.preGetSessionId(request, response);
 		if (checkAvailable(sessionId)) {
