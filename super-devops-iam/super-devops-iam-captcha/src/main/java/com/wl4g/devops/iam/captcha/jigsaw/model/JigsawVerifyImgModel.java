@@ -52,17 +52,25 @@ public class JigsawVerifyImgModel extends BasedVerifyCodeModel {
 		this.trails = trails;
 	}
 
+	/**
+	 * The time coordinate information of mouse pointer on slider can increase
+	 * CNN machine learning model checking.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0.0 2019-09-05
+	 * @since
+	 */
 	public static class Trail {
-		private Long timestamp;
+		private Long t;
 		private Integer x;
 		private Integer y;
 
-		public Long getTimestamp() {
-			return timestamp;
+		public Long getT() {
+			return t;
 		}
 
-		public void setTimestamp(Long timestamp) {
-			this.timestamp = timestamp;
+		public void setT(Long timestamp) {
+			this.t = timestamp;
 		}
 
 		public Integer getX() {

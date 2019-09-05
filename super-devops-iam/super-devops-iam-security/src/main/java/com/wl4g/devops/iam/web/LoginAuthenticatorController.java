@@ -171,11 +171,11 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			}
 
 			// Remaining delay.
-			Long remainingDelay = null;
+			Long remainDelay = null;
 			if (Objects.nonNull(code)) {
-				remainingDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
+				remainDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
 			}
-			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainingDelay));
+			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainDelay));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
