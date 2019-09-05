@@ -17,7 +17,7 @@ spring:
       rules:
       - path: /**
         allowCredentials: true
-        allowsOrigins: http://localhost.com:8080
+        allowsOrigins: '*'
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   cloud:
