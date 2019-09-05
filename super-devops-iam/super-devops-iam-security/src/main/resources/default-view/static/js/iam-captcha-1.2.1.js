@@ -189,12 +189,17 @@
 				type: 'GET',
                 success: function (result) {
                     console.info(result);
-                    result = result.data.applyModel;
-                    img1.setSrc(result.primaryImg);
-                    img2.setSrc(result.blockImg);
-                    img2.imagey = result.y;
-                    applyToken = result.applyToken;
-                    secret = result.secret;
+                    if(result.code==200){//success
+                        result = result.data.applyModel;
+                        img1.setSrc(result.primaryImg);
+                        img2.setSrc(result.blockImg);
+                        img2.imagey = result.y;
+                        applyToken = result.applyToken;
+                        secret = result.secret;
+                    }else{//fail
+                        if ($.isFunction(that.options.onFail(result))) that.options.onFail.call(that.$element);
+                    }
+
                 }
             });
         };
