@@ -123,12 +123,18 @@ public class DefaultViewController extends BaseController {
 			Resource resource = getResource(basePath, filepath);
 			if (resource.exists()) {
 				if (log.isInfoEnabled()) {
-					log.info("Read file url:[{}]", resource.getURL());
+					log.info("Read file path:[{}]", resource.getURL());
 				}
 				buf = ByteStreams.toByteArray(resource.getInputStream());
 				// Caching is enabled when in non-debug mode.
 				if (!JVMRuntimeKit.isJVMDebugging) {
 					bufferCache.put(filepath, buf);
+					// response.setDateHeader("expires",
+					// System.currentTimeMillis() + 600_000);
+					// response.addHeader("Pragma", "Pragma");
+					// response.addHeader("Cache-Control", "public");
+					// response.addHeader("Last-Modified",
+					// String.valueOf(System.currentTimeMillis()));
 				}
 			} else { // Not found
 				write(response, HttpStatus.NOT_FOUND.value(), MediaType.TEXT_HTML_VALUE, "Not Found".getBytes(Charsets.UTF_8));

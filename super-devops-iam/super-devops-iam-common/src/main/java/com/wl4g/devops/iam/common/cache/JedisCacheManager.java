@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.cache;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.shiro.cache.Cache;
@@ -53,7 +54,7 @@ public class JedisCacheManager implements EnhancedCacheManager {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Cache<EnhancedKey, Object> getCache(String name) throws CacheException {
-		return this.getEnhancedCache(name);
+		return getEnhancedCache(name);
 	}
 
 	/**
@@ -65,10 +66,10 @@ public class JedisCacheManager implements EnhancedCacheManager {
 	 */
 	@Override
 	public EnhancedCache getEnhancedCache(String name) throws CacheException {
-		String cacheName = this.getCacheName(name);
-		EnhancedCache cache = this.caching.get(cacheName);
-		if (cache == null) {
-			this.caching.put(cacheName, (cache = new JedisEnhancedCache(cacheName, this.jedisCluster)));
+		String cacheName = getCacheName(name);
+		EnhancedCache cache = caching.get(cacheName);
+		if (Objects.isNull(cache)) {
+			caching.put(cacheName, (cache = new JedisEnhancedCache(cacheName, jedisCluster)));
 		}
 		return cache;
 	}

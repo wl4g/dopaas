@@ -189,7 +189,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Security verifier for jigsaw captcha image cache name.
 	 */
-	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "jigsaw_cache_".getBytes(Charsets.UTF_8);
+	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "captcha_jigsaw_imgcache_".getBytes(Charsets.UTF_8);
 
 	/**
 	 * Cryptographic service cache name.

@@ -59,9 +59,8 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 				console.error(errmsg);
 			}
 		},
-
         jigsaw: {
-			div: null,
+			panel: null,
             applycaptchaUrl: null,
 			hide: function () {
                 var jigsawDiv = CommonUtils.checkEmpty("jigsaw.div", settings.jigsaw.div);
@@ -70,7 +69,6 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 			show: function (applycaptchaUrl) {
 			    console.info("show jigsaw0");
             },
-
 		},
 		account: { // 密码认证配置
 			submitBtn: null, // 登录提交触发对象
@@ -164,7 +162,7 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 		return url;
 	};
 
-	// 重置验证码
+	// 重置验证码（默认为GIF图片验证码）
 	var resetCaptcha = function(){
 		// 获取图像URL
 		var url = runtime.applyCaptchaUrl+"?r="+Math.random();
@@ -172,9 +170,8 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 		settings.captcha.show(url);
 	};
 
-	//显示拼图验证码
+	// 重置Jigsaw验证码
     var resetJigsaw = function(applyUrl){
-    	console.info("into reset Jigsaw");
         settings.jigsaw.show(applyUrl);
     };
 
@@ -673,6 +670,9 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 			//that they are only alias to setKey, so you can pass them both a private or
 			//a public openssl key, just remember that setting a public key allows you to only encrypt.
 			// Encrypt the data with the public key.
+			if(typeof plain != "string"){
+				plain = plain.toString(); // e.g. Is int-type encryption background Java rsa1_padding5 cannot be decrypted.
+			}
 			var enc = crypt.encrypt(plain);
 			if(!enc){
 				throw "Signature failed, maybe the key is set incorrectly. [" + publicKey + "]";
@@ -681,6 +681,12 @@ document.write("<script language=javascript src='static/js/iam-captcha-1.2.1.js'
 		},
 		int2char(n) {
 		    return "0123456789abcdefghijklmnopqrstuvwxyz".charAt(n);
+		},
+		language() {
+		    return (navigator.language || navigator.browserLanguage || navigator.systemLanguage).toLowerCase();
+		},
+		isZhCN() {
+		    return CommonUtils.language().indexOf('zh') >= 0;
 		},
 		base64ToHex(s) { // convert a base64 string to hex
 		    var ret = "";

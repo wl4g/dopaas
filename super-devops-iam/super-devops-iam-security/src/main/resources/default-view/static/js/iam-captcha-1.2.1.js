@@ -1,38 +1,36 @@
 ﻿(function ($) {
     'use strict';
-
-    var applyToken;
-    var y = 0;
-    var secret;
-
-    var JigsawIamCaptcha = function (element, options) {
+    var runtime = {
+		applyToken: null,
+		y: 0,
+		secret: null,
+	};
+    var _JigsawCaptcha = function (element, options) {
         this.$element = $(element);
-        this.options = $.extend({}, JigsawIamCaptcha.DEFAULTS, options);
+        this.options = $.extend({}, _JigsawCaptcha.DEFAULTS, options);
         this.$element.css({'width': this.options.width + 'px', 'margin': '0 auto' });
         this.init();
     };
-
-    JigsawIamCaptcha.VERSION = '1.0';
-    JigsawIamCaptcha.Author = 'argo@163.com';
-
-    JigsawIamCaptcha.DEFAULTS = {
-        width: 280,     // canvas宽度
-        height: 155,    // canvas高度
-        loadingText: '加载中...',
-        failedText: '再试一次',
-        barText: '按住滑块拖动完成拼图',
+    _JigsawCaptcha.VERSION = 'v1.2.1';
+    _JigsawCaptcha.Author = '<wanglsir@gmail.com>';
+    _JigsawCaptcha.BaseURI = 'http://localhost:8080';
+    _JigsawCaptcha.DEFAULTS = {
+        width: 280, // canvas宽度
+        height: 155, // canvas高度
+        loadingText: IAM.util().isZhCN()?'加载中...':'Loading...',
+        failedText: IAM.util().isZhCN()?'再试一次':"Let\'s try again?",
+        barText: IAM.util().isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
         repeatIcon: 'fa fa-repeat',
         applycaptchaUrl: null,
-
         verify: function (arr, left) {
-            //left = window.IAM.util().signature(secret,left);
+            left = IAM.util().signature(runtime.secret, left);
             var ret = null;
             var url = 'http://localhost:14040/iam-server/verify/verifyAnalyze?verifyType=VerifyWithJigsawGraph';
             var verifyInfo = {
-                applyToken: applyToken,
+                applyToken: runtime.applyToken,
                 x: left,
                 trail: arr,
-            }
+            };
             $.ajax({
                 url: url,
                 data: JSON.stringify(verifyInfo),
@@ -50,21 +48,18 @@
         },
     };
 
-    function Plugin(option) {
+    $.fn.JigsawIamCaptcha = function(option) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('lgb.JigsawIamCaptcha');
             var options = typeof option === 'object' && option;
             if (data && !/reset/.test(option)) return;
-            if (!data) $this.data('lgb.JigsawIamCaptcha', data = new JigsawIamCaptcha(this, options));
+            if (!data) $this.data('lgb.JigsawIamCaptcha', data = new _JigsawCaptcha(this, options));
             if (typeof option === 'string') data[option]();
         });
-    }
+    };
 
-    $.fn.JigsawIamCaptcha = Plugin;
-    $.fn.JigsawIamCaptcha.Constructor = JigsawIamCaptcha;
-
-    var _proto = JigsawIamCaptcha.prototype;
+    var _proto = _JigsawCaptcha.prototype;
     _proto.init = function () {
         this.initDOM();
         this.initImg();
@@ -77,27 +72,25 @@
             elment.className = className;
             return elment;
         };
-
         var createElementValue = function (tagName, value) {
             var elment = document.createElement(tagName);
             elment.innerText = value;
             return elment;
         };
-
         var createCanvas = function (width, height) {
             var canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
             return canvas;
         };
-
         var card = createElement('div', 'JigsawIamCaptcha card');
         card.style.display="none";
 		card.style.backgroundColor="rgb(254,249,249)"
 
         var cardHeader = createElement('div', 'card-header');
-		cardHeader.style.paddingLeft="90px";
-        var cardHeaderText = createElementValue('span', '请完成安全验证');
+		cardHeader.style.paddingLeft="20px";
+		cardHeader.style.paddingTop="5px";
+        var cardHeaderText = createElementValue('span', IAM.util().isZhCN()?'请完成人机验证':'Please complete man-machine verification');
         var cardBody = createElement('div', 'card-body2');
 
         var canvas = createCanvas(this.options.width - 2, this.options.height); // 画布
@@ -109,7 +102,6 @@
         var slider = createElement('div', 'slider');
         var sliderIcon = createElement('i', 'fa fa-arrow-right sliderIcon');
         var text = createElement('span', 'sliderText');
-
         block.className = 'block';
         text.innerHTML = this.options.barText;
 
@@ -120,7 +112,6 @@
         cardHeader.append(refreshIcon);
 
         card.append(cardBody);
-
         cardBody.append(canvas);
         cardBody.append(block);
 
@@ -144,11 +135,9 @@
             canvasCtx: canvas.getContext('2d'),
             blockCtx: block.getContext('2d')
         };
-
         if ($.isFunction(Object.assign)) {
             Object.assign(this, _canvas);
-        }
-        else {
+        } else {
             $.extend(this, _canvas);
         }
     };
@@ -178,7 +167,7 @@
             that.text.removeClass('text-danger');
             img2.src='data:image/png;base64,'+imgBase64;
         };
-
+		// Apply captcha.
         var applycaptcha = function(){
             var url = "http://localhost:14040/iam-server/verify/applycaptcha?verifyType=VerifyWithJigsawGraph";
             if(that.options.applycaptchaUrl){
@@ -188,13 +177,17 @@
                 url: url,
 				type: 'GET',
                 success: function (result) {
-                    console.info(result);
-                    result = result.data.applyModel;
-                    img1.setSrc(result.primaryImg);
-                    img2.setSrc(result.blockImg);
-                    img2.imagey = result.y;
-                    applyToken = result.applyToken;
-                    secret = result.secret;
+                    //console.info(result);
+					if(result.code == 200){
+						result = result.data.applyModel;
+						img1.setSrc(result.primaryImg);
+						img2.setSrc(result.blockImg);
+						img2.imagey = result.y;
+						runtime.applyToken = result.applyToken;
+						runtime.secret = result.secret;
+					} else {
+						throw "Failed to apply verification";
+					}
                 }
             });
         };
@@ -281,13 +274,10 @@
                 }, 1000);
             }
         };
-
         this.slider.addEventListener('mousedown', handleDragStart);
         this.slider.addEventListener('touchstart', handleDragStart);
         this.slider.addEventListener('mouseenter',handleOnmouseenter);
-
         this.$element.on('mouseleave',handleOnmouseleave);
-
         document.addEventListener('mousemove', handleDragMove);
         document.addEventListener('touchmove', handleDragMove);
         document.addEventListener('mouseup', handleDragEnd);
@@ -296,23 +286,22 @@
         document.addEventListener('touchstart', function () { return false; });
         document.addEventListener('swipe', function () { return false; });
     };
-
+	// Verify submit captcha.
     _proto.verify = function () {
         var arr = this.trail; // 拖动时y轴的移动距离
         var left = parseInt(this.block.style.left);
         var verified = this.options.verify(arr, left);
         return verified;
     };
-
+	// Reset apply captcha.
     _proto.reset = function () {
-            this.sliderContainer.removeClass('sliderContainer_fail sliderContainer_success');
-            this.slider.style.left = 0;
-            this.block.style.left = 0;
-            this.sliderMask.style.width = 0;
-            this.clean();
-            this.text.attr('data-text', this.text.text());
-            this.text.text(this.options.loadingText);
-            //TODO
-            this.applycaptcha();
+        this.sliderContainer.removeClass('sliderContainer_fail sliderContainer_success');
+        this.slider.style.left = 0;
+        this.block.style.left = 0;
+        this.sliderMask.style.width = 0;
+        this.clean();
+        this.text.attr('data-text', this.text.text());
+        this.text.text(this.options.loadingText);
+        this.applycaptcha();
     };
 })(jQuery);

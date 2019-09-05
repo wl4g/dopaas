@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Sign in for IAM Authentication Central</title>
 	<link rel="shortcut icon" href="./favicon.ico"/>
 	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css"/>
@@ -9,8 +10,6 @@
 	<link rel="stylesheet" href="./static/css/login.css"/>
 	<link rel="stylesheet" href="./static/css/lanren.css"/>
 	<link rel="stylesheet" href="./static/css/iam-captcha-jigsaw.css"/>
-  	<script src="./static/js/jquery-3.3.1.min.js"></script>
-	<script src="./static/js/bootstrap-3.3.7.min.js"></script>
 </head>
 <body>
 	<div id="wrap" style="background:url('./static/images/bg_icon/background.png') no-repeat;background-size: cover;">
@@ -166,7 +165,7 @@
 	</div>
 	<div class="gb_box"></div>
 	<script type="text/javascript" src="./static/js/jquery-3.3.1.min.js"></script>
-	<script type="text/javascript" src="./static/js/iam-core-1.2.1.js"></script>
+	<script type="text/javascript" src="./static/js/bootstrap-3.3.7.min.js"></script>
 	<script type="text/javascript" src="./static/js/iam-core-1.2.1.js"></script>
 	<script type="text/javascript" src="./static/js/login.js"></script>
 	<script type="text/javascript" src="./static/js/tech-anima.js"></script>
@@ -195,7 +194,7 @@
 					}
 				},
                 jigsaw:{
-				    div: document.getElementById("jigsaw"),
+				    panel: document.getElementById("jigsaw"),
                     show: function (applycaptchaUrl) {
                         console.info("show jigsaw");
                         var jigsawDiv = document.getElementById("jigsaw");
@@ -213,11 +212,9 @@
 				// 登录认证配置
 				account: {
 					submitBtn: document.getElementById("iam_submit"), // 登录提交触发对象
-					// 定义获取账号名函数
 					principal: document.getElementById("user_name"), // 必填，获取填写的登录用户名
 					credential: document.getElementById("password"), // 获取登录账号密码，账号登录时必填
-					// 提交之前
-					onBeforeSubmit: function (principal, plainPasswd, captcha) {
+					onBeforeSubmit: function (principal, plainPasswd, captcha) { // 提交之前
 						//console.log("准备提交登录....");
 						return true;
 					},

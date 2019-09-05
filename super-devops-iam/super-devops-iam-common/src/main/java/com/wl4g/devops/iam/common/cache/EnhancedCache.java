@@ -90,6 +90,6 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @param value
 	 * @return
 	 */
-	public boolean putIfAbsent(final EnhancedKey key, final Object value);
+	boolean putIfAbsent(final EnhancedKey key, final Object value);
 
 }

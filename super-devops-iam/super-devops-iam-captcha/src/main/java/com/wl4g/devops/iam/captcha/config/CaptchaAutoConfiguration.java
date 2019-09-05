@@ -22,6 +22,7 @@ import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier;
 import com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier;
 import com.wl4g.devops.iam.verification.SimpleJPEGSecurityVerifier;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 
 @Configuration
 public class CaptchaAutoConfiguration {
@@ -45,8 +46,8 @@ public class CaptchaAutoConfiguration {
 	// --- Jigsaw ---
 
 	@Bean
-	public JigsawImageManager jigsawImageManager(CaptchaProperties config) {
-		return new JigsawImageManager(config);
+	public JigsawImageManager jigsawImageManager(CaptchaProperties config, SimpleRedisLockManager lockManager) {
+		return new JigsawImageManager(config, lockManager);
 	}
 
 	@Bean

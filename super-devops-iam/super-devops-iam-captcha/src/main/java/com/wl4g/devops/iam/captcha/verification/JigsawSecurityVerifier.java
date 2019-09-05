@@ -24,12 +24,14 @@ import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
+import static com.wl4g.devops.common.utils.codec.Encodes.encodeBase64;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 
@@ -71,9 +73,8 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		// Build model
 		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getType());
 		model.setY(code.getY());
-		model.setPrimaryImg(code.getPrimaryImg());
-		model.setBlockImg(code.getBlockImg());
-
+		model.setPrimaryImg(encodeBase64(code.getPrimaryImg()));
+		model.setBlockImg(encodeBase64(code.getBlockImg()));
 		model.setSecret(keySpec.getPubHexString());
 		return model;
 	}
@@ -119,6 +120,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		// DECRYPT slider block x-position.
 		RSAKeySpecWrapper keySpec = getBindValue(model.getApplyToken(), true);
 		String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
+		Assert.hasText(plainX, "Invalid x-position, unable to resolve.");
 		if (log.isDebugEnabled()) {
 			log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 		}
