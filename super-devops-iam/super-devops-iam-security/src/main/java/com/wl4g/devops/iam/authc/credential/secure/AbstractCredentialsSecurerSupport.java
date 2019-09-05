@@ -225,24 +225,24 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
-		RSAKeySpecWrapper keySpecPair = determineSecretKeySpecPair(token.getPrincipal());
+		RSAKeySpecWrapper keySpec = determineSecretKeySpecPair(token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
-			String publicBase64String = keySpecPair.getPubHexString();
+			String publicBase64String = keySpec.getPubHexString();
 			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
 			String privateBase64String = "Not output";
 			boolean output = true;
 
 			if (log.isDebugEnabled() || output) {
-				privateBase64String = keySpecPair.getBase64String();
+				privateBase64String = keySpec.getBase64String();
 				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			} else {
 				log.info(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			}
 		}
 
-		// Mysterious decrypt them.
-		final String plainCredentials = rsaCryptoService.decryptWithHex(keySpecPair, token.getCredentials());
+		// Mysterious DECRYPT them.
+		final String plainCredentials = rsaCryptoService.decryptWithHex(keySpec, token.getCredentials());
 		return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
 	}
 

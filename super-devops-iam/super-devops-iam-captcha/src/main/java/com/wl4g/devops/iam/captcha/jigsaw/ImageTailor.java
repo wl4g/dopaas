@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static com.wl4g.devops.common.utils.codec.Encodes.encodeBase64;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 
 /**
@@ -154,11 +153,11 @@ public class ImageTailor {
 		// Primary image.
 		ByteArrayOutputStream primaryData = new ByteArrayOutputStream();
 		ImageIO.write(primaryImg, "PNG", primaryData);
-		img.setPrimaryImg(encodeBase64(primaryData.toByteArray()));
+		img.setPrimaryImg(primaryData.toByteArray());
 		// Block image.
 		ByteArrayOutputStream blockData = new ByteArrayOutputStream();
 		ImageIO.write(blockImg, "PNG", blockData);
-		img.setBlockImg(encodeBase64(blockData.toByteArray()));
+		img.setBlockImg(blockData.toByteArray());
 		// Position
 		img.setX(x);
 		img.setY(y - circleR >= 0 ? y - circleR : 0);
