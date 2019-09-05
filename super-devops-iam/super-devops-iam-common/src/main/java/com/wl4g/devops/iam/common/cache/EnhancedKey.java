@@ -34,9 +34,6 @@ import com.google.common.base.Charsets;
 public class EnhancedKey {
 
 	private String key;
-	/**
-	 * Effective when greater than or equal to 0
-	 */
 	private Integer expire; // 0 means never expired.
 	private Class<?> valueClass;
 	private Serializer serializer;

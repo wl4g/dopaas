@@ -20,6 +20,7 @@ import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.VerifyAuthController;
+import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
@@ -122,8 +123,8 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 */
 	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { POST })
 	@ResponseBody
-	public RespBase<?> verifyCaptcha(@RequestBody String params, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public RespBase<?> verifyCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			// Limit factors
