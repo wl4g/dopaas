@@ -143,10 +143,9 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 */
 	final private int parseAdditionalWithAlgorithmicSalt(String plainX, JigsawVerifyImgModel model) {
 		try {
-			final int tmp0 = Integer.parseInt(plainX.substring(67));
+			final int tmp0 = Integer.parseInt(plainX.substring(66));
 			final long tmp1 = CheckSums.crc16String(model.getApplyToken());
-			final long tmp2 = tmp0 / tmp1;
-			return (int) Math.sqrt(tmp2);
+			return (int) (tmp0 / tmp1);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Can't parse additional alg salt.");
 		}
