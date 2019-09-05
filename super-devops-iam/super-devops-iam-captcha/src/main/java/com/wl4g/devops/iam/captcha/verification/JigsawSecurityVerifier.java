@@ -147,7 +147,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 			final long tmp1 = CheckSums.crc16String(model.getApplyToken());
 			return (int) (tmp0 / tmp1);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Can't parse additional alg salt.");
+			throw new IllegalArgumentException("Can't parse additional alg salt.", e);
 		}
 	}
 
