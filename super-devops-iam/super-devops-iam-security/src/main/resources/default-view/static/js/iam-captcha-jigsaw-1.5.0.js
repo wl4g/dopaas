@@ -227,7 +227,7 @@
             if ($.isFunction(that.options.onRefresh)) that.options.onRefresh.call(that.$element);
         });
 
-        var originX, originY, trail = [], isMouseDown = false;
+        var originX, originY, trails = [], isMouseDown = false;
 
         var handleDragStart = function (e) {
             if (that.text.hasClass('text-danger')) return;
@@ -260,7 +260,11 @@
             that.block.style.left = blockLeft + 'px';
             that.sliderContainer.addClass('sliderContainer_active');
             that.sliderMask.style.width = (moveX + 4) + 'px';
-            trail.push(moveY);
+            trails.push({
+				t: new Date().getTime(),
+				x: moveX,
+				y: moveY
+			});
         };
 
         var handleDragEnd = function (e) {
@@ -269,7 +273,7 @@
             var eventX = e.clientX;
             if (eventX === originX) return false;
             that.sliderContainer.removeClass('sliderContainer_active');
-            that.trail = trail;
+            that.trails = trails;
             var data = that.verify();
             //TODO 认证是否要抽离出去html
             if (data&&data.verified) {
@@ -298,9 +302,8 @@
     };
 	// Verify submit captcha.
     _proto.verify = function () {
-        var arr = this.trail; // 拖动时y轴的移动距离
         var left = parseInt(this.block.style.left);
-        var verified = this.options.verify(arr, left);
+        var verified = this.options.verify(this.trails, left); // 拖动时x/y轴的移动距离,最总x位置
         return verified;
     };
 	// Reset apply captcha.
