@@ -74,6 +74,7 @@ public abstract class ShellTool {
 			log.info(inlog);
 			ShellContextHolder.printfQuietly(inlog);
 		}
+		ps.waitFor();
 		int exitValue = ps.exitValue();
 		if (exitValue != 0) {
 			taskResult.setSuccess(false);
