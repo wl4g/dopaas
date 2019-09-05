@@ -206,6 +206,10 @@
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
                                 alert("认证成功"+verifiedToken);
+                            },
+							onFail: function (data) {
+                                //alert(data.message);
+                                $("#err_tip").text(data.message).show().delay(8000).hide(100);
                             }
                         });
                     },
