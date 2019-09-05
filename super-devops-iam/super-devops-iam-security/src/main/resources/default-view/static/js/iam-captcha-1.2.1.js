@@ -1,4 +1,9 @@
-﻿(function ($) {
+﻿/**
+ * Iam captcha jigsaw v1.2.1 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Copyright 2017-2032 <wangsir@gmail.com>, Inc. x
+ * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
+ */
+(function ($) {
     'use strict';
     var runtime = {
 		applyToken: null,
@@ -17,13 +22,13 @@
     _JigsawCaptcha.DEFAULTS = {
         width: 280, // canvas宽度
         height: 155, // canvas高度
-        loadingText: IAM.util().isZhCN()?'加载中...':'Loading...',
-        failedText: IAM.util().isZhCN()?'再试一次':"Let\'s try again?",
-        barText: IAM.util().isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
+        loadingText: IAM.Util.isZhCN()?'加载中...':'Loading...',
+        failedText: IAM.Util.isZhCN()?'再试一次':"Let\'s try again?",
+        barText: IAM.Util.isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
         repeatIcon: 'fa fa-repeat',
         applycaptchaUrl: null,
         verify: function (arr, left) {
-            left = IAM.util().signature(runtime.secret, left);
+            left = IAM.Crypto.rsa(runtime.secret, left);
             var ret = null;
             var url = 'http://localhost:14040/iam-server/verify/verifyAnalyze?verifyType=VerifyWithJigsawGraph';
             var verifyInfo = {
@@ -90,7 +95,7 @@
         var cardHeader = createElement('div', 'card-header');
 		cardHeader.style.paddingLeft="20px";
 		cardHeader.style.paddingTop="5px";
-        var cardHeaderText = createElementValue('span', IAM.util().isZhCN()?'请完成人机验证':'Please complete man-machine verification');
+        var cardHeaderText = createElementValue('span', IAM.Util.isZhCN()?'请完成人机验证':'Please complete man-machine verification');
         var cardBody = createElement('div', 'card-body2');
 
         var canvas = createCanvas(this.options.width - 2, this.options.height); // 画布
