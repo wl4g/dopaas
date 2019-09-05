@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw.model;
 
+import static com.wl4g.devops.common.utils.codec.Compresss.snappyCompress;
+import static com.wl4g.devops.common.utils.codec.Compresss.snappyUnCompress;
+
 import java.io.Serializable;
 
 /**
@@ -29,8 +32,8 @@ public class JigsawImgCode implements Serializable {
 
 	private int x;
 	private int y;
-	private String primaryImg; // Base64
-	private String blockImg;
+	private byte[] primaryImg; // Base64
+	private byte[] blockImg;
 
 	public int getX() {
 		return x;
@@ -48,25 +51,47 @@ public class JigsawImgCode implements Serializable {
 		this.y = y;
 	}
 
-	public String getPrimaryImg() {
+	public byte[] getPrimaryImg() {
 		return primaryImg;
 	}
 
-	public void setPrimaryImg(String primaryImg) {
+	public void setPrimaryImg(byte[] primaryImg) {
 		this.primaryImg = primaryImg;
 	}
 
-	public String getBlockImg() {
+	public byte[] getBlockImg() {
 		return blockImg;
 	}
 
-	public void setBlockImg(String blockImg) {
+	public void setBlockImg(byte[] blockImg) {
 		this.blockImg = blockImg;
 	}
 
 	@Override
 	public String toString() {
 		return "JigsawImgCode [x=" + x + ", y=" + y + ", primaryImg=" + primaryImg + ", blockImg=" + blockImg + "]";
+	}
+
+	/**
+	 * Compression primary and block image.
+	 * 
+	 * @return
+	 */
+	public JigsawImgCode compress() {
+		setPrimaryImg(snappyCompress(getPrimaryImg()));
+		setBlockImg(snappyCompress(getBlockImg()));
+		return this;
+	}
+
+	/**
+	 * Compression primary and block image.
+	 * 
+	 * @return
+	 */
+	public JigsawImgCode uncompress() {
+		setPrimaryImg(snappyUnCompress(getPrimaryImg()));
+		setBlockImg(snappyUnCompress(getBlockImg()));
+		return this;
 	}
 
 }

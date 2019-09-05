@@ -35,6 +35,7 @@ import java.util.Set;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -146,9 +147,9 @@ public class JedisService {
 		return (String) doExecuteWithRedis(cluster -> {
 			String result = null;
 			if (cacheSeconds > 0) {
-				result = cluster.setex(getBytesKey(key), cacheSeconds, ProtostuffUtils.serialize(value));
+				result = cluster.setex(getBytesKey(key), cacheSeconds, serialize(value));
 			} else {
-				result = cluster.set(getBytesKey(key), ProtostuffUtils.serialize(value));
+				result = cluster.set(getBytesKey(key), serialize(value));
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("setObjectT {} = {}", key, value);
@@ -384,7 +385,6 @@ public class JedisService {
 	@SuppressWarnings("unchecked")
 	public <T> Set<T> getObjectSet(final String key) {
 		return (Set<T>) doExecuteWithRedis(cluster -> {
-
 			Set<T> value = Sets.newHashSet();
 			Set<byte[]> set = cluster.smembers(getBytesKey(key));
 			for (byte[] bs : set) {

@@ -65,7 +65,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	/**
 	 * Apply UUID bit.
 	 */
-	final public static int DEFAULT_APPLY_TOKEN_BIT = 32;
+	final public static int DEFAULT_APPLY_TOKEN_BIT = 48;
 
 	/**
 	 * RSA cryptoGrapic service.
@@ -104,7 +104,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Get RSA key.(Used to encrypt sliding X position)
 		RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();
-		String applyToken = randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
+		String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
 		bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
 		if (log.isDebugEnabled()) {
 			log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
