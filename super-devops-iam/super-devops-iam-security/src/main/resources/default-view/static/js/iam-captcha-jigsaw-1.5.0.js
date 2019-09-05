@@ -28,13 +28,18 @@
         repeatIcon: 'fa fa-repeat',
         applycaptchaUrl: null,
         verify: function (arr, left) {
-            left = IAM.Crypto.rsa(runtime.secret, left);
+			// Additional algorithmic salt.
+			left = new String(left);
+			var applyTokenCrc = IAM.Util.Crc16CheckSum.crc16Modbus(runtime.applyToken);
+			var tmpX = IAM.Crypto.sha512WithHex(left + runtime.applyToken).substring(31, 97) + (left*applyTokenCrc);
+            // Do encryption x-position.
+			var cipherX = IAM.Crypto.rivestShamirAdleman(runtime.secret, tmpX);
             var ret = null;
             var url = 'http://localhost:14040/iam-server/verify/verifyAnalyze?verifyType=VerifyWithJigsawGraph';
             var verifyInfo = {
                 applyToken: runtime.applyToken,
-                x: left,
-                trail: arr,
+                x: cipherX,
+                trails: arr,
             };
             $.ajax({
                 url: url,

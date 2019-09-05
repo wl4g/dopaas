@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
+import com.wl4g.devops.common.utils.codec.CheckSums;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgModel;
@@ -92,7 +93,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
+	final protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
 		JigsawImgCode code = (JigsawImgCode) storedCode.getCode();
 		JigsawVerifyImgModel model = (JigsawVerifyImgModel) submitCode;
 
@@ -111,7 +112,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * @param model
 	 * @return
 	 */
-	private boolean doAnalyzingJigsawGraph(JigsawImgCode code, JigsawVerifyImgModel model) {
+	final private boolean doAnalyzingJigsawGraph(JigsawImgCode code, JigsawVerifyImgModel model) {
 		if (Objects.isNull(model.getX())) {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;
@@ -124,9 +125,31 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		if (log.isDebugEnabled()) {
 			log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 		}
-
+		// Parsing additional algorithmic salt.
+		Assert.isTrue(plainX.length() > 66,
+				String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
+		// Reduction analysis.
+		int prototypeX = parseAdditionalWithAlgorithmicSalt(plainX, model);
 		// Do match
-		return Math.abs(Integer.parseInt(plainX) - code.getX()) <= capConfig.getJigsaw().getAllowOffsetX();
+		return Math.abs(prototypeX - code.getX()) <= capConfig.getJigsaw().getAllowOffsetX();
+	}
+
+	/**
+	 * Parse additionalWith algorithmic salt.
+	 * 
+	 * @param plainX
+	 * @param model
+	 * @return
+	 */
+	final private int parseAdditionalWithAlgorithmicSalt(String plainX, JigsawVerifyImgModel model) {
+		try {
+			final int tmp0 = Integer.parseInt(plainX.substring(67));
+			final long tmp1 = CheckSums.crc16String(model.getApplyToken());
+			final long tmp2 = tmp0 / tmp1;
+			return (int) Math.sqrt(tmp2);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Can't parse additional alg salt.");
+		}
 	}
 
 }
