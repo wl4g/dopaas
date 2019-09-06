@@ -91,6 +91,7 @@ import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
 import com.wl4g.devops.iam.web.CentralAuthenticatorController;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 
 public class IamAutoConfiguration extends AbstractIamConfiguration {
 
@@ -108,8 +109,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public RSACryptographicService rsaCryptogaphicService() {
-		return new RSACryptographicService();
+	public RSACryptographicService rsaCryptogaphicService(SimpleRedisLockManager lockManager) {
+		return new RSACryptographicService(lockManager);
 	}
 
 	// ==============================

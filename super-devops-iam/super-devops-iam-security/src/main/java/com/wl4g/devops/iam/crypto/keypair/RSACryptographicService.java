@@ -15,9 +15,8 @@
  */
 package com.wl4g.devops.iam.crypto.keypair;
 
-import static org.apache.commons.lang3.RandomUtils.nextInt;
-
 import com.wl4g.devops.iam.crypto.AbstractCryptographicService;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 
 /**
  * RSA cryptographic service.
@@ -33,12 +32,13 @@ public final class RSACryptographicService extends AbstractCryptographicService<
 	 */
 	final protected CryptoHolder crypto;
 
-	public RSACryptographicService() {
+	public RSACryptographicService(SimpleRedisLockManager lockManager) {
+		super(lockManager);
 		this.crypto = CryptoHolder.getInstance("RSA");
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * Encryption from hex.
 	 * 
 	 * @see
 	 * com.wl4g.devops.iam.crypto.CryptographicService#encryptWithHex(com.wl4g.
@@ -52,16 +52,6 @@ public final class RSACryptographicService extends AbstractCryptographicService<
 	@Override
 	public String decryptWithHex(RSAKeySpecWrapper keySpec, String hexCipher) {
 		return crypto.build(keySpec).decrypt(hexCipher);
-	}
-
-	@Override
-	public RSAKeySpecWrapper borrow() {
-		return borrow(nextInt(0, config.getKeyPairPools()));
-	}
-
-	@Override
-	public RSAKeySpecWrapper borrow(int index) throws IndexOutOfBoundsException {
-		return getKeySpecs().get(index);
 	}
 
 	@Override
