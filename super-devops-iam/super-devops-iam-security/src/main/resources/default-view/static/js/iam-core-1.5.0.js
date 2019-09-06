@@ -277,7 +277,6 @@
 		// 请求安全预检
 		$.ajax({
 			url: checkUrl,
-			async: false,
 			type: "post",
 			xhrFields: {
 				withCredentials: true // 跨域调用时，必须设置才会发送cookie
