@@ -59,7 +59,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 		ImageIO.write(createImage(codeWrap.getCode()), "JPEG", out);
 
 		// Build model
-		SimpleApplyImgModel model = new SimpleApplyImgModel(applyToken, verifyType().getType());
+		SimpleApplyImgModel model = new SimpleApplyImgModel(applyToken, verifyType().getAlias());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
 	}
