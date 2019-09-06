@@ -197,7 +197,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @return
 	 */
 	protected String convertToBase64(byte[] data) {
-		return encodeBase64(data);
+		return "data:image/jpeg;base64," + encodeBase64(data);
 	}
 
 	@Override
