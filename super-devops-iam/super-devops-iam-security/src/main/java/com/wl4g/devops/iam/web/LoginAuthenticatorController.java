@@ -145,12 +145,13 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
 
 			// CAPTCHA check.
+			CaptchaCheckModel model = new CaptchaCheckModel(false);
 			if (verifier.forAdapt(request).isEnabled(factors)) {
-				CaptchaCheckModel model = new CaptchaCheckModel(true);
+				model.setEnabled(true);
 				model.setSupport(VerifyType.SUPPORT_ALL); // Default
 				model.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
-				resp.getData().put(KEY_CAPTCHA_CHECK, model);
 			}
+			resp.getData().put(KEY_CAPTCHA_CHECK, model);
 
 			// SMS check.
 			/*
