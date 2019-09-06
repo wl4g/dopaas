@@ -54,7 +54,7 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 		captcha.out(out);
 
 		// Build model
-		GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getType());
+		GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getAlias());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
 	}

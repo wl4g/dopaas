@@ -77,7 +77,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) {
 		JigsawImgCode code = codeWrap.getCode();
 		// Build model
-		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getType());
+		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getAlias());
 		model.setY(code.getY());
 		model.setPrimaryImg(encodeBase64(code.getPrimaryImg()));
 		model.setBlockImg(encodeBase64(code.getBlockImg()));

@@ -19,6 +19,8 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -138,22 +140,27 @@ public abstract interface SecurityVerifier {
 		final public static String PARAM_VERIFYTYPE = "verifyType";
 
 		/**
+		 * Support verify type.
+		 */
+		final public static String SUPPORT_ALL = supportAsString();
+
+		/**
 		 * Verifier type alias value.
 		 */
-		final private String type;
+		final private String alias;
 
 		private VerifyType(String alias) {
-			this.type = alias;
+			this.alias = alias;
 		}
 
-		public String getType() {
-			return type;
+		public String getAlias() {
+			return alias;
 		}
 
 		public static VerifyType of(String type) {
 			Assert.hasText(type, String.format("Parameter '%s' is required.", PARAM_VERIFYTYPE));
 			for (VerifyType t : values()) {
-				if (t.getType().equals(type) || t.name().equals(type)) {
+				if (t.getAlias().equals(type) || t.name().equals(type)) {
 					return t;
 				}
 			}
@@ -166,6 +173,23 @@ public abstract interface SecurityVerifier {
 
 		public static VerifyType of(HttpServletRequest request, String paramName) {
 			return of(getCleanParam(request, paramName));
+		}
+
+		/**
+		 * Get support verify type.
+		 * 
+		 * @return
+		 */
+		private static String supportAsString() {
+			StringBuffer support = new StringBuffer();
+			Iterator<VerifyType> it = Arrays.asList(values()).iterator();
+			while (it.hasNext()) {
+				support.append(it.next().getAlias());
+				if (it.hasNext()) {
+					support.append(",");
+				}
+			}
+			return support.toString();
 		}
 
 	}
