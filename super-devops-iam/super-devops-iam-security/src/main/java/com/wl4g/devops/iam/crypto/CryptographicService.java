@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.crypto;
 
-import java.util.List;
-
 /**
  * Cryptographic Services.
  * 
@@ -58,12 +56,5 @@ public interface CryptographicService<K extends KeySpecWrapper> {
 	 * @return
 	 */
 	K borrow(int index);
-
-	/**
-	 * Get keySpecPairs.
-	 * 
-	 * @return
-	 */
-	List<K> getKeySpecs();
 
 }
