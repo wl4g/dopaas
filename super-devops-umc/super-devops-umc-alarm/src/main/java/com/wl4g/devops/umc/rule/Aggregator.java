@@ -50,7 +50,7 @@ public enum Aggregator {
 				return t;
 			}
 		}
-		return null;
+		throw new UnsupportedOperationException(String.format("Unsupport Aggregator(%d)", aggregateString));
 	}
 
 }
