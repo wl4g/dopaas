@@ -184,7 +184,11 @@ public abstract interface SecurityVerifier {
 			StringBuffer support = new StringBuffer();
 			Iterator<VerifyType> it = Arrays.asList(values()).iterator();
 			while (it.hasNext()) {
-				support.append(it.next().getAlias());
+				VerifyType v = it.next();
+				if (v == TEXT_SMS) {
+					continue;
+				}
+				support.append(v.getAlias());
 				if (it.hasNext()) {
 					support.append(",");
 				}
