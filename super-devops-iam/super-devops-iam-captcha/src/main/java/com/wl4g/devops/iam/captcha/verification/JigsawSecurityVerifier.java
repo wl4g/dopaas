@@ -156,7 +156,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		}
 
 		// TODO => for AI CNN model verifying...
-		return offsetMatched && xSD > 13 && xSD < 79 && ySD > 3 && ySD < 23;
+		return offsetMatched && xSD > 13 && xSD < 79 && ySD > 1.3 && ySD < 11;
 	}
 
 	/**
