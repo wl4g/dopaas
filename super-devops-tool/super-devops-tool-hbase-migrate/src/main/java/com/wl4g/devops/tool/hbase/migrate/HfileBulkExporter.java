@@ -3,8 +3,8 @@ package com.wl4g.devops.tool.hbase.migrate;
 import com.wl4g.devops.tool.common.utils.Assert;
 import com.wl4g.devops.tool.hbase.migrate.mapred.ExamplePrefixMigrateMapper;
 
+import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.logging.Log;
@@ -41,11 +41,11 @@ public class HfileBulkExporter {
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
 		options.addOption("T", "tmpdir", false, "Hbase tmp directory. default:" + DEFAULT_HBASE_FSTMP_DIR);
-		options.addRequiredOption("z", "zkaddr", true, "Zookeeper address.");
-		options.addRequiredOption("t", "tabname", true, "Hbase table name.");
+		options.addOption("z", "zkaddr", true, "Zookeeper address.");
+		options.addOption("t", "tabname", true, "Hbase table name.");
 		/*options.addRequiredOption("p", "path", true,
 				"Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air");*/
-		options.addRequiredOption("o", "output", true, "Output hdfs path.");
+		options.addOption("o", "output", true, "Output hdfs path.");
 		options.addOption("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
 		options.addOption("s", "startrow", false, "Scan start rowkey.");
 		options.addOption("e", "endrow", false, "Scan end rowkey.");
@@ -53,7 +53,7 @@ public class HfileBulkExporter {
 		options.addOption("E", "endtimestamp", false, "Scan end timestamp.");
 		CommandLine line = null;
 		try {
-			line = new DefaultParser().parse(options, args);
+			line = new BasicParser().parse(options, args);
 			log.info(String.format("Parsed arguments: {}", line.getArgList()));
 		} catch (Exception e) {
 			log.error(e);
