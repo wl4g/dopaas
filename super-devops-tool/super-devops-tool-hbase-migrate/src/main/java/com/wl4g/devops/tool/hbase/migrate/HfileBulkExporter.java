@@ -16,14 +16,23 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat2;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
+import org.apache.hadoop.hbase.protobuf.ProtobufUtil;
+import org.apache.hadoop.hbase.protobuf.generated.ClientProtos;
+import org.apache.hadoop.hbase.util.Base64;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.io.IOException;
 import java.net.URI;
+import java.sql.Timestamp;
 
 /**
  * HASE hfile bulk exporter.
@@ -38,13 +47,25 @@ public class HfileBulkExporter {
 	final public static String DEFAULT_HBASE_FSTMP_DIR = "/tmp/fstmpdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
 
+	/**
+	 * e.g. </br>
+	 * 
+	 * <pre>
+	 * yarn jar super-devops-tool-hbase-migrate-master-jar-with-dependencies.jar \
+	 * com.wl4g.devops.tool.hbase.migrate.HfileBulkExporter \
+	 * -z owner-node2:2181 \
+	 * -t safeclound.tb_ammeter \
+	 * -o hdfs://emr-header-1/bak/tb_ammeter
+	 * </pre>
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
 		options.addOption("T", "tmpdir", false, "Hbase tmp directory. default:" + DEFAULT_HBASE_FSTMP_DIR);
 		options.addRequiredOption("z", "zkaddr", true, "Zookeeper address.");
 		options.addRequiredOption("t", "tabname", true, "Hbase table name.");
-		/*options.addRequiredOption("p", "path", true,
-				"Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air");*/
 		options.addRequiredOption("o", "output", true, "Output hdfs path.");
 		options.addOption("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
 		options.addOption("s", "startrow", false, "Scan start rowkey.");
@@ -54,13 +75,14 @@ public class HfileBulkExporter {
 		CommandLine line = null;
 		try {
 			line = new DefaultParser().parse(options, args);
-			log.info(String.format("Parsed arguments: {}", line.getArgList()));
+			log.info(String.format("Parsed arguments: %s", line.getArgList()));
 		} catch (Exception e) {
 			log.error(e);
 			new HelpFormatter().printHelp("Usage: ", options);
 			return;
 		}
 
+		// Configuration
 		Configuration conf = new Configuration();
 		conf.set("hbase.zookeeper.quorum", line.getOptionValue("z"));
 		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_FSTMP_DIR));
@@ -72,32 +94,10 @@ public class HfileBulkExporter {
 		FileSystem fs = FileSystem.get(new URI(output), new Configuration(), "root");
 		Assert.state(!fs.exists(new Path(output)), String.format("Catalogs do not allow other data. '%s'", output));
 
-		// Scan condition.
-		/*String startRow = line.getOptionValue("s");
-		String endRow = line.getOptionValue("e");
-		String startTime = line.getOptionValue("S");
-		String endTime = line.getOptionValue("E");
-		Scan scan = new Scan(); // If necessary
-		if (null != startTimestamp || null != endTimestamp) {
-			startTimestamp = startTimestamp == null ? 0 : startTimestamp;
-			endTimestamp = endTimestamp == null ? System.currentTimeMillis() : endTimestamp;
-			conf.set(TableInputFormat.SCAN_TIMERANGE_START, startTimestamp.toString());
-			conf.set(TableInputFormat.SCAN_TIMERANGE_END, endTimestamp.toString());
-			scan.setTimeRange(startTime, endTime);
-		}
+		// Set scan condition.(if necessary)
+		setScanIfNecessary(conf, line);
 
-		if (isNotBlank(startRow)) {
-			conf.set(TableInputFormat.SCAN_ROW_START, startRow);
-			scan.setStartRow(Bytes.toBytes(startRow));
-		}
-		if (isNotBlank(endRow)) {
-			conf.set(TableInputFormat.SCAN_ROW_STOP, endRow);
-			scan.setStopRow(Bytes.toBytes(endRow));
-		}
-		System.out.println("filter:" + startTimestamp + "--" + endTimestamp + "--" + startRow + "--" + endRow);
-		ClientProtos.Scan proto = ProtobufUtil.toScan(scan);
-		conf.set(TableInputFormat.SCAN, Base64.encodeBytes(proto.toByteArray()));*/
-
+		// Job
 		Connection conn = ConnectionFactory.createConnection(conf);
 		Table table = conn.getTable(TableName.valueOf(line.getOptionValue("t")));
 		Job job = Job.getInstance(conf);
@@ -106,8 +106,6 @@ public class HfileBulkExporter {
 		job.setInputFormatClass(TableInputFormat.class);
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
 		job.setMapOutputValueClass(Put.class);
-		// job.getConfiguration().set("mapred.jar",
-		// mapredJar);//预先将程序打包再将jar分发到集群上
 
 		HFileOutputFormat2.configureIncrementalLoad(job, table,
 				conn.getRegionLocator(TableName.valueOf(line.getOptionValue("t"))));
@@ -116,6 +114,47 @@ public class HfileBulkExporter {
 			log.info("Exported to successfully !");
 		}
 
+	}
+
+	/**
+	 * Setup scan condition if necessary.
+	 * 
+	 * @param conf
+	 * @param line
+	 * @throws IOException
+	 */
+	private static void setScanIfNecessary(Configuration conf, CommandLine line) throws IOException {
+		String startRow = line.getOptionValue("s");
+		String endRow = line.getOptionValue("e");
+		String startTime = line.getOptionValue("S");
+		String endTime = line.getOptionValue("E");
+
+		Scan scan = new Scan();
+		// Row
+		if (isNotBlank(startRow)) {
+			conf.set(TableInputFormat.SCAN_ROW_START, startRow);
+			scan.setStartRow(Bytes.toBytes(startRow));
+		}
+		if (isNotBlank(endRow)) {
+			Assert.hasText(startRow, "Argument for startRow and endRow are used simultaneously");
+			conf.set(TableInputFormat.SCAN_ROW_STOP, endRow);
+			scan.setStopRow(Bytes.toBytes(endRow));
+		}
+
+		// Row TimeStamp
+		if (isNotBlank(startTime) && isNotBlank(endTime)) {
+			conf.set(TableInputFormat.SCAN_TIMERANGE_START, startTime);
+			conf.set(TableInputFormat.SCAN_TIMERANGE_END, endTime);
+			try {
+				Timestamp stime = new Timestamp(Long.parseLong(startTime));
+				Timestamp etime = new Timestamp(Long.parseLong(endTime));
+				scan.setTimeRange(stime.getTime(), etime.getTime());
+			} catch (Exception e) {
+				throw new IllegalArgumentException(String.format("Illegal startTime(%s) and endTime(%s)", startTime, endTime), e);
+			}
+		}
+		ClientProtos.Scan proto = ProtobufUtil.toScan(scan);
+		conf.set(TableInputFormat.SCAN, Base64.encodeBytes(proto.toByteArray()));
 	}
 
 }
