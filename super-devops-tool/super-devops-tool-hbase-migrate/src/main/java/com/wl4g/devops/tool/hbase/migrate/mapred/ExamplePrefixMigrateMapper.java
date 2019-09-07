@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple example HBASE HFile prefix transform.
+ * Prefix HBASE HFile prefix transform.
  *
  * @author Wangl.sir
  * @version v1.0 2019年9月6日
  * @since
  */
-public class ExamplePrefixTransformMapper extends AbstractHfileTransformMapper {
+public class ExamplePrefixMigrateMapper extends AbstractMigrateHfileMapper {
 
 	final static List<String> ROW_PREFIX = unmodifiableList(new ArrayList<String>() {
 		private static final long serialVersionUID = 8767166856581107226L;
@@ -85,7 +85,11 @@ public class ExamplePrefixTransformMapper extends AbstractHfileTransformMapper {
 	}
 
 	/**
-	 * e.g. rowKey(11111112) => rowKey(31111112)
+	 * e.g. </br>
+	 * 
+	 * <pre>
+	 * RowKey(11111112,ELE_P,134,01,20180919110851085) => RowKey(31111112,ELE_P,134,01,20180919110851085)
+	 * </pre>
 	 */
 	@Override
 	protected Put newPut(String row) {
