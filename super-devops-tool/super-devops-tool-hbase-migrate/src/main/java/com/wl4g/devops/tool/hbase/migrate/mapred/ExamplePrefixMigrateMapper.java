@@ -79,6 +79,15 @@ public class ExamplePrefixMigrateMapper extends AbstractMigrateHfileMapper {
 		}
 	});
 
+	/**
+	 * e.g. </br>
+	 * Only rows containing prefixes are matched:
+	 * 
+	 * <pre>
+	 * RowKey(11111112,ELE_P,134,01,20180919110851085)  √(matched)
+	 * RowKey(21111112,ELE_P,121,03,20190918121152085)  ×(unmatched)
+	 * </pre>
+	 */
 	@Override
 	protected boolean isFilter(String row, Result result) {
 		return ROW_PREFIX.contains(row.substring(0, 8));

@@ -25,6 +25,20 @@ import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 public class HfileBulkImporter {
 	final protected static Log log = LogFactory.getLog(HfileBulkImporter.class);
 
+	/**
+	 * e.g.</br>
+	 * 
+	 * <pre>
+	 * yarn jar super-devops-tool-hbase-migrate-master-jar-with-dependencies.jar \
+	 * com.wl4g.devops.tool.hbase.migrate.HfileBulkImporter \
+	 * -z emr-header-1:2181 \
+	 * -t safeclound.tb_ammeter \
+	 * -p hdfs://emr-header-1/bak/tb_ammeter
+	 * </pre>
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
 		options.addRequiredOption("z", "zkaddr", true, "Zookeeper address.");
