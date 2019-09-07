@@ -1,7 +1,7 @@
 package com.wl4g.devops.tool.hbase.migrate;
 
 import com.wl4g.devops.tool.common.utils.Assert;
-import com.wl4g.devops.tool.hbase.migrate.mapred.ExamplePrefixTransformMapper;
+import com.wl4g.devops.tool.hbase.migrate.mapred.ExamplePrefixMigrateMapper;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -102,7 +102,7 @@ public class HfileBulkExporter {
 		Table table = conn.getTable(TableName.valueOf(line.getOptionValue("t")));
 		Job job = Job.getInstance(conf);
 		job.setJarByClass(HfileBulkExporter.class);
-		job.setMapperClass(ExamplePrefixTransformMapper.class);
+		job.setMapperClass(ExamplePrefixMigrateMapper.class);
 		job.setInputFormatClass(TableInputFormat.class);
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
 		job.setMapOutputValueClass(Put.class);

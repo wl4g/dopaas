@@ -19,7 +19,7 @@ import java.util.Optional;
  * @version v1.0 2019年9月5日
  * @since
  */
-public abstract class AbstractHfileTransformMapper extends TableMapper<ImmutableBytesWritable, Put> {
+public abstract class AbstractMigrateHfileMapper extends TableMapper<ImmutableBytesWritable, Put> {
 
 	@Override
 	public void map(ImmutableBytesWritable row, Result value, Context context) throws IOException, InterruptedException {
@@ -39,9 +39,9 @@ public abstract class AbstractHfileTransformMapper extends TableMapper<Immutable
 	 * @throws IOException
 	 */
 	protected Optional<Put> transform(ImmutableBytesWritable key, Result result) throws IOException {
-		String rowkey = Bytes.toString(key.get());
-		if (isFilter(rowkey, result)) {
-			Put put = newPut(rowkey);
+		String row = Bytes.toString(key.get());
+		if (isFilter(row, result)) {
+			Put put = newPut(row);
 			Assert.notNull(put, "Put must not be null");
 			for (Cell cell : result.listCells()) {
 				byte[] family = extractByteArray(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
