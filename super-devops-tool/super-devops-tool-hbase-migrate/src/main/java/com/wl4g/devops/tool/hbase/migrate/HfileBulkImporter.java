@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
@@ -41,10 +42,9 @@ public class HfileBulkImporter {
 	 */
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
-		options.addRequiredOption("z", "zkaddr", true, "Zookeeper address.");
-		options.addRequiredOption("t", "tabname", true, "Hbase table name.");
-		options.addRequiredOption("p", "path", true,
-				"Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air");
+		options.addOption("z", "zkaddr", true, "Zookeeper address.");
+		options.addOption("t", "tabname", true, "Hbase table name.");
+		options.addOption("p", "path", true, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air");
 		CommandLine line = null;
 		try {
 			line = new DefaultParser().parse(options, args);
@@ -55,7 +55,7 @@ public class HfileBulkImporter {
 			return;
 		}
 
-		Configuration cfg = new Configuration();
+		Configuration cfg = HBaseConfiguration.create();
 		cfg.set("hbase.zookeeper.quorum", line.getOptionValue("z"));
 		Connection conn = ConnectionFactory.createConnection(cfg);
 		Admin admin = conn.getAdmin();
