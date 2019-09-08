@@ -17,7 +17,6 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat2;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
@@ -70,8 +69,8 @@ public class HfileBulkExporter {
 		options.addOption("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
 		options.addOption("s", "startrow", false, "Scan start rowkey.");
 		options.addOption("e", "endrow", false, "Scan end rowkey.");
-		options.addOption("S", "starttimestamp", false, "Scan start timestamp.");
-		options.addOption("E", "endtimestamp", false, "Scan end timestamp.");
+		options.addOption("S", "starttime", false, "Scan start timestamp.");
+		options.addOption("E", "endtime", false, "Scan end timestamp.");
 		CommandLine line = null;
 		try {
 			line = new DefaultParser().parse(options, args);
@@ -86,8 +85,8 @@ public class HfileBulkExporter {
 		Configuration conf = new Configuration();
 		conf.set("hbase.zookeeper.quorum", line.getOptionValue("z"));
 		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_FSTMP_DIR));
-		conf.set("hbase.mapreduce.inputtable", line.getOptionValue("t"));
-		conf.set("hbase.mapreduce.scan.batchsize", line.getOptionValue("b", DEFAULT_SCAN_BATCH_SIZE));
+		conf.set(TableInputFormat.INPUT_TABLE, line.getOptionValue("t"));
+		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("b", DEFAULT_SCAN_BATCH_SIZE));
 
 		// Check directory.
 		String output = line.getOptionValue("o");
@@ -99,16 +98,16 @@ public class HfileBulkExporter {
 
 		// Job
 		Connection conn = ConnectionFactory.createConnection(conf);
-		Table table = conn.getTable(TableName.valueOf(line.getOptionValue("t")));
+		TableName tab = TableName.valueOf(line.getOptionValue("t"));
 		Job job = Job.getInstance(conf);
+		job.setJobName(HfileBulkExporter.class.getSimpleName() + "@" + tab.getNameAsString());
 		job.setJarByClass(HfileBulkExporter.class);
 		job.setMapperClass(ExamplePrefixMigrateMapper.class);
 		job.setInputFormatClass(TableInputFormat.class);
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
 		job.setMapOutputValueClass(Put.class);
 
-		HFileOutputFormat2.configureIncrementalLoad(job, table,
-				conn.getRegionLocator(TableName.valueOf(line.getOptionValue("t"))));
+		HFileOutputFormat2.configureIncrementalLoad(job, conn.getTable(tab), conn.getRegionLocator(tab));
 		FileOutputFormat.setOutputPath(job, new Path(output));
 		if (job.waitForCompletion(true)) {
 			log.info("Exported to successfully !");
@@ -129,16 +128,19 @@ public class HfileBulkExporter {
 		String startTime = line.getOptionValue("S");
 		String endTime = line.getOptionValue("E");
 
+		boolean enabledScan = false;
 		Scan scan = new Scan();
 		// Row
 		if (isNotBlank(startRow)) {
 			conf.set(TableInputFormat.SCAN_ROW_START, startRow);
 			scan.setStartRow(Bytes.toBytes(startRow));
+			enabledScan = true;
 		}
 		if (isNotBlank(endRow)) {
 			Assert.hasText(startRow, "Argument for startRow and endRow are used simultaneously");
 			conf.set(TableInputFormat.SCAN_ROW_STOP, endRow);
 			scan.setStopRow(Bytes.toBytes(endRow));
+			enabledScan = true;
 		}
 
 		// Row TimeStamp
@@ -149,12 +151,19 @@ public class HfileBulkExporter {
 				Timestamp stime = new Timestamp(Long.parseLong(startTime));
 				Timestamp etime = new Timestamp(Long.parseLong(endTime));
 				scan.setTimeRange(stime.getTime(), etime.getTime());
+				enabledScan = true;
 			} catch (Exception e) {
 				throw new IllegalArgumentException(String.format("Illegal startTime(%s) and endTime(%s)", startTime, endTime), e);
 			}
 		}
-		ClientProtos.Scan proto = ProtobufUtil.toScan(scan);
-		conf.set(TableInputFormat.SCAN, Base64.encodeBytes(proto.toByteArray()));
+
+		if (enabledScan) {
+			ClientProtos.Scan proto = ProtobufUtil.toScan(scan);
+			log.info("All other SCAN configuration are ignored if\n"
+					+ "		 * this is specified.See TableMapReduceUtil.convertScanToString(Scan)\n"
+					+ "		 * for more details.");
+			conf.set(TableInputFormat.SCAN, Base64.encodeBytes(proto.toByteArray()));
+		}
 	}
 
 }
