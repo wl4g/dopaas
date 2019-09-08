@@ -32,7 +32,7 @@
 			refreshUrlKey: "refresh_url", // 刷新URL参数名
 			principalKey: "principal", // 提交账号参数名
 			credentialKey: "credential", // 提交账号凭据(如：静态密码/SMS验证码)参数名
-			attachKey: "attachCode", // 登录附加码(如：验证码)参数名
+			verifyCodeKey: "verifyCode", // 验证码参数名
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			accountSubmitUri: "/auth/general", // 账号登录提交的URL后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
@@ -362,7 +362,7 @@
 						+ IAM.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
 						+ "&" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 						+ "&" + IAM.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
-						+ "&" + IAM.Util.checkEmpty("definition.attachKey",settings.definition.attachKey) + "=" + captcha
+						+ "&" + IAM.Util.checkEmpty("definition.verifyCodeKey",settings.definition.verifyCodeKey) + "=" + captcha
 						+ "&" + IAM.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef()
 						+ "&verifyType=VerifyWithJigsawGraph";
 
@@ -425,7 +425,7 @@
 
 				var url = IAM.Util.checkEmpty("baseUri",settings.baseUri) + IAM.Util.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
 					+ "?" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + encodeURIComponent(mobileNum)
-					+ "&" + IAM.Util.checkEmpty("definition.attachKey",settings.definition.attachKey) + "=" + captcha;
+					+ "&" + IAM.Util.checkEmpty("definition.verifyCodeKey",settings.definition.verifyCodeKey) + "=" + captcha;
 				// 请求申请SMS验证码
 				$.ajax({
 					url: url,
