@@ -1,9 +1,21 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.wl4g.devops.tool.hbase.migrate;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -16,6 +28,8 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 
+import com.wl4g.devops.tool.common.utils.CommandLines.Builder;
+
 /**
  * HASE hfile bulk importer.
  * 
@@ -24,7 +38,7 @@ import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
  * @since
  */
 public class HfileBulkImporter {
-	final protected static Log log = LogFactory.getLog(HfileBulkImporter.class);
+	final static Log log = LogFactory.getLog(HfileBulkImporter.class);
 
 	/**
 	 * e.g.</br>
@@ -41,19 +55,10 @@ public class HfileBulkImporter {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		Options options = new Options();
-		options.addOption("z", "zkaddr", true, "Zookeeper address.");
-		options.addOption("t", "tabname", true, "Hbase table name.");
-		options.addOption("p", "path", true, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air");
-		CommandLine line = null;
-		try {
-			line = new DefaultParser().parse(options, args);
-			log.info(String.format("Parsed arguments: {}", line.getArgList()));
-		} catch (Exception e) {
-			log.error(e);
-			new HelpFormatter().printHelp("Usage: ", options);
-			return;
-		}
+		CommandLine line = new Builder().option("z", "zkaddr", true, "Zookeeper address.")
+				.option("t", "tabname", true, "Hbase table name.")
+				.option("p", "path", true, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air")
+				.build(args);
 
 		Configuration cfg = HBaseConfiguration.create();
 		cfg.set("hbase.zookeeper.quorum", line.getOptionValue("z"));

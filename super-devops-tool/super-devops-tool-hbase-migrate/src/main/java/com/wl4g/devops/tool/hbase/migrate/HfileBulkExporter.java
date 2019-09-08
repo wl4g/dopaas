@@ -1,12 +1,25 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.wl4g.devops.tool.hbase.migrate;
 
 import com.wl4g.devops.tool.common.utils.Assert;
+import com.wl4g.devops.tool.common.utils.CommandLines.Builder;
 import com.wl4g.devops.tool.hbase.migrate.mapred.ExamplePrefixMigrateMapper;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -41,7 +54,7 @@ import java.sql.Timestamp;
  * @since
  */
 public class HfileBulkExporter {
-	final protected static Log log = LogFactory.getLog(HfileBulkExporter.class);
+	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
 
 	final public static String DEFAULT_HBASE_FSTMP_DIR = "/tmp/fstmpdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
@@ -61,25 +74,13 @@ public class HfileBulkExporter {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		Options options = new Options();
-		options.addOption("T", "tmpdir", false, "Hbase tmp directory. default:" + DEFAULT_HBASE_FSTMP_DIR);
-		options.addRequiredOption("z", "zkaddr", true, "Zookeeper address.");
-		options.addRequiredOption("t", "tabname", true, "Hbase table name.");
-		options.addRequiredOption("o", "output", true, "Output hdfs path.");
-		options.addOption("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
-		options.addOption("s", "startrow", false, "Scan start rowkey.");
-		options.addOption("e", "endrow", false, "Scan end rowkey.");
-		options.addOption("S", "starttime", false, "Scan start timestamp.");
-		options.addOption("E", "endtime", false, "Scan end timestamp.");
-		CommandLine line = null;
-		try {
-			line = new DefaultParser().parse(options, args);
-			log.info(String.format("Parsed arguments: %s", line.getArgList()));
-		} catch (Exception e) {
-			log.error(e);
-			new HelpFormatter().printHelp("Usage: ", options);
-			return;
-		}
+		CommandLine line = new Builder().option("T", "tmpdir", false, "Hbase tmp directory. default:" + DEFAULT_HBASE_FSTMP_DIR)
+				.option("z", "zkaddr", true, "Zookeeper address.").option("t", "tabname", true, "Hbase table name.")
+				.option("o", "output", true, "Output hdfs path.")
+				.option("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE)
+				.option("s", "startrow", false, "Scan start rowkey.").option("e", "endrow", false, "Scan end rowkey.")
+				.option("S", "starttime", false, "Scan start timestamp.").option("E", "endtime", false, "Scan end timestamp.")
+				.build(args);
 
 		// Configuration
 		Configuration conf = new Configuration();
