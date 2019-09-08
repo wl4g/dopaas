@@ -55,7 +55,7 @@ public class HfileBulkExporter {
 	 * com.wl4g.devops.tool.hbase.migrate.HfileBulkExporter \
 	 * -z owner-node2:2181 \
 	 * -t safeclound.tb_ammeter \
-	 * -o hdfs://emr-header-1/bak/tb_ammeter
+	 * -o hdfs://emr-header-1/bak/safeclound.tb_ammeter
 	 * </pre>
 	 * 
 	 * @param args

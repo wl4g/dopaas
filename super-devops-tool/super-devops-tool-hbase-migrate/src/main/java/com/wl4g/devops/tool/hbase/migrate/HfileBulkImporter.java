@@ -34,7 +34,7 @@ public class HfileBulkImporter {
 	 * com.wl4g.devops.tool.hbase.migrate.HfileBulkImporter \
 	 * -z emr-header-1:2181 \
 	 * -t safeclound.tb_ammeter \
-	 * -p hdfs://emr-header-1/bak/tb_ammeter
+	 * -p hdfs://emr-header-1/bak/safeclound.tb_ammeter
 	 * </pre>
 	 * 
 	 * @param args

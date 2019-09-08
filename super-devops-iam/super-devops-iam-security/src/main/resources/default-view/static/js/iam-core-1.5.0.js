@@ -60,9 +60,9 @@
 				var imgInput = IAM.Util.checkEmpty("captcha.input", settings.captcha.input);
 				// 请求申请Captcha
 				$.get(IAM.Util.checkEmpty("captchApplyUri", applyUri), function(res){
-					$(img).attr("src", res.data.applyModel.primaryImg);
-					$(imgInput).css({"display" : "inline"}); // 先显示验证码输入框
+					$(imgInput).css({"display" : "inline"}); // 先显示验证码input
 					$(img).css({"display" : "inline"});
+					$(img).attr("src", res.data.applyModel.primaryImg);
 				});
 			},
 			onFallback: function(errmsg){ // 加载captcha失败，降级回调（如：申请过于频繁）
