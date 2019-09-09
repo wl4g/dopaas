@@ -194,12 +194,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Cryptographic service cache name.
 	 */
-	final public static String CACHE_CRYPTO = "crypto_";
-
-	/**
-	 * The key of cache encryption key pairs
-	 */
-	final public static String KEY_KEYPAIRS = "keypairs";
+	final public static byte[] CACHE_CRYPTO = "crypto_keypairs".getBytes(Charsets.UTF_8);
 
 	/**
 	 * The public key index by logged-in users

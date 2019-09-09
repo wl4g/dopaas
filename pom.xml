@@ -60,6 +60,7 @@
 		<module>super-devops-ci</module>
 		<module>super-devops-shell</module>
 		<module>super-devops-srm</module>
+		<module>super-devops-tool</module>
 		<module>super-devops-iam</module>
 		<module>super-devops-umc</module>
 		<!-- <module>super-devops-esm</module> -->

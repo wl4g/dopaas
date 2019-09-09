@@ -27,6 +27,9 @@ import javax.validation.constraints.NotBlank;
 public class SimpleVerifyImgModel extends BasedVerifyCodeModel {
 	private static final long serialVersionUID = -5475719110868579286L;
 
+	@NotBlank
+	private String verifyCode;
+
 	public SimpleVerifyImgModel() {
 		super();
 	}
@@ -34,6 +37,14 @@ public class SimpleVerifyImgModel extends BasedVerifyCodeModel {
 	public SimpleVerifyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
 		setApplyToken(applyToken);
 		setVerifyType(verifyType);
+	}
+
+	public String getVerifyCode() {
+		return verifyCode;
+	}
+
+	public void setVerifyCode(String verifyCode) {
+		this.verifyCode = verifyCode;
 	}
 
 }

@@ -144,7 +144,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		Assert.notNull(code, "Unable to borrow jigsaw image resource.");
 
 		// UnCompression primary block image.
-		return code.uncompress();
+		return code/* .uncompress() */;
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		// Statistic use material.
 		Set<Integer> indexs = new HashSet<>();
 
-		// Initialize jigsaw images.
+		// Initialize JIGSAW images.
 		ImageTailor tailor = new ImageTailor();
 		for (int i = 0; i < config.getJigsaw().getPoolImgSize(); i++) {
 			int index = i;
@@ -236,7 +236,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 */
 	private void putJigsawImage(JigsawImgCode code, int index) {
 		// Compression primary block image.
-		byte[] data = serialize(code.compress());
+		byte[] data = serialize(code/* .compress() */);
 		// Storage to cache.
 		jedisService.getJedisCluster().hset(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)), data);
 		jedisService.getJedisCluster().expire(CACHE_VERIFY_JIGSAW_IMG, config.getJigsaw().getPoolImgExpireSec());
