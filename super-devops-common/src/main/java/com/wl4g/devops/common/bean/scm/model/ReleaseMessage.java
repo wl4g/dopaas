@@ -39,8 +39,8 @@ public class ReleaseMessage extends GetRelease {
 		super();
 	}
 
-	public ReleaseMessage(String group, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
-		super(group, namespaces, meta, instance);
+	public ReleaseMessage(String cluster, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
+		super(cluster, namespaces, meta, instance);
 	}
 
 	public List<ReleasePropertySource> getPropertySources() {
