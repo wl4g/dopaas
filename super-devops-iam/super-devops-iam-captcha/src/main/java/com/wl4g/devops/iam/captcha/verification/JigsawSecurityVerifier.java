@@ -30,6 +30,11 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import static java.util.stream.Collectors.summarizingDouble;
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
 import java.util.Objects;
 
 import static com.wl4g.devops.common.utils.codec.Encodes.encodeBase64;
@@ -72,7 +77,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) {
 		JigsawImgCode code = codeWrap.getCode();
 		// Build model
-		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getType());
+		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getAlias());
 		model.setY(code.getY());
 		model.setPrimaryImg(encodeBase64(code.getPrimaryImg()));
 		model.setBlockImg(encodeBase64(code.getBlockImg()));
@@ -129,9 +134,29 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		Assert.isTrue(plainX.length() > 66,
 				String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
 		// Reduction analysis.
-		int prototypeX = parseAdditionalWithAlgorithmicSalt(plainX, model);
-		// Do match
-		return Math.abs(prototypeX - code.getX()) <= capConfig.getJigsaw().getAllowOffsetX();
+		final int prototypeX = parseAdditionalWithAlgorithmicSalt(plainX, model);
+
+		// --- Offset analyzing. ---
+		final boolean offsetMatched = Math.abs(prototypeX - code.getX()) <= capConfig.getJigsaw().getAllowOffsetX();
+
+		// --- Simple trails analyzing. ---
+		// X-standardDeviation
+		final List<Integer> xTrails = model.getTrails().stream().map(v -> v.getX()).filter(v -> Objects.nonNull(v))
+				.collect(toList());
+		final double xSD = analyzingStandartDeviation(xTrails);
+		if (log.isDebugEnabled()) {
+			log.debug("Simple AI-smart trails analyze, xSD: {}, xTrails: {}", xSD, xTrails);
+		}
+		// Y-standardDeviation
+		final List<Integer> yTrails = model.getTrails().stream().map(v -> v.getY()).filter(v -> Objects.nonNull(v))
+				.collect(toList());
+		final double ySD = analyzingStandartDeviation(yTrails);
+		if (log.isDebugEnabled()) {
+			log.debug("Simple AI-smart trails analyze, xSD: {}, yTrails: {}", ySD, yTrails);
+		}
+
+		// TODO => for AI CNN model verifying...
+		return offsetMatched && xSD > 13 && xSD < 79 && ySD > 1.3 && ySD < 11;
 	}
 
 	/**
@@ -147,8 +172,23 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 			final long tmp1 = CheckSums.crc16String(model.getApplyToken());
 			return (int) (tmp0 / tmp1);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Can't parse additional alg salt.");
+			throw new IllegalArgumentException("Can't parse additional alg salt.", e);
 		}
+	}
+
+	/**
+	 * Calculation analyzing standard deviation.
+	 * 
+	 * @param model
+	 * @return
+	 */
+	final private double analyzingStandartDeviation(@NotNull List<Integer> trails) {
+		final double xAvg = trails.stream().filter(t -> Objects.nonNull(t)).collect(summarizingDouble(v -> v)).getAverage();
+		// Deviation
+		final Double xD = trails.stream().map(v -> Math.pow(Math.abs(v - xAvg), 2)).reduce((acc, v) -> acc += v)
+				.map(v -> v / trails.size()).get();
+		// StandardDeviation
+		return Math.sqrt(xD);
 	}
 
 }

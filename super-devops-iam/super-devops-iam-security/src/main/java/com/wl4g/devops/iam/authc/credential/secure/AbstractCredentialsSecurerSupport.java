@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.authc.credential.secure;
 
 import java.security.MessageDigest;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -38,7 +37,7 @@ import static com.wl4g.devops.common.utils.codec.CheckSums.*;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
-import static org.apache.commons.lang3.RandomUtils.nextInt;
+import static io.netty.util.internal.ThreadLocalRandom.current;
 
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -145,17 +144,15 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Override
 	public String applySecret() {
 		// Load secret keySpecPairs
-		List<RSAKeySpecWrapper> keyPairs = rsaCryptoService.getKeySpecs();
-
 		Integer index = getBindValue(KEY_SECRET_INDEX);
 		if (index == null) {
-			index = nextInt(0, keyPairs.size());
+			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("Apply secret for index: {}", index);
 		}
 
-		RSAKeySpecWrapper keyPair = keyPairs.get(index);
+		RSAKeySpecWrapper keyPair = rsaCryptoService.borrow(index);
 		// Save the applied keyPair index.
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
@@ -253,13 +250,10 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @return
 	 */
 	private RSAKeySpecWrapper determineSecretKeySpecPair(@NotNull String principal) {
-		// Get the generated key pair
-		List<RSAKeySpecWrapper> keyPairs = rsaCryptoService.getKeySpecs();
-
 		// Choose the best one from the candidate key pair
 		Integer index = getBindValue(KEY_SECRET_INDEX, true);
 		if (index != null) {
-			return keyPairs.get(index);
+			return rsaCryptoService.borrow(index);
 		}
 
 		if (log.isWarnEnabled()) {

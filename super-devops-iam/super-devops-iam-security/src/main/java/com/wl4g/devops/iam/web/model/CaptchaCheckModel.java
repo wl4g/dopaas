@@ -2,8 +2,6 @@ package com.wl4g.devops.iam.web.model;
 
 import java.io.Serializable;
 
-import com.wl4g.devops.common.annotation.Unused;
-
 /**
  * CAPTCHA check model.
  * 
@@ -20,30 +18,19 @@ public class CaptchaCheckModel implements Serializable {
 	final public static String KEY_CAPTCHA_CHECK = "checkCaptcha";
 
 	/**
-	 * CAPTCHA simple(graph2d/JPEG) type.
-	 */
-	final public static String CAPTCHA_SIMPLE_TPYE = "simple";
-
-	/**
-	 * CAPTCHA gap slider type.
-	 */
-	@Unused
-	final public static String CAPTCHA_GAP_SLIDER_TPYE = "gapslider";
-
-	/**
 	 * Enable login CAPTCHA token for session.
 	 */
 	private boolean enabled;
 
 	/**
-	 * CAPTCHA type.
+	 * CAPTCHA verify type support.
 	 */
-	private String type;
+	private String support;
 
 	/**
 	 * Apply CAPTCHA URL.
 	 */
-	private String applyUrl;
+	private String applyUri;
 
 	public CaptchaCheckModel() {
 		super();
@@ -62,20 +49,20 @@ public class CaptchaCheckModel implements Serializable {
 		this.enabled = enabled;
 	}
 
-	public String getType() {
-		return type;
+	public String getSupport() {
+		return support;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setSupport(String support) {
+		this.support = support;
 	}
 
-	public String getApplyUrl() {
-		return applyUrl;
+	public String getApplyUri() {
+		return applyUri;
 	}
 
-	public void setApplyUrl(String applyUrl) {
-		this.applyUrl = applyUrl;
+	public void setApplyUri(String applyUrl) {
+		this.applyUri = applyUrl;
 	}
 
 }

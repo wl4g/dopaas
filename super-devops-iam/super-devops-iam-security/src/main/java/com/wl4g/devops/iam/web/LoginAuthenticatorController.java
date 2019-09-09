@@ -43,7 +43,6 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.iam.common.utils.Securitys.createLimitFactors;
 import static com.wl4g.devops.iam.common.utils.Securitys.sessionStatus;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
-import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.CAPTCHA_SIMPLE_TPYE;
 import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.KEY_CAPTCHA_CHECK;
 import static com.wl4g.devops.iam.web.model.GeneralCheckModel.KEY_GENERAL_CHECK;
 import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
@@ -149,9 +148,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
 			if (verifier.forAdapt(request).isEnabled(factors)) {
 				model.setEnabled(true);
-				model.setType(CAPTCHA_SIMPLE_TPYE); // Default
-				String url = getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA;
-				model.setApplyUrl(url);
+				model.setSupport(VerifyType.SUPPORT_ALL); // Default
+				model.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
 			}
 			resp.getData().put(KEY_CAPTCHA_CHECK, model);
 
@@ -171,11 +169,11 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			}
 
 			// Remaining delay.
-			Long remainingDelay = null;
+			Long remainDelay = null;
 			if (Objects.nonNull(code)) {
-				remainingDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
+				remainDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
 			}
-			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainingDelay));
+			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainDelay));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {

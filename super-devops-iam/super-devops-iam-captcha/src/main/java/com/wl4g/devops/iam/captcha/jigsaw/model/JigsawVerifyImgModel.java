@@ -18,8 +18,12 @@ package com.wl4g.devops.iam.captcha.jigsaw.model;
 import com.wl4g.devops.iam.verification.model.BasedVerifyCodeModel;
 
 import javax.validation.constraints.NotNull;
+
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Analyze verify jigsaw image model.
@@ -45,24 +49,34 @@ public class JigsawVerifyImgModel extends BasedVerifyCodeModel {
 	}
 
 	public List<Trail> getTrails() {
-		return trails;
+		return Objects.isNull(trails) ? emptyList() : trails;
 	}
 
 	public void setTrails(List<Trail> trails) {
-		this.trails = trails;
+		if (Objects.nonNull(trails)) {
+			this.trails = trails;
+		}
 	}
 
+	/**
+	 * The time coordinate information of mouse pointer on slider can increase
+	 * CNN machine learning model checking.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0.0 2019-09-05
+	 * @since
+	 */
 	public static class Trail {
-		private Long timestamp;
+		private Long t;
 		private Integer x;
 		private Integer y;
 
-		public Long getTimestamp() {
-			return timestamp;
+		public Long getT() {
+			return t;
 		}
 
-		public void setTimestamp(Long timestamp) {
-			this.timestamp = timestamp;
+		public void setT(Long timestamp) {
+			this.t = timestamp;
 		}
 
 		public Integer getX() {
@@ -80,6 +94,12 @@ public class JigsawVerifyImgModel extends BasedVerifyCodeModel {
 		public void setY(Integer y) {
 			this.y = y;
 		}
+
+		@Override
+		public String toString() {
+			return "Trail [t=" + t + ", x=" + x + ", y=" + y + "]";
+		}
+
 	}
 
 }
