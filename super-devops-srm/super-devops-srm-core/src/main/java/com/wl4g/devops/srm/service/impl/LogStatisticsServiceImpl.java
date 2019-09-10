@@ -51,9 +51,13 @@ public class LogStatisticsServiceImpl implements LogStatisticsService {
 		String index = requestBean.getIndex();
 		String date;
 		Integer level = requestBean.getLevel();
-		Integer interval = requestBean.getInterval();
+		/*Integer interval = requestBean.getInterval();
 		String startDate = requestBean.getStartDate();
-		String endDate = requestBean.getEndDate();
+		String endDate = requestBean.getEndDate();*/
+		Integer interval = null;
+		String startDate = null;
+		String endDate = null;
+
 		List<Querycriteria> queryList = requestBean.getQueryList();
 		boolean flag = false;
 		if (StringUtils.isEmpty(startDate) || StringUtils.isEmpty(endDate)) {
@@ -83,6 +87,8 @@ public class LogStatisticsServiceImpl implements LogStatisticsService {
 			flag = true;
 		}
 		index = index + "-" + date;
+		//TODO just for test
+		index = "filebeat-6.6.2-2019.09.10";
 		SearchRequest searchRequest = new SearchRequest(index);
 		searchRequest.types("doc");
 		BoolQueryBuilder boolQueryBuilder = boolQuery();
