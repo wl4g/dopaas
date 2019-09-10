@@ -183,11 +183,11 @@
 				baseUri: iamBaseURI, // IAM认证服务接口的基础URI
 				// 定义验证码显示面板配置
 				captcha: {
-					use: "VerifyWithGifGraph", // default by 'VerifyWithGifGraph'
+					use: "VerifyWithJigsawGraph", // default by 'VerifyWithGifGraph'
 					panel: document.getElementById("jigsaw"), // Jigsaw验证码时必须
 					img: document.getElementById("codeimg"), // 验证码显示 img对象（仅jpeg/gif时需要）
 					input: document.getElementById("captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
-					onFallback: function(errmsg) { // 如，申请过于频繁
+					onError: function(errmsg) { // 如，申请过于频繁
 						console.warn(errmsg);
 						// 加载默认破图
 						document.getElementById("codeimg").src = "./static/images/bg_icon/broken.png";

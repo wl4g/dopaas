@@ -165,7 +165,7 @@
         };
         img2.onload = function () {
             that.blockCtx.drawImage(img2, 0, img2.imagey);
-            console.info(img2.imagey);
+            console.debug(img2.imagey);
             that.text.text(that.text.attr('data-text'));
         };
 

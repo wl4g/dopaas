@@ -20,7 +20,8 @@
 				mobileNum: null,
 				remainDelayMs: null,
 			}
-		}
+		},
+		verify
 	};
 
 	// DefaultCaptcha配置实现(jpeg/gif验证码)
@@ -67,13 +68,15 @@
 			accountSubmitUri: "/auth/general", // 账号登录提交的URL后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			checkUri: "/login/check", // 登录前初始检查接口的URL后缀
-			smsApplyUri: "/login/applysmsverify", // SMS申请验证码的URL后缀
+			captchaApplyUri: "/verify/applycaptcha", // 申请GRAPH验证码URI后缀
+			verifyAnalyzeUri: "/verify/verifyAnalyze", // 校验分析GRAPH验证码URI后缀
+			smsApplyUri: "/verify/applysmsverify", // 申请SMS验证码URI后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			codeOkValue: "200" // 接口返回成功码判定标准
 		},
 		// 图像验证码配置
 		captcha: {
-			use: "VerifyWithGifGraph", // Default using gif
+			use: "VerifyWithGifGraph", // Default use gif
 			panel: null,
 			img: null,
 			input: null,
@@ -107,7 +110,7 @@
 				console.info("Captcha verify successfully. verifiedToken => "+ verifiedToken);
 			},
 			onError: function(errmsg) { // 如:申请过于频繁
-				console.error(errmsg);
+				console.error("Failed to captcha verify. " + errmsg);
 			}
 		},
 		// 账号认证配置
@@ -115,17 +118,16 @@
 			submitBtn: null, // 登录提交触发对象
 			principal: null, // 登录账号input对象
 			credential: null, // 登录凭据input对象
-			onBeforeSubmit: function(principal, plainPasswd, captcha){ // 默认提交之前回调实现
-				//throw "Unsupported errors, please implement to support login submission";
-				console.log("Prepare to submit login request. principal=" + principal + ", captcha=" + captcha);
+			onBeforeSubmit: function(principal, credentials, verifiedToken){ // 默认提交之前回调实现
+				console.debug("Prepare to submit login request. principal=" + principal + ", verifiedToken=" + verifiedToken);
 				return true;
 			},
 			onSuccess: function(principal, redirectUrl){ // 登录成功回调
-				console.info("Sign in successful. " + principal + ", " + redirectUrl);
+				console.info("Sign in successfully. " + principal + ", " + redirectUrl);
 				return true;
 			},
 			onError: function(errmsg){ // 登录异常回调
-				throw "Sign in error. " + errmsg;
+				console.error("Sign in error. " + errmsg);
 			}
 		},
 		// SMS认证配置
@@ -178,7 +180,7 @@
 		var protocol = location.protocol;
 		settings.baseUri = protocol + "//" + hostname + ":" + port + "/" + contextPath;
 
-		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj,newObj)只能浅层拷贝
+		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = jQuery.extend(true, settings, obj);
 	};
 
@@ -205,17 +207,17 @@
 		return url;
 	};
 
-	// 统一重置验证码（默认为GIF图片验证码）
+	// 重置验证码
 	var resetCaptcha = function(){
 		safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 			if(checkCaptcha.enabled){ // 启用验证码?
 				// 获取当前配置CaptchaVerifier实例、显示
 				(function(){
-					var type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
+					var _type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
 					var _registry = IAM.Util.checkEmpty("captcha.registry", settings.captcha.registry);
-					for(var verifierType in _registry){
-						if(verifierType == type){
-							return _registry[verifierType];
+					for(var type in _registry){
+						if(type == _type){
+							return _registry[type];
 						}
 					}
 					throw "Illegal verifier type for '"+ type;
@@ -355,10 +357,12 @@
 					$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
 				}
 			});
-			// 绑定验证码点击刷新事件
-			$(IAM.Util.checkEmpty("captcha.img", settings.captcha.img)).click(function(){
-				resetCaptcha();
-			});
+			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph"){
+				// 绑定验证码点击刷新事件
+				$(IAM.Util.checkEmpty("captcha.img", settings.captcha.img)).click(function(){
+					resetCaptcha();
+				});
+			}
 			// 绑定登录按钮点击事件
 			$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function(){
 				safeCheck(function(checkCaptcha, checkGeneral, checkSms){
@@ -375,7 +379,7 @@
 					}
 
 					// 执行登录请求之前回调
-					if(!settings.account.onBeforeSubmit(principal, plainPasswd, captcha)){
+					if(!settings.account.onBeforeSubmit(principal, credentials, "verifiedTokenxxxx")){
 						return;
 					}
 
