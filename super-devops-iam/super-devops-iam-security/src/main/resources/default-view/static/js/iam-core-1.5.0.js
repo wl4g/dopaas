@@ -12,7 +12,7 @@
 		checkCaptcha: {
 			enabled: false,
 			support: null,
-			applyUrl: null,
+			applyUri: null,
 		},
 		checkSms: {
 			enabled: false,
@@ -21,10 +21,36 @@
 		}
 	};
 
+	// DefaultCaptcha配置实现(jpeg/gif验证码)
+	var _DefaultCaptchaGraphVerifier = {
+		hide: function() {
+			var img = IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.img", settings.captcha.VerifyWithSimpleGraph.img);
+			var imgInput = IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.input", settings.captcha.VerifyWithSimpleGraph.input);
+			imgInput.val(""); // 清空验证码input
+			$(img).css({"display" : "none"});
+			$(img).attr({"src": ""});
+			$(imgInput).css({"display" : "none"});
+		},
+		show: function() {
+			var img = IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.img", settings.captcha.VerifyWithSimpleGraph.img);
+			var imgInput = $(IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.input", settings.captcha.VerifyWithSimpleGraph.input));
+			imgInput.val(""); // 清空验证码input
+			// 请申请Captcha
+			var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.checkCaptcha.applyUri) + "?"
+						+ "verifyType="+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) +"&r=" + Math.random();
+			$.get(captchaApplyUrl, function(res){
+				$(img).css({"display" : "inline"});
+				$(img).attr("src", res.data.applyModel.primaryImg);
+				$(imgInput).css({"display" : "inline"});
+			});
+		},
+	};
+
 	// 全局配置
 	var settings = {
-		baseUri: null, // 默认获取SNS接口baseURI实现
-		definition: { // 字典参数定义
+		baseUri: null, // 接口baseURI
+		// 字典参数定义
+		definition: {
 			responseType: "response_type", // 控制返回数据格式的参数名
 			responseTypeValue: "json", // 使用返回数据格式
 			whichKey: "which", // 请求连接到SNS的参数名
@@ -40,47 +66,38 @@
 			smsApplyUri: "/login/applysmsverify", // SMS申请验证码的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			codeOkValue: "200" // 接口返回成功码判定标准
+			verifierSupport: [ // 图像验证码支持的类型
+				{ "VerifyWithSimpleGraph": _DefaultCaptchaGraphVerifier },
+				{ "VerifyWithGifGraph": _DefaultCaptchaGraphVerifier },
+				{"VerifyWithJigsawGraph":   // JigsawCaptcha配置实现
+					hide: function() {
+						var jigsawPanel = IAM.Util.checkEmpty("captcha.panel", settings.captcha.panel);
+						$(jigsawPanel).css({"display" : "none"});
+					},
+					show: function() {
+						var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.checkCaptcha.applyUri) + "?"
+								+ "verifyType="+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) +"&r=" + Math.random();
+						$.get(captchaApplyUrl, function(res){
+							$(img).css({"display" : "inline"});
+							$(img).attr("src", res.data.applyModel.primaryImg);
+							$(imgInput).css({"display" : "inline"});
+						});
+					},
+				},
+			],
 		},
-		captcha: { // 验证码配置
-			img: null, // 验证码显示IMG对象
-			input: null, // 验证码INPUT输入对象
-			url: null, // 验证码图像地址
-			name: "captcha", // 必须，提交时的验证码参数名，后台默认:captcha（与后台对应）
-			hide: function(){ // 默认隐藏验证码实现
-				var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
-				var imgInput = IAM.Util.checkEmpty("captcha.input", settings.captcha.input);
-				$(imgInput).css({"display" : "none"});
-				$(img).css({"display" : "none"});
-				$(img).attr({"src": ""});
-			},
-			show: function(applyUri){ // 显示验证码输入
-				// 清空GIF验证码input
-				$(IAM.Util.checkEmpty("captcha.input", settings.captcha.input)).val("");
-				var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
-				var imgInput = IAM.Util.checkEmpty("captcha.input", settings.captcha.input);
-				// 请求申请Captcha
-				$.get(IAM.Util.checkEmpty("captchApplyUri", applyUri), function(res){
-					$(imgInput).css({"display" : "inline"}); // 先显示验证码input
-					$(img).css({"display" : "inline"});
-					$(img).attr("src", res.data.applyModel.primaryImg);
-				});
-			},
-			onFallback: function(errmsg){ // 加载captcha失败，降级回调（如：申请过于频繁）
+		// 图像验证码配置
+		captcha: {
+			use: "VerifyWithSimpleGraph",
+			panel: null,
+			img: null,
+			input: null,
+			onFallback: function(errmsg) { // 申请captcha失败降级处理（如:申请过于频繁）
 				console.error(errmsg);
 			}
 		},
-        jigsaw: {
-			panel: null,
-            applycaptchaUrl: null,
-			hide: function () {
-                var jigsawDiv = IAM.Util.checkEmpty("jigsaw.div", settings.jigsaw.div);
-                $(jigsawDiv).css({"display" : "none"});
-            },
-			show: function (applycaptchaUrl) {
-			    console.info("show jigsaw0");
-            },
-		},
-		account: { // 密码认证配置
+		// 账号认证配置
+		account: {
 			submitBtn: null, // 登录提交触发对象
 			principal: null, // 登录账号input对象
 			credential: null, // 登录凭据input对象
@@ -97,7 +114,8 @@
 				throw "Sign in error. " + errmsg;
 			}
 		},
-		sms: { // SMS认证配置
+		// SMS认证配置
+		sms: {
 			submitBtn: null, // 登录提交触发对象
 			sendSmsBtn: null, // 发送SMS动态密码对象
 			mobileArea: null, // 手机号区域select对象
@@ -114,7 +132,8 @@
 				throw "SMS login error. " + errmsg;
 			}
 		},
-		sns: { // SNS授权认证配置
+		// SNS授权认证配置
+		sns: {
 			// 具体操作接口必要的参数
 			required: {
 				// 参数'which'
@@ -172,21 +191,27 @@
 		return url;
 	};
 
+	// 获取当前配置CaptchaVerifier实例
+	var getCaptchaVerifier = function(){
+		var type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
+		var _verifierSupport = IAM.Util.checkEmpty(settings.definition.verifierSupport);
+		for(var verifierType in _verifierSupport){
+			if(verifierType == type){
+				return _verifierSupport[verifierType];
+			}
+		}
+		throw "Illegal verifier type for '"+ type;
+	};
+
 	// 统一重置验证码（默认为GIF图片验证码）
 	var resetCaptcha = function(){
 		safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 			if(checkCaptcha.enabled){ // 启用验证码?
-				// 申请及显示验证码
-				var url = checkCaptcha.applyUri + "?verifyType=VerifyWithGifGraph&r=" + Math.random();
-				settings.captcha.show(url);
+				// 显示图像验证码
+				getCaptchaVerifier().show();
 			}
 		});
 	};
-
-	// 重置Jigsaw验证码
-    var resetJigsaw = function(applyUri){
-        settings.jigsaw.show(applyUri);
-    };
 
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
 	var reader = function(connectUrl, panelType) {
@@ -553,8 +578,21 @@
 				return param.length == 0;
 		},
 		isAnyEmpty: function(params){
-			for(var i = 0; i < arguments.length; i++){
-				if(IAM.Util.isEmpty(arguments[i]))
+			if(!IAM.Util.isArray(IAM.Util.checkEmpty("Arguments", params))){
+				throw "Argument must is type of Array";
+			}
+			for(var i = 0; i < params.length; i++){
+				if(IAM.Util.isEmpty(params[i]))
+					return true;
+			}
+			return false;
+		},
+		isAnyContains: function(params, search){
+			if(!IAM.Util.isArray(IAM.Util.checkEmpty("Arguments", params))){
+				throw "Argument must is type of Array";
+			}
+			for(var i = 0; i < params.length; i++){
+				if(params[i] == search)
 					return true;
 			}
 			return false;
