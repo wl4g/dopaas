@@ -6,38 +6,41 @@
 (function(window, document) {
 	// 运行时值/状态临时缓存
 	var runtime = {
-		checkGeneral: {
-			secret: null,
-		},
-		checkCaptcha: {
-			enabled: false,
-			support: null,
-			applyUri: null,
-		},
-		checkSms: {
-			enabled: false,
-			mobileNum: null,
-			remainDelayMs: null,
+		safeCheck: {
+			checkGeneral: {
+				secret: null,
+			},
+			checkCaptcha: {
+				enabled: false,
+				support: null,
+				applyUri: null,
+			},
+			checkSms: {
+				enabled: false,
+				mobileNum: null,
+				remainDelayMs: null,
+			}
 		}
 	};
 
 	// DefaultCaptcha配置实现(jpeg/gif验证码)
-	var _DefaultCaptchaGraphVerifier = {
+	var _defaultCaptchaVerifier = {
 		hide: function() {
-			var img = IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.img", settings.captcha.VerifyWithSimpleGraph.img);
-			var imgInput = IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.input", settings.captcha.VerifyWithSimpleGraph.input);
+			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
+			var imgInput = IAM.Util.checkEmpty("captcha.input", settings.captcha.input);
 			imgInput.val(""); // 清空验证码input
 			$(img).css({"display" : "none"});
 			$(img).attr({"src": ""});
 			$(imgInput).css({"display" : "none"});
 		},
 		show: function() {
-			var img = IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.img", settings.captcha.VerifyWithSimpleGraph.img);
-			var imgInput = $(IAM.Util.checkEmpty("captcha.VerifyWithSimpleGraph.input", settings.captcha.VerifyWithSimpleGraph.input));
+			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
+			var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
 			imgInput.val(""); // 清空验证码input
 			// 请申请Captcha
-			var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.checkCaptcha.applyUri) + "?"
-						+ "verifyType="+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) +"&r=" + Math.random();
+			var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
+						+ IAM.Util.checkEmpty("definition.verifierTypeKey", settings.definition.verifierTypeKey) + "="
+						+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
 			$.get(captchaApplyUrl, function(res){
 				$(img).css({"display" : "inline"});
 				$(img).attr("src", res.data.applyModel.primaryImg);
@@ -58,7 +61,8 @@
 			refreshUrlKey: "refresh_url", // 刷新URL参数名
 			principalKey: "principal", // 提交账号参数名
 			credentialKey: "credential", // 提交账号凭据(如：静态密码/SMS验证码)参数名
-			verifyCodeKey: "verifyCode", // 验证码参数名
+			verifierTypeKey: "verifyType", // 验证码verifier类型参数名
+			verifiedTokenKey: "verifiedToken", // 验证码校验凭据token参数名
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			accountSubmitUri: "/auth/general", // 账号登录提交的URL后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
@@ -66,33 +70,43 @@
 			smsApplyUri: "/login/applysmsverify", // SMS申请验证码的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			codeOkValue: "200" // 接口返回成功码判定标准
-			verifierSupport: [ // 图像验证码支持的类型
-				{ "VerifyWithSimpleGraph": _DefaultCaptchaGraphVerifier },
-				{ "VerifyWithGifGraph": _DefaultCaptchaGraphVerifier },
-				{"VerifyWithJigsawGraph":   // JigsawCaptcha配置实现
+		},
+		// 图像验证码配置
+		captcha: {
+			use: "VerifyWithGifGraph", // Default using gif
+			panel: null,
+			img: null,
+			input: null,
+			registry: { // 图像验证码实现程序注册器
+				VerifyWithSimpleGraph: _defaultCaptchaVerifier,
+				VerifyWithGifGraph: _defaultCaptchaVerifier,
+				VerifyWithJigsawGraph: {  // JigsawCaptcha配置实现
 					hide: function() {
 						var jigsawPanel = IAM.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 						$(jigsawPanel).css({"display" : "none"});
 					},
 					show: function() {
-						var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.checkCaptcha.applyUri) + "?"
-								+ "verifyType="+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) +"&r=" + Math.random();
-						$.get(captchaApplyUrl, function(res){
-							$(img).css({"display" : "inline"});
-							$(img).attr("src", res.data.applyModel.primaryImg);
-							$(imgInput).css({"display" : "inline"});
-						});
+						var jigsawPanel = IAM.Util.checkEmpty("captcha.panel", settings.captcha.panel);
+						$(jigsawPanel).css({"display" : "inline"});
+						// 加载Jigsaw插件滑块
+						var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
+								+ IAM.Util.checkEmpty("definition.verifierTypeKey", settings.definition.verifierTypeKey) + "=" 
+								+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
+                        $(jigsawPanel).JigsawIamCaptcha({
+                            applycaptchaUrl: captchaApplyUrl,
+                            repeatIcon: 'fa fa-redo',
+                            onSuccess: function (verifiedToken) {
+                                console.debug("Captcha verify successfully. verifiedToken => "+ verifiedToken);
+								IAM.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)();
+                            }
+                        });
 					},
 				},
-			],
-		},
-		// 图像验证码配置
-		captcha: {
-			use: "VerifyWithSimpleGraph",
-			panel: null,
-			img: null,
-			input: null,
-			onFallback: function(errmsg) { // 申请captcha失败降级处理（如:申请过于频繁）
+			},
+			onSuccess: function(verifiedToken) {
+				console.info("Captcha verify successfully. verifiedToken => "+ verifiedToken);
+			},
+			onError: function(errmsg) { // 如:申请过于频繁
 				console.error(errmsg);
 			}
 		},
@@ -191,24 +205,21 @@
 		return url;
 	};
 
-	// 获取当前配置CaptchaVerifier实例
-	var getCaptchaVerifier = function(){
-		var type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
-		var _verifierSupport = IAM.Util.checkEmpty(settings.definition.verifierSupport);
-		for(var verifierType in _verifierSupport){
-			if(verifierType == type){
-				return _verifierSupport[verifierType];
-			}
-		}
-		throw "Illegal verifier type for '"+ type;
-	};
-
 	// 统一重置验证码（默认为GIF图片验证码）
 	var resetCaptcha = function(){
 		safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 			if(checkCaptcha.enabled){ // 启用验证码?
-				// 显示图像验证码
-				getCaptchaVerifier().show();
+				// 获取当前配置CaptchaVerifier实例、显示
+				(function(){
+					var type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
+					var _registry = IAM.Util.checkEmpty("captcha.registry", settings.captcha.registry);
+					for(var verifierType in _registry){
+						if(verifierType == type){
+							return _registry[verifierType];
+						}
+					}
+					throw "Illegal verifier type for '"+ type;
+				})().show();
 			}
 		});
 	};
@@ -302,17 +313,14 @@
 		}
 	};
 
-	/**
-	 * 登录前初始化检查
-	 * @param isSubmission 是否提交登录请求（区别提交登录请求和初始化页面时的请求）
-	 * @param callback 回调函数 
-	 */
+	// 登录前初始安全检查
 	var safeCheck = function(callback){
 		var principal = encodeURIComponent(IAM.Util.getEleValue("account.principal", settings.account.principal, false));
 		var checkUrl = IAM.Util.checkEmpty("baseUri",settings.baseUri)
 			+ IAM.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
-			+ IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
-			+"&verifyType=VerifyWithJigsawGraph";
+			+ IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
+			+ IAM.Util.checkEmpty("definition.verifierTypeKey", settings.definition.verifierTypeKey) + "=" 
+			+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
 
 		// 请求安全预检
 		$.ajax({
@@ -322,16 +330,17 @@
 				withCredentials: true // 跨域调用时，必须设置才会发送cookie
 			},
 			dataType: "json",
-			success: function(resp){
+			success: function(res){
 				var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-				if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){
-					settings.account.onError(resp.message); // 检查失败回调
+				if(!IAM.Util.isEmpty(res) && (res.code != codeOkValue)){
+					settings.account.onError(res.message); // 检查失败回调
 				} else {
-					callback(resp.data.checkCaptcha, resp.data.checkGeneral, resp.data.checkSms);
+					runtime.safeCheck = res.data;
+					callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
 				}
 			},
 			error: function(req, status, errmsg){
-				console.log("Initialization failed, " + errmsg);
+				console.log("Failed to safe check, " + errmsg);
 				settings.account.onError(errmsg); // 登录异常回调
 			}
 		});
@@ -387,9 +396,8 @@
 						+ IAM.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
 						+ "&" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 						+ "&" + IAM.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
-						+ "&" + IAM.Util.checkEmpty("definition.verifyCodeKey",settings.definition.verifyCodeKey) + "=" + captcha
-						+ "&" + IAM.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef()
-						+ "&verifyType=VerifyWithJigsawGraph";
+						+ "&" + IAM.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + captcha
+						+ "&" + IAM.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
 
 					// 提交账号登录请求
 					$.ajax({
@@ -441,7 +449,7 @@
 				// 检查输入的验证码
 				var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
 				var captcha = imgInput.val();
-				if(runtime.captchaEnabled){ // 启用时才检查
+				if(runtime.safeCheck.captchaEnabled){ // 启用时才检查
 					if(IAM.Util.isEmpty(captcha) || captcha.length < imgInput.attr("maxlength")){ // 检查验证码
 						settings.account.onError("Illegal length of captcha input");
 						return;
@@ -450,7 +458,7 @@
 
 				var url = IAM.Util.checkEmpty("baseUri",settings.baseUri) + IAM.Util.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
 					+ "?" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + encodeURIComponent(mobileNum)
-					+ "&" + IAM.Util.checkEmpty("definition.verifyCodeKey",settings.definition.verifyCodeKey) + "=" + captcha;
+					+ "&" + IAM.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + captcha;
 				// 请求申请SMS验证码
 				$.ajax({
 					url: url,
@@ -548,13 +556,14 @@
 
 	// 暴露API给外部
 	if(!window.IAM){ window.IAM = {}; }
+
 	// 通用工具类
 	window.IAM.Util = {
 		getEleValue: function(name, obj){
 			return getEleValue(name, obj, true);
 		},
 		getEleValue: function(name, obj, assertion){
-			if(!assertion){
+			if(!assertion) {
 				return $(obj).val();
 			}
 			return IAM.Util.checkEmpty(name, $(obj).val());
@@ -578,11 +587,8 @@
 				return param.length == 0;
 		},
 		isAnyEmpty: function(params){
-			if(!IAM.Util.isArray(IAM.Util.checkEmpty("Arguments", params))){
-				throw "Argument must is type of Array";
-			}
-			for(var i = 0; i < params.length; i++){
-				if(IAM.Util.isEmpty(params[i]))
+			for(var i = 0; i < arguments.length; i++){
+				if(IAM.Util.isEmpty(arguments[i]))
 					return true;
 			}
 			return false;
@@ -795,6 +801,7 @@
 			}
 		},
 	};
+
 	// 核心功能暴露出去
 	window.IAM.Core = {
 		config: function(opt){
@@ -806,11 +813,11 @@
 			// 刷新验证码
 			resetCaptcha();
 			// 申请过SMS验证码
-			if(runtime.checkSms.enabled){
+			if(runtime.safeCheck.checkSms.enabled){
 				// 填充mobile number.
-				$(settings.sms.mobile).val(runtime.checkSms.mobileNum);
+				$(settings.sms.mobile).val(runtime.safeCheck.checkSms.mobileNum);
 				// 继续倒计时
-				var remainDelaySec = runtime.checkSms.remainDelayMs/1000;
+				var remainDelaySec = runtime.safeCheck.checkSms.remainDelayMs/1000;
 				var num = parseInt(remainDelaySec);
 				var timer = setInterval(() => {
 					var sendSmsBtn = $(settings.sms.sendSmsBtn);

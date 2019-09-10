@@ -183,10 +183,11 @@
 				baseUri: iamBaseURI, // IAM认证服务接口的基础URI
 				// 定义验证码显示面板配置
 				captcha: {
-					img: document.getElementById("codeimg"), // 验证码显示IMG对象
-					input: document.getElementById("captcha_input"), // 验证码INPUT输入对象
-					name: "captcha", // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
-					onFallback: function (errmsg) { // 验证码刷新降级处理（被锁定）
+					use: "VerifyWithGifGraph", // default by 'VerifyWithGifGraph'
+					panel: document.getElementById("jigsaw"), // Jigsaw验证码时必须
+					img: document.getElementById("codeimg"), // 验证码显示 img对象（仅jpeg/gif时需要）
+					input: document.getElementById("captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
+					onFallback: function(errmsg) { // 如，申请过于频繁
 						console.warn(errmsg);
 						// 加载默认破图
 						document.getElementById("codeimg").src = "./static/images/bg_icon/broken.png";
@@ -194,22 +195,6 @@
 						$('#captcha_input').attr('disabled', true);
 						$('#captcha_input').css('cursor', 'no-drop');
 					}
-				},
-                jigsaw:{
-				    panel: document.getElementById("jigsaw"),
-                    show: function (applycaptchaUrl) {
-                        console.info("show jigsaw");
-                        var jigsawDiv = document.getElementById("jigsaw");
-                        $(jigsawDiv).css({"display" : "inline"});
-
-                        $('#jigsaw').JigsawIamCaptcha({
-                            applycaptchaUrl: applycaptchaUrl,
-                            repeatIcon: 'fa fa-redo',
-                            onSuccess: function (verifiedToken) {
-                                alert("认证成功"+verifiedToken);
-                            }
-                        });
-                    },
 				},
 				// 登录认证配置
 				account: {
@@ -310,7 +295,7 @@
 	<script type="text/javascript">
 		// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
 		function errTips() {
-			var url = iamBaseURI + "/login/errread";
+			var url = iamBaseURI + "/login/errread";	
 			$.ajax({
 				url: url,
 				success: function (res) {
