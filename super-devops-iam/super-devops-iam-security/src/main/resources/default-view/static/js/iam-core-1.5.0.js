@@ -227,8 +227,8 @@
 		}
 	};
 
-	// configure settings
-	var configure = function(obj) {
+	// Configure settings
+	var _configure = function(obj) {
 		// 初始化默认baseURI
 		var hostname = location.hostname;
 		var pathname = location.pathname;
@@ -266,7 +266,7 @@
 
 	// Reset graph captcha.
 	var resetCaptcha = function(){
-		safeCheck(function(checkCaptcha, checkGeneral, checkSms){
+		_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
 			if(checkCaptcha.enabled && !runtime.flags.applying){ // 启用验证码且不是申请中(防止并发)?
 				// 获取当前配置CaptchaVerifier实例、显示
 				Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().required();
@@ -275,7 +275,7 @@
 	};
 
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
-	var reader = function(connectUrl, panelType) {
+	var snsViewReader = function(connectUrl, panelType) {
 		// 渲染授权二维码面板配置
 		if("qrcodePanel" == panelType){
 			// 获取已创建的iframe对象
@@ -332,8 +332,8 @@
 		}
 	};
 
-	// SNS authorize login implement.
-	var snsAuthentication = function(){
+	// Init SNS authorize authentication login implement.
+	var _InitSNSAuthenticator = function(){
 		var providerMap = Common.Util.checkEmpty("sns.provider", settings.sns.provider);
 		for(var provider in providerMap){ // provider为服务商名
 			// 获取服务商配置信息
@@ -358,56 +358,54 @@
 				}
 
 				// 渲染SNS登录二维码或页面
-				reader(connectUrl, panelType);
+				snsViewReader(connectUrl, panelType);
 			}
 		}
 	};
 
 	// Before safe check.
-	var safeCheck = function(callback){
-		var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));
-		var checkUrl = Common.Util.checkEmpty("baseUri",settings.baseUri)
-			+ Common.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
-			+ Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
-			+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
-			+ Common.Util.checkEmpty("captcha.use", settings.captcha.use);
+	var _InitSafeCheck = function(callback){
+		$(function(){
+			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));
+			var checkUrl = Common.Util.checkEmpty("baseUri",settings.baseUri)
+				+ Common.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
+				+ Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
+				+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
+				+ Common.Util.checkEmpty("captcha.use", settings.captcha.use);
 
-		// 请求安全预检
-		$.ajax({
-			url: checkUrl,
-			type: "post",
-			xhrFields: {
-				withCredentials: true // Send cookies when support cross-domain request.
-			},
-			dataType: "json",
-			success: function(res){
-				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-				if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
-					settings.account.onError(res.message); // 检查失败回调
-				} else {
-					runtime.safeCheck = res.data; // [MARK3]
-					callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
+			// 请求安全预检
+			$.ajax({
+				url: checkUrl,
+				type: "post",
+				xhrFields: {
+					withCredentials: true // Send cookies when support cross-domain request.
+				},
+				dataType: "json",
+				success: function(res){
+					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+					if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
+						settings.account.onError(res.message); // 检查失败回调
+					} else {
+						runtime.safeCheck = res.data; // [MARK3]
+						callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
+					}
+				},
+				error: function(req, status, errmsg){
+					console.log("Failed to safe check, " + errmsg);
+					settings.account.onError(errmsg); // 登录异常回调
 				}
-			},
-			error: function(req, status, errmsg){
-				console.log("Failed to safe check, " + errmsg);
-				settings.account.onError(errmsg); // 登录异常回调
-			}
+			});
 		});
 	};
 
-	// Account login implement.
-	var accountAuthentication = function(){
+	// Init captcha verifier implement.
+	var _InitCaptchaVerifier = function(){
 		$(function(){
-			// Init bind key-enter login submit.
-			$(document).keydown(function(event){
-				if(event.keyCode == 13){
-					$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
-				}
-			});
+			// 初始刷新验证码
+			resetCaptcha();
 
 			// Init captcha event.
-			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph"){
+			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph") {
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
 				imgInput.attr("maxlength", Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaLen);
@@ -460,11 +458,23 @@
 						}
 					}
 				});
-			}
+			};
+		});
+	};
+
+	// Init Account login implement.
+	var _InitAccountAuthenticator = function(){
+		$(function(){
+			// Init bind key-enter login submit.
+			$(document).keydown(function(event){
+				if(event.keyCode == 13){
+					$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
+				}
+			});
 
 			// Bind login btn click.
 			$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function(){
-				safeCheck(function(checkCaptcha, checkGeneral, checkSms){
+				_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
 					var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal));
 					// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
 					var plainPasswd = Common.Util.getEleValue("account.credential", settings.account.credential);
@@ -533,8 +543,8 @@
 		});
 	};
 
-	// SMS登录
-	var smsAuthentication = function(){
+	// Init SMS authentication implement.
+	var _InitSMSAuthenticator = function(){
 		$(function(){
 			// 绑定申请SMS验证码按钮点击事件
 			$(Common.Util.checkEmpty("sms.sendSmsBtn", settings.sms.sendSmsBtn)).click(function(){
@@ -634,7 +644,7 @@
 		});
 	};
 
-	// 客户端设备类型标识
+	// Client device OS type mark.
 	var clientRef = function(){
 		var clientRef = null;
 		var platformType = Common.Util.PlatformType;
@@ -657,17 +667,16 @@
 	// 暴露API给外部
 	if(!window.IAM){ window.IAM = {}; }
 
-	// 核心功能暴露出去
+	// 暴露Core API
 	window.IAM.Core = {
-		config: function(opt){
-			configure(opt);
+		configure: function(opt){
+			_configure(opt);
 			return this;
 		},
-		accountAuth: function(){
-			accountAuthentication();
-			// 刷新验证码
-			resetCaptcha();
-			// 申请过SMS验证码
+		bindForAccountAuthenticator: function(){
+			_InitAccountAuthenticator();
+
+			// 申请过SMS验证码?
 			if(runtime.safeCheck.checkSms.enabled){
 				// 填充mobile number.
 				$(settings.sms.mobile).val(runtime.safeCheck.checkSms.mobileNum);
@@ -689,12 +698,16 @@
 			}
 			return this;
 		},
-		smsAuth: function(){
-			smsAuthentication();
+		bindForSMSAuthenticator: function(){
+			_InitSMSAuthenticator();
 			return this;
 		},
-		snsAuth: function(){
-			snsAuthentication();
+		bindForSNSAuthenticator: function(){
+			_InitSNSAuthenticator();
+			return this;
+		},
+		bindForCaptchaVerifier: function(){
+			_InitCaptchaVerifier();
 			return this;
 		},
 	};
