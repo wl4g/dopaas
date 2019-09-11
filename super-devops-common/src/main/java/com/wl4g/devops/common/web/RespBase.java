@@ -110,7 +110,25 @@ public class RespBase<T extends Object> implements Serializable {
 		return this;
 	}
 
+	/**
+	 * Setting exception messages only does not set response status code.
+	 * 
+	 * @param th
+	 * @return
+	 */
 	public RespBase<T> setThrowable(Throwable th) {
+		this.message = getRootCausesString(th);
+		return this;
+	}
+
+	/**
+	 * Handle API exceptions, setting exception messages and corresponding
+	 * response status code.
+	 * 
+	 * @param th
+	 * @return
+	 */
+	public RespBase<T> handleError(Throwable th) {
 		this.message = getRootCausesString(th);
 		if (th instanceof BizRuleRestrictRestfulException) {
 			this.code = ((BizRuleRestrictRestfulException) th).getCode();

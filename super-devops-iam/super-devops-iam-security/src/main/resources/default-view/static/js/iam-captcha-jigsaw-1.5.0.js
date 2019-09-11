@@ -16,8 +16,8 @@
         this.$element.css({'width': this.options.width + 'px', 'margin': '0 auto' });
         this.init();
     };
-    _JigsawCaptcha.VERSION = 'v1.2.1';
-    _JigsawCaptcha.Author = '<wanglsir@gmail.com>';
+    _JigsawCaptcha.VERSION = 'v1.5.0';
+    _JigsawCaptcha.Author = '<wanglsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>';
     _JigsawCaptcha.BaseURI = 'http://localhost:8080';
     _JigsawCaptcha.DEFAULTS = {
         width: 280, // canvas宽度
@@ -179,22 +179,18 @@
         };
 		// Apply captcha.
         var applycaptcha = function(){
-            var url = "http://localhost:14040/iam-server/verify/applycaptcha?verifyType=VerifyWithJigsawGraph";
-            if(that.options.applycaptchaUrl){
-                url = that.options.applycaptchaUrl+"?verifyType=VerifyWithJigsawGraph";
-            }
             $.ajax({
-                url: url,
+                url: that.options.applycaptchaUrl,
 				type: 'GET',
-                success: function (result) {
-                    //console.info(result);
-					if(result.code == 200){
-						result = result.data.applyModel;
-						img1.setSrc(result.primaryImg);
-						img2.setSrc(result.blockImg);
-						img2.imagey = result.y;
-						runtime.applyToken = result.applyToken;
-						runtime.secret = result.secret;
+                success: function (res) {
+                    //console.info(res);
+					if(res.code == 200){
+						res = res.data.applyModel;
+						img1.setSrc(res.primaryImg);
+						img2.setSrc(res.blockImg);
+						img2.imagey = res.y;
+						runtime.applyToken = res.applyToken;
+						runtime.secret = res.secret;
 					} else {
 						throw "Failed to apply verification";
 					}
@@ -300,6 +296,7 @@
         document.addEventListener('touchstart', function () { return false; });
         document.addEventListener('swipe', function () { return false; });
     };
+
 	// Verify submit captcha.
     _proto.verify = function () {
         var left = parseInt(this.block.style.left);

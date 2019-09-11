@@ -27,34 +27,63 @@
 			verifyType: null,
 		},
 		verifyAnalyze: {
+			verified: true,
 			verifiedToken: null,
+		},
+		flags: {
+			applying: false,
+			verifying: false,
 		}
 	};
 
 	// DefaultCaptcha配置实现(jpeg/gif验证码)
 	var _defaultCaptchaVerifier = {
 		captchaLen: 5,
-		hide: function() {
-			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
+		cancel: function(destroy) {
 			var imgInput = IAM.Util.checkEmpty("captcha.input", settings.captcha.input);
-			imgInput.val(""); // 清空验证码input
-			$(img).css({"display" : "none"});
-			$(img).attr({"src": ""});
-			$(imgInput).css({"display" : "none"});
-		},
-		show: function() {
 			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
+			// UnBind refresh captcha.
+			$(img).unbind("click");
+			$(img).attr({"src": "./static/images/ok.png"});
+			$(imgInput).attr('disabled',true);
+			$(imgInput).css({"cursor":"context-menu"});
+			if(destroy){
+				$(imgInput).val(""); // 清空验证码input
+				$(imgInput).css({"display":"none"});
+				$(img).attr({"src": ""});
+				$(img).css({"display":"none"});
+			}
+		},
+		required: function() {
+			// Set the current application verify code.
+			runtime.flags.applying = false;
+
 			var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
+			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
 			imgInput.val(""); // 清空验证码input
+			// Bind refresh captcha.
+			$(img).click(function(){ resetCaptcha(); });
 			// 请申请Captcha
-			var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
+			var applycaptchaUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
 						+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
 						+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
-			$.get(captchaApplyUrl, function(res){
+			$.get(applycaptchaUrl, function(res){
+				// Apply captcha completed.
+				runtime.flags.applying = false;
 				runtime.applyCaptcha = res.data.applyModel; // [MARK4]
+				$(imgInput).css({"display":"inline","cursor":"text"});
+				$(imgInput).removeAttr('disabled');
 				$(img).css({"display" : "inline"});
-				$(img).attr("src", res.data.applyModel.primaryImg);
-				$(imgInput).css({"display" : "inline"});
+				var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+				if(!IAM.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
+					$(img).attr("src", res.data.applyModel.primaryImg);
+				} else {
+					$(img).attr("title", res.message); // 如:刷新过快
+					$(img).unbind("click");
+					setTimeout(function(){
+						$(img).click(function(){ resetCaptcha(); });
+					}, 15000); // 至少15sec才能点击刷新
+				}
 			});
 		},
 	};
@@ -105,22 +134,29 @@
 				VerifyWithSimpleGraph: _defaultCaptchaVerifier,
 				VerifyWithGifGraph: _defaultCaptchaVerifier,
 				VerifyWithJigsawGraph: {  // JigsawCaptcha配置实现
-					hide: function() {
+					cancel: function(destroy) {
 						var jigsawPanel = IAM.Util.checkEmpty("captcha.panel", settings.captcha.panel);
-						$(jigsawPanel).css({"display" : "none"});
+						if(destroy){
+							$(jigsawPanel).css({"display":"none"});
+						}
 					},
-					show: function() {
+					required: function() {
+						// Set the current application verify code.
+						runtime.flags.applying = false;
+
 						var jigsawPanel = IAM.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 						$(jigsawPanel).css({"display" : "inline"});
 						// 加载Jigsaw插件滑块
-						var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
+						var applycaptchaUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
 								+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
 								+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
                         $(jigsawPanel).JigsawIamCaptcha({
-                            applycaptchaUrl: captchaApplyUrl,
+                            applycaptchaUrl: applycaptchaUrl,
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
-                                console.debug("Captcha verify successfully. verifiedToken => "+ verifiedToken);
+								console.debug("Captcha verify successfully. verifiedToken => "+ verifiedToken);
+								// Apply captcha completed.
+								runtime.flags.applying = false;
 								IAM.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)();
                             }
                         });
@@ -231,9 +267,9 @@
 	// Reset graph captcha.
 	var resetCaptcha = function(){
 		safeCheck(function(checkCaptcha, checkGeneral, checkSms){
-			if(checkCaptcha.enabled){ // 启用验证码?
+			if(checkCaptcha.enabled && !runtime.flags.applying){ // 启用验证码且不是申请中(防止并发)?
 				// 获取当前配置CaptchaVerifier实例、显示
-				IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().show();
+				IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().required();
 			}
 		});
 	};
@@ -375,26 +411,24 @@
 				var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
 				imgInput.attr("maxlength", IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaLen);
-				// Bind refresh captcha.
-				$(IAM.Util.checkEmpty("captcha.img", settings.captcha.img)).click(function(){
-					resetCaptcha();
-				});
 				// Auto verify simple/gif captcha for key-up event.  [MARK1], see: 'MARK2'
 				imgInput.keyup(function(){
 					if(runtime.safeCheck.checkCaptcha.enabled){ // See: 'MARK3'
-						var captcha = IAM.Util.checkEmpty("input captcha", imgInput.val());
-						if(!IAM.Util.isEmpty(captcha) && captcha.length >= parseInt(imgInput.attr("maxlength"))){ // Submit verifyAnalyze?
+						var captcha = imgInput.val();
+						if(!IAM.Util.isEmpty(captcha) && captcha.length >= parseInt(imgInput.attr("maxlength")) && !runtime.flags.verifying){
+							runtime.flags.verifying = true; // Set verify status.
+
 							// Submission verify analyze captcha.
 							var _check = function(name, params){ return IAM.Util.checkEmpty(name, params) };
 							var _map = new IAM.Util.HashMap();
-							_map.put(_check("definition.responseType", settings.definition.responseType), _check("definition.responseTypeValue", settings.definition.responseTypeValue))
 							_map.put(_check("definition.verifyCodeKey", settings.definition.verifyCodeKey), captcha)
 							_map.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyCaptcha.applyToken", runtime.applyCaptcha.applyToken))
 							_map.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyCaptcha.verifyType", runtime.applyCaptcha.verifyType))
 
 							// Verify analyze URL.
 							var verifyUrl = _check("baseUri",settings.baseUri) + _check("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
-								+_check("definition.verifyTypeKey", settings.definition.verifyTypeKey)+"="+_check("applyCaptcha.verifyType", runtime.applyCaptcha.verifyType);
+								+ _check("definition.verifyTypeKey", settings.definition.verifyTypeKey)+"="+_check("applyCaptcha.verifyType",runtime.applyCaptcha.verifyType)+"&"
+								+ _check("definition.responseType", settings.definition.responseType)+"="+_check("definition.responseTypeValue",settings.definition.responseTypeValue);
 
 							$.ajax({
 								url: verifyUrl,
@@ -405,13 +439,17 @@
 								dataType: "json",
 								contentType:"application/json",
 								data: _map.asJsonString(),
-								success: function(resp){
+								complete: function (XHR, textStatus) {
+									runtime.flags.verifying = false; // Reset verify status.
+								},
+								success: function(res){
 									var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
-									if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
+									if(!IAM.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
 										resetCaptcha();
-										settings.captcha.onError(resp.message); // Call after captcha error.
+										settings.captcha.onError(res.message); // Call after captcha error.
 									} else { // Verify success.
-										
+										runtime.verifyAnalyze = res.data.verifiedModel;
+										IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().cancel(false); // Hide captcha when success.
 									}
 								},
 								error: function(req, status, errmsg){

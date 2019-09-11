@@ -102,7 +102,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		JigsawImgCode code = (JigsawImgCode) storedCode.getCode();
 		JigsawVerifyImgModel model = (JigsawVerifyImgModel) submitCode;
 
-		// Analyze & verification jigsaw image.
+		// Analyze & verification JIGSAW image.
 		boolean matched = doAnalyzingJigsawGraph(code, model);
 		if (log.isInfoEnabled()) {
 			log.info("Jigsaw match result: {}, storedCode: {}, submitCode: {}", matched, code.toString(), model.toString());
