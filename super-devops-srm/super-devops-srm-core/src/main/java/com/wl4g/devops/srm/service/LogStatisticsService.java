@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.srm.service;
 
-import com.wl4g.devops.common.bean.srm.RequestBean;
+import com.wl4g.devops.common.bean.srm.QueryLogModel;
 
 public interface LogStatisticsService {
 
-	Object statisticsLog(RequestBean requestBean) throws Exception;
+	Object statisticsLog(QueryLogModel model) throws Exception;
 }

@@ -16,8 +16,8 @@
 package com.wl4g.devops.srm.service.impl;
 
 import com.wl4g.devops.common.bean.srm.Log;
-import com.wl4g.devops.common.bean.srm.Querycriteria;
 import com.wl4g.devops.common.bean.srm.QueryLogModel;
+import com.wl4g.devops.common.bean.srm.Querycriteria;
 import com.wl4g.devops.common.constants.SRMDevOpsConstants;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.srm.handler.LogHandler;
@@ -35,6 +35,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -150,15 +152,33 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 	}*/
 
 	@Override
-	public List<Log> console(QueryLogModel model) throws Exception {
+	public List<String> console(QueryLogModel model) throws Exception {
 		Assert.notNull(model,"params is error");
 		Assert.hasText(model.getIndex(),"index is null");
+
+		//set default
 		if(model.getLimit()==null||model.getLimit()==0){
 			model.setLimit(10);
 		}
 
+		//build index
+		String index = model.getIndex();
+		Long startTime = model.getStartTime();
+		Date startTimeD = null;
+		if(null==startTime||startTime==0){
+			startTimeD = new Date();
+		}else{
+			startTimeD = new Date(startTime);
+		}
 
-		return console(model.getIndex(),model.getStartTime(),model.getEndTIme(),model.getFrom(),model.getLimit(),model.getQueryList(),model.getLevel());
+		index =  index + "-" + DateUtils.formatDate(startTimeD);
+
+		List<Log> console = console(index, model.getStartTime(), model.getEndTime(), model.getFrom(), model.getLimit(), model.getQueryList(), model.getLevel());
+		List<String> result = new ArrayList();
+		for(Log log : console){
+			result.add(log.getMessage());
+		}
+		return result;
 	}
 
 
@@ -193,7 +213,7 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 		}
 
 		//fix time range
-		if(null!=startTime&&null!=endTime){
+		if(null!=startTime&&null!=endTime&&(endTime!=0||startTime!=0)){
 			RangeQueryBuilder rqb = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString());
 			if(null!=startTime){
 				rqb.gte(DateUtils.timeStampToUTC(startTime));

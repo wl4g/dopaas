@@ -15,17 +15,20 @@
  */
 package com.wl4g.devops.srm.admin;
 
-import com.wl4g.devops.common.bean.srm.RequestBean;
+import com.wl4g.devops.common.bean.srm.QueryLogModel;
+import com.wl4g.devops.srm.service.LogConsoleService;
 import com.wl4g.devops.srm.service.LogStatisticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,20 +37,24 @@ public class LogStatisticsController {
     @Autowired
     LogStatisticsService logStatisticsService;
 
+    @Autowired
+    LogConsoleService logConsoleService;
+
     private final static Logger logger = LoggerFactory.getLogger(LogStatisticsController.class);
 
     @RequestMapping("/statisticsLog")
     @ResponseBody
-    public Object statisticsLog(@RequestBody RequestBean requestBean) throws Exception{
+    public Object statisticsLog(@Validated @RequestBody QueryLogModel model) throws Exception{
         Map<String,Object> parm = new HashMap<>();
         try {
-            Object result = logStatisticsService.statisticsLog(requestBean);
+            //Object result = logStatisticsService.statisticsLog(model);
+            List<String> console = logConsoleService.console(model);
             parm.put("code",200);
-            parm.put("data",result);
+            parm.put("data",console.size());
         } catch (Exception e) {
             parm.put("code",201);
             parm.put("message","调用接口异常");
-            logger.info("requestBean:{}",requestBean);
+            logger.info("requestBean:{}",model);
         }
         return parm;
     }

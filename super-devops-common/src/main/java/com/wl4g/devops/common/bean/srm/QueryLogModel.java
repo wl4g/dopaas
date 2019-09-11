@@ -23,7 +23,7 @@ public class QueryLogModel {
 	@NotBlank
 	private String index;
 	private Long startTime;
-	private Long endTIme;
+	private Long endTime;
 	private Integer from;
 	private Integer limit;
 	private Integer level;
@@ -53,12 +53,12 @@ public class QueryLogModel {
 		this.startTime = startTime;
 	}
 
-	public Long getEndTIme() {
-		return endTIme;
+	public Long getEndTime() {
+		return endTime;
 	}
 
-	public void setEndTIme(Long endTIme) {
-		this.endTIme = endTIme;
+	public void setEndTime(Long endTime) {
+		this.endTime = endTime;
 	}
 
 	public Integer getLevel() {
