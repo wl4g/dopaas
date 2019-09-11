@@ -1,6 +1,6 @@
 /**
- * Common util v1.2.1 | (c) 2017, 2022 wl4g Foundation, Inc.
- * Copyright 2017-2032 <wangsir@gmail.com>, Inc. x
+ * Common util v1.5.0 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
