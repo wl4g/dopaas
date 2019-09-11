@@ -22,15 +22,15 @@
     _JigsawCaptcha.DEFAULTS = {
         width: 280, // canvas宽度
         height: 155, // canvas高度
-        loadingText: IAM.Util.isZhCN()?'加载中...':'Loading...',
-        failedText: IAM.Util.isZhCN()?'再试一次':"Let\'s try again?",
-        barText: IAM.Util.isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
+        loadingText: Common.Util.isZhCN()?'加载中...':'Loading...',
+        failedText: Common.Util.isZhCN()?'再试一次':"Let\'s try again?",
+        barText: Common.Util.isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
         repeatIcon: 'fa fa-repeat',
         applycaptchaUrl: null,
         verify: function (arr, left) {
 			// Additional algorithmic salt.
 			left = new String(left);
-			var applyTokenCrc = IAM.Util.Crc16CheckSum.crc16Modbus(runtime.applyToken);
+			var applyTokenCrc = Common.Util.Crc16CheckSum.crc16Modbus(runtime.applyToken);
 			var tmpX = IAM.Crypto.sha512WithHex(left + runtime.applyToken).substring(31, 97) + (left*applyTokenCrc);
             // Do encryption x-position.
 			var cipherX = IAM.Crypto.rivestShamirAdleman(runtime.secret, tmpX);
@@ -100,7 +100,7 @@
         var cardHeader = createElement('div', 'card-header');
 		cardHeader.style.paddingLeft="20px";
 		cardHeader.style.paddingTop="5px";
-        var cardHeaderText = createElementValue('span', IAM.Util.isZhCN()?'请完成人机验证':'Please complete man-machine verification');
+        var cardHeaderText = createElementValue('span', Common.Util.isZhCN()?'请完成人机验证':'Please complete man-machine verification');
         var cardBody = createElement('div', 'card-body2');
 
         var canvas = createCanvas(this.options.width - 2, this.options.height); // 画布

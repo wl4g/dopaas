@@ -1,5 +1,5 @@
 /**
- * Iam v1.2.1 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Iam core v1.2.1 | (c) 2017, 2022 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
@@ -40,8 +40,8 @@
 	var _defaultCaptchaVerifier = {
 		captchaLen: 5,
 		cancel: function(destroy) {
-			var imgInput = IAM.Util.checkEmpty("captcha.input", settings.captcha.input);
-			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
+			var imgInput = Common.Util.checkEmpty("captcha.input", settings.captcha.input);
+			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
 			// UnBind refresh captcha.
 			$(img).unbind("click");
 			$(img).attr({"src": "./static/images/ok.png"});
@@ -58,15 +58,15 @@
 			// Set the current application verify code.
 			runtime.flags.applying = false;
 
-			var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
-			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
+			var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
+			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
 			imgInput.val(""); // 清空验证码input
 			// Bind refresh captcha.
 			$(img).click(function(){ resetCaptcha(); });
 			// 请申请Captcha
-			var applycaptchaUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
-						+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
-						+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
+			var applycaptchaUrl = Common.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
+						+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
+						+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
 			$.get(applycaptchaUrl, function(res){
 				// Apply captcha completed.
 				runtime.flags.applying = false;
@@ -74,8 +74,8 @@
 				$(imgInput).css({"display":"inline","cursor":"text"});
 				$(imgInput).removeAttr('disabled');
 				$(img).css({"display" : "inline"});
-				var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-				if(!IAM.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
+				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+				if(!Common.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
 					$(img).attr("src", res.data.applyModel.primaryImg);
 				} else {
 					$(img).attr("title", res.message); // 如:刷新过快
@@ -121,8 +121,8 @@
 			img: null,
 			input: null,
 			getVerifier: function(){ // Get verifier(captcha) instance.
-				var _type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
-				var _registry = IAM.Util.checkEmpty("captcha.registry", settings.captcha.registry);
+				var _type = Common.Util.checkEmpty("captcha.use", settings.captcha.use);
+				var _registry = Common.Util.checkEmpty("captcha.registry", settings.captcha.registry);
 				for(var type in _registry){
 					if(type == _type){
 						return _registry[type];
@@ -135,7 +135,7 @@
 				VerifyWithGifGraph: _defaultCaptchaVerifier,
 				VerifyWithJigsawGraph: {  // JigsawCaptcha配置实现
 					cancel: function(destroy) {
-						var jigsawPanel = IAM.Util.checkEmpty("captcha.panel", settings.captcha.panel);
+						var jigsawPanel = Common.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 						if(destroy){
 							$(jigsawPanel).css({"display":"none"});
 						}
@@ -144,12 +144,12 @@
 						// Set the current application verify code.
 						runtime.flags.applying = false;
 
-						var jigsawPanel = IAM.Util.checkEmpty("captcha.panel", settings.captcha.panel);
+						var jigsawPanel = Common.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 						$(jigsawPanel).css({"display" : "inline"});
 						// 加载Jigsaw插件滑块
-						var applycaptchaUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
-								+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
-								+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
+						var applycaptchaUrl = Common.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
+								+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
+								+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
                         $(jigsawPanel).JigsawIamCaptcha({
                             applycaptchaUrl: applycaptchaUrl,
                             repeatIcon: 'fa fa-redo',
@@ -157,7 +157,7 @@
 								console.debug("Captcha verify successfully. verifiedToken => "+ verifiedToken);
 								// Apply captcha completed.
 								runtime.flags.applying = false;
-								IAM.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)();
+								Common.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)();
                             }
                         });
 					},
@@ -243,16 +243,16 @@
 
 	// 请求连接到第三方社交网络URL
 	var getConnectUrl = function(provider, panelType){
-		var required = IAM.Util.checkEmpty("sns.required",settings.sns.required);
-		var which = IAM.Util.checkEmpty("required.which",required.which(provider, panelType));
-		var url = settings.baseUri + IAM.Util.checkEmpty("definition.snsConnectUri",settings.definition.snsConnectUri) + IAM.Util.checkEmpty("provider",provider)
-			+ "?" + IAM.Util.checkEmpty("definition.whichKey",settings.definition.whichKey) + "=" + which;
+		var required = Common.Util.checkEmpty("sns.required",settings.sns.required);
+		var which = Common.Util.checkEmpty("required.which",required.which(provider, panelType));
+		var url = settings.baseUri + Common.Util.checkEmpty("definition.snsConnectUri",settings.definition.snsConnectUri) + Common.Util.checkEmpty("provider",provider)
+			+ "?" + Common.Util.checkEmpty("definition.whichKey",settings.definition.whichKey) + "=" + which;
 		// 若当前是绑定操作，则需传入 principal、refreshUrl
 		if(which.toLowerCase() == "bind" || which.toLowerCase() == "unbind"){
-			var principal = encodeURIComponent(IAM.Util.getEleValue("account.principal", settings.account.principal)); // 登录名
-			var refreshUrl = encodeURIComponent(IAM.Util.checkEmpty("sns.required.refreshUrl", settings.sns.required.refreshUrl)); // 回调刷新URL
-			url += "&" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal;
-			url += "&" + IAM.Util.checkEmpty("definition.refreshUrlKey",settings.definition.refreshUrlKey) + "=" + refreshUrl;
+			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal)); // 登录名
+			var refreshUrl = encodeURIComponent(Common.Util.checkEmpty("sns.required.refreshUrl", settings.sns.required.refreshUrl)); // 回调刷新URL
+			url += "&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal;
+			url += "&" + Common.Util.checkEmpty("definition.refreshUrlKey",settings.definition.refreshUrlKey) + "=" + refreshUrl;
 		}
 
 		// window.open新开的窗体授权登录（如：qq的PC端授权登录是鼠标操作、sina是输入账号密码）
@@ -269,7 +269,7 @@
 		safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 			if(checkCaptcha.enabled && !runtime.flags.applying){ // 启用验证码且不是申请中(防止并发)?
 				// 获取当前配置CaptchaVerifier实例、显示
-				IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().required();
+				Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().required();
 			}
 		});
 	};
@@ -282,8 +282,8 @@
 			var qrcodeIframeId = "iam_qrcode_panel_iframe";
 			var qrcodeIframe = document.querySelector('#'+qrcodeIframeId);
 			if(qrcodeIframe == null || qrcodeIframe.length <= 0){
-				var qrcodePanel = IAM.Util.checkEmpty("sns.qrcodePanel", settings.sns.qrcodePanel);
-				var qrcodePanelSrc = IAM.Util.checkEmpty("qrcodePanel.src", qrcodePanel.src);
+				var qrcodePanel = Common.Util.checkEmpty("sns.qrcodePanel", settings.sns.qrcodePanel);
+				var qrcodePanelSrc = Common.Util.checkEmpty("qrcodePanel.src", qrcodePanel.src);
 				var qrcodePanelW = qrcodePanel.width || "250";
 				var qrcodePanelH = qrcodePanel.height || "260";
 				qrcodeIframe = document.createElement("iframe"); // 初始化创建iframe
@@ -307,7 +307,7 @@
 				}
 			}, 2);
 		} else if ("pagePanel" == panelType) { // 渲染授权页面面板配置
-			var pagePanel = IAM.Util.checkEmpty("sns.pagePanel", settings.sns.pagePanel);
+			var pagePanel = Common.Util.checkEmpty("sns.pagePanel", settings.sns.pagePanel);
 			var modal = pagePanel.modal || "yes";
 			var width = pagePanel.width || "800px";
 			var height = pagePanel.height || "500px";
@@ -321,7 +321,7 @@
 				var refreshUrl = window.document.getElementsByTagName("body")[0].getAttribute("refreshUrl");
 				if(oauth2ChildWindow != null && oauth2ChildWindow.closed) {
 					clearInterval(monitor);
-					if(!IAM.Util.isEmpty(refreshUrl)){ // 可能未授权(用户直接点击了关闭子窗体),只有绑定的refreshUrl不为空时才表示授权成功
+					if(!Common.Util.isEmpty(refreshUrl)){ // 可能未授权(用户直接点击了关闭子窗体),只有绑定的refreshUrl不为空时才表示授权成功
 						// Jump to callback refreshUrl
 						window.location.href = refreshUrl;
 					}
@@ -334,13 +334,13 @@
 
 	// SNS authorize login implement.
 	var snsAuthentication = function(){
-		var providerMap = IAM.Util.checkEmpty("sns.provider", settings.sns.provider);
+		var providerMap = Common.Util.checkEmpty("sns.provider", settings.sns.provider);
 		for(var provider in providerMap){ // provider为服务商名
 			// 获取服务商配置信息
 			var providerValue = providerMap[provider];
 			// 获取点击触发源对象
-			var src = IAM.Util.checkEmpty(provider + ".src", providerValue.src);
-			var panelType = IAM.Util.checkEmpty(provider + ".panelType", providerValue.panelType);
+			var src = Common.Util.checkEmpty(provider + ".src", providerValue.src);
+			var panelType = Common.Util.checkEmpty(provider + ".panelType", providerValue.panelType);
 			src.setAttribute("provider", provider); // 保存SNS服务商名
 			src.setAttribute("panelType", panelType); // 请求SNS服务商授权时，显示确认授权页面的面板类型
 			src.onclick = function(event){
@@ -365,12 +365,12 @@
 
 	// Before safe check.
 	var safeCheck = function(callback){
-		var principal = encodeURIComponent(IAM.Util.getEleValue("account.principal", settings.account.principal, false));
-		var checkUrl = IAM.Util.checkEmpty("baseUri",settings.baseUri)
-			+ IAM.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
-			+ IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
-			+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
-			+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
+		var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));
+		var checkUrl = Common.Util.checkEmpty("baseUri",settings.baseUri)
+			+ Common.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
+			+ Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
+			+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
+			+ Common.Util.checkEmpty("captcha.use", settings.captcha.use);
 
 		// 请求安全预检
 		$.ajax({
@@ -381,8 +381,8 @@
 			},
 			dataType: "json",
 			success: function(res){
-				var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-				if(!IAM.Util.isEmpty(res) && (res.code != codeOkValue)){
+				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+				if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
 					settings.account.onError(res.message); // 检查失败回调
 				} else {
 					runtime.safeCheck = res.data; // [MARK3]
@@ -402,25 +402,25 @@
 			// Init bind key-enter login submit.
 			$(document).keydown(function(event){
 				if(event.keyCode == 13){
-					$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
+					$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
 				}
 			});
 
 			// Init captcha event.
 			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph"){
-				var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
+				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
-				imgInput.attr("maxlength", IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaLen);
+				imgInput.attr("maxlength", Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaLen);
 				// Auto verify simple/gif captcha for key-up event.  [MARK1], see: 'MARK2'
 				imgInput.keyup(function(){
 					if(runtime.safeCheck.checkCaptcha.enabled){ // See: 'MARK3'
 						var captcha = imgInput.val();
-						if(!IAM.Util.isEmpty(captcha) && captcha.length >= parseInt(imgInput.attr("maxlength")) && !runtime.flags.verifying){
+						if(!Common.Util.isEmpty(captcha) && captcha.length >= parseInt(imgInput.attr("maxlength")) && !runtime.flags.verifying){
 							runtime.flags.verifying = true; // Set verify status.
 
 							// Submission verify analyze captcha.
-							var _check = function(name, params){ return IAM.Util.checkEmpty(name, params) };
-							var _map = new IAM.Util.HashMap();
+							var _check = function(name, params){ return Common.Util.checkEmpty(name, params) };
+							var _map = new Common.Util.FastMap();
 							_map.put(_check("definition.verifyCodeKey", settings.definition.verifyCodeKey), captcha)
 							_map.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyCaptcha.applyToken", runtime.applyCaptcha.applyToken))
 							_map.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyCaptcha.verifyType", runtime.applyCaptcha.verifyType))
@@ -444,12 +444,12 @@
 								},
 								success: function(res){
 									var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
-									if(!IAM.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
+									if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
 										resetCaptcha();
 										settings.captcha.onError(res.message); // Call after captcha error.
 									} else { // Verify success.
 										runtime.verifyAnalyze = res.data.verifiedModel;
-										IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().cancel(false); // Hide captcha when success.
+										Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().cancel(false); // Hide captcha when success.
 									}
 								},
 								error: function(req, status, errmsg){
@@ -463,22 +463,22 @@
 			}
 
 			// Bind login btn click.
-			$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function(){
+			$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function(){
 				safeCheck(function(checkCaptcha, checkGeneral, checkSms){
-					var principal = encodeURIComponent(IAM.Util.getEleValue("account.principal", settings.account.principal));
+					var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal));
 					// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
-					var plainPasswd = IAM.Util.getEleValue("account.credential", settings.account.credential);
-					var secret = IAM.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
+					var plainPasswd = Common.Util.getEleValue("account.credential", settings.account.credential);
+					var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
 					var credentials = encodeURIComponent(IAM.Crypto.rivestShamirAdleman(secret, plainPasswd));
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
 						verifiedToken = runtime.verifyAnalyze.verifiedToken; // [MARK2], see: 'MARK1'
-						if(IAM.Util.isEmpty(verifiedToken)){ // Required
+						if(Common.Util.isEmpty(verifiedToken)){ // Required
 							throw "Failed to complete verify captcha check auto?, argument verifiedToken is null.";
 						}
 					}
 					// Check principal/credentials.
-					if(IAM.Util.isAnyEmpty(principal, credentials)){
+					if(Common.Util.isAnyEmpty(principal, credentials)){
 						settings.account.onError("No empty login name or password allowed");
 						return;
 					}
@@ -489,14 +489,14 @@
 					}
 
 					// Submission URL
-					var loginSubmitUrl = IAM.Util.checkEmpty("baseUri",settings.baseUri)
-						+ IAM.Util.checkEmpty("definition.accountSubmitUri",settings.definition.accountSubmitUri) + "?"
-						+ IAM.Util.checkEmpty("definition.responseType",settings.definition.responseType) + "="
-						+ IAM.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
-						+ "&" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
-						+ "&" + IAM.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
-						+ "&" + IAM.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + verifiedToken
-						+ "&" + IAM.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
+					var loginSubmitUrl = Common.Util.checkEmpty("baseUri",settings.baseUri)
+						+ Common.Util.checkEmpty("definition.accountSubmitUri",settings.definition.accountSubmitUri) + "?"
+						+ Common.Util.checkEmpty("definition.responseType",settings.definition.responseType) + "="
+						+ Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
+						+ "&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
+						+ "&" + Common.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
+						+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + verifiedToken
+						+ "&" + Common.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
 
 					// Submission
 					$.ajax({
@@ -507,18 +507,18 @@
 						},
 						dataType: "json",
 						beforeSend: function(){
-							$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
+							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
 						},
 						complete: function (XHR, textStatus) {
-							$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
+							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 						},
 						success: function(resp){
-							var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-							if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
+							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+							if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
 								resetCaptcha(); // 刷新验证码
 								settings.account.onError(resp.message); // 登录失败回调
 							} else { // 登录成功，直接重定向
-								var redirectUrl = IAM.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
+								var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.account.onSuccess(principal, redirectUrl)){
 									window.location.href = redirectUrl;
 								}
@@ -537,28 +537,28 @@
 	var smsAuthentication = function(){
 		$(function(){
 			// 绑定申请SMS验证码按钮点击事件
-			$(IAM.Util.checkEmpty("sms.sendSmsBtn", settings.sms.sendSmsBtn)).click(function(){
+			$(Common.Util.checkEmpty("sms.sendSmsBtn", settings.sms.sendSmsBtn)).click(function(){
 				// 获取手机号
-				var mobileArea = IAM.Util.getEleValue("sms.mobileArea", settings.sms.mobileArea, false);
-				var mobileNum = mobileArea + IAM.Util.getEleValue("sms.mobile", settings.sms.mobile, false);
-				if(IAM.Util.isEmpty(mobileNum)){
+				var mobileArea = Common.Util.getEleValue("sms.mobileArea", settings.sms.mobileArea, false);
+				var mobileNum = mobileArea + Common.Util.getEleValue("sms.mobile", settings.sms.mobile, false);
+				if(Common.Util.isEmpty(mobileNum)){
 					settings.sms.onError("SMS login for mobile number is required.");
 					return;
 				}
 
 				// 检查输入的验证码
-				var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
+				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				var captcha = imgInput.val();
 				if(runtime.safeCheck.captchaEnabled){ // 启用时才检查
-					if(IAM.Util.isEmpty(captcha) || captcha.length < imgInput.attr("maxlength")){ // 检查验证码
+					if(Common.Util.isEmpty(captcha) || captcha.length < imgInput.attr("maxlength")){ // 检查验证码
 						settings.account.onError("Illegal length of captcha input");
 						return;
 					}
 				}
 
-				var url = IAM.Util.checkEmpty("baseUri",settings.baseUri) + IAM.Util.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
-					+ "?" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + encodeURIComponent(mobileNum)
-					+ "&" + IAM.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + captcha;
+				var url = Common.Util.checkEmpty("baseUri",settings.baseUri) + Common.Util.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
+					+ "?" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + encodeURIComponent(mobileNum)
+					+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + captcha;
 				// 请求申请SMS验证码
 				$.ajax({
 					url: url,
@@ -568,9 +568,9 @@
 					},
 					dataType: "json",
 					success: function (resp) {
-						var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 						// 登录失败
-						if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){
+						if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
 							settings.sms.onError(resp.message); // 申请失败回调
 						} else {
 							settings.sms.onSuccess(resp); // 申请成功回调
@@ -596,20 +596,20 @@
 				});
 			});
 			// 绑定SMS登录提交按钮点击事件
-			$(IAM.Util.checkEmpty("sms.submitBtn", settings.sms.submitBtn)).click(function(){
+			$(Common.Util.checkEmpty("sms.submitBtn", settings.sms.submitBtn)).click(function(){
 				// 获取手机号
-				var mobileArea = IAM.Util.getEleValue("sms.mobileArea", settings.sms.mobileArea, false);
-				var mobileNum = mobileArea + IAM.Util.getEleValue("sms.mobile", settings.sms.mobile, false);
-				var smsCode = IAM.Util.getEleValue("sms.smsCode", settings.sms.smsCode, false);
+				var mobileArea = Common.Util.getEleValue("sms.mobileArea", settings.sms.mobileArea, false);
+				var mobileNum = mobileArea + Common.Util.getEleValue("sms.mobile", settings.sms.mobile, false);
+				var smsCode = Common.Util.getEleValue("sms.smsCode", settings.sms.smsCode, false);
 
 				// 提交SMS登录之前回调
 				if(!settings.sms.onBeforeSubmit(mobileNum, smsCode)){
 					return;
 				}
 
-				var url = IAM.Util.checkEmpty("baseUri",settings.baseUri)+IAM.Util.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)
-					+ "?action=login&" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + mobileNum
-					+ "&" + IAM.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + smsCode;
+				var url = Common.Util.checkEmpty("baseUri",settings.baseUri)+Common.Util.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)
+					+ "?action=login&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + mobileNum
+					+ "&" + Common.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + smsCode;
 				$.ajax({
 					url: url,
 					type: "post",
@@ -618,8 +618,8 @@
 					},
 					dataType: "json",
 					success: function (resp) {
-						var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-						if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){
+						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+						if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
 							settings.sms.onError(resp.message); // SMS登录失败回调
 						} else {
 							settings.sms.onSuccess(resp); // SMS登录成功回调
@@ -637,7 +637,7 @@
 	// 客户端设备类型标识
 	var clientRef = function(){
 		var clientRef = null;
-		var platformType = IAM.Util.PlatformType;
+		var platformType = Common.Util.PlatformType;
 		if(platformType.WINDOWS){
 			clientRef = "windows";
 		} else if (platformType.WECHAT) {
@@ -656,312 +656,6 @@
 
 	// 暴露API给外部
 	if(!window.IAM){ window.IAM = {}; }
-
-	// 通用工具类
-	window.IAM.Util = {
-		getEleValue: function(name, obj){
-			return getEleValue(name, obj, true);
-		},
-		getEleValue: function(name, obj, assertion){
-			if(!assertion) {
-				return $(obj).val();
-			}
-			return IAM.Util.checkEmpty(name, $(obj).val());
-		},
-		checkEmpty: function(name, param){
-			if(IAM.Util.isEmpty(param)){
-				throw "Argument '" + name + "' must not be empty";
-			}
-			return param;
-		},
-		empty: function(param){
-			if(IAM.Util.isEmpty(param)){
-				return "";
-			}
-			return param;
-		},
-		isEmpty: function(param){
-			if(param == null || param == undefined || param == '')
-				return true;
-			else if(IAM.Util.isFunction(param))
-				return false;
-			else
-				return param.length == 0;
-		},
-		isAnyEmpty: function(params){
-			for(var i = 0; i < arguments.length; i++){
-				if(IAM.Util.isEmpty(arguments[i]))
-					return true;
-			}
-			return false;
-		},
-		isAnyContains: function(params, search){
-			if(!IAM.Util.isArray(IAM.Util.checkEmpty("Arguments", params))){
-				throw "Argument must is type of Array";
-			}
-			for(var i = 0; i < params.length; i++){
-				if(params[i] == search)
-					return true;
-			}
-			return false;
-		},
-		isArray : function (obj) {
-		    return Object.prototype.toString.call(obj) === '[object Array]';
-		},
-		isObject : function (obj) {
-		    return Object.prototype.toString.call(obj) === '[object Object]';
-		},
-		isFunction : function (obj) {
-		    return Object.prototype.toString.call(obj) === '[object Function]';
-		},
-		isString : function (obj) {
-		    return Object.prototype.toString.call(obj) === '[object String]';
-		},
-		getCookie: function(cookieName){
-			var cookiesArr = document.cookie.split(";");
-			for(var i=0; i < cookiesArr.length; i++){
-				var cookie = cookiesArr[i].split("=");
-				var value = cookie[1];
-				if(cookie[0].trim() == cookieName.trim()){
-					return value;
-				}
-			}
-		},
-		isEnabled: function(value){
-			if(!IAM.Util.isEmpty(value)){
-				value = value.toLowerCase();
-				return  (value == "y" || value == "on" || value == "yes" || value == "1" || value == "enabled" || value == "true" || value == "t");
-			}
-			return false;
-		},
-		clone: function(obj) { // 或使用JSON.parse(JSON.stringify(oldObj))实现深度拷贝，注意：Object.assign(oldObj,newObj)只能浅层拷贝
-			if(!IAM.Util.isEmpty(obj)){
-				var newobj = obj.constructor === Array ? [] : {};
-				if (typeof obj !== "object") {
-					return obj;
-				} else {
-					for (var i in obj) {
-						newobj[i] = typeof obj[i] === "object" ? IAM.Util.clone(obj[i]) : obj[i];
-					}
-				}
-				return newobj;
-			}
-			return null;
-		},
-		PlatformType: (function() {
-		    var ua = navigator.userAgent.toLowerCase();
-		    var mua = {
-		        WECHAT: /micromessenger/.test(ua), //WeChat MicroMessenger
-		        IOS: /ipod|iphone|ipad/.test(ua), //iOS
-		       	MAC: /macintosh|mac os/.test(ua), // Mac
-		        IPHONE: /iphone/.test(ua), //iPhone
-		        IPAD: /ipad/.test(ua), //iPad
-		        ANDROID: /android/.test(ua), //Android Device
-		        WINDOWS: /windows/.test(ua), //Windows Device
-		        TOUCH_DEVICE: ('ontouchstart' in window) || /touch/.test(ua), //Touch Device
-		        MOBILE: /mobile/.test(ua), //Mobile Device (iPad)
-		        ANDROID_TABLET: false, //Android Tablet
-		        WINDOWS_TABLET: false, //Windows Tablet
-		        TABLET: false, //Tablet (iPad, Android, Windows)
-		        SMART_PHONE: false //Smart Phone (iPhone, Android)
-		    };
-		    mua.ANDROID_TABLET = mua.ANDROID && !mua.MOBILE;
-		    mua.WINDOWS_TABLET = mua.WINDOWS && /tablet/.test(ua);
-		    mua.TABLET = mua.IPAD || mua.ANDROID_TABLET || mua.WINDOWS_TABLET;
-		    mua.SMART_PHONE = mua.MOBILE && !mua.TABLET;
-		    return mua;
-		})(),
-		int2char(n) {
-		    return "0123456789abcdefghijklmnopqrstuvwxyz".charAt(n);
-		},
-		language() {
-		    return (navigator.language || navigator.browserLanguage || navigator.systemLanguage).toLowerCase();
-		},
-		isZhCN() {
-		    return IAM.Util.language().indexOf('zh') >= 0;
-		},
-		base64ToHex(s) { // convert a base64 string to hex
-		    var ret = "";
-		    var i;
-		    var k = 0; // b64 state, 0-3
-		    var slop = 0;
-		    for (i = 0; i < s.length; ++i) {
-		        if (s.charAt(i) == "=") {
-		            break;
-		        }
-		        var v = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".indexOf(s.charAt(i));
-		        if (v < 0) {
-		            continue;
-		        }
-		        if (k == 0) {
-		            ret += IAM.Util.int2char(v >> 2);
-		            slop = v & 3;
-		            k = 1;
-		        }
-		        else if (k == 1) {
-		            ret += IAM.Util.int2char((slop << 2) | (v >> 4));
-		            slop = v & 0xf;
-		            k = 2;
-		        }
-		        else if (k == 2) {
-		            ret += IAM.Util.int2char(slop);
-		            ret += IAM.Util.int2char(v >> 2);
-		            slop = v & 3;
-		            k = 3;
-		        }
-		        else {
-		            ret += IAM.Util.int2char((slop << 2) | (v >> 4));
-		            ret += IAM.Util.int2char(v & 0xf);
-		            k = 0;
-		        }
-		    }
-		    if (k == 1) {
-		        ret += IAM.Util.int2char(slop << 2);
-		    }
-		    return ret;
-		},
-		Crc16CheckSum: {
-			_auchCRCHi : [
-				0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,
-				0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-				0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0,
-				0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-				0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1,
-				0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
-				0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1,
-				0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-				0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,
-				0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40,
-				0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1,
-				0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-				0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,
-				0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40,
-				0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0,
-				0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
-				0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,
-				0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-				0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0,
-				0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-				0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0,
-				0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40,
-				0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1,
-				0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
-				0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,
-				0x80, 0x41, 0x00, 0xC1, 0x81, 0x40
-			],
-			_auchCRCLo : [
-				0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06,
-				0x07, 0xC7, 0x05, 0xC5, 0xC4, 0x04, 0xCC, 0x0C, 0x0D, 0xCD,
-				0x0F, 0xCF, 0xCE, 0x0E, 0x0A, 0xCA, 0xCB, 0x0B, 0xC9, 0x09,
-				0x08, 0xC8, 0xD8, 0x18, 0x19, 0xD9, 0x1B, 0xDB, 0xDA, 0x1A,
-				0x1E, 0xDE, 0xDF, 0x1F, 0xDD, 0x1D, 0x1C, 0xDC, 0x14, 0xD4,
-				0xD5, 0x15, 0xD7, 0x17, 0x16, 0xD6, 0xD2, 0x12, 0x13, 0xD3,
-				0x11, 0xD1, 0xD0, 0x10, 0xF0, 0x30, 0x31, 0xF1, 0x33, 0xF3,
-				0xF2, 0x32, 0x36, 0xF6, 0xF7, 0x37, 0xF5, 0x35, 0x34, 0xF4,
-				0x3C, 0xFC, 0xFD, 0x3D, 0xFF, 0x3F, 0x3E, 0xFE, 0xFA, 0x3A,
-				0x3B, 0xFB, 0x39, 0xF9, 0xF8, 0x38, 0x28, 0xE8, 0xE9, 0x29,
-				0xEB, 0x2B, 0x2A, 0xEA, 0xEE, 0x2E, 0x2F, 0xEF, 0x2D, 0xED,
-				0xEC, 0x2C, 0xE4, 0x24, 0x25, 0xE5, 0x27, 0xE7, 0xE6, 0x26,
-				0x22, 0xE2, 0xE3, 0x23, 0xE1, 0x21, 0x20, 0xE0, 0xA0, 0x60,
-				0x61, 0xA1, 0x63, 0xA3, 0xA2, 0x62, 0x66, 0xA6, 0xA7, 0x67,
-				0xA5, 0x65, 0x64, 0xA4, 0x6C, 0xAC, 0xAD, 0x6D, 0xAF, 0x6F,
-				0x6E, 0xAE, 0xAA, 0x6A, 0x6B, 0xAB, 0x69, 0xA9, 0xA8, 0x68,
-				0x78, 0xB8, 0xB9, 0x79, 0xBB, 0x7B, 0x7A, 0xBA, 0xBE, 0x7E,
-				0x7F, 0xBF, 0x7D, 0xBD, 0xBC, 0x7C, 0xB4, 0x74, 0x75, 0xB5,
-				0x77, 0xB7, 0xB6, 0x76, 0x72, 0xB2, 0xB3, 0x73, 0xB1, 0x71,
-				0x70, 0xB0, 0x50, 0x90, 0x91, 0x51, 0x93, 0x53, 0x52, 0x92,
-				0x96, 0x56, 0x57, 0x97, 0x55, 0x95, 0x94, 0x54, 0x9C, 0x5C,
-				0x5D, 0x9D, 0x5F, 0x9F, 0x9E, 0x5E, 0x5A, 0x9A, 0x9B, 0x5B,
-				0x99, 0x59, 0x58, 0x98, 0x88, 0x48, 0x49, 0x89, 0x4B, 0x8B,
-				0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
-				0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42,
-				0x43, 0x83, 0x41, 0x81, 0x80, 0x40
-			],
-			crc16Modbus : function (obj) {
-				var buffer = Object.prototype.toString.call(obj) === '[object Array]' ? obj : IAM.Util.Crc16CheckSum.strToByte(obj);
-				var ucCRCHi = (0xffff & 0xff00) >> 8;
-				var ucCRCLo = 0xffff & 0x00ff;
-				var iIndex;
-				for (var i = 0; i < buffer.length; ++i) {
-					iIndex = (ucCRCLo ^ buffer[i]) & 0x00ff;
-					ucCRCLo = ucCRCHi ^ IAM.Util.Crc16CheckSum._auchCRCHi[iIndex];
-					ucCRCHi = IAM.Util.Crc16CheckSum._auchCRCLo[iIndex];
-				}
-				return ((ucCRCHi & 0x00ff) << 8) | (ucCRCLo & 0x00ff) & 0xffff;
-			},
-			strToByte : function (str) {
-				var tmp = str.split(''), arr = [];
-				for (var i = 0, c = tmp.length; i < c; i++) {
-					var j = encodeURI(tmp[i]);
-					if (j.length == 1) {
-						arr.push(j.charCodeAt());
-					} else {
-						var b = j.split('%');
-						for (var m = 1; m < b.length; m++) {
-							arr.push(parseInt('0x' + b[m]));
-						}
-					}
-				}
-				return arr;
-			}
-		},
-		HashMap: function() {
-			var length = 0;
-			var obj = new Object();
-			this.asJsonString = function(){
-				return JSON.stringify(obj);
-			};
-			this.isEmpty = function(){
-				return length == 0;
-			};
-			this.containsKey=function(key){
-				return (key in obj);
-			};
-			this.containsValue=function(value){
-				for(var key in obj){
-					if(obj[key] == value){
-						return true;
-					}
-				}
-				return false;
-			};
-			this.put=function(key,value){
-				if(!this.containsKey(key)){
-					length++;
-				}
-				obj[key] = value;
-			};
-			this.get=function(key){
-				return this.containsKey(key)?obj[key]:null;
-			};
-			this.remove=function(key){
-				if(this.containsKey(key) && (delete obj[key])){
-					length--;
-				}
-			};
-			this.values=function(){
-				var _values= new Array();
-				for(var key in obj){
-					_values.push(obj[key]);
-				}
-				return _values;
-			};
-			this.keySet=function(){
-				var _keys = new Array();
-				for(var key in obj){
-					_keys.push(key);
-				}
-				return _keys;
-			};
-			this.size = function(){
-				return length;
-			};
-			this.clear = function(){
-				length = 0;
-				obj = new Object();
-			};
-		},
-	};
 
 	// 核心功能暴露出去
 	window.IAM.Core = {

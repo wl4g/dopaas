@@ -28,7 +28,7 @@
 		},
 		rivestShamirAdleman: function(publicKey, plain){ // RSA1
 			var crypt = new JSEncrypt();
-			crypt.setKey(IAM.Util.checkEmpty("publicKey", publicKey)); //You can use also setPrivateKey and setPublicKey, they are both alias to setKey
+			crypt.setKey(Common.Util.checkEmpty("publicKey", publicKey)); //You can use also setPrivateKey and setPublicKey, they are both alias to setKey
 
 			//Eventhough the methods are called setPublicKey and setPrivateKey, remember
 			//that they are only alias to setKey, so you can pass them both a private or
@@ -41,7 +41,7 @@
 			if(!enc){
 				throw "Failed to RSA encryption, maybe the key is set incorrectly. '" + publicKey + "'";
 			}
-			return IAM.Util.base64ToHex(enc);
+			return Common.Util.base64ToHex(enc);
 		},
 	};
 
