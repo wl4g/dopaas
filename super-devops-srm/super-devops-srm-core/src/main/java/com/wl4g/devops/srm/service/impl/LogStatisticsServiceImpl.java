@@ -16,12 +16,12 @@
 package com.wl4g.devops.srm.service.impl;
 
 import com.wl4g.devops.common.bean.srm.Log;
+import com.wl4g.devops.common.bean.srm.QueryLogModel;
 import com.wl4g.devops.common.bean.srm.Querycriteria;
-import com.wl4g.devops.common.bean.srm.RequestBean;
 import com.wl4g.devops.common.constants.SRMDevOpsConstants;
+import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.srm.handler.LogHandler;
 import com.wl4g.devops.srm.service.LogStatisticsService;
-import com.wl4g.devops.common.utils.DateUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -31,14 +31,13 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Service
 public class LogStatisticsServiceImpl implements LogStatisticsService {
@@ -47,10 +46,10 @@ public class LogStatisticsServiceImpl implements LogStatisticsService {
 	private LogHandler logHandler;
 
 	@Override
-	public Object statisticsLog(RequestBean requestBean) throws Exception {
-		String index = requestBean.getIndex();
+	public Object statisticsLog(QueryLogModel model) throws Exception {
+		String index = model.getIndex();
 		String date;
-		Integer level = requestBean.getLevel();
+		Integer level = model.getLevel();
 		/*Integer interval = requestBean.getInterval();
 		String startDate = requestBean.getStartDate();
 		String endDate = requestBean.getEndDate();*/
@@ -58,7 +57,7 @@ public class LogStatisticsServiceImpl implements LogStatisticsService {
 		String startDate = null;
 		String endDate = null;
 
-		List<Querycriteria> queryList = requestBean.getQueryList();
+		List<Querycriteria> queryList = model.getQueryList();
 		boolean flag = false;
 		if (StringUtils.isEmpty(startDate) || StringUtils.isEmpty(endDate)) {
 			date = DateUtils.getNowTime(DateUtils.YMD);

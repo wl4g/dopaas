@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.srm.admin;
 
-import com.wl4g.devops.common.bean.srm.Log;
 import com.wl4g.devops.common.bean.srm.QueryLogModel;
+import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.srm.service.LogConsoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/console")
@@ -41,20 +39,18 @@ public class LogConsoleController {
     private final static Logger logger = LoggerFactory.getLogger(LogConsoleController.class);
     @RequestMapping("/consoleLog")
     @ResponseBody
-    public Object consoleLog(@Validated @RequestBody QueryLogModel model) throws Exception{
-        //TODO don't use this map -- need modify
-        Map<String,Object> parm = new HashMap<>();
+    public RespBase<?> consoleLog(@Validated @RequestBody QueryLogModel model) throws Exception{
+        RespBase<Object> resp = RespBase.create();
         try {
-            List<Log> result = logConsoleService.console(model);
-            parm.put("code",200);
-            parm.put("data",result);
+            List<String> result = logConsoleService.console(model);
+            resp.getData().put("data",result);
         } catch (Exception e) {
-            parm.put("code",201);
-            parm.put("message","调用接口异常");
+            resp.setCode(RespBase.RetCode.PARAM_ERR);
+            resp.setMessage("调用接口异常"+e.getMessage());
             logger.info("requestBean:{}",model);
             e.printStackTrace();
         }
-        return parm;
+        return resp;
     }
 
 
