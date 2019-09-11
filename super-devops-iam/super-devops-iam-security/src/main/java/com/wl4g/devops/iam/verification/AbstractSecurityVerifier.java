@@ -38,6 +38,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -235,7 +236,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 		if (Objects.isNull(submitCode)) {
 			return false;
 		}
-		return String.valueOf(storedCode.getCode()).equalsIgnoreCase(String.valueOf(submitCode));
+		return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(String.valueOf(submitCode));
 	}
 
 	/**
