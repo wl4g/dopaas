@@ -1,6 +1,6 @@
 /**
- * Iam core v1.2.1 | (c) 2017, 2022 wl4g Foundation, Inc.
- * Copyright 2017-2032 <wangsir@gmail.com>, Inc. x
+ * Iam core v1.5.0 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
@@ -21,12 +21,12 @@
 				remainDelayMs: null,
 			}
 		},
-		applyCaptcha: {
+		applyModel: {
 			primaryImg: null,
 			applyToken: null,
 			verifyType: null,
 		},
-		verifyAnalyze: {
+		verifiedModel: {
 			verified: true,
 			verifiedToken: null,
 		},
@@ -64,25 +64,31 @@
 			// Bind refresh captcha.
 			$(img).click(function(){ resetCaptcha(); });
 			// 请申请Captcha
-			var applycaptchaUrl = Common.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
-						+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
-						+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
-			$.get(applycaptchaUrl, function(res){
-				// Apply captcha completed.
-				runtime.flags.applying = false;
-				runtime.applyCaptcha = res.data.applyModel; // [MARK4]
-				$(imgInput).css({"display":"inline","cursor":"text"});
-				$(imgInput).removeAttr('disabled');
-				$(img).css({"display" : "inline"});
-				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-				if(!Common.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
-					$(img).attr("src", res.data.applyModel.primaryImg);
-				} else {
-					$(img).attr("title", res.message); // 如:刷新过快
-					$(img).unbind("click");
-					setTimeout(function(){
-						$(img).click(function(){ resetCaptcha(); });
-					}, 15000); // 至少15sec才能点击刷新
+			$.ajax({
+				url: getApplyCaptchaUrl(),
+				dataType: "json",
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				success: function(res) {
+					// Apply captcha completed.
+					runtime.flags.applying = false;
+					runtime.applyModel = res.data.applyModel; // [MARK4]
+					$(imgInput).css({"display":"inline","cursor":"text"});
+					$(imgInput).removeAttr('disabled');
+					$(img).css({"display" : "inline"});
+					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+					if(!Common.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
+						$(img).attr("src", res.data.applyModel.primaryImg);
+					} else {
+						$(img).attr("title", res.message); // 如:刷新过快
+						$(img).unbind("click");
+						setTimeout(function(){
+							$(img).click(function(){ resetCaptcha(); });
+						}, 15000); // 至少15sec才能点击刷新
+					}
+				},
+				error: function(req, status, errmsg){
+					console.debug("Failed to apply captcha, " + errmsg);
+					Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(errmsg);
 				}
 			});
 		},
@@ -146,25 +152,28 @@
 
 						var jigsawPanel = Common.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 						$(jigsawPanel).css({"display" : "inline"});
+
 						// 加载Jigsaw插件滑块
-						var applycaptchaUrl = Common.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
-								+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
-								+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
                         $(jigsawPanel).JigsawIamCaptcha({
-                            applycaptchaUrl: applycaptchaUrl,
+                            applycaptchaUrl: getApplyCaptchaUrl(),
+							applyverifyUrl: getVerifyCaptchaUrl(),
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
-								console.debug("Captcha verify successfully. verifiedToken => "+ verifiedToken);
 								// Apply captcha completed.
 								runtime.flags.applying = false;
-								Common.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)();
-                            }
+								console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);
+								Common.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)(verifiedToken);
+                            },
+							onFail: function(element){
+								console.debug("Failed to jigsaw captcha verify. element => "+ element);
+								Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(element);
+							}
                         });
 					},
 				},
 			},
 			onSuccess: function(verifiedToken) {
-				console.info("Captcha verify successfully. verifiedToken => "+ verifiedToken);
+				console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);
 			},
 			onError: function(errmsg) { // 如:申请过于频繁
 				console.error("Failed to captcha verify. " + errmsg);
@@ -262,6 +271,25 @@
 			url += "&agent=n";
 		}
 		return url;
+	};
+
+	// Make get apply captcha URL.
+	var getApplyCaptchaUrl = function(){
+		var captchaUrl = Common.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
+			+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
+			+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
+		return captchaUrl;
+	};
+
+	// Make get verify & analyze captcha URL.
+	var getVerifyCaptchaUrl = function(){
+		var verifyUrl = Common.Util.checkEmpty("baseUri",settings.baseUri) + Common.Util.checkEmpty("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
+			+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
+			//+ Common.Util.checkEmpty("applyModel.verifyType",runtime.applyModel.verifyType) + "&"
+			+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&"
+			+ Common.Util.checkEmpty("definition.responseType", settings.definition.responseType) + "="
+			+ Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue);
+		return verifyUrl;
 	};
 
 	// Reset graph captcha.
@@ -377,9 +405,7 @@
 			$.ajax({
 				url: checkUrl,
 				type: "post",
-				xhrFields: {
-					withCredentials: true // Send cookies when support cross-domain request.
-				},
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				dataType: "json",
 				success: function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
@@ -409,6 +435,7 @@
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
 				imgInput.attr("maxlength", Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaLen);
+
 				// Auto verify simple/gif captcha for key-up event.  [MARK1], see: 'MARK2'
 				imgInput.keyup(function(){
 					if(runtime.safeCheck.checkCaptcha.enabled){ // See: 'MARK3'
@@ -420,20 +447,13 @@
 							var _check = function(name, params){ return Common.Util.checkEmpty(name, params) };
 							var _map = new Common.Util.FastMap();
 							_map.put(_check("definition.verifyCodeKey", settings.definition.verifyCodeKey), captcha)
-							_map.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyCaptcha.applyToken", runtime.applyCaptcha.applyToken))
-							_map.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyCaptcha.verifyType", runtime.applyCaptcha.verifyType))
-
-							// Verify analyze URL.
-							var verifyUrl = _check("baseUri",settings.baseUri) + _check("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
-								+ _check("definition.verifyTypeKey", settings.definition.verifyTypeKey)+"="+_check("applyCaptcha.verifyType",runtime.applyCaptcha.verifyType)+"&"
-								+ _check("definition.responseType", settings.definition.responseType)+"="+_check("definition.responseTypeValue",settings.definition.responseTypeValue);
+							_map.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyModel.applyToken", runtime.applyModel.applyToken))
+							_map.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyModel.verifyType", runtime.applyModel.verifyType))
 
 							$.ajax({
-								url: verifyUrl,
+								url: getVerifyCaptchaUrl(),
 								type: "post",
-								xhrFields: {
-									withCredentials: true // Send cookies when support cross-domain request.
-								},
+								xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 								dataType: "json",
 								contentType:"application/json",
 								data: _map.asJsonString(),
@@ -446,7 +466,7 @@
 										resetCaptcha();
 										settings.captcha.onError(res.message); // Call after captcha error.
 									} else { // Verify success.
-										runtime.verifyAnalyze = res.data.verifiedModel;
+										runtime.verifiedModel = res.data.verifiedModel;
 										Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().cancel(false); // Hide captcha when success.
 									}
 								},
@@ -482,7 +502,7 @@
 					var credentials = encodeURIComponent(IAM.Crypto.rivestShamirAdleman(secret, plainPasswd));
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
-						verifiedToken = runtime.verifyAnalyze.verifiedToken; // [MARK2], see: 'MARK1'
+						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1'
 						if(Common.Util.isEmpty(verifiedToken)){ // Required
 							throw "Failed to complete verify captcha check auto?, argument verifiedToken is null.";
 						}
@@ -512,9 +532,7 @@
 					$.ajax({
 						url: loginSubmitUrl,
 						type: "post",
-						xhrFields: {
-							withCredentials: true // Send cookies when support cross-domain request.
-						},
+						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 						dataType: "json",
 						beforeSend: function(){
 							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
@@ -573,9 +591,7 @@
 				$.ajax({
 					url: url,
 					type: "post",
-					xhrFields: {
-						withCredentials: true // Send cookies when support cross-domain request.
-					},
+					xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 					dataType: "json",
 					success: function (resp) {
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
