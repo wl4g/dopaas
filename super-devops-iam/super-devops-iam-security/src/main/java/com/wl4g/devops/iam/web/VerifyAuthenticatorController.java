@@ -133,10 +133,11 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
 			resp.getData().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
+			resp.setCode(RetCode.SYS_ERR).setThrowable(e);
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to verify captcha.", e);
 			} else {
-				log.warn("Failed to verify captcha. caused by: {}", getRootCausesString(e));
+				log.warn("Failed to verify captcha. caused by: {}", resp.getMessage());
 			}
 		}
 		return resp;

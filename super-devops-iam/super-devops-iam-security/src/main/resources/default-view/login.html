@@ -73,7 +73,7 @@
 
 						<div id="captcha_panel">
 							<i class="icon-code"></i>
-							<input id="captcha_input" class="text4" name="captcha" maxlength=5 
+							<input id="captcha_input" class="text4" name="captcha"
 								style="border:1px solid #dad2d2;padding-left:20px;border-radius:2px 2px 2px 2px;display:none;">
 							<img id="codeimg" name="codeimg" border=0
 								style="padding:0 0 5px 0;position:relative;top:18px;margin-left:5px;width:100px;height:35px;cursor:pointer;display:none;"
@@ -183,7 +183,7 @@
 				baseUri: iamBaseURI, // IAM认证服务接口的基础URI
 				// 定义验证码显示面板配置
 				captcha: {
-					use: "VerifyWithJigsawGraph", // default by 'VerifyWithGifGraph'
+					use: "VerifyWithGifGraph", // default by 'VerifyWithGifGraph'
 					panel: document.getElementById("jigsaw"), // Jigsaw验证码时必须
 					img: document.getElementById("codeimg"), // 验证码显示 img对象（仅jpeg/gif时需要）
 					input: document.getElementById("captcha_input"), // 验证码input对象（仅jpeg/gif时需要）

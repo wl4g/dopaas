@@ -21,11 +21,19 @@
 				remainDelayMs: null,
 			}
 		},
-		verify
+		applyCaptcha: {
+			primaryImg: null,
+			applyToken: null,
+			verifyType: null,
+		},
+		verifyAnalyze: {
+			verifiedToken: null,
+		}
 	};
 
 	// DefaultCaptcha配置实现(jpeg/gif验证码)
 	var _defaultCaptchaVerifier = {
+		captchaLen: 5,
 		hide: function() {
 			var img = IAM.Util.checkEmpty("captcha.img", settings.captcha.img);
 			var imgInput = IAM.Util.checkEmpty("captcha.input", settings.captcha.input);
@@ -40,9 +48,10 @@
 			imgInput.val(""); // 清空验证码input
 			// 请申请Captcha
 			var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
-						+ IAM.Util.checkEmpty("definition.verifierTypeKey", settings.definition.verifierTypeKey) + "="
+						+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
 						+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
 			$.get(captchaApplyUrl, function(res){
+				runtime.applyCaptcha = res.data.applyModel; // [MARK4]
 				$(img).css({"display" : "inline"});
 				$(img).attr("src", res.data.applyModel.primaryImg);
 				$(imgInput).css({"display" : "inline"});
@@ -50,7 +59,7 @@
 		},
 	};
 
-	// 全局配置
+	// Global settings.
 	var settings = {
 		baseUri: null, // 接口baseURI
 		// 字典参数定义
@@ -62,8 +71,10 @@
 			refreshUrlKey: "refresh_url", // 刷新URL参数名
 			principalKey: "principal", // 提交账号参数名
 			credentialKey: "credential", // 提交账号凭据(如：静态密码/SMS验证码)参数名
-			verifierTypeKey: "verifyType", // 验证码verifier类型参数名
-			verifiedTokenKey: "verifiedToken", // 验证码校验凭据token参数名
+			verifyTypeKey: "verifyType", // 验证码verifier别名参数名（通用）
+			applyTokenKey: "applyToken", // 申请的验证码f返回token参数名（通用）
+			verifyCodeKey: "verifyCode", // 提交验证码参数名（不通用：simple/gif）
+			verifiedTokenKey: "verifiedToken", // 验证码已校验的凭据token参数名（通用）
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			accountSubmitUri: "/auth/general", // 账号登录提交的URL后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
@@ -80,6 +91,16 @@
 			panel: null,
 			img: null,
 			input: null,
+			getVerifier: function(){ // Get verifier(captcha) instance.
+				var _type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
+				var _registry = IAM.Util.checkEmpty("captcha.registry", settings.captcha.registry);
+				for(var type in _registry){
+					if(type == _type){
+						return _registry[type];
+					}
+				}
+				throw "Illegal verifier type for '"+ type;
+			},
 			registry: { // 图像验证码实现程序注册器
 				VerifyWithSimpleGraph: _defaultCaptchaVerifier,
 				VerifyWithGifGraph: _defaultCaptchaVerifier,
@@ -93,7 +114,7 @@
 						$(jigsawPanel).css({"display" : "inline"});
 						// 加载Jigsaw插件滑块
 						var captchaApplyUrl = IAM.Util.checkEmpty("checkCaptcha.applyUri", runtime.safeCheck.checkCaptcha.applyUri) + "?"
-								+ IAM.Util.checkEmpty("definition.verifierTypeKey", settings.definition.verifierTypeKey) + "=" 
+								+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
 								+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use) + "&r=" + Math.random();
                         $(jigsawPanel).JigsawIamCaptcha({
                             applycaptchaUrl: captchaApplyUrl,
@@ -207,21 +228,12 @@
 		return url;
 	};
 
-	// 重置验证码
+	// Reset graph captcha.
 	var resetCaptcha = function(){
 		safeCheck(function(checkCaptcha, checkGeneral, checkSms){
 			if(checkCaptcha.enabled){ // 启用验证码?
 				// 获取当前配置CaptchaVerifier实例、显示
-				(function(){
-					var _type = IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
-					var _registry = IAM.Util.checkEmpty("captcha.registry", settings.captcha.registry);
-					for(var type in _registry){
-						if(type == _type){
-							return _registry[type];
-						}
-					}
-					throw "Illegal verifier type for '"+ type;
-				})().show();
+				IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().show();
 			}
 		});
 	};
@@ -284,7 +296,7 @@
 		}
 	};
 
-	// SNS登录
+	// SNS authorize login implement.
 	var snsAuthentication = function(){
 		var providerMap = IAM.Util.checkEmpty("sns.provider", settings.sns.provider);
 		for(var provider in providerMap){ // provider为服务商名
@@ -315,13 +327,13 @@
 		}
 	};
 
-	// 登录前初始安全检查
+	// Before safe check.
 	var safeCheck = function(callback){
 		var principal = encodeURIComponent(IAM.Util.getEleValue("account.principal", settings.account.principal, false));
 		var checkUrl = IAM.Util.checkEmpty("baseUri",settings.baseUri)
 			+ IAM.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
 			+ IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
-			+ IAM.Util.checkEmpty("definition.verifierTypeKey", settings.definition.verifierTypeKey) + "=" 
+			+ IAM.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
 			+ IAM.Util.checkEmpty("captcha.use", settings.captcha.use);
 
 		// 请求安全预检
@@ -329,7 +341,7 @@
 			url: checkUrl,
 			type: "post",
 			xhrFields: {
-				withCredentials: true // 跨域调用时，必须设置才会发送cookie
+				withCredentials: true // Send cookies when support cross-domain request.
 			},
 			dataType: "json",
 			success: function(res){
@@ -337,7 +349,7 @@
 				if(!IAM.Util.isEmpty(res) && (res.code != codeOkValue)){
 					settings.account.onError(res.message); // 检查失败回调
 				} else {
-					runtime.safeCheck = res.data;
+					runtime.safeCheck = res.data; // [MARK3]
 					callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
 				}
 			},
@@ -348,81 +360,127 @@
 		});
 	};
 
-	// 账号登录
+	// Account login implement.
 	var accountAuthentication = function(){
 		$(function(){
-			// 绑定登录按钮Enter按键事件
+			// Init bind key-enter login submit.
 			$(document).keydown(function(event){
 				if(event.keyCode == 13){
 					$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
 				}
 			});
+
+			// Init captcha event.
 			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph"){
-				// 绑定验证码点击刷新事件
+				var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
+				// Set captcha input maxLength.
+				imgInput.attr("maxlength", IAM.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaLen);
+				// Bind refresh captcha.
 				$(IAM.Util.checkEmpty("captcha.img", settings.captcha.img)).click(function(){
 					resetCaptcha();
 				});
+				// Auto verify simple/gif captcha for key-up event.  [MARK1], see: 'MARK2'
+				imgInput.keyup(function(){
+					if(runtime.safeCheck.checkCaptcha.enabled){ // See: 'MARK3'
+						var captcha = IAM.Util.checkEmpty("input captcha", imgInput.val());
+						if(!IAM.Util.isEmpty(captcha) && captcha.length >= parseInt(imgInput.attr("maxlength"))){ // Submit verifyAnalyze?
+							// Submission verify analyze captcha.
+							var _check = function(name, params){ return IAM.Util.checkEmpty(name, params) };
+							var _map = new IAM.Util.HashMap();
+							_map.put(_check("definition.responseType", settings.definition.responseType), _check("definition.responseTypeValue", settings.definition.responseTypeValue))
+							_map.put(_check("definition.verifyCodeKey", settings.definition.verifyCodeKey), captcha)
+							_map.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyCaptcha.applyToken", runtime.applyCaptcha.applyToken))
+							_map.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyCaptcha.verifyType", runtime.applyCaptcha.verifyType))
+
+							// Verify analyze URL.
+							var verifyUrl = _check("baseUri",settings.baseUri) + _check("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
+								+_check("definition.verifyTypeKey", settings.definition.verifyTypeKey)+"="+_check("applyCaptcha.verifyType", runtime.applyCaptcha.verifyType);
+
+							$.ajax({
+								url: verifyUrl,
+								type: "post",
+								xhrFields: {
+									withCredentials: true // Send cookies when support cross-domain request.
+								},
+								dataType: "json",
+								contentType:"application/json",
+								data: _map.asJsonString(),
+								success: function(resp){
+									var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
+									if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
+										resetCaptcha();
+										settings.captcha.onError(resp.message); // Call after captcha error.
+									} else { // Verify success.
+										
+									}
+								},
+								error: function(req, status, errmsg){
+									resetCaptcha();
+									settings.captcha.onError(errmsg); // Call after captcha error.
+								}
+							});
+						}
+					}
+				});
 			}
-			// 绑定登录按钮点击事件
+
+			// Bind login btn click.
 			$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function(){
 				safeCheck(function(checkCaptcha, checkGeneral, checkSms){
-					// 获取登录账号
 					var principal = encodeURIComponent(IAM.Util.getEleValue("account.principal", settings.account.principal));
 					// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
 					var plainPasswd = IAM.Util.getEleValue("account.credential", settings.account.credential);
 					var secret = IAM.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
 					var credentials = encodeURIComponent(IAM.Crypto.rivestShamirAdleman(secret, plainPasswd));
-					// 检查登录账号、密码
+					var verifiedToken = "";
+					if(runtime.safeCheck.checkCaptcha.enabled){
+						verifiedToken = runtime.verifyAnalyze.verifiedToken; // [MARK2], see: 'MARK1'
+						if(IAM.Util.isEmpty(verifiedToken)){ // Required
+							throw "Failed to complete verify captcha check auto?, argument verifiedToken is null.";
+						}
+					}
+					// Check principal/credentials.
 					if(IAM.Util.isAnyEmpty(principal, credentials)){
 						settings.account.onError("No empty login name or password allowed");
 						return;
 					}
 
-					// 执行登录请求之前回调
-					if(!settings.account.onBeforeSubmit(principal, credentials, "verifiedTokenxxxx")){
+					// Call before submission login.
+					if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
 						return;
 					}
 
-					// 检查输入的验证码
-					var imgInput = $(IAM.Util.checkEmpty("captcha.input", settings.captcha.input));
-					var captcha = imgInput.val();
-					if(checkCaptcha.enabled){ // 启用时才检查
-						if(IAM.Util.isEmpty(captcha) || captcha.length < imgInput.attr("maxlength")){ // 检查验证码
-							settings.account.onError("Illegal length of captcha input");
-							return;
-						}
-					}
-
-					// 生成登录提交URL
+					// Submission URL
 					var loginSubmitUrl = IAM.Util.checkEmpty("baseUri",settings.baseUri)
 						+ IAM.Util.checkEmpty("definition.accountSubmitUri",settings.definition.accountSubmitUri) + "?"
 						+ IAM.Util.checkEmpty("definition.responseType",settings.definition.responseType) + "="
 						+ IAM.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
 						+ "&" + IAM.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 						+ "&" + IAM.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
-						+ "&" + IAM.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + captcha
+						+ "&" + IAM.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + verifiedToken
 						+ "&" + IAM.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
 
-					// 提交账号登录请求
+					// Submission
 					$.ajax({
 						url: loginSubmitUrl,
 						type: "post",
 						xhrFields: {
-							withCredentials: true // 跨域调用时，必须设置才会发送cookie
+							withCredentials: true // Send cookies when support cross-domain request.
 						},
 						dataType: "json",
 						beforeSend: function(){
 							$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
 						},
-						success: function(resp){
+						complete: function (XHR, textStatus) {
 							$(IAM.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
+						},
+						success: function(resp){
 							var codeOkValue = IAM.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-							// 登录失败
-							if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){
+							if(!IAM.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
 								resetCaptcha(); // 刷新验证码
 								settings.account.onError(resp.message); // 登录失败回调
 							} else { // 登录成功，直接重定向
-								var redirectUrl = IAM.Util.checkEmpty("Login successful, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
+								var redirectUrl = IAM.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.account.onSuccess(principal, redirectUrl)){
 									window.location.href = redirectUrl;
 								}
@@ -468,7 +526,7 @@
 					url: url,
 					type: "post",
 					xhrFields: {
-						withCredentials: true // 跨域调用时，必须设置才会发送cookie
+						withCredentials: true // Send cookies when support cross-domain request.
 					},
 					dataType: "json",
 					success: function (resp) {
@@ -518,7 +576,7 @@
 					url: url,
 					type: "post",
 					xhrFields: {
-						withCredentials: true // 跨域调用时，必须设置才会发送cookie
+						withCredentials: true // Send cookies when support cross-domain request.
 					},
 					dataType: "json",
 					success: function (resp) {
@@ -585,8 +643,10 @@
 			return param;
 		},
 		isEmpty: function(param){
-			if(!IAM.Util.isArray(param))
-				return (param == null || param == undefined || param == '' || param.length == 0);
+			if(param == null || param == undefined || param == '')
+				return true;
+			else if(IAM.Util.isFunction(param))
+				return false;
 			else
 				return param.length == 0;
 		},
@@ -612,6 +672,9 @@
 		},
 		isObject : function (obj) {
 		    return Object.prototype.toString.call(obj) === '[object Object]';
+		},
+		isFunction : function (obj) {
+		    return Object.prototype.toString.call(obj) === '[object Function]';
 		},
 		isString : function (obj) {
 		    return Object.prototype.toString.call(obj) === '[object String]';
@@ -803,6 +866,62 @@
 				}
 				return arr;
 			}
+		},
+		HashMap: function() {
+			var length = 0;
+			var obj = new Object();
+			this.asJsonString = function(){
+				return JSON.stringify(obj);
+			};
+			this.isEmpty = function(){
+				return length == 0;
+			};
+			this.containsKey=function(key){
+				return (key in obj);
+			};
+			this.containsValue=function(value){
+				for(var key in obj){
+					if(obj[key] == value){
+						return true;
+					}
+				}
+				return false;
+			};
+			this.put=function(key,value){
+				if(!this.containsKey(key)){
+					length++;
+				}
+				obj[key] = value;
+			};
+			this.get=function(key){
+				return this.containsKey(key)?obj[key]:null;
+			};
+			this.remove=function(key){
+				if(this.containsKey(key) && (delete obj[key])){
+					length--;
+				}
+			};
+			this.values=function(){
+				var _values= new Array();
+				for(var key in obj){
+					_values.push(obj[key]);
+				}
+				return _values;
+			};
+			this.keySet=function(){
+				var _keys = new Array();
+				for(var key in obj){
+					_keys.push(key);
+				}
+				return _keys;
+			};
+			this.size = function(){
+				return length;
+			};
+			this.clear = function(){
+				length = 0;
+				obj = new Object();
+			};
 		},
 	};
 
