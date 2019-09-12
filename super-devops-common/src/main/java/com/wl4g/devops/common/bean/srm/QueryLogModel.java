@@ -15,16 +15,19 @@
  */
 package com.wl4g.devops.common.bean.srm;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-public class RequestBean {
-	private List<Querycriteria> queryList;
+public class QueryLogModel {
+
+	@NotBlank
 	private String index;
-	private String startDate;
-	private String endDate;
-	private Integer interval;//
+	private Long startTime;
+	private Long endTime;
+	private Integer from;
+	private Integer limit;
 	private Integer level;
-	private boolean flag;
+	private List<Querycriteria> queryList;
 
 	public List<Querycriteria> getQueryList() {
 		return queryList;
@@ -42,20 +45,20 @@ public class RequestBean {
 		this.index = index;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public Long getStartTime() {
+		return startTime;
 	}
 
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
+	public void setStartTime(Long startTime) {
+		this.startTime = startTime;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public Long getEndTime() {
+		return endTime;
 	}
 
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
+	public void setEndTime(Long endTime) {
+		this.endTime = endTime;
 	}
 
 	public Integer getLevel() {
@@ -66,19 +69,21 @@ public class RequestBean {
 		this.level = level;
 	}
 
-	public Integer getInterval() {
-		return interval;
+	public Integer getFrom() {
+		return from;
 	}
 
-	public void setInterval(Integer interval) {
-		this.interval = interval;
+	public void setFrom(Integer from) {
+		this.from = from;
 	}
 
-	public boolean isFlag() {
-		return flag;
+	public Integer getLimit() {
+		return limit;
 	}
 
-	public void setFlag(boolean flag) {
-		this.flag = flag;
+	public void setLimit(Integer limit) {
+		this.limit = limit;
 	}
+
+
 }

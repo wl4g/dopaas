@@ -234,7 +234,7 @@
 		SELECT
 			rh.id AS "releaseId",
 			i.version_id AS "version",
-			sd.`id` AS "namespace_id",
+			sd.`key` AS "namespace_id",
 			sd.`value` AS "namespace",
 			vd.type AS "type",
 			vd.content AS "content",
@@ -246,9 +246,10 @@
 		INNER JOIN app_environment e ON e.id = i.env_id
 		INNER JOIN app_cluster g ON g.id = i.cluster_id
 		INNER JOIN scm_version_detail vd ON vd.version_id = i.version_id
-		INNER JOIN sys_dict sd ON sd.id = vd.namespace_id
+		INNER JOIN sys_dict sd ON sd.key = vd.namespace_id
+		left join app_host h on h.id=i.host_id
 		<where>
-			AND g.`name` = #{group}
+			AND g.`name` = #{cluster}
 
 			<if test="namespaces != null"><![CDATA[ AND sd.`value` IN ]]>
 				<foreach item="item" index="index" collection="namespaces" open="(" separator="," close=")">#{item}
@@ -263,8 +264,8 @@
 				AND rh.version_id = #{meta.version}
 			</if>
 			<if test="instance != null">
-				AND i.`host` = #{instance.host}
-				AND i.`port` = #{instance.port}
+				AND h.`hostname` = #{instance.host}
+				AND i.`endpoint` = #{instance.endpoint}
 			</if>
 		</where>
 		ORDER BY rh.create_date DESC
@@ -284,7 +285,7 @@
 			<!-- 条件: 所属实例、所属版本、所属发布ID -->
 			<if test="instance != null">
 				AND i.`host` = #{instance.host}
-				AND i.`port` = #{instance.port}
+				AND i.`endpoint` = #{instance.endpoint}
 			</if>
 			<if test="meta.version != null and meta.version != ''">
 				AND i.version_id = #{meta.version}
