@@ -122,7 +122,7 @@
         };
         var card = createElement('div', 'JigsawIamCaptcha card');
         card.style.display="none";
-		card.style.backgroundColor="rgb(254,249,249)"
+		card.style.backgroundColor="rgb(254,249,249)";
 
         var cardHeader = createElement('div', 'card-header');
 		cardHeader.style.paddingLeft="20px";
@@ -324,10 +324,10 @@
 		$(this.slider).bind("touchstart", handleDragStart);
 		$(this.slider).bind("mouseenter", handleOnmouseenter);
 		$(this.$element).bind('mouseleave', handleOnmouseleave);
-		$(document).bind("mousemove", handleDragMove)
-		$(document).bind("touchmove", handleDragMove)
-		$(document).bind("mouseup", handleDragEnd)
-		$(document).bind("touchend", handleDragEnd)
+		$(document).bind("mousemove", handleDragMove);
+		$(document).bind("touchmove", handleDragMove);
+		$(document).bind("mouseup", handleDragEnd);
+		$(document).bind("touchend", handleDragEnd);
 
 		/*
 		 * Note: If you add events using native js, jQuery will not be able to unbind.
