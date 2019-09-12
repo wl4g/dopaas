@@ -28,9 +28,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.wl4g.devops.common.exception.BizRequiredArgumentException;
-import com.wl4g.devops.common.exception.BizRuleRestrictionException;
-import com.wl4g.devops.common.exception.ServiceUnavailableException;
+import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
+import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
+import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
 
 /**
@@ -110,14 +110,32 @@ public class RespBase<T extends Object> implements Serializable {
 		return this;
 	}
 
+	/**
+	 * Setting exception messages only does not set response status code.
+	 * 
+	 * @param th
+	 * @return
+	 */
 	public RespBase<T> setThrowable(Throwable th) {
 		this.message = getRootCausesString(th);
-		if (th instanceof BizRuleRestrictionException) {
-			this.code = ((BizRuleRestrictionException) th).getCode();
-		} else if (th instanceof BizRequiredArgumentException) {
-			this.code = ((BizRequiredArgumentException) th).getCode();
-		} else if (th instanceof ServiceUnavailableException) {
-			this.code = ((ServiceUnavailableException) th).getCode();
+		return this;
+	}
+
+	/**
+	 * Handle API exceptions, setting exception messages and corresponding
+	 * response status code.
+	 * 
+	 * @param th
+	 * @return
+	 */
+	public RespBase<T> handleError(Throwable th) {
+		this.message = getRootCausesString(th);
+		if (th instanceof BizRuleRestrictRestfulException) {
+			this.code = ((BizRuleRestrictRestfulException) th).getCode();
+		} else if (th instanceof BizInvalidArgRestfulException) {
+			this.code = ((BizInvalidArgRestfulException) th).getCode();
+		} else if (th instanceof ServiceUnavailableRestfulException) {
+			this.code = ((ServiceUnavailableRestfulException) th).getCode();
 		}
 		return this;
 	}

@@ -67,17 +67,15 @@
 							<i class="icon-pass"></i>
 							<input placeholder="请输入密码" id="password" class="text1 text2"
 								style="color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
-								name="password" type="password" maxlength=25>
+								name="password" type="password" maxlength=35 autocapitalize=off autocomplete=off>
 						</div>
-						<div id="jigsaw"  class="jigsaw" style="display:none"></div>
-
+						<div id="jigsaw" class="jigsaw" style="display:none"></div>
 						<div id="captcha_panel">
-							<i class="icon-code"></i>
-							<input id="captcha_input" class="text4" name="captcha" maxlength=5 
-								style="border:1px solid #dad2d2;padding-left:20px;border-radius:2px 2px 2px 2px;display:none;">
+							<input id="captcha_input" class="text4" name="captcha"
+								style="border:1px solid #dad2d2;padding-left:10px;border-radius:2px 2px 2px 2px;display:none;">
 							<img id="codeimg" name="codeimg" border=0
-								style="padding:0 0 5px 0;position:relative;top:18px;margin-left:5px;width:100px;height:35px;cursor:pointer;display:none;"
-								title="看不清点击图片刷新">
+								style="padding:0 0 5px 0;position:relative;top:3px;margin-left:5px;height:33px;cursor:pointer;display:none;"
+								title="看不清? 点击图片刷新">
 						</div>
 						<br />
 						<input id="iam_submit" type="button" style="cursor:pointer;" value="登录"><br /><br /><br />
@@ -85,8 +83,7 @@
 							<span
 								style="text-decoration: line-through;margin-left: 40px;color: #efefef;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 							<span class="con-foot">手机号登录</span>
-							<span
-								style="text-decoration: line-through;color: #efefef;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							<span style="text-decoration:line-through;color: #efefef;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 						</div>
 						<div style="margin-top:15px;margin-left:10px;display: none">
 							<img id="wechat" style="cursor:pointer;margin-left:70px;" src="./static/images/bg_icon/wx.png"
@@ -140,7 +137,6 @@
 							<span class="code-close">x</span></p>
 						<p><span>图文验证码</span></p>
 						<div style="margin: 10px 10px 0 10px;">
-							<i class="icon-codecode"></i>
 							<input id="user_code" class="text1" name="code" placeholder="请输入验证码"
 								style="width:100px;color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
 								maxlength=40>
@@ -166,6 +162,7 @@
 	<div class="gb_box"></div>
 	<script type="text/javascript" src="./static/js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="./static/js/bootstrap-3.3.7.min.js"></script>
+	<script type="text/javascript" src="./static/js/common-util-1.5.0.js"></script>
 	<script type="text/javascript" src="./static/js/iam-core-1.5.0.js"></script>
 	<script type="text/javascript" src="./static/js/iam-crypto-1.5.0.js"></script>
 	<script type="text/javascript" src="./static/js/iam-captcha-jigsaw-1.5.0.js"></script>
@@ -179,41 +176,17 @@
 
 		// 引用IAM SDK插件，处理SNS授权操作
 		(function () {
-			window.IAM.Core.config({
+			window.IAM.Core.configure({
 				baseUri: iamBaseURI, // IAM认证服务接口的基础URI
 				// 定义验证码显示面板配置
 				captcha: {
-					img: document.getElementById("codeimg"), // 验证码显示IMG对象
-					input: document.getElementById("captcha_input"), // 验证码INPUT输入对象
-					name: "captcha", // 必须，提交时的验证码参数名，默认:captcha（与后台对应）
-					onFallback: function (errmsg) { // 验证码刷新降级处理（被锁定）
+					use: "VerifyWithJigsawGraph", // default by 'VerifyWithGifGraph'
+					panel: document.getElementById("jigsaw"), // Jigsaw验证码时必须
+					img: document.getElementById("codeimg"), // 验证码显示 img对象（仅jpeg/gif时需要）
+					input: document.getElementById("captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
+					onError: function(errmsg) { // 如，申请过于频繁
 						console.warn(errmsg);
-						// 加载默认破图
-						document.getElementById("codeimg").src = "./static/images/bg_icon/broken.png";
-						//禁止输入验证码
-						$('#captcha_input').attr('disabled', true);
-						$('#captcha_input').css('cursor', 'no-drop');
 					}
-				},
-                jigsaw:{
-				    panel: document.getElementById("jigsaw"),
-                    show: function (applycaptchaUrl) {
-                        console.info("show jigsaw");
-                        var jigsawDiv = document.getElementById("jigsaw");
-                        $(jigsawDiv).css({"display" : "inline"});
-
-                        $('#jigsaw').JigsawIamCaptcha({
-                            applycaptchaUrl: applycaptchaUrl,
-                            repeatIcon: 'fa fa-redo',
-                            onSuccess: function (verifiedToken) {
-                                alert("认证成功"+verifiedToken);
-                            },
-							onFail: function (data) {
-                                //alert(data.message);
-                                $("#err_tip").text(data.message).show().delay(8000).hide(100);
-                            }
-                        });
-                    },
 				},
 				// 登录认证配置
 				account: {
@@ -300,7 +273,7 @@
 						return true;
 					}
 				}
-			}).accountAuth().smsAuth().snsAuth();
+			}).bindForAccountAuthenticator().bindForSMSAuthenticator().bindForSNSAuthenticator().bindForCaptchaVerifier();
 		})();
 	</script>
 	<script type="text/javascript">
@@ -314,7 +287,7 @@
 	<script type="text/javascript">
 		// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
 		function errTips() {
-			var url = iamBaseURI + "/login/errread";
+			var url = iamBaseURI + "/login/errread";	
 			$.ajax({
 				url: url,
 				success: function (res) {

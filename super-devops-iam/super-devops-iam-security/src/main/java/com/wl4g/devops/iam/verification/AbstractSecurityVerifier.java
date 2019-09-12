@@ -38,12 +38,14 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
 
 /**
  * Abstract IAM verification handler
@@ -235,7 +237,11 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 		if (Objects.isNull(submitCode)) {
 			return false;
 		}
-		return String.valueOf(storedCode.getCode()).equalsIgnoreCase(String.valueOf(submitCode));
+		if (submitCode instanceof SimpleVerifyImgModel) {
+			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((SimpleVerifyImgModel) submitCode).getVerifyCode());
+		}
+		throw new UnsupportedOperationException(String.format("Unsupported verify-code: %s, Override the doMatch() method",
+				submitCode.getClass().getSimpleName()));
 	}
 
 	/**

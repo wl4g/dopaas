@@ -1,14 +1,22 @@
 ﻿/**
- * Iam captcha jigsaw v1.2.1 | (c) 2017, 2022 wl4g Foundation, Inc.
- * Copyright 2017-2032 <wangsir@gmail.com>, Inc. x
+ * Iam captcha jigsaw v1.5.0 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function ($) {
     'use strict';
     var runtime = {
-		applyToken: null,
-		y: 0,
-		secret: null,
+		applyModel: {
+			primaryImg: null,
+			applyToken: null,
+			verifyType: null,
+			secret: null,
+			y: 0,
+		},
+		verifiedModel: {
+			verified: false,
+			verifiedToken: null,
+		},
 	};
     var _JigsawCaptcha = function (element, options) {
         this.$element = $(element);
@@ -16,46 +24,61 @@
         this.$element.css({'width': this.options.width + 'px', 'margin': '0 auto' });
         this.init();
     };
-    _JigsawCaptcha.VERSION = 'v1.2.1';
-    _JigsawCaptcha.Author = '<wanglsir@gmail.com>';
-    _JigsawCaptcha.BaseURI = 'http://localhost:8080';
+    _JigsawCaptcha.VERSION = 'v1.5.0';
+    _JigsawCaptcha.Author = '<wanglsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>';
     _JigsawCaptcha.DEFAULTS = {
         width: 280, // canvas宽度
         height: 155, // canvas高度
-        loadingText: IAM.Util.isZhCN()?'加载中...':'Loading...',
-        failedText: IAM.Util.isZhCN()?'再试一次':"Let\'s try again?",
-        barText: IAM.Util.isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
+        loadingText: Common.Util.isZhCN()?'加载中...':'Loading...',
+        failedText: Common.Util.isZhCN()?'再试一次':"Let\'s try again?",
+        barText: Common.Util.isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
         repeatIcon: 'fa fa-repeat',
         applycaptchaUrl: null,
+        applyverifyUrl: null,
         verify: function (arr, left) {
 			// Additional algorithmic salt.
 			left = new String(left);
-			var applyTokenCrc = IAM.Util.Crc16CheckSum.crc16Modbus(runtime.applyToken);
-			var tmpX = IAM.Crypto.sha512WithHex(left + runtime.applyToken).substring(31, 97) + (left*applyTokenCrc);
+			var applyTokenCrc = Common.Util.Crc16CheckSum.crc16Modbus(runtime.applyModel.applyToken);
+			var tmpX = IAM.Crypto.sha512WithHex(left+runtime.applyModel.applyToken).substring(31, 97) + (left*applyTokenCrc);
             // Do encryption x-position.
-			var cipherX = IAM.Crypto.rivestShamirAdleman(runtime.secret, tmpX);
+			var cipherX = IAM.Crypto.rivestShamirAdleman(runtime.applyModel.secret, tmpX);
             var ret = null;
-            var url = 'http://localhost:14040/iam-server/verify/verifyAnalyze?verifyType=VerifyWithJigsawGraph';
-            var verifyInfo = {
-                applyToken: runtime.applyToken,
+            var verifyData = {
+                applyToken: runtime.applyModel.applyToken,
                 x: cipherX,
                 trails: arr,
             };
+			// Submission verify & analyze.
+			var that = this;
             $.ajax({
-                url: url,
-                data: JSON.stringify(verifyInfo),
-                async: false,
-                cache: false,
+                url: Common.Util.checkEmpty("optinos.applyverifyUrl", that.applyverifyUrl),
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
                 type: 'post',
                 contentType: 'application/json',
                 dataType: 'json',
-                success: function (data) {
-                    data = data.data.verifiedModel;
-                    ret = data;
-                }
+				async: false,
+				data: JSON.stringify(verifyData),
+                success: function (res) {
+					if(res.code == 200){
+						runtime.verifiedModel = res.data.verifiedModel;
+						ret = res.data.verifiedModel;
+					} else {
+						Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, " + res.message);
+					}
+                },
+				error: function(req, status, errmsg){
+					console.debug(errmsg);
+					Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, " + errmsg);
+				}
             });
             return ret;
         },
+		onSuccess: function(verifiedToken){
+			console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);
+		},
+		onFail: function(errmsg){
+			console.error(errmsg);
+		}
     };
 
     $.fn.JigsawIamCaptcha = function(option) {
@@ -100,7 +123,7 @@
         var cardHeader = createElement('div', 'card-header');
 		cardHeader.style.paddingLeft="20px";
 		cardHeader.style.paddingTop="5px";
-        var cardHeaderText = createElementValue('span', IAM.Util.isZhCN()?'请完成人机验证':'Please complete man-machine verification');
+        var cardHeaderText = createElementValue('span', Common.Util.isZhCN()?'请完成人机验证':'Please complete man-machine verification');
         var cardBody = createElement('div', 'card-body2');
 
         var canvas = createCanvas(this.options.width - 2, this.options.height); // 画布
@@ -165,41 +188,38 @@
         };
         img2.onload = function () {
             that.blockCtx.drawImage(img2, 0, img2.imagey);
-            console.info(img2.imagey);
+            console.debug(img2.imagey);
             that.text.text(that.text.attr('data-text'));
         };
-
         img1.setSrc = function (imgBase64) {
             that.text.removeClass('text-danger');
-            img1.src='data:image/png;base64,'+imgBase64;
+            img1.src = imgBase64.startsWith("data:") ? imgBase64: ('data:image/png;base64,'+imgBase64);
         };
         img2.setSrc = function (imgBase64) {
             that.text.removeClass('text-danger');
-            img2.src='data:image/png;base64,'+imgBase64;
+            img2.src = imgBase64.startsWith("data:") ? imgBase64: ('data:image/png;base64,'+imgBase64);
         };
 		// Apply captcha.
-        var applycaptcha = function(){
-            var url = "http://localhost:14040/iam-server/verify/applycaptcha?verifyType=VerifyWithJigsawGraph";
-            if(that.options.applycaptchaUrl){
-                url = that.options.applycaptchaUrl+"?verifyType=VerifyWithJigsawGraph";
-            }
+        var applycaptcha = function() {
             $.ajax({
-                url: url,
+                url: Common.Util.checkEmpty("optinos.applycaptchaUrl", that.options.applycaptchaUrl),
 				type: 'GET',
-                success: function (result) {
-                    //console.info(result);
-                    if(result.code==200){//success
-                        result = result.data.applyModel;
-                        img1.setSrc(result.primaryImg);
-                        img2.setSrc(result.blockImg);
-                        img2.imagey = result.y;
-                        applyToken = result.applyToken;
-                        secret = result.secret;
-                    }else{//fail
-                        if ($.isFunction(that.options.onFail(result))) that.options.onFail.call(that.$element);
-                    }
-
-                }
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+                success: function (res) {
+					if(res.code == 200){
+						runtime.applyModel = res.data.applyModel; // [MARK5]
+						img1.setSrc(runtime.applyModel.primaryImg);
+						img2.setSrc(runtime.applyModel.blockImg);
+						img2.imagey = runtime.applyModel.y;
+					} else {
+						that.text.text(res.message);
+						Common.Util.checkEmpty("options.onFail", that.options.onFail)("Failed to jigsaw apply captcha, " + res.message);
+					}
+                },
+				error: function(req, status, errmsg) {
+					console.debug(errmsg);
+					Common.Util.checkEmpty("options.onFail", that.options.onFail)("Failed to jigsaw apply captcha, " + errmsg);
+				}
             });
         };
         applycaptcha();
@@ -276,8 +296,7 @@
             that.sliderContainer.removeClass('sliderContainer_active');
             that.trails = trails;
             var data = that.verify();
-            //TODO 认证是否要抽离出去html
-            if (data&&data.verified) {
+            if (data && data.verified) {
                 that.sliderContainer.addClass('sliderContainer_success');
                 if ($.isFunction(that.options.onSuccess(data.verifiedToken))) that.options.onSuccess.call(that.$element);
             } else {
@@ -289,7 +308,8 @@
                 }, 1000);
             }
         };
-        this.slider.addEventListener('mousedown', handleDragStart);
+
+		this.slider.addEventListener('mousedown', handleDragStart);
         this.slider.addEventListener('touchstart', handleDragStart);
         this.slider.addEventListener('mouseenter',handleOnmouseenter);
         this.$element.on('mouseleave',handleOnmouseleave);
@@ -301,13 +321,15 @@
         document.addEventListener('touchstart', function () { return false; });
         document.addEventListener('swipe', function () { return false; });
     };
-	// Verify submit captcha.
+
+	 // Verify submit captcha.
     _proto.verify = function () {
         var left = parseInt(this.block.style.left);
         var verified = this.options.verify(this.trails, left); // 拖动时x/y轴的移动距离,最总x位置
         return verified;
     };
-	// Reset apply captcha.
+
+	 // Reset apply captcha.
     _proto.reset = function () {
         this.sliderContainer.removeClass('sliderContainer_fail sliderContainer_success');
         this.slider.style.left = 0;
@@ -318,4 +340,5 @@
         this.text.text(this.options.loadingText);
         this.applycaptcha();
     };
+
 })(jQuery);

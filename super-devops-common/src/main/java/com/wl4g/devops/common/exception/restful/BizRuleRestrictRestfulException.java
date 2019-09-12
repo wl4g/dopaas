@@ -13,29 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.exception;
+package com.wl4g.devops.common.exception.restful;
 
 import org.springframework.http.HttpStatus;
 
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
 /**
- * Business required argument exception, When this exception API is caught, the
- * response code is {@link HttpStatus.BAD_REQUEST}
+ * Business logic restriction exception, When this exception API is caught, the
+ * response code is {@link HttpStatus.PRECONDITION_FAILED}
  * 
  * @author Wangl.sir
  * @version v1.0 2019年9月2日
  * @since
  */
-public interface BizRequiredArgumentException {
+public interface BizRuleRestrictRestfulException extends RESTfulException {
 
 	/**
 	 * Get exception response code.
 	 * 
 	 * @return
 	 */
+	@Override
 	default RetCode getCode() {
-		return RetCode.PARAM_ERR;
+		return RetCode.SECOND_UNAUTH;
 	}
 
 }
