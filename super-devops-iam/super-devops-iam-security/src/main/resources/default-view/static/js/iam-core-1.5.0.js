@@ -6,7 +6,7 @@
 (function(window, document) {
 	// 运行时值/状态临时缓存
 	var runtime = {
-		safeCheck: {
+		safeCheck: { // Safe check result.
 			checkGeneral: {
 				secret: null,
 			},
@@ -21,18 +21,18 @@
 				remainDelayMs: null,
 			}
 		},
-		applyModel: {
+		applyModel: { // Apply captcha result.
 			primaryImg: null,
 			applyToken: null,
 			verifyType: null,
 		},
-		verifiedModel: {
+		verifiedModel: { // Verify & analyze captcha result.
 			verified: true,
 			verifiedToken: null,
 		},
-		flags: {
-			applying: false,
-			verifying: false,
+		flags: { // Runtime status flag(Prevention concurrent).
+			isApplying: false,
+			isVerifying: false,
 		}
 	};
 
@@ -56,7 +56,7 @@
 		},
 		required: function() {
 			// Set the current application verify code.
-			runtime.flags.applying = false;
+			runtime.flags.isApplying = false;
 
 			var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
@@ -70,7 +70,7 @@
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function(res) {
 					// Apply captcha completed.
-					runtime.flags.applying = false;
+					runtime.flags.isApplying = false;
 					runtime.applyModel = res.data.applyModel; // [MARK4]
 					$(imgInput).css({"display":"inline","cursor":"text"});
 					$(imgInput).removeAttr('disabled');
@@ -134,7 +134,7 @@
 						return _registry[type];
 					}
 				}
-				throw "Illegal verifier type for '"+ type;
+				throw "Illegal verifier type for '" + type + "'";
 			},
 			registry: { // 图像验证码实现程序注册器
 				VerifyWithSimpleGraph: _defaultCaptchaVerifier,
@@ -148,7 +148,7 @@
 					},
 					required: function() {
 						// Set the current application verify code.
-						runtime.flags.applying = false;
+						runtime.flags.isApplying = false;
 
 						var jigsawPanel = Common.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 						$(jigsawPanel).css({"display" : "inline"});
@@ -160,8 +160,8 @@
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
 								// Apply captcha completed.
-								runtime.flags.applying = false;
-								console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);
+								runtime.flags.isApplying = false;
+								console.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
 								Common.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)(verifiedToken);
                             },
 							onFail: function(element){
@@ -173,10 +173,10 @@
 				},
 			},
 			onSuccess: function(verifiedToken) {
-				console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);
+				console.debug("Jigsaw captcha verify successfully. verifiedToken is '"+ verifiedToken+"'");
 			},
 			onError: function(errmsg) { // 如:申请过于频繁
-				console.error("Failed to captcha verify. " + errmsg);
+				console.error("Failed to jigsaw captcha verify. " + errmsg);
 			}
 		},
 		// 账号认证配置
@@ -295,7 +295,7 @@
 	// Reset graph captcha.
 	var resetCaptcha = function(){
 		_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
-			if(checkCaptcha.enabled && !runtime.flags.applying){ // 启用验证码且不是申请中(防止并发)?
+			if(checkCaptcha.enabled && !runtime.flags.isApplying){ // 启用验证码且不是申请中(防止并发)?
 				// 获取当前配置CaptchaVerifier实例、显示
 				Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().required();
 			}
@@ -440,8 +440,8 @@
 				imgInput.keyup(function(){
 					if(runtime.safeCheck.checkCaptcha.enabled){ // See: 'MARK3'
 						var captcha = imgInput.val();
-						if(!Common.Util.isEmpty(captcha) && captcha.length >= parseInt(imgInput.attr("maxlength")) && !runtime.flags.verifying){
-							runtime.flags.verifying = true; // Set verify status.
+						if(!Common.Util.isEmpty(captcha) && captcha.length >= parseInt(imgInput.attr("maxlength")) && !runtime.flags.isVerifying){
+							runtime.flags.isVerifying = true; // Set verify status.
 
 							// Submission verify analyze captcha.
 							var _check = function(name, params){ return Common.Util.checkEmpty(name, params) };
@@ -458,7 +458,7 @@
 								contentType:"application/json",
 								data: _map.asJsonString(),
 								complete: function (XHR, textStatus) {
-									runtime.flags.verifying = false; // Reset verify status.
+									runtime.flags.isVerifying = false; // Reset verify status.
 								},
 								success: function(res){
 									var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
@@ -680,10 +680,10 @@
 		return clientRef;
 	};
 
-	// 暴露API给外部
+	// Check parent classy.
 	if(!window.IAM){ window.IAM = {}; }
 
-	// 暴露Core API
+	// Exposing core APIs
 	window.IAM.Core = {
 		configure: function(opt){
 			_configure(opt);

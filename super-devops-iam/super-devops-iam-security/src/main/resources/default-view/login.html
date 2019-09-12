@@ -184,7 +184,10 @@
 					panel: document.getElementById("jigsaw"), // Jigsaw验证码时必须
 					img: document.getElementById("codeimg"), // 验证码显示 img对象（仅jpeg/gif时需要）
 					input: document.getElementById("captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
-					onError: function(errmsg) { // 如，申请过于频繁
+					onSuccess: function(verifiedToken) {
+						console.debug("Captcha verify successful. verifiedToken is "+ verifiedToken);
+					},
+					onError: function(errmsg) { // 如:申请过于频繁
 						console.warn(errmsg);
 					}
 				},
