@@ -205,8 +205,8 @@
 						return true; // 返回false会阻止自动调整
 					},
 					onError: function (errmsg) {
-						// console.error("登录失败. " + errmsg);
-						errTips(); // 加载err_tip
+						console.error("登录失败. " + errmsg);
+						$("#err_tip").text(errmsg).show().delay(5000).hide(100);
 					}
 				},
 				sms: { // SMS认证配置
@@ -222,12 +222,6 @@
 					onSuccess: function(resp){
 						$('.err-tip').text('');
 						$('.code-write').hide();
-						
-						//$('#err_tip').show();
-						//$('#err_tip').text(res.message);
-						//setTimeout(function () {
-						//	$('#err_tip').hide();
-						//}, 3000)
 					},
 					onError: function(errmsg){
 						console.error(errmsg);
@@ -289,7 +283,7 @@
 	</script>
 	<script type="text/javascript">
 		// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
-		function errTips() {
+		(function() {
 			var url = iamBaseURI + "/login/errread";	
 			$.ajax({
 				url: url,
@@ -301,8 +295,7 @@
 					}
 				}
 			});
-		};
-		errTips();
+		})();
 	</script>
 </body>
 </html>
