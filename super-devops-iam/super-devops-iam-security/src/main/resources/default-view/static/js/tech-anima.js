@@ -11,8 +11,7 @@
 
 	//设置创建的canvas的相关属性
 	canvas.id = "c_n" + attr.length;
-	canvas.style.cssText = "position:fixed;top:0;left:0;opacity:" + attr.opacity;
-	// canvas.style.cssText = "position:fixed;top:0;left:0;z-index:" + attr.z + ";opacity:" + attr.opacity;
+	canvas.style.cssText = "position:fixed;top:0;left:0;z-index:" + attr.z + ";opacity:" + attr.opacity;
 	//将canvas元素添加到body元素中
 	document.getElementsByTagName("body")[0].appendChild(canvas);
 	//该函数设置了canvas元素的width属性和height属性
@@ -89,29 +88,26 @@
 	}
 
 	//绘制小方块，小方块移动(碰到边界反向移动)，小方块受鼠标束缚
-	var animation = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-	function(i) {
-		window.setTimeout(i, 1000 / 45)
-	}; //各个浏览器支持的requestAnimationFrame有所不同，兼容各个浏览器
+	var animation = window.requestAnimationFrame
+					|| window.webkitRequestAnimationFrame
+					|| window.mozRequestAnimationFrame
+					|| window.oRequestAnimationFrame
+					|| window.msRequestAnimationFrame
+					|| function(i) { window.setTimeout(i, 1000 / 45)}; //各个浏览器支持的requestAnimationFrame有所不同，兼容各个浏览器
 	function draw() {
 		//清除画布
 		context.clearRect(0, 0, W, H);
-
 		var w = [mouse].concat(squares); //连接(合并)鼠标小方块数组和其他小方块数组
 		var x, v, A, B, z, y;
-
 		//square属性表：x，y，xa，ya，max
 		squares.forEach(function(i) {
-
 			//实现小方块定向移动
 			i.x += i.xa;
 			i.y += i.ya;
-
 			// 控制小方块移动方向
 			// 当小方块达到窗口边界时，反向移动
 			i.xa = i.xa * (i.x > W || i.x < 0 ? -1 : 1);
 			i.ya = i.ya * (i.y > H || i.y < 0 ? -1 : 1);
-
 			//fillRect前两个参数为矩形左上角的x，y坐标，后两个分别为宽度和高度
 			//绘制小方块
 			context.fillRect(i.x - 0.5, i.y - 0.5, 1, 1);
@@ -150,18 +146,15 @@
 			//防止两个小方块重复连线
 			w.splice(w.indexOf(i), 1);
 		});
-
 		//window.requestAnimationFrame与setTimeout相似，形成递归调用，
 		//不过window.requestAnimationFrame采用系统时间间隔，保持最佳绘制效率,提供了更好地优化，使动画更流畅
 		//经过浏览器优化，动画更流畅；
 		//窗口没激活时，动画将停止，省计算资源;
+		//document.getElementsByTagName("body")[0].style.backgroundImage="url('"+canvas.toDataURL()+"')";
 		animation(draw);
 	}
-
 	//此处是等待0.1秒后，执行一次draw()，真正的动画效果是用window.requestAnimationFrame实现的
 	setTimeout(function() {
 		draw();
-	},
-	100)
-
-} ();
+	}, 100);
+}();
