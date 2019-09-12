@@ -14,7 +14,7 @@ banner:
 
 # ### Logging configuration. ###
 logging:
-  file: /var/log/${spring.application.name}/${spring.application.name}.log
+  file: /Users/vjay/soft/log-printf/logprint.log
   root: INFO
   level:
     org:

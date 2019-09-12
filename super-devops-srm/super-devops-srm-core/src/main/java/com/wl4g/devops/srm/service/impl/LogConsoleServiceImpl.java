@@ -45,199 +45,95 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 @Service
 public class LogConsoleServiceImpl implements LogConsoleService {
 
-	@Resource
-	private LogHandler logHandler;
+    @Resource
+    private LogHandler logHandler;
 
-	/*@Override
-	public Object consoleLog(QueryLogModel requestBean) throws Exception {
-		String index = requestBean.getIndex();
-		String date;
-		Integer level = requestBean.getLevel();
-		//Integer interval = requestBean.getInterval();
-		String startDate = requestBean.getStartDate();
-		String endDate = requestBean.getEndDate();
-		boolean flag = requestBean.isFlag();
-		List<Querycriteria> queryList = requestBean.getQueryList();
-		if (StringUtils.isEmpty(startDate) || StringUtils.isEmpty(endDate)) {
-			date = DateUtils.getNowTime(DateUtils.YMD);
-			endDate = DateUtils.getCurrentTimeBySecound(-5);
-			if (interval == null) {
-				if (StringUtils.isEmpty(startDate)) {
-					startDate = DateUtils.getCurrentTimeBySecound(-15);
-				}
-			} else {
-				switch (interval) {
-				case 1:
-					startDate = DateUtils.getCurrentTime(-1);
-					break;
-				case 2:
-					startDate = DateUtils.getCurrentTime(-15);
-					break;
-				case 3:
-					startDate = DateUtils.getCurrentTimeByHour(-1);
-					break;
-				case 4:
-					startDate = DateUtils.getCurrentTimeByHour(-4);
-					break;
-				}
-			}
-		} else {
-			date = DateUtils.ymdhmsToymd(startDate);
-		}
-		index = index + "-" + date;
-		//TODO just for test
-		index = "filebeat-6.6.2-2019.09.10";
-		SearchRequest searchRequest = new SearchRequest(index);
-		searchRequest.types("doc");
-		BoolQueryBuilder boolQueryBuilder = boolQuery();
-		List<Querycriteria> list1 = new ArrayList<>();// 查询包含条件
-		List<Querycriteria> list2 = new ArrayList<>();// 查询不包含条件
-		queryList.forEach(u -> {
-			if (u.isEnable()) {
-				list1.add(u);
-			} else {
-				list2.add(u);
-			}
-		});
-		for (Querycriteria qt : list1) {
-			String con = qt.getValue().trim();
-			if (!StringUtils.isEmpty(con)) {
-				boolQueryBuilder.must(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, con));
-			}
-		}
-		BoolQueryBuilder boolQueryBuilder1 = boolQuery();
-		for (int i = level - 1; i < SRMDevOpsConstants.LOG_LEVEL.size(); i++) {
-			boolQueryBuilder1.should(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, SRMDevOpsConstants.LOG_LEVEL.get(i)));
-		}
-		boolQueryBuilder.must(boolQueryBuilder1);
-		RangeQueryBuilder lt = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString()).gt(DateUtils.toUtc(startDate))
-				.lt(DateUtils.toUtc(endDate));
-		boolQueryBuilder.filter(lt);
-		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-		sourceBuilder.query(boolQueryBuilder);
-		sourceBuilder.from(0);
-		sourceBuilder.size(10000);
-		sourceBuilder.sort(new FieldSortBuilder("@timestamp").order(SortOrder.DESC));
-		searchRequest.source(sourceBuilder);
-		List<String> list = new ArrayList<>();
-		List<Log> logList = logHandler.findAll(searchRequest);
-		for (Log log : logList) {
-			list.add(log.getMessage());
-		}
-		if (!list2.isEmpty()) {
-			list = list.stream().filter(u -> {
-				for (Querycriteria qt : list2) {
-					String val = qt.getValue().trim();
-					if (!StringUtils.isEmpty(val)) {
-						if (u.contains(val)) {
-							return false;
-						}
-					}
-				}
-				return true;
+    @Override
+    public List<String> console(QueryLogModel model) throws Exception {
+        Assert.notNull(model, "params is error");
+        Assert.hasText(model.getIndex(), "index is null");
 
-			}).collect(Collectors.toList());
-		}
-		if (flag) {
-			Storage storage = new Storage();
-			storage.setKey(endDate);
-			storage.setValue(list);
-			// return storage;
-			return storage;
-		} else {
-			StringBuilder sb = new StringBuilder();
-			list.forEach(u -> sb.append(u).append(System.lineSeparator()));
-			return sb.toString();
-		}
-	}*/
+        //set default
+        if (model.getLimit() == null || model.getLimit() == 0) {
+            model.setLimit(100);
+        }
 
-	@Override
-	public List<String> console(QueryLogModel model) throws Exception {
-		Assert.notNull(model,"params is error");
-		Assert.hasText(model.getIndex(),"index is null");
+        //build index
+        String index = model.getIndex();
+        Long startTime = model.getStartTime();
+        Date startTimeD = null;
+        if (null == startTime || startTime == 0) {
+            startTimeD = new Date();
+        } else {
+            startTimeD = new Date(startTime);
+        }
+        index = index + "-" + DateUtils.formatDate(startTimeD);
 
-		//set default
-		if(model.getLimit()==null||model.getLimit()==0){
-			model.setLimit(10);
-		}
+        List<Log> console = console(index, model.getStartTime(), model.getEndTime(), model.getFrom(), model.getLimit(), model.getQueryList(), model.getLevel());
+        List<String> result = new ArrayList();
+        for (Log log : console) {
+            result.add(log.getMessage());
+        }
+        return result;
+    }
 
-		//build index
-		String index = model.getIndex();
-		Long startTime = model.getStartTime();
-		Date startTimeD = null;
-		if(null==startTime||startTime==0){
-			startTimeD = new Date();
-		}else{
-			startTimeD = new Date(startTime);
-		}
+    public List<Log> console(String index, Long startTime, Long endTime, Integer from, Integer limit, List<Querycriteria> queryList, Integer level) throws Exception {
 
-		index =  index + "-" + DateUtils.formatDate(startTimeD);
+        //create bool query
+        BoolQueryBuilder boolQueryBuilder = boolQuery();
 
-		List<Log> console = console(index, model.getStartTime(), model.getEndTime(), model.getFrom(), model.getLimit(), model.getQueryList(), model.getLevel());
-		List<String> result = new ArrayList();
-		for(Log log : console){
-			result.add(log.getMessage());
-		}
-		return result;
-	}
+        //fix key match
+        if (!CollectionUtils.isEmpty(queryList)) {
+            queryList.forEach(u -> {
+                String query = u.getValue().trim();
+                if (StringUtils.isEmpty(query)) {
+                    return;
+                }
+                //con = QueryParser.escape(con);
+                query = "\"" + query + "\"";// for Special characters
+                if (u.isEnable()) {// enable? must match
+                    //boolQueryBuilder.must(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, con));
+                    boolQueryBuilder.must(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
+                } else {//not enbale ? must not match
+                    //boolQueryBuilder.mustNot(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, con));
+                    boolQueryBuilder.mustNot(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
+                }
+            });
+        }
 
+        //fix log level match
+        if (!Objects.isNull(level) && level > 0) {
+            BoolQueryBuilder boolQueryBuilder1 = boolQuery();
+            for (int i = level - 1; i < SRMDevOpsConstants.LOG_LEVEL.size(); i++) {
+                boolQueryBuilder1.should(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, SRMDevOpsConstants.LOG_LEVEL.get(i)));
+            }
+            boolQueryBuilder.must(boolQueryBuilder1);
+        }
 
-	public List<Log> console(String index,Long startTime,Long endTime,Integer from,Integer limit,List<Querycriteria> queryList,Integer level) throws Exception {
+        //fix time range
+        if (null != startTime && null != endTime && (endTime != 0 || startTime != 0)) {
+            RangeQueryBuilder rqb = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString());
+            if (null != startTime) {
+                rqb.gte(DateUtils.timeStampToUTC(startTime));
+            }
+            if (null != endTime) {
+                rqb.lt(DateUtils.timeStampToUTC(endTime));
+            }
+            boolQueryBuilder.filter(rqb);
+        }
 
-		//create bool query
-		BoolQueryBuilder boolQueryBuilder = boolQuery();
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(boolQueryBuilder);
+        sourceBuilder.from(Objects.isNull(from) ? 0 : from);//from
+        sourceBuilder.size(Objects.isNull(limit) ? 100 : limit);//limit
+        sourceBuilder.sort(new FieldSortBuilder("@timestamp").order(SortOrder.DESC));//order by timestamp desc
 
-		//fix key match
-		if(!CollectionUtils.isEmpty(queryList)){
-			queryList.forEach(u -> {
-				String con = u.getValue().trim();
-				if(StringUtils.isEmpty(con)){
-					return;
-				}
-				if (u.isEnable()) {// enable? must match
-					boolQueryBuilder.must(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, con));
-				} else {//not enbale ? must not match
-					boolQueryBuilder.mustNot(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, con));
-				}
-			});
-		}
-
-
-		//fix log level match
-		if(!Objects.isNull(level)&&level>0){
-			BoolQueryBuilder boolQueryBuilder1 = boolQuery();
-			for (int i = level - 1; i < SRMDevOpsConstants.LOG_LEVEL.size(); i++) {
-				boolQueryBuilder1.should(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, SRMDevOpsConstants.LOG_LEVEL.get(i)));
-			}
-			boolQueryBuilder.must(boolQueryBuilder1);
-		}
-
-		//fix time range
-		if(null!=startTime&&null!=endTime&&(endTime!=0||startTime!=0)){
-			RangeQueryBuilder rqb = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString());
-			if(null!=startTime){
-				rqb.gte(DateUtils.timeStampToUTC(startTime));
-			}
-			if(null!=endTime){
-				rqb.lt(DateUtils.timeStampToUTC(endTime));
-			}
-			boolQueryBuilder.filter(rqb);
-		}
-
-		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-		sourceBuilder.query(boolQueryBuilder);
-		sourceBuilder.from(Objects.isNull(from)?0:from);//from
-		sourceBuilder.size(limit);//limit
-		sourceBuilder.sort(new FieldSortBuilder("@timestamp").order(SortOrder.DESC));//order by timestamp desc
-
-		SearchRequest searchRequest = new SearchRequest(index);
-		//searchRequest.types("doc");//useful
-		searchRequest.source(sourceBuilder);
-		List<Log> logList = logHandler.findAll(searchRequest);
-		return logList;
-	}
-
-
+        SearchRequest searchRequest = new SearchRequest(index);
+        //searchRequest.types("doc");//useful
+        searchRequest.source(sourceBuilder);
+        List<Log> logList = logHandler.findAll(searchRequest);
+        return logList;
+    }
 
 
 }
