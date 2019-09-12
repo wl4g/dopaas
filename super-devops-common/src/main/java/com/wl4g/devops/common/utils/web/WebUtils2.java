@@ -479,16 +479,16 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 			return true;
 		}
 
-		// Domain wildcard matched?
+		// Domain wildCard matched?
 		boolean wildcardDomainMatched = false;
-		String[] partsa = split(domaina, ".");
-		String[] partsb = split(domainb, ".");
-		for (int i = 0; i < partsa.length; i++) {
-			if (partsa[i].equalsIgnoreCase("*")) {
+		String[] parts1 = split(domaina, ".");
+		String[] parts2 = split(domainb, ".");
+		for (int i = 0; i < parts1.length; i++) {
+			if (equalsIgnoreCase(parts1[i], "*")) {
 				if (i < (domaina.length() - 1) && i < (domainb.length() - 1)) {
-					String comparea = join(partsa, ".", i + 1, partsa.length);
-					String compareb = join(partsb, ".", i + 1, partsb.length);
-					if (comparea.equalsIgnoreCase(compareb)) {
+					String compare1 = join(parts1, ".", i + 1, parts1.length);
+					String compare2 = join(parts2, ".", i + 1, parts2.length);
+					if (equalsIgnoreCase(compare1, compare2)) {
 						wildcardDomainMatched = true;
 						break;
 					}
