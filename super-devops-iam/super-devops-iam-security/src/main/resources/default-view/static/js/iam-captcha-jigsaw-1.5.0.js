@@ -62,13 +62,17 @@
 					if(res.code == 200){
 						runtime.verifiedModel = res.data.verifiedModel;
 						ret = res.data.verifiedModel;
+						// Remove silder mouse event.
+						
+						// Call jigsaw captcha verified.
+						Common.Util.checkEmpty("options.onSuccess", that.onSuccess)(runtime.verifiedModel.verifiedToken);
 					} else {
-						Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, " + res.message);
+						Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, caused by: " + res.message);
 					}
                 },
 				error: function(req, status, errmsg){
 					console.debug(errmsg);
-					Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, " + errmsg);
+					Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, caused by: " + errmsg);
 				}
             });
             return ret;
@@ -301,7 +305,7 @@
                 if ($.isFunction(that.options.onSuccess(data.verifiedToken))) that.options.onSuccess.call(that.$element);
             } else {
                 that.sliderContainer.addClass('sliderContainer_fail');
-                if ($.isFunction(that.options.onFail)) that.options.onFail.call(that.$element);
+                //if ($.isFunction(that.options.onFail)) that.options.onFail.call(that.$element);
                 setTimeout(function () {
                     that.text.text(that.options.failedText);
                     that.reset();
