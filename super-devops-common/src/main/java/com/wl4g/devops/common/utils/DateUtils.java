@@ -19,10 +19,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Date utility
@@ -283,6 +280,18 @@ public abstract class DateUtils extends org.apache.commons.lang3.time.DateUtils 
 		long beforeTime = before.getTime();
 		long afterTime = after.getTime();
 		return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
+	}
+
+	/**
+	 * 时间戳转UTC
+	 * @param timeStamp
+	 * @return
+	 */
+	public static String timeStampToUTC(long timeStamp){
+		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		df2.setTimeZone(TimeZone.getTimeZone("UTC"));
+		String re = df2.format(new Date(timeStamp));
+		return re;
 	}
 
 	/**

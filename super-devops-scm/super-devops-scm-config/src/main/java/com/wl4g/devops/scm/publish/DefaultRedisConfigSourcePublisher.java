@@ -15,17 +15,17 @@
  */
 package com.wl4g.devops.scm.publish;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.devops.scm.config.ScmProperties;
+import com.wl4g.devops.support.cache.JedisService;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.wl4g.devops.scm.config.ScmProperties;
-import com.wl4g.devops.support.cache.JedisService;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
+import static com.wl4g.devops.common.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * SCM configuration source server publisher implements
@@ -55,8 +55,9 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 				PublishConfigWrapper wrap = jedisService.getObjectT(key, PublishConfigWrapper.class);
 				if (wrap != null) {
 					list.add(wrap);
+					jedisService.del(key);
 				}
-				jedisService.del(key);
+
 			}
 		}
 

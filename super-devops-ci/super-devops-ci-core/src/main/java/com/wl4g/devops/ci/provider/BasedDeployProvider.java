@@ -26,6 +26,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.utils.context.SpringContexts;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,6 +150,9 @@ public abstract class BasedDeployProvider {
 	 * Exce command
 	 */
 	public String exceCommand(String targetHost, String userName, String command, String rsa) throws Exception {
+		if(StringUtils.isBlank(command)){
+			return "command is blank";
+		}
 		String rsaKey = config.getCipherKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();

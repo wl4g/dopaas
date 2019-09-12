@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -110,9 +111,8 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 							if (deferred != null) {
 								GetRelease watch = deferred.getWatch();
 								// Filters name space
-
 								wrap.getNamespaces().retainAll(watch.getNamespaces());
-								if (wrap.getNamespaces() != null && wrap.getNamespaces().size() > 0) {
+								if (!CollectionUtils.isEmpty(wrap.getNamespaces())) {
 									// Filters instance
 									return wrap.getInstances().contains(watch.getInstance());
 								}

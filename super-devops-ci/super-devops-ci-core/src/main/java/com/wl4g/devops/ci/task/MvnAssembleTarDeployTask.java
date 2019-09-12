@@ -83,7 +83,7 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 
 			// post command (restart command)
 			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
-					provider.getTaskHistory().getPreCommand(), instance.getSshKey());
+					provider.getTaskHistory().getPostCommand(), instance.getSshKey());
 			result.append(s2).append("\n");
 
 			// Update status
@@ -99,6 +99,12 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 		if (log.isInfoEnabled()) {
 			log.info("Deploy task is finished!");
 		}
+	}
+
+	private void check(AppInstance instance){
+		Assert.hasText(instance.getHostname(),"hostname is blank");
+		Assert.hasText(instance.getSshKey(),"sshKey is blank");
+		Assert.hasText(instance.getSshUser(),"sshUser is blank");
 	}
 
 }
