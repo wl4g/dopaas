@@ -37,17 +37,18 @@ public class LogConsoleController {
     LogConsoleService logConsoleService;
 
     private final static Logger logger = LoggerFactory.getLogger(LogConsoleController.class);
+
     @RequestMapping("/consoleLog")
     @ResponseBody
-    public RespBase<?> consoleLog(@Validated @RequestBody QueryLogModel model) throws Exception{
+    public RespBase<?> consoleLog(@Validated @RequestBody QueryLogModel model) throws Exception {
         RespBase<Object> resp = RespBase.create();
         try {
             List<String> result = logConsoleService.console(model);
-            resp.getData().put("data",result);
+            resp.getData().put("data", result);
         } catch (Exception e) {
             resp.setCode(RespBase.RetCode.PARAM_ERR);
-            resp.setMessage("调用接口异常"+e.getMessage());
-            logger.info("requestBean:{}",model);
+            resp.setMessage("调用接口异常" + e.getMessage());
+            logger.info("requestBean:{}", model);
             e.printStackTrace();
         }
         return resp;

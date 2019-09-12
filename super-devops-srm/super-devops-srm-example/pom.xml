@@ -70,13 +70,16 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version><!--$NO-MVN-MAN-VER$ -->
 				<configuration>
-					<finalName>${final.name}-${project.version}-bin</finalName>
-					<!-- not append assembly id in release file name -->
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptors>
-						<descriptor>src/main/assemble/package.xml</descriptor>
-					</descriptors>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>com.wl4g.devops.SrmExample</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 				<executions>
 					<execution>
@@ -88,6 +91,8 @@
 					</execution>
 				</executions>
 			</plugin>
+
+
 		</plugins>
 	</build>
 </project>
