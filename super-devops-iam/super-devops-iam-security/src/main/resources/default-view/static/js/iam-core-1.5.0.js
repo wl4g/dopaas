@@ -510,7 +510,8 @@
 					if(runtime.safeCheck.checkCaptcha.enabled){
 						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
 						if(Common.Util.isEmpty(verifiedToken)){ // Required
-							throw "Failed to complete verify captcha check auto?, argument verifiedToken is null.";
+							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete the man-machine verification");
+							return;
 						}
 					}
 					// Check principal/credentials.
@@ -532,6 +533,7 @@
 						+ "&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 						+ "&" + Common.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
 						+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + verifiedToken
+						+ "&" + Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" + Common.Util.checkEmpty("captcha.use", settings.captcha.use)
 						+ "&" + Common.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
 
 					// Submission

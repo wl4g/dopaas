@@ -45,9 +45,7 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 		String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
-		// TODO
-		// VerifyType verityType = VerifyType.of(request);
-		VerifyType verityType = VerifyType.GRAPH_GIF;
+		VerifyType verityType = VerifyType.of(request);
 		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, cipherPassword, clientRef,
 				verifiedToken, verityType);
 	}
