@@ -216,12 +216,16 @@
 						img2.setSrc(runtime.applyModel.blockImg);
 						img2.imagey = runtime.applyModel.y;
 					} else {
+						// Remove silder mouse event all.
+						$(".sliderContainer").find(".slider").unbind(); // [MARK9], See: MARK6
 						that.text.text(res.message);
 						Common.Util.checkEmpty("options.onFail", that.options.onFail)("Failed to jigsaw apply captcha, " + res.message);
 					}
                 },
 				error: function(req, status, errmsg) {
 					console.debug(errmsg);
+					// Remove silder mouse event all.
+					$(".sliderContainer").find(".slider").unbind(); // [MARK8], See: MARK6
 					Common.Util.checkEmpty("options.onFail", that.options.onFail)("Failed to jigsaw apply captcha, " + errmsg);
 				}
             });
@@ -315,7 +319,7 @@
             }
         };
 
-		// [MARK6], See: MARK7
+		// [MARK6], See: 'MARK7,MARK8,MARK9'
 		$(this.slider).bind("mousedown", handleDragStart);
 		$(this.slider).bind("touchstart", handleDragStart);
 		$(this.slider).bind("mouseenter", handleOnmouseenter);
