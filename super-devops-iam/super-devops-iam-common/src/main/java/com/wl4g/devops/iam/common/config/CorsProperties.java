@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
 import static com.wl4g.devops.common.utils.web.WebUtils2.isSameWithOrigin;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.springframework.web.cors.CorsConfiguration.ALL;
 
 /**
@@ -268,17 +269,25 @@ public class CorsProperties implements Serializable {
 				return null;
 			}
 			if (getAllowedOrigins().contains(ALL)) {
-				if (getAllowCredentials()) {
+				/**
+				 * Note: Chrome will prompt: </br>
+				 * The value of the 'Access-Control-Allow-Origin' header in the
+				 * response must not be the wildcard '*' when the request's
+				 * credentials mode is 'include'. The credentials mode of
+				 * requests initiated by the XMLHttpRequest is controlled by the
+				 * withCredentials attribute.
+				 */
+				if (!getAllowCredentials()) {
 					return ALL;
 				} else {
 					return requestOrigin;
 				}
 			}
 			for (String allowedOrigin : getAllowedOrigins()) {
-				if (requestOrigin.equalsIgnoreCase(allowedOrigin)) {
+				if (equalsIgnoreCase(requestOrigin, allowedOrigin)) {
 					return requestOrigin;
 				}
-				// e.g. allowedOrigin is "http://*.aa.mydomain.com"
+				// e.g. allowedOrigin => "http://*.aa.mydomain.com"
 				if (isSameWithOrigin(allowedOrigin, requestOrigin, true)) {
 					return requestOrigin;
 				}
