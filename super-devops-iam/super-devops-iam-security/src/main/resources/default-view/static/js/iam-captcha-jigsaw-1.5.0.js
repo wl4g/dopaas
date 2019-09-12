@@ -62,8 +62,8 @@
 					if(res.code == 200){
 						runtime.verifiedModel = res.data.verifiedModel;
 						ret = res.data.verifiedModel;
-						// Remove silder mouse event.
-						
+						// Remove silder mouse event all.
+						$(".sliderContainer").find(".slider").unbind(); // [MARK7], See: MARK6
 						// Call jigsaw captcha verified.
 						Common.Util.checkEmpty("options.onSuccess", that.onSuccess)(runtime.verifiedModel.verifiedToken);
 					} else {
@@ -302,6 +302,8 @@
             var data = that.verify();
             if (data && data.verified) {
                 that.sliderContainer.addClass('sliderContainer_success');
+                that.text.text(Common.Util.isZhCN()?'验证通过':'Verified');
+				// Call verified successful.
                 if ($.isFunction(that.options.onSuccess(data.verifiedToken))) that.options.onSuccess.call(that.$element);
             } else {
                 that.sliderContainer.addClass('sliderContainer_fail');
@@ -313,17 +315,30 @@
             }
         };
 
-		this.slider.addEventListener('mousedown', handleDragStart);
-        this.slider.addEventListener('touchstart', handleDragStart);
-        this.slider.addEventListener('mouseenter',handleOnmouseenter);
-        this.$element.on('mouseleave',handleOnmouseleave);
-        document.addEventListener('mousemove', handleDragMove);
-        document.addEventListener('touchmove', handleDragMove);
-        document.addEventListener('mouseup', handleDragEnd);
-        document.addEventListener('touchend', handleDragEnd);
-        document.addEventListener('mousedown', function () { return false; });
-        document.addEventListener('touchstart', function () { return false; });
-        document.addEventListener('swipe', function () { return false; });
+		// [MARK6], See: MARK7
+		$(this.slider).bind("mousedown", handleDragStart);
+		$(this.slider).bind("touchstart", handleDragStart);
+		$(this.slider).bind("mouseenter", handleOnmouseenter);
+		$(this.$element).bind('mouseleave', handleOnmouseleave);
+		$(document).bind("mousemove", handleDragMove)
+		$(document).bind("touchmove", handleDragMove)
+		$(document).bind("mouseup", handleDragEnd)
+		$(document).bind("touchend", handleDragEnd)
+
+		/*
+		 * Note: If you add events using native js, jQuery will not be able to unbind.
+		 */ 
+		//this.slider.addEventListener('mousedown', handleDragStart);
+        //this.slider.addEventListener('touchstart', handleDragStart);
+        //this.slider.addEventListener('mouseenter', handleOnmouseenter);
+		//this.$element.on('mouseleave', handleOnmouseleave);
+        //document.addEventListener('mousemove', handleDragMove);
+        //document.addEventListener('touchmove', handleDragMove);
+        //document.addEventListener('mouseup', handleDragEnd);
+        //document.addEventListener('touchend', handleDragEnd);
+        //document.addEventListener('mousedown', function () { return false; });
+        //document.addEventListener('touchstart', function () { return false; });
+        //document.addEventListener('swipe', function () { return false; });
     };
 
 	 // Verify submit captcha.

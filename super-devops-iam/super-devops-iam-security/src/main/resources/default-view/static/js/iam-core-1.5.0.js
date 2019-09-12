@@ -159,9 +159,9 @@
 							applyverifyUrl: getVerifyCaptchaUrl(),
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
-								// Apply captcha completed.
-								runtime.flags.isApplying = false;
 								console.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
+								runtime.flags.isApplying = false; // Apply captcha completed.
+								runtime.verifiedModel.verifiedToken = verifiedToken; // [MARK4], See: 'MARK2'
 								Common.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)(verifiedToken);
                             },
 							onFail: function(element){
@@ -493,16 +493,22 @@
 			});
 
 			// Bind login btn click.
-			$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function(){
+			$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function() {
+				var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal));
+				// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
+				var plainPasswd = Common.Util.getEleValue("account.credential", settings.account.credential);
+				// Check principal/password.
+				if(Common.Util.isAnyEmpty(principal, plainPasswd)){
+					settings.account.onError(Common.Util.isZhCN()?"请输入账户名和密码":"Please input your account and password");
+					return;
+				}
+
 				_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
-					var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal));
-					// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
-					var plainPasswd = Common.Util.getEleValue("account.credential", settings.account.credential);
 					var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
 					var credentials = encodeURIComponent(IAM.Crypto.rivestShamirAdleman(secret, plainPasswd));
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
-						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1'
+						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
 						if(Common.Util.isEmpty(verifiedToken)){ // Required
 							throw "Failed to complete verify captcha check auto?, argument verifiedToken is null.";
 						}
