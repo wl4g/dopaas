@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.common.exception.iam;
 
-public class VerificationException extends IamException {
+import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
+
+public class VerificationException extends IamException implements BizRuleRestrictRestfulException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**

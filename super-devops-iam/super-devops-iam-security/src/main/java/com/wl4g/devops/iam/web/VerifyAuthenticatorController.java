@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package com.wl4g.devops.iam.web;
 
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
-import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.VerifyAuthController;
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
@@ -36,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.iam.common.utils.Securitys.createLimitFactors;
 import static com.wl4g.devops.iam.common.utils.Securitys.sessionStatus;
@@ -102,12 +99,11 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			}
 
 		} catch (Exception e) {
-			String errmsg = getRootCausesString(e);
-			resp.setCode(RetCode.SYS_ERR).setMessage(errmsg);
+			resp.handleError(e);
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to apply captcha.", e);
 			} else {
-				log.warn("Failed to apply captcha. caused by: {}", errmsg);
+				log.warn("Failed to apply captcha. caused by: {}", resp.getMessage());
 			}
 		}
 
@@ -133,10 +129,11 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
 			resp.getData().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
+			resp.handleError(e);
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to verify captcha.", e);
 			} else {
-				log.warn("Failed to verify captcha. caused by: {}", getRootCausesString(e));
+				log.warn("Failed to verify captcha. caused by: {}", resp.getMessage());
 			}
 		}
 		return resp;
@@ -173,13 +170,12 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			resp.getData().put(KEY_SMS_CHECK,
 					new SmsCheckModel(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
 		} catch (Exception e) {
-			if (e instanceof IamException) {
-				resp.setCode(RetCode.BIZ_ERR);
+			resp.handleError(e);
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to apply for sms verify-code", e);
 			} else {
-				resp.setCode(RetCode.SYS_ERR);
+				log.warn("Failed to apply for sms verify-code. caused by: {}", resp.getMessage());
 			}
-			resp.setMessage(getRootCausesString(e));
-			log.error("Failed to apply for sms verify-code", e);
 		}
 		return resp;
 	}
