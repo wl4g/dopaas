@@ -42,7 +42,7 @@ $(function() {
         $('#login_phone').hide();
         $('.active').removeClass('active');
         $(this).addClass('active')
-    })
+    });
     // 手机登录
     $('#phoneGo').click(function () {
         $('#login_scan_pass').hide();
@@ -50,7 +50,7 @@ $(function() {
         $('#login_phone').show();
         $('.active').removeClass('active');
         $(this).addClass('active')
-    })
+    });
     // 扫码登录
     $('#codeGo').click(function () {
         $('#login_scan_pass').hide();
@@ -58,19 +58,18 @@ $(function() {
         $('#login_phone').hide();
         $('.active').removeClass('active');
         $(this).addClass('active')
-    })
+    });
     //关闭 code-close
     $('.code-close').click(function () {
         $('.code-write').hide()
-    })
-    document.querySelector(".select-area").onchange = function (e) {
-        for (var i = 0; i < this.options.length; i++) {
-            if (this.options[i].value != "+086") {
-                alert("目前此功能仅对中国大陆用户开放！敬请谅解");
-                this.selectedIndex = 0;
-                break;
-            }
+    });
+    $(".select-area").change(function(){
+        var selectVal = $(this).children('option:selected').val();
+        console.log(selectVal)
+        if (selectVal != "+086") {
+            alert("目前此功能仅对中国大陆用户开放！敬请谅解");
+            $(this).children('option')[0].selected = true;
         }
-    }
+    });
 
 });
