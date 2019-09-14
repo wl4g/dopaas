@@ -37,7 +37,7 @@ spring:
 
 # Redis configuration.
 redis:
-  passwd: zzx!@#$%
+  passwd: ${REDIS_PASSWD:zzx!@#$%}
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
