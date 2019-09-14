@@ -16,9 +16,23 @@ spring:
     rules:
       - path: /**
         allowCredentials: true
-        allowsOrigins: '*'
+        allowsOrigins:
+           - http://localhost:8080
+           - http://localhost.com:8080
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
+  cloud:
+    devops:
+      iam:
+        authc-internal-access:
+          secure: true
+          allow-ip: 127.0.0.1
+          deny-ip:
+        client:
+          server-uri: http://localhost:14040/iam-server
+          login-uri: http://localhost:8080/#/login
+          success-uri: http://localhost:8080/#/ci/taskhis
+          unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -44,17 +58,11 @@ spring:
 
 # Redis configuration.
 redis:
-  passwd: zzx!@#$%
+  passwd: ${REDIS_PASSWD:zzx!@#$%}
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes:
-    - safecloud-test:6379
-    - safecloud-test:6380
-    - safecloud-test:6381
-    - safecloud-test:7379
-    - safecloud-test:7380
-    - safecloud-test:7381
+  nodes: ${REDIS_NODES:safecloud-test:6379,safecloud-test:6380,safecloud-test:6381,safecloud-test:7380,safecloud-test:7380,safecloud-test:7381}
 
 # Deploy git configuration.
 deploy:

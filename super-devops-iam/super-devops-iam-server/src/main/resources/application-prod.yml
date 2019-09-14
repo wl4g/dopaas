@@ -21,8 +21,16 @@ spring:
            - http://*.wl4g.com
            - https://*.anjiancloud.com
            - http://*.anjiancloud.com
+           - https://*.anjiancloud.test
+           - http://*.anjiancloud.test
+           - https://*.anjiancloud.alpha
+           - http://*.anjiancloud.alpha
            - https://*.sunwuu.com
            - http://*.sunwuu.com
+           - https://*.sunwuu.test
+           - http://*.sunwuu.test
+           - https://*.sunwuu.alpha
+           - http://*.sunwuu.alpha
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   datasource:
