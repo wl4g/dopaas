@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.iam.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
 import java.lang.annotation.Annotation;
 
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.*;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.iam.web.DefaultViewController;
 
@@ -34,9 +34,6 @@ import com.wl4g.devops.iam.web.DefaultViewController;
 @AutoConfigureAfter({ IamAutoConfiguration.class })
 public class DefaultViewAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
-	@Autowired
-	private IamProperties config;
-
 	@Bean
 	public DefaultViewController defaultViewController() {
 		return new DefaultViewController();
@@ -44,7 +41,7 @@ public class DefaultViewAutoConfiguration extends AbstractOptionalControllerConf
 
 	@Override
 	protected String getMappingPrefix() {
-		return this.config.getDefaultViewBaseUri();
+		return DEFAULT_VIEW_BASE_URI;
 	}
 
 	@Bean

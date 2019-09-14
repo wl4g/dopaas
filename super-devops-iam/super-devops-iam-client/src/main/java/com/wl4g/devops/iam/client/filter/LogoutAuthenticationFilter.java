@@ -186,7 +186,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		/*
 		 * Synchronize with xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		StringBuffer uri = new StringBuffer(config.getBaseUri()).append(URI_S_BASE).append("/").append(URI_S_LOGOUT);
+		StringBuffer uri = new StringBuffer(config.getServerUri()).append(URI_S_BASE).append("/").append(URI_S_LOGOUT);
 		Map queryParams = new LinkedHashMap<>();
 		queryParams.put(config.getParam().getApplication(), config.getServiceName());
 		queryParams.put(config.getParam().getGrantTicket(), grantTicket);

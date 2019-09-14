@@ -206,7 +206,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 	 * @return
 	 */
 	private String buildValidateUrl(String authCode) {
-		StringBuffer url = new StringBuffer(config.getBaseUri());
+		StringBuffer url = new StringBuffer(config.getServerUri());
 		url.append(URI_S_BASE).append("/");
 		url.append(URI_S_SECOND_VALIDATE).append("?");
 

@@ -19,6 +19,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BA
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
 import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 
@@ -47,27 +48,26 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	/**
 	 * Default view loader path
 	 */
-	private String defaultViewLoaderPath = "classpath:/default-view";
-
-	/**
-	 * Default view access base URI
-	 */
-	private String defaultViewBaseUri = "/view";
+	final public static String DEFAULT_VIEW_LOADER_PATH = "classpath:/default-view";
 
 	/**
 	 * Login page URI
 	 */
-	private String loginUri = getDefaultViewBaseUri() + "/login.html";
+	private String loginUri = DEFAULT_VIEW_LOGIN_URI;
 
 	/**
-	 * Login success(index) page URI
+	 * Login success redirection to endPoint. </br>
+	 * 
+	 * <pre>
+	 * umc-admin@http://localhost:14048
+	 * </pre>
 	 */
-	private String successUri = getDefaultViewBaseUri() + "/index.html";
+	private String successEndpoint;
 
 	/**
 	 * Unauthorized(403) page URI
 	 */
-	private String unauthorizedUri = getDefaultViewBaseUri() + "/403.html";
+	private String unauthorizedUri = DEFAULT_VIEW_403_URI;
 
 	/**
 	 * Matcher configuration properties.
@@ -84,22 +84,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 */
 	private ServerParamProperties param = new ServerParamProperties();
 
-	public String getDefaultViewLoaderPath() {
-		return defaultViewLoaderPath;
-	}
-
-	public void setDefaultViewLoaderPath(String viewLoaderPath) {
-		this.defaultViewLoaderPath = viewLoaderPath;
-	}
-
-	public String getDefaultViewBaseUri() {
-		return defaultViewBaseUri;
-	}
-
-	public void setDefaultViewBaseUri(String defaultViewBaseUri) {
-		this.defaultViewBaseUri = defaultViewBaseUri;
-	}
-
 	@Override
 	public String getLoginUri() {
 		return loginUri;
@@ -109,13 +93,21 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		this.loginUri = WebUtils2.cleanURI(loginUri);
 	}
 
-	@Override
-	public String getSuccessUri() {
-		return successUri;
+	public String getSuccessEndpoint() {
+		return successEndpoint;
 	}
 
-	public void setSuccessUri(String successUri) {
-		this.successUri = WebUtils2.cleanURI(successUri);
+	public void setSuccessEndpoint(String successEndpoint) {
+		this.successEndpoint = successEndpoint;
+	}
+
+	public String getSuccessService() {
+		return getSuccessEndpoint().split("@")[0];
+	}
+
+	@Override
+	public String getSuccessUri() {
+		return getSuccessEndpoint().split("@")[1];
 	}
 
 	@Override
@@ -151,32 +143,36 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		this.param = param;
 	}
 
-	public void validation() {
-		// Ignore
-		//
+	@Override
+	protected void applyDefaultIfNecessary() {
+		// Default URL filter chain.
+		addDefaultFilterChain();
+		// Default success endPoint.
+		if (isBlank(getSuccessEndpoint())) {
+			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
+		}
+	}
+
+	@Override
+	protected void validation() {
+		Assert.hasText(getSuccessEndpoint(), "'successEndpoint' must not be empty.");
+		Assert.state(getSuccessEndpoint().contains("@"), "Invalid success endpoint, e.g. iam-example@http://localhost:14041");
+		super.validation();
 	}
 
 	/**
 	 * Add default filter chain settings.<br/>
 	 * {@link DefaultOauth2SnsController#connect}<br/>
 	 */
-	public void addDefaultFilterChain() {
+	private void addDefaultFilterChain() {
 		// Default view access files request rules.
-		getFilterChain().put(getDefaultViewBaseUri() + URI_STATIC + "/**", "anon");
+		getFilterChain().put(DEFAULT_VIEW_BASE_URI + URI_STATIC + "/**", "anon");
 		// SNS authenticator rules.
 		getFilterChain().put(URI_S_SNS_BASE + "/*", "anon");
 		// Login authenticator rules.
 		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
 		// Verify(CAPTCHA/SMS) authenticator rules.
 		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		// Default filtering set
-		this.addDefaultFilterChain();
-		// Validation
-		this.validation();
 	}
 
 	/**

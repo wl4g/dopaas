@@ -83,7 +83,7 @@ public abstract class AbstractBasedValidator<R extends BasedModel, A> implements
 		Assert.hasText(endpoint, "Validate endpoint must not be null");
 		Assert.notNull(req, "Validate parameters must not be null");
 
-		StringBuffer url = new StringBuffer(config.getBaseUri());
+		StringBuffer url = new StringBuffer(config.getServerUri());
 		url.append(URI_S_BASE).append("/").append(endpoint).append("?");
 
 		// To request query parameters

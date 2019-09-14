@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -80,10 +79,10 @@ public class CorsProperties implements Serializable {
 	public static class CorsRule {
 		private String path = "/**";
 		private boolean allowCredentials = true;
-		private Set<String> allowsOrigins = new HashSet<>();
-		private Set<String> allowsHeaders = new HashSet<>();
-		private Set<String> allowsMethods = new HashSet<>();
-		private Set<String> exposedHeaders = new HashSet<>();
+		private List<String> allowsOrigins = new ArrayList<>(8);
+		private List<String> allowsHeaders = new ArrayList<>(8);
+		private List<String> allowsMethods = new ArrayList<>(8);
+		private List<String> exposedHeaders = new ArrayList<>(8);
 		private Long maxAge = 1800L;
 
 		public CorsRule() {
@@ -109,11 +108,11 @@ public class CorsProperties implements Serializable {
 			return this;
 		}
 
-		public Set<String> getAllowsOrigins() {
+		public List<String> getAllowsOrigins() {
 			return allowsOrigins;
 		}
 
-		public CorsRule setAllowsOrigins(Set<String> allowsOrigins) {
+		public CorsRule setAllowsOrigins(List<String> allowsOrigins) {
 			// "allowsOrigin" may have a "*" wildcard character.
 			// e.g. http://*.mydomain.com
 			this.allowsOrigins.addAll(allowsOrigins);
@@ -127,7 +126,7 @@ public class CorsProperties implements Serializable {
 			return this;
 		}
 
-		public Set<String> getAllowsHeaders() {
+		public List<String> getAllowsHeaders() {
 			return allowsHeaders;
 		}
 
@@ -139,11 +138,11 @@ public class CorsProperties implements Serializable {
 			return mergeWithSimpleAll(this.allowsHeaders, Arrays.asList(allowsHeader));
 		}
 
-		public Set<String> getAllowsMethods() {
+		public List<String> getAllowsMethods() {
 			return allowsMethods;
 		}
 
-		public CorsRule setAllowsMethods(Set<String> allowsMethods) {
+		public CorsRule setAllowsMethods(List<String> allowsMethods) {
 			return mergeWithSimpleAll(this.allowsMethods, allowsMethods);
 		}
 
@@ -151,11 +150,11 @@ public class CorsProperties implements Serializable {
 			return mergeWithSimpleAll(this.allowsMethods, Arrays.asList(allowsMethod));
 		}
 
-		public Set<String> getExposedHeaders() {
+		public List<String> getExposedHeaders() {
 			return exposedHeaders;
 		}
 
-		public CorsRule setExposedHeaders(Set<String> exposedHeaders) {
+		public CorsRule setExposedHeaders(List<String> exposedHeaders) {
 			return mergeWithSimpleAll(this.exposedHeaders, exposedHeaders);
 		}
 

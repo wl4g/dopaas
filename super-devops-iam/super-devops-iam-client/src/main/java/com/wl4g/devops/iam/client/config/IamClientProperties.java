@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.client.config;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,19 +34,24 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	private static final long serialVersionUID = -8848998112902613969L;
 
 	/**
-	 * IAM server base URI (public network)
+	 * Default IAM server URI.
 	 */
-	private String baseUri = "http://localhost:14040/devops-iam";
+	final public static String DEFAULT_VIEW_SERV_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
 
 	/**
-	 * Application name. Example: http://host:port/myapp/shiro-cas
+	 * IAM server base URI (public network)
 	 */
-	private String serviceName = "defaultApp";
+	private String serverUri = "http://localhost:14040/iam-server";
+
+	/**
+	 * Application name. e.g. http://host:port/{serviceName}/shiro-cas
+	 */
+	private String serviceName;
 
 	/**
 	 * IAM server login page URI
 	 */
-	private String loginUri = "http://localhost:14040/iam/default-view/login.html";
+	private String loginUri = "http://localhost:14040/iam-server" + DEFAULT_VIEW_SERV_URI;
 
 	/**
 	 * This success(index) page URI
@@ -54,7 +61,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * IAM server unauthorized(403) page URI
 	 */
-	private String unauthorizedUri = "http://localhost:14040/iam/default-view/403.html";
+	private String unauthorizedUri = "http://localhost:14040/iam-server" + DEFAULT_VIEW_403_URI;
 
 	/**
 	 * Re-login callback URL, whether to use the previously remembered URL
@@ -72,16 +79,16 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	private Map<String, String> filterChain = new HashMap<>();
 
 	/**
-	 * IAM client parameters configuration properties.
+	 * IAM client parameters configuration.
 	 */
 	private ClientParamProperties param = new ClientParamProperties();
 
-	public String getBaseUri() {
-		return baseUri;
+	public String getServerUri() {
+		return serverUri;
 	}
 
-	public void setBaseUri(String baseUri) {
-		this.baseUri = baseUri;
+	public void setServerUri(String baseUri) {
+		this.serverUri = baseUri;
 	}
 
 	public String getServiceName() {
@@ -153,16 +160,19 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 		this.param = param;
 	}
 
-	public void validation() {
-		Assert.notNull(this.getBaseUri(), "'baseUri' must be null");
-		Assert.notNull(this.getServiceName(), "'serviceName' must be null");
-		Assert.notNull(this.getFilterChain(), "'filterChain' must be null");
+	@Override
+	protected void applyDefaultIfNecessary() {
+		if (isBlank(getServiceName())) {
+			setServiceName(environment.getProperty("spring.application.name"));
+		}
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
-		// Validate attributes
-		this.validation();
+	protected void validation() {
+		super.validation();
+		Assert.notNull(getServerUri(), "'baseUri' must be empty.");
+		Assert.notNull(getServiceName(), "'serviceName' must be empty.");
+		Assert.notNull(getFilterChain(), "'filterChain' must be empty.");
 	}
 
 	/**

@@ -188,9 +188,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// From source application
 			String fromAppName = getFromAppName(request);
 
-			// Callback success redirect URI
-			String successRedirectUrl = determineSuccessUrl(tk, subject, request, response); // prior
-			hasText(successRedirectUrl, "Check the successful login redirection URL configure");
+			// Call determine success redirectUrl
+			String successUrl = determineSuccessUrl(tk, subject, request, response);
+			hasText(successUrl, "Check the successful login redirection URL configure");
 
 			// Granting ticket
 			String grantTicket = null;
@@ -202,16 +202,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			Map params = new HashMap();
 			params.put(config.getParam().getApplication(), fromAppName);
 
-			// Response JSON.
+			// Response with JSON?
 			if (isJSONResponse(request)) {
 				try {
 					// Placing it in http.body makes it easier for Android/iOS
 					// to get token.
 					params.put(config.getCookie().getName(), subject.getSession().getId());
 					// Make logged JSON.
-					RespBase<String> loggedResp = makeLoggedResponse(request, grantTicket, successRedirectUrl, params);
+					RespBase<String> loggedResp = makeLoggedResponse(request, grantTicket, successUrl, params);
 
-					// Callback custom success handling.
+					// Handle success processing.
 					coprocessor.postAuthenticatingSuccess(tk, subject, request, response, loggedResp.getData());
 
 					String logged = toJSONString(loggedResp);
@@ -222,7 +222,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				} catch (IOException e) {
 					log.error("Login success response json error", e);
 				}
-			} else { // Redirect to login page.
+			} else { // Redirection page?
 				/*
 				 * When the source application exists, the indication is that it
 				 * needs to be redirected to the CAS client application, then
@@ -232,13 +232,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 					params.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
-				// Callback custom success handling.
+				// Handle success processing.
 				coprocessor.postAuthenticatingSuccess(tk, subject, request, response, params);
 
 				if (log.isInfoEnabled()) {
-					log.info("Redirect to successUrl '{}', param:{}", successRedirectUrl, params);
+					log.info("Redirect to successUrl '{}', param:{}", successUrl, params);
 				}
-				issueRedirect(request, response, successRedirectUrl, params, true);
+				issueRedirect(request, response, successUrl, params, true);
 			}
 
 		} catch (IamException e) {
@@ -246,8 +246,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// See:org.apache.shiro.web.filter.authc.AuthenticatingFilter#executeLogin
 			throw new AuthenticationException(e);
 		} finally {
-			// Clean-up
-			cleanup(token, subject, request, response);
+			cleanup(token, subject, request, response); // Clean-up
 		}
 
 		// Redirection has been responded and no further execution is required.
