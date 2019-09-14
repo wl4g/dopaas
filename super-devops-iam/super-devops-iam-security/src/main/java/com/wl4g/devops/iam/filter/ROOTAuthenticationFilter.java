@@ -83,7 +83,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 
 	@Override
 	protected boolean isLoginRequest(ServletRequest request, ServletResponse response) {
-		return this.matchRequest(getLoginUrl(), request, response);
+		return matchRequest(getLoginUrl(), request, response);
 	}
 
 	/**

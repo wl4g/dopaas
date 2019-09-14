@@ -38,7 +38,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.config.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.filter.ProviderSupports;
+import com.wl4g.devops.iam.filter.ProviderSupport;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
@@ -178,7 +178,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 */
 	protected void checkConnectRequireds(String provider, String state, Map<String, String> connectParams) {
 		// Check provider supported
-		ProviderSupports.checkSupport(provider);
+		ProviderSupport.checkSupport(provider);
 		// Check state
 		Assert.hasText(state, String.format("Illegal parameter '%s' is empty", config.getParam().getState()));
 	}

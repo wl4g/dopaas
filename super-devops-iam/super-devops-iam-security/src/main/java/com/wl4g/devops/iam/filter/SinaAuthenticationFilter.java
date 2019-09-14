@@ -23,12 +23,12 @@ public class SinaAuthenticationFilter extends Oauth2SnsAuthenticationFilter<Sina
 
 	@Override
 	public String getName() {
-		return ProviderSupports.SINA.getName();
+		return ProviderSupport.SINA.getName();
 	}
 
 	@Override
 	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupports.SINA.getName();
+		return URI_BASE_MAPPING + ProviderSupport.SINA.getName();
 	}
 
 }

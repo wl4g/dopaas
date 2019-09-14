@@ -16,13 +16,13 @@
 package com.wl4g.devops.iam.client.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.apache.shiro.web.util.WebUtils;
 
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
@@ -54,7 +54,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		if (log.isInfoEnabled()) {
-			String url = WebUtils2.getFullRequestURL(WebUtils.toHttp(request));
+			String url = getFullRequestURL(WebUtils.toHttp(request));
 			log.info("Authenticating request URL: {}", url);
 		}
 

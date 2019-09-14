@@ -23,12 +23,12 @@ public class WechatAuthenticationFilter extends Oauth2SnsAuthenticationFilter<We
 
 	@Override
 	public String getName() {
-		return ProviderSupports.WECHAT.getName();
+		return ProviderSupport.WECHAT.getName();
 	}
 
 	@Override
 	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupports.WECHAT.getName();
+		return URI_BASE_MAPPING + ProviderSupport.WECHAT.getName();
 	}
 
 	@Override

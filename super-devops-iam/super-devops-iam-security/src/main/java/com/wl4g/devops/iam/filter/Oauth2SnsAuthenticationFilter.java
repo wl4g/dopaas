@@ -60,7 +60,7 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 
 		// Add supported SNS provider
 		if (this.enabled()) {
-			ProviderSupports.addSupport(getName());
+			ProviderSupport.addSupport(getName());
 		}
 	}
 

@@ -23,12 +23,12 @@ public class GoogleAuthenticationFilter extends Oauth2SnsAuthenticationFilter<Go
 
 	@Override
 	public String getName() {
-		return ProviderSupports.GOOGLE.getName();
+		return ProviderSupport.GOOGLE.getName();
 	}
 
 	@Override
 	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupports.GOOGLE.getName();
+		return URI_BASE_MAPPING + ProviderSupport.GOOGLE.getName();
 	}
 
 }

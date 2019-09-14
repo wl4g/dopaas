@@ -56,7 +56,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	private String loginUri = DEFAULT_VIEW_LOGIN_URI;
 
 	/**
-	 * Login success redirection to endPoint. </br>
+	 * Login success redirection to end-point.(Must be back-end server URI)
+	 * </br>
 	 * 
 	 * <pre>
 	 * umc-admin@http://localhost:14048

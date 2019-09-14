@@ -23,12 +23,12 @@ public class DingtalkAuthenticationFilter extends Oauth2SnsAuthenticationFilter<
 
 	@Override
 	public String getName() {
-		return ProviderSupports.DINGTALK.getName();
+		return ProviderSupport.DINGTALK.getName();
 	}
 
 	@Override
 	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupports.DINGTALK.getName();
+		return URI_BASE_MAPPING + ProviderSupport.DINGTALK.getName();
 	}
 
 }
