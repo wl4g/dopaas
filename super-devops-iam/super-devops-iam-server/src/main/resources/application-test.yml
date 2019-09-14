@@ -43,7 +43,7 @@ spring:
   cloud.devops:
     iam: # IAM configuration.
       login-uri: ${spring.cloud.devops.iam.default-view-base-uri}/login.html
-      success-uri: http://localhost.com:8080/#/umc/config
+      success-uri: http://localhost.com:14048/umc-admin/authenticator
       unauthorized-uri: ${spring.cloud.devops.iam.default-view-base-uri}/403.html
       authc-internal-access:
         secure: true

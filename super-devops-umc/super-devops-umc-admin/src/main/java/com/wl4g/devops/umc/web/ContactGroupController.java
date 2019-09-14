@@ -23,57 +23,52 @@ import java.util.List;
 @RequestMapping("/contactGroup")
 public class ContactGroupController extends BaseController {
 
-    @Autowired
-    private AlarmContactGroupDao alarmContactGroupDao;
+	@Autowired
+	private AlarmContactGroupDao alarmContactGroupDao;
 
-    @Autowired
-    private ContactGroupService contactGroupService;
+	@Autowired
+	private ContactGroupService contactGroupService;
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(String name, CustomPage customPage) {
-        log.info("into ContactGroupController.list prarms::"+ "name = {} , customPage = {} ", name, customPage );
-        RespBase<Object> resp = RespBase.create();
-        Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-        Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page page = PageHelper.startPage(pageNum, pageSize, true);
-        List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
-        customPage.setPageNum(pageNum);
-        customPage.setPageSize(pageSize);
-        customPage.setTotal(page.getTotal());
-        resp.getData().put("page", customPage);
-        resp.getData().put("list", list);
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(String name, CustomPage customPage) {
+		log.info("into ContactGroupController.list prarms::" + "name = {} , customPage = {} ", name, customPage);
+		RespBase<Object> resp = RespBase.create();
+		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+		List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
+		customPage.setPageNum(pageNum);
+		customPage.setPageSize(pageSize);
+		customPage.setTotal(page.getTotal());
+		resp.getData().put("page", customPage);
+		resp.getData().put("list", list);
+		return resp;
+	}
 
-    @RequestMapping(value = "/save")
-    public RespBase<?> save(AlarmContactGroup alarmContactGroup) {
-        log.info("into ContactGroupController.save prarms::"+ "alarmContactGroup = {} ", alarmContactGroup );
-        Assert.notNull(alarmContactGroup,"group is null");
-        Assert.hasText(alarmContactGroup.getName(),"groupName is null");
-        RespBase<Object> resp = RespBase.create();
-        contactGroupService.save(alarmContactGroup);
-        return resp;
-    }
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(AlarmContactGroup alarmContactGroup) {
+		log.info("into ContactGroupController.save prarms::" + "alarmContactGroup = {} ", alarmContactGroup);
+		Assert.notNull(alarmContactGroup, "group is null");
+		Assert.hasText(alarmContactGroup.getName(), "groupName is null");
+		RespBase<Object> resp = RespBase.create();
+		contactGroupService.save(alarmContactGroup);
+		return resp;
+	}
 
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		log.info("into ContactController.del prarms::" + "id = {} ", id);
+		RespBase<Object> resp = RespBase.create();
+		contactGroupService.del(id);
+		return resp;
+	}
 
-    @RequestMapping(value = "/del")
-    public RespBase<?> del(Integer id) {
-        log.info("into ContactController.del prarms::"+ "id = {} ", id );
-        RespBase<Object> resp = RespBase.create();
-        contactGroupService.del(id);
-        return resp;
-    }
-
-    @RequestMapping(value = "/all")
-    public RespBase<?> all() {
-        RespBase<Object> resp = RespBase.create();
-        List<AlarmContactGroup> list = alarmContactGroupDao.list(null);
-        resp.getData().put("list", list);
-        return resp;
-    }
-
-
-
-
+	@RequestMapping(value = "/all")
+	public RespBase<?> all() {
+		RespBase<Object> resp = RespBase.create();
+		List<AlarmContactGroup> list = alarmContactGroupDao.list(null);
+		resp.getData().put("list", list);
+		return resp;
+	}
 
 }

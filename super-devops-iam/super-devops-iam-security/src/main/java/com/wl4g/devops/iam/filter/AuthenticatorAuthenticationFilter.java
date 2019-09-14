@@ -56,7 +56,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			// Remember request parameters
 			rememberRequestParameters(request, response);
 		} catch (IllegalCallbackDomainException e) {
-			log.warn("Using default callback URI. cause by: {}", getRootCausesString(e));
+			log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
 		}
 
 		/*
@@ -65,10 +65,9 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		 */
 		if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(), request, response)) {
 			try {
-				// No need to continue
 				return onLoginSuccess(createToken(request, response), subject, request, response);
 			} catch (Exception e) {
-				log.error("Unauthenticated, automatically redirection application.", e);
+				log.error("Failed to direct redirect successUrl with authenticated.", e);
 			}
 		}
 
