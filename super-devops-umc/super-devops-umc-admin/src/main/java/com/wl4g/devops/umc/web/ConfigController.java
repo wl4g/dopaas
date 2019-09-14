@@ -24,57 +24,53 @@ import java.util.List;
 @RequestMapping("/config")
 public class ConfigController extends BaseController {
 
-    @Autowired
-    private AlarmConfigDao alarmConfigDao;
+	@Autowired
+	private AlarmConfigDao alarmConfigDao;
 
-    @Autowired
-    private ConfigService configService;
+	@Autowired
+	private ConfigService configService;
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(Integer templateId,Integer contactGroupId, CustomPage customPage) {
-        log.info("into ConfigController.list prarms::"+ "templateId = {} , contactGroupId = {} , customPage = {} ", templateId, contactGroupId, customPage );
-        RespBase<Object> resp = RespBase.create();
-        Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-        Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page page = PageHelper.startPage(pageNum, pageSize, true);
-        List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
-        customPage.setPageNum(pageNum);
-        customPage.setPageSize(pageSize);
-        customPage.setTotal(page.getTotal());
-        resp.getData().put("page", customPage);
-        resp.getData().put("list", list);
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(Integer templateId, Integer contactGroupId, CustomPage customPage) {
+		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , customPage = {} ", templateId,
+				contactGroupId, customPage);
+		RespBase<Object> resp = RespBase.create();
+		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+		List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
+		customPage.setPageNum(pageNum);
+		customPage.setPageSize(pageSize);
+		customPage.setTotal(page.getTotal());
+		resp.getData().put("page", customPage);
+		resp.getData().put("list", list);
+		return resp;
+	}
 
-    @RequestMapping(value = "/save")
-    public RespBase<?> save(@RequestBody AlarmConfig alarmConfig) {
-        Assert.notNull(alarmConfig,"config is null");
-        Assert.notNull(alarmConfig.getCollectId(),"instance is null");
-        Assert.notNull(alarmConfig.getContactGroupId(),"contact is null");
-        Assert.notNull(alarmConfig.getTemplateId(),"template is null");
-        RespBase<Object> resp = RespBase.create();
-        configService.save(alarmConfig);
-        return resp;
-    }
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(@RequestBody AlarmConfig alarmConfig) {
+		Assert.notNull(alarmConfig, "config is null");
+		Assert.notNull(alarmConfig.getCollectId(), "instance is null");
+		Assert.notNull(alarmConfig.getContactGroupId(), "contact is null");
+		Assert.notNull(alarmConfig.getTemplateId(), "template is null");
+		RespBase<Object> resp = RespBase.create();
+		configService.save(alarmConfig);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail")
-    public RespBase<?> detail(Integer id) {
-        RespBase<Object> resp = RespBase.create();
-        AlarmConfig alarmConfig = configService.detail(id);
-        resp.getData().put("alarmConfig",alarmConfig);
-        return resp;
-    }
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		AlarmConfig alarmConfig = configService.detail(id);
+		resp.getData().put("alarmConfig", alarmConfig);
+		return resp;
+	}
 
-
-    @RequestMapping(value = "/del")
-    public RespBase<?> del(Integer id) {
-        RespBase<Object> resp = RespBase.create();
-        configService.del(id);
-        return resp;
-    }
-
-
-
-
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		configService.del(id);
+		return resp;
+	}
 
 }

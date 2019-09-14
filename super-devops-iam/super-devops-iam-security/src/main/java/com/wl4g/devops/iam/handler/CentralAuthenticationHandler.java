@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,11 +43,14 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATT
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import static com.wl4g.devops.common.utils.web.WebUtils2.isEqualWithDomain;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.equalsAny;
+import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
@@ -65,7 +69,6 @@ import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
@@ -103,31 +106,31 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	@Override
 	public void checkAuthenticateRequests(String fromAppName, String redirectUrl) {
 		// Check redirect URL(When source application is not empty)
-		if (StringUtils.hasText(fromAppName)) {
-			if (!StringUtils.hasText(redirectUrl)) {
-				throw new IllegalCallbackDomainException("Redirect URL cannot be empty when source application is not empty");
+		if (isNotBlank(fromAppName)) {
+			if (isBlank(redirectUrl)) {
+				throw new IllegalCallbackDomainException("Parameters redirectUrl and application cannot be null");
 			}
 
-			// Application information
-			ApplicationInfo appInfo = context.getApplicationInfo(fromAppName);
-			if (appInfo == null || !StringUtils.hasText(appInfo.getAppName())
-					|| !StringUtils.hasText(appInfo.getExtranetBaseUri())) {
-				throw new IllegalCallbackDomainException(
-						String.format("Illegal authorize callback domain configure, application[%s]", fromAppName));
+			// Get application.
+			ApplicationInfo app = context.getApplicationInfo(fromAppName);
+			if (Objects.isNull(app)) {
+				throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
 			}
+			Assert.state(isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
+					String.format("Invalid redirection domain configure, application[%s]", fromAppName));
+
 			if (log.isDebugEnabled()) {
-				log.debug("Check authenticate requests application info:[{}]", appInfo);
+				log.debug("Check authentication requests application [{}]", app);
 			}
 
 			// Check redirect URL are legitimate callback URI?(As long as there
 			// is a match)
 			try {
 				String host = new URI(redirectUrl).getHost();
-				if (!(StringUtils2.equalsAny(host, PERMISSIVE_HOSTS)
-						|| WebUtils2.isEqualWithDomain(redirectUrl, appInfo.getExtranetBaseUri())
-						|| WebUtils2.isEqualWithDomain(redirectUrl, appInfo.getIntranetBaseUri())
-						|| WebUtils2.isEqualWithDomain(redirectUrl, appInfo.getViewExtranetBaseUri()))) {
-					throw new IllegalCallbackDomainException(String.format("Illegal redirect URL [%s]", redirectUrl));
+				if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
+						|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri())
+						|| isEqualWithDomain(redirectUrl, app.getViewExtranetBaseUri()))) {
+					throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
 				}
 			} catch (URISyntaxException e) {
 				throw new IllegalArgumentException(e);

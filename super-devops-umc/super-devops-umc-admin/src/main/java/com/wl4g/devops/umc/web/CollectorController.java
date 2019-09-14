@@ -22,56 +22,51 @@ import java.util.List;
 @RequestMapping("/collector")
 public class CollectorController extends BaseController {
 
-    @Autowired
-    private AlarmCollectorDao alarmCollectorDao;
+	@Autowired
+	private AlarmCollectorDao alarmCollectorDao;
 
-    @Autowired
-    private CollectorService collectorService;
+	@Autowired
+	private CollectorService collectorService;
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(String name,String addr, CustomPage customPage) {
-        log.info("into ContactGroupController.list prarms::"+ "name = {} , customPage = {} ", name, customPage );
-        RespBase<Object> resp = RespBase.create();
-        Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-        Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
-        Page page = PageHelper.startPage(pageNum, pageSize, true);
-        List<AlarmCollector> list = alarmCollectorDao.list(name, addr);
-        customPage.setPageNum(pageNum);
-        customPage.setPageSize(pageSize);
-        customPage.setTotal(page.getTotal());
-        resp.getData().put("page", customPage);
-        resp.getData().put("list", list);
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(String name, String addr, CustomPage customPage) {
+		log.info("into ContactGroupController.list prarms::" + "name = {} , customPage = {} ", name, customPage);
+		RespBase<Object> resp = RespBase.create();
+		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+		List<AlarmCollector> list = alarmCollectorDao.list(name, addr);
+		customPage.setPageNum(pageNum);
+		customPage.setPageSize(pageSize);
+		customPage.setTotal(page.getTotal());
+		resp.getData().put("page", customPage);
+		resp.getData().put("list", list);
+		return resp;
+	}
 
-    @RequestMapping(value = "/save")
-    public RespBase<?> save(AlarmCollector alarmCollector) {
-        log.info("into CollectorController.save prarms::"+ "alarmCollector = {} ", alarmCollector );
-        RespBase<Object> resp = RespBase.create();
-        collectorService.save(alarmCollector);
-        return resp;
-    }
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(AlarmCollector alarmCollector) {
+		log.info("into CollectorController.save prarms::" + "alarmCollector = {} ", alarmCollector);
+		RespBase<Object> resp = RespBase.create();
+		collectorService.save(alarmCollector);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail")
-    public RespBase<?> detail(Integer id) {
-        log.info("into CollectorController.detail prarms::"+ "id = {} ", id );
-        RespBase<Object> resp = RespBase.create();
-        AlarmCollector alarmCollector = alarmCollectorDao.selectByPrimaryKey(id);
-        resp.getData().put("alarmCollector",alarmCollector);
-        return resp;
-    }
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		log.info("into CollectorController.detail prarms::" + "id = {} ", id);
+		RespBase<Object> resp = RespBase.create();
+		AlarmCollector alarmCollector = alarmCollectorDao.selectByPrimaryKey(id);
+		resp.getData().put("alarmCollector", alarmCollector);
+		return resp;
+	}
 
-
-    @RequestMapping(value = "/del")
-    public RespBase<?> del(Integer id) {
-        log.info("into CollectorController.del prarms::"+ "id = {} ", id );
-        RespBase<Object> resp = RespBase.create();
-        collectorService.del(id);
-        return resp;
-    }
-
-
-
-
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		log.info("into CollectorController.del prarms::" + "id = {} ", id);
+		RespBase<Object> resp = RespBase.create();
+		collectorService.del(id);
+		return resp;
+	}
 
 }

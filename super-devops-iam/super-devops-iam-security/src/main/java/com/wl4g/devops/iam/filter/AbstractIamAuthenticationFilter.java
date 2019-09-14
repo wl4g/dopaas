@@ -222,9 +222,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				} catch (IOException e) {
 					log.error("Login success response json error", e);
 				}
-			}
-			// Redirect to login page.
-			else {
+			} else { // Redirect to login page.
 				/*
 				 * When the source application exists, the indication is that it
 				 * needs to be redirected to the CAS client application, then
