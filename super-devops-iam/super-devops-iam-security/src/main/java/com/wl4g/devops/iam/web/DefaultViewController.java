@@ -25,6 +25,12 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.wl4g.devops.common.kit.jvm.JVMRuntimeKit;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.config.IamProperties;
+
+import static com.wl4g.devops.iam.config.IamProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
@@ -42,10 +48,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
-import com.wl4g.devops.common.kit.jvm.JVMRuntimeKit;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.config.IamProperties;
 
 /**
  * Default view controller
@@ -73,7 +75,7 @@ public class DefaultViewController extends BaseController {
 	 * IAM server configuration
 	 */
 	@Autowired
-	private IamProperties config;
+	protected IamProperties config;
 
 	/**
 	 * Session delegate message source bundle.
@@ -154,8 +156,7 @@ public class DefaultViewController extends BaseController {
 	 * @return
 	 */
 	private Resource getResource(String basePath, String filepath) {
-		String location = new StringBuffer(config.getDefaultViewLoaderPath()).append(basePath).append("/").append(filepath)
-				.toString();
+		String location = new StringBuffer(DEFAULT_VIEW_LOADER_PATH).append(basePath).append("/").append(filepath).toString();
 		return loader.getResource(cleanURI(location));
 	}
 

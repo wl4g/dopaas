@@ -17,13 +17,11 @@ spring:
   cloud: # Spring cloud configuration.
     devops:
       iam: # IAM configuration.
-        default-view-loader-path: classpath:/default-view/
-        default-view-base-uri: /view
-        # login-uri: /default-view/login.html
-        # success-uri: /default-view/index.html
-        # unauthorized-uri: /default-view/403.html
+#        login-uri: /view/login.html
+#        unauthorized-uri: /view/403.html
+#        success-endpoint: iam-example@http://localhost:14041/iam-example
         filter-chain: 
-          /public/**: anon # Public rule release
+          /public/**: anon # Public rule
         param: # Must be consistent with the client, otherwise authentication will never succeed
           sid: __sid
         matcher:

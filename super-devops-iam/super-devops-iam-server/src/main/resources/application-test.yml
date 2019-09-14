@@ -16,7 +16,13 @@ spring:
     rules:
       - path: /**
         allowCredentials: true
-        allowsOrigins: '*'
+        allowsOrigins:
+           - http://localhost:14041 # iam-example
+           - http://localhost:14043 # scm-server
+           - http://localhost:14046 # ci-server
+           - http://localhost:14048 # umc-admin
+           - http://localhost:14051 # share-admin
+           - http://localhost:15050 # srm-admin
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   datasource:
@@ -42,9 +48,9 @@ spring:
       log-slow-sql: true
   cloud.devops:
     iam: # IAM configuration.
-      login-uri: ${spring.cloud.devops.iam.default-view-base-uri}/login.html
-      success-uri: http://localhost.com:14048/umc-admin/authenticator
-      unauthorized-uri: ${spring.cloud.devops.iam.default-view-base-uri}/403.html
+      login-uri: /view/login.html
+      unauthorized-uri: /view/403.html
+      success-endpoint: umc-admin@http://localhost:14048/umc-admin
       authc-internal-access:
         secure: true
         allowIp: 127.0.0.1

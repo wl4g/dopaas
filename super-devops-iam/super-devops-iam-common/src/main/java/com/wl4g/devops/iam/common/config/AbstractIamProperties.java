@@ -22,6 +22,9 @@ import java.util.Map;
 
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
@@ -29,24 +32,50 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	private static final long serialVersionUID = -5858422822181237865L;
 
 	/**
+	 * Default view access base URI
+	 */
+	final public static String DEFAULT_VIEW_BASE_URI = "/view";
+
+	/**
+	 * Default view login URI.
+	 */
+	final public static String DEFAULT_VIEW_LOGIN_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
+
+	/**
+	 * Default view index URI.
+	 */
+	final public static String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
+
+	/**
+	 * Default view 403 URI.
+	 */
+	final public static String DEFAULT_VIEW_403_URI = DEFAULT_VIEW_BASE_URI + "/403.html";
+
+	/**
+	 * Spring boot environment.
+	 */
+	@Autowired
+	protected Environment environment;
+
+	/**
 	 * External custom filter chain pattern matching
 	 */
-	private Map<String, String> filterChain = new LinkedHashMap<>();
+	protected Map<String, String> filterChain = new LinkedHashMap<>();
 
 	/**
 	 * Session cache configuration properties.
 	 */
-	private CacheProperties cache = new CacheProperties();
+	protected CacheProperties cache = new CacheProperties();
 
 	/**
 	 * Cookie configuration properties.
 	 */
-	private CookieProperties cookie = new CookieProperties();
+	protected CookieProperties cookie = new CookieProperties();
 
 	/**
 	 * Session configuration properties.
 	 */
-	private SessionProperties session = new SessionProperties();
+	protected SessionProperties session = new SessionProperties();
 
 	/**
 	 * Login page URI
@@ -55,8 +84,18 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 */
 	protected abstract String getLoginUri();
 
+	/**
+	 * Success URI.
+	 * 
+	 * @return
+	 */
 	protected abstract String getSuccessUri();
 
+	/**
+	 * Unauthorized(403) URI.
+	 * 
+	 * @return
+	 */
 	protected abstract String getUnauthorizedUri();
 
 	public Map<String, String> getFilterChain() {
@@ -100,15 +139,26 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	public abstract void setParam(P param);
 
-	public void validation() {
-		// Ignore
-		//
+	/**
+	 * Apply default properties if necessary.
+	 */
+	protected abstract void applyDefaultIfNecessary();
+
+	/**
+	 * Validation.
+	 */
+	protected void validation() {
+		Assert.notNull(getLoginUri(), "'loginUri' must be empty.");
+		Assert.notNull(getSuccessUri(), "'successUri' must be empty.");
+		Assert.notNull(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// Validation
-		this.validation();
+		// Apply default properties if necessary.
+		applyDefaultIfNecessary();
+		// Validate attributes.
+		validation();
 	}
 
 	/**

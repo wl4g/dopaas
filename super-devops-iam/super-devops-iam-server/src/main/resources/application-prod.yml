@@ -16,7 +16,13 @@ spring:
     rules:
       - path: /**
         allowCredentials: true
-        allowsOrigins: '*'
+        allowsOrigins:
+           - https://*.wl4g.com
+           - http://*.wl4g.com
+           - https://*.anjiancloud.com
+           - http://*.anjiancloud.com
+           - https://*.sunwuu.com
+           - http://*.sunwuu.com
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   datasource:
@@ -43,8 +49,8 @@ spring:
   cloud.devops:
     iam: # IAM configuration.
       login-uri: https://passport.wl4g.com/login.html
-      success-uri: https://passport.wl4g.com/index.html
       unauthorized-uri: https://passport.wl4g.com/403.html
+      success-endpoint: umc-admin@https://umc-admin.wl4g.com/umc-admin
       authc-internal-access:
         secure: true
         allowIp: 127.0.0.1
