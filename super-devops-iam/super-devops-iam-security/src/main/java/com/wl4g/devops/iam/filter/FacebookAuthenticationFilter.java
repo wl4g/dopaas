@@ -23,12 +23,12 @@ public class FacebookAuthenticationFilter extends Oauth2SnsAuthenticationFilter<
 
 	@Override
 	public String getName() {
-		return ProviderSupports.FACEBOOK.getName();
+		return ProviderSupport.FACEBOOK.getName();
 	}
 
 	@Override
 	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupports.FACEBOOK.getName();
+		return URI_BASE_MAPPING + ProviderSupport.FACEBOOK.getName();
 	}
 
 }

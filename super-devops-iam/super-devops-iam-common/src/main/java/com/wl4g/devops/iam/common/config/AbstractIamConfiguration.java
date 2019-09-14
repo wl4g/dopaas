@@ -275,15 +275,25 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	//
 
 	@Bean
+	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
+	@ConfigurationProperties(prefix = "spring.web.cors")
+	public CorsProperties corsProperties() {
+		return new CorsProperties();
+	}
+
+	@Bean
 	public AdvancedCorsProcessor advancedCorsProcessor() {
 		return new AdvancedCorsProcessor();
 	}
 
 	@Bean
-	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = "spring.web.cors")
-	public CorsProperties corsProperties() {
-		return new CorsProperties();
+	public CorsResolveSecurityFilter corsResolveSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		// Merger transformation configuration
+		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
+		CorsResolveSecurityFilter filter = new CorsResolveSecurityFilter(source);
+		filter.setCorsProcessor(corsProcessor);
+		return filter;
 	}
 
 	/**
@@ -310,16 +320,14 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	 */
 	@Bean
 	@ConditionalOnBean(CorsProperties.class)
-	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		// Merger transformation configuration
-		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
-
+	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsResolveSecurityFilter filter) {
 		// Register CORS filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(new CorsResolveSecurityFilter(source));
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
 		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
-		// Cannot use '/*' or it will not be added to the container chain (only
-		// '/**').
+		/*
+		 * Cannot use '/*' or it will not be added to the container chain (only
+		 * '/**').
+		 */
 		filterBean.addUrlPatterns("/*");
 		return filterBean;
 	}

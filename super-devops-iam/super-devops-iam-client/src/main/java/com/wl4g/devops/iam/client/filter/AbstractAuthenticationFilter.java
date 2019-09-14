@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.client.filter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -28,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
@@ -39,9 +39,11 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.StringUtils.endsWith;
+import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.shiro.util.Assert.hasText;
+import static org.apache.shiro.web.util.WebUtils.getAndClearSavedRequest;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -49,7 +51,6 @@ import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.utils.Exceptions;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -372,12 +373,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		if (successUrl == null) {
 			successUrl = config.getSuccessUri();
 		}
-		// Re-determine
+
+		// Determine
 		successUrl = context.determineLoginSuccessUrl(successUrl, token, subject, request, response);
-		// Check and cleaning success url
-		successUrl = WebUtils2.cleanURI(successUrl);
 		Assert.notNull(successUrl, "'successUrl' must not be null");
-		return successUrl;
+		return cleanURI(successUrl); // Check & cleanup.
 	}
 
 	/**
@@ -389,11 +389,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	private String getRememberUrl(HttpServletRequest request) {
 		// Use remember redirect
 		if (config.isUseRememberRedirect()) {
-			SavedRequest savedReq = WebUtils.getAndClearSavedRequest(request);
+			SavedRequest savedReq = getAndClearSavedRequest(request);
 			if (savedReq != null) {
 				// URL excluding redirection remember
-				if (!StringUtils.endsWithAny(savedReq.getRequestURI(), EXCLOUDE_SAVED_REDIRECT_URLS)) {
-					return WebUtils2.getRFCBaseURI(request, false) + savedReq.getRequestUrl();
+				if (!endsWithAny(savedReq.getRequestURI(), EXCLOUDE_SAVED_REDIRECT_URLS)) {
+					return getRFCBaseURI(request, false) + savedReq.getRequestUrl();
 				}
 			}
 		}

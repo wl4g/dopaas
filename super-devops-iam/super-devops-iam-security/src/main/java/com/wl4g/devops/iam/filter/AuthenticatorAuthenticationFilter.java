@@ -33,8 +33,8 @@ import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 
 /**
- * IAM client authenticator authorization filter.<br/>
- * <br/>
+ * IAM client authenticator authorization filter.</br>
+ * </br>
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -54,7 +54,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			authHandler.checkAuthenticateRequests(getFromAppName(request), getFromRedirectUrl(request));
 
 			// Remember request parameters
-			rememberRequestParameters(request, response);
+			savedRequestParameters(request, response);
 		} catch (IllegalCallbackDomainException e) {
 			log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
 		}
@@ -76,26 +76,29 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	}
 
 	/**
-	 * Remember the latest authentication request configuration, such as
-	 * response_type, source application, etc.<br/>
-	 * e.g:<br/>
-	 * <b>Req1：</b>http://localhost:14040/devops-iam/view/login.html?service=devops-iam-example&redirect_url=http://localhost:14041/devops-iam-example/index.html<br/>
-	 * <b>Resp1：</b>login.html<br/>
-	 * <br/>
+	 * Saved the latest authentication request configuration, such as
+	 * response_type, source application, etc.</br>
+	 * E.G.:</br>
+	 * </br>
+	 * 
+	 * <b>Req1：</b>http://localhost:14040/devops-iam/view/login.html?service=devops-iam-example&redirect_url=http://localhost:14041/devops-iam-example/index.html</br>
+	 * <b>Resp1：</b>login.html</br>
+	 * </br>
 	 * <b>Req2：(Intercepted by
-	 * rootFilter)</b>http://localhost:14040/devops-iam/favicon.ico<br/>
+	 * rootFilter)</b>http://localhost:14040/devops-iam/favicon.ico</br>
 	 * <b>Resp2：</b>
-	 * 302->http://localhost:14040/devops-iam/view/login.html?service=devops-iam-example&redirect_url=http://localhost:14041/devops-iam-example/index.html<br/>
-	 * <br/>
-	 * <b>Req3：</b>http://localhost:14040/devops-iam/view/login.html<br/>
-	 * <br/>
+	 * 302->http://localhost:14040/devops-iam/view/login.html?service=devops-iam-example&redirect_url=http://localhost:14041/devops-iam-example/index.html</br>
+	 * </br>
+	 * <b>Req3：</b>http://localhost:14040/devops-iam/view/login.html</br>
+	 * </br>
+	 * 
 	 * No parameters for the second request for login.html ??? This is the
 	 * problem to be solved by this method.
 	 * 
 	 * @param request
 	 * @param response
 	 */
-	private void rememberRequestParameters(ServletRequest request, ServletResponse response) {
+	private void savedRequestParameters(ServletRequest request, ServletResponse response) {
 		// Parameter names
 		String fromAppKey = config.getParam().getApplication();
 		String respTypeKey = config.getParam().getResponseType();

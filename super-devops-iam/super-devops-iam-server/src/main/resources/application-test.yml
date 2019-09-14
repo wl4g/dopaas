@@ -17,6 +17,7 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
+           - http://localhost:8080 # devops-view
            - http://localhost:14041 # iam-example
            - http://localhost:14043 # scm-server
            - http://localhost:14046 # ci-server

@@ -30,7 +30,7 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo.SnsAuthorizingParameter;
 import com.wl4g.devops.iam.authc.EmptyOauth2AuthorizationInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.filter.ProviderSupports;
+import com.wl4g.devops.iam.filter.ProviderSupport;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
 /**
@@ -64,7 +64,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 	@Override
 	protected AuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
 		// Check provider
-		ProviderSupports.checkSupport(token.getSocial().getProvider());
+		ProviderSupport.checkSupport(token.getSocial().getProvider());
 
 		// Get account information
 		/*

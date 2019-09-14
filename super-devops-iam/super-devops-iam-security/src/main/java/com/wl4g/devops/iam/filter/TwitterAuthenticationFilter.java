@@ -23,12 +23,12 @@ public class TwitterAuthenticationFilter extends Oauth2SnsAuthenticationFilter<T
 
 	@Override
 	public String getName() {
-		return ProviderSupports.TWITTER.getName();
+		return ProviderSupport.TWITTER.getName();
 	}
 
 	@Override
 	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupports.TWITTER.getName();
+		return URI_BASE_MAPPING + ProviderSupport.TWITTER.getName();
 	}
 
 }

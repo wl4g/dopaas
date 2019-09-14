@@ -15,6 +15,16 @@
  */
 package com.wl4g.devops.iam.common.attacks.csrf;
 
+import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.DefaultCorsProcessor;
 import org.springframework.web.filter.CorsFilter;
@@ -40,6 +50,20 @@ public class CorsResolveSecurityFilter extends CorsFilter {
 	 * @since
 	 */
 	public static class AdvancedCorsProcessor extends DefaultCorsProcessor {
+
+		final protected Logger log = LoggerFactory.getLogger(getClass());
+
+		@Override
+		public boolean processRequest(CorsConfiguration config, HttpServletRequest request, HttpServletResponse response)
+				throws IOException {
+			// CORS check processing.
+			final boolean corsAllowed = super.processRequest(config, request, response);
+			if (!corsAllowed && log.isWarnEnabled()) {
+				log.warn("CORS request rejected for URL: '{}'", corsAllowed, getFullRequestURL(request));
+			}
+			return corsAllowed;
+		}
+
 	}
 
 }

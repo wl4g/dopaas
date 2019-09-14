@@ -28,7 +28,7 @@ import com.wl4g.devops.common.exception.iam.NoSuchSocialProviderException;
  * @date 2019年1月7日
  * @since
  */
-public enum ProviderSupports {
+public enum ProviderSupport {
 
 	/**
 	 * WeChat public platform definitions.
@@ -84,7 +84,7 @@ public enum ProviderSupports {
 	final private String displayNameEn;
 	final private String displayNameZh;
 
-	private ProviderSupports(String name, String displayNameEn, String displayNameZh) {
+	private ProviderSupport(String name, String displayNameEn, String displayNameZh) {
 		this.name = name;
 		this.displayNameEn = displayNameEn;
 		this.displayNameZh = displayNameZh;

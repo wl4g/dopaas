@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
@@ -30,6 +31,8 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.util.Assert.hasText;
@@ -38,6 +41,8 @@ import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -379,17 +384,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 *            from application name
 	 * @param grantTicket
 	 *            logged information model
-	 * @param successRedirectUrl
+	 * @param successUrl
 	 *            login success redirect URL
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private RespBase<String> makeLoggedResponse(ServletRequest request, String grantTicket, String successRedirectUrl,
-			Map params) {
-		hasText(successRedirectUrl, "'successRedirectUrl' must not be empty");
+	private RespBase<String> makeLoggedResponse(ServletRequest request, String grantTicket, String successUrl, Map params) {
+		hasText(successUrl, "'successUrl' must not be empty");
 
 		// Redirection URL
-		StringBuffer redirectUri = new StringBuffer(successRedirectUrl);
+		StringBuffer redirectUri = new StringBuffer(successUrl);
 		if (isNotBlank(grantTicket)) {
 			if (redirectUri.lastIndexOf("?") > 0) {
 				redirectUri.append("&");
@@ -407,7 +411,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Make message
 		RespBase<String> resp = RespBase.create();
-		resp.setCode(OK).setStatus(SESSION_STATUS_AUTHC).setMessage("Authentication success");
+		resp.setCode(OK).setStatus(SESSION_STATUS_AUTHC).setMessage("Authentication successful");
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
 		resp.getData().putAll(params);
 		return resp;
@@ -428,7 +432,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map params, String errmsg) {
-		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication fail";
+		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication failure";
 		// Make message
 		RespBase<String> resp = RespBase.create();
 		resp.setCode(UNAUTHC).setStatus(SESSION_STATUS_UNAUTHC).setMessage(errmsg);
@@ -448,17 +452,37 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	private String determineSuccessUrl(IamAuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
-		// Callback success redirect URI
-		String successRedirectUrl = getFromRedirectUrl(request);
-		if (isBlank(successRedirectUrl)) {
-			successRedirectUrl = getSuccessUrl(); // fall-back
+		// Callback success redirect URI.
+		String successUrl = getFromRedirectUrl(request);
+		if (isBlank(successUrl)) {
+			successUrl = getSuccessUrl(); // fall-back
 		}
-		// Determine success URL
-		successRedirectUrl = configurer.determineLoginSuccessUrl(successRedirectUrl, token, subject, request, response);
 
-		hasText(successRedirectUrl, "'successRedirectUrl' is empty, please check the configure");
-		cleanURI(successRedirectUrl); // symbol check
-		return successRedirectUrl;
+		// e.g. </br>
+		// Situation1: http://myapp.domain.com/myapp/xxx/list?id=1
+		// Situation1: /view/index.html
+		// ===> http://myapp.domain.com/myapp/xxx/list?id=1
+		//
+		// Implementing the IAM-CAS protocol: When successful login, you must
+		// redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
+		// front-end pages can not be used directly).
+		// See:com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter
+		try {
+			URI uri = new URI(successUrl);
+			if (!endsWith(uri.getPath(), URI_AUTHENTICATOR)) {
+				String portPart = (uri.getPort() == 80 || uri.getPort() == 443) ? EMPTY : (":" + uri.getPort());
+				String queryPart = isBlank(uri.getQuery()) ? EMPTY : ("?" + uri.getQuery());
+				successUrl = uri.getScheme() + "://" + uri.getHost() + portPart + uri.getPath() + URI_AUTHENTICATOR + queryPart;
+			}
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException(
+					String.format("Can't to obtain a successful redirect URL，cause: {}", successUrl, getRootCausesString(e)));
+		}
+
+		// Determine success URL
+		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
+		hasText(successUrl, "Success redirectUrl is empty, please check the configure");
+		return cleanURI(successUrl); // symbol check
 	}
 
 	/**
@@ -480,14 +504,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may
 		// redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen
 		// infinite redirection.
-		if (this instanceof AuthenticatorAuthenticationFilter || !StringUtils.hasText(failRedirectUrl)) {
+		if (this instanceof AuthenticatorAuthenticationFilter || isBlank(failRedirectUrl)) {
 			failRedirectUrl = getLoginUrl();
 		}
 
 		String loginUrl = configurer.determineLoginFailureUrl(failRedirectUrl, token, ae, request, response);
 		hasText(loginUrl, "'loginUrl' is empty, please check the configure");
-		cleanURI(loginUrl); // check
-		return loginUrl;
+		return cleanURI(loginUrl); // symbol check
 	}
 
 	/**

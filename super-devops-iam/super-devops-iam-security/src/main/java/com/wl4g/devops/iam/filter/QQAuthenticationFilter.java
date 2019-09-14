@@ -23,12 +23,12 @@ public class QQAuthenticationFilter extends Oauth2SnsAuthenticationFilter<QQAuth
 
 	@Override
 	public String getName() {
-		return ProviderSupports.QQ.getName();
+		return ProviderSupport.QQ.getName();
 	}
 
 	@Override
 	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupports.QQ.getName();
+		return URI_BASE_MAPPING + ProviderSupport.QQ.getName();
 	}
 
 	@Override

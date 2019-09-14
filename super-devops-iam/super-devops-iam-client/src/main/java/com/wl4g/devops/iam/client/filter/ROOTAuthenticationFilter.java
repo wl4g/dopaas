@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.iam.client.filter;
 
+import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.util.WebUtils;
 
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
@@ -81,15 +83,15 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		if (log.isDebugEnabled()) {
-			String url = WebUtils2.getFullRequestURL(WebUtils.toHttp(request));
-			log.debug("Root request: {}", url);
+			log.debug("ROOT request URL: {}", getFullRequestURL(toHttp(request)));
 		}
 
 		/*
-		 * See:xx.client.filter.AbstractAuthenticationFilter#getRememberUrl()
+		 * See:com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#
+		 * getRememberUrl()
 		 */
-		if (WebUtils.toHttp(request).getMethod().equalsIgnoreCase(GET_METHOD)) {
-			WebUtils.saveRequest(request);
+		if (config.isUseRememberRedirect() && toHttp(request).getMethod().equalsIgnoreCase(GET_METHOD)) {
+			saveRequest(request);
 		}
 
 		return SecurityUtils.getSubject().isAuthenticated();
