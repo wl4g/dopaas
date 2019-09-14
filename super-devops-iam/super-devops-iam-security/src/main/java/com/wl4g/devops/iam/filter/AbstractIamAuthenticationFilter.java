@@ -35,6 +35,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
@@ -190,18 +191,23 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			 */
 			// subject.getSession().setAttribute(KEY_AUTHC_TOKEN, tk);
 
+			// Success redirect URL.
+			String successUrl = getFromRedirectUrl(request);
+
 			// From source application
 			String fromAppName = getFromAppName(request);
-
-			// Call determine success redirectUrl
-			String successUrl = determineSuccessUrl(tk, subject, request, response);
-			hasText(successUrl, "Check the successful login redirection URL configure");
-
-			// Granting ticket
-			String grantTicket = null;
-			if (isNotBlank(fromAppName)) {
-				grantTicket = authHandler.loggedin(fromAppName, subject).getGrantTicket();
+			if (isBlank(fromAppName)) { // Use default?
+				fromAppName = config.getSuccessService();
+				successUrl = config.getSuccessUri();
 			}
+
+			// Determine success redirectUrl
+			successUrl = determineSuccessUrl(tk, subject, request, response, successUrl);
+			hasText(fromAppName, "Successful redirect application must not be empty.");
+			hasText(successUrl, "Successful redirect URL must not be empty.");
+
+			// Granting ticket.
+			String grantTicket = authHandler.loggedin(fromAppName, subject).getGrantTicket();
 
 			// Build response parameter.
 			Map params = new HashMap();
@@ -448,12 +454,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param subject
 	 * @param request
 	 * @param response
+	 * @param successUrl
 	 * @return
 	 */
 	private String determineSuccessUrl(IamAuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) {
-		// Callback success redirect URI.
-		String successUrl = getFromRedirectUrl(request);
+			ServletResponse response, String successUrl) {
 		if (isBlank(successUrl)) {
 			successUrl = getSuccessUrl(); // fall-back
 		}
@@ -461,7 +466,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// e.g. </br>
 		// Situation1: http://myapp.domain.com/myapp/xxx/list?id=1
 		// Situation1: /view/index.html
-		// ===> http://myapp.domain.com/myapp/xxx/list?id=1
+		// ===> http://myapp.domain.com/myapp/authenticator?id=1
 		//
 		// Implementing the IAM-CAS protocol: When successful login, you must
 		// redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
@@ -472,14 +477,19 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			if (!endsWith(uri.getPath(), URI_AUTHENTICATOR)) {
 				String portPart = (uri.getPort() == 80 || uri.getPort() == 443) ? EMPTY : (":" + uri.getPort());
 				String queryPart = isBlank(uri.getQuery()) ? EMPTY : ("?" + uri.getQuery());
-				successUrl = uri.getScheme() + "://" + uri.getHost() + portPart + uri.getPath() + URI_AUTHENTICATOR + queryPart;
+				String contextPath = uri.getPath();
+				String[] pathPart = split(uri.getPath(), "/");
+				if (pathPart.length > 1) {
+					contextPath = pathPart[0];
+				}
+				successUrl = new StringBuffer(uri.getScheme()).append("://").append(uri.getHost()).append(portPart)
+						.append(contextPath).append(URI_AUTHENTICATOR).append(queryPart).toString();
 			}
 		} catch (URISyntaxException e) {
-			throw new IllegalStateException(
-					String.format("Can't to obtain a successful redirect URL，cause: {}", successUrl, getRootCausesString(e)));
+			throw new IllegalStateException("Can't to obtain a successful redirect URL.", e);
 		}
 
-		// Determine success URL
+		// Call determine successUrl.
 		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
 		hasText(successUrl, "Success redirectUrl is empty, please check the configure");
 		return cleanURI(successUrl); // symbol check

@@ -484,7 +484,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @return
 	 */
 	private String generateServiceTicket() {
-		return "st" + randomAlphabetic(30);
+		return "st" + randomAlphabetic(54, 94);
 	}
 
 }
