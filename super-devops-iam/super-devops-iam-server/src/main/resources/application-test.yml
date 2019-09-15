@@ -44,7 +44,8 @@ spring:
       log-slow-sql: true
   cloud.devops:
     iam: # IAM configuration.
-      login-uri: /view/login.html
+      #login-uri: /view/login.html
+      login-uri: http://localhost:8080/#/login
       unauthorized-uri: /view/403.html
       success-endpoint: umc-admin@http://localhost:14048/umc-admin
       authc-internal-access:
