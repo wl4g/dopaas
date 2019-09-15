@@ -13,7 +13,7 @@
 spring:
   application.name: iam-server
   profiles:
-    active: test
+    active: dev
   cloud: # Spring cloud configuration.
     devops:
       iam: # IAM configuration.

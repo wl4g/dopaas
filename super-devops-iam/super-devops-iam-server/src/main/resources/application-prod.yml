@@ -21,16 +21,8 @@ spring:
            - http://*.wl4g.com
            - https://*.anjiancloud.com
            - http://*.anjiancloud.com
-           - https://*.anjiancloud.test
-           - http://*.anjiancloud.test
-           - https://*.anjiancloud.alpha
-           - http://*.anjiancloud.alpha
            - https://*.sunwuu.com
            - http://*.sunwuu.com
-           - https://*.sunwuu.test
-           - http://*.sunwuu.test
-           - https://*.sunwuu.alpha
-           - http://*.sunwuu.alpha
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   datasource:
@@ -56,9 +48,9 @@ spring:
       log-slow-sql: true
   cloud.devops:
     iam: # IAM configuration.
-      login-uri: https://passport.wl4g.com/login.html
-      unauthorized-uri: https://passport.wl4g.com/403.html
-      success-endpoint: umc-admin@https://umc-admin.wl4g.com/umc-admin
+      login-uri: http://devops.anjiancloud.com/#/login
+      unauthorized-uri: /view/403.html
+      success-endpoint: umc-admin@http://localhost:14048/umc-admin
       authc-internal-access:
         secure: true
         allowIp: 127.0.0.1

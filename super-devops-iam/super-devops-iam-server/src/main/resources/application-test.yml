@@ -17,8 +17,16 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - http://localhost:8080
-           - http://localhost.com:8080
+           - https://*.wl4g.com
+           - http://*.wl4g.com
+           - https://*.anjiancloud.test
+           - http://*.anjiancloud.test
+           - https://*.anjiancloud.alpha
+           - http://*.anjiancloud.alpha
+           - https://*.sunwuu.test
+           - http://*.sunwuu.test
+           - https://*.sunwuu.alpha
+           - http://*.sunwuu.alpha
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   datasource:
@@ -45,7 +53,7 @@ spring:
   cloud.devops:
     iam: # IAM configuration.
       #login-uri: /view/login.html
-      login-uri: http://localhost:8080/#/login
+      login-uri: http://devops.anjiancloud.alpha/#/login
       unauthorized-uri: /view/403.html
       success-endpoint: umc-admin@http://localhost:14048/umc-admin
       authc-internal-access:

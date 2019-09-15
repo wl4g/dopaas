@@ -12,8 +12,6 @@
 #
 spring:
   application.name: srm-example
-  profiles:
-    active: test
 
 # ### Server configuration. ###
 server:

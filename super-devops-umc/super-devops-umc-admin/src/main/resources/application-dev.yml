@@ -11,22 +11,15 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web.cors:
-    enabled: true # Defualt: true
-    rules:
+  web:
+    cors:
+      enabled: true # Defualt: true
+      rules:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - https://*.wl4g.com
-           - http://*.wl4g.com
-           - https://*.anjiancloud.test
-           - http://*.anjiancloud.test
-           - https://*.anjiancloud.alpha
-           - http://*.anjiancloud.alpha
-           - https://*.sunwuu.test
-           - http://*.sunwuu.test
-           - https://*.sunwuu.alpha
-           - http://*.sunwuu.alpha
+           - http://localhost:8080
+           - http://localhost.com:8080
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   cloud:
@@ -39,8 +32,7 @@ spring:
         client:
           server-uri: http://localhost:14040/iam-server
           unauthorized-uri: /view/403.html
-          success-uri: http://devops.anjiancloud.alpha/#/ci/taskhis
-  # Datasource configuration.
+          success-uri: http://localhost:8080/#/umc/config
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -63,6 +55,11 @@ spring:
       filters: stat,wall
       log-slow-sql: true
 
+# Spring-security config.
+security.user:
+  name: sba_user
+  password: hnGsFm6k0klJP9j
+
 # Redis configuration.
 redis:
   passwd: ${REDIS_PASSWD:zzx!@#$%}
@@ -71,14 +68,6 @@ redis:
   # Redis's cluster nodes.
   nodes: ${REDIS_NODES:safecloud-test:6379,safecloud-test:6380,safecloud-test:6381,safecloud-test:7380,safecloud-test:7380,safecloud-test:7381}
 
-# Deploy git configuration.
-deploy:
-  git-url: http://git.anjiancloud.repo
-  git-username: heweijie
-  git-password: hwj13535248668
-  git-token: Xw6xYojnoj7SSDyyLXP7
-  cipher-key: 03DE18C2FC4E605F
-  task-timeout: 300
-  docker-push-username: xburnerair00
-  docker-push-passwd: hwj13535248668
-
+opentsdb:
+  url: http://10.0.0.57
+  port: 4242

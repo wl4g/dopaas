@@ -14,8 +14,6 @@
 #
 spring: # Base configuration.
   application.name: iam-example
-  profiles:
-    active: test
   cloud: # Spring cloud configuration.
     devops:
       iam: # IAM client configuration.

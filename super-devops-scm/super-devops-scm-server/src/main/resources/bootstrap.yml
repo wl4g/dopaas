@@ -13,7 +13,7 @@
 spring:
   application.name: scm-server
   profiles:
-    active: test
+    active: dev
   cloud: # Spring cloud configuration.
     # Devops configuration.
     devops: 
