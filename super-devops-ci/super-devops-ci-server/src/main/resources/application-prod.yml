@@ -17,12 +17,8 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - https://*.wl4g.com
-           - http://*.wl4g.com
-           - https://*.anjiancloud.com
-           - http://*.anjiancloud.com
-           - https://*.sunwuu.com
-           - http://*.sunwuu.com
+          - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
+          - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   cloud:
@@ -34,8 +30,8 @@ spring:
           deny-ip:
         client:
           server-uri: http://localhost:14040/iam-server
-          unauthorized-uri: /view/403.html
-          success-uri: http://devops.anjiancloud.com/#/ci/taskhis
+          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+          success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/ci/taskhis
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

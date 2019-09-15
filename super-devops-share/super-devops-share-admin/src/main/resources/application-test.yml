@@ -17,16 +17,8 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - https://*.wl4g.com
-           - http://*.wl4g.com
-           - https://*.anjiancloud.test
-           - http://*.anjiancloud.test
-           - https://*.anjiancloud.alpha
-           - http://*.anjiancloud.alpha
-           - https://*.sunwuu.test
-           - http://*.sunwuu.test
-           - https://*.sunwuu.alpha
-           - http://*.sunwuu.alpha
+          - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+          - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   cloud:
@@ -38,8 +30,8 @@ spring:
           deny-ip:
         client:
           server-uri: http://localhost:14040/iam-server
-          unauthorized-uri: /view/403.html
-          success-uri: http://devops.anjiancloud.alpha/#/share
+          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+          success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/share
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
