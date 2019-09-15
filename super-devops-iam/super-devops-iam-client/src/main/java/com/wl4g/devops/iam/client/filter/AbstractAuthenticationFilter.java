@@ -329,33 +329,34 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @return
 	 */
 	protected String makeFailureRedirectUrl(Throwable cause, HttpServletRequest request) {
-		// Redirect URL
-		String callbackRedirectUrl = new StringBuffer(getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR).toString();
+		// Redirect URL with callback.
+		StringBuffer failRedirectUrl = new StringBuffer();
 
-		// Redirect URL with callback
-		StringBuffer fullRedirectUrl = new StringBuffer();
-
-		// Unauthorized
-		if (cause instanceof UnauthorizedException) {
-			fullRedirectUrl.append(config.getUnauthorizedUri());
-		} else if (cause instanceof UnauthenticatedException) { // Unauthenticated
-			fullRedirectUrl.append(getLoginUrl());
-			fullRedirectUrl.append("?").append(config.getParam().getApplication());
-			fullRedirectUrl.append("=").append(config.getServiceName());
-			fullRedirectUrl.append("&").append(config.getParam().getRedirectUrl());
+		if (cause instanceof UnauthorizedException) { // Unauthorized?
+			failRedirectUrl.append(config.getUnauthorizedUri());
+		}
+		// Unauthenticated?
+		else if (cause instanceof UnauthenticatedException) {
+			// When the IAM server is authenticated successfully, the callback
+			// redirects to the URL of the IAM client.
+			String clientRedirectUrl = new StringBuffer(getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR).toString();
+			failRedirectUrl.append(getLoginUrl());
+			failRedirectUrl.append("?").append(config.getParam().getApplication());
+			failRedirectUrl.append("=").append(config.getServiceName());
+			failRedirectUrl.append("&").append(config.getParam().getRedirectUrl());
 			// Add custom parameters.
-			String queryString = request.getQueryString();
-			if (!isBlank(queryString)) {
-				if (endsWith(callbackRedirectUrl, "?")) {
-					callbackRedirectUrl += "&" + queryString;
+			String clientQueryStr = request.getQueryString();
+			if (!isBlank(clientQueryStr)) {
+				if (endsWith(clientRedirectUrl, "?")) {
+					clientRedirectUrl += "&" + clientQueryStr;
 				} else {
-					callbackRedirectUrl += "?" + queryString;
+					clientRedirectUrl += "?" + clientQueryStr;
 				}
 			}
-			fullRedirectUrl.append("=").append(safeEncodeURL(callbackRedirectUrl));
+			failRedirectUrl.append("=").append(safeEncodeURL(clientRedirectUrl));
 		}
 
-		return fullRedirectUrl.toString();
+		return failRedirectUrl.toString();
 	}
 
 	/**

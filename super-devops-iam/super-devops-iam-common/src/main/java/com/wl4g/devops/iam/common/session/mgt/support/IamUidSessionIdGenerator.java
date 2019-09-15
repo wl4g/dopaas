@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.common.session.mgt.support;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -42,7 +42,7 @@ public class IamUidSessionIdGenerator implements SessionIdGenerator {
 	 *         randomUUID()}.
 	 */
 	public Serializable generateId(Session session) {
-		return "sid" + randomAlphabetic(32);
+		return "sid" + UUID.randomUUID().toString().replaceAll("-", EMPTY);
 	}
 
 }
