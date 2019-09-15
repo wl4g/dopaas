@@ -116,7 +116,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			if (Objects.isNull(app)) {
 				throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
 			}
-			Assert.state(isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
+			Assert.state(!isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
 					String.format("Invalid redirection domain configure, application[%s]", fromAppName));
 
 			if (log.isDebugEnabled()) {
