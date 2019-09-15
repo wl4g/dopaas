@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.configure;
 
+import static org.apache.commons.lang3.StringUtils.equalsAny;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,19 +59,56 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public ApplicationInfo getApplicationInfo(String appName) {
-		// For devops-iam-example.
-		ApplicationInfo appInfo = new ApplicationInfo(appName, "localhost");
-		appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
-		return appInfo;
+		// TODO(Using DB) For testing::
+		List<ApplicationInfo> apps = findApplicationInfo(appName);
+		return !apps.isEmpty() ? apps.get(0) : null;
 	}
 
 	@Override
-	public List<ApplicationInfo> findApplicationInfo(String... application) {
+	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
 		List<ApplicationInfo> appInfoList = new ArrayList<>();
-		// For test.
-		ApplicationInfo appInfo = new ApplicationInfo("devops-iam-example", "localhost");
-		appInfo.setIntranetBaseUri("http://localhost:14041/devops-iam-example");
-		appInfoList.add(appInfo);
+
+		// TODO(Using DB) For testing::
+		if (equalsAny("iam-example", appNames)) {
+			ApplicationInfo appInfo = new ApplicationInfo("iam-example", "http://localhost:14041");
+			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
+			appInfoList.add(appInfo);
+		}
+		if (equalsAny("scm-server", appNames)) {
+			ApplicationInfo appInfo = new ApplicationInfo("scm-server", "http://localhost:14043");
+			appInfo.setIntranetBaseUri("http://localhost:14043/scm-server");
+			appInfoList.add(appInfo);
+		}
+		if (equalsAny("ci-server", appNames)) {
+			ApplicationInfo appInfo = new ApplicationInfo("ci-server", "http://localhost:14046");
+			appInfo.setIntranetBaseUri("http://localhost:14046/ci-server");
+			appInfoList.add(appInfo);
+		}
+		if (equalsAny("umc-admin", appNames)) {
+			ApplicationInfo appInfo = new ApplicationInfo("umc-admin", "http://localhost:14048");
+			appInfo.setIntranetBaseUri("http://localhost:14048/umc-admin");
+			appInfoList.add(appInfo);
+		}
+		if (equalsAny("share-admin", appNames)) {
+			ApplicationInfo appInfo = new ApplicationInfo("share-admin", "http://localhost:14051");
+			appInfo.setIntranetBaseUri("http://localhost:14051/share-admin");
+			appInfoList.add(appInfo);
+		}
+		if (equalsAny("srm-admin", appNames)) {
+			ApplicationInfo appInfo = new ApplicationInfo("srm-admin", "http://localhost:15050");
+			appInfo.setIntranetBaseUri("http://localhost:15050/srm-admin");
+			appInfoList.add(appInfo);
+		}
+
+		//
+		// http://localhost:14041 # iam-example
+		// http://localhost:14043 # scm-server
+		// http://localhost:14046 # ci-server
+		// http://localhost:14048 # umc-admin
+		// http://localhost:14051 # share-admin
+		// http://localhost:15050 # srm-admin
+		//
+
 		return appInfoList;
 	}
 

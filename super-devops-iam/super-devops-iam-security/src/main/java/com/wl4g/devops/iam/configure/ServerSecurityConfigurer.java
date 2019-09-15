@@ -41,20 +41,20 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	/**
 	 * Get application information by name
 	 * 
-	 * @param applicationName
+	 * @param appName
 	 *            application name
 	 * @return aplication information
 	 */
-	ApplicationInfo getApplicationInfo(String applicationName);
+	ApplicationInfo getApplicationInfo(String appName);
 
 	/**
 	 * Find application information list by names
 	 * 
-	 * @param applicationNames
+	 * @param appNames
 	 *            application names
 	 * @return aplication information
 	 */
-	List<ApplicationInfo> findApplicationInfo(String... applicationNames);
+	List<ApplicationInfo> findApplicationInfo(String... appNames);
 
 	/**
 	 * Obtain account information based on loginId
