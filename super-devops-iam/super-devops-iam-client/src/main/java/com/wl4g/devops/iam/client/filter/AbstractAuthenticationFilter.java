@@ -33,6 +33,8 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_AUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
@@ -301,6 +303,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// e.g. Used by mobile APP.
 		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
 		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
+		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
 		return resp;
 	}
 
@@ -321,6 +324,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
 		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
+		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
 		return toJSONString(resp);
 	}
 
