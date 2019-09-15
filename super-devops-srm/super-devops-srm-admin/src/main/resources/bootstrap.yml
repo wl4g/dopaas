@@ -13,7 +13,20 @@
 spring:
   application.name: srm-admin
   profiles:
+    include: common,support,util
     active: test
+  cloud:
+    devops:
+      iam: # IAM client configuration.
+        client: # IAM client configuration.
+          service-name: ${spring.application.name}
+          use-remember-redirect: false
+          filter-chain:
+            /public/**: anon # Public rule release
+          cache:
+            prefix: ${spring.application.name}
+          cookie:
+            name: IAMTOKEN_${spring.application.name}
 
 # ### Server configuration. ###
 server:
