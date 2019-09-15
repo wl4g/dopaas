@@ -11,14 +11,14 @@ import org.springframework.boot.logging.LoggingSystem;
 @EnableIamClient
 @MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class ShareServer {
+public class ShareAdmin {
 
 	static {
 		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShareServer.class, args);
+		SpringApplication.run(ShareAdmin.class, args);
 	}
 
 }
