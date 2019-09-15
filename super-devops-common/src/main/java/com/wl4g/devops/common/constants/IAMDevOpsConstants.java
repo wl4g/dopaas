@@ -73,6 +73,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_SESSION_ACCOUNT = "authcAccountInfoAttributeName";
 
 	/**
+	 * IAM system service role parameter name.</br>
+	 * Can be used for user-client interception of unregistered state
+	 * processing.
+	 */
+	final public static String KEY_SERVICE_ROLE = "serviceRole";
+
+	/**
 	 * IAM Client-server interactive authentication CAS protocol URI
 	 */
 	final public static String URI_AUTHENTICATOR = "/authenticator";
@@ -222,6 +229,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
 
 	/**
+	 * IAM system service role: iam-server.</br>
+	 * Can be used for user-client interception of unregistered state
+	 * processing.
+	 */
+	final public static String KEY_SERVICE_ROLE_VALUE_IAMSERVER = "IamWithCasAppServer";
+
+	/**
 	 * Delegate message source bean name.
 	 */
 	final public static String BEAN_DELEGATE_MSG_SOURCE = "iamSessionDelegateMessageBundle";
@@ -229,6 +243,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	//
 	// Client configuration.
 	//
+
+	/**
+	 * IAM system service role: iam-client.</br>
+	 * Can be used for user-client interception of unregistered state
+	 * processing.
+	 */
+	final public static String KEY_SERVICE_ROLE_VALUE_IAMCLIENT = "IamWithCasAppClient";
 
 	/** Fast-CAS client base URI. */
 	final public static String URI_C_BASE = "/internal";

@@ -16,6 +16,8 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMSERVER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
@@ -411,10 +413,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		// Make message
-		RespBase<String> resp = RespBase.create();
-		resp.setCode(OK).setStatus(SESSION_STATUS_AUTHC).setMessage("Authentication successful");
+		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
+		resp.setCode(OK).setMessage("Authentication successful");
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
 		resp.getData().putAll(params);
+		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return resp;
 	}
 
@@ -435,9 +438,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map params, String errmsg) {
 		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication failure";
 		// Make message
-		RespBase<String> resp = RespBase.create();
-		resp.setCode(UNAUTHC).setStatus(SESSION_STATUS_UNAUTHC).setMessage(errmsg);
+		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
+		resp.setCode(UNAUTHC).setMessage(errmsg);
 		resp.getData().putAll(params);
+		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return toJSONString(resp);
 	}
 
