@@ -218,7 +218,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 
 		// Failure redirect URL
-		String failureRedirectUrl = makeFailureRedirectUrl(cause, toHttp(request));
+		String failRedirectUrl = makeFailureRedirectUrl(cause, toHttp(request));
 
 		// Post handle of authenticate failure.
 		coprocessor.postAuthenticatingFailure(token, ae, request, response);
@@ -233,7 +233,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			// Response JSON message
 			if (isJSONResponse(request)) {
 				try {
-					String failMsg = makeFailedResponse(failureRedirectUrl, cause);
+					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
 						log.info("Failed response: {}", failMsg);
 					}
@@ -243,9 +243,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				}
 			} else { // Redirects the login page direct.
 				try {
-					issueRedirect(request, response, failureRedirectUrl);
+					issueRedirect(request, response, failRedirectUrl);
 				} catch (IOException e) {
-					log.error("Cannot redirect to failure url - {}", failureRedirectUrl, e);
+					log.error("Cannot redirect to failure url - {}", failRedirectUrl, e);
 				}
 			}
 		}
@@ -285,6 +285,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Make logged-in response message.
 	 * 
+	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeLoggedResponse()}
 	 * @param request
 	 *            Servlet request
 	 * @param redirectUri
@@ -294,8 +295,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	private RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
 		hasText(redirectUri, "'redirectUri' must not be null");
 		// Make message
-		RespBase<String> resp = RespBase.create();
-		resp.setCode(OK).setStatus(SESSION_STATUS_AUTHC).setMessage("Login successful");
+		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
+		resp.setCode(OK).setMessage("Login successful");
 		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
 		// e.g. Used by mobile APP.
 		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
@@ -306,6 +307,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Make login failed response message.
 	 * 
+	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
 	 * @param loginRedirectUrl
 	 *            Login redirect URL
 	 * @param err
@@ -315,9 +317,10 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
 		String errmsg = err != null ? err.getMessage() : "Not logged-in";
 		// Make message
-		RespBase<String> resp = RespBase.create();
-		resp.setCode(RetCode.UNAUTHC).setStatus(SESSION_STATUS_UNAUTHC).setMessage(errmsg);
+		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
+		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
 		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
+		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
 		return toJSONString(resp);
 	}
 
