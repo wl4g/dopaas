@@ -30,7 +30,7 @@ spring:
           deny-ip:
         client:
           server-uri: http://localhost:14040/iam-server
-          unauthorized-uri: /view/403.html
+          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://localhost:8080/#/share
   # Datasource configuration.
   datasource:

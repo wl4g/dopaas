@@ -17,14 +17,38 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - https://*.wl4g.com
-           - http://*.wl4g.com
-           - https://*.anjiancloud.com
-           - http://*.anjiancloud.com
-           - https://*.sunwuu.com
-           - http://*.sunwuu.com
+           - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
+           - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
+  cloud:
+    devops:
+      iam: # IAM configuration.
+        login-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/login
+        unauthorized-uri: /view/403.html
+        success-endpoint: umc-admin@http://umc-admin.${DEVOPS_DOMAIN_TOP:wl4g.com}/umc-admin
+        authc-internal-access:
+          secure: true
+          allowIp: 127.0.0.1
+          denyIp:
+        captcha:
+          #jigsaw:
+            #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+        sns: # SNS configuration.
+          oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+          wechat-mp:
+            app-id: wxa0ac2cc5308f3a38
+            app-secret: c5328060db71870a58a43e04fab5d4f6
+            redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechatmp/callback
+          wechat:
+            app-id: wx162814f9191f9d9b
+            app-secret: 9f1d914629bd9820351fb73f51e70495
+            redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechat/callback
+            href: https://static.wl4g.com:2443/iam/static/wx.css
+          qq:
+            app-id: 101542056
+            app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
+            redirect-url: https://passport.wl4g.com{server.contextPath}/sns/qq/callback
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -46,33 +70,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-  cloud.devops:
-    iam: # IAM configuration.
-      login-uri: http://devops.anjiancloud.com/#/login
-      unauthorized-uri: /view/403.html
-      success-endpoint: umc-admin@http://umc-admin.anjiancloud.com/umc-admin
-      authc-internal-access:
-        secure: true
-        allowIp: 127.0.0.1
-        denyIp:
-      captcha:
-        #jigsaw:
-          #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
-      sns: # SNS configuration.
-        oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
-        wechat-mp:
-          app-id: wxa0ac2cc5308f3a38
-          app-secret: c5328060db71870a58a43e04fab5d4f6
-          redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechatmp/callback
-        wechat:
-          app-id: wx162814f9191f9d9b
-          app-secret: 9f1d914629bd9820351fb73f51e70495
-          redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechat/callback
-          href: https://static.wl4g.com:2443/iam/static/wx.css
-        qq:
-          app-id: 101542056
-          app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-          redirect-url: https://passport.wl4g.com{server.contextPath}/sns/qq/callback
 
 # Spring-security config.
 security.user:
