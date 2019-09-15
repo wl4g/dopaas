@@ -50,7 +50,7 @@ spring:
     iam: # IAM configuration.
       login-uri: http://devops.anjiancloud.com/#/login
       unauthorized-uri: /view/403.html
-      success-endpoint: umc-admin@http://localhost:14048/umc-admin
+      success-endpoint: umc-admin@http://umc-admin.anjiancloud.com/umc-admin
       authc-internal-access:
         secure: true
         allowIp: 127.0.0.1
