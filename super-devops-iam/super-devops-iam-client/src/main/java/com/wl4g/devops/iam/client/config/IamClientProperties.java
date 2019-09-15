@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.common.utils.web.WebUtils2;
+import com.wl4g.devops.iam.common.utils.Securitys;
 import com.wl4g.devops.iam.client.config.IamClientProperties.ClientParamProperties;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.client")
@@ -47,11 +47,6 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	 * Application name. e.g. http://host:port/{serviceName}/shiro-cas
 	 */
 	private String serviceName;
-
-	/**
-	 * IAM server login page URI
-	 */
-	private String loginUri = "http://localhost:14040/iam-server" + DEFAULT_VIEW_SERV_URI;
 
 	/**
 	 * This success(index) page URI
@@ -83,6 +78,24 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	 */
 	private ClientParamProperties param = new ClientParamProperties();
 
+	/**
+	 * Implementing the IAM-CAS protocol: When successful login, you must
+	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
+	 * front-end pages can not be used directly).
+	 * See:{@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
+	 * </br>
+	 * </br>
+	 * e.g. </br>
+	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1</br>
+	 * Situation1: /view/index.html</br>
+	 * => http://myapp.domain.com/myapp/authenticator?id=1</br>
+	 * See:{@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#determineSuccessUrl}
+	 */
+	@Override
+	protected String getLoginUri() {
+		return Securitys.correctAuthenticaitorURI(getServerUri());
+	}
+
 	public String getServerUri() {
 		return serverUri;
 	}
@@ -97,15 +110,6 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
-	}
-
-	@Override
-	public String getLoginUri() {
-		return loginUri;
-	}
-
-	public void setLoginUri(String loginUri) {
-		this.loginUri = WebUtils2.cleanURI(loginUri);
 	}
 
 	@Override
@@ -169,10 +173,10 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 
 	@Override
 	protected void validation() {
-		super.validation();
 		Assert.notNull(getServerUri(), "'baseUri' must be empty.");
 		Assert.notNull(getServiceName(), "'serviceName' must be empty.");
 		Assert.notNull(getFilterChain(), "'filterChain' must be empty.");
+		super.validation();
 	}
 
 	/**

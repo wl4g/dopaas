@@ -21,8 +21,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+import com.wl4g.devops.iam.client.annotation.EnableIamClient;
 import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
 
+@EnableIamClient
 @EnableDiscoveryClient
 @MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication

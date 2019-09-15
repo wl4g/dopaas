@@ -43,7 +43,6 @@ spring:
           deny-ip:
         client:
           server-uri: http://localhost:14040/iam-server
-          login-uri: http://localhost:8080/#/login
           success-uri: http://localhost:8080/#/umc/config
           unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html
   datasource:

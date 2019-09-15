@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
@@ -31,19 +30,14 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,6 +63,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.devops.iam.common.utils.Securitys;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -472,22 +467,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
 		// front-end pages can not be used directly).
 		// See:com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter
-		try {
-			URI uri = new URI(successUrl);
-			if (!endsWith(uri.getPath(), URI_AUTHENTICATOR)) {
-				String portPart = (uri.getPort() == 80 || uri.getPort() == 443) ? EMPTY : (":" + uri.getPort());
-				String queryPart = isBlank(uri.getQuery()) ? EMPTY : ("?" + uri.getQuery());
-				String contextPath = uri.getPath();
-				String[] pathPart = split(uri.getPath(), "/");
-				if (pathPart.length > 1) {
-					contextPath = pathPart[0];
-				}
-				successUrl = new StringBuffer(uri.getScheme()).append("://").append(uri.getHost()).append(portPart)
-						.append(contextPath).append(URI_AUTHENTICATOR).append(queryPart).toString();
-			}
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException("Can't to obtain a successful redirect URL.", e);
-		}
+		successUrl = Securitys.correctAuthenticaitorURI(successUrl);
 
 		// Call determine successUrl.
 		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);

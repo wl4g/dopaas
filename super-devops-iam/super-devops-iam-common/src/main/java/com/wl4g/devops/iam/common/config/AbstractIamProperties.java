@@ -37,11 +37,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	final public static String DEFAULT_VIEW_BASE_URI = "/view";
 
 	/**
-	 * Default view login URI.
-	 */
-	final public static String DEFAULT_VIEW_LOGIN_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
-
-	/**
 	 * Default view index URI.
 	 */
 	final public static String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
@@ -78,7 +73,10 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	protected SessionProperties session = new SessionProperties();
 
 	/**
-	 * Login page URI
+	 * Redirect to login URI.</br>
+	 * e.g. </br>
+	 * In IAM-Client: {iam-server-uri}/authenticator </br>
+	 * In IAM-Server: {iam-server-uri}/view/login.html
 	 * 
 	 * @return
 	 */
@@ -148,9 +146,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * Validation.
 	 */
 	protected void validation() {
-		Assert.notNull(getLoginUri(), "'loginUri' must be empty.");
-		Assert.notNull(getSuccessUri(), "'successUri' must be empty.");
-		Assert.notNull(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
+		Assert.hasText(getLoginUri(), "'loginUri' must be empty.");
+		Assert.hasText(getSuccessUri(), "'successUri' must be empty.");
+		Assert.hasText(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
 	}
 
 	@Override

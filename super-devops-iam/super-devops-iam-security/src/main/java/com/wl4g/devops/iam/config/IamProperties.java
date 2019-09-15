@@ -51,6 +51,11 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	final public static String DEFAULT_VIEW_LOADER_PATH = "classpath:/default-view";
 
 	/**
+	 * Default view login URI.
+	 */
+	final public static String DEFAULT_VIEW_LOGIN_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
+
+	/**
 	 * Login page URI
 	 */
 	private String loginUri = DEFAULT_VIEW_LOGIN_URI;
@@ -85,7 +90,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 */
 	private ServerParamProperties param = new ServerParamProperties();
 
-	@Override
 	public String getLoginUri() {
 		return loginUri;
 	}

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.utils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,6 +97,42 @@ public abstract class Securitys {
 	 */
 	public static String sessionStatus() {
 		return SecurityUtils.getSubject().isAuthenticated() ? SESSION_STATUS_AUTHC : SESSION_STATUS_UNAUTHC;
+	}
+
+	/**
+	 * Get the URI address of the authenticator interface on the client or
+	 * server side.</br>
+	 * e.g.</br>
+	 * 
+	 * <pre>
+	 *  http://iam.xx.com/iam-server/xx/list?id=1  =>  http://iam.xx.com/iam-server/authenticator?id=1
+	 *  http://iam.xx.com/xx/list?id=1             =>  http://iam.xx.com/xx/authenticator?id=1
+	 *  http://iam.xx.com/xx/list/?id=1            =>  http://iam.xx.com/xx/authenticator?id=1
+	 *  http://iam.xx.com:8080/xx/list/?id=1       =>  http://iam.xx.com:8080/xx/authenticator?id=1
+	 * </pre>
+	 * 
+	 * @param uri
+	 * @return
+	 */
+	public static String correctAuthenticaitorURI(String url) {
+		try {
+			URI _uri = new URI(url);
+			if (!endsWith(_uri.getPath(), URI_AUTHENTICATOR)) {
+				String portPart = (_uri.getPort() == 80 || _uri.getPort() == 443 || _uri.getPort() < 0) ? EMPTY
+						: (":" + _uri.getPort());
+				String queryPart = isBlank(_uri.getQuery()) ? EMPTY : ("?" + _uri.getQuery());
+				String contextPath = _uri.getPath();
+				String[] pathPart = split(_uri.getPath(), "/");
+				if (pathPart.length > 1) {
+					contextPath = "/" + pathPart[0];
+				}
+				return new StringBuffer(_uri.getScheme()).append("://").append(_uri.getHost()).append(portPart)
+						.append(contextPath).append(URI_AUTHENTICATOR).append(queryPart).toString();
+			}
+			return url;
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("Can't to obtain a redirect authenticaitor URL.", e);
+		}
 	}
 
 }
