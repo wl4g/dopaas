@@ -15,7 +15,7 @@
 spring: # Base configuration.
   application.name: scm-example
   profiles:
-    active: test
+    active: dev
   cloud: # Spring cloud configuration.
     # Devops configuration.
     devops: 

@@ -18,8 +18,16 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - http://localhost:8080
-           - http://localhost.com:8080
+           - https://*.wl4g.com
+           - http://*.wl4g.com
+           - https://*.anjiancloud.test
+           - http://*.anjiancloud.test
+           - https://*.anjiancloud.alpha
+           - http://*.anjiancloud.alpha
+           - https://*.sunwuu.test
+           - http://*.sunwuu.test
+           - https://*.sunwuu.alpha
+           - http://*.sunwuu.alpha
         allowsHeaders: '*'
         allowsMethods: GET,POST,OPTION
   cloud:
@@ -31,8 +39,8 @@ spring:
           deny-ip:
         client:
           server-uri: http://localhost:14040/iam-server
-          success-uri: http://localhost:8080/#/umc/config
-          unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html
+          unauthorized-uri: /view/403.html
+          success-uri: http://devops.anjiancloud.alpha/#/umc/config
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver

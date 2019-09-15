@@ -59,8 +59,8 @@ import java.util.Properties;
  * @since
  */
 @Configuration
-public class DataSourceConfiguration {
-	final private static Logger log = LoggerFactory.getLogger(DataSourceConfiguration.class);
+public class DataSourceAutoConfiguration {
+	final private static Logger log = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
 
 	@Value("${mybatis.typeAliasesPackage}")
 	private String typeAliasesPackage;
@@ -81,8 +81,9 @@ public class DataSourceConfiguration {
 		if (String.valueOf(this.env.getProperty("spring.profiles.active")).equalsIgnoreCase("prod")) {
 			try {
 				plain = new AES().decrypt(prop.getPassword());
-			} catch (Exception e1) {
-				log.error("", e1);
+			} catch (Throwable th) {
+				throw new IllegalStateException(
+						String.format("Unable to decryption database password for '%s'", prop.getPassword()), th);
 			}
 		}
 		datasource.setPassword(plain);

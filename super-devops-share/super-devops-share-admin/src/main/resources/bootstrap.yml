@@ -14,7 +14,7 @@ spring:
   application.name: share-admin
   profiles:
     include: common,support,util
-    active: test
+    active: dev
   cloud:
     devops:
       iam: # IAM client configuration.

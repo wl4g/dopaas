@@ -15,7 +15,7 @@
 spring: # Base configuration.
   application.name: umc-example
   profiles:
-    active: test
+    active: dev
   cloud: # Spring cloud configuration.
     # Devops monitor(metrics) configuration.
     devops:
