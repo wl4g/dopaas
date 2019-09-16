@@ -23,7 +23,7 @@
 		<commons-cli.version>1.4</commons-cli.version>
 		<commons-csv.version>1.0</commons-csv.version>
 		<protobuf.version>3.8.0</protobuf.version>
-		<protostuff.version>1.4.4</protostuff.version>
+		<protostuff.version>1.6.0</protostuff.version>
 		<user-agent.version>1.2.4</user-agent.version>
 		<hibernate-validator.version>6.0.16.Final</hibernate-validator.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>

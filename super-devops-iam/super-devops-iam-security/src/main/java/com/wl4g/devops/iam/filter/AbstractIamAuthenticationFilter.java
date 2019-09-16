@@ -269,6 +269,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		String errmsg = getRootCausesString(ae);
 		if (isNotBlank(errmsg)) {
+			log.error("Failed to authentication.", ae);
 			if (log.isDebugEnabled()) {
 				log.debug("Failed to authentication.", ae);
 			} else {
