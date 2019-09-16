@@ -15,16 +15,16 @@
  */
 package com.wl4g.devops;
 
+import com.wl4g.devops.iam.annotation.EnableIamServer;
+import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import static org.springframework.boot.logging.LoggingSystem.SYSTEM_PROPERTY;
 
-import com.wl4g.devops.iam.annotation.EnableIamServer;
-import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
-
 @EnableIamServer
-@MapperScan("com.wl4g.devops.*.dao")
+@MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class IamServer {
 
