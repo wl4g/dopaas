@@ -41,6 +41,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+/**
+ * JEDIS cluster service template.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018年9月16日
+ * @since
+ */
 public class JedisService {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
