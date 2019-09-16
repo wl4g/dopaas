@@ -83,8 +83,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// TODO (Using DB)
 		List<Application> applications = applicationDao.getByAppNames(appNames);
 		for (Application application : applications) {
-			ApplicationInfo appInfo = new ApplicationInfo(application.getAppName(), application.getExtranetBaseuri());
-			appInfo.setIntranetBaseUri(application.getIntranetBaseuri());
+			ApplicationInfo appInfo = new ApplicationInfo(application.getAppName(), application.getExtranetBaseUri());
+			appInfo.setIntranetBaseUri(application.getIntranetBaseUri());
 			appInfoList.add(appInfo);
 		}
 
