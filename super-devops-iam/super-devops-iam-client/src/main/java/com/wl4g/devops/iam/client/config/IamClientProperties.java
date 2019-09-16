@@ -44,6 +44,13 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	private String serverUri = "http://localhost:14040/iam-server";
 
 	/**
+	 * This configuration item is used to specify a custom login page, default
+	 * to {spring.cloud.devops.iam.client.server-uri}, that is, the login page
+	 * controlled by iam-server.
+	 */
+	private String loginUri;
+
+	/**
 	 * Application name. e.g. http://host:port/{serviceName}/shiro-cas
 	 */
 	private String serviceName;
@@ -51,7 +58,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * This success(index) page URI
 	 */
-	private String successUri = "http://localhost:8080/index";
+	private String successUri = "http://localhost:8080/index.html";
 
 	/**
 	 * IAM server unauthorized(403) page URI
@@ -92,8 +99,12 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	 * See:{@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#determineSuccessUrl}
 	 */
 	@Override
-	protected String getLoginUri() {
-		return Securitys.correctAuthenticaitorURI(getServerUri());
+	public String getLoginUri() {
+		return loginUri;
+	}
+
+	public void setLoginUri(String loginUri) {
+		this.loginUri = loginUri;
 	}
 
 	public String getServerUri() {
@@ -166,8 +177,13 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 
 	@Override
 	protected void applyDefaultIfNecessary() {
+		// Service name.
 		if (isBlank(getServiceName())) {
 			setServiceName(environment.getProperty("spring.application.name"));
+		}
+		// Login URI.
+		if (isBlank(getLoginUri())) {
+			setLoginUri(Securitys.correctAuthenticaitorURI(getServerUri()));
 		}
 	}
 
