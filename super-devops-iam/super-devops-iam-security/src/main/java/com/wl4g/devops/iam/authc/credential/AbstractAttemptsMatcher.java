@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.authc.credential;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.config.IamProperties;
+import com.wl4g.devops.iam.config.properties.MatcherProperties;
 import com.wl4g.devops.iam.verification.cumulation.CumulateHolder;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
@@ -262,7 +262,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		IamProperties.MatcherProperties matcher = config.getMatcher();
+		MatcherProperties matcher = config.getMatcher();
 		this.lockCache = cacheManager.getEnhancedCache(CACHE_MATCH_LOCK);
 
 		this.matchCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),

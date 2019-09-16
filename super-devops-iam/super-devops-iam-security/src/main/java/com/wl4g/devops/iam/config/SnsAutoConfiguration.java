@@ -28,6 +28,8 @@ import java.util.List;
 import com.wl4g.devops.iam.annotation.SnsController;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
+import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.sns.BindConnection;
