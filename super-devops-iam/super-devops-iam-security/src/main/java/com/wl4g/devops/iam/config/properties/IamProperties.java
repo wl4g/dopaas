@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.config.properties;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
+import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -106,9 +107,21 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		return getSuccessEndpoint().split("@")[0];
 	}
 
+	/**
+	 * e.g. </br>
+	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1 Situation1:
+	 * /view/index.html ===> http://myapp.domain.com/myapp/authenticator?id=1
+	 * 
+	 * Implementing the IAM-CAS protocol: When successful login, you must
+	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
+	 * front-end pages can not be used directly).
+	 * 
+	 * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
+	 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
+	 */
 	@Override
 	public String getSuccessUri() {
-		return getSuccessEndpoint().split("@")[1];
+		return correctAuthenticaitorURI(getSuccessEndpoint().split("@")[1]);
 	}
 
 	@Override
