@@ -54,6 +54,7 @@
 	</developers>
 	<modules>
 		<module>super-devops-common</module>
+		<module>super-devops-support</module>
 		<module>super-devops-share</module>
 		<module>super-devops-dao</module>
 		<module>super-devops-scm</module>

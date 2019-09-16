@@ -9,7 +9,7 @@
 	<description>UMC - An open source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.</description>
 	<url>https://umc.super-devops.wl4g.com</url>
 	<modules>
-		<module>super-devops-umc-admin</module>
+		<module>super-devops-umc-manager</module>
 		<module>super-devops-umc-client</module>
 		<module>super-devops-umc-example</module>
 		<module>super-devops-umc-receiver</module>

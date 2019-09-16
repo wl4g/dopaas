@@ -3,9 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-tool-hbase-migrate</artifactId>
+	<artifactId>super-devops-tool-hbase-migrator</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps Tool Suite Hbase Migrate</name>
+	<name>Super DevOps Tool Suite Hbase Migrator</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps SRM</name>
 	<modules>
-		<module>super-devops-srm-admin</module>
+		<module>super-devops-srm-manager</module>
 		<module>super-devops-srm-core</module>
 		<module>super-devops-srm-example</module>
 	</modules>

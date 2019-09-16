@@ -7,9 +7,8 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps Share</name>
 	<modules>
-		<module>super-devops-share-admin</module>
+		<module>super-devops-share-manager</module>
 		<module>super-devops-share-core</module>
-		<module>super-devops-share-support</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
