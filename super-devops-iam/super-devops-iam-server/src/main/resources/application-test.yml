@@ -27,7 +27,7 @@ spring:
         #login-uri: /view/login.html
         login-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-admin@http://umc-admin.${DEVOPS_DOMAIN_TOP:wl4g.test}/umc-admin
+        success-endpoint: umc-manager@http://umc-manager.${DEVOPS_DOMAIN_TOP:wl4g.test}/umc-manager
         authc-internal-access:
           secure: true
           allowIp: 127.0.0.1

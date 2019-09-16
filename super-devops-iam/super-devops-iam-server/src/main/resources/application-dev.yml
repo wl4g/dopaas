@@ -27,7 +27,7 @@ spring:
         #login-uri: /view/login.html
         login-uri: http://localhost:8080/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-admin@http://localhost:14048/umc-admin
+        success-endpoint: umc-manager@http://localhost:14048/umc-manager
         authc-internal-access:
           secure: true
           allowIp: 127.0.0.1
