@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.share.ApplicationDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.share.Application" >
+    <id column="app_name" property="appName" jdbcType="VARCHAR" />
+    <result column="view_extranet_baseUri" property="viewExtranetBaseuri" jdbcType="VARCHAR" />
+    <result column="extranet_baseUri" property="extranetBaseuri" jdbcType="VARCHAR" />
+    <result column="intranet_baseUri" property="intranetBaseuri" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    app_name, view_extranet_baseUri, extranet_baseUri, intranet_baseUri, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_application
+    where app_name = #{appName,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_application
+    where app_name = #{appName,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.share.Application" >
+    insert into sys_application (app_name, view_extranet_baseUri, extranet_baseUri,
+      intranet_baseUri, remark)
+    values (#{appName,jdbcType=VARCHAR}, #{viewExtranetBaseuri,jdbcType=VARCHAR}, #{extranetBaseuri,jdbcType=VARCHAR},
+      #{intranetBaseuri,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.Application" >
+    insert into sys_application
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="appName != null" >
+        app_name,
+      </if>
+      <if test="viewExtranetBaseuri != null" >
+        view_extranet_baseUri,
+      </if>
+      <if test="extranetBaseuri != null" >
+        extranet_baseUri,
+      </if>
+      <if test="intranetBaseuri != null" >
+        intranet_baseUri,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="appName != null" >
+        #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="viewExtranetBaseuri != null" >
+        #{viewExtranetBaseuri,jdbcType=VARCHAR},
+      </if>
+      <if test="extranetBaseuri != null" >
+        #{extranetBaseuri,jdbcType=VARCHAR},
+      </if>
+      <if test="intranetBaseuri != null" >
+        #{intranetBaseuri,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.share.Application" >
+    update sys_application
+    <set >
+      <if test="viewExtranetBaseuri != null" >
+        view_extranet_baseUri = #{viewExtranetBaseuri,jdbcType=VARCHAR},
+      </if>
+      <if test="extranetBaseuri != null" >
+        extranet_baseUri = #{extranetBaseuri,jdbcType=VARCHAR},
+      </if>
+      <if test="intranetBaseuri != null" >
+        intranet_baseUri = #{intranetBaseuri,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where app_name = #{appName,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.share.Application" >
+    update sys_application
+    set view_extranet_baseUri = #{viewExtranetBaseuri,jdbcType=VARCHAR},
+      extranet_baseUri = #{extranetBaseuri,jdbcType=VARCHAR},
+      intranet_baseUri = #{intranetBaseuri,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where app_name = #{appName,jdbcType=VARCHAR}
+  </update>
+
+
+  <!-- 批量获取应用信息 -->
+  <select id="getByAppNames" parameterType="java.lang.String" resultType="com.wl4g.devops.common.bean.share.Application">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM
+    sys_application
+    <where>
+      <if test="appNames != null and appNames.length > 0">
+        app_name in
+        <foreach collection="appNames" item="appName" index="index" open="(" close=")" separator=",">
+          #{appName}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+
+</mapper>
