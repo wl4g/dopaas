@@ -3,13 +3,13 @@
 <mapper namespace="com.wl4g.devops.dao.share.ApplicationDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.share.Application" >
     <id column="app_name" property="appName" jdbcType="VARCHAR" />
-    <result column="view_extranet_baseUri" property="viewExtranetBaseuri" jdbcType="VARCHAR" />
-    <result column="extranet_baseUri" property="extranetBaseuri" jdbcType="VARCHAR" />
-    <result column="intranet_baseUri" property="intranetBaseuri" jdbcType="VARCHAR" />
+    <result column="view_extranet_base_uri" property="viewExtranetBaseUri" jdbcType="VARCHAR" />
+    <result column="extranet_base_uri" property="extranetBaseUri" jdbcType="VARCHAR" />
+    <result column="intranet_base_uri" property="intranetBaseUri" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    app_name, view_extranet_baseUri, extranet_baseUri, intranet_baseUri, remark
+    app_name, view_extranet_base_uri, extranet_base_uri, intranet_base_uri, remark
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -22,10 +22,10 @@
     where app_name = #{appName,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.share.Application" >
-    insert into sys_application (app_name, view_extranet_baseUri, extranet_baseUri,
-      intranet_baseUri, remark)
-    values (#{appName,jdbcType=VARCHAR}, #{viewExtranetBaseuri,jdbcType=VARCHAR}, #{extranetBaseuri,jdbcType=VARCHAR},
-      #{intranetBaseuri,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+    insert into sys_application (app_name, view_extranet_base_uri, extranet_base_uri,
+      intranet_base_uri, remark)
+    values (#{appName,jdbcType=VARCHAR}, #{viewExtranetBaseUri,jdbcType=VARCHAR}, #{extranetBaseUri,jdbcType=VARCHAR},
+      #{intranetBaseUri,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.Application" >
     insert into sys_application
@@ -33,14 +33,14 @@
       <if test="appName != null" >
         app_name,
       </if>
-      <if test="viewExtranetBaseuri != null" >
-        view_extranet_baseUri,
+      <if test="viewExtranetBaseUri != null" >
+        view_extranet_base_uri,
       </if>
-      <if test="extranetBaseuri != null" >
-        extranet_baseUri,
+      <if test="extranetBaseUri != null" >
+        extranet_base_uri,
       </if>
-      <if test="intranetBaseuri != null" >
-        intranet_baseUri,
+      <if test="intranetBaseUri != null" >
+        intranet_base_uri,
       </if>
       <if test="remark != null" >
         remark,
@@ -50,14 +50,14 @@
       <if test="appName != null" >
         #{appName,jdbcType=VARCHAR},
       </if>
-      <if test="viewExtranetBaseuri != null" >
-        #{viewExtranetBaseuri,jdbcType=VARCHAR},
+      <if test="viewExtranetBaseUri != null" >
+        #{viewExtranetBaseUri,jdbcType=VARCHAR},
       </if>
-      <if test="extranetBaseuri != null" >
-        #{extranetBaseuri,jdbcType=VARCHAR},
+      <if test="extranetBaseUri != null" >
+        #{extranetBaseUri,jdbcType=VARCHAR},
       </if>
-      <if test="intranetBaseuri != null" >
-        #{intranetBaseuri,jdbcType=VARCHAR},
+      <if test="intranetBaseUri != null" >
+        #{intranetBaseUri,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
@@ -67,14 +67,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.share.Application" >
     update sys_application
     <set >
-      <if test="viewExtranetBaseuri != null" >
-        view_extranet_baseUri = #{viewExtranetBaseuri,jdbcType=VARCHAR},
+      <if test="viewExtranetBaseUri != null" >
+        view_extranet_base_uri = #{viewExtranetBaseUri,jdbcType=VARCHAR},
       </if>
-      <if test="extranetBaseuri != null" >
-        extranet_baseUri = #{extranetBaseuri,jdbcType=VARCHAR},
+      <if test="extranetBaseUri != null" >
+        extranet_base_uri = #{extranetBaseUri,jdbcType=VARCHAR},
       </if>
-      <if test="intranetBaseuri != null" >
-        intranet_baseUri = #{intranetBaseuri,jdbcType=VARCHAR},
+      <if test="intranetBaseUri != null" >
+        intranet_base_uri = #{intranetBaseUri,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
@@ -84,16 +84,16 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.share.Application" >
     update sys_application
-    set view_extranet_baseUri = #{viewExtranetBaseuri,jdbcType=VARCHAR},
-      extranet_baseUri = #{extranetBaseuri,jdbcType=VARCHAR},
-      intranet_baseUri = #{intranetBaseuri,jdbcType=VARCHAR},
+    set view_extranet_base_uri = #{viewExtranetBaseUri,jdbcType=VARCHAR},
+      extranet_base_uri = #{extranetBaseUri,jdbcType=VARCHAR},
+      intranet_base_uri = #{intranetBaseUri,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR}
     where app_name = #{appName,jdbcType=VARCHAR}
   </update>
 
 
   <!-- 批量获取应用信息 -->
-  <select id="getByAppNames" parameterType="java.lang.String" resultType="com.wl4g.devops.common.bean.share.Application">
+  <select id="getByAppNames" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
     FROM

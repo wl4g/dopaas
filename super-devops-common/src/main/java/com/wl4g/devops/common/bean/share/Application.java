@@ -3,11 +3,11 @@ package com.wl4g.devops.common.bean.share;
 public class Application {
     private String appName;
 
-    private String viewExtranetBaseuri;
+    private String viewExtranetBaseUri;
 
-    private String extranetBaseuri;
+    private String extranetBaseUri;
 
-    private String intranetBaseuri;
+    private String intranetBaseUri;
 
     private String remark;
 
@@ -19,28 +19,28 @@ public class Application {
         this.appName = appName;
     }
 
-    public String getViewExtranetBaseuri() {
-        return viewExtranetBaseuri;
+    public String getViewExtranetBaseUri() {
+        return viewExtranetBaseUri;
     }
 
-    public void setViewExtranetBaseuri(String viewExtranetBaseuri) {
-        this.viewExtranetBaseuri = viewExtranetBaseuri == null ? null : viewExtranetBaseuri.trim();
+    public void setViewExtranetBaseUri(String viewExtranetBaseUri) {
+        this.viewExtranetBaseUri = viewExtranetBaseUri;
     }
 
-    public String getExtranetBaseuri() {
-        return extranetBaseuri;
+    public String getExtranetBaseUri() {
+        return extranetBaseUri;
     }
 
-    public void setExtranetBaseuri(String extranetBaseuri) {
-        this.extranetBaseuri = extranetBaseuri == null ? null : extranetBaseuri.trim();
+    public void setExtranetBaseUri(String extranetBaseUri) {
+        this.extranetBaseUri = extranetBaseUri;
     }
 
-    public String getIntranetBaseuri() {
-        return intranetBaseuri;
+    public String getIntranetBaseUri() {
+        return intranetBaseUri;
     }
 
-    public void setIntranetBaseuri(String intranetBaseuri) {
-        this.intranetBaseuri = intranetBaseuri == null ? null : intranetBaseuri.trim();
+    public void setIntranetBaseUri(String intranetBaseUri) {
+        this.intranetBaseUri = intranetBaseUri;
     }
 
     public String getRemark() {

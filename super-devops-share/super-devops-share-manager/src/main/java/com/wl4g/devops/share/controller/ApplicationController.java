@@ -1,6 +1,7 @@
 package com.wl4g.devops.share.controller;
 
 import com.wl4g.devops.common.bean.share.Application;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.ApplicationDao;
@@ -26,6 +27,7 @@ public class ApplicationController extends BaseController {
         RespBase<Object> resp = RespBase.create();
         List<Application> list = applicationDao.getByAppNames(null);
         resp.getData().put("list", list);
+        System.out.println(JacksonUtils.toJSONString(list));
         return resp;
     }
 
