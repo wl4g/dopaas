@@ -15,24 +15,24 @@
  */
 package com.wl4g.devops.iam.configure;
 
-import static org.apache.commons.lang3.StringUtils.equalsAny;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
+import com.wl4g.devops.common.bean.iam.ApplicationInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
+import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
+import com.wl4g.devops.common.bean.share.Application;
+import com.wl4g.devops.common.utils.lang.Collections2;
+import com.wl4g.devops.dao.share.ApplicationDao;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Standard IAM Security context handler
@@ -44,6 +44,9 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
  */
 @Service
 public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
+
+	@Autowired
+	private ApplicationDao applicationDao;
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
@@ -68,8 +71,19 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
 		List<ApplicationInfo> appInfoList = new ArrayList<>();
 
-		// TODO(Using DB) For testing::
-		if (equalsAny("iam-example", appNames)) {
+		if(Collections2.isEmptyArray(appNames)){
+			return Collections.emptyList();
+		}
+
+		//TODO (Using DB)
+		List<Application> applications = applicationDao.getByAppNames(appNames);
+		for(Application application : applications){
+			ApplicationInfo appInfo = new ApplicationInfo(application.getAppName(), application.getExtranetBaseuri());
+			appInfo.setIntranetBaseUri(application.getIntranetBaseuri());
+			appInfoList.add(appInfo);
+		}
+
+		/*if (equalsAny("iam-example", appNames)) {
 			ApplicationInfo appInfo = new ApplicationInfo("iam-example", "http://localhost:14041");
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfoList.add(appInfo);
@@ -98,7 +112,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			ApplicationInfo appInfo = new ApplicationInfo("srm-admin", "http://localhost:15050");
 			appInfo.setIntranetBaseUri("http://localhost:15050/srm-admin");
 			appInfoList.add(appInfo);
-		}
+		}*/
 
 		//
 		// http://localhost:14041 # iam-example
