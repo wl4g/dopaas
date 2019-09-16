@@ -28,12 +28,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.wl4g.devops.common.kit.jvm.JVMRuntimeKit;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.config.IamProperties;
+import com.wl4g.devops.iam.config.properties.IamProperties;
 
-import static com.wl4g.devops.iam.config.IamProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
+import static com.wl4g.devops.iam.config.properties.IamProperties.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;

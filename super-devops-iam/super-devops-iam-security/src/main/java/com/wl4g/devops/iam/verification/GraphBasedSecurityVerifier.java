@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.verification;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.config.IamProperties.MatcherProperties;
+import com.wl4g.devops.iam.config.properties.MatcherProperties;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;

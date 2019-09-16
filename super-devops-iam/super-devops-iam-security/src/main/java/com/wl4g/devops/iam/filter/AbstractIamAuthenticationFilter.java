@@ -67,9 +67,9 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.Securitys;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
+import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**

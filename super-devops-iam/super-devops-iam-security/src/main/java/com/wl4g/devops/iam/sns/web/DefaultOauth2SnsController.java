@@ -32,8 +32,8 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.SnsController;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.config.SnsProperties;
+import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;

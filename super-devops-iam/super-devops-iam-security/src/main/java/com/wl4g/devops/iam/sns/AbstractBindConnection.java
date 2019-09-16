@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 import com.google.common.base.Charsets;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.config.SnsProperties.AbstractSocialProperties;
+import com.wl4g.devops.iam.config.properties.SnsProperties.AbstractSocialProperties;
 import com.wl4g.devops.iam.sns.support.OAuth2GrantType;
 import com.wl4g.devops.iam.sns.support.OAuth2ResponseType;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;

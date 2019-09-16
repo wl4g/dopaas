@@ -47,6 +47,8 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
+import com.wl4g.devops.iam.config.properties.CryptoProperties;
+import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.AnynothingSecurityCoprocessor;
 import com.wl4g.devops.iam.configure.DefaultSecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.SecureConfigureAdapter;
