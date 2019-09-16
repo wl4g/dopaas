@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: srm-admin
+  application.name: srm-manager
   profiles:
     include: common,support,util
     active: dev

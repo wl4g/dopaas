@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: umc-admin
+  application.name: umc-manager
   profiles:
     include: common,support,util
     active: dev
