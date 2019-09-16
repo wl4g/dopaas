@@ -126,6 +126,10 @@ public abstract class Securitys {
 	 * @return
 	 */
 	public static String correctAuthenticaitorURI(String url) {
+		if (isBlank(url)) {
+			return EMPTY;
+		}
+
 		try {
 			URI _uri = new URI(url);
 			if (!endsWith(_uri.getPath(), URI_AUTHENTICATOR)) {
