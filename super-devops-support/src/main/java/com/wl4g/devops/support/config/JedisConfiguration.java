@@ -38,33 +38,51 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.exceptions.JedisException;
 
+/**
+ * JEDIS properties configuration.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018年9月16日
+ * @since
+ */
 @Configuration
 @ConditionalOnClass({ JedisCluster.class, GenericObjectPoolConfig.class })
-@ConditionalOnMissingBean({ JedisCluster.class })
 public class JedisConfiguration {
 
+	/**
+	 * Resolving spring byName injection conflict.
+	 */
+	final public static String BEAN_NAME_REDIS = "superDevopsSupportJedisService";
+
 	@Bean
-	public RedisProperties redisProperties() {
-		return new RedisProperties();
+	public JedisProperties jedisProperties() {
+		return new JedisProperties();
 	}
 
 	@Bean
-	@ConditionalOnMissingBean
-	public JedisClusterFactoryBean jedisClusterFactoryBean(RedisProperties properties) {
+	@ConditionalOnMissingBean({ JedisCluster.class, JedisClusterFactoryBean.class })
+	public JedisClusterFactoryBean jedisClusterFactoryBean(JedisProperties properties) {
 		return new JedisClusterFactoryBean(properties);
 	}
 
-	@Bean
+	@Bean(BEAN_NAME_REDIS)
 	@ConditionalOnMissingBean
 	public JedisService jedisService(JedisCluster jedisCluster) {
 		return new JedisService(jedisCluster);
 	}
 
+	/**
+	 * JEDIS properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2018年9月16日
+	 * @since
+	 */
 	@ConfigurationProperties(prefix = "redis")
-	public static class RedisProperties implements Serializable {
+	public static class JedisProperties implements Serializable {
 		private static final long serialVersionUID = 1906168160146495488L;
 
-		private static final Logger log = LoggerFactory.getLogger(RedisProperties.class);
+		private static final Logger log = LoggerFactory.getLogger(JedisProperties.class);
 		private static final Pattern pattern = Pattern.compile("^.+[:]\\d{1,9}\\s*$");
 
 		private List<String> nodes = new ArrayList<>();
@@ -74,7 +92,7 @@ public class JedisConfiguration {
 		private int maxAttempts = 20;
 		private GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 
-		public RedisProperties() {
+		public JedisProperties() {
 			// Initialize by default
 			this.poolConfig.setMaxWaitMillis(10000);
 			this.poolConfig.setMinIdle(10);
