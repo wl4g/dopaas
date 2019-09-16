@@ -39,6 +39,20 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import com.wl4g.devops.common.exception.iam.AccessRejectedException;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.utils.web.WebUtils2;
+import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.devops.iam.common.utils.SessionBindings;
+import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.devops.iam.handler.AuthenticationHandler;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,21 +70,6 @@ import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
-import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.utils.web.WebUtils2;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.utils.Securitys;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
-import com.wl4g.devops.iam.config.properties.IamProperties;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
  * Multiple channel login authentication submitted processing based filter
@@ -195,7 +194,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			String fromAppName = getFromAppName(request);
 			if (isBlank(fromAppName)) { // Use default?
 				fromAppName = config.getSuccessService();
-				successUrl = config.getSuccessUri();
+				successUrl = getSuccessUrl();
 			}
 
 			// Determine success redirectUrl
@@ -459,21 +458,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	private String determineSuccessUrl(IamAuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response, String successUrl) {
-		if (isBlank(successUrl)) {
-			successUrl = getSuccessUrl(); // fall-back
-		}
-
-		// e.g. </br>
-		// Situation1: http://myapp.domain.com/myapp/xxx/list?id=1
-		// Situation1: /view/index.html
-		// ===> http://myapp.domain.com/myapp/authenticator?id=1
-		//
-		// Implementing the IAM-CAS protocol: When successful login, you must
-		// redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
-		// front-end pages can not be used directly).
-		// See:com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter
-		successUrl = Securitys.correctAuthenticaitorURI(successUrl);
-
 		// Call determine successUrl.
 		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
 		hasText(successUrl, "Success redirectUrl is empty, please check the configure");
