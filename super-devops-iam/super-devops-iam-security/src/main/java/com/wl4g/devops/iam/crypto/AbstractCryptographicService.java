@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.iam.config.CryptoProperties;
+import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 

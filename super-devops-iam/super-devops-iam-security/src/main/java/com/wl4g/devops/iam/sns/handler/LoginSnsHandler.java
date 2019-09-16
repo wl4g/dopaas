@@ -24,8 +24,8 @@ import org.springframework.util.Assert;
 import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.config.SnsProperties;
+import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 

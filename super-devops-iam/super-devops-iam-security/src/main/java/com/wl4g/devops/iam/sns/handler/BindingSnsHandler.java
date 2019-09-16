@@ -21,8 +21,8 @@ import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.common.utils.SessionBindings;
-import com.wl4g.devops.iam.config.IamProperties;
-import com.wl4g.devops.iam.config.SnsProperties;
+import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 

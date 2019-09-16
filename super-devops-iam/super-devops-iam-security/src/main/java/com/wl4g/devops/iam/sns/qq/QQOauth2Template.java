@@ -20,7 +20,7 @@ import java.util.Map;
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.iam.config.SnsProperties.QQSocialProperties;
+import com.wl4g.devops.iam.config.properties.SnsProperties.QQSocialProperties;
 import com.wl4g.devops.iam.sns.AbstractBindConnection;
 import com.wl4g.devops.iam.sns.qq.model.QQAccessToken;
 import com.wl4g.devops.iam.sns.qq.model.QQOpenId;

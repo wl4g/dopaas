@@ -20,7 +20,7 @@ import java.util.Map;
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.iam.config.SnsProperties.WechatMpSocialProperties;
+import com.wl4g.devops.iam.config.properties.SnsProperties.WechatMpSocialProperties;
 import com.wl4g.devops.iam.sns.wechat.model.WxAccessToken;
 import com.wl4g.devops.iam.sns.wechat.model.WxBasedOpenId;
 import com.wl4g.devops.iam.sns.wechat.model.WxUserInfo;

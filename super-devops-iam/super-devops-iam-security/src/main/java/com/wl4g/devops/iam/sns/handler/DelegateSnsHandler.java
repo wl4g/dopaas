@@ -27,7 +27,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.util.StringUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.config.IamProperties;
+import com.wl4g.devops.iam.config.properties.IamProperties;
 
 /**
  * IAM Social delegate handler factory
