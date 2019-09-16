@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.realm;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -76,7 +78,7 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 		}
 
 		// To authenticationInfo
-		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
+		if (acc == null || isBlank(acc.getPrincipal())) {
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}
 
