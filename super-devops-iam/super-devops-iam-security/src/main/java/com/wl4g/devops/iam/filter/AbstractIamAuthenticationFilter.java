@@ -28,6 +28,7 @@ import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_AUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
+import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
@@ -197,8 +198,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				successUrl = getSuccessUrl();
 			}
 
-			// Determine success redirectUrl
-			successUrl = determineSuccessUrl(tk, subject, request, response, successUrl);
+			// Determine success redirectUrl.
+			successUrl = correctAuthenticaitorURI(determineSuccessUrl(tk, subject, request, response, successUrl));
 			hasText(fromAppName, "Successful redirect application must not be empty.");
 			hasText(successUrl, "Successful redirect URL must not be empty.");
 
@@ -461,7 +462,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Call determine successUrl.
 		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
 		hasText(successUrl, "Success redirectUrl is empty, please check the configure");
-		return cleanURI(successUrl); // symbol check
+		return cleanURI(successUrl); // Check symbol
 	}
 
 	/**
