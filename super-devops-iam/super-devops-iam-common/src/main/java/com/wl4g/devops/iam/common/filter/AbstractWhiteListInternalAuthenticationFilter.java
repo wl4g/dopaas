@@ -65,12 +65,12 @@ public abstract class AbstractWhiteListInternalAuthenticationFilter extends Base
 		String requestUrl = getFullRequestURL(toHttp(request), true);
 		String remoteIp = getHttpRemoteIp(request);
 		if (log.isDebugEnabled()) {
-			log.debug("Access request remoteIp: {}, requestUrl: {}", remoteIp, requestUrl);
+			log.debug("Access request remoteIp: {}, '{}'", remoteIp, requestUrl);
 		}
 
 		final boolean allowed = control.isPermitted(remoteIp);
 		if (!allowed) {
-			log.warn("Rejected request with remoteIp: {}, requestUrl: {}", remoteIp, requestUrl);
+			log.warn("Rejected request with remoteIp: {}, '{}'", remoteIp, requestUrl);
 		}
 		return allowed;
 	}
