@@ -21,7 +21,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
-import com.wl4g.devops.iam.config.IamProperties;
+import com.wl4g.devops.iam.config.properties.IamProperties;
+
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_S;
 
 /**

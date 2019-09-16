@@ -42,8 +42,8 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.config.IamProperties;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
