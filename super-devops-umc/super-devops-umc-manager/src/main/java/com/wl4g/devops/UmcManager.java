@@ -28,14 +28,14 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 @MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
-public class UmcAdmin {
+public class UmcManager {
 
 	static {
 		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(UmcAdmin.class, args);
+		SpringApplication.run(UmcManager.class, args);
 	}
 
 }

@@ -28,14 +28,14 @@ import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
 @EnableDiscoveryClient
 @MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
-public class SrmAdmin {
+public class SrmManager {
 
 	static {
 		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SrmAdmin.class, args);
+		SpringApplication.run(SrmManager.class, args);
 	}
 
 }
