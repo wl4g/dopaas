@@ -20,7 +20,6 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.apache.shiro.web.util.SavedRequest;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +38,15 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_RO
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_AUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.shiro.util.Assert.hasText;
-import static org.apache.shiro.web.util.WebUtils.getAndClearSavedRequest;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -107,6 +107,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * (For example, jump to IAM/login.html after executing logout)
 	 */
 	final public static String[] EXCLOUDE_SAVED_REDIRECT_URLS = { ("/" + LogoutAuthenticationFilter.NAME) };
+
+	/**
+	 * Remember last request URL.
+	 */
+	final public static String KEY_REMEMBER_URL = AbstractAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -389,7 +394,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	private String determineSuccessRedirectUrl(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
-		String successUrl = getRememberUrl(toHttp(request));
+		String successUrl = getClearSavedRememberUrl(toHttp(request));
 		if (Objects.isNull(successUrl)) {
 			successUrl = config.getSuccessUri();
 		}
@@ -406,14 +411,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @param request
 	 * @return
 	 */
-	private String getRememberUrl(HttpServletRequest request) {
+	private String getClearSavedRememberUrl(HttpServletRequest request) {
 		// Use remember redirect
 		if (config.isUseRememberRedirect()) {
-			SavedRequest savedReq = getAndClearSavedRequest(request);
-			if (savedReq != null) {
+			String rememberUrl = getBindValue(KEY_REMEMBER_URL, true);
+			if (isNotBlank(rememberUrl)) {
 				// URL excluding redirection remember
-				if (!endsWithAny(savedReq.getRequestURI(), EXCLOUDE_SAVED_REDIRECT_URLS)) {
-					return getRFCBaseURI(request, false) + savedReq.getRequestUrl();
+				if (!endsWithAny(rememberUrl, EXCLOUDE_SAVED_REDIRECT_URLS)) {
+					return rememberUrl;
 				}
 			}
 		}

@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.iam.client.filter;
 
+import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.common.utils.web.WebUtils2.isXHRRequest;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
@@ -90,11 +95,37 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 		 * See:com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#
 		 * getRememberUrl()
 		 */
-		if (config.isUseRememberRedirect() && toHttp(request).getMethod().equalsIgnoreCase(GET_METHOD)) {
-			saveRequest(request);
+		if (config.isUseRememberRedirect() && isBrowser(toHttp(request))) {
+			// Get remember URL.
+			String rememberUrl = getRequestRememberUrl(request);
+			if (isNotBlank(rememberUrl)) {
+				bind(KEY_REMEMBER_URL, rememberUrl);
+			} else {
+				log.warn("Can't get remember via requestURL: {}", getFullRequestURL(toHttp(request)));
+			}
 		}
 
 		return SecurityUtils.getSubject().isAuthenticated();
+	}
+
+	/**
+	 * Get request remember URL.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private String getRequestRememberUrl(ServletRequest request) {
+		HttpServletRequest req = toHttp(request);
+
+		String rememberUrl = req.getHeader("Referer");
+		// #[RFC7231], https://tools.ietf.org/html/rfc7231#section-5.5.2
+		rememberUrl = isNotBlank(rememberUrl) ? rememberUrl : req.getHeader("Referrer");
+
+		// Fallback
+		if (isBlank(rememberUrl) && !isXHRRequest(req) && req.getMethod().equalsIgnoreCase(GET_METHOD)) {
+			rememberUrl = getFullRequestURL(req, true);
+		}
+		return rememberUrl;
 	}
 
 	@Override
