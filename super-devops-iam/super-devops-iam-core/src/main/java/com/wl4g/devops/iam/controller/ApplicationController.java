@@ -1,7 +1,6 @@
-package com.wl4g.devops.share.controller;
+package com.wl4g.devops.iam.controller;
 
 import com.wl4g.devops.common.bean.share.Application;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.ApplicationDao;
@@ -9,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -26,8 +27,12 @@ public class ApplicationController extends BaseController {
     public RespBase<?> allType() {
         RespBase<Object> resp = RespBase.create();
         List<Application> list = applicationDao.getByAppNames(null);
-        resp.getData().put("list", list);
-        System.out.println(JacksonUtils.toJSONString(list));
+        Map<String,Object> map = new HashMap<>();
+        for(Application application : list){
+            map.put(application.getAppName(),application);
+        }
+        resp.getData().put("map", map);
+        //System.out.println(JacksonUtils.toJSONString(list));
         return resp;
     }
 
