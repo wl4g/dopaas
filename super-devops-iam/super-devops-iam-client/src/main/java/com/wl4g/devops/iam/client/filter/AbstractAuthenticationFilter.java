@@ -68,6 +68,7 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
@@ -117,7 +118,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Client security context handler.
 	 */
-	final protected ClientSecurityConfigurer context;
+	final protected ClientSecurityConfigurer configurer;
 
 	/**
 	 * Client security processor.
@@ -143,7 +144,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		Assert.notNull(coprocessor, "'interceptor' must not be null");
 		Assert.notNull(cacheManager, "'cacheManager' must not be null");
 		this.config = config;
-		this.context = context;
+		this.configurer = context;
 		this.coprocessor = coprocessor;
 		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
 	}
@@ -309,7 +310,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		hasText(redirectUri, "'redirectUri' must not be null");
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
-		resp.setCode(OK).setMessage("Login successful");
+		resp.setCode(OK).setMessage("Authentication successful");
 		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
 		// e.g. Used by mobile APP.
 		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
@@ -329,7 +330,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @return
 	 */
 	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
-		String errmsg = err != null ? err.getMessage() : "Not logged-in";
+		String errmsg = err != null ? err.getMessage() : "Authentication failure";
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
 		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
@@ -388,13 +389,13 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	private String determineSuccessRedirectUrl(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
-		String successUrl = getRememberUrl(WebUtils.toHttp(request));
-		if (successUrl == null) {
+		String successUrl = getRememberUrl(toHttp(request));
+		if (Objects.isNull(successUrl)) {
 			successUrl = config.getSuccessUri();
 		}
 
-		// Determine
-		successUrl = context.determineLoginSuccessUrl(successUrl, token, subject, request, response);
+		// Determine successUrl.
+		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
 		Assert.notNull(successUrl, "'successUrl' must not be null");
 		return cleanURI(successUrl); // Check & cleanup.
 	}
@@ -416,6 +417,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				}
 			}
 		}
+
 		return null;
 	}
 
