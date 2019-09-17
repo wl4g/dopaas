@@ -172,14 +172,14 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			if (checkAvailable(sessionId)) {
 				return sessionId;
 			} else {
-				log.warn("Get empty SID by grantTicket '{}'", grantTicket);
+				log.warn("Got empty SID by grantTicket: '{}'", grantTicket);
 			}
 		}
 
 		// Using default cookie session.
 		sessionId = super.getSessionId(request, response);
 		if (log.isDebugEnabled()) {
-			log.debug("Using default SID for '{}'", sessionId);
+			log.debug("Using default SID for: '{}'", sessionId);
 		}
 		return sessionId;
 	}

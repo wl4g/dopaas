@@ -80,11 +80,14 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	@Value("${spring.cloud.devops.error.base-path:" + DEFAULT_DIR_VIEW + "}")
 	private String basePath;
 	@Value("${spring.cloud.devops.error.404:404.html}")
-	private String ftl404Name;
+	private String tpl404Name;
+	@Value("${spring.cloud.devops.error.403:403.html}")
+	private String tpl403Name;
 	@Value("${spring.cloud.devops.error.500:500.html}")
-	private String ftl500Name;
+	private String tpl500Name;
 
-	private Template tpl40x;
+	private Template tpl404;
+	private Template tpl403;
 	private Template tpl50x;
 
 	public SmartSuperErrorsController(ErrorAttributes errorAttributes) {
@@ -113,12 +116,14 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 		config.setFreemarkerSettings(settings);
 		try {
 			config.afterPropertiesSet();
-			this.tpl40x = config.getConfiguration().getTemplate(ftl404Name, "UTF-8");
-			this.tpl50x = config.getConfiguration().getTemplate(ftl500Name, "UTF-8");
+			this.tpl404 = config.getConfiguration().getTemplate(tpl404Name, "UTF-8");
+			this.tpl403 = config.getConfiguration().getTemplate(tpl403Name, "UTF-8");
+			this.tpl50x = config.getConfiguration().getTemplate(tpl500Name, "UTF-8");
 		} catch (Exception e) {
 			ReflectionUtils.rethrowRuntimeException(e);
 		}
-		Assert.notNull(tpl40x, "Default 404 view template must not be null");
+		Assert.notNull(tpl404, "Default 404 view template must not be null");
+		Assert.notNull(tpl403, "Default 403 view template must not be null");
 		Assert.notNull(tpl50x, "Default 500 view template must not be null");
 	}
 
@@ -287,10 +292,12 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 		model.put("message", extractMeaningfulErrorsMessage(model));
 
 		Template tpl = this.tpl50x;
-		HttpStatus status = getStatus(request);
-		switch (status) {
+		switch (getStatus(request)) {
 		case NOT_FOUND:
-			tpl = tpl40x;
+			tpl = tpl404;
+			break;
+		case FORBIDDEN:
+			tpl = tpl403;
 			break;
 		default:
 			tpl = tpl50x;

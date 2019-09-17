@@ -71,12 +71,12 @@ public abstract class AbstractDelegateMessageBundle extends ResourceBundleMessag
 	}
 
 	/**
-	 * Defualt i18n message base classpath prefix
+	 * Default i18n message base class-path prefix.
 	 * 
 	 * @return
 	 */
 	protected static String getBasename(Class<?> clazz) {
-		Assert.notNull(clazz, "'clazz' cannot not be null");
+		Assert.notNull(clazz, "Basename class cannot not be null");
 		String path = clazz.getName();
 		return path.substring(0, path.lastIndexOf(".")) + ".messages";
 	}
