@@ -207,7 +207,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				successUrl = getSuccessUrl();
 			}
 
-			// Determine success redirectUrl.
+			// Determine success redirectUrl(authenticator URL).
 			successUrl = correctAuthenticaitorURI(determineSuccessUrl(tk, subject, request, response, successUrl));
 			hasText(fromAppName, "Successful redirect application must not be empty.");
 			hasText(successUrl, "Successful redirect URL must not be empty.");
@@ -434,7 +434,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	/**
 	 * Make login failed response message.
 	 * 
-	 * @param failureRedirectUrl
+	 * @param failRedirectUrl
 	 *            failure redirect URL
 	 * @param request
 	 *            Servlet request
@@ -445,12 +445,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private String makeFailedResponse(String failureRedirectUrl, ServletRequest request, Map params, String errmsg) {
+	private String makeFailedResponse(String failRedirectUrl, ServletRequest request, Map params, String errmsg) {
 		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication failure";
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
 		resp.setCode(UNAUTHC).setMessage(errmsg);
 		resp.getData().putAll(params);
+		resp.getData().put(config.getParam().getRedirectUrl(), failRedirectUrl);
 		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return toJSONString(resp);
 	}
