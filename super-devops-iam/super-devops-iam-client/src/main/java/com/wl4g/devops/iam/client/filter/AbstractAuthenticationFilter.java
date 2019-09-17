@@ -32,6 +32,7 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
@@ -64,13 +65,16 @@ import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 /**
  * This filter validates the CAS service ticket to authenticate the user. It
@@ -105,6 +109,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * IAM client configuration properties.
+	 */
 	final protected IamClientProperties config;
 
 	/**
@@ -116,6 +123,12 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * Client security processor.
 	 */
 	final protected ClientSecurityCoprocessor coprocessor;
+
+	/**
+	 * Delegate message source.
+	 */
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	protected SessionDelegateMessageBundle bundle;
 
 	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under
@@ -232,8 +245,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * See:xx.validation.AbstractBasedValidator#doGetRemoteValidation()
 		 */
 		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
-			// Response JSON message
-			if (isJSONResponse(request)) {
+			if (isJSONResponse(request)) { // Response JSON message.
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
@@ -250,19 +262,18 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 					log.error("Cannot redirect to failure url - {}", failRedirectUrl, e);
 				}
 			}
-		}
-		// If it is an error caused by interface connection, etc.
-		else {
+		} else { // If it is an error caused by interface connection, etc.
 			try {
-				String errmsg = String.format("<b>Iam Server Internal Error</b><br/>%s", getMessage(cause));
-				toHttp(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, errmsg);
+				String errmsg = String.format("%s</br>%s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
+						getMessage(cause));
+				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}
 		}
 
 		/*
-		 * Termination of execution. Otherwise, DispatcherServlet will perform
+		 * Suspend of execution. otherwise, dispatcherServlet will perform
 		 * redirection and eventually result in an exception:Cannot call
 		 * sendRedirect() after the response has been committed
 		 */

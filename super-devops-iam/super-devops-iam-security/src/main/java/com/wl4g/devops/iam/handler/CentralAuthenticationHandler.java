@@ -405,7 +405,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		if (isBlank(model.getTicket())) {
 			log.warn("Invalid grantTicket has empty, appName: '{}', sessionId: '{}'", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
-			throw new InvalidGrantTicketException("Invalid grant ticket has empty");
+			throw new InvalidGrantTicketException("Invalid grantTicket has empty");
 		}
 
 		// Get grant information

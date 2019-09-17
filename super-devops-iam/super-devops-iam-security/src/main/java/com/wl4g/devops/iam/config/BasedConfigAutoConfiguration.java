@@ -22,8 +22,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -35,7 +33,6 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 
 /**
@@ -48,24 +45,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 public class BasedConfigAutoConfiguration {
 
 	//
-	// Locale i18n configuration.
-	//
-
-	/**
-	 * Build a proxy message resourcer. Note that this bean can instantiate
-	 * multiple different 'basenames', so the name must be unique
-	 * 
-	 * @param beanFactory
-	 * @return
-	 */
-	@Bean(BEAN_DELEGATE_MSG_SOURCE)
-	@ConditionalOnMissingBean
-	public SessionDelegateMessageBundle sessionDelegateMessageBundle() {
-		return new SessionDelegateMessageBundle(getClass());
-	}
-
-	//
-	// Context's configuration
+	// Configurer's configuration
 	//
 
 	@Bean
