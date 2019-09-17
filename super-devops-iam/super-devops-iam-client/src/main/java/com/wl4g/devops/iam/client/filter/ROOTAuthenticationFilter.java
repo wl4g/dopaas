@@ -83,7 +83,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		if (log.isDebugEnabled()) {
-			log.debug("ROOT request URL: {}", getFullRequestURL(toHttp(request)));
+			log.debug("ROOT requestURL: {}", getFullRequestURL(toHttp(request)));
 		}
 
 		/*
