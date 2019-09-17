@@ -16,6 +16,7 @@
 package com.wl4g.devops.support.cache;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -25,11 +26,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Charsets;
 
@@ -63,10 +65,12 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 
 	final public static ScanParams NONE_PARAMS = new ScanParams();
 
+	final private Logger log = LoggerFactory.getLogger(getClass());
+
 	final private ScanParams params;
 	final private Class<?> valueType;
 	final private JedisCluster jdsCluster;
-	final private List<JedisPool> jdsPools;
+	final private List<JedisPool> jedisNodes;
 
 	private int selectionPos;
 	private CursorState state;
@@ -111,19 +115,19 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	public ScanCursor(JedisCluster jdCluster, String cursorId, Class<?> valueType, ScanParams param) {
 		Assert.notNull(jdCluster, "jedisCluster must not be null");
 		Assert.hasText(cursorId, "cursorId must not be empty");
-		if (valueType == null) {
+		if (Objects.isNull(valueType)) {
 			valueType = ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
 		}
-		// Assert.notNull(valueType, "Unable to get 'valueType' actual generic
-		// parameters");
 		this.valueType = valueType;
 		this.jdsCluster = jdCluster;
 		this.params = param != null ? param : NONE_PARAMS;
-		this.jdsPools = jdCluster.getClusterNodes().values().stream().collect(Collectors.toCollection(ArrayList::new));
+		this.jedisNodes = jdCluster.getClusterNodes().values().stream().collect(toCollection(ArrayList::new));
 		this.selectionPos = 0;
 		this.state = CursorState.READY;
 		this.cursorId = cursorId;
-		this.iter = new ScanIterable<>(cursorId, Collections.emptyList());
+		this.iter = new ScanIterable<>(cursorId, emptyList());
+		Assert.notEmpty(jedisNodes, "Jedis nodes is empty.");
+		Assert.hasText(cursorId, "CursorId is empty.");
 	}
 
 	/*
@@ -187,6 +191,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	public synchronized boolean hasNext() {
 		assertCursorIsOpen();
 
+		// If the current 'iter' is fully traversed, you need to check whether
+		// the next node has data.
 		while (!iter.iterator().hasNext() && CursorState.FINISHED != state) {
 			scan(getCursorId());
 		}
@@ -287,8 +293,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 		ScanResult<byte[]> res = jedis.scan(cursorId.getBytes(Charsets.UTF_8), params);
 
 		List<byte[]> items = res.getResult();
-		if (CollectionUtils.isEmpty(items)) {
-			items = Collections.emptyList();
+		if (isEmpty(items)) {
+			items = emptyList();
 		}
 
 		return new ScanIterable<byte[]>(res.getStringCursor(), items);
@@ -303,7 +309,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 		Jedis jedis = null;
 		try {
 			// Select a node
-			jedis = jdsPools.get(getSelectionPos()).getResource();
+			jedis = jedisNodes.get(getSelectionPos()).getResource();
 
 			// Traverse only the primary node
 			if (jedis.info(REPLICATION).contains(ROLE_MASTER)) {
@@ -323,28 +329,35 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param res
 	 */
-	private void processResult(ScanIterable<byte[]> res) {
-		iter = res;
+	private synchronized void processResult(ScanIterable<byte[]> res) {
+		this.iter = res;
 
 		// The current node has completed traversal
-		if ((cursorId = res.getCursorId()).equals("0")) { // Scan end
-
+		if ((cursorId = res.getCursorId()).equals("0")) { // Scan end?
 			// All nodes are traversed
-			if (selectionPos >= (jdsPools.size() - 1)) {
-				state = CursorState.FINISHED;
+			if (selectionPos >= (jedisNodes.size() - 1)) {
+				this.state = CursorState.FINISHED;
 			}
 
 			nextTo(); // Traversed, go to the next node
 		}
-
 	}
 
 	/**
 	 * Selection next node
 	 */
-	private void nextTo() {
-		cursorId = "0"; // Reset cursor
-		selectionPos++; // Next node
+	private synchronized void nextTo() {
+		cursorId = "0"; // Reset cursor.
+		selectionPos++; // Next node.
+		// Assert.state(selectionPos < jedisNodes.size(),
+		// String.format("No such jedis node. index: %s, size: %s",
+		// selectionPos, jedisNodes.size()));
+
+		// Safe check out of nodes.
+		if (selectionPos >= (jedisNodes.size() - 1)) {
+			log.warn(String.format("No such jedis node. index: %s, size: %s", selectionPos, jedisNodes.size()));
+			selectionPos = jedisNodes.size() - 1;
+		}
 	}
 
 	/**
