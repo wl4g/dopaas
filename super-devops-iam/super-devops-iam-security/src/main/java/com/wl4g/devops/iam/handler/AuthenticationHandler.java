@@ -61,11 +61,11 @@ public abstract interface AuthenticationHandler {
 	/**
 	 * Validate application request ticket
 	 * 
-	 * @param param
+	 * @param model
 	 *            ticket validation request
 	 * @return validation assert result
 	 */
-	TicketAssertion validate(TicketValidationModel param);
+	TicketAssertion validate(TicketValidationModel model);
 
 	/**
 	 * Shiro authentication success callback process.

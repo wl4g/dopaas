@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.iam.common.filter;
 
+import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -40,6 +43,9 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
  */
 public abstract class AbstractWhiteListInternalAuthenticationFilter extends BasedInternalAuthenticationFilter {
 
+	/**
+	 * Request remote IP checker.
+	 */
 	private IPAccessControl control;
 
 	public AbstractWhiteListInternalAuthenticationFilter(IPAccessControl control,
@@ -56,16 +62,16 @@ public abstract class AbstractWhiteListInternalAuthenticationFilter extends Base
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		final String remoteIp = getHttpRemoteIp(request);
+		String requestUrl = toHttp(request).getMethod() + " " + getFullRequestURL(toHttp(request), true);
+		String remoteIp = getHttpRemoteIp(request);
 		if (log.isDebugEnabled()) {
-			log.debug("Access request remoteIp: {}", remoteIp);
+			log.debug("Access request remoteIp: {}, '{}'", remoteIp, requestUrl);
 		}
 
 		final boolean allowed = control.isPermitted(remoteIp);
 		if (!allowed) {
-			log.warn("Illegal access request remoteIp: {}", remoteIp);
+			log.warn("Rejected request with remoteIp: {}, '{}'", remoteIp, requestUrl);
 		}
-
 		return allowed;
 	}
 

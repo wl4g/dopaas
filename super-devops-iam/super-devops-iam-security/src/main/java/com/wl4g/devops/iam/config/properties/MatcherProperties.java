@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
  * @date 2018年11月29日
  * @since
  */
-public class MatcherProperties implements InitializingBean, Serializable {
+public   class MatcherProperties implements InitializingBean, Serializable {
 	private static final long serialVersionUID = -6194767776312196341L;
 
 	// --- Credentials ---
@@ -43,8 +43,8 @@ public class MatcherProperties implements InitializingBean, Serializable {
 	private String applyGraphTokenName = "graphToken";
 
 	/**
-	 * Maximum number of consecutive attempts to request an graph verification
-	 * code.
+	 * Maximum number of consecutive attempts to request an graph
+	 * verification code.
 	 */
 	private int failFastCaptchaMaxAttempts = 20;
 
@@ -69,9 +69,9 @@ public class MatcherProperties implements InitializingBean, Serializable {
 	private int failFastSmsMaxAttempts = 3;
 
 	/**
-	 * The length of time (in milliseconds) that will be locked after trying to
-	 * apply for the maximum number of SMS dynamic passwords multiple times.
-	 * Reference: failFastSmsMaxAttempts.
+	 * The length of time (in milliseconds) that will be locked after trying
+	 * to apply for the maximum number of SMS dynamic passwords multiple
+	 * times. Reference: failFastSmsMaxAttempts.
 	 */
 	private long failFastSmsMaxDelay = 30 * 60 * 1000L;
 

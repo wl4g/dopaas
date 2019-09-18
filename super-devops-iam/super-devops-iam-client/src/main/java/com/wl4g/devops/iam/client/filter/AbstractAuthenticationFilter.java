@@ -20,7 +20,6 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.apache.shiro.web.util.SavedRequest;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,20 +31,22 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_AUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.shiro.util.Assert.hasText;
-import static org.apache.shiro.web.util.WebUtils.getAndClearSavedRequest;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -64,13 +65,17 @@ import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 /**
  * This filter validates the CAS service ticket to authenticate the user. It
@@ -103,19 +108,33 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	final public static String[] EXCLOUDE_SAVED_REDIRECT_URLS = { ("/" + LogoutAuthenticationFilter.NAME) };
 
+	/**
+	 * Remember last request URL.
+	 */
+	final public static String KEY_REMEMBER_URL = AbstractAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * IAM client configuration properties.
+	 */
 	final protected IamClientProperties config;
 
 	/**
 	 * Client security context handler.
 	 */
-	final protected ClientSecurityConfigurer context;
+	final protected ClientSecurityConfigurer configurer;
 
 	/**
 	 * Client security processor.
 	 */
 	final protected ClientSecurityCoprocessor coprocessor;
+
+	/**
+	 * Delegate message source.
+	 */
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	protected SessionDelegateMessageBundle bundle;
 
 	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under
@@ -130,7 +149,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		Assert.notNull(coprocessor, "'interceptor' must not be null");
 		Assert.notNull(cacheManager, "'cacheManager' must not be null");
 		this.config = config;
-		this.context = context;
+		this.configurer = context;
 		this.coprocessor = coprocessor;
 		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
 	}
@@ -232,8 +251,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * See:xx.validation.AbstractBasedValidator#doGetRemoteValidation()
 		 */
 		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
-			// Response JSON message
-			if (isJSONResponse(request)) {
+			if (isJSONResponse(request)) { // Response JSON message.
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
@@ -250,19 +268,18 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 					log.error("Cannot redirect to failure url - {}", failRedirectUrl, e);
 				}
 			}
-		}
-		// If it is an error caused by interface connection, etc.
-		else {
+		} else { // If it is an error caused by interface connection, etc.
 			try {
-				String errmsg = String.format("<b>Iam Server Internal Error</b><br/>%s", getMessage(cause));
-				toHttp(response).sendError(HttpServletResponse.SC_BAD_GATEWAY, errmsg);
+				String errmsg = String.format("%s</br>%s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
+						getMessage(cause));
+				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}
 		}
 
 		/*
-		 * Termination of execution. Otherwise, DispatcherServlet will perform
+		 * Suspend of execution. otherwise, dispatcherServlet will perform
 		 * redirection and eventually result in an exception:Cannot call
 		 * sendRedirect() after the response has been committed
 		 */
@@ -298,7 +315,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		hasText(redirectUri, "'redirectUri' must not be null");
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
-		resp.setCode(OK).setMessage("Login successful");
+		resp.setCode(OK).setMessage("Authentication successful");
 		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
 		// e.g. Used by mobile APP.
 		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
@@ -318,7 +335,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @return
 	 */
 	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
-		String errmsg = err != null ? err.getMessage() : "Not logged-in";
+		String errmsg = err != null ? err.getMessage() : "Authentication failure";
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
 		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
@@ -377,13 +394,13 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	private String determineSuccessRedirectUrl(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
-		String successUrl = getRememberUrl(WebUtils.toHttp(request));
-		if (successUrl == null) {
+		String successUrl = getClearSavedRememberUrl(toHttp(request));
+		if (Objects.isNull(successUrl)) {
 			successUrl = config.getSuccessUri();
 		}
 
-		// Determine
-		successUrl = context.determineLoginSuccessUrl(successUrl, token, subject, request, response);
+		// Determine successUrl.
+		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
 		Assert.notNull(successUrl, "'successUrl' must not be null");
 		return cleanURI(successUrl); // Check & cleanup.
 	}
@@ -394,17 +411,18 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @param request
 	 * @return
 	 */
-	private String getRememberUrl(HttpServletRequest request) {
+	private String getClearSavedRememberUrl(HttpServletRequest request) {
 		// Use remember redirect
 		if (config.isUseRememberRedirect()) {
-			SavedRequest savedReq = getAndClearSavedRequest(request);
-			if (savedReq != null) {
+			String rememberUrl = getBindValue(KEY_REMEMBER_URL, true);
+			if (isNotBlank(rememberUrl)) {
 				// URL excluding redirection remember
-				if (!endsWithAny(savedReq.getRequestURI(), EXCLOUDE_SAVED_REDIRECT_URLS)) {
-					return getRFCBaseURI(request, false) + savedReq.getRequestUrl();
+				if (!endsWithAny(rememberUrl, EXCLOUDE_SAVED_REDIRECT_URLS)) {
+					return rememberUrl;
 				}
 			}
 		}
+
 		return null;
 	}
 

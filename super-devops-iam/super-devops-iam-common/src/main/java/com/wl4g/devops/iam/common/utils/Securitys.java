@@ -102,7 +102,7 @@ public abstract class Securitys {
 	/**
 	 * Get the URI address of the authenticator interface on the client or
 	 * server side.</br>
-	 * e.g.</br>
+	 * e.g.
 	 * 
 	 * <pre>
 	 *  http://iam.xx.com/iam-server/xx/list?id=1  =>  http://iam.xx.com/iam-server/authenticator?id=1
@@ -111,10 +111,25 @@ public abstract class Securitys {
 	 *  http://iam.xx.com:8080/xx/list/?id=1       =>  http://iam.xx.com:8080/xx/authenticator?id=1
 	 * </pre>
 	 * 
-	 * @param uri
+	 * e.g. </br>
+	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1</br>
+	 * Situation1: /view/index.html =>
+	 * http://myapp.domain.com/myapp/authenticator?id=1
+	 * 
+	 * Implementing the IAM-CAS protocol: When successful login, you must
+	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
+	 * front-end pages can not be used directly).
+	 * 
+	 * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
+	 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
+	 * @param url
 	 * @return
 	 */
 	public static String correctAuthenticaitorURI(String url) {
+		if (isBlank(url)) {
+			return EMPTY;
+		}
+
 		try {
 			URI _uri = new URI(url);
 			if (!endsWith(_uri.getPath(), URI_AUTHENTICATOR)) {

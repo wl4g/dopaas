@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.handle;
+package com.wl4g.devops.support.mail;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MailNotificationHandle {
+public class MailNotificationHandler {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	@Value("${spring.mail.username}")

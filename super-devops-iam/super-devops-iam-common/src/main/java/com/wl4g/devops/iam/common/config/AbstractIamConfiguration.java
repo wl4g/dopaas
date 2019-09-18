@@ -23,6 +23,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,6 +34,7 @@ import javax.servlet.Filter;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -54,6 +57,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
+import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
@@ -69,6 +73,22 @@ import redis.clients.jedis.JedisCluster;
  * @since
  */
 public abstract class AbstractIamConfiguration extends AbstractOptionalControllerConfiguration {
+
+	// ==============================
+	// Locale i18n configuration.
+	// ==============================
+
+	/**
+	 * A delegate message resource. Note that this bean can instantiate multiple
+	 * different 'base-names', so the name must be unique
+	 * 
+	 * @return
+	 */
+	@Bean(BEAN_DELEGATE_MSG_SOURCE)
+	@ConditionalOnMissingBean
+	public SessionDelegateMessageBundle sessionDelegateMessageBundle() {
+		return new SessionDelegateMessageBundle(getClass());
+	}
 
 	// ==============================
 	// S H I R O _ C O N F I G's.

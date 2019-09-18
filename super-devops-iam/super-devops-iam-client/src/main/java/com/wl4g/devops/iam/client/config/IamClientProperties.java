@@ -68,7 +68,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * Re-login callback URL, whether to use the previously remembered URL
 	 */
-	private boolean useRememberRedirect = false;
+	private boolean useRememberRedirect = true;
 
 	/**
 	 * Secondary authenticator provider name.

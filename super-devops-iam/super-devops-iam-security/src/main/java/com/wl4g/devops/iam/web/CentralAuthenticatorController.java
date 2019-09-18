@@ -75,7 +75,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	@ResponseBody
 	public RespBase<TicketAssertion> validate(HttpServletRequest request, @NotNull @RequestBody TicketValidationModel param) {
 		if (log.isInfoEnabled()) {
-			log.info("Ticket validate for sessionId {}, {}", getSessionId(), toJSONString(param));
+			log.info("Ticket validate sessionId {} <= {}", getSessionId(), toJSONString(param));
 		}
 
 		RespBase<TicketAssertion> resp = new RespBase<>();
