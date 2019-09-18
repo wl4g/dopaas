@@ -7,7 +7,7 @@
 
 	// Basic constant definition.
     var constant = {
-        baseUriKey : '__$IamBaseUriStoredKey',
+        baseUriStoredKey : '__$IamBaseUriStoredKey',
     };
 
 	// 运行时值/状态临时缓存
@@ -102,7 +102,10 @@
 
 	// Global settings.
 	var settings = {
-		baseUri: null, // 接口baseURI
+		deploy: { // 部署配置
+			baseUri: null, // IAM后端服务baseURI
+			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+		},
 		// 字典参数定义
 		definition: {
 			responseType: "response_type", // 控制返回数据格式的参数名
@@ -254,7 +257,7 @@
 		// 获取默认IAM baseURL.
 		var isIpv4 = window.Common.Util.isIpv4(hostname);
         if (hostname == 'localhost' || hostname == '127.0.0.1'|| hostname == '0:0:0:0:0:0:0:1'|| isIpv4) {
-            settings.baseUri = protocol + "//" +hostname+ ":14040/iam-server";
+            settings.deploy.baseUri = protocol + "//" +hostname+ ":14040/iam-server";
             if(isIpv4){
                 alert("Please refer to the readme docs,Use domain name deployment. see:https://github.com/wl4g/super-devops-view/blob/master/README.md");
             }
@@ -263,22 +266,22 @@
         	if(hostname.indexOf("com.cn") > 0){
         		topDomainName = hostname.split('.').slice(-3).join('.');
         	}
-            settings.baseUri = protocol +"//passport."+ topDomainName +"/iam-server";
+            settings.deploy.baseUri = protocol +"//"+ settings.deploy.defaultTwoDomain +"."+ topDomainName +"/iam-server";
         }
-        console.debug("Default IAM baseURI is: "+ settings.baseUri);
+        console.debug("Default IAM baseURI is: "+ settings.deploy.baseUri);
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = jQuery.extend(true, settings, obj);
 
 		// Saved IAM baseUri.
-        window.sessionStorage.setItem(constant.baseUriKey, settings.baseUri);
-        console.debug("Determined IAM baseURI: "+ settings.baseUri);
+        window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
+        console.debug("Determined IAM baseURI: "+ settings.deploy.baseUri);
 	};
 
 	// 请求连接到第三方社交网络URL
 	var getConnectUrl = function(provider, panelType){
 		var required = Common.Util.checkEmpty("sns.required",settings.sns.required);
 		var which = Common.Util.checkEmpty("required.which",required.which(provider, panelType));
-		var url = settings.baseUri + Common.Util.checkEmpty("definition.snsConnectUri",settings.definition.snsConnectUri) + Common.Util.checkEmpty("provider",provider)
+		var url = settings.deploy.baseUri + Common.Util.checkEmpty("definition.snsConnectUri",settings.definition.snsConnectUri) + Common.Util.checkEmpty("provider",provider)
 			+ "?" + Common.Util.checkEmpty("definition.whichKey",settings.definition.whichKey) + "=" + which;
 		// 若当前是绑定操作，则需传入 principal、refreshUrl
 		if(which.toLowerCase() == "bind" || which.toLowerCase() == "unbind"){
@@ -307,7 +310,7 @@
 
 	// Make get verify & analyze captcha URL.
 	var getVerifyCaptchaUrl = function(){
-		var verifyUrl = Common.Util.checkEmpty("baseUri",settings.baseUri) + Common.Util.checkEmpty("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
+		var verifyUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri) + Common.Util.checkEmpty("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
 			+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
 			//+ Common.Util.checkEmpty("applyModel.verifyType",runtime.applyModel.verifyType) + "&"
 			+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&"
@@ -419,7 +422,7 @@
 	var _InitSafeCheck = function(callback){
 		$(function(){
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));
-			var checkUrl = Common.Util.checkEmpty("baseUri",settings.baseUri)
+			var checkUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)
 				+ Common.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
 				+ Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
 				+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
@@ -550,7 +553,7 @@
 					}
 
 					// Submission URL
-					var loginSubmitUrl = Common.Util.checkEmpty("baseUri",settings.baseUri)
+					var loginSubmitUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)
 						+ Common.Util.checkEmpty("definition.accountSubmitUri",settings.definition.accountSubmitUri) + "?"
 						+ Common.Util.checkEmpty("definition.responseType",settings.definition.responseType) + "="
 						+ Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
@@ -616,7 +619,7 @@
 					}
 				}
 
-				var url = Common.Util.checkEmpty("baseUri",settings.baseUri) + Common.Util.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
+				var url = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri) + Common.Util.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
 					+ "?" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + encodeURIComponent(mobileNum)
 					+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + captcha;
 				// 请求申请SMS验证码
@@ -665,7 +668,7 @@
 					return;
 				}
 
-				var url = Common.Util.checkEmpty("baseUri",settings.baseUri)+Common.Util.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)
+				var url = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)+Common.Util.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)
 					+ "?action=login&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + mobileNum
 					+ "&" + Common.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + smsCode;
 				$.ajax({
@@ -722,7 +725,7 @@
 			return this;
 		},
         getIamBaseUri: function(){
-            return window.sessionStorage.getItem(constant.baseUriKey);
+            return window.sessionStorage.getItem(constant.baseUriStoredKey);
         },
 		bindForAccountAuthenticator: function(){
 			_InitAccountAuthenticator();
