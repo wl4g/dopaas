@@ -28,7 +28,7 @@ import com.wl4g.devops.support.lock.SimpleRedisLockManager;
  * @since
  */
 @Configuration
-public class SupportConfiguration {
+public class SupportAutoConfiguration {
 
 	@Bean
 	public SimpleRedisLockManager simpleRedisLockManager() {
