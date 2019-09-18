@@ -19,21 +19,17 @@ import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.bean.share.Application;
 import com.wl4g.devops.dao.share.ApplicationDao;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
 import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,12 +83,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfoList.add(appInfo);
 		} else { // Formal environment.
-			List<Application> applications = applicationDao.getByAppNames(appNames);
-			for (Application application : applications) {
-				ApplicationInfo appInfo = new ApplicationInfo(application.getAppName(), application.getExtranetBaseUri());
-				appInfo.setIntranetBaseUri(application.getIntranetBaseUri());
-				appInfoList.add(appInfo);
-			}
+			List<ApplicationInfo> applications = applicationDao.getByAppNames(appNames);
+			appInfoList.addAll(applications);
 		}
 
 		//// TODO(Using DB) for testing.
