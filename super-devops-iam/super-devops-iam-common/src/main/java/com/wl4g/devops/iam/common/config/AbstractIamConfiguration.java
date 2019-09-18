@@ -87,7 +87,7 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	@Bean(BEAN_DELEGATE_MSG_SOURCE)
 	@ConditionalOnMissingBean
 	public SessionDelegateMessageBundle sessionDelegateMessageBundle() {
-		return new SessionDelegateMessageBundle(getClass());
+		return new SessionDelegateMessageBundle(AbstractIamConfiguration.class);
 	}
 
 	// ==============================
