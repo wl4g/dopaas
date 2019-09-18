@@ -60,7 +60,12 @@ public class IPAccessControl {
 	/**
 	 * Thread local pattern cache.
 	 */
-	final private static ThreadLocal<Pattern[]> DEFAULT_PATTERN_CACHE = new InheritableThreadLocal<>();
+	final private static ThreadLocal<Pattern[]> DEFAULT_PATTERN_CACHE = new ThreadLocal<Pattern[]>() {
+		@Override
+		protected Pattern[] initialValue() {
+			return new Pattern[] { Pattern.compile(OWN_A), Pattern.compile(OWN_B), Pattern.compile(OWN_C) };
+		}
+	};
 
 	private IPAccessProperties config;
 
@@ -76,7 +81,7 @@ public class IPAccessControl {
 	 * @return
 	 */
 	public boolean isPermitted(String remoteIp) {
-		return config.isSecure() ? isAnyNetIPOwnPermitted(remoteIp) : isIPRangePermitted(remoteIp);
+		return config.isSecure() ? isIPRangePermitted(remoteIp) : isAnyNetIPOwnPermitted(remoteIp);
 	}
 
 	/**
@@ -89,17 +94,16 @@ public class IPAccessControl {
 	public boolean isIPRangePermitted(String remoteIp) {
 		boolean ipV6 = remoteIp != null && remoteIp.indexOf(':') != -1;
 		if (ipV6) {
-			return "0:0:0:0:0:0:0:1".equals(remoteIp)
-					|| (this.config.getDenyList().size() == 0 && this.config.getAllowList().size() == 0);
+			return "0:0:0:0:0:0:0:1".equals(remoteIp) || (config.getDenyList().size() == 0 && config.getAllowList().size() == 0);
 		}
 		IPAddress ipAddress = new IPAddress(remoteIp);
-		for (IPRange range : this.config.getDenyList()) {
+		for (IPRange range : config.getDenyList()) {
 			if (range.isIPAddressInRange(ipAddress)) {
 				return false;
 			}
 		}
-		if (this.config.getAllowList().size() > 0) {
-			for (IPRange range : this.config.getAllowList()) {
+		if (config.getAllowList().size() > 0) {
+			for (IPRange range : config.getAllowList()) {
 				if (range.isIPAddressInRange(ipAddress)) {
 					return true;
 				}
@@ -125,14 +129,8 @@ public class IPAccessControl {
 			}
 		}
 
-		// Get patterns from cache
-		Pattern[] patterns = DEFAULT_PATTERN_CACHE.get();
-		if (patterns == null) {
-			patterns = new Pattern[] { Pattern.compile(OWN_A), Pattern.compile(OWN_B), Pattern.compile(OWN_C) };
-			DEFAULT_PATTERN_CACHE.set(patterns);
-		}
-		// Matches validation
-		for (Pattern pattern : patterns) {
+		// Matches validation.
+		for (Pattern pattern : DEFAULT_PATTERN_CACHE.get()) {
 			if (pattern.matcher(remoteIp).matches()) {
 				return true; // Allow as long as one of the matches succeeds
 			}
@@ -317,7 +315,7 @@ public class IPAccessControl {
 		}
 
 		public int hashCode() {
-			return this.ipAddress;
+			return ipAddress;
 		}
 
 		public boolean equals(Object another) {
@@ -545,7 +543,7 @@ public class IPAccessControl {
 		 */
 		public boolean isIPAddressInRange(IPAddress address) {
 			if (ipSubnetMask == null) {
-				return this.ipAddress.equals(address);
+				return ipAddress.equals(address);
 			}
 
 			int result1 = address.getIPAddress() & ipSubnetMask.getIPAddress();
@@ -567,7 +565,8 @@ public class IPAccessControl {
 		final private Logger log = LoggerFactory.getLogger(getClass());
 
 		/**
-		 * True means only intranet access is allowed
+		 * When the protection mode is enabled, the remote client IP must be
+		 * white-list, otherwise any same intranet IP will be trusted.
 		 */
 		private boolean secure = true;
 		private String allowIp = "127.0.0.1"; // Default by local.
@@ -581,8 +580,8 @@ public class IPAccessControl {
 			return secure;
 		}
 
-		public void setSecure(boolean secure) {
-			this.secure = secure;
+		public void setSecure(boolean trustAnyIntranet) {
+			this.secure = trustAnyIntranet;
 		}
 
 		public String getAllowIp() {
@@ -598,7 +597,7 @@ public class IPAccessControl {
 		}
 
 		public void setDenyIp(String disableIp) {
-			this.denyIp = disableIp;
+			denyIp = disableIp;
 		}
 
 		private Set<IPRange> getAllowList() {
@@ -613,7 +612,7 @@ public class IPAccessControl {
 		public void afterPropertiesSet() throws Exception {
 			// Allow list.
 			try {
-				String allows = this.getAllowIp();
+				String allows = getAllowIp();
 				if (allows != null && allows.trim().length() != 0) {
 					allows = allows.trim();
 					String[] items = allows.split(",");
@@ -621,17 +620,17 @@ public class IPAccessControl {
 					for (String item : items) {
 						if (item == null || item.length() == 0)
 							continue;
-						this.getAllowList().add(new IPRange(item));
+						getAllowList().add(new IPRange(item));
 					}
 				}
 			} catch (Exception e) {
-				String msg = "Init config error, allow : " + this.getDenyIp();
+				String msg = "Init config error, allow : " + getDenyIp();
 				log.error(msg, e);
 			}
 
 			// Deny list.
 			try {
-				String denys = this.getDenyIp();
+				String denys = getDenyIp();
 				if (denys != null && denys.trim().length() != 0) {
 					denys = denys.trim();
 					String[] items = denys.split(",");
@@ -639,11 +638,11 @@ public class IPAccessControl {
 					for (String item : items) {
 						if (item == null || item.length() == 0)
 							continue;
-						this.getDenyList().add(new IPRange(item));
+						getDenyList().add(new IPRange(item));
 					}
 				}
 			} catch (Exception e) {
-				String msg = "Init config error, deny : " + this.getDenyIp();
+				String msg = "Init config error, deny : " + getDenyIp();
 				log.error(msg, e);
 			}
 		}

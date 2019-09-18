@@ -29,7 +29,7 @@ spring:
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@http://localhost:14048/umc-manager
         authc-internal-access:
-          secure: true
+          secure: false # Turn off protection will trust any same intranet IP.
           allowIp: 127.0.0.1
           denyIp:
         captcha:
