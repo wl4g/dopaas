@@ -15,14 +15,13 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import java.util.Date;
-
+import com.wl4g.devops.support.mail.MailNotificationHandler;
+import com.wl4g.devops.umc.handle.SmsNotificationHandle;
+import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 
-import com.wl4g.devops.umc.handle.MailNotificationHandle;
-import com.wl4g.devops.umc.handle.SmsNotificationHandle;
-import com.wl4g.devops.umc.model.StatusMessage;
+import java.util.Date;
 
 /**
  * Composite status change notifier
@@ -37,7 +36,7 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 	@Autowired
 	private SmsNotificationHandle smsHandle;
 	@Autowired
-	private MailNotificationHandle mailHandle;
+	private MailNotificationHandler mailHandle;
 
 	@Override
 	protected void doNotify(StatusMessage status) {
