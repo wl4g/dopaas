@@ -11,13 +11,7 @@
 .txtbg404 .txtbox .paddingbox { padding-top:15px;}
 .txtbg404 .txtbox p a { color:#fff; text-decoration:none;}
 .txtbg404 .txtbox p:hover { opacity: 0.8;}
-.txtbox .anniu{
-    background: #309dfc;
-    padding: 6px 12px;
-    display: inline-block;
-    border-radius: 4px;
-    margin-top: 30px;
-}
+.txtbox .anniu{background:#309dfc;padding:6px 12px;display:inline-block;border-radius:4px;margin-top:30px;}
 </style>
 </head>
 <body bgcolor="#fff">
@@ -25,6 +19,7 @@
    	<div class="txtbg404">
   <div class="txtbox">
       <p>很抱歉，您似乎走错了门（权限不足）~</p>
+      <p>${message}</p>
       <p class="anniu"><a style="cursor:pointer" onclick="history.back()">返回上一页</a></p>
       <p class="anniu" style="margin-left: 30px"><a href="">返回首页</a></p>
     </div>

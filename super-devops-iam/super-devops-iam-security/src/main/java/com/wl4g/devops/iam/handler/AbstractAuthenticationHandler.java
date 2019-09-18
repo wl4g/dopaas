@@ -91,10 +91,24 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 		this.context = context;
 	}
 
+	/**
+	 * Find current grantTicket principal system role.
+	 * 
+	 * @param principal
+	 * @param application
+	 * @return
+	 */
 	protected String getRoles(String principal, String application) {
 		return this.context.findRoles(principal, application);
 	}
 
+	/**
+	 * Find current grantTicket principal system Permission.
+	 * 
+	 * @param principal
+	 * @param application
+	 * @return
+	 */
 	protected String getPermits(String principal, String application) {
 		return this.context.findPermissions(principal, application);
 	}

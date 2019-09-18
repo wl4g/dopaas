@@ -49,8 +49,10 @@ public interface SecurityConfigurer {
 	 * @param response
 	 * @return
 	 */
-	String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response);
+	default String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
+			ServletResponse response) {
+		return successUrl;
+	}
 
 	/**
 	 * Determine the URL of the login failure redirection, default: loginURL,
@@ -63,7 +65,9 @@ public interface SecurityConfigurer {
 	 * @param response
 	 * @return
 	 */
-	String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
-			ServletRequest request, ServletResponse response);
+	default String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+			ServletRequest request, ServletResponse response) {
+		return loginUrl;
+	}
 
 }

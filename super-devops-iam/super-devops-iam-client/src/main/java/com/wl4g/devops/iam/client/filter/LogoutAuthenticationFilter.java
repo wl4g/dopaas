@@ -34,7 +34,6 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.devops.common.bean.iam.model.LogoutModel;
 import com.wl4g.devops.common.exception.iam.GrantTicketNullException;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
@@ -47,6 +46,7 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LOGOUT_INFO;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
+import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 
@@ -147,7 +147,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		String grantTicket = (String) subject.getSession().getAttribute(SAVE_GRANT_TICKET);
 
 		// Post server logout URL by grantTicket
-		String url = this.buildRemoteLogoutUrl(grantTicket, forced);
+		String url = buildRemoteLogoutUrl(grantTicket, forced);
 
 		RespBase<LogoutModel> resp = this.restTemplate
 				.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
@@ -191,9 +191,8 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		queryParams.put(config.getParam().getApplication(), config.getServiceName());
 		queryParams.put(config.getParam().getGrantTicket(), grantTicket);
 		queryParams.put(config.getParam().getLogoutForced(), forced);
-
 		// Full URL
-		return WebUtils2.applyQueryURL(uri.toString(), queryParams);
+		return applyQueryURL(uri.toString(), queryParams);
 	}
 
 	@Override

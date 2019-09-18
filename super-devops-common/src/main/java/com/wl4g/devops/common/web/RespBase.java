@@ -50,7 +50,7 @@ public class RespBase<T extends Object> implements Serializable {
 	final public static String DEFAULT_STATUS = "normal";
 
 	private RetCode code;
-	private String status; // Response status
+	private String status; // Response status.
 	private String message;
 	private DataMap<T> data = new DataMap<>();
 
@@ -287,7 +287,7 @@ public class RespBase<T extends Object> implements Serializable {
 		 * System abnormality<br/>
 		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
-		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try-again later");
+		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later");
 
 		private int code;
 		private String msg;
