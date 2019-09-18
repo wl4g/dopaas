@@ -20,6 +20,8 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
     <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
+
     <!-- other  -->
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
     <result column="name" property="groupName" jdbcType="VARCHAR" />
@@ -29,11 +31,11 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,tar_type,pre_command,post_command, remark, del_flag, create_date,
-    create_by, update_date, update_by
+    create_by, update_date, update_by,result,contact_group_id
   </sql>
   <sql id="Base_Column_List_t" >
     t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.tar_type,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
-    t.create_by, t.update_date, t.update_by,t.result
+    t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id
   </sql>
   <sql id="Blob_Column_List" >
     result
@@ -55,12 +57,12 @@
       status, branch_name, sha_git,sha_local,
       ref_id, tar_type,pre_command,post_command,remark, del_flag,
       create_date, create_by, update_date, 
-      update_by, result)
+      update_by, result,contact_group_id)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
       #{refId,jdbcType=INTEGER},#{tarType,jdbcType=INTEGER},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR})
+      #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contact_group_id,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" useGeneratedKeys="true" keyProperty="id">
     insert into ci_task_history
@@ -117,6 +119,9 @@
       <if test="result != null" >
         result,
       </if>
+      <if test="contactGroupId != null" >
+        contact_group_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
 
@@ -170,6 +175,9 @@
       </if>
       <if test="result != null" >
         #{result,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contactGroupId != null" >
+        #{contactGroupId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -227,6 +235,9 @@
       <if test="result != null" >
         result = #{result,jdbcType=LONGVARCHAR},
       </if>
+      <if test="contactGroupId != null" >
+        contact_group_id = #{contactGroupId,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -248,7 +259,8 @@
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
-      result = #{result,jdbcType=LONGVARCHAR}
+      result = #{result,jdbcType=LONGVARCHAR},
+      contact_group_id = #{contactGroupId,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
@@ -268,7 +280,9 @@
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=VARCHAR}
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      result = #{result,jdbcType=LONGVARCHAR},
+      contact_group_id = #{contactGroupId,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

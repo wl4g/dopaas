@@ -26,6 +26,8 @@ public class Task extends BaseBean implements Serializable {
 
 	private String postCommand;
 
+	private Integer contactGroupId;
+
 	private List<AppInstance> instances;
 
 	private List<TaskDetail> taskDetails;
@@ -119,6 +121,14 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setTaskDetails(List<TaskDetail> taskDetails) {
 		this.taskDetails = taskDetails;
+	}
+
+	public Integer getContactGroupId() {
+		return contactGroupId;
+	}
+
+	public void setContactGroupId(Integer contactGroupId) {
+		this.contactGroupId = contactGroupId;
 	}
 
 	@Override
