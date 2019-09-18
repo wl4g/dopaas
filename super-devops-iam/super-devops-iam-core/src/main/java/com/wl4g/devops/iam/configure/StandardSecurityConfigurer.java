@@ -30,8 +30,10 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -75,12 +77,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Override
 	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
 		List<ApplicationInfo> appInfoList = new ArrayList<>();
-
 		if (Collections2.isEmptyArray(appNames)) {
-			return Collections.emptyList();
+			return emptyList();
 		}
-
-		// TODO (Using DB)
 		List<Application> applications = applicationDao.getByAppNames(appNames);
 		for (Application application : applications) {
 			ApplicationInfo appInfo = new ApplicationInfo(application.getAppName(), application.getExtranetBaseUri());
@@ -88,33 +87,44 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfoList.add(appInfo);
 		}
 
-		/*
-		 * if (equalsAny("iam-example", appNames)) { ApplicationInfo appInfo =
-		 * new ApplicationInfo("iam-example", "http://localhost:14041");
-		 * appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
-		 * appInfoList.add(appInfo); } if (equalsAny("scm-server", appNames)) {
-		 * ApplicationInfo appInfo = new ApplicationInfo("scm-server",
-		 * "http://localhost:14043");
-		 * appInfo.setIntranetBaseUri("http://localhost:14043/scm-server");
-		 * appInfoList.add(appInfo); } if (equalsAny("ci-server", appNames)) {
-		 * ApplicationInfo appInfo = new ApplicationInfo("ci-server",
-		 * "http://localhost:14046");
-		 * appInfo.setIntranetBaseUri("http://localhost:14046/ci-server");
-		 * appInfoList.add(appInfo); } if (equalsAny("umc-admin", appNames)) {
-		 * ApplicationInfo appInfo = new ApplicationInfo("umc-admin",
-		 * "http://localhost:14048");
-		 * appInfo.setIntranetBaseUri("http://localhost:14048/umc-admin");
-		 * appInfoList.add(appInfo); } if (equalsAny("share-admin", appNames)) {
-		 * ApplicationInfo appInfo = new ApplicationInfo("share-admin",
-		 * "http://localhost:14051");
-		 * appInfo.setIntranetBaseUri("http://localhost:14051/share-admin");
-		 * appInfoList.add(appInfo); } if (equalsAny("srm-admin", appNames)) {
-		 * ApplicationInfo appInfo = new ApplicationInfo("srm-admin",
-		 * "http://localhost:15050");
-		 * appInfo.setIntranetBaseUri("http://localhost:15050/srm-admin");
-		 * appInfoList.add(appInfo); }
-		 */
-
+		//// TODO(Using DB) for testing.
+		//
+		// if (equalsAny("iam-example", appNames)) {
+		// ApplicationInfo appInfo = new ApplicationInfo("iam-example",
+		// "http://localhost:14041");
+		// appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
+		// appInfoList.add(appInfo);
+		// }
+		// if (equalsAny("scm-server", appNames)) {
+		// ApplicationInfo appInfo = new ApplicationInfo("scm-server",
+		// "http://localhost:14043");
+		// appInfo.setIntranetBaseUri("http://localhost:14043/scm-server");
+		// appInfoList.add(appInfo);
+		// }
+		// if (equalsAny("ci-server", appNames)) {
+		// ApplicationInfo appInfo = new ApplicationInfo("ci-server",
+		// "http://localhost:14046");
+		// appInfo.setIntranetBaseUri("http://localhost:14046/ci-server");
+		// appInfoList.add(appInfo);
+		// }
+		// if (equalsAny("umc-admin", appNames)) {
+		// ApplicationInfo appInfo = new ApplicationInfo("umc-admin",
+		// "http://localhost:14048");
+		// appInfo.setIntranetBaseUri("http://localhost:14048/umc-admin");
+		// appInfoList.add(appInfo);
+		// }
+		// if (equalsAny("share-admin", appNames)) {
+		// ApplicationInfo appInfo = new ApplicationInfo("share-admin",
+		// "http://localhost:14051");
+		// appInfo.setIntranetBaseUri("http://localhost:14051/share-admin");
+		// appInfoList.add(appInfo);
+		// }
+		// if (equalsAny("srm-admin", appNames)) {
+		// ApplicationInfo appInfo = new ApplicationInfo("srm-admin",
+		// "http://localhost:15050");
+		// appInfo.setIntranetBaseUri("http://localhost:15050/srm-admin");
+		// appInfoList.add(appInfo);
+		// }
 		//
 		// http://localhost:14041 # iam-example
 		// http://localhost:14043 # scm-server
