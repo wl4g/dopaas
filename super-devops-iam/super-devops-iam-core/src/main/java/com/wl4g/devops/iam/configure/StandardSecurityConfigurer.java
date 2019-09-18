@@ -20,7 +20,6 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.bean.share.Application;
-import com.wl4g.devops.common.utils.lang.Collections2;
 import com.wl4g.devops.dao.share.ApplicationDao;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -31,7 +30,9 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.equalsAny;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,24 +78,25 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Override
 	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
 		List<ApplicationInfo> appInfoList = new ArrayList<>();
-		if (Collections2.isEmptyArray(appNames)) {
+		if (isEmptyArray(appNames)) {
 			return emptyList();
 		}
-		List<Application> applications = applicationDao.getByAppNames(appNames);
-		for (Application application : applications) {
-			ApplicationInfo appInfo = new ApplicationInfo(application.getAppName(), application.getExtranetBaseUri());
-			appInfo.setIntranetBaseUri(application.getIntranetBaseUri());
+		// Is IAM example demo.
+		if (equalsAny("iam-example", appNames)) {
+			ApplicationInfo appInfo = new ApplicationInfo("iam-example", "http://localhost:14041");
+			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfoList.add(appInfo);
+		} else { // Formal environment.
+			List<Application> applications = applicationDao.getByAppNames(appNames);
+			for (Application application : applications) {
+				ApplicationInfo appInfo = new ApplicationInfo(application.getAppName(), application.getExtranetBaseUri());
+				appInfo.setIntranetBaseUri(application.getIntranetBaseUri());
+				appInfoList.add(appInfo);
+			}
 		}
 
 		//// TODO(Using DB) for testing.
 		//
-		// if (equalsAny("iam-example", appNames)) {
-		// ApplicationInfo appInfo = new ApplicationInfo("iam-example",
-		// "http://localhost:14041");
-		// appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
-		// appInfoList.add(appInfo);
-		// }
 		// if (equalsAny("scm-server", appNames)) {
 		// ApplicationInfo appInfo = new ApplicationInfo("scm-server",
 		// "http://localhost:14043");

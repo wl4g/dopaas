@@ -43,7 +43,7 @@ public class ApplicationInfo implements Serializable {
 	private String viewExtranetBaseUri;
 
 	/**
-	 * Intranet Basic URI.<br/>
+	 * Extranet Basic URI.<br/>
 	 * e.g: https://portal.domain.com/portal <br/>
 	 */
 	private String extranetBaseUri;
