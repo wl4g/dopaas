@@ -1,6 +1,6 @@
 package com.wl4g.devops.dao.share;
 
-import com.wl4g.devops.common.bean.share.Application;
+import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -8,15 +8,15 @@ import java.util.List;
 public interface ApplicationDao {
     int deleteByPrimaryKey(String appname);
 
-    int insert(Application record);
+    int insert(ApplicationInfo record);
 
-    int insertSelective(Application record);
+    int insertSelective(ApplicationInfo record);
 
-    Application selectByPrimaryKey(String appname);
+    ApplicationInfo selectByPrimaryKey(String appname);
 
-    int updateByPrimaryKeySelective(Application record);
+    int updateByPrimaryKeySelective(ApplicationInfo record);
 
-    int updateByPrimaryKey(Application record);
+    int updateByPrimaryKey(ApplicationInfo record);
 
-    List<Application> getByAppNames (@Param("appNames") String[] appNames);
+    List<ApplicationInfo> getByAppNames (@Param("appNames") String[] appNames);
 }

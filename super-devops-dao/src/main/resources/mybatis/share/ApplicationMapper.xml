@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.devops.dao.share.ApplicationDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.share.Application" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.ApplicationInfo" >
     <id column="app_name" property="appName" jdbcType="VARCHAR" />
     <result column="view_extranet_base_uri" property="viewExtranetBaseUri" jdbcType="VARCHAR" />
     <result column="extranet_base_uri" property="extranetBaseUri" jdbcType="VARCHAR" />
@@ -21,13 +21,13 @@
     delete from sys_application
     where app_name = #{appName,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.share.Application" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.ApplicationInfo" >
     insert into sys_application (app_name, view_extranet_base_uri, extranet_base_uri,
       intranet_base_uri, remark)
     values (#{appName,jdbcType=VARCHAR}, #{viewExtranetBaseUri,jdbcType=VARCHAR}, #{extranetBaseUri,jdbcType=VARCHAR},
       #{intranetBaseUri,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.Application" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.ApplicationInfo" >
     insert into sys_application
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="appName != null" >
@@ -64,7 +64,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.share.Application" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.ApplicationInfo" >
     update sys_application
     <set >
       <if test="viewExtranetBaseUri != null" >
@@ -82,7 +82,7 @@
     </set>
     where app_name = #{appName,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.share.Application" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.ApplicationInfo" >
     update sys_application
     set view_extranet_base_uri = #{viewExtranetBaseUri,jdbcType=VARCHAR},
       extranet_base_uri = #{extranetBaseUri,jdbcType=VARCHAR},

@@ -1,6 +1,6 @@
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.share.Application;
+import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.ApplicationDao;
@@ -26,9 +26,9 @@ public class ApplicationController extends BaseController {
     @RequestMapping(value = "/info")
     public RespBase<?> allType() {
         RespBase<Object> resp = RespBase.create();
-        List<Application> list = applicationDao.getByAppNames(null);
+        List<ApplicationInfo> list = applicationDao.getByAppNames(null);
         Map<String,Object> map = new HashMap<>();
-        for(Application application : list){
+        for(ApplicationInfo application : list){
             map.put(application.getAppName(),application);
         }
         resp.getData().put("map", map);

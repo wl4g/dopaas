@@ -15,11 +15,10 @@
  */
 package com.wl4g.devops.common.bean.iam;
 
-import java.io.Serializable;
-
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import java.io.Serializable;
 
 /**
  * Application information
@@ -53,6 +52,8 @@ public class ApplicationInfo implements Serializable {
 	 * e.g: http://192.168.210.101:8080/myapp <br/>
 	 */
 	private String intranetBaseUri;
+
+	private String remark;
 
 	public ApplicationInfo() {
 		super();
@@ -102,4 +103,12 @@ public class ApplicationInfo implements Serializable {
 		return JacksonUtils.toJSONString(this);
 	}
 
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 }
