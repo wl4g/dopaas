@@ -26,7 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.support.config.JedisConfiguration.JedisProperties;
+import com.wl4g.devops.support.config.JedisAutoConfiguration.JedisProperties;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;

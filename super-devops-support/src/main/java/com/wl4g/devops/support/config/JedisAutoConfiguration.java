@@ -47,7 +47,7 @@ import redis.clients.jedis.exceptions.JedisException;
  */
 @Configuration
 @ConditionalOnClass({ JedisCluster.class, GenericObjectPoolConfig.class })
-public class JedisConfiguration {
+public class JedisAutoConfiguration {
 
 	/**
 	 * Resolving spring byName injection conflict.

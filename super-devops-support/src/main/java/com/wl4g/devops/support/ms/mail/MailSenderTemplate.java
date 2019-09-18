@@ -18,28 +18,35 @@ package com.wl4g.devops.support.ms.mail;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
+import static com.wl4g.devops.support.config.MessageServiceAutoConfiguration.*;
 
 /**
- * Email sender composite adapter.
+ * Email sender composite adapter template.
  * 
  * @author Wangl.sir
  * @version v1.0.0 2019-09-17
  * @since
  */
-@Component
 public class MailSenderTemplate {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Value("${spring.mail.username}")
+	/**
+	 * Java mail sender.
+	 */
+	final protected JavaMailSender mailSender;
+
+	@Value("${" + KEY_SPRING_MAIL_USER + ":none}")
 	protected String fromUser;
 
-	@Autowired
-	protected JavaMailSender mailSender;
+	public MailSenderTemplate(JavaMailSender mailSender) {
+		this.mailSender = mailSender;
+		Assert.notNull(mailSender, "Mail sender must not be null.");
+	}
 
 	/**
 	 * Send simple mail messages.
