@@ -29,7 +29,7 @@ spring:
           allow-ip: 127.0.0.1
           deny-ip:
         client:
-          server-uri: http://localhost:14040/iam-server
+          server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.test}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/share
   # Datasource configuration.
