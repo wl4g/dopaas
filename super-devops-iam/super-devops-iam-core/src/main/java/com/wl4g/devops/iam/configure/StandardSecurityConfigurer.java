@@ -129,9 +129,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// http://localhost:14041 # iam-example
 		// http://localhost:14043 # scm-server
 		// http://localhost:14046 # ci-server
-		// http://localhost:14048 # umc-admin
-		// http://localhost:14051 # share-admin
-		// http://localhost:15050 # srm-admin
+		// http://localhost:14048 # umc-manager
+		// http://localhost:14050 # srm-manager
+		// http://localhost:14051 # share-manager
 		//
 
 		return appInfoList;
