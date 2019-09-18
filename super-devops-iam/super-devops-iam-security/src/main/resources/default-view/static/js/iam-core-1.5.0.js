@@ -265,12 +265,13 @@
         	}
             settings.baseUri = protocol +"//passport."+ topDomainName +"/iam-server";
         }
-        console.debug("Default iam baseUri: "+ settings.baseUri);
-
+        console.debug("Default IAM baseURI is: "+ settings.baseUri);
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = jQuery.extend(true, settings, obj);
+
 		// Saved IAM baseUri.
         window.sessionStorage.setItem(constant.baseUriKey, settings.baseUri);
+        console.debug("Determined IAM baseURI: "+ settings.baseUri);
 	};
 
 	// 请求连接到第三方社交网络URL
