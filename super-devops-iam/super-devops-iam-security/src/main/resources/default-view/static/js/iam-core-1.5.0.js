@@ -4,6 +4,11 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+
+    var constant = {
+        baseUriKey : '__$baseUriKey',
+    };
+
 	// 运行时值/状态临时缓存
 	var runtime = {
 		safeCheck: { // Safe check result.
@@ -244,8 +249,16 @@
 		var contextPath = pathname.split("/")[1];
 		var port = location.port;
 		var protocol = location.protocol;
-		settings.baseUri = protocol + "//" + hostname + ":" + port + "/" + contextPath;
-
+		var isIpv4 = window.Common.Util.isIpv4(hostname);
+        if (hostname == 'localhost' || hostname == '127.0.0.1'|| hostname == '0:0:0:0:0:0:0:1'|| isIpv4) {
+            settings.baseUri = protocol + "//" +hostname+ ":14040/iam-server";
+            if(isIpv4){
+                alert("Please refer to the readme documentation,Use domain name deployment see:https://github.com/wl4g/super-devops-view/blob/master/README.md");
+            }
+        } else {
+            settings.baseUri = protocol + "//passport." +hostname+ "/iam-server";
+        }
+        window.sessionStorage.setItem(constant.baseUriKey,settings.baseUri);
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = jQuery.extend(true, settings, obj);
 	};
@@ -697,6 +710,9 @@
 			_configure(opt);
 			return this;
 		},
+        getIamBaseUri: function(){
+            return window.sessionStorage.getItem(constant.baseUriKey);
+        },
 		bindForAccountAuthenticator: function(){
 			_InitAccountAuthenticator();
 

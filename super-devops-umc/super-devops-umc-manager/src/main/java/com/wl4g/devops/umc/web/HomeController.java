@@ -19,7 +19,7 @@ import com.wl4g.devops.common.constants.UMCDevOpsConstants;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.umc.handle.DashboardHandle;
-import com.wl4g.devops.umc.handle.MailNotificationHandle;
+import com.wl4g.devops.support.mail.MailNotificationHandler;
 import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class HomeController extends BaseController {
 	@Autowired
 	private DashboardHandle dashboardService;
 	@Autowired
-	private MailNotificationHandle mailHandle;
+	private MailNotificationHandler mailHandle;
 	@Autowired
 	private SmsNotificationHandle smsHandle;
 
