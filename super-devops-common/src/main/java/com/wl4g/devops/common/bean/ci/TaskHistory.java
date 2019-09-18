@@ -49,6 +49,8 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String groupName;
 
+	private Integer contactGroupId;
+
 	public Integer getType() {
 		return type;
 	}
@@ -153,4 +155,11 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.shaLocal = shaLocal;
 	}
 
+	public Integer getContactGroupId() {
+		return contactGroupId;
+	}
+
+	public void setContactGroupId(Integer contactGroupId) {
+		this.contactGroupId = contactGroupId;
+	}
 }

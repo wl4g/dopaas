@@ -25,19 +25,24 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
+import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.umc.AlarmContactDao;
+import com.wl4g.devops.support.mail.MailNotificationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,6 +76,12 @@ public class CiServiceImpl implements CiService {
 
 	@Autowired
 	private TaskDetailDao taskDetailDao;
+
+	@Autowired
+	private MailNotificationHandler mailHandle;
+
+	@Autowired
+	private AlarmContactDao alarmContactDao;
 
 	@Override
 	public List<AppCluster> grouplist() {
@@ -126,7 +137,7 @@ public class CiServiceImpl implements CiService {
 		}
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
 				CiDevOpsConstants.TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getPreCommand(),
-				task.getPostCommand(), task.getTarType());
+				task.getPostCommand(), task.getTarType(),task.getContactGroupId());
 		BasedDeployProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
@@ -170,7 +181,7 @@ public class CiServiceImpl implements CiService {
 		// ShellContextHolder.printfQuietly("taskHistory begin");
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, task.getPreCommand(), task.getPostCommand(),
-				task.getTarType());
+				task.getTarType(),task.getContactGroupId());
 		BasedDeployProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
@@ -199,14 +210,19 @@ public class CiServiceImpl implements CiService {
 						taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS,
 								provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(),
 								provider.getShaLocal());
-						// taskService.updateStatusAndResult(taskId,
-						// CiDevOpsConstants.TASK_STATUS_SUCCESS,
-						// provider.getResult().toString());
+						//TODO send mail
+						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Success taskId="+taskId+" projectName="
+								+provider.getProject().getProjectName()+" time="+(new Date())+"\n"
+								+" result"+provider.getTaskResult().getStringBuffer().toString());
 					} else {
 						// update task--fail
 						log.info("task fail taskId={}", taskId);
 						taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
 								provider.getTaskResult().getStringBuffer().toString());
+
+						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Fail taskId="+taskId+" projectName="
+								+provider.getProject().getProjectName()+" time="+(new Date())+"\n"
+								+" result"+provider.getTaskResult().getStringBuffer().toString());
 					}
 				} catch (Exception e) {
 					// update task--fail
@@ -214,9 +230,27 @@ public class CiServiceImpl implements CiService {
 					taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
 							provider.getTaskResult().getStringBuffer().toString() + e.getMessage());
 					e.printStackTrace();
+					sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Fail taskId="+taskId+" projectName="
+							+provider.getProject().getProjectName()+" time="+(new Date())+"\n"
+							+" result"+provider.getTaskResult().getStringBuffer().toString());
 				}
 			}
 		}).start();
+	}
+
+
+	private void sendMailByContactGroupId(Integer contactGroupId,String text){
+		List list = new ArrayList();
+		list.add(contactGroupId);
+		List<AlarmContact> contactByGroupIds = alarmContactDao.getContactByGroupIds(list);
+		for(AlarmContact alarmContact : contactByGroupIds){
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setSubject("CI Build Report");
+			msg.setTo(alarmContact.getEmail());
+			msg.setText(text);
+			msg.setSentDate(new Date());
+			mailHandle.send(msg);
+		}
 	}
 
 	/**
@@ -304,7 +338,7 @@ public class CiServiceImpl implements CiService {
 		}
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
 				CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId,
-				taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR);
+				taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR,taskHistoryOld.getContactGroupId());
 		BasedDeployProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		rollback(taskHistory.getId(), provider);
