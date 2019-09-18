@@ -260,7 +260,7 @@
             }
         } else { // domain-name?
         	var topDomainName = hostname.split('.').slice(-2).join('.');
-        	if(hostname.indexOf("com.cn")){
+        	if(hostname.indexOf("com.cn") > 0){
         		topDomainName = hostname.split('.').slice(-3).join('.');
         	}
             settings.baseUri = protocol +"//passport."+ topDomainName +"/iam-server";
