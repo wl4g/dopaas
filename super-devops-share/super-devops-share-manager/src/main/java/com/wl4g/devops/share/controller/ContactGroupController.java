@@ -1,4 +1,4 @@
-package com.wl4g.devops.umc.web;
+package com.wl4g.devops.share.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -7,7 +7,7 @@ import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.umc.AlarmContactGroupDao;
-import com.wl4g.devops.umc.service.ContactGroupService;
+import com.wl4g.devops.share.service.ContactGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
