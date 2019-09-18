@@ -33,7 +33,8 @@ import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
-import com.wl4g.devops.support.mail.MailNotificationHandler;
+import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class CiServiceImpl implements CiService {
 	private TaskDetailDao taskDetailDao;
 
 	@Autowired
-	private MailNotificationHandler mailHandle;
+	private MailSenderTemplate mailHandle;
 
 	@Autowired
 	private AlarmContactDao alarmContactDao;

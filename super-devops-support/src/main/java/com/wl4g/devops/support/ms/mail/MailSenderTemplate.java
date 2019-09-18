@@ -13,28 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.mail;
+package com.wl4g.devops.support.ms.mail;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+/**
+ * Email sender composite adapter.
+ * 
+ * @author Wangl.sir
+ * @version v1.0.0 2019-09-17
+ * @since
+ */
 @Component
-@Lazy
-public class MailNotificationHandler {
-	final private Logger log = LoggerFactory.getLogger(getClass());
+public class MailSenderTemplate {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Value("${spring.mail.username}")
-	private String fromUser;
-	@Autowired
-	private JavaMailSender mailSender;
+	protected String fromUser;
 
+	@Autowired
+	protected JavaMailSender mailSender;
+
+	/**
+	 * Send simple mail messages.
+	 * 
+	 * @param simpleMessages
+	 */
 	public void send(SimpleMailMessage... simpleMessages) {
 		StringBuffer msgs = new StringBuffer();
 		try {
@@ -45,10 +56,7 @@ public class MailNotificationHandler {
 				msgs.append(",");
 				msg.setFrom(msg.getFrom() + "<" + fromUser + ">"); // 要加“<>”这种格式才能发出去
 			}
-
-			// Do-send.
 			mailSender.send(simpleMessages);
-
 		} catch (Exception e) {
 			log.error("Mail发送异常. request: {} {}", msgs.toString(), ExceptionUtils.getRootCauseMessage(e));
 		}

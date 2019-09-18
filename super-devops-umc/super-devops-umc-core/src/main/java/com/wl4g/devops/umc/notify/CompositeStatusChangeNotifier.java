@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import com.wl4g.devops.support.mail.MailNotificationHandler;
+import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
 import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 	@Autowired
 	private SmsNotificationHandle smsHandle;
 	@Autowired
-	private MailNotificationHandler mailHandle;
+	private MailSenderTemplate mailHandle;
 
 	@Override
 	protected void doNotify(StatusMessage status) {
