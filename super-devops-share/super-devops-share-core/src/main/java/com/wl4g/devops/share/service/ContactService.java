@@ -1,4 +1,4 @@
-package com.wl4g.devops.umc.service;
+package com.wl4g.devops.share.service;
 
 import com.wl4g.devops.common.bean.umc.AlarmContact;
 

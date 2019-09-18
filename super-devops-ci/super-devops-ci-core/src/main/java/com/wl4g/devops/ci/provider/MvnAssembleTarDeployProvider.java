@@ -51,25 +51,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 		// maven install , include dependency
 		getDependencyService().build(getTaskHistory(), dependency, getBranch(), taskResult, false);
 		if (!taskResult.isSuccess()) {
-
-			/*SimpleMailMessage msg = new SimpleMailMessage();
-			msg.setSubject(getSubject());
-			msg.setFrom(getFromName());
-			msg.setTo(getMailTo());
-			msg.setText(content.toString());
-			msg.setSentDate(new Date());
-
-			message = javaMailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-			helper.setTo(myQqMail);
-			helper.setFrom(username);
-			helper.setSubject("服务器报警");
-			helper.setText(text);
-			javaMailSender.send(message);*/
-
 			return;
-		}else{
-
 		}
 		// get git sha
 		setShaGit(GitUtils.getOldestCommitSha(getPath()));

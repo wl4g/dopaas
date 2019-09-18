@@ -1,10 +1,10 @@
-package com.wl4g.devops.umc.service.impl;
+package com.wl4g.devops.share.service.impl;
 
 import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.bean.umc.AlarmContactGroupRef;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.dao.umc.AlarmContactGroupRefDao;
-import com.wl4g.devops.umc.service.ContactService;
+import com.wl4g.devops.share.service.ContactService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

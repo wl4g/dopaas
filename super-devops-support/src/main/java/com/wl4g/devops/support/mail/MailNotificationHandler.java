@@ -20,11 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Component
+@Lazy
 public class MailNotificationHandler {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -45,7 +47,7 @@ public class MailNotificationHandler {
 			}
 
 			// Do-send.
-			this.mailSender.send(simpleMessages);
+			mailSender.send(simpleMessages);
 
 		} catch (Exception e) {
 			log.error("Mail发送异常. request: {} {}", msgs.toString(), ExceptionUtils.getRootCauseMessage(e));
