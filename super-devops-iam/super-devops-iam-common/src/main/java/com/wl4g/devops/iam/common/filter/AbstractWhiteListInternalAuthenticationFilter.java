@@ -62,10 +62,10 @@ public abstract class AbstractWhiteListInternalAuthenticationFilter extends Base
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		String requestUrl = toHttp(request).getMethod() + " " + getFullRequestURL(toHttp(request), true);
+		String requestUrl = "[" + toHttp(request).getMethod() + "] " + getFullRequestURL(toHttp(request), true);
 		String remoteIp = getHttpRemoteIp(request);
 		if (log.isDebugEnabled()) {
-			log.debug("Access request remoteIp: {}, '{}'", remoteIp, requestUrl);
+			log.debug("Request with remoteIp: {}, '{}'", remoteIp, requestUrl);
 		}
 
 		final boolean allowed = control.isPermitted(remoteIp);

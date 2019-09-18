@@ -26,7 +26,7 @@ spring:
     devops:
       iam:
         authc-internal-access:
-          secure: true
+          secure: false # Turn off protection will trust any same intranet IP.
           allow-ip: 127.0.0.1
           deny-ip:
         client:
