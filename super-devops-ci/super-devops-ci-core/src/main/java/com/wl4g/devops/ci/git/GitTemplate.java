@@ -48,6 +48,6 @@ public interface GitTemplate {
 	 * @param projectName
 	 * @return
 	 */
-	List<Integer> findRemoteProjectId(String projectName);
+	Integer findRemoteProjectId(String projectName);
 
 }

@@ -213,8 +213,7 @@ public class CiServiceImpl implements CiService {
 								provider.getShaLocal());
 						//TODO send mail
 						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Success taskId="+taskId+" projectName="
-								+provider.getProject().getProjectName()+" time="+(new Date())+"\n"
-								+" result"+provider.getTaskResult().getStringBuffer().toString());
+								+provider.getProject().getProjectName()+" time="+(new Date()));
 					} else {
 						// update task--fail
 						log.info("task fail taskId={}", taskId);
@@ -222,8 +221,7 @@ public class CiServiceImpl implements CiService {
 								provider.getTaskResult().getStringBuffer().toString());
 
 						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Fail taskId="+taskId+" projectName="
-								+provider.getProject().getProjectName()+" time="+(new Date())+"\n"
-								+" result"+provider.getTaskResult().getStringBuffer().toString());
+								+provider.getProject().getProjectName()+" time="+(new Date())+"\n");
 					}
 				} catch (Exception e) {
 					// update task--fail
@@ -232,8 +230,7 @@ public class CiServiceImpl implements CiService {
 							provider.getTaskResult().getStringBuffer().toString() + e.getMessage());
 					e.printStackTrace();
 					sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Fail taskId="+taskId+" projectName="
-							+provider.getProject().getProjectName()+" time="+(new Date())+"\n"
-							+" result"+provider.getTaskResult().getStringBuffer().toString());
+							+provider.getProject().getProjectName()+" time="+(new Date())+"\n");
 				}
 			}
 		}).start();

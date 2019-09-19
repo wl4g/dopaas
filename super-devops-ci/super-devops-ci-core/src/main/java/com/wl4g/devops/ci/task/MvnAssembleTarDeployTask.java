@@ -77,9 +77,9 @@ public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 			result.append(s).append("\n");
 
 			// Change link
-			String s1 = provider.relink(instance.getHostname(), project.getParentAppHome(), instance.getSshUser(), path + tarPath,
+			/*String s1 = provider.relink(instance.getHostname(), project.getParentAppHome(), instance.getSshUser(), path + tarPath,
 					instance.getSshKey());
-			result.append(s1).append("\n");
+			result.append(s1).append("\n");*/
 
 			// post command (restart command)
 			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),

@@ -65,7 +65,7 @@ public class MailSenderTemplate {
 			}
 			mailSender.send(simpleMessages);
 		} catch (Exception e) {
-			log.error("Mail发送异常. request: {} {}", msgs.toString(), ExceptionUtils.getRootCauseMessage(e));
+			log.error("Mail发送异常. request:  {}", ExceptionUtils.getRootCauseMessage(e));
 		}
 	}
 
