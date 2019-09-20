@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -167,9 +169,15 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public static class CacheProperties implements Serializable {
+	public static class CacheProperties implements InitializingBean, Serializable {
 		private static final long serialVersionUID = 5246530494860631770L;
 
+		@Autowired
+		protected Environment environment;
+
+		/**
+		 * IAM cache prefix.
+		 */
 		private String prefix = "iam_";
 
 		public String getPrefix() {
@@ -178,6 +186,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setPrefix(String prefix) {
 			this.prefix = prefix;
+		}
+
+		@Override
+		public void afterPropertiesSet() throws Exception {
+			if (isBlank(getPrefix())) {
+				setPrefix(environment.getProperty("spring.application.name") + "_");
+				Assert.hasText(getPrefix(), "Cache prefix must not be empty.");
+			}
 		}
 
 	}
@@ -190,14 +206,25 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public static class CookieProperties extends SimpleCookie implements Serializable {
+	public static class CookieProperties extends SimpleCookie implements InitializingBean, Serializable {
 		private static final long serialVersionUID = 918554077474485700L;
+
+		@Autowired
+		protected Environment environment;
 
 		/**
 		 * Specification capitalizes cookie names
 		 */
 		public void setName(String name) {
 			super.setName(name.toUpperCase(Locale.US));
+		}
+
+		@Override
+		public void afterPropertiesSet() throws Exception {
+			if (isBlank(getName())) {
+				setName("IAMSID_" + environment.getProperty("spring.application.name"));
+				Assert.hasText(getName(), "Cookie name must not be empty.");
+			}
 		}
 
 	}
@@ -222,7 +249,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * Clean up invalid sessions on a regular basis, and clean up isolated
 		 * sessions caused by users closing browsers directly
 		 */
-		private Long sessionValidationInterval = 300_000L;
+		private Long sessionValidationInterval = 360_000L;
 
 		/**
 		 * {@link org.apache.shiro.web.session.mgt.DefaultWebSessionManager#setSessionIdUrlRewritingEnabled}
