@@ -15,7 +15,11 @@
  */
 package com.wl4g.devops.common.kit.access;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -566,10 +570,26 @@ public class IPAccessControl {
 		 * white-list, otherwise any same intranet IP will be trusted.
 		 */
 		private boolean secure = true;
-		private String allowIp = "127.0.0.1"; // Default by local.
-		private String denyIp = ""; // Use default EMPTY when not set
 
-		// Temporary members
+		/**
+		 * Default by local.
+		 */
+		private List<String> allowIp = new ArrayList<String>() {
+			private static final long serialVersionUID = 4266338324190365830L;
+			{
+				add("127.0.0.1");
+			}
+		};
+
+		/**
+		 * Use default EMPTY when not set.
+		 */
+		private List<String> denyIp = new ArrayList<String>();
+
+		//
+		// Temporary.
+		//
+
 		private Set<IPRange> allowList = new HashSet<>();
 		private Set<IPRange> denyList = new HashSet<>();
 
@@ -581,20 +601,20 @@ public class IPAccessControl {
 			this.secure = trustAnyIntranet;
 		}
 
-		public String getAllowIp() {
+		public List<String> getAllowIp() {
 			return allowIp;
 		}
 
-		public void setAllowIp(String allowIp) {
-			this.allowIp = allowIp;
+		public void setAllowIp(List<String> allowIp) {
+			this.allowIp.addAll(allowIp);
 		}
 
-		public String getDenyIp() {
+		public List<String> getDenyIp() {
 			return denyIp;
 		}
 
-		public void setDenyIp(String disableIp) {
-			denyIp = disableIp;
+		public void setDenyIp(List<String> denyIp) {
+			this.denyIp.addAll(denyIp);
 		}
 
 		private Set<IPRange> getAllowList() {
@@ -609,16 +629,11 @@ public class IPAccessControl {
 		public void afterPropertiesSet() throws Exception {
 			// Allow list.
 			try {
-				String allows = getAllowIp();
-				if (allows != null && allows.trim().length() != 0) {
-					allows = allows.trim();
-					String[] items = allows.split(",");
-
-					for (String item : items) {
-						if (item == null || item.length() == 0)
-							continue;
-						getAllowList().add(new IPRange(item));
+				for (String item : getAllowIp()) {
+					if (isBlank(item)) {
+						continue;
 					}
+					getAllowList().add(new IPRange(item));
 				}
 			} catch (Exception e) {
 				String msg = "Init config error, allow : " + getDenyIp();
@@ -627,16 +642,11 @@ public class IPAccessControl {
 
 			// Deny list.
 			try {
-				String denys = getDenyIp();
-				if (denys != null && denys.trim().length() != 0) {
-					denys = denys.trim();
-					String[] items = denys.split(",");
-
-					for (String item : items) {
-						if (item == null || item.length() == 0)
-							continue;
-						getDenyList().add(new IPRange(item));
+				for (String item : getDenyIp()) {
+					if (isBlank(item)) {
+						continue;
 					}
+					getDenyList().add(new IPRange(item));
 				}
 			} catch (Exception e) {
 				String msg = "Init config error, deny : " + getDenyIp();
@@ -648,8 +658,8 @@ public class IPAccessControl {
 
 	public static void main(String[] args) throws Exception {
 		IPAccessProperties config = new IPAccessProperties();
-		// config.setAllowIp("10.0.0.160");
-		config.setAllowIp("0.0.0.0/0");
+		// config.getAllowIp().add("10.0.0.160");
+		config.getAllowIp().add("0.0.0.0/0");
 		config.afterPropertiesSet();
 		IPAccessControl ctl = new IPAccessControl(config);
 		System.out.println(ctl.isIPRangePermitted("10.0.0.160"));
