@@ -102,15 +102,12 @@ public class IPAccessControl {
 				return false;
 			}
 		}
-		if (config.getAllowList().size() > 0) {
-			for (IPRange range : config.getAllowList()) {
-				if (range.isIPAddressInRange(ipAddress)) {
-					return true;
-				}
+		for (IPRange range : config.getAllowList()) {
+			if (range.isIPAddressInRange(ipAddress)) {
+				return true;
 			}
-			return false;
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -647,6 +644,18 @@ public class IPAccessControl {
 			}
 		}
 
+	}
+
+	public static void main(String[] args) throws Exception {
+		IPAccessProperties config = new IPAccessProperties();
+		// config.setAllowIp("10.0.0.160");
+		config.setAllowIp("0.0.0.0/0");
+		config.afterPropertiesSet();
+		IPAccessControl ctl = new IPAccessControl(config);
+		System.out.println(ctl.isIPRangePermitted("10.0.0.160"));
+		System.out.println(ctl.isIPRangePermitted("10.0.0.161"));
+		System.out.println(ctl.isAnyNetIPOwnPermitted("10.0.0.161"));
+		System.out.println(ctl.isAnyNetIPOwnPermitted("121.47.108.77"));
 	}
 
 }
