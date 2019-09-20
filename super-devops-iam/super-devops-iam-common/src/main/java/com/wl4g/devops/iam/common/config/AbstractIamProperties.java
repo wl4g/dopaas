@@ -191,7 +191,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		@Override
 		public void afterPropertiesSet() throws Exception {
 			if (isBlank(getPrefix())) {
-				setPrefix(environment.getProperty("spring.application.name") + "_");
+				setPrefix(environment.getProperty("spring.application.name") + "_iam_");
 				Assert.hasText(getPrefix(), "Cache prefix must not be empty.");
 			}
 		}
