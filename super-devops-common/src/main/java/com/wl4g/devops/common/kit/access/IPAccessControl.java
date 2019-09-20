@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.kit.access;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -574,17 +575,12 @@ public class IPAccessControl {
 		/**
 		 * Default by local.
 		 */
-		private List<String> allowIp = new ArrayList<String>() {
-			private static final long serialVersionUID = 4266338324190365830L;
-			{
-				add("127.0.0.1");
-			}
-		};
+		private List<String> allowIp = new ArrayList<>();
 
 		/**
 		 * Use default EMPTY when not set.
 		 */
-		private List<String> denyIp = new ArrayList<String>();
+		private List<String> denyIp = new ArrayList<>();
 
 		//
 		// Temporary.
@@ -606,7 +602,14 @@ public class IPAccessControl {
 		}
 
 		public void setAllowIp(List<String> allowIp) {
-			this.allowIp.addAll(allowIp);
+			if (!isEmpty(allowIp)) {
+				this.allowIp.addAll(new HashSet<String>(allowIp.size()) {
+					private static final long serialVersionUID = -5256118509571850550L;
+					{
+						addAll(allowIp);
+					}
+				});
+			}
 		}
 
 		public List<String> getDenyIp() {
@@ -614,7 +617,14 @@ public class IPAccessControl {
 		}
 
 		public void setDenyIp(List<String> denyIp) {
-			this.denyIp.addAll(denyIp);
+			if (!isEmpty(denyIp)) {
+				this.denyIp.addAll(new HashSet<String>(denyIp.size()) {
+					private static final long serialVersionUID = -5256118509571850550L;
+					{
+						addAll(denyIp);
+					}
+				});
+			}
 		}
 
 		private Set<IPRange> getAllowList() {
