@@ -30,6 +30,13 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
+/**
+ * IAM abstract properties.
+ * 
+ * @author Wangl.sir
+ * @version v1.0.0 2018-09-22
+ * @since
+ */
 public abstract class AbstractIamProperties<P extends ParamProperties> implements InitializingBean, Serializable {
 	private static final long serialVersionUID = -5858422822181237865L;
 
@@ -169,31 +176,24 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public static class CacheProperties implements InitializingBean, Serializable {
+	public class CacheProperties implements Serializable {
 		private static final long serialVersionUID = 5246530494860631770L;
-
-		@Autowired
-		protected Environment environment;
 
 		/**
 		 * IAM cache prefix.
 		 */
-		private String prefix = "iam_";
+		private String prefix;
 
 		public String getPrefix() {
+			if (isBlank(prefix)) {
+				setPrefix(environment.getProperty("spring.application.name") + "_iam_");
+			}
+			Assert.hasText(prefix, "Cache prefix must not be empty.");
 			return prefix;
 		}
 
 		public void setPrefix(String prefix) {
 			this.prefix = prefix;
-		}
-
-		@Override
-		public void afterPropertiesSet() throws Exception {
-			if (isBlank(getPrefix())) {
-				setPrefix(environment.getProperty("spring.application.name") + "_iam_");
-				Assert.hasText(getPrefix(), "Cache prefix must not be empty.");
-			}
 		}
 
 	}
@@ -206,25 +206,23 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public static class CookieProperties extends SimpleCookie implements InitializingBean, Serializable {
+	public class CookieProperties extends SimpleCookie implements Serializable {
 		private static final long serialVersionUID = 918554077474485700L;
 
-		@Autowired
-		protected Environment environment;
+		@Override
+		public String getName() {
+			if (isBlank(super.getName())) {
+				setName("IAMSID_" + environment.getProperty("spring.application.name"));
+			}
+			Assert.hasText(super.getName(), "Cookie name must not be empty.");
+			return super.getName();
+		}
 
 		/**
 		 * Specification capitalizes cookie names
 		 */
 		public void setName(String name) {
 			super.setName(name.toUpperCase(Locale.US));
-		}
-
-		@Override
-		public void afterPropertiesSet() throws Exception {
-			if (isBlank(getName())) {
-				setName("IAMSID_" + environment.getProperty("spring.application.name"));
-				Assert.hasText(getName(), "Cookie name must not be empty.");
-			}
 		}
 
 	}
@@ -237,7 +235,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public static class SessionProperties implements Serializable {
+	public class SessionProperties implements Serializable {
 		private static final long serialVersionUID = -2694422471812860689L;
 
 		/**
