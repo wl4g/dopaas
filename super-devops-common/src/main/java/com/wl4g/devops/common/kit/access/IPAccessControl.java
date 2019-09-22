@@ -86,7 +86,8 @@ public class IPAccessControl {
 	 * @return
 	 */
 	public boolean isPermitted(String remoteIp) {
-		return config.isSecure() ? isIPRangePermitted(remoteIp) : isAnyNetIPOwnPermitted(remoteIp);
+		return config.isSecure() ? isIPRangePermitted(remoteIp)
+				: (isIPRangePermitted(remoteIp) || isAnyNetIPOwnPermitted(remoteIp));
 	}
 
 	/**
