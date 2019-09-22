@@ -85,7 +85,7 @@ public class CiCdProperties {
 
 	public String getGitBasePath() {// if blank ,user default
 		if (StringUtils.isBlank(gitBasePath)) {
-			gitBasePath = System.getProperties().getProperty("user.home") + "/gittest";
+			gitBasePath = System.getProperties().getProperty("user.home") + "/git";
 		}
 		return gitBasePath;
 	}

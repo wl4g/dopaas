@@ -55,10 +55,10 @@ spring:
       filters: stat,wall
       log-slow-sql: true
   mail:
-    host: smtp.163.com
+    host: smtp.exmail.qq.com
     port: 465
-    username: babaa1f4@163.com
-    password: XBurnerAir00
+    username: syslog@7782.co
+    password: Sm#1234
     protocol: smtp
 
 # Redis configuration.
@@ -71,10 +71,12 @@ redis:
 
 # Deploy git configuration.
 deploy:
+  git-url: http://git.anjiancloud.repo
   git-username: heweijie
   git-password: hwj13535248668
-  git-base-path: /Users/vjay/gittest
-  backup-path: /Users/vjay/gittest/bak
-  link-path: /usr/local
-  rsa-key: 03DE18C2FC4E605F
+  git-token: Xw6xYojnoj7SSDyyLXP7
+  cipher-key: 03DE18C2FC4E605F
+  task-timeout: 300
+  docker-push-username: xburnerair00
+  docker-push-passwd: hwj13535248668
 

@@ -15,15 +15,16 @@
  */
 package com.wl4g.devops.ci.git;
 
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * GITLAB API utility
@@ -85,19 +86,26 @@ public class GitlabV4Template extends AbstractGitTemplate {
 	 * @return
 	 */
 	@Override
-	public List<Integer> findRemoteProjectId(String projectName) {
+	public Integer findRemoteProjectId(String projectName) {
+		Assert.notNull(projectName,"projectName is null");
 		String url = config.getGitUrl() + "/api/v4/projects?simple=true&search=" + projectName;
 
 		// Extract project IDs.
 		List<Map<String, Object>> projects = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
 		});
-		List<Integer> projectIds = safeList(projects).stream().map(m -> Integer.parseInt(m.getOrDefault("id", "-1").toString()))
-				.filter(id -> id >= 0).collect(toList());
+
+		Integer id = null;
+		for(Map<String, Object> map : projects){
+			if(map.getOrDefault("name", "-1").toString().equals(projectName)){
+				id=Integer.parseInt(map.getOrDefault("id", "-1").toString());
+				break;
+			}
+		}
 
 		if (log.isInfoEnabled()) {
-			log.info("Extract remote project IDs: {}", projectIds);
+			log.info("Extract remote project IDs: {}", id);
 		}
-		return projectIds;
+		return id;
 	}
 
 }

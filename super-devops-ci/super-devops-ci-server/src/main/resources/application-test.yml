@@ -55,10 +55,10 @@ spring:
       filters: stat,wall
       log-slow-sql: true
   mail:
-    host: smtp.163.com
+    host: smtp.exmail.qq.com
     port: 465
-    username: babaa1f4@163.com
-    password: XBurnerAir00
+    username: syslog@7782.co
+    password: Sm#1234
     protocol: smtp
 
 # Redis configuration.
@@ -67,7 +67,7 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:safecloud-test:6379,safecloud-test:6380,safecloud-test:6381,safecloud-test:7380,safecloud-test:7380,safecloud-test:7381}
+  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
 
 # Deploy git configuration.
 deploy:

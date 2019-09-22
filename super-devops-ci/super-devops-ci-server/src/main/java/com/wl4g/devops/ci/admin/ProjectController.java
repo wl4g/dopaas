@@ -186,11 +186,9 @@ public class ProjectController extends BaseController {
 
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
-		List<Integer> gitlabProjectIds = gitlabTemplate.findRemoteProjectId(projectName);
-		Assert.notEmpty(gitlabProjectIds, String.format("No found projectId of name: %s", projectName));
-		Assert.state(gitlabProjectIds.size() == 1, String.format("Find multiple project IDs from: %s", projectName));
+		Integer gitlabProjectId = gitlabTemplate.findRemoteProjectId(projectName);
+		Assert.notNull(gitlabProjectId, String.format("No found projectId of name: %s", projectName));
 
-		Integer gitlabProjectId = gitlabProjectIds.get(0);
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
 			List<String> branchNames = gitlabTemplate.getRemoteTags(gitlabProjectId);
 			resp.getData().put("branchNames", branchNames);
