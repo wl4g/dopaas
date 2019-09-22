@@ -24,9 +24,9 @@ spring:
   cloud:
     devops:
       iam:
-        login-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/login
+        login-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-manager@http://umc.${DEVOPS_DOMAIN_TOP:wl4g.com}/umc-manager
+        success-endpoint: umc-manager@https://umc.${DEVOPS_DOMAIN_TOP:wl4g.com}/umc-manager
         authc-internal-access:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIp: 127.0.0.1

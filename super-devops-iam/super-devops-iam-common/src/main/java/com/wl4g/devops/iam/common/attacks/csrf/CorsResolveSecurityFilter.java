@@ -59,7 +59,7 @@ public class CorsResolveSecurityFilter extends CorsFilter {
 			// CORS check processing.
 			final boolean corsAllowed = super.processRequest(config, request, response);
 			if (!corsAllowed && log.isWarnEnabled()) {
-				log.warn("CORS request rejected for URL: '{}'", corsAllowed, getFullRequestURL(request));
+				log.warn("Rejected cors request of URL: '{}'", (request.getMethod() + " " + getFullRequestURL(request)));
 			}
 			return corsAllowed;
 		}
