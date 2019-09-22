@@ -238,7 +238,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @return
 	 */
-	public final boolean isReady() {
+	public synchronized final boolean isReady() {
 		return state == CursorState.READY;
 	}
 
@@ -247,7 +247,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @return
 	 */
-	public final boolean isOpen() {
+	public synchronized final boolean isOpen() {
 		return state == CursorState.OPEN;
 	}
 
@@ -256,7 +256,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @see org.springframework.data.redis.core.Cursor#isClosed()
 	 */
-	public boolean isClosed() {
+	public synchronized boolean isClosed() {
 		return state == CursorState.CLOSED;
 	}
 
@@ -277,7 +277,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * Customization hook for cleaning up resources on when calling
 	 * {@link #close()}.
 	 */
-	protected void doClose() {
+	protected synchronized void doClose() {
 	}
 
 	/**
@@ -289,7 +289,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * @param params
 	 * @return
 	 */
-	protected ScanIterable<byte[]> doScan(Jedis jedis, String cursorId, ScanParams params) {
+	protected synchronized ScanIterable<byte[]> doScan(Jedis jedis, String cursorId, ScanParams params) {
 		ScanResult<byte[]> res = jedis.scan(cursorId.getBytes(Charsets.UTF_8), params);
 
 		List<byte[]> items = res.getResult();
@@ -363,7 +363,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	/**
 	 * Assertion cursor is open
 	 */
-	private void assertCursorIsOpen() {
+	private synchronized void assertCursorIsOpen() {
 		if (isReady() || isClosed()) {
 			throw new RuntimeException("Cannot access closed cursor. Did you forget to call open()?");
 		}
