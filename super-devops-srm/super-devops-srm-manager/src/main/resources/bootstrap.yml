@@ -23,10 +23,6 @@ spring:
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
-          cache:
-            prefix: ${spring.application.name}
-          cookie:
-            name: IAMTOKEN_${spring.application.name}
 
 # ### Server configuration. ###
 server:

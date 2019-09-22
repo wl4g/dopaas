@@ -36,12 +36,12 @@ spring:
           fail-fast-sms-delay: 90000
           sms-expire-ms: 300000
         cache:
-          prefix: iam_
+          prefix: ${spring.application.name}_
         session:
-          global-session-timeout: 1500000
-          session-validation-interval: 1500000
+          global-session-timeout: 1800_000
+          session-validation-interval: 360_000
         cookie:
-          name: IAMTOKEN_TGC
+          name: IAMSID_TGC
 #        authc-internal-access:
 #          secure: true
 #          allowIp: 127.0.0.1

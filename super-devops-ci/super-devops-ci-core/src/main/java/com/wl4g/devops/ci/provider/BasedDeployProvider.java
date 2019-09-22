@@ -172,6 +172,9 @@ public abstract class BasedDeployProvider {
 		result += tarToTmp(targetHost, userName, path, rsa) + "\n";
 		// mkdir--real app path
 		// result += mkdirs(targetHost, userName, targetPath, rsa);
+
+		//remove
+		result += removeTarPath(targetHost, userName, path, targetPath, rsa);
 		// move
 		result += moveToTarPath(targetHost, userName, path, targetPath, rsa) + "\n";
 		return result;
@@ -181,7 +184,7 @@ public abstract class BasedDeployProvider {
 	 * Relink
 	 */
 	public String relink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
-		String command = "ln -snf " + targetPath + "/" + replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr() + " "
+		String command = "ln -snf " + targetPath + "/" + subPacknameWithOutPostfix(path) + " "
 				+ project.getLinkAppHome();
 		return exceCommand(targetHost, userName, command, rsa);
 	}
@@ -205,11 +208,23 @@ public abstract class BasedDeployProvider {
 	}
 
 	/**
+	 * remove tar path
+	 */
+	public String removeTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
+		String s = targetPath + "/" + subPacknameWithOutPostfix(path);
+		if(StringUtils.isBlank(s)||s.trim().equals("/")){
+			throw new RuntimeException("bad command");
+		}
+		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path) ;
+		return exceCommand(targetHost, userName, command, rsa);
+	}
+
+	/**
 	 * Move to tar path
 	 */
 	public String moveToTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
 		String command = "mv /home/" + userName + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
-				+ replaceMaster(subPacknameWithOutPostfix(path)) + getDateTimeStr();
+				+ subPacknameWithOutPostfix(path) ;
 		return exceCommand(targetHost, userName, command, rsa);
 	}
 
