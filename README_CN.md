@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## 一个轻量而全面的微服务DevSecOps解决方案.
+## 一个轻量全面的微服务DevSecOps解决方案，CICD、统一监控、统一认证、配置中心、日志分析、弹性伸缩、Shell CLI、HBase运维工具、DOCS、VCS等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://camo.githubusercontent.com/ce4fb5b3ec026da9d76d9de28d688d0a0d493949/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f73706f746966792f646f636b657266696c652d6d6176656e2e737667)
