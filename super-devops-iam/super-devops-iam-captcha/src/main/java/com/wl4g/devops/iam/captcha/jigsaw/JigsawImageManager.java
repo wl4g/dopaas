@@ -42,7 +42,6 @@ import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
 import static com.wl4g.devops.common.utils.codec.Encodes.toBytes;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.deserialize;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static io.netty.util.internal.ThreadLocalRandom.current;
@@ -241,7 +240,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		jedisService.getJedisCluster().hset(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)), data);
 		jedisService.getJedisCluster().expire(CACHE_VERIFY_JIGSAW_IMG, config.getJigsaw().getPoolImgExpireSec());
 		if (log.isDebugEnabled()) {
-			log.debug("Put jigsaw image to cache, index {}, jigsawImage => {}", index, toJSONString(code));
+			log.debug("Put jigsaw image to cache, index {}, jigsawImage(x:{}, y:{})", index, code.getX(), code.getY());
 		}
 	}
 
