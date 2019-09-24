@@ -105,6 +105,7 @@
 		deploy: { // 部署配置
 			baseUri: null, // IAM后端服务baseURI
 			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
 		},
 		// 字典参数定义
 		definition: {
@@ -247,34 +248,34 @@
 
 	// Configure settings
 	var _configure = function(obj) {
-		// 初始化默认baseURI
-		var hostname = location.hostname;
-		var pathname = location.pathname;
-		var contextPath = pathname.split("/")[1];
-		var port = location.port;
-		var protocol = location.protocol;
+		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
+		settings = jQuery.extend(true, settings, obj);
+		console.debug("Default IAM baseURI is: "+ settings.deploy.baseUri);
 
 		// 获取默认IAM baseURL.
+		var hostname = location.hostname;
+		var pathname = location.pathname;
+		var twoDomain = settings.deploy.defaultTwoDomain;
+		var contextPath = settings.deploy.defaultContextPath;
+		var port = location.port;
+		var protocol = location.protocol;
 		var isIpv4 = window.Common.Util.isIpv4(hostname);
         if (hostname == 'localhost' || hostname == '127.0.0.1'|| hostname == '0:0:0:0:0:0:0:1'|| isIpv4) {
-            settings.deploy.baseUri = protocol + "//" +hostname+ ":14040/iam-server";
+            settings.deploy.baseUri = protocol + "//" +hostname+ ":14040/" + contextPath;
             if(isIpv4){
                 alert("Please refer to the readme docs,Use domain name deployment. see:https://github.com/wl4g/super-devops-view/blob/master/README.md");
             }
         } else { // domain-name?
+			// Get domain top.
         	var topDomainName = hostname.split('.').slice(-2).join('.');
         	if(hostname.indexOf("com.cn") > 0){
         		topDomainName = hostname.split('.').slice(-3).join('.');
         	}
-            settings.deploy.baseUri = protocol +"//"+ settings.deploy.defaultTwoDomain +"."+ topDomainName +"/iam-server";
+            settings.deploy.baseUri = protocol +"//"+ twoDomain +"."+ topDomainName + contextPath;
         }
-        console.debug("Default IAM baseURI is: "+ settings.deploy.baseUri);
-		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
-		settings = jQuery.extend(true, settings, obj);
-
 		// Saved IAM baseUri.
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
-        console.debug("Determined IAM baseURI: "+ settings.deploy.baseUri);
+        console.debug("Overlay IAM baseURI: "+ settings.deploy.baseUri);
 	};
 
 	// 请求连接到第三方社交网络URL
