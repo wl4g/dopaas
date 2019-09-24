@@ -72,6 +72,10 @@
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-validator</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -112,17 +116,14 @@
 			<artifactId>spring-cloud-context</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- Validation -->
+		<!-- Note that the use of '$NO-MVN-MAN-VER$' is valid for the current dependency. 
+			When this project is referenced externally, the indirect dependency will 
+			fail, possibly leading to dependency incompatible versions. -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version><!--$NO-MVN-MAN-VER$ -->
-			<exclusions>
-				<exclusion>
-					<groupId>javax.validation</groupId>
-					<artifactId>validation-api</artifactId>
-				</exclusion>
-			</exclusions>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>

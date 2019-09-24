@@ -322,7 +322,7 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	 */
 	@Configuration
 	@ConditionalOnProperty(value = "spring.cloud.devops.error.enabled", matchIfMissing = true)
-	public static class SuperErrorsControllerConfiguration extends AbstractOptionalControllerConfiguration {
+	public static class SuperErrorsControllerAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
 		@Bean
 		public SmartSuperErrorsController superErrorsController(ErrorAttributes errorAttributes) {
