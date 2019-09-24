@@ -107,10 +107,6 @@ public abstract class SessionBindings extends Sessions {
 	 *            Keys to save and session
 	 * @return
 	 */
-	/**
-	 * @param sessionKey
-	 * @return
-	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getBindValue(String sessionKey) throws InvalidSessionException {
 		Assert.hasText(sessionKey, "Session key must not be empty.");

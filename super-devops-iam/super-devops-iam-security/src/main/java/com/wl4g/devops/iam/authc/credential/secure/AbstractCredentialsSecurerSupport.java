@@ -155,6 +155,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		RSAKeySpecWrapper keyPair = rsaCryptoService.borrow(index);
 		// Save the applied keyPair index.
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
+		System.out.println((int)getBindValue(KEY_SECRET_INDEX));
 
 		if (log.isInfoEnabled()) {
 			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),

@@ -257,11 +257,12 @@
 		var pathname = location.pathname;
 		var twoDomain = settings.deploy.defaultTwoDomain;
 		var contextPath = settings.deploy.defaultContextPath;
+		contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
 		var port = location.port;
 		var protocol = location.protocol;
 		var isIpv4 = window.Common.Util.isIpv4(hostname);
         if (hostname == 'localhost' || hostname == '127.0.0.1'|| hostname == '0:0:0:0:0:0:0:1'|| isIpv4) {
-            settings.deploy.baseUri = protocol + "//" +hostname+ ":14040/" + contextPath;
+            settings.deploy.baseUri = protocol + "//" +hostname+ ":14040" + contextPath;
             if(isIpv4){
                 alert("Please refer to the readme docs,Use domain name deployment. see:https://github.com/wl4g/super-devops-view/blob/master/README.md");
             }
