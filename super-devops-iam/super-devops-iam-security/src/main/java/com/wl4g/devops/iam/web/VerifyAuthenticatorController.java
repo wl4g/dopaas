@@ -119,7 +119,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 */
 	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { POST })
 	@ResponseBody
-	public RespBase<?> verifyCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request,
+	public RespBase<?> verifyAnalyzeCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
@@ -130,10 +130,8 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			resp.getData().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
 			resp.handleError(e);
-			if (log.isDebugEnabled()) {
-				log.debug("Failed to verify captcha.", e);
-			} else {
-				log.warn("Failed to verify captcha. caused by: {}", resp.getMessage());
+			if (log.isWarnEnabled()) {
+				log.warn("Failed to verifyAnalyze captcha.", e);
 			}
 		}
 		return resp;
