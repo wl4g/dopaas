@@ -1,4 +1,4 @@
-package com.wl4g.devops.ci.task;
+package com.wl4g.devops.ci.deploy;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.common.utils.task.CronUtils;
@@ -13,6 +13,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -23,7 +24,7 @@ import java.util.concurrent.ScheduledFuture;
  */
 @Component
 @EnableScheduling
-public class TimingTasks implements ApplicationRunner {
+public class DeployingTimeoutJobFinalizer implements ApplicationRunner {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -34,9 +35,9 @@ public class TimingTasks implements ApplicationRunner {
 	private TaskHistoryDao taskHistoryDao;
 
 	@Autowired
-	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+	private ThreadPoolTaskScheduler taskScheduler;
 
-	private static ScheduledFuture<?> future;
+	private ScheduledFuture<?> future;
 
 	/**
 	 * Scan timeout task , modify their status
@@ -45,42 +46,37 @@ public class TimingTasks implements ApplicationRunner {
 	 */
 	@Override
 	public void run(ApplicationArguments applicationArguments) {
-		// Scan time out task
-		future = threadPoolTaskScheduler.schedule(new Runnable() {
-			@Override
-			public void run() {
-				Integer taskTimeout = config.getTaskTimeout();
-				if (taskTimeout == null || taskTimeout == 0) {
-					return;
-				}
-				taskHistoryDao.updateStatus(taskTimeout);
-			}
-		}, new CronTrigger("00/30 * * * * ?"));
+		// Initializing timeout checker.
+		resetTimeoutCheckerExpression("00/30 * * * * ?");
 	}
 
 	/**
-	 * modify expression , update time out task status
+	 * Reseting timeout task checker, for update task status to Timeout
+	 * 
+	 * @param expression
 	 */
-	public void modifyExpression(String expression) {
-		log.info("modify expression , expression={}", expression);
+	public void resetTimeoutCheckerExpression(String expression) {
+		if (log.isInfoEnabled()) {
+			log.info("Reseting timeout scnaner expression: {}", expression);
+		}
 		if (!CronUtils.isValidExpression(expression)) {
 			log.info("modify expression fail , expression is not valid , expression={}", expression);
 			return;
 		}
-		if (null != future) {
-			future.cancel(true);
+		if (Objects.nonNull(future) || !future.isDone()) {
+			this.future.cancel(true);
 		}
-		// Scan time out task
-		future = threadPoolTaskScheduler.schedule(new Runnable() {
-			@Override
-			public void run() {
-				Integer taskTimeout = config.getTaskTimeout();
-				if (taskTimeout == null || taskTimeout == 0) {
-					return;
-				}
-				taskHistoryDao.updateStatus(taskTimeout);
+
+		// Resume timeout scanner.
+		this.future = taskScheduler.schedule(() -> {
+			if (config.getTaskTimeout() != null && config.getTaskTimeout() > 0) {
+				taskHistoryDao.updateStatus(config.getTaskTimeout());
 			}
 		}, new CronTrigger(expression));
-		log.info("modify expression success , expression={}", expression);
+
+		if (log.isInfoEnabled()) {
+			log.info("Reseted timeout scanner expression: {}", expression);
+		}
 	}
+
 }

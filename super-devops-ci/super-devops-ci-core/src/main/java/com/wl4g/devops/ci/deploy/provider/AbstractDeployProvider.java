@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.provider;
+package com.wl4g.devops.ci.deploy.provider;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.DependencyService;
@@ -35,13 +35,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Based executable provider.
+ * Abstract based deploy provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class BasedDeployProvider {
+public abstract class AbstractDeployProvider implements DeployProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -108,24 +108,15 @@ public abstract class BasedDeployProvider {
 	 * sha
 	 */
 	protected String shaGit;
+
 	/**
 	 * md5
 	 */
 	protected String shaLocal;
 
-	/**
-	 * is success , if fail , Stop running
-	 */
-	// protected Boolean isSuccess = new Boolean(true);
-
-	/**
-	 * result
-	 */
-	// protected StringBuffer result = new StringBuffer();
-
 	protected TaskResult taskResult = new TaskResult();
 
-	public BasedDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
+	public AbstractDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
 			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
 		this.config = SpringContexts.getBean(CiCdProperties.class);
 		this.path = path;
@@ -150,7 +141,7 @@ public abstract class BasedDeployProvider {
 	 * Exce command
 	 */
 	public String exceCommand(String targetHost, String userName, String command, String rsa) throws Exception {
-		if(StringUtils.isBlank(command)){
+		if (StringUtils.isBlank(command)) {
 			return "command is blank";
 		}
 		String rsaKey = config.getCipherKey();
@@ -173,7 +164,7 @@ public abstract class BasedDeployProvider {
 		// mkdir--real app path
 		// result += mkdirs(targetHost, userName, targetPath, rsa);
 
-		//remove
+		// remove
 		result += removeTarPath(targetHost, userName, path, targetPath, rsa);
 		// move
 		result += moveToTarPath(targetHost, userName, path, targetPath, rsa) + "\n";
@@ -184,8 +175,7 @@ public abstract class BasedDeployProvider {
 	 * Relink
 	 */
 	public String relink(String targetHost, String targetPath, String userName, String path, String rsa) throws Exception {
-		String command = "ln -snf " + targetPath + "/" + subPacknameWithOutPostfix(path) + " "
-				+ project.getLinkAppHome();
+		String command = "ln -snf " + targetPath + "/" + subPacknameWithOutPostfix(path) + " " + project.getLinkAppHome();
 		return exceCommand(targetHost, userName, command, rsa);
 	}
 
@@ -212,10 +202,10 @@ public abstract class BasedDeployProvider {
 	 */
 	public String removeTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
 		String s = targetPath + "/" + subPacknameWithOutPostfix(path);
-		if(StringUtils.isBlank(s)||s.trim().equals("/")){
+		if (StringUtils.isBlank(s) || s.trim().equals("/")) {
 			throw new RuntimeException("bad command");
 		}
-		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path) ;
+		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path);
 		return exceCommand(targetHost, userName, command, rsa);
 	}
 
@@ -224,7 +214,7 @@ public abstract class BasedDeployProvider {
 	 */
 	public String moveToTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
 		String command = "mv /home/" + userName + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
-				+ subPacknameWithOutPostfix(path) ;
+				+ subPacknameWithOutPostfix(path);
 		return exceCommand(targetHost, userName, command, rsa);
 	}
 
@@ -401,4 +391,5 @@ public abstract class BasedDeployProvider {
 	public TaskHistory getRefTaskHistory() {
 		return refTaskHistory;
 	}
+
 }

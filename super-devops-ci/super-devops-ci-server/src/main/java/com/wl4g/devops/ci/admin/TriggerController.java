@@ -17,8 +17,8 @@ package com.wl4g.devops.ci.admin;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.deploy.DynamicTask;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.ci.task.DynamicTask;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.DateUtils;

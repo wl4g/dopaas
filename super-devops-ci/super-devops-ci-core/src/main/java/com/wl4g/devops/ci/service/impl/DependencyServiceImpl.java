@@ -110,7 +110,7 @@ public class DependencyServiceImpl implements DependencyService {
 			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);// 锁定项目，防止同一个项目同时build
 
 			String path = config.getGitBasePath() + "/" + project.getProjectName();
-			if (GitUtils.checkGitPahtExist(path)) {// 若果目录存在则:chekcout 分支 并 pull
+			if (GitUtils.checkGitPath(path)) {// 若果目录存在则:chekcout 分支 并 pull
 				GitUtils.checkout(config.getCredentials(), path, branch);
 				taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
@@ -123,7 +123,7 @@ public class DependencyServiceImpl implements DependencyService {
 				TaskSign taskSign = new TaskSign();
 				taskSign.setTaskId(taskHistory.getId());
 				taskSign.setDependenvyId(dependency.getId());
-				taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+				taskSign.setShaGit(GitUtils.getLatestCommitted(path));
 				taskSignDao.insertSelective(taskSign);
 			}
 
@@ -189,13 +189,13 @@ public class DependencyServiceImpl implements DependencyService {
 				sha = refTaskHistory.getShaGit();
 			}
 
-			if (GitUtils.checkGitPahtExist(path)) {
-				GitUtils.roolback(config.getCredentials(), path, sha);
+			if (GitUtils.checkGitPath(path)) {
+				GitUtils.rollback(config.getCredentials(), path, sha);
 				taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
 			} else {
 				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
 				taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
-				GitUtils.roolback(config.getCredentials(), path, sha);
+				GitUtils.rollback(config.getCredentials(), path, sha);
 				taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
 			}
 
@@ -204,7 +204,7 @@ public class DependencyServiceImpl implements DependencyService {
 				TaskSign taskSign = new TaskSign();
 				taskSign.setTaskId(taskHistory.getId());
 				taskSign.setDependenvyId(dependency.getId());
-				taskSign.setShaGit(GitUtils.getOldestCommitSha(path));
+				taskSign.setShaGit(GitUtils.getLatestCommitted(path));
 				taskSignDao.insertSelective(taskSign);
 			}
 

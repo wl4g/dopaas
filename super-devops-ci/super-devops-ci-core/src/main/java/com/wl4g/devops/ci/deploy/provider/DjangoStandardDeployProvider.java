@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.provider;
+package com.wl4g.devops.ci.deploy.provider;
 
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -29,7 +29,7 @@ import java.util.List;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class DjangoStandardDeployProvider extends BasedDeployProvider {
+public class DjangoStandardDeployProvider extends AbstractDeployProvider {
 
 	public DjangoStandardDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
 			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {

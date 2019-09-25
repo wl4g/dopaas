@@ -1,4 +1,4 @@
-package com.wl4g.devops.ci.task;
+package com.wl4g.devops.ci.deploy;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.CiService;
@@ -21,7 +21,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +32,6 @@ import java.util.concurrent.ScheduledFuture;
  * @author vjay
  * @date 2019-07-19 09:50:00
  */
-@RestController
 @Component
 public class DynamicTask implements ApplicationRunner {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -129,4 +127,5 @@ public class DynamicTask implements ApplicationRunner {
 		// start all after app start
 		startAll();
 	}
+
 }
