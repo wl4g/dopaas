@@ -182,7 +182,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		// Default view access files request rules.
 		getFilterChain().put(DEFAULT_VIEW_BASE_URI + URI_STATIC + "/**", "anon");
 		// SNS authenticator rules.
-		getFilterChain().put(URI_S_SNS_BASE + "/*", "anon");
+		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
 		// Login authenticator rules.
 		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
 		// Verify(CAPTCHA/SMS) authenticator rules.
