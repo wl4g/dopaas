@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.provider;
+package com.wl4g.devops.ci.deploy.provider;
 
-import com.wl4g.devops.ci.task.MvnAssembleTarDeployTask;
+import com.wl4g.devops.ci.deploy.MvnAssembleTarDeployTask;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -34,7 +34,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
+public class MvnAssembleTarDeployProvider extends AbstractDeployProvider {
 
 	public MvnAssembleTarDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
 			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
@@ -54,7 +54,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 			return;
 		}
 		// get git sha
-		setShaGit(GitUtils.getOldestCommitSha(getPath()));
+		setShaGit(GitUtils.getLatestCommitted(getPath()));
 		deploy();
 	}
 
@@ -75,7 +75,7 @@ public class MvnAssembleTarDeployProvider extends BasedDeployProvider {
 			setShaGit(getRefTaskHistory().getShaGit());
 		} else {
 			getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-			setShaGit(GitUtils.getOldestCommitSha(getPath()));
+			setShaGit(GitUtils.getLatestCommitted(getPath()));
 		}
 		deploy();
 	}

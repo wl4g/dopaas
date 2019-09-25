@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.task;
+package com.wl4g.devops.ci.deploy;
 
-import com.wl4g.devops.ci.provider.DockerBuildDeployProvider;
+import com.wl4g.devops.ci.deploy.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -32,15 +32,19 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class DockerBuildDeployTask extends AbstractDeployTask {
+public class MvnAssembleTarDeployTask extends AbstractDeployTask {
 
-	private DockerBuildDeployProvider provider;
+	private MvnAssembleTarDeployProvider provider;
+	private String path;
+	private String tarPath;
 	private Integer taskDetailId;
 
-	public DockerBuildDeployTask(DockerBuildDeployProvider provider, Project project, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
+	public MvnAssembleTarDeployTask(MvnAssembleTarDeployProvider provider, Project project, String path, AppInstance instance,
+			String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
 		super(instance, project);
 		this.provider = provider;
+		this.path = path;
+		this.tarPath = tarPath;
 		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
 		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
 			if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
@@ -61,29 +65,28 @@ public class DockerBuildDeployTask extends AbstractDeployTask {
 			// Update status
 			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
-			// Pull
-			String s = provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
-					+ ":master"/*
-								 * TODO 要改成动态的
-								 * provider.getTaskHistory().getPreCommand()
-								 */, instance.getSshKey());
+			// pre command
+			String s4 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+					provider.getTaskHistory().getPreCommand(), instance.getSshKey());
+			result.append(s4).append("\n");
+
+			// Boolean detailSuccess = new Boolean(false);
+			// Scp to tmp,rename,move to webapps
+			String s = provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(),
+					project.getParentAppHome(), instance.getSshKey());
 			result.append(s).append("\n");
-			// Restart
-			String s1 = provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
-					instance.getSshKey());
-			result.append(s1).append("\n");
-			// Remove Container
-			String s2 = provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
-					instance.getSshKey());
+
+			// Change link
+			/*
+			 * String s1 = provider.relink(instance.getHostname(),
+			 * project.getParentAppHome(), instance.getSshUser(), path +
+			 * tarPath, instance.getSshKey()); result.append(s1).append("\n");
+			 */
+
+			// post command (restart command)
+			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+					provider.getTaskHistory().getPostCommand(), instance.getSshKey());
 			result.append(s2).append("\n");
-			// Run
-			String s3 = provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/"
-					+ project.getGroupName()
-					+ ":master"/*
-								 * TODO 要改成动态的
-								 * provider.getTaskHistory().getPostCommand()
-								 */, instance.getSshKey());
-			result.append(s3).append("\n");
 
 			// Update status
 			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());

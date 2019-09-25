@@ -1,4 +1,4 @@
-package com.wl4g.devops.ci.task;
+package com.wl4g.devops.ci.deploy;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.CiService;
@@ -65,7 +65,7 @@ public class CronRunnable implements Runnable {
 			// set new sha in db
 			String path = config.getGitBasePath() + "/" + project.getProjectName();
 			try {
-				String newSha = GitUtils.getOldestCommitSha(path);
+				String newSha = GitUtils.getLatestCommitted(path);
 				if (StringUtils.isNotBlank(newSha)) {
 					triggerService.updateSha(trigger.getId(), newSha);
 					trigger.setSha(newSha);
@@ -86,12 +86,12 @@ public class CronRunnable implements Runnable {
 		String sha = trigger.getSha();
 		String path = config.getGitBasePath() + "/" + project.getProjectName();
 		try {
-			if (GitUtils.checkGitPahtExist(path)) {
+			if (GitUtils.checkGitPath(path)) {
 				GitUtils.checkout(config.getCredentials(), path, task.getBranchName());
 			} else {
 				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, task.getBranchName());
 			}
-			String oldestSha = GitUtils.getOldestCommitSha(path);
+			String oldestSha = GitUtils.getLatestCommitted(path);
 			return !StringUtils.equals(sha, oldestSha);
 		} catch (Exception e) {
 			e.printStackTrace();

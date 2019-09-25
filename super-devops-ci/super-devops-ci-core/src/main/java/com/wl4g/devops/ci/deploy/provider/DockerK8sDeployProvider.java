@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.provider;
+package com.wl4g.devops.ci.deploy.provider;
 
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -23,22 +23,26 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import java.util.List;
 
 /**
- * Spring boot executable deployments provider.
+ * Docker and k8s deploy provider.
  *
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
- * @since
+ * @author vjay
+ * @date 2019-05-05 17:28:00
  */
-public class SpringbootExecutableJarDeployProvider extends BasedDeployProvider {
+public class DockerK8sDeployProvider extends AbstractDeployProvider {
 
-	public SpringbootExecutableJarDeployProvider(Project project, String path, String url, String branch, String alias,
-			String tarPath, List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
-			List<TaskHistoryDetail> taskHistoryDetails) {
+	public DockerK8sDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
+			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
 		super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
 	}
 
 	@Override
 	public void execute() throws Exception {
+
+	}
+
+	@Override
+	public void rollback() throws Exception {
 
 	}
 

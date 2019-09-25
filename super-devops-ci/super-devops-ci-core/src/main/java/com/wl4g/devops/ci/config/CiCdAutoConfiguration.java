@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
-import com.wl4g.devops.ci.git.GitlabV4Template;
+import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 
 /**
  * CICD auto configuration.
@@ -35,7 +35,7 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = "deploy")
-	public CiCdProperties deployProperties() {
+	public CiCdProperties cICDProperties() {
 		return new CiCdProperties();
 	}
 
@@ -50,8 +50,8 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public GitlabV4Template gitlabTemplate() {
-		return new GitlabV4Template();
+	public GitlabV4VcsOperator gitlabV4Operator() {
+		return new GitlabV4VcsOperator();
 	}
 
 }

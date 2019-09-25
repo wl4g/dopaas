@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.utils;
 
 import ch.ethz.ssh2.*;
 import com.google.common.base.Charsets;
-import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.log4j.Logger;
 
@@ -32,7 +31,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public abstract class SSHTool extends ShellTool {
+public abstract class SSHTool extends CommandUtils {
 	final private static Logger log = Logger.getLogger(SSHTool.class);
 
 	/**
@@ -209,142 +208,6 @@ public abstract class SSHTool extends ShellTool {
 		}
 
 		return buffer.toString();
-	}
-
-	public static void main(String[] args) {
-
-		try {
-			AES aes = new AES("03DE18C2FC4E605F");
-			String s = "-----BEGIN RSA PRIVATE KEY-----\n" +
-					"MIIEowIBAAKCAQEAshpp9xnp4CRf0heH9+DqEZ32N+IgoFjjpMlDnZYtVjuV6SU/\n" +
-					"2+eu7R2pf4MduTTXt481o0rqu0SUhNs+MshVmXdGvK3m4BzCQ+nLYfBqg3aPGOiN\n" +
-					"Q+J7/PPGNjZMnB4HNFH52Upfx2qJhi2Y32bxuQ7QM/ydXwWfUTNct+PqRxnlfaly\n" +
-					"BBG6HOSMjAXu9rVSKiqatgMqVOrC1ooPjWT9J6jXScnzXfsy0Ig7Deu4Bt4IBqPT\n" +
-					"8AhmBJ3xk/+ooPjIE1hUVpY614IFFEHgDIU3IIVKtZy9ejavFPdSv8avzQruM9bb\n" +
-					"/IwTE2BmZON99iBeMI15seQXpGtLhP3DtJt7oQIDAQABAoIBABa89pBcl5ZNLoqV\n" +
-					"BH/qEBglsZya2w19q7qLE33YAXvD6bS1U7zQjG2rXstvwui1TWEbAH8TfnpgHBIG\n" +
-					"J5+2Ie+Q4dAO563vHgIrpBKh7gdQqJ5GelqTXL8DpGehcRBxaPwOBzbtnuLHwD0I\n" +
-					"Lz8+VlgJAx3P/4t1HUzxoMG9cFiZSCnRYci29m7nTnKyDVmK7F9+HivDC7X46kkB\n" +
-					"ROczx38oNIPYwjtPK12EgntYmhnqcZJLVO812m6eE3KqBDhqfbfQPoHXQvW6WxsU\n" +
-					"NfKBozJQEtp1oCgzzV2vLTr/miC1TbGsuaRZzYi8g9leIeJGt8wQR+hYRndSKM5b\n" +
-					"HhDRdwECgYEA4yiYennwzKYH4fvdlmw0+6zS26EFCPkVSctPJ1R1lxOPY3G0A6Zy\n" +
-					"YpCt7dyRHWjbj6gy9D9yHHByvNK5xvCp4VZjBaxle3lmqWkrK1yts12gLo8A9br3\n" +
-					"gLgAXsWmgelaMP+fCMAUIFJVSiUfCAwGQOjYqFSiEN2bnJfnEZv/2FECgYEAyLdb\n" +
-					"FWYQL9T8BE1hh3Uq0tIUaf9DO6vLLz9w8XK1+oDoyKAGVHAr3yD8HE3eAHTuwE8d\n" +
-					"dgYcR6rbEnbhAkK4hBYGhfMrfbVELcKrOEplnQkTJwbdiyvlVSzR50YxhgczGRXq\n" +
-					"MUGv2fRaH3cd6rA5z1uXcjiRNzkZqVeBV4CO6lECgYArNIBz4xeSxQ2AxPfrcV9O\n" +
-					"cxuT3Hdpsn6DD6FZeK348yZ1op27h///kUcTk70iG9yO4U33uM2KbTTVhzsAhKu7\n" +
-					"CURCQvz2VCvbkv47/B+pmugpktd65XnHyLeBTxSRZwHZifUEpAvv7dj9Bjx1ulvC\n" +
-					"Isd6lMZScOP1D8tKRSKPUQKBgQCdk21bmFwe4SvVSNbHnJG5HxrNuIwU/aMvfbPy\n" +
-					"qmb5uliGoTM2+TVIIEItCmi+nQ6PRc1QSi3LifQhQ9kUiEMJ16zZXnYHY9aZwlnf\n" +
-					"gHDT3zr9CaPGTfjmbKCB3BanLWHNUOoiL3qaNv7F8yM2i5FnHHYCQyymWRqvWrZ9\n" +
-					"dr08cQKBgFe8LyPVz7XMFEWaop+RxtcU7/fqxSMDYBEY8iQb6eaydjjuNrRiFDRt\n" +
-					"AshuOj5w4VH0optDPvNSsvyE30Reo3NeGVWN4wBQ+pIczoUd7Zl0CQb/jn7sgRaj\n" +
-					"46/tDKpj7HJTWRzHpa+M1ec8rpwiyLEi7d7rFDIszun2iQ0cdCBc\n" +
-					"-----END RSA PRIVATE KEY-----";
-
-			System.out.println("cipherText: " + (s = aes.encrypt(s)));
-			System.out.println("plainText: " + aes.decrypt(s));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		/*
-		 * try { AES aes = new AES("03DE18C2FC4E605F"); String s =
-		 * "-----BEGIN RSA PRIVATE KEY-----\n" +
-		 * "MIIEpQIBAAKCAQEAwawifYZlHNdmkdMmXdi6wslkfvvAVjGo4cBPtrOFonD0Paex\n"
-		 * +
-		 * "tVRckfkj6rCu4IkKOq6HFBBf1peYVHojLFUm4FGC+YatxoLcdExBj8A/oMVsWN8a\n"
-		 * +
-		 * "ZWv5RH0lqUPZyuefqIrD+pos0R1hJtEDh5cKKT+Ae7kOP2+pX0QeGu0F/z9jozPo\n"
-		 * +
-		 * "PiM5DaoM0xaDqhmn1dnY03X3TAY8/V9Oy1zSRslXoiF2EmfTiaHBlvCeK5WhCiMd\n"
-		 * +
-		 * "5Xfn26Eiw3RBePh/eGiXjgv2ILZA7pnoINCa+PXI6VW6mthHQ8GJ7w+2afCGZBun\n"
-		 * +
-		 * "hxpGPEKih8YGNHBlGKUPale0pPMqI703iENZrQIDAQABAoIBAQCD2/qvk+0Lsev3\n"
-		 * +
-		 * "pNceVgzxycROYIEXLkBZU2Hydk+pxVXFFIN9fa55BDNb+mdWIHeCdIkrM+rMY/Im\n"
-		 * +
-		 * "sfF4oZEScOzHjtaJrVcDJ1gL00x+3WtjJqMGInlYFAysLbH+36xoR/IekRGqXmJi\n"
-		 * +
-		 * "1zOcAU29v6pukhQNRK0AW5RTqMTIfuQeR7Utpq4QNk8BSfDKJcyVoiTpaJ3Pv4AG\n"
-		 * +
-		 * "rPkIgtIqtmDJmp6MbMVtJA8AyxYrAiJbHntVeRddj2NkrScK/J4RG+5U/9Jj5cpB\n"
-		 * +
-		 * "VA21C7pt4lvUVuAPQ+esFLiwxBlIfW+sS5jaKCbJaeBL78xOiaLBJNWfrGR4USdu\n"
-		 * +
-		 * "k0P8o/sBAoGBAO6YeX2TDyVH/8XsSq9nPs+hu85wMqWohswG9R6oxcurVJLLKjdd\n"
-		 * +
-		 * "vqwpFaOUaQHcZr7iN2jGWqxxjFRW5qnwevk8uyXs9joSKV2C7KUdxuP9dtuqJNyl\n"
-		 * +
-		 * "+p1qN57+J69WXQNJoMKmiICK43fW89CoNucqJqrmsLzBkQiFmtR83ORxAoGBAM/M\n"
-		 * +
-		 * "xBTaVPrJYXxx10TZo+NcN5dv4FfDmK/Uz6v2F4y8xoRxpde8yeo0xj9CM8J2SX8w\n"
-		 * +
-		 * "712GLWI03m8RsYg/g2qRueK34lrA0eJ8GGUV2SJOqOQqlv1FJJVDp3658Cm0IyDT\n"
-		 * +
-		 * "CvyHJyrGmJljUhTgnwMuuzcp1wAfenWFp6OaAfb9AoGAXZMxOr29V+rH9nD4zZgZ\n"
-		 * +
-		 * "e0c8J/e69VuGGmi0I+UfRgSY88V4diRvDohCc1hWYqN1LHH+Nzpr/2u9FKrMZmPp\n"
-		 * +
-		 * "ZuyZnYM1Aoty67jYZN2rzmju/7HYKS1zf99TlyiomcyuSAbNZOn5aSiPk8Wa8/+1\n"
-		 * +
-		 * "IK5YYfh94lmsLwJvOd0KqRECgYEAxUa22L02dCh/Pm+tWRXt+0lvFXwG1gtBh5xX\n"
-		 * +
-		 * "0/97+Aa3yMFEGv6GCq0zkJa/INy/hdrlRDrAFz3t9jAsBReXIbNbcBv27wWjvIrn\n"
-		 * +
-		 * "dgA59dILkSHF2oir5HEoMK1BjbYQq3bwNTHyQy/ra6PZJyzgiVryLbqw/NLlpXDP\n"
-		 * +
-		 * "6Aer2dkCgYEAwKka1EYm5/N4krwsVvNBWD4Xgt4dtkGkQYkhyXZIqGTLFntIdVig\n"
-		 * +
-		 * "jKoQ6kaFTPaSST4kWNoXxNWvBDjarOriPa//St+l5fsEjfhjF1CfCS5aKvKfIwmP\n"
-		 * + "jZss7kAharoCjXmxdyqPBEjJPHMts7d93olfGDGCvFrZnEfuD+zUcmU=\n" +
-		 * "-----END RSA PRIVATE KEY-----"; System.out.println("cipherText: " +
-		 * (s = aes.encrypt(s))); System.out.println("plainText: " +
-		 * aes.decrypt(s)); } catch (Exception e) { e.printStackTrace(); }
-		 */
-
-		/*String ase = "-----BEGIN RSA PRIVATE KEY-----\n" + "MIIEpQIBAAKCAQEAwawifYZlHNdmkdMmXdi6wslkfvvAVjGo4cBPtrOFonD0Paex\n"
-				+ "tVRckfkj6rCu4IkKOq6HFBBf1peYVHojLFUm4FGC+YatxoLcdExBj8A/oMVsWN8a\n"
-				+ "ZWv5RH0lqUPZyuefqIrD+pos0R1hJtEDh5cKKT+Ae7kOP2+pX0QeGu0F/z9jozPo\n"
-				+ "PiM5DaoM0xaDqhmn1dnY03X3TAY8/V9Oy1zSRslXoiF2EmfTiaHBlvCeK5WhCiMd\n"
-				+ "5Xfn26Eiw3RBePh/eGiXjgv2ILZA7pnoINCa+PXI6VW6mthHQ8GJ7w+2afCGZBun\n"
-				+ "hxpGPEKih8YGNHBlGKUPale0pPMqI703iENZrQIDAQABAoIBAQCD2/qvk+0Lsev3\n"
-				+ "pNceVgzxycROYIEXLkBZU2Hydk+pxVXFFIN9fa55BDNb+mdWIHeCdIkrM+rMY/Im\n"
-				+ "sfF4oZEScOzHjtaJrVcDJ1gL00x+3WtjJqMGInlYFAysLbH+36xoR/IekRGqXmJi\n"
-				+ "1zOcAU29v6pukhQNRK0AW5RTqMTIfuQeR7Utpq4QNk8BSfDKJcyVoiTpaJ3Pv4AG\n"
-				+ "rPkIgtIqtmDJmp6MbMVtJA8AyxYrAiJbHntVeRddj2NkrScK/J4RG+5U/9Jj5cpB\n"
-				+ "VA21C7pt4lvUVuAPQ+esFLiwxBlIfW+sS5jaKCbJaeBL78xOiaLBJNWfrGR4USdu\n"
-				+ "k0P8o/sBAoGBAO6YeX2TDyVH/8XsSq9nPs+hu85wMqWohswG9R6oxcurVJLLKjdd\n"
-				+ "vqwpFaOUaQHcZr7iN2jGWqxxjFRW5qnwevk8uyXs9joSKV2C7KUdxuP9dtuqJNyl\n"
-				+ "+p1qN57+J69WXQNJoMKmiICK43fW89CoNucqJqrmsLzBkQiFmtR83ORxAoGBAM/M\n"
-				+ "xBTaVPrJYXxx10TZo+NcN5dv4FfDmK/Uz6v2F4y8xoRxpde8yeo0xj9CM8J2SX8w\n"
-				+ "712GLWI03m8RsYg/g2qRueK34lrA0eJ8GGUV2SJOqOQqlv1FJJVDp3658Cm0IyDT\n"
-				+ "CvyHJyrGmJljUhTgnwMuuzcp1wAfenWFp6OaAfb9AoGAXZMxOr29V+rH9nD4zZgZ\n"
-				+ "e0c8J/e69VuGGmi0I+UfRgSY88V4diRvDohCc1hWYqN1LHH+Nzpr/2u9FKrMZmPp\n"
-				+ "ZuyZnYM1Aoty67jYZN2rzmju/7HYKS1zf99TlyiomcyuSAbNZOn5aSiPk8Wa8/+1\n"
-				+ "IK5YYfh94lmsLwJvOd0KqRECgYEAxUa22L02dCh/Pm+tWRXt+0lvFXwG1gtBh5xX\n"
-				+ "0/97+Aa3yMFEGv6GCq0zkJa/INy/hdrlRDrAFz3t9jAsBReXIbNbcBv27wWjvIrn\n"
-				+ "dgA59dILkSHF2oir5HEoMK1BjbYQq3bwNTHyQy/ra6PZJyzgiVryLbqw/NLlpXDP\n"
-				+ "6Aer2dkCgYEAwKka1EYm5/N4krwsVvNBWD4Xgt4dtkGkQYkhyXZIqGTLFntIdVig\n"
-				+ "jKoQ6kaFTPaSST4kWNoXxNWvBDjarOriPa//St+l5fsEjfhjF1CfCS5aKvKfIwmP\n"
-				+ "jZss7kAharoCjXmxdyqPBEjJPHMts7d93olfGDGCvFrZnEfuD+zUcmU=\n" + "-----END RSA PRIVATE KEY-----";*/
-		/*
-		 * Connection conn = new Connection("10.0.0.161"); try {
-		 * conn.connect();// connect boolean flag =
-		 * conn.authenticateWithPublicKey("datachecker", ase.toCharArray(),
-		 * null); //execute(conn,
-		 * ". /etc/profile && . /etc/bashrc && . ~/.bash_profile && . ~/.bashrc && sc datachecker restart"
-		 * ); if (flag) { logger.debug("login success！");
-		 * uploadFile("10.0.0.161","datachecker",ase.toCharArray(),new File(
-		 * "/Users/vjay/gittest/safecloud-devops-datachecker/boot/target/datachecker-master-bin.tar"
-		 * ),"/home/ci/tmp"); } else { logger.error("login fail!"); } } catch
-		 * (IOException e) { e.printStackTrace(); }
-		 */
-
-		/*uploadFile("10.0.0.10", "root", ase.toCharArray(),
-				new File("/Users/vjay/gittest/safecloud-devops-datachecker/boot/target/datachecker-master-bin.tar"), "/root/tmp");*/
 	}
 
 }

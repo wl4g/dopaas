@@ -17,8 +17,8 @@ package com.wl4g.devops.ci.admin;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.git.GitlabV4Template;
 import com.wl4g.devops.ci.service.ProjectService;
+import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.BaseController;
@@ -54,7 +54,7 @@ public class ProjectController extends BaseController {
 	private ProjectDao projectDao;
 
 	@Autowired
-	private GitlabV4Template gitlabTemplate;
+	private GitlabV4VcsOperator gitlabTemplate;
 
 	/**
 	 * list

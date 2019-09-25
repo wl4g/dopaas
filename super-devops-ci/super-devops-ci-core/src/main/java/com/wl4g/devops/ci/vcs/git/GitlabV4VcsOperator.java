@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.git;
+package com.wl4g.devops.ci.vcs.git;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.util.Assert;
@@ -33,7 +33,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @version v1.0 2019年8月2日
  * @since
  */
-public class GitlabV4Template extends AbstractGitTemplate {
+public class GitlabV4VcsOperator extends AbstractGitVcsOperator {
 
 	/**
 	 * Get GITLAB remote branch names.

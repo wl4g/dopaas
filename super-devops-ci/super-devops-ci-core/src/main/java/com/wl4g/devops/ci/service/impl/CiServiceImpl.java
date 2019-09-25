@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.provider.BasedDeployProvider;
-import com.wl4g.devops.ci.provider.DockerBuildDeployProvider;
-import com.wl4g.devops.ci.provider.MvnAssembleTarDeployProvider;
+import com.wl4g.devops.ci.deploy.provider.DeployProvider;
+import com.wl4g.devops.ci.deploy.provider.DockerNativeDeployProvider;
+import com.wl4g.devops.ci.deploy.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
@@ -42,12 +42,14 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * CI/CD
+ * CI/CD Service implements
  * 
  * @author vjay
  * @date 2019-05-16 14:50:00
@@ -138,8 +140,8 @@ public class CiServiceImpl implements CiService {
 		}
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
 				CiDevOpsConstants.TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getPreCommand(),
-				task.getPostCommand(), task.getTarType(),task.getContactGroupId());
-		BasedDeployProvider provider = buildDeployProvider(taskHistory);
+				task.getPostCommand(), task.getTarType(), task.getContactGroupId());
+		DeployProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
 	}
@@ -182,8 +184,8 @@ public class CiServiceImpl implements CiService {
 		// ShellContextHolder.printfQuietly("taskHistory begin");
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, task.getPreCommand(), task.getPostCommand(),
-				task.getTarType(),task.getContactGroupId());
-		BasedDeployProvider provider = buildDeployProvider(taskHistory);
+				task.getTarType(), task.getContactGroupId());
+		DeployProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
 	}
@@ -194,7 +196,7 @@ public class CiServiceImpl implements CiService {
 	 * @param taskId
 	 * @param provider
 	 */
-	private void execute(Integer taskId, BasedDeployProvider provider) {
+	private void execute(Integer taskId, DeployProvider provider) {
 		log.info("task start taskId={}", taskId);
 		// update task--running
 		taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
@@ -203,7 +205,6 @@ public class CiServiceImpl implements CiService {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					// exec
 					provider.execute();
 					if (provider.getTaskResult().isSuccess()) {
 						// update task--success
@@ -211,17 +212,17 @@ public class CiServiceImpl implements CiService {
 						taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS,
 								provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(),
 								provider.getShaLocal());
-						//TODO send mail
-						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Success taskId="+taskId+" projectName="
-								+provider.getProject().getProjectName()+" time="+(new Date()));
+						// TODO send mail
+						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Success taskId="
+								+ taskId + " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()));
 					} else {
 						// update task--fail
 						log.info("task fail taskId={}", taskId);
 						taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
 								provider.getTaskResult().getStringBuffer().toString());
 
-						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Fail taskId="+taskId+" projectName="
-								+provider.getProject().getProjectName()+" time="+(new Date())+"\n");
+						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
+								+ " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()) + "\n");
 					}
 				} catch (Exception e) {
 					// update task--fail
@@ -229,22 +230,19 @@ public class CiServiceImpl implements CiService {
 					taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
 							provider.getTaskResult().getStringBuffer().toString() + e.getMessage());
 					e.printStackTrace();
-					sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(),"Task Build Fail taskId="+taskId+" projectName="
-							+provider.getProject().getProjectName()+" time="+(new Date())+"\n");
+					sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
+							+ " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()) + "\n");
 				}
 			}
 		}).start();
 	}
 
-
-	private void sendMailByContactGroupId(Integer contactGroupId,String text){
-		List list = new ArrayList();
-		list.add(contactGroupId);
-		List<AlarmContact> contactByGroupIds = alarmContactDao.getContactByGroupIds(list);
-		for(AlarmContact alarmContact : contactByGroupIds){
+	private void sendMailByContactGroupId(Integer contactGroupId, String text) {
+		List<AlarmContact> contactByGroupIds = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
+		for (AlarmContact contact : contactByGroupIds) {
 			SimpleMailMessage msg = new SimpleMailMessage();
 			msg.setSubject("CI Build Report");
-			msg.setTo(alarmContact.getEmail());
+			msg.setTo(contact.getEmail());
 			msg.setText(text);
 			msg.setSentDate(new Date());
 			mailHandle.send(msg);
@@ -265,7 +263,7 @@ public class CiServiceImpl implements CiService {
 	 * @param taskHistoryDetails
 	 * @return
 	 */
-	private BasedDeployProvider getDeployProvider(Project project, int tarType, String path, String branch, String alias,
+	private DeployProvider getDeployProvider(Project project, int tarType, String path, String branch, String alias,
 			List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		switch (tarType) {
@@ -276,7 +274,7 @@ public class CiServiceImpl implements CiService {
 			// return new JarSubject(path, url, branch,
 			// alias,tarPath,instances,taskHistoryDetails);
 		case CiDevOpsConstants.TAR_TYPE_DOCKER:
-			return new DockerBuildDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory,
+			return new DockerNativeDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory,
 					taskHistoryDetails);
 		default:
 			throw new RuntimeException("unsuppost type:" + tarType);
@@ -289,7 +287,7 @@ public class CiServiceImpl implements CiService {
 	 * @param taskHistory
 	 * @return
 	 */
-	public BasedDeployProvider buildDeployProvider(TaskHistory taskHistory) {
+	public DeployProvider buildDeployProvider(TaskHistory taskHistory) {
 		log.info("into CiServiceImpl.buildDeployProvider prarms::" + "taskHistory = {} ", taskHistory);
 		Assert.notNull(taskHistory, "taskHistory can not be null");
 		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
@@ -336,8 +334,9 @@ public class CiServiceImpl implements CiService {
 		}
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_ROLLBACK,
 				CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId,
-				taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR,taskHistoryOld.getContactGroupId());
-		BasedDeployProvider provider = buildDeployProvider(taskHistory);
+				taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR,
+				taskHistoryOld.getContactGroupId());
+		DeployProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		rollback(taskHistory.getId(), provider);
 
@@ -349,7 +348,7 @@ public class CiServiceImpl implements CiService {
 	 * @param taskId
 	 * @param provider
 	 */
-	private void rollback(Integer taskId, BasedDeployProvider provider) {
+	private void rollback(Integer taskId, DeployProvider provider) {
 		// update task--running
 		taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 		// optimize : use multithreading

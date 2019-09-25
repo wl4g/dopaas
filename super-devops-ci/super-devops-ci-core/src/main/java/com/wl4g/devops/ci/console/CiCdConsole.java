@@ -20,8 +20,8 @@ import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
 import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
+import com.wl4g.devops.ci.deploy.DeployingTimeoutJobFinalizer;
 import com.wl4g.devops.ci.service.CiService;
-import com.wl4g.devops.ci.task.TimingTasks;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -69,7 +69,7 @@ public class CiCdConsole {
 	private SimpleRedisLockManager lockManager;
 
 	@Autowired
-	private TimingTasks timingTasks;
+	private DeployingTimeoutJobFinalizer timingTasks;
 
 	@Autowired
 	private TaskDao taskDao;
@@ -83,7 +83,7 @@ public class CiCdConsole {
 			// Print to client
 			printfQuietly(String.format("expression = <%s>", expression));
 			if (CronUtils.isValidExpression(expression)) {
-				timingTasks.modifyExpression(expression);
+				timingTasks.resetTimeoutCheckerExpression(expression);
 				printfQuietly(String.format("modify the success , expression = <%s>", expression));
 			} else {
 				printfQuietly(String.format("the expression is not valid , expression = <%s>", expression));

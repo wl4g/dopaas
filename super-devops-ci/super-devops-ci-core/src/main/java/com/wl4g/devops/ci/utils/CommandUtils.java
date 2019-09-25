@@ -33,8 +33,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @version v1.0 2019年5月24日
  * @since
  */
-public abstract class ShellTool {
-	final private static Logger log = LoggerFactory.getLogger(ShellTool.class);
+public abstract class CommandUtils {
+	final private static Logger log = LoggerFactory.getLogger(CommandUtils.class);
 
 	/**
 	 * Execute commands in local
