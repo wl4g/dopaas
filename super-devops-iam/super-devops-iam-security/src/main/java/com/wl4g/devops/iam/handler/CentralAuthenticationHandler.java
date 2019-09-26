@@ -113,13 +113,12 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 
 			// Get application.
-			ApplicationInfo app = context.getApplicationInfo(fromAppName);
+			ApplicationInfo app = configurer.getApplicationInfo(fromAppName);
 			if (Objects.isNull(app)) {
 				throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
 			}
 			Assert.state(!isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
 					String.format("Invalid redirection domain configure, application[%s]", fromAppName));
-
 			if (log.isDebugEnabled()) {
 				log.debug("Check authentication requests application [{}]", app);
 			}
@@ -143,7 +142,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	public void checkApplicationAccessAuthorized(String principal, String fromAppName) {
 		Assert.hasText(principal, "'principal' must not be empty");
 		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
-		if (!context.isApplicationAccessAuthorized(principal, fromAppName)) {
+		if (!configurer.isApplicationAccessAuthorized(principal, fromAppName)) {
 			throw new IllegalApplicationAccessException(
 					bundle.getMessage("GentralAuthenticationHandler.unaccessible", principal, fromAppName));
 		}
@@ -271,7 +270,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 * Query applications by bind session names
 			 */
 			Set<String> appNames = grantInfo.getApplications().keySet();
-			List<ApplicationInfo> apps = context.findApplicationInfo(appNames.toArray(new String[] {}));
+			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (apps == null || apps.isEmpty()) {
 				throw new IamException(String.format("Find application information is empty. %s", appNames));
 			}
