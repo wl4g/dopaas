@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.vcs;
 import java.util.List;
 
 /**
- * GIT API template
+ * VCS API operator.
  * 
  * @author Wangl.sir
  * @version v1.0 2019年8月2日
