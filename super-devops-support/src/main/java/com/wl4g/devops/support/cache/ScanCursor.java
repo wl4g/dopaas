@@ -18,6 +18,8 @@ package com.wl4g.devops.support.cache;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.IOException;
@@ -224,7 +226,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 */
 	public synchronized final ScanCursor<E> open() {
 		if (!isReady()) {
-			throw new RuntimeException("Cursor already " + state + ". Cannot (re)open it.");
+			throw new IllegalStateException("Cursor already " + state + ". Cannot (re)open it.");
 		}
 
 		state = CursorState.OPEN;
@@ -306,20 +308,13 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * @param cursorId
 	 */
 	private synchronized void scan(String cursorId) {
-		Jedis jedis = null;
-		try {
-			// Select a node
-			jedis = jedisNodes.get(getSelectionPos()).getResource();
-
+		// Select a node
+		try (Jedis jedis = jedisNodes.get(getSelectionPos()).getResource()) {
 			// Traverse only the primary node
-			if (jedis.info(REPLICATION).contains(ROLE_MASTER)) {
+			if (containsIgnoreCase(jedis.info(REPLICATION), ROLE_MASTER)) {
 				processResult(doScan(jedis, cursorId, params));
 			} else {
 				nextTo();
-			}
-		} finally {
-			if (jedis != null) {
-				jedis.close();
 			}
 		}
 	}
@@ -331,15 +326,9 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 */
 	private synchronized void processResult(ScanIterable<byte[]> res) {
 		this.iter = res;
-
 		// The current node has completed traversal
-		if ((cursorId = res.getCursorId()).equals("0")) { // Scan end?
-			// All nodes are traversed
-			if (selectionPos >= (jedisNodes.size() - 1)) {
-				this.state = CursorState.FINISHED;
-			}
-
-			nextTo(); // Traversed, go to the next node
+		if (equalsIgnoreCase((cursorId = res.getCursorId()), "0")) { // End?
+			nextTo(); // Select to next node.
 		}
 	}
 
@@ -347,23 +336,32 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * Selection next node
 	 */
 	private synchronized void nextTo() {
-		cursorId = "0"; // Reset cursor.
-		selectionPos++; // Next node.
-		// Assert.state(selectionPos < jedisNodes.size(),
-		// String.format("No such jedis node. index: %s, size: %s",
-		// selectionPos, jedisNodes.size()));
+		this.cursorId = "0"; // Reset cursor.
+		this.selectionPos++; // Next node.
 
-		// Safe check out of nodes.
-		if (selectionPos >= (jedisNodes.size() - 1)) {
-			log.warn(String.format("No such jedis node. index: %s, size: %s", selectionPos, jedisNodes.size()));
-			selectionPos = jedisNodes.size() - 1;
+		// Safe check fully scanned.
+		if (checkFullyScanned()) {
+			if (log.isDebugEnabled()) {
+				log.debug(String.format("Scanned all jedis nodes. size: %s", jedisNodes.size()));
+			}
+			this.state = CursorState.FINISHED;
+			this.selectionPos = jedisNodes.size() - 1;
 		}
+	}
+
+	/**
+	 * Check that all nodes are currently fully scanned.
+	 * 
+	 * @return
+	 */
+	private boolean checkFullyScanned() {
+		return selectionPos >= (jedisNodes.size() - 1);
 	}
 
 	/**
 	 * Assertion cursor is open
 	 */
-	private synchronized void assertCursorIsOpen() {
+	private void assertCursorIsOpen() {
 		if (isReady() || isClosed()) {
 			throw new RuntimeException("Cannot access closed cursor. Did you forget to call open()?");
 		}
