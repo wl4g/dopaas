@@ -29,7 +29,7 @@ spring: # Base configuration.
           cache:
             prefix: ${spring.application.name}
           cookie:
-            name: IAMTOKEN_${spring.application.name}
+            name: IAMSID_${spring.application.name}
 
 # #### Server configuration. ####
 server:
