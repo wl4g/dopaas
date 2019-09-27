@@ -30,6 +30,7 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
+import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
@@ -54,7 +55,6 @@ import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.utils.Exceptions;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
@@ -195,7 +195,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
 		// JSON response
-		if (isJSONResponse(request)) {
+		if (isJSONResponse(toHttp(request), config.getParam().getResponseType())) {
 			try {
 				// Make logged response JSON.
 				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
@@ -251,7 +251,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * See:xx.validation.AbstractBasedValidator#doGetRemoteValidation()
 		 */
 		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
-			if (isJSONResponse(request)) { // Response JSON message.
+			if (isJSONResponse(toHttp(request), config.getParam().getResponseType())) {
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
@@ -284,21 +284,6 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * sendRedirect() after the response has been committed
 		 */
 		return false;
-	}
-
-	/**
-	 * Determine is the JSON interactive strategy
-	 * 
-	 * @param request
-	 * @return
-	 */
-	protected boolean isJSONResponse(ServletRequest request) {
-		// Using dynamic parameter
-		ResponseType respType = ResponseType.safeOf(WebUtils.getCleanParam(request, config.getParam().getResponseType()));
-		if (log.isDebugEnabled()) {
-			log.debug("Using response type:{}", respType);
-		}
-		return ResponseType.isJSONResponse(respType, WebUtils.toHttp(request));
 	}
 
 	/**

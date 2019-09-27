@@ -706,12 +706,26 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		/**
 		 * Is response JSON message
 		 * 
-		 * @param respType
+		 * @param respTypeValue
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(String respType, HttpServletRequest request) {
-			return isJSONResponse(safeOf(respType), request);
+		final public static boolean isJSONResponse(String respTypeValue, HttpServletRequest request) {
+			return isJSONResponse(safeOf(respTypeValue), request);
+		}
+
+		/**
+		 * Is response JSON message
+		 * 
+		 * @param request
+		 * @param respTypeParamName
+		 * @return
+		 */
+		final public static boolean isJSONResponse(HttpServletRequest request, String respTypeParamName) {
+			respTypeParamName = isBlank(respTypeParamName) ? DEFAULT_PARAM_NAME : respTypeParamName;
+			String respTypeValue = request.getParameter(respTypeParamName);
+			respTypeValue = isBlank(respTypeValue) ? request.getHeader(respTypeParamName) : respTypeValue;
+			return isJSONResponse(safeOf(respTypeValue), request);
 		}
 
 		/**
