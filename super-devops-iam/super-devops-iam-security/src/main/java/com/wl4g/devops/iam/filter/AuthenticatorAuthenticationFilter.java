@@ -28,6 +28,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
+import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -101,7 +102,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	private void savedRequestParameters(ServletRequest request, ServletResponse response) {
 		// Parameter names
 		String fromAppKey = config.getParam().getApplication();
-		String respTypeKey = config.getParam().getResponseType();
+		String respTypeKey = ResponseType.DEFAULT_RESPTYPE_NAME;
 		String redirectUrlKey = config.getParam().getRedirectUrl();
 
 		// Parameter values

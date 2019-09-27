@@ -195,7 +195,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
 		// JSON response
-		if (isJSONResponse(toHttp(request), config.getParam().getResponseType())) {
+		if (isJSONResponse(toHttp(request))) {
 			try {
 				// Make logged response JSON.
 				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
@@ -251,7 +251,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * See:xx.validation.AbstractBasedValidator#doGetRemoteValidation()
 		 */
 		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
-			if (isJSONResponse(toHttp(request), config.getParam().getResponseType())) {
+			if (isJSONResponse(toHttp(request))) {
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
