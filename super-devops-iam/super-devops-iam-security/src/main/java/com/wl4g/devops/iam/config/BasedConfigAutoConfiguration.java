@@ -32,7 +32,6 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
-import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 
 /**
@@ -122,7 +121,7 @@ public class BasedConfigAutoConfiguration {
 		public void afterPropertiesSet() throws Exception {
 			String errmsg = "\n\n==>>\tWhen you rely on Iam security as a plug-in, you must implement the '"
 					+ ServerSecurityConfigurer.class.getName() + "' interface yourself !\n";
-			throw new IamException(errmsg);
+			throw new IllegalStateException(errmsg);
 		}
 
 	}

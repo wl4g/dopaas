@@ -1,7 +1,5 @@
 package com.wl4g.devops.iam.web.model;
 
-import java.io.Serializable;
-
 /**
  * General check model.
  * 
@@ -9,7 +7,7 @@ import java.io.Serializable;
  * @version v1.0 2019-08-24
  * @since
  */
-public class GeneralCheckModel implements Serializable {
+public class GeneralCheckModel extends AuthenticationCodeModel {
 	private static final long serialVersionUID = 2636165327046053795L;
 
 	/**

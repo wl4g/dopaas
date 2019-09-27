@@ -28,9 +28,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
-import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
-import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
+import com.wl4g.devops.common.exception.restful.BizInvalidArgRESTfulException;
+import com.wl4g.devops.common.exception.restful.BizRuleRestrictRESTfulException;
+import com.wl4g.devops.common.exception.restful.ServiceUnavailableRESTfulException;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
 
 /**
@@ -130,12 +130,17 @@ public class RespBase<T extends Object> implements Serializable {
 	 */
 	public RespBase<T> handleError(Throwable th) {
 		this.message = getRootCausesString(th);
-		if (th instanceof BizRuleRestrictRestfulException) {
-			this.code = ((BizRuleRestrictRestfulException) th).getCode();
-		} else if (th instanceof BizInvalidArgRestfulException) {
-			this.code = ((BizInvalidArgRestfulException) th).getCode();
-		} else if (th instanceof ServiceUnavailableRestfulException) {
-			this.code = ((ServiceUnavailableRestfulException) th).getCode();
+		// Business restrictions
+		if (th instanceof BizRuleRestrictRESTfulException) {
+			this.code = ((BizRuleRestrictRESTfulException) th).getCode();
+		}
+		// Invalid arguments.
+		else if (th instanceof BizInvalidArgRESTfulException) {
+			this.code = ((BizInvalidArgRESTfulException) th).getCode();
+		}
+		// Unavailable service
+		else if (th instanceof ServiceUnavailableRESTfulException) {
+			this.code = ((ServiceUnavailableRESTfulException) th).getCode();
 		}
 		return this;
 	}
@@ -257,7 +262,7 @@ public class RespBase<T extends Object> implements Serializable {
 		 * Business constraints<br/>
 		 * {@link HttpStatus.NOT_IMPLEMENTED}
 		 */
-		BIZ_ERR(HttpStatus.EXPECTATION_FAILED.value(), "Business restricted"),
+		BIZ_ERR(470, "Business restricted"),
 
 		/**
 		 * Business locked constraints<br/>

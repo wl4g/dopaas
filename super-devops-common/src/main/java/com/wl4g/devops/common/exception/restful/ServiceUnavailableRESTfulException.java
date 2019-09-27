@@ -20,14 +20,14 @@ import org.springframework.http.HttpStatus;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
 /**
- * Invalid argument exception, When this exception API is caught, the response
- * code is {@link HttpStatus.BAD_REQUEST}
+ * Business required argument exception, When this exception API is caught, the
+ * response code is {@link HttpStatus.SERVICE_UNAVAILABLE}
  * 
  * @author Wangl.sir
  * @version v1.0 2019年9月2日
  * @since
  */
-public interface BizInvalidArgRestfulException extends RESTfulException {
+public interface ServiceUnavailableRESTfulException extends RESTfulException {
 
 	/**
 	 * Get exception response code.
@@ -36,7 +36,7 @@ public interface BizInvalidArgRestfulException extends RESTfulException {
 	 */
 	@Override
 	default RetCode getCode() {
-		return RetCode.PARAM_ERR;
+		return RetCode.SYS_ERR;
 	}
 
 }

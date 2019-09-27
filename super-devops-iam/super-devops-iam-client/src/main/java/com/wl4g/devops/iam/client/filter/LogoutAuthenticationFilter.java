@@ -34,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.devops.common.bean.iam.model.LogoutModel;
 import com.wl4g.devops.common.exception.iam.GrantTicketNullException;
 import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
@@ -154,7 +155,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 				}).getBody();
 
 		if (!RespBase.isSuccess(resp)) {
-			throw new IamException(resp.getMessage());
+			throw new UnauthenticatedException(resp.getMessage());
 		}
 		return resp.getData().get(KEY_LOGOUT_INFO);
 	}
