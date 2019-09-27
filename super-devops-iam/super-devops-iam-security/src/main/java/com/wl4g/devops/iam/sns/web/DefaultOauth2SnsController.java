@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.google.common.base.Charsets;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.utils.web.WebUtils2;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.SnsController;
@@ -42,6 +41,7 @@ import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeDecodeURL;
+import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CALLBACK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 
@@ -106,8 +106,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		String authorizingUrl = this.delegate.connect(Which.of(which), provider, state, connectParams);
 
 		// Response type
-		String respType = WebUtils.getCleanParam(request, config.getParam().getResponseType());
-		if (ResponseType.isJSONResponse(respType, request)) {
+		if (isJSONResponse(request)) {
 			RespBase<String> resp = RespBase.create();
 			resp.setCode(RetCode.OK).setStatus(DEFAULT_AUTHC_READY_STATUS)
 					.setMessage("Obtain the SNS authorization code is ready.");

@@ -332,16 +332,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	protected boolean isJSONResponse(ServletRequest request) {
-		// Using dynamic parameter
-		String respTypeValue = request.getParameter(config.getParam().getResponseType()); // Priority
-		respTypeValue = isBlank(respTypeValue) ? toHttp(request).getHeader(config.getParam().getResponseType()) : respTypeValue;
-		if (isNotBlank(respTypeValue)) {
-			respTypeValue = extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getResponseType());
-		}
+		// Using last saved parameters.
+		String respTypeValue = extParameterValue(KEY_REQ_AUTH_PARAMS, ResponseType.DEFAULT_RESPTYPE_NAME);
 		if (log.isDebugEnabled()) {
-			log.debug("Using response type:{}", respTypeValue);
+			log.debug("Using last response type:{}", respTypeValue);
 		}
-		return ResponseType.isJSONResponse(respTypeValue, toHttp(request));
+		return ResponseType.isJSONResponse(respTypeValue, toHttp(request)) || ResponseType.isJSONResponse(toHttp(request));
 	}
 
 	/**

@@ -26,7 +26,6 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.web.RespBase.RetCode.SECOND_UNAUTH;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import java.util.HashMap;
@@ -125,8 +124,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		String redirectUrl = buildConnectAuthenticatingUrl(http, annotation);
 
 		// Response JSON message
-		String respType = getCleanParam(http.getRequest(), config.getParam().getResponseType());
-		if (isJSONResponse(respType, http.getRequest())) {
+		if (isJSONResponse(http.getRequest())) {
 			RespBase<String> resp = new RespBase<>(SECOND_UNAUTH, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
 			resp.getData().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);
