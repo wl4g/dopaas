@@ -153,7 +153,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		sessionId = toHttp(request).getHeader(config.getCookie().getName());
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Using url cookieId for '{}'", sessionId);
+				log.debug("Using header cookieId for '{}'", sessionId);
 			}
 			return sessionId;
 		}
