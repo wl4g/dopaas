@@ -57,7 +57,6 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import com.wl4g.devops.common.annotation.DevOpsErrorController;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 
 import freemarker.template.Template;
 
@@ -156,7 +155,7 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			 * If and only if the client is a browser and not an XHR request
 			 * returns to the page, otherwise it returns to JSON
 			 */
-			if (isJSONResponse(getResponseType(request), request)) {
+			if (isJSONResponse(request)) {
 				String errmsg = extractMeaningfulErrorsMessage(model);
 				writeJson(response, toJSONString(new RespBase<>(SYS_ERR, errmsg, null)));
 			} else {
@@ -239,17 +238,6 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 		}
 
 		return errmsg.toString();
-	}
-
-	/**
-	 * Get request response type
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private ResponseType getResponseType(HttpServletRequest request) {
-		ResponseType respType = safeOf(request.getParameter(DEFAULT_PARAM_NAME));
-		return respType == null ? auto : respType;
 	}
 
 	/**
