@@ -48,7 +48,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
-import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.SecondAuthenticationException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
@@ -252,7 +251,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 				throw new SecondAuthenticationException(assertion.getErrdesc());
 			}
 		} else {
-			throw new IamException(String.format("System internal error. %s", JacksonUtils.toJSONString(resp)));
+			throw new SecondAuthenticationException(String.format("System internal error. %s", JacksonUtils.toJSONString(resp)));
 		}
 	}
 

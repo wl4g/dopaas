@@ -20,13 +20,16 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
+import com.wl4g.devops.iam.web.model.AuthenticationCodeModel;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -43,9 +46,11 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.iam.common.utils.Securitys.createLimitFactors;
 import static com.wl4g.devops.iam.common.utils.Securitys.sessionStatus;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
+import static com.wl4g.devops.iam.web.model.AuthenticationCodeModel.*;
 import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.KEY_CAPTCHA_CHECK;
 import static com.wl4g.devops.iam.web.model.GeneralCheckModel.KEY_GENERAL_CHECK;
 import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -72,29 +77,6 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@Autowired
 	protected IamCredentialsSecurer securer;
-
-	/**
-	 * Apply session, applicable to mobile token session.
-	 * 
-	 * @param request
-	 */
-	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { GET, POST })
-	@ResponseBody
-	public RespBase<?> applySession(HttpServletRequest request) {
-		RespBase<Object> resp = RespBase.create(sessionStatus());
-		try {
-			resp.getData().put(config.getCookie().getName(), getSessionId());
-		} catch (Exception e) {
-			if (e instanceof IamException) {
-				resp.setCode(RetCode.BIZ_ERR);
-			} else {
-				resp.setCode(RetCode.SYS_ERR);
-			}
-			resp.setMessage(getRootCausesString(e));
-			log.error("Failed to apply session.", e);
-		}
-		return resp;
-	}
 
 	/**
 	 * Apply international locale.</br>
@@ -129,20 +111,46 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	}
 
 	/**
+	 * Apply authentication code,
+	 * 
+	 * @param request
+	 */
+	@RequestMapping(value = URI_S_LOGIN_APPLY_AUTHCODE, method = { GET, POST })
+	@ResponseBody
+	public RespBase<?> applyAuthenticationCode(HttpServletRequest request) {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		try {
+			/**
+			 * Generate authentication code, using for sign in.
+			 */
+			String authCode = "acde" + randomAlphabetic(46);
+			if (log.isDebugEnabled()) {
+				log.debug("Apply authentication code: '{}'", authCode);
+			}
+			cacheManager.getCache(CACHE_AUTH_CODE).put(new EnhancedKey(authCode, 600), "");
+			resp.getData().put(KEY_AUTHENTICATION_MODEL, new AuthenticationCodeModel(authCode));
+		} catch (Exception e) {
+			resp.handleError(e);
+			log.error("Failed to apply session.", e);
+		}
+		return resp;
+	}
+
+	/**
 	 * Login before environmental security check.
 	 *
 	 * @param request
 	 */
 	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> safeCheck(HttpServletRequest request) {
+	public RespBase<?> safeCheck(HttpServletRequest request, @Validated AuthenticationCodeModel authCode) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			// Limit factors
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
 
 			// Secret(pubKey).
-			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
+			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret(authCode.getAuthenticationCode())));
 
 			// CAPTCHA check.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);

@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.authc.credential.secure;
 
 import java.security.MessageDigest;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -32,14 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SECRET_INDEX;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_PUBKEY_IDX;
 import static com.wl4g.devops.common.utils.codec.CheckSums.*;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 
+import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
@@ -142,19 +143,19 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	@Override
-	public String applySecret() {
-		// Load secret keySpecPairs
-		Integer index = getBindValue(KEY_SECRET_INDEX);
-		if (index == null) {
+	public String applySecret(String authenticationCode) {
+		// Load secret keySpecPairs.
+		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
+		Integer index = (Integer) pubIdxCache.get(new EnhancedKey(authenticationCode, Integer.class));
+		if (Objects.isNull(index)) {
 			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("Apply secret for index: {}", index);
 		}
-
+		// Get & save the applied keyPair index.
 		RSAKeySpecWrapper keyPair = rsaCryptoService.borrow(index);
-		// Save the applied keyPair index.
-		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
+		pubIdxCache.put(new EnhancedKey(authenticationCode, config.getApplyPubkeyExpireMs()), index);
 
 		if (log.isInfoEnabled()) {
 			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
@@ -250,16 +251,23 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @return
 	 */
 	private RSAKeySpecWrapper determineSecretKeySpecPair(@NotNull String principal) {
-		// Choose the best one from the candidate key pair
-		Integer index = getBindValue(KEY_SECRET_INDEX, true);
-		if (index != null) {
-			return rsaCryptoService.borrow(index);
-		}
+		// Determine the best one from the candidate keyPair.
+		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
+		try {
+			Integer index = (Integer) pubIdxCache.get(new EnhancedKey(principal, Integer.class));
+			if (Objects.nonNull(index)) {
+				return rsaCryptoService.borrow(index);
+			}
 
-		if (log.isWarnEnabled()) {
-			log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
+			String errmsg = String.format("Failed to decrypt, applied secretKey or expired. seesionId: {}, principal: %s",
+					getSessionId(), principal);
+			if (log.isWarnEnabled()) {
+				log.warn(errmsg);
+			}
+			throw new IllegalStateException(errmsg);
+		} finally { // Cleanup
+			pubIdxCache.remove(new EnhancedKey(principal));
 		}
-		throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
 	}
 
 	/**
