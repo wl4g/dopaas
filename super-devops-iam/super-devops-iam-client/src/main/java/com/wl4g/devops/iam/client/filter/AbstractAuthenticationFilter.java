@@ -51,6 +51,7 @@ import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
@@ -231,7 +232,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			ServletResponse response) {
 		Throwable cause = Exceptions.getRootCause(ae);
 		if (cause != null) {
-			if (cause instanceof RuntimeException) {
+			if (cause instanceof IamException) {
 				log.error("Failed to caused by: {}", getMessage(cause));
 			} else {
 				log.error("Failed to authentication.", cause);
@@ -255,7 +256,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
-						log.info("Failed response: {}", failMsg);
+						log.info("Failed to invalid grantTicket response: {}", failMsg);
 					}
 					writeJson(toHttp(response), failMsg);
 				} catch (IOException e) {
@@ -268,11 +269,17 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 					log.error("Cannot redirect to failure url - {}", failRedirectUrl, e);
 				}
 			}
-		} else { // If it is an error caused by interface connection, etc.
+		}
+		/*
+		 * For example, because of interface or permission errors, there is no
+		 * need to carry redirection URLs, because even redirection is the same
+		 * error, which may lead to unlimited redirection.
+		 */
+		else {
 			try {
 				String errmsg = String.format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getMessage(cause));
-				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
+				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg); // =>SmartSuperErrorsController
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}
