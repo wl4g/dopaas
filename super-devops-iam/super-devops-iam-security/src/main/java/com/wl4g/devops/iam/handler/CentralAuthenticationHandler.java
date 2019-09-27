@@ -53,6 +53,7 @@ import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
@@ -64,7 +65,6 @@ import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
-import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
@@ -271,11 +271,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 */
 			Set<String> appNames = grantInfo.getApplications().keySet();
 			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
-			if (apps == null || apps.isEmpty()) {
-				throw new IamException(String.format("Find application information is empty. %s", appNames));
+			if (isEmpty(apps)) {
+				logoutAll = processLogoutAll(subject, grantInfo, apps); // logout-all
+			} else {
+				log.warn(String.format("Logout to no found application informations. %s", appNames));
 			}
-			// logout all
-			logoutAll = processLogoutAll(subject, grantInfo, apps);
 		}
 
 		if (forced || logoutAll) {
@@ -467,7 +467,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 					log.info("Logout finished for principal:{}, application:{} url:{}", subject.getPrincipal(), app.getAppName(),
 							url);
 				} else {
-					throw new IamException(resp != null ? resp.getMessage() : "No response");
+					throw new IllegalStateException(resp != null ? resp.getMessage() : "No response");
 				}
 			} catch (Exception e) {
 				logoutAll = false;

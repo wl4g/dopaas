@@ -20,14 +20,14 @@ import org.springframework.http.HttpStatus;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
 /**
- * Business logic restriction exception, When this exception API is caught, the
- * response code is {@link HttpStatus.PRECONDITION_FAILED}
+ * Invalid argument exception, When this exception API is caught, the response
+ * code is {@link HttpStatus.BAD_REQUEST}
  * 
  * @author Wangl.sir
  * @version v1.0 2019年9月2日
  * @since
  */
-public interface BizRuleRestrictRestfulException extends RESTfulException {
+public interface BizInvalidArgRESTfulException extends RESTfulException {
 
 	/**
 	 * Get exception response code.
@@ -36,7 +36,7 @@ public interface BizRuleRestrictRestfulException extends RESTfulException {
 	 */
 	@Override
 	default RetCode getCode() {
-		return RetCode.SECOND_UNAUTH;
+		return RetCode.PARAM_ERR;
 	}
 
 }

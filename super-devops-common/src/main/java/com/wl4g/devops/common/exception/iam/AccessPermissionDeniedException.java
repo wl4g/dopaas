@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.common.exception.iam;
 
-public class AccessPermissionDeniedException extends IamException {
+import com.wl4g.devops.common.exception.restful.RESTfulException;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+
+public class AccessPermissionDeniedException extends IamException implements RESTfulException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -78,4 +81,10 @@ public class AccessPermissionDeniedException extends IamException {
 	public AccessPermissionDeniedException(Throwable cause) {
 		super(cause);
 	}
+
+	@Override
+	public RetCode getCode() {
+		return RetCode.UNAUTHZ;
+	}
+
 }

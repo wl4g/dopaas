@@ -137,16 +137,16 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** URI for apply for CAPTCHA. */
 	final public static String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
 	/** URI for verify analyze for CAPTCHA. */
-	final public static String URI_S_VERIFY_ANALYZE_CAPTCHA = "verifyAnalyze";
+	final public static String URI_S_VERIFY_ANALYZE_CAPTCHA = "verifyanalyze";
 	/** URI for apply for verify-code. */
 	final public static String URI_S_VERIFY_SMS_APPLY = "applysmsverify";
 
 	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
-	 * Apply sessionID, For example for mobile use.
+	 * Apply authentication code, For example for mobile use.
 	 */
-	final public static String URI_S_LOGIN_APPLY_SESSION = "sessions";
+	final public static String URI_S_LOGIN_APPLY_AUTHCODE = "authenticationcode";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
@@ -192,21 +192,23 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Login failure overrun, lock cache name.
 	 */
 	final public static String CACHE_MATCH_LOCK = "match_lock_";
-
 	/**
 	 * Security verifier for jigsaw captcha image cache name.
 	 */
 	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "captcha_jigsaw_imgcache_".getBytes(Charsets.UTF_8);
-
 	/**
 	 * Cryptographic service cache name.
 	 */
 	final public static byte[] CACHE_CRYPTO = "crypto_keypairs".getBytes(Charsets.UTF_8);
-
 	/**
-	 * The public key index by logged-in users
+	 * Cache applied secret key index.
 	 */
-	final public static String KEY_SECRET_INDEX = "securerSecretKeyPairIndex";
+	final public static String CACHE_PUBKEY_IDX = "pubkey_index_";
+	/**
+	 * Apply authentication code keyName.
+	 */
+	final public static String CACHE_AUTH_CODE = "authcode_";
+
 	/**
 	 * Token used to save current session authenticating
 	 */
@@ -227,7 +229,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Error information for saving iam-related operations to sessions.
 	 */
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
-
 	/**
 	 * IAM system service role: iam-server.</br>
 	 * Can be used for user-client interception of unregistered state
