@@ -770,7 +770,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 					return isJSONResponse(safeOf(respTypeValue), request);
 				}
 			}
-			return true;
+			return false;
 		}
 
 		/**
