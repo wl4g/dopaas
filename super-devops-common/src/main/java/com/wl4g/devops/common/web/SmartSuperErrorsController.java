@@ -157,9 +157,10 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			 */
 			if (isJSONResponse(request)) {
 				String errmsg = extractMeaningfulErrorsMessage(model);
-				writeJson(response, toJSONString(new RespBase<>(SYS_ERR, errmsg, null)));
+				int code = (int) model.getOrDefault("status", SYS_ERR.getCode());
+				writeJson(response, toJSONString(new RespBase<>(code, errmsg)));
 			} else {
-				write(response, getStatus(request, response).value(), TEXT_HTML_VALUE,
+				write(response, getHttpStatus(request, response).value(), TEXT_HTML_VALUE,
 						renderErrorPage(model, request).getBytes(UTF_8));
 			}
 		} catch (IOException e) {
@@ -171,9 +172,10 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	 * Get error HTTP status
 	 * 
 	 * @param request
+	 * @param response
 	 * @return
 	 */
-	protected HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response) {
+	protected HttpStatus getHttpStatus(HttpServletRequest request, HttpServletResponse response) {
 		HttpStatus status = super.getStatus(request);
 		if (status != null) {
 			return status;
@@ -200,10 +202,9 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			errmsg.append(message);
 		}
 
-		Object errors = model.get("errors");
+		Object errors = model.get("errors"); // @NotNull?
 		if (errors != null) {
 			errmsg.setLength(0); // Print only errors information
-
 			if (errors instanceof Collection) {
 				// Used to remove duplication
 				List<String> fieldErrs = new ArrayList<>(8);
