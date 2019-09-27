@@ -270,7 +270,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			}
 		} else { // If it is an error caused by interface connection, etc.
 			try {
-				String errmsg = String.format("%s</br>%s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
+				String errmsg = String.format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getMessage(cause));
 				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
