@@ -16,11 +16,12 @@
 package com.wl4g.devops.iam.common.i18n;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import com.wl4g.devops.common.i18n.AbstractDelegateMessageBundle;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
 
 /**
  * Session delegate resource bundle message source.
@@ -45,7 +46,8 @@ public class SessionDelegateMessageBundle extends AbstractDelegateMessageBundle 
 
 	@Override
 	protected Locale getSessionLocale() {
-		return (Locale) SessionBindings.getBindValue(KEY_LANG_ATTRIBUTE_NAME);
+		Locale locale = (Locale) getBindValue(KEY_LANG_ATTRIBUTE_NAME);
+		return Objects.isNull(locale) ? Locale.CHINESE : locale;
 	}
 
 }
