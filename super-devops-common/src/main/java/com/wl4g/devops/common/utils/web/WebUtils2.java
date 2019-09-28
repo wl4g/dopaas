@@ -739,7 +739,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		 * @return
 		 */
 		final public static boolean isJSONResponse(String respTypeValue, HttpServletRequest request) {
-			return isJSONResponse(safeOf(respTypeValue), request);
+			return determineJSONResponse(safeOf(respTypeValue), request);
 		}
 
 		/**
@@ -770,19 +770,21 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 				String respTypeValue = request.getParameter(name);
 				respTypeValue = isBlank(respTypeValue) ? request.getHeader(name) : respTypeValue;
 				if (!isBlank(respTypeValue)) {
-					return isJSONResponse(safeOf(respTypeValue), request);
+					return determineJSONResponse(safeOf(respTypeValue), request);
 				}
 			}
-			return false;
+
+			// Using auto mode.
+			return determineJSONResponse(ResponseType.auto, request);
 		}
 
 		/**
-		 * Is response JSON message
+		 * Determine response JSON message
 		 * 
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(ResponseType respType, HttpServletRequest request) {
+		final public static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
 			Assert.notNull(request, "Request must not be null");
 			// Using default strategy
 			if (Objects.isNull(respType)) {
