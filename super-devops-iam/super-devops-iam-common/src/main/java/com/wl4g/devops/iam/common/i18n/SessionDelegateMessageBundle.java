@@ -47,7 +47,7 @@ public class SessionDelegateMessageBundle extends AbstractDelegateMessageBundle 
 	@Override
 	protected Locale getSessionLocale() {
 		Locale locale = (Locale) getBindValue(KEY_LANG_ATTRIBUTE_NAME);
-		return Objects.isNull(locale) ? Locale.CHINESE : locale;
+		return Objects.isNull(locale) ? Locale.SIMPLIFIED_CHINESE : locale;
 	}
 
 }
