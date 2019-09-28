@@ -667,9 +667,9 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		try {
 			String uri0 = safeEncodeURL(uri);
 			String path = uri0, schema = "";
-			if (uri0.toLowerCase().contains(URL_SEPAR_PROTO)) {
+			if (uri0.toLowerCase(Locale.ENGLISH).contains(URL_SEPAR_PROTO)) {
 				// Starting from "://"
-				int startIndex = uri0.indexOf(URL_SEPAR_PROTO);
+				int startIndex = uri0.toLowerCase(Locale.ENGLISH).indexOf(URL_SEPAR_PROTO);
 				schema = uri0.substring(0, startIndex) + URL_SEPAR_PROTO;
 				path = uri0.substring(startIndex + URL_SEPAR_PROTO.length());
 			}
