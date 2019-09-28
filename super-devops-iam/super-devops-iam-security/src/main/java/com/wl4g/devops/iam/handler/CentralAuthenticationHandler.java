@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.handler;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -189,16 +189,15 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertion.setPrincipal(new IamPrincipal(principal));
 
 		// Grant validated start date.
-		Calendar calendar = Calendar.getInstance();
-		assertion.setValidFromDate(calendar.getTime());
+		long now = System.currentTimeMillis();
+		assertion.setValidFromDate(new Date(now));
 
 		/*
 		 * xx.xx...client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo
 		 * Grant term of validity(end date).
 		 */
 		long expiredMs = getSessionExpiredTime(session);
-		calendar.add(Calendar.MILLISECOND, (int) expiredMs);
-		assertion.setValidUntilDate(calendar.getTime());
+		assertion.setValidUntilDate(new Date(now + expiredMs));
 
 		// Updating grantTicket
 		/*
