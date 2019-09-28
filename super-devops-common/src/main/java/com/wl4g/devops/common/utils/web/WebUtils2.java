@@ -660,11 +660,14 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 			throw new IllegalArgumentException("Error syntax uri", e);
 		}
 
-		// Cleaning
+		/**
+		 * Cleaning.</br>
+		 * Note: that you cannot change the original URI case.
+		 */
 		try {
-			String uri0 = safeEncodeURL(uri).toLowerCase();
+			String uri0 = safeEncodeURL(uri);
 			String path = uri0, schema = "";
-			if (uri0.contains(URL_SEPAR_PROTO)) {
+			if (uri0.toLowerCase().contains(URL_SEPAR_PROTO)) {
 				// Starting from "://"
 				int startIndex = uri0.indexOf(URL_SEPAR_PROTO);
 				schema = uri0.substring(0, startIndex) + URL_SEPAR_PROTO;
