@@ -15,11 +15,9 @@
  */
 package com.wl4g.devops.iam.sns.web;
 
-import org.apache.shiro.web.util.WebUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,11 +34,14 @@ import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeDecodeURL;
+import static com.wl4g.devops.common.utils.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CALLBACK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
@@ -95,12 +96,12 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		}
 
 		// Basic parameters
-		String which = WebUtils.getCleanParam(request, config.getParam().getWhich());
-		String state = WebUtils.getCleanParam(request, config.getParam().getState());
+		String which = getCleanParam(request, config.getParam().getWhich());
+		String state = getCleanParam(request, config.getParam().getState());
 
 		// Extra parameters all.(Note: Form submission parameters will be
 		// ignored)
-		Map<String, String> connectParams = WebUtils2.toQueryParams(request.getQueryString());
+		Map<String, String> connectParams = toQueryParams(request.getQueryString());
 
 		// Getting SNS authorizingUrl
 		String authorizingUrl = this.delegate.connect(Which.of(which), provider, state, connectParams);
@@ -115,7 +116,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 			/**
 			 * Some handler have carried the 'redirect:' prefix
 			 */
-			if (StringUtils.startsWithIgnoreCase(authorizingUrl, REDIRECT_PREFIX)) {
+			if (startsWithIgnoreCase(authorizingUrl, REDIRECT_PREFIX)) {
 				issueRedirect(request, response, authorizingUrl.substring(REDIRECT_PREFIX.length()), null, false);
 			} else {
 				// Return the URL string directly without redirection
@@ -137,7 +138,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 	public void callback(@PathVariable(PARAM_SNS_PRIVIDER) String provider, @NotBlank @RequestParam(PARAM_SNS_CODE) String code,
 			HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (log.isInfoEnabled()) {
-			log.info("Sns callback url[{}]", WebUtils2.getFullRequestURI(request));
+			log.info("Sns callback url[{}]", getFullRequestURI(request));
 		}
 
 		// Basic parameters
@@ -160,8 +161,8 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		 */
 		if (isBlank(redirectRefreshUrl)) {
 			// Response JSON of redirection.
-			RespBase<String> resp = RespBase.create();
-			resp.setCode(RetCode.OK).setStatus(DEFAULT_SECOND_AUTHC_STATUS).setMessage("Second authenticate successfully.");
+			RespBase<String> resp = RespBase.create(DEFAULT_SECOND_AUTHC_STATUS);
+			resp.setCode(RetCode.OK).setMessage("Second authenticate successfully.");
 			// resp.setData(singletonMap(config.getParam().getRefreshUrl(),
 			// redirectRefreshUrl));
 			writeJson(response, toJSONString(resp));
