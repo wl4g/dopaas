@@ -72,7 +72,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 		String authorizingUrl = super.connect(which, provider, state, connectParams);
 
 		// Save connect parameters
-		this.saveOauth2ConnectParameters(provider, state, connectParams);
+		saveOauth2ConnectParameters(provider, state, connectParams);
 
 		return REDIRECT_PREFIX + authorizingUrl;
 	}
@@ -125,7 +125,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 		Oauth2OpenId openId = connect.getUserOpenId(ast);
 
 		// Account by openId
-		IamAccountInfo account = this.context
+		IamAccountInfo account = configurer
 				.getIamAccount(new SnsAuthorizingParameter(provider, openId.openId(), openId.unionId()));
 
 		// Second authentication assertion
@@ -133,7 +133,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 				connectParams.get(config.getParam().getFuncId()));
 		try {
 			// Assertion
-			this.assertionSecondAuthentication(provider, openId, account, authorizers, connectParams);
+			assertionSecondAuthentication(provider, openId, account, authorizers, connectParams);
 			// Result set
 			assertion.setPrincipal(account.getPrincipal());
 			assertion.setValidFromDate(new Date());
@@ -147,9 +147,9 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 		 * Save authenticated to cache.
 		 * See:xx.iam.handler.DefaultAuthenticationHandler#secondValidate()
 		 */
-		String secondAuthCode = this.generateSecondAuthcCode(sourceApp);
+		String secondAuthCode = generateSecondAuthcCode(sourceApp);
 		EnhancedKey ekey = new EnhancedKey(secondAuthCode, snsConfig.getOauth2ConnectExpireMs());
-		this.cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).put(ekey, assertion);
+		cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).put(ekey, assertion);
 
 		if (log.isInfoEnabled()) {
 			log.info("Saved secondary authentication. {}[{}], result[{}]", config.getParam().getSecondAuthCode(), secondAuthCode,

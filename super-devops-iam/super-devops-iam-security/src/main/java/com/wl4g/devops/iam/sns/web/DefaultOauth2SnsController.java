@@ -104,7 +104,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		Map<String, String> connectParams = toQueryParams(request.getQueryString());
 
 		// Getting SNS authorizingUrl
-		String authorizingUrl = this.delegate.connect(Which.of(which), provider, state, connectParams);
+		String authorizingUrl = delegate.connect(Which.of(which), provider, state, connectParams);
 
 		// Response type
 		if (isJSONResponse(request)) {
@@ -193,7 +193,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 
 		// Build agent HTML
 		byte[] agentHtml = String.format(TEMPLATE_CALLBACK_AGENT, attributeJSONString).getBytes(Charsets.UTF_8);
-		this.write(response, HttpStatus.OK.value(), MediaType.TEXT_HTML_VALUE, agentHtml);
+		write(response, HttpStatus.OK.value(), MediaType.TEXT_HTML_VALUE, agentHtml);
 	}
 
 }

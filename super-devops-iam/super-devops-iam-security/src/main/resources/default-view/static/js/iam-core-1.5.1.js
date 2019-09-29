@@ -226,22 +226,22 @@
 		},
 		// SNS授权认证配置
 		sns: {
-			// 具体操作接口必要的参数
-			required: {
-				// 参数'which'
-				which: function(provider, panelType){
+			required: { // 必须的参数
+				getWhich: function(provider, panelType){ // 获取参数'which'
 					throw "Unsupported errors, please implement to support get which function";
 				},
 				// 回调刷新URL（如：绑定操作）
 				refreshUrl: null
 			},
+			// 获取用户ID（如：绑定和解绑时必须）
+			getPrincipal: function(){},
 			// 渲染授权二维码面板配置
 			qrcodePanel: null,
 			// 渲染授权页面面板配置
 			pagePanel: null,
 			// 第三方社交网络配置
 			provider: null,
-			// 默认点击SNS服务商授权请求之前回调实现
+			// 点击SNS服务商授权请求之前回调实现
 			onBefore: function(provider, panelType, connectUrl){}
 		}
 	};
@@ -280,17 +280,18 @@
 	};
 
 	// 请求连接到第三方社交网络URL
-	var getConnectUrl = function(provider, panelType){
-		var required = Common.Util.checkEmpty("sns.required",settings.sns.required);
-		var which = Common.Util.checkEmpty("required.which",required.which(provider, panelType));
-		var url = settings.deploy.baseUri + Common.Util.checkEmpty("definition.snsConnectUri",settings.definition.snsConnectUri) + Common.Util.checkEmpty("provider",provider)
-			+ "?" + Common.Util.checkEmpty("definition.whichKey",settings.definition.whichKey) + "=" + which;
-		// 若当前是绑定操作，则需传入 principal、refreshUrl
+	var getSnsConnectUrl = function(provider, panelType){
+		var required = Common.Util.checkEmpty("sns.required", settings.sns.required);
+		var which = Common.Util.checkEmpty("required.getWhich", required.getWhich(provider, panelType));
+		var url = settings.deploy.baseUri + Common.Util.checkEmpty("definition.snsConnectUri", settings.definition.snsConnectUri) 
+			+ Common.Util.checkEmpty("provider",provider) + "?" + Common.Util.checkEmpty("definition.whichKey",settings.definition.whichKey) + "=" + which;
+
+		// 当绑定时必传 principal、refreshUrl
 		if(which.toLowerCase() == "bind" || which.toLowerCase() == "unbind"){
-			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal)); // 登录名
+			var principal = encodeURIComponent(Common.Util.checkEmpty("sns.principal", settings.sns.getPrincipal())); // 获取用户ID
 			var refreshUrl = encodeURIComponent(Common.Util.checkEmpty("sns.required.refreshUrl", settings.sns.required.refreshUrl)); // 回调刷新URL
-			url += "&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal;
-			url += "&" + Common.Util.checkEmpty("definition.refreshUrlKey",settings.definition.refreshUrlKey) + "=" + refreshUrl;
+			url += "&" + Common.Util.checkEmpty("definition.principalKey", settings.definition.principalKey) + "=" + principal;
+			url += "&" + Common.Util.checkEmpty("definition.refreshUrlKey", settings.definition.refreshUrlKey) + "=" + refreshUrl;
 		}
 
 		// window.open新开的窗体授权登录（如：qq的PC端授权登录是鼠标操作、sina是输入账号密码）
@@ -406,7 +407,7 @@
 				var panelType = curProviderEle.getAttribute("panelType");
 
 				// 请求社交网络认证的URL（与which、action相关）
-				var connectUrl = getConnectUrl(provider, panelType);
+				var connectUrl = getSnsConnectUrl(provider, panelType);
 
 				// 执行点击SNS按钮事件
 				if(!settings.sns.onBefore(provider, panelType, connectUrl)){

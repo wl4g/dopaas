@@ -24,8 +24,8 @@ spring:
   cloud:
     devops:
       iam: # IAM configuration.
-        #login-uri: /view/login.html
-        login-uri: http://localhost:8080/#/login
+        login-uri: /view/login.html
+        #login-uri: http://localhost:8080/#/login # See: super-devops-view
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@http://localhost:14048/umc-manager
         authc-internal-access:
