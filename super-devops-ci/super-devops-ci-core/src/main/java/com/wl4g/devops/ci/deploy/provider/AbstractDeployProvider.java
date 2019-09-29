@@ -116,19 +116,18 @@ public abstract class AbstractDeployProvider implements DeployProvider {
 
 	protected TaskResult taskResult = new TaskResult();
 
-	public AbstractDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
-			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
+	public AbstractDeployProvider(DeployProviderBean deployProviderBean) {
 		this.config = SpringContexts.getBean(CiCdProperties.class);
-		this.path = path;
-		this.branch = branch;
-		this.alias = alias;
-		this.instances = instances;
-		this.taskHistory = taskHistory;
-		this.refTaskHistory = refTaskHistory;
-		this.taskHistoryDetails = taskHistoryDetails;
-		String[] a = project.getTarPath().split("/");
+		this.path = deployProviderBean.getPath();
+		this.branch = deployProviderBean.getBranch();
+		this.alias = deployProviderBean.getAlias();
+		this.instances = deployProviderBean.getInstances();
+		this.taskHistory = deployProviderBean.getTaskHistory();
+		this.refTaskHistory = deployProviderBean.getRefTaskHistory();
+		this.taskHistoryDetails = deployProviderBean.getTaskHistoryDetails();
+		String[] a = deployProviderBean.getProject().getTarPath().split("/");
 		this.tarName = a[a.length - 1];
-		this.project = project;
+		this.project = deployProviderBean.getProject();
 		this.dependencyService = SpringContexts.getBean(DependencyService.class);
 	}
 
