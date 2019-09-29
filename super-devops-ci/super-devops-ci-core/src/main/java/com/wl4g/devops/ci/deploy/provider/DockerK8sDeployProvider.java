@@ -15,13 +15,6 @@
  */
 package com.wl4g.devops.ci.deploy.provider;
 
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
-
-import java.util.List;
-
 /**
  * Docker and k8s deploy provider.
  *
@@ -31,9 +24,8 @@ import java.util.List;
  */
 public class DockerK8sDeployProvider extends AbstractDeployProvider {
 
-	public DockerK8sDeployProvider(Project project, String path, String branch, String alias, List<AppInstance> instances,
-			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(project, path, branch, alias, instances, taskHistory, refTaskHistory, taskHistoryDetails);
+	public DockerK8sDeployProvider(DeployProviderBean deployProviderBean) {
+		super(deployProviderBean);
 	}
 
 	@Override

@@ -63,7 +63,7 @@ public class DeployingTimeoutJobFinalizer implements ApplicationRunner {
 			log.info("modify expression fail , expression is not valid , expression={}", expression);
 			return;
 		}
-		if (Objects.nonNull(future) || !future.isDone()) {
+		if (Objects.nonNull(future) && !future.isDone()) {
 			this.future.cancel(true);
 		}
 

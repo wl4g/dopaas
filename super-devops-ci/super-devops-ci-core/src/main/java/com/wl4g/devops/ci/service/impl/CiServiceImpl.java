@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.deploy.provider.DeployProvider;
+import com.wl4g.devops.ci.deploy.provider.DeployProviderBean;
 import com.wl4g.devops.ci.deploy.provider.DockerNativeDeployProvider;
 import com.wl4g.devops.ci.deploy.provider.MvnAssembleTarDeployProvider;
 import com.wl4g.devops.ci.service.CiService;
@@ -34,7 +35,6 @@ import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +42,11 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * CI/CD Service implements
@@ -263,21 +263,17 @@ public class CiServiceImpl implements CiService {
 	 * @param taskHistoryDetails
 	 * @return
 	 */
-	private DeployProvider getDeployProvider(Project project, int tarType, String path, String branch, String alias,
-			List<AppInstance> instances, TaskHistory taskHistory, TaskHistory refTaskHistory,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		switch (tarType) {
+	private DeployProvider getDeployProvider(DeployProviderBean deployProviderBean) {
+		switch (deployProviderBean.getTarType()) {
 		case CiDevOpsConstants.TAR_TYPE_TAR:
-			return new MvnAssembleTarDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory,
-					taskHistoryDetails);
+			return new MvnAssembleTarDeployProvider(deployProviderBean);
 		case CiDevOpsConstants.TAR_TYPE_JAR:
 			// return new JarSubject(path, url, branch,
 			// alias,tarPath,instances,taskHistoryDetails);
 		case CiDevOpsConstants.TAR_TYPE_DOCKER:
-			return new DockerNativeDeployProvider(project, path, branch, alias, instances, taskHistory, refTaskHistory,
-					taskHistoryDetails);
+			return new DockerNativeDeployProvider(deployProviderBean);
 		default:
-			throw new RuntimeException("unsuppost type:" + tarType);
+			throw new RuntimeException("unsuppost type:" + deployProviderBean.getTarType());
 		}
 	}
 
@@ -309,8 +305,18 @@ public class CiServiceImpl implements CiService {
 			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
-		return getDeployProvider(project, taskHistory.getTarType(), config.getGitBasePath() + "/" + project.getProjectName(),
-				taskHistory.getBranchName(), appCluster.getName(), instances, taskHistory, refTaskHistory, taskHistoryDetails);
+		DeployProviderBean deployProviderBean = new DeployProviderBean();
+		deployProviderBean.setProject(project);
+		deployProviderBean.setTarType(taskHistory.getTarType());
+		deployProviderBean.setPath(config.getGitBasePath() + "/" + project.getProjectName());
+		deployProviderBean.setBranch(taskHistory.getBranchName());
+		deployProviderBean.setAlias(appCluster.getName());
+		deployProviderBean.setInstances(instances);
+		deployProviderBean.setTaskHistory(taskHistory);
+		deployProviderBean.setRefTaskHistory(refTaskHistory);
+		deployProviderBean.setTaskHistoryDetails(taskHistoryDetails);
+
+		return getDeployProvider(deployProviderBean);
 	}
 
 	/**
