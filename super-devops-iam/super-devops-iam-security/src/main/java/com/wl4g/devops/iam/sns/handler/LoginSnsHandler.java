@@ -49,7 +49,7 @@ public class LoginSnsHandler extends AbstractSnsHandler {
 		String authorizingUrl = super.connect(which, provider, state, connectParams);
 
 		// Save connect parameters
-		this.saveOauth2ConnectParameters(provider, state, connectParams);
+		saveOauth2ConnectParameters(provider, state, connectParams);
 
 		return REDIRECT_PREFIX + authorizingUrl;
 	}
