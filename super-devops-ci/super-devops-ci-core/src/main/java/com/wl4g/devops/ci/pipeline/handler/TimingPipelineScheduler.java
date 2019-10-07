@@ -1,4 +1,4 @@
-package com.wl4g.devops.ci.deploy;
+package com.wl4g.devops.ci.pipeline.handler;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.CiService;
@@ -33,7 +33,7 @@ import java.util.concurrent.ScheduledFuture;
  * @date 2019-07-19 09:50:00
  */
 @Component
-public class DynamicTask implements ApplicationRunner {
+public class TimingPipelineScheduler implements ApplicationRunner {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -88,9 +88,9 @@ public class DynamicTask implements ApplicationRunner {
 			return;
 		}
 		ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(
-				new CronRunnable(trigger, project, config, ciService, triggerService, task, taskDetails),
+				new TimingPipelineHandler(trigger, project, config, ciService, triggerService, task, taskDetails),
 				new CronTrigger(expression));
-		DynamicTask.map.put(key, future);
+		TimingPipelineScheduler.map.put(key, future);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class DynamicTask implements ApplicationRunner {
 	 */
 	public void stopCron(String key) {
 		log.info("into DynamicTask.stopCron prarms::" + "triggerId = {} ", key);
-		ScheduledFuture<?> future = DynamicTask.map.get(key);
+		ScheduledFuture<?> future = TimingPipelineScheduler.map.get(key);
 		if (future != null) {
 			future.cancel(true);
 		}

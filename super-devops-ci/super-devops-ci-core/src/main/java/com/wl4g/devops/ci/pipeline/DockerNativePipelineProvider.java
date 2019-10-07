@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.deploy.provider;
+package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.deploy.DockerBuildDeployTask;
+import com.wl4g.devops.ci.pipeline.handler.DockerNativePipelineHandler;
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -24,16 +25,21 @@ import com.wl4g.devops.common.utils.codec.FileCodec;
 import java.io.File;
 
 /**
- * Maven assemble tar provider.
+ * Docker native integrate pipeline provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class DockerNativeDeployProvider extends AbstractDeployProvider {
+public class DockerNativePipelineProvider extends AbstractPipelineProvider {
 
-	public DockerNativeDeployProvider(DeployProviderBean deployProviderBean) {
+	public DockerNativePipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
+	}
+
+	@Override
+	public PipelineType pipelineType() {
+		return PipelineType.PIPE_DOCKER_NATIVE;
 	}
 
 	/**
@@ -55,7 +61,7 @@ public class DockerNativeDeployProvider extends AbstractDeployProvider {
 
 		// Each install pull and restart
 		for (AppInstance instance : getInstances()) {
-			Runnable task = new DockerBuildDeployTask(this, getProject(), instance, getTaskHistoryDetails());
+			Runnable task = new DockerNativePipelineHandler(this, getProject(), instance, getTaskHistoryDetails());
 			Thread t = new Thread(task);
 			t.start();
 			t.join();
@@ -67,7 +73,7 @@ public class DockerNativeDeployProvider extends AbstractDeployProvider {
 	}
 
 	/**
-	 * Rollback
+	 * Roll-back
 	 * 
 	 * @throws Exception
 	 */
@@ -95,7 +101,7 @@ public class DockerNativeDeployProvider extends AbstractDeployProvider {
 
 		// scp to server
 		for (AppInstance instance : getInstances()) {
-			Runnable task = new DockerBuildDeployTask(this, getProject(), instance, getTaskHistoryDetails());
+			Runnable task = new DockerNativePipelineHandler(this, getProject(), instance, getTaskHistoryDetails());
 			Thread t = new Thread(task);
 			t.start();
 			t.join();

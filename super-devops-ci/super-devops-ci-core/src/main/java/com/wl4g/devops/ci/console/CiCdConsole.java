@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
 import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
-import com.wl4g.devops.ci.deploy.DeployingTimeoutJobFinalizer;
+import com.wl4g.devops.ci.pipeline.handler.GlobalTimeoutHandlerCleanFinalizer;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.share.AppCluster;
@@ -69,7 +69,7 @@ public class CiCdConsole {
 	private SimpleRedisLockManager lockManager;
 
 	@Autowired
-	private DeployingTimeoutJobFinalizer timingTasks;
+	private GlobalTimeoutHandlerCleanFinalizer timingTasks;
 
 	@Autowired
 	private TaskDao taskDao;

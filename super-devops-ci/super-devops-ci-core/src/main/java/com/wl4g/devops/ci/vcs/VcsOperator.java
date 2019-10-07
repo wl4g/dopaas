@@ -27,7 +27,7 @@ import java.util.List;
 public interface VcsOperator {
 
 	/**
-	 * Get GITLAB remote branch names.
+	 * Get VCS remote branch names.
 	 * 
 	 * @param projectId
 	 * @return
@@ -35,7 +35,7 @@ public interface VcsOperator {
 	List<String> getRemoteBranchNames(int projectId);
 
 	/**
-	 * Get GITLAB remote tag names.
+	 * Get VCS remote tag names.
 	 * 
 	 * @param projectId
 	 * @return

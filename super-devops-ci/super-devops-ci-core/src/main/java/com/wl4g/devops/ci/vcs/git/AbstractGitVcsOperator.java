@@ -48,7 +48,7 @@ public abstract class AbstractGitVcsOperator implements VcsOperator, Initializin
 	protected RestTemplate restTemplate;
 
 	/**
-	 * Do GITLAB exchange.
+	 * Do GIT apiServer exchange.
 	 * 
 	 * @param url
 	 * @param typeRef

@@ -13,35 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.deploy.provider;
+package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.deploy.MvnAssembleTarDeployTask;
+import com.wl4g.devops.ci.pipeline.handler.MvnAssembleTarPipelineHandler;
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
 
 import java.io.File;
-import java.util.List;
 
 /**
- * Maven assemble tar provider.
+ * MAVEN assemble tar provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class MvnAssembleTarDeployProvider extends AbstractDeployProvider {
+public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 
-	public MvnAssembleTarDeployProvider(DeployProviderBean deployProviderBean) {
-		super(deployProviderBean);
+	public MvnAssembleTarPipelineProvider(PipelineInfo info) {
+		super(info);
+	}
+
+	@Override
+	public PipelineType pipelineType() {
+		return PipelineType.PIPE_MVN_ASSEMBLE_TAR;
 	}
 
 	/**
-	 * excute build and deploy
+	 * Execution build and deploy
 	 */
 	@Override
 	public void execute() throws Exception {
@@ -58,7 +60,7 @@ public class MvnAssembleTarDeployProvider extends AbstractDeployProvider {
 	}
 
 	/**
-	 * rollback
+	 * Roll-back
 	 */
 	@Override
 	public void rollback() throws Exception {
@@ -90,7 +92,7 @@ public class MvnAssembleTarDeployProvider extends AbstractDeployProvider {
 		// scp to server
 		for (AppInstance instance : getInstances()) {
 			// create deploy task
-			Runnable task = new MvnAssembleTarDeployTask(this, getProject(), getPath(), instance, getProject().getTarPath(),
+			Runnable task = new MvnAssembleTarPipelineHandler(this, getProject(), getPath(), instance, getProject().getTarPath(),
 					getTaskHistoryDetails());
 			Thread t = new Thread(task);
 			t.start();

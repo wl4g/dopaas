@@ -1,4 +1,4 @@
-package com.wl4g.devops.ci.deploy;
+package com.wl4g.devops.ci.pipeline.handler;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.CiService;
@@ -22,7 +22,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-07-19 10:41:00
  */
-public class CronRunnable implements Runnable {
+public class TimingPipelineHandler implements Runnable {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -40,7 +40,7 @@ public class CronRunnable implements Runnable {
 
 	private List<TaskDetail> taskDetails;
 
-	public CronRunnable(Trigger trigger, Project project, CiCdProperties config, CiService ciService,
+	public TimingPipelineHandler(Trigger trigger, Project project, CiCdProperties config, CiService ciService,
 			TriggerService triggerService, Task task, List<TaskDetail> taskDetails) {
 		this.trigger = trigger;
 		// this.triggerDetails = trigger.getTriggerDetails();
