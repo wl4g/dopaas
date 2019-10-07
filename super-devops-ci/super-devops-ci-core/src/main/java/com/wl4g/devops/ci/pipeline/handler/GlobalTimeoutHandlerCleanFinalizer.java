@@ -1,4 +1,4 @@
-package com.wl4g.devops.ci.deploy;
+package com.wl4g.devops.ci.pipeline.handler;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.common.utils.task.CronUtils;
@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledFuture;
  */
 @Component
 @EnableScheduling
-public class DeployingTimeoutJobFinalizer implements ApplicationRunner {
+public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 

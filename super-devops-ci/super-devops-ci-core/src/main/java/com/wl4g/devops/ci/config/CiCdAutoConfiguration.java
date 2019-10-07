@@ -15,12 +15,16 @@
  */
 package com.wl4g.devops.ci.config;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
+import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 
 /**
@@ -35,7 +39,7 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = "deploy")
-	public CiCdProperties cICDProperties() {
+	public CiCdProperties cicdProperties() {
 		return new CiCdProperties();
 	}
 
@@ -45,13 +49,19 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public CiCdConsole ciCdConsole() {
+	public CiCdConsole cicdConsole() {
 		return new CiCdConsole();
 	}
 
 	@Bean
 	public GitlabV4VcsOperator gitlabV4Operator() {
 		return new GitlabV4VcsOperator();
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
+		return new MvnAssembleTarPipelineProvider(info);
 	}
 
 }

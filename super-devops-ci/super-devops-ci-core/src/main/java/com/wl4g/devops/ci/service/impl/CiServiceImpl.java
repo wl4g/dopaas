@@ -16,10 +16,11 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.deploy.provider.DeployProvider;
-import com.wl4g.devops.ci.deploy.provider.DeployProviderBean;
-import com.wl4g.devops.ci.deploy.provider.DockerNativeDeployProvider;
-import com.wl4g.devops.ci.deploy.provider.MvnAssembleTarDeployProvider;
+import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.pipeline.model.DefaultPipelineInfo;
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
@@ -141,7 +142,7 @@ public class CiServiceImpl implements CiService {
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_MANUAL,
 				CiDevOpsConstants.TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getPreCommand(),
 				task.getPostCommand(), task.getTarType(), task.getContactGroupId());
-		DeployProvider provider = buildDeployProvider(taskHistory);
+		PipelineProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
 	}
@@ -185,7 +186,7 @@ public class CiServiceImpl implements CiService {
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, CiDevOpsConstants.TASK_TYPE_TRIGGER,
 				CiDevOpsConstants.TASK_STATUS_CREATE, branchName, sha, null, task.getPreCommand(), task.getPostCommand(),
 				task.getTarType(), task.getContactGroupId());
-		DeployProvider provider = buildDeployProvider(taskHistory);
+		PipelineProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
 	}
@@ -196,7 +197,7 @@ public class CiServiceImpl implements CiService {
 	 * @param taskId
 	 * @param provider
 	 */
-	private void execute(Integer taskId, DeployProvider provider) {
+	private void execute(Integer taskId, PipelineProvider provider) {
 		log.info("task start taskId={}", taskId);
 		// update task--running
 		taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
@@ -263,17 +264,14 @@ public class CiServiceImpl implements CiService {
 	 * @param taskHistoryDetails
 	 * @return
 	 */
-	private DeployProvider getDeployProvider(DeployProviderBean deployProviderBean) {
-		switch (deployProviderBean.getTarType()) {
+	private PipelineProvider getDeployProvider(PipelineInfo info) {
+		switch (info.getTarType()) {
 		case CiDevOpsConstants.TAR_TYPE_TAR:
-			return new MvnAssembleTarDeployProvider(deployProviderBean);
-		case CiDevOpsConstants.TAR_TYPE_JAR:
-			// return new JarSubject(path, url, branch,
-			// alias,tarPath,instances,taskHistoryDetails);
+			return new MvnAssembleTarPipelineProvider(info);
 		case CiDevOpsConstants.TAR_TYPE_DOCKER:
-			return new DockerNativeDeployProvider(deployProviderBean);
+			return new DockerNativePipelineProvider(info);
 		default:
-			throw new RuntimeException("unsuppost type:" + deployProviderBean.getTarType());
+			throw new RuntimeException("unsuppost type:" + info.getTarType());
 		}
 	}
 
@@ -283,7 +281,7 @@ public class CiServiceImpl implements CiService {
 	 * @param taskHistory
 	 * @return
 	 */
-	public DeployProvider buildDeployProvider(TaskHistory taskHistory) {
+	private PipelineProvider buildDeployProvider(TaskHistory taskHistory) {
 		log.info("into CiServiceImpl.buildDeployProvider prarms::" + "taskHistory = {} ", taskHistory);
 		Assert.notNull(taskHistory, "taskHistory can not be null");
 		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
@@ -305,18 +303,18 @@ public class CiServiceImpl implements CiService {
 			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
-		DeployProviderBean deployProviderBean = new DeployProviderBean();
-		deployProviderBean.setProject(project);
-		deployProviderBean.setTarType(taskHistory.getTarType());
-		deployProviderBean.setPath(config.getGitBasePath() + "/" + project.getProjectName());
-		deployProviderBean.setBranch(taskHistory.getBranchName());
-		deployProviderBean.setAlias(appCluster.getName());
-		deployProviderBean.setInstances(instances);
-		deployProviderBean.setTaskHistory(taskHistory);
-		deployProviderBean.setRefTaskHistory(refTaskHistory);
-		deployProviderBean.setTaskHistoryDetails(taskHistoryDetails);
+		PipelineInfo info = new DefaultPipelineInfo();
+		info.setProject(project);
+		info.setTarType(taskHistory.getTarType());
+		info.setPath(config.getGitBasePath() + "/" + project.getProjectName());
+		info.setBranch(taskHistory.getBranchName());
+		info.setAlias(appCluster.getName());
+		info.setInstances(instances);
+		info.setTaskHistory(taskHistory);
+		info.setRefTaskHistory(refTaskHistory);
+		info.setTaskHistoryDetails(taskHistoryDetails);
 
-		return getDeployProvider(deployProviderBean);
+		return getDeployProvider(info);
 	}
 
 	/**
@@ -342,7 +340,7 @@ public class CiServiceImpl implements CiService {
 				CiDevOpsConstants.TASK_STATUS_CREATE, taskHistoryOld.getBranchName(), null, taskId,
 				taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(), CiDevOpsConstants.TAR_TYPE_TAR,
 				taskHistoryOld.getContactGroupId());
-		DeployProvider provider = buildDeployProvider(taskHistory);
+		PipelineProvider provider = buildDeployProvider(taskHistory);
 		// execute
 		rollback(taskHistory.getId(), provider);
 
@@ -354,7 +352,7 @@ public class CiServiceImpl implements CiService {
 	 * @param taskId
 	 * @param provider
 	 */
-	private void rollback(Integer taskId, DeployProvider provider) {
+	private void rollback(Integer taskId, PipelineProvider provider) {
 		// update task--running
 		taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 		// optimize : use multithreading

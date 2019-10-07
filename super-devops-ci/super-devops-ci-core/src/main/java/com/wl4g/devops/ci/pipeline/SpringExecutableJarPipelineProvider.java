@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.deploy.provider;
+package com.wl4g.devops.ci.pipeline;
+
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 
 /**
- * Docker and k8s deploy provider.
+ * Spring boot executable deployments provider.
  *
  * @author Wangl.sir <983708408@qq.com>
- * @author vjay
- * @date 2019-05-05 17:28:00
+ * @version v1.0 2019年5月25日
+ * @since
  */
-public class DockerK8sDeployProvider extends AbstractDeployProvider {
+public class SpringExecutableJarPipelineProvider extends AbstractPipelineProvider {
 
-	public DockerK8sDeployProvider(DeployProviderBean deployProviderBean) {
+	public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
 	}
 
 	@Override
-	public void execute() throws Exception {
-
+	public PipelineType pipelineType() {
+		return PipelineType.PIPE_SPRING_EXECUTABLE_JAR;
 	}
 
 	@Override
-	public void rollback() throws Exception {
-
+	public void execute() throws Exception {
+		throw new UnsupportedOperationException();
 	}
 
 }

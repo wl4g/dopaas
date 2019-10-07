@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.deploy;
+package com.wl4g.devops.ci.pipeline.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import com.wl4g.devops.common.utils.context.SpringContexts;
  * @version v1.0 2019年5月25日
  * @since
  */
-public abstract class AbstractDeployTask implements Runnable {
+public abstract class BasedPipelineHandler implements Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	final protected AppInstance instance;
@@ -42,7 +42,7 @@ public abstract class AbstractDeployTask implements Runnable {
 	// Result
 	protected StringBuffer result = new StringBuffer();
 
-	public AbstractDeployTask(AppInstance instance, Project project) {
+	public BasedPipelineHandler(AppInstance instance, Project project) {
 		super();
 		this.instance = instance;
 		this.project = project;

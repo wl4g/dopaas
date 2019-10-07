@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.deploy.provider;
+package com.wl4g.devops.ci.pipeline;
+
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 
 /**
  * Django standard deployments provider.
@@ -22,15 +24,20 @@ package com.wl4g.devops.ci.deploy.provider;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class DjangoStandardDeployProvider extends AbstractDeployProvider {
+public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
 
-	public DjangoStandardDeployProvider(DeployProviderBean deployProviderBean) {
+	public DjangoStandardPipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
 	}
 
 	@Override
-	public void execute() throws Exception {
+	public PipelineType pipelineType() {
+		return PipelineType.PIPE_DJANGO_STDAND;
+	}
 
+	@Override
+	public void execute() throws Exception {
+		throw new UnsupportedOperationException();
 	}
 
 }

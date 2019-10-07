@@ -87,7 +87,7 @@ public class GitlabV4VcsOperator extends AbstractGitVcsOperator {
 	 */
 	@Override
 	public Integer findRemoteProjectId(String projectName) {
-		Assert.notNull(projectName,"projectName is null");
+		Assert.notNull(projectName, "projectName is null");
 		String url = config.getGitUrl() + "/api/v4/projects?simple=true&search=" + projectName;
 
 		// Extract project IDs.
@@ -95,9 +95,9 @@ public class GitlabV4VcsOperator extends AbstractGitVcsOperator {
 		});
 
 		Integer id = null;
-		for(Map<String, Object> map : projects){
-			if(map.getOrDefault("name", "-1").toString().equals(projectName)){
-				id=Integer.parseInt(map.getOrDefault("id", "-1").toString());
+		for (Map<String, Object> map : projects) {
+			if (map.getOrDefault("name", "-1").toString().equals(projectName)) {
+				id = Integer.parseInt(map.getOrDefault("id", "-1").toString());
 				break;
 			}
 		}

@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.deploy.provider;
+package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -41,7 +42,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class AbstractDeployProvider implements DeployProvider {
+public abstract class AbstractPipelineProvider implements PipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -116,18 +117,18 @@ public abstract class AbstractDeployProvider implements DeployProvider {
 
 	protected TaskResult taskResult = new TaskResult();
 
-	public AbstractDeployProvider(DeployProviderBean deployProviderBean) {
+	public AbstractPipelineProvider(PipelineInfo info) {
 		this.config = SpringContexts.getBean(CiCdProperties.class);
-		this.path = deployProviderBean.getPath();
-		this.branch = deployProviderBean.getBranch();
-		this.alias = deployProviderBean.getAlias();
-		this.instances = deployProviderBean.getInstances();
-		this.taskHistory = deployProviderBean.getTaskHistory();
-		this.refTaskHistory = deployProviderBean.getRefTaskHistory();
-		this.taskHistoryDetails = deployProviderBean.getTaskHistoryDetails();
-		String[] a = deployProviderBean.getProject().getTarPath().split("/");
+		this.path = info.getPath();
+		this.branch = info.getBranch();
+		this.alias = info.getAlias();
+		this.instances = info.getInstances();
+		this.taskHistory = info.getTaskHistory();
+		this.refTaskHistory = info.getRefTaskHistory();
+		this.taskHistoryDetails = info.getTaskHistoryDetails();
+		String[] a = info.getProject().getTarPath().split("/");
 		this.tarName = a[a.length - 1];
-		this.project = deployProviderBean.getProject();
+		this.project = info.getProject();
 		this.dependencyService = SpringContexts.getBean(DependencyService.class);
 	}
 
