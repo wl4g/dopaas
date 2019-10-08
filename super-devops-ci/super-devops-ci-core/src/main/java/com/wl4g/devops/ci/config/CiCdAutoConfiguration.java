@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -26,6 +27,8 @@ import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
+import com.wl4g.devops.support.beans.DelegateAlias;
+import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
 
 /**
  * CICD auto configuration.
@@ -35,6 +38,7 @@ import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
  * @since
  */
 @Configuration
+@Import(DelegateAliasPrototypeBeanFactory.class)
 public class CiCdAutoConfiguration {
 
 	@Bean
@@ -59,6 +63,7 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
+	@DelegateAlias("mvnAssTarPipe")
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
 		return new MvnAssembleTarPipelineProvider(info);

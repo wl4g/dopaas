@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
+import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
 
 /**
  * Based deploy provider.
@@ -27,7 +28,7 @@ import com.wl4g.devops.common.bean.ci.dto.TaskResult;
  * @author Wangl.sir <983708408@qq.com>
  * @date 2019-05-05 17:17:00
  */
-public abstract interface PipelineProvider {
+public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 
 	/**
 	 * Pipeline type definition.
