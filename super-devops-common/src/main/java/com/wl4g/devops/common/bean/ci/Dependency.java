@@ -15,9 +15,12 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import java.io.Serializable;
-
 import com.wl4g.devops.common.bean.BaseBean;
+
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class Dependency extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
@@ -88,5 +91,51 @@ public class Dependency extends BaseBean implements Serializable {
 
 	public void setParentName(String parentName) {
 		this.parentName = parentName;
+	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Dependency that = (Dependency) o;
+		return Objects.equals(projectId, that.projectId) &&
+				Objects.equals(branch, that.branch);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(projectId, branch);
+	}
+
+
+
+
+	//test
+	public static void main(String[] args){
+		Set<Dependency> set = new LinkedHashSet<>();
+
+		Dependency d1 = new Dependency();
+		d1.setProjectId(1);
+		d1.setBranch("1");
+		d1.setId(1);
+		set.add(d1);
+
+		Dependency d2 = new Dependency();
+		d2.setProjectId(2);
+		d2.setBranch("1");
+		d2.setId(2);
+		set.add(d2);
+
+		Dependency d3 = new Dependency();
+		d3.setProjectId(1);
+		d3.setBranch("1");
+		d3.setId(3);
+		set.add(d3);
+
+		System.out.println(set);
+
+
+
 	}
 }
