@@ -3,7 +3,9 @@ package com.wl4g.devops.ci.core;
 import com.wl4g.devops.ci.anno.DeployType;
 import com.wl4g.devops.ci.bean.BaseDeployBean;
 import com.wl4g.devops.ci.constant.DeployTypeEnum;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,9 @@ public class DeployAdapter {
     @Autowired
     private TaskHistoryDao taskHistoryDao;
 
+    @Autowired
+    private ProjectDao projectDao;
+
     private final Map<DeployTypeEnum, DeployInterface> deployInterfaceMap;
 
 
@@ -33,9 +38,12 @@ public class DeployAdapter {
     public void deploy(DeployTypeEnum deployTypeEnum,int taskHisId) throws Exception {
         TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(taskHisId);
         Assert.notNull(taskHistory,"not found Task History");
+        Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
+        Assert.notNull(project,"not found Project");
         DeployInterface deployInterface = getDeploy(deployTypeEnum);
         BaseDeployBean bean = new BaseDeployBean();
         bean.setTaskHistory(taskHistory);
+        bean.setProject(project);
         deployInterface.getSource(bean);
         deployInterface.build(bean);
         if (!bean.getTaskResult().isSuccess()) {
@@ -57,9 +65,12 @@ public class DeployAdapter {
     public void rollback(DeployTypeEnum deployTypeEnum,int taskHisId) throws Exception {
         TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(taskHisId);
         Assert.notNull(taskHistory,"not found Task History");
+        Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
+        Assert.notNull(project,"not found Project");
         DeployInterface deployInterface = getDeploy(deployTypeEnum);
         BaseDeployBean bean = new BaseDeployBean();
         bean.setTaskHistory(taskHistory);
+        bean.setProject(project);
         deployInterface.rollback(bean);
 
     }

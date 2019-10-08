@@ -110,32 +110,4 @@ public class Dependency extends BaseBean implements Serializable {
 
 
 
-
-	//test
-	public static void main(String[] args){
-		Set<Dependency> set = new LinkedHashSet<>();
-
-		Dependency d1 = new Dependency();
-		d1.setProjectId(1);
-		d1.setBranch("1");
-		d1.setId(1);
-		set.add(d1);
-
-		Dependency d2 = new Dependency();
-		d2.setProjectId(2);
-		d2.setBranch("1");
-		d2.setId(2);
-		set.add(d2);
-
-		Dependency d3 = new Dependency();
-		d3.setProjectId(1);
-		d3.setBranch("1");
-		d3.setId(3);
-		set.add(d3);
-
-		System.out.println(set);
-
-
-
-	}
 }

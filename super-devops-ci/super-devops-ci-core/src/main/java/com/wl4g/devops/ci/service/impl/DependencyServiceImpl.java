@@ -29,6 +29,7 @@ import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +37,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_LOCK;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 /**
  * Dependency service implements
@@ -67,6 +70,115 @@ public class DependencyServiceImpl implements DependencyService {
 
 	@Autowired
 	private TaskSignDao taskSignDao;
+
+	@Autowired
+	private SimpleRedisLockManager lockManager;
+
+
+	/**
+	 * get dependency
+	 * @param projectId
+	 * @param set
+	 * @return
+	 */
+	private LinkedHashSet<Dependency> getDependencys(Integer projectId, LinkedHashSet<Dependency> set){
+		if(null == set){
+			set = new LinkedHashSet<>();
+		}
+		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
+		if (dependencies != null && dependencies.size() > 0) {
+			for (Dependency dep : dependencies) {
+				set.add(dep);
+				getDependencys(dep.getDependentId(),set);
+			}
+		}
+		return set;
+	}
+
+	/**
+	 * build
+	 * @param taskHistory
+	 * @param taskResult
+	 * @throws Exception
+	 */
+	public void build(TaskHistory taskHistory, TaskResult taskResult) throws Exception{
+
+		LinkedHashSet<Dependency> dependencys = getDependencys(taskHistory.getProjectId(), null);
+		Dependency[] dependencys2 = (Dependency[]) dependencys.toArray();
+
+		for (int i = dependencys2.length - 1; i >= 0; i--) {
+			Dependency dependency1 = dependencys2[i];
+			build(taskHistory,dependency1.getProjectId(),dependency1.getDependentId(),dependency1.getBranch(),taskResult,true);
+			// Is Continue ? if fail then return
+			if (!taskResult.isSuccess()) {
+				return;
+			}
+		}
+
+		build(taskHistory,taskHistory.getProjectId(),null,taskHistory.getBranchName(),taskResult,false);
+
+	}
+
+
+	private void build(TaskHistory taskHistory, Integer projectId,Integer dependencyId, String branch, TaskResult taskResult, boolean isDependency)throws Exception{
+		// ===== redis lock =====
+		Lock lock = lockManager.getLock(CI_LOCK+projectId, LOCK_TIME, TimeUnit.MINUTES);
+		if(lock.tryLock()){// needn't wait
+			//Do
+			try {
+				build2(taskHistory,projectId,dependencyId,branch,taskResult,isDependency);
+			}finally {
+				lock.unlock();
+			}
+		}else{
+			//not yet
+			try {
+				if (lock.tryLock(LOCK_TIME, TimeUnit.MINUTES)) {//Wait
+					log.info("One Task is running , just waiting and do nothing");
+					lock.unlock();
+				} else {
+					log.error("One Task is running ,Waiting timeout");
+				}
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			} finally {
+				//lock.unlock();
+			}
+
+		}
+	}
+
+	private void build2(TaskHistory taskHistory, Integer projectId,Integer dependencyId, String branch, TaskResult taskResult, boolean isDependency) throws Exception{
+		log.info("build start projectId={}", projectId);
+		Project project = projectDao.selectByPrimaryKey(projectId);
+		Assert.notNull(project, "project not exist");
+
+
+		String path = config.getGitBasePath() + "/" + project.getProjectName();
+		if (GitUtils.checkGitPath(path)) {// 若果目录存在则:chekcout 分支 并 pull
+			GitUtils.checkout(config.getCredentials(), path, branch);
+			taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
+		} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
+			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+			taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
+		}
+
+		// save dependency git sha -- 保存依赖项目的sha，用于回滚时找回对应的 历史依赖项目
+		if (isDependency) {
+			TaskSign taskSign = new TaskSign();
+			taskSign.setTaskId(taskHistory.getId());
+			taskSign.setDependenvyId(dependencyId);
+			taskSign.setShaGit(GitUtils.getLatestCommitted(path));
+			taskSignDao.insertSelective(taskSign);
+		}
+
+		// run install command
+		String installResult = mvnInstall(path, taskResult);
+
+		// ===== build end =====
+		taskResult.getStringBuffer().append(installResult);
+
+	}
 
 	/**
 	 * maven install -- if it has dependency project , build dependency first
