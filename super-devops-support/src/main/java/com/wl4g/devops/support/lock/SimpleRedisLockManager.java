@@ -17,10 +17,6 @@ package com.wl4g.devops.support.lock;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +28,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 /**
  * Simple spin lock manager.
