@@ -16,11 +16,13 @@
 package com.wl4g.devops.ci.utils;
 
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
+import com.wl4g.devops.common.utils.io.FileWriteUtil;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
@@ -34,59 +36,72 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @since
  */
 public abstract class CommandUtils {
-	final private static Logger log = LoggerFactory.getLogger(CommandUtils.class);
+    final private static Logger log = LoggerFactory.getLogger(CommandUtils.class);
 
-	/**
-	 * Execute commands in local
-	 */
-	public static String exec(String cmd) throws Exception {
-		return exec(cmd, null);
-	}
+    /**
+     * Execute commands in local
+     */
+    public static String exec(String cmd) throws Exception {
+        return exec(cmd, null);
+    }
 
-	public static String exec(String cmd, TaskResult taskResult) throws Exception {
-		return exec(cmd, null, taskResult);
-	}
+    public static String exec(String cmd, TaskResult taskResult) throws Exception {
+        return exec(cmd, null, taskResult);
+    }
 
-	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
-		if (log.isInfoEnabled()) {
-			log.info("Execution native command for '{}'", cmd);
-		}
+    public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
+        if (log.isInfoEnabled()) {
+            log.info("Execution native command for '{}'", cmd);
+        }
 
-		StringBuffer slog = new StringBuffer();
-		StringBuffer serr = new StringBuffer();
+        StringBuilder slog = new StringBuilder();
+        StringBuilder serr = new StringBuilder();
 
-		Process ps = Runtime.getRuntime().exec(cmd);
-		BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-		BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
-		String inlog;
-		while ((inlog = blog.readLine()) != null) {
-			if (callback != null) {
-				if (!callback.apply(inlog)) {
-					throw new InterruptedException("Commands force interrupted!");
-				}
-			}
-			slog.append(inlog).append("\n");
-			log.info(inlog);
-			ShellContextHolder.printfQuietly(inlog);
-		}
-		while ((inlog = berr.readLine()) != null) {
-			serr.append(inlog).append("\n");
-			log.info(inlog);
-			ShellContextHolder.printfQuietly(inlog);
-		}
-		ps.waitFor();
-		int exitValue = ps.exitValue();
-		if (exitValue != 0) {
-			taskResult.setSuccess(false);
-		}
-		String log = slog.toString();
-		String err = serr.toString();
-		if (isNotBlank(err)) {
-			log += err;
-			throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + log.toString());
-		}
+        Process ps = Runtime.getRuntime().exec(cmd);
+        try (BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+             BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
+            String inlog;
+            while ((inlog = blog.readLine()) != null) {
+                if (callback != null) {
+                    if (!callback.apply(inlog)) {
+                        throw new InterruptedException("Commands force interrupted!");
+                    }
+                }
+                slog.append(inlog).append("\n");
+                writeResult(taskResult, inlog + "\n");
+                log.info(inlog);
+                ShellContextHolder.printfQuietly(inlog);
+            }
+            while ((inlog = berr.readLine()) != null) {
+                serr.append(inlog).append("\n");
+                writeResult(taskResult, inlog + "\n");
+                log.info(inlog);
+                ShellContextHolder.printfQuietly(inlog);
+            }
 
-		return log;
-	}
+            ps.waitFor();
+            int exitValue = ps.exitValue();
+            if (exitValue != 0) {
+                taskResult.setSuccess(false);
+            }
+            String log = slog.toString();
+            String err = serr.toString();
+            if (isNotBlank(err)) {
+                log += err;
+                throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + log.toString());
+            }
+            return log;
+        }
+
+    }
+
+
+    private static void writeResult(TaskResult taskResult, String result) {
+        if (null == taskResult || taskResult.getLogFile() == null) {
+            return;
+        }
+        File logFile = taskResult.getLogFile();
+        FileWriteUtil.writerFile(result, logFile);
+    }
 
 }

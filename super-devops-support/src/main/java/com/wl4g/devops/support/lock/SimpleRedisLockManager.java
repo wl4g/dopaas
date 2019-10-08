@@ -114,8 +114,8 @@ public class SimpleRedisLockManager {
 		}
 
 		@Override
-		public boolean tryLock(long time, TimeUnit timeUnit) throws InterruptedException {
-			long t = timeUnit.toMillis(time) / FREQ_MS, c = 0;
+		public boolean tryLock(long tryTimeout, TimeUnit timeUnit) throws InterruptedException {
+			long t = timeUnit.toMillis(tryTimeout) / FREQ_MS, c = 0;
 			while (t > (++c)) {
 				Thread.sleep(FREQ_MS);
 				if (Objects.nonNull(jedisCluster.set(name, processId, NXXX, EXPX, timeoutMs))) {
