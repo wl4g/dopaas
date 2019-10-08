@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,35 +35,38 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 
 /**
- * Delegate prototype bean factory.
- *
+ * Delegate prototype bean factory.</br>
+ * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  * @see {@link MapperScannerRegistrar} struct implements.
  */
-public class DelegatePrototypeBeanFactory<T> implements ImportBeanDefinitionRegistrar {
+public class DelegateAliasPrototypeBeanFactory implements ImportBeanDefinitionRegistrar {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Delegate prototype bean class registry.
 	 */
-	final protected Map<String, Class<? extends T>> beanClassRegistry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<String, Class<? extends DelegateAliasPrototypeBean>> beanClassRegistry = new OnceModifiableMap<>(
+			new HashMap<>());
 
 	@Autowired
 	protected BeanFactory beanFactory;
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-		for (String bdn : registry.getBeanDefinitionNames()) {
-			BeanDefinition bd = registry.getBeanDefinition(bdn);
-			if (bd.isPrototype()) {
+	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+		for (String beanName : registry.getBeanDefinitionNames()) {
+			BeanDefinition bd = registry.getBeanDefinition(beanName);
+			if (Objects.nonNull(beanName) && bd.isPrototype()) {
 				if (bd instanceof AnnotatedBeanDefinition) {
 					if (log.isDebugEnabled()) {
 						log.debug("Register prototype bean class with annotatedBeanDefinition ... - {}", bd);
@@ -71,28 +74,38 @@ public class DelegatePrototypeBeanFactory<T> implements ImportBeanDefinitionRegi
 
 					AnnotatedBeanDefinition abd = (AnnotatedBeanDefinition) bd;
 					String prototypeBeanClassName = null;
+					// Bean alias, Used to get prototype bean
+					// instance.
+					String beanAlias = beanName;
 					if (bd instanceof ScannedGenericBeanDefinition) {
 						/*
 						 * Using with @Service/@Component...
 						 */
-						prototypeBeanClassName = abd.getMetadata().getClassName();
+						AnnotationMetadata metadata = abd.getMetadata();
+						if (Objects.nonNull(metadata)) {
+							prototypeBeanClassName = metadata.getClassName();
+							// TODO get custom alias
+						}
 					} else {
 						/*
-						 * See:ConfigurationClassBeanDefinition, using
-						 * with @Configuration
+						 * Using with @Configuration
+						 * See:ConfigurationClassBeanDefinition
 						 */
-						if (Objects.nonNull(abd.getFactoryMethodMetadata())) {
-							prototypeBeanClassName = abd.getFactoryMethodMetadata().getReturnTypeName();
+						MethodMetadata metadata = abd.getFactoryMethodMetadata();
+						if (Objects.nonNull(metadata)) {
+							prototypeBeanClassName = metadata.getReturnTypeName();
+							// TODO get custom alias
 						}
 					}
 					if (!isBlank(prototypeBeanClassName)) {
 						try {
-							@SuppressWarnings("unchecked")
-							Class<? extends T> beanClass = (Class<? extends T>) forName(prototypeBeanClassName,
-									getDefaultClassLoader());
-							if (Objects.isNull(beanClassRegistry.putIfAbsent("", beanClass))) {
-								if (log.isDebugEnabled()) {
-									log.debug("Registed prototype bean class - {}", beanClass);
+							Class<?> beanClass = forName(prototypeBeanClassName, getDefaultClassLoader());
+							if (DelegateAliasPrototypeBean.class.isAssignableFrom(beanClass)) {
+								if (Objects.isNull(beanClassRegistry.putIfAbsent(beanAlias,
+										(Class<? extends DelegateAliasPrototypeBean>) beanClass))) {
+									if (log.isDebugEnabled()) {
+										log.debug("Registed prototype bean class - {}", beanClass);
+									}
 								}
 							}
 						} catch (LinkageError | ClassNotFoundException e) {
@@ -102,18 +115,21 @@ public class DelegatePrototypeBeanFactory<T> implements ImportBeanDefinitionRegi
 				}
 			}
 		}
+
 	}
 
 	/**
-	 * Get new prototype bean instance.
+	 * Get and create prototype bean instance by alias.
 	 * 
-	 * @param type
+	 * @param alias
+	 * @param args
 	 * @return
 	 */
-	public T getBean(@NotNull T type, @NotNull Object... args) {
-		Class<? extends T> beanClass = this.beanClassRegistry.get(type);
-		Assert.notNull(beanClass, String.format("Unsupported prototype beanClass for '%s'", type));
-		return this.beanFactory.getBean(beanClass, args);
+	@SuppressWarnings("unchecked")
+	public <T extends DelegateAliasPrototypeBean> T getPrototypeBean(@NotNull String alias, @NotNull Object... args) {
+		Class<?> beanClass = this.beanClassRegistry.get(alias);
+		Assert.notNull(beanClass, String.format("Unsupported prototype beanClass for '%s'", alias));
+		return (T) this.beanFactory.getBean(beanClass, args);
 	}
 
 }
