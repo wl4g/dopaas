@@ -50,7 +50,7 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProject().getId());
 		// maven install , include dependency
-		getDependencyService().build(getTaskHistory(), dependency, getBranch(), taskResult, false);
+		getDependencyService().build(getTaskHistory() ,taskResult);//TODO 修改后要测试
 		if (!taskResult.isSuccess()) {
 			return;
 		}

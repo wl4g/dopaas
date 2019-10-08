@@ -34,7 +34,7 @@ public interface DeployInterface {
     void bakcup(BaseDeployBean bean) throws Exception;
 
     //rollback
-    void rollback(BaseDeployBean bean);
+    void rollback(BaseDeployBean bean) throws Exception;
 
 
 

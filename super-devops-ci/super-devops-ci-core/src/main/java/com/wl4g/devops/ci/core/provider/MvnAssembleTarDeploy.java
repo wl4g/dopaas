@@ -155,8 +155,34 @@ public class MvnAssembleTarDeploy extends BaseDeploy implements DeployInterface 
     }
 
     @Override
-    public void rollback(BaseDeployBean bean) {
+    public void rollback(BaseDeployBean bean) throws Exception {
+        String path = config.getGitBasePath() + "/" + bean.getTaskHistory().getProjectName();
+        Dependency dependency = new Dependency();
+        dependency.setProjectId(bean.getProject().getId());
+        // Old file
+        String oldFilePath = config.getBackupPath() + "/" + subPackname(bean.getProject().getTarPath()) + "#"
+                + bean.getTaskHistory().getRefId();
+        File oldFile = new File(oldFilePath);
+        if (oldFile.exists()) {// Check bakup file isExist , if not -- check out
+            // from git
+            getBackupLocal(oldFilePath, path + bean.getProject().getTarPath());
+            TaskHistory refTaskHistory = taskHistoryService.getById(bean.getTaskHistory().getRefId());
+            TaskHistory taskHistoryUpdate = new TaskHistory();
+            taskHistoryUpdate.setId(bean.getTaskHistory().getId());
+            taskHistoryUpdate.setShaGit(refTaskHistory.getShaGit());
+            taskHistoryDao.updateByPrimaryKeySelective(taskHistoryUpdate);
 
+        } else {
+            //TODO
+            //getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), taskResult, false);
+            //setShaGit(GitUtils.getLatestCommitted(getPath()));
+        }
+
+        List<Thread> threads = deploy(bean);
+        for(Thread thread: threads){
+            thread.start();
+            thread.join();
+        }
     }
 
 
