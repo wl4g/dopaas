@@ -1,9 +1,13 @@
 package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.anno.DeployType;
+import com.wl4g.devops.ci.bean.BaseDeployBean;
 import com.wl4g.devops.ci.constant.DeployTypeEnum;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,31 +21,47 @@ import java.util.stream.Collectors;
 @Component
 public class DeployAdapter {
 
+    @Autowired
+    private TaskHistoryDao taskHistoryDao;
+
     private final Map<DeployTypeEnum, DeployInterface> deployInterfaceMap;
 
+
     /**
-     * 部署
+     * deploy
      */
-    public void deploy(DeployTypeEnum deployTypeEnum) throws Exception {
+    public void deploy(DeployTypeEnum deployTypeEnum,int taskHisId) throws Exception {
+        TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(taskHisId);
+        Assert.notNull(taskHistory,"not found Task History");
         DeployInterface deployInterface = getDeploy(deployTypeEnum);
-        deployInterface.getSource();
-        deployInterface.build();
-        deployInterface.bakcup();
-        deployInterface.preCommand();
-        deployInterface.transport();
-        deployInterface.postCommand();
+        BaseDeployBean bean = new BaseDeployBean();
+        bean.setTaskHistory(taskHistory);
+        deployInterface.getSource(bean);
+        deployInterface.build(bean);
+        if (!bean.getTaskResult().isSuccess()) {
+            return;
+        }
+        deployInterface.bakcup(bean);
+        deployInterface.preCommand(bean);
+
+        List<Thread> threads = deployInterface.deploy(bean);
+        for(Thread thread: threads){
+            thread.start();
+            thread.join();
+        }
     }
 
     /**
-     * 回滚
+     * rollback
      */
-    public void rollback(DeployTypeEnum deployTypeEnum) throws Exception {
+    public void rollback(DeployTypeEnum deployTypeEnum,int taskHisId) throws Exception {
+        TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(taskHisId);
+        Assert.notNull(taskHistory,"not found Task History");
         DeployInterface deployInterface = getDeploy(deployTypeEnum);
-        deployInterface.rollback();
-        deployInterface.build();
-        deployInterface.preCommand();
-        deployInterface.transport();
-        deployInterface.postCommand();
+        BaseDeployBean bean = new BaseDeployBean();
+        bean.setTaskHistory(taskHistory);
+        deployInterface.rollback(bean);
+
     }
 
     public DeployInterface getDeploy(DeployTypeEnum deployTypeEnum){

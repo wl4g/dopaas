@@ -8,9 +8,7 @@ public enum DeployTypeEnum {
 
     MvnAssembleTar,//normal use type
     DockerNative,//docker
-    DockerK8s,//docker
     SpringbootExecutable,//spring boot jar
-    NativeJar,
     DjangoStandard,
     ;
 
