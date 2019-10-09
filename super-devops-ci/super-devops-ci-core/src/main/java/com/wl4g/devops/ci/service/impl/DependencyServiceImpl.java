@@ -101,32 +101,32 @@ public class DependencyServiceImpl implements DependencyService {
 	 * @param taskResult
 	 * @throws Exception
 	 */
-	public void build(TaskHistory taskHistory, TaskResult taskResult) throws Exception{
+	public void build(TaskHistory taskHistory, TaskResult taskResult,boolean isRollback) throws Exception{
 
 		LinkedHashSet<Dependency> dependencys = getDependencys(taskHistory.getProjectId(), null);
 		Dependency[] dependencys2 = (Dependency[]) dependencys.toArray();
 
 		for (int i = dependencys2.length - 1; i >= 0; i--) {
 			Dependency dependency1 = dependencys2[i];
-			build(taskHistory,dependency1.getProjectId(),dependency1.getDependentId(),dependency1.getBranch(),taskResult,true);
+			build(taskHistory,dependency1.getProjectId(),dependency1.getDependentId(),dependency1.getBranch(),taskResult,true,isRollback);
 			// Is Continue ? if fail then return
 			if (!taskResult.isSuccess()) {
 				return;
 			}
 		}
 
-		build(taskHistory,taskHistory.getProjectId(),null,taskHistory.getBranchName(),taskResult,false);
+		build(taskHistory,taskHistory.getProjectId(),null,taskHistory.getBranchName(),taskResult,false,isRollback);
 
 	}
 
 
-	private void build(TaskHistory taskHistory, Integer projectId,Integer dependencyId, String branch, TaskResult taskResult, boolean isDependency)throws Exception{
+	private void build(TaskHistory taskHistory, Integer projectId,Integer dependencyId, String branch, TaskResult taskResult, boolean isDependency,boolean isRollback)throws Exception{
 		// ===== redis lock =====
 		Lock lock = lockManager.getLock(CI_LOCK+projectId, LOCK_TIME, TimeUnit.MINUTES);
 		if(lock.tryLock()){// needn't wait
 			//Do
 			try {
-				build2(taskHistory,projectId,dependencyId,branch,taskResult,isDependency);
+				build2(taskHistory,projectId,dependencyId,branch,taskResult,isDependency,isRollback);
 			}finally {
 				lock.unlock();
 			}
@@ -148,19 +148,41 @@ public class DependencyServiceImpl implements DependencyService {
 		}
 	}
 
-	private void build2(TaskHistory taskHistory, Integer projectId,Integer dependencyId, String branch, TaskResult taskResult, boolean isDependency) throws Exception{
+	private void build2(TaskHistory taskHistory, Integer projectId,Integer dependencyId, String branch, TaskResult taskResult, boolean isDependency,boolean isRollback) throws Exception{
 		log.info("build start projectId={}", projectId);
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		Assert.notNull(project, "project not exist");
 
 
 		String path = config.getGitBasePath() + "/" + project.getProjectName();
-		if (GitUtils.checkGitPath(path)) {// 若果目录存在则:chekcout 分支 并 pull
-			GitUtils.checkout(config.getCredentials(), path, branch);
-			taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
-		} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-			GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-			taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
+
+		if(isRollback){
+			String sha;
+			if (isDependency) {
+				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependencyId, taskHistory.getRefId());
+				Assert.notNull(taskSign, "not found taskSign");
+				sha = taskSign.getShaGit();
+			} else {
+				sha = taskHistory.getShaGit();
+			}
+
+			if (GitUtils.checkGitPath(path)) {
+				GitUtils.rollback(config.getCredentials(), path, sha);
+				taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
+			} else {
+				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+				taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
+				GitUtils.rollback(config.getCredentials(), path, sha);
+				taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
+			}
+		}else{
+			if (GitUtils.checkGitPath(path)) {// 若果目录存在则:chekcout 分支 并 pull
+				GitUtils.checkout(config.getCredentials(), path, branch);
+				taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
+			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
+				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+				taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
+			}
 		}
 
 		// save dependency git sha -- 保存依赖项目的sha，用于回滚时找回对应的 历史依赖项目
@@ -192,7 +214,7 @@ public class DependencyServiceImpl implements DependencyService {
 	 * @throws Exception
 	 */
 	@Override
-	public void build(TaskHistory taskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency)
+	public void build(TaskHistory taskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency,boolean isRollback)
 			throws Exception {
 		Integer projectId = dependency.getProjectId();
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
@@ -202,7 +224,7 @@ public class DependencyServiceImpl implements DependencyService {
 				Dependency dependency1 = new Dependency(dep.getDependentId());
 				dependency1.setId(dep.getId());
 				// 如果依赖配置中有配置分支，则用配置的分支，若没有，则默认用打包项目的分支
-				build(taskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, taskResult, true);
+				build(taskHistory, dependency1, StringUtils.isBlank(br) ? branch : br, taskResult, true,isRollback);
 			}
 		}
 
@@ -222,12 +244,35 @@ public class DependencyServiceImpl implements DependencyService {
 			projectService.updateLockStatus(projectId, TASK_LOCK_STATUS_LOCK);// 锁定项目，防止同一个项目同时build
 
 			String path = config.getGitBasePath() + "/" + project.getProjectName();
-			if (GitUtils.checkGitPath(path)) {// 若果目录存在则:chekcout 分支 并 pull
-				GitUtils.checkout(config.getCredentials(), path, branch);
-				taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
-			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
-				taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
+
+
+			if(isRollback){
+				String sha;
+				if (isDependency) {
+					TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependency.getId(), taskHistory.getRefId());
+					Assert.notNull(taskSign, "not found taskSign");
+					sha = taskSign.getShaGit();
+				} else {
+					sha = taskHistory.getShaGit();
+				}
+
+				if (GitUtils.checkGitPath(path)) {
+					GitUtils.rollback(config.getCredentials(), path, sha);
+					taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
+				} else {
+					GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+					taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
+					GitUtils.rollback(config.getCredentials(), path, sha);
+					taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
+				}
+			}else{
+				if (GitUtils.checkGitPath(path)) {// 若果目录存在则:chekcout 分支 并 pull
+					GitUtils.checkout(config.getCredentials(), path, branch);
+					taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
+				} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
+					GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+					taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
+				}
 			}
 
 			// save dependency git sha -- 保存依赖项目的sha，用于回滚时找回对应的 历史依赖项目
