@@ -24,14 +24,19 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
- * Spring container context holder.
+ * Spring container context holder.</br>
  * 
- * @author wangl.sir
- * @version v1.0 2019年7月12日
+ * Deprecated use classes, because there may be injection disorder leading to
+ * exceptions when using @{@link Configuration} and @{@link Component}
+ * or @{@link Service} etc.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-07-12
  * @since
  */
 @Component("devopsUtilitySpringContainerContexts")
 @Lazy(false)
+@Deprecated
 public class SpringContexts implements ApplicationContextAware, DisposableBean {
 	final private static Logger logger = LoggerFactory.getLogger(SpringContexts.class);
 

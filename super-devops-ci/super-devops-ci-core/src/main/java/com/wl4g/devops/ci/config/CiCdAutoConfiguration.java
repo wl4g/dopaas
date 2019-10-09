@@ -19,16 +19,17 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
+import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
+import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.SpringExecutableJarPipelineProvider;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 import com.wl4g.devops.support.beans.DelegateAlias;
-import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
 
 /**
  * CICD auto configuration.
@@ -38,7 +39,6 @@ import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
  * @since
  */
 @Configuration
-@Import(DelegateAliasPrototypeBeanFactory.class)
 public class CiCdAutoConfiguration {
 
 	@Bean
@@ -62,11 +62,36 @@ public class CiCdAutoConfiguration {
 		return new GitlabV4VcsOperator();
 	}
 
+	//
+	// Pipeline provider.
+	//
+
 	@Bean
-	@DelegateAlias("mvnAssTarPipe")
+	@DelegateAlias({ "MvnAssTarPipeline", "MvnAssTar" })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
 		return new MvnAssembleTarPipelineProvider(info);
+	}
+
+	@Bean
+	@DelegateAlias({ "DjangoStdPipeline", "DjangoStd" })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
+		return new DjangoStandardPipelineProvider(info);
+	}
+
+	@Bean
+	@DelegateAlias({ "SpringExecJarPipeline", "SpringExecJar" })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineInfo info) {
+		return new SpringExecutableJarPipelineProvider(info);
+	}
+
+	@Bean
+	@DelegateAlias({ "DockerNativePipeline", "DockerNative" })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineInfo info) {
+		return new DockerNativePipelineProvider(info);
 	}
 
 }

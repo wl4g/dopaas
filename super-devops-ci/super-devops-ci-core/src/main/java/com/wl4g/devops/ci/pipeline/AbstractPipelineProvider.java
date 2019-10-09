@@ -26,10 +26,10 @@ import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
-import com.wl4g.devops.common.utils.context.SpringContexts;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.util.Date;
@@ -48,7 +48,14 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Deployments properties configuration.
 	 */
-	final protected CiCdProperties config;
+	@Autowired
+	protected CiCdProperties config;
+
+	/**
+	 * Dependency service
+	 */
+	@Autowired
+	protected DependencyService dependencyService;
 
 	/**
 	 * branch name
@@ -79,11 +86,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * TaskHistoryDetails
 	 */
 	final private List<TaskHistoryDetail> taskHistoryDetails;
-
-	/**
-	 * Service
-	 */
-	final private DependencyService dependencyService;
 
 	/**
 	 * Task History
@@ -118,7 +120,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected TaskResult taskResult = new TaskResult();
 
 	public AbstractPipelineProvider(PipelineInfo info) {
-		this.config = SpringContexts.getBean(CiCdProperties.class);
 		this.path = info.getPath();
 		this.branch = info.getBranch();
 		this.alias = info.getAlias();
@@ -129,7 +130,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		String[] a = info.getProject().getTarPath().split("/");
 		this.tarName = a[a.length - 1];
 		this.project = info.getProject();
-		this.dependencyService = SpringContexts.getBean(DependencyService.class);
 	}
 
 	/**

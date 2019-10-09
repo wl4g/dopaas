@@ -15,6 +15,14 @@
  */
 package com.wl4g.devops.support.beans;
 
+/**
+ * Delegate alias prototype bean, beans that implements this interface will be
+ * automatically assembled into {@link DelegateAliasPrototypeBeanFactory}
+ * 
+ * @author Wangl.sir <Wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0.0 2019-10-09
+ * @since
+ */
 public interface DelegateAliasPrototypeBean {
 
 }

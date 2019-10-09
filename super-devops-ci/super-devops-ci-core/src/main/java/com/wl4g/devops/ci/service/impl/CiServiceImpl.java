@@ -35,9 +35,11 @@ import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
+import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
 import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -56,12 +58,15 @@ import static java.util.Arrays.asList;
  * @date 2019-05-16 14:50:00
  */
 @Service
-public class CiServiceImpl implements CiService {
+public class CiServiceImpl implements CiService, InitializingBean {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private CiCdProperties config;
+	protected CiCdProperties config;
+
+	@Autowired
+	protected DelegateAliasPrototypeBeanFactory providerBeanFactory;
 
 	@Autowired
 	private AppClusterDao appClusterDao;
@@ -381,6 +386,19 @@ public class CiServiceImpl implements CiService {
 				}
 			}
 		}).start();
+	}
+
+	//
+	// TODO - for testing.
+	//
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		PipelineInfo info = new DefaultPipelineInfo();
+		Project p = new Project();
+		p.setTarPath("aa/bb");
+		info.setProject(p);
+		PipelineProvider provider = providerBeanFactory.getPrototypeBean("MvnAssTarPipeline", info);
+		System.out.println(provider);
 	}
 
 }
