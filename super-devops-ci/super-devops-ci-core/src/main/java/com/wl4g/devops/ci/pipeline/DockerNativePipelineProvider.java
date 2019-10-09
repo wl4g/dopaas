@@ -51,7 +51,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider {
 	public void execute() throws Exception {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProject().getId());
-		getDependencyService().build(getTaskHistory(), dependency, getBranch(), taskResult, false);
+		getDependencyService().build(getTaskHistory(), taskResult, false);
 
 		// get sha and md5
 		setShaGit(GitUtils.getLatestCommitted(getPath()));
