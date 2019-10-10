@@ -25,6 +25,7 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskSign;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
+import com.wl4g.devops.common.exception.ci.LockStateException;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -131,20 +132,19 @@ public class DependencyServiceImpl implements DependencyService {
 				lock.unlock();
 			}
 		}else{
-			//not yet
+			log.info("One Task is running , just waiting and do nothing");
 			try {
 				if (lock.tryLock(LOCK_TIME, TimeUnit.MINUTES)) {//Wait
-					log.info("One Task is running , just waiting and do nothing");
-					lock.unlock();
+					log.info("The task is finish , jemp this project build");
 				} else {
-					log.error("One Task is running ,Waiting timeout");
+					//One Task is running , and Waiting timeout
+					throw new LockStateException("One Task is running ,Waiting timeout");
 				}
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			} finally {
-				//lock.unlock();
+				lock.unlock();
 			}
-
 		}
 	}
 
