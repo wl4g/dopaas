@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.admin;
 
-import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.ci.core.CiService;
 import com.wl4g.devops.common.bean.ci.dto.HookInfo;
 import com.wl4g.devops.common.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;

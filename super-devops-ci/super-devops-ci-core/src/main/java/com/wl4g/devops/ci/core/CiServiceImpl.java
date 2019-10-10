@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.service.impl;
+package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
@@ -21,7 +21,6 @@ import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.pipeline.model.DefaultPipelineInfo;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
-import com.wl4g.devops.ci.service.CiService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;

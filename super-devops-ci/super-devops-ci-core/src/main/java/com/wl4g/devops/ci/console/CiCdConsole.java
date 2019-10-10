@@ -21,7 +21,7 @@ import com.wl4g.devops.ci.console.args.InstanceListArgument;
 import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
 import com.wl4g.devops.ci.pipeline.handler.GlobalTimeoutHandlerCleanFinalizer;
-import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.ci.core.CiService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;

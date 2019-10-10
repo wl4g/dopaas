@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.admin;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.ci.core.CiService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;

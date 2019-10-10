@@ -1,7 +1,7 @@
 package com.wl4g.devops.ci.pipeline.handler;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.service.CiService;
+import com.wl4g.devops.ci.core.CiService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;

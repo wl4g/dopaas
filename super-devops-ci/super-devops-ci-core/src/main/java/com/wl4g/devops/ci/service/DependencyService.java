@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Dependency;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.dto.TaskResult;
+
+import java.util.LinkedHashSet;
 
 /**
  * @author vjay
@@ -25,12 +25,6 @@ import com.wl4g.devops.common.bean.ci.dto.TaskResult;
  */
 public interface DependencyService {
 
-	void build(TaskHistory taskHistory,TaskResult taskResult,boolean isRollback) throws Exception;
-
-	void build(TaskHistory taskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency,boolean isRollback)
-			throws Exception;
-
-	void rollback(TaskHistory taskHistory, TaskHistory refTaskHistory, Dependency dependency, String branch,
-			TaskResult taskResult, boolean isDependency) throws Exception;
+	LinkedHashSet<Dependency> getDependencys(Integer projectId, LinkedHashSet<Dependency> set);
 
 }
