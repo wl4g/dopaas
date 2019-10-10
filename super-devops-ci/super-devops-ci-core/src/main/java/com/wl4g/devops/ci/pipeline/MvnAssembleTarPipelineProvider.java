@@ -37,11 +37,6 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		super(info);
 	}
 
-	@Override
-	public PipelineType pipelineType() {
-		return PipelineType.PIPE_MVN_ASSEMBLE_TAR;
-	}
-
 	/**
 	 * Execution build and deploy
 	 */
@@ -50,7 +45,8 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProject().getId());
 		// maven install , include dependency
-		getDependencyService().build(getTaskHistory() ,taskResult,false);//TODO 修改后要测试
+		getDependencyService().build(getTaskHistory(), taskResult, false);// TODO
+																			// 修改后要测试
 		if (!taskResult.isSuccess()) {
 			return;
 		}
@@ -75,8 +71,9 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 			getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
 			setShaGit(getRefTaskHistory().getShaGit());
 		} else {
-			//getDependencyService().rollback(getTaskHistory(), getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-			getDependencyService().build(getTaskHistory() ,taskResult,true);
+			// getDependencyService().rollback(getTaskHistory(),
+			// getRefTaskHistory(), dependency, getBranch(), taskResult, false);
+			getDependencyService().build(getTaskHistory(), taskResult, true);
 			setShaGit(GitUtils.getLatestCommitted(getPath()));
 		}
 		deploy();

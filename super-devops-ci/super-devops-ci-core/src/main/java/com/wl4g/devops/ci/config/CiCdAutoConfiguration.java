@@ -26,6 +26,7 @@ import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType;
 import com.wl4g.devops.ci.pipeline.SpringExecutableJarPipelineProvider;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
@@ -67,28 +68,28 @@ public class CiCdAutoConfiguration {
 	//
 
 	@Bean
-	@DelegateAlias({ "MvnAssTarPipeline", "MvnAssTar" })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
-		return new MvnAssembleTarPipelineProvider(info);
-	}
-
-	@Bean
-	@DelegateAlias({ "DjangoStdPipeline", "DjangoStd" })
+	@DelegateAlias({ PipelineType.DJANGO_STD1, PipelineType.DJANGO_STD2 })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
 		return new DjangoStandardPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({ "SpringExecJarPipeline", "SpringExecJar" })
+	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR1, PipelineType.MVN_ASSEMBLE_TAR2 })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
+		return new MvnAssembleTarPipelineProvider(info);
+	}
+
+	@Bean
+	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR1, PipelineType.SPRING_EXECUTABLE_JAR2 })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineInfo info) {
 		return new SpringExecutableJarPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({ "DockerNativePipeline", "DockerNative" })
+	@DelegateAlias({ PipelineType.DOCKER_NATIVE1, PipelineType.DOCKER_NATIVE2 })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineInfo info) {
 		return new DockerNativePipelineProvider(info);

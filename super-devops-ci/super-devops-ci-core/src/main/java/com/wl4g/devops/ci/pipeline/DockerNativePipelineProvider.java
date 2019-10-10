@@ -37,11 +37,6 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider {
 		super(deployProviderBean);
 	}
 
-	@Override
-	public PipelineType pipelineType() {
-		return PipelineType.PIPE_DOCKER_NATIVE;
-	}
-
 	/**
 	 * execute -- build , push , pull , run
 	 * 
