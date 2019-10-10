@@ -59,6 +59,6 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 
 	// lock
 	public static final String CI_LOCK = "CI_LOCK_";
-	public static final int LOCK_TIME = 10;
+	public static final int LOCK_TIME = 4;
 
 }
