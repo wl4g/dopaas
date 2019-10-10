@@ -18,9 +18,7 @@ package com.wl4g.devops.common.bean.ci;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class Dependency extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
@@ -99,15 +97,11 @@ public class Dependency extends BaseBean implements Serializable {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Dependency that = (Dependency) o;
-		return Objects.equals(projectId, that.projectId) &&
-				Objects.equals(branch, that.branch);
+		return Objects.equals(dependentId, that.dependentId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(projectId, branch);
+		return Objects.hash(dependentId);
 	}
-
-
-
 }

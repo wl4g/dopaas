@@ -368,11 +368,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public void build(TaskHistory taskHistory, TaskResult taskResult, boolean isRollback) throws Exception{
 
 		LinkedHashSet<Dependency> dependencys = dependencyService.getDependencys(taskHistory.getProjectId(), null);
-		Dependency[] dependencys2 = (Dependency[]) dependencys.toArray();
 
-		for (int i = dependencys2.length - 1; i >= 0; i--) {
-			Dependency dependency1 = dependencys2[i];
-			checkLock(taskHistory,dependency1.getProjectId(),dependency1.getDependentId(),dependency1.getBranch(),taskResult,true,isRollback);
+		for (Dependency dependency : dependencys) {
+			checkLock(taskHistory,dependency.getDependentId(),dependency.getDependentId(),dependency.getBranch(),taskResult,true,isRollback);
 			// Is Continue ? if fail then return
 			if (!taskResult.isSuccess()) {
 				return;

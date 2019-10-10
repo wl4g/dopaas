@@ -16,8 +16,6 @@
 package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
-import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.pipeline.model.DefaultPipelineInfo;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
@@ -48,6 +46,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.DOCKER_NATIVE2;
+import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.MVN_ASSEMBLE_TAR2;
 import static java.util.Arrays.asList;
 
 /**
@@ -271,9 +271,9 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
 	private PipelineProvider getDeployProvider(PipelineInfo info) {
 		switch (info.getTarType()) {
 		case CiDevOpsConstants.TAR_TYPE_TAR:
-			return new MvnAssembleTarPipelineProvider(info);
+			return providerBeanFactory.getPrototypeBean(MVN_ASSEMBLE_TAR2, info);
 		case CiDevOpsConstants.TAR_TYPE_DOCKER:
-			return new DockerNativePipelineProvider(info);
+			return providerBeanFactory.getPrototypeBean(DOCKER_NATIVE2, info);
 		default:
 			throw new RuntimeException("unsuppost type:" + info.getTarType());
 		}
@@ -396,7 +396,7 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
 		Project p = new Project();
 		p.setTarPath("aa/bb");
 		info.setProject(p);
-		PipelineProvider provider = providerBeanFactory.getPrototypeBean("MvnAssTarPipeline", info);
+		PipelineProvider provider = providerBeanFactory.getPrototypeBean("PipeWithMvnAssTar", info);
 		System.out.println(provider);
 	}
 
