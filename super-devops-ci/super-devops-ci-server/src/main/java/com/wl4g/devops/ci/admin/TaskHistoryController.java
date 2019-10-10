@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.admin;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.core.CiService;
+import com.wl4g.devops.ci.core.PipelineCoreProcessor;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -42,7 +42,7 @@ import java.util.List;
 public class TaskHistoryController extends BaseController {
 
 	@Autowired
-	private CiService ciService;
+	private PipelineCoreProcessor pipelineCoreProcessor;
 
 	@Autowired
 	private TaskHistoryService taskHistoryService;
@@ -104,7 +104,7 @@ public class TaskHistoryController extends BaseController {
 	public RespBase<?> rollback(Integer taskId) {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
-		ciService.createRollbackTask(taskId);
+		pipelineCoreProcessor.createRollbackTask(taskId);
 		return resp;
 	}
 

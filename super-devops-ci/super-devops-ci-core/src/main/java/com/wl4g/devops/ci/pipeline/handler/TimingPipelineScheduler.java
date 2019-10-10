@@ -1,7 +1,7 @@
 package com.wl4g.devops.ci.pipeline.handler;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.core.CiService;
+import com.wl4g.devops.ci.core.PipelineCoreProcessor;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
@@ -48,7 +48,7 @@ public class TimingPipelineScheduler implements ApplicationRunner {
 	private CiCdProperties config;
 
 	@Autowired
-	private CiService ciService;
+	private PipelineCoreProcessor pipelineCoreProcessor;
 
 	@Autowired
 	private ProjectDao projectDao;
@@ -88,7 +88,7 @@ public class TimingPipelineScheduler implements ApplicationRunner {
 			return;
 		}
 		ScheduledFuture<?> future = threadPoolTaskScheduler.schedule(
-				new TimingPipelineHandler(trigger, project, config, ciService, triggerService, task, taskDetails),
+				new TimingPipelineHandler(trigger, project, config, pipelineCoreProcessor, triggerService, task, taskDetails),
 				new CronTrigger(expression));
 		TimingPipelineScheduler.map.put(key, future);
 	}

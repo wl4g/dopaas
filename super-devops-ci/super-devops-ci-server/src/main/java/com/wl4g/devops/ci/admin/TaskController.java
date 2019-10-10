@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.admin;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.core.CiService;
+import com.wl4g.devops.ci.core.PipelineCoreProcessor;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
@@ -48,7 +48,7 @@ import java.util.List;
 public class TaskController extends BaseController {
 
 	@Autowired
-	private CiService ciService;
+	private PipelineCoreProcessor pipelineCoreProcessor;
 
 	@Autowired
 	private TaskDao taskDao;
@@ -198,7 +198,7 @@ public class TaskController extends BaseController {
 	@RequestMapping(value = "/create")
 	public RespBase<?> create(Integer taskId) {
 		RespBase<Object> resp = RespBase.create();
-		ciService.createTask(taskId);
+		pipelineCoreProcessor.createTask(taskId);
 		return resp;
 	}
 

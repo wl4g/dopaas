@@ -1,7 +1,7 @@
 package com.wl4g.devops.ci.pipeline.handler;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.core.CiService;
+import com.wl4g.devops.ci.core.PipelineCoreProcessor;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -32,7 +32,7 @@ public class TimingPipelineHandler implements Runnable {
 
 	private CiCdProperties config;
 
-	private CiService ciService;
+	private PipelineCoreProcessor pipelineCoreProcessor;
 
 	private TriggerService triggerService;
 
@@ -40,13 +40,13 @@ public class TimingPipelineHandler implements Runnable {
 
 	private List<TaskDetail> taskDetails;
 
-	public TimingPipelineHandler(Trigger trigger, Project project, CiCdProperties config, CiService ciService,
+	public TimingPipelineHandler(Trigger trigger, Project project, CiCdProperties config, PipelineCoreProcessor pipelineCoreProcessor,
 			TriggerService triggerService, Task task, List<TaskDetail> taskDetails) {
 		this.trigger = trigger;
 		// this.triggerDetails = trigger.getTriggerDetails();
 		this.project = project;
 		this.config = config;
-		this.ciService = ciService;
+		this.pipelineCoreProcessor = pipelineCoreProcessor;
 		this.triggerService = triggerService;
 		this.task = task;
 		this.taskDetails = taskDetails;
@@ -61,7 +61,7 @@ public class TimingPipelineHandler implements Runnable {
 			for (TaskDetail taskDetail : taskDetails) {
 				instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
 			}
-			ciService.createTask(task.getId());
+			pipelineCoreProcessor.createTask(task.getId());
 			// set new sha in db
 			String path = config.getGitBasePath() + "/" + project.getProjectName();
 			try {

@@ -26,7 +26,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-05-16 14:45:00
  */
-public interface CiService {
+public interface PipelineCoreProcessor {
 
 	List<AppCluster> grouplist();
 
