@@ -57,7 +57,7 @@ import static java.util.Arrays.asList;
  * @date 2019-05-16 14:50:00
  */
 @Service
-public class CiServiceImpl implements CiService, InitializingBean {
+public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, InitializingBean {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -122,7 +122,7 @@ public class CiServiceImpl implements CiService, InitializingBean {
 	 */
 	@Override
 	public void createTask(Integer taskId) {
-		log.debug("into CiServiceImpl.createTask prarms::" + "taskId = {} ", taskId);
+		log.debug("into PipelineCoreProcessorImpl.createTask prarms::" + "taskId = {} ", taskId);
 		Assert.notNull(taskId, "taskId is null");
 		Task task = taskDao.selectByPrimaryKey(taskId);
 		Assert.notNull(task, "task is null");
@@ -159,7 +159,7 @@ public class CiServiceImpl implements CiService, InitializingBean {
 	 * @param url
 	 */
 	public void hook(String projectName, String branchName, String url) {
-		log.info("into CiServiceImpl.hook prarms::" + "projectName = {} , branchName = {} , url = {} ", projectName, branchName,
+		log.info("into PipelineCoreProcessorImpl.hook prarms::" + "projectName = {} , branchName = {} , url = {} ", projectName, branchName,
 				url);
 		Project project = projectDao.getByProjectName(projectName);
 		if (null == project) {
@@ -286,7 +286,7 @@ public class CiServiceImpl implements CiService, InitializingBean {
 	 * @return
 	 */
 	private PipelineProvider buildDeployProvider(TaskHistory taskHistory) {
-		log.info("into CiServiceImpl.buildDeployProvider prarms::" + "taskHistory = {} ", taskHistory);
+		log.info("into PipelineCoreProcessorImpl.buildDeployProvider prarms::" + "taskHistory = {} ", taskHistory);
 		Assert.notNull(taskHistory, "taskHistory can not be null");
 		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
 		Assert.notNull(project, "project can not be null");
@@ -327,7 +327,7 @@ public class CiServiceImpl implements CiService, InitializingBean {
 	 * @param taskId
 	 */
 	public void createRollbackTask(Integer taskId) {
-		log.info("into CiServiceImpl.rollback prarms::" + "taskId = {} ", taskId);
+		log.info("into PipelineCoreProcessorImpl.rollback prarms::" + "taskId = {} ", taskId);
 		Assert.notNull(taskId, "taskId is null");
 		TaskHistory taskHistoryOld = taskHistoryService.getById(taskId);
 		Assert.notNull(taskHistoryOld, "not found this app");
