@@ -15,14 +15,9 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.dao.ci.DependencyDao;
-import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskSignDao;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,24 +39,9 @@ public class DependencyServiceImpl implements DependencyService {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private CiCdProperties config;
-
-	@Autowired
 	private DependencyDao dependencyDao;
 
-	@Autowired
-	private ProjectDao projectDao;
-
-	@Autowired
-	private ProjectService projectService;
-
-	@Autowired
-	private TaskSignDao taskSignDao;
-
-	@Autowired
-	private SimpleRedisLockManager lockManager;
-
-
+	
 	/**
 	 * get dependency
 	 * @param projectId
