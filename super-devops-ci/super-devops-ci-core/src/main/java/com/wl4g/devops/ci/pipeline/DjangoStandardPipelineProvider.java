@@ -31,11 +31,6 @@ public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
 	}
 
 	@Override
-	public PipelineType pipelineType() {
-		return PipelineType.PIPE_DJANGO_STDAND;
-	}
-
-	@Override
 	public void execute() throws Exception {
 		throw new UnsupportedOperationException();
 	}

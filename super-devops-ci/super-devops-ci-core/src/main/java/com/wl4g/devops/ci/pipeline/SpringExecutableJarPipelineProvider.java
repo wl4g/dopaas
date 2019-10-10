@@ -31,11 +31,6 @@ public class SpringExecutableJarPipelineProvider extends AbstractPipelineProvide
 	}
 
 	@Override
-	public PipelineType pipelineType() {
-		return PipelineType.PIPE_SPRING_EXECUTABLE_JAR;
-	}
-
-	@Override
 	public void execute() throws Exception {
 		throw new UnsupportedOperationException();
 	}
