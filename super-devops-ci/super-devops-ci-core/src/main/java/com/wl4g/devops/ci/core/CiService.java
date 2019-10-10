@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.service;
+package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.share.AppCluster;

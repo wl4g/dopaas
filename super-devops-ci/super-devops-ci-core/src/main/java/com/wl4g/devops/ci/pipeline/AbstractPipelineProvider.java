@@ -26,6 +26,10 @@ import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.TaskSignDao;
+import com.wl4g.devops.shell.utils.ShellContextHolder;
+import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +60,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	@Autowired
 	protected DependencyService dependencyService;
+
+	@Autowired
+	protected SimpleRedisLockManager lockManager;
+
+	@Autowired
+	protected ProjectDao projectDao;
+
+	@Autowired
+	protected TaskSignDao taskSignDao;
+
 
 	/**
 	 * branch name
@@ -242,6 +256,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public String mkdirs(String targetHost, String userName, String path, String rsa) throws Exception {
 		String command = "mkdir -p " + path;
 		return exceCommand(targetHost, userName, command, rsa);
+	}
+
+	/**
+	 * Building (maven)
+	 */
+	public String mvnInstall(String path, TaskResult taskResult) throws Exception {
+		// Execution mvn
+		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true";
+		return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary(), taskResult);
 	}
 
 	/**
