@@ -55,8 +55,8 @@ public class DependencyServiceImpl implements DependencyService {
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
 		if (dependencies != null && dependencies.size() > 0) {
 			for (Dependency dep : dependencies) {
-				set.add(dep);
 				getDependencys(dep.getDependentId(),set);
+				set.add(dep);
 			}
 		}
 		return set;
