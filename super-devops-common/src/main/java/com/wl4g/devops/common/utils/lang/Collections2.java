@@ -5,7 +5,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,6 +104,19 @@ public abstract class Collections2 {
 	 */
 	public static <K, V> Map<K, V> safeMap(Map<K, V> map) {
 		return isEmpty(map) ? Collections.emptyMap() : map;
+	}
+
+	/**
+	 * Remove duplicate collection elements.
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public static <T> Collection<T> disDupCollection(Collection<T> list) {
+		Set<T> disDupSet = new HashSet<>(list);
+		list.clear();
+		list.addAll(disDupSet);
+		return list;
 	}
 
 }
