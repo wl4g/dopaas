@@ -15,13 +15,6 @@
  */
 package com.wl4g.devops.ci.config;
 
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-
 import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
@@ -31,6 +24,12 @@ import com.wl4g.devops.ci.pipeline.SpringExecutableJarPipelineProvider;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 import com.wl4g.devops.support.beans.DelegateAlias;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 /**
  * CICD auto configuration.
@@ -42,9 +41,15 @@ import com.wl4g.devops.support.beans.DelegateAlias;
 @Configuration
 public class CiCdAutoConfiguration {
 
-	@Bean
+	/*@Bean
 	@ConfigurationProperties(prefix = "deploy")
 	public CiCdProperties cicdProperties() {
+		return new CiCdProperties();
+	}*/
+
+	@Bean
+	@ConfigurationProperties(prefix = "pipeline")
+	public CiCdProperties ciCdProperties() {
 		return new CiCdProperties();
 	}
 

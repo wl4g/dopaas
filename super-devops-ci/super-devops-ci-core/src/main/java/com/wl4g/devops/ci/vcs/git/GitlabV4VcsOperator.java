@@ -43,7 +43,7 @@ public class GitlabV4VcsOperator extends AbstractGitVcsOperator {
 	 */
 	@Override
 	public List<String> getRemoteBranchNames(int projectId) {
-		String url = config.getGitUrl() + "/api/v4/projects/" + projectId + "/repository/branches";
+		String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/branches";
 
 		// Extract branch names.
 		List<Map<String, Object>> branchs = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
@@ -65,7 +65,7 @@ public class GitlabV4VcsOperator extends AbstractGitVcsOperator {
 	 */
 	@Override
 	public List<String> getRemoteTags(int projectId) {
-		String url = config.getGitUrl() + "/api/v4/projects/" + projectId + "/repository/tags";
+		String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/tags";
 
 		// Extract tag names.
 		List<Map<String, Object>> tags = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
@@ -88,7 +88,7 @@ public class GitlabV4VcsOperator extends AbstractGitVcsOperator {
 	@Override
 	public Integer findRemoteProjectId(String projectName) {
 		Assert.notNull(projectName, "projectName is null");
-		String url = config.getGitUrl() + "/api/v4/projects?simple=true&search=" + projectName;
+		String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects?simple=true&search=" + projectName;
 
 		// Extract project IDs.
 		List<Map<String, Object>> projects = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {

@@ -63,7 +63,7 @@ public class TimingPipelineHandler implements Runnable {
 			}
 			pipelineCoreProcessor.createTask(task.getId());
 			// set new sha in db
-			String path = config.getGitBasePath() + "/" + project.getProjectName();
+			String path = config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName();
 			try {
 				String newSha = GitUtils.getLatestCommitted(path);
 				if (StringUtils.isNotBlank(newSha)) {
@@ -84,12 +84,12 @@ public class TimingPipelineHandler implements Runnable {
 	 */
 	private boolean check() {
 		String sha = trigger.getSha();
-		String path = config.getGitBasePath() + "/" + project.getProjectName();
+		String path = config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName();
 		try {
 			if (GitUtils.checkGitPath(path)) {
-				GitUtils.checkout(config.getCredentials(), path, task.getBranchName());
+				GitUtils.checkout(config.getVcs().getGit().getCredentials(), path, task.getBranchName());
 			} else {
-				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, task.getBranchName());
+				GitUtils.clone(config.getVcs().getGit().getCredentials(), project.getGitUrl(), path, task.getBranchName());
 			}
 			String oldestSha = GitUtils.getLatestCommitted(path);
 			return !StringUtils.equals(sha, oldestSha);

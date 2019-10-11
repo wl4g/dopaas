@@ -78,7 +78,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider {
 		dependency.setProjectId(getProject().getId());
 
 		// check bakup file isExist
-		String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#"
+		String oldFilePath = config.getBackup().getBaseDir() + "/" + subPackname(getProject().getTarPath()) + "#"
 				+ getTaskHistory().getRefId();
 
 		File oldFile = new File(oldFilePath);
