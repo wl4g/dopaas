@@ -21,8 +21,12 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * MAVEN assemble tar provider.
@@ -86,14 +90,37 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		// backup in local
 		backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
 		// scp to server
-		for (AppInstance instance : getInstances()) {//TODO
+		List<Future<?>> futures = new ArrayList<>();
+		for (AppInstance instance : getInstances()) {
 			// create deploy task
 			Runnable task = new MvnAssembleTarPipelineHandler(this, getProject(), getPath(), instance, getProject().getTarPath(),
 					getTaskHistoryDetails());
-			Thread t = new Thread(task);
+			Future<?> submit = pipelineTaskRunner.getWorker().submit(task);
+			futures.add(submit);
+
+			/*Thread t = new Thread(task);
 			t.start();
-			t.join();
+			t.join();*/
 		}
+
+		if(CollectionUtils.isEmpty(futures)){
+			return;
+		}
+		//TODO
+		while(true){
+			boolean isAllDone = true;
+			for(Future<?> future : futures){
+				if(!future.isDone()){
+					isAllDone = false;
+					break;
+				}
+			}
+			if(isAllDone){
+				break;
+			}
+			Thread.sleep(500);
+		}
+
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");

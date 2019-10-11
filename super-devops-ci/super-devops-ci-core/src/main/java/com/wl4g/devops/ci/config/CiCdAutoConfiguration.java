@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.config;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
+import com.wl4g.devops.ci.core.PipelineTaskRunner;
 import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
@@ -51,6 +52,16 @@ public class CiCdAutoConfiguration {
 	@ConfigurationProperties(prefix = "pipeline")
 	public CiCdProperties ciCdProperties() {
 		return new CiCdProperties();
+	}
+
+	@Bean
+	public CiCdProperties.ExecutorProperties executor(CiCdProperties ciCdProperties){
+		return ciCdProperties.getExecutor();
+	}
+
+	@Bean
+	public PipelineTaskRunner pipelineTaskRunner(CiCdProperties.ExecutorProperties executor){
+		return new PipelineTaskRunner(executor);
 	}
 
 	@Bean

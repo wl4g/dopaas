@@ -84,7 +84,7 @@ pipeline:
   executor:
     concurrency: 10
     keep-alive-time: 600000
-    accept-queue: 8192
+    accept-queue: 32
   vcs:
     git:
       base-url: http://git.anjiancloud.repo
@@ -97,10 +97,9 @@ pipeline:
     job-clean-timeout: 300
     job-share-dependency-try-timeout: 300
   backup:
-    #base-dir: user default
+    base-dir:
   tranform:
     cipher-key: 03DE18C2FC4E605F
-    mvn-ass-tar:
     docker-native:
       docker-push-username: xburnerair00
       docker-push-passwd: hwj13535248668

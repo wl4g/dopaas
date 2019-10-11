@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.core.PipelineTaskRunner;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.GitUtils;
@@ -76,6 +77,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	@Autowired
 	protected TaskSignDao taskSignDao;
+
+	@Autowired
+	protected PipelineTaskRunner pipelineTaskRunner;
 
 
 	/**

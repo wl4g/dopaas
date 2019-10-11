@@ -23,7 +23,7 @@ public class PipelineTaskRunner extends GenericTaskRunner<RunProperties>{
     }
 
     public ThreadPoolExecutor getWorker(){
-        return getWorker();
+        return super.getWorker();
     }
 
 

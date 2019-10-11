@@ -29,258 +29,252 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  */
 public class CiCdProperties {
 
-	private ExecutorProperties executor = new ExecutorProperties();
+    private ExecutorProperties executor = new ExecutorProperties();
 
-	private VcsProperties vcs = new VcsProperties();
+    private VcsProperties vcs = new VcsProperties();
 
-	private BuildProperties build = new BuildProperties();
+    private BuildProperties build = new BuildProperties();
 
-	private BackupProperties backup = new BackupProperties();
+    private BackupProperties backup = new BackupProperties();
 
-	private TranformProperties tranform = new TranformProperties();
+    private TranformProperties tranform = new TranformProperties();
 
 
-	public ExecutorProperties getExecutor() {
-		return executor;
-	}
+    public ExecutorProperties getExecutor() {
+        return executor;
+    }
 
-	public void setExecutor(ExecutorProperties executor) {
-		this.executor = executor;
-	}
+    public void setExecutor(ExecutorProperties executor) {
+        this.executor = executor;
+    }
 
-	public VcsProperties getVcs() {
-		return vcs;
-	}
+    public VcsProperties getVcs() {
+        return vcs;
+    }
 
-	public void setVcs(VcsProperties vcs) {
-		this.vcs = vcs;
-	}
+    public void setVcs(VcsProperties vcs) {
+        this.vcs = vcs;
+    }
 
-	public BuildProperties getBuild() {
-		return build;
-	}
+    public BuildProperties getBuild() {
+        return build;
+    }
 
-	public void setBuild(BuildProperties build) {
-		this.build = build;
-	}
+    public void setBuild(BuildProperties build) {
+        this.build = build;
+    }
 
-	public BackupProperties getBackup() {
-		return backup;
-	}
+    public BackupProperties getBackup() {
+        return backup;
+    }
 
-	public void setBackup(BackupProperties backup) {
-		this.backup = backup;
-	}
+    public void setBackup(BackupProperties backup) {
+        this.backup = backup;
+    }
 
-	public TranformProperties getTranform() {
-		return tranform;
-	}
+    public TranformProperties getTranform() {
+        return tranform;
+    }
 
-	public void setTranform(TranformProperties tranform) {
-		this.tranform = tranform;
-	}
+    public void setTranform(TranformProperties tranform) {
+        this.tranform = tranform;
+    }
 
-	//excutor
-	public static class ExecutorProperties extends GenericTaskRunner.RunProperties{
+    public static class ExecutorProperties extends GenericTaskRunner.RunProperties {
 
-		private Integer taskTimeout = 300;
+        public ExecutorProperties() {
+            setConcurrency(5);
+            setAcceptQueue(32);
+        }
 
-		public Integer getTaskTimeout() {
-			return taskTimeout;
-		}
+    }
 
-		public void setTaskTimeout(Integer taskTimeout) {
-			this.taskTimeout = taskTimeout;
-		}
-	}
+    public static class VcsProperties {
 
-	//vcs
-	public static class VcsProperties{
+        private GitProperties git;
 
-		private GitProperties git;
+        public GitProperties getGit() {
+            return git;
+        }
 
-		public GitProperties getGit() {
-			return git;
-		}
+        public void setGit(GitProperties git) {
+            this.git = git;
+        }
 
-		public void setGit(GitProperties git) {
-			this.git = git;
-		}
+        public static class GitProperties {
+            private String baseUrl;
+            private String username;
+            private String password;
+            private String token;
 
-		public static class GitProperties{
-			private String baseUrl;
-			private String username;
-			private String password;
-			private String token;
+            /**
+             * Git check out path
+             */
+            private String workspace;
 
-			/**
-			 * Git check out path
-			 */
-			private String workspace;
+            /**
+             * credentials for git
+             */
+            private CredentialsProvider credentials;
 
-			/**
-			 * credentials for git
-			 */
-			private CredentialsProvider credentials;
+            public String getBaseUrl() {
+                return baseUrl;
+            }
 
-			public String getBaseUrl() {
-				return baseUrl;
-			}
+            public void setBaseUrl(String baseUrl) {
+                this.baseUrl = baseUrl;
+            }
 
-			public void setBaseUrl(String baseUrl) {
-				this.baseUrl = baseUrl;
-			}
-
-			public String getUsername() {
-				return username;
-			}
-
-			public void setUsername(String username) {
-				this.username = username;
-			}
-
-			public String getPassword() {
-				return password;
-			}
-
-			public void setPassword(String password) {
-				this.password = password;
-			}
-
-			public String getToken() {
-				return token;
-			}
-
-			public void setToken(String token) {
-				this.token = token;
-			}
-
-			public void setWorkspace(String workspace) {
-				this.workspace = workspace;
-			}
-
-			public String getWorkspace() {
-				if (StringUtils.isBlank(workspace)) {// if blank ,user default
-					workspace = System.getProperties().getProperty("user.home") + "/git";
-				}
-				return workspace;
-			}
+            public String getUsername() {
+                return username;
+            }
 
-			public CredentialsProvider getCredentials() {
-				if (null == credentials) {
-					credentials = new UsernamePasswordCredentialsProvider(username, password);
-				}
-				return credentials;
-			}
-		}
-	}
+            public void setUsername(String username) {
+                this.username = username;
+            }
+
+            public String getPassword() {
+                return password;
+            }
+
+            public void setPassword(String password) {
+                this.password = password;
+            }
+
+            public String getToken() {
+                return token;
+            }
+
+            public void setToken(String token) {
+                this.token = token;
+            }
+
+            public void setWorkspace(String workspace) {
+                this.workspace = workspace;
+            }
+
+            public String getWorkspace() {
+                if (StringUtils.isBlank(workspace)) {// if blank ,user default
+                    workspace = System.getProperties().getProperty("user.home") + "/git";
+                }
+                return workspace;
+            }
 
-	//build
-	public static class BuildProperties{
+            public CredentialsProvider getCredentials() {
+                if (null == credentials) {
+                    credentials = new UsernamePasswordCredentialsProvider(username, password);
+                }
+                return credentials;
+            }
+        }
+    }
 
-		private Integer jobCleanScan = 30;
+    //build
+    public static class BuildProperties {
 
-		private Integer jobCleanTimeout = 600;
+        private Integer jobCleanScan = 30;
 
-		private Integer jobShareDenpenyTryTimeout = 300;
-
-		public Integer getJobCleanScan() {
-			return jobCleanScan;
-		}
-
-		public void setJobCleanScan(Integer jobCleanScan) {
-			this.jobCleanScan = jobCleanScan;
-		}
-
-		public Integer getJobCleanTimeout() {
-			return jobCleanTimeout;
-		}
-
-		public void setJobCleanTimeout(Integer jobCleanTimeout) {
-			this.jobCleanTimeout = jobCleanTimeout;
-		}
-
-		public Integer getJobShareDenpenyTryTimeout() {
-			return jobShareDenpenyTryTimeout;
-		}
-
-		public void setJobShareDenpenyTryTimeout(Integer jobShareDenpenyTryTimeout) {
-			this.jobShareDenpenyTryTimeout = jobShareDenpenyTryTimeout;
-		}
-	}
-
-	//backup
-	public static class BackupProperties{
-
-		private String baseDir;
-
-		public String getBaseDir() {
-			if (StringUtils.isBlank(baseDir)) {// if blank ,user default
-				baseDir = System.getProperties().getProperty("user.home") + "/git/bak";
-			}
-			return baseDir;
-		}
-
-		public void setBaseDir(String baseDir) {
-			this.baseDir = baseDir;
-		}
-	}
-
-	//tranform
-	public static class TranformProperties{
-
-		private String cipherKey;
-		private MvnAssTar mvnAssTar;
-		private DockerNative dockerNative;
-
-		public String getCipherKey() {
-			return cipherKey;
-		}
-
-		public void setCipherKey(String cipherKey) {
-			this.cipherKey = cipherKey;
-		}
-
-		public MvnAssTar getMvnAssTar() {
-			return mvnAssTar;
-		}
-
-		public void setMvnAssTar(MvnAssTar mvnAssTar) {
-			this.mvnAssTar = mvnAssTar;
-		}
-
-		public DockerNative getDockerNative() {
-			return dockerNative;
-		}
-
-		public void setDockerNative(DockerNative dockerNative) {
-			this.dockerNative = dockerNative;
-		}
-
-		public static class MvnAssTar{
-
-		}
-
-		public static class DockerNative{
-			public String dockerPushUsername;
-			public String dockerPushPasswd;
-
-			public String getDockerPushUsername() {
-				return dockerPushUsername;
-			}
-
-			public void setDockerPushUsername(String dockerPushUsername) {
-				this.dockerPushUsername = dockerPushUsername;
-			}
-
-			public String getDockerPushPasswd() {
-				return dockerPushPasswd;
-			}
-
-			public void setDockerPushPasswd(String dockerPushPasswd) {
-				this.dockerPushPasswd = dockerPushPasswd;
-			}
-		}
-	}
+        private Integer jobCleanTimeout = 600;
+
+        private Integer jobShareDenpenyTryTimeout = 300;
+
+        public Integer getJobCleanScan() {
+            return jobCleanScan;
+        }
+
+        public void setJobCleanScan(Integer jobCleanScan) {
+            this.jobCleanScan = jobCleanScan;
+        }
+
+        public Integer getJobCleanTimeout() {
+            return jobCleanTimeout;
+        }
+
+        public void setJobCleanTimeout(Integer jobCleanTimeout) {
+            this.jobCleanTimeout = jobCleanTimeout;
+        }
+
+        public Integer getJobShareDenpenyTryTimeout() {
+            return jobShareDenpenyTryTimeout;
+        }
+
+        public void setJobShareDenpenyTryTimeout(Integer jobShareDenpenyTryTimeout) {
+            this.jobShareDenpenyTryTimeout = jobShareDenpenyTryTimeout;
+        }
+    }
+
+    //backup
+    public static class BackupProperties {
+
+        private String baseDir;
+
+        public String getBaseDir() {
+            if (StringUtils.isBlank(baseDir)) {// if blank ,user default
+                baseDir = System.getProperties().getProperty("user.home") + "/git/bak";
+            }
+            return baseDir;
+        }
+
+        public void setBaseDir(String baseDir) {
+            this.baseDir = baseDir;
+        }
+    }
+
+    //tranform
+    public static class TranformProperties {
+
+        private String cipherKey;
+        private MvnAssTar mvnAssTar;
+        private DockerNative dockerNative;
+
+        public String getCipherKey() {
+            return cipherKey;
+        }
+
+        public void setCipherKey(String cipherKey) {
+            this.cipherKey = cipherKey;
+        }
+
+        public MvnAssTar getMvnAssTar() {
+            return mvnAssTar;
+        }
+
+        public void setMvnAssTar(MvnAssTar mvnAssTar) {
+            this.mvnAssTar = mvnAssTar;
+        }
+
+        public DockerNative getDockerNative() {
+            return dockerNative;
+        }
+
+        public void setDockerNative(DockerNative dockerNative) {
+            this.dockerNative = dockerNative;
+        }
+
+        public static class MvnAssTar {
+
+        }
+
+        public static class DockerNative {
+            public String dockerPushUsername;
+            public String dockerPushPasswd;
+
+            public String getDockerPushUsername() {
+                return dockerPushUsername;
+            }
+
+            public void setDockerPushUsername(String dockerPushUsername) {
+                this.dockerPushUsername = dockerPushUsername;
+            }
+
+            public String getDockerPushPasswd() {
+                return dockerPushPasswd;
+            }
+
+            public void setDockerPushPasswd(String dockerPushPasswd) {
+                this.dockerPushPasswd = dockerPushPasswd;
+            }
+        }
+    }
 
 }
