@@ -26,6 +26,8 @@ import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
 import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
+import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
+import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 
 /**
  * IAM authentication handler.
@@ -38,25 +40,27 @@ import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 public abstract interface AuthenticationHandler {
 
 	/**
-	 * Check the validity of the request parameters before executing the login.
-	 * (that is, verify that the <b>'source application'</b> and the secure
-	 * callback <b>'redirectUrl'</b> are legitimate)
+	 * Assertion the validity of the request parameters before executing the
+	 * login. (that is, verify that the <b>'source application'</b> and the
+	 * secure callback <b>'redirectUrl'</b> are legitimate)
 	 * 
 	 * @param fromAppName
 	 * @param redirectUrl
+	 * @throws IllegalCallbackDomainException
 	 */
-	void checkAuthenticateRequests(String fromAppName, String redirectUrl);
+	void checkAuthenticateValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException;
 
 	/**
-	 * Check whether the current login account has permission to access the
+	 * Assertion whether the current login account has permission to access the
 	 * application. (that is, validating the legitimacy of <b>'principal'</b>
 	 * and <b>'source application'</b>)
 	 * 
 	 * @param principal
 	 * @param fromAppName
 	 *            From source application
+	 * @throws IllegalApplicationAccessException
 	 */
-	void checkApplicationAccessAuthorized(String principal, String fromAppName);
+	void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException;
 
 	/**
 	 * Validate application request ticket

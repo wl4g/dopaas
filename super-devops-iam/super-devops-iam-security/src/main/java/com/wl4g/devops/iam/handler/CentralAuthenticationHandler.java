@@ -105,7 +105,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public void checkAuthenticateRequests(String fromAppName, String redirectUrl) {
+	public void checkAuthenticateValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException {
 		// Check redirect URL(When source application is not empty)
 		if (isNotBlank(fromAppName)) {
 			if (isBlank(redirectUrl)) {
@@ -139,7 +139,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public void checkApplicationAccessAuthorized(String principal, String fromAppName) {
+	public void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException {
 		Assert.hasText(principal, "'principal' must not be empty");
 		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
 		if (!configurer.isApplicationAccessAuthorized(principal, fromAppName)) {
@@ -167,7 +167,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertGrantTicketValidity(subject, model);
 
 		// Check access authorized from application.
-		checkApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
+		assertApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
 
 		// Force clearance of last grant Ticket
 		/*
@@ -398,8 +398,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * 
 	 * @param subject
 	 * @param model
+	 * @throws InvalidGrantTicketException
 	 */
-	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) {
+	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
 			log.warn("Invalid grantTicket has empty, appName: '{}', sessionId: '{}'", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
