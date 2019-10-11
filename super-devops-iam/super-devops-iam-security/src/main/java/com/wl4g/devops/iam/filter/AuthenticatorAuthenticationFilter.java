@@ -68,7 +68,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			try {
 				return onLoginSuccess(createToken(request, response), subject, request, response);
 			} catch (Exception e) {
-				log.error("Failed to direct redirect successUrl with authenticated.", e);
+				log.error("Failed to redirect successUrl with authenticated.", e);
 			}
 		}
 
