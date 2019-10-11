@@ -52,7 +52,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 
 		try {
 			// Check authentication login request parameters
-			authHandler.checkAuthenticateRequests(getFromAppName(request), getFromRedirectUrl(request));
+			authHandler.checkAuthenticateValidity(getFromAppName(request), getFromRedirectUrl(request));
 
 			// Remember request parameters
 			savedRequestParameters(request, response);
