@@ -218,7 +218,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		/**
 		 * Consumption receive queue size
 		 */
-		private int acceptQueue = 8192;
+		private int acceptQueue = 128;
 
 		/** Rejected execution handler. */
 		private RejectedExecutionHandler reject = new AbortPolicy();
