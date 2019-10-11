@@ -21,7 +21,7 @@ spring:
            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
            - http://10.0.0.160:38099
         allowsHeaders: '*'
-        allowsMethods: GET,POST,OPTION
+        allowsMethods: GET,POST
   cloud:
     devops:
       iam: # IAM configuration.

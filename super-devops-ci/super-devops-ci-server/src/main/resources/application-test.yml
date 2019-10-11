@@ -20,7 +20,7 @@ spring:
            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
         allowsHeaders: '*'
-        allowsMethods: GET,POST,OPTION
+        allowsMethods: GET,POST
   cloud:
     devops:
       iam:

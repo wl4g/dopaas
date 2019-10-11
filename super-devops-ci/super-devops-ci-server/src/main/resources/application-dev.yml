@@ -20,7 +20,7 @@ spring:
            - http://localhost:8080
            - http://localhost.com:8080
         allowsHeaders: '*'
-        allowsMethods: GET,POST,OPTION
+        allowsMethods: GET,POST
   cloud:
     devops:
       iam:
