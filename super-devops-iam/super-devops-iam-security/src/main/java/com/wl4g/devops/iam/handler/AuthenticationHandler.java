@@ -53,7 +53,7 @@ public abstract interface AuthenticationHandler {
 	/**
 	 * Assertion whether the current login account has permission to access the
 	 * application. (that is, validating the legitimacy of <b>'principal'</b>
-	 * and <b>'source application'</b>)
+	 * and <b>'application'</b>)
 	 * 
 	 * @param principal
 	 * @param fromAppName
