@@ -278,8 +278,8 @@ public class CorsProperties implements Serializable {
 
 			/*
 			 * Clean up invalid values that did not resolve successfully through
-			 * environment variables. e.g. http://${SAFECLOUD_DOMAIN_TOP}
-			 * https://${SAFECLOUD_DOMAIN_TOP}
+			 * environment variables. e.g. http://${DEVOPS_DOMAIN_TOP}
+			 * https://${DEVOPS_DOMAIN_TOP}
 			 */
 			Iterator<String> it2 = source.iterator();
 			while (it2.hasNext()) {

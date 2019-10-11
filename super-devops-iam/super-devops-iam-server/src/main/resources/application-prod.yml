@@ -27,10 +27,10 @@ spring:
         login-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/login
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@https://umc.${DEVOPS_DOMAIN_TOP:wl4g.com}/umc-manager
-        authc-internal-access:
+        acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allowIp: 127.0.0.1
-          denyIp:
+          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         captcha:
           #jigsaw:
             #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
