@@ -33,6 +33,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import com.wl4g.devops.common.utils.lang.Collections2;
 
 import static com.wl4g.devops.common.utils.web.WebUtils2.isSameWithOrigin;
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -262,9 +263,9 @@ public class CorsProperties implements Serializable {
 		private CorsRule mergeWithWildcardAndDisDuplicate(Collection<String> source) {
 			Assert.notNull(source, "'source' must not be null");
 			// Clear other specific item configurations if '*' is present
-			Iterator<String> it = source.iterator();
-			while (it.hasNext()) {
-				String value = it.next();
+			Iterator<String> it1 = source.iterator();
+			while (it1.hasNext()) {
+				String value = it1.next();
 				if (!isBlank(value) && trimToEmpty(value).equalsIgnoreCase(ALL)) {
 					source.clear();
 					source.add(ALL);
@@ -274,6 +275,19 @@ public class CorsProperties implements Serializable {
 
 			// Remove duplicate.
 			Collections2.disDupCollection(source);
+
+			/*
+			 * Clean up invalid values that did not resolve successfully through
+			 * environment variables. e.g. http://${SAFECLOUD_DOMAIN_TOP}
+			 * https://${SAFECLOUD_DOMAIN_TOP}
+			 */
+			Iterator<String> it2 = source.iterator();
+			while (it2.hasNext()) {
+				String value = it2.next();
+				if (!isBlank(value) && contains(value, "{") && contains(value, "}")) {
+					it2.remove();
+				}
+			}
 			return this;
 		}
 
