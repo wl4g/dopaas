@@ -25,10 +25,10 @@ spring:
   cloud:
     devops:
       iam:
-        authc-internal-access:
+        acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allow-ip: 127.0.0.1
-          deny-ip:
+          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         client:
           server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.test}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
