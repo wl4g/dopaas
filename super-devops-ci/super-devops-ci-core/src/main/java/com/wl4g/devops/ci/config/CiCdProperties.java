@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.config;
 
+import com.wl4g.devops.support.task.GenericTaskRunner;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -28,151 +29,258 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  */
 public class CiCdProperties {
 
-	/**
-	 * Git check out url
-	 */
-	private String gitUrl;
+	private ExecutorProperties executor = new ExecutorProperties();
 
-	/**
-	 * Git check out path
-	 */
-	private String gitBasePath;
+	private VcsProperties vcs = new VcsProperties();
 
-	/**
-	 * Git check out username
-	 */
-	private String gitUsername;
+	private BuildProperties build = new BuildProperties();
 
-	/**
-	 * Git check out password
-	 */
-	private String gitPassword;
+	private BackupProperties backup = new BackupProperties();
 
-	/**
-	 * Gitlab token, for get branch
-	 */
-	private String gitToken;
+	private TranformProperties tranform = new TranformProperties();
 
-	/**
-	 * After build tar,save the tar in backup path
-	 */
-	private String backupPath;
 
-	/**
-	 * Cipher key , for decrypt the ssh ase
-	 */
-	private String cipherKey;
+	public ExecutorProperties getExecutor() {
+		return executor;
+	}
 
-	/**
-	 * build task time out
-	 */
-	private Integer taskTimeout;
+	public void setExecutor(ExecutorProperties executor) {
+		this.executor = executor;
+	}
 
-	/**
-	 * docker push username
-	 */
-	private String dockerPushUsername;
+	public VcsProperties getVcs() {
+		return vcs;
+	}
 
-	/**
-	 * docker push password
-	 */
-	private String dockerPushPasswd;
+	public void setVcs(VcsProperties vcs) {
+		this.vcs = vcs;
+	}
 
-	/**
-	 * credentials for git
-	 */
-	private CredentialsProvider credentials;
+	public BuildProperties getBuild() {
+		return build;
+	}
 
-	public String getGitBasePath() {// if blank ,user default
-		if (StringUtils.isBlank(gitBasePath)) {
-			gitBasePath = System.getProperties().getProperty("user.home") + "/git";
+	public void setBuild(BuildProperties build) {
+		this.build = build;
+	}
+
+	public BackupProperties getBackup() {
+		return backup;
+	}
+
+	public void setBackup(BackupProperties backup) {
+		this.backup = backup;
+	}
+
+	public TranformProperties getTranform() {
+		return tranform;
+	}
+
+	public void setTranform(TranformProperties tranform) {
+		this.tranform = tranform;
+	}
+
+	//excutor
+	public static class ExecutorProperties extends GenericTaskRunner.RunProperties{
+
+		private Integer taskTimeout = 300;
+
+		public Integer getTaskTimeout() {
+			return taskTimeout;
 		}
-		return gitBasePath;
-	}
 
-	public void setGitBasePath(String gitBasePath) {
-		this.gitBasePath = gitBasePath;
-	}
-
-	public String getGitUsername() {
-		return gitUsername;
-	}
-
-	public void setGitUsername(String gitAccount) {
-		this.gitUsername = gitAccount;
-	}
-
-	public String getGitPassword() {
-		return gitPassword;
-	}
-
-	public void setGitPassword(String gitPassword) {
-		this.gitPassword = gitPassword;
-	}
-
-	public String getBackupPath() {
-		if (StringUtils.isBlank(backupPath)) {// if blank ,user default
-			backupPath = System.getProperties().getProperty("user.home") + "/git/bak";
+		public void setTaskTimeout(Integer taskTimeout) {
+			this.taskTimeout = taskTimeout;
 		}
-		return backupPath;
 	}
 
-	public void setBackupPath(String bakPath) {
-		this.backupPath = bakPath;
-	}
+	//vcs
+	public static class VcsProperties{
 
-	public String getCipherKey() {
-		return cipherKey;
-	}
+		private GitProperties git;
 
-	public void setCipherKey(String cipherKey) {
-		this.cipherKey = cipherKey;
-	}
-
-	public CredentialsProvider getCredentials() {
-		if (null == credentials) {
-			credentials = new UsernamePasswordCredentialsProvider(gitUsername, gitPassword);
+		public GitProperties getGit() {
+			return git;
 		}
-		return credentials;
+
+		public void setGit(GitProperties git) {
+			this.git = git;
+		}
+
+		public static class GitProperties{
+			private String baseUrl;
+			private String username;
+			private String password;
+			private String token;
+
+			/**
+			 * Git check out path
+			 */
+			private String workspace;
+
+			/**
+			 * credentials for git
+			 */
+			private CredentialsProvider credentials;
+
+			public String getBaseUrl() {
+				return baseUrl;
+			}
+
+			public void setBaseUrl(String baseUrl) {
+				this.baseUrl = baseUrl;
+			}
+
+			public String getUsername() {
+				return username;
+			}
+
+			public void setUsername(String username) {
+				this.username = username;
+			}
+
+			public String getPassword() {
+				return password;
+			}
+
+			public void setPassword(String password) {
+				this.password = password;
+			}
+
+			public String getToken() {
+				return token;
+			}
+
+			public void setToken(String token) {
+				this.token = token;
+			}
+
+			public void setWorkspace(String workspace) {
+				this.workspace = workspace;
+			}
+
+			public String getWorkspace() {
+				if (StringUtils.isBlank(workspace)) {// if blank ,user default
+					workspace = System.getProperties().getProperty("user.home") + "/git";
+				}
+				return workspace;
+			}
+
+			public CredentialsProvider getCredentials() {
+				if (null == credentials) {
+					credentials = new UsernamePasswordCredentialsProvider(username, password);
+				}
+				return credentials;
+			}
+		}
 	}
 
-	public Integer getTaskTimeout() {
-		return taskTimeout;
+	//build
+	public static class BuildProperties{
+
+		private Integer jobCleanScan = 30;
+
+		private Integer jobCleanTimeout = 600;
+
+		private Integer jobShareDenpenyTryTimeout = 300;
+
+		public Integer getJobCleanScan() {
+			return jobCleanScan;
+		}
+
+		public void setJobCleanScan(Integer jobCleanScan) {
+			this.jobCleanScan = jobCleanScan;
+		}
+
+		public Integer getJobCleanTimeout() {
+			return jobCleanTimeout;
+		}
+
+		public void setJobCleanTimeout(Integer jobCleanTimeout) {
+			this.jobCleanTimeout = jobCleanTimeout;
+		}
+
+		public Integer getJobShareDenpenyTryTimeout() {
+			return jobShareDenpenyTryTimeout;
+		}
+
+		public void setJobShareDenpenyTryTimeout(Integer jobShareDenpenyTryTimeout) {
+			this.jobShareDenpenyTryTimeout = jobShareDenpenyTryTimeout;
+		}
 	}
 
-	public void setTaskTimeout(Integer taskTimeout) {
-		this.taskTimeout = taskTimeout;
+	//backup
+	public static class BackupProperties{
+
+		private String baseDir;
+
+		public String getBaseDir() {
+			if (StringUtils.isBlank(baseDir)) {// if blank ,user default
+				baseDir = System.getProperties().getProperty("user.home") + "/git/bak";
+			}
+			return baseDir;
+		}
+
+		public void setBaseDir(String baseDir) {
+			this.baseDir = baseDir;
+		}
 	}
 
-	public String getDockerPushUsername() {
-		return dockerPushUsername;
+	//tranform
+	public static class TranformProperties{
+
+		private String cipherKey;
+		private MvnAssTar mvnAssTar;
+		private DockerNative dockerNative;
+
+		public String getCipherKey() {
+			return cipherKey;
+		}
+
+		public void setCipherKey(String cipherKey) {
+			this.cipherKey = cipherKey;
+		}
+
+		public MvnAssTar getMvnAssTar() {
+			return mvnAssTar;
+		}
+
+		public void setMvnAssTar(MvnAssTar mvnAssTar) {
+			this.mvnAssTar = mvnAssTar;
+		}
+
+		public DockerNative getDockerNative() {
+			return dockerNative;
+		}
+
+		public void setDockerNative(DockerNative dockerNative) {
+			this.dockerNative = dockerNative;
+		}
+
+		public static class MvnAssTar{
+
+		}
+
+		public static class DockerNative{
+			public String dockerPushUsername;
+			public String dockerPushPasswd;
+
+			public String getDockerPushUsername() {
+				return dockerPushUsername;
+			}
+
+			public void setDockerPushUsername(String dockerPushUsername) {
+				this.dockerPushUsername = dockerPushUsername;
+			}
+
+			public String getDockerPushPasswd() {
+				return dockerPushPasswd;
+			}
+
+			public void setDockerPushPasswd(String dockerPushPasswd) {
+				this.dockerPushPasswd = dockerPushPasswd;
+			}
+		}
 	}
 
-	public void setDockerPushUsername(String dockerPushUsername) {
-		this.dockerPushUsername = dockerPushUsername;
-	}
-
-	public String getDockerPushPasswd() {
-		return dockerPushPasswd;
-	}
-
-	public void setDockerPushPasswd(String dockerPushPasswd) {
-		this.dockerPushPasswd = dockerPushPasswd;
-	}
-
-	public String getGitUrl() {
-		return gitUrl;
-	}
-
-	public void setGitUrl(String gitUrl) {
-		this.gitUrl = gitUrl;
-	}
-
-	public String getGitToken() {
-		return gitToken;
-	}
-
-	public void setGitToken(String gitToken) {
-		this.gitToken = gitToken;
-	}
 }

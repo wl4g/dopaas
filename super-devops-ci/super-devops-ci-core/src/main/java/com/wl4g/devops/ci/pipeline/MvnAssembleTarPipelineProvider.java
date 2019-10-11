@@ -51,7 +51,7 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		}
 		// get git sha
 		setShaGit(GitUtils.getLatestCommitted(getPath()));
-		deploy();
+		//deploy();//TODO
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProject().getId());
 		// Old file
-		String oldFilePath = config.getBackupPath() + "/" + subPackname(getProject().getTarPath()) + "#"
+		String oldFilePath = config.getBackup().getBaseDir() + "/" + subPackname(getProject().getTarPath()) + "#"
 				+ getTaskHistory().getRefId();
 		File oldFile = new File(oldFilePath);
 		if (oldFile.exists()) {// Check bakup file isExist , if not -- check out
@@ -86,7 +86,7 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		// backup in local
 		backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
 		// scp to server
-		for (AppInstance instance : getInstances()) {
+		for (AppInstance instance : getInstances()) {//TODO
 			// create deploy task
 			Runnable task = new MvnAssembleTarPipelineHandler(this, getProject(), getPath(), instance, getProject().getTarPath(),
 					getTaskHistoryDetails());

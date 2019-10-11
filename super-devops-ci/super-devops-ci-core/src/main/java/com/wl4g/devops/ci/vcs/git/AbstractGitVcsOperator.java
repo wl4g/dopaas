@@ -75,7 +75,7 @@ public abstract class AbstractGitVcsOperator implements VcsOperator, Initializin
 	 */
 	protected HttpEntity<String> createHttpEntity() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("PRIVATE-TOKEN", config.getGitToken());
+		headers.add("PRIVATE-TOKEN", config.getVcs().getGit().getToken());
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);
 		return entity;
 	}

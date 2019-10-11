@@ -91,6 +91,10 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
 	@Autowired
 	private AlarmContactDao alarmContactDao;
 
+
+	@Autowired
+	private PipelineTaskRunner pipelineTaskRunner;
+
 	@Override
 	public List<AppCluster> grouplist() {
 		return appClusterDao.grouplist();
@@ -240,6 +244,14 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
 				}
 			}
 		}).start();
+
+
+		/*pipelineTaskRunner.getWorker().submit(new Runnable() {
+			@Override
+			public void run() {
+
+			}
+		});*/
 	}
 
 	private void sendMailByContactGroupId(Integer contactGroupId, String text) {
@@ -310,7 +322,7 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
 		PipelineInfo info = new DefaultPipelineInfo();
 		info.setProject(project);
 		info.setTarType(taskHistory.getTarType());
-		info.setPath(config.getGitBasePath() + "/" + project.getProjectName());
+		info.setPath(config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName());
 		info.setBranch(taskHistory.getBranchName());
 		info.setAlias(appCluster.getName());
 		info.setInstances(instances);

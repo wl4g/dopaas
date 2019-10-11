@@ -165,7 +165,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		if (StringUtils.isBlank(command)) {
 			return "command is blank";
 		}
-		String rsaKey = config.getCipherKey();
+		String rsaKey = config.getTranform().getCipherKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
 		String result = command + "\n";
@@ -204,7 +204,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * Scp To Tmp
 	 */
 	public String scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
-		String rsaKey = config.getCipherKey();
+		String rsaKey = config.getTranform().getCipherKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
 		return SSHTool.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
@@ -243,8 +243,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * Local back up
 	 */
 	public String backupLocal(String path, String sign) throws Exception {
-		checkPath(config.getBackupPath());
-		String command = "cp -Rf " + path + " " + config.getBackupPath() + "/" + subPackname(path) + "#" + sign;
+		checkPath(config.getBackup().getBaseDir());
+		String command = "cp -Rf " + path + " " + config.getBackup().getBaseDir() + "/" + subPackname(path) + "#" + sign;
 		return SSHTool.exec(command);
 	}
 
@@ -252,7 +252,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * Get local back up , for rollback
 	 */
 	public String getBackupLocal(String backFile, String target) throws Exception {
-		checkPath(config.getBackupPath());
+		checkPath(config.getBackup().getBaseDir());
 		String command = "cp -Rf " + backFile + " " + target;
 		return SSHTool.exec(command);
 	}
@@ -286,7 +286,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	public String dockerBuild(String path) throws Exception {
 		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
-				+ config.getDockerPushUsername() + " -Ddockerfile.password=" + config.getDockerPushPasswd();
+				+ config.getTranform().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password=" + config.getTranform().getDockerNative().getDockerPushPasswd();
 		return SSHTool.exec(command);
 	}
 
@@ -415,7 +415,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		Assert.notNull(project, "project not exist");
 
 
-		String path = config.getGitBasePath() + "/" + project.getProjectName();
+		String path = config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName();
 
 		if(isRollback){
 			String sha;
@@ -428,20 +428,20 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			}
 
 			if (GitUtils.checkGitPath(path)) {
-				GitUtils.rollback(config.getCredentials(), path, sha);
+				GitUtils.rollback(config.getVcs().getGit().getCredentials(), path, sha);
 				taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
 			} else {
-				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+				GitUtils.clone(config.getVcs().getGit().getCredentials(), project.getGitUrl(), path, branch);
 				taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
-				GitUtils.rollback(config.getCredentials(), path, sha);
+				GitUtils.rollback(config.getVcs().getGit().getCredentials(), path, sha);
 				taskResult.getStringBuffer().append("project rollback success:").append(project.getProjectName()).append("\n");
 			}
 		}else{
 			if (GitUtils.checkGitPath(path)) {// 若果目录存在则:chekcout 分支 并 pull
-				GitUtils.checkout(config.getCredentials(), path, branch);
+				GitUtils.checkout(config.getVcs().getGit().getCredentials(), path, branch);
 				taskResult.getStringBuffer().append("project checkout success:").append(project.getProjectName()).append("\n");
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(config.getCredentials(), project.getGitUrl(), path, branch);
+				GitUtils.clone(config.getVcs().getGit().getCredentials(), project.getGitUrl(), path, branch);
 				taskResult.getStringBuffer().append("project clone success:").append(project.getProjectName()).append("\n");
 			}
 		}

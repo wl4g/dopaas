@@ -80,3 +80,31 @@ deploy:
   docker-push-username: xburnerair00
   docker-push-passwd: hwj13535248668
 
+pipeline:
+  executor:
+    concurrency: 10
+    keep-alive-time: 600000
+    accept-queue: 8192
+  vcs:
+    git:
+      base-url: http://git.anjiancloud.repo
+      username: heweijie
+      password: hwj13535248668
+      token: Xw6xYojnoj7SSDyyLXP7
+      #workspace: user default
+  build:
+    job-clean-scan: 30
+    job-clean-timeout: 300
+    job-share-dependency-try-timeout: 300
+  backup:
+    #base-dir: user default
+  tranform:
+    cipher-key: 03DE18C2FC4E605F
+    mvn-ass-tar:
+    docker-native:
+      docker-push-username: xburnerair00
+      docker-push-passwd: hwj13535248668
+
+
+
+
