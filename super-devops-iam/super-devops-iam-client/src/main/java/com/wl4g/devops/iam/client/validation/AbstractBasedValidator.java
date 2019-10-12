@@ -22,6 +22,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import static org.springframework.http.HttpMethod.*;
 
@@ -112,9 +113,14 @@ public abstract class AbstractBasedValidator<R extends BasedModel, A> implements
 		});
 
 		// Request execute
-		RespBase<A> resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
-		if (log.isInfoEnabled()) {
-			log.info("Validate retrieving: {}", resp);
+		RespBase<A> resp = null;
+		try {
+			resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
+			if (log.isInfoEnabled()) {
+				log.info("Validate retrieving: {}", resp);
+			}
+		} catch (Throwable ex) {
+			throw new RestClientException(String.format("Failed to validating ticket via URL: %s", url), ex);
 		}
 		return resp;
 	}
