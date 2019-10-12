@@ -27,47 +27,55 @@ import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
  */
 public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 
-	void execute() throws Exception;
+    void execute() throws Exception;
 
-	void rollback() throws Exception;
+    void rollback() throws Exception;
 
-	//Project getProject();
+    //Project getProject();
 
-	TaskResult getTaskResult();
+    TaskResult getTaskResult();
 
-	//TaskHistory getTaskHistory();
+    //TaskHistory getTaskHistory();
 
-	PipelineInfo getPipelineInfo();
+    PipelineInfo getPipelineInfo();
 
-	String getShaLocal();
+    String getShaLocal();
 
-	String getShaGit();
+    String getShaGit();
 
-	/**
-	 * Integrate pipeline type definition.
-	 *
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月29日
-	 * @since
-	 */
-	public static abstract class PipelineType {
+    /**
+     * Integrate pipeline type definition.
+     *
+     * @author Wangl.sir
+     * @version v1.0 2019年8月29日
+     * @since
+     */
+    public static abstract class PipelineType {
 
-		/** MAVEN assemble tar provider alias. */
-		final public static String MVN_ASSEMBLE_TAR1 = "PipeWithMvnAssembleTar";
-		final public static String MVN_ASSEMBLE_TAR2 = "PipeWithMvnAssTar";
+        /**
+         * MAVEN assemble tar provider alias.
+         */
+        final public static String MVN_ASSEMBLE_TAR1 = "PipeWithMvnAssembleTar";
+        final public static String MVN_ASSEMBLE_TAR2 = "PipeWithMvnAssTar";
 
-		/** Spring boot executable jar provider alias. */
-		final public static String SPRING_EXECUTABLE_JAR1 = "PipeWithSpringExecutableJar";
-		final public static String SPRING_EXECUTABLE_JAR2 = "PipeWithSpringExecJar";
+        /**
+         * Spring boot executable jar provider alias.
+         */
+        final public static String SPRING_EXECUTABLE_JAR1 = "PipeWithSpringExecutableJar";
+        final public static String SPRING_EXECUTABLE_JAR2 = "PipeWithSpringExecJar";
 
-		/** Docker native provider alias. */
-		final public static String DOCKER_NATIVE1 = "PipeWithDockerNative";
-		final public static String DOCKER_NATIVE2 = "PipeWithDockerNat";
+        /**
+         * Docker native provider alias.
+         */
+        final public static String DOCKER_NATIVE1 = "PipeWithDockerNative";
+        final public static String DOCKER_NATIVE2 = "PipeWithDockerNat";
 
-		/** DJANGO standard provider alias. */
-		final public static String DJANGO_STD1 = "PipeWithDjangoStdand";
-		final public static String DJANGO_STD2 = "PipeWithDjangoStd";
+        /**
+         * DJANGO standard provider alias.
+         */
+        final public static String DJANGO_STD1 = "PipeWithDjangoStdand";
+        final public static String DJANGO_STD2 = "PipeWithDjangoStd";
 
-	}
+    }
 
 }

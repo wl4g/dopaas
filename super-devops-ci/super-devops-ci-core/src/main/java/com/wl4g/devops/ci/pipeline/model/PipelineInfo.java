@@ -52,7 +52,7 @@ public interface PipelineInfo {
 
     void setTaskHistoryDetails(List<TaskHistoryDetail> taskHistoryDetails);
 
-    String getTarName() ;
+    String getTarName();
 
     void setTarName(String tarName);
 }
