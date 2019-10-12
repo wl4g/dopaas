@@ -17,6 +17,8 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
+           - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
+           - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
            - http://10.0.0.160:38099

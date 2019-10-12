@@ -17,6 +17,8 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
+          - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
+          - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
           - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
           - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
         allowsHeaders: '*'
