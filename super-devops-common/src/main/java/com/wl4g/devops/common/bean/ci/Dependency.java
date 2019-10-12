@@ -104,4 +104,16 @@ public class Dependency extends BaseBean implements Serializable {
 	public int hashCode() {
 		return Objects.hash(dependentId);
 	}
+
+	@Override
+	public String toString() {
+		return "Dependency{" +
+				"id=" + id +
+				", projectId=" + projectId +
+				", dependentId=" + dependentId +
+				", branch='" + branch + '\'' +
+				", projectName='" + projectName + '\'' +
+				", parentName='" + parentName + '\'' +
+				'}';
+	}
 }

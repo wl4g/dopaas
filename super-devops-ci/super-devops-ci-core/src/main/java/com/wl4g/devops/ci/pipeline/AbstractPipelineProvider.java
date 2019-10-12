@@ -279,6 +279,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
+	 * Building (maven)
+	 */
+	public String mvnInstall(String path, TaskResult taskResult,String logPath) throws Exception {
+		// Execution mvn
+		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true | tee -a " +logPath;
+		return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary(), taskResult);
+	}
+
+	/**
 	 * Rollback
 	 */
 	public void rollback() throws Exception {
@@ -372,7 +381,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public void build(TaskHistory taskHistory, TaskResult taskResult, boolean isRollback) throws Exception{
 
 		LinkedHashSet<Dependency> dependencys = dependencyService.getDependencys(taskHistory.getProjectId(), null);
-
+		log.info("Analysis dependencys={}" ,dependencys);
 		for (Dependency dependency : dependencys) {
 			checkLock(taskHistory,dependency.getDependentId(),dependency.getDependentId(),dependency.getBranch(),taskResult,true,isRollback);
 			// Is Continue ? if fail then return
@@ -459,8 +468,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			taskSignDao.insertSelective(taskSign);
 		}
 
+		String logPath = config.getBuild().getLogPath()+"/"+taskHistory.getId()+".log";
 		// run install command
-		String installResult = mvnInstall(path, taskResult);
+		String installResult = mvnInstall(path, taskResult,logPath);
 
 		// ===== build end =====
 		taskResult.getStringBuffer().append(installResult);

@@ -57,7 +57,7 @@ public abstract class CommandUtils {
         StringBuilder slog = new StringBuilder();
         StringBuilder serr = new StringBuilder();
 
-        Process ps = Runtime.getRuntime().exec(cmd);
+        Process ps = Runtime.getRuntime().exec(new String[]{"/bin/sh","-c",cmd});
         try (BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
              BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
             String inlog;
@@ -79,7 +79,7 @@ public abstract class CommandUtils {
                 ShellContextHolder.printfQuietly(inlog);
             }
 
-            ps.waitFor();
+            ps.waitFor();//wait for process exit , or maybe throw java.lang.IllegalThreadStateException: process hasn't exited
             int exitValue = ps.exitValue();
             if (exitValue != 0) {
                 taskResult.setSuccess(false);
@@ -103,5 +103,6 @@ public abstract class CommandUtils {
         File logFile = taskResult.getLogFile();
         FileWriteUtil.writerFile(result, logFile);
     }
+
 
 }

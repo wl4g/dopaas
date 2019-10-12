@@ -86,6 +86,7 @@ pipeline:
     job-clean-scan: 30
     job-clean-timeout: 300
     job-share-dependency-try-timeout: 300
+    log-path:
   backup:
     base-dir:
   tranform:

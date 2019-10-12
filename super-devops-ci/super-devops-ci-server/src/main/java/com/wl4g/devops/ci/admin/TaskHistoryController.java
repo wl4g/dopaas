@@ -108,4 +108,13 @@ public class TaskHistoryController extends BaseController {
 		return resp;
 	}
 
+
+	@RequestMapping(value = "/readLog")
+	public RespBase<?> readLog(Integer taskHisId,Integer index,Integer size) {
+		RespBase<Object> resp = RespBase.create();
+		List<String> strings = pipelineCoreProcessor.readLog(taskHisId, index, size);
+		resp.getData().put("data",strings);
+		return resp;
+	}
+
 }

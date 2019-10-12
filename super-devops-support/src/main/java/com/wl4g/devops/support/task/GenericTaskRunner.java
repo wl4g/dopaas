@@ -75,13 +75,13 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 				final AtomicInteger counter = new AtomicInteger(-1);
 				final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(config.getAcceptQueue());
 				this.worker = new ThreadPoolExecutor(1, config.getConcurrency(), config.getKeepAliveTime(), MICROSECONDS, queue,
-						r -> {
+						/*r -> {
 							String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
 							Thread job = new Thread(this, name);
 							job.setDaemon(false);
 							job.setPriority(Thread.NORM_PRIORITY);
 							return job;
-						}, config.getReject());
+						},*/ config.getReject());
 			} else {
 				log.warn("No workthread pool for started, because the number of workthread is less than 0");
 			}
