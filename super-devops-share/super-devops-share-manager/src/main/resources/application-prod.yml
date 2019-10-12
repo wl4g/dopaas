@@ -61,4 +61,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:redis-cluster:6379,redis-cluster:6380,redis-cluster:6381,redis-cluster:7380,redis-cluster:7380,redis-cluster:7381}
+  nodes: ${DEVOPS_REDIS_NODES:redis-cluster:6379,redis-cluster:6380,redis-cluster:6381,redis-cluster:7380,redis-cluster:7380,redis-cluster:7381}
