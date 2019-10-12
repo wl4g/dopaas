@@ -36,32 +36,32 @@ import java.util.List;
 @Service
 public class DependencyServiceImpl implements DependencyService {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private DependencyDao dependencyDao;
+    @Autowired
+    private DependencyDao dependencyDao;
 
-	
-	/**
-	 * get dependency
-	 * @param projectId
-	 * @param set
-	 * @return
-	 */
-	public LinkedHashSet<Dependency> getDependencys(Integer projectId, LinkedHashSet<Dependency> set){
-		if(null == set){
-			set = new LinkedHashSet<>();
-		}
-		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
-		if (dependencies != null && dependencies.size() > 0) {
-			for (Dependency dep : dependencies) {
-				getDependencys(dep.getDependentId(),set);
-				set.add(dep);
-			}
-		}
-		return set;
-	}
 
+    /**
+     * get dependency
+     *
+     * @param projectId
+     * @param set
+     * @return
+     */
+    public LinkedHashSet<Dependency> getDependencys(Integer projectId, LinkedHashSet<Dependency> set) {
+        if (null == set) {
+            set = new LinkedHashSet<>();
+        }
+        List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
+        if (dependencies != null && dependencies.size() > 0) {
+            for (Dependency dep : dependencies) {
+                getDependencys(dep.getDependentId(), set);
+                set.add(dep);
+            }
+        }
+        return set;
+    }
 
 
 }

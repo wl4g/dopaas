@@ -23,16 +23,16 @@ import com.wl4g.devops.common.bean.ci.Trigger;
  */
 public interface TriggerService {
 
-	Trigger insert(Trigger trigger);
+    Trigger insert(Trigger trigger);
 
-	Trigger update(Trigger trigger);
+    Trigger update(Trigger trigger);
 
-	int delete(Integer id);
+    int delete(Integer id);
 
-	void enable(Integer id);
+    void enable(Integer id);
 
-	void disable(Integer id);
+    void disable(Integer id);
 
-	void updateSha(Integer id, String sha);
+    void updateSha(Integer id, String sha);
 
 }

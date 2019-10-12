@@ -19,35 +19,35 @@ import java.util.List;
 
 /**
  * VCS API operator.
- * 
+ *
  * @author Wangl.sir
  * @version v1.0 2019年8月2日
  * @since
  */
 public interface VcsOperator {
 
-	/**
-	 * Get VCS remote branch names.
-	 * 
-	 * @param projectId
-	 * @return
-	 */
-	List<String> getRemoteBranchNames(int projectId);
+    /**
+     * Get VCS remote branch names.
+     *
+     * @param projectId
+     * @return
+     */
+    List<String> getRemoteBranchNames(int projectId);
 
-	/**
-	 * Get VCS remote tag names.
-	 * 
-	 * @param projectId
-	 * @return
-	 */
-	List<String> getRemoteTags(int projectId);
+    /**
+     * Get VCS remote tag names.
+     *
+     * @param projectId
+     * @return
+     */
+    List<String> getRemoteTags(int projectId);
 
-	/**
-	 * Find remote project ID by project name.
-	 * 
-	 * @param projectName
-	 * @return
-	 */
-	Integer findRemoteProjectId(String projectName);
+    /**
+     * Find remote project ID by project name.
+     *
+     * @param projectName
+     * @return
+     */
+    Integer findRemoteProjectId(String projectName);
 
 }

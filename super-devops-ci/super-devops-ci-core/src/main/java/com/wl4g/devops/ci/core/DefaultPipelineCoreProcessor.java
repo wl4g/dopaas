@@ -217,41 +217,6 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
         // update task--running
         taskHistoryService.updateStatus(taskId, CiDevOpsConstants.TASK_STATUS_RUNNING);
 
-        // optimize : use multithreading
-		/*new Thread(new Runnable() {
-			public void run() {
-				try {
-					provider.execute();
-					if (provider.getTaskResult().isSuccess()) {
-						// update task--success
-						log.info("task succcess taskId={}", taskId);
-						taskHistoryService.updateStatusAndResultAndSha(taskId, CiDevOpsConstants.TASK_STATUS_SUCCESS,
-								provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(),
-								provider.getShaLocal());
-						// TODO send mail
-						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Success taskId="
-								+ taskId + " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()));
-					} else {
-						// update task--fail
-						log.info("task fail taskId={}", taskId);
-						taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
-								provider.getTaskResult().getStringBuffer().toString());
-
-						sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
-								+ " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()) + "\n");
-					}
-				} catch (Exception e) {
-					// update task--fail
-					log.info("task fail taskId={}", taskId);
-					taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
-							provider.getTaskResult().getStringBuffer().toString() + e.getMessage());
-					e.printStackTrace();
-					sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
-							+ " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()) + "\n");
-				}
-			}
-		}).start();*/
-
         ThreadPoolExecutor worker = pipelineTaskRunner.getWorker();
         worker.execute(() -> {
             try {
@@ -263,16 +228,16 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
                             provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(),
                             provider.getShaLocal());
                     // TODO send mail
-                    sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Success taskId="
-                            + taskId + " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()));
+                    sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(), "Task Build Success taskId="
+                            + taskId + " projectName=" + provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()));
                 } else {
                     // update task--fail
                     log.info("task fail taskId={}", taskId);
                     taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
                             provider.getTaskResult().getStringBuffer().toString());
 
-                    sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
-                            + " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()) + "\n");
+                    sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
+                            + " projectName=" + provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()) + "\n");
                 }
             } catch (Exception e) {
                 // update task--fail
@@ -280,8 +245,8 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
                 taskHistoryService.updateStatusAndResult(taskId, CiDevOpsConstants.TASK_STATUS_FAIL,
                         provider.getTaskResult().getStringBuffer().toString() + e.getMessage());
                 e.printStackTrace();
-                sendMailByContactGroupId(provider.getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
-                        + " projectName=" + provider.getProject().getProjectName() + " time=" + (new Date()) + "\n");
+                sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
+                        + " projectName=" + provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()) + "\n");
             }
         });
 
@@ -434,14 +399,14 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
     }
 
 
-    public List<String> readLog(Integer taskHisId,Integer index,Integer size){
-        if(index==null){
+    public List<String> readLog(Integer taskHisId, Integer index, Integer size) {
+        if (index == null) {
             index = 0;
         }
-        if(size == null){
+        if (size == null) {
             size = 100;
         }
-        String logPath = config.getBuild().getLogPath()+"/"+taskHisId+".log";
+        String logPath = config.getBuild().getLogPath() + "/" + taskHisId + ".log";
         List<String> strings = FileReadUtil.readFile(logPath, index, size);
         return strings;
     }

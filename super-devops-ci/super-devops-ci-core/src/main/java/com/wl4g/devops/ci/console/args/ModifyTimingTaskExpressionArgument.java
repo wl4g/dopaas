@@ -24,16 +24,16 @@ import java.io.Serializable;
  * @date 2019-05-21 16:18:00
  */
 public class ModifyTimingTaskExpressionArgument implements Serializable {
-	private static final long serialVersionUID = -90377698662015272L;
+    private static final long serialVersionUID = -90377698662015272L;
 
-	@ShellOption(opt = "e", lopt = "expression", help = "modify the expression of the timing task", required = true)
-	private String expression;
+    @ShellOption(opt = "e", lopt = "expression", help = "modify the expression of the timing task", required = true)
+    private String expression;
 
-	public String getExpression() {
-		return expression;
-	}
+    public String getExpression() {
+        return expression;
+    }
 
-	public void setExpression(String expression) {
-		this.expression = expression;
-	}
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
 }

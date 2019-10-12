@@ -9,92 +9,101 @@ import java.util.List;
 
 /**
  * Default deploy information implements.
- * 
+ *
  * @author Wangl.sir
  * @version v1.0.0 2019-10-07
  * @since
  */
 public class DefaultPipelineInfo implements PipelineInfo {
 
-	private Project project;
-	private int tarType;
-	private String path;
-	private String branch;
-	private String alias;
-	private List<AppInstance> instances;
-	private TaskHistory taskHistory;
-	private TaskHistory refTaskHistory;
-	private List<TaskHistoryDetail> taskHistoryDetails;
+    private Project project;
+    private int tarType;
+    private String path;
+    private String branch;
+    private String alias;
+    private String tarName;
+    private List<AppInstance> instances;
+    private TaskHistory taskHistory;
+    private TaskHistory refTaskHistory;
+    private List<TaskHistoryDetail> taskHistoryDetails;
 
-	public Project getProject() {
-		return project;
-	}
+    public Project getProject() {
+        return project;
+    }
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
-	public int getTarType() {
-		return tarType;
-	}
+    public int getTarType() {
+        return tarType;
+    }
 
-	public void setTarType(int tarType) {
-		this.tarType = tarType;
-	}
+    public void setTarType(int tarType) {
+        this.tarType = tarType;
+    }
 
-	public String getPath() {
-		return path;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-	public String getBranch() {
-		return branch;
-	}
+    public String getTarName() {
+        return tarName;
+    }
 
-	public void setBranch(String branch) {
-		this.branch = branch;
-	}
+    public void setTarName(String tarName) {
+        this.tarName = tarName;
+    }
 
-	public String getAlias() {
-		return alias;
-	}
+    public String getBranch() {
+        return branch;
+    }
 
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
 
-	public List<AppInstance> getInstances() {
-		return instances;
-	}
+    public String getAlias() {
+        return alias;
+    }
 
-	public void setInstances(List<AppInstance> instances) {
-		this.instances = instances;
-	}
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
-	public TaskHistory getTaskHistory() {
-		return taskHistory;
-	}
+    public List<AppInstance> getInstances() {
+        return instances;
+    }
 
-	public void setTaskHistory(TaskHistory taskHistory) {
-		this.taskHistory = taskHistory;
-	}
+    public void setInstances(List<AppInstance> instances) {
+        this.instances = instances;
+    }
 
-	public TaskHistory getRefTaskHistory() {
-		return refTaskHistory;
-	}
+    public TaskHistory getTaskHistory() {
+        return taskHistory;
+    }
 
-	public void setRefTaskHistory(TaskHistory refTaskHistory) {
-		this.refTaskHistory = refTaskHistory;
-	}
+    public void setTaskHistory(TaskHistory taskHistory) {
+        this.taskHistory = taskHistory;
+    }
 
-	public List<TaskHistoryDetail> getTaskHistoryDetails() {
-		return taskHistoryDetails;
-	}
+    public TaskHistory getRefTaskHistory() {
+        return refTaskHistory;
+    }
 
-	public void setTaskHistoryDetails(List<TaskHistoryDetail> taskHistoryDetails) {
-		this.taskHistoryDetails = taskHistoryDetails;
-	}
+    public void setRefTaskHistory(TaskHistory refTaskHistory) {
+        this.refTaskHistory = refTaskHistory;
+    }
+
+    public List<TaskHistoryDetail> getTaskHistoryDetails() {
+        return taskHistoryDetails;
+    }
+
+    public void setTaskHistoryDetails(List<TaskHistoryDetail> taskHistoryDetails) {
+        this.taskHistoryDetails = taskHistoryDetails;
+    }
 }

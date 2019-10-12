@@ -18,85 +18,85 @@ import java.util.List;
 
 /**
  * Cron Runnagle
- * 
+ *
  * @author vjay
  * @date 2019-07-19 10:41:00
  */
 public class TimingPipelineHandler implements Runnable {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	private Trigger trigger;
+    private Trigger trigger;
 
-	private Project project;
+    private Project project;
 
-	private CiCdProperties config;
+    private CiCdProperties config;
 
-	private PipelineCoreProcessor pipelineCoreProcessor;
+    private PipelineCoreProcessor pipelineCoreProcessor;
 
-	private TriggerService triggerService;
+    private TriggerService triggerService;
 
-	private Task task;
+    private Task task;
 
-	private List<TaskDetail> taskDetails;
+    private List<TaskDetail> taskDetails;
 
-	public TimingPipelineHandler(Trigger trigger, Project project, CiCdProperties config, PipelineCoreProcessor pipelineCoreProcessor,
-			TriggerService triggerService, Task task, List<TaskDetail> taskDetails) {
-		this.trigger = trigger;
-		// this.triggerDetails = trigger.getTriggerDetails();
-		this.project = project;
-		this.config = config;
-		this.pipelineCoreProcessor = pipelineCoreProcessor;
-		this.triggerService = triggerService;
-		this.task = task;
-		this.taskDetails = taskDetails;
-	}
+    public TimingPipelineHandler(Trigger trigger, Project project, CiCdProperties config, PipelineCoreProcessor pipelineCoreProcessor,
+                                 TriggerService triggerService, Task task, List<TaskDetail> taskDetails) {
+        this.trigger = trigger;
+        // this.triggerDetails = trigger.getTriggerDetails();
+        this.project = project;
+        this.config = config;
+        this.pipelineCoreProcessor = pipelineCoreProcessor;
+        this.triggerService = triggerService;
+        this.task = task;
+        this.taskDetails = taskDetails;
+    }
 
-	@Override
-	public void run() {
-		log.info("Timing tasks start");
-		if (check()) {// check
-			log.info("Code had modify , create build task now triggetId={} ", trigger.getId());
-			List<String> instancesStr = new ArrayList<>();
-			for (TaskDetail taskDetail : taskDetails) {
-				instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
-			}
-			pipelineCoreProcessor.createTask(task.getId());
-			// set new sha in db
-			String path = config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName();
-			try {
-				String newSha = GitUtils.getLatestCommitted(path);
-				if (StringUtils.isNotBlank(newSha)) {
-					triggerService.updateSha(trigger.getId(), newSha);
-					trigger.setSha(newSha);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+    @Override
+    public void run() {
+        log.info("Timing tasks start");
+        if (check()) {// check
+            log.info("Code had modify , create build task now triggetId={} ", trigger.getId());
+            List<String> instancesStr = new ArrayList<>();
+            for (TaskDetail taskDetail : taskDetails) {
+                instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
+            }
+            pipelineCoreProcessor.createTask(task.getId());
+            // set new sha in db
+            String path = config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName();
+            try {
+                String newSha = GitUtils.getLatestCommitted(path);
+                if (StringUtils.isNotBlank(newSha)) {
+                    triggerService.updateSha(trigger.getId(), newSha);
+                    trigger.setSha(newSha);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-			log.info("Cron Create TaskHistory triggerId={} projectId={} projectName={} time={}", trigger.getId(), project.getId(),
-					project.getProjectName(), new Date());
-		}
-	}
+            log.info("Cron Create TaskHistory triggerId={} projectId={} projectName={} time={}", trigger.getId(), project.getId(),
+                    project.getProjectName(), new Date());
+        }
+    }
 
-	/**
-	 * check need or not build -- 当本地git仓库的sha和服务器上的不一致时(有代码提交)，则需要更新
-	 */
-	private boolean check() {
-		String sha = trigger.getSha();
-		String path = config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName();
-		try {
-			if (GitUtils.checkGitPath(path)) {
-				GitUtils.checkout(config.getVcs().getGit().getCredentials(), path, task.getBranchName());
-			} else {
-				GitUtils.clone(config.getVcs().getGit().getCredentials(), project.getGitUrl(), path, task.getBranchName());
-			}
-			String oldestSha = GitUtils.getLatestCommitted(path);
-			return !StringUtils.equals(sha, oldestSha);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+    /**
+     * check need or not build -- 当本地git仓库的sha和服务器上的不一致时(有代码提交)，则需要更新
+     */
+    private boolean check() {
+        String sha = trigger.getSha();
+        String path = config.getVcs().getGit().getWorkspace() + "/" + project.getProjectName();
+        try {
+            if (GitUtils.checkGitPath(path)) {
+                GitUtils.checkout(config.getVcs().getGit().getCredentials(), path, task.getBranchName());
+            } else {
+                GitUtils.clone(config.getVcs().getGit().getCredentials(), project.getGitUrl(), path, task.getBranchName());
+            }
+            String oldestSha = GitUtils.getLatestCommitted(path);
+            return !StringUtils.equals(sha, oldestSha);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

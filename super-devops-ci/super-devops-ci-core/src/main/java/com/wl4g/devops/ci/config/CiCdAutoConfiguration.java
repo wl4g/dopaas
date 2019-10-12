@@ -48,67 +48,67 @@ public class CiCdAutoConfiguration {
 		return new CiCdProperties();
 	}*/
 
-	@Bean
-	@ConfigurationProperties(prefix = "pipeline")
-	public CiCdProperties ciCdProperties() {
-		return new CiCdProperties();
-	}
+    @Bean
+    @ConfigurationProperties(prefix = "pipeline")
+    public CiCdProperties ciCdProperties() {
+        return new CiCdProperties();
+    }
 
-	@Bean
-	public CiCdProperties.ExecutorProperties executor(CiCdProperties ciCdProperties){
-		return ciCdProperties.getExecutor();
-	}
+    @Bean
+    public CiCdProperties.ExecutorProperties executor(CiCdProperties ciCdProperties) {
+        return ciCdProperties.getExecutor();
+    }
 
-	@Bean
-	public PipelineTaskRunner pipelineTaskRunner(CiCdProperties.ExecutorProperties executor){
-		return new PipelineTaskRunner(executor);
-	}
+    @Bean
+    public PipelineTaskRunner pipelineTaskRunner(CiCdProperties.ExecutorProperties executor) {
+        return new PipelineTaskRunner(executor);
+    }
 
-	@Bean
-	public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-		return new ThreadPoolTaskScheduler();
-	}
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+        return new ThreadPoolTaskScheduler();
+    }
 
-	@Bean
-	public CiCdConsole cicdConsole() {
-		return new CiCdConsole();
-	}
+    @Bean
+    public CiCdConsole cicdConsole() {
+        return new CiCdConsole();
+    }
 
-	@Bean
-	public GitlabV4VcsOperator gitlabV4Operator() {
-		return new GitlabV4VcsOperator();
-	}
+    @Bean
+    public GitlabV4VcsOperator gitlabV4Operator() {
+        return new GitlabV4VcsOperator();
+    }
 
-	//
-	// Pipeline provider.
-	//
+    //
+    // Pipeline provider.
+    //
 
-	@Bean
-	@DelegateAlias({ PipelineType.DJANGO_STD1, PipelineType.DJANGO_STD2 })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
-		return new DjangoStandardPipelineProvider(info);
-	}
+    @Bean
+    @DelegateAlias({PipelineType.DJANGO_STD1, PipelineType.DJANGO_STD2})
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
+        return new DjangoStandardPipelineProvider(info);
+    }
 
-	@Bean
-	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR1, PipelineType.MVN_ASSEMBLE_TAR2 })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
-		return new MvnAssembleTarPipelineProvider(info);
-	}
+    @Bean
+    @DelegateAlias({PipelineType.MVN_ASSEMBLE_TAR1, PipelineType.MVN_ASSEMBLE_TAR2})
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
+        return new MvnAssembleTarPipelineProvider(info);
+    }
 
-	@Bean
-	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR1, PipelineType.SPRING_EXECUTABLE_JAR2 })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineInfo info) {
-		return new SpringExecutableJarPipelineProvider(info);
-	}
+    @Bean
+    @DelegateAlias({PipelineType.SPRING_EXECUTABLE_JAR1, PipelineType.SPRING_EXECUTABLE_JAR2})
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineInfo info) {
+        return new SpringExecutableJarPipelineProvider(info);
+    }
 
-	@Bean
-	@DelegateAlias({ PipelineType.DOCKER_NATIVE1, PipelineType.DOCKER_NATIVE2 })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineInfo info) {
-		return new DockerNativePipelineProvider(info);
-	}
+    @Bean
+    @DelegateAlias({PipelineType.DOCKER_NATIVE1, PipelineType.DOCKER_NATIVE2})
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineInfo info) {
+        return new DockerNativePipelineProvider(info);
+    }
 
 }
