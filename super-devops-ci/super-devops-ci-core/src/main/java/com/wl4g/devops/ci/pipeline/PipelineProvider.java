@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
 
@@ -32,11 +31,13 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 
 	void rollback() throws Exception;
 
-	Project getProject();
+	//Project getProject();
 
 	TaskResult getTaskResult();
 
-	TaskHistory getTaskHistory();
+	//TaskHistory getTaskHistory();
+
+	PipelineInfo getPipelineInfo();
 
 	String getShaLocal();
 
@@ -44,7 +45,7 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 
 	/**
 	 * Integrate pipeline type definition.
-	 * 
+	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月29日
 	 * @since

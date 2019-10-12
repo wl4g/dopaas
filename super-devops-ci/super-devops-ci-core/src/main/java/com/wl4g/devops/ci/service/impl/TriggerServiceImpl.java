@@ -30,55 +30,55 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TriggerServiceImpl implements TriggerService {
 
-	@Autowired
-	private TriggerDao triggerDao;
+    @Autowired
+    private TriggerDao triggerDao;
 
-	@Override
-	@Transactional
-	public Trigger insert(Trigger trigger) {
-		trigger.preInsert();
-		triggerDao.insertSelective(trigger);
-		return trigger;
-	}
+    @Override
+    @Transactional
+    public Trigger insert(Trigger trigger) {
+        trigger.preInsert();
+        triggerDao.insertSelective(trigger);
+        return trigger;
+    }
 
-	@Override
-	@Transactional
-	public Trigger update(Trigger trigger) {
-		trigger.preUpdate();
-		triggerDao.updateByPrimaryKeySelective(trigger);
-		return trigger;
-	}
+    @Override
+    @Transactional
+    public Trigger update(Trigger trigger) {
+        trigger.preUpdate();
+        triggerDao.updateByPrimaryKeySelective(trigger);
+        return trigger;
+    }
 
-	@Override
-	@Transactional
-	public int delete(Integer id) {
-		return triggerDao.deleteByPrimaryKey(id);
-	}
+    @Override
+    @Transactional
+    public int delete(Integer id) {
+        return triggerDao.deleteByPrimaryKey(id);
+    }
 
-	@Override
-	public void enable(Integer id) {
-		Trigger trigger = new Trigger();
-		trigger.setId(id);
-		trigger.preUpdate();
-		trigger.setEnable(BaseBean.ENABLED);
-		triggerDao.updateByPrimaryKeySelective(trigger);
-	}
+    @Override
+    public void enable(Integer id) {
+        Trigger trigger = new Trigger();
+        trigger.setId(id);
+        trigger.preUpdate();
+        trigger.setEnable(BaseBean.ENABLED);
+        triggerDao.updateByPrimaryKeySelective(trigger);
+    }
 
-	@Override
-	public void disable(Integer id) {
-		Trigger trigger = new Trigger();
-		trigger.setId(id);
-		trigger.preUpdate();
-		trigger.setEnable(BaseBean.DISABLED);
-		triggerDao.updateByPrimaryKeySelective(trigger);
-	}
+    @Override
+    public void disable(Integer id) {
+        Trigger trigger = new Trigger();
+        trigger.setId(id);
+        trigger.preUpdate();
+        trigger.setEnable(BaseBean.DISABLED);
+        triggerDao.updateByPrimaryKeySelective(trigger);
+    }
 
-	@Override
-	public void updateSha(Integer id, String sha) {
-		Trigger trigger = new Trigger();
-		trigger.setId(id);
-		trigger.setSha(sha);
-		triggerDao.updateByPrimaryKeySelective(trigger);
-	}
+    @Override
+    public void updateSha(Integer id, String sha) {
+        Trigger trigger = new Trigger();
+        trigger.setId(id);
+        trigger.setSha(sha);
+        triggerDao.updateByPrimaryKeySelective(trigger);
+    }
 
 }

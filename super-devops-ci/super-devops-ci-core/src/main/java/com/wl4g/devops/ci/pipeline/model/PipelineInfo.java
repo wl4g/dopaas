@@ -9,46 +9,50 @@ import java.util.List;
 
 /**
  * Deploy information wrapper API.
- * 
+ *
  * @author Wangl.sir
  * @version v1.0.0 2019-09-29
  * @since
  */
 public interface PipelineInfo {
 
-	Project getProject();
+    Project getProject();
 
-	void setProject(Project project);
+    void setProject(Project project);
 
-	int getTarType();
+    int getTarType();
 
-	void setTarType(int tarType);
+    void setTarType(int tarType);
 
-	String getPath();
+    String getPath();
 
-	void setPath(String path);
+    void setPath(String path);
 
-	String getBranch();
+    String getBranch();
 
-	void setBranch(String branch);
+    void setBranch(String branch);
 
-	String getAlias();
+    String getAlias();
 
-	void setAlias(String alias);
+    void setAlias(String alias);
 
-	List<AppInstance> getInstances();
+    List<AppInstance> getInstances();
 
-	void setInstances(List<AppInstance> instances);
+    void setInstances(List<AppInstance> instances);
 
-	TaskHistory getTaskHistory();
+    TaskHistory getTaskHistory();
 
-	void setTaskHistory(TaskHistory taskHistory);
+    void setTaskHistory(TaskHistory taskHistory);
 
-	TaskHistory getRefTaskHistory();
+    TaskHistory getRefTaskHistory();
 
-	void setRefTaskHistory(TaskHistory refTaskHistory);
+    void setRefTaskHistory(TaskHistory refTaskHistory);
 
-	List<TaskHistoryDetail> getTaskHistoryDetails();
+    List<TaskHistoryDetail> getTaskHistoryDetails();
 
-	void setTaskHistoryDetails(List<TaskHistoryDetail> taskHistoryDetails);
+    void setTaskHistoryDetails(List<TaskHistoryDetail> taskHistoryDetails);
+
+    String getTarName() ;
+
+    void setTarName(String tarName);
 }

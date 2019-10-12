@@ -28,84 +28,84 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * GITLAB API utility
- * 
+ *
  * @author Wangl.sir
  * @version v1.0 2019年8月2日
  * @since
  */
 public class GitlabV4VcsOperator extends AbstractGitVcsOperator {
 
-	/**
-	 * Get GITLAB remote branch names.
-	 * 
-	 * @param projectId
-	 * @return
-	 */
-	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
-		String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/branches";
+    /**
+     * Get GITLAB remote branch names.
+     *
+     * @param projectId
+     * @return
+     */
+    @Override
+    public List<String> getRemoteBranchNames(int projectId) {
+        String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/branches";
 
-		// Extract branch names.
-		List<Map<String, Object>> branchs = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
-		});
-		List<String> branchNames = safeList(branchs).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
-				.filter(s -> !isEmpty(s)).collect(toList());
+        // Extract branch names.
+        List<Map<String, Object>> branchs = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
+        });
+        List<String> branchNames = safeList(branchs).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
+                .filter(s -> !isEmpty(s)).collect(toList());
 
-		if (log.isInfoEnabled()) {
-			log.info("Extract remote branch names: {}", branchNames);
-		}
-		return branchNames;
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Extract remote branch names: {}", branchNames);
+        }
+        return branchNames;
+    }
 
-	/**
-	 * Get GITLAB remote tag names.
-	 * 
-	 * @param projectId
-	 * @return
-	 */
-	@Override
-	public List<String> getRemoteTags(int projectId) {
-		String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/tags";
+    /**
+     * Get GITLAB remote tag names.
+     *
+     * @param projectId
+     * @return
+     */
+    @Override
+    public List<String> getRemoteTags(int projectId) {
+        String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/tags";
 
-		// Extract tag names.
-		List<Map<String, Object>> tags = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
-		});
-		List<String> tagNames = safeList(tags).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
-				.filter(s -> !isEmpty(s)).collect(toList());
+        // Extract tag names.
+        List<Map<String, Object>> tags = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
+        });
+        List<String> tagNames = safeList(tags).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
+                .filter(s -> !isEmpty(s)).collect(toList());
 
-		if (log.isInfoEnabled()) {
-			log.info("Extract remote tag names: {}", tagNames);
-		}
-		return tagNames;
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Extract remote tag names: {}", tagNames);
+        }
+        return tagNames;
+    }
 
-	/**
-	 * Find remote project ID by project name.
-	 * 
-	 * @param projectName
-	 * @return
-	 */
-	@Override
-	public Integer findRemoteProjectId(String projectName) {
-		Assert.notNull(projectName, "projectName is null");
-		String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects?simple=true&search=" + projectName;
+    /**
+     * Find remote project ID by project name.
+     *
+     * @param projectName
+     * @return
+     */
+    @Override
+    public Integer findRemoteProjectId(String projectName) {
+        Assert.notNull(projectName, "projectName is null");
+        String url = config.getVcs().getGit().getBaseUrl() + "/api/v4/projects?simple=true&search=" + projectName;
 
-		// Extract project IDs.
-		List<Map<String, Object>> projects = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
-		});
+        // Extract project IDs.
+        List<Map<String, Object>> projects = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
+        });
 
-		Integer id = null;
-		for (Map<String, Object> map : projects) {
-			if (map.getOrDefault("name", "-1").toString().equals(projectName)) {
-				id = Integer.parseInt(map.getOrDefault("id", "-1").toString());
-				break;
-			}
-		}
+        Integer id = null;
+        for (Map<String, Object> map : projects) {
+            if (map.getOrDefault("name", "-1").toString().equals(projectName)) {
+                id = Integer.parseInt(map.getOrDefault("id", "-1").toString());
+                break;
+            }
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Extract remote project IDs: {}", id);
-		}
-		return id;
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Extract remote project IDs: {}", id);
+        }
+        return id;
+    }
 
 }

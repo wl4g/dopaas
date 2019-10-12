@@ -57,7 +57,7 @@ public abstract class CommandUtils {
         StringBuilder slog = new StringBuilder();
         StringBuilder serr = new StringBuilder();
 
-        Process ps = Runtime.getRuntime().exec(new String[]{"/bin/sh","-c",cmd});
+        Process ps = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", cmd});
         try (BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
              BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
             String inlog;

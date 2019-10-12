@@ -33,78 +33,78 @@ import java.io.File;
  */
 public class DockerNativePipelineProvider extends AbstractPipelineProvider {
 
-	public DockerNativePipelineProvider(PipelineInfo deployProviderBean) {
-		super(deployProviderBean);
-	}
+    public DockerNativePipelineProvider(PipelineInfo deployProviderBean) {
+        super(deployProviderBean);
+    }
 
-	/**
-	 * execute -- build , push , pull , run
-	 * 
-	 * @throws Exception
-	 */
-	@Override
-	public void execute() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getProject().getId());
-		build(getTaskHistory(), taskResult, false);
+    /**
+     * execute -- build , push , pull , run
+     *
+     * @throws Exception
+     */
+    @Override
+    public void execute() throws Exception {
+        Dependency dependency = new Dependency();
+        dependency.setProjectId(getPipelineInfo().getProject().getId());
+        build(getPipelineInfo().getTaskHistory(), taskResult, false);
 
-		// get sha and md5
-		setShaGit(GitUtils.getLatestCommitted(getPath()));
+        // get sha and md5
+        setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 
-		// docker build
-		dockerBuild(getPath());
+        // docker build
+        dockerBuild(getPipelineInfo().getPath());
 
-		// Each install pull and restart
-		for (AppInstance instance : getInstances()) {
-			Runnable task = new DockerNativePipelineHandler(this, getProject(), instance, getTaskHistoryDetails());
-			Thread t = new Thread(task);
-			t.start();
-			t.join();
-		}
+        // Each install pull and restart
+        for (AppInstance instance : getPipelineInfo().getInstances()) {
+            Runnable task = new DockerNativePipelineHandler(this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails());
+            Thread t = new Thread(task);
+            t.start();
+            t.join();
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Maven assemble deploy done!");
+        }
+    }
 
-	/**
-	 * Roll-back
-	 * 
-	 * @throws Exception
-	 */
-	@Override
-	public void rollback() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getProject().getId());
+    /**
+     * Roll-back
+     *
+     * @throws Exception
+     */
+    @Override
+    public void rollback() throws Exception {
+        Dependency dependency = new Dependency();
+        dependency.setProjectId(getPipelineInfo().getProject().getId());
 
-		// check bakup file isExist
-		String oldFilePath = config.getBackup().getBaseDir() + "/" + subPackname(getProject().getTarPath()) + "#"
-				+ getTaskHistory().getRefId();
+        // check bakup file isExist
+        String oldFilePath = config.getBackup().getBaseDir() + "/" + subPackname(getPipelineInfo().getProject().getTarPath()) + "#"
+                + getPipelineInfo().getTaskHistory().getRefId();
 
-		File oldFile = new File(oldFilePath);
-		if (oldFile.exists()) {
-			getBackupLocal(oldFilePath, getPath() + getProject().getTarPath());
-			setShaGit(getRefTaskHistory().getShaGit());
-		} else {
-			build(getTaskHistory() ,taskResult,true);
-			setShaGit(GitUtils.getLatestCommitted(getPath()));
-		}
+        File oldFile = new File(oldFilePath);
+        if (oldFile.exists()) {
+            getBackupLocal(oldFilePath, getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
+            setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
+        } else {
+            build(getPipelineInfo().getTaskHistory(), taskResult, true);
+            setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+        }
 
-		setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
-		// backup in local
-		//backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
+        setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
+        // backup in local
+        //backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
 
-		// scp to server
-		for (AppInstance instance : getInstances()) {
-			Runnable task = new DockerNativePipelineHandler(this, getProject(), instance, getTaskHistoryDetails());
-			Thread t = new Thread(task);
-			t.start();
-			t.join();
-		}
+        // scp to server
+        for (AppInstance instance : getPipelineInfo().getInstances()) {
+            Runnable task = new DockerNativePipelineHandler(this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails());
+            Thread t = new Thread(task);
+            t.start();
+            t.join();
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Maven assemble deploy done!");
+        }
+    }
 
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author vjay
  * @date 2019-10-11 10:13:00
  */
-public class PipelineTaskRunner extends GenericTaskRunner<RunProperties>{
+public class PipelineTaskRunner extends GenericTaskRunner<RunProperties> {
 
     public PipelineTaskRunner(CiCdProperties.ExecutorProperties executor) {
         super(executor);
@@ -22,14 +22,9 @@ public class PipelineTaskRunner extends GenericTaskRunner<RunProperties>{
 
     }
 
-    public ThreadPoolExecutor getWorker(){
+    public ThreadPoolExecutor getWorker() {
         return super.getWorker();
     }
-
-
-
-
-
 
 
 }
