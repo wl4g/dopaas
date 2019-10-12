@@ -37,18 +37,18 @@ spring:
         sns: # SNS configuration.
           oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
           wechat-mp:
-            app-id: wxa0ac2cc5308f3a38
-            app-secret: c5328060db71870a58a43e04fab5d4f6
-            redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechatmp/callback
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}${server.contextPath}/sns/wechatmp/callback
           wechat:
-            app-id: wx162814f9191f9d9b
-            app-secret: 9f1d914629bd9820351fb73f51e70495
-            redirect-url: https://passport.wl4g.com${server.contextPath}/sns/wechat/callback
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}${server.contextPath}/sns/wechat/callback
             href: https://static.wl4g.com:2443/iam/static/wx.css
           qq:
-            app-id: 101542056
+            app-id: 101542056 # Public testing.
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-            redirect-url: https://passport.wl4g.com{server.contextPath}/sns/qq/callback
+            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}{server.contextPath}/sns/qq/callback
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
