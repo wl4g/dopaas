@@ -61,4 +61,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${DEVOPS_REDIS_NODES:redis-cluster.wl4g.com:6379,redis-cluster.wl4g.com:6380,redis-cluster.wl4g.com:6381,redis-cluster.wl4g.com:7380,redis-cluster.wl4g.com:7380,redis-cluster.wl4g.com:7381}
+  nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
