@@ -45,7 +45,9 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.DOCKER_NATIVE2;
 import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.MVN_ASSEMBLE_TAR2;
@@ -95,6 +97,9 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
 
     @Autowired
     private PipelineTaskRunner pipelineTaskRunner;
+
+    public static ThreadPoolExecutor pool = new ThreadPoolExecutor(1, 10, 600, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2), new ThreadPoolExecutor.DiscardOldestPolicy());
+
 
     @Override
     public List<AppCluster> grouplist() {
