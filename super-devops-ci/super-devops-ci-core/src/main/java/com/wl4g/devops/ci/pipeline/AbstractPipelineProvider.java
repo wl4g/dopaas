@@ -246,9 +246,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Local back up
 	 */
-	public String backupLocal(String path, String sign) throws Exception {
+	public String backupLocal(String path, String sign, String alias, String branchName) throws Exception {
 		checkPath(config.getBackup().getBaseDir());
-		String command = "cp -Rf " + path + " " + config.getBackup().getBaseDir() + "/" + subPackname(path) + "#" + sign;
+		String command = "cp -Rf " + path + " " + config.getBackup().getBaseDir() + "/" + alias + "/" + branchName + "/" + subPackname(path) + "#" + sign;
 		return SSHTool.exec(command);
 	}
 

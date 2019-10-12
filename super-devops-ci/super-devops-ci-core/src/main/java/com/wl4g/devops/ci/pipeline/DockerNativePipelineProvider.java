@@ -92,7 +92,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider {
 
 		setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
 		// backup in local
-		backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
+		//backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
 
 		// scp to server
 		for (AppInstance instance : getInstances()) {

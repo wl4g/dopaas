@@ -69,14 +69,28 @@ redis:
   # Redis's cluster nodes.
   nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
 
-# Deploy git configuration.
-deploy:
-  git-url: http://git.anjiancloud.repo
-  git-username: heweijie
-  git-password: hwj13535248668
-  git-token: Xw6xYojnoj7SSDyyLXP7
-  cipher-key: 03DE18C2FC4E605F
-  task-timeout: 300
-  docker-push-username: xburnerair00
-  docker-push-passwd: hwj13535248668
+# Pipeline configuration.
+pipeline:
+  executor:
+    concurrency: 10
+    keep-alive-time: 601000000
+    accept-queue: 32
+  vcs:
+    git:
+      base-url: http://git.anjiancloud.repo
+      username: heweijie
+      password: hwj13535248668
+      token: Xw6xYojnoj7SSDyyLXP7
+      #workspace: user default
+  build:
+    job-clean-scan: 30
+    job-clean-timeout: 300
+    job-share-dependency-try-timeout: 300
+  backup:
+    base-dir:
+  tranform:
+    cipher-key: 03DE18C2FC4E605F
+    docker-native:
+      docker-push-username: xburnerair00
+      docker-push-passwd: hwj13535248668
 

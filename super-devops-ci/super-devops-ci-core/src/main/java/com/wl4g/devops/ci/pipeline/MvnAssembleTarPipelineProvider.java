@@ -66,7 +66,7 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProject().getId());
 		// Old file
-		String oldFilePath = config.getBackup().getBaseDir() + "/" + subPackname(getProject().getTarPath()) + "#"
+		String oldFilePath = config.getBackup().getBaseDir()+ "/" + getAlias() + "/" + getBranch() + "/" +  subPackname(getProject().getTarPath()) + "#"
 				+ getTaskHistory().getRefId();
 		File oldFile = new File(oldFilePath);
 		if (oldFile.exists()) {// Check bakup file isExist , if not -- check out
@@ -88,7 +88,7 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		// get local sha
 		setShaLocal(FileCodec.getFileMD5(new File(getPath() + getProject().getTarPath())));
 		// backup in local
-		backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString());
+		backupLocal(getPath() + getProject().getTarPath(), getTaskHistory().getId().toString(),getAlias(),getBranch());
 		// scp to server
 		List<Future<?>> futures = new ArrayList<>();
 		for (AppInstance instance : getInstances()) {
