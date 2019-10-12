@@ -96,9 +96,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
         this.pipelineInfo.setTarName(a[a.length - 1]);
     }
 
-    public PipelineInfo getPipelineInfo(){
+    public PipelineInfo getPipelineInfo() {
         return pipelineInfo;
-    };
+    }
 
     @Override
     public String getShaGit() {
