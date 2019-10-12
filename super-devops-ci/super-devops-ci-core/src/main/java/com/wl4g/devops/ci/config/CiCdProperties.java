@@ -178,6 +178,8 @@ public class CiCdProperties {
 
         private Integer jobShareDenpenyTryTimeout = 300;
 
+        private String logPath;
+
         public Integer getJobCleanScan() {
             return jobCleanScan;
         }
@@ -200,6 +202,17 @@ public class CiCdProperties {
 
         public void setJobShareDenpenyTryTimeout(Integer jobShareDenpenyTryTimeout) {
             this.jobShareDenpenyTryTimeout = jobShareDenpenyTryTimeout;
+        }
+
+        public String getLogPath() {
+            if (StringUtils.isBlank(logPath)) {// if blank ,user default
+                logPath = System.getProperties().getProperty("user.home") + "/git/log";
+            }
+            return logPath;
+        }
+
+        public void setLogPath(String logPath) {
+            this.logPath = logPath;
         }
     }
 

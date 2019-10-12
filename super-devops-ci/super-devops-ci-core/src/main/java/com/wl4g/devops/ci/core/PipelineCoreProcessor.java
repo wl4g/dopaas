@@ -42,4 +42,6 @@ public interface PipelineCoreProcessor {
 
 	void createRollbackTask(Integer taskId);
 
+	List<String> readLog(Integer taskHisId,Integer index,Integer size);
+
 }

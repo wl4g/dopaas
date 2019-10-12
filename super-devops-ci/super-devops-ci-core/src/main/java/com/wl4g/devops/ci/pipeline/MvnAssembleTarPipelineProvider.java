@@ -49,13 +49,13 @@ public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getProject().getId());
 		// maven install , include dependency
-		build(getTaskHistory() ,taskResult,false);//TODO 修改后要测试
+		build(getTaskHistory() ,taskResult,false);
 		if (!taskResult.isSuccess()) {
 			return;
 		}
 		// get git sha
 		setShaGit(GitUtils.getLatestCommitted(getPath()));
-		//deploy();//TODO
+		deploy();//TODO
 	}
 
 	/**

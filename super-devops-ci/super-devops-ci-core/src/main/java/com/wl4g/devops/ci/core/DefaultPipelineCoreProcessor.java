@@ -26,6 +26,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
+import com.wl4g.devops.common.utils.io.FileReadUtil;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
@@ -253,11 +254,6 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
 
         ThreadPoolExecutor worker = pipelineTaskRunner.getWorker();
         worker.execute(() -> {
-            System.out.println("into execute");
-            System.out.println("into execute");
-            System.out.println("into execute");
-            System.out.println("into execute");
-
             try {
                 provider.execute();
                 if (provider.getTaskResult().isSuccess()) {
@@ -435,6 +431,19 @@ public class DefaultPipelineCoreProcessor implements PipelineCoreProcessor, Init
                 }
             }
         }).start();
+    }
+
+
+    public List<String> readLog(Integer taskHisId,Integer index,Integer size){
+        if(index==null){
+            index = 0;
+        }
+        if(size == null){
+            size = 100;
+        }
+        String logPath = config.getBuild().getLogPath()+"/"+taskHisId+".log";
+        List<String> strings = FileReadUtil.readFile(logPath, index, size);
+        return strings;
     }
 
     //
