@@ -155,8 +155,9 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 			log.debug("Simple AI-smart trails analyze, xSD: {}, yTrails: {}", ySD, yTrails);
 		}
 
-		// TODO => for AI CNN model verifying...
-		return offsetMatched && xSD > 13 && xSD < 79 && ySD > 1.3 && ySD < 11;
+		// (At present, the effect is not very good.)TODO => for AI CNN model
+		// verifying...
+		return offsetMatched /* && xSD > 13 && xSD < 79 &&ySD>1.3&&ySD<11 */;
 	}
 
 	/**

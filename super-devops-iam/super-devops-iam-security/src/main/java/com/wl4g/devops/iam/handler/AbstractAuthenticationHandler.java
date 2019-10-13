@@ -52,7 +52,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	/**
 	 * IAM security context handler
 	 */
-	final protected ServerSecurityConfigurer context;
+	final protected ServerSecurityConfigurer configurer;
 
 	/**
 	 * IAM server configuration properties
@@ -88,7 +88,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 		Assert.notNull(context, "'context' must not be null");
 		Assert.notNull(restTemplate, "'restTemplate' must not be null");
 		this.restTemplate = restTemplate;
-		this.context = context;
+		this.configurer = context;
 	}
 
 	/**
@@ -99,7 +99,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	 * @return
 	 */
 	protected String getRoles(String principal, String application) {
-		return this.context.findRoles(principal, application);
+		return this.configurer.findRoles(principal, application);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	 * @return
 	 */
 	protected String getPermits(String principal, String application) {
-		return this.context.findPermissions(principal, application);
+		return this.configurer.findPermissions(principal, application);
 	}
 
 }

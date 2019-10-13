@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.handler;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -105,7 +105,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public void checkAuthenticateRequests(String fromAppName, String redirectUrl) {
+	public void checkAuthenticateValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException {
 		// Check redirect URL(When source application is not empty)
 		if (isNotBlank(fromAppName)) {
 			if (isBlank(redirectUrl)) {
@@ -113,13 +113,12 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 
 			// Get application.
-			ApplicationInfo app = context.getApplicationInfo(fromAppName);
+			ApplicationInfo app = configurer.getApplicationInfo(fromAppName);
 			if (Objects.isNull(app)) {
 				throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
 			}
 			Assert.state(!isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
 					String.format("Invalid redirection domain configure, application[%s]", fromAppName));
-
 			if (log.isDebugEnabled()) {
 				log.debug("Check authentication requests application [{}]", app);
 			}
@@ -140,10 +139,10 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public void checkApplicationAccessAuthorized(String principal, String fromAppName) {
+	public void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException {
 		Assert.hasText(principal, "'principal' must not be empty");
 		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
-		if (!context.isApplicationAccessAuthorized(principal, fromAppName)) {
+		if (!configurer.isApplicationAccessAuthorized(principal, fromAppName)) {
 			throw new IllegalApplicationAccessException(
 					bundle.getMessage("GentralAuthenticationHandler.unaccessible", principal, fromAppName));
 		}
@@ -168,7 +167,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertGrantTicketValidity(subject, model);
 
 		// Check access authorized from application.
-		checkApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
+		assertApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
 
 		// Force clearance of last grant Ticket
 		/*
@@ -190,16 +189,15 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertion.setPrincipal(new IamPrincipal(principal));
 
 		// Grant validated start date.
-		Calendar calendar = Calendar.getInstance();
-		assertion.setValidFromDate(calendar.getTime());
+		long now = System.currentTimeMillis();
+		assertion.setValidFromDate(new Date(now));
 
 		/*
 		 * xx.xx...client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo
 		 * Grant term of validity(end date).
 		 */
 		long expiredMs = getSessionExpiredTime(session);
-		calendar.add(Calendar.MILLISECOND, (int) expiredMs);
-		assertion.setValidUntilDate(calendar.getTime());
+		assertion.setValidUntilDate(new Date(now + expiredMs));
 
 		// Updating grantTicket
 		/*
@@ -271,7 +269,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 * Query applications by bind session names
 			 */
 			Set<String> appNames = grantInfo.getApplications().keySet();
-			List<ApplicationInfo> apps = context.findApplicationInfo(appNames.toArray(new String[] {}));
+			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (apps == null || apps.isEmpty()) {
 				throw new IamException(String.format("Find application information is empty. %s", appNames));
 			}
@@ -400,8 +398,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * 
 	 * @param subject
 	 * @param model
+	 * @throws InvalidGrantTicketException
 	 */
-	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) {
+	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
 			log.warn("Invalid grantTicket has empty, appName: '{}', sessionId: '{}'", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());

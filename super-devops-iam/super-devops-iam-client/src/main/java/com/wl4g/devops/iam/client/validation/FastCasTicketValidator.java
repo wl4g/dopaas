@@ -59,14 +59,14 @@ public class FastCasTicketValidator extends AbstractBasedValidator<TicketValidat
 			 * Only if the error is not authenticated, can it be redirected to
 			 * the IAM server login page, otherwise the client will display the
 			 * error page directly (to prevent unlimited redirection).
-			 * See:i.w.DefaultAuthenticatorController#validate()
+			 * See:i.w.CentralAuthenticatorController#validate()
 			 */
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
 				throw new InvalidGrantTicketException(resp.getMessage());
 			} else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
 				throw new IllegalApplicationAccessException(resp.getMessage());
 			}
-			throw new TicketValidateException(resp.getMessage());
+			throw new TicketValidateException(resp != null ? resp.getMessage() : "Unknown error");
 		}
 
 		return resp.getData().get(KEY_TICKET_ASSERT);

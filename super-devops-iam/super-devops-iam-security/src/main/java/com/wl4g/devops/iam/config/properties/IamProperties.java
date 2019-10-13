@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.config.properties;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
+import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -25,7 +26,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.apache.shiro.util.Assert;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.config.properties.ServerParamProperties;
 import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
@@ -92,7 +92,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	public void setLoginUri(String loginUri) {
-		this.loginUri = WebUtils2.cleanURI(loginUri);
+		this.loginUri = cleanURI(loginUri);
 	}
 
 	public String getSuccessEndpoint() {

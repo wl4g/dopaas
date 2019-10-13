@@ -27,22 +27,27 @@ public enum ClientRef {
 	/**
 	 * Client android type.
 	 */
-	Android("android"),
+	Android("Android"),
 
 	/**
 	 * Client iOS type.
 	 */
-	iOS("ios"),
+	iOS("iOS"),
 
 	/**
-	 * Client Mac type.
+	 * Client MAC type.
 	 */
-	Mac("mac"),
+	Mac("Mac"),
+
+	/**
+	 * Client iPad type.
+	 */
+	IPad("IPad"),
 
 	/**
 	 * Client WeChat official platform type.
 	 */
-	WeChatMp("wechatmp"),
+	WeChatMp("wechatMp"),
 
 	/**
 	 * Client WeChat applet type.
@@ -52,7 +57,12 @@ public enum ClientRef {
 	/**
 	 * Client windows type.
 	 */
-	WINDOWS("windows");
+	WINDOWS("Windows"),
+
+	/**
+	 * Client unknown type.
+	 */
+	Unknown("Unknown");
 
 	final private String value;
 

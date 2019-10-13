@@ -57,7 +57,6 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import com.wl4g.devops.common.annotation.DevOpsErrorController;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 
 import freemarker.template.Template;
 
@@ -156,11 +155,12 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			 * If and only if the client is a browser and not an XHR request
 			 * returns to the page, otherwise it returns to JSON
 			 */
-			if (isJSONResponse(getResponseType(request), request)) {
+			if (isJSONResponse(request)) {
 				String errmsg = extractMeaningfulErrorsMessage(model);
-				writeJson(response, toJSONString(new RespBase<>(SYS_ERR, errmsg, null)));
+				int code = (int) model.getOrDefault("status", SYS_ERR.getCode());
+				writeJson(response, toJSONString(new RespBase<>(code, errmsg)));
 			} else {
-				write(response, getStatus(request, response).value(), TEXT_HTML_VALUE,
+				write(response, getHttpStatus(request, response).value(), TEXT_HTML_VALUE,
 						renderErrorPage(model, request).getBytes(UTF_8));
 			}
 		} catch (IOException e) {
@@ -172,9 +172,10 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	 * Get error HTTP status
 	 * 
 	 * @param request
+	 * @param response
 	 * @return
 	 */
-	protected HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response) {
+	protected HttpStatus getHttpStatus(HttpServletRequest request, HttpServletResponse response) {
 		HttpStatus status = super.getStatus(request);
 		if (status != null) {
 			return status;
@@ -201,10 +202,9 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			errmsg.append(message);
 		}
 
-		Object errors = model.get("errors");
+		Object errors = model.get("errors"); // @NotNull?
 		if (errors != null) {
 			errmsg.setLength(0); // Print only errors information
-
 			if (errors instanceof Collection) {
 				// Used to remove duplication
 				List<String> fieldErrs = new ArrayList<>(8);
@@ -239,17 +239,6 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 		}
 
 		return errmsg.toString();
-	}
-
-	/**
-	 * Get request response type
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private ResponseType getResponseType(HttpServletRequest request) {
-		ResponseType respType = safeOf(request.getParameter(DEFAULT_PARAM_NAME));
-		return respType == null ? auto : respType;
 	}
 
 	/**

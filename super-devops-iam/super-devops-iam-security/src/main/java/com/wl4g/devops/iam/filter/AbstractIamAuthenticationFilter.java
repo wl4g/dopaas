@@ -50,7 +50,6 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -69,7 +68,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -334,16 +332,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	protected boolean isJSONResponse(ServletRequest request) {
-		// Using dynamic parameter
-		String respType = request.getParameter(config.getParam().getResponseType()); // Priority
-		if (!StringUtils.hasText(respType)) {
-			respType = SessionBindings.extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getResponseType());
-		}
+		// Using last saved parameters.
+		String respTypeValue = extParameterValue(KEY_REQ_AUTH_PARAMS, ResponseType.DEFAULT_RESPTYPE_NAME);
 		if (log.isDebugEnabled()) {
-			log.debug("Using response type:{}", respType);
+			log.debug("Using last response type:{}", respTypeValue);
 		}
-
-		return ResponseType.isJSONResponse(respType, toHttp(request));
+		return ResponseType.isJSONResponse(respTypeValue, toHttp(request)) || ResponseType.isJSONResponse(toHttp(request));
 	}
 
 	/**

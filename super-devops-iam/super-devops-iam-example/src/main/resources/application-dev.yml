@@ -21,14 +21,14 @@ spring:
           allowCredentials: true
           allowsOrigins: '*'
           allowsHeaders: '*'
-          allowsMethods: GET,POST,OPTION
+          allowsMethods: GET,POST
   cloud:
     devops:
       iam:
-        authc-internal-access:
+        acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allow-ip: 127.0.0.1
-          deny-ip: 
+          allowIpRange: 127.0.0.1
+          denyIpRange: 
         client:
           server-uri: http://localhost:14040/iam-server # Required
           # This config item is used to specify a custom login page, default to 

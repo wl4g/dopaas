@@ -32,7 +32,7 @@ import com.wl4g.devops.common.kit.access.IPAccessControl.IPAccessProperties;
  */
 @Configuration
 public class IPAccessConfiguration {
-	final static String IP_ACCESS_PREFIX = "spring.cloud.devops.iam.authc-internal-access";
+	final static String IP_ACCESS_PREFIX = "spring.cloud.devops.iam.acl";
 
 	@Bean
 	public IPAccessControl ipAccessControl(IPAccessProperties properties) {
