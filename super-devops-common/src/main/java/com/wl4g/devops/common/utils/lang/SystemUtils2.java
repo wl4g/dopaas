@@ -22,6 +22,7 @@ import java.net.NetworkInterface;
 import java.nio.charset.Charset;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.SystemUtils;
 
 /**
  * System utility tools
@@ -30,7 +31,7 @@ import org.apache.commons.codec.binary.Hex;
  * @version v1.0 2018年5月28日
  * @since
  */
-public abstract class SystemUtils extends org.apache.commons.lang3.SystemUtils {
+public abstract class SystemUtils2 extends SystemUtils {
 
 	/**
 	 * System Unique Identification
@@ -55,7 +56,7 @@ public abstract class SystemUtils extends org.apache.commons.lang3.SystemUtils {
 	static {
 		try {
 			HOST_SERIAL = localMacString();
-			String packagePath = SystemUtils.class.getProtectionDomain().getCodeSource().getLocation().toString();
+			String packagePath = SystemUtils2.class.getProtectionDomain().getCodeSource().getLocation().toString();
 			APP_SERIAL = new StringBuffer(HOST_SERIAL).append("-")
 					.append(Hex.encodeHexString((HOST_SERIAL + packagePath).getBytes(Charset.forName("UTF-8")))).substring(16, 26)
 					.toString();
