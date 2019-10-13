@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
@@ -23,25 +22,26 @@ import com.wl4g.devops.common.bean.share.Environment;
 import java.util.List;
 
 /**
+ * CICD pipeline core entry processor.
+ * 
  * @author vjay
+ * @author Wangl.sir <983708408@qq.com>
  * @date 2019-05-16 14:45:00
  */
-public interface PipelineCoreProcessor {
+public interface Pipeline {
 
-    List<AppCluster> grouplist();
+	List<AppCluster> grouplist();
 
-    List<Environment> environmentlist(String clusterId);
+	List<Environment> environmentlist(String clusterId);
 
-    List<AppInstance> instancelist(AppInstance appInstance);
+	List<AppInstance> instancelist(AppInstance appInstance);
 
-    Trigger getTriggerByAppClusterIdAndBranch(Integer appClusterId, String branchName);
+	void hook(String projectName, String branchName, String url);
 
-    void hook(String projectName, String branchName, String url);
+	void createTask(Integer taskId);
 
-    void createTask(Integer taskId);
+	void createRollbackTask(Integer taskId);
 
-    void createRollbackTask(Integer taskId);
-
-    List<String> readLog(Integer taskHisId, Integer index, Integer size);
+	List<String> readLog(Integer taskHisId, Integer index, Integer size);
 
 }

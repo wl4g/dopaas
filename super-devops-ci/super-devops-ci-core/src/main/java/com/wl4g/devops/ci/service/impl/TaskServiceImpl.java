@@ -40,99 +40,99 @@ import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 @Service
 public class TaskServiceImpl implements TaskService {
 
-    @Autowired
-    private TaskDao taskDao;
-    @Autowired
-    private TaskDetailDao taskDetailDao;
+	@Autowired
+	private TaskDao taskDao;
+	@Autowired
+	private TaskDetailDao taskDetailDao;
 
-    @Autowired
-    private ProjectDao projectDao;
+	@Autowired
+	private ProjectDao projectDao;
 
-    @Override
-    @Transactional
-    public Task save(Task task, Integer[] instanceIds) {
-        // check task repeat
-        Assert.state(!isRepeat(task, instanceIds), "trigger deploy this instance is Repeat,please check");
-        Assert.notEmpty(instanceIds, "instance can not be null");
-        Assert.notNull(task, "task can not be null");
-        Project project = projectDao.getByAppClusterId(task.getAppClusterId());
-        Assert.notNull(project, "Not found project , Please check you project config");
-        task.setProjectId(project.getId());
-        if (null != task.getId() && task.getId() > 0) {
-            task.preUpdate();
-            task = update(task, instanceIds);
-        } else {
-            task = insert(task, instanceIds);
-        }
-        return task;
-    }
+	@Override
+	@Transactional
+	public Task save(Task task, Integer[] instanceIds) {
+		// check task repeat
+		Assert.state(!isRepeat(task, instanceIds), "trigger deploy this instance is Repeat,please check");
+		Assert.notEmpty(instanceIds, "instance can not be null");
+		Assert.notNull(task, "task can not be null");
+		Project project = projectDao.getByAppClusterId(task.getAppClusterId());
+		Assert.notNull(project, "Not found project , Please check you project config");
+		task.setProjectId(project.getId());
+		if (null != task.getId() && task.getId() > 0) {
+			task.preUpdate();
+			task = update(task, instanceIds);
+		} else {
+			task = insert(task, instanceIds);
+		}
+		return task;
+	}
 
-    private Task insert(Task task, Integer[] instanceIds) {
-        task.preInsert();
-        task.setDelFlag(DEL_FLAG_NORMAL);
-        taskDao.insertSelective(task);
-        int taskId = task.getId();
-        List<TaskDetail> taskDetails = new ArrayList<>();
-        for (Integer instanceId : instanceIds) {
-            TaskDetail taskDetail = new TaskDetail();
-            taskDetail.setTaskId(taskId);
-            taskDetail.setInstanceId(instanceId);
-            taskDetailDao.insertSelective(taskDetail);
-            taskDetails.add(taskDetail);
-        }
-        task.setTaskDetails(taskDetails);
-        return task;
-    }
+	private Task insert(Task task, Integer[] instanceIds) {
+		task.preInsert();
+		task.setDelFlag(DEL_FLAG_NORMAL);
+		taskDao.insertSelective(task);
+		int taskId = task.getId();
+		List<TaskDetail> taskDetails = new ArrayList<>();
+		for (Integer instanceId : instanceIds) {
+			TaskDetail taskDetail = new TaskDetail();
+			taskDetail.setTaskId(taskId);
+			taskDetail.setInstanceId(instanceId);
+			taskDetailDao.insertSelective(taskDetail);
+			taskDetails.add(taskDetail);
+		}
+		task.setTaskDetails(taskDetails);
+		return task;
+	}
 
-    private Task update(Task task, Integer[] instanceIds) {
-        task.preUpdate();
-        task.preUpdate();
-        taskDao.updateByPrimaryKeySelective(task);
-        List<TaskDetail> taskDetails = new ArrayList<>();
-        taskDetailDao.deleteByTaskId(task.getId());
-        for (Integer instanceId : instanceIds) {
-            TaskDetail taskDetail = new TaskDetail();
-            taskDetail.setTaskId(task.getId());
-            taskDetail.setInstanceId(instanceId);
-            taskDetailDao.insertSelective(taskDetail);
-            taskDetails.add(taskDetail);
-        }
-        task.setTaskDetails(taskDetails);
-        return task;
-    }
+	private Task update(Task task, Integer[] instanceIds) {
+		task.preUpdate();
+		task.preUpdate();
+		taskDao.updateByPrimaryKeySelective(task);
+		List<TaskDetail> taskDetails = new ArrayList<>();
+		taskDetailDao.deleteByTaskId(task.getId());
+		for (Integer instanceId : instanceIds) {
+			TaskDetail taskDetail = new TaskDetail();
+			taskDetail.setTaskId(task.getId());
+			taskDetail.setInstanceId(instanceId);
+			taskDetailDao.insertSelective(taskDetail);
+			taskDetails.add(taskDetail);
+		}
+		task.setTaskDetails(taskDetails);
+		return task;
+	}
 
-    /**
-     * check task repeat
-     *
-     * @param task
-     * @param instanceIds
-     * @return
-     */
-    private boolean isRepeat(Task task, Integer[] instanceIds) {
-        List<TaskDetail> taskDetails = taskDetailDao.getUsedInstance(task.getAppClusterId(), task.getId());
-        for (TaskDetail taskDetail : taskDetails) {
-            if (Arrays.asList(instanceIds).contains(taskDetail.getInstanceId())) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * check task repeat
+	 *
+	 * @param task
+	 * @param instanceIds
+	 * @return
+	 */
+	private boolean isRepeat(Task task, Integer[] instanceIds) {
+		List<TaskDetail> taskDetails = taskDetailDao.getUsedInstance(task.getAppClusterId(), task.getId());
+		for (TaskDetail taskDetail : taskDetails) {
+			if (Arrays.asList(instanceIds).contains(taskDetail.getInstanceId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    @Override
-    @Transactional
-    public int delete(Integer taskId) {
-        taskDetailDao.deleteByTaskId(taskId);
-        return taskDao.deleteByPrimaryKey(taskId);
-    }
+	@Override
+	@Transactional
+	public int delete(Integer taskId) {
+		taskDetailDao.deleteByTaskId(taskId);
+		return taskDao.deleteByPrimaryKey(taskId);
+	}
 
-    @Override
-    public Task getTaskDetailById(Integer taskId) {
-        Assert.notNull(taskId, "taskId is null");
-        Task task = taskDao.selectByPrimaryKey(taskId);
-        Assert.notNull(task, "not found task");
-        List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
-        task.setTaskDetails(taskDetails);
-        return task;
-    }
+	@Override
+	public Task getTaskDetailById(Integer taskId) {
+		Assert.notNull(taskId, "taskId is null");
+		Task task = taskDao.selectByPrimaryKey(taskId);
+		Assert.notNull(task, "not found task");
+		List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
+		task.setTaskDetails(taskDetails);
+		return task;
+	}
 
 }

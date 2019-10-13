@@ -26,13 +26,13 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
  */
 public class SpringExecutableJarPipelineProvider extends AbstractPipelineProvider {
 
-    public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
-        super(deployProviderBean);
-    }
+	public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
+		super(deployProviderBean);
+	}
 
-    @Override
-    public void execute() throws Exception {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void execute() throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
 }

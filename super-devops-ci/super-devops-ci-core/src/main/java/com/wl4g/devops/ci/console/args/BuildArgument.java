@@ -25,16 +25,16 @@ import java.io.Serializable;
  * @date 2019-05-21 15:53:00
  */
 public class BuildArgument implements Serializable {
-    private static final long serialVersionUID = -90377698662015272L;
+	private static final long serialVersionUID = -90377698662015272L;
 
-    @ShellOption(opt = "t", lopt = "taskId", help = "taskId")
-    private Integer taskId;
+	@ShellOption(opt = "t", lopt = "taskId", help = "taskId")
+	private Integer taskId;
 
-    public Integer getTaskId() {
-        return taskId;
-    }
+	public Integer getTaskId() {
+		return taskId;
+	}
 
-    public void setTaskId(Integer taskId) {
-        this.taskId = taskId;
-    }
+	public void setTaskId(Integer taskId) {
+		this.taskId = taskId;
+	}
 }

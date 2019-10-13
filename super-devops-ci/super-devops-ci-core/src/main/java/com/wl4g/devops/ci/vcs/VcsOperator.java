@@ -26,28 +26,28 @@ import java.util.List;
  */
 public interface VcsOperator {
 
-    /**
-     * Get VCS remote branch names.
-     *
-     * @param projectId
-     * @return
-     */
-    List<String> getRemoteBranchNames(int projectId);
+	/**
+	 * Get VCS remote branch names.
+	 *
+	 * @param projectId
+	 * @return
+	 */
+	List<String> getRemoteBranchNames(int projectId);
 
-    /**
-     * Get VCS remote tag names.
-     *
-     * @param projectId
-     * @return
-     */
-    List<String> getRemoteTags(int projectId);
+	/**
+	 * Get VCS remote tag names.
+	 *
+	 * @param projectId
+	 * @return
+	 */
+	List<String> getRemoteTags(int projectId);
 
-    /**
-     * Find remote project ID by project name.
-     *
-     * @param projectName
-     * @return
-     */
-    Integer findRemoteProjectId(String projectName);
+	/**
+	 * Find remote project ID by project name.
+	 *
+	 * @param projectName
+	 * @return
+	 */
+	Integer findRemoteProjectId(String projectName);
 
 }

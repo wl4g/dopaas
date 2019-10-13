@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.admin;
 
-import com.wl4g.devops.ci.core.PipelineCoreProcessor;
+import com.wl4g.devops.ci.core.Pipeline;
 import com.wl4g.devops.common.bean.ci.dto.HookInfo;
 import com.wl4g.devops.common.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GitHookController extends BaseController {
 
 	@Autowired
-	private PipelineCoreProcessor pipelineCoreProcessor;
+	private Pipeline pipelineCoreProcessor;
 
 	/**
 	 * Receive GITLAB hook.

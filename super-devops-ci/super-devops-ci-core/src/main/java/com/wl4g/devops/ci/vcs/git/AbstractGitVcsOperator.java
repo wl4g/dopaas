@@ -37,53 +37,53 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
  * @since
  */
 public abstract class AbstractGitVcsOperator implements VcsOperator, InitializingBean {
-    final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    protected CiCdProperties config;
+	@Autowired
+	protected CiCdProperties config;
 
-    /**
-     * Rest template.
-     */
-    protected RestTemplate restTemplate;
+	/**
+	 * Rest template.
+	 */
+	protected RestTemplate restTemplate;
 
-    /**
-     * Do GIT apiServer exchange.
-     *
-     * @param url
-     * @param typeRef
-     * @return
-     */
-    protected <T> T doGitExchange(String url, TypeReference<T> typeRef) {
-        // Create httpEntity.
-        HttpEntity<String> entity = createHttpEntity();
+	/**
+	 * Do GIT apiServer exchange.
+	 *
+	 * @param url
+	 * @param typeRef
+	 * @return
+	 */
+	protected <T> T doGitExchange(String url, TypeReference<T> typeRef) {
+		// Create httpEntity.
+		HttpEntity<String> entity = createHttpEntity();
 
-        // Do request.
-        ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
-            throw new IllegalStateException(String.format("Failed to request git remote, status: %s, body: %s",
-                    resp.getStatusCodeValue(), resp.getBody()));
-        }
-        if (log.isInfoEnabled()) {
-            log.info("Git remote response <= {}", resp.getBody());
-        }
-        return parseJSON(resp.getBody(), typeRef);
-    }
+		// Do request.
+		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
+			throw new IllegalStateException(String.format("Failed to request git remote, status: %s, body: %s",
+					resp.getStatusCodeValue(), resp.getBody()));
+		}
+		if (log.isInfoEnabled()) {
+			log.info("Git remote response <= {}", resp.getBody());
+		}
+		return parseJSON(resp.getBody(), typeRef);
+	}
 
-    /**
-     * Create httpEntity.
-     */
-    protected HttpEntity<String> createHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("PRIVATE-TOKEN", config.getVcs().getGit().getToken());
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        return entity;
-    }
+	/**
+	 * Create httpEntity.
+	 */
+	protected HttpEntity<String> createHttpEntity() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("PRIVATE-TOKEN", config.getVcs().getGitlab().getToken());
+		HttpEntity<String> entity = new HttpEntity<>(null, headers);
+		return entity;
+	}
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-        this.restTemplate = new RestTemplate(factory);
-    }
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		this.restTemplate = new RestTemplate(factory);
+	}
 
 }

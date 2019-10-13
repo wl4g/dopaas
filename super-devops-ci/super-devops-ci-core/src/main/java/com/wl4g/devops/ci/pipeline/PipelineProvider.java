@@ -21,61 +21,58 @@ import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
 
 /**
  * Based pipeline provider.
- *
+ * 
+ * @author vjay
  * @author Wangl.sir <983708408@qq.com>
  * @date 2019-05-05 17:17:00
  */
 public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 
-    void execute() throws Exception;
+	void execute() throws Exception;
 
-    void rollback() throws Exception;
+	void rollback() throws Exception;
 
-    //Project getProject();
+	TaskResult getTaskResult();
 
-    TaskResult getTaskResult();
+	PipelineInfo getPipelineInfo();
 
-    //TaskHistory getTaskHistory();
+	String getShaLocal();
 
-    PipelineInfo getPipelineInfo();
+	String getShaGit();
 
-    String getShaLocal();
+	/**
+	 * Integrate pipeline type definition.
+	 *
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月29日
+	 * @since
+	 */
+	public static abstract class PipelineType {
 
-    String getShaGit();
+		/**
+		 * MAVEN assemble tar provider alias.
+		 */
+		final public static String MVN_ASSEMBLE_TAR1 = "PipeWithMvnAssembleTar";
+		final public static String MVN_ASSEMBLE_TAR2 = "PipeWithMvnAssTar";
 
-    /**
-     * Integrate pipeline type definition.
-     *
-     * @author Wangl.sir
-     * @version v1.0 2019年8月29日
-     * @since
-     */
-    public static abstract class PipelineType {
+		/**
+		 * Spring boot executable jar provider alias.
+		 */
+		final public static String SPRING_EXECUTABLE_JAR1 = "PipeWithSpringExecutableJar";
+		final public static String SPRING_EXECUTABLE_JAR2 = "PipeWithSpringExecJar";
 
-        /**
-         * MAVEN assemble tar provider alias.
-         */
-        final public static String MVN_ASSEMBLE_TAR1 = "PipeWithMvnAssembleTar";
-        final public static String MVN_ASSEMBLE_TAR2 = "PipeWithMvnAssTar";
+		/**
+		 * Docker native provider alias.
+		 */
+		final public static String DOCKER_NATIVE1 = "PipeWithDockerNative";
+		final public static String DOCKER_NATIVE2 = "PipeWithDockerNat";
 
-        /**
-         * Spring boot executable jar provider alias.
-         */
-        final public static String SPRING_EXECUTABLE_JAR1 = "PipeWithSpringExecutableJar";
-        final public static String SPRING_EXECUTABLE_JAR2 = "PipeWithSpringExecJar";
+		/**
+		 * DJANGO standard provider alias.
+		 */
+		final public static String DJANGO_STD1 = "PipeWithDjangoStdand";
+		final public static String DJANGO_STD2 = "PipeWithDjangoStd";
 
-        /**
-         * Docker native provider alias.
-         */
-        final public static String DOCKER_NATIVE1 = "PipeWithDockerNative";
-        final public static String DOCKER_NATIVE2 = "PipeWithDockerNat";
-
-        /**
-         * DJANGO standard provider alias.
-         */
-        final public static String DJANGO_STD1 = "PipeWithDjangoStdand";
-        final public static String DJANGO_STD2 = "PipeWithDjangoStd";
-
-    }
+	}
 
 }

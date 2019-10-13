@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.admin;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.pipeline.handler.TimingPipelineScheduler;
+import com.wl4g.devops.ci.pipeline.schedule.PipelineScheduleManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.scm.CustomPage;
@@ -55,7 +55,7 @@ public class TriggerController extends BaseController {
 	private TriggerService triggerService;
 
 	@Autowired
-	private TimingPipelineScheduler dynamicTask;
+	private PipelineScheduleManager pipelineManager;
 
 	/**
 	 * Page List
@@ -143,7 +143,7 @@ public class TriggerController extends BaseController {
 	 */
 	private void restart(Integer triggerId) {
 		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-		dynamicTask.restartCron(trigger.getId().toString(), trigger.getCron(), trigger);
+		pipelineManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class TriggerController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		triggerService.delete(id);
-		dynamicTask.stopCron(id.toString());
+		pipelineManager.stopPipeline(id.toString());
 		return resp;
 	}
 
