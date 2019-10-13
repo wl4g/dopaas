@@ -20,8 +20,8 @@ import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
 import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
-import com.wl4g.devops.ci.pipeline.handler.GlobalTimeoutHandlerCleanFinalizer;
-import com.wl4g.devops.ci.core.PipelineCoreProcessor;
+import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.pipeline.GlobalTimeoutHandlerCleanFinalizer;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -57,214 +57,214 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @ShellComponent
 public class CiCdConsole {
 
-    final public static String GROUP = "Devops CI/CD console commands";
+	final public static String GROUP = "Devops CI/CD console commands";
 
-    @Autowired
-    private AppClusterDao appClusterDao;
+	@Autowired
+	private AppClusterDao appClusterDao;
 
-    @Autowired
-    private PipelineCoreProcessor pipelineCoreProcessor;
+	@Autowired
+	private Pipeline pipelineCoreProcessor;
 
-    @Autowired
-    private SimpleRedisLockManager lockManager;
+	@Autowired
+	private SimpleRedisLockManager lockManager;
 
-    @Autowired
-    private GlobalTimeoutHandlerCleanFinalizer timingTasks;
+	@Autowired
+	private GlobalTimeoutHandlerCleanFinalizer timingTasks;
 
-    @Autowired
-    private TaskDao taskDao;
+	@Autowired
+	private TaskDao taskDao;
 
-    @ShellMethod(keys = "expression", group = GROUP, help = "modify the expression of the timing task")
-    public String modifyTimingTaskExpression(ModifyTimingTaskExpressionArgument argument) {
-        String expression = argument.getExpression();
-        // Open console printer.
-        open();
-        try {
-            // Print to client
-            printfQuietly(String.format("expression = <%s>", expression));
-            if (CronUtils.isValidExpression(expression)) {
-                timingTasks.resetTimeoutCheckerExpression(expression);
-                printfQuietly(String.format("modify the success , expression = <%s>", expression));
-            } else {
-                printfQuietly(String.format("the expression is not valid , expression = <%s>", expression));
-            }
-        } catch (Exception e) {
-            printfQuietly(String.format("modify the fail , expression = <%s>", expression));
-            printfQuietly(e);
-        } finally {
-            // Close console printer.
-            close();
-        }
+	@ShellMethod(keys = "expression", group = GROUP, help = "modify the expression of the timing task")
+	public String modifyTimingTaskExpression(ModifyTimingTaskExpressionArgument argument) {
+		String expression = argument.getExpression();
+		// Open console printer.
+		open();
+		try {
+			// Print to client
+			printfQuietly(String.format("expression = <%s>", expression));
+			if (CronUtils.isValidExpression(expression)) {
+				timingTasks.resetTimeoutCheckerExpression(expression);
+				printfQuietly(String.format("modify the success , expression = <%s>", expression));
+			} else {
+				printfQuietly(String.format("the expression is not valid , expression = <%s>", expression));
+			}
+		} catch (Exception e) {
+			printfQuietly(String.format("modify the fail , expression = <%s>", expression));
+			printfQuietly(e);
+		} finally {
+			// Close console printer.
+			close();
+		}
 
-        return "Deployment task finished!";
-    }
+		return "Deployment task finished!";
+	}
 
-    @ShellMethod(keys = "taskList", group = GROUP, help = "get task list")
-    public String taskList(TaskListArgument argument) {
-        // Open console printer.
-        open();
-        try {
-            // Print to client
-            int pageNum = StringUtils.isNotBlank(argument.getPageNum()) ? Integer.valueOf(argument.getPageNum()) : 1;
-            int pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
-            PageHelper.startPage(pageNum, pageSize, true);
-            List<Task> list = taskDao.list(null, null, null, null, null, null, null);
-            String result = TableFormatters.build(list).setH('=').setV('!').getTableString();
-            return result;
-        } catch (Exception e) {
-            printfQuietly(e);
-            throw e;
-        } finally {
-            // Close console printer.
-            close();
-        }
-    }
+	@ShellMethod(keys = "taskList", group = GROUP, help = "get task list")
+	public String taskList(TaskListArgument argument) {
+		// Open console printer.
+		open();
+		try {
+			// Print to client
+			int pageNum = StringUtils.isNotBlank(argument.getPageNum()) ? Integer.valueOf(argument.getPageNum()) : 1;
+			int pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
+			PageHelper.startPage(pageNum, pageSize, true);
+			List<Task> list = taskDao.list(null, null, null, null, null, null, null);
+			String result = TableFormatters.build(list).setH('=').setV('!').getTableString();
+			return result;
+		} catch (Exception e) {
+			printfQuietly(e);
+			throw e;
+		} finally {
+			// Close console printer.
+			close();
+		}
+	}
 
-    /**
-     * Execution deployments
-     */
-    @ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
-    public String deploy(BuildArgument argument) {
+	/**
+	 * Execution deployments
+	 */
+	@ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
+	public String deploy(BuildArgument argument) {
 
-        // Open console printer.
-        open();
+		// Open console printer.
+		open();
 
-        Lock lock = lockManager.getLock(CI_LOCK, LOCK_TIME, TimeUnit.MINUTES);
-        try {
-            if (lock.tryLock()) {
-                // Print to client
+		Lock lock = lockManager.getLock(CI_LOCK, LOCK_TIME, TimeUnit.MINUTES);
+		try {
+			if (lock.tryLock()) {
+				// Print to client
 
-                // Create async task
-                // TODO 修改后与原有逻辑有差异，必须多一个环节，选task
-                pipelineCoreProcessor.createTask(argument.getTaskId());
+				// Create async task
+				// TODO 修改后与原有逻辑有差异，必须多一个环节，选task
+				pipelineCoreProcessor.createTask(argument.getTaskId());
 
-            } else {
-                printfQuietly("One Task is running ,Please try again later");
-            }
+			} else {
+				printfQuietly("One Task is running ,Please try again later");
+			}
 
-        } catch (Exception e) {
-            printfQuietly(e);
-        } finally {
-            // Close console printer.
-            close();
-            lock.unlock();
-        }
+		} catch (Exception e) {
+			printfQuietly(e);
+		} finally {
+			// Close console printer.
+			close();
+			lock.unlock();
+		}
 
-        return "Deployment task finished!";
-    }
+		return "Deployment task finished!";
+	}
 
-    /**
-     * Got application groups list.
-     */
-    @ShellMethod(keys = "list", group = GROUP, help = "Get a list of application information")
-    public String list(InstanceListArgument argument) {
-        StringBuffer result = new StringBuffer();
+	/**
+	 * Got application groups list.
+	 */
+	@ShellMethod(keys = "list", group = GROUP, help = "Get a list of application information")
+	public String list(InstanceListArgument argument) {
+		StringBuffer result = new StringBuffer();
 
-        String appGroupName = argument.getAppGroupName();
-        String envName = argument.getEnvName();
-        String r = argument.getAnyInstants();
-        Pattern pattern = Pattern.compile(r);
-        if (isBlank(appGroupName)) {
-            List<AppCluster> apps = appClusterDao.grouplist();
-            for (AppCluster appCluster : apps) {
-                appendApp(result, appCluster, r);
-                result.append("\n");
-            }
-        } else {
-            AppCluster app = appClusterDao.getAppGroupByName(appGroupName);
-            if (null == app) {
-                return "AppCluster not exist";
-            }
-            List<Environment> environments = appClusterDao.environmentlist(app.getId().toString());
-            if (null == environments || environments.size() <= 0) {
-                return "no one env";
-            }
-            if (isBlank(envName)) {
-                for (Environment environment : environments) {
-                    appendEnv(result, environment, r);
-                }
-            } else {
-                Integer envId = null;
-                for (Environment environment : environments) {
-                    if (environment.getName().equals(envName)) {
-                        envId = environment.getId();
-                        break;
-                    }
-                }
-                if (null == envId) {
-                    return "env name is wrong";
-                }
-                AppInstance appInstance = new AppInstance();
-                appInstance.setEnvId(envId.toString());
-                List<AppInstance> instances = appClusterDao.instancelist(appInstance);
-                if (null == instances || instances.size() < 1) {
-                    return "none";
-                }
-                result.append(" ----- <").append(envName).append("> -----\n");
-                result.append("\t[ID]    [HostAndPort]          [description]\n");
-                for (int i = 0; i < instances.size() && i < 50; i++) {
-                    if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
-                            && pattern.matcher(instances.get(i).getHostname() + ":" + instances.get(i).getEndpoint()).matches()) {
-                        appendInstance(result, instances.get(i));
-                        if (i == 49) {
-                            result.append("\t......");
-                        }
-                    }
-                }
-            }
-        }
-        return result.toString();
-    }
+		String appGroupName = argument.getAppGroupName();
+		String envName = argument.getEnvName();
+		String r = argument.getAnyInstants();
+		Pattern pattern = Pattern.compile(r);
+		if (isBlank(appGroupName)) {
+			List<AppCluster> apps = appClusterDao.grouplist();
+			for (AppCluster appCluster : apps) {
+				appendApp(result, appCluster, r);
+				result.append("\n");
+			}
+		} else {
+			AppCluster app = appClusterDao.getAppGroupByName(appGroupName);
+			if (null == app) {
+				return "AppCluster not exist";
+			}
+			List<Environment> environments = appClusterDao.environmentlist(app.getId().toString());
+			if (null == environments || environments.size() <= 0) {
+				return "no one env";
+			}
+			if (isBlank(envName)) {
+				for (Environment environment : environments) {
+					appendEnv(result, environment, r);
+				}
+			} else {
+				Integer envId = null;
+				for (Environment environment : environments) {
+					if (environment.getName().equals(envName)) {
+						envId = environment.getId();
+						break;
+					}
+				}
+				if (null == envId) {
+					return "env name is wrong";
+				}
+				AppInstance appInstance = new AppInstance();
+				appInstance.setEnvId(envId.toString());
+				List<AppInstance> instances = appClusterDao.instancelist(appInstance);
+				if (null == instances || instances.size() < 1) {
+					return "none";
+				}
+				result.append(" ----- <").append(envName).append("> -----\n");
+				result.append("\t[ID]    [HostAndPort]          [description]\n");
+				for (int i = 0; i < instances.size() && i < 50; i++) {
+					if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
+							&& pattern.matcher(instances.get(i).getHostname() + ":" + instances.get(i).getEndpoint()).matches()) {
+						appendInstance(result, instances.get(i));
+						if (i == 49) {
+							result.append("\t......");
+						}
+					}
+				}
+			}
+		}
+		return result.toString();
+	}
 
-    private void appendApp(StringBuffer result, AppCluster appCluster, String r) {
-        List<Environment> environments = appClusterDao.environmentlist(appCluster.getId().toString());
-        if (environments == null || environments.size() <= 0) {
-            return;
-        }
-        result.append(" <").append(appCluster.getName()).append(">:\n");
-        for (Environment environment : environments) {
-            appendEnv(result, environment, r);
-        }
-    }
+	private void appendApp(StringBuffer result, AppCluster appCluster, String r) {
+		List<Environment> environments = appClusterDao.environmentlist(appCluster.getId().toString());
+		if (environments == null || environments.size() <= 0) {
+			return;
+		}
+		result.append(" <").append(appCluster.getName()).append(">:\n");
+		for (Environment environment : environments) {
+			appendEnv(result, environment, r);
+		}
+	}
 
-    private void appendEnv(StringBuffer result, Environment environment, String r) {
-        AppInstance appInstance = new AppInstance();
-        appInstance.setEnvId(environment.getId().toString());
-        List<AppInstance> instances = appClusterDao.instancelist(appInstance);
+	private void appendEnv(StringBuffer result, Environment environment, String r) {
+		AppInstance appInstance = new AppInstance();
+		appInstance.setEnvId(environment.getId().toString());
+		List<AppInstance> instances = appClusterDao.instancelist(appInstance);
 
-        if (null == instances || instances.size() <= 0) {
-            return;
-        }
-        result.append(" ----- <").append(environment.getName()).append("> -----\n");
-        result.append("\t[ID]    [HostAndPort]          [description]\n");
+		if (null == instances || instances.size() <= 0) {
+			return;
+		}
+		result.append(" ----- <").append(environment.getName()).append("> -----\n");
+		result.append("\t[ID]    [HostAndPort]          [description]\n");
 
-        Pattern pattern = Pattern.compile(r);
-        for (int i = 0; i < instances.size() && i < 50; i++) {
-            if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
-                    && pattern.matcher(instances.get(i).getHostname() + ":" + instances.get(i).getEndpoint()).matches()) {
-                appendInstance(result, instances.get(i));
-                if (i == 49) {
-                    result.append("\t......");
-                }
-            }
-        }
-    }
+		Pattern pattern = Pattern.compile(r);
+		for (int i = 0; i < instances.size() && i < 50; i++) {
+			if (StringUtils.isBlank(r) || StringUtils.isNotBlank(r)
+					&& pattern.matcher(instances.get(i).getHostname() + ":" + instances.get(i).getEndpoint()).matches()) {
+				appendInstance(result, instances.get(i));
+				if (i == 49) {
+					result.append("\t......");
+				}
+			}
+		}
+	}
 
-    private void appendInstance(StringBuffer result, AppInstance instance) {
-        result.append("\t").append(formatCell(instance.getId().toString(), 8))
-                .append(formatCell((instance.getHostname() + ":" + instance.getEndpoint()), 23)).append(instance.getRemark())
-                .append("\n");
-    }
+	private void appendInstance(StringBuffer result, AppInstance instance) {
+		result.append("\t").append(formatCell(instance.getId().toString(), 8))
+				.append(formatCell((instance.getHostname() + ":" + instance.getEndpoint()), 23)).append(instance.getRemark())
+				.append("\n");
+	}
 
-    private String formatCell(String text, int width) {
-        if (text != null && text.length() < width) {
-            StringBuilder space = new StringBuilder();
-            for (int i = 0; i < width - text.length(); i++) {
-                space.append(" ");
-            }
-            text = text + space.toString();
-        }
-        return text;
-    }
+	private String formatCell(String text, int width) {
+		if (text != null && text.length() < width) {
+			StringBuilder space = new StringBuilder();
+			for (int i = 0; i < width - text.length(); i++) {
+				space.append(" ");
+			}
+			text = text + space.toString();
+		}
+		return text;
+	}
 
 }

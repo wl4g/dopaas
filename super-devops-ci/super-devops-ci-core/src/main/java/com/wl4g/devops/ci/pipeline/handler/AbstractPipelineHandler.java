@@ -17,11 +17,11 @@ package com.wl4g.devops.ci.pipeline.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.context.SpringContexts;
 
 /**
  * Abstract deployments task.
@@ -30,23 +30,18 @@ import com.wl4g.devops.common.utils.context.SpringContexts;
  * @version v1.0 2019年5月25日
  * @since
  */
-public abstract class BasedPipelineHandler implements Runnable {
-    final protected Logger log = LoggerFactory.getLogger(getClass());
+public abstract class AbstractPipelineHandler implements Runnable {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-    final protected AppInstance instance;
-    final protected Project project;
-    final protected TaskHistoryService taskHistoryService;
+	final protected AppInstance instance;
+	final protected Project project;
 
-    // Is Success , if not , return
-    protected Boolean isSuccess = true;
-    // Result
-    protected StringBuffer result = new StringBuffer();
+	@Autowired
+	protected TaskHistoryService taskHistoryService;
 
-    public BasedPipelineHandler(AppInstance instance, Project project) {
-        super();
-        this.instance = instance;
-        this.project = project;
-        this.taskHistoryService = SpringContexts.getBean(TaskHistoryService.class);
-    }
+	public AbstractPipelineHandler(AppInstance instance, Project project) {
+		this.instance = instance;
+		this.project = project;
+	}
 
 }

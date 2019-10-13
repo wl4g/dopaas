@@ -30,21 +30,21 @@ import java.util.List;
 @Component
 public interface TaskHistoryService {
 
-    List<TaskHistory> list(String groupName, String projectName, String branchName);
+	List<TaskHistory> list(String groupName, String projectName, String branchName);
 
-    List<TaskHistoryDetail> getDetailByTaskId(Integer id);
+	List<TaskHistoryDetail> getDetailByTaskId(Integer id);
 
-    TaskHistory getById(Integer id);
+	TaskHistory getById(Integer id);
 
-    TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-                                  String sha, Integer parentId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId);
+	TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
+			String sha, Integer parentId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId);
 
-    void updateStatus(int taskId, int status);
+	void updateStatus(int taskId, int status);
 
-    void updateStatusAndResult(int taskId, int status, String result);
+	void updateStatusAndResult(int taskId, int status, String result);
 
-    void updateDetailStatusAndResult(int taskDetailId, int status, String result);
+	void updateDetailStatusAndResult(int taskDetailId, int status, String result);
 
-    void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
+	void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
 
 }

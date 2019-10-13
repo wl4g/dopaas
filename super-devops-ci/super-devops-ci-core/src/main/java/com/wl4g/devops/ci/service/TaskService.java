@@ -23,10 +23,10 @@ import com.wl4g.devops.common.bean.ci.Task;
  */
 public interface TaskService {
 
-    Task save(Task task, Integer[] instanceIds);
+	Task save(Task task, Integer[] instanceIds);
 
-    int delete(Integer id);
+	int delete(Integer id);
 
-    Task getTaskDetailById(Integer triggerId);
+	Task getTaskDetailById(Integer triggerId);
 
 }

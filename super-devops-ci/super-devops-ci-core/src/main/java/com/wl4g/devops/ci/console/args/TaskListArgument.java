@@ -25,27 +25,27 @@ import java.io.Serializable;
  * @date 2019-05-21 15:53:00
  */
 public class TaskListArgument implements Serializable {
-    private static final long serialVersionUID = -90377698662015272L;
+	private static final long serialVersionUID = -90377698662015272L;
 
-    @ShellOption(opt = "p", lopt = "pagenum", help = "page num", required = false)
-    private String pageNum;
+	@ShellOption(opt = "p", lopt = "pagenum", help = "page num", required = false)
+	private String pageNum;
 
-    @ShellOption(opt = "s", lopt = "pagesize", help = "page size", required = false)
-    private String pageSize;
+	@ShellOption(opt = "s", lopt = "pagesize", help = "page size", required = false)
+	private String pageSize;
 
-    public String getPageNum() {
-        return pageNum;
-    }
+	public String getPageNum() {
+		return pageNum;
+	}
 
-    public void setPageNum(String pageNum) {
-        this.pageNum = pageNum;
-    }
+	public void setPageNum(String pageNum) {
+		this.pageNum = pageNum;
+	}
 
-    public String getPageSize() {
-        return pageSize;
-    }
+	public String getPageSize() {
+		return pageSize;
+	}
 
-    public void setPageSize(String pageSize) {
-        this.pageSize = pageSize;
-    }
+	public void setPageSize(String pageSize) {
+		this.pageSize = pageSize;
+	}
 }

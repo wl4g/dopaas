@@ -76,7 +76,7 @@ pipeline:
     keep-alive-time: 601000000
     accept-queue: 32
   vcs:
-    git:
+    gitlab:
       base-url: http://git.anjiancloud.repo
       username: heweijie
       password: hwj13535248668
@@ -86,7 +86,7 @@ pipeline:
     job-clean-scan: 30
     job-clean-timeout: 300
     job-share-dependency-try-timeout: 300
-    log-path:
+    log-base-dir:
   backup:
     base-dir:
   tranform:
@@ -94,7 +94,3 @@ pipeline:
     docker-native:
       docker-push-username: xburnerair00
       docker-push-passwd: hwj13535248668
-
-
-
-
