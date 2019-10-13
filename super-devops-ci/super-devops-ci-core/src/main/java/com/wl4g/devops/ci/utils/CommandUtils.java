@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.utils;
 
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
-import com.wl4g.devops.common.utils.io.FileWriteUtil;
+import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public abstract class CommandUtils {
 			return;
 		}
 		File logFile = taskResult.getLogFile();
-		FileWriteUtil.writerFile(result, logFile);
+		FileIOUtils.writeFile(logFile, result);
 	}
 
 }

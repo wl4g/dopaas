@@ -25,7 +25,7 @@ import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
-import com.wl4g.devops.common.utils.io.FileReadUtil;
+import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
@@ -350,15 +350,14 @@ public class DefaultPipeline implements Pipeline {
 	}
 
 	public List<String> readLog(Integer taskHisId, Integer index, Integer size) {
-		if (index == null) {
+		if (Objects.isNull(index)) {
 			index = 0;
 		}
-		if (size == null) {
+		if (Objects.isNull(size)) {
 			size = 100;
 		}
 		String logPath = config.getBuild().getLogBaseDir() + "/" + taskHisId + ".log";
-		List<String> strings = FileReadUtil.readFile(logPath, index, size);
-		return strings;
+		return FileIOUtils.readLines(logPath, index, size);
 	}
 
 }

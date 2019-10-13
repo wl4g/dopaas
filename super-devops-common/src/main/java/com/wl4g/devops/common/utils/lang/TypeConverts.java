@@ -1,4 +1,4 @@
-package com.wl4g.devops.common.utils.codec;
+package com.wl4g.devops.common.utils.lang;
 
 /**
  * 类型字节转换器
@@ -193,4 +193,6 @@ public class TypeConverts {
 		return new String(out);
 	}
 
+	
+	
 }
