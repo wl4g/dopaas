@@ -30,6 +30,7 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
+import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
@@ -50,11 +51,11 @@ import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.utils.Exceptions;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
@@ -195,7 +196,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
 		// JSON response
-		if (isJSONResponse(request)) {
+		if (isJSONResponse(toHttp(request))) {
 			try {
 				// Make logged response JSON.
 				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
@@ -231,7 +232,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			ServletResponse response) {
 		Throwable cause = Exceptions.getRootCause(ae);
 		if (cause != null) {
-			if (cause instanceof RuntimeException) {
+			if (cause instanceof IamException) {
 				log.error("Failed to caused by: {}", getMessage(cause));
 			} else {
 				log.error("Failed to authentication.", cause);
@@ -251,11 +252,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * See:xx.validation.AbstractBasedValidator#doGetRemoteValidation()
 		 */
 		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
-			if (isJSONResponse(request)) { // Response JSON message.
+			if (isJSONResponse(toHttp(request))) {
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
-						log.info("Failed response: {}", failMsg);
+						log.info("Failed to invalid grantTicket response: {}", failMsg);
 					}
 					writeJson(toHttp(response), failMsg);
 				} catch (IOException e) {
@@ -268,11 +269,17 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 					log.error("Cannot redirect to failure url - {}", failRedirectUrl, e);
 				}
 			}
-		} else { // If it is an error caused by interface connection, etc.
+		}
+		/*
+		 * For example, because of interface or permission errors, there is no
+		 * need to carry redirection URLs, because even redirection is the same
+		 * error, which may lead to unlimited redirection.
+		 */
+		else {
 			try {
-				String errmsg = String.format("%s</br>%s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
+				String errmsg = String.format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getMessage(cause));
-				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
+				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg); // =>SmartSuperErrorsController
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}
@@ -284,21 +291,6 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * sendRedirect() after the response has been committed
 		 */
 		return false;
-	}
-
-	/**
-	 * Determine is the JSON interactive strategy
-	 * 
-	 * @param request
-	 * @return
-	 */
-	protected boolean isJSONResponse(ServletRequest request) {
-		// Using dynamic parameter
-		ResponseType respType = ResponseType.safeOf(WebUtils.getCleanParam(request, config.getParam().getResponseType()));
-		if (log.isDebugEnabled()) {
-			log.debug("Using response type:{}", respType);
-		}
-		return ResponseType.isJSONResponse(respType, WebUtils.toHttp(request));
 	}
 
 	/**

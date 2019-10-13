@@ -31,13 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_ACCOUNT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_TOKEN;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -167,11 +167,11 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			 * Check whether have permission to access the target
 			 * application(Check only when accessing applications).
 			 */
-			if (!StringUtils.isEmpty(tk.getFromAppName())) {
+			if (!isBlank(tk.getFromAppName())) {
 				Assert.isTrue(!info.getPrincipals().isEmpty(),
 						String.format("login user info is empty. please check the configure. info: %s", info));
 				String principal = (String) info.getPrincipals().iterator().next();
-				authHandler.checkApplicationAccessAuthorized(principal, tk.getFromAppName());
+				authHandler.assertApplicationAccessAuthorized(principal, tk.getFromAppName());
 			}
 
 		} else {

@@ -335,12 +335,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String grantTicket = "gt";
 
 		/**
-		 * Authentication center sets the parameter name of authentication
-		 * response type.
-		 */
-		private String responseType = "response_type";
-
-		/**
 		 * Redirected URL parameter name for request authentication callback
 		 */
 		private String redirectUrl = "redirect_url";
@@ -427,14 +421,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setGrantTicket(String grantTicket) {
 			this.grantTicket = grantTicket;
-		}
-
-		public String getResponseType() {
-			return responseType;
-		}
-
-		public void setResponseType(String responseType) {
-			this.responseType = responseType;
 		}
 
 		public String getRedirectUrl() {

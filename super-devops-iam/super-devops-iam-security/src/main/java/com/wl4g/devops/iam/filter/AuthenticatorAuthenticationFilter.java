@@ -28,6 +28,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
+import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -51,7 +52,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 
 		try {
 			// Check authentication login request parameters
-			authHandler.checkAuthenticateRequests(getFromAppName(request), getFromRedirectUrl(request));
+			authHandler.checkAuthenticateValidity(getFromAppName(request), getFromRedirectUrl(request));
 
 			// Remember request parameters
 			savedRequestParameters(request, response);
@@ -67,7 +68,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			try {
 				return onLoginSuccess(createToken(request, response), subject, request, response);
 			} catch (Exception e) {
-				log.error("Failed to direct redirect successUrl with authenticated.", e);
+				log.error("Failed to redirect successUrl with authenticated.", e);
 			}
 		}
 
@@ -101,7 +102,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	private void savedRequestParameters(ServletRequest request, ServletResponse response) {
 		// Parameter names
 		String fromAppKey = config.getParam().getApplication();
-		String respTypeKey = config.getParam().getResponseType();
+		String respTypeKey = ResponseType.DEFAULT_RESPTYPE_NAME;
 		String redirectUrlKey = config.getParam().getRedirectUrl();
 
 		// Parameter values

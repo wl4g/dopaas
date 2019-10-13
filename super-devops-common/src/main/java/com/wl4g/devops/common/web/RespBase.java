@@ -16,12 +16,14 @@
 package com.wl4g.devops.common.web;
 
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
@@ -31,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
 import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
 import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
-import com.wl4g.devops.common.utils.lang.StringUtils2;
 
 /**
  * Generic Restful response base class
@@ -47,8 +48,9 @@ public class RespBase<T extends Object> implements Serializable {
 	/**
 	 * Default status value.
 	 */
-	final public static String DEFAULT_STATUS = "normal";
+	final public transient static String DEFAULT_STATUS = "normal";
 
+	private int codeValue = -1;
 	private RetCode code;
 	private String status; // Response status.
 	private String message;
@@ -76,13 +78,33 @@ public class RespBase<T extends Object> implements Serializable {
 
 	public RespBase(RetCode retCode, String status, String message, DataMap<T> data) {
 		setCode(retCode);
-		setStatus(StringUtils2.isEmpty(status) ? DEFAULT_STATUS : status);
+		setStatus(isBlank(status) ? DEFAULT_STATUS : status);
+		setMessage(message);
+		setData(data);
+	}
+
+	public RespBase(int code, String message) {
+		this(code, null, message, null);
+	}
+
+	public RespBase(int code, String message, DataMap<T> data) {
+		this(code, null, message, data);
+	}
+
+	public RespBase(int code, String status, String message, DataMap<T> data) {
+		setCode(code);
+		setStatus(isBlank(status) ? DEFAULT_STATUS : status);
 		setMessage(message);
 		setData(data);
 	}
 
 	public int getCode() {
-		return code.getCode();
+		return (codeValue > 0) ? codeValue : code.getCode();
+	}
+
+	public RespBase<T> setCode(int code) {
+		this.codeValue = code;
+		return this;
 	}
 
 	public RespBase<T> setCode(RetCode retCode) {
@@ -95,7 +117,7 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	public RespBase<T> setStatus(String status) {
-		if (status != null) {
+		if (!isBlank(status)) {
 			this.status = status;
 		}
 		return this;
@@ -106,7 +128,7 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	public RespBase<T> setMessage(String message) {
-		this.message = message != null ? message : this.message;
+		this.message = !isBlank(message) ? message : this.message;
 		return this;
 	}
 
@@ -315,13 +337,27 @@ public class RespBase<T extends Object> implements Serializable {
 		 */
 		@JsonCreator
 		public static RetCode get(String nameOrCode) {
+			RetCode code = safeOf(nameOrCode);
+			if (Objects.nonNull(code)) {
+				return code;
+			}
+			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
+		}
+
+		/**
+		 * Safe convert retCode.
+		 * 
+		 * @param nameOrCode
+		 * @return
+		 */
+		public static RetCode safeOf(String nameOrCode) {
 			String tmp = String.valueOf(nameOrCode);
 			for (RetCode v : values()) {
 				if (v.name().equalsIgnoreCase(tmp) || String.valueOf(v.getCode()).equalsIgnoreCase(tmp)) {
 					return v;
 				}
 			}
-			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
+			return null;
 		}
 
 	}

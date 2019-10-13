@@ -15,11 +15,15 @@
  */
 package com.wl4g.devops.common.utils;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -133,15 +137,18 @@ public abstract class Exceptions extends ExceptionUtils {
 	 * @return
 	 */
 	public static String getRootCausesString(Throwable th, boolean extract) {
-		if (th == null) {
+		if (Objects.isNull(th)) {
 			return null;
 		}
 		String causes = getRootCauseMessage(th);
 		String errmsg = isEmpty(causes) ? getMessage(th) : causes;
 		if (extract && contains(errmsg, ":")) {
-			errmsg = errmsg.split(":")[1];
+			String[] arr = errmsg.split(":");
+			if (arr.length > 1) {
+				errmsg = join(arr, EMPTY, 1, arr.length);
+			}
 		}
-		return errmsg;
+		return trim(errmsg);
 	}
 
 }

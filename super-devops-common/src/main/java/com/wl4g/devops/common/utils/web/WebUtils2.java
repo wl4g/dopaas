@@ -22,12 +22,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +54,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.split;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
@@ -656,13 +660,16 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 			throw new IllegalArgumentException("Error syntax uri", e);
 		}
 
-		// Cleaning
+		/**
+		 * Cleaning.</br>
+		 * Note: that you cannot change the original URI case.
+		 */
 		try {
-			String uri0 = safeEncodeURL(uri).toLowerCase();
+			String uri0 = safeEncodeURL(uri);
 			String path = uri0, schema = "";
-			if (uri0.contains(URL_SEPAR_PROTO)) {
+			if (uri0.toLowerCase(Locale.ENGLISH).contains(URL_SEPAR_PROTO)) {
 				// Starting from "://"
-				int startIndex = uri0.indexOf(URL_SEPAR_PROTO);
+				int startIndex = uri0.toLowerCase(Locale.ENGLISH).indexOf(URL_SEPAR_PROTO);
 				schema = uri0.substring(0, startIndex) + URL_SEPAR_PROTO;
 				path = uri0.substring(startIndex + URL_SEPAR_PROTO.length());
 			}
@@ -686,17 +693,38 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static enum ResponseType {
 		auto, link, json;
 
-		final public static String DEFAULT_PARAM_NAME = "response_type";
+		/**
+		 * Default get response type parameter name.
+		 */
+		final public static String DEFAULT_RESPTYPE_NAME = "response_type";
+
+		/**
+		 * Get the name of the corresponding data type parameter. Note that
+		 * NGINX defaults to replace the underlined header, such as:
+		 * 
+		 * <pre>
+		 * header(response_type: json) => header(responsetype: json)
+		 * </pre>
+		 * 
+		 * and how to disable this feature of NGINX:
+		 * 
+		 * <pre>
+		 * http {
+		 * 	underscores_in_headers on;
+		 * }
+		 * </pre>
+		 */
+		final public static String[] RESPTYPE_NAMES = { DEFAULT_RESPTYPE_NAME, "responsetype", "Response-Type" };
 
 		/**
 		 * Safe converter string to {@link ResponseType}
 		 * 
-		 * @param responseType
+		 * @param respType
 		 * @return
 		 */
-		final public static ResponseType safeOf(String responseType) {
+		final public static ResponseType safeOf(String respType) {
 			for (ResponseType t : values()) {
-				if (String.valueOf(responseType).equalsIgnoreCase(t.name())) {
+				if (String.valueOf(respType).equalsIgnoreCase(t.name())) {
 					return t;
 				}
 			}
@@ -706,12 +734,12 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		/**
 		 * Is response JSON message
 		 * 
-		 * @param respType
+		 * @param respTypeValue
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(String respType, HttpServletRequest request) {
-			return isJSONResponse(safeOf(respType), request);
+		final public static boolean isJSONResponse(String respTypeValue, HttpServletRequest request) {
+			return determineJSONResponse(safeOf(respTypeValue), request);
 		}
 
 		/**
@@ -720,20 +748,60 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(ResponseType respType, HttpServletRequest request) {
+		final public static boolean isJSONResponse(HttpServletRequest request) {
+			return isJSONResponse(request, null);
+		}
+
+		/**
+		 * Is response JSON message
+		 * 
+		 * @param request
+		 * @param respTypeName
+		 * @return
+		 */
+		final public static boolean isJSONResponse(HttpServletRequest request, String respTypeName) {
+			Assert.notNull(request, "Request must not be null");
+
+			List<String> paramNames = Arrays.asList(RESPTYPE_NAMES);
+			if (!isBlank(respTypeName)) {
+				paramNames.add(respTypeName);
+			}
+			for (String name : paramNames) {
+				String respTypeValue = request.getParameter(name);
+				respTypeValue = isBlank(respTypeValue) ? request.getHeader(name) : respTypeValue;
+				if (!isBlank(respTypeValue)) {
+					return determineJSONResponse(safeOf(respTypeValue), request);
+				}
+			}
+
+			// Using auto mode.
+			return determineJSONResponse(ResponseType.auto, request);
+		}
+
+		/**
+		 * Determine response JSON message
+		 * 
+		 * @param request
+		 * @return
+		 */
+		final public static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
+			Assert.notNull(request, "Request must not be null");
 			// Using default strategy
-			if (respType == null) {
+			if (Objects.isNull(respType)) {
 				respType = ResponseType.auto;
 			}
 
-			// Has accept[application/json] ?
-			boolean isAccpetJson = false;
+			// Has header(accept:application/json)
+			boolean hasAccpetJson = false;
 			for (String typePart : String.valueOf(request.getHeader("Accept")).split(",")) {
-				if (StringUtils.startsWithIgnoreCase(typePart, "application/json")) {
-					isAccpetJson = true;
+				if (startsWithIgnoreCase(typePart, "application/json")) {
+					hasAccpetJson = true;
 					break;
 				}
 			}
+
+			// Has header(origin:xx.domain.com)
+			boolean hasOrigin = isNotBlank(request.getHeader("Origin"));
 
 			// Is header[XHR] ?
 			boolean isXhr = isXHRRequest(request);
@@ -750,7 +818,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 				 * the line), it responds to the rendering page, otherwise it
 				 * responds to JSON.
 				 */
-				return isBrowser(request) ? (isXhr || isAccpetJson) : true;
+				return isBrowser(request) ? (isXhr || hasAccpetJson || hasOrigin) : true;
 			default:
 				throw new IllegalStateException(String.format("Illegal response type %s", respType));
 			}

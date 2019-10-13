@@ -153,7 +153,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		sessionId = toHttp(request).getHeader(config.getCookie().getName());
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Using url cookieId for '{}'", sessionId);
+				log.debug("Using header cookieId for '{}'", sessionId);
 			}
 			return sessionId;
 		}
@@ -382,14 +382,15 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param sessionId
 	 */
 	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, Serializable sessionId) {
-		// Response JSON type(Non WEB).
-		boolean isJSONType = isJSONResponse(getCleanParam(request, config.getParam().getResponseType()), toHttp(request));
-		// When a browser request or display specifies that cookies need to b
-		// saved.
+		/*
+		 * When a browser request or display specifies that cookies need to
+		 * saved.
+		 */
 		boolean sidSaved = isTrue(request, config.getParam().getSidSaveCookie());
-		if (isBrowser(toHttp(request)) || sidSaved || !isJSONType) {
+		if (isBrowser(toHttp(request)) || sidSaved || !isJSONResponse(toHttp(request))) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
 			cookie.setValue(String.valueOf(sessionId));
+
 			// Save to response.
 			cookie.saveTo(toHttp(request), toHttp(response));
 			if (log.isTraceEnabled()) {
