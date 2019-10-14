@@ -357,7 +357,7 @@ public class DefaultPipeline implements Pipeline {
 			size = 100;
 		}
 		String logPath = config.getBuild().getLogBaseDir() + "/" + taskHisId + ".log";
-		return FileIOUtils.readLines(logPath, index, size);
+		return FileIOUtils.readSeekLines(logPath, index, size).getLines(); // TODO
 	}
 
 }
