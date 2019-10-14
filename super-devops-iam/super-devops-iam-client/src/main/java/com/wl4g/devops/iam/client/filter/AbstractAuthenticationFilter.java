@@ -48,6 +48,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.shiro.util.Assert.hasText;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -69,7 +70,6 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
@@ -294,50 +294,6 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	/**
-	 * Make logged-in response message.
-	 * 
-	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeLoggedResponse()}
-	 * @param request
-	 *            Servlet request
-	 * @param redirectUri
-	 *            login success redirect URL
-	 * @return
-	 */
-	private RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
-		hasText(redirectUri, "'redirectUri' must not be null");
-		// Make message
-		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
-		resp.setCode(OK).setMessage("Authentication successful");
-		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
-		// e.g. Used by mobile APP.
-		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
-		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
-		return resp;
-	}
-
-	/**
-	 * Make login failed response message.
-	 * 
-	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
-	 * @param loginRedirectUrl
-	 *            Login redirect URL
-	 * @param err
-	 *            Exception object
-	 * @return
-	 */
-	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
-		String errmsg = err != null ? err.getMessage() : "Authentication failure";
-		// Make message
-		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
-		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
-		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
-		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
-		return toJSONString(resp);
-	}
-
-	/**
 	 * Make failure redirect URL
 	 * 
 	 * @param cause
@@ -384,11 +340,17 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @param response
 	 * @return
 	 */
-	private String determineSuccessRedirectUrl(AuthenticationToken token, Subject subject, ServletRequest request,
+	protected String determineSuccessRedirectUrl(AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
-		String successUrl = getClearSavedRememberUrl(toHttp(request));
-		if (Objects.isNull(successUrl)) {
-			successUrl = config.getSuccessUri();
+		// Priority obtain redirectURL from request.
+		String successUrl = getRedirectUrl(request);
+		if (isBlank(successUrl)) {
+			// Secondary get remembered redirectURL.
+			successUrl = getClearSavedRememberUrl(toHttp(request));
+			if (isBlank(successUrl)) {
+				// Fallback get the configured redirectURL as the default.
+				successUrl = config.getSuccessUri();
+			}
 		}
 
 		// Determine successUrl.
@@ -398,13 +360,23 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	/**
+	 * Get the URL from the redirectUrl from the authentication request(flexible
+	 * API).
+	 * 
+	 * @return
+	 */
+	protected String getRedirectUrl(ServletRequest request) {
+		return getCleanParam(request, config.getParam().getRedirectUrl());
+	}
+
+	/**
 	 * Get remember last request URL
 	 * 
 	 * @param request
 	 * @return
 	 */
-	private String getClearSavedRememberUrl(HttpServletRequest request) {
-		// Use remember redirect
+	protected String getClearSavedRememberUrl(HttpServletRequest request) {
+		// Use remember redirection.
 		if (config.isUseRememberRedirect()) {
 			String rememberUrl = getBindValue(KEY_REMEMBER_URL, true);
 			if (isNotBlank(rememberUrl)) {
@@ -416,6 +388,52 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 
 		return null;
+	}
+
+	/**
+	 * Make logged-in response message.
+	 * 
+	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeLoggedResponse()}
+	 * @param request
+	 *            Servlet request
+	 * @param redirectUri
+	 *            login success redirect URL
+	 * @return
+	 */
+	private RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
+		hasText(redirectUri, "'redirectUri' must not be null");
+
+		// Make message
+		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
+		resp.setCode(OK).setMessage("Authentication successful");
+		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
+
+		// e.g. Used by mobile APP.
+		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
+		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
+		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
+		return resp;
+	}
+
+	/**
+	 * Make login failed response message.
+	 * 
+	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
+	 * @param loginRedirectUrl
+	 *            Login redirect URL
+	 * @param err
+	 *            Exception object
+	 * @return
+	 */
+	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
+		String errmsg = err != null ? err.getMessage() : "Authentication failure";
+		// Make message
+		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
+		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
+		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
+		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
+		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
+		return toJSONString(resp);
 	}
 
 	@Override
