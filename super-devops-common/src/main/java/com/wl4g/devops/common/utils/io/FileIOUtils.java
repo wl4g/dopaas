@@ -160,7 +160,7 @@ public abstract class FileIOUtils extends FileUtils {
 					lines.add(line);
 				}
 			}
-			return new ReadResult(startPos, raf.getFilePointer(), lines);
+			return new ReadResult(startPos, raf.getFilePointer(), raf.length(), lines);
 		} catch (Throwable ex) {
 			throw new IllegalStateException(ex);
 		}
@@ -265,12 +265,14 @@ public abstract class FileIOUtils extends FileUtils {
 
 		private long startPos;
 		private long pointer;
+		private long length;
 		private List<String> lines;
 
-		public ReadResult(long startPos, long pointer, List<String> lines) {
+		public ReadResult(long startPos, long pointer, long length, List<String> lines) {
 			super();
 			this.startPos = startPos;
 			this.pointer = pointer;
+			this.length = length;
 			this.lines = lines;
 		}
 
@@ -298,9 +300,17 @@ public abstract class FileIOUtils extends FileUtils {
 			this.lines = lines;
 		}
 
+		public long getLength() {
+			return length;
+		}
+
+		public void setLength(long length) {
+			this.length = length;
+		}
+
 		@Override
 		public String toString() {
-			return "ReadResult [startPos=" + startPos + ", pointer=" + pointer + ", lines=" + lines + "]";
+			return "ReadResult [startPos=" + startPos + ", pointer=" + pointer + ", length=" + length + ", lines=" + lines + "]";
 		}
 
 	}
