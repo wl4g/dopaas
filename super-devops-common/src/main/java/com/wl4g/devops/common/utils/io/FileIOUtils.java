@@ -28,6 +28,7 @@ import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
+import org.springframework.util.Assert;
 
 /**
  * Enhanced files IO operation implements.</br>
@@ -106,15 +107,15 @@ public abstract class FileIOUtils extends FileUtils {
 	 * 
 	 * @param filename
 	 * @param startLine
-	 * @param limitLine
+	 * @param limit
 	 * @return
 	 */
-	public static List<String> readLines(String filename, int startLine, int limitLine) {
+	public static List<String> readLines(String filename, int startLine, int limit) {
 		List<String> lines = new ArrayList<>();
 		try (FileInputStream in = new FileInputStream(filename); Scanner sc = new Scanner(in);) {
 			int index = 0;
 			int count = 0;
-			while (count < limitLine && sc.hasNextLine()) {
+			while (count < limit && sc.hasNextLine()) {
 				if (index >= startLine) {
 					count++;
 					String line = sc.nextLine();
@@ -131,102 +132,100 @@ public abstract class FileIOUtils extends FileUtils {
 	}
 
 	/**
-	 * Seek reading file to batch string lines.
+	 * Seek reading file to batch string buffer. Note: Each element of the
+	 * returned list string does not correspond to a line of the physical file
+	 * content. The result you want to read corresponds to a line of the
+	 * physical file
 	 * 
 	 * @param filename
 	 *            the system-dependent filename
 	 * @param startPos
 	 *            seek page start position.
-	 * @param length
+	 * @param aboutLimit
 	 *            seek page size, Note: that it will contain line breaks.
 	 * @return
 	 */
-	public static List<String> readSeekLines(String filename, long startPos, long length) {
-		// Reading file to buffer strings.
-		List<String> bufStrs = readSeekBufLines(filename, startPos, length);
+	public static ReadResult readSeekLines(String filename, long startPos, int aboutLimit) {
+		Assert.hasText(filename, "Read seek filename must not be empty.");
+		Assert.isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
+		Assert.isTrue(aboutLimit > 0, "Read about limit must be greater than to 0");
 
-		// Paging reorganization according to system newline characters.
-		List<String> newLines = new ArrayList<>();
-		for (String buf : bufStrs) {
-			StringBuffer line = new StringBuffer();
-			for (int i = 0, len = buf.length(); i < len; i++) {
-				char ch = buf.charAt(i);
-				boolean isNewline = (ch == '\n');
-				if (isNewline || (i >= (len - 1))) {
-					if (!isNewline) {
-						line.append(ch);
-					}
-					newLines.add(line.toString());
-					line.setLength(0);
-				} else {
-					line.append(ch);
+		List<String> lines = new ArrayList<>();
+		try (RandomAccessFile raf = new RandomAccessFile(filename, "r")) {
+			raf.seek(startPos);
+			long endPos = startPos + aboutLimit;
+			while (raf.getFilePointer() < endPos) {
+				String line = raf.readLine();
+				if (Objects.nonNull(line)) {
+					lines.add(line);
 				}
 			}
+			return new ReadResult(startPos, raf.getFilePointer(), lines);
+		} catch (Throwable ex) {
+			throw new IllegalStateException(ex);
 		}
-		return newLines;
 	}
 
 	/**
 	 * Seek reading file to batch string buffer. Note: Each element of the
 	 * returned list string does not correspond to a line of the physical file
 	 * content. The result you want to read corresponds to a line of the
-	 * physical file, see:
-	 * {@link FileIOUtils#readSeekLines(String filename, long startPos, int length)}
+	 * physical file
 	 * 
 	 * @param filename
 	 *            the system-dependent filename
 	 * @param startPos
 	 *            seek page start position.
-	 * @param length
+	 * @param limitPos
 	 *            seek page size, Note: that it will contain line breaks.
 	 * @return
 	 */
-	public static List<String> readSeekBufLines(String filename, long startPos, long length) {
-		List<String> content = new ArrayList<>();
-		readSeekFile(filename, startPos, length, DEFAULT_BUF_SIZE, (data, len) -> content.add(new String(data, 0, len)));
-		return content;
+	public static String readSeekString(String filename, long startPos, int limitPos) {
+		final StringBuffer lineBuf = new StringBuffer();
+		readSeekFile(filename, startPos, limitPos, DEFAULT_BUF_SIZE, (data, totalLen) -> lineBuf.append(new String(data)));
+		return lineBuf.toString();
 	}
 
 	/**
-	 * Seek reading skip mode reading in file.
+	 * Seek reading and limit bytes in file.
 	 * 
 	 * @param filename
 	 *            the system-dependent filename
 	 * @param startPos
 	 *            seek page start position.
-	 * @param length
+	 * @param limitPos
 	 *            seek page size, Note: that it will contain line breaks.
 	 * @param bufSize
 	 *            Buffer size per batch read
 	 * @param processor
 	 *            Each read processing program
 	 */
-	public static void readSeekFile(String filename, long startPos, long length, int bufSize, SeekProcessor processor) {
+	public static void readSeekFile(String filename, long startPos, int limitPos, int bufSize, SeekProcessor processor) {
+		Assert.hasText(filename, "Read seek filename must not be empty.");
+		Assert.isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
+		Assert.isTrue(limitPos > 0, "Read limit position must be greater than to 0");
+
 		try (RandomAccessFile raf = new RandomAccessFile(filename, "r")) {
 			raf.seek(startPos);
 			byte[] data = new byte[bufSize];
 			int len = 0, totalLen = 0;
 			while ((len = raf.read(data)) != -1) {
 				totalLen += len;
-				if (totalLen >= length) { // Read enough data?
-					/**
-					 * e.g. File:3000bytes</br>
-					 * bufSize=1024, length=1000 => 0,1024,...
-					 */
-					int needLen = (int) length;
-					if (length > bufSize) {
-						/**
-						 * e.g. File:3000bytes</br>
-						 * bufSize=1024, length=2000 => 0,1024,2048,...
-						 */
-						needLen = bufSize - (totalLen - ((int) length));
+				if (totalLen >= limitPos) { // Read enough data?
+					// e.g. File(3000bytes)
+					// bufSize=1024, length=1000 => 0,1024,...
+					int needLen = limitPos;
+					if (limitPos > bufSize) {
+						// e.g. File(3000bytes)
+						// bufSize=1024, length=2000 => 0,1024,2048,...
+						needLen = bufSize - (totalLen - limitPos);
 					}
 					byte[] needData = new byte[needLen];
 					System.arraycopy(data, 0, needData, 0, needLen);
-					processor.process(needData, needLen);
+					processor.process(needData, (totalLen - len + needLen));
 					break;
 				} else {
-					processor.process(data, len);
+					processor.process(data, totalLen);
 				}
 			}
 		} catch (Throwable ex) {
@@ -242,11 +241,76 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @since
 	 */
 	public static interface SeekProcessor {
-		void process(byte[] data, int len);
+
+		/**
+		 * Processing seek each.
+		 * 
+		 * @param data
+		 *            Every fetch bytes data.
+		 * @param totalLen
+		 *            total fetch bytes length.
+		 */
+		void process(byte[] data, int totalLen);
+
+	}
+
+	/**
+	 * Read result.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月14日
+	 * @since
+	 */
+	public static class ReadResult {
+
+		private long startPos;
+		private long pointer;
+		private List<String> lines;
+
+		public ReadResult(long startPos, long pointer, List<String> lines) {
+			super();
+			this.startPos = startPos;
+			this.pointer = pointer;
+			this.lines = lines;
+		}
+
+		public long getStartPos() {
+			return startPos;
+		}
+
+		public void setStartPos(long startPos) {
+			this.startPos = startPos;
+		}
+
+		public long getPointer() {
+			return pointer;
+		}
+
+		public void setPointer(long pointer) {
+			this.pointer = pointer;
+		}
+
+		public List<String> getLines() {
+			return lines;
+		}
+
+		public void setLines(List<String> lines) {
+			this.lines = lines;
+		}
+
+		@Override
+		public String toString() {
+			return "ReadResult [startPos=" + startPos + ", pointer=" + pointer + ", lines=" + lines + "]";
+		}
+
 	}
 
 	public static void main(String[] args) {
-		System.out.println(readSeekLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 3L, 12L));
+		System.out.println(readLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 2, 12));
+		System.out.println("--------------------");
+		System.out.println(readSeekString("C:\\Users\\Administrator\\Desktop\\aaa.txt", 3L, 12));
+		System.out.println("--------------------");
+		System.out.println(readSeekLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 13L, 6));
 	}
 
 }
