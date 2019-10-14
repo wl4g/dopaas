@@ -36,6 +36,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
@@ -352,7 +353,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	}
 
 	/**
-	 * Get the name from the redirectUrl from the login request, or get it from
+	 * Get the URL from the redirectUrl from the login request, or get it from
 	 * session(flexible API).
 	 * 
 	 * @return
@@ -400,23 +401,23 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		hasText(successUrl, "'successUrl' must not be empty");
 
 		// Redirection URL
-		StringBuffer redirectUri = new StringBuffer(successUrl);
+		StringBuffer successRedirectUrl = new StringBuffer(successUrl);
 		if (isNotBlank(grantTicket)) {
-			if (redirectUri.lastIndexOf("?") > 0) {
-				redirectUri.append("&");
+			if (successRedirectUrl.lastIndexOf("?") > 0) {
+				successRedirectUrl.append("&");
 			} else {
-				redirectUri.append("?");
+				successRedirectUrl.append("?");
 			}
-			redirectUri.append(config.getParam().getGrantTicket()).append("=").append(grantTicket);
+			successRedirectUrl.append(config.getParam().getGrantTicket()).append("=").append(grantTicket);
 		}
 
-		// Relative path processing
-		String redirectUrl = redirectUri.toString();
-		if (redirectUrl.startsWith("/")) {
-			redirectUrl = getRFCBaseURI(toHttp(request), true) + redirectUri;
+		// Relative path?
+		String redirectUrl = successRedirectUrl.toString();
+		if (startsWith(redirectUrl, "/")) {
+			redirectUrl = getRFCBaseURI(toHttp(request), true) + successRedirectUrl;
 		}
 
-		// Make message
+		// Make message:
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
 		resp.setCode(OK).setMessage("Authentication successful");
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
