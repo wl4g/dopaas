@@ -35,7 +35,7 @@ import java.util.concurrent.Future;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class MvnAssembleTarPipelineProvider extends AbstractPipelineProvider {
+public class MvnAssembleTarPipelineProvider extends AbstractMavenPipelineProvider {
 
 	public MvnAssembleTarPipelineProvider(PipelineInfo info) {
 		super(info);

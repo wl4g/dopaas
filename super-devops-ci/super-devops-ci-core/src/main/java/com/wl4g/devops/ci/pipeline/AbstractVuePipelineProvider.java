@@ -16,23 +16,30 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Spring boot executable deployments provider.
+ * Abstract based deploy provider.
  *
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
- * @since
+ * @author vjay
+ * @date 2019-05-05 17:17:00
  */
-public class SpringExecutableJarPipelineProvider extends AbstractMavenPipelineProvider {
+public abstract class AbstractVuePipelineProvider extends AbstractPipelineProvider {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
-		super(deployProviderBean);
+
+	public AbstractVuePipelineProvider(PipelineInfo info) {
+		super(info);
 	}
 
-	@Override
-	public void execute() throws Exception {
-		throw new UnsupportedOperationException();
-	}
+	/**
+	 * Execute
+	 */
+	public abstract void execute() throws Exception;
+
+
+
 
 }
