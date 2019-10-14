@@ -24,7 +24,7 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
+public class DjangoStandardPipelineProvider extends AbstractMavenPipelineProvider {
 
 	public DjangoStandardPipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);

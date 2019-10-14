@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,25 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 
 /**
- * Spring boot executable deployments provider.
+ * Django standard deployments provider.
  *
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
+ * @version v1.0 2019年5月22日
  * @since
  */
-public class SpringExecutableJarPipelineProvider extends AbstractMavenPipelineProvider {
+public class VuePipelineProvider extends AbstractVuePipelineProvider {
 
-	public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
+	public VuePipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
 	}
 
 	@Override
 	public void execute() throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void rollback() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
