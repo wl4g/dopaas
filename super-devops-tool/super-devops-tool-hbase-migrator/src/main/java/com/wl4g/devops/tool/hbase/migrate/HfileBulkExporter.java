@@ -81,7 +81,7 @@ public class HfileBulkExporter {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
-		System.out.println(Resources.toString(getResource("banner.txt"), Charsets.UTF_8));
+		System.out.println(Resources.toString(getResource(HfileBulkExporter.class, "banner.txt"), Charsets.UTF_8));
 
 		CommandLine line = new Builder()
 				.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_EXPORT_TMPDIR)
