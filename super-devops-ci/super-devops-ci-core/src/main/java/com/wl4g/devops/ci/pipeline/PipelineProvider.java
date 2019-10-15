@@ -52,26 +52,27 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 		/**
 		 * MAVEN assemble tar provider alias.
 		 */
-		final public static String MVN_ASSEMBLE_TAR1 = "PipeWithMvnAssembleTar";
-		final public static String MVN_ASSEMBLE_TAR2 = "PipeWithMvnAssTar";
+		final public static String MVN_ASSEMBLE_TAR = "PipeWithMvnAssTar";
 
 		/**
 		 * Spring boot executable jar provider alias.
 		 */
-		final public static String SPRING_EXECUTABLE_JAR1 = "PipeWithSpringExecutableJar";
-		final public static String SPRING_EXECUTABLE_JAR2 = "PipeWithSpringExecJar";
+		final public static String SPRING_EXECUTABLE_JAR = "PipeWithSpringExecJar";
 
 		/**
 		 * Docker native provider alias.
 		 */
-		final public static String DOCKER_NATIVE1 = "PipeWithDockerNative";
-		final public static String DOCKER_NATIVE2 = "PipeWithDockerNat";
+		final public static String DOCKER_NATIVE = "PipeWithDockerNat";
 
 		/**
 		 * DJANGO standard provider alias.
 		 */
-		final public static String DJANGO_STD1 = "PipeWithDjangoStdand";
-		final public static String DJANGO_STD2 = "PipeWithDjangoStd";
+		final public static String DJANGO_STD = "PipeWithDjangoStd";
+
+		/**
+		 * Vue provider alias.
+		 */
+		final public static String VUE_VIEW = "PipeWithVue";
 
 	}
 

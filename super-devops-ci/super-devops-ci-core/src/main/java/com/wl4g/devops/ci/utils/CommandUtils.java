@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.utils;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,16 +51,25 @@ public abstract class CommandUtils {
 	}
 
 	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
+		return exec(cmd, callback, taskResult,null);
+	}
+
+	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult,String dirPath)throws Exception{
 		if (log.isInfoEnabled()) {
 			log.info("Execution native command for '{}'", cmd);
 		}
 
 		StringBuilder slog = new StringBuilder();
 		StringBuilder serr = new StringBuilder();
+		Process ps;
+		if(StringUtils.isBlank(dirPath)){
+			ps = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", cmd });
+		}else{
+			ps = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", cmd }, null, new File(dirPath));
+		}
 
-		Process ps = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", cmd });
 		try (BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-				BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
+			 BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
 			String inlog;
 			while ((inlog = blog.readLine()) != null) {
 				if (callback != null) {
@@ -80,10 +90,10 @@ public abstract class CommandUtils {
 			}
 
 			ps.waitFor();// wait for process exit , or maybe throw
-							// java.lang.IllegalThreadStateException: process
-							// hasn't exited
+			// java.lang.IllegalThreadStateException: process
+			// hasn't exited
 			int exitValue = ps.exitValue();
-			if (exitValue != 0) {
+			if (exitValue != 0&&taskResult!=null) {
 				taskResult.setSuccess(false);
 			}
 			String log = slog.toString();
@@ -94,7 +104,6 @@ public abstract class CommandUtils {
 			}
 			return log;
 		}
-
 	}
 
 	private static void writeResult(TaskResult taskResult, String result) {

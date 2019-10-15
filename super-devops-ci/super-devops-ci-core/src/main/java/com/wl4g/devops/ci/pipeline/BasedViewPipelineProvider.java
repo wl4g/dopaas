@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class AbstractVuePipelineProvider extends AbstractPipelineProvider {
+public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 
-	public AbstractVuePipelineProvider(PipelineInfo info) {
+	public BasedViewPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
 
@@ -38,6 +38,7 @@ public abstract class AbstractVuePipelineProvider extends AbstractPipelineProvid
 	 * Execute
 	 */
 	public abstract void execute() throws Exception;
+
 
 
 

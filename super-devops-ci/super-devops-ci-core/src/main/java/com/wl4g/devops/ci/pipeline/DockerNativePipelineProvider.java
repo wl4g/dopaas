@@ -32,7 +32,7 @@ import java.io.File;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class DockerNativePipelineProvider extends AbstractMavenPipelineProvider {
+public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
 	public DockerNativePipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
