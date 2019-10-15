@@ -17,9 +17,10 @@ package com.wl4g.devops.tool.hbase.migrate;
 
 import com.wl4g.devops.tool.common.utils.Assert;
 import com.wl4g.devops.tool.common.utils.CommandLines.Builder;
-import com.wl4g.devops.tool.hbase.migrate.mapred.ExamplePrefixMigrateMapper;
+import com.wl4g.devops.tool.hbase.migrate.mapred.NothingTransformMapper;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -38,6 +39,7 @@ import org.apache.hadoop.hbase.protobuf.generated.ClientProtos;
 import org.apache.hadoop.hbase.util.Base64;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -58,6 +60,7 @@ public class HfileBulkExporter {
 
 	final public static String DEFAULT_HBASE_FSTMP_DIR = "/tmp/fstmpdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
+	final public static String DEFAULT_MAPPER_CLASS = NothingTransformMapper.class.getName();
 
 	/**
 	 * e.g. </br>
@@ -73,6 +76,7 @@ public class HfileBulkExporter {
 	 * @param args
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
 		CommandLine line = new Builder().option("T", "tmpdir", false, "Hbase tmp directory. default:" + DEFAULT_HBASE_FSTMP_DIR)
 				.option("z", "zkaddr", true, "Zookeeper address.").option("t", "tabname", true, "Hbase table name.")
@@ -80,7 +84,8 @@ public class HfileBulkExporter {
 				.option("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE)
 				.option("s", "startrow", false, "Scan start rowkey.").option("e", "endrow", false, "Scan end rowkey.")
 				.option("S", "starttime", false, "Scan start timestamp.").option("E", "endtime", false, "Scan end timestamp.")
-				.build(args);
+				.option("M", "mapperclass", false, "Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS)
+				.option("E", "endtime", false, "Scan end timestamp.").build(args);
 
 		// Configuration
 		Configuration conf = new Configuration();
@@ -103,7 +108,7 @@ public class HfileBulkExporter {
 		Job job = Job.getInstance(conf);
 		job.setJobName(HfileBulkExporter.class.getSimpleName() + "@" + tab.getNameAsString());
 		job.setJarByClass(HfileBulkExporter.class);
-		job.setMapperClass(ExamplePrefixMigrateMapper.class);
+		job.setMapperClass((Class<Mapper>) ClassUtils.getClass(line.getOptionValue("M", DEFAULT_MAPPER_CLASS)));
 		job.setInputFormatClass(TableInputFormat.class);
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
 		job.setMapOutputValueClass(Put.class);
