@@ -19,7 +19,7 @@ import java.util.Optional;
  * @version v1.0 2019年9月5日
  * @since
  */
-public abstract class AbstractMigrateHfileMapper extends TableMapper<ImmutableBytesWritable, Put> {
+public abstract class AbstractTransformHfileMapper extends TableMapper<ImmutableBytesWritable, Put> {
 
 	@Override
 	public void map(ImmutableBytesWritable row, Result value, Context context) throws IOException, InterruptedException {
@@ -31,7 +31,7 @@ public abstract class AbstractMigrateHfileMapper extends TableMapper<ImmutableBy
 	}
 
 	/**
-	 * Transform process writable data result.
+	 * Transform processing writable data row.
 	 * 
 	 * @param key
 	 * @param result

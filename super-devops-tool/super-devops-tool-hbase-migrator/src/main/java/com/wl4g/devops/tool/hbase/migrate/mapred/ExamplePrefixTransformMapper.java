@@ -19,7 +19,7 @@ import java.util.List;
  * @version v1.0 2019年9月6日
  * @since
  */
-public class ExamplePrefixMigrateMapper extends AbstractMigrateHfileMapper {
+public class ExamplePrefixTransformMapper extends AbstractTransformHfileMapper {
 
 	final static List<String> ROW_PREFIX = unmodifiableList(new ArrayList<String>() {
 		private static final long serialVersionUID = 8767166856581107226L;
