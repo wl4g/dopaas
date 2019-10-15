@@ -6,7 +6,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# See: https://github.com/wl4g/super-devops/super-devops-tool/super-devops-tool-hbase-migrator
+# See: https://github.com/wl4g/super-devops/tree/master/super-devops-tool/super-devops-tool-hbase-migrator
 #
 
  ___            ___            ___                      _            
