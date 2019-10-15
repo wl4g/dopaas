@@ -48,11 +48,11 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_TIME;
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class AbstractMavenPipelineProvider extends AbstractPipelineProvider {
+public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 
-	public AbstractMavenPipelineProvider(PipelineInfo info) {
+	public BasedMavenPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
 

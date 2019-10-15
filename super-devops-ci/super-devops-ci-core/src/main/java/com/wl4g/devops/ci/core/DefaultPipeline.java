@@ -34,8 +34,6 @@ import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
 import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +45,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.DOCKER_NATIVE2;
-import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.MVN_ASSEMBLE_TAR2;
+import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.DOCKER_NATIVE;
+import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.MVN_ASSEMBLE_TAR;
+import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.VUE_VIEW;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static java.util.Arrays.asList;
 
 /**
@@ -280,9 +280,11 @@ public class DefaultPipeline implements Pipeline {
 
 		switch (info.getTarType()) {
 		case TAR_TYPE_TAR:
-			return beanFactory.getPrototypeBean(MVN_ASSEMBLE_TAR2, info);
+			return beanFactory.getPrototypeBean(MVN_ASSEMBLE_TAR, info);
+		case TAR_TYPE_VUE:
+			return beanFactory.getPrototypeBean(VUE_VIEW, info);
 		case TAR_TYPE_DOCKER:
-			return beanFactory.getPrototypeBean(DOCKER_NATIVE2, info);
+			return beanFactory.getPrototypeBean(DOCKER_NATIVE, info);
 		default:
 			throw new RuntimeException("unsuppost type:" + info.getTarType());
 		}

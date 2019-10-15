@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.utils.CommandUtils;
 
 /**
  * Django standard deployments provider.
@@ -24,7 +25,7 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class VuePipelineProvider extends AbstractVuePipelineProvider {
+public class VuePipelineProvider extends BasedViewPipelineProvider {
 
 	public VuePipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
@@ -32,12 +33,32 @@ public class VuePipelineProvider extends AbstractVuePipelineProvider {
 
 	@Override
 	public void execute() throws Exception {
-		throw new UnsupportedOperationException();
+		//build
+		build();
+
+
+
 	}
 
 	@Override
 	public void rollback() throws Exception {
 		throw new UnsupportedOperationException();
 	}
+
+
+	public void build() throws Exception {
+		//npm install
+		String path = getPipelineInfo().getPath();
+		String logPath = config.getBuild().getLogBaseDir() + "/" + getPipelineInfo().getTaskHistory().getId() + ".log";
+		String installCommand = "npm install "+path+" | tee -a " + logPath;
+		CommandUtils.exec(installCommand ,null,getTaskResult());
+
+		//npm run build
+		String buildCommand = "npm run build | tee -a " + logPath;
+		CommandUtils.exec(installCommand ,null,getTaskResult(),path);
+
+	}
+
+
 
 }

@@ -16,32 +16,28 @@
 package com.wl4g.devops.ci.config;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
-import com.wl4g.devops.ci.core.Pipeline;
 import com.wl4g.devops.ci.core.DefaultPipeline;
+import com.wl4g.devops.ci.core.Pipeline;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
-import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
-import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
-import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
-import com.wl4g.devops.ci.pipeline.SpringExecutableJarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
-import com.wl4g.devops.ci.pipeline.schedule.TimingPipelineHandler;
 import com.wl4g.devops.ci.pipeline.schedule.PipelineScheduleManager;
+import com.wl4g.devops.ci.pipeline.schedule.TimingPipelineHandler;
 import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.support.beans.DelegateAlias;
-
-import java.util.List;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
+import java.util.List;
 
 /**
  * CICD auto configuration.
@@ -93,33 +89,39 @@ public class CiCdAutoConfiguration {
 	//
 
 	@Bean
-	@DelegateAlias({ PipelineType.DJANGO_STD1, PipelineType.DJANGO_STD2 })
+	@DelegateAlias({PipelineType.DJANGO_STD})
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
 		return new DjangoStandardPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR1, PipelineType.MVN_ASSEMBLE_TAR2 })
+	@DelegateAlias({PipelineType.MVN_ASSEMBLE_TAR})
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
 		return new MvnAssembleTarPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR1, PipelineType.SPRING_EXECUTABLE_JAR2 })
+	@DelegateAlias({PipelineType.SPRING_EXECUTABLE_JAR})
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineInfo info) {
 		return new SpringExecutableJarPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.DOCKER_NATIVE1, PipelineType.DOCKER_NATIVE2 })
+	@DelegateAlias({PipelineType.DOCKER_NATIVE})
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineInfo info) {
 		return new DockerNativePipelineProvider(info);
 	}
 
+	@Bean
+	@DelegateAlias({PipelineType.VUE_VIEW})
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public VuePipelineProvider vuePipelineProvider(PipelineInfo info) {
+		return new VuePipelineProvider(info);
+	}
 	//
 	// Timing CICD hander configuration.
 	//

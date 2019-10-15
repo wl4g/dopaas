@@ -24,7 +24,7 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
  * @version v1.0 2019年5月25日
  * @since
  */
-public class SpringExecutableJarPipelineProvider extends AbstractMavenPipelineProvider {
+public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvider {
 
 	public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
