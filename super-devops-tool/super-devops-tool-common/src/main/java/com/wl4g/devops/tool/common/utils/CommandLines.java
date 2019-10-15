@@ -65,7 +65,7 @@ public abstract class CommandLines {
 		 */
 		public Builder option(String opt, String longOpt, boolean required, String description) {
 			Assert.notNull(options, "Options did not initialize creation");
-			Option option = new Option(opt, longOpt, required, description);
+			Option option = new Option(opt, longOpt, true, description);
 			option.setRequired(required);
 			options.addOption(option);
 			return this;

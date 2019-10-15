@@ -84,15 +84,18 @@ public class HfileBulkExporter {
 	public static void main(String[] args) throws Exception {
 		System.out.println(Resources.toString(getResource(HfileBulkExporter.class, "banner.txt"), Charsets.UTF_8));
 
-		CommandLine line = new Builder()
-				.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_EXPORT_TMPDIR)
-				.option("z", "zkaddr", true, "Zookeeper address.").option("t", "tabname", true, "Hbase table name.")
-				.option("o", "output", true, "Output hdfs path.")
-				.option("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE)
-				.option("s", "startrow", false, "Scan start rowkey.").option("e", "endrow", false, "Scan end rowkey.")
-				.option("S", "starttime", false, "Scan start timestamp.").option("E", "endtime", false, "Scan end timestamp.")
-				.option("M", "mapperclass", false, "Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS)
-				.option("E", "endtime", false, "Scan end timestamp.").build(args);
+		Builder builder = new Builder();
+		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_EXPORT_TMPDIR);
+		builder.option("z", "zkaddr", true, "Zookeeper address.");
+		builder.option("t", "tabname", true, "Hbase table name.");
+		builder.option("o", "output", true, "Output hdfs path.");
+		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
+		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS);
+		builder.option("s", "startRow", false, "Scan start rowkey.");
+		builder.option("e", "endRow", false, "Scan end rowkey.");
+		builder.option("S", "startTime", false, "Scan start timestamp.");
+		builder.option("E", "endTime", false, "Scan end timestamp.");
+		CommandLine line = builder.build(args);
 
 		// Configuration
 		Configuration conf = new Configuration();
