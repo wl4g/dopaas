@@ -63,7 +63,7 @@ public class HfileBulkExporter {
 	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
 
 	final public static String DEFAULT_HBASE_MR_TMPDIR = "/tmp-devops/tmpdir";
-	final public static String DEFAULT_HFILE_OUTPUT_DIR = "/tmp-devops/hfileoutputdir";
+	final public static String DEFAULT_HFILE_OUTPUT_DIR = "/tmp-devops/outputdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
 	final public static String DEFAULT_MAPPER_CLASS = NothingTransformMapper.class.getName();
 
@@ -90,7 +90,8 @@ public class HfileBulkExporter {
 		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
 		builder.option("z", "zkaddr", true, "Zookeeper address.");
 		builder.option("t", "tabname", true, "Hbase table name.");
-		builder.option("o", "output", false, "Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR);
+		builder.option("o", "output", false,
+				"Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}");
 		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
 		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS);
 		builder.option("s", "startRow", false, "Scan start rowkey.");
@@ -99,25 +100,26 @@ public class HfileBulkExporter {
 		builder.option("E", "endTime", false, "Scan end timestamp.");
 		CommandLine line = builder.build(args);
 
-		// Configuration
+		// Configuration.
+		String tabname = line.getOptionValue("tabname");
 		Configuration conf = new Configuration();
 		conf.set("hbase.zookeeper.quorum", line.getOptionValue("zkaddr"));
 		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR));
-		conf.set(TableInputFormat.INPUT_TABLE, line.getOptionValue("tabname"));
+		conf.set(TableInputFormat.INPUT_TABLE, tabname);
 		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE));
 
 		// Check directory.
-		String output = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR);
-		FileSystem fs = FileSystem.get(new URI(output), new Configuration(), "root");
-		Assert.state(!fs.exists(new Path(output)),
-				String.format("HDFS temporary directory already has data, path: '%s'", output));
+		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
+		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), "root");
+		Assert.state(!fs.exists(new Path(outputDir)),
+				String.format("HDFS temporary directory already has data, path: '%s'", outputDir));
 
 		// Set scan condition.(if necessary)
 		setScanIfNecessary(conf, line);
 
-		// Job
+		// Job.
 		Connection conn = ConnectionFactory.createConnection(conf);
-		TableName tab = TableName.valueOf(line.getOptionValue("tabname"));
+		TableName tab = TableName.valueOf(tabname);
 		Job job = Job.getInstance(conf);
 		job.setJobName(HfileBulkExporter.class.getSimpleName() + "@" + tab.getNameAsString());
 		job.setJarByClass(HfileBulkExporter.class);
@@ -127,7 +129,7 @@ public class HfileBulkExporter {
 		job.setMapOutputValueClass(Put.class);
 
 		HFileOutputFormat2.configureIncrementalLoad(job, conn.getTable(tab), conn.getRegionLocator(tab));
-		FileOutputFormat.setOutputPath(job, new Path(output));
+		FileOutputFormat.setOutputPath(job, new Path(outputDir));
 		if (job.waitForCompletion(true)) {
 			long total = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).getValue();
 			long filtered = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_FILTERED).getValue();
