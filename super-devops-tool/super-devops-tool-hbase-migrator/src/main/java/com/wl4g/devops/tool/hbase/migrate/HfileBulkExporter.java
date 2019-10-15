@@ -104,7 +104,8 @@ public class HfileBulkExporter {
 		// Check directory.
 		String output = line.getOptionValue("o");
 		FileSystem fs = FileSystem.get(new URI(output), new Configuration(), "root");
-		Assert.state(!fs.exists(new Path(output)), String.format("Catalogs do not allow other data. '%s'", output));
+		Assert.state(!fs.exists(new Path(output)),
+				String.format("HDFS temporary directory already has data, path: '%s'", output));
 
 		// Set scan condition.(if necessary)
 		setScanIfNecessary(conf, line);
