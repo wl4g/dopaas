@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.tool.hbase.migrate;
 
+import static com.google.common.io.Resources.*;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.utils.Assert;
 import com.wl4g.devops.tool.common.utils.CommandLines.Builder;
 import com.wl4g.devops.tool.hbase.migrate.mapred.NothingTransformMapper;
@@ -78,6 +81,8 @@ public class HfileBulkExporter {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
+		System.out.println(Resources.toString(getResource("banner.txt"), Charsets.UTF_8));
+
 		CommandLine line = new Builder()
 				.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_EXPORT_TMPDIR)
 				.option("z", "zkaddr", true, "Zookeeper address.").option("t", "tabname", true, "Hbase table name.")

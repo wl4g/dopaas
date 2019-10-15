@@ -6,13 +6,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# See: http://www.network-science.de/ascii/#big#drpepper
+# See: https://github.com/wl4g/super-devops/super-devops-tool/super-devops-tool-hbase-migrator
 #
-   ,--.   ,--.
-   \  /-~-\  /
-    )' a a `(
-   (  ,---.  )
-    `(_o_o_)'
-      )`-'(
 
-Spring Boot${spring-boot.formatted-version}
+ ___            ___            ___                      _            
+| . \ ___  _ _ | . | ___  ___ | __>__   ___  ___  _ _ _| |_ ___  _ _ 
+| | |/ ._>| | || | || . \<_-< | _> \ \/| . \/ . \| '_> | | / ._>| '_>
+|___/\___.|__/ `___'|  _//__/ |___>/\_\|  _/\___/|_|   |_| \___.|_|  
+                    |_|                |_|           |_|   
