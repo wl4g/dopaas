@@ -48,6 +48,7 @@ import com.google.common.base.Charsets;
 import static com.wl4g.devops.common.utils.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -379,11 +380,11 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 */
 	public static String safeEncodeURL(String url) {
 		try {
-			if (!url.toLowerCase().contains(URL_SEPAR_SLASH)) {
+			if (!contains(trimToEmpty(url).toLowerCase(Locale.ENGLISH), URL_SEPAR_SLASH)) {
 				return URLEncoder.encode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 		return url;
 	}
@@ -397,11 +398,11 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 */
 	public static String safeDecodeURL(String url) {
 		try {
-			if (url.toLowerCase().contains(URL_SEPAR_SLASH)) {
+			if (contains(trimToEmpty(url).toLowerCase(Locale.ENGLISH), URL_SEPAR_SLASH)) {
 				return URLDecoder.decode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 		return url;
 	}
