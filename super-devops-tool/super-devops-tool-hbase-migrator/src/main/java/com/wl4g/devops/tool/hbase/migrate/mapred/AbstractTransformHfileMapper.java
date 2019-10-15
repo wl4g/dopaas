@@ -21,11 +21,18 @@ import java.util.Optional;
  */
 public abstract class AbstractTransformHfileMapper extends TableMapper<ImmutableBytesWritable, Put> {
 
+	final public static String DEFUALT_COUNTER_GROUP = AbstractTransformHfileMapper.class.getSimpleName() + "@CounterGroup";
+	final public static String DEFUALT_COUNTER_TOTAL = "Total@Counter";
+	final public static String DEFUALT_COUNTER_FILTERED = "Filtered@Counter";
+
 	@Override
 	public void map(ImmutableBytesWritable row, Result value, Context context) throws IOException, InterruptedException {
+		context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).increment(1);
+
 		// Loading raw table data to perform processing.
 		Optional<Put> opt = transform(row, value);
 		if (opt.isPresent()) {
+			context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_FILTERED).increment(1);
 			context.write(row, opt.get());
 		}
 	}

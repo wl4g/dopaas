@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.hbase.migrate;
 
 import static com.google.common.io.Resources.*;
+import static com.wl4g.devops.tool.hbase.migrate.mapred.AbstractTransformHfileMapper.*;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.utils.Assert;
@@ -122,7 +123,9 @@ public class HfileBulkExporter {
 		HFileOutputFormat2.configureIncrementalLoad(job, conn.getTable(tab), conn.getRegionLocator(tab));
 		FileOutputFormat.setOutputPath(job, new Path(output));
 		if (job.waitForCompletion(true)) {
-			log.info("Exported to successfully !");
+			long total = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).getValue();
+			long filtered = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_FILTERED).getValue();
+			log.info(String.format("Exported to successfully! with processed: %d/%d", total, filtered));
 		}
 
 	}
