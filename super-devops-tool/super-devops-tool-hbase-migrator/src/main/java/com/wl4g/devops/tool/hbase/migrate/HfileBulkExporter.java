@@ -62,7 +62,8 @@ import java.sql.Timestamp;
 public class HfileBulkExporter {
 	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
 
-	final public static String DEFAULT_HBASE_EXPORT_TMPDIR = "/tmp/super-devops-tool-hfile-exportdir";
+	final public static String DEFAULT_HBASE_MR_TMPDIR = "/tmp-devops/tmpdir";
+	final public static String DEFAULT_HFILE_OUTPUT_DIR = "/tmp-devops/hfileoutputdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
 	final public static String DEFAULT_MAPPER_CLASS = NothingTransformMapper.class.getName();
 
@@ -73,8 +74,9 @@ public class HfileBulkExporter {
 	 * yarn jar super-devops-tool-hbase-migrator-master-jar-with-dependencies.jar \
 	 * com.wl4g.devops.tool.hbase.migrate.HfileBulkExporter \
 	 * -z emr-header-1:2181 \
-	 * -t safeclound.tb_ammeter \
-	 * -o hdfs://emr-header-1/bak/safeclound.tb_ammeter
+	 * -t safeclound.tb_elec_power \
+	 * -s 11111112,ELE_R_P,134,01,20180919110850989 \
+	 * -e 11111112,ELE_R_P,134,01,20180921124050540
 	 * </pre>
 	 * 
 	 * @param args
@@ -85,10 +87,10 @@ public class HfileBulkExporter {
 		System.out.println(Resources.toString(getResource(HfileBulkExporter.class, "banner.txt"), Charsets.UTF_8));
 
 		Builder builder = new Builder();
-		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_EXPORT_TMPDIR);
+		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
 		builder.option("z", "zkaddr", true, "Zookeeper address.");
 		builder.option("t", "tabname", true, "Hbase table name.");
-		builder.option("o", "output", true, "Output hdfs path.");
+		builder.option("o", "output", false, "Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR);
 		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
 		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS);
 		builder.option("s", "startRow", false, "Scan start rowkey.");
@@ -99,13 +101,13 @@ public class HfileBulkExporter {
 
 		// Configuration
 		Configuration conf = new Configuration();
-		conf.set("hbase.zookeeper.quorum", line.getOptionValue("z"));
-		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_EXPORT_TMPDIR));
-		conf.set(TableInputFormat.INPUT_TABLE, line.getOptionValue("t"));
-		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("b", DEFAULT_SCAN_BATCH_SIZE));
+		conf.set("hbase.zookeeper.quorum", line.getOptionValue("zkaddr"));
+		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR));
+		conf.set(TableInputFormat.INPUT_TABLE, line.getOptionValue("tabname"));
+		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE));
 
 		// Check directory.
-		String output = line.getOptionValue("o");
+		String output = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR);
 		FileSystem fs = FileSystem.get(new URI(output), new Configuration(), "root");
 		Assert.state(!fs.exists(new Path(output)),
 				String.format("HDFS temporary directory already has data, path: '%s'", output));
@@ -115,7 +117,7 @@ public class HfileBulkExporter {
 
 		// Job
 		Connection conn = ConnectionFactory.createConnection(conf);
-		TableName tab = TableName.valueOf(line.getOptionValue("t"));
+		TableName tab = TableName.valueOf(line.getOptionValue("tabname"));
 		Job job = Job.getInstance(conf);
 		job.setJobName(HfileBulkExporter.class.getSimpleName() + "@" + tab.getNameAsString());
 		job.setJarByClass(HfileBulkExporter.class);
@@ -129,7 +131,7 @@ public class HfileBulkExporter {
 		if (job.waitForCompletion(true)) {
 			long total = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).getValue();
 			long filtered = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_FILTERED).getValue();
-			log.info(String.format("Exported to successfully! with processed: %d/%d", total, filtered));
+			log.info(String.format("Exported to successfully! with processed:(%d)/total:(%d)", filtered, total));
 		}
 
 	}
@@ -142,10 +144,10 @@ public class HfileBulkExporter {
 	 * @throws IOException
 	 */
 	private static void setScanIfNecessary(Configuration conf, CommandLine line) throws IOException {
-		String startRow = line.getOptionValue("s");
-		String endRow = line.getOptionValue("e");
-		String startTime = line.getOptionValue("S");
-		String endTime = line.getOptionValue("E");
+		String startRow = line.getOptionValue("startRow");
+		String endRow = line.getOptionValue("endRow");
+		String startTime = line.getOptionValue("startTime");
+		String endTime = line.getOptionValue("endTime");
 
 		boolean enabledScan = false;
 		Scan scan = new Scan();

@@ -54,7 +54,6 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
-import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.web.RespBase;
@@ -306,10 +305,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 		if (cause instanceof UnauthorizedException) { // Unauthorized?
 			failRedirectUrl.append(config.getUnauthorizedUri());
-		}
-		// Unauthenticated?
-		else if (cause instanceof UnauthenticatedException) {
-			// When the IAM server is authenticated successfully, the callback
+		} else { // UnauthenticatedException?
+			// When the IAM server is authenticated successfully, the
+			// callback
 			// redirects to the URL of the IAM client.
 			String clientRedirectUrl = new StringBuffer(getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR).toString();
 			failRedirectUrl.append(getLoginUrl());
