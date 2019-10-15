@@ -58,7 +58,7 @@ import java.sql.Timestamp;
 public class HfileBulkExporter {
 	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
 
-	final public static String DEFAULT_HBASE_FSTMP_DIR = "/tmp/fstmpdir";
+	final public static String DEFAULT_HBASE_EXPORT_TMPDIR = "/tmp/super-devops-tool-hfile-exportdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
 	final public static String DEFAULT_MAPPER_CLASS = NothingTransformMapper.class.getName();
 
@@ -78,7 +78,8 @@ public class HfileBulkExporter {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
-		CommandLine line = new Builder().option("T", "tmpdir", false, "Hbase tmp directory. default:" + DEFAULT_HBASE_FSTMP_DIR)
+		CommandLine line = new Builder()
+				.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_EXPORT_TMPDIR)
 				.option("z", "zkaddr", true, "Zookeeper address.").option("t", "tabname", true, "Hbase table name.")
 				.option("o", "output", true, "Output hdfs path.")
 				.option("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE)
@@ -90,7 +91,7 @@ public class HfileBulkExporter {
 		// Configuration
 		Configuration conf = new Configuration();
 		conf.set("hbase.zookeeper.quorum", line.getOptionValue("z"));
-		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_FSTMP_DIR));
+		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_EXPORT_TMPDIR));
 		conf.set(TableInputFormat.INPUT_TABLE, line.getOptionValue("t"));
 		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("b", DEFAULT_SCAN_BATCH_SIZE));
 
