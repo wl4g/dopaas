@@ -654,9 +654,11 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static String getBaseURIForDefault(String scheme, String serverName, int port) {
 		Assert.notNull(scheme, "Http request scheme must not be empty");
 		Assert.notNull(serverName, "Http request serverName must not be empty");
-		Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
+		if (port > -1) {
+			Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
+		}
 		StringBuffer baseUri = new StringBuffer(scheme).append("://").append(serverName);
-		if (!((scheme.equalsIgnoreCase("HTTP") && port == 80) || (scheme.equalsIgnoreCase("HTTPS") && port == 443))) {
+		if (!((equalsIgnoreCase(scheme, "HTTP") && port == 80) || (equalsIgnoreCase(scheme, "HTTPS") && port == 443))) {
 			baseUri.append(":").append(port);
 		}
 		return baseUri.toString();
