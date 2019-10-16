@@ -17,9 +17,10 @@ package com.wl4g.devops.iam.authc.credential.secure;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.ByteSource.Util;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.codec.CheckSums;
+import static com.wl4g.devops.common.utils.codec.CheckSums.*;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.configure.SecureConfig;
 
@@ -78,21 +79,20 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 	}
 
 	public static void main(String[] args) {
-		// Get hashing public salt
-		ByteSource publicSalt = ByteSource.Util.bytes("admin");
-		// Merge salt
 		// String privateSalt = "IAM";
-		String privateSalt = "safecloud";
-		ByteSource salt = ByteSource.Util
-				.bytes(crossCombined(ByteSource.Util.bytes(privateSalt).getBytes(), publicSalt.getBytes()));
+		// String privateSalt = "safecloud";
+		// String privateSalt = "IamWithCipherPrivateSalt";
+		String privateSalt = "iam-serverdev";
+		ByteSource publicSalt = Util.bytes("admin");
+		ByteSource salt = Util.bytes(crossCombined(Util.bytes(privateSalt).getBytes(), publicSalt.getBytes()));
 
-		final String[] hashAlgorithms = new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" };
-		final int size = hashAlgorithms.length;
-		final long index = CheckSums.crc32(salt.getBytes()) % size & (size - 1);
-		final String algorithm = hashAlgorithms[(int) index];
-		final int hashIterations = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
+		String[] hashAlgorithms = new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" };
+		int size = hashAlgorithms.length;
+		long index = crc32(salt.getBytes()) % size & (size - 1);
+		String algorithm = hashAlgorithms[(int) index];
+		int hashIterations = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
 		System.out.println(">>>>>>>>>>");
-		System.out.print(new SimpleHash(algorithm, ByteSource.Util.bytes("123456"), salt, hashIterations).toHex());
+		System.out.print(new SimpleHash(algorithm, Util.bytes("123456"), salt, hashIterations).toHex());
 		System.out.print("\n<<<<<<<<<<");
 	}
 
