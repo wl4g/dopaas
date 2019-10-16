@@ -24,17 +24,8 @@ import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
 
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
@@ -118,27 +109,9 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		String fromApp = getCleanParam(request, fromAppKey);
 		String respType = getCleanParam(request, respTypeKey);
 		String redirectUrl = getCleanParam(request, redirectUrlKey);
-		
-		// TODO
-//		if (!isBlank(redirectUrl)) {
-//			// To prevent automatic loss, such as the anchor part of "#",
-//			// e.g.redirectUrl=http://mydomain.com/iam-example/authenticator?redirect_url=http://mydomain.com/#/index
-//			try {
-//				URI uri = new URI(redirectUrl);
-//				Map<String, String> redirectParams = toQueryParams(uri.getQuery());
-//				if (!isEmpty(redirectParams)) {
-//					String clientRedirectUrl = redirectParams.get(config.getParam().getRedirectUrl());
-//					if (!isBlank(clientRedirectUrl)) {
-//						redirectParams.remove(config.getParam().getRedirectUrl());
-//						redirectParams.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
-//						redirectUrl = applyQueryURL(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + uri.getPath(),
-//								redirectParams);
-//					}
-//				}
-//			} catch (URISyntaxException e) {
-//				throw new IllegalArgumentException(e);
-//			}
-//		}
+
+		// Safety encoding.
+		redirectUrl = safeEncodeWithCyclicRedirectUrl(redirectUrl);
 
 		// Overlay to save the latest parameters
 		bindKVParameters(KEY_REQ_AUTH_PARAMS, fromAppKey, fromApp, respTypeKey, respType, redirectUrlKey, redirectUrl);

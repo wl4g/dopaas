@@ -307,8 +307,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			failRedirectUrl.append(config.getUnauthorizedUri());
 		} else { // UnauthenticatedException?
 			// When the IAM server is authenticated successfully, the
-			// callback
-			// redirects to the URL of the IAM client.
+			// callback redirects to the URL of the IAM client.
 			String clientRedirectUrl = new StringBuffer(getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR).toString();
 			failRedirectUrl.append(getLoginUrl());
 			failRedirectUrl.append("?").append(config.getParam().getApplication());
