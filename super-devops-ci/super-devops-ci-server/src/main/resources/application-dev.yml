@@ -82,13 +82,11 @@ pipeline:
       password: hwj13535248668
       token: Xw6xYojnoj7SSDyyLXP7
       #workspace: user default
-  build:
-    job-clean-scan: 30
-    job-clean-timeout: 300
-    job-share-dependency-try-timeout: 300
-    log-base-dir:
-  backup:
+  job:
     base-dir:
+    clean-scan: 30
+    clean-timeout: 300
+    share-dependency-try-timeout: 300
   tranform:
     cipher-key: 03DE18C2FC4E605F
     docker-native:

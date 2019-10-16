@@ -15,20 +15,16 @@
  */
 package com.wl4g.devops.common.utils.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.io.Writer;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.FileWriterWithEncoding;
+import org.springframework.util.Assert;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.FileWriterWithEncoding;
-import org.springframework.util.Assert;
 
 /**
  * Enhanced files IO operation implements.</br>
@@ -68,6 +64,10 @@ public abstract class FileIOUtils extends FileUtils {
 	 */
 	public static void writeFile(File file, String data) {
 		writeFile(file, data, Charset.forName("UTF-8"), true);
+	}
+
+	public static void writeFile(File file, String data,boolean append) {
+		writeFile(file, data, Charset.forName("UTF-8"), append);
 	}
 
 	/**

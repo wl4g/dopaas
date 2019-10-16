@@ -22,6 +22,8 @@ public class Task extends BaseBean implements Serializable {
 
 	private String branchType;
 
+	private String buildCommand;
+
 	private String preCommand;
 
 	private String postCommand;
@@ -129,6 +131,14 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setContactGroupId(Integer contactGroupId) {
 		this.contactGroupId = contactGroupId;
+	}
+
+	public String getBuildCommand() {
+		return buildCommand;
+	}
+
+	public void setBuildCommand(String buildCommand) {
+		this.buildCommand = buildCommand;
 	}
 
 	@Override

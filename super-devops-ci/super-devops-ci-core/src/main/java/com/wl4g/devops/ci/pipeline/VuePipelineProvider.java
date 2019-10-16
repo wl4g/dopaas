@@ -49,7 +49,7 @@ public class VuePipelineProvider extends BasedViewPipelineProvider {
 	public void build() throws Exception {
 		//npm install
 		String path = getPipelineInfo().getPath();
-		String logPath = config.getBuild().getLogBaseDir() + "/" + getPipelineInfo().getTaskHistory().getId() + ".log";
+		String logPath = config.getJob().getLogBaseDir(getPipelineInfo().getTaskHistory().getId()) + "/build.log";
 		String installCommand = "npm install "+path+" | tee -a " + logPath;
 		CommandUtils.exec(installCommand ,null,getTaskResult());
 

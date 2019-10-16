@@ -37,6 +37,8 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private Integer refId;
 
+	private String buildCommand;
+
 	private String preCommand;
 
 	private String postCommand;
@@ -161,5 +163,13 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setContactGroupId(Integer contactGroupId) {
 		this.contactGroupId = contactGroupId;
+	}
+
+	public String getBuildCommand() {
+		return buildCommand;
+	}
+
+	public void setBuildCommand(String buildCommand) {
+		this.buildCommand = buildCommand;
 	}
 }

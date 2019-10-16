@@ -18,7 +18,6 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.pipeline.handler.MvnAssembleTarPipelineHandler;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
-import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
 import org.springframework.util.CollectionUtils;
@@ -46,8 +45,6 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	@Override
 	public void execute() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(pipelineInfo.getProject().getId());
 		// maven install , include dependency
 		build(pipelineInfo.getTaskHistory(), taskResult, false);
 		if (!taskResult.isSuccess()) {
@@ -63,12 +60,8 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	@Override
 	public void rollback() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getPipelineInfo().getProject().getId());
 		// Old file
-		String oldFilePath = config.getBackup().getBaseDir() + "/" + getPipelineInfo().getAlias() + "/"
-				+ getPipelineInfo().getBranch() + "/" + subPackname(getPipelineInfo().getProject().getTarPath()) + "#"
-				+ getPipelineInfo().getTaskHistory().getRefId();
+		String oldFilePath = config.getJob().getBackupDir(getPipelineInfo().getTaskHistory().getRefId()) + "/" + subPackname(getPipelineInfo().getProject().getTarPath());
 		File oldFile = new File(oldFilePath);
 		if (oldFile.exists()) {// Check bakup file isExist , if not -- check out
 			// from git
@@ -90,8 +83,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		// get local sha
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 		// backup in local
-		backupLocal(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath(),
-				getPipelineInfo().getTaskHistory().getId().toString(), getPipelineInfo().getAlias(),
+		backupLocal(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getAlias(),
 				getPipelineInfo().getBranch());
 		// scp to server
 		List<Future<?>> futures = new ArrayList<>();

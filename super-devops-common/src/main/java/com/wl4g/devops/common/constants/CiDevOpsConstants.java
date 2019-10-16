@@ -63,4 +63,13 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final String CI_LOCK = "CI_LOCK_";
 	public static final int LOCK_TIME = 4;
 
+	//log file start
+	public static final String LOG_FILE_START = "<[EOF]";
+	//log file end
+	public static final String LOG_FILE_END = "[EOF]>";
+
+
+	//command replace
+	public static final String PROJECT_PATH = "#{projectPath}";
+
 }

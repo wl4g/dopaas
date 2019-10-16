@@ -18,14 +18,12 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
-import com.wl4g.devops.common.bean.ci.Dependency;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskSign;
+import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.common.exception.ci.LockStateException;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,11 +33,11 @@ import org.springframework.util.Assert;
 import java.io.File;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.CI_LOCK;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_TIME;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 /**
  * Abstract based deploy provider.
@@ -121,10 +119,10 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	/**
 	 * Local back up
 	 */
-	public String backupLocal(String path, String sign, String alias, String branchName) throws Exception {
-		checkPath(config.getBackup().getBaseDir());
-		String command = "cp -Rf " + path + " " + config.getBackup().getBaseDir() + "/" + alias + "/" + branchName + "/"
-				+ subPackname(path) + "#" + sign;
+	public String backupLocal(String path, String alias, String branchName) throws Exception {
+		checkPath(config.getJob().getBackupDir(getPipelineInfo().getTaskHistory().getId()));
+		String command = "cp -Rf " + path + " " + config.getJob().getBackupDir(getPipelineInfo().getTaskHistory().getId()) + "/"
+				+ subPackname(path);
 		return SSHTool.exec(command);
 	}
 
@@ -132,7 +130,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * Get local back up , for rollback
 	 */
 	public String getBackupLocal(String backFile, String target) throws Exception {
-		checkPath(config.getBackup().getBaseDir());
+		checkPath(config.getJob().getBackupDir(getPipelineInfo().getTaskHistory().getId()));
 		String command = "cp -Rf " + backFile + " " + target;
 		return SSHTool.exec(command);
 	}
@@ -149,7 +147,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	/**
 	 * Building (maven)
 	 */
-	public String mvnInstall(String path, TaskResult taskResult, String logPath) throws Exception {
+	public String mvnInstall(String path, TaskResult taskResult, String logPath,String buildCommand) throws Exception {
 		// Execution mvn
 		String command = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true | tee -a " + logPath;
 		return SSHTool.exec(command, inlog -> !ShellContextHolder.isInterruptIfNecessary(), taskResult);
@@ -207,27 +205,49 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @throws Exception
 	 */
 	public void build(TaskHistory taskHistory, TaskResult taskResult, boolean isRollback) throws Exception {
+		//get dependencys
 		LinkedHashSet<Dependency> dependencys = dependencyService.getDependencys(taskHistory.getProjectId(), null);
+		//get task build commands
+		List<TaskBuildCommand> taskBuildCommands = taskHisBuildCommandDao.selectByTaskHisId(taskHistory.getId());
+		String logPath = config.getJob().getLogBaseDir(taskHistory.getId()) + "/"  + "build.log";
+		//write log file -- <[EOF]
+		FileIOUtils.writeFile(new File(logPath),LOG_FILE_START);
+
 		log.info("Analysis dependencys={}", dependencys);
 		for (Dependency dependency : dependencys) {
+			String buildCommand = getBuildCommand(taskBuildCommands, dependency.getProjectId());
 			checkLock(taskHistory, dependency.getDependentId(), dependency.getDependentId(), dependency.getBranch(), taskResult,
-					true, isRollback);
+					true, isRollback,buildCommand);
 			// Is Continue ? if fail then return
 			if (!taskResult.isSuccess()) {
 				return;
 			}
 		}
-		checkLock(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), taskResult, false, isRollback);
+		checkLock(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), taskResult, false, isRollback,taskHistory.getBuildCommand());
+
+		//write log file -- [EOF]>
+		FileIOUtils.writeFile(new File(logPath),LOG_FILE_END);
+	}
+
+	private String getBuildCommand(List<TaskBuildCommand> taskBuildCommands,Integer projectId){
+		Assert.notEmpty(taskBuildCommands,"taskBuildCommands is empty");
+		Assert.notNull(projectId,"projectId is null");
+		for(TaskBuildCommand taskBuildCommand : taskBuildCommands){
+			if(taskBuildCommand.getProjectId().intValue()==projectId.intValue()){
+				return taskBuildCommand.getCommand();
+			}
+		}
+		return null;
 	}
 
 	private void checkLock(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch, TaskResult taskResult,
-			boolean isDependency, boolean isRollback) throws Exception {
+			boolean isDependency, boolean isRollback,String buildCommand) throws Exception {
 		// ===== redis lock =====
 		Lock lock = lockManager.getLock(CI_LOCK + projectId, LOCK_TIME, TimeUnit.MINUTES);
 		if (lock.tryLock()) {// needn't wait
 			// Do
 			try {
-				getSourceAndMvnBuild(taskHistory, projectId, dependencyId, branch, taskResult, isDependency, isRollback);
+				getSourceAndMvnBuild(taskHistory, projectId, dependencyId, branch, taskResult, isDependency, isRollback,buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -250,7 +270,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	private void getSourceAndMvnBuild(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch,
-			TaskResult taskResult, boolean isDependency, boolean isRollback) throws Exception {
+			TaskResult taskResult, boolean isDependency, boolean isRollback,String buildCommand) throws Exception {
 		log.info("build start projectId={}", projectId);
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		Assert.notNull(project, "project not exist");
@@ -295,13 +315,24 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			taskSignDao.insertSelective(taskSign);
 		}
 
-		String logPath = config.getBuild().getLogBaseDir() + "/" + taskHistory.getId() + ".log";
+		String logPath = config.getJob().getLogBaseDir(taskHistory.getId()) + "/" +"build.log";
 		// run install command
-		String installResult = mvnInstall(path, taskResult, logPath);
+		String defaultCommand = "mvn -f " + path + "/pom.xml clean install -Dmaven.test.skip=true | tee -a " + logPath;
+
+		String installResult = "";
+		if(StringUtils.isBlank(buildCommand)){
+			installResult = SSHTool.exec(defaultCommand,inlog -> !ShellContextHolder.isInterruptIfNecessary(),taskResult);
+		}else{
+			String filePath = config.getJob().getBaseDir()+ "/" + taskHistory.getId() + "/" + "build_"+ project.getId()+".sh | tee -a " + logPath;
+			buildCommand = commandReplace(buildCommand,path);
+			installResult = SSHTool.execFile(buildCommand,inlog -> !ShellContextHolder.isInterruptIfNecessary(),filePath,taskResult);
+		}
 
 		// ===== build end =====
 		taskResult.getStringBuffer().append(installResult);
 
 	}
+
+
 
 }

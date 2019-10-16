@@ -80,8 +80,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dependency.setProjectId(getPipelineInfo().getProject().getId());
 
 		// check bakup file isExist
-		String oldFilePath = config.getBackup().getBaseDir() + "/" + subPackname(getPipelineInfo().getProject().getTarPath())
-				+ "#" + getPipelineInfo().getTaskHistory().getRefId();
+		String oldFilePath = config.getJob().getBackupDir(getPipelineInfo().getTaskHistory().getRefId()) + "/" + subPackname(getPipelineInfo().getProject().getTarPath());
 
 		File oldFile = new File(oldFilePath);
 		if (oldFile.exists()) {
