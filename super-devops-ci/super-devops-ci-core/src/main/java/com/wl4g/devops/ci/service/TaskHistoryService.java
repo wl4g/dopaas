@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -37,7 +38,7 @@ public interface TaskHistoryService {
 	TaskHistory getById(Integer id);
 
 	TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer parentId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId);
+								  String sha, Integer parentId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands);
 
 	void updateStatus(int taskId, int status);
 

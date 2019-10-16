@@ -20,8 +20,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.core.Pipeline;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.BaseController;
@@ -106,13 +105,13 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(Task task, Integer[] instance) {
+	public RespBase<?> save(Task task, Integer[] instance,List<TaskBuildCommand> taskBuildCommands) {
 		log.info("into TaskController.save prarms::" + "task = {} , instance = {} ", task, instance);
 		Assert.notNull(task, "task can not be null");
 		Assert.notEmpty(instance, "instances can not be empty");
 		checkTask(task);
 		RespBase<Object> resp = RespBase.create();
-		taskService.save(task, instance);
+		taskService.save(task, instance,taskBuildCommands);
 		return resp;
 	}
 
@@ -127,26 +126,7 @@ public class TaskController extends BaseController {
 		log.info("into TaskController.detail prarms::" + "id = {} ", id);
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
-		Task task = taskService.getTaskDetailById(id);
-
-		AppInstance appInstance = null;
-		for (TaskDetail taskDetail : task.getTaskDetails()) {
-			Integer instanceId = taskDetail.getInstanceId();
-			appInstance = appClusterDao.getAppInstance(instanceId.toString());
-			if (appInstance != null && appInstance.getEnvId() != null) {
-				break;
-			}
-		}
-		Integer[] instances = new Integer[task.getTaskDetails().size()];
-		for (int i = 0; i < task.getTaskDetails().size(); i++) {
-			instances[i] = task.getTaskDetails().get(i).getInstanceId();
-		}
-
-		resp.getData().put("task", task);
-		if (null != appInstance) {
-			resp.getData().put("envId", Integer.valueOf(appInstance.getEnvId()));
-		}
-		resp.getData().put("instances", instances);
+		resp.setData(taskService.detail(id));
 		return resp;
 	}
 
@@ -200,6 +180,15 @@ public class TaskController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		pipelineCoreProcessor.createTask(taskId);
 		return resp;
+	}
+
+	@RequestMapping(value = "/getDependencys")
+	public RespBase<?> getDependencys(Integer clustomId) {
+		RespBase<Object> resp = RespBase.create();
+		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(clustomId);
+		resp.getData().put("list",taskBuildCommands);
+		return resp;
+
 	}
 
 }

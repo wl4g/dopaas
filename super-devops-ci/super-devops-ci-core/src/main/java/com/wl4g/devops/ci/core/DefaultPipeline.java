@@ -26,10 +26,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
-import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskDao;
-import com.wl4g.devops.dao.ci.TaskDetailDao;
-import com.wl4g.devops.dao.ci.TriggerDao;
+import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
@@ -83,6 +80,8 @@ public class DefaultPipeline implements Pipeline {
 	private TaskDetailDao taskDetailDao;
 	@Autowired
 	private AlarmContactDao alarmContactDao;
+	@Autowired
+	private TaskBuildCommandDao taskBuildCommandDao;
 
 	@Override
 	public List<AppCluster> grouplist() {
@@ -127,9 +126,10 @@ public class DefaultPipeline implements Pipeline {
 			AppInstance instance = appClusterDao.getAppInstance(instanceId);
 			instances.add(instance);
 		}
+		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(taskId);
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(),
-				task.getContactGroupId());
+				task.getContactGroupId(),taskBuildCommands);
 		PipelineProvider provider = getPipelineProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
@@ -167,11 +167,12 @@ public class DefaultPipeline implements Pipeline {
 
 		// get sha
 		String sha = null;
+		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(task.getId());
 
 		// Print to client
 		// ShellContextHolder.printfQuietly("taskHistory begin");
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
-				branchName, sha, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(), task.getContactGroupId());
+				branchName, sha, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(), task.getContactGroupId(),taskBuildCommands);
 		PipelineProvider provider = getPipelineProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
@@ -311,9 +312,10 @@ public class DefaultPipeline implements Pipeline {
 			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
 			instances.add(instance);
 		}
+		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(taskId);
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK, TASK_STATUS_CREATE,
 				taskHistoryOld.getBranchName(), null, taskId, taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(),
-				TAR_TYPE_TAR, taskHistoryOld.getContactGroupId());
+				TAR_TYPE_TAR, taskHistoryOld.getContactGroupId(),taskBuildCommands);
 		PipelineProvider provider = getPipelineProvider(taskHistory);
 
 		// Do roll-back pipeline job.
@@ -358,7 +360,7 @@ public class DefaultPipeline implements Pipeline {
 		if (Objects.isNull(size)) {
 			size = 100;
 		}
-		String logPath = config.getBuild().getLogBaseDir() + "/" + taskHisId + ".log";
+		String logPath = config.getJob().getLogBaseDir(taskHisId) + "/build.log";
 		return FileIOUtils.readSeekLines(logPath, index, size).getLines(); // TODO
 	}
 

@@ -16,6 +16,10 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -23,10 +27,14 @@ import com.wl4g.devops.common.bean.ci.Task;
  */
 public interface TaskService {
 
-	Task save(Task task, Integer[] instanceIds);
+	Task save(Task task, Integer[] instanceIds,List<TaskBuildCommand> taskBuildCommands);
+
+	Map<String,Object> detail(Integer id);
 
 	int delete(Integer id);
 
 	Task getTaskDetailById(Integer triggerId);
+
+	List<TaskBuildCommand> getDependency(Integer clustomId);
 
 }

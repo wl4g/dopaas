@@ -69,8 +69,8 @@ public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 
 		// Resume timeout scanner.
 		this.future = taskScheduler.schedule(() -> {
-			if (config.getBuild().getJobCleanTimeout() != null && config.getBuild().getJobCleanTimeout() > 0) {
-				taskHistoryDao.updateStatus(config.getBuild().getJobCleanTimeout());
+			if (config.getJob().getCleanTimeout() != null && config.getJob().getCleanTimeout() > 0) {
+				taskHistoryDao.updateStatus(config.getJob().getCleanTimeout());
 			}
 		}, new CronTrigger(expression));
 

@@ -17,12 +17,14 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
@@ -48,6 +50,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	private ProjectDao projectDao;
 	@Autowired
 	private AppClusterDao appClusterDao;
+	@Autowired
+	private TaskHisBuildCommandDao taskHisBuildCommandDao;
 
 	@Override
 	public List<TaskHistory> list(String groupName, String projectName, String branchName) {
@@ -76,7 +80,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Override
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer refId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId) {
+			String sha, Integer refId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId,List<TaskBuildCommand> taskBuildCommands) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
@@ -100,6 +104,11 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 			taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
 			taskHistoryDetailDao.insertSelective(taskHistoryDetail);
 		}
+		for(TaskBuildCommand taskBuildCommand : taskBuildCommands){
+			taskBuildCommand.setId(null);
+			taskBuildCommand.setTaskId(taskHistory.getId());
+			taskHisBuildCommandDao.insertSelective(taskBuildCommand);
+		}
 		return taskHistory;
 	}
 
@@ -118,7 +127,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.preUpdate();
 		taskHistory.setId(taskId);
 		taskHistory.setStatus(status);
-		taskHistory.setResult(result);
+		//modify -- read fomr file
+		//taskHistory.setResult(result);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
 	}
 
@@ -128,7 +138,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.preUpdate();
 		taskHistory.setId(taskId);
 		taskHistory.setStatus(status);
-		taskHistory.setResult(result);
+		//modify -- read fomr file
+		//taskHistory.setResult(result);
 		taskHistory.setShaGit(sha);
 		taskHistory.setShaLocal(md5);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);

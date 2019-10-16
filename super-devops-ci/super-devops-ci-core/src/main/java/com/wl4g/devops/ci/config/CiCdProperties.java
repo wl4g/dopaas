@@ -35,14 +35,9 @@ public class CiCdProperties {
 	private VcsSourceProperties vcs = new VcsSourceProperties();
 
 	/**
-	 * Pipeline build properties.
+	 * Pipeline job properties.
 	 */
-	private BuildProperties build = new BuildProperties();
-
-	/**
-	 * Pipeline backup properties.
-	 */
-	private BackupProperties backup = new BackupProperties();
+	private JobProperties job = new JobProperties();
 
 	/**
 	 * Pipeline transform properties.
@@ -65,20 +60,12 @@ public class CiCdProperties {
 		this.vcs = vcs;
 	}
 
-	public BuildProperties getBuild() {
-		return build;
+	public JobProperties getJob() {
+		return job;
 	}
 
-	public void setBuild(BuildProperties build) {
-		this.build = build;
-	}
-
-	public BackupProperties getBackup() {
-		return backup;
-	}
-
-	public void setBackup(BackupProperties backup) {
-		this.backup = backup;
+	public void setJob(JobProperties job) {
+		this.job = job;
 	}
 
 	public TranformProperties getTranform() {

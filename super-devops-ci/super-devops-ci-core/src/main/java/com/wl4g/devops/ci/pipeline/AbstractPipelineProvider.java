@@ -23,12 +23,15 @@ import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.lock.SimpleRedisLockManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
 
 /**
  * Abstract based deploy provider.
@@ -57,6 +60,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	@Autowired
 	protected PipelineJobExecutor pipelineTaskRunner;
+
+	@Autowired
+    protected TaskHisBuildCommandDao taskHisBuildCommandDao;
 
 	protected PipelineInfo pipelineInfo;
 
@@ -117,6 +123,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		if (StringUtils.isBlank(command)) {
 			return "command is blank";
 		}
+
 		String rsaKey = config.getTranform().getCipherKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
@@ -133,6 +140,13 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public String mkdirs(String targetHost, String userName, String path, String rsa) throws Exception {
 		String command = "mkdir -p " + path;
 		return exceCommand(targetHost, userName, command, rsa);
+	}
+
+
+	protected String commandReplace(String command,String projectPath){
+		command = command.replaceAll(PROJECT_PATH,projectPath);//projectPath
+		//TODO ......
+		return command;
 	}
 
 

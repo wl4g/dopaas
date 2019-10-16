@@ -58,6 +58,7 @@ public abstract class CommandUtils {
 		if (log.isInfoEnabled()) {
 			log.info("Execution native command for '{}'", cmd);
 		}
+		//TODO filter command
 
 		StringBuilder slog = new StringBuilder();
 		StringBuilder serr = new StringBuilder();
@@ -112,6 +113,25 @@ public abstract class CommandUtils {
 		}
 		File logFile = taskResult.getLogFile();
 		FileIOUtils.writeFile(logFile, result);
+	}
+
+
+
+	public static String execFile(String cmd,String filePath,TaskResult taskResult) throws Exception {
+		File file = new File(filePath);
+		FileIOUtils.writeFile(file,cmd,false);
+		return exec("sh "+filePath, null, taskResult);
+	}
+
+	public static String execFile(String cmd,Function<String, Boolean> callback,String filePath,TaskResult taskResult) throws Exception {
+		File file = new File(filePath);
+		FileIOUtils.writeFile(file,cmd,false);
+		return exec("sh "+filePath, callback, taskResult);
+	}
+
+
+	public static void main(String[] args) throws Exception {
+		execFile("pwd\nls","/Users/vjay/Downloads/myTest.sh",null);
 	}
 
 }
