@@ -26,6 +26,7 @@ import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.ByteSource.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		Assert.notNull(config.getApplyPubkeyExpireMs() > 0, "'applyPubKeyExpireMs' must greater than 0");
 		Assert.notNull(cacheManager, "'cacheManager' must not be null");
 
-		this.privateSalt = ByteSource.Util.bytes(config.getPrivateSalt());
+		this.privateSalt = Util.bytes(config.getPrivateSalt());
 		this.config = config;
 		this.cacheManager = cacheManager;
 	}
@@ -211,7 +212,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		final int hashIters = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
 
 		// Hashing signature
-		return hasher.hashing(algorithm, ByteSource.Util.bytes(token.getCredentials()), salt, hashIters).toHex();
+		return hasher.hashing(algorithm, Util.bytes(token.getCredentials()), salt, hashIters).toHex();
 	}
 
 	/**

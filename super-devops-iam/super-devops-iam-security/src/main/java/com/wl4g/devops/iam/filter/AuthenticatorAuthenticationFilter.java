@@ -100,15 +100,18 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	 * @param response
 	 */
 	private void savedRequestParameters(ServletRequest request, ServletResponse response) {
-		// Parameter names
+		// Parameter names.
 		String fromAppKey = config.getParam().getApplication();
 		String respTypeKey = ResponseType.DEFAULT_RESPTYPE_NAME;
 		String redirectUrlKey = config.getParam().getRedirectUrl();
 
-		// Parameter values
+		// Parameter values.
 		String fromApp = getCleanParam(request, fromAppKey);
 		String respType = getCleanParam(request, respTypeKey);
 		String redirectUrl = getCleanParam(request, redirectUrlKey);
+
+		// Safety encoding.
+		redirectUrl = safeEncodeWithCyclicRedirectUrl(redirectUrl);
 
 		// Overlay to save the latest parameters
 		bindKVParameters(KEY_REQ_AUTH_PARAMS, fromAppKey, fromApp, respTypeKey, respType, redirectUrlKey, redirectUrl);
