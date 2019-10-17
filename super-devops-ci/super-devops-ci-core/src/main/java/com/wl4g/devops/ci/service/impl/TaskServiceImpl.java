@@ -59,10 +59,10 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	@Transactional
-	public Task save(Task task, Integer[] instanceIds, List<TaskBuildCommand> taskBuildCommands) {
+	public Task save(Task task) {
 		// check task repeat
-		Assert.state(!isRepeat(task, instanceIds), "trigger deploy this instance is Repeat,please check");
-		Assert.notEmpty(instanceIds, "instance can not be null");
+		//Assert.state(!isRepeat(task, task.getInstance()), "trigger deploy this instance is Repeat,please check");
+		Assert.notEmpty(task.getInstance(), "instance can not be null");
 		Assert.notNull(task, "task can not be null");
 		Project project = projectDao.getByAppClusterId(task.getAppClusterId());
 		Assert.notNull(project, "Not found project , Please check you project config");
@@ -71,9 +71,9 @@ public class TaskServiceImpl implements TaskService {
 		task.setProjectId(project.getId());
 		if (null != task.getId() && task.getId() > 0) {
 			task.preUpdate();
-			task = update(task, instanceIds, taskBuildCommands);
+			task = update(task, task.getInstance(), task.getTaskBuildCommands());
 		} else {
-			task = insert(task, instanceIds, taskBuildCommands);
+			task = insert(task, task.getInstance(), task.getTaskBuildCommands());
 		}
 		return task;
 	}
@@ -92,6 +92,7 @@ public class TaskServiceImpl implements TaskService {
 			taskDetails.add(taskDetail);
 		}
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
+			taskBuildCommand.setTaskId(taskId);
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
 		task.setTaskDetails(taskDetails);
@@ -113,6 +114,7 @@ public class TaskServiceImpl implements TaskService {
 		}
 		taskBuildCommandDao.deleteByTaskId(task.getId());
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
+			taskBuildCommand.setTaskId(task.getId());
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
 		task.setTaskDetails(taskDetails);
@@ -131,7 +133,7 @@ public class TaskServiceImpl implements TaskService {
 			Integer instanceId = taskDetail.getInstanceId();
 			AppInstance instance = appClusterDao.getAppInstance(instanceId.toString());
 			if (instance != null && instance.getEnvId() != null) {
-				data.put("envId", instance.getEnvId());
+				data.put("envId", Integer.valueOf(instance.getEnvId()));
 				break;
 			}
 		}
@@ -142,7 +144,15 @@ public class TaskServiceImpl implements TaskService {
 		}
 		data.put("instances", instances);
 		// Commands.
-		data.put("taskBuildCommands", taskBuildCommandDao.selectByTaskId(id));
+		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(id);
+		for(TaskBuildCommand taskBuildCommand : taskBuildCommands){
+			Project project = projectDao.selectByPrimaryKey(taskBuildCommand.getProjectId());
+			if(project==null){
+				continue;
+			}
+			taskBuildCommand.setProjectName(project.getProjectName());
+		}
+		data.put("taskBuildCommands", taskBuildCommands);
 		return data;
 	}
 

@@ -29,6 +29,7 @@ import com.wl4g.devops.dao.ci.TaskDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -101,13 +102,13 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(Task task, Integer[] instance, List<TaskBuildCommand> taskBuildCommands) {
-		log.info("into TaskController.save prarms::" + "task = {} , instance = {} ", task, instance);
+	public RespBase<?> save(@RequestBody Task task) {
+		log.info("into TaskController.save prarms::" + "task = {} ", task);
 		Assert.notNull(task, "task can not be null");
-		Assert.notEmpty(instance, "instances can not be empty");
+		Assert.notEmpty(task.getInstance(), "instances can not be empty");
 		checkTask(task);
 		RespBase<Object> resp = RespBase.create();
-		taskService.save(task, instance, taskBuildCommands);
+		taskService.save(task);
 		return resp;
 	}
 
