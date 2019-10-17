@@ -5,17 +5,17 @@ import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import java.util.List;
 
 public interface TaskHisBuildCommandDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(TaskBuildCommand record);
+	int insert(TaskBuildCommand record);
 
-    int insertSelective(TaskBuildCommand record);
+	int insertSelective(TaskBuildCommand record);
 
-    TaskBuildCommand selectByPrimaryKey(Integer id);
+	TaskBuildCommand selectByPrimaryKey(Integer id);
 
-    List<TaskBuildCommand> selectByTaskHisId(Integer taskHisId);
+	List<TaskBuildCommand> selectByTaskHisId(Integer taskHisId);
 
-    int updateByPrimaryKeySelective(TaskBuildCommand record);
+	int updateByPrimaryKeySelective(TaskBuildCommand record);
 
-    int updateByPrimaryKey(TaskBuildCommand record);
+	int updateByPrimaryKey(TaskBuildCommand record);
 }

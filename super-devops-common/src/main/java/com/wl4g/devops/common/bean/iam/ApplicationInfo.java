@@ -103,7 +103,6 @@ public class ApplicationInfo implements Serializable {
 		return JacksonUtils.toJSONString(this);
 	}
 
-
 	public String getRemark() {
 		return remark;
 	}

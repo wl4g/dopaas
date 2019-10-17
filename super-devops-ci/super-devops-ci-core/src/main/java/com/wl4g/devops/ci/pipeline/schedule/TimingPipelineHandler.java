@@ -57,8 +57,9 @@ public class TimingPipelineHandler implements Runnable {
 				instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
 			}
 			pipelineProcessor.createTask(task.getId());
+
 			// set new sha in db
-			String path = config.getVcs().getGitlab().getWorkspace() + "/" + project.getProjectName();
+			String path = config.getWorkspace() + "/" + project.getProjectName();
 			try {
 				String newSha = GitUtils.getLatestCommitted(path);
 				if (StringUtils.isNotBlank(newSha)) {
@@ -79,7 +80,7 @@ public class TimingPipelineHandler implements Runnable {
 	 */
 	private boolean check() {
 		String sha = trigger.getSha();
-		String path = config.getVcs().getGitlab().getWorkspace() + "/" + project.getProjectName();
+		String path = config.getWorkspace() + "/" + project.getProjectName();
 		try {
 			if (GitUtils.checkGitPath(path)) {
 				GitUtils.checkout(config.getVcs().getGitlab().getCredentials(), path, task.getBranchName());

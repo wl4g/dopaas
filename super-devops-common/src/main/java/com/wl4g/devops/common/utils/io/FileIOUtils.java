@@ -66,7 +66,7 @@ public abstract class FileIOUtils extends FileUtils {
 		writeFile(file, data, Charset.forName("UTF-8"), true);
 	}
 
-	public static void writeFile(File file, String data,boolean append) {
+	public static void writeFile(File file, String data, boolean append) {
 		writeFile(file, data, Charset.forName("UTF-8"), append);
 	}
 
@@ -95,6 +95,7 @@ public abstract class FileIOUtils extends FileUtils {
 				}
 			}
 			w.write(data);
+			w.flush();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

@@ -27,9 +27,9 @@ import java.util.Map;
  */
 public interface TaskService {
 
-	Task save(Task task, Integer[] instanceIds,List<TaskBuildCommand> taskBuildCommands);
+	Task save(Task task, Integer[] instanceIds, List<TaskBuildCommand> taskBuildCommands);
 
-	Map<String,Object> detail(Integer id);
+	Map<String, Object> detail(Integer id);
 
 	int delete(Integer id);
 

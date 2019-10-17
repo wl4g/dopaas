@@ -6,25 +6,24 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TaskDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(Task record);
+	int insert(Task record);
 
-    int insertSelective(Task record);
+	int insertSelective(Task record);
 
-    Task selectByPrimaryKey(Integer id);
+	Task selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Task record);
+	int updateByPrimaryKeySelective(Task record);
 
-    int updateByPrimaryKeyWithBLOBs(Task record);
+	int updateByPrimaryKeyWithBLOBs(Task record);
 
-    int updateByPrimaryKey(Task record);
+	int updateByPrimaryKey(Task record);
 
-    List<Task> list(@Param("id") Integer id,@Param("taskName") String taskName,@Param("groupName") String groupName,
-                    @Param("branchName") String branchName,@Param("tarType") Integer tarType,@Param("startDate") String startDate,
-                    @Param("endDate") String endDate);
+	List<Task> list(@Param("id") Integer id, @Param("taskName") String taskName, @Param("groupName") String groupName,
+			@Param("branchName") String branchName, @Param("tarType") Integer tarType, @Param("startDate") String startDate,
+			@Param("endDate") String endDate);
 
-
-    List<Task> selectByAppClusterId(Integer appClusterId);
+	List<Task> selectByAppClusterId(Integer appClusterId);
 
 }

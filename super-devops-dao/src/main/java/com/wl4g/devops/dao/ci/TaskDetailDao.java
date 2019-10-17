@@ -6,24 +6,22 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TaskDetailDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(TaskDetail record);
+	int insert(TaskDetail record);
 
-    int insertSelective(TaskDetail record);
+	int insertSelective(TaskDetail record);
 
-    TaskDetail selectByPrimaryKey(Integer id);
+	TaskDetail selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TaskDetail record);
+	int updateByPrimaryKeySelective(TaskDetail record);
 
-    int updateByPrimaryKey(TaskDetail record);
+	int updateByPrimaryKey(TaskDetail record);
 
-    int deleteByTaskId(Integer taskId);
+	int deleteByTaskId(Integer taskId);
 
-    List<TaskDetail> getUsedInstance(@Param("appClusterId") Integer appClusterId, @Param("taskId") Integer taskId);
+	List<TaskDetail> getUsedInstance(@Param("appClusterId") Integer appClusterId, @Param("taskId") Integer taskId);
 
-    List<TaskDetail> selectByTaskId(Integer taskId);
-
-
+	List<TaskDetail> selectByTaskId(Integer taskId);
 
 }

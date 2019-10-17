@@ -5,20 +5,20 @@ import com.wl4g.devops.common.bean.umc.AlarmContactGroupRef;
 import java.util.List;
 
 public interface AlarmContactGroupRefDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AlarmContactGroupRef record);
+	int insert(AlarmContactGroupRef record);
 
-    int insertSelective(AlarmContactGroupRef record);
+	int insertSelective(AlarmContactGroupRef record);
 
-    AlarmContactGroupRef selectByPrimaryKey(Integer id);
+	AlarmContactGroupRef selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AlarmContactGroupRef record);
+	int updateByPrimaryKeySelective(AlarmContactGroupRef record);
 
-    int updateByPrimaryKey(AlarmContactGroupRef record);
+	int updateByPrimaryKey(AlarmContactGroupRef record);
 
-    int deleteByContactId(Integer id);
+	int deleteByContactId(Integer id);
 
-    List<AlarmContactGroupRef> selectByContactId(Integer id);
+	List<AlarmContactGroupRef> selectByContactId(Integer id);
 
 }

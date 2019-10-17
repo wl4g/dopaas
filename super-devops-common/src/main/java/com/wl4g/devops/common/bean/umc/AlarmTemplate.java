@@ -107,7 +107,7 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 		}
 
 		Map<String, String> map = new HashMap<String, String>();
-		if(isEmpty(tagMap)){
+		if (isEmpty(tagMap)) {
 			return map;
 		}
 		for (Map<String, String> m : tagMap) {

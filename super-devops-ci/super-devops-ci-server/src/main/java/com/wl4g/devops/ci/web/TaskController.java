@@ -26,7 +26,6 @@ import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.TaskDao;
-import com.wl4g.devops.dao.scm.AppClusterDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -54,9 +53,6 @@ public class TaskController extends BaseController {
 
 	@Autowired
 	private TaskService taskService;
-
-	@Autowired
-	private AppClusterDao appClusterDao;
 
 	/**
 	 * Page List
@@ -105,13 +101,13 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(Task task, Integer[] instance,List<TaskBuildCommand> taskBuildCommands) {
+	public RespBase<?> save(Task task, Integer[] instance, List<TaskBuildCommand> taskBuildCommands) {
 		log.info("into TaskController.save prarms::" + "task = {} , instance = {} ", task, instance);
 		Assert.notNull(task, "task can not be null");
 		Assert.notEmpty(instance, "instances can not be empty");
 		checkTask(task);
 		RespBase<Object> resp = RespBase.create();
-		taskService.save(task, instance,taskBuildCommands);
+		taskService.save(task, instance, taskBuildCommands);
 		return resp;
 	}
 
@@ -186,7 +182,7 @@ public class TaskController extends BaseController {
 	public RespBase<?> getDependencys(Integer clustomId) {
 		RespBase<Object> resp = RespBase.create();
 		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(clustomId);
-		resp.getData().put("list",taskBuildCommands);
+		resp.getData().put("list", taskBuildCommands);
 		return resp;
 
 	}

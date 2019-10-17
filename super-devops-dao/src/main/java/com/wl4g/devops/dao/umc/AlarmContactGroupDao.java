@@ -6,17 +6,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface AlarmContactGroupDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AlarmContactGroup record);
+	int insert(AlarmContactGroup record);
 
-    int insertSelective(AlarmContactGroup record);
+	int insertSelective(AlarmContactGroup record);
 
-    AlarmContactGroup selectByPrimaryKey(Integer id);
+	AlarmContactGroup selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AlarmContactGroup record);
+	int updateByPrimaryKeySelective(AlarmContactGroup record);
 
-    int updateByPrimaryKey(AlarmContactGroup record);
+	int updateByPrimaryKey(AlarmContactGroup record);
 
-    List<AlarmContactGroup> list(@Param("name") String name);
+	List<AlarmContactGroup> list(@Param("name") String name);
 }

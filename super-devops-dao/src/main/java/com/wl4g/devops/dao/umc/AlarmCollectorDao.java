@@ -6,17 +6,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface AlarmCollectorDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AlarmCollector record);
+	int insert(AlarmCollector record);
 
-    int insertSelective(AlarmCollector record);
+	int insertSelective(AlarmCollector record);
 
-    AlarmCollector selectByPrimaryKey(Integer id);
+	AlarmCollector selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AlarmCollector record);
+	int updateByPrimaryKeySelective(AlarmCollector record);
 
-    int updateByPrimaryKey(AlarmCollector record);
+	int updateByPrimaryKey(AlarmCollector record);
 
-    List<AlarmCollector> list(@Param("name") String name, @Param("addr") String addr);
+	List<AlarmCollector> list(@Param("name") String name, @Param("addr") String addr);
 }

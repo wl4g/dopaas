@@ -20,20 +20,20 @@ import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import java.util.List;
 
 public interface TaskHistoryDetailDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(TaskHistoryDetail record);
+	int insert(TaskHistoryDetail record);
 
-    int insertSelective(TaskHistoryDetail record);
+	int insertSelective(TaskHistoryDetail record);
 
-    TaskHistoryDetail selectByPrimaryKey(Integer id);
+	TaskHistoryDetail selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TaskHistoryDetail record);
+	int updateByPrimaryKeySelective(TaskHistoryDetail record);
 
-    int updateByPrimaryKeyWithBLOBs(TaskHistoryDetail record);
+	int updateByPrimaryKeyWithBLOBs(TaskHistoryDetail record);
 
-    int updateByPrimaryKey(TaskHistoryDetail record);
+	int updateByPrimaryKey(TaskHistoryDetail record);
 
-    List<TaskHistoryDetail> getDetailByTaskId(Integer id);
+	List<TaskHistoryDetail> getDetailByTaskId(Integer id);
 
 }

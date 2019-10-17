@@ -20,7 +20,8 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
-import org.springframework.util.CollectionUtils;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,11 +62,11 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void rollback() throws Exception {
 		// Old file
-		String oldFilePath = config.getJob().getBackupDir(getPipelineInfo().getTaskHistory().getRefId()) + "/" + subPackname(getPipelineInfo().getProject().getTarPath());
-		File oldFile = new File(oldFilePath);
-		if (oldFile.exists()) {// Check bakup file isExist , if not -- check out
+		File backupFile = getBackupFile();
+		if (backupFile.exists()) {
 			// from git
-			getBackupLocal(oldFilePath, getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
+			getBackupLocal(backupFile.getAbsolutePath(),
+					getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
 			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
 		} else {
 			// getDependencyService().rollback(getTaskHistory(),
@@ -85,6 +86,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		// backup in local
 		backupLocal(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getAlias(),
 				getPipelineInfo().getBranch());
+
 		// scp to server
 		List<Future<?>> futures = new ArrayList<>();
 		for (AppInstance instance : getPipelineInfo().getInstances()) {
@@ -95,26 +97,31 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			futures.add(submit);
 		}
 
-		if (CollectionUtils.isEmpty(futures)) {
-			return;
-		}
-		while (true) {
-			boolean isAllDone = true;
-			for (Future<?> future : futures) {
-				if (!future.isDone()) {
-					isAllDone = false;
+		if (!isEmpty(futures)) {
+			while (true) {
+				boolean isAllDone = true;
+				for (Future<?> future : futures) {
+					if (!future.isDone()) {
+						isAllDone = false;
+						break;
+					}
+				}
+				if (isAllDone) {
 					break;
 				}
+				Thread.sleep(500);
 			}
-			if (isAllDone) {
-				break;
-			}
-			Thread.sleep(500);
 		}
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
 		}
+	}
+
+	private File getBackupFile() {
+		String oldFilePath = config.getWorkspace() + "/" + getPipelineInfo().getTaskHistory().getRefId() + "/"
+				+ subPackname(getPipelineInfo().getProject().getTarPath());
+		return new File(oldFilePath);
 	}
 
 }

@@ -6,20 +6,18 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface AppHostDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AppHost record);
+	int insert(AppHost record);
 
-    int insertSelective(AppHost record);
+	int insertSelective(AppHost record);
 
-    AppHost selectByPrimaryKey(Integer id);
+	AppHost selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AppHost record);
+	int updateByPrimaryKeySelective(AppHost record);
 
-    int updateByPrimaryKey(AppHost record);
+	int updateByPrimaryKey(AppHost record);
 
-    List<AppHost> list(@Param("name") String name,
-                       @Param("hostname") String hostname,
-                       @Param("idcId") Integer idcId);
+	List<AppHost> list(@Param("name") String name, @Param("hostname") String hostname, @Param("idcId") Integer idcId);
 
 }

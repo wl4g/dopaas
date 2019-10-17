@@ -6,17 +6,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface ApplicationDao {
-    int deleteByPrimaryKey(String appname);
+	int deleteByPrimaryKey(String appname);
 
-    int insert(ApplicationInfo record);
+	int insert(ApplicationInfo record);
 
-    int insertSelective(ApplicationInfo record);
+	int insertSelective(ApplicationInfo record);
 
-    ApplicationInfo selectByPrimaryKey(String appname);
+	ApplicationInfo selectByPrimaryKey(String appname);
 
-    int updateByPrimaryKeySelective(ApplicationInfo record);
+	int updateByPrimaryKeySelective(ApplicationInfo record);
 
-    int updateByPrimaryKey(ApplicationInfo record);
+	int updateByPrimaryKey(ApplicationInfo record);
 
-    List<ApplicationInfo> getByAppNames (@Param("appNames") String[] appNames);
+	List<ApplicationInfo> getByAppNames(@Param("appNames") String[] appNames);
 }

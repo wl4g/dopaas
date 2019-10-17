@@ -78,8 +78,8 @@ public class DockerNativePipelineHandler extends AbstractPipelineHandler {
 					instance.getSshKey());
 			result.append(s2).append("\n");
 			// Run
-			String s3 = provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + project
-					.getGroupName()
+			String s3 = provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/"
+					+ project.getGroupName()
 					+ ":master"/*
 								 * TODO 要改成动态的
 								 * provider.getTaskHistory().getPostCommand()

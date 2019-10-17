@@ -193,6 +193,4 @@ public class TypeConverts {
 		return new String(out);
 	}
 
-	
-	
 }

@@ -21,21 +21,23 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TaskHistoryDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(TaskHistory record);
+	int insert(TaskHistory record);
 
-    int insertSelective(TaskHistory record);
+	int insertSelective(TaskHistory record);
 
-    TaskHistory selectByPrimaryKey(Integer id);
+	TaskHistory selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TaskHistory record);
+	int updateByPrimaryKeySelective(TaskHistory record);
 
-    int updateByPrimaryKeyWithBLOBs(TaskHistory record);
+	int updateByPrimaryKeyWithBLOBs(TaskHistory record);
 
-    int updateByPrimaryKey(TaskHistory record);
+	int updateByPrimaryKey(TaskHistory record);
 
-    List<TaskHistory> list(@Param("groupName") String groupName, @Param("projectName") String projectName, @Param("branchName") String branchName);
+	List<TaskHistory> list(@Param("groupName") String groupName, @Param("projectName") String projectName,
+			@Param("branchName") String branchName);
 
-    int updateStatus(Integer time);
+	int updateStatus(Integer time);
+
 }

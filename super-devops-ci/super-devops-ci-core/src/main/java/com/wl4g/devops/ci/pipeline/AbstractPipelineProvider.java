@@ -62,7 +62,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected PipelineJobExecutor pipelineTaskRunner;
 
 	@Autowired
-    protected TaskHisBuildCommandDao taskHisBuildCommandDao;
+	protected TaskHisBuildCommandDao taskHisBuildCommandDao;
 
 	protected PipelineInfo pipelineInfo;
 
@@ -132,8 +132,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		return result;
 	}
 
-
-
 	/**
 	 * Mkdir
 	 */
@@ -142,13 +140,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		return exceCommand(targetHost, userName, command, rsa);
 	}
 
-
-	protected String commandReplace(String command,String projectPath){
-		command = command.replaceAll(PROJECT_PATH,projectPath);//projectPath
-		//TODO ......
+	protected String commandReplace(String command, String projectPath) {
+		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
+		// TODO ......
 		return command;
 	}
-
-
 
 }

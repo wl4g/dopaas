@@ -1,7 +1,5 @@
 package com.wl4g.devops.ci.config;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
@@ -38,11 +36,6 @@ public class VcsSourceProperties {
 		private String token;
 
 		/**
-		 * Git check out path
-		 */
-		private String workspace;
-
-		/**
 		 * credentials for git
 		 */
 		private CredentialsProvider credentials;
@@ -77,17 +70,6 @@ public class VcsSourceProperties {
 
 		public void setToken(String token) {
 			this.token = token;
-		}
-
-		public void setWorkspace(String workspace) {
-			this.workspace = workspace;
-		}
-
-		public String getWorkspace() {
-			if (isBlank(workspace)) {// if blank ,user default
-				workspace = System.getProperties().getProperty("user.home") + "/git";
-			}
-			return workspace;
 		}
 
 		public CredentialsProvider getCredentials() {

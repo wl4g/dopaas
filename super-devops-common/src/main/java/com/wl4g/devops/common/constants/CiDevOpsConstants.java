@@ -24,15 +24,6 @@ package com.wl4g.devops.common.constants;
  */
 public abstract class CiDevOpsConstants extends DevOpsConstants {
 
-	// tar
-	public static final int TAR_TYPE_TAR = 1;
-	// jar
-	public static final int TAR_TYPE_JAR = 2;
-	// other
-	public static final int TAR_TYPE_DOCKER = 3;
-	// vue
-	public static final int TAR_TYPE_VUE = 4;
-
 	// task-create
 	public static final int TASK_STATUS_CREATE = 0;
 	// task-start running
@@ -46,7 +37,7 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_TYPE_TRIGGER = 1;
 	// Manual trigger
 	public static final int TASK_TYPE_MANUAL = 2;
-	// Rollback trigger
+	// Roll-back trigger
 	public static final int TASK_TYPE_ROLLBACK = 3;
 	// Auto trigger
 	public static final int TASK_TYPE_TIMMING = 4;
@@ -59,17 +50,18 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_ENABLE_STATUS = 1;
 	public static final int TASK_DISABLE_STATUS = 0;
 
-	// lock
+	/**
+	 * Pipeline dependencies locker.
+	 */
 	public static final String CI_LOCK = "CI_LOCK_";
-	public static final int LOCK_TIME = 4;
 
-	//log file start
+	/**
+	 * Log file start/end separation.
+	 */
 	public static final String LOG_FILE_START = "<[EOF]";
-	//log file end
 	public static final String LOG_FILE_END = "[EOF]>";
 
-
-	//command replace
+	// command replace
 	public static final String PROJECT_PATH = "#{projectPath}";
 
 }

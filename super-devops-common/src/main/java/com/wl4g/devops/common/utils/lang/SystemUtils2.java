@@ -15,11 +15,18 @@
  */
 package com.wl4g.devops.common.utils.lang;
 
+import static org.apache.commons.lang3.StringUtils.contains;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.split;
+
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.SystemUtils;
@@ -84,6 +91,51 @@ public abstract class SystemUtils2 extends SystemUtils {
 				sb.append(str);
 		}
 		return sb.toString().toLowerCase().replaceAll("-", "");
+	}
+
+	/**
+	 * System path invalid path cleanup. </br>
+	 * WINDOWS:
+	 * 
+	 * <pre>
+	 * cleanSystemPath("E:\\dir\\") == E:\dir
+	 * cleanSystemPath("E:\\log\\a.log\\") == E:\log\a.log
+	 * </pre>
+	 * 
+	 * UNIX:
+	 * 
+	 * <pre>
+	 * cleanSystemPath("/var/dir//") == /var/dir
+	 * cleanSystemPath("/var/log//a.log/") == /var/log/a.log
+	 * </pre>
+	 * 
+	 * @param systemPath
+	 * @return
+	 */
+	public static String cleanSystemPath(String systemPath) {
+		if (isBlank(systemPath) || !contains(systemPath, File.separator)) {
+			return systemPath;
+		}
+
+		// Clean invalid suffix path separator.
+		StringBuffer path = new StringBuffer();
+		Iterator<String> it = Arrays.asList(split(systemPath, File.separator)).iterator();
+		while (it.hasNext()) {
+			String part = it.next();
+			if (!isBlank(part)) {
+				path.append(part);
+				if (it.hasNext()) {
+					path.append(File.separator);
+				}
+			}
+		}
+		return path.toString();
+	}
+
+	public static void main(String[] args) {
+		System.out.println(cleanSystemPath("E:\\dir\\"));
+		System.out.println(cleanSystemPath("E:\\log\\a.log\\"));
+		System.out.println(cleanSystemPath("/var/log//a.log/"));
 	}
 
 }

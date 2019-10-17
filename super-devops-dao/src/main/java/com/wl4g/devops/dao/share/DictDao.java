@@ -6,26 +6,24 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface DictDao {
-    int deleteByPrimaryKey(String key);
+	int deleteByPrimaryKey(String key);
 
-    int insert(Dict record);
+	int insert(Dict record);
 
-    int insertSelective(Dict record);
+	int insertSelective(Dict record);
 
-    Dict selectByPrimaryKey(String key);
+	Dict selectByPrimaryKey(String key);
 
-    int updateByPrimaryKeySelective(Dict record);
+	int updateByPrimaryKeySelective(Dict record);
 
-    int updateByPrimaryKey(Dict record);
+	int updateByPrimaryKey(Dict record);
 
-    List<Dict> selectByType(String type);
+	List<Dict> selectByType(String type);
 
-    List<String> allType();
+	List<String> allType();
 
-    Dict getByKey(String key);
+	Dict getByKey(String key);
 
-    List<Dict> list(@Param("key") String key,
-                    @Param("label") String label,
-                    @Param("type") String type,
-                    @Param("description") String description);
+	List<Dict> list(@Param("key") String key, @Param("label") String label, @Param("type") String type,
+			@Param("description") String description);
 }
