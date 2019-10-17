@@ -20,9 +20,9 @@ public interface PipelineInfo {
 
 	void setProject(Project project);
 
-	int getTarType();
+	String getTarType();
 
-	void setTarType(int tarType);
+	void setTarType(String tarType);
 
 	String getPath();
 

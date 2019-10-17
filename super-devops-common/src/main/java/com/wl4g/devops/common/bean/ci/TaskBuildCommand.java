@@ -21,12 +21,6 @@ public class TaskBuildCommand extends BaseBean implements Serializable {
 
 	private Integer sort;
 
-    private Integer taskId;
-
-    private Integer projectId;
-
-    private Integer sort;
-
     private String command;
 
     private String projectName;
