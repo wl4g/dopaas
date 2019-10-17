@@ -434,11 +434,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		if (uria == null || urib == null) {
 			return false;
 		}
-		try {
-			return new URI(safeDecodeURL(uria)).getHost().equals(new URI(safeDecodeURL(urib)).getHost());
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return URI.create(safeDecodeURL(uria)).getHost().equals(URI.create(safeDecodeURL(urib)).getHost());
 	}
 
 	/**
@@ -654,12 +650,13 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static String getBaseURIForDefault(String scheme, String serverName, int port) {
 		Assert.notNull(scheme, "Http request scheme must not be empty");
 		Assert.notNull(serverName, "Http request serverName must not be empty");
-		if (port > -1) {
-			Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
-		}
+
 		StringBuffer baseUri = new StringBuffer(scheme).append("://").append(serverName);
-		if (!((equalsIgnoreCase(scheme, "HTTP") && port == 80) || (equalsIgnoreCase(scheme, "HTTPS") && port == 443))) {
-			baseUri.append(":").append(port);
+		if (port > 0) {
+			Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
+			if (!((equalsIgnoreCase(scheme, "HTTP") && port == 80) || (equalsIgnoreCase(scheme, "HTTPS") && port == 443))) {
+				baseUri.append(":").append(port);
+			}
 		}
 		return baseUri.toString();
 	}
@@ -854,6 +851,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		System.out.println(getBaseURIForDefault("http", "my.com", 8080));
 		System.out.println(getBaseURIForDefault("http", "my.com", 80));
 		System.out.println(getBaseURIForDefault("https", "my.com", 443));
+		System.out.println(getBaseURIForDefault("http", "my.com", -1));
 
 		System.out.println(URI.create("http://my.com/index/#/me").getQuery());
 		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index"));
