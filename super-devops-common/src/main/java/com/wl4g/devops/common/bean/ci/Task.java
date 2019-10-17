@@ -34,6 +34,10 @@ public class Task extends BaseBean implements Serializable {
 
 	private List<TaskDetail> taskDetails;
 
+	private Integer[] instance;
+
+	private List<TaskBuildCommand> taskBuildCommands;
+
 	/* other */
 	private String groupName;
 
@@ -139,6 +143,22 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setBuildCommand(String buildCommand) {
 		this.buildCommand = buildCommand;
+	}
+
+	public List<TaskBuildCommand> getTaskBuildCommands() {
+		return taskBuildCommands;
+	}
+
+	public void setTaskBuildCommands(List<TaskBuildCommand> taskBuildCommands) {
+		this.taskBuildCommands = taskBuildCommands;
+	}
+
+	public Integer[] getInstance() {
+		return instance;
+	}
+
+	public void setInstance(Integer[] instance) {
+		this.instance = instance;
 	}
 
 	@Override
