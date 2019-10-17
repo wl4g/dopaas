@@ -360,8 +360,8 @@ public class DefaultPipeline implements Pipeline {
 		if (Objects.isNull(size)) {
 			size = 100;
 		}
-		String logPath = config.getJob().getLogBaseDir(taskHisId) + "/build.log";
-		return FileIOUtils.readSeekLines(logPath, index, size); // TODO
+		String logPath = config.getJobLog(taskHisId) + "/build.log";
+		return FileIOUtils.readSeekLines(logPath, index, size);
 	}
 
 }
