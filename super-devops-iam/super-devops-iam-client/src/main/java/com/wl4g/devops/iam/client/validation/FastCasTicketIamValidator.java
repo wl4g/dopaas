@@ -55,12 +55,10 @@ public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketV
 	public TicketAssertion validate(TicketValidationModel req) throws TicketValidateException {
 		final RespBase<TicketAssertion> resp = doGetRemoteValidate(URI_S_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
-			/*
-			 * Only if the error is not authenticated, can it be redirected to
-			 * the IAM server login page, otherwise the client will display the
-			 * error page directly (to prevent unlimited redirection).
-			 * See:i.w.CentralAuthenticatorController#validate()
-			 */
+			// Only if the error is not authenticated, can it be redirected to
+			// the IAM server login page, otherwise the client will display the
+			// error page directly (to prevent unlimited redirection).
+			/** See:{@link CentralAuthenticatorController#validate()} */
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
 				throw new InvalidGrantTicketException(resp.getMessage());
 			} else if (RespBase.eq(resp, RetCode.UNAUTHZ)) {
@@ -68,7 +66,6 @@ public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketV
 			}
 			throw new TicketValidateException(resp != null ? resp.getMessage() : "Unknown error");
 		}
-
 		return resp.getData().get(KEY_TICKET_ASSERT);
 	}
 
