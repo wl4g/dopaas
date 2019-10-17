@@ -184,10 +184,15 @@ public class TaskServiceImpl implements TaskService {
 		Project project = projectDao.getByAppClusterId(clustomId);
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
 		List<TaskBuildCommand> taskBuildCommands = new ArrayList<>();
-		int i = 1;
-		for (Dependency dependency : dependencys) {
+		int i=1;
+		for(Dependency dependency : dependencys){
+			Project project1 = projectDao.selectByPrimaryKey(dependency.getDependentId());
+			if(project1==null){
+				continue;
+			}
 			TaskBuildCommand taskBuildCommand = new TaskBuildCommand();
 			taskBuildCommand.setProjectId(dependency.getDependentId());
+			taskBuildCommand.setProjectName(project1.getProjectName());
 			taskBuildCommand.setSort(i);
 			i++;
 			taskBuildCommands.add(taskBuildCommand);

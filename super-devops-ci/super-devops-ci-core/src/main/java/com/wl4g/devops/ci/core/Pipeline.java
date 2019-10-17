@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.core;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
+import com.wl4g.devops.common.utils.io.FileIOUtils;
 
 import java.util.List;
 
@@ -42,6 +43,6 @@ public interface Pipeline {
 
 	void createRollbackTask(Integer taskId);
 
-	List<String> readLog(Integer taskHisId, Integer index, Integer size);
+	FileIOUtils.ReadResult readLog(Integer taskHisId, Integer index, Integer size);
 
 }

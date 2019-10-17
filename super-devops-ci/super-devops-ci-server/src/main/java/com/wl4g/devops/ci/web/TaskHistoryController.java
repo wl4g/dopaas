@@ -22,6 +22,7 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,8 +113,8 @@ public class TaskHistoryController extends BaseController {
 	@RequestMapping(value = "/readLog")
 	public RespBase<?> readLog(Integer taskHisId,Integer index,Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> strings = pipelineCoreProcessor.readLog(taskHisId, index, size);
-		resp.getData().put("data",strings);
+		FileIOUtils.ReadResult readResult = pipelineCoreProcessor.readLog(taskHisId, index, size);
+		resp.getData().put("data",readResult);
 		return resp;
 	}
 
