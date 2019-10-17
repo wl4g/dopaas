@@ -7,123 +7,116 @@ import java.util.List;
 
 public class AlarmConfig extends BaseBean implements Serializable {
 
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
-    private Integer collectId;
+	private Integer collectId;
 
-    private Integer templateId;
+	private Integer templateId;
 
-    private Integer contactGroupId;
+	private Integer contactGroupId;
 
-    private String callbackUrl;
+	private String callbackUrl;
 
+	/* other */
+	private String templateName;
 
-    /*other*/
-    private String templateName;
+	private String contactGroupName;
 
-    private String contactGroupName;
+	private Integer group;
+	private Integer environment;
+	private String classify;
 
+	/* template */
+	private AlarmTemplate alarmTemplate;
 
-    private Integer group;
-    private Integer environment;
-    private String classify;
+	/* contacts */
+	private List<AlarmContact> alarmContacts;
 
+	public Integer getCollectId() {
+		return collectId;
+	}
 
-    /* template */
-    private AlarmTemplate alarmTemplate;
+	public void setCollectId(Integer collectId) {
+		this.collectId = collectId;
+	}
 
-    /* contacts */
-    private List<AlarmContact> alarmContacts;
+	public Integer getTemplateId() {
+		return templateId;
+	}
 
+	public void setTemplateId(Integer templateId) {
+		this.templateId = templateId;
+	}
 
+	public Integer getContactGroupId() {
+		return contactGroupId;
+	}
 
+	public void setContactGroupId(Integer contactGroupId) {
+		this.contactGroupId = contactGroupId;
+	}
 
-    public Integer getCollectId() {
-        return collectId;
-    }
+	public String getCallbackUrl() {
+		return callbackUrl;
+	}
 
-    public void setCollectId(Integer collectId) {
-        this.collectId = collectId;
-    }
+	public void setCallbackUrl(String callbackUrl) {
+		this.callbackUrl = callbackUrl;
+	}
 
-    public Integer getTemplateId() {
-        return templateId;
-    }
+	public String getTemplateName() {
+		return templateName;
+	}
 
-    public void setTemplateId(Integer templateId) {
-        this.templateId = templateId;
-    }
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
 
-    public Integer getContactGroupId() {
-        return contactGroupId;
-    }
+	public String getContactGroupName() {
+		return contactGroupName;
+	}
 
-    public void setContactGroupId(Integer contactGroupId) {
-        this.contactGroupId = contactGroupId;
-    }
+	public void setContactGroupName(String contactGroupName) {
+		this.contactGroupName = contactGroupName;
+	}
 
-    public String getCallbackUrl() {
-        return callbackUrl;
-    }
+	public Integer getGroup() {
+		return group;
+	}
 
-    public void setCallbackUrl(String callbackUrl) {
-        this.callbackUrl = callbackUrl;
-    }
+	public void setGroup(Integer group) {
+		this.group = group;
+	}
 
+	public Integer getEnvironment() {
+		return environment;
+	}
 
-    public String getTemplateName() {
-        return templateName;
-    }
+	public void setEnvironment(Integer environment) {
+		this.environment = environment;
+	}
 
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
+	public String getClassify() {
+		return classify;
+	}
 
-    public String getContactGroupName() {
-        return contactGroupName;
-    }
+	public void setClassify(String classify) {
+		this.classify = classify;
+	}
 
-    public void setContactGroupName(String contactGroupName) {
-        this.contactGroupName = contactGroupName;
-    }
+	public AlarmTemplate getAlarmTemplate() {
+		return alarmTemplate;
+	}
 
-    public Integer getGroup() {
-        return group;
-    }
+	public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
+		this.alarmTemplate = alarmTemplate;
+	}
 
-    public void setGroup(Integer group) {
-        this.group = group;
-    }
+	public List<AlarmContact> getAlarmContacts() {
+		return alarmContacts;
+	}
 
-    public Integer getEnvironment() {
-        return environment;
-    }
-
-    public void setEnvironment(Integer environment) {
-        this.environment = environment;
-    }
-
-    public String getClassify() {
-        return classify;
-    }
-
-    public void setClassify(String classify) {
-        this.classify = classify;
-    }
-
-    public AlarmTemplate getAlarmTemplate() {
-        return alarmTemplate;
-    }
-
-    public void setAlarmTemplate(AlarmTemplate alarmTemplate) {
-        this.alarmTemplate = alarmTemplate;
-    }
-
-    public List<AlarmContact> getAlarmContacts() {
-        return alarmContacts;
-    }
-
-    public void setAlarmContacts(List<AlarmContact> alarmContacts) {
-        this.alarmContacts = alarmContacts;
-    }
+	public void setAlarmContacts(List<AlarmContact> alarmContacts) {
+		this.alarmContacts = alarmContacts;
+	}
 }

@@ -89,38 +89,38 @@ public class CiCdAutoConfiguration {
 	//
 
 	@Bean
-	@DelegateAlias({PipelineType.DJANGO_STD})
+	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
 		return new DjangoStandardPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({PipelineType.MVN_ASSEMBLE_TAR})
+	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
 		return new MvnAssembleTarPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({PipelineType.SPRING_EXECUTABLE_JAR})
+	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineInfo info) {
 		return new SpringExecutableJarPipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({PipelineType.DOCKER_NATIVE})
+	@DelegateAlias({ PipelineType.DOCKER_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineInfo info) {
 		return new DockerNativePipelineProvider(info);
 	}
 
 	@Bean
-	@DelegateAlias({PipelineType.VUE_VIEW})
+	@DelegateAlias({ PipelineType.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public VuePipelineProvider vuePipelineProvider(PipelineInfo info) {
-		return new VuePipelineProvider(info);
+	public NpmPipelineProvider vuePipelineProvider(PipelineInfo info) {
+		return new NpmPipelineProvider(info);
 	}
 	//
 	// Timing CICD hander configuration.

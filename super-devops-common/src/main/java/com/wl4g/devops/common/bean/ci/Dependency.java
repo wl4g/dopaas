@@ -91,11 +91,12 @@ public class Dependency extends BaseBean implements Serializable {
 		this.parentName = parentName;
 	}
 
-
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		Dependency that = (Dependency) o;
 		return Objects.equals(dependentId, that.dependentId);
 	}
@@ -107,13 +108,7 @@ public class Dependency extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Dependency{" +
-				"id=" + id +
-				", projectId=" + projectId +
-				", dependentId=" + dependentId +
-				", branch='" + branch + '\'' +
-				", projectName='" + projectName + '\'' +
-				", parentName='" + parentName + '\'' +
-				'}';
+		return "Dependency{" + "id=" + id + ", projectId=" + projectId + ", dependentId=" + dependentId + ", branch='" + branch
+				+ '\'' + ", projectName='" + projectName + '\'' + ", parentName='" + parentName + '\'' + '}';
 	}
 }

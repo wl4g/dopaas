@@ -1,6 +1,6 @@
 package com.wl4g.devops.ci.config;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import java.util.Objects;
 
 /**
  * CICD pipeline process, construction of relevant configuration.
@@ -11,61 +11,40 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class JobProperties {
 
-	private Integer cleanScan = 30;
+	private Long cleanScan = 30L;
 
-	private Integer cleanTimeout = 300;
+	private Integer jobTimeout = 300;
 
-	private Integer shareDependencyTryTimeout = 300;
+	private Long sharedDependencyTryTimeoutMs = 300L;
 
-	private String baseDir;
-
-
-	public Integer getCleanScan() {
+	public Long getCleanScan() {
 		return cleanScan;
 	}
 
-	public void setCleanScan(Integer cleanScan) {
-		this.cleanScan = cleanScan;
-	}
-
-	public Integer getCleanTimeout() {
-		return cleanTimeout;
-	}
-
-	public void setCleanTimeout(Integer cleanTimeout) {
-		this.cleanTimeout = cleanTimeout;
-	}
-
-	public Integer getShareDependencyTryTimeout() {
-		return shareDependencyTryTimeout;
-	}
-
-	public void setShareDependencyTryTimeout(Integer jobShareDenpenyTryTimeout) {
-		this.shareDependencyTryTimeout = jobShareDenpenyTryTimeout;
-	}
-
-	public String getBaseDir() {
-		if(isBlank(baseDir)){
-			baseDir = System.getProperties().getProperty("user.home") + "/git/jobs";
+	public void setCleanScan(Long cleanScan) {
+		if (Objects.nonNull(cleanScan)) {
+			this.cleanScan = cleanScan;
 		}
-		return baseDir;
 	}
 
-	public String getBaseDir(Integer taskHisId) {
-		return getBaseDir()+"/"+taskHisId;
+	public Integer getJobTimeout() {
+		return jobTimeout;
 	}
 
-	public void setBaseDir(String baseDir) {
-		this.baseDir = baseDir;
+	public void setJobTimeout(Integer jobTimeout) {
+		if (Objects.nonNull(jobTimeout)) {
+			this.jobTimeout = jobTimeout;
+		}
 	}
 
-	public String getLogBaseDir(Integer taskHisId) {
-		return getBaseDir(taskHisId);
+	public Long getSharedDependencyTryTimeoutMs() {
+		return sharedDependencyTryTimeoutMs;
 	}
 
-	public String getBackupDir(Integer taskHisId){
-        return getBaseDir(taskHisId);
-    }
-
+	public void setSharedDependencyTryTimeoutMs(Long sharedDependencyTryTimeoutMs) {
+		if (Objects.nonNull(sharedDependencyTryTimeoutMs)) {
+			this.sharedDependencyTryTimeoutMs = sharedDependencyTryTimeoutMs;
+		}
+	}
 
 }

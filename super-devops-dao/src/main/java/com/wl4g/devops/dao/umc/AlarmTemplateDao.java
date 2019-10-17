@@ -7,21 +7,21 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface AlarmTemplateDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AlarmTemplate record);
+	int insert(AlarmTemplate record);
 
-    int insertSelective(AlarmTemplate record);
+	int insertSelective(AlarmTemplate record);
 
-    AlarmTemplate selectByPrimaryKey(Integer id);
+	AlarmTemplate selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AlarmTemplate record);
+	int updateByPrimaryKeySelective(AlarmTemplate record);
 
-    int updateByPrimaryKey(AlarmTemplate record);
+	int updateByPrimaryKey(AlarmTemplate record);
 
-    List<AlarmTemplate> getByCollectAddr(@Param("collectAddr") String collectAddr);
+	List<AlarmTemplate> getByCollectAddr(@Param("collectAddr") String collectAddr);
 
-    List<AlarmTemplate> getByClusterId(@Param("clusterId") Serializable clusterId);
+	List<AlarmTemplate> getByClusterId(@Param("clusterId") Serializable clusterId);
 
-    List<AlarmTemplate> list(@Param("name") String name,@Param("metricId") Integer metricId,@Param("classify") String classify);
+	List<AlarmTemplate> list(@Param("name") String name, @Param("metricId") Integer metricId, @Param("classify") String classify);
 }

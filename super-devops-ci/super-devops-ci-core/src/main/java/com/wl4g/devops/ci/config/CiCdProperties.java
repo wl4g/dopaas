@@ -15,6 +15,15 @@
  */
 package com.wl4g.devops.ci.config;
 
+import static com.wl4g.devops.common.utils.lang.SystemUtils2.cleanSystemPath;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+
+import java.io.File;
+import java.util.Objects;
+
+import org.springframework.util.Assert;
+
 /**
  * CICD configuration properties.
  *
@@ -23,6 +32,11 @@ package com.wl4g.devops.ci.config;
  * @since
  */
 public class CiCdProperties {
+
+	/**
+	 * Global workspace directory path.
+	 */
+	private String workspace = USER_HOME + File.separator + ".ci-workspace"; // By-default.
 
 	/**
 	 * Pipeline executor properties.
@@ -44,12 +58,25 @@ public class CiCdProperties {
 	 */
 	private TranformProperties tranform = new TranformProperties();
 
+	public void setWorkspace(String workspace) {
+		if (!isBlank(workspace)) {
+			// Clean invalid suffix separator.
+			this.workspace = cleanSystemPath(workspace);
+		}
+	}
+
+	public String getWorkspace() {
+		return workspace;
+	}
+
 	public ExecutorProperties getExecutor() {
 		return executor;
 	}
 
 	public void setExecutor(ExecutorProperties executor) {
-		this.executor = executor;
+		if (Objects.nonNull(executor)) {
+			this.executor = executor;
+		}
 	}
 
 	public VcsSourceProperties getVcs() {
@@ -57,7 +84,9 @@ public class CiCdProperties {
 	}
 
 	public void setVcs(VcsSourceProperties vcs) {
-		this.vcs = vcs;
+		if (Objects.nonNull(vcs)) {
+			this.vcs = vcs;
+		}
 	}
 
 	public JobProperties getJob() {
@@ -65,7 +94,9 @@ public class CiCdProperties {
 	}
 
 	public void setJob(JobProperties job) {
-		this.job = job;
+		if (Objects.nonNull(job)) {
+			this.job = job;
+		}
 	}
 
 	public TranformProperties getTranform() {
@@ -73,7 +104,40 @@ public class CiCdProperties {
 	}
 
 	public void setTranform(TranformProperties tranform) {
-		this.tranform = tranform;
+		if (Objects.nonNull(tranform)) {
+			this.tranform = tranform;
+		}
+	}
+
+	//
+	// Functions.
+	//
+
+	public File getJobBaseDir(Integer taskHisyId) {
+		Assert.notNull(taskHisyId, "Task history ID must not be null.");
+		return new File(getWorkspace() + "/job." + taskHisyId);
+	}
+
+	public File getJobLog(Integer taskHisyId) {
+		Assert.notNull(taskHisyId, "Task history ID must not be null.");
+		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/build.out.log");
+	}
+
+	public File getJobBackup(Integer taskHisyRefId, String projectName) {
+		Assert.notNull(taskHisyRefId, "Rollback task history ref ID must not be null.");
+		Assert.hasText(projectName, "Rollback projectName must not be empty.");
+		return new File(getJobBaseDir(taskHisyRefId).getAbsolutePath() + "/" + projectName);
+	}
+
+	public File getJobTmpCommandFile(Integer taskHisyId, Integer projectId) {
+		Assert.notNull(taskHisyId, "Task history ID must not be null.");
+		Assert.notNull(projectId, "Task project ID must not be null.");
+		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/" + "tmp.build." + projectId + ".sh");
+	}
+
+	public File getProjectDir(String projectName) {
+		Assert.hasText(projectName, "ProjectName must not be empty.");
+		return new File(getWorkspace() + "/" + projectName);
 	}
 
 }

@@ -26,6 +26,8 @@ import java.util.concurrent.ScheduledFuture;
 @EnableScheduling
 public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 
+	final public static String DEFAULT_CLEANER_CRON = "00/30 * * * * ?";
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -47,7 +49,7 @@ public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments applicationArguments) {
 		// Initializing timeout checker.
-		resetTimeoutCheckerExpression("00/30 * * * * ?");
+		resetTimeoutCheckerExpression(DEFAULT_CLEANER_CRON);
 	}
 
 	/**
@@ -69,8 +71,8 @@ public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 
 		// Resume timeout scanner.
 		this.future = taskScheduler.schedule(() -> {
-			if (config.getJob().getCleanTimeout() != null && config.getJob().getCleanTimeout() > 0) {
-				taskHistoryDao.updateStatus(config.getJob().getCleanTimeout());
+			if (config.getJob().getJobTimeout() > 0) {
+				taskHistoryDao.updateStatus(config.getJob().getJobTimeout());
 			}
 		}, new CronTrigger(expression));
 

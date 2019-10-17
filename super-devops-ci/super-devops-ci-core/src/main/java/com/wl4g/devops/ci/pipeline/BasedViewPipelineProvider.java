@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-
 	public BasedViewPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
@@ -38,9 +37,5 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	 * Execute
 	 */
 	public abstract void execute() throws Exception;
-
-
-
-
 
 }

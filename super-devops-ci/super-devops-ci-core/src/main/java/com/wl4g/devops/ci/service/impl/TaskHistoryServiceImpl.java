@@ -80,7 +80,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Override
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer refId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId,List<TaskBuildCommand> taskBuildCommands) {
+			String sha, Integer refId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId,
+			List<TaskBuildCommand> taskBuildCommands) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
@@ -104,7 +105,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 			taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
 			taskHistoryDetailDao.insertSelective(taskHistoryDetail);
 		}
-		for(TaskBuildCommand taskBuildCommand : taskBuildCommands){
+		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setId(null);
 			taskBuildCommand.setTaskId(taskHistory.getId());
 			taskHisBuildCommandDao.insertSelective(taskBuildCommand);
@@ -127,8 +128,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.preUpdate();
 		taskHistory.setId(taskId);
 		taskHistory.setStatus(status);
-		//modify -- read fomr file
-		//taskHistory.setResult(result);
+		// modify -- read fomr file
+		// taskHistory.setResult(result);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
 	}
 
@@ -138,8 +139,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.preUpdate();
 		taskHistory.setId(taskId);
 		taskHistory.setStatus(status);
-		//modify -- read fomr file
-		//taskHistory.setResult(result);
+		// modify -- read fomr file
+		// taskHistory.setResult(result);
 		taskHistory.setShaGit(sha);
 		taskHistory.setShaLocal(md5);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);

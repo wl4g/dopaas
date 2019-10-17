@@ -42,9 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.DOCKER_NATIVE;
-import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.MVN_ASSEMBLE_TAR;
-import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.VUE_VIEW;
+import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.*;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static java.util.Arrays.asList;
 
@@ -67,21 +65,21 @@ public class DefaultPipeline implements Pipeline {
 	protected PipelineJobExecutor jobExecutor;
 
 	@Autowired
-	private AppClusterDao appClusterDao;
+	protected AppClusterDao appClusterDao;
 	@Autowired
-	private TriggerDao triggerDao;
+	protected TriggerDao triggerDao;
 	@Autowired
-	private ProjectDao projectDao;
+	protected ProjectDao projectDao;
 	@Autowired
-	private TaskHistoryService taskHistoryService;
+	protected TaskHistoryService taskHistoryService;
 	@Autowired
-	private TaskDao taskDao;
+	protected TaskDao taskDao;
 	@Autowired
-	private TaskDetailDao taskDetailDao;
+	protected TaskDetailDao taskDetailDao;
 	@Autowired
-	private AlarmContactDao alarmContactDao;
+	protected AlarmContactDao alarmContactDao;
 	@Autowired
-	private TaskBuildCommandDao taskBuildCommandDao;
+	protected TaskBuildCommandDao taskBuildCommandDao;
 
 	@Override
 	public List<AppCluster> grouplist() {
@@ -129,7 +127,7 @@ public class DefaultPipeline implements Pipeline {
 		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(taskId);
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(),
-				task.getContactGroupId(),taskBuildCommands);
+				task.getContactGroupId(), taskBuildCommands);
 		PipelineProvider provider = getPipelineProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
@@ -172,7 +170,8 @@ public class DefaultPipeline implements Pipeline {
 		// Print to client
 		// ShellContextHolder.printfQuietly("taskHistory begin");
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
-				branchName, sha, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(), task.getContactGroupId(),taskBuildCommands);
+				branchName, sha, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(), task.getContactGroupId(),
+				taskBuildCommands);
 		PipelineProvider provider = getPipelineProvider(taskHistory);
 		// execute
 		execute(taskHistory.getId(), provider);
@@ -241,26 +240,66 @@ public class DefaultPipeline implements Pipeline {
 	}
 
 	/**
-	 * Get pipeline provider.
+	 * Create roll-back Task by taskId.
+	 *
+	 * @param taskId
+	 */
+	public void createRollbackTask(Integer taskId) {
+		if (log.isInfoEnabled()) {
+			log.info("into PipelineCoreProcessorImpl.rollback prarms::" + "taskId = {} ", taskId);
+		}
+		Assert.notNull(taskId, "Rollback taskId must not be null.");
+
+		// Task
+		TaskHistory backupTaskHisy = taskHistoryService.getById(taskId);
+		Assert.notNull(backupTaskHisy, String.format("Not found pipeline task history for taskId:%s", taskId));
+		// Details
+		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
+		Assert.notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
+		// Project.
+		Project project = projectDao.selectByPrimaryKey(backupTaskHisy.getProjectId());
+		Assert.notNull(project, String.format("Not found project history for projectId:%s", backupTaskHisy.getProjectId()));
+		// Instance.
+		List<AppInstance> instances = new ArrayList<>();
+		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
+			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
+			instances.add(instance);
+		}
+
+		// Roll-back.
+		List<TaskBuildCommand> commands = taskBuildCommandDao.selectByTaskId(taskId);
+		// TODO TAR_TYPE_TAR(-1)
+		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
+				TASK_STATUS_CREATE, backupTaskHisy.getBranchName(), null, taskId, backupTaskHisy.getPreCommand(),
+				backupTaskHisy.getPostCommand(), -1, backupTaskHisy.getContactGroupId(), commands);
+
+		// Do roll-back pipeline job.
+		doRollback(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
+	}
+
+	/**
+	 * Get task pipeline provider.
 	 * 
-	 * @param taskHistory
+	 * @param taskHisy
 	 * @return
 	 */
-	private PipelineProvider getPipelineProvider(TaskHistory taskHistory) {
-		log.info("into PipelineCoreProcessorImpl.buildDeployProvider prarms::" + "taskHistory = {} ", taskHistory);
-		Assert.notNull(taskHistory, "taskHistory can not be null");
-		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
+	private PipelineProvider getPipelineProvider(TaskHistory taskHisy) {
+		log.info("into PipelineCoreProcessorImpl.buildDeployProvider prarms::" + "taskHistory = {} ", taskHisy);
+		Assert.notNull(taskHisy, "taskHistory can not be null");
+
+		Project project = projectDao.selectByPrimaryKey(taskHisy.getProjectId());
 		Assert.notNull(project, "project can not be null");
+
 		AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
 		Assert.notNull(appCluster, "appCluster can not be null");
 		project.setGroupName(appCluster.getName());
 
-		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskHistory.getId());
+		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskHisy.getId());
 		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
 
 		TaskHistory refTaskHistory = null;
-		if (taskHistory.getRefId() != null) {
-			refTaskHistory = taskHistoryService.getById(taskHistory.getRefId());
+		if (taskHisy.getRefId() != null) {
+			refTaskHistory = taskHistoryService.getById(taskHisy.getRefId());
 		}
 
 		List<AppInstance> instances = new ArrayList<>();
@@ -270,56 +309,17 @@ public class DefaultPipeline implements Pipeline {
 		}
 		PipelineInfo info = new DefaultPipelineInfo();
 		info.setProject(project);
-		info.setTarType(taskHistory.getTarType());
-		info.setPath(config.getVcs().getGitlab().getWorkspace() + "/" + project.getProjectName());
-		info.setBranch(taskHistory.getBranchName());
+		info.setTarType(taskHisy.getTarType());
+		info.setPath(config.getWorkspace() + "/" + project.getProjectName());
+		info.setBranch(taskHisy.getBranchName());
 		info.setAlias(appCluster.getName());
 		info.setInstances(instances);
-		info.setTaskHistory(taskHistory);
+		info.setTaskHistory(taskHisy);
 		info.setRefTaskHistory(refTaskHistory);
 		info.setTaskHistoryDetails(taskHistoryDetails);
 
-		switch (info.getTarType()) {
-		case TAR_TYPE_TAR:
-			return beanFactory.getPrototypeBean(MVN_ASSEMBLE_TAR, info);
-		case TAR_TYPE_VUE:
-			return beanFactory.getPrototypeBean(VUE_VIEW, info);
-		case TAR_TYPE_DOCKER:
-			return beanFactory.getPrototypeBean(DOCKER_NATIVE, info);
-		default:
-			throw new RuntimeException("unsuppost type:" + info.getTarType());
-		}
-	}
-
-	/**
-	 * Create Rollback Task by taskId
-	 *
-	 * @param taskId
-	 */
-	public void createRollbackTask(Integer taskId) {
-		log.info("into PipelineCoreProcessorImpl.rollback prarms::" + "taskId = {} ", taskId);
-		Assert.notNull(taskId, "taskId is null");
-		TaskHistory taskHistoryOld = taskHistoryService.getById(taskId);
-		Assert.notNull(taskHistoryOld, "not found this app");
-
-		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
-		Assert.notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
-
-		Project project = projectDao.selectByPrimaryKey(taskHistoryOld.getProjectId());
-		Assert.notNull(project, "not found this project");
-		List<AppInstance> instances = new ArrayList<>();
-		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
-			instances.add(instance);
-		}
-		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(taskId);
-		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK, TASK_STATUS_CREATE,
-				taskHistoryOld.getBranchName(), null, taskId, taskHistoryOld.getPreCommand(), taskHistoryOld.getPostCommand(),
-				TAR_TYPE_TAR, taskHistoryOld.getContactGroupId(),taskBuildCommands);
-		PipelineProvider provider = getPipelineProvider(taskHistory);
-
-		// Do roll-back pipeline job.
-		doRollback(taskHistory.getId(), provider);
+		// TODO getTarType()
+		return getPrototypePipelineProvider(beanFactory, "info.getTarType()", info);
 	}
 
 	/**
@@ -360,8 +360,8 @@ public class DefaultPipeline implements Pipeline {
 		if (Objects.isNull(size)) {
 			size = 100;
 		}
-		String logPath = config.getJob().getLogBaseDir(taskHisId) + "/build.log";
-		return FileIOUtils.readSeekLines(logPath, index, size).getLines(); // TODO
+		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
+		return FileIOUtils.readSeekLines(logPath, index, size).getLines();
 	}
 
 }

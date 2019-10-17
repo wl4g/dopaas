@@ -39,8 +39,8 @@ public class VuePipelineHandler extends AbstractPipelineHandler {
 	private String tarPath;
 	private Integer taskDetailId;
 
-	public VuePipelineHandler(MvnAssembleTarPipelineProvider provider, Project project, String path,
-                              AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
+	public VuePipelineHandler(MvnAssembleTarPipelineProvider provider, Project project, String path, AppInstance instance,
+			String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
 		super(instance, project);
 		this.provider = provider;
 		this.path = path;
@@ -76,7 +76,6 @@ public class VuePipelineHandler extends AbstractPipelineHandler {
 			String s = provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(),
 					project.getParentAppHome(), instance.getSshKey());
 			result.append(s).append("\n");
-
 
 			// post command (restart command)
 			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),

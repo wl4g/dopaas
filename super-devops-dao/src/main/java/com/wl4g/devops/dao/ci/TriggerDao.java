@@ -21,24 +21,24 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TriggerDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(Trigger record);
+	int insert(Trigger record);
 
-    int insertSelective(Trigger record);
+	int insertSelective(Trigger record);
 
-    Trigger selectByPrimaryKey(Integer id);
+	Trigger selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Trigger record);
+	int updateByPrimaryKeySelective(Trigger record);
 
-    int updateByPrimaryKey(Trigger record);
+	int updateByPrimaryKey(Trigger record);
 
-    List<Trigger> list(@Param("id") Integer id, @Param("name") String name,@Param("taskId")Integer taskId,
-                       @Param("enable") Integer enable,@Param("startDate") String startDate,
-                       @Param("endDate") String endDate);
+	List<Trigger> list(@Param("id") Integer id, @Param("name") String name, @Param("taskId") Integer taskId,
+			@Param("enable") Integer enable, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
-    Trigger getTriggerByAppClusterIdAndBranch(@Param("appClusterId") Integer appClusterId, @Param("branchName") String branchName);
+	Trigger getTriggerByAppClusterIdAndBranch(@Param("appClusterId") Integer appClusterId,
+			@Param("branchName") String branchName);
 
-    List<Trigger> selectByType(@Param("type") Integer type);
+	List<Trigger> selectByType(@Param("type") Integer type);
 
 }

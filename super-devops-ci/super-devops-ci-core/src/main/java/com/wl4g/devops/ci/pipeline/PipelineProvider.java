@@ -15,9 +15,15 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import static org.springframework.util.ReflectionUtils.findField;
+
+import java.lang.reflect.Field;
+import java.util.Objects;
+
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
+import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
 
 /**
  * Based pipeline provider.
@@ -30,7 +36,9 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 
 	void execute() throws Exception;
 
-	void rollback() throws Exception;
+	default void rollback() throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
 	TaskResult getTaskResult();
 
@@ -62,17 +70,33 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 		/**
 		 * Docker native provider alias.
 		 */
-		final public static String DOCKER_NATIVE = "PipeWithDockerNat";
+		final public static String DOCKER_NATIVE = "PipeWithDockerNative";
 
 		/**
 		 * DJANGO standard provider alias.
 		 */
-		final public static String DJANGO_STD = "PipeWithDjangoStd";
+		final public static String DJANGO_STANDARD = "PipeWithDjangoStandard";
 
 		/**
-		 * Vue provider alias.
+		 * NPM provider alias.
 		 */
-		final public static String VUE_VIEW = "PipeWithVue";
+		final public static String NPM_VIEW = "PipeWithNpm";
+
+		/**
+		 * Get prototype bean provider.
+		 * 
+		 * @param beanFactory
+		 * @param provider
+		 * @return
+		 */
+		final public static PipelineProvider getPrototypePipelineProvider(DelegateAliasPrototypeBeanFactory beanFactory,
+				String provider, PipelineInfo info) {
+			Field field = findField(PipelineType.class, provider, String.class);
+			if (Objects.nonNull(field)) {
+				return beanFactory.getPrototypeBean(provider, info);
+			}
+			throw new IllegalArgumentException("Unknown provider for: " + provider);
+		}
 
 	}
 

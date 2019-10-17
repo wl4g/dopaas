@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.console;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.InstanceListArgument;
 import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
@@ -42,7 +43,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.regex.Pattern;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.CI_LOCK;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_TIME;
 import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -58,6 +58,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class CiCdConsole {
 
 	final public static String GROUP = "Devops CI/CD console commands";
+
+	@Autowired
+	private CiCdProperties config;
 
 	@Autowired
 	private AppClusterDao appClusterDao;
@@ -129,7 +132,7 @@ public class CiCdConsole {
 		// Open console printer.
 		open();
 
-		Lock lock = lockManager.getLock(CI_LOCK, LOCK_TIME, TimeUnit.MINUTES);
+		Lock lock = lockManager.getLock(CI_LOCK, config.getJob().getJobTimeout(), TimeUnit.MINUTES);
 		try {
 			if (lock.tryLock()) {
 				// Print to client

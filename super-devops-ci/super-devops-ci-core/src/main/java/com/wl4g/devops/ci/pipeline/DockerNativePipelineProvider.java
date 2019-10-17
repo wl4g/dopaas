@@ -79,29 +79,24 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getPipelineInfo().getProject().getId());
 
-		// check bakup file isExist
-		String oldFilePath = config.getJob().getBackupDir(getPipelineInfo().getTaskHistory().getRefId()) + "/" + subPackname(getPipelineInfo().getProject().getTarPath());
-
-		File oldFile = new File(oldFilePath);
-		if (oldFile.exists()) {
-			getBackupLocal(oldFilePath, getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
+		File backupFile = config.getJobBackup(getPipelineInfo().getTaskHistory().getRefId(),
+				subPackname(getPipelineInfo().getProject().getTarPath()));
+		if (backupFile.exists()) { // Use local backup?
+			getBackupLocal(backupFile.getAbsolutePath(),
+					getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
 			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
-		} else {
+		} else { // Re-pull from VCS by SHA.
 			build(getPipelineInfo().getTaskHistory(), taskResult, true);
 			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		}
-
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
-		// backup in local
-		// backupLocal(getPath() + getProject().getTarPath(),
-		// getTaskHistory().getId().toString());
 
-		// scp to server
+		// Transform to instance
 		for (AppInstance instance : getPipelineInfo().getInstances()) {
 			Runnable task = new DockerNativePipelineHandler(this, getPipelineInfo().getProject(), instance,
 					getPipelineInfo().getTaskHistoryDetails());
 			Thread t = new Thread(task);
-			t.start();
+			t.start(); // TODO use jobExecutor
 			t.join();
 		}
 

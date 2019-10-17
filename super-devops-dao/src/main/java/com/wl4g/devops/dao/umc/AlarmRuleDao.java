@@ -5,25 +5,24 @@ import com.wl4g.devops.common.bean.umc.AlarmRule;
 import java.util.List;
 
 public interface AlarmRuleDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AlarmRule record);
+	int insert(AlarmRule record);
 
-    int insertSelective(AlarmRule record);
+	int insertSelective(AlarmRule record);
 
-    AlarmRule selectByPrimaryKey(Integer id);
+	AlarmRule selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AlarmRule record);
+	int updateByPrimaryKeySelective(AlarmRule record);
 
-    int updateByPrimaryKey(AlarmRule record);
+	int updateByPrimaryKey(AlarmRule record);
 
-    List<AlarmRule> selectAll();
+	List<AlarmRule> selectAll();
 
-    List<AlarmRule> selectByRecordId(Integer id);
+	List<AlarmRule> selectByRecordId(Integer id);
 
-    List<AlarmRule> selectByTemplateId(Integer id);
+	List<AlarmRule> selectByTemplateId(Integer id);
 
-    int deleteByTemplateId(Integer id);
-
+	int deleteByTemplateId(Integer id);
 
 }

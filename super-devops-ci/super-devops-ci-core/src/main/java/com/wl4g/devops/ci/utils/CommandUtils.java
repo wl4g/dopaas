@@ -51,26 +51,27 @@ public abstract class CommandUtils {
 	}
 
 	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
-		return exec(cmd, callback, taskResult,null);
+		return exec(cmd, callback, taskResult, null);
 	}
 
-	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult,String dirPath)throws Exception{
+	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult, String dirPath)
+			throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Execution native command for '{}'", cmd);
 		}
-		//TODO filter command
+		// TODO filter command
 
 		StringBuilder slog = new StringBuilder();
 		StringBuilder serr = new StringBuilder();
 		Process ps;
-		if(StringUtils.isBlank(dirPath)){
+		if (StringUtils.isBlank(dirPath)) {
 			ps = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", cmd });
-		}else{
+		} else {
 			ps = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", cmd }, null, new File(dirPath));
 		}
 
 		try (BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-			 BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
+				BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
 			String inlog;
 			while ((inlog = blog.readLine()) != null) {
 				if (callback != null) {
@@ -94,7 +95,7 @@ public abstract class CommandUtils {
 			// java.lang.IllegalThreadStateException: process
 			// hasn't exited
 			int exitValue = ps.exitValue();
-			if (exitValue != 0&&taskResult!=null) {
+			if (exitValue != 0 && taskResult != null) {
 				taskResult.setSuccess(false);
 			}
 			String log = slog.toString();
@@ -115,23 +116,21 @@ public abstract class CommandUtils {
 		FileIOUtils.writeFile(logFile, result);
 	}
 
-
-
-	public static String execFile(String cmd,String filePath,TaskResult taskResult) throws Exception {
+	public static String execFile(String cmd, String filePath, TaskResult taskResult) throws Exception {
 		File file = new File(filePath);
-		FileIOUtils.writeFile(file,cmd,false);
-		return exec("sh "+filePath, null, taskResult);
+		FileIOUtils.writeFile(file, cmd, false);
+		return exec("sh " + filePath, null, taskResult);
 	}
 
-	public static String execFile(String cmd,Function<String, Boolean> callback,String filePath,TaskResult taskResult) throws Exception {
+	public static String execFile(String cmd, Function<String, Boolean> callback, String filePath, TaskResult taskResult)
+			throws Exception {
 		File file = new File(filePath);
-		FileIOUtils.writeFile(file,cmd,false);
-		return exec("sh "+filePath, callback, taskResult);
+		FileIOUtils.writeFile(file, cmd, false);
+		return exec("sh " + filePath, callback, taskResult);
 	}
-
 
 	public static void main(String[] args) throws Exception {
-		execFile("pwd\nls","/Users/vjay/Downloads/myTest.sh",null);
+		execFile("pwd\nls", "/Users/vjay/Downloads/myTest.sh", null);
 	}
 
 }

@@ -85,5 +85,4 @@ public class QueryLogModel {
 		this.limit = limit;
 	}
 
-
 }

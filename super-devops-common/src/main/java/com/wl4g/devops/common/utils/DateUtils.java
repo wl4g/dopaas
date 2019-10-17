@@ -284,10 +284,11 @@ public abstract class DateUtils extends org.apache.commons.lang3.time.DateUtils 
 
 	/**
 	 * 时间戳转UTC
+	 * 
 	 * @param timeStamp
 	 * @return
 	 */
-	public static String timeStampToUTC(long timeStamp){
+	public static String timeStampToUTC(long timeStamp) {
 		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		df2.setTimeZone(TimeZone.getTimeZone("UTC"));
 		String re = df2.format(new Date(timeStamp));

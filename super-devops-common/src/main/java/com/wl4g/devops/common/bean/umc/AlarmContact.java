@@ -249,12 +249,8 @@ public class AlarmContact extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AlarmContact{" +
-				"name='" + name + '\'' +
-				", email='" + email + '\'' +
-				", id='" + getId() + '\'' +
-				", phone='" + phone + '\'' +
-				'}';
+		return "AlarmContact{" + "name='" + name + '\'' + ", email='" + email + '\'' + ", id='" + getId() + '\'' + ", phone='"
+				+ phone + '\'' + '}';
 	}
 
 	@Override
@@ -263,11 +259,10 @@ public class AlarmContact extends BaseBean implements Serializable {
 			return true;
 		}
 		AlarmContact other = (AlarmContact) obj;
-		if(this.getId().equals(other.getId())){
+		if (this.getId().equals(other.getId())) {
 			return true;
 		}
 		return false;
 	}
-
 
 }

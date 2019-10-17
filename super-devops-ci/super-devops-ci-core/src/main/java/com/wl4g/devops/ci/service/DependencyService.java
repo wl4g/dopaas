@@ -25,6 +25,6 @@ import java.util.LinkedHashSet;
  */
 public interface DependencyService {
 
-	LinkedHashSet<Dependency> getDependencys(Integer projectId, LinkedHashSet<Dependency> set);
+	LinkedHashSet<Dependency> getHierarchyDependencys(Integer projectId, LinkedHashSet<Dependency> set);
 
 }

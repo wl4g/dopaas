@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Dependency service implements
@@ -42,24 +43,24 @@ public class DependencyServiceImpl implements DependencyService {
 	private DependencyDao dependencyDao;
 
 	/**
-	 * get dependency
+	 * Get hierarchy project dependency.
 	 *
 	 * @param projectId
-	 * @param set
+	 * @param sets
 	 * @return
 	 */
-	public LinkedHashSet<Dependency> getDependencys(Integer projectId, LinkedHashSet<Dependency> set) {
-		if (null == set) {
-			set = new LinkedHashSet<>();
+	public LinkedHashSet<Dependency> getHierarchyDependencys(Integer projectId, LinkedHashSet<Dependency> sets) {
+		if (Objects.isNull(sets)) {
+			sets = new LinkedHashSet<>();
 		}
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(projectId);
 		if (dependencies != null && dependencies.size() > 0) {
-			for (Dependency dep : dependencies) {
-				getDependencys(dep.getDependentId(), set);
-				set.add(dep);
+			for (Dependency depd : dependencies) {
+				getHierarchyDependencys(depd.getDependentId(), sets);
+				sets.add(depd);
 			}
 		}
-		return set;
+		return sets;
 	}
 
 }

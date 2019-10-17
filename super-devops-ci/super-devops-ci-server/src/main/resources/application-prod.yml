@@ -73,9 +73,9 @@ redis:
 
 # Pipeline configuration.
 pipeline:
+  #workspace: # Default by to {user.home}/.ci-workspace
   executor:
     concurrency: 10
-    keep-alive-time: 601000000
     accept-queue: 32
   vcs:
     gitlab:
@@ -83,14 +83,12 @@ pipeline:
       username: heweijie
       password: hwj13535248668
       token: Xw6xYojnoj7SSDyyLXP7
-      #workspace: user default
   job:
-    base-dir:
-    clean-scan: 30
-    clean-timeout: 300
-    share-dependency-try-timeout: 300
+    clean-internal: 30
+    job-timeout: 300
+    shared-dependency-try-timeout: 300
   tranform:
     cipher-key: 03DE18C2FC4E605F
     docker-native:
       docker-push-username: xburnerair00
-      docker-push-passwd: hwj13535248668
+      docker-push-password: hwj13535248668
