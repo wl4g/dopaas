@@ -44,7 +44,7 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
  * @date 2018年11月19日
  * @since
  */
-public abstract class AbstractBasedValidator<R extends BasedModel, A> implements IamValidator<R, A> {
+public abstract class AbstractBasedIamValidator<R extends BasedModel, A> implements IamValidator<R, A> {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -63,7 +63,7 @@ public abstract class AbstractBasedValidator<R extends BasedModel, A> implements
 	 * @param casServerUrlPrefix
 	 *            the location of the CAS server.
 	 */
-	protected AbstractBasedValidator(IamClientProperties config, RestTemplate restTemplate) {
+	protected AbstractBasedIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		Assert.notNull(config, "'iamClientProperties' cannot be null.");
 		Assert.notNull(restTemplate, "'restTemplate' cannot be null.");
 		this.config = config;
@@ -81,8 +81,8 @@ public abstract class AbstractBasedValidator<R extends BasedModel, A> implements
 	 * @return the response from the CAS server.
 	 */
 	protected RespBase<A> doGetRemoteValidate(String endpoint, R req) {
-		Assert.hasText(endpoint, "Validate endpoint must not be null");
-		Assert.notNull(req, "Validate parameters must not be null");
+		Assert.hasText(endpoint, "Validate endpoint must not be empty.");
+		Assert.notNull(req, "Validate parameters must not be null.");
 
 		StringBuffer url = new StringBuffer(config.getServerUri());
 		url.append(URI_S_BASE).append("/").append(endpoint).append("?");
@@ -117,7 +117,7 @@ public abstract class AbstractBasedValidator<R extends BasedModel, A> implements
 		try {
 			resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
 			if (log.isInfoEnabled()) {
-				log.info("Validate retrieving: {}", resp);
+				log.info("Grant ticket validate retrieve: {}", resp);
 			}
 		} catch (Throwable ex) {
 			throw new RestClientException(String.format("Failed to validating ticket via URL: %s", url), ex);

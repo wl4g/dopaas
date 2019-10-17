@@ -57,6 +57,7 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import com.wl4g.devops.common.annotation.DevOpsErrorController;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.web.RespBase.RetCode;
 
 import freemarker.template.Template;
 
@@ -157,8 +158,8 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			 */
 			if (isJSONResponse(request)) {
 				String errmsg = extractMeaningfulErrorsMessage(model);
-				int code = (int) model.getOrDefault("status", SYS_ERR.getCode());
-				writeJson(response, toJSONString(new RespBase<>(code, errmsg)));
+				int code = (int) model.getOrDefault("status", SYS_ERR.getErrcode());
+				writeJson(response, toJSONString(new RespBase<>(RetCode.create(code, errmsg))));
 			} else {
 				write(response, getHttpStatus(request, response).value(), TEXT_HTML_VALUE,
 						renderErrorPage(model, request).getBytes(UTF_8));

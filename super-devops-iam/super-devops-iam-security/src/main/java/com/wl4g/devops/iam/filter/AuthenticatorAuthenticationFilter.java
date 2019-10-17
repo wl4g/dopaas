@@ -111,7 +111,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		String redirectUrl = getCleanParam(request, redirectUrlKey);
 
 		// Safety encoding.
-		redirectUrl = safeEncodeWithCyclicRedirectUrl(redirectUrl);
+		redirectUrl = safeEncodeHierarchyRedirectUrl(redirectUrl);
 
 		// Overlay to save the latest parameters
 		bindKVParameters(KEY_REQ_AUTH_PARAMS, fromAppKey, fromApp, respTypeKey, respType, redirectUrlKey, redirectUrl);

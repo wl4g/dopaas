@@ -21,7 +21,6 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 
 public class BasedModel implements Serializable {
@@ -35,8 +34,7 @@ public class BasedModel implements Serializable {
 	}
 
 	public BasedModel(String application) {
-		super();
-		this.setApplication(application);
+		setApplication(application);
 	}
 
 	public String getApplication() {
@@ -44,8 +42,8 @@ public class BasedModel implements Serializable {
 	}
 
 	public void setApplication(String application) {
-		Assert.notNull(application, "'application' must not be null");
-		if (!StringUtils2.isEmpty(application) && !"NULL".equalsIgnoreCase(application)) {
+		Assert.hasText(application, "Application name must not be empty.");
+		if (!"NULL".equalsIgnoreCase(application)) {
 			this.application = application;
 		}
 	}
