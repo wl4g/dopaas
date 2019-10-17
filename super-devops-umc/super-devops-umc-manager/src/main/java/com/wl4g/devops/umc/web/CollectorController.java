@@ -33,7 +33,7 @@ public class CollectorController extends BaseController {
 		log.info("into ContactGroupController.list prarms::" + "name = {} , customPage = {} ", name, customPage);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<AlarmCollector> list = alarmCollectorDao.list(name, addr);
 		customPage.setPageNum(pageNum);

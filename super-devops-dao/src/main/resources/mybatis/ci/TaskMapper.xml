@@ -70,7 +70,7 @@
       #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=INTEGER},
       #{branchType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{buildCommand,#{preCommand,jdbcType=LONGVARCHAR},
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{buildCommand,jdbcType=LONGVARCHAR},#{preCommand,jdbcType=LONGVARCHAR},
       #{postCommand,jdbcType=LONGVARCHAR},#{contactGroupId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Task" useGeneratedKeys="true" keyProperty="id" >

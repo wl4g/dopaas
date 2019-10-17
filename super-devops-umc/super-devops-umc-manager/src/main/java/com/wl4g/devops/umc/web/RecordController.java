@@ -34,7 +34,7 @@ public class RecordController extends BaseController {
 				customPage, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
 
 		List<AlarmRecord> list = alarmRecordDao.list(name, startDate, endDate);
