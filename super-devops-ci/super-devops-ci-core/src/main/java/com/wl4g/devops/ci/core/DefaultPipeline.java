@@ -353,15 +353,15 @@ public class DefaultPipeline implements Pipeline {
 		});
 	}
 
-	public List<String> readLog(Integer taskHisId, Integer index, Integer size) {
+	public FileIOUtils.ReadResult readLog(Integer taskHisId, Integer index, Integer size) {
 		if (Objects.isNull(index)) {
 			index = 0;
 		}
 		if (Objects.isNull(size)) {
 			size = 100;
 		}
-		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
-		return FileIOUtils.readSeekLines(logPath, index, size).getLines();
+		String logPath = config.getJob().getLogBaseDir(taskHisId) + "/build.log";
+		return FileIOUtils.readSeekLines(logPath, index, size); // TODO
 	}
 
 }

@@ -179,10 +179,10 @@ public class TaskController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getDependencys")
-	public RespBase<?> getDependencys(Integer clustomId) {
+	public RespBase<?> getDependencys(Integer appClusterId) {
 		RespBase<Object> resp = RespBase.create();
-		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(clustomId);
-		resp.getData().put("list", taskBuildCommands);
+		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
+		resp.getData().put("list",taskBuildCommands);
 		return resp;
 
 	}
