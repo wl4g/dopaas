@@ -43,7 +43,7 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String postCommand;
 
-	private Integer tarType;
+	private String tarType;
 
 	private String result;
 
@@ -125,11 +125,11 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.postCommand = postCommand;
 	}
 
-	public Integer getTarType() {
+	public String getTarType() {
 		return tarType;
 	}
 
-	public void setTarType(Integer tarType) {
+	public void setTarType(String tarType) {
 		this.tarType = tarType;
 	}
 

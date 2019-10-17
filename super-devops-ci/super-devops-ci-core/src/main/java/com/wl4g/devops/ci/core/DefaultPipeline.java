@@ -199,7 +199,7 @@ public class DefaultPipeline implements Pipeline {
 					log.info("task succcess taskId={}", taskId);
 					taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS,
 							provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(), provider.getShaLocal());
-					// TODO send mail
+
 					sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(),
 							"Task Build Success taskId=" + taskId + " projectName="
 									+ provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()));
@@ -268,10 +268,9 @@ public class DefaultPipeline implements Pipeline {
 
 		// Roll-back.
 		List<TaskBuildCommand> commands = taskBuildCommandDao.selectByTaskId(taskId);
-		// TODO TAR_TYPE_TAR(-1)
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
 				TASK_STATUS_CREATE, backupTaskHisy.getBranchName(), null, taskId, backupTaskHisy.getPreCommand(),
-				backupTaskHisy.getPostCommand(), -1, backupTaskHisy.getContactGroupId(), commands);
+				backupTaskHisy.getPostCommand(), backupTaskHisy.getTarType(), backupTaskHisy.getContactGroupId(), commands);
 
 		// Do roll-back pipeline job.
 		doRollback(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
@@ -318,8 +317,7 @@ public class DefaultPipeline implements Pipeline {
 		info.setRefTaskHistory(refTaskHistory);
 		info.setTaskHistoryDetails(taskHistoryDetails);
 
-		// TODO getTarType()
-		return getPrototypePipelineProvider(beanFactory, "info.getTarType()", info);
+		return getPrototypePipelineProvider(beanFactory, info.getTarType(), info);
 	}
 
 	/**
@@ -353,15 +351,15 @@ public class DefaultPipeline implements Pipeline {
 		});
 	}
 
-	public List<String> readLog(Integer taskHisId, Integer index, Integer size) {
+	public FileIOUtils.ReadResult readLog(Integer taskHisId, Integer index, Integer size) {
 		if (Objects.isNull(index)) {
 			index = 0;
 		}
 		if (Objects.isNull(size)) {
 			size = 100;
 		}
-		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
-		return FileIOUtils.readSeekLines(logPath, index, size).getLines();
+		String logPath = config.getJobLog(taskHisId) + "/build.log";
+		return FileIOUtils.readSeekLines(logPath, index, size);
 	}
 
 }
