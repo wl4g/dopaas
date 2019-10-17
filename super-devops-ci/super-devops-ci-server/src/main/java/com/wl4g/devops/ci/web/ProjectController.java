@@ -70,7 +70,7 @@ public class ProjectController extends BaseController {
 				projectName, customPage);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 		Page<Project> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<Project> list = projectService.list(groupName, projectName);
 		customPage.setPageNum(pageNum);
