@@ -367,7 +367,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected String getFromRedirectUrl(ServletRequest request) {
 		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl()); // Priority.
 		// Safety encoding.
-		redirectUrl = safeEncodeWithCyclicRedirectUrl(redirectUrl);
+		redirectUrl = safeEncodeHierarchyRedirectUrl(redirectUrl);
 		return isNotBlank(redirectUrl) ? redirectUrl : extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
 	}
 
@@ -386,7 +386,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param redirectUrl
 	 * @return
 	 */
-	protected String safeEncodeWithCyclicRedirectUrl(String redirectUrl) {
+	protected String safeEncodeHierarchyRedirectUrl(String redirectUrl) {
 		if (!isBlank(redirectUrl)) {
 			// To prevent automatic loss, such as the anchor part of "#".
 			URI uri = URI.create(redirectUrl);

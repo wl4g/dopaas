@@ -848,6 +848,18 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	}
 
 	public static void main(String[] args) {
+		// URI s =
+		// URI.create("http://portal.wl4g.com/portal/authenticator?fragment=eleIndex/elecReport#/eleIndex/index");
+		URI s = URI.create(
+				"http://portal.wl4g.com/portal/authenticator?redirect_url=http://portal.wl4g.com/?fragment=eleIndex/elecReport#/authLogin");
+		System.out.println(s.getScheme());
+		System.out.println(s.getHost());
+		System.out.println(s.getPort());
+		System.out.println(s.getPath());
+		System.out.println(s.getQuery());
+		System.out.println(s.getFragment());
+		System.out.println("-----------------");
+
 		System.out.println(getBaseURIForDefault("http", "my.com", 8080));
 		System.out.println(getBaseURIForDefault("http", "my.com", 80));
 		System.out.println(getBaseURIForDefault("https", "my.com", 443));

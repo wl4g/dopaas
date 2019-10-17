@@ -50,7 +50,6 @@ public class RespBase<T extends Object> implements Serializable {
 	 */
 	final public transient static String DEFAULT_STATUS = "normal";
 
-	private int codeValue = -1;
 	private RetCode code;
 	private String status; // Response status.
 	private String message;
@@ -83,28 +82,8 @@ public class RespBase<T extends Object> implements Serializable {
 		setData(data);
 	}
 
-	public RespBase(int code, String message) {
-		this(code, null, message, null);
-	}
-
-	public RespBase(int code, String message, DataMap<T> data) {
-		this(code, null, message, data);
-	}
-
-	public RespBase(int code, String status, String message, DataMap<T> data) {
-		setCode(code);
-		setStatus(isBlank(status) ? DEFAULT_STATUS : status);
-		setMessage(message);
-		setData(data);
-	}
-
 	public int getCode() {
-		return (codeValue > 0) ? codeValue : code.getCode();
-	}
-
-	public RespBase<T> setCode(int code) {
-		this.codeValue = code;
-		return this;
+		return code.getErrcode();
 	}
 
 	public RespBase<T> setCode(RetCode retCode) {
@@ -124,7 +103,7 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	public String getMessage() {
-		return message == null ? code.getMsg() : message;
+		return message == null ? code.getErrmsg() : message;
 	}
 
 	public RespBase<T> setMessage(String message) {
@@ -196,11 +175,11 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	public static boolean isSuccess(RespBase<?> resp) {
-		return resp != null && RetCode.OK.getCode() == resp.getCode();
+		return resp != null && RetCode.OK.getErrcode() == resp.getCode();
 	}
 
 	public static boolean eq(RespBase<?> resp, RetCode retCode) {
-		return resp != null && retCode.getCode() == resp.getCode();
+		return resp != null && retCode.getErrcode() == resp.getCode();
 	}
 
 	/**
@@ -264,7 +243,7 @@ public class RespBase<T extends Object> implements Serializable {
 	public static enum RetCode {
 
 		/**
-		 * Successfully<br/>
+		 * Successful code<br/>
 		 * {@link HttpStatus.OK}
 		 */
 		OK(HttpStatus.OK.value(), "ok"),
@@ -309,22 +288,58 @@ public class RespBase<T extends Object> implements Serializable {
 		 * System abnormality<br/>
 		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
-		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later");
+		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later"),
 
-		private int code;
-		private String msg;
+		/**
+		 * Custom code type definition.
+		 */
+		$CUSTOM$(-1, "Unknown error");
+
+		/**
+		 * Create custom status code, refer to {@link #$CUSTOM$} and
+		 * {@link #create(int, String)}
+		 */
+		final private static ThreadLocal<Object[]> customStore = new InheritableThreadLocal<>();
+
+		private int errcode;
+		private String errmsg;
 
 		private RetCode(int code, String msg) {
-			this.code = code;
-			this.msg = msg;
+			Assert.hasText(msg, "Result message definition must not be empty.");
+			this.errcode = code;
+			this.errmsg = msg;
 		}
 
-		public int getCode() {
-			return code;
+		/**
+		 * Get error code.</br>
+		 * If custom status code ({@link #$CUSTOM$}) is used, it takes
+		 * precedence.
+		 * 
+		 * @return
+		 */
+		public int getErrcode() {
+			if (this == $CUSTOM$) {
+				Object errcode = customStore.get()[0];
+				Assert.notNull(errcode, "");
+				return (int) errcode;
+			}
+			return errcode;
 		}
 
-		public String getMsg() {
-			return msg;
+		/**
+		 * Get error message.</br>
+		 * If custom status error message ({@link #$CUSTOM$}) is used, it takes
+		 * precedence.
+		 * 
+		 * @return
+		 */
+		public String getErrmsg() {
+			if (this == $CUSTOM$) {
+				Object errmsg = customStore.get()[1];
+				Assert.notNull(errmsg, "");
+				return (String) errmsg;
+			}
+			return errmsg;
 		}
 
 		/**
@@ -336,7 +351,7 @@ public class RespBase<T extends Object> implements Serializable {
 		 * @return
 		 */
 		@JsonCreator
-		public static RetCode get(String nameOrCode) {
+		final public static RetCode get(String nameOrCode) {
 			RetCode code = safeOf(nameOrCode);
 			if (Objects.nonNull(code)) {
 				return code;
@@ -350,14 +365,27 @@ public class RespBase<T extends Object> implements Serializable {
 		 * @param nameOrCode
 		 * @return
 		 */
-		public static RetCode safeOf(String nameOrCode) {
+		final public static RetCode safeOf(String nameOrCode) {
 			String tmp = String.valueOf(nameOrCode);
 			for (RetCode v : values()) {
-				if (v.name().equalsIgnoreCase(tmp) || String.valueOf(v.getCode()).equalsIgnoreCase(tmp)) {
+				if (v.name().equalsIgnoreCase(tmp) || String.valueOf(v.getErrcode()).equalsIgnoreCase(tmp)) {
 					return v;
 				}
 			}
 			return null;
+		}
+
+		/**
+		 * Create custom status code, refer to {@link #$CUSTOM$}
+		 * 
+		 * @param errcode
+		 * @param errmsg
+		 * @return
+		 */
+		final public static RetCode create(int errcode, String errmsg) {
+			Assert.hasText(errmsg, "Result errmsg definition must not be empty.");
+			customStore.set(new Object[] { errcode, errmsg });
+			return $CUSTOM$;
 		}
 
 	}

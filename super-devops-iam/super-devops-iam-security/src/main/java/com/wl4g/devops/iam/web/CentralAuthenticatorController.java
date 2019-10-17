@@ -82,20 +82,20 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 		try {
 			// Ticket assertion.
 			resp.getData().put(KEY_TICKET_ASSERT, authHandler.validate(param));
-		} catch (Throwable th) {
+		} catch (Throwable ex) {
 			resp.setCode(RetCode.SYS_ERR);
-			resp.handleError(th);
-			if (th instanceof UnauthenticatedException) {
+			resp.handleError(ex);
+			if (ex instanceof UnauthenticatedException) {
 				// Only if the error is not authenticated, can it be redirected
 				// to the IAM server login page, otherwise the client will
 				// display the error page directly (to prevent unlimited
 				// redirection). See:com.wl4g.devops.iam.client.validation.
 				// AbstractBasedTicketValidator#getRemoteValidation()
 				resp.setCode(RetCode.UNAUTHC);
-			} else if (th instanceof UnauthorizedException) {
+			} else if (ex instanceof UnauthorizedException) {
 				resp.setCode(RetCode.UNAUTHZ);
 			}
-			log.warn("Failed to ticket validate. caused by: {}", resp.getMessage());
+			log.warn("Failed to ticket validate.", ex);
 		}
 
 		if (log.isInfoEnabled()) {

@@ -47,6 +47,8 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
@@ -158,7 +160,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			log.debug("Validate subject [{}] by grantTicket: '{}'", subject, model.getTicket());
 		}
 
-		// Assertion grantTicket validity.
+		// Assertion grantTicket.
 		assertGrantTicketValidity(subject, model);
 
 		// Check access authorized from application.
@@ -223,7 +225,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
 
 		// Check authentication.
-		if (subject != null && subject.isAuthenticated() && StringUtils.hasText((String) subject.getPrincipal())) {
+		if (nonNull(subject) && subject.isAuthenticated() && !isBlank((String) subject.getPrincipal())) {
 			Session session = subject.getSession(); // Session
 
 			// Generate grantTicket. Same: CAS/service-ticket
@@ -326,7 +328,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			if (info != null && info.hasApplications()) {
 				String savedGrantTicket = info.getApplications().get(assertion.getApplication());
 				// If exist grantTicket with application.
-				if (Objects.nonNull(savedGrantTicket)) {
+				if (nonNull(savedGrantTicket)) {
 					assertion.getTickets().remove(savedGrantTicket);
 				}
 			}
@@ -350,10 +352,10 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Assert.isTrue(StringUtils.hasText(grantTicket), "'grantTicket' must not be null");
 
 		/*
-		 * Synchronize with See:DefaultAuthenticationHandler#validate()
+		 * See:CentralAuthenticationHandler#validate()
 		 */
 		GrantTicketInfo info = getGrantTicket(session);
-		if (info == null) {
+		if (Objects.isNull(info)) {
 			info = new GrantTicketInfo();
 		}
 		if (info.getApplications().keySet().contains(grantApp)) {
@@ -408,12 +410,17 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			log.debug("Got grantTicket info:{} by sessionId:{}", info, getSessionId());
 		}
 
+		// No grant ticket created or expired?
+		if (isNull(info)) {
+			throw new InvalidGrantTicketException("Invalid grantTicket.");
+		}
+
 		// Validate Request appName ticket and storedTicket match?
 		String storedTicket = info.getApplications().get(model.getApplication());
-		if (!(model.getTicket().equals(storedTicket) && subject.isAuthenticated() && Objects.nonNull(subject.getPrincipal()))) {
-			log.warn("Illegal grantTicket: '{}', appName: '{}', sessionId: '{}'", model.getTicket(), model.getApplication(),
+		if (!(model.getTicket().equals(storedTicket) && subject.isAuthenticated() && nonNull(subject.getPrincipal()))) {
+			log.warn("Invalid grantTicket:{}, appName:{}, sessionId:{}", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
-			throw new InvalidGrantTicketException("Illegal grantTicket");
+			throw new InvalidGrantTicketException("Invalid grantTicket.");
 		}
 
 	}

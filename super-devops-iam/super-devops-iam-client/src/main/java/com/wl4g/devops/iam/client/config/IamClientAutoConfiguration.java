@@ -33,8 +33,8 @@ import com.wl4g.devops.common.kit.access.IPAccessControl;
 import com.wl4g.devops.iam.client.filter.ROOTAuthenticationFilter;
 import com.wl4g.devops.iam.client.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm;
-import com.wl4g.devops.iam.client.validation.ExpireSessionValidator;
-import com.wl4g.devops.iam.client.validation.FastCasTicketValidator;
+import com.wl4g.devops.iam.client.validation.ExpiredSessionIamValidator;
+import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.client.web.ClientAuthenticatorController;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
@@ -180,13 +180,13 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	@SuppressWarnings("rawtypes")
 	@Bean(BEAN_TICKET_VALIDATOR)
 	public IamValidator fastCasTicketValidator(IamClientProperties config, RestTemplate restTemplate) {
-		return new FastCasTicketValidator(config, restTemplate);
+		return new FastCasTicketIamValidator(config, restTemplate);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Bean(BEAN_SESSION_VALIDATOR)
 	public IamValidator expireSessionValidator(IamClientProperties config, RestTemplate restTemplate) {
-		return new ExpireSessionValidator(config, restTemplate);
+		return new ExpiredSessionIamValidator(config, restTemplate);
 	}
 
 	// ==============================

@@ -40,9 +40,9 @@ import java.util.Map;
  * @date 2018年11月29日
  * @since
  */
-public class FastCasTicketValidator extends AbstractBasedValidator<TicketValidationModel, TicketAssertion> {
+public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketValidationModel, TicketAssertion> {
 
-	public FastCasTicketValidator(IamClientProperties config, RestTemplate restTemplate) {
+	public FastCasTicketIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
 	}
 
