@@ -32,14 +32,14 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class VuePipelineHandler extends AbstractPipelineHandler {
+public class NpmPipelineHandler extends AbstractPipelineHandler {
 
 	private MvnAssembleTarPipelineProvider provider;
 	private String path;
 	private String tarPath;
 	private Integer taskDetailId;
 
-	public VuePipelineHandler(MvnAssembleTarPipelineProvider provider, Project project, String path, AppInstance instance,
+	public NpmPipelineHandler(MvnAssembleTarPipelineProvider provider, Project project, String path, AppInstance instance,
 			String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
 		super(instance, project);
 		this.provider = provider;

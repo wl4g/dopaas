@@ -26,15 +26,28 @@ import org.springframework.util.Assert;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.concurrent.BlockingQueue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Generic task schedule runner.
@@ -66,22 +79,15 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 
 	@Override
 	public synchronized void run(ApplicationArguments args) throws Exception {
-		// Call pre-startup
+		// Call PreStartup
 		preStartupProperties();
 
 		// Create worker(if necessary)
 		if (bossState.compareAndSet(false, true)) {
 			if (config.getConcurrency() > 0) {
-				final AtomicInteger counter = new AtomicInteger(-1);
-				final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(config.getAcceptQueue());
-				this.worker = new ThreadPoolExecutor(1, config.getConcurrency(), config.getKeepAliveTime(), MICROSECONDS, queue,
-						/*r -> {
-							String name = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
-							Thread job = new Thread(this, name);
-							job.setDaemon(false);
-							job.setPriority(Thread.NORM_PRIORITY);
-							return job;
-						},*/ config.getReject());
+				worker = new ThreadPoolExecutor(1, config.getConcurrency(), config.getKeepAliveTime(), MICROSECONDS,
+						new LinkedBlockingQueue<>(config.getAcceptQueue()), new NamedThreadFactory(getClass().getSimpleName()),
+						config.getReject());
 			} else {
 				log.warn("No workthread pool for started, because the number of workthread is less than 0");
 			}
@@ -183,13 +189,168 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 	}
 
 	/**
+	 * Submitted job wait for completed.
+	 * 
+	 * @param jobs
+	 * @param listener
+	 * @param timeoutMs
+	 * @throws InterruptedException
+	 */
+	public void submitForComplete(List<NamedIdJob> jobs, CompleteTaskListener listener, long timeoutMs)
+			throws IllegalStateException {
+		if (!isEmpty(jobs)) {
+			int total = jobs.size();
+			// Future jobs.
+			Map<Future<?>, NamedIdJob> futureJob = new HashMap<Future<?>, NamedIdJob>(total);
+			CountDownLatch latch = new CountDownLatch(total); // Submit.
+			jobs.stream().forEach(job -> futureJob.put(getWorker().submit(new FutureDoneTaskWrapper(latch, job)), job));
+			try {
+				if (!latch.await(timeoutMs, TimeUnit.MILLISECONDS)) { // Timeout?
+					Iterator<Entry<Future<?>, NamedIdJob>> it = futureJob.entrySet().iterator();
+					while (it.hasNext()) {
+						Entry<Future<?>, NamedIdJob> entry = it.next();
+						if (!entry.getKey().isCancelled() && !entry.getKey().isDone()) {
+							entry.getKey().cancel(true);
+						} else {
+							it.remove(); // Cleanup cancelled or isDone
+						}
+					}
+					Exception ex = new IllegalStateException(
+							String.format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
+									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
+					listener.onComplete(ex, (total - latch.getCount()), futureJob.values());
+				} else {
+					listener.onComplete(null, total, emptyList());
+				}
+			} catch (InterruptedException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+	}
+
+	/**
 	 * Get thread worker.
 	 * 
 	 * @return
 	 */
 	protected ThreadPoolExecutor getWorker() {
-		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency>0");
+		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency > 0");
 		return worker;
+	}
+
+	/**
+	 * The named thread factory
+	 */
+	private class NamedThreadFactory implements ThreadFactory {
+		private final AtomicInteger threads = new AtomicInteger(1);
+		private final ThreadGroup group;
+		private final String prefix;
+
+		NamedThreadFactory(String prefix) {
+			SecurityManager s = System.getSecurityManager();
+			this.group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			if (isBlank(prefix)) {
+				prefix = GenericTaskRunner.class.getSimpleName() + "-Default";
+			}
+			this.prefix = prefix;
+		}
+
+		@Override
+		public Thread newThread(Runnable r) {
+			Thread t = new Thread(group, r, prefix + "-" + threads.getAndIncrement(), 0);
+			if (t.isDaemon())
+				t.setDaemon(false);
+			if (t.getPriority() != Thread.NORM_PRIORITY)
+				t.setPriority(Thread.NORM_PRIORITY);
+			return t;
+		}
+	}
+
+	/**
+	 * Wait future done runnable wrapper.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月17日
+	 * @since
+	 */
+	private class FutureDoneTaskWrapper implements Runnable {
+
+		final private CountDownLatch latch;
+
+		final private Runnable job;
+
+		public FutureDoneTaskWrapper(CountDownLatch latch, Runnable job) {
+			Assert.notNull(latch, "Job runable latch must not be null.");
+			Assert.notNull(job, "Job runable must not be null.");
+			this.latch = latch;
+			this.job = job;
+		}
+
+		@Override
+		public void run() {
+			try {
+				this.job.run();
+			} finally {
+				this.latch.countDown();
+			}
+		}
+
+	}
+
+	/**
+	 * Named ID job runnable.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月17日
+	 * @since
+	 */
+	public static class NamedIdJob implements Runnable {
+
+		final private String namedId;
+
+		final private Runnable job;
+
+		public NamedIdJob(String namedId, Runnable job) {
+			Assert.hasText(namedId, "Named ID must not be empty.");
+			Assert.notNull(job, "Named job must not be null.");
+			this.namedId = namedId;
+			this.job = job;
+		}
+
+		public String getNamedId() {
+			return namedId;
+		}
+
+		@Override
+		public void run() {
+			job.run();
+		}
+
+		@Override
+		public String toString() {
+			return "NamedIdJob [namedId=" + namedId + "]";
+		}
+
+	}
+
+	/**
+	 * Wait completion task listener.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月17日
+	 * @since
+	 */
+	public static interface CompleteTaskListener {
+
+		/**
+		 * Call-back completion listener.
+		 * 
+		 * @param ex
+		 * @param completed
+		 * @param uncompleted
+		 */
+		void onComplete(Exception ex, long completed, Collection<NamedIdJob> uncompleted);
+
 	}
 
 	/**
@@ -218,13 +379,17 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		/**
 		 * Consumption receive queue size
 		 */
-		private int acceptQueue = 128;
+		private int acceptQueue = 32;
 
 		/** Rejected execution handler. */
 		private RejectedExecutionHandler reject = new AbortPolicy();
 
 		public RunProperties() {
 			super();
+		}
+
+		public RunProperties(int concurrency) {
+			this(concurrency, 0L, 32, null);
 		}
 
 		public RunProperties(int concurrency, long keepAliveTime, int acceptQueue) {
@@ -235,10 +400,10 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 			this(true, concurrency, keepAliveTime, acceptQueue, reject);
 		}
 
-		public RunProperties(boolean async, int concurrency, long keepAliveTime, int acceptQueue,
+		public RunProperties(boolean startup, int concurrency, long keepAliveTime, int acceptQueue,
 				RejectedExecutionHandler reject) {
 			super();
-			setStartup(async);
+			setStartup(startup);
 			setConcurrency(concurrency);
 			setKeepAliveTime(keepAliveTime);
 			setAcceptQueue(acceptQueue);
@@ -299,6 +464,36 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 					+ acceptQueue + ", reject=" + reject + "]";
 		}
 
+	}
+
+	@SuppressWarnings({ "resource", "unchecked", "rawtypes" })
+	public static void main(String[] args) throws Exception {
+		// Add testing jobs.
+		List<NamedIdJob> jobs = new ArrayList<>();
+		for (int i = 0; i < 3; i++) {
+			jobs.add(new NamedIdJob("testjob-" + i, () -> {
+				try {
+					System.out.println("testing job starting. ");
+					Thread.sleep(3000L);
+					System.out.println("testing job completed. ");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}));
+		}
+
+		// Submit jobs.
+		GenericTaskRunner runner = new GenericTaskRunner<RunProperties>(new RunProperties(1)) {
+			@Override
+			public void run() {
+				// Ignore
+			}
+		};
+		runner.run(null);
+		runner.submitForComplete(jobs, (ex, completed, uncompleted) -> {
+			// Listen timeout call-back.
+			System.out.println(String.format("Completion for completed:%s, uncompleted:%s", completed, uncompleted));
+		}, 10000l); // >3*3000
 	}
 
 }
