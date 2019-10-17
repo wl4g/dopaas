@@ -22,8 +22,12 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_RO
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getBaseURIForDefault;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
+import static com.wl4g.devops.common.utils.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
@@ -41,6 +45,7 @@ import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
@@ -57,6 +62,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -359,8 +365,43 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	protected String getFromRedirectUrl(ServletRequest request) {
-		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl()); // prerogative
+		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl()); // Priority.
+		// Safety encoding.
+		redirectUrl = safeEncodeWithCyclicRedirectUrl(redirectUrl);
 		return isNotBlank(redirectUrl) ? redirectUrl : extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
+	}
+
+	/**
+	 * The redirection URI of the secure encoding loop is mainly used to prevent
+	 * the loss of fragments such as for example "/#/index".
+	 * 
+	 * </br>
+	 * e.g.
+	 * 
+	 * <pre>
+	 * safeEncodeWithCyclicRedirectUrl("http://mydomain.com/iam-example/authenticator?redirect_url=http://mydomain.com/#/index")
+	 * Return ==> http://mydomain.com/iam-example/authenticator?redirect_url=http%3A%2F%2Fmydomain.com%2F%23%2Findex
+	 * </pre>
+	 * 
+	 * @param redirectUrl
+	 * @return
+	 */
+	protected String safeEncodeWithCyclicRedirectUrl(String redirectUrl) {
+		if (!isBlank(redirectUrl)) {
+			// To prevent automatic loss, such as the anchor part of "#".
+			URI uri = URI.create(redirectUrl);
+			Map<String, String> params = toQueryParams(uri.getQuery() + "#" + uri.getFragment());
+			if (!isEmpty(params)) {
+				String clientRedirectUrl = params.get(config.getParam().getRedirectUrl());
+				if (!isBlank(clientRedirectUrl)) {
+					params.remove(config.getParam().getRedirectUrl());
+					params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
+					String newRedirectUrl = getBaseURIForDefault(uri.getScheme(), uri.getHost(), uri.getPort()) + uri.getPath();
+					redirectUrl = applyQueryURL(newRedirectUrl, params);
+				}
+			}
+		}
+		return redirectUrl;
 	}
 
 	/**
@@ -371,7 +412,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param request
 	 * @param response
 	 */
-	protected void cleanup(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) {
+	private void cleanup(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) {
 		/*
 		 * Clean See:AuthenticatorAuthenticationFilter#bindRequestParameters()
 		 */
@@ -467,7 +508,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Call determine successUrl.
 		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
 		hasText(successUrl, "Success redirectUrl is empty, please check the configure");
-		return cleanURI(successUrl); // Check symbol
+		return URI.create(successUrl).toString(); // Check symbol
 	}
 
 	/**
