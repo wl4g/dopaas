@@ -21,37 +21,48 @@ public class TaskBuildCommand extends BaseBean implements Serializable {
 
 	private Integer sort;
 
-	private String command;
+    private String command;
 
-	public Integer getTaskId() {
-		return taskId;
-	}
+    private String projectName;
 
-	public void setTaskId(Integer taskId) {
-		this.taskId = taskId;
-	}
 
-	public Integer getProjectId() {
-		return projectId;
-	}
+    public Integer getTaskId() {
+        return taskId;
+    }
 
-	public void setProjectId(Integer projectId) {
-		this.projectId = projectId;
-	}
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
+    }
 
-	public Integer getSort() {
-		return sort;
-	}
+    public Integer getProjectId() {
+        return projectId;
+    }
 
-	public void setSort(Integer sort) {
-		this.sort = sort;
-	}
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
 
-	public String getCommand() {
-		return command;
-	}
+    public Integer getSort() {
+        return sort;
+    }
 
-	public void setCommand(String command) {
-		this.command = command == null ? null : command.trim();
-	}
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command == null ? null : command.trim();
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 }

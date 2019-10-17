@@ -17,7 +17,7 @@ import java.util.List;
 public class DefaultPipelineInfo implements PipelineInfo {
 
 	private Project project;
-	private int tarType;
+	private String tarType;
 	private String path;
 	private String branch;
 	private String alias;
@@ -35,11 +35,11 @@ public class DefaultPipelineInfo implements PipelineInfo {
 		this.project = project;
 	}
 
-	public int getTarType() {
+	public String getTarType() {
 		return tarType;
 	}
 
-	public void setTarType(int tarType) {
+	public void setTarType(String tarType) {
 		this.tarType = tarType;
 	}
 
