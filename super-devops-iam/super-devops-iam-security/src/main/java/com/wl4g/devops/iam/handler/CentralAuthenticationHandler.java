@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.handler;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -107,7 +106,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	@Override
 	public void checkAuthenticateValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException {
 		// Check redirect URL(When source application is not empty)
-		if (isNotBlank(fromAppName)) {
+		if (!isBlank(fromAppName)) {
 			if (isBlank(redirectUrl)) {
 				throw new IllegalCallbackDomainException("Parameters redirectUrl and application cannot be null");
 			}
@@ -125,15 +124,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 			// Check redirect URL are legitimate callback URI?(As long as there
 			// is a match)
-			try {
-				String host = new URI(redirectUrl).getHost();
-				if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
-						|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri())
-						|| isEqualWithDomain(redirectUrl, app.getViewExtranetBaseUri()))) {
-					throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
-				}
-			} catch (URISyntaxException e) {
-				throw new IllegalArgumentException(e);
+			String host = URI.create(redirectUrl).getHost();
+			if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
+					|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri())
+					|| isEqualWithDomain(redirectUrl, app.getViewExtranetBaseUri()))) {
+				throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
 			}
 		}
 	}
