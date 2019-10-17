@@ -80,7 +80,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Override
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer refId, String preCommand, String postCommand, Integer tarType, Integer contactGroupId,
+			String sha, Integer refId, String preCommand, String postCommand, String tarType, Integer contactGroupId,
 			List<TaskBuildCommand> taskBuildCommands) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();

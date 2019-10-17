@@ -7,7 +7,7 @@
     <result column="app_cluster_id" property="appClusterId" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
-    <result column="tar_type" property="tarType" jdbcType="INTEGER" />
+    <result column="tar_type" property="tarType" jdbcType="VARCHAR" />
     <result column="branch_type" property="branchType" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
@@ -67,7 +67,7 @@
       update_date, update_by, build_command,pre_command,
       post_command,contact_group_id)
     values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
-      #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=INTEGER},
+      #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=VARCHAR},
       #{branchType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{buildCommand,jdbcType=LONGVARCHAR},#{preCommand,jdbcType=LONGVARCHAR},
@@ -148,7 +148,7 @@
         #{branchName,jdbcType=VARCHAR},
       </if>
       <if test="tarType != null" >
-        #{tarType,jdbcType=INTEGER},
+        #{tarType,jdbcType=VARCHAR},
       </if>
       <if test="branchType != null" >
         #{branchType,jdbcType=VARCHAR},
@@ -204,7 +204,7 @@
         branch_name = #{branchName,jdbcType=VARCHAR},
       </if>
       <if test="tarType != null" >
-        tar_type = #{tarType,jdbcType=INTEGER},
+        tar_type = #{tarType,jdbcType=VARCHAR},
       </if>
       <if test="branchType != null" >
         branch_type = #{branchType,jdbcType=VARCHAR},
@@ -251,7 +251,7 @@
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
-      tar_type = #{tarType,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=VARCHAR},
       branch_type = #{branchType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
@@ -272,7 +272,7 @@
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
-      tar_type = #{tarType,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=VARCHAR},
       branch_type = #{branchType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
@@ -310,7 +310,7 @@
       AND t.branch_name LIKE CONCAT('%','${branchName}','%')
     </if>
     <if test="tarType != null and tarType != ''" >
-      AND t.tar_type = #{tarType,jdbcType=INTEGER}
+      AND t.tar_type = #{tarType,jdbcType=VARCHAR}
     </if>
     <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
       AND DATE_FORMAT(a.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')

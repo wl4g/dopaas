@@ -18,7 +18,7 @@ public class Task extends BaseBean implements Serializable {
 
 	private String branchName;
 
-	private Integer tarType;
+	private String tarType;
 
 	private String branchType;
 
@@ -85,11 +85,11 @@ public class Task extends BaseBean implements Serializable {
 		this.branchName = branchName == null ? null : branchName.trim();
 	}
 
-	public Integer getTarType() {
+	public String getTarType() {
 		return tarType;
 	}
 
-	public void setTarType(Integer tarType) {
+	public void setTarType(String tarType) {
 		this.tarType = tarType;
 	}
 
