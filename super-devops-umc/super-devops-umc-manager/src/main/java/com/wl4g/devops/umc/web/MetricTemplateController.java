@@ -34,7 +34,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> list(String metric, String classify, CustomPage customPage) {
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<MetricTemplate> list = metricTemplateDao.list(metric, classify);
 

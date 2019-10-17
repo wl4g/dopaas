@@ -36,7 +36,7 @@ public class ConfigController extends BaseController {
 				contactGroupId, customPage);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
 		customPage.setPageNum(pageNum);

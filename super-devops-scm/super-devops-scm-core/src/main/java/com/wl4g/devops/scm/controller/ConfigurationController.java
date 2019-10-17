@@ -88,7 +88,7 @@ public class ConfigurationController extends BaseController {
 		RespBase<Object> resp = new RespBase<>();
 		try {
 			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 			Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
 			List<ConfigVersionList> list = configService.list(agl);
 			customPage.setPageNum(pageNum);
