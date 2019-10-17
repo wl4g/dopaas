@@ -78,7 +78,7 @@ public class TriggerController extends BaseController {
 				customPage, id, name, taskId, enable, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 		Page<Trigger> page = PageHelper.startPage(pageNum, pageSize, true);
 
 		String endDateStr = null;

@@ -41,7 +41,7 @@ public class TemplateController extends BaseController {
 				metricId, classify, customPage);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
