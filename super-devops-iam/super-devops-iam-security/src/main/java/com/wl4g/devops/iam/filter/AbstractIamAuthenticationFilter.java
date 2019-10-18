@@ -25,6 +25,7 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getBaseURIForDefault;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.toQueryParams;
@@ -53,6 +54,7 @@ import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -177,16 +179,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		// Client remote host
-		String remoteHost = WebUtils2.getHttpRemoteAddr((HttpServletRequest) request);
+		String remoteHost = getHttpRemoteAddr(toHttp(request));
 		// From information
 		String fromAppName = getCleanParam(request, config.getParam().getApplication());
 		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
 
 		// Create authentication token
-		return postCreateToken(remoteHost, fromAppName, redirectUrl, toHttp(request), toHttp(response));
+		return postCreateToken(remoteHost, new RedirectInfo(fromAppName, redirectUrl), toHttp(request), toHttp(response));
 	}
 
-	protected abstract T postCreateToken(String remoteHost, String fromAppName, String redirectUrl, HttpServletRequest request,
+	protected abstract T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

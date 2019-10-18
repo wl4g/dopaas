@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 public class WechatAuthenticationToken extends Oauth2SnsAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
-	public WechatAuthenticationToken(String fromAppName, String redirectUrl, SocialAuthorizeInfo social, String host) {
-		super(fromAppName, redirectUrl, social, host);
+	public WechatAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, SocialAuthorizeInfo social) {
+		super(remoteHost, redirectInfo, social);
 	}
 
 }

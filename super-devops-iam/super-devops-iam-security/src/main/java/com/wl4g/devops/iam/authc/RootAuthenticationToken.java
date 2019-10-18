@@ -28,8 +28,8 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 public class RootAuthenticationToken extends AbstractIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
-	public RootAuthenticationToken(final String remoteHost, String fromAppName, String redirectUrl) {
-		super(remoteHost, fromAppName, redirectUrl);
+	public RootAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo) {
+		super(remoteHost, redirectInfo);
 	}
 
 	@Override

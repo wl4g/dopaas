@@ -27,6 +27,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
@@ -52,20 +53,19 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			this.initial();
+			initialize();
 			Assert.state(authenticationTokenConstructor != null, "'authenticationTokenConstructor' is null");
 		} catch (NoSuchMethodException | SecurityException e) {
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
-
 		// Add supported SNS provider
-		if (this.enabled()) {
+		if (enabled()) {
 			ProviderSupport.addSupport(getName());
 		}
 	}
 
 	@Override
-	protected T postCreateToken(String remoteHost, String fromAppName, String redirectUrl, HttpServletRequest request,
+	protected T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		String callbackId = WebUtils.getCleanParam(request, PARAM_SNS_CALLBACK_ID);
 		Assert.hasText(callbackId, String.format("'%s' must not be empty", PARAM_SNS_CALLBACK_ID));
@@ -75,13 +75,13 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 		try {
 			// SNS authorized callback info,
 			// See:xx.sns.handler.AbstractSnsHandler#afterCallbackSet()
-			SocialAuthorizeInfo info = (SocialAuthorizeInfo) cacheManager.getEnhancedCache(CACHE_SNSAUTH)
+			SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getEnhancedCache(CACHE_SNSAUTH)
 					.get(new EnhancedKey(key, SocialAuthorizeInfo.class));
 
 			// Create authentication token instance
-			return this.authenticationTokenConstructor.newInstance(fromAppName, redirectUrl, info, remoteHost);
+			return authenticationTokenConstructor.newInstance(remoteHost, redirectInfo, authorizedInfo);
 		} finally { // Clean-up cache
-			this.cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(key));
+			cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(key));
 		}
 	}
 
@@ -92,11 +92,11 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 	 * @throws SecurityException
 	 */
 	@SuppressWarnings("unchecked")
-	private void initial() throws NoSuchMethodException, SecurityException {
+	private void initialize() throws NoSuchMethodException, SecurityException {
 		ResolvableType resolveType = ResolvableType.forClass(this.getClass());
 		Class<T> authenticationTokenClass = (Class<T>) resolveType.getSuperType().getGeneric(0).resolve();
 		this.authenticationTokenConstructor = authenticationTokenClass
-				.getConstructor(new Class[] { String.class, String.class, SocialAuthorizeInfo.class, String.class });
+				.getConstructor(new Class[] { String.class, RedirectInfo.class, SocialAuthorizeInfo.class });
 	}
 
 	/**

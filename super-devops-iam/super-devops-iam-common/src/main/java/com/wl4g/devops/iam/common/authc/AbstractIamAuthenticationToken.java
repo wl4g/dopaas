@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.authc;
 
 import static org.apache.shiro.util.Assert.notNull;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * Abstract IAM authentication token
@@ -32,7 +33,7 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	/**
 	 * Remote client host address
 	 */
-	final private String host;
+	final private String remoteHost;
 
 	/**
 	 * Redirection information.
@@ -43,20 +44,21 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 		this(null);
 	}
 
-	public AbstractIamAuthenticationToken(String remoteHost) {
-		this.host = remoteHost;
+	public AbstractIamAuthenticationToken(final String remoteHost) {
+		this.remoteHost = remoteHost;
 		this.redirectInfo = null;
 	}
 
-	public AbstractIamAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
-		this.host = remoteHost;
+	public AbstractIamAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo) {
+		hasText(remoteHost, "Remote client host must not be null.");
 		notNull(redirectInfo, "Redirect info must not be null.");
+		this.remoteHost = remoteHost;
 		this.redirectInfo = redirectInfo;
 	}
 
 	@Override
 	public String getHost() {
-		return host;
+		return remoteHost;
 	}
 
 	public RedirectInfo getRedirectInfo() {

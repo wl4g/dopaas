@@ -27,6 +27,7 @@ import org.apache.shiro.SecurityUtils;
 
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 /**
@@ -44,9 +45,9 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	final public static String NAME = "logout";
 
 	@Override
-	protected LogoutAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return new LogoutAuthenticationToken(remoteHost, fromAppName, redirectUrl);
+	protected LogoutAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		return new LogoutAuthenticationToken(remoteHost, redirectInfo);
 	}
 
 	@Override

@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 public class DingtalkAuthenticationToken extends Oauth2SnsAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
-	public DingtalkAuthenticationToken(String fromAppName, String redirectUrl, SocialAuthorizeInfo social, String host) {
-		super(fromAppName, redirectUrl, social, host);
+	public DingtalkAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, SocialAuthorizeInfo social) {
+		super(remoteHost, redirectInfo, social);
 	}
 
 }
