@@ -291,15 +291,15 @@ public class RespBase<T extends Object> implements Serializable {
 		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later"),
 
 		/**
-		 * Custom code type definition.
+		 * Customize code type definition.
 		 */
-		$CUSTOM$(-1, "Unknown error");
+		$CUSTOMIZE$(-1, "Unknown error");
 
 		/**
-		 * Create custom status code, refer to {@link #$CUSTOM$} and
+		 * Create custom status code, refer to {@link #$CUSTOMIZE$} and
 		 * {@link #create(int, String)}
 		 */
-		final private static ThreadLocal<Object[]> customStore = new InheritableThreadLocal<>();
+		final private static ThreadLocal<Object[]> customizeLocal = new InheritableThreadLocal<>();
 
 		private int errcode;
 		private String errmsg;
@@ -312,15 +312,15 @@ public class RespBase<T extends Object> implements Serializable {
 
 		/**
 		 * Get error code.</br>
-		 * If custom status code ({@link #$CUSTOM$}) is used, it takes
+		 * If custom status code ({@link #$CUSTOMIZE$}) is used, it takes
 		 * precedence.
 		 * 
 		 * @return
 		 */
 		public int getErrcode() {
-			if (this == $CUSTOM$) {
-				Object errcode = customStore.get()[0];
-				Assert.notNull(errcode, "");
+			if (this == $CUSTOMIZE$) {
+				Object errcode = customizeLocal.get()[0];
+				Assert.notNull(errcode, "Respbase customize errcode must not be null.");
 				return (int) errcode;
 			}
 			return errcode;
@@ -328,24 +328,25 @@ public class RespBase<T extends Object> implements Serializable {
 
 		/**
 		 * Get error message.</br>
-		 * If custom status error message ({@link #$CUSTOM$}) is used, it takes
-		 * precedence.
+		 * If custom status error message ({@link #$CUSTOMIZE$}) is used, it
+		 * takes precedence.
 		 * 
 		 * @return
 		 */
 		public String getErrmsg() {
-			if (this == $CUSTOM$) {
-				Object errmsg = customStore.get()[1];
-				Assert.notNull(errmsg, "");
+			if (this == $CUSTOMIZE$) {
+				Object errmsg = customizeLocal.get()[1];
+				Assert.notNull(errmsg, "Respbase customize errmsg must not be null.");
 				return (String) errmsg;
 			}
 			return errmsg;
 		}
 
 		/**
-		 * JACKSON映射枚举大小写不敏感处理
+		 * Case insensitive handling of JACKSON mapping enumeration.
 		 * 
-		 * https://www.cnblogs.com/chyu/p/9177140.htmlhttps://www.cnblogs.com/chyu/p/9177140.html
+		 * <a href=
+		 * "https://www.cnblogs.com/chyu/p/9177140.htmlhttps://www.cnblogs.com/chyu/p/9177140.html">See</a>
 		 * 
 		 * @param value
 		 * @return
@@ -376,7 +377,7 @@ public class RespBase<T extends Object> implements Serializable {
 		}
 
 		/**
-		 * Create custom status code, refer to {@link #$CUSTOM$}
+		 * Create custom status code, refer to {@link #$CUSTOMIZE$}
 		 * 
 		 * @param errcode
 		 * @param errmsg
@@ -384,8 +385,8 @@ public class RespBase<T extends Object> implements Serializable {
 		 */
 		final public static RetCode create(int errcode, String errmsg) {
 			Assert.hasText(errmsg, "Result errmsg definition must not be empty.");
-			customStore.set(new Object[] { errcode, errmsg });
-			return $CUSTOM$;
+			customizeLocal.set(new Object[] { errcode, errmsg });
+			return $CUSTOMIZE$;
 		}
 
 	}
