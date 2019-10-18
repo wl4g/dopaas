@@ -321,7 +321,7 @@
   <update id="updateStatus" parameterType="java.lang.Integer" >
     <![CDATA[
     update ci_task_history set status=4
-    where status not in(2,3,4)
+    where status in(0,1)
     and TIMESTAMPDIFF(second ,create_date,now())>#{time,jdbcType=INTEGER};
     ]]>
   </update>

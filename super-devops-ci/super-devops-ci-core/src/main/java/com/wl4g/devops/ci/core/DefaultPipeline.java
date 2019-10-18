@@ -25,13 +25,13 @@ import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
+import com.wl4g.devops.common.exception.ci.StopCommandStateException;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
 import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,37 +194,28 @@ public class DefaultPipeline implements Pipeline {
 		jobExecutor.getWorker().execute(() -> {
 			try {
 				provider.execute();
-				if (provider.getTaskResult().isSuccess()) {
+
 					// update task--success
 					log.info("task succcess taskId={}", taskId);
 					taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS,
-							provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(), provider.getShaLocal());
-
+							null, provider.getShaGit(), provider.getShaLocal());
 					sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(),
 							"Task Build Success taskId=" + taskId + " projectName="
 									+ provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()));
-				} else {
-					// update task--fail
-					log.info("task fail taskId={}", taskId);
-					taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL,
-							provider.getTaskResult().getStringBuffer().toString());
-
-					sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(),
-							"Task Build Fail taskId=" + taskId + " projectName="
-									+ provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()) + "\n");
-				}
+			} catch (StopCommandStateException e) {
+				log.info("task stop taskId={}", taskId);
+				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, e.getMessage());
+				e.printStackTrace();
 			} catch (Exception e) {
 				// update task--fail
 				log.info("task fail taskId={}", taskId);
-				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL,
-						provider.getTaskResult().getStringBuffer().toString() + e.getMessage());
+				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				e.printStackTrace();
 				sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(),
 						"Task Build Fail taskId=" + taskId + " projectName="
 								+ provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()) + "\n");
 			}
 		});
-
 	}
 
 	private void sendMailByContactGroupId(Integer contactGroupId, String text) {
@@ -337,13 +328,10 @@ public class DefaultPipeline implements Pipeline {
 		jobExecutor.getWorker().execute(() -> {
 			try {
 				provider.rollback();
-				if (provider.getTaskResult().isSuccess()) {
+
 					taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS,
-							provider.getTaskResult().getStringBuffer().toString(), provider.getShaGit(), provider.getShaLocal());
-				} else {
-					taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL,
-							provider.getTaskResult().getStringBuffer().toString());
-				}
+							null, provider.getShaGit(), provider.getShaLocal());
+
 			} catch (Exception e) {
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				e.printStackTrace();

@@ -47,7 +47,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	public void execute() throws Exception {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getPipelineInfo().getProject().getId());
-		build(getPipelineInfo().getTaskHistory(), taskResult, false);
+		build(getPipelineInfo().getTaskHistory(), false);
 
 		// get sha and md5
 		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
@@ -86,7 +86,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 					getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
 			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
 		} else { // Re-pull from VCS by SHA.
-			build(getPipelineInfo().getTaskHistory(), taskResult, true);
+			build(getPipelineInfo().getTaskHistory(), true);
 			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		}
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
@@ -108,11 +108,11 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	/**
 	 * Docker build
 	 */
-	public String dockerBuild(String path) throws Exception {
+	public void dockerBuild(String path) throws Exception {
 		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getTranform().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getTranform().getDockerNative().getDockerPushPasswd();
-		return SSHTool.exec(command);
+		SSHTool.exec(command);
 	}
 
 	/**

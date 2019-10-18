@@ -118,4 +118,12 @@ public class TaskHistoryController extends BaseController {
 		return resp;
 	}
 
+
+	@RequestMapping(value = "/stopTask")
+	public RespBase<?> create(Integer taskHisId) {
+		RespBase<Object> resp = RespBase.create();
+		taskHistoryService.stopByTaskHisId(taskHisId);
+		return resp;
+	}
+
 }
