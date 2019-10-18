@@ -21,7 +21,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -34,13 +33,14 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
 import static com.wl4g.devops.iam.config.properties.IamProperties.*;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.springframework.util.Assert.notNull;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -116,33 +116,31 @@ public class DefaultViewController extends BaseController {
 	 * @throws Exception
 	 */
 	protected void responseFile(String basePath, String filepath, HttpServletResponse response) throws Exception {
-		Assert.notNull(filepath, "'filename' must not be null");
+		notNull(filepath, "'filename' must not be null");
 		basePath = trimToEmpty(basePath);
 
 		// Get buffer cache
 		byte[] buf = bufferCache.get(filepath);
-		if (Objects.isNull(buf)) {
+		if (isNull(buf)) {
 			Resource resource = getResource(basePath, filepath);
 			if (resource.exists()) {
-				if (log.isInfoEnabled()) {
-					log.info("Read file path:[{}]", resource.getURL());
+				if (log.isDebugEnabled()) {
+					log.debug("Read file path:[{}]", resource.getURL());
 				}
 				buf = ByteStreams.toByteArray(resource.getInputStream());
 				// Caching is enabled when in non-debug mode.
 				if (!JVMRuntimeKit.isJVMDebugging) {
 					bufferCache.put(filepath, buf);
-					// response.setDateHeader("expires",
-					// System.currentTimeMillis() + 600_000);
-					// response.addHeader("Pragma", "Pragma");
-					// response.addHeader("Cache-Control", "public");
-					// response.addHeader("Last-Modified",
-					// String.valueOf(System.currentTimeMillis()));
 				}
 			} else { // Not found
 				write(response, HttpStatus.NOT_FOUND.value(), MediaType.TEXT_HTML_VALUE, "Not Found".getBytes(Charsets.UTF_8));
 				return;
 			}
 		}
+		response.setDateHeader("expires", System.currentTimeMillis() + 600_000);
+		response.addHeader("Pragma", "Pragma");
+		response.addHeader("Cache-Control", "public");
+		response.addHeader("Last-Modified", String.valueOf(System.currentTimeMillis()));
 
 		// Response file buffer.
 		write(response, HttpStatus.OK.value(), getContentType(filepath), buf);

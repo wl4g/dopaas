@@ -43,6 +43,7 @@ import static com.wl4g.devops.iam.common.utils.Sessions.getSession;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATTRIBUTE_NAME;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Date;
@@ -89,7 +90,7 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		String granticket = "";
+		String granticket = EMPTY;
 		try {
 			Assert.notNull(token, "'authenticationToken' must not be null");
 			FastCasAuthenticationToken fcToken = (FastCasAuthenticationToken) token;

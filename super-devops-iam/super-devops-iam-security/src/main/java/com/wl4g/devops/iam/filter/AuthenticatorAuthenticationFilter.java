@@ -27,11 +27,13 @@ import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 
 /**
  * IAM client authenticator authorization filter.</br>
@@ -42,6 +44,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
  * @date 2018年12月6日
  * @since
  */
+@Beta
 @IamFilter
 public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter {
 	final public static String NAME = "authenticatorFilter";
@@ -123,9 +126,9 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	}
 
 	@Override
-	protected IamAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return new AuthenticatorAuthenticationToken(remoteHost, fromAppName, redirectUrl);
+	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		return new AuthenticatorAuthenticationToken(remoteHost, redirectInfo);
 	}
 
 	@Override

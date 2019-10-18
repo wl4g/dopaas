@@ -42,13 +42,16 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.isTrue;
 
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
@@ -98,6 +101,12 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	 */
 	@Autowired
 	protected ServerSecurityConfigurer configurer;
+
+	/**
+	 * IAM server security processor
+	 */
+	@Autowired
+	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
 	 * Delegate message source.
@@ -169,9 +178,10 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 
 			// Check whether the login user has access to the target IAM-client
 			// application. (Check only when access application).
-			if (!isBlank(tk.getRedirectInfo().getFromAppName())) {
-				Assert.isTrue(!info.getPrincipals().isEmpty(),
-						String.format("login user info is empty. please check the configure. info: %s", info));
+			String fromAppName = tk.getRedirectInfo().getFromAppName();
+			if (!isBlank(fromAppName)) {
+				isTrue(!info.getPrincipals().isEmpty(),
+						String.format("Authentication info principals is empty, please check the configure. [%s]", info));
 				// For example: first login to manager service(mp) with 'admin',
 				// then logout, and then login to portal service(portal) with
 				// user01. At this time, the check will return that 'user01' has
@@ -180,22 +190,22 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 				// https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
 				String principal = (String) tk.getPrincipal();
 				try {
-					authHandler.assertApplicationAccessAuthorized(principal, tk.getRedirectInfo().getFromAppName());
+					authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
 				} catch (IllegalApplicationAccessException ex) {
-					// TODO --------------=======================
-					String fallbackAppName = null;
-					String fallbackRedirectUrl = null;
-					log.warn(
-							"The user '{}' is not authorized to access application '{}', and has used the fallback access application: {}@{}, caused by: {}",
-							principal, tk.getRedirectInfo().getFromAppName(), fallbackAppName, fallbackRedirectUrl,
-							getRootCausesString(ex, false));
+					// Fallback determine redirect to application.
+					RedirectInfo fallbackRedirect = coprocessor.fallbackAccessUnauthorizedApplication(tk, tk.getRedirectInfo());
 					/**
 					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters}
 					 * See:{@link AbstractIamAuthenticationFilter#getFromAppName}
 					 * See:{@link AbstractIamAuthenticationFilter#getFromRedirectUrl}
 					 */
-					bindKVParameters(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication(), fallbackAppName,
-							config.getParam().getRedirectUrl(), fallbackRedirectUrl);
+					bindKVParameters(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication(), fallbackRedirect.getFromAppName(),
+							config.getParam().getRedirectUrl(), fallbackRedirect.getRedirectUrl());
+					if (log.isWarnEnabled()) {
+						log.warn(
+								"The user '{}' is not authorized to access application '{}', and has used the fallback access application: {}@{}, caused by: {}",
+								principal, fromAppName, fallbackRedirect, getRootCausesString(ex, false));
+					}
 				}
 			}
 

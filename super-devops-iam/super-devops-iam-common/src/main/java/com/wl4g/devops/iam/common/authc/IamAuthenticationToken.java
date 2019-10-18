@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
-import static org.apache.shiro.util.Assert.hasText;
-
 import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
@@ -51,8 +49,8 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		final private String redirectUrl;
 
 		public RedirectInfo(String fromAppName, String redirectUrl) {
-			hasText(fromAppName, "Application name must not be empty.");
-			hasText(redirectUrl, "Redirect url must not be empty.");
+			// hasText(fromAppName, "Application name must not be empty.");
+			// hasText(redirectUrl, "Redirect url must not be empty.");
 			this.fromAppName = fromAppName;
 			this.redirectUrl = redirectUrl;
 		}
@@ -65,5 +63,11 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 			return redirectUrl;
 		}
 
+		@Override
+		public String toString() {
+			return fromAppName + "@" + redirectUrl;
+		}
+
 	}
+
 }

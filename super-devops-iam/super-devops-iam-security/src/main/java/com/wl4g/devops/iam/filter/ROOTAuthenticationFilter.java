@@ -26,9 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.Assert;
 
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.authc.RootAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 
 /**
  * Root path authentication routing filter.<br/>
@@ -42,6 +44,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
  * @date 2018年12月6日
  * @since
  */
+@Beta
 @IamFilter
 public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<IamAuthenticationToken> {
 	final public static String NAME = "rootFilter";
@@ -76,9 +79,9 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	}
 
 	@Override
-	protected IamAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return new RootAuthenticationToken(remoteHost, fromAppName, redirectUrl);
+	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		return new RootAuthenticationToken(remoteHost, redirectInfo);
 	}
 
 	@Override

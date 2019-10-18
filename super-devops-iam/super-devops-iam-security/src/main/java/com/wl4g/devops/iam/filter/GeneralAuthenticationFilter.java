@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 
@@ -33,8 +34,8 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 	final public static String NAME = "general";
 
 	@Override
-	protected GeneralAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected GeneralAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		if (!POST.name().equalsIgnoreCase(request.getMethod())) {
 			response.setStatus(405);
 			throw new HttpRequestMethodNotSupportedException(request.getMethod(),
@@ -46,8 +47,8 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
 		VerifyType verityType = VerifyType.of(request);
-		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, cipherPassword, clientRef,
-				verifiedToken, verityType);
+		return new GeneralAuthenticationToken(remoteHost, redirectInfo, username, cipherPassword, clientRef, verifiedToken,
+				verityType);
 	}
 
 	@Override

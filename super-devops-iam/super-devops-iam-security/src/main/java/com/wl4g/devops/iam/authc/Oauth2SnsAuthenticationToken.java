@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import org.apache.shiro.util.Assert;
+import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
@@ -39,10 +39,10 @@ public abstract class Oauth2SnsAuthenticationToken extends AbstractIamAuthentica
 	 */
 	final private SocialAuthorizeInfo social;
 
-	public Oauth2SnsAuthenticationToken(final String fromAppName, final String redirectUrl, final SocialAuthorizeInfo social,
-			final String remoteHost) {
-		super(remoteHost, fromAppName, redirectUrl);
-		Assert.notNull(social, "'social' must not be null");
+	public Oauth2SnsAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo,
+			final SocialAuthorizeInfo social) {
+		super(remoteHost, redirectInfo);
+		notNull(social, "'social' must not be null");
 		this.social = (social == null ? new SocialAuthorizeInfo() : social);
 	}
 

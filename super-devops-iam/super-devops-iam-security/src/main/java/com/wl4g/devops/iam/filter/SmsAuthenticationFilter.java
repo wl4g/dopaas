@@ -15,24 +15,34 @@
  */
 package com.wl4g.devops.iam.filter;
 
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.web.util.WebUtils;
-
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 
+/**
+ * SMS authentication filter.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-05-18
+ * @since
+ */
 @IamFilter
+@Beta
 public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<SmsAuthenticationToken> {
 	final public static String NAME = "sms";
 
 	@Override
-	protected SmsAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String action = WebUtils.getCleanParam(request, config.getParam().getSmsActionName());
-		String principal = WebUtils.getCleanParam(request, config.getParam().getPrincipalName());
-		String smsCode = WebUtils.getCleanParam(request, config.getParam().getCredentialName());
+	protected SmsAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		String action = getCleanParam(request, config.getParam().getSmsActionName());
+		String principal = getCleanParam(request, config.getParam().getPrincipalName());
+		String smsCode = getCleanParam(request, config.getParam().getCredentialName());
 		return new SmsAuthenticationToken(remoteHost, action, principal, smsCode);
 	}
 

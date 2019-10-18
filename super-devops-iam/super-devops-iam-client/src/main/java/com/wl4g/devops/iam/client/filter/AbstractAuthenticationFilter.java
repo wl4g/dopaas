@@ -52,6 +52,7 @@ import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
@@ -171,7 +172,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response)
 			throws Exception {
 		FastCasAuthenticationToken ftoken = (FastCasAuthenticationToken) token;
-		Assert.notNull(ftoken.getCredentials(), "token.credentials(grant ticket) must not be null");
+		notNull(ftoken.getCredentials(), "token.credentials(grant ticket) must not be null");
 
 		// Grant ticket
 		String grantTicket = (String) ftoken.getCredentials();

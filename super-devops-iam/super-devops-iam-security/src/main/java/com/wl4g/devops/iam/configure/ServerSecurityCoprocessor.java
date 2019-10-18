@@ -19,6 +19,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 
 /**
@@ -53,15 +54,16 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 	}
 
 	/**
+	 * When the authentication succeeds, but there is no access to the Iam
+	 * client application, this method will be called fallback to get the
+	 * redirection URL
 	 * 
 	 * @param token
-	 * @param application
-	 * @param redirectUrl
+	 * @param redirectInfo
 	 * @return
 	 */
-	default boolean fallbackAccessUnauthorizedApplication(IamAuthenticationToken token, String application, String redirectUrl) {
-		// TODO
-		return true;
+	default RedirectInfo fallbackAccessUnauthorizedApplication(IamAuthenticationToken token, RedirectInfo redirectInfo) {
+		return redirectInfo;
 	}
 
 }

@@ -54,6 +54,7 @@ import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.Assert.hasText;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
@@ -149,7 +150,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	public TicketAssertion validate(TicketValidationModel model) {
 		TicketAssertion assertion = new TicketAssertion();
 		String fromAppName = model.getApplication();
-		Assert.hasText(fromAppName, "'fromAppName' must not be empty.");
+		hasText(fromAppName, "'fromAppName' must not be empty.");
 
 		// Get subject session of grantTicket.
 		/*
