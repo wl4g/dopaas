@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.configure;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 
 /**
@@ -48,6 +49,18 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 	 * @return
 	 */
 	default boolean preApplyVerify(ServletRequest request, ServletResponse response) {
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param token
+	 * @param application
+	 * @param redirectUrl
+	 * @return
+	 */
+	default boolean fallbackAccessUnauthorizedApplication(IamAuthenticationToken token, String application, String redirectUrl) {
+		// TODO
 		return true;
 	}
 

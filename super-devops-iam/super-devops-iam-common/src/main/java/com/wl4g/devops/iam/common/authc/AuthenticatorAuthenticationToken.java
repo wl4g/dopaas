@@ -26,8 +26,8 @@ package com.wl4g.devops.iam.common.authc;
 public class AuthenticatorAuthenticationToken extends AbstractIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
-	public AuthenticatorAuthenticationToken(String remoteHost, String fromAppName, String redirectUrl) {
-		super(remoteHost, fromAppName, redirectUrl);
+	public AuthenticatorAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
+		super(remoteHost, redirectInfo);
 	}
 
 	@Override

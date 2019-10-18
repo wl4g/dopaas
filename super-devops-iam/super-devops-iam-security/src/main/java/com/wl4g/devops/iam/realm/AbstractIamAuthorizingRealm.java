@@ -33,12 +33,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.web.client.RestTemplate;
 
+import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_ACCOUNT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_TOKEN;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -157,21 +162,41 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
 		CredentialsMatcher matcher = getCredentialsMatcher();
-		if (matcher != null) {
+		if (nonNull(matcher)) {
 			if (!matcher.doCredentialsMatch(tk, info)) {
-				// not successful - throw an exception to indicate this:
 				throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
 			}
 
-			/*
-			 * Check whether have permission to access the target
-			 * application(Check only when accessing applications).
-			 */
-			if (!isBlank(tk.getFromAppName())) {
+			// Check whether the login user has access to the target IAM-client
+			// application. (Check only when access application).
+			if (!isBlank(tk.getRedirectInfo().getFromAppName())) {
 				Assert.isTrue(!info.getPrincipals().isEmpty(),
 						String.format("login user info is empty. please check the configure. info: %s", info));
-				String principal = (String) info.getPrincipals().iterator().next();
-				authHandler.assertApplicationAccessAuthorized(principal, tk.getFromAppName());
+				// For example: first login to manager service(mp) with 'admin',
+				// then logout, and then login to portal service(portal) with
+				// user01. At this time, the check will return that 'user01' has
+				// no permission to access manager service(mp).
+				// e.g:
+				// https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
+				String principal = (String) tk.getPrincipal();
+				try {
+					authHandler.assertApplicationAccessAuthorized(principal, tk.getRedirectInfo().getFromAppName());
+				} catch (IllegalApplicationAccessException ex) {
+					// TODO --------------=======================
+					String fallbackAppName = null;
+					String fallbackRedirectUrl = null;
+					log.warn(
+							"The user '{}' is not authorized to access application '{}', and has used the fallback access application: {}@{}, caused by: {}",
+							principal, tk.getRedirectInfo().getFromAppName(), fallbackAppName, fallbackRedirectUrl,
+							getRootCausesString(ex, false));
+					/**
+					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters}
+					 * See:{@link AbstractIamAuthenticationFilter#getFromAppName}
+					 * See:{@link AbstractIamAuthenticationFilter#getFromRedirectUrl}
+					 */
+					bindKVParameters(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication(), fallbackAppName,
+							config.getParam().getRedirectUrl(), fallbackRedirectUrl);
+				}
 			}
 
 		} else {

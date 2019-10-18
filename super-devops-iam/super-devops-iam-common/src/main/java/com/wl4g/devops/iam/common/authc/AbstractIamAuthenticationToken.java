@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
+import static org.apache.shiro.util.Assert.notNull;
+
 /**
  * Abstract IAM authentication token
  * 
@@ -33,14 +35,9 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	final private String host;
 
 	/**
-	 * Source application name
+	 * Redirection information.
 	 */
-	final private String fromAppName;
-
-	/**
-	 * Source application callback URL
-	 */
-	final private String redirectUrl;
+	final private RedirectInfo redirectInfo;
 
 	public AbstractIamAuthenticationToken() {
 		this(null);
@@ -48,14 +45,13 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 
 	public AbstractIamAuthenticationToken(String remoteHost) {
 		this.host = remoteHost;
-		this.fromAppName = null;
-		this.redirectUrl = null;
+		this.redirectInfo = null;
 	}
 
-	public AbstractIamAuthenticationToken(String remoteHost, String fromAppName, String redirectUrl) {
+	public AbstractIamAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
 		this.host = remoteHost;
-		this.fromAppName = fromAppName;
-		this.redirectUrl = redirectUrl;
+		notNull(redirectInfo, "Redirect info must not be null.");
+		this.redirectInfo = redirectInfo;
 	}
 
 	@Override
@@ -63,14 +59,8 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 		return host;
 	}
 
-	@Override
-	public String getFromAppName() {
-		return fromAppName;
-	}
-
-	@Override
-	public String getRedirectUrl() {
-		return redirectUrl;
+	public RedirectInfo getRedirectInfo() {
+		return redirectInfo;
 	}
 
 }

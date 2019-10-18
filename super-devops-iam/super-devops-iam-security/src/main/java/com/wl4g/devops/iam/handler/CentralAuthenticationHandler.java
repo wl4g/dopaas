@@ -106,7 +106,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public void checkAuthenticateValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException {
+	public void checkAuthenticateRedirectValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException {
 		// Check redirect URL(When source application is not empty)
 		if (!isBlank(fromAppName)) {
 			if (isBlank(redirectUrl)) {
