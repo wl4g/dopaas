@@ -179,8 +179,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Client remote host
 		String remoteHost = WebUtils2.getHttpRemoteAddr((HttpServletRequest) request);
 		// From information
-		String fromAppName = getFromAppName(request);
-		String redirectUrl = getFromRedirectUrl(request);
+		String fromAppName = getCleanParam(request, config.getParam().getApplication());
+		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
 
 		// Create authentication token
 		return postCreateToken(remoteHost, fromAppName, redirectUrl, toHttp(request), toHttp(response));
@@ -200,13 +200,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			 * Save the token at the time of authentication, which can then be
 			 * used for extended logic usage.
 			 */
-			// subject.getSession().setAttribute(KEY_AUTHC_TOKEN, tk);
+			// bind(KEY_AUTHC_TOKEN, tk);
 
+			// Redirection application.
+			String fromAppName = getFromAppName(request);
 			// Success redirect URL.
 			String successUrl = getFromRedirectUrl(request);
-
-			// From source application
-			String fromAppName = getFromAppName(request);
 			if (isBlank(fromAppName)) { // Use default?
 				fromAppName = config.getSuccessService();
 				successUrl = getSuccessUrl();
@@ -348,27 +347,24 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	}
 
 	/**
-	 * Get the name from the application from the login request, or get it from
-	 * session(flexible API).
+	 * Get redirect application name bound from authentication request. See:
+	 * {@link #createToken(ServletRequest, ServletResponse)}
 	 * 
 	 * @return
 	 */
 	protected String getFromAppName(ServletRequest request) {
-		String fromAppName = getCleanParam(request, config.getParam().getApplication()); // Priority
-		return isNotBlank(fromAppName) ? fromAppName : extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication());
+		return extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication());
 	}
 
 	/**
-	 * Get the URL from the redirectUrl from the login request, or get it from
-	 * session(flexible API).
+	 * Get redirect URL bound from authentication request
+	 * {@link #createToken(ServletRequest, ServletResponse)}
 	 * 
 	 * @return
 	 */
 	protected String getFromRedirectUrl(ServletRequest request) {
-		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl()); // Priority.
 		// Safety encoding.
-		redirectUrl = safeEncodeHierarchyRedirectUrl(redirectUrl);
-		return isNotBlank(redirectUrl) ? redirectUrl : extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl());
+		return safeEncodeHierarchyRedirectUrl(extParameterValue(KEY_REQ_AUTH_PARAMS, config.getParam().getRedirectUrl()));
 	}
 
 	/**
@@ -379,8 +375,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * e.g.
 	 * 
 	 * <pre>
-	 * safeEncodeWithCyclicRedirectUrl("http://mydomain.com/iam-example/authenticator?redirect_url=http://mydomain.com/#/index")
-	 * Return ==> http://mydomain.com/iam-example/authenticator?redirect_url=http%3A%2F%2Fmydomain.com%2F%23%2Findex
+	 * http://mydomain.com/iam-example/authenticator?redirect_url=http://mydomain.com/#/index
+	 * => http://mydomain.com/iam-example/authenticator?redirect_url=http%3A%2F%2Fmydomain.com%2F%23%2Findex
 	 * </pre>
 	 * 
 	 * @param redirectUrl

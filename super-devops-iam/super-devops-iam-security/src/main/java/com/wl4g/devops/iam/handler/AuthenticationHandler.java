@@ -48,7 +48,7 @@ public abstract interface AuthenticationHandler {
 	 * @param redirectUrl
 	 * @throws IllegalCallbackDomainException
 	 */
-	void checkAuthenticateValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException;
+	void checkAuthenticateRedirectValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException;
 
 	/**
 	 * Assertion whether the current login account has permission to access the

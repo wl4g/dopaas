@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
+import static org.apache.shiro.util.Assert.hasText;
+
 import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
@@ -27,8 +29,41 @@ import org.apache.shiro.authc.HostAuthenticationToken;
  */
 public interface IamAuthenticationToken extends HostAuthenticationToken {
 
-	String getFromAppName();
+	RedirectInfo getRedirectInfo();
 
-	String getRedirectUrl();
+	/**
+	 * IAM client authentication redirection information.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月18日
+	 * @since
+	 */
+	public static class RedirectInfo {
 
+		/**
+		 * Client authentication redirection application.
+		 */
+		final private String fromAppName;
+
+		/**
+		 * Client authentication redirection URL.
+		 */
+		final private String redirectUrl;
+
+		public RedirectInfo(String fromAppName, String redirectUrl) {
+			hasText(fromAppName, "Application name must not be empty.");
+			hasText(redirectUrl, "Redirect url must not be empty.");
+			this.fromAppName = fromAppName;
+			this.redirectUrl = redirectUrl;
+		}
+
+		public String getFromAppName() {
+			return fromAppName;
+		}
+
+		public String getRedirectUrl() {
+			return redirectUrl;
+		}
+
+	}
 }

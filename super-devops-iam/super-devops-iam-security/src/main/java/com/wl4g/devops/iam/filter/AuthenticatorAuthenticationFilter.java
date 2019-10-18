@@ -51,8 +51,10 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		Subject subject = getSubject(request, response);
 
 		try {
-			// Check authenticate request validity.
-			authHandler.checkAuthenticateValidity(getFromAppName(request), getFromRedirectUrl(request));
+			// Check authenticate redirect URL validity.
+			String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
+			String fromAppName = getCleanParam(request, config.getParam().getApplication());
+			authHandler.checkAuthenticateRedirectValidity(fromAppName, redirectUrl);
 
 			// Remember request parameters
 			savedRequestParameters(request, response);
