@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.iam.model.BasedModel;
 import com.wl4g.devops.common.exception.iam.ValidateException;
 
 /**
- * IAM validator
+ * IAM validator.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月31日
