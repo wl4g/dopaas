@@ -14,9 +14,7 @@ public class ExecutorProperties extends RunProperties {
 	private static final long serialVersionUID = -7007748978859003620L;
 
 	public ExecutorProperties() {
-		// By default.
-		setConcurrency(5);
-		setAcceptQueue(32);
+		setConcurrency(5); // By default.
 	}
 
 }

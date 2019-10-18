@@ -18,7 +18,6 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
-import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
 
 /**
  * Based pipeline provider.
@@ -76,18 +75,6 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 		 * NPM provider alias.
 		 */
 		final public static String NPM_VIEW = "PipeWithNpm";
-
-		/**
-		 * Get prototype bean provider.
-		 * 
-		 * @param beanFactory
-		 * @param provider
-		 * @return
-		 */
-		final public static PipelineProvider getPrototypePipelineProvider(DelegateAliasPrototypeBeanFactory beanFactory,
-				String provider, PipelineInfo info) {
-			return beanFactory.getPrototypeBean(provider, info);
-		}
 
 	}
 

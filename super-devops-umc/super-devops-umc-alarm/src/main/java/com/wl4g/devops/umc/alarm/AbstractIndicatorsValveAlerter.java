@@ -62,11 +62,6 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	}
 
 	@Override
-	public void run() {
-		// Ignore
-	}
-
-	@Override
 	public void alarm(MetricAggregateWrapper wrap) {
 		// TODO 没有进入doHandleAlarm方法，要看下这个getworker是否有bug
 		// getWorker().execute(() -> doHandleAlarm(wrap));
@@ -161,8 +156,5 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 		Assert.hasText(cacheKey, "cacheKey must not be empty");
 		return KEY_CACHE_ALARM_METRIC_QUEUE + cacheKey;
 	}
-
-
-
 
 }

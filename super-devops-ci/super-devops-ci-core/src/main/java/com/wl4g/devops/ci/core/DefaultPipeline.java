@@ -30,7 +30,8 @@ import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBeanFactory;
-import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
+import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType.*;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static java.util.Arrays.asList;
 
@@ -309,7 +309,7 @@ public class DefaultPipeline implements Pipeline {
 		PipelineInfo info = new DefaultPipelineInfo();
 		info.setProject(project);
 		info.setTarType(taskHisy.getTarType());
-		info.setPath(config.getWorkspace() + "/" + project.getProjectName());
+		info.setPath(config.getProjectDir(project.getProjectName()).getAbsolutePath());
 		info.setBranch(taskHisy.getBranchName());
 		info.setAlias(appCluster.getName());
 		info.setInstances(instances);
@@ -317,7 +317,7 @@ public class DefaultPipeline implements Pipeline {
 		info.setRefTaskHistory(refTaskHistory);
 		info.setTaskHistoryDetails(taskHistoryDetails);
 
-		return getPrototypePipelineProvider(beanFactory, info.getTarType(), info);
+		return beanFactory.getPrototypeBean(info.getTarType(), info);
 	}
 
 	/**

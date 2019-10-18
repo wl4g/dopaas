@@ -22,11 +22,6 @@ public class PipelineJobExecutor extends GenericTaskRunner<RunProperties> {
 		this.config = config;
 	}
 
-	@Override
-	public void run() {
-		// Ignore.
-	}
-
 	public ThreadPoolExecutor getWorker() {
 		return super.getWorker();
 	}
