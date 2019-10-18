@@ -21,12 +21,12 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * MAVEN assemble tar provider.
@@ -53,7 +53,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		}
 		// get git sha
 		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
-		deploy();
+		//deploy();
 	}
 
 	/**

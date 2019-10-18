@@ -141,6 +141,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	protected String commandReplace(String command, String projectPath) {
+		command.replaceAll("\\[","\\[");
 		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
 		// TODO ......
 		return command;
