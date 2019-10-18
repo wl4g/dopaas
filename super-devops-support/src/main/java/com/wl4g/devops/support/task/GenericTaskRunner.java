@@ -40,6 +40,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,9 +86,10 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		// Create worker(if necessary)
 		if (bossState.compareAndSet(false, true)) {
 			if (config.getConcurrency() > 0) {
-				worker = new ThreadPoolExecutor(1, config.getConcurrency(), config.getKeepAliveTime(), MICROSECONDS,
-						new LinkedBlockingQueue<>(config.getAcceptQueue()), new NamedThreadFactory(getClass().getSimpleName()),
-						config.getReject());
+				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
+				worker = new ThreadPoolExecutor(config.getConcurrency(), config.getConcurrency(), config.getKeepAliveTime(),
+						MICROSECONDS, new LinkedBlockingQueue<>(config.getAcceptQueue()),
+						new NamedThreadFactory(getClass().getSimpleName()), config.getReject());
 			} else {
 				log.warn("No workthread pool for started, because the number of workthread is less than 0");
 			}
@@ -188,6 +190,11 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		return config;
 	}
 
+	@Override
+	public void run() {
+		// Ignore
+	}
+
 	/**
 	 * Submitted job wait for completed.
 	 * 
@@ -215,7 +222,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 							it.remove(); // Cleanup cancelled or isDone
 						}
 					}
-					Exception ex = new IllegalStateException(
+					TimeoutException ex = new TimeoutException(
 							String.format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
 									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
 					listener.onComplete(ex, (total - latch.getCount()), futureJob.values());
@@ -308,13 +315,9 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 
 		final private String namedId;
 
-		final private Runnable job;
-
-		public NamedIdJob(String namedId, Runnable job) {
+		public NamedIdJob(String namedId) {
 			Assert.hasText(namedId, "Named ID must not be empty.");
-			Assert.notNull(job, "Named job must not be null.");
 			this.namedId = namedId;
-			this.job = job;
 		}
 
 		public String getNamedId() {
@@ -323,12 +326,12 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 
 		@Override
 		public void run() {
-			job.run();
+			// Ignore
 		}
 
 		@Override
 		public String toString() {
-			return "NamedIdJob [namedId=" + namedId + "]";
+			return "NamedIdJob@" + namedId;
 		}
 
 	}
@@ -349,7 +352,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		 * @param completed
 		 * @param uncompleted
 		 */
-		void onComplete(Exception ex, long completed, Collection<NamedIdJob> uncompleted);
+		void onComplete(TimeoutException ex, long completed, Collection<NamedIdJob> uncompleted);
 
 	}
 
@@ -373,13 +376,13 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		 */
 		private int concurrency = -1;
 
-		/** watch dog delay */
+		/** Watch dog delay */
 		private long keepAliveTime = 0L;
 
 		/**
 		 * Consumption receive queue size
 		 */
-		private int acceptQueue = 32;
+		private int acceptQueue = 2;
 
 		/** Rejected execution handler. */
 		private RejectedExecutionHandler reject = new AbortPolicy();
@@ -471,29 +474,30 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		// Add testing jobs.
 		List<NamedIdJob> jobs = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
-			jobs.add(new NamedIdJob("testjob-" + i, () -> {
-				try {
-					System.out.println("testing job starting. ");
-					Thread.sleep(3000L);
-					System.out.println("testing job completed. ");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+			jobs.add(new NamedIdJob("testjob-" + i) {
+				@Override
+				public void run() {
+					try {
+						System.out.println("Starting... testjob-" + getNamedId());
+						Thread.sleep(3000L);
+						System.out.println("Completed. testjob-" + getNamedId());
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-			}));
+			});
 		}
 
-		// Submit jobs.
-		GenericTaskRunner runner = new GenericTaskRunner<RunProperties>(new RunProperties(1)) {
-			@Override
-			public void run() {
-				// Ignore
-			}
+		// Create runner.
+		GenericTaskRunner runner = new GenericTaskRunner<RunProperties>(new RunProperties(2)) {
 		};
 		runner.run(null);
+
+		// Submit jobs & listen job timeout.
 		runner.submitForComplete(jobs, (ex, completed, uncompleted) -> {
-			// Listen timeout call-back.
-			System.out.println(String.format("Completion for completed:%s, uncompleted:%s", completed, uncompleted));
-		}, 10000l); // >3*3000
+			ex.printStackTrace();
+			System.out.println(String.format("Completed: %s, uncompleted sets: %s", completed, uncompleted));
+		}, 4 * 1000l); // > 3*3000
 	}
 
 }

@@ -33,6 +33,9 @@ import org.springframework.util.Assert;
  */
 public class CiCdProperties {
 
+	final public static String DEFUALT_JOB_BASEDIR = "jobs";
+	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
+
 	/**
 	 * Global workspace directory path.
 	 */
@@ -115,7 +118,7 @@ public class CiCdProperties {
 
 	public File getJobBaseDir(Integer taskHisyId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
-		return new File(getWorkspace() + "/job." + taskHisyId);
+		return new File(getWorkspace() + "/" + DEFUALT_JOB_BASEDIR + "/job." + taskHisyId);
 	}
 
 	public File getJobLog(Integer taskHisyId) {
@@ -137,7 +140,7 @@ public class CiCdProperties {
 
 	public File getProjectDir(String projectName) {
 		Assert.hasText(projectName, "ProjectName must not be empty.");
-		return new File(getWorkspace() + "/" + projectName);
+		return new File(getWorkspace() + "/" + DEFUALT_VCS_SOURCEDIR + "/" + projectName);
 	}
 
 }

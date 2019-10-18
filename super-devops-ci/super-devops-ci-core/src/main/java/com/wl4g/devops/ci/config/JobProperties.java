@@ -1,6 +1,6 @@
 package com.wl4g.devops.ci.config;
 
-import java.util.Objects;
+import static java.util.Objects.nonNull;
 
 /**
  * CICD pipeline process, construction of relevant configuration.
@@ -22,7 +22,7 @@ public class JobProperties {
 	}
 
 	public void setCleanScan(Long cleanScan) {
-		if (Objects.nonNull(cleanScan)) {
+		if (nonNull(cleanScan)) {
 			this.cleanScan = cleanScan;
 		}
 	}
@@ -32,7 +32,7 @@ public class JobProperties {
 	}
 
 	public void setJobTimeout(Integer jobTimeout) {
-		if (Objects.nonNull(jobTimeout)) {
+		if (nonNull(jobTimeout)) {
 			this.jobTimeout = jobTimeout;
 		}
 	}
@@ -42,7 +42,7 @@ public class JobProperties {
 	}
 
 	public void setSharedDependencyTryTimeoutMs(Long sharedDependencyTryTimeoutMs) {
-		if (Objects.nonNull(sharedDependencyTryTimeoutMs)) {
+		if (nonNull(sharedDependencyTryTimeoutMs)) {
 			this.sharedDependencyTryTimeoutMs = sharedDependencyTryTimeoutMs;
 		}
 	}

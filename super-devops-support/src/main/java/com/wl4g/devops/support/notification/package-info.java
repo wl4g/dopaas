@@ -15,4 +15,4 @@
  * 
  * Java message service module. (Email/SMS/VMS/WECAHT/iOS)
  */
-package com.wl4g.devops.support.ms;
+package com.wl4g.devops.support.notification;

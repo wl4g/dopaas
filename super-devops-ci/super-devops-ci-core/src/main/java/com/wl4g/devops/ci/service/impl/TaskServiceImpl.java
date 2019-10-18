@@ -61,7 +61,8 @@ public class TaskServiceImpl implements TaskService {
 	@Transactional
 	public Task save(Task task) {
 		// check task repeat
-		//Assert.state(!isRepeat(task, task.getInstance()), "trigger deploy this instance is Repeat,please check");
+		// Assert.state(!isRepeat(task, task.getInstance()), "trigger deploy
+		// this instance is Repeat,please check");
 		Assert.notEmpty(task.getInstance(), "instance can not be null");
 		Assert.notNull(task, "task can not be null");
 		Project project = projectDao.getByAppClusterId(task.getAppClusterId());
@@ -145,32 +146,15 @@ public class TaskServiceImpl implements TaskService {
 		data.put("instances", instances);
 		// Commands.
 		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(id);
-		for(TaskBuildCommand taskBuildCommand : taskBuildCommands){
+		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			Project project = projectDao.selectByPrimaryKey(taskBuildCommand.getProjectId());
-			if(project==null){
+			if (project == null) {
 				continue;
 			}
 			taskBuildCommand.setProjectName(project.getProjectName());
 		}
 		data.put("taskBuildCommands", taskBuildCommands);
 		return data;
-	}
-
-	/**
-	 * check task repeat
-	 *
-	 * @param task
-	 * @param instanceIds
-	 * @return
-	 */
-	private boolean isRepeat(Task task, Integer[] instanceIds) {
-		List<TaskDetail> taskDetails = taskDetailDao.getUsedInstance(task.getAppClusterId(), task.getId());
-		for (TaskDetail taskDetail : taskDetails) {
-			if (Arrays.asList(instanceIds).contains(taskDetail.getInstanceId())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override
@@ -194,10 +178,10 @@ public class TaskServiceImpl implements TaskService {
 		Project project = projectDao.getByAppClusterId(clustomId);
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
 		List<TaskBuildCommand> taskBuildCommands = new ArrayList<>();
-		int i=1;
-		for(Dependency dependency : dependencys){
+		int i = 1;
+		for (Dependency dependency : dependencys) {
 			Project project1 = projectDao.selectByPrimaryKey(dependency.getDependentId());
-			if(project1==null){
+			if (project1 == null) {
 				continue;
 			}
 			TaskBuildCommand taskBuildCommand = new TaskBuildCommand();

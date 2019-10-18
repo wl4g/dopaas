@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
+import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
 
 /**
  * Message service auto configuration
