@@ -15,12 +15,6 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import static org.springframework.util.ReflectionUtils.findField;
-import static org.springframework.util.ReflectionUtils.getField;
-
-import java.lang.reflect.Field;
-import java.util.Objects;
-
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
@@ -92,11 +86,7 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 		 */
 		final public static PipelineProvider getPrototypePipelineProvider(DelegateAliasPrototypeBeanFactory beanFactory,
 				String provider, PipelineInfo info) {
-			Field f = findField(PipelineType.class, provider, String.class);
-			if (Objects.nonNull(f)) {
-				return beanFactory.getPrototypeBean((String) getField(f, null), info);
-			}
-			throw new IllegalArgumentException("Unknown provider for: " + provider);
+			return beanFactory.getPrototypeBean(provider, info);
 		}
 
 	}
