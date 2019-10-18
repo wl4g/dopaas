@@ -47,13 +47,10 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void execute() throws Exception {
 		// maven install , include dependency
-		build(pipelineInfo.getTaskHistory(), taskResult, false);
-		if (!taskResult.isSuccess()) {
-			return;
-		}
+		build(pipelineInfo.getTaskHistory(), false);
 		// get git sha
 		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
-		//deploy();
+		deploy();
 	}
 
 	/**
@@ -71,7 +68,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		} else {
 			// getDependencyService().rollback(getTaskHistory(),
 			// getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-			build(getPipelineInfo().getTaskHistory(), taskResult, true);
+			build(getPipelineInfo().getTaskHistory(),  true);
 			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		}
 		deploy();

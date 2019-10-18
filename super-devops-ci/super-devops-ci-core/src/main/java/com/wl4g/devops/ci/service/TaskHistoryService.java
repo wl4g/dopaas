@@ -49,4 +49,6 @@ public interface TaskHistoryService {
 
 	void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
 
+	void stopByTaskHisId(Integer taskHisId);
+
 }
