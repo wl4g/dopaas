@@ -126,7 +126,7 @@ public class DefaultPipeline implements Pipeline {
 		}
 		List<TaskBuildCommand> taskBuildCommands = taskBuildCommandDao.selectByTaskId(taskId);
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
-				task.getBranchName(), null, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(),
+				task.getBranchName(), null, null, task.getBuildCommand(),task.getPreCommand(), task.getPostCommand(), task.getTarType(),
 				task.getContactGroupId(), taskBuildCommands);
 		PipelineProvider provider = getPipelineProvider(taskHistory);
 		// execute
@@ -170,7 +170,7 @@ public class DefaultPipeline implements Pipeline {
 		// Print to client
 		// ShellContextHolder.printfQuietly("taskHistory begin");
 		TaskHistory taskHistory = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
-				branchName, sha, null, task.getPreCommand(), task.getPostCommand(), task.getTarType(), task.getContactGroupId(),
+				branchName, sha, null, task.getBuildCommand(),task.getPreCommand(), task.getPostCommand(), task.getTarType(), task.getContactGroupId(),
 				taskBuildCommands);
 		PipelineProvider provider = getPipelineProvider(taskHistory);
 		// execute
@@ -269,7 +269,7 @@ public class DefaultPipeline implements Pipeline {
 		// Roll-back.
 		List<TaskBuildCommand> commands = taskBuildCommandDao.selectByTaskId(taskId);
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
-				TASK_STATUS_CREATE, backupTaskHisy.getBranchName(), null, taskId, backupTaskHisy.getPreCommand(),
+				TASK_STATUS_CREATE, backupTaskHisy.getBranchName(), null, taskId, backupTaskHisy.getBuildCommand(),backupTaskHisy.getPreCommand(),
 				backupTaskHisy.getPostCommand(), backupTaskHisy.getTarType(), backupTaskHisy.getContactGroupId(), commands);
 
 		// Do roll-back pipeline job.

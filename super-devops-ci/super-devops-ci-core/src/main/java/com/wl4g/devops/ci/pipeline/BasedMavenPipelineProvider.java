@@ -195,7 +195,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		// Custom dependencies commands.
 		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHistory.getId());
 		for (Dependency depd : dependencys) {
-			String depCmd = extractDependencyBuildCommand(commands, depd.getProjectId());
+			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
 			doBuilding(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), taskResult, true, isRollback,
 					depCmd);
 			// Is Continue ? if fail then return
