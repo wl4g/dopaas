@@ -42,6 +42,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -131,16 +132,16 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final protected ClientSecurityCoprocessor coprocessor;
 
 	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
-
-	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under
 	 * Mutilate-Node.
 	 */
 	final private EnhancedCache cache;
+
+	/**
+	 * Delegate message source.
+	 */
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
@@ -234,7 +235,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			if (cause instanceof IamException) {
 				log.error("Failed to caused by: {}", getMessage(cause));
 			} else {
-				log.error("Failed to authentication.", cause);
+				log.error("Failed to authenticate.", cause);
 			}
 		}
 
@@ -244,13 +245,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Post handle of authenticate failure.
 		coprocessor.postAuthenticatingFailure(token, ae, request, response);
 
-		/*
-		 * Only if the error is not authenticated, can it be redirected to the
-		 * IAM server login page, otherwise the client will display the error
-		 * page directly (to prevent unlimited redirection).
-		 * See:xx.validation.AbstractBasedValidator#doGetRemoteValidation()
-		 */
-		if (cause == null || (cause instanceof InvalidGrantTicketException)) {
+		// Only if the error is not authenticated, can it be redirected to the
+		// IAM server login page, otherwise the client will display the error
+		// page directly (to prevent unlimited redirection).
+		/** See:{@link AbstractBasedIamValidator#doGetRemoteValidation()} */
+		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) {
 			if (isJSONResponse(toHttp(request))) {
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
@@ -269,26 +268,23 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				}
 			}
 		}
-		/*
-		 * For example, because of interface or permission errors, there is no
-		 * need to carry redirection URLs, because even redirection is the same
-		 * error, which may lead to unlimited redirection.
-		 */
+		// For example, because of interface or permission errors, there is no
+		// need to carry redirection URLs, because even redirection is the same
+		// error, which may lead to unlimited redirection.
 		else {
 			try {
 				String errmsg = String.format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getMessage(cause));
-				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg); // =>SmartSuperErrorsController
+				/** See:{@link SmartSuperErrorsController#doHandleErrors()} */
+				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
 			}
 		}
 
-		/*
-		 * Suspend of execution. otherwise, dispatcherServlet will perform
-		 * redirection and eventually result in an exception:Cannot call
-		 * sendRedirect() after the response has been committed
-		 */
+		// Suspend of execution. otherwise, dispatcherServlet will perform
+		// redirection and eventually result in an exception:Cannot call
+		// sendRedirect() after the response has been committed
 		return false;
 	}
 

@@ -38,9 +38,9 @@ import java.util.Map;
  * @date 2018年11月29日
  * @since
  */
-public class ExpireSessionValidator extends AbstractBasedValidator<SessionValidationAssertion, SessionValidationAssertion> {
+public class ExpiredSessionIamValidator extends AbstractBasedIamValidator<SessionValidationAssertion, SessionValidationAssertion> {
 
-	public ExpireSessionValidator(IamClientProperties config, RestTemplate restTemplate) {
+	public ExpiredSessionIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
 	}
 
