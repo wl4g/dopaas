@@ -294,15 +294,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			} else {
 				log.warn("Failed to authentication. caused by: ", errmsg);
 			}
-			/*
-			 * See:i.w.DiabloExtraController#errReads()
+			/**
+			 * {@link LoginAuthenticatorController#errReads()}
 			 */
 			bind(KEY_ERR_SESSION_SAVED, errmsg);
 		}
-		// Callback failure redirect URI
+		// Failure redirect URI
 		String failRedirectUrl = determineFailureUrl(tk, ae, request, response);
 
-		// Post-handling of login failure
+		// Post handling of authentication failure.
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
 
 		// Obtain bound parameters.
@@ -311,7 +311,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		params.put(config.getParam().getApplication(), redirect.getFromAppName());
 		params.put(config.getParam().getRedirectUrl(), redirect.getRedirectUrl());
 
-		// Response JSON message
+		// Response JSON message.
 		if (isJSONResponse(request)) {
 			try {
 				String failed = makeFailedResponse(failRedirectUrl, request, params, errmsg);

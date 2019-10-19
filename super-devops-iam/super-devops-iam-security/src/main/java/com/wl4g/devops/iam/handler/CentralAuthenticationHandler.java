@@ -138,8 +138,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException {
-		Assert.hasText(principal, "'principal' must not be empty");
-		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
+		hasText(principal, "'principal' must not be empty");
+		hasText(fromAppName, "'fromAppName' must not be empty");
 		if (!configurer.isApplicationAccessAuthorized(principal, fromAppName)) {
 			throw new IllegalApplicationAccessException(
 					bundle.getMessage("GentralAuthenticationHandler.unaccessible", principal, fromAppName));
