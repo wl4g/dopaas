@@ -202,7 +202,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static boolean isMediaRequest(String path) {
 		String ext = org.springframework.util.StringUtils.getFilenameExtension(path);
 		for (String media : MEDIA_BASE) {
-			if (StringUtils.equalsIgnoreCase(ext, media)) {
+			if (equalsIgnoreCase(ext, media)) {
 				return true;
 			}
 		}
