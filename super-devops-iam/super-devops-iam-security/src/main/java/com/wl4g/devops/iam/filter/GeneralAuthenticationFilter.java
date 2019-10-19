@@ -30,7 +30,6 @@ import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 
 @IamFilter
 public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter<GeneralAuthenticationToken> {
-
 	final public static String NAME = "general";
 
 	@Override
@@ -42,13 +41,12 @@ public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter
 					String.format("No support '%s' request method", request.getMethod()));
 		}
 
-		String username = getCleanParam(request, config.getParam().getPrincipalName());
+		String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
-		VerifyType verityType = VerifyType.of(request);
-		return new GeneralAuthenticationToken(remoteHost, redirectInfo, username, cipherPassword, clientRef, verifiedToken,
-				verityType);
+		return new GeneralAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword, clientRef, verifiedToken,
+				VerifyType.of(request));
 	}
 
 	@Override
