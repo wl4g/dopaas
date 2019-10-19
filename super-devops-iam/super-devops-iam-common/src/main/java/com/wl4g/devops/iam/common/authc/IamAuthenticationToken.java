@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
+import static org.apache.commons.lang3.StringUtils.isAnyBlank;
+
 import java.io.Serializable;
 
 import org.apache.shiro.authc.HostAuthenticationToken;
@@ -79,6 +81,10 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		@Override
 		public String toString() {
 			return fromAppName + "@" + redirectUrl;
+		}
+
+		public boolean isValidity() {
+			return !isAnyBlank(getFromAppName(), getRedirectUrl());
 		}
 
 	}

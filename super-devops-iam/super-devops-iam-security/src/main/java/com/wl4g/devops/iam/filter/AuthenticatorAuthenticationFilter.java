@@ -55,9 +55,8 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 
 		try {
 			// Check authenticate redirect URL validity.
-			String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
-			String fromAppName = getCleanParam(request, config.getParam().getApplication());
-			authHandler.checkAuthenticateRedirectValidity(fromAppName, redirectUrl);
+			RedirectInfo redirect = getRedirectInfo(request, false);
+			authHandler.checkAuthenticateRedirectValidity(redirect.getFromAppName(), redirect.getRedirectUrl());
 
 			// Remember request parameters
 			savedRequestParameters(request, response);
@@ -87,15 +86,15 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	 * E.G.:</br>
 	 * </br>
 	 * 
-	 * <b>Req1：</b>http://localhost:14040/devops-iam/view/login.html?service=devops-iam-example&redirect_url=http://localhost:14041/devops-iam-example/index.html</br>
+	 * <b>Req1：</b>http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
 	 * <b>Resp1：</b>login.html</br>
 	 * </br>
 	 * <b>Req2：(Intercepted by
-	 * rootFilter)</b>http://localhost:14040/devops-iam/favicon.ico</br>
+	 * rootFilter)</b>http://localhost:14040/iam-server/favicon.ico</br>
 	 * <b>Resp2：</b>
-	 * 302->http://localhost:14040/devops-iam/view/login.html?service=devops-iam-example&redirect_url=http://localhost:14041/devops-iam-example/index.html</br>
+	 * 302->http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
 	 * </br>
-	 * <b>Req3：</b>http://localhost:14040/devops-iam/view/login.html</br>
+	 * <b>Req3：</b>http://localhost:14040/iam-server/view/login.html</br>
 	 * </br>
 	 * 
 	 * No parameters for the second request for login.html ??? This is the
@@ -110,11 +109,11 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 		String respType = getCleanParam(request, respTypeKey);
 
 		// Redirection information.
-		RedirectInfo redirect = getRedirectInfo(request);
+		RedirectInfo redirect = getRedirectInfo(request, false);
 		// Safety encoding for URL fragment.
 		redirect.setRedirectUrl(safeEncodeHierarchyRedirectUrl(redirect.getRedirectUrl()));
 
-		// Overlay to save the latest parameters
+		// Overlay to save the latest parameters.
 		bindKVParameters(KEY_REQ_AUTH_PARAMS, respTypeKey, respType, KEY_REQ_AUTH_REDIRECT, redirect);
 
 		if (log.isDebugEnabled()) {
