@@ -82,18 +82,19 @@ public abstract class FileIOUtils extends FileUtils {
 			return;
 		}
 
+		File parent = file.getParentFile();
+		if (!parent.exists() || !parent.isDirectory()) {
+			Assert.state(parent.mkdirs(),"Cerate dir fail");
+		}
+		if (!file.exists()) {
+			try {
+				Assert.state(file.createNewFile(),"Cerate file fail");
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
 		try (Writer w = new FileWriterWithEncoding(file, charset, append)) {
-			File parent = file.getParentFile();
-			if (!parent.exists() || !parent.isDirectory()) {
-				parent.mkdirs();
-			}
-			if (!file.exists()) {
-				try {
-					file.createNewFile();
-				} catch (IOException e) {
-					throw new IllegalStateException(e);
-				}
-			}
 			w.write(data);
 			w.flush();
 		} catch (IOException e) {

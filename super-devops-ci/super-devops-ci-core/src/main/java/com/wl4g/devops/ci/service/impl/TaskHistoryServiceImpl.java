@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.TaskHistoryService;
+import com.wl4g.devops.ci.utils.CommandUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -34,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
+
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOP;
 
 /**
  * @author vjay
@@ -80,7 +83,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Override
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer refId, String preCommand, String postCommand, String tarType, Integer contactGroupId,
+			String sha, Integer refId,String buildCommand, String preCommand, String postCommand, String tarType, Integer contactGroupId,
 			List<TaskBuildCommand> taskBuildCommands) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
@@ -91,6 +94,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setBranchName(branchName);
 		taskHistory.setShaGit(sha);
 		taskHistory.setRefId(refId);
+		taskHistory.setBuildCommand(buildCommand);
 		taskHistory.setPreCommand(preCommand);
 		taskHistory.setPostCommand(postCommand);
 		taskHistory.setTarType(tarType);
@@ -144,6 +148,16 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setShaGit(sha);
 		taskHistory.setShaLocal(md5);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+	}
+
+	@Override
+	public void stopByTaskHisId(Integer taskHisId) {
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preUpdate();
+		taskHistory.setId(taskHisId);
+		taskHistory.setStatus(TASK_STATUS_STOP);
+		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+		CommandUtils.killByTaskId(taskHisId);
 	}
 
 	@Override

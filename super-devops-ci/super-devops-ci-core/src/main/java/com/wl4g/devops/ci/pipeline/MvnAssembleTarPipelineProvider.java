@@ -21,12 +21,12 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * MAVEN assemble tar provider.
@@ -47,10 +47,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void execute() throws Exception {
 		// maven install , include dependency
-		build(pipelineInfo.getTaskHistory(), taskResult, false);
-		if (!taskResult.isSuccess()) {
-			return;
-		}
+		build(pipelineInfo.getTaskHistory(), false);
 		// get git sha
 		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		deploy();
@@ -71,7 +68,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		} else {
 			// getDependencyService().rollback(getTaskHistory(),
 			// getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-			build(getPipelineInfo().getTaskHistory(), taskResult, true);
+			build(getPipelineInfo().getTaskHistory(),  true);
 			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		}
 		deploy();

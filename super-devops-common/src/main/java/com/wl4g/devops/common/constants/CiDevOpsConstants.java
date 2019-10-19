@@ -32,6 +32,8 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_STATUS_SUCCESS = 2;
 	// task-fail
 	public static final int TASK_STATUS_FAIL = 3;
+	// stop
+	public static final int TASK_STATUS_STOP = 5;
 
 	// Auto trigger
 	public static final int TASK_TYPE_TRIGGER = 1;
@@ -58,10 +60,10 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Log file start/end separation.
 	 */
-	public static final String LOG_FILE_START = "<[EOF]";
-	public static final String LOG_FILE_END = "[EOF]>";
+	public static final String LOG_FILE_START = "<[EOF]\n";
+	public static final String LOG_FILE_END = "\n[EOF]>";
 
 	// command replace
-	public static final String PROJECT_PATH = "#{projectPath}";
+	public static final String PROJECT_PATH = "#\\{projectPath}";
 
 }
