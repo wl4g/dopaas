@@ -25,7 +25,6 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
 import java.io.Serializable;
@@ -109,16 +108,17 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 	@Override
 	protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
-		// Static resource direct pass(ignore).
-		if (isMediaRequest(toHttp(request))) {
-			return null;
-		}
+		// ->bug: For example: infinite redirection error will occur if
+		// iam-example/index.html fails to get sid
+		// if (isMediaRequest(toHttp(request))) { // Static file pass.
+		// return null;
+		// }
 
 		// Call extra get SID.
 		Serializable sessionId = coprocessor.preGetSessionId(request, response);
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Using extra SID for '{}'", sessionId);
+				log.debug("Use extra sid '{}'", sessionId);
 			}
 			return sessionId;
 		}
@@ -128,7 +128,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		sessionId = getCleanParam(request, config.getParam().getSid());
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Using url SID for '{}'", sessionId);
+				log.debug("Use url sid '{}'", sessionId);
 			}
 			// Storage session.
 			storageTokenIfNecessary(request, response, sessionId);
@@ -144,7 +144,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		sessionId = getCleanParam(request, config.getCookie().getName());
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Using url cookieId for '{}'", sessionId);
+				log.debug("Use url cookie sid '{}'", sessionId);
 			}
 			return sessionId;
 		}
@@ -153,7 +153,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		sessionId = toHttp(request).getHeader(config.getCookie().getName());
 		if (checkAvailable(sessionId)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Using header cookieId for '{}'", sessionId);
+				log.debug("Use header cookie sid '{}'", sessionId);
 			}
 			return sessionId;
 		}
@@ -161,25 +161,24 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		// Using grant ticket session.
 		String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
 		if (checkAvailable(grantTicket)) {
-			/*
-			 * Synchronize with
-			 * See:iam.handler.DefaultAuthenticationHandler#loggedin()
+			/**
+			 * {@link CentralAuthenticationHandler#loggedin()}
 			 */
 			sessionId = (String) cacheManager.getCache(cacheName).get(new EnhancedKey(grantTicket, String.class));
 			if (log.isDebugEnabled()) {
-				log.debug("Using grantTicket: '{}' SID: '{}'", grantTicket, sessionId);
+				log.debug("Use ticket sid: '{}', grantTicket: '{}'", sessionId, grantTicket);
 			}
 			if (checkAvailable(sessionId)) {
 				return sessionId;
 			} else {
-				log.warn("Got empty SID by grantTicket: '{}'", grantTicket);
+				log.warn("Cannot got sid via grantTicket: '{}'", grantTicket);
 			}
 		}
 
 		// Using default cookie session.
 		sessionId = super.getSessionId(request, response);
 		if (log.isDebugEnabled()) {
-			log.debug("Using default SID for: '{}'", sessionId);
+			log.debug("Use default cookie sid: '{}'", sessionId);
 		}
 		return sessionId;
 	}

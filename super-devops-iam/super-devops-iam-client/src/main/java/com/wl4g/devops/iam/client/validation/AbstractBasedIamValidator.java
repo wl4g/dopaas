@@ -25,6 +25,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import static org.springframework.http.HttpMethod.*;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -81,8 +83,8 @@ public abstract class AbstractBasedIamValidator<R extends BasedModel, A> impleme
 	 * @return the response from the CAS server.
 	 */
 	protected RespBase<A> doGetRemoteValidate(String endpoint, R req) {
-		Assert.hasText(endpoint, "Validate endpoint must not be empty.");
-		Assert.notNull(req, "Validate parameters must not be null.");
+		hasText(endpoint, "Validate endpoint must not be empty.");
+		notNull(req, "Validate parameters must not be null.");
 
 		StringBuffer url = new StringBuffer(config.getServerUri());
 		url.append(URI_S_BASE).append("/").append(endpoint).append("?");
@@ -101,7 +103,7 @@ public abstract class AbstractBasedIamValidator<R extends BasedModel, A> impleme
 		// Append parameters to URL
 		url.append(BeanMapConvert.toUriParmaters(queryParams));
 		if (log.isInfoEnabled()) {
-			log.info("Grant ticket validate url: {}", url);
+			log.info("Ticket validating to: {}", url);
 		}
 
 		// Add header
@@ -117,10 +119,10 @@ public abstract class AbstractBasedIamValidator<R extends BasedModel, A> impleme
 		try {
 			resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
 			if (log.isInfoEnabled()) {
-				log.info("Grant ticket validate retrieve: {}", resp);
+				log.info("Validate retrieved: {}", resp);
 			}
 		} catch (Throwable ex) {
-			throw new RestClientException(String.format("Failed to validating ticket via URL: %s", url), ex);
+			throw new RestClientException(String.format("Failed to validate ticket via URL: %s", url), ex);
 		}
 		return resp;
 	}
