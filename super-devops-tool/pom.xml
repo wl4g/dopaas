@@ -9,6 +9,7 @@
 	<url>https://tool.super-devops.wl4g.com</url>
 	<description>A suite of peripheral tools related to the life cycle of micro services.</description>
 	<modules>
+		<module>super-devops-tool-code</module>
 		<module>super-devops-tool-common</module>
 		<module>super-devops-tool-hbase-migrator</module>
 	</modules>
