@@ -193,11 +193,11 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 					authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
 				} catch (IllegalApplicationAccessException ex) {
 					// Fallback determine redirect to application.
-					RedirectInfo fallbackRedirect = coprocessor.fallbackAccessUnauthorizedApplication(tk);
+					RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
+							new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
 					/**
-					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters}
-					 * See:{@link AbstractIamAuthenticationFilter#getFromAppName}
-					 * See:{@link AbstractIamAuthenticationFilter#getFromRedirectUrl}
+					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters()}
+					 * See:{@link AbstractIamAuthenticationFilter#getRedirectInfo()}
 					 */
 					bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
 					if (log.isWarnEnabled()) {

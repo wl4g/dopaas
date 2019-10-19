@@ -59,10 +59,13 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 	 * redirection URL
 	 * 
 	 * @param token
+	 *            Authentication token.
+	 * @param defaultRedirect
+	 *            Default redirection information for configuration.
 	 * @return
 	 */
-	default RedirectInfo fallbackAccessUnauthorizedApplication(IamAuthenticationToken token) {
-		return token.getRedirectInfo();
+	default RedirectInfo fallbackGetRedirectInfo(IamAuthenticationToken token, RedirectInfo defaultRedirect) {
+		return defaultRedirect;
 	}
 
 }
