@@ -20,7 +20,6 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.utils.SSHTool;
-import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
@@ -76,7 +75,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected String shaLocal;
 
-	protected TaskResult taskResult = new TaskResult();
 
 	public AbstractPipelineProvider(PipelineInfo info) {
 		this.pipelineInfo = info;
@@ -106,10 +104,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		this.shaLocal = shaLocal;
 	}
 
-	@Override
-	public TaskResult getTaskResult() {
-		return taskResult;
-	}
 
 	/**
 	 * Execute
@@ -141,6 +135,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	protected String commandReplace(String command, String projectPath) {
+		command.replaceAll("\\[","\\[");
 		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
 		// TODO ......
 		return command;

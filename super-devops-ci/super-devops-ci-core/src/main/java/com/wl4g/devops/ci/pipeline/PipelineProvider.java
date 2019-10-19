@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
-import com.wl4g.devops.common.bean.ci.dto.TaskResult;
 import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
 
 /**
@@ -33,8 +32,6 @@ public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
 	default void rollback() throws Exception {
 		throw new UnsupportedOperationException();
 	}
-
-	TaskResult getTaskResult();
 
 	PipelineInfo getPipelineInfo();
 

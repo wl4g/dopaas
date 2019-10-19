@@ -15,19 +15,21 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.devops.common.bean.ci.dto.TaskResult;
+import com.wl4g.devops.common.exception.ci.StopCommandStateException;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
-import com.wl4g.devops.shell.utils.ShellContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.function.Function;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Shell utility tools.
@@ -36,30 +38,31 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @version v1.0 2019年5月24日
  * @since
  */
+@Deprecated
 public abstract class CommandUtils {
 	final private static Logger log = LoggerFactory.getLogger(CommandUtils.class);
+
+	public static Map<Integer, List<Process>> processMap = new HashMap<>();
 
 	/**
 	 * Execute commands in local
 	 */
-	public static String exec(String cmd) throws Exception {
-		return exec(cmd, null);
+	public static void exec(String cmd) throws Exception {
+		exec(cmd, null, null);
 	}
 
-	public static String exec(String cmd, TaskResult taskResult) throws Exception {
-		return exec(cmd, null, taskResult);
+	public static void exec(String cmd, String logPath, Integer taskId) throws Exception {
+		exec(cmd, null, logPath, taskId);
 	}
 
-	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult) throws Exception {
-		return exec(cmd, callback, taskResult, null);
-	}
-
-	public static String exec(String cmd, Function<String, Boolean> callback, TaskResult taskResult, String dirPath)
-			throws Exception {
+	public static void exec(String cmd, String dirPath, String logPath, Integer taskId) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Execution native command for '{}'", cmd);
 		}
 		// TODO filter command
+		if (StringUtils.isNotBlank(logPath)) {
+			cmd = cmd + " 2>&1 | tee -a " + logPath;
+		}
 
 		StringBuilder slog = new StringBuilder();
 		StringBuilder serr = new StringBuilder();
@@ -69,68 +72,79 @@ public abstract class CommandUtils {
 		} else {
 			ps = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", cmd }, null, new File(dirPath));
 		}
+		addProcess(taskId, ps);
 
-		try (BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-				BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()))) {
-			String inlog;
-			while ((inlog = blog.readLine()) != null) {
-				if (callback != null) {
-					if (!callback.apply(inlog)) {
-						throw new InterruptedException("Commands force interrupted!");
-					}
-				}
-				slog.append(inlog).append("\n");
-				writeResult(taskResult, inlog + "\n");
-				log.info(inlog);
-				ShellContextHolder.printfQuietly(inlog);
-			}
-			while ((inlog = berr.readLine()) != null) {
-				serr.append(inlog).append("\n");
-				writeResult(taskResult, inlog + "\n");
-				log.info(inlog);
-				ShellContextHolder.printfQuietly(inlog);
-			}
+		ps.waitFor();// wait for process exit
+		int exitValue = ps.exitValue();
 
-			ps.waitFor();// wait for process exit , or maybe throw
-			// java.lang.IllegalThreadStateException: process
-			// hasn't exited
-			int exitValue = ps.exitValue();
-			if (exitValue != 0 && taskResult != null) {
-				taskResult.setSuccess(false);
+		if (exitValue != 0) {
+			if (exitValue == 143) {
+				throw new StopCommandStateException("Manual Stop Task");
 			}
-			String log = slog.toString();
-			String err = serr.toString();
-			if (isNotBlank(err)) {
-				log += err;
-				throw new RuntimeException("Exec command fail,command=" + cmd + "\n cause:" + log.toString());
-			}
-			return log;
+			throw new IllegalStateException(String.format("Failed to exec write file command=%s , logPath=%s)", cmd, logPath));
 		}
+
 	}
 
-	private static void writeResult(TaskResult taskResult, String result) {
-		if (null == taskResult || taskResult.getLogFile() == null) {
+	public static void execFile(String cmd, String filePath, String logPath, Integer taskId) throws Exception {
+		File file = new File(filePath);
+		FileIOUtils.writeFile(file, cmd, false);
+		exec("sh " + filePath, logPath, taskId);
+	}
+
+	private static void addProcess(Integer taskId, Process ps) {
+		if (null == taskId || null == ps) {
 			return;
 		}
-		File logFile = taskResult.getLogFile();
-		FileIOUtils.writeFile(logFile, result);
+		List<Process> processes = processMap.get(taskId);
+		if (null == processes) {
+			processes = new ArrayList<>();
+		}
+		processes.add(ps);
+		processMap.put(taskId, processes);
 	}
 
-	public static String execFile(String cmd, String filePath, TaskResult taskResult) throws Exception {
-		File file = new File(filePath);
-		FileIOUtils.writeFile(file, cmd, false);
-		return exec("sh " + filePath, null, taskResult);
-	}
-
-	public static String execFile(String cmd, Function<String, Boolean> callback, String filePath, TaskResult taskResult)
-			throws Exception {
-		File file = new File(filePath);
-		FileIOUtils.writeFile(file, cmd, false);
-		return exec("sh " + filePath, callback, taskResult);
+	public static void killByTaskId(Integer taskId) {
+		List<Process> processes = processMap.get(taskId);
+		if (CollectionUtils.isEmpty(processes)) {
+			return;
+		}
+		for (Process ps : processes) {
+			ps.destroy();
+		}
+		// processMap.remove(taskId);
 	}
 
 	public static void main(String[] args) throws Exception {
-		execFile("pwd\nls", "/Users/vjay/Downloads/myTest.sh", null);
+		Process ps = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c",
+				"sh /Users/vjay/Downloads/myTest.sh 2>&1 | tee -a /Users/vjay/Downloads/zz.log" });
+
+		long time = System.currentTimeMillis();
+		try (BufferedReader blog = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+				BufferedReader berr = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
+				OutputStream outputStream = ps.getOutputStream();) {
+			String inlog;
+			while (System.currentTimeMillis() - time <= 5000) {
+
+			}
+			System.out.println("stop");
+			ps.destroyForcibly();
+			/*
+			 * while ((inlog = blog.readLine()) != null) {
+			 * if(inlog!=null&&inlog.contains("[3/4]")){
+			 * System.out.println("stop"); ps.destroyForcibly();
+			 *//*
+				 * char ctrlBreak = (char)3; outputStream.write(ctrlBreak);
+				 * outputStream.flush();
+				 *//*
+					 * } System.out.println(inlog); } while ((inlog =
+					 * berr.readLine()) != null) { System.out.println(inlog); }
+					 */
+
+			ps.waitFor();
+			int exitValue = ps.exitValue();
+			System.out.println(exitValue);
+		}
 	}
 
 }
