@@ -37,10 +37,8 @@ import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -188,7 +186,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Remote client host.
 		String remoteHost = getHttpRemoteAddr(toHttp(request));
 		// Redirection.
-		RedirectInfo redirect = getRedirectInfo(request);
+		RedirectInfo redirect = getRedirectInfo(request, false);
 
 		// Create authentication token
 		return postCreateToken(remoteHost, redirect, toHttp(request), toHttp(response));
@@ -211,7 +209,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// bind(KEY_AUTHC_TOKEN, tk);
 
 			// Get redirection.
-			RedirectInfo redirect = getRedirectInfo(null);
+			RedirectInfo redirect = getRedirectInfo(request, true);
 			if (isBlank(redirect.getFromAppName())) { // Use default?
 				redirect.setFromAppName(config.getSuccessService());
 				redirect.setRedirectUrl(getSuccessUrl());
@@ -282,7 +280,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
@@ -307,8 +305,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Post-handling of login failure
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
 
-		// Get binding parameters
-		Map params = getBindValue(KEY_REQ_AUTH_PARAMS);
+		// Obtain bound parameters.
+		Map params = new HashMap();
+		RedirectInfo redirect = getRedirectInfo(request, false);
+		params.put(config.getParam().getApplication(), redirect.getFromAppName());
+		params.put(config.getParam().getRedirectUrl(), redirect.getRedirectUrl());
 
 		// Response JSON message
 		if (isJSONResponse(request)) {
@@ -322,7 +323,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				log.error("Response unauthentication json error", e);
 			}
 		}
-		// Redirects the login page directly
+		// Redirects the login page directly.
 		else {
 			try {
 				if (log.isInfoEnabled()) {
@@ -361,16 +362,21 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
 	 * 
 	 * @param request
-	 *            If the request object is not empty, only get it from the
-	 *            request parameter, otherwise get it from the previously bound
+	 * @param bindOnly
+	 *            Whether to get only the redirection information of the binding
 	 * @return
 	 */
-	protected RedirectInfo getRedirectInfo(ServletRequest request) {
-		if (nonNull(request)) {
-			return new RedirectInfo(getCleanParam(request, config.getParam().getApplication()),
+	protected RedirectInfo getRedirectInfo(ServletRequest request, boolean bindOnly) {
+		RedirectInfo redirect = null;
+		if (bindOnly) {
+			redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
+		} else {
+			redirect = new RedirectInfo(getCleanParam(request, config.getParam().getApplication()),
 					getCleanParam(request, config.getParam().getRedirectUrl()));
+			if (!redirect.isValidity()) {
+				redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
+			}
 		}
-		RedirectInfo redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 		return isNull(redirect) ? RedirectInfo.EMPTY : redirect;
 	}
 
@@ -518,7 +524,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * Determine the URL of the login failure redirection, default: loginURL,
 	 * can support customization.
 	 * 
-	 * 
 	 * @param token
 	 * @param ae
 	 * @param request
@@ -528,7 +533,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	private String determineFailureUrl(IamAuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
 		// Callback fail redirect URI
-		String failRedirectUrl = getRedirectInfo(null).getRedirectUrl();
+		String failRedirectUrl = getRedirectInfo(request, true).getRedirectUrl();
 
 		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may
 		// redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen
