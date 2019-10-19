@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.configure;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
@@ -29,6 +30,7 @@ import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
  * @version v1.0 2019年4月5日
  * @since
  */
+@Beta
 public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
 	/**

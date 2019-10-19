@@ -112,10 +112,10 @@ public class DataSourceAutoConfiguration {
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
 		// SqlSessionFactory
-		SqlSessionFactoryBean sqlSessionFtb = new SqlSessionFactoryBean();
-		sqlSessionFtb.setDataSource(dataSource);
-		sqlSessionFtb.setTypeAliases(this.getTypeAliases(resolver));
-		sqlSessionFtb.setConfigLocation(new ClassPathResource(configLocation));
+		SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+		factory.setDataSource(dataSource);
+		factory.setTypeAliases(getTypeAliases(resolver));
+		factory.setConfigLocation(new ClassPathResource(configLocation));
 
 		// Page.
 		PageHelper pageHelper = new PageHelper();
@@ -126,10 +126,10 @@ public class DataSourceAutoConfiguration {
 		props.setProperty("returnPageInfo", "check");
 		props.setProperty("params", "count=countSql");
 		pageHelper.setProperties(props); // 添加插件
-		sqlSessionFtb.setPlugins(new Interceptor[] { pageHelper });
+		factory.setPlugins(new Interceptor[] { pageHelper });
 
-		sqlSessionFtb.setMapperLocations(resolver.getResources(mapperLocations));
-		return sqlSessionFtb;
+		factory.setMapperLocations(resolver.getResources(mapperLocations));
+		return factory;
 	}
 
 	@Bean
