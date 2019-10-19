@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
+import java.io.Serializable;
+
 import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
@@ -36,17 +38,20 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 	 * @version v1.0 2019年10月18日
 	 * @since
 	 */
-	public static class RedirectInfo {
+	public static class RedirectInfo implements Serializable {
+		private static final long serialVersionUID = -7747661274396168460L;
+
+		final public static RedirectInfo EMPTY = new RedirectInfo(null, null);
 
 		/**
 		 * Client authentication redirection application.
 		 */
-		final private String fromAppName;
+		private String fromAppName;
 
 		/**
 		 * Client authentication redirection URL.
 		 */
-		final private String redirectUrl;
+		private String redirectUrl;
 
 		public RedirectInfo(String fromAppName, String redirectUrl) {
 			// hasText(fromAppName, "Application name must not be empty.");
@@ -59,8 +64,16 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 			return fromAppName;
 		}
 
+		public void setFromAppName(String fromAppName) {
+			this.fromAppName = fromAppName;
+		}
+
 		public String getRedirectUrl() {
 			return redirectUrl;
+		}
+
+		public void setRedirectUrl(String redirectUrl) {
+			this.redirectUrl = redirectUrl;
 		}
 
 		@Override

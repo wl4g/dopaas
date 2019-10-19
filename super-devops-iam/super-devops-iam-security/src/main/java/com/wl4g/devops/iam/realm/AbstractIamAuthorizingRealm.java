@@ -193,14 +193,13 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 					authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
 				} catch (IllegalApplicationAccessException ex) {
 					// Fallback determine redirect to application.
-					RedirectInfo fallbackRedirect = coprocessor.fallbackAccessUnauthorizedApplication(tk, tk.getRedirectInfo());
+					RedirectInfo fallbackRedirect = coprocessor.fallbackAccessUnauthorizedApplication(tk);
 					/**
 					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters}
 					 * See:{@link AbstractIamAuthenticationFilter#getFromAppName}
 					 * See:{@link AbstractIamAuthenticationFilter#getFromRedirectUrl}
 					 */
-					bindKVParameters(KEY_REQ_AUTH_PARAMS, config.getParam().getApplication(), fallbackRedirect.getFromAppName(),
-							config.getParam().getRedirectUrl(), fallbackRedirect.getRedirectUrl());
+					bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
 					if (log.isWarnEnabled()) {
 						log.warn(
 								"The user '{}' is not authorized to access application '{}', and has used the fallback access application: {}@{}, caused by: {}",
