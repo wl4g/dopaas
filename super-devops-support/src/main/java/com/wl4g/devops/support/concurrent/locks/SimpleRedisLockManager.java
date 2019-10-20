@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.lock;
+package com.wl4g.devops.support.concurrent.locks;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;

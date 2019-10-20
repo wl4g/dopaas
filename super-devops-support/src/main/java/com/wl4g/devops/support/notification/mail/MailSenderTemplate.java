@@ -23,7 +23,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Assert;
 
-import static com.wl4g.devops.support.config.MessageServiceAutoConfiguration.*;
+import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 
 /**
  * Email sender composite adapter template.

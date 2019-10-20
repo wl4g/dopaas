@@ -13,26 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.config;
+package com.wl4g.devops.support.beans.prototype;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Support auto configuration
+ * Configure aliases for prototype beans to obtain prototype beans at
+ * {@link DelegateAliasPrototypeBeanFactory}
  * 
- * @author wangl.sir
- * @version v1.0 2019年5月28日
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-10-09
  * @since
  */
-@Configuration
-public class SupportAutoConfiguration {
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface DelegateAlias {
 
-	@Bean
-	public SimpleRedisLockManager simpleRedisLockManager() {
-		return new SimpleRedisLockManager();
-	}
+	String[] value();
 
 }

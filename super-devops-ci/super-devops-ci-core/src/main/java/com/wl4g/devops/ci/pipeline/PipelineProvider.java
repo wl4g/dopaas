@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
-import com.wl4g.devops.support.beans.DelegateAliasPrototypeBean;
+import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
 
 /**
  * Based pipeline provider.

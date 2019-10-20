@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.crypto.keypair;
 
 import com.wl4g.devops.iam.crypto.AbstractCryptographicService;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
 
 /**
  * RSA cryptographic service.

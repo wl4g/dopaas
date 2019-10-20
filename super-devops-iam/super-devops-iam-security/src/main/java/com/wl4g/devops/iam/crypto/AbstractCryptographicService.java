@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
 
 import redis.clients.jedis.JedisCluster;
 

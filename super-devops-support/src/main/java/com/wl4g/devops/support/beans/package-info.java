@@ -14,26 +14,3 @@
  * limitations under the License.
  */
 package com.wl4g.devops.support.beans;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
- * Configure aliases for prototype beans to obtain prototype beans at
- * {@link DelegateAliasPrototypeBeanFactory}
- * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0.0 2019-10-09
- * @since
- */
-@Target({ ElementType.TYPE, ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface DelegateAlias {
-
-	String[] value();
-
-}

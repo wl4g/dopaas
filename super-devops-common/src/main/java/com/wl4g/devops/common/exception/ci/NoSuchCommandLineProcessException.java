@@ -15,10 +15,7 @@
  */
 package com.wl4g.devops.common.exception.ci;
 
-import com.wl4g.devops.common.exception.DevOpsException;
-import com.wl4g.devops.common.exception.restful.LockStateRestfulException;
-
-public class LockStateException extends DevOpsException implements LockStateRestfulException {
+public class NoSuchCommandLineProcessException extends CiException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -26,7 +23,7 @@ public class LockStateException extends DevOpsException implements LockStateRest
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public LockStateException() {
+	public NoSuchCommandLineProcessException() {
 		super();
 	}
 
@@ -39,7 +36,7 @@ public class LockStateException extends DevOpsException implements LockStateRest
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public LockStateException(String message) {
+	public NoSuchCommandLineProcessException(String message) {
 		super(message);
 	}
 
@@ -60,7 +57,7 @@ public class LockStateException extends DevOpsException implements LockStateRest
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public LockStateException(String message, Throwable cause) {
+	public NoSuchCommandLineProcessException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -78,8 +75,7 @@ public class LockStateException extends DevOpsException implements LockStateRest
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public LockStateException(Throwable cause) {
+	public NoSuchCommandLineProcessException(Throwable cause) {
 		super(cause);
 	}
-
 }
