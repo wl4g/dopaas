@@ -201,9 +201,8 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 					 */
 					bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
 					if (log.isWarnEnabled()) {
-						log.warn(
-								"The user '{}' is not authorized to access application '{}', and has used the fallback access application: {}@{}, caused by: {}",
-								principal, fromAppName, fallbackRedirect, getRootCausesString(ex, false));
+						log.warn("The principal '{}' illegal access to:{}, used fallback access to:{}, cause: {}", principal,
+								fromAppName, fallbackRedirect, getRootCausesString(ex, false));
 					}
 				}
 			}
