@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.beans;
+package com.wl4g.devops.support.beans.prototype;
 
 /**
  * Delegate alias prototype bean, beans that implements this interface will be

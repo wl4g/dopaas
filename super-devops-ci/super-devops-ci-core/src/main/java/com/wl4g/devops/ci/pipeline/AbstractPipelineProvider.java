@@ -24,7 +24,8 @@ import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

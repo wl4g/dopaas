@@ -29,7 +29,8 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.support.beans.DelegateAlias;
+import com.wl4g.devops.support.beans.prototype.DelegateAlias;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

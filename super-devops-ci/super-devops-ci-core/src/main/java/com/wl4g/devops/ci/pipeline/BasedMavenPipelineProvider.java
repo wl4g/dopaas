@@ -19,7 +19,7 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.exception.ci.LockStateException;
+import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
@@ -258,7 +258,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 						log.info("Wait for dependency build to be skipped successfully! cost: {}ms", cost);
 					}
 				} else {
-					throw new LockStateException("Failed to build, timeout waiting for dependency building.");
+					throw new DependencyCurrentlyInBuildingException("Failed to build, timeout waiting for dependency building.");
 				}
 			} finally {
 				lock.unlock();

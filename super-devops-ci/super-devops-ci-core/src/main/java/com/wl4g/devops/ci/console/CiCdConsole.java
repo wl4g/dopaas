@@ -33,7 +33,8 @@ import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

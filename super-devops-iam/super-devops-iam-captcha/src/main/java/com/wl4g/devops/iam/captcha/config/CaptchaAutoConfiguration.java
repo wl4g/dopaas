@@ -22,7 +22,7 @@ import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier;
 import com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier;
 import com.wl4g.devops.iam.verification.SimpleJPEGSecurityVerifier;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
 
 @Configuration
 public class CaptchaAutoConfiguration {

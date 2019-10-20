@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.exception.iam;
+package com.wl4g.devops.common.exception.ci;
 
-public class NoSuchSocialProviderException extends IamException {
+import com.wl4g.devops.common.exception.restful.LockStateRestfulException;
+
+public class DependencyCurrentlyInBuildingException extends CiException implements LockStateRestfulException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -23,7 +25,7 @@ public class NoSuchSocialProviderException extends IamException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public NoSuchSocialProviderException() {
+	public DependencyCurrentlyInBuildingException() {
 		super();
 	}
 
@@ -36,7 +38,7 @@ public class NoSuchSocialProviderException extends IamException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public NoSuchSocialProviderException(String message) {
+	public DependencyCurrentlyInBuildingException(String message) {
 		super(message);
 	}
 
@@ -57,7 +59,7 @@ public class NoSuchSocialProviderException extends IamException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public NoSuchSocialProviderException(String message, Throwable cause) {
+	public DependencyCurrentlyInBuildingException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +77,8 @@ public class NoSuchSocialProviderException extends IamException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public NoSuchSocialProviderException(Throwable cause) {
+	public DependencyCurrentlyInBuildingException(Throwable cause) {
 		super(cause);
 	}
+
 }

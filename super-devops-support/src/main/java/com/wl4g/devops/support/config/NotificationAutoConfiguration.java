@@ -30,7 +30,7 @@ import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
  * @since
  */
 @Configuration
-public class MessageServiceAutoConfiguration {
+public class NotificationAutoConfiguration {
 
 	/**
 	 * YAML configuration: spring.mail.username.

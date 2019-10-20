@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.exception.ci;
 
-public class StopCommandStateException extends IllegalStateException  {
+public class StoppedCommandStateException extends CiException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -23,7 +23,7 @@ public class StopCommandStateException extends IllegalStateException  {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public StopCommandStateException() {
+	public StoppedCommandStateException() {
 		super();
 	}
 
@@ -36,7 +36,7 @@ public class StopCommandStateException extends IllegalStateException  {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public StopCommandStateException(String message) {
+	public StoppedCommandStateException(String message) {
 		super(message);
 	}
 
@@ -57,7 +57,7 @@ public class StopCommandStateException extends IllegalStateException  {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public StopCommandStateException(String message, Throwable cause) {
+	public StoppedCommandStateException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +75,7 @@ public class StopCommandStateException extends IllegalStateException  {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public StopCommandStateException(Throwable cause) {
+	public StoppedCommandStateException(Throwable cause) {
 		super(cause);
 	}
 
