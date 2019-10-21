@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @version v1.0.0 2019-10-13
  * @since
  */
-public class PipelineJobExecutor extends GenericTaskRunner<RunProperties> {
+public class PipelineJobExecutor extends GenericTaskRunner<RunnerProperties> {
 
 	final protected CiCdProperties config;
 

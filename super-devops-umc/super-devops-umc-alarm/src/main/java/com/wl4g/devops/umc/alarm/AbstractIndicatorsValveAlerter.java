@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,8 @@ import static java.util.Collections.emptyList;
  * @author wangl.sir
  * @version v1.0 2019年7月5日
  */
-public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<RunProperties> implements IndicatorsValveAlerter {
+public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<RunnerProperties>
+		implements IndicatorsValveAlerter {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 

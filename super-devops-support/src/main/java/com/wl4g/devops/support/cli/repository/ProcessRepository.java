@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.cli;
+package com.wl4g.devops.support.cli.repository;
 
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.ci.NoSuchCommandLineProcessException;
 
 /**
@@ -31,6 +33,7 @@ import com.wl4g.devops.common.exception.ci.NoSuchCommandLineProcessException;
  * @version v1.0.0 2019-10-20
  * @since
  */
+@Beta
 public interface ProcessRepository {
 
 	/**
@@ -50,6 +53,14 @@ public interface ProcessRepository {
 	ProcessInfo getProcessInfo(Serializable processId) throws NoSuchCommandLineProcessException;
 
 	/**
+	 * Remove cleanup command-line process information.
+	 * 
+	 * @param processId
+	 * @return
+	 */
+	ProcessInfo cleanup(Serializable processId);
+
+	/**
 	 * Command-line process information bean.
 	 * 
 	 * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
@@ -59,19 +70,26 @@ public interface ProcessRepository {
 	public static class ProcessInfo implements Serializable {
 		private static final long serialVersionUID = 1013208493410008301L;
 
+		/** Process ID */
 		final private Serializable processId;
 
+		/** Process context directory */
 		final private File pwdDir;
 
+		/** Process commands */
 		final private List<String> commands;
 
+		/** Process commands standard output file */
 		final private File stdout;
 
-		final private Process process;
+		/** Process object */
+		@JsonIgnore
+		final transient private Process process;
 
 		public ProcessInfo(Serializable processId, File pwdDir, List<String> commands, File stdout, Process process) {
-			notNull(processId, "Execution commands processId must not be empty");
+			notNull(processId, "Execution commands processId must not be null");
 			notEmpty(commands, "Execution commands must not be empty");
+			notNull(process, "Execution process must not be null");
 			this.processId = processId;
 			this.pwdDir = pwdDir;
 			this.commands = commands;

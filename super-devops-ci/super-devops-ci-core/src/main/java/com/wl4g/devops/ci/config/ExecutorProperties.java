@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.config;
 
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 /**
  * Task executor configuration such as CICD pipeline process
@@ -25,7 +25,7 @@ import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
  * @version v1.0.0 2019-10-13
  * @since
  */
-public class ExecutorProperties extends RunProperties {
+public class ExecutorProperties extends RunnerProperties {
 	private static final long serialVersionUID = -7007748978859003620L;
 
 	public ExecutorProperties() {

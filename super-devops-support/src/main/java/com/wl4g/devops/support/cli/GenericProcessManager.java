@@ -20,6 +20,7 @@ import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,22 +34,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.exception.ci.StoppedCommandStateException;
-import com.wl4g.devops.support.cli.ProcessRepository.ProcessInfo;
+import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.cli.repository.ProcessRepository;
+import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
+import com.wl4g.devops.support.task.GenericTaskRunner;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 /**
- * Commands line process management.
+ * Abstract generic command-line process management implements.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-20
  * @since
  */
-public class CommandLineProcessManager {
+public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements ProcessManager {
+
+	final public static long DEFAULT_DESTROY_KEEP_WATCH_MS = 400L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Command-line process repository */
 	@Autowired
 	protected ProcessRepository repository;
+
+	/** JEDIS service. */
+	@Autowired
+	protected JedisService jedisService;
+
+	public GenericProcessManager() {
+		super(new RunnerProperties(true));
+	}
 
 	/**
 	 * Execution command-line to process.
@@ -59,6 +74,7 @@ public class CommandLineProcessManager {
 	 * @throws IOException
 	 * @throws Exception
 	 */
+	@Override
 	public void exec(Serializable processId, String cmd, long timeoutMs) throws InterruptedException, IOException {
 		exec(processId, cmd, null, null, timeoutMs);
 	}
@@ -74,25 +90,25 @@ public class CommandLineProcessManager {
 	 * @throws IOException
 	 * @throws Exception
 	 */
+	@Override
 	public void exec(Serializable processId, String cmd, File pwdDir, File stdout, long timeoutMs)
 			throws InterruptedException, IOException {
 		notNull(processId, "Execution commands must not be empty");
 		hasText(cmd, "Execution commands must not be empty");
 		isTrue(timeoutMs > 0, "Command-line timeoutMs must greater than 0");
 
-		// Use input stdout/stderr
-		if (isNull(stdout)) {
-			cmd = cmd + " > /dev/null 2>&1";
-		} else { // Append to stdout file.
+		// Use input (stdout/stderr)
+		if (!isNull(stdout)) {
 			cmd = cmd + " 2>&1 | tee -a " + stdout.getAbsolutePath();
+		} else { // Append to stdout file.
+			cmd = cmd + " > /dev/null 2>&1";
 		}
 		if (log.isInfoEnabled()) {
-			log.info("Execution command: [{}]", cmd);
+			log.info("Execution commands: [{}]", cmd);
 		}
 
 		// Execution.
 		Process ps = null;
-		Runtime rt = Runtime.getRuntime();
 		List<String> commands = new ArrayList<String>(4) {
 			private static final long serialVersionUID = 1L;
 			{
@@ -101,12 +117,12 @@ public class CommandLineProcessManager {
 			}
 		};
 		if (nonNull(pwdDir) && pwdDir.exists()) {
-			ps = rt.exec(commands.toArray(new String[] {}), null, pwdDir);
+			ps = Runtime.getRuntime().exec(commands.toArray(new String[] {}), null, pwdDir);
 		} else {
-			ps = rt.exec(commands.toArray(new String[] {}));
+			ps = Runtime.getRuntime().exec(commands.toArray(new String[] {}));
 		}
 
-		// Registration process.
+		// Register process.
 		repository.register(processId, new ProcessInfo(processId, pwdDir, commands, stdout, ps));
 
 		// Wait for completed.
@@ -114,20 +130,37 @@ public class CommandLineProcessManager {
 
 		int exitCode = ps.exitValue();
 		if (exitCode != 0) {
-			if (exitCode == 143) {
-				throw new StoppedCommandStateException("Manual Stop Task");
+			if (exitCode == 143) { // e.g. destroy() was called.
+				throw new StoppedCommandStateException(String.format("Command-line process(%s) killed", processId));
 			}
-			throw new IllegalStateException(String.format("Failed to execution command: [%s], stdout:[%s])", cmd, stdout));
+			throw new IllegalStateException(String.format("Failed to execution commands:[%s], stdout:[%s])", cmd, stdout));
 		}
+
+	}
+
+	@Override
+	public void run() {
+		keepWatchProcessDestroy();
 	}
 
 	/**
-	 * Destroy command-line process.
-	 * 
-	 * @param processId
+	 * Keep monitor watching process destroy.
 	 */
-	public void destroy(Serializable processId) {
-		repository.getProcessInfo(processId).getProcess().destroyForcibly();
+	private void keepWatchProcessDestroy() {
+		while (true) {
+			List<ProcessInfo> processes = jedisService.getObjectList("", ProcessInfo.class);
+			if (!isEmpty(processes)) {
+				for (ProcessInfo ps : processes) {
+					destroy(ps.getProcessId(), 5000L);
+				}
+			}
+
+			try {
+				Thread.sleep(DEFAULT_DESTROY_KEEP_WATCH_MS);
+			} catch (InterruptedException e) {
+				log.warn("", e);
+			}
+		}
 	}
 
 }
