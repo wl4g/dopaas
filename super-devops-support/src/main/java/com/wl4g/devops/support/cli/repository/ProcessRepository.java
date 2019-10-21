@@ -20,6 +20,7 @@ import static org.springframework.util.Assert.notNull;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,7 +51,7 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @return
 	 */
-	ProcessInfo getProcessInfo(String processId) throws NoSuchProcessException;
+	ProcessInfo get(String processId) throws NoSuchProcessException;
 
 	/**
 	 * Remove cleanup command-line process information.
@@ -59,6 +60,13 @@ public interface ProcessRepository {
 	 * @return
 	 */
 	ProcessInfo cleanup(String processId);
+
+	/**
+	 * Obtain processes list all.
+	 * 
+	 * @return
+	 */
+	Collection<ProcessInfo> getProcesses();
 
 	/**
 	 * Command-line process information bean.

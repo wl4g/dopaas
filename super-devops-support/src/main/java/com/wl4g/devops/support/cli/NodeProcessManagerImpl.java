@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.support.cli;
 
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_WATCH_PROCESS_DESTROY;
 import static io.netty.util.internal.ThreadLocalRandom.current;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.isTrue;
 
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import org.springframework.util.Assert;
@@ -38,11 +39,11 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
  */
 public class NodeProcessManagerImpl extends GenericProcessManager {
 
-	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
+	/** Default destruction signal expired seconds. */
+	final public static int DEFAULT_SIGNAL_EXPIRED_SEC = (int) (3 * TimeUnit.MILLISECONDS.toSeconds(DEFAULT_MAX_WATCH_MS));
 
 	/**
-	 * Destroy command-line process.</br>
-	 * <font color=red>There's no guarantee that it will be killed.</font>
+	 * Send signal for destroy command-line process.</br>
 	 * 
 	 * @param processId
 	 *            Create command-lien process ID.
@@ -51,36 +52,22 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * @throws TimeoutDestroyProcessException
 	 */
 	@Override
-	public void destroy(String processId, long timeoutMs) throws TimeoutDestroyProcessException {
+	public void destroy(String processId, long timeoutMs) {
 		isTrue(timeoutMs >= DEFAULT_DESTROY_ROUND_MS,
 				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
 
 		// Send destruction signal.
 		String signalKey = getDestroySignalKey(processId);
-		jedisService.setObjectAsJson(signalKey, new DestroySignal(processId, timeoutMs), 0); // MARK1
-
-		// Obtain destroy result signal.
-		DestroySignal result = null;
-		long i = 0, c = (timeoutMs / DEFAULT_DESTROY_ROUND_MS);
-		do {
-			result = jedisService.getObjectAsJson(getDestroySignalResultKey(processId), DestroySignal.class);
-			try {
-				Thread.sleep(current().nextInt(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS));
-			} catch (InterruptedException e) {
-				throw new IllegalStateException(e);
-			}
-			++i;
-			if (i >= c) { // Timeout?
-				throw new TimeoutDestroyProcessException(String.format("Destruction waiting timeout", processId));
-			}
-		} while (isNull(result) || (nonNull(result) && !result.getDestroyed()));
-
+		if (log.isInfoEnabled()) {
+			log.info("Send destruction signal:{} for processId:{}", signalKey, processId);
+		}
+		jedisService.setObjectAsJson(signalKey, new DestroySignal(processId, timeoutMs), DEFAULT_SIGNAL_EXPIRED_SEC); // MARK1
 	}
 
 	@Override
 	public void run() {
 		try {
-			runningWatchProcessesDestroy();
+			loopWatchProcessesDestroy();
 		} catch (InterruptedException e) {
 			log.error("Grave warning!!! Killed node process watcher, commands process on this node will not be manual cancel.",
 					e);
@@ -93,38 +80,37 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("deprecation")
-	private synchronized void runningWatchProcessesDestroy() throws InterruptedException {
+	private synchronized void loopWatchProcessesDestroy() throws InterruptedException {
 		while (true) {
-			Thread.sleep(current().nextInt(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS));
+			Thread.sleep(current().nextLong(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS));
 
-			Lock lock = lockManager.getLock("");
+			Lock lock = lockManager.getLock(LOCK_WATCH_PROCESS_DESTROY);
 			try {
 				// Let cluster this node process destroy, nodes that do not
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
-					for (ProcessInfo ps : safeList(jedisService.getObjectList("", ProcessInfo.class))) {
+					Collection<ProcessInfo> processes = repository.getProcesses();
+					if (log.isInfoEnabled()) {
+						log.info("Destruction processes: {}", processes);
+					}
+					processes.stream().forEach(ps -> {
 						String signalKey = getDestroySignalKey(ps.getProcessId());
-						String signalRetKey = getDestroySignalResultKey(ps.getProcessId());
 						try {
-							// Matcher need destroy process. See:[MARK1]
+							// Match & destroy process. See:[MARK1]
 							DestroySignal signal = jedisService.getObjectAsJson(signalKey, DestroySignal.class);
 							if (nonNull(signal)) {
-								// Destruction.
-								destroy0(signal);
-								// Response destroyed.
-								jedisService.setObjectAsJson(signalRetKey, new DestroySignal(ps.getProcessId(), true), 1);
-								// Cleanup signal.
-								jedisService.del(signalKey);
-								break;
+								destroy0(signal); // Destruction process.
+								return;
 							}
-						} catch (TimeoutDestroyProcessException e) {
-							// Response destroy failure.
-							jedisService.setObjectAsJson(signalRetKey, new DestroySignal(ps.getProcessId(), false), 1);
+						} catch (Exception e) {
+							log.error("Failed to destruction process.", e);
+						} finally {
+							jedisService.del(signalKey); // Cleanup.
 						}
-					}
+					});
 				}
 			} catch (Throwable ex) {
-				log.warn("", ex);
+				log.error("Destruction error", ex);
 			} finally {
 				lock.unlock();
 			}
@@ -132,12 +118,13 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 
 	}
 
+	/**
+	 * Obtain processId destruction signal key.
+	 * 
+	 * @param processId
+	 * @return
+	 */
 	private String getDestroySignalKey(String processId) {
-		Assert.hasText(processId, "ProcessId must not be empty.");
-		return "" + processId;
-	}
-
-	private String getDestroySignalResultKey(String processId) {
 		Assert.hasText(processId, "ProcessId must not be empty.");
 		return "" + processId;
 	}

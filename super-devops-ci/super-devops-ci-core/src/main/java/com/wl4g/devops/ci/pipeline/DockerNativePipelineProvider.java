@@ -79,7 +79,6 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getPipelineInfo().getProject().getId());
 
-
 		build(getPipelineInfo().getTaskHistory(), true);
 		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 

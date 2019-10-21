@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.regex.Pattern;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.CI_LOCK;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
 import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -133,7 +133,7 @@ public class CiCdConsole {
 		// Open console printer.
 		open();
 
-		Lock lock = lockManager.getLock(CI_LOCK, config.getJob().getJobTimeout(), TimeUnit.MINUTES);
+		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD, config.getJob().getJobTimeout(), TimeUnit.MINUTES);
 		try {
 			if (lock.tryLock()) {
 				// Print to client

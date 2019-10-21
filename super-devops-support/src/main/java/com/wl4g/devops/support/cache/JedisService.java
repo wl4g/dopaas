@@ -19,7 +19,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wl4g.devops.common.utils.lang.StringUtils2;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.utils.serialize.ObjectUtils;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import org.slf4j.Logger;
@@ -171,9 +170,9 @@ public class JedisService {
 		return (String) doExecuteWithRedis(cluster -> {
 			String result = null;
 			if (cacheSeconds != 0) {
-				result = cluster.setex(key, cacheSeconds, JacksonUtils.toJSONString(value));
+				result = cluster.setex(key, cacheSeconds, toJSONString(value));
 			} else {
-				result = cluster.set(key, JacksonUtils.toJSONString(value));
+				result = cluster.set(key, toJSONString(value));
 			}
 			if (log.isDebugEnabled()) {
 				log.debug("setObjectAsJson {} = {}", key, value);

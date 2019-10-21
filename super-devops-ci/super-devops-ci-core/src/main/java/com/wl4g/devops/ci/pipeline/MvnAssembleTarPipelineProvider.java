@@ -67,7 +67,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		} else {
 			// getDependencyService().rollback(getTaskHistory(),
 			// getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-			build(getPipelineInfo().getTaskHistory(),  true);
+			build(getPipelineInfo().getTaskHistory(), true);
 			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		}
 		deploy();

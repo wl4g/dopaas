@@ -52,8 +52,8 @@ import com.wl4g.devops.support.task.RunnerProperties;
 public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements ProcessManager {
 
 	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
-	final public static int DEFAULT_MIN_WATCH_MS = 2_00;
-	final public static int DEFAULT_MAX_WATCH_MS = 2_000;
+	final public static long DEFAULT_MIN_WATCH_MS = 2_00L;
+	final public static long DEFAULT_MAX_WATCH_MS = 2_000L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -169,7 +169,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		isTrue(signal.getTimeoutMs() >= DEFAULT_DESTROY_ROUND_MS,
 				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
 
-		Process process = repository.getProcessInfo(signal.getProcessId()).getProcess();
+		Process process = repository.get(signal.getProcessId()).getProcess();
 		if (nonNull(process)) {
 			try {
 				process.getOutputStream().close();
