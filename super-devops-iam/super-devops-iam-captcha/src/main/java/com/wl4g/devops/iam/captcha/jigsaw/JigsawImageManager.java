@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.captcha.jigsaw;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -87,7 +87,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	@Autowired
 	protected JedisService jedisService;
 
-	public JigsawImageManager(CaptchaProperties config, SimpleRedisLockManager lockManager) {
+	public JigsawImageManager(CaptchaProperties config, JedisLockManager lockManager) {
 		Assert.notNull(config, "Captcha properties must not be null.");
 		Assert.notNull(lockManager, "Captcha properties must not be null.");
 		this.config = config;

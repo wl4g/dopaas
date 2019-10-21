@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.exception.ci;
+package com.wl4g.devops.common.exception.support;
 
-public class StoppedCommandStateException extends CiException {
+import com.wl4g.devops.common.exception.ci.CiException;
+
+public class TimeoutDestroyProcessException extends CiException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -23,7 +25,7 @@ public class StoppedCommandStateException extends CiException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public StoppedCommandStateException() {
+	public TimeoutDestroyProcessException() {
 		super();
 	}
 
@@ -36,7 +38,7 @@ public class StoppedCommandStateException extends CiException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public StoppedCommandStateException(String message) {
+	public TimeoutDestroyProcessException(String message) {
 		super(message);
 	}
 
@@ -57,7 +59,7 @@ public class StoppedCommandStateException extends CiException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public StoppedCommandStateException(String message, Throwable cause) {
+	public TimeoutDestroyProcessException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +77,7 @@ public class StoppedCommandStateException extends CiException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public StoppedCommandStateException(Throwable cause) {
+	public TimeoutDestroyProcessException(Throwable cause) {
 		super(cause);
 	}
 

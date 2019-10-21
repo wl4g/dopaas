@@ -17,10 +17,10 @@ package com.wl4g.devops.support.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.common.exception.ci.TimeoutDestroyProcessException;
+import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
+import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 
 /**
  * Commands line process management.
@@ -41,10 +41,12 @@ public interface ProcessManager {
 	 *            commands
 	 * @param timeoutMs
 	 *            timeout Ms.
+	 * @throws InterruptedException
+	 * @throws IllegalProcessStateException
 	 * @throws IOException
-	 * @throws Exception
 	 */
-	void exec(Serializable processId, String cmd, long timeoutMs) throws InterruptedException, IOException;
+	void exec(String processId, String cmd, long timeoutMs)
+			throws InterruptedException, IllegalProcessStateException, IOException;
 
 	/**
 	 * Blocking execution command-line to process.
@@ -60,11 +62,12 @@ public interface ProcessManager {
 	 * @param timeoutMs
 	 *            timeout Ms.
 	 * @param processId
+	 * @throws InterruptedException
+	 * @throws IllegalProcessStateException
 	 * @throws IOException
-	 * @throws Exception
 	 */
-	void exec(Serializable processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws InterruptedException, IOException;
+	void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws InterruptedException, IllegalProcessStateException, IOException;
 
 	/**
 	 * Destroy command-line process.</br>
@@ -76,6 +79,6 @@ public interface ProcessManager {
 	 *            Destroy process timeout Ms.
 	 * @throws TimeoutDestroyProcessException
 	 */
-	void destroy(Serializable processId, long timeoutMs) throws TimeoutDestroyProcessException;
+	void destroy(String processId, long timeoutMs) throws TimeoutDestroyProcessException;
 
 }

@@ -15,16 +15,15 @@
  */
 package com.wl4g.devops.support.cli;
 
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -33,10 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.common.exception.ci.StoppedCommandStateException;
+import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
+import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 
@@ -49,7 +51,9 @@ import com.wl4g.devops.support.task.RunnerProperties;
  */
 public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements ProcessManager {
 
-	final public static long DEFAULT_DESTROY_KEEP_WATCH_MS = 400L;
+	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
+	final public static int DEFAULT_MIN_WATCH_MS = 2_00;
+	final public static int DEFAULT_MAX_WATCH_MS = 2_000;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -60,6 +64,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	/** JEDIS service. */
 	@Autowired
 	protected JedisService jedisService;
+
+	/** JEDIS locks manager. */
+	@Autowired
+	protected JedisLockManager lockManager;
 
 	public GenericProcessManager() {
 		super(new RunnerProperties(true));
@@ -75,7 +83,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @throws Exception
 	 */
 	@Override
-	public void exec(Serializable processId, String cmd, long timeoutMs) throws InterruptedException, IOException {
+	public void exec(String processId, String cmd, long timeoutMs)
+			throws InterruptedException, IllegalProcessStateException, IOException {
 		exec(processId, cmd, null, null, timeoutMs);
 	}
 
@@ -91,8 +100,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @throws Exception
 	 */
 	@Override
-	public void exec(Serializable processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws InterruptedException, IOException {
+	public void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws InterruptedException, IllegalProcessStateException, IOException {
 		notNull(processId, "Execution commands must not be empty");
 		hasText(cmd, "Execution commands must not be empty");
 		isTrue(timeoutMs > 0, "Command-line timeoutMs must greater than 0");
@@ -128,38 +137,72 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		// Wait for completed.
 		ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
 
-		int exitCode = ps.exitValue();
-		if (exitCode != 0) {
-			if (exitCode == 143) { // e.g. destroy() was called.
-				throw new StoppedCommandStateException(String.format("Command-line process(%s) killed", processId));
+		// Check exited?
+		try {
+			int exitCode = ps.exitValue();
+			if (exitCode != 0) {
+				if (exitCode == 143) { // e.g. destroy() was called.
+					throw new IllegalProcessStateException(String.format("Process(%s) killed", processId));
+				}
+				throw new IllegalProcessStateException();
 			}
-			throw new IllegalStateException(String.format("Failed to execution commands:[%s], stdout:[%s])", cmd, stdout));
+		} catch (IllegalProcessStateException | IllegalThreadStateException e) {
+			throw new IllegalProcessStateException(
+					String.format("Failed to process(%s), cmd: [%s], cause: %s", processId, cmd, getRootCausesString(e)));
+		} finally {
+			repository.cleanup(processId); // Cleanup process.
 		}
 
 	}
 
-	@Override
-	public void run() {
-		keepWatchProcessDestroy();
-	}
-
 	/**
-	 * Keep monitor watching process destroy.
+	 * Destroy command-line process.</br>
+	 * <font color=red>There's no guarantee that it will be killed.</font>
+	 * 
+	 * @param signal
+	 *            Destruction process signal.
+	 * @throws TimeoutDestroyProcessException
 	 */
-	private void keepWatchProcessDestroy() {
-		while (true) {
-			List<ProcessInfo> processes = jedisService.getObjectList("", ProcessInfo.class);
-			if (!isEmpty(processes)) {
-				for (ProcessInfo ps : processes) {
-					destroy(ps.getProcessId(), 5000L);
+	@Deprecated
+	protected void destroy0(DestroySignal signal) throws TimeoutDestroyProcessException {
+		notNull(signal, "Destroy signal must not be null.");
+		isTrue(signal.getTimeoutMs() >= DEFAULT_DESTROY_ROUND_MS,
+				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
+
+		Process process = repository.getProcessInfo(signal.getProcessId()).getProcess();
+		if (nonNull(process)) {
+			try {
+				process.getOutputStream().close();
+			} catch (IOException e) {
+			}
+			try {
+				process.getInputStream().close();
+			} catch (IOException e) {
+			}
+			try {
+				process.getErrorStream().close();
+			} catch (IOException e) {
+			}
+
+			// Destroy force.
+			for (long i = 0, c = (signal.getTimeoutMs() / DEFAULT_DESTROY_ROUND_MS); process.isAlive() || i < c; i++) {
+				try {
+					process.destroyForcibly();
+					Thread.sleep(DEFAULT_DESTROY_ROUND_MS);
+				} catch (Exception e) {
+					log.error("Failed to destory comand-line process.", e);
+					break;
 				}
 			}
 
-			try {
-				Thread.sleep(DEFAULT_DESTROY_KEEP_WATCH_MS);
-			} catch (InterruptedException e) {
-				log.warn("", e);
+			// Check destroyed?
+			if (process.isAlive()) {
+				throw new TimeoutDestroyProcessException(
+						String.format("Still not destroyed '%s', destruction handling timeout", signal.getProcessId()));
 			}
+
+			// Cleanup
+			repository.cleanup(signal.getProcessId());
 		}
 	}
 

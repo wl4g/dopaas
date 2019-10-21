@@ -33,7 +33,7 @@ import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class CiCdConsole {
 	private Pipeline pipelineCoreProcessor;
 
 	@Autowired
-	private SimpleRedisLockManager lockManager;
+	private JedisLockManager lockManager;
 
 	@Autowired
 	private GlobalTimeoutHandlerCleanFinalizer timingTasks;

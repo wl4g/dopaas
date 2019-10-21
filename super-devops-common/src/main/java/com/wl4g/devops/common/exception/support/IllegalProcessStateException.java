@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.exception.ci;
+package com.wl4g.devops.common.exception.support;
 
-public class NoSuchCommandLineProcessException extends CiException {
+import com.wl4g.devops.common.exception.ci.CiException;
+
+public class IllegalProcessStateException extends CiException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -23,7 +25,7 @@ public class NoSuchCommandLineProcessException extends CiException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public NoSuchCommandLineProcessException() {
+	public IllegalProcessStateException() {
 		super();
 	}
 
@@ -36,7 +38,7 @@ public class NoSuchCommandLineProcessException extends CiException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public NoSuchCommandLineProcessException(String message) {
+	public IllegalProcessStateException(String message) {
 		super(message);
 	}
 
@@ -57,7 +59,7 @@ public class NoSuchCommandLineProcessException extends CiException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public NoSuchCommandLineProcessException(String message, Throwable cause) {
+	public IllegalProcessStateException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +77,8 @@ public class NoSuchCommandLineProcessException extends CiException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public NoSuchCommandLineProcessException(Throwable cause) {
+	public IllegalProcessStateException(Throwable cause) {
 		super(cause);
 	}
+
 }

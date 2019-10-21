@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.SimulateIndicatorsValveAleter;
@@ -68,14 +68,14 @@ public class UmcAlarmAutoConfiguration {
 	}
 
 	@Bean(BEAN_DEFAULT_VALVE_ALERTER)
-	public IndicatorsValveAlerter defaultIndicatorsValveAlerter(JedisService jedisService, SimpleRedisLockManager lockManager,
+	public IndicatorsValveAlerter defaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager,
 			AlarmProperties config, AlarmConfigurer configurer, RuleConfigManager ruleManager,
 			CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
 		return new DefaultIndicatorsValveAlerter(jedisService, lockManager, config, configurer, ruleManager, inspector, notifier);
 	}
 
 	@Bean(BEAN_SIMULATE_VALVE_ALERTER)
-	public IndicatorsValveAlerter simulateIndicatorsValveAlerter(JedisService jedisService, SimpleRedisLockManager lockManager,
+	public IndicatorsValveAlerter simulateIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager,
 			AlarmProperties config, AlarmConfigurer configurer, RuleConfigManager ruleManager,
 			CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
 		return new SimulateIndicatorsValveAleter(jedisService, lockManager, config, configurer, ruleManager, inspector, notifier);

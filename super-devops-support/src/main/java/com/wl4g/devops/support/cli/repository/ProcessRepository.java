@@ -24,7 +24,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.common.exception.ci.NoSuchCommandLineProcessException;
+import com.wl4g.devops.common.exception.support.NoSuchProcessException;
 
 /**
  * Command-line process repository interface.
@@ -42,7 +42,7 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @param process
 	 */
-	void register(Serializable processId, ProcessInfo process);
+	void register(String processId, ProcessInfo process);
 
 	/**
 	 * Get command-line process information.
@@ -50,7 +50,7 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @return
 	 */
-	ProcessInfo getProcessInfo(Serializable processId) throws NoSuchCommandLineProcessException;
+	ProcessInfo getProcessInfo(String processId) throws NoSuchProcessException;
 
 	/**
 	 * Remove cleanup command-line process information.
@@ -58,7 +58,7 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @return
 	 */
-	ProcessInfo cleanup(Serializable processId);
+	ProcessInfo cleanup(String processId);
 
 	/**
 	 * Command-line process information bean.
@@ -71,7 +71,7 @@ public interface ProcessRepository {
 		private static final long serialVersionUID = 1013208493410008301L;
 
 		/** Process ID */
-		final private Serializable processId;
+		final private String processId;
 
 		/** Process context directory */
 		final private File pwdDir;
@@ -86,7 +86,7 @@ public interface ProcessRepository {
 		@JsonIgnore
 		final transient private Process process;
 
-		public ProcessInfo(Serializable processId, File pwdDir, List<String> commands, File stdout, Process process) {
+		public ProcessInfo(String processId, File pwdDir, List<String> commands, File stdout, Process process) {
 			notNull(processId, "Execution commands processId must not be null");
 			notEmpty(commands, "Execution commands must not be empty");
 			notNull(process, "Execution process must not be null");
@@ -97,7 +97,7 @@ public interface ProcessRepository {
 			this.process = process;
 		}
 
-		public Serializable getProcessId() {
+		public String getProcessId() {
 			return processId;
 		}
 
