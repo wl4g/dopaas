@@ -13,7 +13,7 @@ matrix:
       - ZULUJDK=8
 
 before_install:
-  - chmod a+x ./mvnw -Dmaven.test.skip=true -DskipTests
+  - chmod a+x ./mvnw
 #  # adding $HOME/.sdkman to cache would create an empty directory, which interferes with the initial installation
 #  - "[[ -d $HOME/.sdkman/bin/ ]] || rm -rf $HOME/.sdkman/"
 #  - curl -sL https://get.sdkman.io | bash
@@ -28,6 +28,9 @@ cache:
   directories:
     - "$HOME/.m2/repository"
     - "$HOME/.m2/wrapper"
+
+script:
+  - ./mvnw clean install -Dmaven.test.skip=true
 
 #script:
 #  - ./mvnw -version
