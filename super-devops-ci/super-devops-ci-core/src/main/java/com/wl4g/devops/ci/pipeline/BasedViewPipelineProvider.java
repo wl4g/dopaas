@@ -70,8 +70,8 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 		String rsaKey = config.getTranform().getCipherKey();
 		AES aes = new AES(rsaKey);
 		char[] rsaReal = aes.decrypt(rsa).toCharArray();
-		String targetFilePath = getPipelineInfo().getPath()+getPipelineInfo().getProject().getTarPath();
-		return SSHTool.uploadFile(targetHost, userName, rsaReal, new File(targetFilePath), "/home/" + userName + "/tmp");
+		String localPath = config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+getPipelineInfo().getProject().getProjectName() + ".tar.gz";
+		return SSHTool.uploadFile(targetHost, userName, rsaReal, new File(localPath), "/home/" + userName + "/tmp");
 	}
 
 	/**
@@ -87,7 +87,7 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	 * Unzip in tmp
 	 */
 	public String tar(String targetHost, String userName, String rsa) throws Exception {
-		String command = "tar -xvf /home/" + userName + "/tmp" + "/" + getPipelineInfo().getProject().getProjectName() + ".tar -C "+ getPipelineInfo().getProject().getParentAppHome();
+		String command = "tar -zxvf /home/" + userName + "/tmp" + "/" + getPipelineInfo().getProject().getProjectName() + ".tar.gz -C "+ getPipelineInfo().getProject().getParentAppHome();
 		return exceCommand(targetHost, userName, command, rsa);
 	}
 
@@ -95,7 +95,7 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	 * remove tar path
 	 */
 	public String removeTar(String targetHost, String userName, String rsa) throws Exception {
-		String path = "/home/" + userName + "/tmp"+ getPipelineInfo().getProject().getProjectName() + ".tar";
+		String path = "/home/" + userName + "/tmp"+ getPipelineInfo().getProject().getProjectName() + ".tar.gz";
 		if (StringUtils.isBlank(path) || path.trim().equals("/")) {
 			throw new RuntimeException("bad command");
 		}
