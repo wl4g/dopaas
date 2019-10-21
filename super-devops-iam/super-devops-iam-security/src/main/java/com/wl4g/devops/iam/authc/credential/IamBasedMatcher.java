@@ -26,9 +26,9 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 
 /**
@@ -71,7 +71,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	 * IAM security Coprocessor
 	 */
 	@Autowired
-	protected SecurityCoprocessor coprocessor;
+	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
 	 * Delegate message source.

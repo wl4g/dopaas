@@ -18,6 +18,9 @@ package com.wl4g.devops.iam.configure;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationInfo;
+
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
@@ -52,6 +55,17 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 	 * @return
 	 */
 	default boolean preApplyVerify(ServletRequest request, ServletResponse response) {
+		return true;
+	}
+
+	/**
+	 * Before Whether the generic authenticating check match is allowed.
+	 * 
+	 * @param token
+	 * @param info
+	 * @return
+	 */
+	default boolean preAuthenticatingAllowed(IamAuthenticationToken token, AuthenticationInfo info) throws AccountException {
 		return true;
 	}
 

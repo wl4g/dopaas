@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -78,7 +78,7 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 	protected JedisService jedisService;
 
 	@SuppressWarnings("unchecked")
-	public AbstractCryptographicService(SimpleRedisLockManager lockManager) {
+	public AbstractCryptographicService(JedisLockManager lockManager) {
 		Assert.notNull(lockManager, "Crypto lockManager must not be null.");
 		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_KEY_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
 		ResolvableType resolveType = ResolvableType.forClass(getClass());

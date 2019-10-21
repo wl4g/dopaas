@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.devops.common.exception.ci.StoppedCommandStateException;
+import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -78,7 +78,7 @@ public abstract class CommandUtils {
 
 		if (exitValue != 0) {
 			if (exitValue == 143) {
-				throw new StoppedCommandStateException("Manual Stop Task");
+				throw new IllegalProcessStateException("Manual Stop Task");
 			}
 			throw new IllegalStateException(String.format("Failed to exec write file command=%s , logPath=%s)", cmd, logPath));
 		}

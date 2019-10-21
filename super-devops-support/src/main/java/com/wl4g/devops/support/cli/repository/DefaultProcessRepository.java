@@ -17,13 +17,12 @@ package com.wl4g.devops.support.cli.repository;
 
 import static java.util.Objects.isNull;
 
-import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.exception.ci.NoSuchCommandLineProcessException;
+import com.wl4g.devops.common.exception.support.NoSuchProcessException;
 
 /**
  * Default command-line process registration repository.
@@ -35,24 +34,24 @@ import com.wl4g.devops.common.exception.ci.NoSuchCommandLineProcessException;
 public class DefaultProcessRepository implements ProcessRepository {
 
 	/** Command-line process registration repository. */
-	final protected ConcurrentMap<Serializable, ProcessInfo> registry = new ConcurrentHashMap<>();
+	final protected ConcurrentMap<String, ProcessInfo> registry = new ConcurrentHashMap<>();
 
 	@Override
-	public void register(Serializable processId, ProcessInfo process) {
+	public void register(String processId, ProcessInfo process) {
 		Assert.state(isNull(registry.putIfAbsent(processId, process)), "Already command-line process");
 	}
 
 	@Override
-	public ProcessInfo getProcessInfo(Serializable processId) throws NoSuchCommandLineProcessException {
+	public ProcessInfo getProcessInfo(String processId) throws NoSuchProcessException {
 		ProcessInfo process = registry.get(processId);
 		if (isNull(process)) {
-			throw new NoSuchCommandLineProcessException(String.format("No such command-line process of '%s'", processId));
+			throw new NoSuchProcessException(String.format("No such command-line process of '%s'", processId));
 		}
 		return process;
 	}
 
 	@Override
-	public ProcessInfo cleanup(Serializable processId) {
+	public ProcessInfo cleanup(String processId) {
 		return registry.remove(processId);
 	}
 

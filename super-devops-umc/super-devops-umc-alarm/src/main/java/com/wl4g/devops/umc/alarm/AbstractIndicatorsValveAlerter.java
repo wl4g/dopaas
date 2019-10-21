@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
@@ -52,9 +52,9 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	/**
 	 * REDIS lock manager.
 	 */
-	final protected SimpleRedisLockManager lockManager;
+	final protected JedisLockManager lockManager;
 
-	public AbstractIndicatorsValveAlerter(JedisService jedisService, SimpleRedisLockManager lockManager, AlarmProperties config) {
+	public AbstractIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config) {
 		super(config);
 		Assert.notNull(jedisService, "JedisService is null, please check config.");
 		Assert.notNull(lockManager, "LockManager is null, please check config.");

@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.crypto.keypair;
 
 import com.wl4g.devops.iam.crypto.AbstractCryptographicService;
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
  * RSA cryptographic service.
@@ -32,7 +32,7 @@ public final class RSACryptographicService extends AbstractCryptographicService<
 	 */
 	final protected CryptoHolder crypto;
 
-	public RSACryptographicService(SimpleRedisLockManager lockManager) {
+	public RSACryptographicService(JedisLockManager lockManager) {
 		super(lockManager);
 		this.crypto = CryptoHolder.getInstance("RSA");
 	}

@@ -18,7 +18,7 @@ package com.wl4g.devops.support.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
  * Concurrent support auto configuration
@@ -31,8 +31,8 @@ import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
 public class ConcurrentAutoConfiguration {
 
 	@Bean
-	public SimpleRedisLockManager simpleRedisLockManager() {
-		return new SimpleRedisLockManager();
+	public JedisLockManager jedisLockManager() {
+		return new JedisLockManager();
 	}
 
 }

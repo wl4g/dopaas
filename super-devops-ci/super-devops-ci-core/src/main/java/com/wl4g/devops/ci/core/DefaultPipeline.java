@@ -25,7 +25,7 @@ import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Environment;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
-import com.wl4g.devops.common.exception.ci.StoppedCommandStateException;
+import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.scm.AppClusterDao;
@@ -202,7 +202,7 @@ public class DefaultPipeline implements Pipeline {
 					sendMailByContactGroupId(provider.getPipelineInfo().getTaskHistory().getContactGroupId(),
 							"Task Build Success taskId=" + taskId + " projectName="
 									+ provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()));
-			} catch (StoppedCommandStateException e) {
+			} catch (IllegalProcessStateException e) {
 				log.info("task stop taskId={}", taskId);
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, e.getMessage());
 				e.printStackTrace();

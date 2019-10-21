@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.alarm;
 import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.concurrent.locks.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
@@ -65,7 +65,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	/** Alarm notifier */
 	final protected CompositeAlarmNotifierAdapter notifier;
 
-	public DefaultIndicatorsValveAlerter(JedisService jedisService, SimpleRedisLockManager lockManager, AlarmProperties config,
+	public DefaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config,
 			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
 			CompositeAlarmNotifierAdapter notifier) {
 		super(jedisService, lockManager, config);
