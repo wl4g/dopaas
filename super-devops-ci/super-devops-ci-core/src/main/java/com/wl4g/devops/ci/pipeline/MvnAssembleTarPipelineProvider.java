@@ -62,8 +62,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		File backupFile = getBackupFile();
 		if (backupFile.exists()) {
 			// from git
-			getBackupLocal(backupFile.getAbsolutePath(),
-					getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
+			getBackupLocal();
 			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
 		} else {
 			// getDependencyService().rollback(getTaskHistory(),
@@ -81,8 +80,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		// get local sha
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 		// backup in local
-		backupLocal(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getAlias(),
-				getPipelineInfo().getBranch());
+		backupLocal();
 
 		// scp to server
 		List<Future<?>> futures = new ArrayList<>();

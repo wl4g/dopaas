@@ -115,20 +115,23 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	/**
 	 * Local back up
 	 */
-	public void backupLocal(String path, String alias, String branchName) throws Exception {
-		File baseDir = config.getJobBaseDir(getPipelineInfo().getTaskHistory().getId());
-		checkPath(baseDir.getAbsolutePath());
-		String command = "cp -Rf " + path + " " + baseDir.getAbsolutePath() + "/" + subPackname(path);
+	public void backupLocal() throws Exception {
+		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
+		String targetPath = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
+		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath()+ subPackname(getPipelineInfo().getProject().getTarPath());
+		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
+		String command = "cp -Rf " + targetPath + " " + backupPath;
 		SSHTool.exec(command);
 	}
 
 	/**
 	 * Get local back up , for rollback
 	 */
-	public void getBackupLocal(String backFile, String target) throws Exception {
-		File baseDir = config.getJobBaseDir(getPipelineInfo().getTaskHistory().getId());
-		checkPath(baseDir.getAbsolutePath());
-		String command = "cp -Rf " + backFile + " " + target;
+	public void getBackupLocal() throws Exception {
+		Integer taskHisRefId = getPipelineInfo().getRefTaskHistory().getId();
+		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()+ subPackname(getPipelineInfo().getProject().getTarPath());
+		String target  = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
+		String command = "cp -Rf " + backupPath + " " + target;
 		SSHTool.exec(command);
 	}
 
@@ -142,21 +145,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		return str;
 	}
 
-	/**
-	 * Get Package Name from path
-	 */
-	public String subPackname(String path) {
-		String[] a = path.split("/");
-		return a[a.length - 1];
-	}
 
-	/**
-	 * Get Packname WithOut Postfix from path
-	 */
-	public String subPacknameWithOutPostfix(String path) {
-		String a = subPackname(path);
-		return a.substring(0, a.lastIndexOf("."));
-	}
+
+
 
 	public String replaceMaster(String str) {
 		return str.replaceAll("master-", "");

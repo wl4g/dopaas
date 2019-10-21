@@ -16,8 +16,14 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.utils.SSHTool;
+import com.wl4g.devops.common.utils.codec.AES;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Date;
 
 /**
  * Abstract based deploy provider.
@@ -37,5 +43,67 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	 * Execute
 	 */
 	public abstract void execute() throws Exception;
+
+
+	/**
+	 * Scp + tar + move to basePath
+	 */
+	public String handOut(String targetHost, String userName, String rsa) throws Exception {
+		String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
+		// scp
+		result += scpToTmp(targetHost, userName, rsa) + "\n";
+		//backup
+		result += backupOnServer(targetHost, userName, rsa) + "\n";
+		//mkdir
+		result += mkdirs(targetHost, userName, getPipelineInfo().getProject().getParentAppHome(), rsa) + "\n";
+		// tar
+		result += tar(targetHost, userName,  rsa) + "\n";
+		// remove
+		result += removeTar(targetHost, userName, rsa);
+		return result;
+	}
+
+	/**
+	 * Scp To Tmp
+	 */
+	public String scpToTmp(String targetHost, String userName, String rsa) throws Exception {
+		String rsaKey = config.getTranform().getCipherKey();
+		AES aes = new AES(rsaKey);
+		char[] rsaReal = aes.decrypt(rsa).toCharArray();
+		String targetFilePath = getPipelineInfo().getPath()+getPipelineInfo().getProject().getTarPath();
+		return SSHTool.uploadFile(targetHost, userName, rsaReal, new File(targetFilePath), "/home/" + userName + "/tmp");
+	}
+
+	/**
+	 * backup on server
+	 */
+	public String backupOnServer(String targetHost, String userName, String rsa) throws Exception {
+		String command = "mv "+ getPipelineInfo().getProject().getParentAppHome() + " " + "mv "+ getPipelineInfo().getProject().getParentAppHome()+new Date().getTime();
+		return exceCommand(targetHost, userName, command, rsa);
+	}
+
+
+	/**
+	 * Unzip in tmp
+	 */
+	public String tar(String targetHost, String userName, String rsa) throws Exception {
+		String command = "tar -xvf /home/" + userName + "/tmp" + "/" + getPipelineInfo().getProject().getProjectName() + ".tar -C "+ getPipelineInfo().getProject().getParentAppHome();
+		return exceCommand(targetHost, userName, command, rsa);
+	}
+
+	/**
+	 * remove tar path
+	 */
+	public String removeTar(String targetHost, String userName, String rsa) throws Exception {
+		String path = "/home/" + userName + "/tmp"+ getPipelineInfo().getProject().getProjectName() + ".tar";
+		if (StringUtils.isBlank(path) || path.trim().equals("/")) {
+			throw new RuntimeException("bad command");
+		}
+		String command = "rm -f " + path;
+		return exceCommand(targetHost, userName, command, rsa);
+	}
+
+
+
 
 }
