@@ -142,4 +142,20 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		return command;
 	}
 
+	/**
+	 * Get Package Name from path
+	 */
+	public String subPackname(String path) {
+		String[] a = path.split("/");
+		return a[a.length - 1];
+	}
+
+	/**
+	 * Get Packname WithOut Postfix from path
+	 */
+	public String subPacknameWithOutPostfix(String path) {
+		String a = subPackname(path);
+		return a.substring(0, a.lastIndexOf("."));
+	}
+
 }

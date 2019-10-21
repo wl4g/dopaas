@@ -79,16 +79,10 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getPipelineInfo().getProject().getId());
 
-		File backupFile = config.getJobBackup(getPipelineInfo().getTaskHistory().getRefId(),
-				subPackname(getPipelineInfo().getProject().getTarPath()));
-		if (backupFile.exists()) { // Use local backup?
-			getBackupLocal(backupFile.getAbsolutePath(),
-					getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath());
-			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
-		} else { // Re-pull from VCS by SHA.
-			build(getPipelineInfo().getTaskHistory(), true);
-			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
-		}
+
+		build(getPipelineInfo().getTaskHistory(), true);
+		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 
 		// Transform to instance
