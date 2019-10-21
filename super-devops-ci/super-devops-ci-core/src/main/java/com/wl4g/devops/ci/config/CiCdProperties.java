@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.ci.config;
 
-import static com.wl4g.devops.common.utils.lang.SystemUtils2.cleanSystemPath;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import org.springframework.util.Assert;
 
 import java.io.File;
 import java.util.Objects;
 
-import org.springframework.util.Assert;
+import static com.wl4g.devops.common.utils.lang.SystemUtils2.cleanSystemPath;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 
 /**
  * CICD configuration properties.
@@ -126,10 +126,9 @@ public class CiCdProperties {
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/build.out.log");
 	}
 
-	public File getJobBackup(Integer taskHisyRefId, String projectName) {
-		Assert.notNull(taskHisyRefId, "Rollback task history ref ID must not be null.");
-		Assert.hasText(projectName, "Rollback projectName must not be empty.");
-		return new File(getJobBaseDir(taskHisyRefId).getAbsolutePath() + "/" + projectName);
+	public File getJobBackup(Integer taskHisId) {
+		Assert.notNull(taskHisId, "Rollback task history ref ID must not be null.");
+		return new File(getJobBaseDir(taskHisId).getAbsolutePath());
 	}
 
 	public File getJobTmpCommandFile(Integer taskHisyId, Integer projectId) {

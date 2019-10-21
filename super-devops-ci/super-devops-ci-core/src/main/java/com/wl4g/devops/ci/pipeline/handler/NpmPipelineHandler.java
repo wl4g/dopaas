@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.handler;
 
-import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.NpmPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -34,17 +34,14 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  */
 public class NpmPipelineHandler extends AbstractPipelineHandler {
 
-	private MvnAssembleTarPipelineProvider provider;
-	private String path;
-	private String tarPath;
+	private NpmPipelineProvider provider;
+
 	private Integer taskDetailId;
 
-	public NpmPipelineHandler(MvnAssembleTarPipelineProvider provider, Project project, String path, AppInstance instance,
-			String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
+	public NpmPipelineHandler(NpmPipelineProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(instance, project);
 		this.provider = provider;
-		this.path = path;
-		this.tarPath = tarPath;
 		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
 		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
 			if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
@@ -73,8 +70,7 @@ public class NpmPipelineHandler extends AbstractPipelineHandler {
 
 			// Boolean detailSuccess = new Boolean(false);
 			// Scp to tmp,rename,move to webapps
-			String s = provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(),
-					project.getParentAppHome(), instance.getSshKey());
+			String s = provider.handOut(instance.getHostname(), instance.getSshUser(),instance.getSshKey());
 			result.append(s).append("\n");
 
 			// post command (restart command)

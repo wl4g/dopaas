@@ -26,6 +26,7 @@ import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
+import com.wl4g.devops.support.cli.ProcessManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected TaskHisBuildCommandDao taskHisBuildCommandDao;
 
+	@Autowired
+	protected ProcessManager processManager;
+
 	protected PipelineInfo pipelineInfo;
 
 	/**
@@ -75,7 +79,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * md5
 	 */
 	protected String shaLocal;
-
 
 	public AbstractPipelineProvider(PipelineInfo info) {
 		this.pipelineInfo = info;
@@ -104,7 +107,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public void setShaLocal(String shaLocal) {
 		this.shaLocal = shaLocal;
 	}
-
 
 	/**
 	 * Execute
@@ -136,10 +138,26 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	protected String commandReplace(String command, String projectPath) {
-		command.replaceAll("\\[","\\[");
+		command.replaceAll("\\[", "\\[");
 		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
 		// TODO ......
 		return command;
+	}
+
+	/**
+	 * Get Package Name from path
+	 */
+	public String subPackname(String path) {
+		String[] a = path.split("/");
+		return a[a.length - 1];
+	}
+
+	/**
+	 * Get Packname WithOut Postfix from path
+	 */
+	public String subPacknameWithOutPostfix(String path) {
+		String a = subPackname(path);
+		return a.substring(0, a.lastIndexOf("."));
 	}
 
 }
