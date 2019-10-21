@@ -18,9 +18,10 @@ package com.wl4g.devops.support.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.cli.CommandLineProcessManager;
-import com.wl4g.devops.support.cli.DefaultProcessRepository;
-import com.wl4g.devops.support.cli.ProcessRepository;
+import com.wl4g.devops.support.cli.DefaultProcessManagerImpl;
+import com.wl4g.devops.support.cli.ProcessManager;
+import com.wl4g.devops.support.cli.repository.DefaultProcessRepository;
+import com.wl4g.devops.support.cli.repository.ProcessRepository;
 
 /**
  * Command-line support auto configuration.
@@ -38,8 +39,8 @@ public class CommandLineAutoConfiguration {
 	}
 
 	@Bean
-	public CommandLineProcessManager commandProcessManager() {
-		return new CommandLineProcessManager();
+	public ProcessManager defaultProcessManager() {
+		return new DefaultProcessManagerImpl();
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.cli;
+package com.wl4g.devops.support.cli.repository;
 
 import static java.util.Objects.isNull;
 
@@ -49,6 +49,11 @@ public class DefaultProcessRepository implements ProcessRepository {
 			throw new NoSuchCommandLineProcessException(String.format("No such command-line process of '%s'", processId));
 		}
 		return process;
+	}
+
+	@Override
+	public ProcessInfo cleanup(Serializable processId) {
+		return registry.remove(processId);
 	}
 
 }

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 /**
  * Alarm properties.
@@ -24,7 +24,7 @@ import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
  * @version v1.0 2019年7月5日
  * @since
  */
-public class AlarmProperties extends RunProperties {
+public class AlarmProperties extends RunnerProperties {
 	private static final long serialVersionUID = -3690593536229115411L;
 
 	public AlarmProperties() {

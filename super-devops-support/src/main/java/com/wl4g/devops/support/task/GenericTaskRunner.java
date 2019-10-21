@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.support.task;
 
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -25,7 +24,6 @@ import org.springframework.util.Assert;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,12 +34,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -57,7 +53,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0 2019年6月2日
  * @since
  */
-public abstract class GenericTaskRunner<C extends RunProperties>
+public abstract class GenericTaskRunner<C extends RunnerProperties>
 		implements DisposableBean, ApplicationRunner, Closeable, Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -72,6 +68,11 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 
 	/** Runner worker thread group pool. */
 	private ThreadPoolExecutor worker;
+
+	@SuppressWarnings("unchecked")
+	public GenericTaskRunner() {
+		this.config = (C) new RunnerProperties();
+	}
 
 	public GenericTaskRunner(C config) {
 		Assert.notNull(config, "TaskHistory properties must not be null");
@@ -356,119 +357,6 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 
 	}
 
-	/**
-	 * Generic task runner properties
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年6月8日
-	 * @since
-	 */
-	public static class RunProperties implements Serializable {
-
-		private static final long serialVersionUID = -1996272636830701232L;
-
-		/** Whether to start the boss thread asynchronously. */
-		private boolean startup = true;
-
-		/**
-		 * When the concurrency is less than 0, it means that the worker thread
-		 * group is not enabled (only the boss asynchronous thread is started)
-		 */
-		private int concurrency = -1;
-
-		/** Watch dog delay */
-		private long keepAliveTime = 0L;
-
-		/**
-		 * Consumption receive queue size
-		 */
-		private int acceptQueue = 2;
-
-		/** Rejected execution handler. */
-		private RejectedExecutionHandler reject = new AbortPolicy();
-
-		public RunProperties() {
-			super();
-		}
-
-		public RunProperties(int concurrency) {
-			this(concurrency, 0L, 32, null);
-		}
-
-		public RunProperties(int concurrency, long keepAliveTime, int acceptQueue) {
-			this(concurrency, keepAliveTime, acceptQueue, null);
-		}
-
-		public RunProperties(int concurrency, long keepAliveTime, int acceptQueue, RejectedExecutionHandler reject) {
-			this(true, concurrency, keepAliveTime, acceptQueue, reject);
-		}
-
-		public RunProperties(boolean startup, int concurrency, long keepAliveTime, int acceptQueue,
-				RejectedExecutionHandler reject) {
-			super();
-			setStartup(startup);
-			setConcurrency(concurrency);
-			setKeepAliveTime(keepAliveTime);
-			setAcceptQueue(acceptQueue);
-			setReject(reject);
-		}
-
-		public boolean isStartup() {
-			return startup;
-		}
-
-		public void setStartup(boolean async) {
-			this.startup = async;
-		}
-
-		public int getConcurrency() {
-			return concurrency;
-		}
-
-		public void setConcurrency(int concurrency) {
-			this.concurrency = concurrency;
-		}
-
-		public long getKeepAliveTime() {
-			return keepAliveTime;
-		}
-
-		public void setKeepAliveTime(long keepAliveTime) {
-			if (getConcurrency() > 0) {
-				Assert.isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
-			}
-			this.keepAliveTime = keepAliveTime;
-		}
-
-		public int getAcceptQueue() {
-			return acceptQueue;
-		}
-
-		public void setAcceptQueue(int acceptQueue) {
-			if (getConcurrency() > 0) {
-				Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
-			}
-			this.acceptQueue = acceptQueue;
-		}
-
-		public RejectedExecutionHandler getReject() {
-			return reject;
-		}
-
-		public void setReject(RejectedExecutionHandler reject) {
-			if (reject != null) {
-				this.reject = reject;
-			}
-		}
-
-		@Override
-		public String toString() {
-			return "TaskProperties [concurrency=" + concurrency + ", keepAliveTime=" + keepAliveTime + ", acceptQueue="
-					+ acceptQueue + ", reject=" + reject + "]";
-		}
-
-	}
-
 	@SuppressWarnings({ "resource", "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
 		// Add testing jobs.
@@ -489,7 +377,7 @@ public abstract class GenericTaskRunner<C extends RunProperties>
 		}
 
 		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunProperties>(new RunProperties(2)) {
+		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(2)) {
 		};
 		runner.run(null);
 
