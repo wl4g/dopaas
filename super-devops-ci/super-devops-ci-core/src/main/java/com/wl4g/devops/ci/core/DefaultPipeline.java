@@ -346,7 +346,7 @@ public class DefaultPipeline implements Pipeline {
 		if (Objects.isNull(size)) {
 			size = 100;
 		}
-		String logPath = config.getJobLog(taskHisId) + "/build.log";
+		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
 		return FileIOUtils.readSeekLines(logPath, index, size);
 	}
 

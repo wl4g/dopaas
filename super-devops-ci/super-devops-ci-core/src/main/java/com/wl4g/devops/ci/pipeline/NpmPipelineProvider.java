@@ -15,22 +15,16 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.handler.NpmPipelineHandler;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.share.AppInstance;
 import org.springframework.util.Assert;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * NPM/(VUE/angularJS/ReactJS) standard deployments provider.
@@ -66,7 +60,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		//step3: tar -c
 		pkg();
 		//step4 scp ==> tar -x
-		List<Future<?>> futures = new ArrayList<>();
+		/*List<Future<?>> futures = new ArrayList<>();
 		for (AppInstance instance : getPipelineInfo().getInstances()) {
 			// create deploy task
 			Runnable task = new NpmPipelineHandler(this, getPipelineInfo().getProject(),instance, getPipelineInfo().getTaskHistoryDetails());
@@ -88,9 +82,9 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 				}
 				Thread.sleep(500);
 			}
-		}
+		}*/
 
-
+		log.info("npm deploy finish");
 
 	}
 
@@ -141,6 +135,10 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		String buildCommand = "cd "+projectDir+"\nnpm install\nnpm run build\n";
+
+		//tar
+		String tarCommand  = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
+		buildCommand = buildCommand+"\n"+tarCommand;
 		SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(),taskHistory.getId());
 	}
 
@@ -148,14 +146,15 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 	 * tar -cvf ***.tar -C /home/ci/view *
 	 * tar -xvf ***.tar -C /opt/apps/view
 	 */
-	private void pkg(){
+	private void pkg() throws Exception {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
 		//tar
-		String tarCommand  = "tar -cvf " + project.getProjectName() + ".tar -C " + projectDir + "/dist *";
-		//bakup
-		String bakupCommand = "cp " + projectDir + "/dist/" + project.getProjectName() + ".tar " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId());
+		String tarCommand  = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
+
+		//SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
+
 
 
 	}
