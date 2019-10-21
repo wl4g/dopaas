@@ -118,7 +118,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	public void backupLocal() throws Exception {
 		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
 		String targetPath = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
-		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath()+ subPackname(getPipelineInfo().getProject().getTarPath());
+		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath()
+				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
 		String command = "cp -Rf " + targetPath + " " + backupPath;
 		SSHTool.exec(command);
@@ -129,8 +130,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 */
 	public void getBackupLocal() throws Exception {
 		Integer taskHisRefId = getPipelineInfo().getRefTaskHistory().getId();
-		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()+ subPackname(getPipelineInfo().getProject().getTarPath());
-		String target  = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
+		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
+				+ subPackname(getPipelineInfo().getProject().getTarPath());
+		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
 		String command = "cp -Rf " + backupPath + " " + target;
 		SSHTool.exec(command);
 	}
@@ -144,10 +146,6 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		str = "-v" + str;
 		return str;
 	}
-
-
-
-
 
 	public String replaceMaster(String str) {
 		return str.replaceAll("master-", "");
@@ -167,7 +165,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param taskResult
 	 * @throws Exception
 	 */
-	public void build(TaskHistory taskHistory,  boolean isRollback) throws Exception {
+	public void build(TaskHistory taskHistory, boolean isRollback) throws Exception {
 		File jobLog = config.getJobLog(taskHistory.getId());
 		if (log.isInfoEnabled()) {
 			log.info("Building started, stdout to {}", jobLog.getAbsolutePath());
@@ -185,8 +183,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHistory.getId());
 		for (Dependency depd : dependencys) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doBuilding(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(),  true, isRollback,
-					depCmd);
+			doBuilding(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback, depCmd);
 		}
 		doBuilding(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
 				taskHistory.getBuildCommand());
@@ -226,13 +223,12 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doBuilding(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch,
-							boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
-		Lock lock = lockManager.getLock(CI_LOCK + projectId, config.getJob().getSharedDependencyTryTimeoutMs(), TimeUnit.MINUTES);
+	private void doBuilding(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+			boolean isRollback, String buildCommand) throws Exception {
+		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(), TimeUnit.MINUTES);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
-				doGetSourceAndMvnBuild(taskHistory, projectId, dependencyId, branch, isDependency, isRollback,
-						buildCommand);
+				doGetSourceAndMvnBuild(taskHistory, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -271,7 +267,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @throws Exception
 	 */
 	private void doGetSourceAndMvnBuild(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch,
-			 boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
+			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Pipeline building for projectId={}", projectId);
 		}
@@ -315,12 +311,12 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		File logPath = config.getJobLog(taskHistory.getId());
 		// Building.
 		if (isBlank(buildCommand)) {
-			doBuildWithDefaultCommand(projectDir, logPath,taskHistory.getId());
+			doBuildWithDefaultCommand(projectDir, logPath, taskHistory.getId());
 		} else {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			buildCommand = commandReplace(buildCommand, projectDir);
-			SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(),taskHistory.getId());
+			SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
 		}
 
 	}
@@ -332,9 +328,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param logPath
 	 * @throws Exception
 	 */
-	private void doBuildWithDefaultCommand(String projectDir, File logPath,Integer taskId) throws Exception {
+	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true";
-		SSHTool.exec(defaultCommand,logPath.getAbsolutePath(),taskId);
+		SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
 	}
 
 }

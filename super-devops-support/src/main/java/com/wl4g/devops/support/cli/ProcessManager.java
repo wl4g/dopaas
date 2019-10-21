@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
-import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 
 /**
  * Commands line process management.
@@ -77,8 +76,7 @@ public interface ProcessManager {
 	 *            Create command-lien process ID.
 	 * @param timeoutMs
 	 *            Destroy process timeout Ms.
-	 * @throws TimeoutDestroyProcessException
 	 */
-	void destroy(String processId, long timeoutMs) throws TimeoutDestroyProcessException;
+	void destroy(String processId, long timeoutMs);
 
 }

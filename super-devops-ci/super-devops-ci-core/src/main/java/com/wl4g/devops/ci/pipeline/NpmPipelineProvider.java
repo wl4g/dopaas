@@ -35,8 +35,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class NpmPipelineProvider extends BasedViewPipelineProvider {
 
-	public NpmPipelineProvider(PipelineInfo deployProviderBean) {
-		super(deployProviderBean);
+	public NpmPipelineProvider(PipelineInfo info) {
+		super(info);
 	}
 
 	@Override
@@ -53,43 +53,31 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 
 	public void build() throws Exception {
 		// TODO
-		//step1: git clone/pull
+		// step1: git clone/pull
 		getSources(false);
-		//step2: npm install & npm run build ==> run build command
+		// step2: npm install & npm run build ==> run build command
 		npmBuild();
-		//step3: tar -c
+		// step3: tar -c
 		pkg();
-		//step4 scp ==> tar -x
-		/*List<Future<?>> futures = new ArrayList<>();
-		for (AppInstance instance : getPipelineInfo().getInstances()) {
-			// create deploy task
-			Runnable task = new NpmPipelineHandler(this, getPipelineInfo().getProject(),instance, getPipelineInfo().getTaskHistoryDetails());
-			Future<?> submit = pipelineTaskRunner.getWorker().submit(task);
-			futures.add(submit);
-		}
-
-		if (!isEmpty(futures)) {
-			while (true) {
-				boolean isAllDone = true;
-				for (Future<?> future : futures) {
-					if (!future.isDone()) {
-						isAllDone = false;
-						break;
-					}
-				}
-				if (isAllDone) {
-					break;
-				}
-				Thread.sleep(500);
-			}
-		}*/
+		// step4 scp ==> tar -x
+		/*
+		 * List<Future<?>> futures = new ArrayList<>(); for (AppInstance
+		 * instance : getPipelineInfo().getInstances()) { // create deploy task
+		 * Runnable task = new NpmPipelineHandler(this,
+		 * getPipelineInfo().getProject(),instance,
+		 * getPipelineInfo().getTaskHistoryDetails()); Future<?> submit =
+		 * pipelineTaskRunner.getWorker().submit(task); futures.add(submit); }
+		 * 
+		 * if (!isEmpty(futures)) { while (true) { boolean isAllDone = true; for
+		 * (Future<?> future : futures) { if (!future.isDone()) { isAllDone =
+		 * false; break; } } if (isAllDone) { break; } Thread.sleep(500); } }
+		 */
 
 		log.info("npm deploy finish");
 
 	}
 
-	private void getSources( boolean isRollback) throws Exception {
-
+	private void getSources(boolean isRollback) throws Exception {
 		log.info("Pipeline building for projectId={}", getPipelineInfo().getProject().getId());
 		Project project = getPipelineInfo().getProject();
 		Assert.notNull(project, "project not exist");
@@ -100,18 +88,19 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 			if (GitUtils.checkGitPath(projectDir)) {
 				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
 			} else {
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, getPipelineInfo().getBranch());
+				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
+						getPipelineInfo().getBranch());
 				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
 			}
 		} else {
 			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
 				GitUtils.checkout(config.getVcs().getGitlab().getCredentials(), projectDir, getPipelineInfo().getBranch());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, getPipelineInfo().getBranch());
+				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
+						getPipelineInfo().getBranch());
 			}
 		}
 	}
-
 
 	private void npmBuild() throws Exception {
 		Project project = getPipelineInfo().getProject();
@@ -120,43 +109,40 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
 		// Building.
 		if (isBlank(taskHistory.getBuildCommand())) {
-			doBuildWithDefaultCommand(projectDir, logPath,taskHistory.getId());
+			doBuildWithDefaultCommand(projectDir, logPath, taskHistory.getId());
 		} else {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			String buildCommand = commandReplace(taskHistory.getBuildCommand(), projectDir);
-			SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(),taskHistory.getId());
+			SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
 		}
 	}
 
-
-	private void doBuildWithDefaultCommand(String projectDir, File logPath,Integer taskId) throws Exception {
+	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		String buildCommand = "cd "+projectDir+"\nnpm install\nnpm run build\n";
+		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
 
-		//tar
-		String tarCommand  = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
-		buildCommand = buildCommand+"\n"+tarCommand;
-		SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(),taskHistory.getId());
+		// tar
+		String tarCommand = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/"
+				+ project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
+		buildCommand = buildCommand + "\n" + tarCommand;
+		SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
 	}
 
 	/**
-	 * tar -cvf ***.tar -C /home/ci/view *
-	 * tar -xvf ***.tar -C /opt/apps/view
+	 * tar -cvf ***.tar -C /home/ci/view * tar -xvf ***.tar -C /opt/apps/view
 	 */
 	private void pkg() throws Exception {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
-		//tar
-		String tarCommand  = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
+		// tar
+		String tarCommand = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/"
+				+ project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
 
-		//SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
-
-
-
+		// SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
 	}
 
 }

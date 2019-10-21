@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.constants;
 
 /**
- * CI/CD devops constants
+ * CI/CD DevOps constants.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
@@ -55,7 +55,12 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Pipeline dependencies locker.
 	 */
-	public static final String CI_LOCK = "CI_LOCK_";
+	public static final String LOCK_DEPENDENCY_BUILD = "ci.pipeline.build_";
+
+	/**
+	 * Kill pipeline command-line process watcher locker.
+	 */
+	public static final String LOCK_WATCH_PROCESS_DESTROY = "ci.watch.process.destroy_";
 
 	/**
 	 * Log file start/end separation.

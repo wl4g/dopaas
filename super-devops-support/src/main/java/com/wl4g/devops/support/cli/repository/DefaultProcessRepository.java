@@ -17,6 +17,7 @@ package com.wl4g.devops.support.cli.repository;
 
 import static java.util.Objects.isNull;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -42,12 +43,17 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
-	public ProcessInfo getProcessInfo(String processId) throws NoSuchProcessException {
+	public ProcessInfo get(String processId) throws NoSuchProcessException {
 		ProcessInfo process = registry.get(processId);
 		if (isNull(process)) {
 			throw new NoSuchProcessException(String.format("No such command-line process of '%s'", processId));
 		}
 		return process;
+	}
+
+	@Override
+	public Collection<ProcessInfo> getProcesses() {
+		return registry.values();
 	}
 
 	@Override
