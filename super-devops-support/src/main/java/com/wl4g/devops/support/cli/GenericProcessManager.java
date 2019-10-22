@@ -21,6 +21,7 @@ import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
@@ -97,7 +98,6 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	@Override
 	public void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, IOException {
-		notNull(processId, "Execution commands must not be empty");
 		hasText(cmd, "Execution commands must not be empty");
 		isTrue(timeoutMs > 0, "Command-line timeoutMs must greater than 0");
 
@@ -122,8 +122,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			ps = Runtime.getRuntime().exec(commands);
 		}
 
-		// Register process.
-		repository.register(processId, new ProcessInfo(processId, pwdDir, asList(commands), stdout, ps));
+		// Register process if necessary.
+		if (!isBlank(processId)) {
+			repository.register(processId, new ProcessInfo(processId, pwdDir, asList(commands), stdout, ps));
+		}
 
 		// Check exited?
 		try {
@@ -145,7 +147,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			throw new IllegalProcessStateException(ex.getExitValue(), String.format(
 					"Failed to process(%s), commands:[%s], cause: %s", processId, asList(commands), getRootCausesString(ex)));
 		} finally {
-			repository.cleanup(processId); // Cleanup.
+			// Cleanup if necessary.
+			if (!isBlank(processId)) {
+				repository.cleanup(processId);
+			}
 		}
 
 	}

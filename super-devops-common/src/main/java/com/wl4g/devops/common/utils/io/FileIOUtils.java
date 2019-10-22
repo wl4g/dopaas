@@ -174,7 +174,7 @@ public abstract class FileIOUtils extends FileUtils {
 				String line = raf.readLine();
 				if (nonNull(line)) {
 					lines.add(line);
-					if (!stopper.apply(line)) {
+					if (stopper.apply(line)) {
 						break;
 					}
 				}
@@ -338,7 +338,7 @@ public abstract class FileIOUtils extends FileUtils {
 		System.out.println(seekReadString("C:\\Users\\Administrator\\Desktop\\aaa.txt", 3L, 12));
 		System.out.println("--------------------");
 		System.out.println(seekReadLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 13L, 6, line -> {
-			return !line.equalsIgnoreCase("EOF"); // End if 'EOF'
+			return line.equalsIgnoreCase("EOF"); // End if 'EOF'
 		}));
 	}
 
