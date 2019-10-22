@@ -19,6 +19,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.springframework.util.Assert;
 
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -78,17 +82,17 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param append
 	 */
 	public static void writeFile(File file, String data, Charset charset, boolean append) {
-		if (Objects.isNull(data) || Objects.isNull(file)) {
-			return;
-		}
+		notNull(file, "Write file must not be null");
+		hasText(data, "Write data must not be empty");
+		notNull(charset, "Write charset must not be null");
 
 		File parent = file.getParentFile();
 		if (!parent.exists() || !parent.isDirectory()) {
-			Assert.state(parent.mkdirs(),"Cerate dir fail");
+			state(parent.mkdirs(), String.format("Failed to creating parent directory for [%s]", parent.getAbsolutePath()));
 		}
 		if (!file.exists()) {
 			try {
-				Assert.state(file.createNewFile(),"Cerate file fail");
+				state(file.createNewFile(), String.format("Failed to creating file for [%s]", file.getAbsolutePath()));
 			} catch (IOException e) {
 				throw new IllegalStateException(e);
 			}

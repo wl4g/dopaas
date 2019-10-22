@@ -18,6 +18,7 @@ package com.wl4g.devops.support.cli;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_WATCH_PROCESS_DESTROY;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.util.Objects.nonNull;
+import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
 import java.util.Collection;
@@ -53,6 +54,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 */
 	@Override
 	public void destroy(String processId, long timeoutMs) {
+		hasText(processId, "ProcessId must not be empty.");
 		isTrue(timeoutMs >= DEFAULT_DESTROY_ROUND_MS,
 				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
 
@@ -79,7 +81,6 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * 
 	 * @throws InterruptedException
 	 */
-	@SuppressWarnings("deprecation")
 	private synchronized void loopWatchProcessesDestroy() throws InterruptedException {
 		while (true) {
 			Thread.sleep(current().nextLong(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS));
@@ -99,15 +100,17 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 							// Match & destroy process. See:[MARK1]
 							DestroySignal signal = jedisService.getObjectAsJson(signalKey, DestroySignal.class);
 							if (nonNull(signal)) {
-								destroy0(signal); // Destruction process.
+								destroy0(signal); // Destruction.
 								return;
 							}
 						} catch (Exception e) {
-							log.error("Failed to destruction process.", e);
+							log.error("Failed to destroy process.", e);
 						} finally {
 							jedisService.del(signalKey); // Cleanup.
 						}
 					});
+				} else if (log.isDebugEnabled()) {
+					log.debug("Skip destroy processes ...");
 				}
 			} catch (Throwable ex) {
 				log.error("Destruction error", ex);
