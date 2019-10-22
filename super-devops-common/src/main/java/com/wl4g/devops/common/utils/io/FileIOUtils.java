@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.springframework.util.Assert;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
@@ -27,8 +28,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
+import java.util.function.Function;
 
 /**
  * Enhanced files IO operation implements.</br>
@@ -54,9 +55,14 @@ import java.util.Scanner;
 public abstract class FileIOUtils extends FileUtils {
 
 	/**
-	 * Default buffer size.
+	 * Default read safety loop count.
 	 */
-	final public static int DEFAULT_BUF_SIZE = 4096;
+	final public static long DEFAULT_SAFE_READ_COUNT = 100_0000L;
+
+	/**
+	 * Default read/write buffer size.
+	 */
+	final public static int DEFAULT_RW_BUF_SIZE = 4096;
 
 	// Writer
 
@@ -116,6 +122,7 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param limit
 	 * @return
 	 */
+	@Deprecated
 	public static List<String> readLines(String filename, int startLine, int limit) {
 		List<String> lines = new ArrayList<>();
 		try (FileInputStream in = new FileInputStream(filename); Scanner sc = new Scanner(in);) {
@@ -149,9 +156,12 @@ public abstract class FileIOUtils extends FileUtils {
 	 *            seek page start position.
 	 * @param aboutLimit
 	 *            seek page size, Note: that it will contain line breaks.
+	 * @param stopper
+	 *            Seek reader stopper, When {@link Function#apply()} returns
+	 *            true, the read ends.
 	 * @return
 	 */
-	public static ReadResult readSeekLines(String filename, long startPos, int aboutLimit) {
+	public static ReadResult seekReadLines(String filename, long startPos, int aboutLimit, Function<String, Boolean> stopper) {
 		Assert.hasText(filename, "Read seek filename must not be empty.");
 		Assert.isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
 		Assert.isTrue(aboutLimit > 0, "Read about limit must be greater than to 0");
@@ -159,11 +169,14 @@ public abstract class FileIOUtils extends FileUtils {
 		List<String> lines = new ArrayList<>();
 		try (RandomAccessFile raf = new RandomAccessFile(filename, "r")) {
 			raf.seek(startPos);
-			long endPos = startPos + aboutLimit;
-			while (raf.getFilePointer() < endPos) {
+			long c = 0, lastPos = -1, endPos = (startPos + aboutLimit);
+			while (raf.getFilePointer() > lastPos && (lastPos = raf.getFilePointer()) < endPos && ++c < DEFAULT_SAFE_READ_COUNT) {
 				String line = raf.readLine();
-				if (Objects.nonNull(line)) {
+				if (nonNull(line)) {
 					lines.add(line);
+					if (!stopper.apply(line)) {
+						break;
+					}
 				}
 			}
 			return new ReadResult(startPos, raf.getFilePointer(), raf.length(), lines);
@@ -186,14 +199,14 @@ public abstract class FileIOUtils extends FileUtils {
 	 *            seek page size, Note: that it will contain line breaks.
 	 * @return
 	 */
-	public static String readSeekString(String filename, long startPos, int limitPos) {
+	public static String seekReadString(String filename, long startPos, int limitPos) {
 		final StringBuffer lineBuf = new StringBuffer();
-		readSeekFile(filename, startPos, limitPos, DEFAULT_BUF_SIZE, (data, totalLen) -> lineBuf.append(new String(data)));
+		doSeekReadFile(filename, startPos, limitPos, DEFAULT_RW_BUF_SIZE, (data, totalLen) -> lineBuf.append(new String(data)));
 		return lineBuf.toString();
 	}
 
 	/**
-	 * Seek reading and limit bytes in file.
+	 * DO seek reading and limit bytes in file.
 	 * 
 	 * @param filename
 	 *            the system-dependent filename
@@ -206,7 +219,7 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param processor
 	 *            Each read processing program
 	 */
-	public static void readSeekFile(String filename, long startPos, int limitPos, int bufSize, SeekProcessor processor) {
+	public static void doSeekReadFile(String filename, long startPos, int limitPos, int bufSize, SeekProcessor processor) {
 		Assert.hasText(filename, "Read seek filename must not be empty.");
 		Assert.isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
 		Assert.isTrue(limitPos > 0, "Read limit position must be greater than to 0");
@@ -257,7 +270,6 @@ public abstract class FileIOUtils extends FileUtils {
 		 *            total fetch bytes length.
 		 */
 		void process(byte[] data, int totalLen);
-
 	}
 
 	/**
@@ -267,17 +279,16 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @version v1.0 2019年10月14日
 	 * @since
 	 */
-	public static class ReadResult {
+	public final static class ReadResult {
 
 		private long startPos;
-		private long pointer;
+		private long endPos;
 		private long length;
 		private List<String> lines;
 
-		public ReadResult(long startPos, long pointer, long length, List<String> lines) {
-			super();
+		public ReadResult(long startPos, long endPos, long length, List<String> lines) {
 			this.startPos = startPos;
-			this.pointer = pointer;
+			this.endPos = endPos;
 			this.length = length;
 			this.lines = lines;
 		}
@@ -290,12 +301,12 @@ public abstract class FileIOUtils extends FileUtils {
 			this.startPos = startPos;
 		}
 
-		public long getPointer() {
-			return pointer;
+		public long getEndPos() {
+			return endPos;
 		}
 
-		public void setPointer(long pointer) {
-			this.pointer = pointer;
+		public void setEndPos(long endPos) {
+			this.endPos = endPos;
 		}
 
 		public List<String> getLines() {
@@ -316,7 +327,7 @@ public abstract class FileIOUtils extends FileUtils {
 
 		@Override
 		public String toString() {
-			return "ReadResult [startPos=" + startPos + ", pointer=" + pointer + ", length=" + length + ", lines=" + lines + "]";
+			return "ReadResult [startPos=" + startPos + ", pointer=" + endPos + ", length=" + length + ", lines=" + lines + "]";
 		}
 
 	}
@@ -324,9 +335,11 @@ public abstract class FileIOUtils extends FileUtils {
 	public static void main(String[] args) {
 		System.out.println(readLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 2, 12));
 		System.out.println("--------------------");
-		System.out.println(readSeekString("C:\\Users\\Administrator\\Desktop\\aaa.txt", 3L, 12));
+		System.out.println(seekReadString("C:\\Users\\Administrator\\Desktop\\aaa.txt", 3L, 12));
 		System.out.println("--------------------");
-		System.out.println(readSeekLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 13L, 6));
+		System.out.println(seekReadLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 13L, 6, line -> {
+			return !line.equalsIgnoreCase("EOF"); // End if 'EOF'
+		}));
 	}
 
 }
