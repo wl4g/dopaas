@@ -26,16 +26,16 @@ import java.io.File;
 import java.util.Date;
 
 /**
- * Abstract based deploy provider.
+ * Based abstract view deploy provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider {
+public abstract class ViewPipelineProvider extends AbstractPipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public BasedViewPipelineProvider(PipelineInfo info) {
+	public ViewPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
 
@@ -52,14 +52,14 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 		// scp
 		result += scpToTmp(targetHost, userName, rsa) + "\n";
 		// backup
-		//result += backupOnServer(targetHost, userName, rsa) + "\n";
+		// result += backupOnServer(targetHost, userName, rsa) + "\n";
 		// mkdir
 		result += mkdirs(targetHost, userName, getPipelineInfo().getProject().getParentAppHome(), rsa) + "\n";
 		// tar
 		result += tar(targetHost, userName, rsa) + "\n";
 
 		// remove
-		//result += removeTar(targetHost, userName, rsa);
+		// result += removeTar(targetHost, userName, rsa);
 		return result;
 	}
 

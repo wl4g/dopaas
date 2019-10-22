@@ -23,24 +23,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.stereotype.Component;
 
 import static java.util.Objects.nonNull;
-
 import java.util.concurrent.ScheduledFuture;
 
 /**
- * Timing Tasks
- *
- * @author vjay
- * @date 2019-07-22 16:40:00
+ * Global timeout job handler finalizer.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-10-15
+ * @since
  */
-@Component
-@EnableScheduling
-public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
+public class GlobalTimeoutJobCleanupFinalizer implements ApplicationRunner {
 
 	final public static String DEFAULT_CLEANER_EXPRESS = "00/30 * * * * ?";
 
@@ -48,12 +44,10 @@ public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 
 	@Autowired
 	private CiCdProperties config;
-
 	@Autowired
 	private TaskHistoryDao taskHistoryDao;
-
 	@Autowired
-	private ThreadPoolTaskScheduler taskScheduler;
+	private ThreadPoolTaskScheduler scheduler;
 
 	private ScheduledFuture<?> future;
 
@@ -86,7 +80,7 @@ public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 		}
 
 		// Resume timeout scanner.
-		future = taskScheduler.schedule(() -> {
+		future = scheduler.schedule(() -> {
 			if (config.getJob().getJobTimeout() > 0) {
 				taskHistoryDao.updateStatus(config.getJob().getJobTimeout());
 			}

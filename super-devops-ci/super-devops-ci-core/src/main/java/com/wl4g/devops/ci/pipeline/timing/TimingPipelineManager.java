@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.schedule;
+package com.wl4g.devops.ci.pipeline.timing;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.Pipeline;
@@ -48,7 +48,7 @@ import java.util.concurrent.ScheduledFuture;
  * @author vjay
  * @date 2019-07-19 09:50:00
  */
-public class PipelineScheduleManager implements ApplicationRunner {
+public class TimingPipelineManager implements ApplicationRunner {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -135,11 +135,11 @@ public class PipelineScheduleManager implements ApplicationRunner {
 			return;
 		}
 
-		TimingPipelineHandler handler = beanFactory.getBean(TimingPipelineHandler.class,
+		TimingPipelineJob handler = beanFactory.getBean(TimingPipelineJob.class,
 				new Object[] { trigger, project, task, taskDetails });
 		ScheduledFuture<?> future = scheduler.schedule(handler, new CronTrigger(expression));
 		// TODO distributed cluster??
-		PipelineScheduleManager.map.put(key, future);
+		TimingPipelineManager.map.put(key, future);
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class PipelineScheduleManager implements ApplicationRunner {
 	 */
 	public void stopPipeline(String key) {
 		log.info("into DynamicTask.stopCron prarms::" + "triggerId = {} ", key);
-		ScheduledFuture<?> future = PipelineScheduleManager.map.get(key);
+		ScheduledFuture<?> future = TimingPipelineManager.map.get(key);
 		if (future != null) {
 			future.cancel(true);
 		}

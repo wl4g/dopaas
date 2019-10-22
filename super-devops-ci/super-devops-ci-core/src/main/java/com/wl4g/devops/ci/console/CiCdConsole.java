@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.console.args.InstanceListArgument;
 import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
 import com.wl4g.devops.ci.core.Pipeline;
-import com.wl4g.devops.ci.pipeline.GlobalTimeoutHandlerCleanFinalizer;
+import com.wl4g.devops.ci.pipeline.GlobalTimeoutJobCleanupFinalizer;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -73,7 +73,7 @@ public class CiCdConsole {
 	private JedisLockManager lockManager;
 
 	@Autowired
-	private GlobalTimeoutHandlerCleanFinalizer timingTasks;
+	private GlobalTimeoutJobCleanupFinalizer timingTasks;
 
 	@Autowired
 	private TaskDao taskDao;
@@ -140,7 +140,7 @@ public class CiCdConsole {
 
 				// Create async task
 				// TODO 修改后与原有逻辑有差异，必须多一个环节，选task
-				pipelineCoreProcessor.createTask(argument.getTaskId());
+				pipelineCoreProcessor.startup(argument.getTaskId());
 
 			} else {
 				printfQuietly("One Task is running ,Please try again later");

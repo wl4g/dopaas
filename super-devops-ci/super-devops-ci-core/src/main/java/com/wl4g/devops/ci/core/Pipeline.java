@@ -15,34 +15,48 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.common.bean.share.AppCluster;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.bean.share.Environment;
-import com.wl4g.devops.common.utils.io.FileIOUtils;
-
-import java.util.List;
+import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
 
 /**
  * CICD pipeline core entry processor.
  * 
- * @author vjay
  * @author Wangl.sir <983708408@qq.com>
+ * @author vjay
  * @date 2019-05-16 14:45:00
  */
 public interface Pipeline {
 
-	List<AppCluster> grouplist();
+	/**
+	 * Startup pipeline task job.
+	 * 
+	 * @param taskId
+	 */
+	void startup(Integer taskId);
 
-	List<Environment> environmentlist(String clusterId);
+	/**
+	 * Roll-back pipeline task job.
+	 * 
+	 * @param taskId
+	 */
+	void rollback(Integer taskId);
 
-	List<AppInstance> instancelist(AppInstance appInstance);
-
+	/**
+	 * Hook pipeline task job.
+	 * 
+	 * @param projectName
+	 * @param branchName
+	 * @param url
+	 */
 	void hook(String projectName, String branchName, String url);
 
-	void createTask(Integer taskId);
-
-	void createRollbackTask(Integer taskId);
-
-	FileIOUtils.ReadResult readLog(Integer taskHisId, Integer index, Integer size);
+	/**
+	 * Reader pipeline task job logs.
+	 * 
+	 * @param taskHisId
+	 * @param index
+	 * @param size
+	 * @return
+	 */
+	ReadResult logfile(Integer taskHisId, Integer index, Integer size);
 
 }

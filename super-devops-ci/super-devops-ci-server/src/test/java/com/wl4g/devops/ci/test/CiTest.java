@@ -36,7 +36,7 @@ public class CiTest {
 
 	@Test
 	public void createTask() {
-		pipelineProcessor.createTask(152);
+		pipelineProcessor.startup(152);
 	}
 
 }

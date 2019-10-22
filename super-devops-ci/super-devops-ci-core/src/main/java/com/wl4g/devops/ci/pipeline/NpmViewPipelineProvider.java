@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.handler.NpmPipelineHandler;
+import com.wl4g.devops.ci.pipeline.job.NpmViewPipelineJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -32,15 +32,15 @@ import static com.wl4g.devops.common.utils.lang.StringUtils2.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * NPM/(VUE/angularJS/ReactJS) standard deployments provider.
+ * NPM/(VUE/AngularJS/ReactJS...) standard deployments provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmPipelineProvider extends BasedViewPipelineProvider {
+public class NpmViewPipelineProvider extends ViewPipelineProvider {
 
-	public NpmPipelineProvider(PipelineInfo info) {
+	public NpmViewPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
 
@@ -48,7 +48,6 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 	public void execute() throws Exception {
 		// build
 		build();
-
 	}
 
 	@Override
@@ -69,19 +68,18 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		List<Future<?>> futures = new ArrayList<>();
 		for (AppInstance instance : getPipelineInfo().getInstances()) {
 			// create deploy task
-			Runnable task = new NpmPipelineHandler(this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails());
-			Future<?> submit = pipelineTaskRunner.getWorker().submit(task);
+			Runnable task = new NpmViewPipelineJob(this, getPipelineInfo().getProject(), instance,
+					getPipelineInfo().getTaskHistoryDetails());
+			Future<?> submit = jobExecutor.getWorker().submit(task);
 			futures.add(submit);
 		}
 
 		if (!isEmpty(futures)) {
 			while (true) {
 				boolean isAllDone = true;
-				for
-				(Future<?> future : futures) {
+				for (Future<?> future : futures) {
 					if (!future.isDone()) {
-						isAllDone =
-								false;
+						isAllDone = false;
 						break;
 					}
 				}
@@ -91,7 +89,6 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 				Thread.sleep(500);
 			}
 		}
-
 
 		log.info("npm deploy finish");
 
@@ -134,7 +131,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			String buildCommand = commandReplace(taskHistory.getBuildCommand(), projectDir);
-			processManager.execFile(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
+			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 	}
 
@@ -142,8 +139,8 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		String buildCommand = "cd "+projectDir+"\nnpm install\nnpm run build\n";
-		processManager.execFile(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
+		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
+		processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 	}
 
 	/**
@@ -153,9 +150,12 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
-		//tar
-		String tarCommand  = "cd "+projectDir + "/dist\n"+"tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz  *";
-		processManager.execFile(String.valueOf(taskHistory.getId()),tarCommand,config.getJobTmpCommandFile(taskHistory.getId(), -1),config.getJobLog(getPipelineInfo().getTaskHistory().getId()),300000);
+		// tar
+		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
+				+ config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
+		processManager.execFile(String.valueOf(taskHistory.getId()), tarCommand,
+				config.getJobTmpCommandFile(taskHistory.getId(), -1),
+				config.getJobLog(getPipelineInfo().getTaskHistory().getId()), 300000);
 	}
 
 }

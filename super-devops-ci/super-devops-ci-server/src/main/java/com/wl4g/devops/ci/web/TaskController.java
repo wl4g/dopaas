@@ -175,7 +175,7 @@ public class TaskController extends BaseController {
 	@RequestMapping(value = "/create")
 	public RespBase<?> create(Integer taskId) {
 		RespBase<Object> resp = RespBase.create();
-		pipelineCoreProcessor.createTask(taskId);
+		pipelineCoreProcessor.startup(taskId);
 		return resp;
 	}
 

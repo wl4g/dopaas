@@ -22,8 +22,8 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
-import com.wl4g.devops.ci.pipeline.schedule.PipelineScheduleManager;
-import com.wl4g.devops.ci.pipeline.schedule.TimingPipelineHandler;
+import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
+import com.wl4g.devops.ci.pipeline.timing.TimingPipelineJob;
 import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
@@ -67,7 +67,7 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public Pipeline defaultCICDPipeline() {
+	public Pipeline defaultPipeline() {
 		return new DefaultPipeline();
 	}
 
@@ -76,8 +76,13 @@ public class CiCdAutoConfiguration {
 		return new GitlabV4VcsOperator();
 	}
 
+	@Bean
+	public GlobalTimeoutJobCleanupFinalizer globalTimeoutJobCleanFinalizer() {
+		return new GlobalTimeoutJobCleanupFinalizer();
+	}
+
 	//
-	// Manager console configuration.
+	// Manager & console configuration.
 	//
 
 	@Bean
@@ -120,24 +125,22 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@DelegateAlias({ PipelineType.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public NpmPipelineProvider vuePipelineProvider(PipelineInfo info) {
-		return new NpmPipelineProvider(info);
+	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineInfo info) {
+		return new NpmViewPipelineProvider(info);
 	}
 	//
-	// Timing CICD hander configuration.
+	// Timing & handler configuration.
 	//
 
 	@Bean
-	public PipelineScheduleManager timingPipelineManager() {
-		return new PipelineScheduleManager();
+	public TimingPipelineManager timingPipelineManager() {
+		return new TimingPipelineManager();
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public TimingPipelineHandler timingPipelineHandler(Trigger trigger, Project project, Task task,
-			List<TaskDetail> taskDetails) {
-		return new TimingPipelineHandler(trigger, project, task, taskDetails);
-
+	public TimingPipelineJob timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
+		return new TimingPipelineJob(trigger, project, task, taskDetails);
 	}
 
 }

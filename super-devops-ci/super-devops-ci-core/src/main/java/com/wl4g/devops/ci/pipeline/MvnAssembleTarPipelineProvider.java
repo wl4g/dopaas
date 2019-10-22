@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.handler.MvnAssembleTarPipelineHandler;
+import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipelineJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -35,15 +35,12 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
+public class MvnAssembleTarPipelineProvider extends MavenPipelineProvider {
 
 	public MvnAssembleTarPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
 
-	/**
-	 * Execution build and deploy
-	 */
 	@Override
 	public void execute() throws Exception {
 		// maven install , include dependency
@@ -86,9 +83,9 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		List<Future<?>> futures = new ArrayList<>();
 		for (AppInstance instance : getPipelineInfo().getInstances()) {
 			// create deploy task
-			Runnable task = new MvnAssembleTarPipelineHandler(this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
+			Runnable task = new MvnAssembleTarPipelineJob(this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
 					instance, getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
-			Future<?> submit = pipelineTaskRunner.getWorker().submit(task);
+			Future<?> submit = jobExecutor.getWorker().submit(task);
 			futures.add(submit);
 		}
 
