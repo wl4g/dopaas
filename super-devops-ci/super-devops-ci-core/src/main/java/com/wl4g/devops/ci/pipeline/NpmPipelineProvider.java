@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
-import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import org.springframework.util.Assert;
@@ -114,7 +113,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			String buildCommand = commandReplace(taskHistory.getBuildCommand(), projectDir);
-			SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
+			processManager.exec(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
 		}
 	}
 
@@ -123,7 +122,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		String buildCommand = "cd "+projectDir+"\nnpm install\nnpm run build\n";
-		SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(),taskHistory.getId());
+		processManager.exec(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
 	}
 
 	/**
@@ -135,11 +134,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
 		//tar
 		String tarCommand  = "cd "+projectDir + "/dist\n"+"tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz  *";
-		SSHTool.execFile(tarCommand, config.getJobTmpCommandFile(taskHistory.getId(), -1).getAbsolutePath(), config.getJobLog(getPipelineInfo().getTaskHistory().getId()).getAbsolutePath(),taskHistory.getId());
-		//SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
-
-
-		// SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
+		processManager.exec(String.valueOf(taskHistory.getId()),tarCommand,config.getJobTmpCommandFile(taskHistory.getId(), -1),config.getJobLog(getPipelineInfo().getTaskHistory().getId()),300000);
 	}
 
 }
