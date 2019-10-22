@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.handler.DockerNativePipelineHandler;
+import com.wl4g.devops.ci.pipeline.job.DockerNativePipelineJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
@@ -31,7 +31,7 @@ import java.io.File;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
+public class DockerNativePipelineProvider extends MavenPipelineProvider {
 
 	public DockerNativePipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
@@ -56,7 +56,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
 		// Each install pull and restart
 		for (AppInstance instance : getPipelineInfo().getInstances()) {
-			Runnable task = new DockerNativePipelineHandler(this, getPipelineInfo().getProject(), instance,
+			Runnable task = new DockerNativePipelineJob(this, getPipelineInfo().getProject(), instance,
 					getPipelineInfo().getTaskHistoryDetails());
 			Thread t = new Thread(task);
 			t.start();
@@ -85,7 +85,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
 		// Transform to instance
 		for (AppInstance instance : getPipelineInfo().getInstances()) {
-			Runnable task = new DockerNativePipelineHandler(this, getPipelineInfo().getProject(), instance,
+			Runnable task = new DockerNativePipelineJob(this, getPipelineInfo().getProject(), instance,
 					getPipelineInfo().getTaskHistoryDetails());
 			Thread t = new Thread(task);
 			t.start(); // TODO use jobExecutor
@@ -104,7 +104,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getTranform().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getTranform().getDockerNative().getDockerPushPasswd();
-		processManager.exec( command, config.getJobLog(getPipelineInfo().getTaskHistory().getId()),300000);
+		processManager.exec(command, config.getJobLog(getPipelineInfo().getTaskHistory().getId()), 300000);
 	}
 
 	/**

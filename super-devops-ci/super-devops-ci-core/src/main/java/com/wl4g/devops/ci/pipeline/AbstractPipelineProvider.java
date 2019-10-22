@@ -47,41 +47,28 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	@Autowired
 	protected CiCdProperties config;
-
-	@Autowired
-	protected DependencyService dependencyService;
-
 	@Autowired
 	protected JedisLockManager lockManager;
-
 	@Autowired
-	protected ProjectDao projectDao;
-
-	@Autowired
-	protected TaskSignDao taskSignDao;
-
-	@Autowired
-	protected PipelineJobExecutor pipelineTaskRunner;
-
-	@Autowired
-	protected TaskHisBuildCommandDao taskHisBuildCommandDao;
-
+	protected PipelineJobExecutor jobExecutor;
 	@Autowired
 	protected ProcessManager processManager;
 
 	@Autowired
+	protected DependencyService dependencyService;
+	@Autowired
 	protected TaskHistoryService taskHistoryService;
+	@Autowired
+	protected TaskHisBuildCommandDao taskHisBuildCommandDao;
+	@Autowired
+	protected ProjectDao projectDao;
+	@Autowired
+	protected TaskSignDao taskSignDao;
 
-	protected PipelineInfo pipelineInfo;
+	/** Pipeline information. */
+	final protected PipelineInfo pipelineInfo;
 
-	/**
-	 * sha
-	 */
 	protected String shaGit;
-
-	/**
-	 * md5
-	 */
 	protected String shaLocal;
 
 	public AbstractPipelineProvider(PipelineInfo info) {
@@ -115,11 +102,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public TaskHistoryService getTaskHistoryService() {
 		return taskHistoryService;
 	}
-
-	/**
-	 * Execute
-	 */
-	public abstract void execute() throws Exception;
 
 	/**
 	 * Exce command

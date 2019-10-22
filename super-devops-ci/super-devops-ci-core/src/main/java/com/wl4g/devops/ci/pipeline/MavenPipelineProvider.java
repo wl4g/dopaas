@@ -39,22 +39,19 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * Abstract based deploy provider.
+ * Abstract based MAVEN pipeline provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvider {
+public abstract class MavenPipelineProvider extends AbstractPipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public BasedMavenPipelineProvider(PipelineInfo info) {
+	public MavenPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
 
-	/**
-	 * Execute
-	 */
 	public abstract void execute() throws Exception;
 
 	/**
@@ -122,8 +119,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
 		String command = "cp -Rf " + targetPath + " " + backupPath;
-		//SSHTool.exec(command);
-		processManager.exec(command,config.getJobLog(taskHisId),300000);
+		// SSHTool.exec(command);
+		processManager.exec(command, config.getJobLog(taskHisId), 300000);
 	}
 
 	/**
@@ -135,7 +132,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
 		String command = "cp -Rf " + backupPath + " " + target;
-		processManager.exec(command,config.getJobLog(taskHisRefId),300000);
+		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
 	}
 
 	/**
@@ -159,13 +156,6 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		}
 	}
 
-	/**
-	 * build
-	 *
-	 * @param taskHistory
-	 * @param taskResult
-	 * @throws Exception
-	 */
 	public void build(TaskHistory taskHistory, boolean isRollback) throws Exception {
 		File jobLog = config.getJobLog(taskHistory.getId());
 		if (log.isInfoEnabled()) {
@@ -226,7 +216,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 */
 	private void doBuilding(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
-		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(), TimeUnit.MINUTES);
+		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(),
+				TimeUnit.MINUTES);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
 				doGetSourceAndMvnBuild(taskHistory, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
@@ -317,8 +308,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			buildCommand = commandReplace(buildCommand, projectDir);
-			//SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
-			processManager.execFile(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
+			// SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(),
+			// logPath.getAbsolutePath(), taskHistory.getId());
+			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 
 		}
 
@@ -333,8 +325,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 */
 	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true";
-		//SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
-		processManager.exec(String.valueOf(taskId),defaultCommand,null,logPath,300000);
+		// SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
+		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}
 
 }

@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.pipeline.schedule.PipelineScheduleManager;
+import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.scm.CustomPage;
@@ -55,7 +55,7 @@ public class TriggerController extends BaseController {
 	private TriggerService triggerService;
 
 	@Autowired
-	private PipelineScheduleManager pipelineManager;
+	private TimingPipelineManager pipelineManager;
 
 	/**
 	 * Page List

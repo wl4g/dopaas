@@ -106,7 +106,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 							// Match & destroy process. See:[MARK1]
 							DestroySignal signal = jedisService.getObjectAsJson(signalKey, DestroySignal.class);
 							if (nonNull(signal)) {
-								destroy0(signal); // Destruction.
+								destroy0(signal);
 								return;
 							}
 						} catch (Exception e) {

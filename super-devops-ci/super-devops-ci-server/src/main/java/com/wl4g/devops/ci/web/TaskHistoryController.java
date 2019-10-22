@@ -105,7 +105,7 @@ public class TaskHistoryController extends BaseController {
 	public RespBase<?> rollback(Integer taskId) {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
-		pipelineCoreProcessor.createRollbackTask(taskId);
+		pipelineCoreProcessor.rollback(taskId);
 		return resp;
 	}
 
@@ -113,7 +113,7 @@ public class TaskHistoryController extends BaseController {
 	@RequestMapping(value = "/readLog")
 	public RespBase<?> readLog(Integer taskHisId,Integer index,Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipelineCoreProcessor.readLog(taskHisId, index, size);
+		FileIOUtils.ReadResult readResult = pipelineCoreProcessor.logfile(taskHisId, index, size);
 		resp.getData().put("data",readResult);
 		return resp;
 	}

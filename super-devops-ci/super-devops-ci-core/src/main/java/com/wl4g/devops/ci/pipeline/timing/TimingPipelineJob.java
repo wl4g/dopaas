@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.schedule;
+package com.wl4g.devops.ci.pipeline.timing;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.Pipeline;
@@ -40,7 +40,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-07-19 10:41:00
  */
-public class TimingPipelineHandler implements Runnable {
+public class TimingPipelineJob implements Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -55,7 +55,7 @@ public class TimingPipelineHandler implements Runnable {
 	final protected Project project;
 	final protected List<TaskDetail> taskDetails;
 
-	public TimingPipelineHandler(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
+	public TimingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
 		this.trigger = trigger;
 		this.project = project;
 		this.task = task;
@@ -71,7 +71,7 @@ public class TimingPipelineHandler implements Runnable {
 			for (TaskDetail taskDetail : taskDetails) {
 				instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
 			}
-			pipelineProcessor.createTask(task.getId());
+			pipelineProcessor.startup(task.getId());
 
 			// set new sha in db
 			String path = config.getWorkspace() + "/" + project.getProjectName();

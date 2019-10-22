@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.handler;
+package com.wl4g.devops.ci.pipeline.job;
 
-import com.wl4g.devops.ci.pipeline.NpmPipelineProvider;
+import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -26,19 +26,18 @@ import java.util.List;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 /**
- * Maven assemble tar deployments task.
+ * Docker native deployments task.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
  * @since
  */
-public class NpmPipelineHandler extends AbstractPipelineHandler {
+public class DockerNativePipelineJob extends AbstractPipelineJob {
 
-	private NpmPipelineProvider provider;
-
+	private DockerNativePipelineProvider provider;
 	private Integer taskDetailId;
 
-	public NpmPipelineHandler(NpmPipelineProvider provider, Project project, AppInstance instance,
+	public DockerNativePipelineJob(DockerNativePipelineProvider provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(instance, project);
 		this.provider = provider;
@@ -63,20 +62,29 @@ public class NpmPipelineHandler extends AbstractPipelineHandler {
 			// Update status
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
-			// pre command
-			String s4 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
-					provider.getPipelineInfo().getTaskHistory().getPreCommand(), instance.getSshKey());
-			result.append(s4).append("\n");
-
-			// Boolean detailSuccess = new Boolean(false);
-			// Scp to tmp,rename,move to webapps
-			String s = provider.handOut(instance.getHostname(), instance.getSshUser(),instance.getSshKey());
+			// Pull
+			String s = provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
+					+ ":master"/*
+								 * TODO 要改成动态的
+								 * provider.getTaskHistory().getPreCommand()
+								 */, instance.getSshKey());
 			result.append(s).append("\n");
-
-			// post command (restart command)
-			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
-					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
+			// Restart
+			String s1 = provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
+					instance.getSshKey());
+			result.append(s1).append("\n");
+			// Remove Container
+			String s2 = provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
+					instance.getSshKey());
 			result.append(s2).append("\n");
+			// Run
+			String s3 = provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/"
+					+ project.getGroupName()
+					+ ":master"/*
+								 * TODO 要改成动态的
+								 * provider.getTaskHistory().getPostCommand()
+								 */, instance.getSshKey());
+			result.append(s3).append("\n");
 
 			// Update status
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());

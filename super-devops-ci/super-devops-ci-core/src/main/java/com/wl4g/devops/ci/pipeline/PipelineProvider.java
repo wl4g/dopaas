@@ -19,13 +19,13 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
 
 /**
- * Based pipeline provider.
+ * Pipeline provider.
  * 
  * @author vjay
  * @author Wangl.sir <983708408@qq.com>
  * @date 2019-05-05 17:17:00
  */
-public abstract interface PipelineProvider extends DelegateAliasPrototypeBean {
+public interface PipelineProvider extends DelegateAliasPrototypeBean {
 
 	void execute() throws Exception;
 
