@@ -31,7 +31,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public abstract class SSHTool extends CommandUtils {
+public abstract class SSHTool {
 	final private static Logger log = Logger.getLogger(SSHTool.class);
 
 	/**
