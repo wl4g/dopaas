@@ -18,7 +18,6 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.pipeline.handler.DockerNativePipelineHandler;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
-import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
@@ -105,7 +104,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getTranform().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getTranform().getDockerNative().getDockerPushPasswd();
-		processManager.exec(null,command,300000);
+		processManager.exec(null, command, 300000);
 	}
 
 	/**
