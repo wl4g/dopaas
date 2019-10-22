@@ -32,6 +32,22 @@ import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 public interface ProcessManager {
 
 	/**
+	 * Blocking execution multi-commands, Save to temporary file before
+	 * execution.
+	 * 
+	 * @param processId
+	 * @param multiCommands
+	 * @param file
+	 * @param stdout
+	 * @param timeoutMs
+	 * @throws IllegalProcessStateException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	void execFile(String processId, String multiCommands, File file, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, InterruptedException, IOException;
+
+	/**
 	 * Blocking execution command-line to process.
 	 * 
 	 * @param processId
@@ -54,8 +70,6 @@ public interface ProcessManager {
 	 *            command-lien process ID.
 	 * @param cmd
 	 *            commands
-	 * @param pwdDir
-	 *            process command-line context directory
 	 * @param stdout
 	 *            standard output stream file.
 	 * @param timeoutMs
@@ -65,8 +79,28 @@ public interface ProcessManager {
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
 	 */
-	void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+	void exec(String processId, String cmd, File stdout, long timeoutMs)
 			throws InterruptedException, IllegalProcessStateException, IOException;
+
+	/**
+	 * Blocking execution command-line to process.
+	 * 
+	 * @param processId
+	 *            command-lien process ID.
+	 * @param cmd
+	 *            commands
+	 * @param pwdDir
+	 *            process command-line context directory
+	 * @param stdout
+	 *            standard output stream file.
+	 * @param timeoutMs
+	 *            timeout Ms.
+	 * @param processId
+	 * @throws IllegalProcessStateException
+	 * @throws IOException
+	 */
+	void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, IOException;
 
 	/**
 	 * Destroy command-line process.</br>

@@ -39,9 +39,6 @@ public class DestroySignal implements Serializable {
 	/** Destroy timeoutMs */
 	private Long timeoutMs;
 
-	/** Destroy state */
-	private Boolean destroyed = false;
-
 	public DestroySignal() {
 		super();
 	}
@@ -53,13 +50,6 @@ public class DestroySignal implements Serializable {
 				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
 		this.processId = processId;
 		this.timeoutMs = timeoutMs;
-	}
-
-	public DestroySignal(String processId, Boolean destroyed) {
-		Assert.notNull(processId, "Destroy processId must not be null.");
-		Assert.notNull(destroyed, "Destration state must not be null.");
-		this.processId = processId;
-		this.destroyed = destroyed;
 	}
 
 	public String getProcessId() {
@@ -78,17 +68,9 @@ public class DestroySignal implements Serializable {
 		this.timeoutMs = timeoutMs;
 	}
 
-	public Boolean getDestroyed() {
-		return destroyed;
-	}
-
-	public void setDestroyed(Boolean destroyed) {
-		this.destroyed = destroyed;
-	}
-
 	@Override
 	public String toString() {
-		return "DestroySignal [processId=" + processId + ", timeoutMs=" + timeoutMs + ", destroyed=" + destroyed + "]";
+		return "DestroySignal [processId=" + processId + ", timeoutMs=" + timeoutMs + "]";
 	}
 
 }

@@ -16,16 +16,17 @@
 package com.wl4g.devops.support.cli;
 
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
+import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -73,35 +74,28 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		super(new RunnerProperties(true));
 	}
 
-	/**
-	 * Execution command-line to process.
-	 * 
-	 * @param processId
-	 * @param cmd
-	 * @param timeoutMs
-	 * @throws IOException
-	 * @throws Exception
-	 */
+	@Override
+	public void execFile(String processId, String multiCommands, File file, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, InterruptedException, IOException {
+		writeFile(file, multiCommands, false);
+		exec(processId, file.getAbsolutePath(), stdout, timeoutMs);
+	}
+
 	@Override
 	public void exec(String processId, String cmd, long timeoutMs)
 			throws InterruptedException, IllegalProcessStateException, IOException {
 		exec(processId, cmd, null, null, timeoutMs);
 	}
 
-	/**
-	 * Execution command-line to process.
-	 * 
-	 * @param processId
-	 * @param cmd
-	 * @param pwdDir
-	 * @param stdout
-	 * @param timeoutMs
-	 * @throws IOException
-	 * @throws Exception
-	 */
+	@Override
+	public void exec(String processId, String cmd, File stdout, long timeoutMs)
+			throws InterruptedException, IllegalProcessStateException, IOException {
+		exec(processId, cmd, null, stdout, timeoutMs);
+	}
+
 	@Override
 	public void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws InterruptedException, IllegalProcessStateException, IOException {
+			throws IllegalProcessStateException, IOException {
 		notNull(processId, "Execution commands must not be empty");
 		hasText(cmd, "Execution commands must not be empty");
 		isTrue(timeoutMs > 0, "Command-line timeoutMs must greater than 0");
@@ -112,45 +106,39 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		} else { // Append to stdout file.
 			cmd = cmd + " > /dev/null 2>&1";
 		}
-		if (log.isInfoEnabled()) {
-			log.info("Execution commands: [{}]", cmd);
-		}
 
 		// Execution.
+		final String[] commands = { "/bin/bash", "-c", cmd };
+		if (log.isInfoEnabled()) {
+			log.info("Execution commands: [{}]", asList(commands));
+		}
+
 		Process ps = null;
-		List<String> commands = new ArrayList<String>(4) {
-			private static final long serialVersionUID = 1L;
-			{
-				add("/bin/bash");
-				add("-c");
-			}
-		};
-		if (nonNull(pwdDir) && pwdDir.exists()) {
-			ps = Runtime.getRuntime().exec(commands.toArray(new String[] {}), null, pwdDir);
+		if (nonNull(pwdDir)) {
+			state(pwdDir.exists(), String.format("No such directory for processId(%s), pwdDir:[%s]", processId, pwdDir));
+			ps = Runtime.getRuntime().exec(commands, null, pwdDir);
 		} else {
-			ps = Runtime.getRuntime().exec(commands.toArray(new String[] {}));
+			ps = Runtime.getRuntime().exec(commands);
 		}
 
 		// Register process.
-		repository.register(processId, new ProcessInfo(processId, pwdDir, commands, stdout, ps));
-
-		// Wait for completed.
-		ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
+		repository.register(processId, new ProcessInfo(processId, pwdDir, asList(commands), stdout, ps));
 
 		// Check exited?
 		try {
+			// Wait for completed.
+			ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
+
 			int exitCode = ps.exitValue();
-			if (exitCode != 0) {
-				if (exitCode == 143) { // e.g. destroy() was called.
-					throw new IllegalProcessStateException(String.format("Process(%s) killed", processId));
-				}
-				throw new IllegalProcessStateException();
+			if (exitCode != 0) { // e.g. destroy() was called.
+				throw new IllegalProcessStateException(
+						String.format("Process(%s) interrupted, exit code for (%s)", processId, exitCode));
 			}
-		} catch (IllegalProcessStateException | IllegalThreadStateException e) {
-			throw new IllegalProcessStateException(
-					String.format("Failed to process(%s), cmd: [%s], cause: %s", processId, cmd, getRootCausesString(e)));
+		} catch (Throwable ex) {
+			throw new IllegalProcessStateException(String.format("Failed to process(%s), commands:[%s], cause: %s", processId,
+					asList(commands), getRootCausesString(ex)));
 		} finally {
-			repository.cleanup(processId); // Cleanup process.
+			repository.cleanup(processId); // Cleanup.
 		}
 
 	}
@@ -163,7 +151,6 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 *            Destruction process signal.
 	 * @throws TimeoutDestroyProcessException
 	 */
-	@Deprecated
 	protected void destroy0(DestroySignal signal) throws TimeoutDestroyProcessException {
 		notNull(signal, "Destroy signal must not be null.");
 		isTrue(signal.getTimeoutMs() >= DEFAULT_DESTROY_ROUND_MS,
@@ -185,12 +172,12 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			}
 
 			// Destroy force.
-			for (long i = 0, c = (signal.getTimeoutMs() / DEFAULT_DESTROY_ROUND_MS); process.isAlive() || i < c; i++) {
+			for (long i = 0, c = (signal.getTimeoutMs() / DEFAULT_DESTROY_ROUND_MS); (process.isAlive() || i < c); i++) {
 				try {
 					process.destroyForcibly();
 					Thread.sleep(DEFAULT_DESTROY_ROUND_MS);
 				} catch (Exception e) {
-					log.error("Failed to destory comand-line process.", e);
+					log.error("Failed to destory process.", e);
 					break;
 				}
 			}
