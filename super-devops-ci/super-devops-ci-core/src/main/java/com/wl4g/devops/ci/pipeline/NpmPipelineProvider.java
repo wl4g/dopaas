@@ -134,7 +134,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
 		//tar
-		String tarCommand  = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz -C " + projectDir + "/dist *";
+		String tarCommand  = "cd "+projectDir + "/dist\n"+"tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz  *";
 		SSHTool.execFile(tarCommand, config.getJobTmpCommandFile(taskHistory.getId(), -1).getAbsolutePath(), config.getJobLog(getPipelineInfo().getTaskHistory().getId()).getAbsolutePath(),taskHistory.getId());
 		//SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
 

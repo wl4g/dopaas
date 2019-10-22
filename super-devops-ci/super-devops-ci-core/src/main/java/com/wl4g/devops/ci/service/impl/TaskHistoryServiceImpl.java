@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.ci.utils.CommandUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -29,6 +28,7 @@ import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.support.cli.ProcessManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +55,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	private AppClusterDao appClusterDao;
 	@Autowired
 	private TaskHisBuildCommandDao taskHisBuildCommandDao;
+	@Autowired
+	protected ProcessManager processManager;
 
 	@Override
 	public List<TaskHistory> list(String groupName, String projectName, String branchName) {
@@ -157,7 +159,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setId(taskHisId);
 		taskHistory.setStatus(TASK_STATUS_STOP);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
-		CommandUtils.killByTaskId(taskHisId);
+		//CommandUtils.killByTaskId(taskHisId);
+		processManager.destroy(String.valueOf(taskHisId),5000);
+
 	}
 
 	@Override
