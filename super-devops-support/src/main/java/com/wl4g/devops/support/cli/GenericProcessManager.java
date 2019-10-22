@@ -15,23 +15,6 @@
  */
 package com.wl4g.devops.support.cli;
 
-import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cache.JedisService;
@@ -41,6 +24,20 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.Assert.*;
 
 /**
  * Abstract generic command-line process management implements.
@@ -125,11 +122,13 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				add("-c");
 			}
 		};
+		commands.add(cmd);
 		if (nonNull(pwdDir) && pwdDir.exists()) {
 			ps = Runtime.getRuntime().exec(commands.toArray(new String[] {}), null, pwdDir);
 		} else {
 			ps = Runtime.getRuntime().exec(commands.toArray(new String[] {}));
 		}
+
 
 		// Register process.
 		repository.register(processId, new ProcessInfo(processId, pwdDir, commands, stdout, ps));
