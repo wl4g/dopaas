@@ -58,11 +58,6 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final String LOCK_DEPENDENCY_BUILD = "ci.pipeline.build_";
 
 	/**
-	 * Kill pipeline command-line process watcher locker.
-	 */
-	public static final String LOCK_WATCH_PROCESS_DESTROY = "ci.watch.process.destroy_";
-
-	/**
 	 * Log file start/end separation.
 	 */
 	public static final String LOG_FILE_START = "<[EOF]\n";

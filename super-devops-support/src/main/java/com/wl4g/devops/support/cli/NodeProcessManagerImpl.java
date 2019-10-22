@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.support.cli;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_WATCH_PROCESS_DESTROY;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
@@ -42,6 +41,11 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 
 	/** Default destruction signal expired seconds. */
 	final public static int DEFAULT_SIGNAL_EXPIRED_SEC = (int) (3 * TimeUnit.MILLISECONDS.toSeconds(DEFAULT_MAX_WATCH_MS));
+
+	/**
+	 * Command-line process watcher locker.
+	 */
+	final public static String DEFAULT_PROCESS_DESTROY_LOCK = "process.watch.destroy.lock";
 
 	/**
 	 * Send signal for destroy command-line process.</br>
@@ -85,7 +89,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 		while (true) {
 			Thread.sleep(current().nextLong(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS));
 
-			Lock lock = lockManager.getLock(LOCK_WATCH_PROCESS_DESTROY);
+			Lock lock = lockManager.getLock(DEFAULT_PROCESS_DESTROY_LOCK);
 			try {
 				// Let cluster this node process destroy, nodes that do not
 				// acquire lock are on ready in place.

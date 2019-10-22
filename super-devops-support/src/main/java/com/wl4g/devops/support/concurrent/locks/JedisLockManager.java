@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.concurrent.locks;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+import static com.google.common.hash.Hashing.*;
+import static com.google.common.base.Charsets.UTF_8;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
@@ -52,8 +52,7 @@ public class JedisLockManager {
 	}
 
 	public Lock getLock(String name, long timeout, TimeUnit unit) {
-		return new SimpleSpinJedisLock(jedisCluster, Hashing.md5().hashString(name, Charsets.UTF_8).toString(), timeout,
-				unit/* , jedisCluster.get(name) */);
+		return new SimpleSpinJedisLock(jedisCluster, md5().hashString(name, UTF_8).toString(), timeout, unit);
 	}
 
 	/**
