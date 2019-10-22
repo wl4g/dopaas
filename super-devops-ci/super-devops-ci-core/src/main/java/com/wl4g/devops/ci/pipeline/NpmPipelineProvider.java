@@ -122,13 +122,8 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
-
-		// tar
-		String tarCommand = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/"
-				+ project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
-		buildCommand = buildCommand + "\n" + tarCommand;
-		SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
+		String buildCommand = "cd "+projectDir+"\nnpm install\nnpm run build\n";
+		SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(),taskHistory.getId());
 	}
 
 	/**
@@ -138,9 +133,11 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
-		// tar
-		String tarCommand = "tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/"
-				+ project.getProjectName() + ".tar.gz -C " + projectDir + "/dist/ *";
+		//tar
+		String tarCommand  = "cd "+projectDir + "/dist\n"+"tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz  *";
+		SSHTool.execFile(tarCommand, config.getJobTmpCommandFile(taskHistory.getId(), -1).getAbsolutePath(), config.getJobLog(getPipelineInfo().getTaskHistory().getId()).getAbsolutePath(),taskHistory.getId());
+		//SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
+
 
 		// SSHTool.exec(tarCommand,config.getJobLog(taskHistory.getId()).getAbsolutePath(),taskHistory.getId());
 	}

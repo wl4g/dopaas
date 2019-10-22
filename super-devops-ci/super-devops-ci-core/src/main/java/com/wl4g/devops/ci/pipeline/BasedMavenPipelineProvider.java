@@ -118,7 +118,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	public void backupLocal() throws Exception {
 		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
 		String targetPath = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
-		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath()
+		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
 		String command = "cp -Rf " + targetPath + " " + backupPath;
@@ -330,7 +330,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 */
 	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true";
-		SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
+		//SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
+		processManager.exec(taskId+"",defaultCommand,null,logPath,1800000);
 	}
 
 }
