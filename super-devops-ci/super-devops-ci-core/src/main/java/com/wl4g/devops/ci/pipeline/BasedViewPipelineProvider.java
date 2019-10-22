@@ -52,13 +52,14 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 		// scp
 		result += scpToTmp(targetHost, userName, rsa) + "\n";
 		// backup
-		result += backupOnServer(targetHost, userName, rsa) + "\n";
+		//result += backupOnServer(targetHost, userName, rsa) + "\n";
 		// mkdir
 		result += mkdirs(targetHost, userName, getPipelineInfo().getProject().getParentAppHome(), rsa) + "\n";
 		// tar
 		result += tar(targetHost, userName, rsa) + "\n";
+
 		// remove
-		result += removeTar(targetHost, userName, rsa);
+		//result += removeTar(targetHost, userName, rsa);
 		return result;
 	}
 
@@ -78,7 +79,7 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	 * backup on server
 	 */
 	public String backupOnServer(String targetHost, String userName, String rsa) throws Exception {
-		String command = "mv " + getPipelineInfo().getProject().getParentAppHome() + " " + "mv "
+		String command = "mv " + getPipelineInfo().getProject().getParentAppHome() + " "
 				+ getPipelineInfo().getProject().getParentAppHome() + new Date().getTime();
 		return exceCommand(targetHost, userName, command, rsa);
 	}

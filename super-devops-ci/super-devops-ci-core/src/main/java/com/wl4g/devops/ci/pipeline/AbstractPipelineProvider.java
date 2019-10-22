@@ -19,6 +19,7 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
+import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -68,6 +69,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected ProcessManager processManager;
 
+	@Autowired
+	protected TaskHistoryService taskHistoryService;
+
 	protected PipelineInfo pipelineInfo;
 
 	/**
@@ -106,6 +110,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	public void setShaLocal(String shaLocal) {
 		this.shaLocal = shaLocal;
+	}
+
+	public TaskHistoryService getTaskHistoryService() {
+		return taskHistoryService;
 	}
 
 	/**

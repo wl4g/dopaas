@@ -60,7 +60,7 @@ public class DockerNativePipelineHandler extends AbstractPipelineHandler {
 		StringBuffer result = new StringBuffer();
 		try {
 			// Update status
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 			// Pull
 			String s = provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
@@ -87,11 +87,11 @@ public class DockerNativePipelineHandler extends AbstractPipelineHandler {
 			result.append(s3).append("\n");
 
 			// Update status
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 
 		} catch (Exception e) {
 			log.error("Deploy job failed", e);
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
 					result.toString() + "\n" + e.toString());
 			// throw new RuntimeException(e);
 		}

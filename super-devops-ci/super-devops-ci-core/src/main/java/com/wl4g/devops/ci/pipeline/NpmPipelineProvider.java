@@ -15,14 +15,20 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.devops.ci.pipeline.handler.NpmPipelineHandler;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import org.springframework.util.Assert;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
+import static com.wl4g.devops.common.utils.lang.StringUtils2.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -59,18 +65,33 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		// step3: tar -c
 		pkg();
 		// step4 scp ==> tar -x
-		/*
-		 * List<Future<?>> futures = new ArrayList<>(); for (AppInstance
-		 * instance : getPipelineInfo().getInstances()) { // create deploy task
-		 * Runnable task = new NpmPipelineHandler(this,
-		 * getPipelineInfo().getProject(),instance,
-		 * getPipelineInfo().getTaskHistoryDetails()); Future<?> submit =
-		 * pipelineTaskRunner.getWorker().submit(task); futures.add(submit); }
-		 * 
-		 * if (!isEmpty(futures)) { while (true) { boolean isAllDone = true; for
-		 * (Future<?> future : futures) { if (!future.isDone()) { isAllDone =
-		 * false; break; } } if (isAllDone) { break; } Thread.sleep(500); } }
-		 */
+
+		List<Future<?>> futures = new ArrayList<>();
+		for (AppInstance instance : getPipelineInfo().getInstances()) {
+			// create deploy task
+			Runnable task = new NpmPipelineHandler(this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails());
+			Future<?> submit = pipelineTaskRunner.getWorker().submit(task);
+			futures.add(submit);
+		}
+
+		if (!isEmpty(futures)) {
+			while (true) {
+				boolean isAllDone = true;
+				for
+				(Future<?> future : futures) {
+					if (!future.isDone()) {
+						isAllDone =
+								false;
+						break;
+					}
+				}
+				if (isAllDone) {
+					break;
+				}
+				Thread.sleep(500);
+			}
+		}
+
 
 		log.info("npm deploy finish");
 
@@ -113,7 +134,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			String buildCommand = commandReplace(taskHistory.getBuildCommand(), projectDir);
-			processManager.exec(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
+			processManager.execFile(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
 		}
 	}
 
@@ -122,7 +143,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		String buildCommand = "cd "+projectDir+"\nnpm install\nnpm run build\n";
-		processManager.exec(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
+		processManager.execFile(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
 	}
 
 	/**
@@ -134,7 +155,7 @@ public class NpmPipelineProvider extends BasedViewPipelineProvider {
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
 		//tar
 		String tarCommand  = "cd "+projectDir + "/dist\n"+"tar -zcvf " + config.getJobBackup(getPipelineInfo().getTaskHistory().getId())+"/"+project.getProjectName() + ".tar.gz  *";
-		processManager.exec(String.valueOf(taskHistory.getId()),tarCommand,config.getJobTmpCommandFile(taskHistory.getId(), -1),config.getJobLog(getPipelineInfo().getTaskHistory().getId()),300000);
+		processManager.execFile(String.valueOf(taskHistory.getId()),tarCommand,config.getJobTmpCommandFile(taskHistory.getId(), -1),config.getJobLog(getPipelineInfo().getTaskHistory().getId()),300000);
 	}
 
 }

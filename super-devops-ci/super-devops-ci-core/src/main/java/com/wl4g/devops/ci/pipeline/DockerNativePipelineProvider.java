@@ -104,7 +104,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getTranform().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getTranform().getDockerNative().getDockerPushPasswd();
-		processManager.exec(null, command, 300000);
+		processManager.exec( command, config.getJobLog(getPipelineInfo().getTaskHistory().getId()),300000);
 	}
 
 	/**
