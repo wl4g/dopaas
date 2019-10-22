@@ -122,7 +122,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
 		String command = "cp -Rf " + targetPath + " " + backupPath;
-		SSHTool.exec(command);
+		//SSHTool.exec(command);
+		processManager.exec(null,command,300000);
 	}
 
 	/**
@@ -134,7 +135,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
 		String command = "cp -Rf " + backupPath + " " + target;
-		SSHTool.exec(command);
+		processManager.exec(null,command,300000);
 	}
 
 	/**
@@ -316,7 +317,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			buildCommand = commandReplace(buildCommand, projectDir);
-			SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
+			//SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(), logPath.getAbsolutePath(), taskHistory.getId());
+			processManager.execFile(String.valueOf(taskHistory.getId()),buildCommand,tmpCmdFile,logPath,300000);
+
 		}
 
 	}
@@ -331,7 +334,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true";
 		//SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
-		processManager.exec(taskId+"",defaultCommand,null,logPath,1800000);
+		processManager.exec(String.valueOf(taskId),defaultCommand,null,logPath,300000);
 	}
 
 }
