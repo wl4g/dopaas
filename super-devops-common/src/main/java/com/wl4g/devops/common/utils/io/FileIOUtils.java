@@ -160,7 +160,9 @@ public abstract class FileIOUtils extends FileUtils {
 		try (RandomAccessFile raf = new RandomAccessFile(filename, "r")) {
 			raf.seek(startPos);
 			long endPos = startPos + aboutLimit;
-			while (raf.getFilePointer() < endPos) {
+			long filePointer  = 0;
+			while (raf.getFilePointer() < endPos && raf.getFilePointer()!=filePointer) {
+				filePointer = raf.getFilePointer();
 				String line = raf.readLine();
 				if (Objects.nonNull(line)) {
 					lines.add(line);
