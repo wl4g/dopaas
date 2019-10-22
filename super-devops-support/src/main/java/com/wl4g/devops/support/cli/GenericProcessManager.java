@@ -21,6 +21,7 @@ import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
@@ -84,18 +85,6 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	@Override
-	public void exec(String processId, String cmd, long timeoutMs)
-			throws InterruptedException, IllegalProcessStateException, IOException {
-		exec(processId, cmd, null, null, timeoutMs);
-	}
-
-	@Override
-	public void exec(String processId, String cmd, File stdout, long timeoutMs)
-			throws InterruptedException, IllegalProcessStateException, IOException {
-		exec(processId, cmd, null, stdout, timeoutMs);
-	}
-
-	@Override
 	public void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, IOException {
 		hasText(cmd, "Execution commands must not be empty");
@@ -138,10 +127,17 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 			int exitCode = ps.exitValue();
 			if (exitCode != 0) { // e.g. destroy() was called.
-				InputStream errIn = ps.getErrorStream();
-				byte[] errBuf = new byte[errIn.available()];
-				ByteStreams.readFully(errIn, errBuf);
-				throw new IllegalProcessStateException(exitCode, new String(errBuf, UTF_8));
+				String errmsg = EMPTY;
+				// Obtain process error message.
+				try {
+					InputStream errIn = ps.getErrorStream();
+					byte[] errBuf = new byte[errIn.available()];
+					ByteStreams.readFully(errIn, errBuf);
+					errmsg = new String(errBuf, UTF_8);
+				} catch (Exception e) {
+					errmsg = getRootCausesString(e);
+				}
+				throw new IllegalProcessStateException(exitCode, errmsg);
 			}
 		} catch (IllegalProcessStateException ex) {
 			throw new IllegalProcessStateException(ex.getExitValue(), String.format(

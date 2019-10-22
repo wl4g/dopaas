@@ -97,8 +97,8 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
 					Collection<ProcessInfo> processes = repository.getProcesses();
-					if (log.isInfoEnabled()) {
-						log.info("Destruction processes: {}", processes);
+					if (log.isDebugEnabled()) {
+						log.debug("Destruction processes: {}", processes);
 					}
 					processes.stream().forEach(ps -> {
 						String signalKey = getDestroySignalKey(ps.getProcessId());
