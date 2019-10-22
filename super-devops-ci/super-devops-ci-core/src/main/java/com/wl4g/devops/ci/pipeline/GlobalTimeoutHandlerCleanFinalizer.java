@@ -28,7 +28,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
+import static java.util.Objects.nonNull;
+
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -41,7 +42,7 @@ import java.util.concurrent.ScheduledFuture;
 @EnableScheduling
 public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 
-	final public static String DEFAULT_CLEANER_CRON = "00/30 * * * * ?";
+	final public static String DEFAULT_CLEANER_EXPRESS = "00/30 * * * * ?";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -64,7 +65,7 @@ public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments applicationArguments) {
 		// Initializing timeout checker.
-		resetTimeoutCheckerExpression(DEFAULT_CLEANER_CRON);
+		resetTimeoutCheckerExpression(DEFAULT_CLEANER_EXPRESS);
 	}
 
 	/**
@@ -74,25 +75,25 @@ public class GlobalTimeoutHandlerCleanFinalizer implements ApplicationRunner {
 	 */
 	public void resetTimeoutCheckerExpression(String expression) {
 		if (log.isInfoEnabled()) {
-			log.info("Reseting timeout scnaner expression: {}", expression);
+			log.info("Reseting globalTimeout finalizer for expression: {}", expression);
 		}
 		if (!CronUtils.isValidExpression(expression)) {
-			log.info("modify expression fail , expression is not valid , expression={}", expression);
+			log.warn("Failed to reset globalTimeout finalizer, because invalid expression: {}", expression);
 			return;
 		}
-		if (Objects.nonNull(future) && !future.isDone()) {
-			this.future.cancel(true);
+		if (nonNull(future) && !future.isDone()) {
+			future.cancel(true);
 		}
 
 		// Resume timeout scanner.
-		this.future = taskScheduler.schedule(() -> {
+		future = taskScheduler.schedule(() -> {
 			if (config.getJob().getJobTimeout() > 0) {
 				taskHistoryDao.updateStatus(config.getJob().getJobTimeout());
 			}
 		}, new CronTrigger(expression));
 
 		if (log.isInfoEnabled()) {
-			log.info("Reseted timeout scanner expression: {}", expression);
+			log.info("Reseted globalTimeout finalizer for expression: {}", expression);
 		}
 	}
 
