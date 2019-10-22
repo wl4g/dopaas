@@ -35,7 +35,103 @@ public interface ProcessManager {
 	 * Blocking execution multi-commands, Save to temporary file before
 	 * execution.
 	 * 
+	 * @param multiCommands
+	 * @param file
+	 * @param stdout
+	 * @param timeoutMs
+	 * @throws IllegalProcessStateException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	default void execFile(String multiCommands, File file, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, InterruptedException, IOException {
+		execFile(null, multiCommands, file, stdout, timeoutMs);
+	}
+
+	/**
+	 * Blocking execution command-line to process.
+	 * 
+	 * @param cmd
+	 *            commands
+	 * @param stdout
+	 *            standard output stream file.
+	 * @param timeoutMs
+	 *            timeout Ms.
+	 * @throws IllegalProcessStateException
+	 * @throws IOException
+	 */
+	default void exec(String cmd, File stdout, long timeoutMs) throws IllegalProcessStateException, IOException {
+		exec(null, cmd, null, stdout, timeoutMs);
+	}
+
+	/**
+	 * Blocking execution command-line to process.
+	 * 
+	 * @param cmd
+	 *            commands
+	 * @param pwdDir
+	 *            process command-line context directory
+	 * @param stdout
+	 *            standard output stream file.
+	 * @param timeoutMs
+	 *            timeout Ms.
+	 * @throws IllegalProcessStateException
+	 * @throws IOException
+	 */
+	default void exec(String cmd, File pwdDir, File stdout, long timeoutMs) throws IllegalProcessStateException, IOException {
+		exec(null, cmd, pwdDir, stdout, timeoutMs);
+	}
+
+	/**
+	 * Blocking execution command-line to process.
+	 * 
 	 * @param processId
+	 *            command-line process ID, If it is not empty, the process
+	 *            reference will be saved, which can be used to interrupt the
+	 *            execution of commands in a timely manner.
+	 * @param cmd
+	 *            commands
+	 * @param timeoutMs
+	 *            timeout Ms.
+	 * @throws InterruptedException
+	 * @throws IllegalProcessStateException
+	 * @throws IOException
+	 */
+	default void exec(String processId, String cmd, long timeoutMs)
+			throws InterruptedException, IllegalProcessStateException, IOException {
+		exec(processId, cmd, null, null, timeoutMs);
+	}
+
+	/**
+	 * Blocking execution command-line to process.
+	 * 
+	 * @param processId
+	 *            command-line process ID, If it is not empty, the process
+	 *            reference will be saved, which can be used to interrupt the
+	 *            execution of commands in a timely manner.
+	 * @param cmd
+	 *            commands
+	 * @param stdout
+	 *            standard output stream file.
+	 * @param timeoutMs
+	 *            timeout Ms.
+	 * @throws InterruptedException
+	 * @throws IllegalProcessStateException
+	 * @throws IOException
+	 */
+	default void exec(String processId, String cmd, File stdout, long timeoutMs)
+			throws InterruptedException, IllegalProcessStateException, IOException {
+		exec(processId, cmd, null, stdout, timeoutMs);
+	}
+
+	/**
+	 * Blocking execution multi-commands, Save to temporary file before
+	 * execution.
+	 * 
+	 * @param processId
+	 *            command-line process ID, If it is not empty, the process
+	 *            reference will be saved, which can be used to interrupt the
+	 *            execution of commands in a timely manner.
 	 * @param multiCommands
 	 * @param file
 	 * @param stdout
@@ -51,42 +147,9 @@ public interface ProcessManager {
 	 * Blocking execution command-line to process.
 	 * 
 	 * @param processId
-	 *            command-lien process ID.
-	 * @param cmd
-	 *            commands
-	 * @param timeoutMs
-	 *            timeout Ms.
-	 * @throws InterruptedException
-	 * @throws IllegalProcessStateException
-	 * @throws IOException
-	 */
-	void exec(String processId, String cmd, long timeoutMs)
-			throws InterruptedException, IllegalProcessStateException, IOException;
-
-	/**
-	 * Blocking execution command-line to process.
-	 * 
-	 * @param processId
-	 *            command-lien process ID.
-	 * @param cmd
-	 *            commands
-	 * @param stdout
-	 *            standard output stream file.
-	 * @param timeoutMs
-	 *            timeout Ms.
-	 * @param processId
-	 * @throws InterruptedException
-	 * @throws IllegalProcessStateException
-	 * @throws IOException
-	 */
-	void exec(String processId, String cmd, File stdout, long timeoutMs)
-			throws InterruptedException, IllegalProcessStateException, IOException;
-
-	/**
-	 * Blocking execution command-line to process.
-	 * 
-	 * @param processId
-	 *            command-lien process ID.
+	 *            command-line process ID, If it is not empty, the process
+	 *            reference will be saved, which can be used to interrupt the
+	 *            execution of commands in a timely manner.
 	 * @param cmd
 	 *            commands
 	 * @param pwdDir
@@ -95,7 +158,6 @@ public interface ProcessManager {
 	 *            standard output stream file.
 	 * @param timeoutMs
 	 *            timeout Ms.
-	 * @param processId
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
 	 */
@@ -107,7 +169,7 @@ public interface ProcessManager {
 	 * <font color=red>There's no guarantee that it will be killed.</font>
 	 * 
 	 * @param processId
-	 *            Create command-lien process ID.
+	 *            Created command-line process ID, must not be empty.
 	 * @param timeoutMs
 	 *            Destroy process timeout Ms.
 	 */
