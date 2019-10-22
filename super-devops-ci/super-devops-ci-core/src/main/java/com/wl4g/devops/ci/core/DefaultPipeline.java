@@ -347,7 +347,9 @@ public class DefaultPipeline implements Pipeline {
 			size = 100;
 		}
 		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
-		return FileIOUtils.readSeekLines(logPath, index, size);
+		return FileIOUtils.seekReadLines(logPath, index, size,line -> {
+			return line.equalsIgnoreCase("EOF"); // End if 'EOF'
+		});
 	}
 
 }

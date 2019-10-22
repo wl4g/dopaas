@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.wl4g.devops.ci.utils;
 
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
@@ -31,21 +32,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+*/
 /**
  * Shell utility tools.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
  * @since
- */
+ *//*
+
 public abstract class CommandUtils {
 	final private static Logger log = LoggerFactory.getLogger(CommandUtils.class);
 
 	public static Map<Integer, List<Process>> processMap = new HashMap<>();
 
-	/**
+	*/
+/**
 	 * Execute commands in local
-	 */
+	 *//*
+
 	public static void exec(String cmd) throws Exception {
 		exec(cmd, null, null);
 	}
@@ -128,17 +133,23 @@ public abstract class CommandUtils {
 			}
 			System.out.println("stop");
 			ps.destroyForcibly();
-			/*
+			*/
+/*
 			 * while ((inlog = blog.readLine()) != null) {
 			 * if(inlog!=null&&inlog.contains("[3/4]")){
 			 * System.out.println("stop"); ps.destroyForcibly();
 			 *//*
+*/
+/*
 				 * char ctrlBreak = (char)3; outputStream.write(ctrlBreak);
 				 * outputStream.flush();
 				 *//*
+*/
+/*
 					 * } System.out.println(inlog); } while ((inlog =
 					 * berr.readLine()) != null) { System.out.println(inlog); }
-					 */
+					 *//*
+
 
 			ps.waitFor();
 			int exitValue = ps.exitValue();
@@ -146,4 +157,4 @@ public abstract class CommandUtils {
 		}
 	}
 
-}
+}*/
