@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.support.cli;
 
-import static io.netty.util.internal.ThreadLocalRandom.current;
+import static com.wl4g.devops.common.utils.concurrent.ThreadUtils.sleepRandom;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
@@ -39,6 +39,8 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
  */
 public class NodeProcessManagerImpl extends GenericProcessManager {
 
+	final public static long DEFAULT_MIN_WATCH_MS = 2_00L;
+	final public static long DEFAULT_MAX_WATCH_MS = 2_000L;
 	/** Default destruction signal expired seconds. */
 	final public static int DEFAULT_SIGNAL_EXPIRED_SEC = (int) (3 * TimeUnit.MILLISECONDS.toSeconds(DEFAULT_MAX_WATCH_MS));
 
@@ -87,7 +89,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 */
 	private synchronized void loopWatchProcessesDestroy() throws InterruptedException {
 		while (true) {
-			Thread.sleep(current().nextLong(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS));
+			sleepRandom(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS);
 
 			Lock lock = lockManager.getLock(DEFAULT_PROCESS_DESTROY_LOCK);
 			try {

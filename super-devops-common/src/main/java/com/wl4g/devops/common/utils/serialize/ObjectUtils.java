@@ -82,21 +82,21 @@ public abstract class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
 				return baos.toByteArray();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException(e);
 		} finally {
 			try {
 				if (oos != null)
 					oos.close();
 				oos = null;
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new IllegalStateException(e);
 			}
 			try {
 				if (baos != null)
 					baos.close();
 				baos = null;
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new IllegalStateException(e);
 			}
 		}
 
@@ -118,22 +118,22 @@ public abstract class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
 				ois = new ObjectInputStream(bais);
 				return ois.readObject();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			throw new IllegalStateException(e);
 		} finally {
 			try {
 				if (ois != null)
 					ois.close();
 				ois = null;
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new IllegalStateException(e);
 			}
 			try {
 				if (bais != null)
 					bais.close();
 				bais = null;
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new IllegalStateException(e);
 			}
 		}
 

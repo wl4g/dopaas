@@ -22,6 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+/**
+ * JACKSON utility tools.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年05月22日
+ * @since
+ */
 public abstract class JacksonUtils {
 	final private static ObjectMapper mapper = new ObjectMapper();
 

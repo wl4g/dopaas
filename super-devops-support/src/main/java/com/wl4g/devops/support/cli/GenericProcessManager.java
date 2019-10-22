@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.cli;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
 import static java.util.Arrays.asList;
@@ -27,12 +28,14 @@ import static org.springframework.util.Assert.state;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.io.ByteStreams;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cache.JedisService;
@@ -53,8 +56,6 @@ import com.wl4g.devops.support.task.RunnerProperties;
 public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements ProcessManager {
 
 	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
-	final public static long DEFAULT_MIN_WATCH_MS = 2_00L;
-	final public static long DEFAULT_MAX_WATCH_MS = 2_000L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -126,17 +127,23 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 		// Check exited?
 		try {
-			// Wait for completed.
-			ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
+			try {
+				// Wait for completed.
+				ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
+			} catch (Throwable e) {
+				throw new IllegalProcessStateException(-1, e);
+			}
 
 			int exitCode = ps.exitValue();
 			if (exitCode != 0) { // e.g. destroy() was called.
-				throw new IllegalProcessStateException(
-						String.format("Process(%s) interrupted, exit code for (%s)", processId, exitCode));
+				InputStream errIn = ps.getErrorStream();
+				byte[] errBuf = new byte[errIn.available()];
+				ByteStreams.readFully(errIn, errBuf);
+				throw new IllegalProcessStateException(exitCode, new String(errBuf, UTF_8));
 			}
-		} catch (Throwable ex) {
-			throw new IllegalProcessStateException(String.format("Failed to process(%s), commands:[%s], cause: %s", processId,
-					asList(commands), getRootCausesString(ex)));
+		} catch (IllegalProcessStateException ex) {
+			throw new IllegalProcessStateException(ex.getExitValue(), String.format(
+					"Failed to process(%s), commands:[%s], cause: %s", processId, asList(commands), getRootCausesString(ex)));
 		} finally {
 			repository.cleanup(processId); // Cleanup.
 		}
