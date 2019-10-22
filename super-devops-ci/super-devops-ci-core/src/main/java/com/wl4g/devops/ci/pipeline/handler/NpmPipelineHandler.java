@@ -61,7 +61,7 @@ public class NpmPipelineHandler extends AbstractPipelineHandler {
 		StringBuffer result = new StringBuffer();
 		try {
 			// Update status
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 			// pre command
 			String s4 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
@@ -79,11 +79,11 @@ public class NpmPipelineHandler extends AbstractPipelineHandler {
 			result.append(s2).append("\n");
 
 			// Update status
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 
 		} catch (Exception e) {
 			log.error("Deploy job failed", e);
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
 					result.toString() + "\n" + e.toString());
 			// throw new RuntimeException(e);
 		}

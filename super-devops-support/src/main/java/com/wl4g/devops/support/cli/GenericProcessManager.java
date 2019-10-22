@@ -15,28 +15,6 @@
  */
 package com.wl4g.devops.support.cli;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
-import static java.util.Arrays.asList;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.google.common.io.ByteStreams;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
@@ -47,6 +25,24 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
+import static java.util.Arrays.asList;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.*;
 
 /**
  * Abstract generic command-line process management implements.
@@ -81,7 +77,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	public void execFile(String processId, String multiCommands, File file, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
 		writeFile(file, multiCommands, false);
-		exec(processId, file.getAbsolutePath(), stdout, timeoutMs);
+		exec(processId, "sh "+file.getAbsolutePath(), stdout, timeoutMs);
 	}
 
 	@Override

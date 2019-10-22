@@ -123,7 +123,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
 		String command = "cp -Rf " + targetPath + " " + backupPath;
 		//SSHTool.exec(command);
-		processManager.exec(null,command,300000);
+		processManager.exec(command,config.getJobLog(taskHisId),300000);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
 		String command = "cp -Rf " + backupPath + " " + target;
-		processManager.exec(null,command,300000);
+		processManager.exec(command,config.getJobLog(taskHisRefId),300000);
 	}
 
 	/**

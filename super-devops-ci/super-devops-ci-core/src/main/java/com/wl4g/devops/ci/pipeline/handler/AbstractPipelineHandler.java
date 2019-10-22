@@ -15,13 +15,10 @@
  */
 package com.wl4g.devops.ci.pipeline.handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract deployments task.
@@ -35,9 +32,6 @@ public abstract class AbstractPipelineHandler implements Runnable {
 
 	final protected AppInstance instance;
 	final protected Project project;
-
-	@Autowired
-	protected TaskHistoryService taskHistoryService;
 
 	public AbstractPipelineHandler(AppInstance instance, Project project) {
 		this.instance = instance;
