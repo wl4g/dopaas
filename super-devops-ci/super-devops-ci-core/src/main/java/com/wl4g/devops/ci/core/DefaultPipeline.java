@@ -242,7 +242,7 @@ public class DefaultPipeline implements Pipeline {
 				// Post successful process.
 				postPipelineExecuteSuccess(taskId, provider);
 			} catch (Throwable e) {
-				log.error("Failed to pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
+				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId, provider.getClass().getSimpleName()),e);
 				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, e.getMessage());
 				// Post failure process.

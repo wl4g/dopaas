@@ -36,6 +36,7 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Abstract based MAVEN pipeline provider.
@@ -189,7 +190,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @return
 	 */
 	private String extractDependencyBuildCommand(List<TaskBuildCommand> commands, Integer projectId) {
-		Assert.notEmpty(commands, "taskBuildCommands is empty");
+		if(isEmpty(commands)){
+			return null;
+		}
 		Assert.notNull(projectId, "projectId is null");
 		for (TaskBuildCommand taskBuildCommand : commands) {
 			if (taskBuildCommand.getProjectId().intValue() == projectId.intValue()) {
