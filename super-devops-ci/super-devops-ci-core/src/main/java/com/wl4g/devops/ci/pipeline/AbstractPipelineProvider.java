@@ -20,6 +20,8 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
+import com.wl4g.devops.ci.utils.CommandLogHolder;
+import com.wl4g.devops.ci.utils.CommandLogHolder.LogAppender;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
@@ -121,6 +123,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		String rsaKey = config.getTranform().getCipherKey();
 		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
 
+		// TODO
+//		LogAppender appender = getLogAppender();
+
 		StringBuffer result = new StringBuffer(command);
 		result.append("\n");
 		//
@@ -141,6 +146,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public String mkdirs(String targetHost, String userName, String path, String rsa) throws Exception {
 		String command = "mkdir -p " + path;
 		return exceCommand(targetHost, userName, command, rsa);
+	}
+
+	/**
+	 * Get log appender.
+	 * 
+	 * @return
+	 */
+	public LogAppender getLogAppender() {
+		return CommandLogHolder.getLogAppender(getPipelineInfo().getTaskHistory().getId());
 	}
 
 	protected String commandReplace(String command, String projectPath) {
