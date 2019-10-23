@@ -32,10 +32,10 @@ import java.util.Date;
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class ViewPipelineProvider extends AbstractPipelineProvider {
+public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public ViewPipelineProvider(PipelineInfo info) {
+	public BasedViewPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
 

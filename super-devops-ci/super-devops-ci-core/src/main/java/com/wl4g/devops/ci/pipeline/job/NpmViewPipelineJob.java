@@ -35,9 +35,9 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  */
 public class NpmViewPipelineJob extends AbstractPipelineJob<NpmViewPipelineProvider> {
 
-	public NpmViewPipelineJob(String namedId, CiCdProperties config, NpmViewPipelineProvider provider, Project project,
-			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(namedId, config, provider, project, instance, taskHistoryDetails);
+	public NpmViewPipelineJob(CiCdProperties config, NpmViewPipelineProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		super(config, provider, project, instance, taskHistoryDetails);
 	}
 
 	@Override

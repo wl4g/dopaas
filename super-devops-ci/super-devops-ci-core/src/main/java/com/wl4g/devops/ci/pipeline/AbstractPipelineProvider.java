@@ -27,7 +27,6 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 import com.wl4g.devops.support.cli.ProcessManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -160,7 +159,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected void doStartJobsExecute0() {
 		// Create jobs.
-		List<NamedIdJob> jobs = getPipelineInfo().getInstances().stream().map(instance -> newPipelineJob(instance))
+		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newPipelineJob(instance))
 				.collect(toList());
 
 		// Submit jobs for complete.
@@ -176,6 +175,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @param instance
 	 * @return
 	 */
-	protected abstract NamedIdJob newPipelineJob(AppInstance instance);
+	protected abstract Runnable newPipelineJob(AppInstance instance);
 
 }

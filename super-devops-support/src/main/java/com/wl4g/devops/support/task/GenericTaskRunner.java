@@ -44,7 +44,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -204,7 +203,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * @param timeoutMs
 	 * @throws IllegalStateException
 	 */
-	public void submitForComplete(List<NamedIdJob> jobs, long timeoutMs) throws IllegalStateException {
+	public void submitForComplete(List<Runnable> jobs, long timeoutMs) throws IllegalStateException {
 		submitForComplete(jobs, (ex, completed, uncompleted) -> {
 			throw ex;
 		}, timeoutMs);
@@ -218,28 +217,31 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * @param timeoutMs
 	 * @throws IllegalStateException
 	 */
-	public void submitForComplete(List<NamedIdJob> jobs, CompleteTaskListener listener, long timeoutMs)
+	public void submitForComplete(List<Runnable> jobs, CompleteTaskListener listener, long timeoutMs)
 			throws IllegalStateException {
 		if (!isEmpty(jobs)) {
 			int total = jobs.size();
 			// Future jobs.
-			Map<Future<?>, NamedIdJob> futureJob = new HashMap<Future<?>, NamedIdJob>(total);
-			CountDownLatch latch = new CountDownLatch(total); // Submit.
-			jobs.stream().forEach(job -> futureJob.put(getWorker().submit(new FutureDoneTaskWrapper(latch, job)), job));
+			Map<Future<?>, Runnable> futureJob = new HashMap<Future<?>, Runnable>(total);
 			try {
+				CountDownLatch latch = new CountDownLatch(total); // Submit.
+				jobs.stream().forEach(job -> futureJob.put(getWorker().submit(new FutureDoneTaskWrapper(latch, job)), job));
+
 				if (!latch.await(timeoutMs, TimeUnit.MILLISECONDS)) { // Timeout?
-					Iterator<Entry<Future<?>, NamedIdJob>> it = futureJob.entrySet().iterator();
+					Iterator<Entry<Future<?>, Runnable>> it = futureJob.entrySet().iterator();
 					while (it.hasNext()) {
-						Entry<Future<?>, NamedIdJob> entry = it.next();
+						Entry<Future<?>, Runnable> entry = it.next();
 						if (!entry.getKey().isCancelled() && !entry.getKey().isDone()) {
 							entry.getKey().cancel(true);
 						} else {
 							it.remove(); // Cleanup cancelled or isDone
 						}
 					}
+
 					TimeoutException ex = new TimeoutException(
 							String.format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
 									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
+
 					listener.onComplete(ex, (total - latch.getCount()), futureJob.values());
 				} else {
 					listener.onComplete(null, total, emptyList());
@@ -320,39 +322,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	/**
-	 * Named ID job runnable.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月17日
-	 * @since
-	 */
-	public static class NamedIdJob implements Runnable {
-
-		/** Job namedId. */
-		final private String namedId;
-
-		public NamedIdJob(String namedId) {
-			hasText(namedId, "Named ID must not be empty.");
-			this.namedId = namedId;
-		}
-
-		public String getNamedId() {
-			return namedId;
-		}
-
-		@Override
-		public void run() {
-			// Ignore
-		}
-
-		@Override
-		public String toString() {
-			return "NamedIdJob@" + namedId;
-		}
-
-	}
-
-	/**
 	 * Wait completion task listener.
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
@@ -369,7 +338,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		 * @param uncompleted
 		 * @throws Exception
 		 */
-		void onComplete(TimeoutException ex, long completed, Collection<NamedIdJob> uncompleted) throws Exception;
+		void onComplete(TimeoutException ex, long completed, Collection<Runnable> uncompleted) throws Exception;
 	}
 
 	@SuppressWarnings({ "resource", "unchecked", "rawtypes" })
@@ -381,9 +350,9 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 				@Override
 				public void run() {
 					try {
-						System.out.println("Starting... testjob-" + getNamedId());
+						System.out.println("Starting... testjob-" + getId());
 						Thread.sleep(3000L);
-						System.out.println("Completed. testjob-" + getNamedId());
+						System.out.println("Completed. testjob-" + getId());
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

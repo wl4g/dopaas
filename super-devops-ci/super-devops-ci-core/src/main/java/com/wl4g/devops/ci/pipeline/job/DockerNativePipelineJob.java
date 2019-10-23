@@ -35,9 +35,9 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  */
 public class DockerNativePipelineJob extends AbstractPipelineJob<DockerNativePipelineProvider> {
 
-	public DockerNativePipelineJob(String namedId, CiCdProperties config, DockerNativePipelineProvider provider, Project project,
+	public DockerNativePipelineJob(CiCdProperties config, DockerNativePipelineProvider provider, Project project,
 			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(namedId, config, provider, project, instance, taskHistoryDetails);
+		super(config, provider, project, instance, taskHistoryDetails);
 	}
 
 	@Override

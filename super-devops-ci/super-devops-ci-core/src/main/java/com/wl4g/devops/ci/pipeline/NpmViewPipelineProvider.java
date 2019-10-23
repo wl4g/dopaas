@@ -21,7 +21,6 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 import org.springframework.util.Assert;
 
@@ -35,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends ViewPipelineProvider {
+public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 
 	public NpmViewPipelineProvider(PipelineInfo info) {
 		super(info);
@@ -53,9 +52,8 @@ public class NpmViewPipelineProvider extends ViewPipelineProvider {
 	}
 
 	@Override
-	protected NamedIdJob newPipelineJob(AppInstance instance) {
-		// TODO namedId
-		return new NpmViewPipelineJob("", config, this, getPipelineInfo().getProject(), instance,
+	protected Runnable newPipelineJob(AppInstance instance) {
+		return new NpmViewPipelineJob(config, this, getPipelineInfo().getProject(), instance,
 				getPipelineInfo().getTaskHistoryDetails());
 	}
 

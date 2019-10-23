@@ -20,7 +20,6 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
-import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 import java.io.File;
 
@@ -31,7 +30,7 @@ import java.io.File;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class MvnAssembleTarPipelineProvider extends MavenPipelineProvider {
+public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	public MvnAssembleTarPipelineProvider(PipelineInfo info) {
 		super(info);
@@ -91,10 +90,9 @@ public class MvnAssembleTarPipelineProvider extends MavenPipelineProvider {
 	}
 
 	@Override
-	protected NamedIdJob newPipelineJob(AppInstance instance) {
-		// TODO namedId
-		return new MvnAssembleTarPipelineJob("", config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
-				instance, getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
+	protected Runnable newPipelineJob(AppInstance instance) {
+		return new MvnAssembleTarPipelineJob(config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(), instance,
+				getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
 	}
 
 }
