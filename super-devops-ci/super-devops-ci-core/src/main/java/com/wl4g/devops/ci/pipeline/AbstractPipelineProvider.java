@@ -21,12 +21,13 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.utils.SSHTool;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-
+import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 import com.wl4g.devops.support.cli.ProcessManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +35,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.List;
 
 /**
  * Abstract based deploy provider.
@@ -137,7 +142,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Get Package Name from path
 	 */
-	public String subPackname(String path) {
+	protected String subPackname(String path) {
 		String[] a = path.split("/");
 		return a[a.length - 1];
 	}
@@ -145,9 +150,32 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Get Packname WithOut Postfix from path
 	 */
-	public String subPacknameWithOutPostfix(String path) {
+	protected String subPacknameWithOutPostfix(String path) {
 		String a = subPackname(path);
 		return a.substring(0, a.lastIndexOf("."));
 	}
+
+	/**
+	 * Do startup job execution.
+	 */
+	protected void doStartJobsExecute0() {
+		// Create jobs.
+		List<NamedIdJob> jobs = getPipelineInfo().getInstances().stream().map(instance -> newPipelineJob(instance))
+				.collect(toList());
+
+		// Submit jobs for complete.
+		if (!isEmpty(jobs)) {
+			jobExecutor.submitForComplete(jobs, config.getTranform().getWaitCompleteTimeout());
+		}
+
+	}
+
+	/**
+	 * Create pipeline job.
+	 * 
+	 * @param instance
+	 * @return
+	 */
+	protected abstract NamedIdJob newPipelineJob(AppInstance instance);
 
 }

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -32,22 +33,11 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class DockerNativePipelineJob extends AbstractPipelineJob {
+public class DockerNativePipelineJob extends AbstractPipelineJob<DockerNativePipelineProvider> {
 
-	private DockerNativePipelineProvider provider;
-	private Integer taskDetailId;
-
-	public DockerNativePipelineJob(DockerNativePipelineProvider provider, Project project, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(instance, project);
-		this.provider = provider;
-		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
-		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-			if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
-				this.taskDetailId = taskHistoryDetail.getId();
-				break;
-			}
-		}
+	public DockerNativePipelineJob(String namedId, CiCdProperties config, DockerNativePipelineProvider provider, Project project,
+			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+		super(namedId, config, provider, project, instance, taskHistoryDetails);
 	}
 
 	@Override

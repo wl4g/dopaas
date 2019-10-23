@@ -16,6 +16,8 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 /**
  * Django standard deployments provider.
@@ -32,6 +34,11 @@ public class DjangoStandardPipelineProvider extends MavenPipelineProvider {
 
 	@Override
 	public void execute() throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected NamedIdJob newPipelineJob(AppInstance instance) {
 		throw new UnsupportedOperationException();
 	}
 

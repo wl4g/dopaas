@@ -44,6 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -200,9 +201,22 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * Submitted job wait for completed.
 	 * 
 	 * @param jobs
+	 * @param timeoutMs
+	 * @throws IllegalStateException
+	 */
+	public void submitForComplete(List<NamedIdJob> jobs, long timeoutMs) throws IllegalStateException {
+		submitForComplete(jobs, (ex, completed, uncompleted) -> {
+			throw ex;
+		}, timeoutMs);
+	}
+
+	/**
+	 * Submitted job wait for completed.
+	 * 
+	 * @param jobs
 	 * @param listener
 	 * @param timeoutMs
-	 * @throws InterruptedException
+	 * @throws IllegalStateException
 	 */
 	public void submitForComplete(List<NamedIdJob> jobs, CompleteTaskListener listener, long timeoutMs)
 			throws IllegalStateException {
@@ -230,7 +244,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 				} else {
 					listener.onComplete(null, total, emptyList());
 				}
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
 		}
@@ -314,10 +328,11 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 */
 	public static class NamedIdJob implements Runnable {
 
+		/** Job namedId. */
 		final private String namedId;
 
 		public NamedIdJob(String namedId) {
-			Assert.hasText(namedId, "Named ID must not be empty.");
+			hasText(namedId, "Named ID must not be empty.");
 			this.namedId = namedId;
 		}
 
@@ -352,9 +367,9 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		 * @param ex
 		 * @param completed
 		 * @param uncompleted
+		 * @throws Exception
 		 */
-		void onComplete(TimeoutException ex, long completed, Collection<NamedIdJob> uncompleted);
-
+		void onComplete(TimeoutException ex, long completed, Collection<NamedIdJob> uncompleted) throws Exception;
 	}
 
 	@SuppressWarnings({ "resource", "unchecked", "rawtypes" })

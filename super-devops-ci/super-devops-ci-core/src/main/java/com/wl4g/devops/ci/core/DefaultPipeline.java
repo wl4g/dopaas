@@ -239,15 +239,14 @@ public class DefaultPipeline implements Pipeline {
 				// Setup status to success.
 				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getShaGit(),
 						provider.getShaLocal());
-
 				// Post successful process.
 				postPipelineExecuteSuccess(taskId, provider);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				log.error("Failed to pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
+				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, e.getMessage());
-
 				// Post failure process.
-				postPipelineExecuteSuccess(taskId, provider);
+				postPipelineExecuteFailure(taskId, provider, e);
 			}
 		});
 	}
@@ -271,7 +270,7 @@ public class DefaultPipeline implements Pipeline {
 	 * @param provider
 	 * @param e
 	 */
-	protected void postPipelineExecuteFailure(Integer taskId, PipelineProvider provider, Exception e) {
+	protected void postPipelineExecuteFailure(Integer taskId, PipelineProvider provider, Throwable e) {
 		// Failure execute job notification.
 		notificationResult(provider.getPipelineInfo().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
 				+ " projectName=" + provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()) + "\n");
@@ -319,11 +318,10 @@ public class DefaultPipeline implements Pipeline {
 			refTaskHisy = taskHistoryService.getById(taskHisy.getRefId());
 		}
 
-		List<AppInstance> instances = new ArrayList<>();
-		for (TaskHistoryDetail taskHistoryDetail : taskHisyDetails) {
-			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
-			instances.add(instance);
-		}
+		// Obtain instances.
+		List<AppInstance> instances = safeList(taskHisyDetails).stream()
+				.map(detail -> appClusterDao.getAppInstance(String.valueOf(detail.getInstanceId()))).collect(toList());
+
 		PipelineInfo info = new DefaultPipelineInfo();
 		info.setProject(project);
 		info.setTarType(taskHisy.getTarType());

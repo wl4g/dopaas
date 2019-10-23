@@ -21,14 +21,11 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
+
 import org.springframework.util.Assert;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import static com.wl4g.devops.common.utils.lang.StringUtils2.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -55,7 +52,14 @@ public class NpmViewPipelineProvider extends ViewPipelineProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public void build() throws Exception {
+	@Override
+	protected NamedIdJob newPipelineJob(AppInstance instance) {
+		// TODO namedId
+		return new NpmViewPipelineJob("", config, this, getPipelineInfo().getProject(), instance,
+				getPipelineInfo().getTaskHistoryDetails());
+	}
+
+	private void build() throws Exception {
 		// TODO
 		// step1: git clone/pull
 		getSources(false);
@@ -65,33 +69,12 @@ public class NpmViewPipelineProvider extends ViewPipelineProvider {
 		pkg();
 		// step4 scp ==> tar -x
 
-		List<Future<?>> futures = new ArrayList<>();
-		for (AppInstance instance : getPipelineInfo().getInstances()) {
-			// create deploy task
-			Runnable task = new NpmViewPipelineJob(this, getPipelineInfo().getProject(), instance,
-					getPipelineInfo().getTaskHistoryDetails());
-			Future<?> submit = jobExecutor.getWorker().submit(task);
-			futures.add(submit);
+		// Startup pipeline jobs.
+		doStartJobsExecute0();
+
+		if (log.isInfoEnabled()) {
+			log.info("Npm pipeline execution successful!");
 		}
-
-		if (!isEmpty(futures)) {
-			while (true) {
-				boolean isAllDone = true;
-				for (Future<?> future : futures) {
-					if (!future.isDone()) {
-						isAllDone = false;
-						break;
-					}
-				}
-				if (isAllDone) {
-					break;
-				}
-				Thread.sleep(500);
-			}
-		}
-
-		log.info("npm deploy finish");
-
 	}
 
 	private void getSources(boolean isRollback) throws Exception {
