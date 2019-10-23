@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.support.cli;
 
-import com.google.common.io.ByteStreams;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cache.JedisService;
@@ -31,10 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.common.utils.io.ByteStreams2.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
 import static java.util.Arrays.asList;
@@ -77,7 +75,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	public void execFile(String processId, String multiCommands, File file, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
 		writeFile(file, multiCommands, false);
-		exec(processId, "sh "+file.getAbsolutePath(), stdout, timeoutMs);
+		exec(processId, "sh " + file.getAbsolutePath(), stdout, timeoutMs);
 	}
 
 	@Override
@@ -126,10 +124,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				String errmsg = EMPTY;
 				// Obtain process error message.
 				try {
-					InputStream errIn = ps.getErrorStream();
-					byte[] errBuf = new byte[errIn.available()];
-					ByteStreams.readFully(errIn, errBuf);
-					errmsg = new String(errBuf, UTF_8);
+					errmsg = unsafeReadFullyToString(ps.getErrorStream());
 				} catch (Exception e) {
 					errmsg = getRootCausesString(e);
 				}

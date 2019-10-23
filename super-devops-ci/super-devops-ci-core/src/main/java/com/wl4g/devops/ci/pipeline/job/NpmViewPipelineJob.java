@@ -74,7 +74,6 @@ public class NpmViewPipelineJob extends AbstractPipelineJob<NpmViewPipelineProvi
 			log.error("Deploy job failed", e);
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
 					result.toString() + "\n" + e.toString());
-			// throw new RuntimeException(e);
 		}
 
 		if (log.isInfoEnabled()) {

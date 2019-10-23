@@ -40,37 +40,15 @@
 			<version>master</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>1.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.pagehelper</groupId>
-			<artifactId>pagehelper</artifactId>
-			<version>${pagehelper.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>1.2.56</version>
-		</dependency>
-		<!-- SSH2 -->
-		<dependency>
-			<groupId>ch.ethz.ganymed</groupId>
-			<artifactId>ganymed-ssh2</artifactId>
-			<version>262</version>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-dao</artifactId>
+			<version>master</version>
 		</dependency>
 		<!-- GIT -->
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>5.3.1.201904271842-r</version>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>2.2.2</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>

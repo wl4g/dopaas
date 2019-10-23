@@ -20,8 +20,8 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
@@ -34,7 +34,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
+import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.List;
@@ -115,12 +117,22 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			return "command is blank";
 		}
 
+		// Obtain text-plain privateKey(RSA)
 		String rsaKey = config.getTranform().getCipherKey();
-		AES aes = new AES(rsaKey);
-		char[] rsaReal = aes.decrypt(rsa).toCharArray();
-		String result = command + "\n";
-		result += SSHTool.execute(targetHost, userName, command, rsaReal);
-		return result;
+		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
+
+		StringBuffer result = new StringBuffer(command);
+		result.append("\n");
+		//
+		CommandResult ret = executeWithCommand(targetHost, userName, rsaReal, command);
+		if (!isBlank(ret.getMessage())) {
+			result.append(ret.getMessage());
+		}
+		result.append("-----------------");
+		if (!isBlank(ret.getErrmsg())) {
+			result.append(ret.getErrmsg());
+		}
+		return result.toString();
 	}
 
 	/**
