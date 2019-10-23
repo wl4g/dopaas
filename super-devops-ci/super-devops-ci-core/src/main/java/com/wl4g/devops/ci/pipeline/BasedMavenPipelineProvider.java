@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
-import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.common.utils.DateUtils;
@@ -34,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 
@@ -70,10 +70,14 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * Scp To Tmp
 	 */
 	public String scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
+		// Obtain text-plain privateKey(RSA)
 		String rsaKey = config.getTranform().getCipherKey();
-		AES aes = new AES(rsaKey);
-		char[] rsaReal = aes.decrypt(rsa).toCharArray();
-		return SSHTool.uploadFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
+		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
+
+		// Transfer file to remote.
+		transferFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
+
+		return "SCP to tmp succesful for " + path;
 	}
 
 	/**

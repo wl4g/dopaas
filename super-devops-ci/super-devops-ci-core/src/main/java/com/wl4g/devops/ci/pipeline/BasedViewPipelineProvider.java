@@ -16,11 +16,12 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
-import com.wl4g.devops.ci.utils.SSHTool;
 import com.wl4g.devops.common.utils.codec.AES;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
 
 import java.io.File;
 import java.util.Date;
@@ -40,15 +41,16 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	}
 
 	/**
-	 * Execute
-	 */
-	public abstract void execute() throws Exception;
-
-	/**
-	 * Scp + tar + move to basePath
+	 * 
+	 * @param targetHost
+	 * @param userName
+	 * @param rsa
+	 * @return
+	 * @throws Exception
 	 */
 	public String handOut(String targetHost, String userName, String rsa) throws Exception {
 		String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
+
 		// scp
 		result += scpToTmp(targetHost, userName, rsa) + "\n";
 		// backup
@@ -67,12 +69,16 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	 * Scp To Tmp
 	 */
 	public String scpToTmp(String targetHost, String userName, String rsa) throws Exception {
+		// Obtain text-plain privateKey(RSA)
 		String rsaKey = config.getTranform().getCipherKey();
-		AES aes = new AES(rsaKey);
-		char[] rsaReal = aes.decrypt(rsa).toCharArray();
-		String localPath = config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/"
+		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
+
+		// Transfer file to remote.
+		String localFile = config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/"
 				+ getPipelineInfo().getProject().getProjectName() + ".tar.gz";
-		return SSHTool.uploadFile(targetHost, userName, rsaReal, new File(localPath), "/home/" + userName + "/tmp");
+		transferFile(targetHost, userName, rsaReal, new File(localFile), "/home/" + userName + "/tmp");
+
+		return "SCP to tmp succesful for " + localFile;
 	}
 
 	/**
