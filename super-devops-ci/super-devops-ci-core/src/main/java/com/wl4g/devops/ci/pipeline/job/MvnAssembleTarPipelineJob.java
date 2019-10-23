@@ -39,9 +39,9 @@ public class MvnAssembleTarPipelineJob extends AbstractPipelineJob<MvnAssembleTa
 	private String tarPath;
 	private Integer taskDetailId;
 
-	public MvnAssembleTarPipelineJob(String namedId, CiCdProperties config, MvnAssembleTarPipelineProvider provider,
-			Project project, String path, AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(namedId, config, provider, project, instance, taskHistoryDetails);
+	public MvnAssembleTarPipelineJob(CiCdProperties config, MvnAssembleTarPipelineProvider provider, Project project, String path,
+			AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
+		super(config, provider, project, instance, taskHistoryDetails);
 		this.path = path;
 		this.tarPath = tarPath;
 	}

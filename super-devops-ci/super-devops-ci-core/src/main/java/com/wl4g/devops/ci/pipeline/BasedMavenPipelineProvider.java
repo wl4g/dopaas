@@ -24,8 +24,6 @@ import com.wl4g.devops.common.utils.DateUtils;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.io.File;
@@ -37,6 +35,7 @@ import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Abstract based MAVEN pipeline provider.
@@ -45,14 +44,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @author vjay
  * @date 2019-05-05 17:17:00
  */
-public abstract class MavenPipelineProvider extends AbstractPipelineProvider {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvider {
 
-	public MavenPipelineProvider(PipelineInfo info) {
+	public BasedMavenPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
-
-	public abstract void execute() throws Exception;
 
 	/**
 	 * Scp + tar + move to basePath
@@ -174,9 +170,9 @@ public abstract class MavenPipelineProvider extends AbstractPipelineProvider {
 		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHistory.getId());
 		for (Dependency depd : dependencys) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doBuilding(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback, depCmd);
+			doBuild0(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback, depCmd);
 		}
-		doBuilding(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
+		doBuild0(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
 				taskHistory.getBuildCommand());
 
 		// Mark end EOF.
@@ -214,13 +210,13 @@ public abstract class MavenPipelineProvider extends AbstractPipelineProvider {
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doBuilding(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+	private void doBuild0(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MINUTES);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
-				doGetSourceAndMvnBuild(taskHistory, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				doGetSourceAndBuild0(taskHistory, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -258,13 +254,13 @@ public abstract class MavenPipelineProvider extends AbstractPipelineProvider {
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doGetSourceAndMvnBuild(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch,
+	private void doGetSourceAndBuild0(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Pipeline building for projectId={}", projectId);
 		}
 		Project project = projectDao.selectByPrimaryKey(projectId);
-		Assert.notNull(project, "project not exist");
+		notNull(project, "project not exist");
 
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
@@ -308,10 +304,7 @@ public abstract class MavenPipelineProvider extends AbstractPipelineProvider {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			buildCommand = commandReplace(buildCommand, projectDir);
-			// SSHTool.execFile(buildCommand, tmpCmdFile.getAbsolutePath(),
-			// logPath.getAbsolutePath(), taskHistory.getId());
 			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
-
 		}
 
 	}
@@ -324,7 +317,7 @@ public abstract class MavenPipelineProvider extends AbstractPipelineProvider {
 	 * @throws Exception
 	 */
 	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
-		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true";
+		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
 		// SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
 		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}

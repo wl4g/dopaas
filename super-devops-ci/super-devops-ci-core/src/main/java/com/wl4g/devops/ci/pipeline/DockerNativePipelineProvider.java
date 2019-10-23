@@ -21,7 +21,6 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
-import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 import java.io.File;
 
@@ -32,7 +31,7 @@ import java.io.File;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class DockerNativePipelineProvider extends MavenPipelineProvider {
+public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
 	public DockerNativePipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
@@ -128,9 +127,8 @@ public class DockerNativePipelineProvider extends MavenPipelineProvider {
 	}
 
 	@Override
-	protected NamedIdJob newPipelineJob(AppInstance instance) {
-		// TODO namedId
-		return new DockerNativePipelineJob("", config, this, getPipelineInfo().getProject(), instance,
+	protected Runnable newPipelineJob(AppInstance instance) {
+		return new DockerNativePipelineJob(config, this, getPipelineInfo().getProject(), instance,
 				getPipelineInfo().getTaskHistoryDetails());
 	}
 

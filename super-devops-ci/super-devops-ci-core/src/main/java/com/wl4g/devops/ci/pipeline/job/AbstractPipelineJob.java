@@ -20,7 +20,6 @@ import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notEmpty;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @since
  * @param <P>
  */
-public abstract class AbstractPipelineJob<P extends PipelineProvider> extends NamedIdJob {
+public abstract class AbstractPipelineJob<P extends PipelineProvider> implements Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Pipeline CICD properties configuration. */
@@ -58,9 +57,8 @@ public abstract class AbstractPipelineJob<P extends PipelineProvider> extends Na
 	/** Pipeline taskDetailId. */
 	protected Integer taskDetailId;
 
-	public AbstractPipelineJob(String namedId, CiCdProperties config, P provider, Project project, AppInstance instance,
+	public AbstractPipelineJob(CiCdProperties config, P provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(namedId);
 		notNull(config, "Pipeline config must not be null.");
 		notNull(provider, "Pipeline provider must not be null.");
 		notNull(project, "Pipeline job project must not be null.");
@@ -70,6 +68,7 @@ public abstract class AbstractPipelineJob<P extends PipelineProvider> extends Na
 		this.provider = provider;
 		this.project = project;
 		this.instance = instance;
+
 		// Task detail.
 		Optional<TaskHistoryDetail> taskHisyDetail = taskHistoryDetails.stream()
 				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();

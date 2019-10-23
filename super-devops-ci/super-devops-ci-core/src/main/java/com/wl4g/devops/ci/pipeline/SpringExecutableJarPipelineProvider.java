@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 /**
  * Spring boot executable deployments provider.
@@ -26,7 +25,7 @@ import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
  * @version v1.0 2019年5月25日
  * @since
  */
-public class SpringExecutableJarPipelineProvider extends MavenPipelineProvider {
+public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvider {
 
 	public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
 		super(deployProviderBean);
@@ -38,7 +37,7 @@ public class SpringExecutableJarPipelineProvider extends MavenPipelineProvider {
 	}
 
 	@Override
-	protected NamedIdJob newPipelineJob(AppInstance instance) {
+	protected Runnable newPipelineJob(AppInstance instance) {
 		throw new UnsupportedOperationException();
 	}
 
