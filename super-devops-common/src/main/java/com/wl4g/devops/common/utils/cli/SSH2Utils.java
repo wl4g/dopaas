@@ -63,11 +63,8 @@ public abstract class SSH2Utils {
 
 		try (CharArrayWriter cw = new CharArrayWriter(); FileReader fr = new FileReader(defaultKey.getAbsolutePath())) {
 			char[] buff = new char[256];
-			while (true) {
-				int len = fr.read(buff);
-				if (len < 0) {
-					break;
-				}
+			int len = 0;
+			while ((len = fr.read(buff)) != -1) {
 				cw.write(buff, 0, len);
 			}
 

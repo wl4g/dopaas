@@ -20,6 +20,8 @@ import static java.util.Collections.synchronizedMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,20 +39,17 @@ import com.google.common.annotations.Beta;
 public abstract class CommandLogHolder {
 
 	/** Current logs cache. */
-	final private static ThreadLocal<Map<String, StringBuffer>> logCache = withInitial(() -> synchronizedMap(new HashMap<>(8)));
+	final private static ThreadLocal<Map<String, LogAppender>> logCache = withInitial(() -> synchronizedMap(new HashMap<>(8)));
 
 	/**
 	 * Append log message to current buffer cache.
 	 * 
+	 * @param key
 	 * @param message
+	 * @return
 	 */
-	public static void logAdd(String key, String message) {
-		Map<String, StringBuffer> cache = logCache.get();
-		StringBuffer buffer = cache.get(key);
-		if (isNull(buffer)) {
-			cache.putIfAbsent(key, (buffer = new StringBuffer(64)));
-		}
-		buffer.append(message);
+	public static StringBuffer logAdd(String key, String message) {
+		return getLogAppender(key).getMessage().append(message);
 	}
 
 	/**
@@ -61,7 +60,8 @@ public abstract class CommandLogHolder {
 	 */
 	public static String getCleanup(String key) {
 		String text = null;
-		StringBuffer buffer = logCache.get().get(key);
+		LogAppender appender = getLogAppender(key);
+		StringBuffer buffer = appender.getMessage();
 		if (nonNull(buffer)) {
 			text = buffer.toString();
 			buffer.setLength(0);
@@ -75,10 +75,9 @@ public abstract class CommandLogHolder {
 	 * @param key
 	 */
 	public static void cleanup(String key) {
-		StringBuffer buffer = logCache.get().get(key);
-		if (nonNull(buffer)) {
-			buffer.setLength(0);
-		}
+		LogAppender appender = getLogAppender(key);
+		appender.getMessage().setLength(0);
+		logCache.get().remove(key);
 	}
 
 	/**
@@ -94,8 +93,26 @@ public abstract class CommandLogHolder {
 	 * @param key
 	 * @return
 	 */
+	public static LogAppender getLogAppender(Number key) {
+		notNull(key, "Log appender key must not be null.");
+		return getLogAppender(String.valueOf(key));
+	}
+
+	/**
+	 * Get or create log appender.
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public static LogAppender getLogAppender(String key) {
-		return new LogAppender(key);
+		hasText(key, "Log appender key must not be empty.");
+		Map<String, LogAppender> cache = logCache.get();
+		LogAppender appender = cache.get(key);
+		if (isNull(appender)) {
+			state(isNull(cache.putIfAbsent(key, (appender = new LogAppender(key)))),
+					String.format("Already log appender with key: %s", key));
+		}
+		return appender;
 	}
 
 	/**
@@ -107,8 +124,11 @@ public abstract class CommandLogHolder {
 	 */
 	public static class LogAppender {
 
-		/** Log appender key-name */
+		/** Log appender key-name. */
 		final private String key;
+
+		/** Log appended message. */
+		final private StringBuffer message = new StringBuffer(64);
 
 		public LogAppender(String key) {
 			hasText(key, "Log appender key must not be empty.");
@@ -117,6 +137,10 @@ public abstract class CommandLogHolder {
 
 		public String getKey() {
 			return key;
+		}
+
+		public StringBuffer getMessage() {
+			return message;
 		}
 
 		/**

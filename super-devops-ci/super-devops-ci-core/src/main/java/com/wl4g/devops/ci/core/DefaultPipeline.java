@@ -224,7 +224,6 @@ public class DefaultPipeline implements Pipeline {
 		if (log.isInfoEnabled()) {
 			log.info("Startup pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 		}
-
 		// Setup status to running.
 		taskHistoryService.updateStatus(taskId, TASK_STATUS_RUNNING);
 
@@ -239,16 +238,19 @@ public class DefaultPipeline implements Pipeline {
 				// Setup status to success.
 				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getShaGit(),
 						provider.getShaLocal());
+
 				// Post successful process.
 				postPipelineExecuteSuccess(taskId, provider);
 			} catch (Throwable e) {
-				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId, provider.getClass().getSimpleName()),e);
+				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
+						provider.getClass().getSimpleName()), e);
 				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, e.getMessage());
+
 				// Post failure process.
 				postPipelineExecuteFailure(taskId, provider, e);
-			}finally {
-				// Mark end EOF.
+			} finally {
+				// Force mark end EOF.
 				FileIOUtils.writeFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 			}
 		});
