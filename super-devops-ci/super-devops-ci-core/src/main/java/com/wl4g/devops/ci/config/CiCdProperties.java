@@ -15,14 +15,19 @@
  */
 package com.wl4g.devops.ci.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import java.io.File;
 import java.util.Objects;
 
 import static com.wl4g.devops.common.utils.lang.SystemUtils2.cleanSystemPath;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import static org.springframework.util.Assert.isTrue;
 
 /**
  * CICD configuration properties.
@@ -31,10 +36,12 @@ import static org.apache.commons.lang3.SystemUtils.USER_HOME;
  * @version v1.0 2019年5月25日
  * @since
  */
-public class CiCdProperties {
+public class CiCdProperties implements InitializingBean {
 
 	final public static String DEFUALT_JOB_BASEDIR = "jobs";
 	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
+
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Global workspace directory path.
@@ -112,6 +119,28 @@ public class CiCdProperties {
 		}
 	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		applyDefaultProperties();
+	}
+
+	/**
+	 * Apply default properties values.
+	 */
+	protected void applyDefaultProperties() {
+		if (isNull(getJob().getSharedDependencyTryTimeoutMs())) {
+			// Default to one third of the full job timeout.
+			getJob().setSharedDependencyTryTimeoutMs(getJob().getJobTimeoutMs() / 3);
+			log.info("Use sharedDependencyTryTimeoutMs default value: {}", getJob().getSharedDependencyTryTimeoutMs());
+		}
+		if (isNull(getTranform().getTransferTimeoutMs())) {
+			// Default to one sixth of the full job timeout.
+			getTranform().setTransferTimeoutMs(getJob().getJobTimeoutMs() / 6);
+			log.info("Use transferTimeoutMs default value: {}", getTranform().getTransferTimeoutMs());
+		}
+
+	}
+
 	//
 	// Functions.
 	//
@@ -140,6 +169,11 @@ public class CiCdProperties {
 	public File getProjectDir(String projectName) {
 		Assert.hasText(projectName, "ProjectName must not be empty.");
 		return new File(getWorkspace() + "/" + DEFUALT_VCS_SOURCEDIR + "/" + projectName);
+	}
+
+	public long getJobWithInstanceTimeout(int instanceCount) {
+		isTrue(instanceCount > 0, "Job instance count must greater than or equal to 0");
+		return getJob().getJobTimeoutMs() / instanceCount;
 	}
 
 }

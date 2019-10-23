@@ -70,7 +70,7 @@ public abstract class CommandLogHolder {
 	}
 
 	/**
-	 * Cleanup multi buffer cache by key.
+	 * Cleanup multiple buffer cache by key.
 	 * 
 	 * @param key
 	 */
@@ -82,7 +82,7 @@ public abstract class CommandLogHolder {
 	}
 
 	/**
-	 * Cleanup multi buffer cache all.
+	 * Cleanup multiple buffer cache all.
 	 */
 	public static void cleanup() {
 		logCache.get().clear();
@@ -141,11 +141,13 @@ public abstract class CommandLogHolder {
 	}
 
 	public static void main(String[] args) {
-		LogAppender appender = CommandLogHolder.getLogAppender("test1");
-		appender.logAdd("asasdfasdf");
-		appender.logAdd("2rerwqsadfa");
-		appender.logAdd("6734665347");
-		System.out.println(appender.getCleanup("test1"));
+		LogAppender appender1 = CommandLogHolder.getLogAppender("test1");
+		appender1.logAdd("asasdfasdf");
+		appender1.logAdd("6734665347");
+		LogAppender appender2 = CommandLogHolder.getLogAppender("test2");
+		appender2.logAdd("2rerwqsadfa");
+		System.out.println(appender1.getCleanup("test1"));
+		System.out.println(appender2.getCleanup("test2"));
 	}
 
 }

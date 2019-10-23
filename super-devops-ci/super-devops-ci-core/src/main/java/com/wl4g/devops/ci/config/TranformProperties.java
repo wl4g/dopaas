@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.config;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
 /**
@@ -30,16 +31,21 @@ import static org.springframework.util.Assert.isTrue;
  */
 public class TranformProperties {
 
+	/** Transfer bin file to remote host SSH2 key. */
 	private String cipherKey = EMPTY;
 
-	/** Delivery timeout for distribution to a single instance. */
-	private long waitCompleteTimeout = 10_000L;
+	/**
+	 * Transfer bin file to remote host timeout (Ms). </br>
+	 * {@link com.wl4g.devops.ci.config.CiCdProperties#applyDefaultProperties()}
+	 */
+	private Long transferTimeoutMs;
 
 	private MvnAssTarProperties mvnAssTar = new MvnAssTarProperties();
 
 	private DockerNativeProperties dockerNative = new DockerNativeProperties();
 
 	public String getCipherKey() {
+		hasText(cipherKey, "Transfer SSH2 cipherKey must not be empty.");
 		return cipherKey;
 	}
 
@@ -49,13 +55,18 @@ public class TranformProperties {
 		}
 	}
 
-	public long getWaitCompleteTimeout() {
-		return waitCompleteTimeout;
+	public Long getTransferTimeoutMs() {
+		// notNull(transferTimeoutMs, "Transfer timeout must not be empty.");
+		// isTrue(transferTimeoutMs > 0, "Transfer timeout must greater than
+		// 0.");
+		return transferTimeoutMs;
 	}
 
-	public void setWaitCompleteTimeout(long waitCompleteTimeout) {
-		isTrue(waitCompleteTimeout > 0, "Wait complete timeout must greater than 0");
-		this.waitCompleteTimeout = waitCompleteTimeout;
+	public void setTransferTimeoutMs(Long transferTimeoutMs) {
+		if (nonNull(transferTimeoutMs)) {
+			isTrue(transferTimeoutMs > 0, "Transfer timeout must greater than 0.");
+			this.transferTimeoutMs = transferTimeoutMs;
+		}
 	}
 
 	public MvnAssTarProperties getMvnAssTar() {

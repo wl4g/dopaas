@@ -82,12 +82,12 @@ pipeline:
       password: hwj13535248668
       token: Xw6xYojnoj7SSDyyLXP7
   job:
-    clean-internal: 30
-    job-timeout: 300
-    shared-dependency-try-timeout: 300
+    job-clean-interval-ms: 30_000
+    job-timeout-ms: 600_000
+    shared-dependency-try-timeout-ms: 200_000
   tranform:
     cipher-key: 03DE18C2FC4E605F
-    wait-complete-timeout: 10_000
+    transfer-timeout-ms: 100_000
     docker-native:
       docker-push-username: xburnerair00
       docker-push-password: hwj13535248668

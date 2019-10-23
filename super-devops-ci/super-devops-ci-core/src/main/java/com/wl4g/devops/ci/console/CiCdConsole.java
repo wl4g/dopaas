@@ -133,7 +133,7 @@ public class CiCdConsole {
 		// Open console printer.
 		open();
 
-		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD, config.getJob().getJobTimeout(), TimeUnit.MINUTES);
+		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD, config.getJob().getJobTimeoutMs(), TimeUnit.MINUTES);
 		try {
 			if (lock.tryLock()) {
 				// Print to client

@@ -227,7 +227,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			}
 		} else {
 			if (log.isInfoEnabled()) {
-				log.info("Waiting to build dependency, timeout for {}sec ...", config.getJob().getJobTimeout());
+				log.info("Waiting to build dependency, timeout for {}sec ...", config.getJob().getJobTimeoutMs());
 			}
 			try {
 				long begin = System.currentTimeMillis();

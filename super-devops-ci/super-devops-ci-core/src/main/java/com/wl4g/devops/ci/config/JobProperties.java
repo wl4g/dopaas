@@ -16,6 +16,8 @@
 package com.wl4g.devops.ci.config;
 
 import static java.util.Objects.nonNull;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * CICD pipeline process, construction of relevant configuration.
@@ -26,38 +28,58 @@ import static java.util.Objects.nonNull;
  */
 public class JobProperties {
 
-	private Long cleanScan = 30L;
+	/** Clean for timeouts job interval time (Ms). */
+	private Long jobCleanIntervalMs = 30 * 1000L;
 
-	private Integer jobTimeout = 300;
+	/**
+	 * Timeout practice of building a system completely, including multiple
+	 * sub-projects (Ms).
+	 */
+	private Long jobTimeoutMs = 10 * 60 * 1000L;
 
-	private Long sharedDependencyTryTimeoutMs = 300L;
+	/**
+	 * Shared dependent projects wait timeout when building concurrently.</br>
+	 * {@link com.wl4g.devops.ci.config.CiCdProperties#applyDefaultProperties()}
+	 */
+	private Long sharedDependencyTryTimeoutMs;
 
-	public Long getCleanScan() {
-		return cleanScan;
+	public Long getJobCleanIntervalMs() {
+		notNull(jobCleanIntervalMs, "Job clean interval must not be null.");
+		isTrue(jobCleanIntervalMs > 0, "Job clean interval must greater than 0.");
+		return jobCleanIntervalMs;
 	}
 
-	public void setCleanScan(Long cleanScan) {
-		if (nonNull(cleanScan)) {
-			this.cleanScan = cleanScan;
+	public void setJobCleanIntervalMs(Long jobCleanInterval) {
+		if (nonNull(jobCleanInterval)) {
+			isTrue(jobCleanInterval > 0, "Job clean interval must greater than 0.");
+			this.jobCleanIntervalMs = jobCleanInterval;
 		}
 	}
 
-	public Integer getJobTimeout() {
-		return jobTimeout;
+	public Long getJobTimeoutMs() {
+		notNull(jobTimeoutMs, "Job timeout must not be null.");
+		isTrue(jobTimeoutMs > 0, "Job timeout must greater than 0.");
+		return jobTimeoutMs;
 	}
 
-	public void setJobTimeout(Integer jobTimeout) {
+	public void setJobTimeoutMs(Long jobTimeout) {
 		if (nonNull(jobTimeout)) {
-			this.jobTimeout = jobTimeout;
+			isTrue(jobTimeout > 0, "Job timeout must greater than 0.");
+			this.jobTimeoutMs = jobTimeout;
 		}
 	}
 
 	public Long getSharedDependencyTryTimeoutMs() {
+		// notNull(sharedDependencyTryTimeoutMs, "Shared dependency try
+		// timeoutMs must not be null.");
+		// isTrue(sharedDependencyTryTimeoutMs > 0, "Shared dependency try
+		// timeoutMs must greater than 0.");
 		return sharedDependencyTryTimeoutMs;
 	}
 
 	public void setSharedDependencyTryTimeoutMs(Long sharedDependencyTryTimeoutMs) {
 		if (nonNull(sharedDependencyTryTimeoutMs)) {
+			isTrue(sharedDependencyTryTimeoutMs > 0, "Shared dependency try timeoutMs must greater than 0.");
 			this.sharedDependencyTryTimeoutMs = sharedDependencyTryTimeoutMs;
 		}
 	}

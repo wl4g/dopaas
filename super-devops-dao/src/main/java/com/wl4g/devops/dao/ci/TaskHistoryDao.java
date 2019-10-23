@@ -38,6 +38,6 @@ public interface TaskHistoryDao {
 	List<TaskHistory> list(@Param("groupName") String groupName, @Param("projectName") String projectName,
 			@Param("branchName") String branchName);
 
-	int updateStatus(Integer time);
+	int updateStatus(Long time);
 
 }
