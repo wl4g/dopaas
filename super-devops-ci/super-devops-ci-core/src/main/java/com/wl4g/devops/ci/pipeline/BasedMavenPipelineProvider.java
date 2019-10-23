@@ -179,8 +179,6 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		doBuild0(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
 				taskHistory.getBuildCommand());
 
-		// Mark end EOF.
-		FileIOUtils.writeFile(jobLog, LOG_FILE_END);
 	}
 
 	/**

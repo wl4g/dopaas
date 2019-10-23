@@ -247,6 +247,9 @@ public class DefaultPipeline implements Pipeline {
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, e.getMessage());
 				// Post failure process.
 				postPipelineExecuteFailure(taskId, provider, e);
+			}finally {
+				// Mark end EOF.
+				FileIOUtils.writeFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 			}
 		});
 	}
