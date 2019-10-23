@@ -133,14 +133,14 @@ public class CiCdAutoConfiguration {
 	//
 
 	@Bean
-	public TimingPipelineManager timingPipelineManager() {
-		return new TimingPipelineManager();
-	}
-
-	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public TimingPipelineJob timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
 		return new TimingPipelineJob(trigger, project, task, taskDetails);
+	}
+
+	@Bean
+	public TimingPipelineManager timingPipelineManager() {
+		return new TimingPipelineManager();
 	}
 
 }

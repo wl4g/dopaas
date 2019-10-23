@@ -176,7 +176,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			jobExecutor.submitForComplete(jobs, config.getTranform().getWaitCompleteTimeout());
+			long timeoutMs = config.getJobWithInstanceTimeout(getPipelineInfo().getInstances().size());
+			jobExecutor.submitForComplete(jobs, timeoutMs);
 		}
 
 	}
