@@ -15,27 +15,66 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
+import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
+
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notEmpty;
+import static org.springframework.util.Assert.notNull;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract deployments task.
- *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
+ * Abstract deployments pipeline job.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年05月23日
  * @since
+ * @param <P>
  */
-public abstract class AbstractPipelineJob implements Runnable {
+public abstract class AbstractPipelineJob<P extends PipelineProvider> extends NamedIdJob {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	/** Pipeline CICD properties configuration. */
+	final protected CiCdProperties config;
+
+	/** Pipeline provider. */
+	final protected P provider;
+
+	/** Pipeline application instance. */
 	final protected AppInstance instance;
+
+	/** Pipeline application project. */
 	final protected Project project;
 
-	public AbstractPipelineJob(AppInstance instance, Project project) {
-		this.instance = instance;
+	/** Pipeline taskDetailId. */
+	protected Integer taskDetailId;
+
+	public AbstractPipelineJob(String namedId, CiCdProperties config, P provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		super(namedId);
+		notNull(config, "Pipeline config must not be null.");
+		notNull(provider, "Pipeline provider must not be null.");
+		notNull(project, "Pipeline job project must not be null.");
+		notNull(instance, "Pipeline job instance must not be null.");
+		notEmpty(taskHistoryDetails, "Pipeline task historyDetails must not be null.");
+		this.config = config;
+		this.provider = provider;
 		this.project = project;
+		this.instance = instance;
+		// Task detail.
+		Optional<TaskHistoryDetail> taskHisyDetail = taskHistoryDetails.stream()
+				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
+		isTrue(taskHisyDetail.isPresent(), "Not found taskDetailId by details.");
+		this.taskDetailId = taskHisyDetail.get().getId();
 	}
 
 }

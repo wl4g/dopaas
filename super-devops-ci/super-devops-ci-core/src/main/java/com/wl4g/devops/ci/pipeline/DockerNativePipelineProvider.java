@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
+import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 import java.io.File;
 
@@ -54,14 +55,8 @@ public class DockerNativePipelineProvider extends MavenPipelineProvider {
 		// docker build
 		dockerBuild(getPipelineInfo().getPath());
 
-		// Each install pull and restart
-		for (AppInstance instance : getPipelineInfo().getInstances()) {
-			Runnable task = new DockerNativePipelineJob(this, getPipelineInfo().getProject(), instance,
-					getPipelineInfo().getTaskHistoryDetails());
-			Thread t = new Thread(task);
-			t.start();
-			t.join();
-		}
+		// Startup pipeline jobs.
+		doStartJobsExecute0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -83,14 +78,8 @@ public class DockerNativePipelineProvider extends MavenPipelineProvider {
 
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 
-		// Transform to instance
-		for (AppInstance instance : getPipelineInfo().getInstances()) {
-			Runnable task = new DockerNativePipelineJob(this, getPipelineInfo().getProject(), instance,
-					getPipelineInfo().getTaskHistoryDetails());
-			Thread t = new Thread(task);
-			t.start(); // TODO use jobExecutor
-			t.join();
-		}
+		// Startup pipeline jobs.
+		doStartJobsExecute0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -136,6 +125,13 @@ public class DockerNativePipelineProvider extends MavenPipelineProvider {
 	 */
 	public String dockerRun(String targetHost, String userName, String runCommand, String rsa) throws Exception {
 		return exceCommand(targetHost, userName, runCommand, rsa);
+	}
+
+	@Override
+	protected NamedIdJob newPipelineJob(AppInstance instance) {
+		// TODO namedId
+		return new DockerNativePipelineJob("", config, this, getPipelineInfo().getProject(), instance,
+				getPipelineInfo().getTaskHistoryDetails());
 	}
 
 }

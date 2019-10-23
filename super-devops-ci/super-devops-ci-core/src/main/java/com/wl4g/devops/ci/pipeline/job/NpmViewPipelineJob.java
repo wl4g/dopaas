@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.NpmViewPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -32,23 +33,11 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class NpmViewPipelineJob extends AbstractPipelineJob {
+public class NpmViewPipelineJob extends AbstractPipelineJob<NpmViewPipelineProvider> {
 
-	private NpmViewPipelineProvider provider;
-
-	private Integer taskDetailId;
-
-	public NpmViewPipelineJob(NpmViewPipelineProvider provider, Project project, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(instance, project);
-		this.provider = provider;
-		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
-		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-			if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
-				this.taskDetailId = taskHistoryDetail.getId();
-				break;
-			}
-		}
+	public NpmViewPipelineJob(String namedId, CiCdProperties config, NpmViewPipelineProvider provider, Project project,
+			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+		super(namedId, config, provider, project, instance, taskHistoryDetails);
 	}
 
 	@Override

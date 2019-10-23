@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -26,32 +27,23 @@ import java.util.List;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 /**
- * Maven assemble tar deployments task.
+ * MAVEN assemble tar deployments task.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
  * @since
  */
-public class MvnAssembleTarPipelineJob extends AbstractPipelineJob {
+public class MvnAssembleTarPipelineJob extends AbstractPipelineJob<MvnAssembleTarPipelineProvider> {
 
-	private MvnAssembleTarPipelineProvider provider;
 	private String path;
 	private String tarPath;
 	private Integer taskDetailId;
 
-	public MvnAssembleTarPipelineJob(MvnAssembleTarPipelineProvider provider, Project project, String path,
-			AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(instance, project);
-		this.provider = provider;
+	public MvnAssembleTarPipelineJob(String namedId, CiCdProperties config, MvnAssembleTarPipelineProvider provider,
+			Project project, String path, AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
+		super(namedId, config, provider, project, instance, taskHistoryDetails);
 		this.path = path;
 		this.tarPath = tarPath;
-		Assert.notNull(taskHistoryDetails, "taskHistoryDetails can not be null");
-		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-			if (taskHistoryDetail.getInstanceId().intValue() == instance.getId().intValue()) {
-				this.taskDetailId = taskHistoryDetail.getId();
-				break;
-			}
-		}
 	}
 
 	@Override

@@ -15,6 +15,11 @@
  */
 package com.wl4g.devops.ci.config;
 
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.isTrue;
+
 /**
  * CICD pipeline process, the related configuration classes sent to cluster
  * nodes after completion of construction.
@@ -25,39 +30,73 @@ package com.wl4g.devops.ci.config;
  */
 public class TranformProperties {
 
-	private String cipherKey;
-	private MvnAssTar mvnAssTar;
-	private DockerNative dockerNative;
+	private String cipherKey = EMPTY;
+
+	/** Delivery timeout for distribution to a single instance. */
+	private long waitCompleteTimeout = 10_000L;
+
+	private MvnAssTarProperties mvnAssTar = new MvnAssTarProperties();
+
+	private DockerNativeProperties dockerNative = new DockerNativeProperties();
 
 	public String getCipherKey() {
 		return cipherKey;
 	}
 
 	public void setCipherKey(String cipherKey) {
-		this.cipherKey = cipherKey;
+		if (!isBlank(cipherKey)) {
+			this.cipherKey = cipherKey;
+		}
 	}
 
-	public MvnAssTar getMvnAssTar() {
+	public long getWaitCompleteTimeout() {
+		return waitCompleteTimeout;
+	}
+
+	public void setWaitCompleteTimeout(long waitCompleteTimeout) {
+		isTrue(waitCompleteTimeout > 0, "Wait complete timeout must greater than 0");
+		this.waitCompleteTimeout = waitCompleteTimeout;
+	}
+
+	public MvnAssTarProperties getMvnAssTar() {
 		return mvnAssTar;
 	}
 
-	public void setMvnAssTar(MvnAssTar mvnAssTar) {
-		this.mvnAssTar = mvnAssTar;
+	public void setMvnAssTar(MvnAssTarProperties mvnAssTar) {
+		if (nonNull(mvnAssTar)) {
+			this.mvnAssTar = mvnAssTar;
+		}
 	}
 
-	public DockerNative getDockerNative() {
+	public DockerNativeProperties getDockerNative() {
 		return dockerNative;
 	}
 
-	public void setDockerNative(DockerNative dockerNative) {
-		this.dockerNative = dockerNative;
+	public void setDockerNative(DockerNativeProperties dockerNative) {
+		if (nonNull(dockerNative)) {
+			this.dockerNative = dockerNative;
+		}
 	}
 
-	public static class MvnAssTar {
+	/**
+	 * MAVEN assemble tar transform properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月23日
+	 * @since
+	 */
+	public static class MvnAssTarProperties {
 
 	}
 
-	public static class DockerNative {
+	/**
+	 * DOCKER native transform properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月23日
+	 * @since
+	 */
+	public static class DockerNativeProperties {
 		public String dockerPushUsername;
 		public String dockerPushPasswd;
 

@@ -20,6 +20,8 @@ import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
 /**
@@ -37,10 +39,10 @@ public class DefaultPipelineInfo implements PipelineInfo {
 	private String branch;
 	private String alias;
 	private String tarName;
-	private List<AppInstance> instances;
+	private List<AppInstance> instances = emptyList();
 	private TaskHistory taskHistory;
 	private TaskHistory refTaskHistory;
-	private List<TaskHistoryDetail> taskHistoryDetails;
+	private List<TaskHistoryDetail> taskHistoryDetails = emptyList();
 
 	public Project getProject() {
 		return project;

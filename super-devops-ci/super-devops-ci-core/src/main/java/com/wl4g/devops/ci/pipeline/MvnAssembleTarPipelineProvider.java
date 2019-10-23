@@ -20,13 +20,9 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
+import com.wl4g.devops.support.task.GenericTaskRunner.NamedIdJob;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * MAVEN assemble tar provider.
@@ -79,41 +75,26 @@ public class MvnAssembleTarPipelineProvider extends MavenPipelineProvider {
 		// backup in local
 		backupLocal();
 
-		// scp to server
-		List<Future<?>> futures = new ArrayList<>();
-		for (AppInstance instance : getPipelineInfo().getInstances()) {
-			// create deploy task
-			Runnable task = new MvnAssembleTarPipelineJob(this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
-					instance, getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
-			Future<?> submit = jobExecutor.getWorker().submit(task);
-			futures.add(submit);
-		}
-
-		if (!isEmpty(futures)) {
-			while (true) {
-				boolean isAllDone = true;
-				for (Future<?> future : futures) {
-					if (!future.isDone()) {
-						isAllDone = false;
-						break;
-					}
-				}
-				if (isAllDone) {
-					break;
-				}
-				Thread.sleep(500);
-			}
-		}
+		// Startup pipeline jobs.
+		doStartJobsExecute0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
 		}
+
 	}
 
 	private File getBackupFile() {
 		String oldFilePath = config.getWorkspace() + "/" + getPipelineInfo().getTaskHistory().getRefId() + "/"
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 		return new File(oldFilePath);
+	}
+
+	@Override
+	protected NamedIdJob newPipelineJob(AppInstance instance) {
+		// TODO namedId
+		return new MvnAssembleTarPipelineJob("", config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
+				instance, getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
 	}
 
 }
