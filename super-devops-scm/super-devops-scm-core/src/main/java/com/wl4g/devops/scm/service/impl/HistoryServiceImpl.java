@@ -174,6 +174,7 @@ public class HistoryServiceImpl implements HistoryService {
 		for (VersionContentBean versionContentBean : versionContentBeans) {
 			Dict dict = dictDao.selectByPrimaryKey(versionContentBean.getNamespaceId());
 			String namespace = dict.getValue();
+			namespace = "application-"+namespace+".yml";
 			namespaces.add(namespace);
 		}
 
