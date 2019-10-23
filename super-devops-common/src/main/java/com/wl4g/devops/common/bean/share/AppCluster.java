@@ -17,6 +17,9 @@ package com.wl4g.devops.common.bean.share;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * 对应表：app_cluster
  * 
@@ -24,10 +27,27 @@ import com.wl4g.devops.common.bean.BaseBean;
  */
 public class AppCluster extends BaseBean {
 
-	private Long deptId; // 应用所属部门ID
-	private String name; // 应用名称 Disabled
-	private Integer enable; // 启用状态（0:禁止/1:启用）
-	private String evnname; // 环境名
+	private Integer deptId;
+
+	private String name;
+
+	private Integer type;
+
+	private Integer enable;
+
+	private String remark;
+
+	//other
+	private List<AppInstance> instances;
+
+
+	public Integer getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Integer deptId) {
+		this.deptId = deptId;
+	}
 
 	public String getName() {
 		return name;
@@ -37,28 +57,39 @@ public class AppCluster extends BaseBean {
 		this.name = name;
 	}
 
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	@Override
 	public Integer getEnable() {
 		return enable;
 	}
 
+	@Override
 	public void setEnable(Integer enable) {
 		this.enable = enable;
 	}
 
-	public Long getDeptId() {
-		return deptId;
+	@Override
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setDeptId(Long deptId) {
-		this.deptId = deptId;
+	@Override
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
-	public String getEvnname() {
-		return evnname;
+	public List<AppInstance> getInstances() {
+		return instances;
 	}
 
-	public void setEvnname(String evnname) {
-		this.evnname = evnname;
+	public void setInstances(List<AppInstance> instances) {
+		this.instances = instances;
 	}
-
 }

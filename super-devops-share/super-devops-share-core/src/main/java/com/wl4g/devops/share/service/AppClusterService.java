@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.share.service;
 
-import com.wl4g.devops.common.bean.share.*;
-
-import java.util.List;
+import com.wl4g.devops.common.bean.share.AppCluster;
 
 /**
  * 应用组管理Service接口
@@ -27,40 +25,6 @@ import java.util.List;
  */
 public interface AppClusterService {
 
-	public void insert(InstanceOfGroup iog);
-
-	public boolean delete(AppCluster group);
-
-	public boolean deleteEnv(Environment group);
-
-	public boolean update(AppCluster group);
-
-	public InstanceOfGroup select(AppCluster group);
-
-	public InstanceOfGroup selectEnv(AppCluster group);
-
-	public List<AppGroupList> list(AppGroupList agl);
-
-	public List<AppGroupList> groupEnvlist(AppGroupList agl);
-
-	public boolean insertInstance(InstanceOfGroup iog);
-
-	public boolean insertEnvironment(InstanceOfGroup iog);
-
-	public boolean deleteInstance(AppInstance instance);
-
-	public boolean updateInstance(AppInstance instance);
-
-	public boolean updateEnvironment(Environment instance);
-
-	public List<AppCluster> grouplist();
-
-	public List<Environment> environmentlist(String clusterId);
-
-	public List<AppInstance> instancelist(AppInstance appInstance);
-
-	public String selectEnvName(String envId);
-
-	public AppInstance getAppInstance(String id);
+	void save(AppCluster appCluster);
 
 }
