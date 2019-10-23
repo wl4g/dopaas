@@ -24,12 +24,7 @@ import org.springframework.util.Assert;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -42,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -205,7 +201,9 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 */
 	public void submitForComplete(List<Runnable> jobs, long timeoutMs) throws IllegalStateException {
 		submitForComplete(jobs, (ex, completed, uncompleted) -> {
-			throw ex;
+			if(nonNull(ex)){
+				throw ex;
+			}
 		}, timeoutMs);
 	}
 
