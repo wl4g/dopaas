@@ -121,15 +121,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Obtain text-plain privateKey(RSA)
 		String rsaKey = config.getTranform().getCipherKey();
-		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
+		char[] sshkeyPlain = new AES(rsaKey).decrypt(rsa).toCharArray();
 
 		// TODO
-//		LogAppender appender = getLogAppender();
+		// LogAppender appender = getLogAppender();
 
 		StringBuffer result = new StringBuffer(command);
 		result.append("\n");
 		//
-		CommandResult ret = executeWithCommand(targetHost, userName, rsaReal, command);
+		long remoteTimeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
+		CommandResult ret = executeWithCommand(targetHost, userName, sshkeyPlain, command, remoteTimeoutMs);
 		if (!isBlank(ret.getMessage())) {
 			result.append(ret.getMessage());
 		}
@@ -181,17 +182,19 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Do startup job execution.
+	 * Do startup transfer jobs.
 	 */
-	protected void doStartJobsExecute0() {
+	protected void doStartTransferJobs0() {
 		// Create jobs.
 		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newPipelineJob(instance))
 				.collect(toList());
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			long timeoutMs = config.getJobWithInstanceTimeout(getPipelineInfo().getInstances().size());
-			jobExecutor.submitForComplete(jobs, timeoutMs);
+			if (log.isInfoEnabled()) {
+				log.info("Transfer jobs starting...  for instances({}), {}", jobs.size(), getPipelineInfo().getInstances());
+			}
+			jobExecutor.submitForComplete(jobs, config.getTranform().getTransferTimeoutMs());
 		}
 
 	}

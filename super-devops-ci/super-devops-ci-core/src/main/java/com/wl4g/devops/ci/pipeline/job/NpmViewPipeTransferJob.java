@@ -33,9 +33,9 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class NpmViewPipelineJob extends AbstractPipelineJob<NpmViewPipelineProvider> {
+public class NpmViewPipeTransferJob extends AbstractPipeTransferJob<NpmViewPipelineProvider> {
 
-	public NpmViewPipelineJob(CiCdProperties config, NpmViewPipelineProvider provider, Project project, AppInstance instance,
+	public NpmViewPipeTransferJob(CiCdProperties config, NpmViewPipelineProvider provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(config, provider, project, instance, taskHistoryDetails);
 	}

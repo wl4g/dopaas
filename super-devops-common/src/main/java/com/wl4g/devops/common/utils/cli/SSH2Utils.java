@@ -17,6 +17,8 @@ package com.wl4g.devops.common.utils.cli;
 
 import ch.ethz.ssh2.*;
 
+import static ch.ethz.ssh2.ChannelCondition.*;
+
 import java.io.*;
 
 import org.slf4j.Logger;
@@ -159,10 +161,11 @@ public abstract class SSH2Utils {
 	 * @param user
 	 * @param pemPrivateKey
 	 * @param command
+	 * @param timeoutMs
 	 * @return
 	 * @throws IOException
 	 */
-	public static CommandResult executeWithCommand(String host, String user, char[] pemPrivateKey, String command)
+	public static CommandResult executeWithCommand(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws IOException {
 		return executeWithCommand(host, user, pemPrivateKey, command, new CommandProcessor() {
 			@SuppressWarnings({ "unchecked" })
@@ -177,7 +180,7 @@ public abstract class SSH2Utils {
 				}
 				return new CommandResult(s.getExitSignal(), s.getExitStatus(), message, errmsg);
 			}
-		});
+		}, timeoutMs);
 	}
 
 	/**
@@ -188,11 +191,12 @@ public abstract class SSH2Utils {
 	 * @param pemPrivateKey
 	 * @param command
 	 * @param processor
+	 * @param timeoutMs
 	 * @return
 	 * @throws IOException
 	 */
 	public static <T> T executeWithCommand(String host, String user, char[] pemPrivateKey, String command,
-			CommandProcessor processor) throws IOException {
+			CommandProcessor processor, long timeoutMs) throws IOException {
 		hasText(host, "SSH2 command host must not be empty.");
 		hasText(user, "SSH2 command user must not be empty.");
 		notNull(pemPrivateKey, "SSH2 command pemPrivateKey must not be null.");
@@ -219,6 +223,9 @@ public abstract class SSH2Utils {
 			}
 			session.execCommand(command, "UTF-8");
 
+			// Wait for completed by condition.
+			session.waitForCondition((CLOSED | EOF | TIMEOUT), timeoutMs);
+
 			// Customize process.
 			return processor.process(session);
 		} catch (IOException e) {
@@ -239,6 +246,7 @@ public abstract class SSH2Utils {
 				log.error("", e2);
 			}
 		}
+
 	}
 
 	/**

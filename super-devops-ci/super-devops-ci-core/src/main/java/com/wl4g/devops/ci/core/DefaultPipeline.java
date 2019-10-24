@@ -122,7 +122,7 @@ public class DefaultPipeline implements Pipeline {
 				task.getTarType(), task.getContactGroupId(), taskBuildCmds);
 
 		// Execution pipeline job.
-		execute(taskHisy.getId(), getPipelineProvider(taskHisy));
+		doExecute0(taskHisy.getId(), getPipelineProvider(taskHisy));
 	}
 
 	@Override
@@ -195,7 +195,7 @@ public class DefaultPipeline implements Pipeline {
 				task.getContactGroupId(), taskBuildCmds);
 
 		// Execution pipeline job.
-		execute(taskHisy.getId(), getPipelineProvider(taskHisy));
+		doExecute0(taskHisy.getId(), getPipelineProvider(taskHisy));
 	}
 
 	@Override
@@ -218,7 +218,7 @@ public class DefaultPipeline implements Pipeline {
 	 * @param taskId
 	 * @param provider
 	 */
-	protected void execute(Integer taskId, PipelineProvider provider) {
+	protected void doExecute0(Integer taskId, PipelineProvider provider) {
 		notNull(taskId, "Pipeline taskId must not be null");
 		notNull(provider, "Pipeline provider must not be null");
 		if (log.isInfoEnabled()) {

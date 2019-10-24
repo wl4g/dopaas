@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.job.NpmViewPipelineJob;
+import com.wl4g.devops.ci.pipeline.job.NpmViewPipeTransferJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -53,7 +53,7 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 
 	@Override
 	protected Runnable newPipelineJob(AppInstance instance) {
-		return new NpmViewPipelineJob(config, this, getPipelineInfo().getProject(), instance,
+		return new NpmViewPipeTransferJob(config, this, getPipelineInfo().getProject(), instance,
 				getPipelineInfo().getTaskHistoryDetails());
 	}
 
@@ -68,7 +68,7 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 		// step4 scp ==> tar -x
 
 		// Startup pipeline jobs.
-		doStartJobsExecute0();
+		doStartTransferJobs0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Npm pipeline execution successful!");

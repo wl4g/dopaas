@@ -33,9 +33,9 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class DockerNativePipelineJob extends AbstractPipelineJob<DockerNativePipelineProvider> {
+public class DockerNativePipeTransferJob extends AbstractPipeTransferJob<DockerNativePipelineProvider> {
 
-	public DockerNativePipelineJob(CiCdProperties config, DockerNativePipelineProvider provider, Project project,
+	public DockerNativePipeTransferJob(CiCdProperties config, DockerNativePipelineProvider provider, Project project,
 			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
 		super(config, provider, project, instance, taskHistoryDetails);
 	}

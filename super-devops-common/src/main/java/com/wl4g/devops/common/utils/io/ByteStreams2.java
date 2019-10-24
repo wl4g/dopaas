@@ -34,7 +34,8 @@ public abstract class ByteStreams2 {
 	 * Read all data from the input stream and turn it into a string. Note: the
 	 * stream will not be closed after reading. Warning: the data size should be
 	 * estimated before use. If the data volume is too large, there may be a
-	 * risk of memory leakage.
+	 * risk of memory leakage, Also note that InputStream blocking should be
+	 * set, such as waitForCompleted().
 	 * 
 	 * @param in
 	 * @return
@@ -47,7 +48,8 @@ public abstract class ByteStreams2 {
 	 * Read all data from the input stream and turn it into a string. Note: the
 	 * stream will not be closed after reading. Warning: the data size should be
 	 * estimated before use. If the data volume is too large, there may be a
-	 * risk of memory leakage.
+	 * risk of memory leakage, Also note that InputStream blocking should be
+	 * set, such as waitForCompleted().
 	 * 
 	 * @param in
 	 * @param charset

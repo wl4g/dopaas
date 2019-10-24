@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.job.DockerNativePipelineJob;
+import com.wl4g.devops.ci.pipeline.job.DockerNativePipeTransferJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
@@ -55,7 +55,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dockerBuild(getPipelineInfo().getPath());
 
 		// Startup pipeline jobs.
-		doStartJobsExecute0();
+		doStartTransferJobs0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -78,7 +78,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 
 		// Startup pipeline jobs.
-		doStartJobsExecute0();
+		doStartTransferJobs0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -128,7 +128,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	protected Runnable newPipelineJob(AppInstance instance) {
-		return new DockerNativePipelineJob(config, this, getPipelineInfo().getProject(), instance,
+		return new DockerNativePipeTransferJob(config, this, getPipelineInfo().getProject(), instance,
 				getPipelineInfo().getTaskHistoryDetails());
 	}
 

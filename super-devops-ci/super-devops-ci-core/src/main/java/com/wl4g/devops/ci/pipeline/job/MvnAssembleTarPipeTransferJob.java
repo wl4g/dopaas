@@ -33,13 +33,13 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class MvnAssembleTarPipelineJob extends AbstractPipelineJob<MvnAssembleTarPipelineProvider> {
+public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAssembleTarPipelineProvider> {
 
 	private String path;
 	private String tarPath;
 
-	public MvnAssembleTarPipelineJob(CiCdProperties config, MvnAssembleTarPipelineProvider provider, Project project, String path,
-			AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
+	public MvnAssembleTarPipeTransferJob(CiCdProperties config, MvnAssembleTarPipelineProvider provider, Project project,
+			String path, AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
 		super(config, provider, project, instance, taskHistoryDetails);
 		this.path = path;
 		this.tarPath = tarPath;
@@ -68,13 +68,6 @@ public class MvnAssembleTarPipelineJob extends AbstractPipelineJob<MvnAssembleTa
 					project.getParentAppHome(), instance.getSshKey());
 			result.append(s).append("\n");
 
-			// Change link
-			/*
-			 * String s1 = provider.relink(instance.getHostname(),
-			 * project.getParentAppHome(), instance.getSshUser(), path +
-			 * tarPath, instance.getSshKey()); result.append(s1).append("\n");
-			 */
-
 			// post command (restart command)
 			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
 					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
@@ -87,7 +80,7 @@ public class MvnAssembleTarPipelineJob extends AbstractPipelineJob<MvnAssembleTa
 			log.error("Deploy job failed", e);
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
 					result.toString() + "\n" + e.toString());
-			// throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 
 		if (log.isInfoEnabled()) {
