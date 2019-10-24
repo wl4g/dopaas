@@ -37,6 +37,11 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 	}
 
 	@Override
+	public void rollback() throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	protected Runnable newPipelineJob(AppInstance instance) {
 		throw new UnsupportedOperationException();
 	}

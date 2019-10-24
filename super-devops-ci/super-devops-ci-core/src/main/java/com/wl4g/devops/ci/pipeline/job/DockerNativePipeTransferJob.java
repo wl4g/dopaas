@@ -53,29 +53,23 @@ public class DockerNativePipeTransferJob extends AbstractPipeTransferJob<DockerN
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 			// Pull
-			String s = provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
+			provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
 					+ ":master"/*
 								 * TODO 要改成动态的
 								 * provider.getTaskHistory().getPreCommand()
 								 */, instance.getSshKey());
-			result.append(s).append("\n");
 			// Restart
-			String s1 = provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
-					instance.getSshKey());
-			result.append(s1).append("\n");
+			provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(), instance.getSshKey());
+
 			// Remove Container
-			String s2 = provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
+			provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
 					instance.getSshKey());
-			result.append(s2).append("\n");
 			// Run
-			String s3 = provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/"
-					+ project.getGroupName()
+			provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + project.getGroupName()
 					+ ":master"/*
 								 * TODO 要改成动态的
 								 * provider.getTaskHistory().getPostCommand()
 								 */, instance.getSshKey());
-			result.append(s3).append("\n");
-
 			// Update status
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 

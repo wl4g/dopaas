@@ -21,6 +21,8 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
 
+import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
+
 import java.io.File;
 
 /**
@@ -39,7 +41,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void execute() throws Exception {
 		// maven install , include dependency
-		build(pipelineInfo.getTaskHistory(), false);
+		build(pipeInfo.getTaskHistory(), false);
 		// get git sha
 		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		deploy();
@@ -75,7 +77,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		backupLocal();
 
 		// Startup pipeline jobs.
-		doStartTransferJobs0();
+		doStartTransfer0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -91,8 +93,8 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	protected Runnable newPipelineJob(AppInstance instance) {
-		return new MvnAssembleTarPipeTransferJob(config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(), instance,
-				getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
+		return new MvnAssembleTarPipeTransferJob(config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
+				instance, getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
 	}
 
 }

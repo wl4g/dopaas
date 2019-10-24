@@ -348,6 +348,7 @@ public class DefaultPipeline implements Pipeline {
 	 * @param provider
 	 */
 	private void doRollback(Integer taskId, PipelineProvider provider) {
+		notNull(taskId, "TaskId must not be null.");
 		if (log.isInfoEnabled()) {
 			log.info("Rollback pipeline job for taskId: {}", taskId);
 		}

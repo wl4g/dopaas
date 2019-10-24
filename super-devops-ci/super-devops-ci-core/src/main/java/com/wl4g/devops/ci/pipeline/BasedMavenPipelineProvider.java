@@ -21,18 +21,18 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
-import com.wl4g.devops.common.utils.lang.DateUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.io.File;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
+import static com.wl4g.devops.ci.utils.PipelineUtils.subPacknameWithOutPostfix;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -55,29 +55,25 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	/**
 	 * Scp + tar + move to basePath
 	 */
-	public String scpAndTar(String path, String targetHost, String userName, String targetPath, String rsa) throws Exception {
-		String result = createRemoteDirectory(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
+	public void scpAndTar(String path, String remoteHost, String user, String targetPath, String rsa) throws Exception {
+		createRemoteDirectory(remoteHost, user, "/home/" + user + "/tmp", rsa);
 		// scp
-		result += scpToTmp(path, targetHost, userName, rsa) + "\n";
+		scpToTmp(path, remoteHost, user, rsa);
 		// tar
-		result += tarToTmp(targetHost, userName, path, rsa) + "\n";
+		tarToTmp(remoteHost, user, path, rsa);
 		// remove
-		result += removeTarPath(targetHost, userName, path, targetPath, rsa);
+		removeTarPath(remoteHost, user, path, targetPath, rsa);
 		// move
-		result += moveToTarPath(targetHost, userName, path, targetPath, rsa) + "\n";
-		return result;
+		moveToTarPath(remoteHost, user, path, targetPath, rsa);
 	}
 
-	/**
-	 * Scp To Tmp
-	 */
-	public String scpToTmp(String path, String targetHost, String userName, String rsa) throws Exception {
+	public String scpToTmp(String path, String remoteHost, String user, String rsa) throws Exception {
 		// Obtain text-plain privateKey(RSA)
 		String rsaKey = config.getTranform().getCipherKey();
 		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
 
 		// Transfer file to remote.
-		transferFile(targetHost, userName, rsaReal, new File(path), "/home/" + userName + "/tmp");
+		transferFile(remoteHost, user, rsaReal, new File(path), "/home/" + user + "/tmp");
 
 		return "SCP to tmp succesful for " + path;
 	}
@@ -85,30 +81,30 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	/**
 	 * Unzip in tmp
 	 */
-	public String tarToTmp(String targetHost, String userName, String path, String rsa) throws Exception {
-		String command = "tar -xvf /home/" + userName + "/tmp" + "/" + subPackname(path) + " -C /home/" + userName + "/tmp";
-		return doRemoteCommand(targetHost, userName, command, rsa);
+	public void tarToTmp(String remoteHost, String user, String path, String rsa) throws Exception {
+		String command = "tar -xvf /home/" + user + "/tmp" + "/" + subPackname(path) + " -C /home/" + user + "/tmp";
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
 	 * remove tar path
 	 */
-	public String removeTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
+	public void removeTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
 		String s = targetPath + "/" + subPacknameWithOutPostfix(path);
 		if (StringUtils.isBlank(s) || s.trim().equals("/")) {
 			throw new RuntimeException("bad command");
 		}
 		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path);
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
 	 * Move to tar path
 	 */
-	public String moveToTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
-		String command = "mv /home/" + userName + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
+	public void moveToTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
+		String command = "mv /home/" + user + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
 				+ subPacknameWithOutPostfix(path);
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
@@ -135,20 +131,6 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
 		String command = "cp -Rf " + backupPath + " " + target;
 		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
-	}
-
-	/**
-	 * Get date to string user for version
-	 */
-	public String getDateTimeStr() {
-		String str = DateUtils.formatDate(new Date(), DateUtils.YMDHM);
-		str = str.substring(2);
-		str = "-v" + str;
-		return str;
-	}
-
-	public String replaceMaster(String str) {
-		return str.replaceAll("master-", "");
 	}
 
 	public void checkPath(String path) {
@@ -191,7 +173,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @return
 	 */
 	private String extractDependencyBuildCommand(List<TaskBuildCommand> commands, Integer projectId) {
-		if(isEmpty(commands)){
+		if (isEmpty(commands)) {
 			return null;
 		}
 		Assert.notNull(projectId, "projectId is null");

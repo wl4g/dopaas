@@ -68,7 +68,7 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 		// step4 scp ==> tar -x
 
 		// Startup pipeline jobs.
-		doStartTransferJobs0();
+		doStartTransfer0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Npm pipeline execution successful!");
