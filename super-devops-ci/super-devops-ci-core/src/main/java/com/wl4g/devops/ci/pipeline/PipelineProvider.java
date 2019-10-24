@@ -27,12 +27,25 @@ import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
  */
 public interface PipelineProvider extends DelegateAliasPrototypeBean {
 
+	/**
+	 * Execution pipeline with provider process.
+	 * 
+	 * @throws Exception
+	 */
 	void execute() throws Exception;
 
-	default void rollback() throws Exception {
-		throw new UnsupportedOperationException();
-	}
+	/**
+	 * Roll-back with provider process.
+	 * 
+	 * @throws Exception
+	 */
+	void rollback() throws Exception;
 
+	/**
+	 * Get pipeline model information.
+	 * 
+	 * @return
+	 */
 	PipelineInfo getPipelineInfo();
 
 	String getShaLocal();

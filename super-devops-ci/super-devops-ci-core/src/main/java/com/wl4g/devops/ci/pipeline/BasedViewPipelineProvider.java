@@ -42,33 +42,28 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 
 	/**
 	 * 
-	 * @param targetHost
-	 * @param userName
+	 * @param remoteHost
+	 * @param user
 	 * @param rsa
 	 * @return
 	 * @throws Exception
 	 */
-	public String handOut(String targetHost, String userName, String rsa) throws Exception {
-		String result = createRemoteDirectory(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
-
+	public void handOut(String remoteHost, String user, String rsa) throws Exception {
+		createRemoteDirectory(remoteHost, user, "/home/" + user + "/tmp", rsa);
 		// scp
-		result += scpToTmp(targetHost, userName, rsa) + "\n";
-		// backup
-		// result += backupOnServer(targetHost, userName, rsa) + "\n";
+		scpToTmp(remoteHost, user, rsa);
 		// mkdir
-		result += createRemoteDirectory(targetHost, userName, getPipelineInfo().getProject().getParentAppHome(), rsa) + "\n";
+		createRemoteDirectory(remoteHost, user, getPipelineInfo().getProject().getParentAppHome(), rsa);
 		// tar
-		result += tar(targetHost, userName, rsa) + "\n";
-
+		tar(remoteHost, user, rsa);
 		// remove
-		// result += removeTar(targetHost, userName, rsa);
-		return result;
+		// removeTar(remoteHost, user, rsa);
 	}
 
 	/**
 	 * Scp To Tmp
 	 */
-	public String scpToTmp(String targetHost, String userName, String rsa) throws Exception {
+	public String scpToTmp(String remoteHost, String user, String rsa) throws Exception {
 		// Obtain text-plain privateKey(RSA)
 		String rsaKey = config.getTranform().getCipherKey();
 		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
@@ -76,7 +71,7 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 		// Transfer file to remote.
 		String localFile = config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/"
 				+ getPipelineInfo().getProject().getProjectName() + ".tar.gz";
-		transferFile(targetHost, userName, rsaReal, new File(localFile), "/home/" + userName + "/tmp");
+		transferFile(remoteHost, user, rsaReal, new File(localFile), "/home/" + user + "/tmp");
 
 		return "SCP to tmp succesful for " + localFile;
 	}
@@ -84,31 +79,31 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	/**
 	 * backup on server
 	 */
-	public String backupOnServer(String targetHost, String userName, String rsa) throws Exception {
+	public void backupOnServer(String remoteHost, String user, String rsa) throws Exception {
 		String command = "mv " + getPipelineInfo().getProject().getParentAppHome() + " "
 				+ getPipelineInfo().getProject().getParentAppHome() + new Date().getTime();
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
 	 * Unzip in tmp
 	 */
-	public String tar(String targetHost, String userName, String rsa) throws Exception {
-		String command = "tar -zxvf /home/" + userName + "/tmp" + "/" + getPipelineInfo().getProject().getProjectName()
+	public void tar(String remoteHost, String user, String rsa) throws Exception {
+		String command = "tar -zxvf /home/" + user + "/tmp" + "/" + getPipelineInfo().getProject().getProjectName()
 				+ ".tar.gz -C " + getPipelineInfo().getProject().getParentAppHome();
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
 	 * remove tar path
 	 */
-	public String removeTar(String targetHost, String userName, String rsa) throws Exception {
-		String path = "/home/" + userName + "/tmp" + getPipelineInfo().getProject().getProjectName() + ".tar.gz";
+	public void removeTar(String remoteHost, String user, String rsa) throws Exception {
+		String path = "/home/" + user + "/tmp" + getPipelineInfo().getProject().getProjectName() + ".tar.gz";
 		if (StringUtils.isBlank(path) || path.trim().equals("/")) {
 			throw new RuntimeException("bad command");
 		}
 		String command = "rm -f " + path;
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 }

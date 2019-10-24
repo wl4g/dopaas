@@ -52,34 +52,29 @@ public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAs
 		}
 
 		Assert.notNull(taskDetailId, "taskDetailId can not be null");
-		StringBuffer result = new StringBuffer();
 		try {
 			// Update status
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 			// pre command
-			String s4 = provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
+			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
 					provider.getPipelineInfo().getTaskHistory().getPreCommand(), instance.getSshKey());
-			result.append(s4).append("\n");
 
 			// Boolean detailSuccess = new Boolean(false);
 			// Scp to tmp,rename,move to webapps
-			String s = provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(),
-					project.getParentAppHome(), instance.getSshKey());
-			result.append(s).append("\n");
+			provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
+					instance.getSshKey());
 
 			// post command (restart command)
-			String s2 = provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
+			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
 					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
-			result.append(s2).append("\n");
 
 			// Update status
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, ""); // TODO
 
 		} catch (Exception e) {
 			log.error("Deploy job failed", e);
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
-					result.toString() + "\n" + e.toString());
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, e.toString());
 			throw new IllegalStateException(e);
 		}
 

@@ -55,7 +55,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dockerBuild(getPipelineInfo().getPath());
 
 		// Startup pipeline jobs.
-		doStartTransferJobs0();
+		doStartTransfer0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -78,7 +78,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 
 		// Startup pipeline jobs.
-		doStartTransferJobs0();
+		doStartTransfer0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -98,32 +98,32 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	/**
 	 * Docker pull
 	 */
-	public String dockerPull(String targetHost, String userName, String imageName, String rsa) throws Exception {
+	public void dockerPull(String remoteHost, String user, String imageName, String rsa) throws Exception {
 		String command = "docker pull " + imageName;
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
 	 * Docker stop
 	 */
-	public String dockerStop(String targetHost, String userName, String groupName, String rsa) throws Exception {
+	public void dockerStop(String remoteHost, String user, String groupName, String rsa) throws Exception {
 		String command = "docker stop " + groupName;
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
 	 * Docker remove container
 	 */
-	public String dockerRemoveContainer(String targetHost, String userName, String groupName, String rsa) throws Exception {
+	public void dockerRemoveContainer(String remoteHost, String user, String groupName, String rsa) throws Exception {
 		String command = "docker rm " + groupName;
-		return doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
 	 * Docker Run
 	 */
-	public String dockerRun(String targetHost, String userName, String runCommand, String rsa) throws Exception {
-		return doRemoteCommand(targetHost, userName, runCommand, rsa);
+	public void dockerRun(String remoteHost, String user, String runCommand, String rsa) throws Exception {
+		doRemoteCommand(remoteHost, user, runCommand, rsa);
 	}
 
 	@Override

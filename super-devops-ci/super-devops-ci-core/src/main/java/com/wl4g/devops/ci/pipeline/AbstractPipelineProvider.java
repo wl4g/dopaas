@@ -39,6 +39,7 @@ import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.List;
@@ -74,19 +75,19 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected TaskSignDao taskSignDao;
 
 	/** Pipeline information. */
-	final protected PipelineInfo pipelineInfo;
+	final protected PipelineInfo pipeInfo;
 
 	protected String shaGit;
 	protected String shaLocal;
 
 	public AbstractPipelineProvider(PipelineInfo info) {
-		this.pipelineInfo = info;
+		this.pipeInfo = info;
 		String[] a = info.getProject().getTarPath().split("/");
-		this.pipelineInfo.setTarName(a[a.length - 1]);
+		this.pipeInfo.setTarName(a[a.length - 1]);
 	}
 
 	public PipelineInfo getPipelineInfo() {
-		return pipelineInfo;
+		return pipeInfo;
 	}
 
 	@Override
@@ -114,28 +115,27 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Execution remote commands
 	 * 
-	 * @param targetHost
-	 * @param userName
+	 * @param remoteHost
+	 * @param user
 	 * @param command
-	 * @param rsa
+	 * @param sshkey
 	 * @return
 	 * @throws Exception
 	 */
-	public void doRemoteCommand(String targetHost, String userName, String command, String rsa) throws Exception {
+	public void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
 		hasText(command, "Commands must not be empty.");
 		Integer logId = getPipelineInfo().getTaskHistory().getId();
 
 		// Obtain text-plain privateKey(RSA)
-		String sshkey = config.getTranform().getCipherKey();
-		char[] sshkeyPlain = new AES(sshkey).decrypt(rsa).toCharArray();
-		logAdd(logId, "Transfer decrypted sshkey: %s => %s", sshkey, "******");
+		String cipherKey = config.getTranform().getCipherKey();
+		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
+		logAdd(logId, "Transfer decrypted sshkey: %s => %s", cipherKey, "******");
 
 		// Remote commands timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
-		logAdd(logId, "Transfer remote execution for %s@%s, timeout(%s) => command(%s)", userName, targetHost, timeoutMs,
-				command);
-		// Execution commands.
-		CommandResult result = executeWithCommand(targetHost, userName, sshkeyPlain, command, timeoutMs);
+		logAdd(logId, "Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
+		// Execution.
+		CommandResult result = executeWithCommand(remoteHost, user, sshkeyPlain, command, timeoutMs);
 
 		logAdd(logId, "\n----------------- Stdout -------------------\n");
 		if (!isBlank(result.getMessage())) {
@@ -148,10 +148,19 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	}
 
-	public void createRemoteDirectory(String targetHost, String userName, String path, String rsa) throws Exception {
+	/**
+	 * Creating remote directory.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param path
+	 * @param sshkey
+	 * @throws Exception
+	 */
+	protected void createRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
 		String command = "mkdir -p " + path;
 		logAdd(getPipelineInfo().getTaskHistory().getId(), "Creating remote directory: %s", command);
-		doRemoteCommand(targetHost, userName, command, rsa);
+		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
@@ -161,6 +170,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 */
 	public LogAppender getLogAppender(Integer logId) {
+		notNull(logId, "Log appender id must not be null.");
 		return CommandLogHolder.getLogAppender(getClass().getSimpleName() + "-" + logId);
 	}
 
@@ -175,33 +185,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		return getLogAppender(logId).logAdd(String.format(format, message));
 	}
 
-	protected String commandReplace(String command, String projectPath) {
-		command.replaceAll("\\[", "\\[");
-		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
-		// TODO ......
-		return command;
-	}
-
-	/**
-	 * Get Package Name from path
-	 */
-	protected String subPackname(String path) {
-		String[] a = path.split("/");
-		return a[a.length - 1];
-	}
-
-	/**
-	 * Get Packname WithOut Postfix from path
-	 */
-	protected String subPacknameWithOutPostfix(String path) {
-		String a = subPackname(path);
-		return a.substring(0, a.lastIndexOf("."));
-	}
-
 	/**
 	 * Do startup transfer jobs.
 	 */
-	protected void doStartTransferJobs0() {
+	protected void doStartTransfer0() {
 		// Create jobs.
 		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newPipelineJob(instance))
 				.collect(toList());
@@ -223,5 +210,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 */
 	protected abstract Runnable newPipelineJob(AppInstance instance);
+
+	protected String commandReplace(String command, String projectPath) {
+		command.replaceAll("\\[", "\\[");
+		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
+		// TODO ......
+		return command;
+	}
 
 }

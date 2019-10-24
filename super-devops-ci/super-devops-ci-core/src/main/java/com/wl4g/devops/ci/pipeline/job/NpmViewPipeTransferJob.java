@@ -20,7 +20,6 @@ import com.wl4g.devops.ci.pipeline.NpmViewPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -63,13 +62,13 @@ public class NpmViewPipeTransferJob extends AbstractPipeTransferJob<NpmViewPipel
 					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
 
 			// Update status to success.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, ""); // TODO
 
 		} catch (Exception e) {
 			String errmsg = String.format("Transfer deploy failed. project(%s), taskDetailId(%s)",
 					provider.getPipelineInfo().getProject().getProjectName(), taskDetailId);
 			log.error(errmsg, e);
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, null);
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, "");// TODO
 		}
 
 		if (log.isInfoEnabled()) {
