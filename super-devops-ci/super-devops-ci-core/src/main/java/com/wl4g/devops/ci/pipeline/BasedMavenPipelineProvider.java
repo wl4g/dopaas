@@ -219,7 +219,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	private void doBuild0(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(),
-				TimeUnit.MINUTES);
+				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
 				doGetSourceAndBuild0(taskHistory, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
@@ -233,7 +233,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			try {
 				long begin = System.currentTimeMillis();
 				// Waiting for other job builds to completed.
-				if (lock.tryLock(config.getJob().getSharedDependencyTryTimeoutMs(), TimeUnit.SECONDS)) {
+				if (lock.tryLock(config.getJob().getSharedDependencyTryTimeoutMs(), TimeUnit.MILLISECONDS)) {
 					if (log.isInfoEnabled()) {
 						long cost = System.currentTimeMillis() - begin;
 						log.info("Wait for dependency build to be skipped successfully! cost: {}ms", cost);
