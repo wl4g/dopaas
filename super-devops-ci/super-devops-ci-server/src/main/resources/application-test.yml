@@ -75,8 +75,8 @@ redis:
 pipeline:
   #workspace: # Default by to {user.home}/.ci-workspace
   executor:
-    concurrency: 10
-    accept-queue: 32
+    concurrency: 5
+    accept-queue: 2
   vcs:
     gitlab:
       base-url: http://git.anjiancloud.repo

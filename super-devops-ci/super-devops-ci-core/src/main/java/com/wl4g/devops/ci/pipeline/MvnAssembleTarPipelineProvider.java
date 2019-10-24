@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipelineJob;
+import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipeTransferJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -75,7 +75,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		backupLocal();
 
 		// Startup pipeline jobs.
-		doStartJobsExecute0();
+		doStartTransferJobs0();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -91,7 +91,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	protected Runnable newPipelineJob(AppInstance instance) {
-		return new MvnAssembleTarPipelineJob(config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(), instance,
+		return new MvnAssembleTarPipeTransferJob(config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(), instance,
 				getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
 	}
 

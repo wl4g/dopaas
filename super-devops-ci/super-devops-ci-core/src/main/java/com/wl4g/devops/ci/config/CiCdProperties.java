@@ -131,12 +131,12 @@ public class CiCdProperties implements InitializingBean {
 		if (isNull(getJob().getSharedDependencyTryTimeoutMs())) {
 			// Default to one third of the full job timeout.
 			getJob().setSharedDependencyTryTimeoutMs(getJob().getJobTimeoutMs() / 3);
-			log.info("Use sharedDependencyTryTimeoutMs default value: {}", getJob().getSharedDependencyTryTimeoutMs());
+			log.info("Use sharedDependencyTryTimeoutMs of default value: {}", getJob().getSharedDependencyTryTimeoutMs());
 		}
 		if (isNull(getTranform().getTransferTimeoutMs())) {
-			// Default to one sixth of the full job timeout.
-			getTranform().setTransferTimeoutMs(getJob().getJobTimeoutMs() / 6);
-			log.info("Use transferTimeoutMs default value: {}", getTranform().getTransferTimeoutMs());
+			// Default to one fifth of the full job timeout.
+			getTranform().setTransferTimeoutMs(getJob().getJobTimeoutMs() / 5);
+			log.info("Use transferTimeoutMs of default value: {}", getTranform().getTransferTimeoutMs());
 		}
 
 	}
@@ -171,9 +171,17 @@ public class CiCdProperties implements InitializingBean {
 		return new File(getWorkspace() + "/" + DEFUALT_VCS_SOURCEDIR + "/" + projectName);
 	}
 
-	public long getJobWithInstanceTimeout(int instanceCount) {
+	/**
+	 * Timeout for execution of each remote command during the distribution
+	 * deployment phase.
+	 * 
+	 * @param instanceCount
+	 * @return
+	 */
+	public long getRemoteCommandTimeoutMs(int instanceCount) {
 		isTrue(instanceCount > 0, "Job instance count must greater than or equal to 0");
-		return getJob().getJobTimeoutMs() / instanceCount;
+		int tmpMultilpe = (instanceCount / getExecutor().getConcurrency() * 2);
+		return getTranform().getTransferTimeoutMs() * tmpMultilpe;
 	}
 
 }

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @since
  * @param <P>
  */
-public abstract class AbstractPipelineJob<P extends PipelineProvider> implements Runnable {
+public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implements Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Pipeline CICD properties configuration. */
@@ -57,7 +57,7 @@ public abstract class AbstractPipelineJob<P extends PipelineProvider> implements
 	/** Pipeline taskDetailId. */
 	protected Integer taskDetailId;
 
-	public AbstractPipelineJob(CiCdProperties config, P provider, Project project, AppInstance instance,
+	public AbstractPipeTransferJob(CiCdProperties config, P provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		notNull(config, "Pipeline config must not be null.");
 		notNull(provider, "Pipeline provider must not be null.");

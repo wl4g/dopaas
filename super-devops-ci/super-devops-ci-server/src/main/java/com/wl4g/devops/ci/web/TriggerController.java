@@ -21,7 +21,7 @@ import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.scm.CustomPage;
-import com.wl4g.devops.common.utils.DateUtils;
+import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.utils.task.CronUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;

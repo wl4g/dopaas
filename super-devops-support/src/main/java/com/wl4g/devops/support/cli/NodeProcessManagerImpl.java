@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.cli;
 
+import static com.wl4g.devops.common.constants.DevOpsConstants.LOCK_PROCESS_DESTROY_PREFIX;
 import static com.wl4g.devops.common.utils.concurrent.ThreadUtils.sleepRandom;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.hasText;
@@ -135,7 +136,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 */
 	private String getDestroySignalKey(String processId) {
 		Assert.hasText(processId, "ProcessId must not be empty.");
-		return "" + processId;
+		return LOCK_PROCESS_DESTROY_PREFIX + processId;
 	}
 
 }
