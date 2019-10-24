@@ -126,16 +126,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		hasText(command, "Commands must not be empty.");
 		Integer logId = getPipelineInfo().getTaskHistory().getId();
 
-		// Obtain text-plain privateKey(RSA)
-		String cipherKey = config.getTranform().getCipherKey();
-		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
-		logAdd(logId, "Transfer decrypted sshkey: %s => %s", cipherKey, "******");
-
-		// Remote commands timeout(Ms)
+		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
 		logAdd(logId, "Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
-		// Execution.
-		CommandResult result = executeWithCommand(remoteHost, user, sshkeyPlain, command, timeoutMs);
+
+		// Execution command.
+		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSSHKey(sshkey), command, timeoutMs);
 
 		logAdd(logId, "\n----------------- Stdout -------------------\n");
 		if (!isBlank(result.getMessage())) {
@@ -160,6 +156,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected void createRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
 		String command = "mkdir -p " + path;
 		logAdd(getPipelineInfo().getTaskHistory().getId(), "Creating remote directory: %s", command);
+		// Do directory creating.
 		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
@@ -186,10 +183,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Do startup transfer jobs.
+	 * Do startup transfer instances jobs.
 	 */
-	protected void doStartTransfer0() {
-		// Create jobs.
+	protected void doStartupTransferInstances() {
+		// Creating transfer instances jobs.
 		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newPipelineJob(instance))
 				.collect(toList());
 
@@ -216,6 +213,27 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
 		// TODO ......
 		return command;
+	}
+
+	/**
+	 * Do decrypted usable cipher SSH2 key.
+	 * 
+	 * @param sshkey
+	 * @return
+	 * @throws Exception
+	 */
+	protected char[] getUsableCipherSSHKey(String sshkey) throws Exception {
+		Integer logId = getPipelineInfo().getTaskHistory().getId();
+
+		// Obtain text-plain privateKey(RSA)
+		String cipherKey = config.getTranform().getCipherKey();
+		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
+		if (log.isInfoEnabled()) {
+			log.info("Transfer decrypted sshkey: {} => {}", cipherKey, "******");
+		}
+
+		logAdd(logId, "Transfer decrypted sshkey: %s => %s", cipherKey, "******");
+		return sshkeyPlain;
 	}
 
 }

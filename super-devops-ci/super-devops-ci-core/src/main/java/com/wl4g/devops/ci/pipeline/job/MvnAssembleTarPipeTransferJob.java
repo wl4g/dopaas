@@ -18,13 +18,14 @@ package com.wl4g.devops.ci.pipeline.job;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import org.springframework.util.Assert;
 
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * MAVEN assemble tar deployments task.
@@ -50,26 +51,25 @@ public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAs
 		if (log.isInfoEnabled()) {
 			log.info("Deploy task is starting ...");
 		}
-
-		Assert.notNull(taskDetailId, "taskDetailId can not be null");
+		notNull(taskDetailId, "taskDetailId can not be null");
 		try {
-			// Update status
+			TaskHistory taskHisy = provider.getPipelineInfo().getTaskHistory();
+			// Update status to running.
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
-			// pre command
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
-					provider.getPipelineInfo().getTaskHistory().getPreCommand(), instance.getSshKey());
-
-			// Boolean detailSuccess = new Boolean(false);
-			// Scp to tmp,rename,move to webapps
-			provider.scpAndTar(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
+			// Pre local commands.
+			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
 					instance.getSshKey());
 
-			// post command (restart command)
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
-					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
+			// Scp to tmp,rename,move to webapps
+			provider.doExecutableTransfer(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
+					instance.getSshKey());
 
-			// Update status
+			// Post remote commands (e.g. restart)
+			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
+					instance.getSshKey());
+
+			// Update status to success.
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, ""); // TODO
 
 		} catch (Exception e) {
@@ -81,6 +81,7 @@ public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAs
 		if (log.isInfoEnabled()) {
 			log.info("Deploy task is finished!");
 		}
+
 	}
 
 }

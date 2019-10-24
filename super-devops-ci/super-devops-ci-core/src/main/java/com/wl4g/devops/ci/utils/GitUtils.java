@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.StringUtils;
@@ -84,7 +83,6 @@ public abstract class GitUtils {
 			if (log.isInfoEnabled()) {
 				log.info(msg);
 			}
-			printfQuietly(msg);
 			return git;
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -105,29 +103,28 @@ public abstract class GitUtils {
 					exist = true;
 				}
 			}
-			if (exist) {// if exist --checkout
+			if (exist) { // Exist to checkout
 				git.checkout().setName(branchName).call();
-			} else {// if not exist --checkout and create local branch
+			} else {// Not exist to checkout & create local branch
 				git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
 						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
 			}
-			// pull -- get newest code
+			// Pull & get latest source code.
 			git.pull().setCredentialsProvider(credentials).call();
 
+			String msg = "Checkout branch success;branchName=" + branchName + " localPath=" + projecDir;
 			if (log.isInfoEnabled()) {
-				log.info("checkout branch success;branchName=" + branchName + " localPath=" + projecDir);
+				log.info(msg);
 			}
-			printfQuietly("checkout branch success;branchName=" + branchName + " localPath=" + projecDir);
 		} catch (Exception e) {
 			String errmsg = String.format("checkout branch failure. branchName=%s, localPath=%s", branchName, projecDir);
-			printfQuietly(errmsg);
 			log.error(errmsg, e);
 			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * Delete local branch.
+	 * Delete (local) branch.
 	 *
 	 * @param localProjectPath
 	 * @param branchName
@@ -144,7 +141,7 @@ public abstract class GitUtils {
 	}
 
 	/**
-	 * Get local branch list.
+	 * Get (local) branch list.
 	 *
 	 * @param projecDir
 	 * @return
@@ -159,7 +156,7 @@ public abstract class GitUtils {
 	}
 
 	/**
-	 * Get (local)branch name.
+	 * Get (local) branch name.
 	 *
 	 * @param ref
 	 * @return
@@ -188,7 +185,7 @@ public abstract class GitUtils {
 	}
 
 	/**
-	 * Get local latest committed.
+	 * Get (local) latest committed ID.
 	 *
 	 * @param projecDir
 	 * @return
@@ -225,15 +222,14 @@ public abstract class GitUtils {
 		try (Git git = Git.open(new File(projectURL))) {
 			git.fetch().setCredentialsProvider(credentials).call();
 			Ref ref = git.checkout().setName(sha).call();
+
 			String msg = "Rollback branch completed, sha:" + sha + ", localPath:" + projecDir;
 			if (log.isInfoEnabled()) {
 				log.info(msg);
 			}
-			printfQuietly(msg);
 			return ref;
 		} catch (Exception e) {
 			String errmsg = String.format("Failed to rollback, sha:%s, localPath:%s", sha, projecDir);
-			printfQuietly(errmsg);
 			log.error(errmsg, e);
 			throw new IllegalStateException(e);
 		}

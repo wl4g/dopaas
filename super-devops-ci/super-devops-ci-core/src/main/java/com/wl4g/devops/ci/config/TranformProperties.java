@@ -21,6 +21,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
+import java.io.File;
+
 /**
  * CICD pipeline process, the related configuration classes sent to cluster
  * nodes after completion of construction.
@@ -39,6 +41,16 @@ public class TranformProperties {
 	 * {@link com.wl4g.devops.ci.config.CiCdProperties#applyDefaultProperties()}
 	 */
 	private Long transferTimeoutMs;
+
+	/**
+	 * Transfer remote user home directory name.</br>
+	 * 
+	 * <pre>
+	 * e.g. /home/{APP_USER}/.ci-temporary
+	 * e.g. /root/.ci-temporary
+	 * </pre>
+	 */
+	private String remoteHomeTmpDir = "~" + File.separator + ".ci-temporary";
 
 	private MvnAssTarProperties mvnAssTar = new MvnAssTarProperties();
 
@@ -66,6 +78,16 @@ public class TranformProperties {
 		if (nonNull(transferTimeoutMs)) {
 			isTrue(transferTimeoutMs > 0, "Transfer timeout must greater than 0.");
 			this.transferTimeoutMs = transferTimeoutMs;
+		}
+	}
+
+	public String getRemoteHomeTmpDir() {
+		return remoteHomeTmpDir;
+	}
+
+	public void setRemoteHomeTmpDir(String remoteHomeTmpDir) {
+		if (!isBlank(remoteHomeTmpDir)) {
+			this.remoteHomeTmpDir = remoteHomeTmpDir;
 		}
 	}
 
