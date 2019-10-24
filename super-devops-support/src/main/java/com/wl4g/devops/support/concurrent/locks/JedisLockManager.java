@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import redis.clients.jedis.JedisCluster;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -30,6 +29,7 @@ import static com.google.common.hash.Hashing.*;
 import static com.google.common.base.Charsets.UTF_8;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
@@ -83,14 +83,14 @@ public class JedisLockManager {
 			Assert.isTrue(expiredMs > 0, "'timeoutMs' must greater than 0");
 			this.jedisCluster = jedisCluster;
 			this.name = NAMESPACE + name;
-			this.expiredMs = (int) unit.toMillis(expiredMs);
-			this.processId = String.valueOf(current().nextInt(100_0000, Integer.MAX_VALUE));
+			this.expiredMs = unit.toMillis(expiredMs);
+			this.processId = String.valueOf(current().nextInt(1000_0000, Integer.MAX_VALUE));
 		}
 
 		@Override
 		public void lock() {
 			while (true) {
-				if (jedisCluster.set(name, processId, NXXX, EXPX, expiredMs) != null) {
+				if (nonNull(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
 					return;
 				}
 				try {
@@ -117,7 +117,7 @@ public class JedisLockManager {
 			long t = timeUnit.toMillis(tryTimeout) / FREQ_MS, c = 0;
 			while (t > (++c)) {
 				Thread.sleep(FREQ_MS);
-				if (Objects.nonNull(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
+				if (nonNull(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
 					return true;
 				}
 			}
@@ -129,7 +129,7 @@ public class JedisLockManager {
 			String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 			Object res = jedisCluster.eval(script, singletonList(name), singletonList(processId));
 			if (!SUCCESS.equals(res)) {
-				log.warn(String.format("Failed to unlock for '%s'", processId));
+				log.warn(String.format("Failed to unlock for %s@%s", processId, name));
 			}
 		}
 
