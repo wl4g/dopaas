@@ -36,6 +36,7 @@ import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_AUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
 import static java.util.Objects.isNull;
@@ -46,6 +47,7 @@ import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
@@ -187,6 +189,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		String remoteHost = getHttpRemoteAddr(toHttp(request));
 		// Redirection.
 		RedirectInfo redirect = getRedirectInfo(request, false);
+
+		/**
+		 * Remember request protocol parameters.</br>
+		 * e.g. Android submit login will bring redirectUrl and application,
+		 * which will be used for successful login redirection.
+		 */
+		rememberProtocolParameters(redirect, request, response);
 
 		// Create authentication token
 		return postCreateToken(remoteHost, redirect, toHttp(request), toHttp(response));
@@ -357,7 +366,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 	/**
 	 * Get redirect information bound from authentication request
-	 * {@link AuthenticatorAuthenticationFilter#savedRequestParameters(ServletRequest, ServletResponse)}
+	 * {@link AuthenticatorAuthenticationFilter#rememberProtocolParameters(ServletRequest, ServletResponse)}
 	 * </br>
 	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
 	 * 
@@ -378,6 +387,47 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			}
 		}
 		return isNull(redirect) ? RedirectInfo.EMPTY : redirect;
+	}
+
+	/**
+	 * Saved the latest request protocol configuration, such as response_type,
+	 * source application, etc.</br>
+	 * E.G.:</br>
+	 * </br>
+	 * 
+	 * <b>Req1：</b>http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * <b>Resp1：</b>login.html</br>
+	 * </br>
+	 * <b>Req2：(Intercepted by
+	 * rootFilter)</b>http://localhost:14040/iam-server/favicon.ico</br>
+	 * <b>Resp2：</b>
+	 * 302->http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * </br>
+	 * <b>Req3：</b>http://localhost:14040/iam-server/view/login.html</br>
+	 * </br>
+	 * 
+	 * No parameters for the second request for login.html ??? This is the
+	 * problem to be solved by this method.
+	 * 
+	 * @param redirect
+	 * @param request
+	 * @param response
+	 */
+	protected void rememberProtocolParameters(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
+		notNull(redirect, "Redirect info must not be null.");
+		// Safety encoding for URL fragment.
+		redirect.setRedirectUrl(safeEncodeHierarchyRedirectUrl(redirect.getRedirectUrl()));
+
+		// Response type.
+		String respTypeKey = ResponseType.DEFAULT_RESPTYPE_NAME;
+		String respType = getCleanParam(request, respTypeKey);
+
+		// Overlay to save the latest parameters.
+		bindKVParameters(KEY_REQ_AUTH_PARAMS, respTypeKey, respType, KEY_REQ_AUTH_REDIRECT, redirect);
+		if (log.isDebugEnabled()) {
+			log.debug("Binding for respType[{}], redirect[{}]", respType, redirect);
+		}
+
 	}
 
 	/**
