@@ -166,6 +166,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
+    from app_cluster
     where del_flag!=1
     <if test="clusterName != null and clusterName != ''" >
       AND name LIKE CONCAT('%','${clusterName}','%')

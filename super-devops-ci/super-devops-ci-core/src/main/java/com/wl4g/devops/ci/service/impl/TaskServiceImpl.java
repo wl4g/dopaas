@@ -23,7 +23,8 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
-import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.dao.share.AppInstanceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,8 @@ public class TaskServiceImpl implements TaskService {
 	private TaskBuildCommandDao taskBuildCommandDao;
 	@Autowired
 	private AppClusterDao appClusterDao;
+	@Autowired
+	private AppInstanceDao appInstanceDao;
 
 	@Override
 	@Transactional
@@ -132,9 +135,9 @@ public class TaskServiceImpl implements TaskService {
 		// Environment.
 		for (TaskDetail taskDetail : task.getTaskDetails()) {
 			Integer instanceId = taskDetail.getInstanceId();
-			AppInstance instance = appClusterDao.getAppInstance(instanceId.toString());
-			if (instance != null && instance.getEnvId() != null) {
-				data.put("envId", Integer.valueOf(instance.getEnvId()));
+			AppInstance instance = appInstanceDao.selectByPrimaryKey(instanceId);
+			if (instance != null && instance.getEnvType() != null) {
+				data.put("envId", instance.getEnvType());
 				break;
 			}
 		}

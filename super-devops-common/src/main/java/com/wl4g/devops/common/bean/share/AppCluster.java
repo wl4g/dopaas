@@ -17,7 +17,6 @@ package com.wl4g.devops.common.bean.share;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +37,7 @@ public class AppCluster extends BaseBean {
 	private String remark;
 
 	//other
+	private int instanceCount;
 	private List<AppInstance> instances;
 
 
@@ -91,5 +91,13 @@ public class AppCluster extends BaseBean {
 
 	public void setInstances(List<AppInstance> instances) {
 		this.instances = instances;
+	}
+
+	public int getInstanceCount() {
+		return instanceCount;
+	}
+
+	public void setInstanceCount(int instanceCount) {
+		this.instanceCount = instanceCount;
 	}
 }
