@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * NPM view deployments pipeline handler tasks.
@@ -42,38 +43,33 @@ public class NpmViewPipeTransferJob extends AbstractPipeTransferJob<NpmViewPipel
 
 	@Override
 	public void run() {
+		notNull(taskDetailId, "taskDetailId can not be null");
 		if (log.isInfoEnabled()) {
 			log.info("Deploy task is starting ...");
 		}
-
-		Assert.notNull(taskDetailId, "taskDetailId can not be null");
-		StringBuffer result = new StringBuffer();
 		try {
-			// Update status
+			// Update status to running.
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
-			// pre command
-			String s4 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+			// Pre commands.
+			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
 					provider.getPipelineInfo().getTaskHistory().getPreCommand(), instance.getSshKey());
-			result.append(s4).append("\n");
 
-			// Boolean detailSuccess = new Boolean(false);
 			// Scp to tmp,rename,move to webapps
-			String s = provider.handOut(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
-			result.append(s).append("\n");
+			provider.handOut(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
 
-			// post command (restart command)
-			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+			// Post commands. (restart command)
+			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
 					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
-			result.append(s2).append("\n");
 
-			// Update status
+			// Update status to success.
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
 
 		} catch (Exception e) {
-			log.error("Deploy job failed", e);
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
-					result.toString() + "\n" + e.toString());
+			String errmsg = String.format("Transfer deploy failed. project(%s), taskDetailId(%s)",
+					provider.getPipelineInfo().getProject().getProjectName(), taskDetailId);
+			log.error(errmsg, e);
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, null);
 		}
 
 		if (log.isInfoEnabled()) {

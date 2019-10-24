@@ -100,7 +100,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	public String dockerPull(String targetHost, String userName, String imageName, String rsa) throws Exception {
 		String command = "docker pull " + imageName;
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	public String dockerStop(String targetHost, String userName, String groupName, String rsa) throws Exception {
 		String command = "docker stop " + groupName;
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -116,14 +116,14 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	public String dockerRemoveContainer(String targetHost, String userName, String groupName, String rsa) throws Exception {
 		String command = "docker rm " + groupName;
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
 	 * Docker Run
 	 */
 	public String dockerRun(String targetHost, String userName, String runCommand, String rsa) throws Exception {
-		return exceCommand(targetHost, userName, runCommand, rsa);
+		return doRemoteCommand(targetHost, userName, runCommand, rsa);
 	}
 
 	@Override

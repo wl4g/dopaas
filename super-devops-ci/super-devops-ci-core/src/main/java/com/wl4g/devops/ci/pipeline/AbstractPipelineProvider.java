@@ -21,7 +21,6 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.utils.CommandLogHolder;
-import com.wl4g.devops.ci.utils.CommandLogHolder.LogAppender;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
@@ -30,15 +29,16 @@ import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.cli.ProcessManager;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.wl4g.devops.ci.utils.CommandLogHolder.*;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.List;
@@ -112,50 +112,67 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Exce command
+	 * Execution remote commands
+	 * 
+	 * @param targetHost
+	 * @param userName
+	 * @param command
+	 * @param rsa
+	 * @return
+	 * @throws Exception
 	 */
-	public String exceCommand(String targetHost, String userName, String command, String rsa) throws Exception {
-		if (StringUtils.isBlank(command)) {
-			return "command is blank";
-		}
+	public void doRemoteCommand(String targetHost, String userName, String command, String rsa) throws Exception {
+		hasText(command, "Commands must not be empty.");
+		Integer logId = getPipelineInfo().getTaskHistory().getId();
 
 		// Obtain text-plain privateKey(RSA)
-		String rsaKey = config.getTranform().getCipherKey();
-		char[] sshkeyPlain = new AES(rsaKey).decrypt(rsa).toCharArray();
+		String sshkey = config.getTranform().getCipherKey();
+		char[] sshkeyPlain = new AES(sshkey).decrypt(rsa).toCharArray();
+		logAdd(logId, "Transfer decrypted sshkey: %s => %s", sshkey, "******");
 
-		// TODO
-		// LogAppender appender = getLogAppender();
+		// Remote commands timeout(Ms)
+		long timeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
+		logAdd(logId, "Transfer remote execution for %s@%s, timeout(%s) => command(%s)", userName, targetHost, timeoutMs,
+				command);
+		// Execution commands.
+		CommandResult result = executeWithCommand(targetHost, userName, sshkeyPlain, command, timeoutMs);
 
-		StringBuffer result = new StringBuffer(command);
-		result.append("\n");
-		//
-		long remoteTimeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
-		CommandResult ret = executeWithCommand(targetHost, userName, sshkeyPlain, command, remoteTimeoutMs);
-		if (!isBlank(ret.getMessage())) {
-			result.append(ret.getMessage());
+		logAdd(logId, "\n----------------- Stdout -------------------\n");
+		if (!isBlank(result.getMessage())) {
+			logAdd(logId, result.getMessage());
 		}
-		result.append("-----------------");
-		if (!isBlank(ret.getErrmsg())) {
-			result.append(ret.getErrmsg());
+		logAdd(logId, "\n----------------- Stderr -------------------\n");
+		if (!isBlank(result.getErrmsg())) {
+			logAdd(logId, result.getErrmsg());
 		}
-		return result.toString();
+
 	}
 
-	/**
-	 * Mkdir
-	 */
-	public String mkdirs(String targetHost, String userName, String path, String rsa) throws Exception {
+	public void createRemoteDirectory(String targetHost, String userName, String path, String rsa) throws Exception {
 		String command = "mkdir -p " + path;
-		return exceCommand(targetHost, userName, command, rsa);
+		logAdd(getPipelineInfo().getTaskHistory().getId(), "Creating remote directory: %s", command);
+		doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
 	 * Get log appender.
 	 * 
+	 * @param logId
 	 * @return
 	 */
-	public LogAppender getLogAppender() {
-		return CommandLogHolder.getLogAppender(getPipelineInfo().getTaskHistory().getId());
+	public LogAppender getLogAppender(Integer logId) {
+		return CommandLogHolder.getLogAppender(getClass().getSimpleName() + "-" + logId);
+	}
+
+	/**
+	 * Append log message.
+	 * 
+	 * @param logId
+	 * @param format
+	 * @return
+	 */
+	public LogAppender logAdd(Integer logId, String format, Object... message) {
+		return getLogAppender(logId).logAdd(String.format(format, message));
 	}
 
 	protected String commandReplace(String command, String projectPath) {
