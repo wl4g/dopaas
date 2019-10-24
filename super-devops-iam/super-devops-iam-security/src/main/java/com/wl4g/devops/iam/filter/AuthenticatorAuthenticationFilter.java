@@ -24,12 +24,9 @@ import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
-import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -57,9 +54,6 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 			// Check authenticate redirect URL validity.
 			RedirectInfo redirect = getRedirectInfo(request, false);
 			authHandler.checkAuthenticateRedirectValidity(redirect.getFromAppName(), redirect.getRedirectUrl());
-
-			// Remember request parameters
-			savedRequestParameters(request, response);
 		} catch (IllegalCallbackDomainException e) {
 			log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
 		}
@@ -78,47 +72,6 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 
 		// Pass processing
 		return super.isAccessAllowed(request, response, mappedValue);
-	}
-
-	/**
-	 * Saved the latest authentication request configuration, such as
-	 * response_type, source application, etc.</br>
-	 * E.G.:</br>
-	 * </br>
-	 * 
-	 * <b>Req1：</b>http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
-	 * <b>Resp1：</b>login.html</br>
-	 * </br>
-	 * <b>Req2：(Intercepted by
-	 * rootFilter)</b>http://localhost:14040/iam-server/favicon.ico</br>
-	 * <b>Resp2：</b>
-	 * 302->http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
-	 * </br>
-	 * <b>Req3：</b>http://localhost:14040/iam-server/view/login.html</br>
-	 * </br>
-	 * 
-	 * No parameters for the second request for login.html ??? This is the
-	 * problem to be solved by this method.
-	 * 
-	 * @param request
-	 * @param response
-	 */
-	private void savedRequestParameters(ServletRequest request, ServletResponse response) {
-		// Response type.
-		String respTypeKey = ResponseType.DEFAULT_RESPTYPE_NAME;
-		String respType = getCleanParam(request, respTypeKey);
-
-		// Redirection information.
-		RedirectInfo redirect = getRedirectInfo(request, false);
-		// Safety encoding for URL fragment.
-		redirect.setRedirectUrl(safeEncodeHierarchyRedirectUrl(redirect.getRedirectUrl()));
-
-		// Overlay to save the latest parameters.
-		bindKVParameters(KEY_REQ_AUTH_PARAMS, respTypeKey, respType, KEY_REQ_AUTH_REDIRECT, redirect);
-
-		if (log.isDebugEnabled()) {
-			log.debug("Binding for respType[{}], redirect[{}]", respType, redirect);
-		}
 	}
 
 	@Override
