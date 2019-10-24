@@ -79,7 +79,7 @@ public class RunnerProperties implements Serializable {
 	}
 
 	public void setConcurrency(int concurrency) {
-		Assert.isTrue(concurrency > 0, "Concurrency must be greater than 0");
+		// Assert.isTrue(concurrency > 0, "Concurrency must be greater than 0");
 		this.concurrency = concurrency;
 	}
 
