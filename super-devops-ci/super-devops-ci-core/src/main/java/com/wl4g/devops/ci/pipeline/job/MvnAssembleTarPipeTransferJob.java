@@ -58,7 +58,7 @@ public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAs
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 
 			// pre command
-			String s4 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+			String s4 = provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
 					provider.getPipelineInfo().getTaskHistory().getPreCommand(), instance.getSshKey());
 			result.append(s4).append("\n");
 
@@ -69,7 +69,7 @@ public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAs
 			result.append(s).append("\n");
 
 			// post command (restart command)
-			String s2 = provider.exceCommand(instance.getHostname(), instance.getSshUser(),
+			String s2 = provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
 					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
 			result.append(s2).append("\n");
 

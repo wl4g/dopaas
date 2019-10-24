@@ -56,7 +56,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * Scp + tar + move to basePath
 	 */
 	public String scpAndTar(String path, String targetHost, String userName, String targetPath, String rsa) throws Exception {
-		String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
+		String result = createRemoteDirectory(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
 		// scp
 		result += scpToTmp(path, targetHost, userName, rsa) + "\n";
 		// tar
@@ -87,7 +87,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 */
 	public String tarToTmp(String targetHost, String userName, String path, String rsa) throws Exception {
 		String command = "tar -xvf /home/" + userName + "/tmp" + "/" + subPackname(path) + " -C /home/" + userName + "/tmp";
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			throw new RuntimeException("bad command");
 		}
 		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path);
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	public String moveToTarPath(String targetHost, String userName, String path, String targetPath, String rsa) throws Exception {
 		String command = "mv /home/" + userName + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
 				+ subPacknameWithOutPostfix(path);
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**

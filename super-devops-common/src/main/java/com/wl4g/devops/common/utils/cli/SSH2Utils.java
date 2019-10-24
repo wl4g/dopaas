@@ -218,8 +218,8 @@ public abstract class SSH2Utils {
 
 			// Session & send command.
 			session = conn.openSession();
-			if (log.isDebugEnabled()) {
-				log.debug("SSH2 send command to {}@{}, ({})", user, host, command);
+			if (log.isInfoEnabled()) {
+				log.info("SSH2 send command to {}@{}, ({})", user, host, command);
 			}
 			session.execCommand(command, "UTF-8");
 

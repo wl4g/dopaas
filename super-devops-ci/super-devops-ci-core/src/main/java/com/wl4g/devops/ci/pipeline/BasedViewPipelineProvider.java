@@ -49,14 +49,14 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	 * @throws Exception
 	 */
 	public String handOut(String targetHost, String userName, String rsa) throws Exception {
-		String result = mkdirs(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
+		String result = createRemoteDirectory(targetHost, userName, "/home/" + userName + "/tmp", rsa) + "\n";
 
 		// scp
 		result += scpToTmp(targetHost, userName, rsa) + "\n";
 		// backup
 		// result += backupOnServer(targetHost, userName, rsa) + "\n";
 		// mkdir
-		result += mkdirs(targetHost, userName, getPipelineInfo().getProject().getParentAppHome(), rsa) + "\n";
+		result += createRemoteDirectory(targetHost, userName, getPipelineInfo().getProject().getParentAppHome(), rsa) + "\n";
 		// tar
 		result += tar(targetHost, userName, rsa) + "\n";
 
@@ -87,7 +87,7 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	public String backupOnServer(String targetHost, String userName, String rsa) throws Exception {
 		String command = "mv " + getPipelineInfo().getProject().getParentAppHome() + " "
 				+ getPipelineInfo().getProject().getParentAppHome() + new Date().getTime();
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 	public String tar(String targetHost, String userName, String rsa) throws Exception {
 		String command = "tar -zxvf /home/" + userName + "/tmp" + "/" + getPipelineInfo().getProject().getProjectName()
 				+ ".tar.gz -C " + getPipelineInfo().getProject().getParentAppHome();
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public abstract class BasedViewPipelineProvider extends AbstractPipelineProvider
 			throw new RuntimeException("bad command");
 		}
 		String command = "rm -f " + path;
-		return exceCommand(targetHost, userName, command, rsa);
+		return doRemoteCommand(targetHost, userName, command, rsa);
 	}
 
 }

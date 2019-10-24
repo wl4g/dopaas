@@ -147,9 +147,11 @@ public abstract class CommandLogHolder {
 		 * Append log message to current buffer cache.
 		 * 
 		 * @param message
+		 * @return
 		 */
-		public void logAdd(String message) {
+		public LogAppender logAdd(String message) {
 			CommandLogHolder.logAdd(key, message);
+			return this;
 		}
 
 		/**
