@@ -27,7 +27,7 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
-import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.support.cli.ProcessManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,7 +73,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(id);
 		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
 		if (null != project && null != project.getAppClusterId()) {
-			AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
+			AppCluster appCluster = appClusterDao.selectByPrimaryKey(project.getAppClusterId());
 			if (null != appCluster) {
 				taskHistory.setGroupName(appCluster.getName());
 			}

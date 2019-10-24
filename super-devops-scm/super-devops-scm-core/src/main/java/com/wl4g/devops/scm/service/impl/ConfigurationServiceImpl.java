@@ -26,9 +26,10 @@ import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Dict;
-import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.share.DictDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
@@ -61,6 +62,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private AppClusterDao appClusterDao;
 	@Autowired
+	private AppInstanceDao appInstanceDao;
+	@Autowired
 	private ConfigContextHandler contextHandler;
 	@Autowired
 	private DictDao dictDao;
@@ -75,11 +78,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		String sign = signVersionContent(vd);
 		List<AppInstance> nodeList = new ArrayList<>();
 		for (String nodeId : nodeIdList) {
-			AppInstance instance = this.appClusterDao.getAppInstance(nodeId);
-			String hisVersionId = instance.getVersionId();
+			AppInstance instance = this.appInstanceDao.selectByPrimaryKey(Integer.valueOf(nodeId));
+			Integer hisVersionId = instance.getVersionId();
 			if (hisVersionId != null) {
 				Version version = new Version();
-				version.setId(Integer.parseInt(hisVersionId));
+				version.setId(hisVersionId);
 				version = this.historyDao.versionselect(version);
 				String hisSign = version.getSign();
 				if (sign.equals(hisSign)) {
@@ -140,7 +143,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			instances.add(releaseInstance);
 		}
 		// Get application group information.
-		AppCluster appCluster = this.appClusterDao.getAppGroup(vd.getAppClusterId());
+		AppCluster appCluster = this.appClusterDao.selectByPrimaryKey(vd.getAppClusterId());
 
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean vcb : vd.getConfigGurations()) {

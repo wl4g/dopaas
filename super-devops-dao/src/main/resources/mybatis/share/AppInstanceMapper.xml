@@ -36,7 +36,23 @@
     select
     <include refid="Base_Column_List" />
     from app_instance
+    where cluster_id = #{clusterId,jdbcType=INTEGER} and del_flag!=1
+  </select>
+
+  <select id="selectByClusterIdAndEnvType" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from app_instance
     where cluster_id = #{clusterId,jdbcType=INTEGER}
+    and env_type = #{envType,jdbcType=VARCHAR}
+    and del_flag!=1
+  </select>
+
+  <select id="countByClusterId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+    count(1)
+    from app_instance
+    where cluster_id = #{id,jdbcType=INTEGER} and del_flag!=1
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

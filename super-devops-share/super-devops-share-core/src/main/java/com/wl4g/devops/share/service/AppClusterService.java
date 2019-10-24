@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.share.service;
 
+import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.bean.share.AppCluster;
+import com.wl4g.devops.common.bean.share.AppInstance;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 应用组管理Service接口
@@ -26,5 +31,15 @@ import com.wl4g.devops.common.bean.share.AppCluster;
 public interface AppClusterService {
 
 	void save(AppCluster appCluster);
+
+	Map list(CustomPage customPage, String clusterName);
+
+	void del(Integer clusterId);
+
+	AppCluster detail(Integer clusterId);
+
+	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
+
+
 
 }

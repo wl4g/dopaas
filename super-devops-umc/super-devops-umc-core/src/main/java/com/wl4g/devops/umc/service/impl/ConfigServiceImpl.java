@@ -19,7 +19,8 @@ import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.umc.service.ConfigService;
@@ -42,6 +43,9 @@ public class ConfigServiceImpl implements ConfigService {
 
 	@Autowired
 	private AppClusterDao appClusterDao;
+
+	@Autowired
+	private AppInstanceDao appInstanceDao;
 
 	@Override
 	public void save(AlarmConfig alarmConfig) {
@@ -71,9 +75,9 @@ public class ConfigServiceImpl implements ConfigService {
 		AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmConfig.getTemplateId());
 		Assert.notNull(alarmTemplate, "not found alarmTemplate");
 		alarmConfig.setClassify(alarmTemplate.getClassify());
-		AppInstance appInstance = appClusterDao.getAppInstance(alarmConfig.getCollectId().toString());
-		alarmConfig.setGroup(appInstance.getAppClusterId().intValue());
-		alarmConfig.setEnvironment(Integer.valueOf(appInstance.getEnvId()));
+		AppInstance appInstance = appInstanceDao.selectByPrimaryKey(alarmConfig.getCollectId());
+		alarmConfig.setGroup(appInstance.getClusterId());
+		alarmConfig.setEnvType(appInstance.getEnvType());
 		return alarmConfig;
 	}
 }
