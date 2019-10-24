@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.wl4g.devops.dao.scm;
 
 import java.util.List;
@@ -20,9 +21,11 @@ import java.util.List;
 import com.wl4g.devops.common.bean.share.*;
 import org.apache.ibatis.annotations.Param;
 
+*/
 /**
  * 应用组管理DAO接口
- */
+ *//*
+
 public interface AppClusterDao {
 
 	public Long insert(InstanceOfGroup iog);
@@ -65,4 +68,9 @@ public interface AppClusterDao {
 
 	public AppCluster getAppGroupByName(@Param(value = "name") String name);
 
-}
+
+	//1023 modify
+
+
+
+}*/
