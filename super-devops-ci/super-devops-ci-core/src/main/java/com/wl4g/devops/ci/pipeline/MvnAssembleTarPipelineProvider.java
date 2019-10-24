@@ -56,7 +56,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		File backupFile = getBackupFile();
 		if (backupFile.exists()) {
 			// from git
-			getBackupLocal();
+			rollbackBackupFile();
 			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
 		} else {
 			// getDependencyService().rollback(getTaskHistory(),
@@ -77,7 +77,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		backupLocal();
 
 		// Startup pipeline jobs.
-		doStartTransfer0();
+		doStartupTransferInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");

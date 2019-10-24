@@ -19,15 +19,14 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
-import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -35,6 +34,7 @@ import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPacknameWithOutPostfix;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -52,13 +52,24 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		super(info);
 	}
 
+	// --- MAVEN file transfer. ---
+
 	/**
-	 * Scp + tar + move to basePath
+	 * Do executable to instances transfer.</br>
+	 * SCP & move & decompression to target directory.
+	 * 
+	 * @param path
+	 * @param remoteHost
+	 * @param user
+	 * @param targetPath
+	 * @param rsa
+	 * @throws Exception
 	 */
-	public void scpAndTar(String path, String remoteHost, String user, String targetPath, String rsa) throws Exception {
+	public void doExecutableTransfer(String path, String remoteHost, String user, String targetPath, String rsa)
+			throws Exception {
 		createRemoteDirectory(remoteHost, user, "/home/" + user + "/tmp", rsa);
 		// scp
-		scpToTmp(path, remoteHost, user, rsa);
+		scpToTmpDir(path, remoteHost, user, rsa);
 		// tar
 		tarToTmp(remoteHost, user, path, rsa);
 		// remove
@@ -67,22 +78,17 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		moveToTarPath(remoteHost, user, path, targetPath, rsa);
 	}
 
-	public String scpToTmp(String path, String remoteHost, String user, String rsa) throws Exception {
-		// Obtain text-plain privateKey(RSA)
-		String rsaKey = config.getTranform().getCipherKey();
-		char[] rsaReal = new AES(rsaKey).decrypt(rsa).toCharArray();
-
+	public void scpToTmpDir(String path, String remoteHost, String user, String sshkey) throws Exception {
 		// Transfer file to remote.
-		transferFile(remoteHost, user, rsaReal, new File(path), "/home/" + user + "/tmp");
-
-		return "SCP to tmp succesful for " + path;
+		transferFile(remoteHost, user, getUsableCipherSSHKey(sshkey), new File(path), "/home/" + user + "/tmp");
 	}
 
 	/**
 	 * Unzip in tmp
 	 */
 	public void tarToTmp(String remoteHost, String user, String path, String rsa) throws Exception {
-		String command = "tar -xvf /home/" + user + "/tmp" + "/" + subPackname(path) + " -C /home/" + user + "/tmp";
+		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
+		String command = "tar -xvf " + remoteTmpDir + "/" + subPackname(path) + " -C " + remoteTmpDir;
 		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
@@ -91,7 +97,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 */
 	public void removeTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
 		String s = targetPath + "/" + subPacknameWithOutPostfix(path);
-		if (StringUtils.isBlank(s) || s.trim().equals("/")) {
+		if (isBlank(s) || s.trim().equals("/")) {
 			throw new RuntimeException("bad command");
 		}
 		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path);
@@ -102,32 +108,37 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * Move to tar path
 	 */
 	public void moveToTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
-		String command = "mv /home/" + user + "/tmp" + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
+		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
+		String command = "mv " + remoteTmpDir + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
 				+ subPacknameWithOutPostfix(path);
 		doRemoteCommand(remoteHost, user, command, rsa);
 	}
 
 	/**
-	 * Local back up
+	 * Local backup
 	 */
 	public void backupLocal() throws Exception {
 		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
 		String targetPath = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
 		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
+
 		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
+
 		String command = "cp -Rf " + targetPath + " " + backupPath;
-		// SSHTool.exec(command);
 		processManager.exec(command, config.getJobLog(taskHisId), 300000);
 	}
 
 	/**
-	 * Get local back up , for rollback
+	 * Roll-back backup file.
+	 * 
+	 * @throws Exception
 	 */
-	public void getBackupLocal() throws Exception {
+	public void rollbackBackupFile() throws Exception {
 		Integer taskHisRefId = getPipelineInfo().getRefTaskHistory().getId();
 		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
+
 		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
 		String command = "cp -Rf " + backupPath + " " + target;
 		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
@@ -139,6 +150,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			file.mkdirs();
 		}
 	}
+
+	// --- MAVEN building. ---
 
 	public void build(TaskHistory taskHistory, boolean isRollback) throws Exception {
 		File jobLog = config.getJobLog(taskHistory.getId());
@@ -158,37 +171,37 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHistory.getId());
 		for (Dependency depd : dependencys) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doBuild0(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback, depCmd);
+			doInternalMvnBuild(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
+					depCmd);
 		}
-		doBuild0(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
-				taskHistory.getBuildCommand());
 
+		// Do MAVEN building.
+		doInternalMvnBuild(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
+				taskHistory.getBuildCommand());
 	}
 
 	/**
 	 * Extract dependency project custom command.
 	 * 
-	 * @param commands
+	 * @param buildCommands
 	 * @param projectId
 	 * @return
 	 */
-	private String extractDependencyBuildCommand(List<TaskBuildCommand> commands, Integer projectId) {
-		if (isEmpty(commands)) {
+	private String extractDependencyBuildCommand(List<TaskBuildCommand> buildCommands, Integer projectId) {
+		if (isEmpty(buildCommands)) {
 			return null;
 		}
-		Assert.notNull(projectId, "projectId is null");
-		for (TaskBuildCommand taskBuildCommand : commands) {
-			if (taskBuildCommand.getProjectId().intValue() == projectId.intValue()) {
-				return taskBuildCommand.getCommand();
-			}
-		}
-		return null;
+		notNull(projectId, "Building dependency projectId is null");
+
+		Optional<TaskBuildCommand> buildCmdOp = safeList(buildCommands).stream()
+				.filter(cmd -> cmd.getProjectId().intValue() == projectId.intValue()).findFirst();
+		return buildCmdOp.isPresent() ? buildCmdOp.get().getCommand() : null;
 	}
 
 	/**
-	 * Execution building dependency project.
+	 * Execution dependency project building.
 	 * 
-	 * @param taskHistory
+	 * @param taskHisy
 	 * @param projectId
 	 * @param dependencyId
 	 * @param branch
@@ -198,13 +211,13 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doBuild0(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch, boolean isDependency,
-			boolean isRollback, String buildCommand) throws Exception {
+	private void doInternalMvnBuild(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
-				doGetSourceAndBuild0(taskHistory, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				doPullSourceAndBuild0(taskHisy, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -227,12 +240,13 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				lock.unlock();
 			}
 		}
+
 	}
 
 	/**
-	 * Execution pipeline core to get source and MVN building.
+	 * Pull merge source and MVN building.
 	 * 
-	 * @param taskHistory
+	 * @param taskHisy
 	 * @param projectId
 	 * @param dependencyId
 	 * @param branch
@@ -242,24 +256,24 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doGetSourceAndBuild0(TaskHistory taskHistory, Integer projectId, Integer dependencyId, String branch,
+	private void doPullSourceAndBuild0(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Pipeline building for projectId={}", projectId);
 		}
 		Project project = projectDao.selectByPrimaryKey(projectId);
-		notNull(project, "project not exist");
+		notNull(project, String.format("Not found project by %s", projectId));
 
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
 		if (isRollback) {
 			String sha;
 			if (isDependency) {
-				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependencyId, taskHistory.getRefId());
-				Assert.notNull(taskSign, "not found taskSign");
+				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependencyId, taskHisy.getRefId());
+				Assert.notNull(taskSign, "Not found taskSign");
 				sha = taskSign.getShaGit();
 			} else {
-				sha = taskHistory.getShaGit();
+				sha = taskHisy.getShaGit();
 			}
 			if (GitUtils.checkGitPath(projectDir)) {
 				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
@@ -278,21 +292,21 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		// Save the SHA of the dependency project for roll-back。
 		if (isDependency) {
 			TaskSign taskSign = new TaskSign();
-			taskSign.setTaskId(taskHistory.getId());
+			taskSign.setTaskId(taskHisy.getId());
 			taskSign.setDependenvyId(dependencyId);
 			taskSign.setShaGit(GitUtils.getLatestCommitted(projectDir));
 			taskSignDao.insertSelective(taskSign);
 		}
 
-		File logPath = config.getJobLog(taskHistory.getId());
+		File logPath = config.getJobLog(taskHisy.getId());
 		// Building.
 		if (isBlank(buildCommand)) {
-			doBuildWithDefaultCommand(projectDir, logPath, taskHistory.getId());
+			doBuildWithDefaultCommand(projectDir, logPath, taskHisy.getId());
 		} else {
 			// Obtain temporary command file.
-			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
+			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
 			buildCommand = commandReplace(buildCommand, projectDir);
-			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
+			processManager.execFile(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 
 	}
