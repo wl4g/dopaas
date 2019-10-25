@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.utils.CommandLogHolder;
+import com.wl4g.devops.ci.utils.CommandLogHolder.LogAppender;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
@@ -31,9 +32,10 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.cli.ProcessManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.ci.utils.CommandLogHolder.*;
+import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static java.util.stream.Collectors.toList;
@@ -57,9 +59,11 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected CiCdProperties config;
 	@Autowired
-	protected JedisLockManager lockManager;
-	@Autowired
 	protected PipelineJobExecutor jobExecutor;
+	@Autowired
+	protected BeanFactory beanFactory;
+	@Autowired
+	protected JedisLockManager lockManager;
 	@Autowired
 	protected ProcessManager processManager;
 
@@ -75,19 +79,19 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected TaskSignDao taskSignDao;
 
 	/** Pipeline information. */
-	final protected PipelineInfo pipeInfo;
+	final protected PipelineInfo pipelineInfo;
 
 	protected String shaGit;
 	protected String shaLocal;
 
 	public AbstractPipelineProvider(PipelineInfo info) {
-		this.pipeInfo = info;
-		String[] a = info.getProject().getTarPath().split("/");
-		this.pipeInfo.setTarName(a[a.length - 1]);
+		notNull(info, "Pipeline info must not be null.");
+		this.pipelineInfo = info;
+		this.pipelineInfo.setTarName(subPackname(info.getProject().getTarPath()));
 	}
 
 	public PipelineInfo getPipelineInfo() {
-		return pipeInfo;
+		return pipelineInfo;
 	}
 
 	@Override
@@ -122,6 +126,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 * @throws Exception
 	 */
+	@Override
 	public void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
 		hasText(command, "Commands must not be empty.");
 		Integer logId = getPipelineInfo().getTaskHistory().getId();
@@ -145,19 +150,24 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Creating remote directory.
+	 * Decryption usable cipher SSH2 key.
 	 * 
-	 * @param remoteHost
-	 * @param user
-	 * @param path
 	 * @param sshkey
+	 * @return
 	 * @throws Exception
 	 */
-	protected void createRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
-		String command = "mkdir -p " + path;
-		logAdd(getPipelineInfo().getTaskHistory().getId(), "Creating remote directory: %s", command);
-		// Do directory creating.
-		doRemoteCommand(remoteHost, user, command, sshkey);
+	public char[] getUsableCipherSSHKey(String sshkey) throws Exception {
+		Integer logId = getPipelineInfo().getTaskHistory().getId();
+
+		// Obtain text-plain privateKey(RSA)
+		String cipherKey = config.getTranform().getCipherKey();
+		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
+		if (log.isInfoEnabled()) {
+			log.info("Transfer decrypted sshkey: {} => {}", cipherKey, "******");
+		}
+
+		logAdd(logId, "Transfer decrypted sshkey: %s => %s", cipherKey, "******");
+		return sshkeyPlain;
 	}
 
 	/**
@@ -185,7 +195,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Do startup transfer instances jobs.
 	 */
-	protected void doTransferForInstances() {
+	protected void doTransferInstances() {
 		// Creating transfer instances jobs.
 		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newTransferJob(instance))
 				.collect(toList());
@@ -208,32 +218,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected abstract Runnable newTransferJob(AppInstance instance);
 
-	protected String commandReplace(String command, String projectPath) {
-		command.replaceAll("\\[", "\\[");
-		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
-		// TODO ......
-		return command;
-	}
-
 	/**
-	 * Decryption usable cipher SSH2 key.
+	 * Resolve placeholder variables.
 	 * 
-	 * @param sshkey
+	 * @param command
+	 * @param projectPath
 	 * @return
-	 * @throws Exception
 	 */
-	protected char[] getUsableCipherSSHKey(String sshkey) throws Exception {
-		Integer logId = getPipelineInfo().getTaskHistory().getId();
-
-		// Obtain text-plain privateKey(RSA)
-		String cipherKey = config.getTranform().getCipherKey();
-		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
-		if (log.isInfoEnabled()) {
-			log.info("Transfer decrypted sshkey: {} => {}", cipherKey, "******");
-		}
-
-		logAdd(logId, "Transfer decrypted sshkey: %s => %s", cipherKey, "******");
-		return sshkeyPlain;
+	protected String resolvePlaceholderVariables(String command, String projectPath) {
+		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
+		return command;
 	}
 
 }

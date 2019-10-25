@@ -20,7 +20,9 @@ import com.wl4g.devops.ci.core.DefaultPipeline;
 import com.wl4g.devops.ci.core.Pipeline;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
-import com.wl4g.devops.ci.pipeline.PipelineProvider.PipelineType;
+import com.wl4g.devops.ci.pipeline.job.DockerNativePipeTransferJob;
+import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipeTransferJob;
+import com.wl4g.devops.ci.pipeline.job.NpmViewPipeTransferJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineJob;
@@ -28,7 +30,9 @@ import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.support.beans.prototype.DelegateAlias;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -49,6 +53,8 @@ import java.util.List;
  */
 @Configuration
 public class CiCdAutoConfiguration {
+
+	// --- BASIC ---
 
 	@Bean
 	@ConfigurationProperties(prefix = "pipeline")
@@ -81,25 +87,14 @@ public class CiCdAutoConfiguration {
 		return new GlobalTimeoutJobCleanupFinalizer();
 	}
 
-	//
-	// Manager & console configuration.
-	//
+	// --- CONSOLE ---
 
 	@Bean
 	public CiCdConsole cicdConsole() {
 		return new CiCdConsole();
 	}
 
-	//
-	// Pipeline provider configuration.
-	//
-
-	@Bean
-	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
-		return new DjangoStandardPipelineProvider(info);
-	}
+	// --- PIPELINE PROVIDERs ---
 
 	@Bean
 	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR })
@@ -123,14 +118,43 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
+	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
+		return new DjangoStandardPipelineProvider(info);
+	}
+
+	@Bean
 	@DelegateAlias({ PipelineType.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineInfo info) {
 		return new NpmViewPipelineProvider(info);
 	}
-	//
-	// Timing & handler configuration.
-	//
+
+	// --- PIPELINE TRANSFER JOBs ---
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public MvnAssembleTarPipeTransferJob mvnAssembleTarPipeTransferJob(MvnAssembleTarPipelineProvider provider, Project project,
+			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails, String tarPath, String path) {
+		return new MvnAssembleTarPipeTransferJob(provider, project, instance, taskHistoryDetails, tarPath, path);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DockerNativePipeTransferJob dockerNativePipeTransferJob(DockerNativePipelineProvider provider, Project project,
+			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+		return new DockerNativePipeTransferJob(provider, project, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public NpmViewPipeTransferJob npmViewPipeTransferJob(NpmViewPipelineProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		return new NpmViewPipeTransferJob(provider, project, instance, taskHistoryDetails);
+	}
+
+	// --- TIMING SCHEDULE ---
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

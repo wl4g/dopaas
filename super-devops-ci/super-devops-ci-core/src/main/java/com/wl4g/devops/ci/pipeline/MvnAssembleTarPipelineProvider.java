@@ -41,10 +41,11 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void execute() throws Exception {
 		// maven install , include dependency
-		build(pipeInfo.getTaskHistory(), false);
+		build(pipelineInfo.getTaskHistory(), false);
 		// get git sha
 		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
-		deploy();
+		// MVN build.
+		doInternalMvnBuild0();
 	}
 
 	/**
@@ -64,20 +65,20 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			build(getPipelineInfo().getTaskHistory(), true);
 			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
 		}
-		deploy();
+		doInternalMvnBuild0();
 	}
 
 	/**
-	 * Deploy
+	 * Invoke internal MVN build.
 	 */
-	private void deploy() throws Exception {
+	private void doInternalMvnBuild0() throws Exception {
 		// get local sha
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 		// backup in local
 		backupLocal();
 
 		// Startup pipeline jobs.
-		doTransferForInstances();
+		doTransferInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -93,8 +94,9 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
-		return new MvnAssembleTarPipeTransferJob(config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
-				instance, getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
+		Object[] args = { this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails(),
+				getPipelineInfo().getPath(), getPipelineInfo().getProject().getTarPath() };
+		return beanFactory.getBean(MvnAssembleTarPipeTransferJob.class, args);
 	}
 
 }

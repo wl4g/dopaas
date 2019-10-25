@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
-import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -25,6 +24,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
 /**
@@ -34,14 +34,16 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAssembleTarPipelineProvider> {
+public class MvnAssembleTarPipeTransferJob extends BasedMavenPipeTransferJob<MvnAssembleTarPipelineProvider> {
 
-	private String path;
-	private String tarPath;
+	final protected String path;
+	final protected String tarPath;
 
-	public MvnAssembleTarPipeTransferJob(CiCdProperties config, MvnAssembleTarPipelineProvider provider, Project project,
-			String path, AppInstance instance, String tarPath, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(config, provider, project, instance, taskHistoryDetails);
+	public MvnAssembleTarPipeTransferJob(MvnAssembleTarPipelineProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails, String tarPath, String path) {
+		super(provider, project, instance, taskHistoryDetails);
+		hasText(path, "path must not be empty.");
+		hasText(tarPath, "tarPath must not be empty.");
 		this.path = path;
 		this.tarPath = tarPath;
 	}
@@ -62,7 +64,7 @@ public class MvnAssembleTarPipeTransferJob extends AbstractPipeTransferJob<MvnAs
 					instance.getSshKey());
 
 			// Scp to tmp,rename,move to webapps
-			provider.doExecutableTransfer(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
+			doExecutableTransfer(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
 					instance.getSshKey());
 
 			// Post remote commands (e.g. restart)

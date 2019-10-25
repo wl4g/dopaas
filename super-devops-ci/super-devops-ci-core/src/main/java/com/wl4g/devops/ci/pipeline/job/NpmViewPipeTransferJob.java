@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
-import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.NpmViewPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -33,11 +32,11 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class NpmViewPipeTransferJob extends AbstractPipeTransferJob<NpmViewPipelineProvider> {
+public class NpmViewPipeTransferJob extends BasedViewPipeTransferJob<NpmViewPipelineProvider> {
 
-	public NpmViewPipeTransferJob(CiCdProperties config, NpmViewPipelineProvider provider, Project project, AppInstance instance,
+	public NpmViewPipeTransferJob(NpmViewPipelineProvider provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(config, provider, project, instance, taskHistoryDetails);
+		super(provider, project, instance, taskHistoryDetails);
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class NpmViewPipeTransferJob extends AbstractPipeTransferJob<NpmViewPipel
 					provider.getPipelineInfo().getTaskHistory().getPreCommand(), instance.getSshKey());
 
 			// Scp to tmp,rename,move to webapps
-			provider.handOut(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
+			handOut(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
 
 			// Post commands. (restart command)
 			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),

@@ -42,50 +42,25 @@ public interface PipelineProvider extends DelegateAliasPrototypeBean {
 	void rollback() throws Exception;
 
 	/**
-	 * Get pipeline model information.
+	 * Get pipeline information.
 	 * 
 	 * @return
 	 */
 	PipelineInfo getPipelineInfo();
 
+	/**
+	 * Invoke remote commands.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param command
+	 * @param sshkey
+	 * @throws Exception
+	 */
+	void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception;
+
 	String getShaLocal();
 
 	String getShaGit();
-
-	/**
-	 * Integrate pipeline type definition.
-	 *
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月29日
-	 * @since
-	 */
-	public static abstract class PipelineType {
-
-		/**
-		 * MAVEN assemble tar provider alias.
-		 */
-		final public static String MVN_ASSEMBLE_TAR = "PipeWithMvnAssTar";
-
-		/**
-		 * Spring boot executable jar provider alias.
-		 */
-		final public static String SPRING_EXECUTABLE_JAR = "PipeWithSpringExecJar";
-
-		/**
-		 * Docker native provider alias.
-		 */
-		final public static String DOCKER_NATIVE = "PipeWithDockerNative";
-
-		/**
-		 * DJANGO standard provider alias.
-		 */
-		final public static String DJANGO_STANDARD = "PipeWithDjangoStandard";
-
-		/**
-		 * NPM provider alias.
-		 */
-		final public static String NPM_VIEW = "PipeWithNpm";
-
-	}
 
 }

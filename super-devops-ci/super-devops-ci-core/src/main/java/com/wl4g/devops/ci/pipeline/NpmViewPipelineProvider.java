@@ -34,11 +34,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
+public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 
 	public NpmViewPipelineProvider(PipelineInfo info) {
 		super(info);
 	}
+
+	// --- NPM building. ---
 
 	@Override
 	public void execute() throws Exception {
@@ -53,8 +55,8 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
-		return new NpmViewPipeTransferJob(config, this, getPipelineInfo().getProject(), instance,
-				getPipelineInfo().getTaskHistoryDetails());
+		Object[] args = { this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails() };
+		return beanFactory.getBean(NpmViewPipeTransferJob.class, args);
 	}
 
 	private void build() throws Exception {
@@ -68,7 +70,7 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 		// step4 scp ==> tar -x
 
 		// Startup pipeline jobs.
-		doTransferForInstances();
+		doTransferInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Npm pipeline execution successful!");
@@ -111,7 +113,7 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 		} else {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-			String buildCommand = commandReplace(taskHistory.getBuildCommand(), projectDir);
+			String buildCommand = resolvePlaceholderVariables(taskHistory.getBuildCommand(), projectDir);
 			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 	}

@@ -20,6 +20,7 @@ import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.cli.ProcessManager;
 
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notEmpty;
@@ -30,6 +31,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract deployments pipeline job.
@@ -43,7 +45,12 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Pipeline CICD properties configuration. */
-	final protected CiCdProperties config;
+	@Autowired
+	protected CiCdProperties config;
+
+	/** Command-line process manager. */
+	@Autowired
+	protected ProcessManager processManager;
 
 	/** Pipeline provider. */
 	final protected P provider;
@@ -55,25 +62,42 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	final protected Project project;
 
 	/** Pipeline taskDetailId. */
-	protected Integer taskDetailId;
+	final protected Integer taskDetailId;
 
-	public AbstractPipeTransferJob(CiCdProperties config, P provider, Project project, AppInstance instance,
+	public AbstractPipeTransferJob(P provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		notNull(config, "Pipeline config must not be null.");
 		notNull(provider, "Pipeline provider must not be null.");
 		notNull(project, "Pipeline job project must not be null.");
 		notNull(instance, "Pipeline job instance must not be null.");
 		notEmpty(taskHistoryDetails, "Pipeline task historyDetails must not be null.");
-		this.config = config;
 		this.provider = provider;
 		this.project = project;
 		this.instance = instance;
 
-		// Task detail.
+		// Task details.
 		Optional<TaskHistoryDetail> taskHisyDetail = taskHistoryDetails.stream()
 				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
 		isTrue(taskHisyDetail.isPresent(), "Not found taskDetailId by details.");
 		this.taskDetailId = taskHisyDetail.get().getId();
+	}
+
+	/**
+	 * Creating remote directory.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param path
+	 * @param sshkey
+	 * @throws Exception
+	 */
+	protected void createRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
+		Integer logId = provider.getPipelineInfo().getTaskHistory().getId();
+
+		String command = "mkdir -p " + path;
+		provider.logAdd(logId, "Creating remote directory: %s", command);
+
+		// Do directory creating.
+		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 }

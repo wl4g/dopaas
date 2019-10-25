@@ -18,7 +18,6 @@ package com.wl4g.devops.support.concurrent.locks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import redis.clients.jedis.JedisCluster;
 
 import java.util.concurrent.TimeUnit;
@@ -30,8 +29,9 @@ import static com.google.common.base.Charsets.UTF_8;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * REDIS locks manager.
@@ -41,47 +41,57 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
  * @since
  */
 public class JedisLockManager {
-
+	final protected static String NAMESPACE = "simple_spinlock_";
+	final protected static String NXXX = "NX";
+	final protected static String EXPX = "PX";
+	final protected static Long FREQ_MS = 50L;
+	final protected static String UNLOCK_LUA = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private JedisCluster jedisCluster;
+	protected JedisCluster jedisCluster;
 
+	/**
+	 * Get and create {@link SimpleSpinJedisLock} with name.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Lock getLock(String name) {
 		return getLock(name, 15, TimeUnit.SECONDS);
 	}
 
+	/**
+	 * Get and create {@link SimpleSpinJedisLock} with name.
+	 * 
+	 * @param name
+	 * @param timeout
+	 * @param unit
+	 * @return
+	 */
 	public Lock getLock(String name, long timeout, TimeUnit unit) {
-		return new SimpleSpinJedisLock(jedisCluster, md5().hashString(name, UTF_8).toString(), timeout, unit);
+		return new SimpleSpinJedisLock(md5().hashString(name, UTF_8).toString(), timeout, unit);
 	}
 
 	/**
-	 * Simple spin JEDIS lock.
+	 * JEDIS simple spin lock.
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019年3月21日
 	 * @since
 	 */
-	public static class SimpleSpinJedisLock implements Lock {
-		final private static String NAMESPACE = "simple_spinlock_";
-		final private static Long SUCCESS = new Long(1L);
-		final private static String NXXX = "NX";
-		final private static String EXPX = "PX";
-		final private static long FREQ_MS = 50L;
-
-		final private Logger log = LoggerFactory.getLogger(getClass());
-		final private JedisCluster jedisCluster;
+	private class SimpleSpinJedisLock implements Lock {
+		/** Current locker name. */
 		final private String name;
+		/** Current locker request ID. */
 		final private String processId;
+		/** Current locker expired time(MS). */
 		final private long expiredMs;
 
-		public SimpleSpinJedisLock(JedisCluster jedisCluster, String name, long expiredMs,
-				TimeUnit unit/* , String processId */) {
-			Assert.notNull(jedisCluster, "'jedisCluster' must not be null");
-			Assert.hasText(name, "'name' must not be empty");
-			Assert.notNull(unit, "'unit' must not be null");
-			Assert.isTrue(expiredMs > 0, "'timeoutMs' must greater than 0");
-			this.jedisCluster = jedisCluster;
+		public SimpleSpinJedisLock(String name, long expiredMs, TimeUnit unit) {
+			hasText(name, "SimpleSpinJedis lock name must not be empty");
+			notNull(unit, "SimpleSpinJedis unit must not be null");
+			isTrue(expiredMs > 0, "'timeoutMs' must greater than 0");
 			this.name = NAMESPACE + name;
 			this.expiredMs = unit.toMillis(expiredMs);
 			this.processId = String.valueOf(current().nextInt(1000_0000, Integer.MAX_VALUE));
@@ -90,7 +100,7 @@ public class JedisLockManager {
 		@Override
 		public void lock() {
 			while (true) {
-				if (nonNull(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
+				if (assertSuccess(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
 					return;
 				}
 				try {
@@ -108,16 +118,18 @@ public class JedisLockManager {
 
 		@Override
 		public boolean tryLock() {
-			String ret = jedisCluster.set(name, processId, NXXX, EXPX, expiredMs);
-			return endsWithIgnoreCase(ret, "ok") || (isNumeric(ret) && Integer.parseInt(ret) > 0);
+			if (assertSuccess(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
+				return true;
+			}
+			return false;
 		}
 
 		@Override
-		public boolean tryLock(long tryTimeout, TimeUnit timeUnit) throws InterruptedException {
-			long t = timeUnit.toMillis(tryTimeout) / FREQ_MS, c = 0;
+		public boolean tryLock(long tryTimeout, TimeUnit unit) throws InterruptedException {
+			long t = unit.toMillis(tryTimeout) / FREQ_MS, c = 0;
 			while (t > (++c)) {
 				Thread.sleep(FREQ_MS);
-				if (nonNull(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
+				if (assertSuccess(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
 					return true;
 				}
 			}
@@ -126,16 +138,39 @@ public class JedisLockManager {
 
 		@Override
 		public void unlock() {
-			String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-			Object res = jedisCluster.eval(script, singletonList(name), singletonList(processId));
-			if (!SUCCESS.equals(res)) {
-				log.warn(String.format("Failed to unlock for %s@%s", processId, name));
+			if (processId.equals(jedisCluster.get(name))) { // Optimized:Locked?
+				Object res = jedisCluster.eval(UNLOCK_LUA, singletonList(name), singletonList(processId));
+				if (!assertSuccess(res)) {
+					log.warn("Failed to unlock for %{}@{}", processId, name);
+				} else if (log.isDebugEnabled()) {
+					log.debug("Unlock successful for %{}@{}", processId, name);
+				}
 			}
 		}
 
 		@Override
 		public Condition newCondition() {
 			throw new UnsupportedOperationException();
+		}
+
+		/**
+		 * Assertion JEDIS lock result is success?
+		 * 
+		 * @param res
+		 * @return
+		 */
+		final private boolean assertSuccess(Object res) {
+			if (nonNull(res)) {
+				if (res instanceof String) {
+					String res0 = res.toString().trim();
+					return "1".equals(res0) || "ok".equalsIgnoreCase(res0);
+				} else if (res instanceof Number) {
+					return ((Number) res).longValue() >= 1L;
+				} else {
+					throw new IllegalStateException(String.format("Unknown result for %s", res));
+				}
+			}
+			return false;
 		}
 
 	}
