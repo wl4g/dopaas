@@ -26,7 +26,6 @@ import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.share.service.AppClusterService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -48,8 +47,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	@Autowired
 	private AppInstanceDao appInstanceDao;
 
-	@Value("${cipher-key}")
-	protected String cipherKey;
+
 
 
 	@Override
@@ -73,15 +71,15 @@ public class AppClueterServiceImpl implements AppClusterService {
 
 
 	@Override
-	public void save(AppCluster appCluster) {
+	public void save(AppCluster appCluster,String cipherKey) {
 		if(appCluster.getId()==null){
-			insert(appCluster);
+			insert(appCluster,cipherKey);
 		}else{
-			update(appCluster);
+			update(appCluster,cipherKey);
 		}
 	}
 
-	private void insert(AppCluster appCluster){
+	private void insert(AppCluster appCluster,String cipherKey){
 		appCluster.preInsert();
 		appClusterDao.insertSelective(appCluster);
 		Integer clusterId = appCluster.getId();
@@ -102,7 +100,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 		}
 	}
 
-	private void update(AppCluster appCluster){
+	private void update(AppCluster appCluster,String cipherKey){
 		appCluster.preUpdate();
 		appClusterDao.updateByPrimaryKeySelective(appCluster);
 		List<AppInstance> appInstances = appInstanceDao.selectByClusterId(appCluster.getId());
@@ -150,7 +148,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	}
 
 	@Override
-	public AppCluster detail(Integer clusterId) {
+	public AppCluster detail(Integer clusterId,String cipherKey) {
 		Assert.notNull(clusterId,"clusterId is null");
 		AppCluster appCluster = appClusterDao.selectByPrimaryKey(clusterId);
 		List<AppInstance> appInstances = appInstanceDao.selectByClusterId(clusterId);

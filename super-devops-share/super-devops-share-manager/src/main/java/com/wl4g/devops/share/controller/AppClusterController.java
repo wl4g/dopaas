@@ -23,6 +23,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.share.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +49,9 @@ public class AppClusterController extends BaseController {
 	@Autowired
 	private AppClusterService appClusterService;
 
+	@Value("${cipher-key}")
+	protected String cipherKey;
+
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(CustomPage customPage, String clusterName) {
 		RespBase<Object> resp = RespBase.create();
@@ -60,7 +64,7 @@ public class AppClusterController extends BaseController {
 	@RequestMapping(value = "/save")
 	public RespBase<?> save(@RequestBody AppCluster appCluster) {
 		RespBase<Object> resp = RespBase.create();
-		appClusterService.save(appCluster);
+		appClusterService.save(appCluster,cipherKey);
 		return resp;
 	}
 
@@ -74,7 +78,7 @@ public class AppClusterController extends BaseController {
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer clusterId) {
 		RespBase<Object> resp = RespBase.create();
-		AppCluster detail = appClusterService.detail(clusterId);
+		AppCluster detail = appClusterService.detail(clusterId,cipherKey);
 		resp.getData().put("data",detail);
 		return resp;
 	}

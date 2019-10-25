@@ -181,6 +181,7 @@ public class TaskController extends BaseController {
 
 	@RequestMapping(value = "/getDependencys")
 	public RespBase<?> getDependencys(Integer appClusterId) {
+		Assert.notNull(appClusterId,"appClusterId is null");
 		RespBase<Object> resp = RespBase.create();
 		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
 		resp.getData().put("list",taskBuildCommands);
