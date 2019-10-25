@@ -22,6 +22,7 @@ import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.support.cli.ProcessManager;
 
+import static com.wl4g.devops.ci.utils.LogHolder.logAdd;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
@@ -91,10 +92,8 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	 * @throws Exception
 	 */
 	protected void createRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
-		Integer logId = provider.getPipelineInfo().getTaskHistory().getId();
-
 		String command = "mkdir -p " + path;
-		provider.logAdd(logId, "Creating remote directory: %s", command);
+		logAdd("Creating remote directory: %s", command);
 
 		// Do directory creating.
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);

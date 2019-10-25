@@ -20,9 +20,11 @@ import com.wl4g.devops.ci.core.DefaultPipeline;
 import com.wl4g.devops.ci.core.Pipeline;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
+import com.wl4g.devops.ci.pipeline.job.DjangoStandardTransferJob;
 import com.wl4g.devops.ci.pipeline.job.DockerNativePipeTransferJob;
 import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipeTransferJob;
 import com.wl4g.devops.ci.pipeline.job.NpmViewPipeTransferJob;
+import com.wl4g.devops.ci.pipeline.job.SpringExecutableJarTransferJob;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineJob;
@@ -152,6 +154,20 @@ public class CiCdAutoConfiguration {
 	public NpmViewPipeTransferJob npmViewPipeTransferJob(NpmViewPipelineProvider provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		return new NpmViewPipeTransferJob(provider, project, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public SpringExecutableJarTransferJob springExecutableJarTransferJob(SpringExecutableJarPipelineProvider provider,
+			Project project, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+		return new SpringExecutableJarTransferJob(provider, project, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DjangoStandardTransferJob djangoStandardTransferJob(DjangoStandardPipelineProvider provider, Project project,
+			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+		return new DjangoStandardTransferJob(provider, project, instance, taskHistoryDetails);
 	}
 
 	// --- TIMING SCHEDULE ---

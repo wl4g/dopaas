@@ -19,7 +19,6 @@ import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
-import com.wl4g.devops.common.utils.io.FileIOUtils;
 
 import org.springframework.util.Assert;
 
@@ -33,6 +32,7 @@ import java.util.concurrent.locks.Lock;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
@@ -59,7 +59,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			log.info("Building started, stdout to {}", jobLog.getAbsolutePath());
 		}
 		// Mark start EOF.
-		FileIOUtils.writeFile(jobLog, LOG_FILE_START);
+		writeALineFile(jobLog, LOG_FILE_START);
 
 		// Dependencies.
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(taskHistory.getProjectId(), null);
