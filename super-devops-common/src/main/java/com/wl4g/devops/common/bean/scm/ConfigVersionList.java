@@ -22,7 +22,7 @@ package com.wl4g.devops.common.bean.scm;
  */
 public class ConfigVersionList extends ConfigVersion {
 	private String instanceId; // 节点id
-	private String envId;// 环境id=
+	private String envType;// 环境id=
 	private String historyId;// 轨迹id=
 	private Integer instanceCount; //
 	private Integer type;
@@ -35,12 +35,12 @@ public class ConfigVersionList extends ConfigVersion {
 		this.instanceId = instanceId;
 	}
 
-	public String getEnvId() {
-		return envId;
+	public String getEnvType() {
+		return envType;
 	}
 
-	public void setEnvId(String envId) {
-		this.envId = envId;
+	public void setEnvType(String envType) {
+		this.envType = envType;
 	}
 
 	public Integer getInstanceCount() {

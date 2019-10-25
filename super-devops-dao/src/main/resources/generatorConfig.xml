@@ -40,9 +40,9 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
 
-        <table tableName="ci_task_build_command" domainObjectName="TaskBuildCommand"
+        <table tableName="app_cluster" domainObjectName="AppCluster"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="ci_task_his_build_command" domainObjectName="TaskHisBuildCommand"
+        <table tableName="app_instance" domainObjectName="AppInstance"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
         <!--<table tableName="umc_alarm_collector" domainObjectName="AlarmCollector"

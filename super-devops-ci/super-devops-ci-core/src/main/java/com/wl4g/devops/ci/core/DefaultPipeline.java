@@ -27,7 +27,8 @@ import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
 import com.wl4g.devops.dao.ci.*;
-import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBeanFactory;
 import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
@@ -68,7 +69,8 @@ public class DefaultPipeline implements Pipeline {
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
 	protected MailSenderTemplate mailSender;
-
+	@Autowired
+	private AppInstanceDao appInstanceDao;
 	@Autowired
 	protected AppClusterDao appClusterDao;
 	@Autowired
@@ -102,12 +104,12 @@ public class DefaultPipeline implements Pipeline {
 		Task task = taskDao.selectByPrimaryKey(taskId);
 		notNull(task, String.format("Not found task of %s", taskId));
 		notNull(task.getAppClusterId(), "Task clusterId must not be null.");
-		AppCluster appCluster = appClusterDao.getAppGroup(task.getAppClusterId());
+		AppCluster appCluster = appClusterDao.selectByPrimaryKey(task.getAppClusterId());
 		notNull(appCluster, "not found this app");
 
 		List<AppInstance> instances = new ArrayList<>();
 		for (String instanceId : instanceIds) {
-			AppInstance instance = appClusterDao.getAppInstance(instanceId);
+			AppInstance instance = appInstanceDao.selectByPrimaryKey(Integer.valueOf(instanceId));
 			instances.add(instance);
 		}
 
@@ -144,7 +146,7 @@ public class DefaultPipeline implements Pipeline {
 		// Instance.
 		List<AppInstance> instances = new ArrayList<>();
 		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-			AppInstance instance = appClusterDao.getAppInstance(taskHistoryDetail.getInstanceId().toString());
+			AppInstance instance = appInstanceDao.selectByPrimaryKey(taskHistoryDetail.getInstanceId());
 			instances.add(instance);
 		}
 
@@ -184,7 +186,7 @@ public class DefaultPipeline implements Pipeline {
 		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
 		notNull(task, "Hook pipeline task must not be null.");
 		List<AppInstance> instances = safeList(taskDetailDao.selectByTaskId(task.getId())).stream()
-				.map(detail -> appClusterDao.getAppInstance(detail.getInstanceId().toString())).collect(toList());
+				.map(detail -> appInstanceDao.selectByPrimaryKey(detail.getInstanceId())).collect(toList());
 		notEmpty(instances, "Hook pipeline task instances is empty, please complete the configure.");
 
 		// Create task history(NEW).
@@ -311,7 +313,7 @@ public class DefaultPipeline implements Pipeline {
 		Project project = projectDao.selectByPrimaryKey(taskHisy.getProjectId());
 		notNull(project, "Project can not be null");
 
-		AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
+		AppCluster appCluster = appClusterDao.selectByPrimaryKey(project.getAppClusterId());
 		notNull(appCluster, "AppCluster can not be null");
 		project.setGroupName(appCluster.getName());
 
@@ -325,7 +327,7 @@ public class DefaultPipeline implements Pipeline {
 
 		// Obtain instances.
 		List<AppInstance> instances = safeList(taskHisyDetails).stream()
-				.map(detail -> appClusterDao.getAppInstance(String.valueOf(detail.getInstanceId()))).collect(toList());
+				.map(detail -> appInstanceDao.selectByPrimaryKey(detail.getInstanceId())).collect(toList());
 
 		PipelineInfo info = new DefaultPipelineInfo();
 		info.setProject(project);
