@@ -22,9 +22,10 @@ import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.share.Dict;
-import com.wl4g.devops.dao.scm.AppClusterDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.share.DictDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.HistoryService;
@@ -55,6 +56,8 @@ public class HistoryServiceImpl implements HistoryService {
 	private AppClusterService appClusterService;
 	@Autowired
 	private DictDao dictDao;
+	@Autowired
+	private AppInstanceDao appInstanceDao;
 
 	@Override
 	public void insert(HistoryOfDetail historyOfDetail) {
@@ -152,13 +155,10 @@ public class HistoryServiceImpl implements HistoryService {
 		configGurationDao.updateNode(nMap);
 
 		// Get application group information.
-		AppCluster appCluster = this.appClusterDao.getAppGroup(agl.getAppClusterId());
+		AppCluster appCluster = this.appClusterDao.selectByPrimaryKey(agl.getAppClusterId());
 
 		// Get application nodeList information
-		AppInstance appInstance = new AppInstance();
-		appInstance.setAppClusterId(Long.parseLong(String.valueOf(agl.getAppClusterId())));
-		appInstance.setEnvId(agl.getEnvId());
-		List<AppInstance> nodeList = appClusterService.instancelist(appInstance);
+		List<AppInstance> nodeList = appInstanceDao.selectByClusterIdAndEnvType(agl.getAppClusterId(),agl.getEnvType());
 		// Define release instance list.
 		List<ReleaseInstance> instances = new ArrayList<>();
 		for (AppInstance instance : nodeList) {

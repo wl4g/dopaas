@@ -38,7 +38,7 @@ public class AlarmConfig extends BaseBean implements Serializable {
 	private String contactGroupName;
 
 	private Integer group;
-	private Integer environment;
+	private String envType;
 	private String classify;
 
 	/* template */
@@ -103,12 +103,12 @@ public class AlarmConfig extends BaseBean implements Serializable {
 		this.group = group;
 	}
 
-	public Integer getEnvironment() {
-		return environment;
+	public String getEnvType() {
+		return envType;
 	}
 
-	public void setEnvironment(Integer environment) {
-		this.environment = environment;
+	public void setEnvType(String envType) {
+		this.envType = envType;
 	}
 
 	public String getClassify() {
