@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.iam.realm;
 
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -22,7 +26,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
@@ -66,16 +69,17 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		// Check provider
 		ProviderSupport.checkSupport(token.getSocial().getProvider());
 
-		// Get account information
-		/*
-		 * The corresponding account ID (userId or accountId or principal) for
-		 * the openId binding, validate in
-		 * com.wl4g.devops.iam.matcher.Oauth2Matcher#doMatch
+		/**
+		 * Obtain the account information bound by openId.
+		 * {@link Oauth2AuthorizingBoundMatcher#doCredentialsMatch()}
 		 */
 		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
 				token.getSocial().getUnionId());
-		IamAccountInfo account = this.configurer.getIamAccount(parameter);
-		if (account != null && !StringUtils.isEmpty(account.getPrincipal())) {
+		IamAccountInfo account = configurer.getIamAccount(parameter);
+		if (log.isInfoEnabled()) {
+			log.info("The accountInfo obtained through {} -> {}", toJSONString(parameter), toJSONString(account));
+		}
+		if (nonNull(account) && !isBlank(account.getPrincipal())) {
 			return new SimpleAuthenticationInfo(account.getPrincipal(), null, this.getName());
 		}
 		return EmptyOauth2AuthorizationInfo.EMPTY;
