@@ -23,6 +23,6 @@ public interface AppInstanceDao {
 
     int countByClusterId(Integer clusterId);
 
-    List<AppInstance> selectByClusterIdAndEnvType(Integer clusterId,@Param("envType") String envType);
+    List<AppInstance> selectByClusterIdAndEnvType(@Param("clusterId") Integer clusterId,@Param("envType") String envType);
 
 }

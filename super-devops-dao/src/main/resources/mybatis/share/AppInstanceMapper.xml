@@ -18,11 +18,19 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="ssh_key" property="sshKey" jdbcType="LONGVARCHAR" />
     <result column="ssh_key_pub" property="sshKeyPub" jdbcType="LONGVARCHAR" />
+
+    <!--other-->
+    <result column="hostname" property="hostname" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     id, cluster_id, version_id, host_id, env_type, enable, endpoint, remark, ssh_user, 
     create_by, create_date, update_by, update_date, del_flag,ssh_key, ssh_key_pub
+  </sql>
+
+  <sql id="Base_Column_List_i" >
+    i.id, i.cluster_id, i.version_id, i.host_id, i.env_type, i.enable, i.endpoint, i.remark, i.ssh_user,
+    i.create_by, i.create_date, i.update_by, i.update_date, i.del_flag,i.ssh_key, i.ssh_key_pub
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -41,11 +49,12 @@
 
   <select id="selectByClusterIdAndEnvType" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    <include refid="Base_Column_List" />
-    from app_instance
-    where cluster_id = #{clusterId,jdbcType=INTEGER}
-    and env_type = #{envType,jdbcType=VARCHAR}
-    and del_flag!=1
+    <include refid="Base_Column_List_i" />,h.hostname
+    from app_instance i
+    left join app_host h on h.id = i.host_id
+    where i.cluster_id = #{clusterId,jdbcType=INTEGER}
+    and i.env_type = #{envType,jdbcType=VARCHAR}
+    and i.del_flag!=1
   </select>
 
   <select id="countByClusterId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
