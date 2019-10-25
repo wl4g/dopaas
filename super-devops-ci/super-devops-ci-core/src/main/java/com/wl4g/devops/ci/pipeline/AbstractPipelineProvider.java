@@ -185,9 +185,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Do startup transfer instances jobs.
 	 */
-	protected void doStartupTransferInstances() {
+	protected void doTransferForInstances() {
 		// Creating transfer instances jobs.
-		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newPipelineJob(instance))
+		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newTransferJob(instance))
 				.collect(toList());
 
 		// Submit jobs for complete.
@@ -201,12 +201,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Create pipeline job.
+	 * Create pipeline transfer job.
 	 * 
 	 * @param instance
 	 * @return
 	 */
-	protected abstract Runnable newPipelineJob(AppInstance instance);
+	protected abstract Runnable newTransferJob(AppInstance instance);
 
 	protected String commandReplace(String command, String projectPath) {
 		command.replaceAll("\\[", "\\[");
@@ -216,7 +216,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Do decrypted usable cipher SSH2 key.
+	 * Decryption usable cipher SSH2 key.
 	 * 
 	 * @param sshkey
 	 * @return

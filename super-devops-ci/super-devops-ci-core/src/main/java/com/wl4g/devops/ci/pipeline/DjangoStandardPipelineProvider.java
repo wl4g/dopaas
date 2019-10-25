@@ -42,7 +42,7 @@ public class DjangoStandardPipelineProvider extends BasedMavenPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newPipelineJob(AppInstance instance) {
+	protected Runnable newTransferJob(AppInstance instance) {
 		throw new UnsupportedOperationException();
 	}
 

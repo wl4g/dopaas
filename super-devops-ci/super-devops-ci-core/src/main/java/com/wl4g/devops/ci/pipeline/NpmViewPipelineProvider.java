@@ -52,7 +52,7 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newPipelineJob(AppInstance instance) {
+	protected Runnable newTransferJob(AppInstance instance) {
 		return new NpmViewPipeTransferJob(config, this, getPipelineInfo().getProject(), instance,
 				getPipelineInfo().getTaskHistoryDetails());
 	}
@@ -68,7 +68,7 @@ public class NpmViewPipelineProvider extends BasedViewPipelineProvider {
 		// step4 scp ==> tar -x
 
 		// Startup pipeline jobs.
-		doStartupTransferInstances();
+		doTransferForInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Npm pipeline execution successful!");

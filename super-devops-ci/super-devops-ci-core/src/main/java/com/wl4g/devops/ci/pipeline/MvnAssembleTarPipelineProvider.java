@@ -77,7 +77,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		backupLocal();
 
 		// Startup pipeline jobs.
-		doStartupTransferInstances();
+		doTransferForInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -92,7 +92,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newPipelineJob(AppInstance instance) {
+	protected Runnable newTransferJob(AppInstance instance) {
 		return new MvnAssembleTarPipeTransferJob(config, this, getPipelineInfo().getProject(), getPipelineInfo().getPath(),
 				instance, getPipelineInfo().getProject().getTarPath(), getPipelineInfo().getTaskHistoryDetails());
 	}
