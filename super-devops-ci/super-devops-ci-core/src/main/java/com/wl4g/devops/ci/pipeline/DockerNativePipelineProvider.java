@@ -55,7 +55,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dockerBuild(getPipelineInfo().getPath());
 
 		// Startup pipeline jobs.
-		doTransferForInstances();
+		doTransferInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -78,7 +78,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
 
 		// Startup pipeline jobs.
-		doTransferForInstances();
+		doTransferInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -128,7 +128,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
-		return new DockerNativePipeTransferJob(config, this, getPipelineInfo().getProject(), instance,
+		return new DockerNativePipeTransferJob(this, getPipelineInfo().getProject(), instance,
 				getPipelineInfo().getTaskHistoryDetails());
 	}
 

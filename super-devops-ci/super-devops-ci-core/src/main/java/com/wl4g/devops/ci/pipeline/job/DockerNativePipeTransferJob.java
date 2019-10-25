@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
-import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -35,9 +34,9 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  */
 public class DockerNativePipeTransferJob extends AbstractPipeTransferJob<DockerNativePipelineProvider> {
 
-	public DockerNativePipeTransferJob(CiCdProperties config, DockerNativePipelineProvider provider, Project project,
-			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(config, provider, project, instance, taskHistoryDetails);
+	public DockerNativePipeTransferJob(DockerNativePipelineProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		super(provider, project, instance, taskHistoryDetails);
 	}
 
 	@Override

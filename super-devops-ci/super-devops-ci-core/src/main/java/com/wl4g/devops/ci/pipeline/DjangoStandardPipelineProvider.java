@@ -25,10 +25,10 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class DjangoStandardPipelineProvider extends BasedMavenPipelineProvider {
+public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
 
-	public DjangoStandardPipelineProvider(PipelineInfo deployProviderBean) {
-		super(deployProviderBean);
+	public DjangoStandardPipelineProvider(PipelineInfo info) {
+		super(info);
 	}
 
 	@Override

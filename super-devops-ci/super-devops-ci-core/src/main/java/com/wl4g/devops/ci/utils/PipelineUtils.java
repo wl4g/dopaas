@@ -18,6 +18,9 @@ package com.wl4g.devops.ci.utils;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.state;
+
+import java.io.File;
 
 /**
  * Pipeline utility tools.
@@ -52,6 +55,20 @@ public abstract class PipelineUtils {
 	public static String subPacknameWithOutPostfix(String path) {
 		String a = subPackname(path);
 		return a.substring(0, a.lastIndexOf("."));
+	}
+
+	/**
+	 * Make sure that the directory of the path exists. If it does not exist,
+	 * create it. Throw an exception when the creation fails.
+	 * 
+	 * @param path
+	 */
+	public static void ensureDirectory(String path) {
+		hasText(path, "Directory path must not be emtpy.");
+		File file = new File(path);
+		if (!file.exists()) {
+			state(file.mkdirs(), String.format("Failed to creating directory for %s", path));
+		}
 	}
 
 }

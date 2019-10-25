@@ -30,10 +30,9 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
-import static com.wl4g.devops.ci.utils.PipelineUtils.subPacknameWithOutPostfix;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
@@ -52,108 +51,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		super(info);
 	}
 
-	// --- MAVEN file transfer. ---
-
-	/**
-	 * Do executable to instances transfer.</br>
-	 * SCP & move & decompression to target directory.
-	 * 
-	 * @param path
-	 * @param remoteHost
-	 * @param user
-	 * @param targetPath
-	 * @param rsa
-	 * @throws Exception
-	 */
-	public void doExecutableTransfer(String path, String remoteHost, String user, String targetPath, String rsa)
-			throws Exception {
-		createRemoteDirectory(remoteHost, user, "/home/" + user + "/tmp", rsa);
-		// scp
-		scpToTmpDir(path, remoteHost, user, rsa);
-		// tar
-		tarToTmp(remoteHost, user, path, rsa);
-		// remove
-		removeTarPath(remoteHost, user, path, targetPath, rsa);
-		// move
-		moveToTarPath(remoteHost, user, path, targetPath, rsa);
-	}
-
-	public void scpToTmpDir(String path, String remoteHost, String user, String sshkey) throws Exception {
-		// Transfer file to remote.
-		transferFile(remoteHost, user, getUsableCipherSSHKey(sshkey), new File(path), "/home/" + user + "/tmp");
-	}
-
-	/**
-	 * Unzip in tmp
-	 */
-	public void tarToTmp(String remoteHost, String user, String path, String rsa) throws Exception {
-		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
-		String command = "tar -xvf " + remoteTmpDir + "/" + subPackname(path) + " -C " + remoteTmpDir;
-		doRemoteCommand(remoteHost, user, command, rsa);
-	}
-
-	/**
-	 * remove tar path
-	 */
-	public void removeTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
-		String s = targetPath + "/" + subPacknameWithOutPostfix(path);
-		if (isBlank(s) || s.trim().equals("/")) {
-			throw new RuntimeException("bad command");
-		}
-		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path);
-		doRemoteCommand(remoteHost, user, command, rsa);
-	}
-
-	/**
-	 * Move to tar path
-	 */
-	public void moveToTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
-		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
-		String command = "mv " + remoteTmpDir + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
-				+ subPacknameWithOutPostfix(path);
-		doRemoteCommand(remoteHost, user, command, rsa);
-	}
-
-	/**
-	 * Local backup
-	 */
-	public void backupLocal() throws Exception {
-		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
-		String targetPath = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
-		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
-				+ subPackname(getPipelineInfo().getProject().getTarPath());
-
-		checkPath(config.getJobBackup(taskHisId).getAbsolutePath());
-
-		String command = "cp -Rf " + targetPath + " " + backupPath;
-		processManager.exec(command, config.getJobLog(taskHisId), 300000);
-	}
-
-	/**
-	 * Roll-back backup file.
-	 * 
-	 * @throws Exception
-	 */
-	public void rollbackBackupFile() throws Exception {
-		Integer taskHisRefId = getPipelineInfo().getRefTaskHistory().getId();
-		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
-				+ subPackname(getPipelineInfo().getProject().getTarPath());
-
-		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
-		String command = "cp -Rf " + backupPath + " " + target;
-		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
-	}
-
-	public void checkPath(String path) {
-		File file = new File(path);
-		if (!file.exists()) {
-			file.mkdirs();
-		}
-	}
-
 	// --- MAVEN building. ---
 
-	public void build(TaskHistory taskHistory, boolean isRollback) throws Exception {
+	protected void build(TaskHistory taskHistory, boolean isRollback) throws Exception {
 		File jobLog = config.getJobLog(taskHistory.getId());
 		if (log.isInfoEnabled()) {
 			log.info("Building started, stdout to {}", jobLog.getAbsolutePath());
@@ -178,6 +78,36 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		// Do MAVEN building.
 		doInternalMvnBuild(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
 				taskHistory.getBuildCommand());
+	}
+
+	/**
+	 * Local backup
+	 */
+	protected void backupLocal() throws Exception {
+		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
+		String targetPath = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
+		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
+				+ subPackname(getPipelineInfo().getProject().getTarPath());
+
+		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
+
+		String command = "cp -Rf " + targetPath + " " + backupPath;
+		processManager.exec(command, config.getJobLog(taskHisId), 300000);
+	}
+
+	/**
+	 * Roll-back backup file.
+	 * 
+	 * @throws Exception
+	 */
+	protected void rollbackBackupFile() throws Exception {
+		Integer taskHisRefId = getPipelineInfo().getRefTaskHistory().getId();
+		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
+				+ subPackname(getPipelineInfo().getProject().getTarPath());
+
+		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
+		String command = "cp -Rf " + backupPath + " " + target;
+		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
 	}
 
 	/**
@@ -217,7 +147,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
-				doPullSourceAndBuild0(taskHisy, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				doPullSourceAndBuild(taskHisy, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -256,7 +186,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doPullSourceAndBuild0(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+	private void doPullSourceAndBuild(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Pipeline building for projectId={}", projectId);
@@ -305,7 +235,9 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		} else {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
-			buildCommand = commandReplace(buildCommand, projectDir);
+			// Resolve placeholders.
+			buildCommand = resolvePlaceholderVariables(buildCommand, projectDir);
+			// Execute with file.
 			processManager.execFile(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 

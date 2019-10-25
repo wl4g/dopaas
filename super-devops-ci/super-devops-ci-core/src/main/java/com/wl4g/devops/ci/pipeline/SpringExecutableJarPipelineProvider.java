@@ -27,8 +27,8 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  */
 public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvider {
 
-	public SpringExecutableJarPipelineProvider(PipelineInfo deployProviderBean) {
-		super(deployProviderBean);
+	public SpringExecutableJarPipelineProvider(PipelineInfo info) {
+		super(info);
 	}
 
 	@Override
