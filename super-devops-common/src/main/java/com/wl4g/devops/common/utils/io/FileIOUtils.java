@@ -17,9 +17,11 @@ package com.wl4g.devops.common.utils.io;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.util.Assert;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
@@ -67,6 +69,26 @@ public abstract class FileIOUtils extends FileUtils {
 	// Writer
 
 	/**
+	 * Write string to file(before + {@link SystemUtils#LINE_SEPARATOR}).
+	 * 
+	 * @param file
+	 * @param data
+	 */
+	public static void writeBLineFile(File file, String data) {
+		writeFile(file, LINE_SEPARATOR + data, Charset.forName("UTF-8"), true);
+	}
+
+	/**
+	 * Write string to file(after + {@link SystemUtils#LINE_SEPARATOR}).
+	 * 
+	 * @param file
+	 * @param data
+	 */
+	public static void writeALineFile(File file, String data) {
+		writeFile(file, data + LINE_SEPARATOR, Charset.forName("UTF-8"), true);
+	}
+
+	/**
 	 * Write string to file.
 	 * 
 	 * @param file
@@ -76,6 +98,13 @@ public abstract class FileIOUtils extends FileUtils {
 		writeFile(file, data, Charset.forName("UTF-8"), true);
 	}
 
+	/**
+	 * Write string to file.
+	 * 
+	 * @param file
+	 * @param data
+	 * @param append
+	 */
 	public static void writeFile(File file, String data, boolean append) {
 		writeFile(file, data, Charset.forName("UTF-8"), append);
 	}
@@ -333,6 +362,7 @@ public abstract class FileIOUtils extends FileUtils {
 	}
 
 	public static void main(String[] args) {
+		System.out.println(SystemUtils.LINE_SEPARATOR);
 		System.out.println(readLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 2, 12));
 		System.out.println("--------------------");
 		System.out.println(seekReadString("C:\\Users\\Administrator\\Desktop\\aaa.txt", 3L, 12));

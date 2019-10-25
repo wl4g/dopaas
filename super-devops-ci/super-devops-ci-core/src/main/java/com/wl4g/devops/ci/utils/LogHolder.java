@@ -36,10 +36,24 @@ import com.google.common.annotations.Beta;
  * @since
  */
 @Beta
-public abstract class CommandLogHolder {
+public abstract class LogHolder {
+
+	/** Current default logs appender ID. */
+	final private static String DEFAULT_LOG_APPENDER = "DefaultLogAppenderID";
 
 	/** Current logs cache. */
 	final private static ThreadLocal<Map<String, LogAppender>> logCache = withInitial(() -> synchronizedMap(new HashMap<>(8)));
+
+	/**
+	 * Append log message to current buffer cache.
+	 * 
+	 * @param format
+	 * @param args
+	 * @return
+	 */
+	public static LogAppender logAdd(String format, Object... args) {
+		return getDefault().logAdd(format, args);
+	}
 
 	/**
 	 * Append log message to current buffer cache.
@@ -48,7 +62,7 @@ public abstract class CommandLogHolder {
 	 * @param message
 	 * @return
 	 */
-	public static StringBuffer logAdd(String key, String message) {
+	public static StringBuffer addLog(String key, String message) {
 		return getLogAppender(key).getMessage().append(message);
 	}
 
@@ -85,6 +99,16 @@ public abstract class CommandLogHolder {
 	 */
 	public static void cleanup() {
 		logCache.get().clear();
+	}
+
+	/**
+	 * Get or create log appender.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static LogAppender getDefault() {
+		return getLogAppender(DEFAULT_LOG_APPENDER);
 	}
 
 	/**
@@ -146,11 +170,12 @@ public abstract class CommandLogHolder {
 		/**
 		 * Append log message to current buffer cache.
 		 * 
-		 * @param message
+		 * @param format
+		 * @param args
 		 * @return
 		 */
-		public LogAppender logAdd(String message) {
-			CommandLogHolder.logAdd(key, message);
+		public LogAppender logAdd(String format, Object... args) {
+			LogHolder.addLog(key, String.format(format, args));
 			return this;
 		}
 
@@ -161,16 +186,16 @@ public abstract class CommandLogHolder {
 		 * @return
 		 */
 		public String getCleanup(String key) {
-			return CommandLogHolder.getCleanup(key);
+			return LogHolder.getCleanup(key);
 		}
 
 	}
 
 	public static void main(String[] args) {
-		LogAppender appender1 = CommandLogHolder.getLogAppender("test1");
+		LogAppender appender1 = LogHolder.getLogAppender("test1");
 		appender1.logAdd("asasdfasdf");
 		appender1.logAdd("6734665347");
-		LogAppender appender2 = CommandLogHolder.getLogAppender("test2");
+		LogAppender appender2 = LogHolder.getLogAppender("test2");
 		appender2.logAdd("2rerwqsadfa");
 		System.out.println(appender1.getCleanup("test1"));
 		System.out.println(appender2.getCleanup("test2"));

@@ -41,9 +41,10 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -70,7 +71,7 @@ public class DefaultPipeline implements Pipeline {
 	@Autowired
 	protected MailSenderTemplate mailSender;
 	@Autowired
-	private AppInstanceDao appInstanceDao;
+	protected AppInstanceDao appInstanceDao;
 	@Autowired
 	protected AppClusterDao appClusterDao;
 	@Autowired
@@ -202,16 +203,15 @@ public class DefaultPipeline implements Pipeline {
 
 	@Override
 	public ReadResult logfile(Integer taskHisId, Integer index, Integer size) {
-		if (Objects.isNull(index)) {
+		if (isNull(index)) {
 			index = 0;
 		}
-		if (Objects.isNull(size)) {
+		if (isNull(size)) {
 			size = 100;
 		}
 		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
-		return FileIOUtils.seekReadLines(logPath, index, size, line -> {
-			return line.equalsIgnoreCase("EOF"); // End if 'EOF'
-		});
+		// End if 'EOF'
+		return FileIOUtils.seekReadLines(logPath, index, size, line -> line.equalsIgnoreCase("EOF"));
 	}
 
 	/**
@@ -246,14 +246,15 @@ public class DefaultPipeline implements Pipeline {
 			} catch (Throwable e) {
 				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
+
 				// Setup status to failure.
-				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, e.getMessage());
+				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
 
 				// Post failure process.
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
 				// Force mark end EOF.
-				FileIOUtils.writeFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
+				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 			}
 		});
 	}

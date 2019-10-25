@@ -60,9 +60,8 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Log file start/end separation.
 	 */
-	public static final String LOG_FILE_START = "<[EOF]\n";
-	public static final String LOG_FILE_END = "\n[EOF]>";
-	public static final String LOG_FILE_END2 = "[EOF]>";
+	public static final String LOG_FILE_START = "<[EOF]";
+	public static final String LOG_FILE_END = "[EOF]>";
 
 	// command replace
 	public static final String PROJECT_PATH = "#\\{projectPath}";

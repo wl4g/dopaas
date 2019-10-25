@@ -20,8 +20,6 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.ci.utils.CommandLogHolder;
-import com.wl4g.devops.ci.utils.CommandLogHolder.LogAppender;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
@@ -35,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.wl4g.devops.ci.utils.LogHolder.logAdd;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
@@ -129,22 +128,20 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Override
 	public void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
 		hasText(command, "Commands must not be empty.");
-		Integer logId = getPipelineInfo().getTaskHistory().getId();
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
-		logAdd(logId, "Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
-
+		logAdd("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
 		// Execution command.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSSHKey(sshkey), command, timeoutMs);
 
-		logAdd(logId, "\n----------------- Stdout -------------------\n");
+		logAdd("\n----------------- Stdout -------------------\n");
 		if (!isBlank(result.getMessage())) {
-			logAdd(logId, result.getMessage());
+			logAdd(result.getMessage());
 		}
-		logAdd(logId, "\n----------------- Stderr -------------------\n");
+		logAdd("\n----------------- Stderr -------------------\n");
 		if (!isBlank(result.getErrmsg())) {
-			logAdd(logId, result.getErrmsg());
+			logAdd(result.getErrmsg());
 		}
 
 	}
@@ -157,8 +154,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @throws Exception
 	 */
 	public char[] getUsableCipherSSHKey(String sshkey) throws Exception {
-		Integer logId = getPipelineInfo().getTaskHistory().getId();
-
 		// Obtain text-plain privateKey(RSA)
 		String cipherKey = config.getTranform().getCipherKey();
 		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
@@ -166,30 +161,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			log.info("Transfer decrypted sshkey: {} => {}", cipherKey, "******");
 		}
 
-		logAdd(logId, "Transfer decrypted sshkey: %s => %s", cipherKey, "******");
+		logAdd("Transfer decrypted sshkey: %s => %s", cipherKey, "******");
 		return sshkeyPlain;
-	}
-
-	/**
-	 * Get log appender.
-	 * 
-	 * @param logId
-	 * @return
-	 */
-	public LogAppender getLogAppender(Integer logId) {
-		notNull(logId, "Log appender id must not be null.");
-		return CommandLogHolder.getLogAppender(getClass().getSimpleName() + "-" + logId);
-	}
-
-	/**
-	 * Append log message.
-	 * 
-	 * @param logId
-	 * @param format
-	 * @return
-	 */
-	public LogAppender logAdd(Integer logId, String format, Object... message) {
-		return getLogAppender(logId).logAdd(String.format(format, message));
 	}
 
 	/**
