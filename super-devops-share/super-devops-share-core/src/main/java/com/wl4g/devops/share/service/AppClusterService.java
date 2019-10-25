@@ -30,13 +30,13 @@ import java.util.Map;
  */
 public interface AppClusterService {
 
-	void save(AppCluster appCluster);
+	void save(AppCluster appCluster,String cipherKey);
 
 	Map list(CustomPage customPage, String clusterName);
 
 	void del(Integer clusterId);
 
-	AppCluster detail(Integer clusterId);
+	AppCluster detail(Integer clusterId,String cipherKey);
 
 	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
 
