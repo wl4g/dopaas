@@ -179,6 +179,9 @@ public class TaskServiceImpl implements TaskService {
 
 	public List<TaskBuildCommand> getDependency(Integer clustomId) {
 		Project project = projectDao.getByAppClusterId(clustomId);
+		if(project == null){
+			return Collections.emptyList();
+		}
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
 		List<TaskBuildCommand> taskBuildCommands = new ArrayList<>();
 		int i = 1;
