@@ -182,16 +182,21 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			if (!isBlank(fromAppName)) {
 				isTrue(!info.getPrincipals().isEmpty(),
 						String.format("Authentication info principals is empty, please check the configure. [%s]", info));
-				// For example: first login to manager service(mp) with 'admin',
-				// then logout, and then login to portal service(portal) with
-				// user01. At this time, the check will return that 'user01' has
-				// no permission to access manager service(mp).
-				// e.g:
-				// https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
-				String principal = (String) tk.getPrincipal();
+
+				// Note: for example, when using wechat scanning code (oauth2)
+				// to log in, token.getPrincipal() is empty,
+				// info.getPrimaryPrincipal() will not be empty.
+				String principal = (String) info.getPrincipals().getPrimaryPrincipal();
 				try {
 					authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
 				} catch (IllegalApplicationAccessException ex) {
+					// For example: first login to manager service(mp) with
+					// 'admin', then logout, and then login to portal
+					// service(portal) with user01. At this time, the check will
+					// return that 'user01' has no permission to access manager
+					// service(mp).
+					// e.g.->https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
+
 					// Fallback determine redirect to application.
 					RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
 							new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
