@@ -136,7 +136,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * Using Distributed Cache to Ensure Concurrency Control under
 	 * Mutilate-Node.
 	 */
-	final private EnhancedCache cache;
+	final protected EnhancedCache cache;
 
 	/**
 	 * Delegate message source.

@@ -23,7 +23,6 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
-import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,8 +54,6 @@ public class TaskServiceImpl implements TaskService {
 	private DependencyService dependencyService;
 	@Autowired
 	private TaskBuildCommandDao taskBuildCommandDao;
-	@Autowired
-	private AppClusterDao appClusterDao;
 	@Autowired
 	private AppInstanceDao appInstanceDao;
 
@@ -179,7 +176,7 @@ public class TaskServiceImpl implements TaskService {
 
 	public List<TaskBuildCommand> getDependency(Integer clustomId) {
 		Project project = projectDao.getByAppClusterId(clustomId);
-		if(project == null){
+		if (project == null) {
 			return Collections.emptyList();
 		}
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);

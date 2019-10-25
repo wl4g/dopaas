@@ -95,7 +95,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 		 * See:com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#
 		 * getRememberUrl()
 		 */
-		if (config.isUseRememberRedirect() && isBrowser(toHttp(request))) {
+		if (config.isUseRememberRedirect() && isBrowser(toHttp(request)) && !isXHRRequest(toHttp(request))) {
 			// Get remember URL.
 			String rememberUrl = getRequestRememberUrl(request);
 			if (isNotBlank(rememberUrl)) {
@@ -122,7 +122,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 		rememberUrl = isNotBlank(rememberUrl) ? rememberUrl : req.getHeader("Referrer");
 
 		// Fallback
-		if (isBlank(rememberUrl) && !isXHRRequest(req) && req.getMethod().equalsIgnoreCase(GET_METHOD)) {
+		if (isBlank(rememberUrl) && req.getMethod().equalsIgnoreCase(GET_METHOD)) {
 			rememberUrl = getFullRequestURL(req, true);
 		}
 		return rememberUrl;

@@ -62,7 +62,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Secure configuration.
 	 */
-	final private SecureConfig config;
+	final protected SecureConfig config;
 
 	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under multiple-node
@@ -72,7 +72,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * The 'private' part of the hash salt.
 	 */
-	final private ByteSource privateSalt;
+	final protected ByteSource privateSalt;
 
 	/**
 	 * Cryptic service.
