@@ -16,10 +16,10 @@
 package com.wl4g.devops.iam.client.filter;
 
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.common.utils.web.WebUtils2.getAvaliableRequestRememberUrl;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isXHRRequest;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -91,13 +91,12 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 			log.debug("ROOT requestURL: {}", getFullRequestURL(toHttp(request)));
 		}
 
-		/*
-		 * See:com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#
-		 * getRememberUrl()
+		/**
+		 * See:{@link com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#getClearSavedRememberUrl()}
 		 */
 		if (config.isUseRememberRedirect() && isBrowser(toHttp(request)) && !isXHRRequest(toHttp(request))) {
-			// Get remember URL.
-			String rememberUrl = getRequestRememberUrl(request);
+			// Remember URL.
+			String rememberUrl = getAvaliableRequestRememberUrl(toHttp(request));
 			if (isNotBlank(rememberUrl)) {
 				bind(KEY_REMEMBER_URL, rememberUrl);
 			} else {
@@ -106,26 +105,6 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 		}
 
 		return SecurityUtils.getSubject().isAuthenticated();
-	}
-
-	/**
-	 * Get request remember URL.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private String getRequestRememberUrl(ServletRequest request) {
-		HttpServletRequest req = toHttp(request);
-
-		String rememberUrl = req.getHeader("Referer");
-		// #[RFC7231], https://tools.ietf.org/html/rfc7231#section-5.5.2
-		rememberUrl = isNotBlank(rememberUrl) ? rememberUrl : req.getHeader("Referrer");
-
-		// Fallback
-		if (isBlank(rememberUrl) && req.getMethod().equalsIgnoreCase(GET_METHOD)) {
-			rememberUrl = getFullRequestURL(req, true);
-		}
-		return rememberUrl;
 	}
 
 	@Override

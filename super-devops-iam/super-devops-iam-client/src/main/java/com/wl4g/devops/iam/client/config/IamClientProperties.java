@@ -66,7 +66,8 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	private String unauthorizedUri = "http://localhost:14040/iam-server" + DEFAULT_VIEW_403_URI;
 
 	/**
-	 * Re-login callback URL, whether to use the previously remembered URL
+	 * Re-login callback URL, whether to use the previously remembered URL.
+	 * {@link com.wl4g.devops.iam.client.filter.ROOTAuthenticationFilter#isAccessAllowed()}
 	 */
 	private boolean useRememberRedirect = true;
 

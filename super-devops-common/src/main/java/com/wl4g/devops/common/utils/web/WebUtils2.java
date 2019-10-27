@@ -704,6 +704,24 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	}
 
 	/**
+	 * Obtain the available request remember URL, for example: used to log in
+	 * successfully and redirect to the last remembered URL
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public static String getAvaliableRequestRememberUrl(HttpServletRequest request) {
+		String rememberUrl = request.getHeader("Referer");
+		// #[RFC7231], https://tools.ietf.org/html/rfc7231#section-5.5.2
+		rememberUrl = isNotBlank(rememberUrl) ? rememberUrl : request.getHeader("Referrer");
+		// Fallback
+		if (isBlank(rememberUrl) && request.getMethod().equalsIgnoreCase("GET")) {
+			rememberUrl = getFullRequestURL(request, true);
+		}
+		return rememberUrl;
+	}
+
+	/**
 	 * Generic dynamic web message response type processing enumeration.
 	 * 
 	 * @author Wangl.sir <983708408@qq.com>
