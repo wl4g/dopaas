@@ -48,6 +48,7 @@ import static io.netty.util.internal.ThreadLocalRandom.current;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * JIGSAW image manager.
@@ -88,8 +89,8 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	protected JedisService jedisService;
 
 	public JigsawImageManager(CaptchaProperties config, JedisLockManager lockManager) {
-		Assert.notNull(config, "Captcha properties must not be null.");
-		Assert.notNull(lockManager, "Captcha properties must not be null.");
+		notNull(config, "Captcha properties must not be null.");
+		notNull(lockManager, "Captcha properties must not be null.");
 		this.config = config;
 		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_JIGSAW_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
 	}
@@ -125,8 +126,8 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 
 		// Load JIGSAW image by index.
 		JedisCluster jdsCluster = jedisService.getJedisCluster();
-		byte[] data = jdsCluster.hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
-		if (Objects.isNull(data)) { // Expired?
+		byte[] jigsawBuf = jdsCluster.hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
+		if (Objects.isNull(jigsawBuf)) { // Expired?
 			try {
 				if (lock.tryLock(DEFAULT_JIGSAW_INIT_TIMEOUTMS / 2, TimeUnit.MILLISECONDS)) {
 					initializeJigsawImagePool();
@@ -137,9 +138,9 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 				lock.unlock();
 			}
 			// Retry get.
-			data = jdsCluster.hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
+			jigsawBuf = jdsCluster.hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
 		}
-		JigsawImgCode code = deserialize(data, JigsawImgCode.class);
+		JigsawImgCode code = deserialize(jigsawBuf, JigsawImgCode.class);
 		Assert.notNull(code, "Unable to borrow jigsaw image resource.");
 
 		// UnCompression primary block image.
@@ -169,7 +170,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 		if (isBlank(config.getJigsaw().getSourceDir())) {
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 			Resource[] resources = resolver.getResources(DEFAULT_JIGSAW_SOURCE_CLASSPATH);
-			storageJigsawImageCache(resources);
+			parseAndPutJigsawImage(resources);
 		} else {
 			File srcDir = new File(config.getJigsaw().getSourceDir());
 			Assert.state((srcDir.canRead() && srcDir.exists()),
@@ -180,18 +181,18 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 			File[] files = srcDir.listFiles(f -> !startsWith(f.getName(), "."));
 			Assert.state((files != null && files.length > 0),
 					String.format("Failed to initialize jigsaw images, path: %s material is empty", srcDir.getAbsolutePath()));
-			storageJigsawImageCache(files);
+			parseAndPutJigsawImage(files);
 		}
 
 	}
 
 	/**
-	 * Storage put buffer image to cache.
+	 * Parse load & storage put buffer image to cache.
 	 * 
 	 * @param sources
 	 * @throws IOException
 	 */
-	private void storageJigsawImageCache(Object[] sources) throws IOException {
+	private void parseAndPutJigsawImage(Object[] sources) throws IOException {
 		// Statistic use material.
 		Set<Integer> indexs = new HashSet<>();
 

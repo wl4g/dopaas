@@ -15,20 +15,22 @@
  */
 package com.wl4g.devops.common.utils.lang;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static java.net.InetAddress.getLocalHost;
+import static java.net.NetworkInterface.getByInetAddress;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.split;
+import static org.springframework.util.Assert.hasText;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.nio.charset.Charset;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.SystemUtils;
 
 /**
@@ -41,56 +43,82 @@ import org.apache.commons.lang3.SystemUtils;
 public abstract class SystemUtils2 extends SystemUtils {
 
 	/**
-	 * System Unique Identification
+	 * Global unique host hardware MAC identification.
 	 */
-	public static String HOST_SERIAL;
+	final public static String GLOBAL_HOST_SERIAL = globalHostSerial0();
 
 	/**
-	 * Unique identity of current application
+	 * Global unique identity of current application.
 	 */
-	public static String APP_SERIAL;
+	final public static String GLOBAL_APP_SERIAL = globalAppSerial0();
 
 	/**
-	 * Unique Identification of Current Application Processe ID
+	 * Local current application process ID
 	 */
-	public static String PROCESS_ID;
+	final public static String LOCAL_PROCESS_ID = localProcessId0();
 
 	/**
-	 * Unique Identification of Current Application Processes
+	 * Global unique identification of current application process
 	 */
-	public static String PROCESS_SERIAL;
+	final public static String GLOBAL_PROCESS_SERIAL = globalProcessSerial0();
 
-	static {
+	/**
+	 * Obtain local host hardware MAC address identity.
+	 * 
+	 * @return
+	 */
+	private static String globalHostSerial0() {
+		// Getting MAC Address Information of Network Card
 		try {
-			HOST_SERIAL = localMacString();
-			String packagePath = SystemUtils2.class.getProtectionDomain().getCodeSource().getLocation().toString();
-			APP_SERIAL = new StringBuffer(HOST_SERIAL).append("-")
-					.append(Hex.encodeHexString((HOST_SERIAL + packagePath).getBytes(Charset.forName("UTF-8")))).substring(16, 26)
-					.toString();
-			PROCESS_ID = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-			PROCESS_SERIAL = APP_SERIAL + "-" + PROCESS_ID;
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to initialize local device resource information.", e);
+			byte[] mac = getByInetAddress(getLocalHost()).getHardwareAddress();
+			StringBuffer sb = new StringBuffer("");
+			for (int i = 0; i < mac.length; i++) {
+				if (i != 0) {
+					sb.append("-");
+				}
+				// Byte to integer
+				int temp = mac[i] & 0xff;
+				String str = Integer.toHexString(temp);
+				if (str.length() == 1)
+					sb.append("0" + str);
+				else
+					sb.append(str);
+			}
+			return sb.toString().toLowerCase().replaceAll("-", "");
+		} catch (SocketException | UnknownHostException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
-	private static String localMacString() throws IOException {
-		// Getting MAC Address Information of Network Card
-		byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-		StringBuffer sb = new StringBuffer("");
-		for (int i = 0; i < mac.length; i++) {
-			if (i != 0) {
-				sb.append("-");
-			}
-			// Byte to integer
-			int temp = mac[i] & 0xff;
-			String str = Integer.toHexString(temp);
-			if (str.length() == 1)
-				sb.append("0" + str);
-			else
-				sb.append(str);
-		}
-		return sb.toString().toLowerCase().replaceAll("-", "");
+	/**
+	 * Obtain global application identity.
+	 * 
+	 * @return
+	 */
+	private static String globalAppSerial0() {
+		hasText(GLOBAL_HOST_SERIAL, "HostSerial is empty.");
+		String packagePath = SystemUtils2.class.getProtectionDomain().getCodeSource().getLocation().toString();
+		return md5().hashString(GLOBAL_HOST_SERIAL + packagePath, UTF_8).toString();
+	}
+
+	/**
+	 * Obtain local application processId.
+	 * 
+	 * @return
+	 */
+	private static String localProcessId0() {
+		return ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+	}
+
+	/**
+	 * Obtain global application identity.
+	 * 
+	 * @return
+	 */
+	private static String globalProcessSerial0() {
+		hasText(GLOBAL_APP_SERIAL, "LocalAppSerial is empty.");
+		hasText(LOCAL_PROCESS_ID, "LocalProcessId is empty.");
+		return GLOBAL_APP_SERIAL + String.format("%05d", Integer.parseInt(LOCAL_PROCESS_ID));
 	}
 
 	/**
@@ -116,7 +144,6 @@ public abstract class SystemUtils2 extends SystemUtils {
 		if (isBlank(systemPath) || !contains(systemPath, File.separator)) {
 			return systemPath;
 		}
-
 		// Clean invalid suffix path separator.
 		StringBuffer path = new StringBuffer();
 		Iterator<String> it = Arrays.asList(split(systemPath, File.separator)).iterator();
@@ -133,6 +160,10 @@ public abstract class SystemUtils2 extends SystemUtils {
 	}
 
 	public static void main(String[] args) {
+		System.out.println(GLOBAL_HOST_SERIAL);
+		System.out.println(GLOBAL_APP_SERIAL);
+		System.out.println(LOCAL_PROCESS_ID);
+		System.out.println(GLOBAL_PROCESS_SERIAL);
 		System.out.println(cleanSystemPath("E:\\dir\\"));
 		System.out.println(cleanSystemPath("E:\\log\\a.log\\"));
 		System.out.println(cleanSystemPath("/var/log//a.log/"));

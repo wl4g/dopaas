@@ -18,19 +18,28 @@ package com.wl4g.devops.support.concurrent.locks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import redis.clients.jedis.JedisCluster;
 
+import com.google.common.annotations.Beta;
+
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPool;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
-import static com.google.common.hash.Hashing.*;
-import static com.google.common.base.Charsets.UTF_8;
-import static io.netty.util.internal.ThreadLocalRandom.current;
+import static java.lang.Math.abs;
+import static java.lang.Thread.interrupted;
+import static java.lang.Thread.sleep;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
 
 /**
@@ -41,10 +50,10 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 public class JedisLockManager {
-	final protected static String NAMESPACE = "simple_spinlock_";
+	final protected static String NAMESPACE = "reentrant_unfair_lock_";
 	final protected static String NXXX = "NX";
 	final protected static String EXPX = "PX";
-	final protected static Long FREQ_MS = 50L;
+	final protected static long FRAME_INTERVAL_MS = 50L;
 	final protected static String UNLOCK_LUA = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -52,98 +61,136 @@ public class JedisLockManager {
 	protected JedisCluster jedisCluster;
 
 	/**
-	 * Get and create {@link SimpleSpinJedisLock} with name.
+	 * Get and create {@link HAReentrantUnFairDistributedRedLock} with name.
 	 * 
 	 * @param name
 	 * @return
 	 */
 	public Lock getLock(String name) {
-		return getLock(name, 15, TimeUnit.SECONDS);
+		return getLock(name, 10, TimeUnit.SECONDS);
 	}
 
 	/**
-	 * Get and create {@link SimpleSpinJedisLock} with name.
+	 * Get and create {@link HAReentrantUnFairDistributedRedLock} with name.
 	 * 
 	 * @param name
-	 * @param timeout
+	 * @param expiredAt
 	 * @param unit
 	 * @return
 	 */
-	public Lock getLock(String name, long timeout, TimeUnit unit) {
-		return new SimpleSpinJedisLock(md5().hashString(name, UTF_8).toString(), timeout, unit);
+	public Lock getLock(String name, long expiredAt, TimeUnit unit) {
+		hasText(name, "Lock name must not be empty.");
+		isTrue(expiredAt > 0, "Lock expiredAt must greater than 0");
+		notNull(unit, "TimeUnit must not be null.");
+		return new HAReentrantUnFairDistributedRedLock(name, unit.toMillis(expiredAt));
 	}
 
 	/**
-	 * JEDIS simple spin lock.
+	 * HA Reentrant unfair Redlock implemented by JEDIS, supported redis master
+	 * node failover</br>
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019年3月21日
 	 * @since
+	 * @see <a href=
+	 *      'https://blog.csdn.net/matt8/article/details/64442064'>Discuss
+	 *      Antirez failover analysis</a>
+	 * @see <a href=
+	 *      'https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html'>Martin
+	 *      Kleppmann analysis redlock</a>
+	 * @see <a href='https://redis.io/topics/distlock'>Antirez failover
+	 *      analysis</a>
+	 * @see <a href='http://antirez.com/news/101'>VS Martin Kleppmann for
+	 *      Redlock failover analysis</a>
 	 */
-	private class SimpleSpinJedisLock implements Lock {
-		/** Current locker name. */
-		final private String name;
-		/** Current locker request ID. */
-		final private String processId;
-		/** Current locker expired time(MS). */
-		final private long expiredMs;
+	@Beta
+	private final class HAReentrantUnFairDistributedRedLock extends AbstractDistributedLock {
+		private static final long serialVersionUID = -1909894475263151824L;
 
-		public SimpleSpinJedisLock(String name, long expiredMs, TimeUnit unit) {
-			hasText(name, "SimpleSpinJedis lock name must not be empty");
-			notNull(unit, "SimpleSpinJedis unit must not be null");
-			isTrue(expiredMs > 0, "'timeoutMs' must greater than 0");
-			this.name = NAMESPACE + name;
-			this.expiredMs = unit.toMillis(expiredMs);
-			this.processId = String.valueOf(current().nextInt(1000_0000, Integer.MAX_VALUE));
+		/** Current locker reentrant counter. */
+		final protected AtomicLong counter;
+
+		public HAReentrantUnFairDistributedRedLock(String name, long expiredMs) {
+			this(name, expiredMs, 0L);
+		}
+
+		public HAReentrantUnFairDistributedRedLock(String name, long expiredMs, long counterValue) {
+			this(name, expiredMs, new AtomicLong(counterValue));
+		}
+
+		public HAReentrantUnFairDistributedRedLock(String name, long expiredMs, AtomicLong counter) {
+			super(name, getCurrentThreadLockProcessId(), expiredMs);
+			isTrue(counter.get() >= 0, "Lock count must greater than 0");
+			this.counter = counter;
 		}
 
 		@Override
 		public void lock() {
-			while (true) {
-				if (assertSuccess(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
-					return;
-				}
-				try {
-					Thread.sleep(FREQ_MS);
-				} catch (InterruptedException e) {
-					throw new IllegalStateException(e);
-				}
+			try {
+				lockInterruptibly();
+			} catch (InterruptedException e) {
+				throw new IllegalStateException(e);
 			}
 		}
 
 		@Override
 		public void lockInterruptibly() throws InterruptedException {
-			throw new UnsupportedOperationException();
+			if (interrupted())
+				throw new InterruptedException();
+			while (true) {
+				if (doTryAcquire())
+					break;
+				sleep(FRAME_INTERVAL_MS);
+			}
 		}
 
 		@Override
 		public boolean tryLock() {
-			if (assertSuccess(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
-				return true;
-			}
-			return false;
+			return doTryAcquire();
 		}
 
 		@Override
 		public boolean tryLock(long tryTimeout, TimeUnit unit) throws InterruptedException {
-			long t = unit.toMillis(tryTimeout) / FREQ_MS, c = 0;
-			while (t > (++c)) {
-				Thread.sleep(FREQ_MS);
-				if (assertSuccess(jedisCluster.set(name, processId, NXXX, EXPX, expiredMs))) {
+			notNull(unit, "TimeUnit must not be null.");
+			isTrue((tryTimeout > 0 && tryTimeout <= expiredMs), "TryTimeout must be > 0 && <= " + expiredMs);
+			long t = unit.toMillis(tryTimeout) / FRAME_INTERVAL_MS, c = 0;
+			while (t > ++c) {
+				if (doTryAcquire())
 					return true;
-				}
+				sleep(FRAME_INTERVAL_MS);
 			}
 			return false;
 		}
 
 		@Override
 		public void unlock() {
-			if (processId.equals(jedisCluster.get(name))) { // Optimized:Locked?
-				Object res = jedisCluster.eval(UNLOCK_LUA, singletonList(name), singletonList(processId));
-				if (!assertSuccess(res)) {
-					log.warn("Failed to unlock for %{}@{}", processId, name);
-				} else if (log.isDebugEnabled()) {
-					log.debug("Unlock successful for %{}@{}", processId, name);
+			// Obtain locked processId.
+			String acquiredProcessId = jedisCluster.get(name);
+			// Current thread is holder?
+			if (!currentProcessId.equals(acquiredProcessId)) {
+				if (log.isTraceEnabled()) {
+					log.trace("No need to unlock of currentProcessId:{}, acquiredProcessId:{}, counter:{}", currentProcessId,
+							acquiredProcessId, counter);
+				}
+				return;
+			}
+
+			// Add a thread stack.
+			counter.decrementAndGet();
+			if (log.isTraceEnabled()) {
+				log.trace("No need to unlock and reenter the stack lock layer, counter: {}", counter);
+			}
+
+			if (counter.longValue() == 0L) { // All thread stack layers exited?
+				Object res = jedisCluster.eval(UNLOCK_LUA, singletonList(name), singletonList(currentProcessId));
+				if (!assertValidity(res)) {
+					if (log.isDebugEnabled()) {
+						log.debug("Failed to unlock for %{}@{}", currentProcessId, name);
+					}
+				} else {
+					if (log.isDebugEnabled()) {
+						log.debug("Unlock successful for %{}@{}", currentProcessId, name);
+					}
 				}
 			}
 		}
@@ -154,23 +201,65 @@ public class JedisLockManager {
 		}
 
 		/**
-		 * Assertion JEDIS lock result is success?
+		 * Execution try acquire locker by reentrant info.
+		 * 
+		 * @return
+		 */
+		private final boolean doTryAcquire() {
+			if (currentProcessId.equals(jedisCluster.get(name))) {
+				counter.incrementAndGet(); // Reduce one thread stack
+				return true;
+			}
+
+			// Solve the problem of master node failover.
+			Map<String, JedisPool> nodes = jedisCluster.getClusterNodes();
+			notEmpty(nodes, "No redis cluster nodes available!");
+
+			Iterator<Entry<String, JedisPool>> it = nodes.entrySet().iterator();
+			long acquired = 0L, firstTime = 0L;
+			for (int i = 0; it.hasNext(); i++) {
+				Entry<String, JedisPool> entry = it.next();
+				try {
+					if (assertValidity(entry.getValue().getResource().set(name, currentProcessId, NXXX, EXPX, expiredMs))) {
+						++acquired;
+						if (i == 0) {
+							// [#issue] It's best not to rely too much on system
+							// time.
+							// See:https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
+							firstTime = System.currentTimeMillis();
+						}
+					}
+				} catch (Exception e) {
+					log.warn(String.format("Can't to tryAcquire lock for node:%s", entry.getKey()), e);
+				}
+			}
+
+			// Check acquire validity. See:https://redis.io/topics/distlock
+			if (acquired >= (nodes.size() / 2 + 1)) { // Most are successful?
+				// Didn't spend too much time?
+				return abs(System.currentTimeMillis() - firstTime) < expiredMs;
+			}
+			return false;
+		}
+
+		/**
+		 * Assertion validate lock result is acquired/UnAcquired success?
 		 * 
 		 * @param res
 		 * @return
 		 */
-		final private boolean assertSuccess(Object res) {
-			if (nonNull(res)) {
-				if (res instanceof String) {
-					String res0 = res.toString().trim();
-					return "1".equals(res0) || "ok".equalsIgnoreCase(res0);
-				} else if (res instanceof Number) {
-					return ((Number) res).longValue() >= 1L;
-				} else {
-					throw new IllegalStateException(String.format("Unknown result for %s", res));
-				}
+		private final boolean assertValidity(Object res) {
+			if (isNull(res)) {
+				return false;
 			}
-			return false;
+			if (res instanceof String) {
+				String res0 = res.toString().trim();
+				return "1".equals(res0) || "OK".equalsIgnoreCase(res0);
+			} else if (res instanceof Number) {
+				return ((Number) res).longValue() >= 1L;
+			} else {
+				throw new IllegalStateException(String.format("Unknown acquired state for %s", res));
+			}
 		}
 
 	}
