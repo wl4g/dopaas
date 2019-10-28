@@ -17,6 +17,9 @@ spring:
     active: dev
   cloud:
     devops:
+      support:
+        cli:
+          enabled: true
       iam: # IAM client configuration.
         client: # IAM client configuration.
           service-name: ${spring.application.name}

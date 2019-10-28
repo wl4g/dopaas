@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.annotations.Beta;
 
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 
@@ -119,7 +120,7 @@ public class JedisLockManager {
 		}
 
 		public HAReentrantUnFairDistributedRedLock(String name, long expiredMs, AtomicLong counter) {
-			super(name, getCurrentThreadLockProcessId(), expiredMs);
+			super((NAMESPACE + name), getThreadCurrentProcessId(), expiredMs);
 			isTrue(counter.get() >= 0, "Lock count must greater than 0");
 			this.counter = counter;
 		}
@@ -211,35 +212,37 @@ public class JedisLockManager {
 				return true;
 			}
 
-			// Solve the problem of master node failover.
-			Map<String, JedisPool> nodes = jedisCluster.getClusterNodes();
-			notEmpty(nodes, "No redis cluster nodes available!");
+			return assertValidity(jedisCluster.set(name, currentProcessId, NXXX, EXPX, expiredMs));
 
-			Iterator<Entry<String, JedisPool>> it = nodes.entrySet().iterator();
-			long acquired = 0L, firstTime = 0L;
-			for (int i = 0; it.hasNext(); i++) {
-				Entry<String, JedisPool> entry = it.next();
-				try {
-					if (assertValidity(entry.getValue().getResource().set(name, currentProcessId, NXXX, EXPX, expiredMs))) {
-						++acquired;
-						if (i == 0) {
-							// [#issue] It's best not to rely too much on system
-							// time.
-							// See:https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
-							firstTime = System.currentTimeMillis();
-						}
-					}
-				} catch (Exception e) {
-					log.warn(String.format("Can't to tryAcquire lock for node:%s", entry.getKey()), e);
-				}
-			}
-
-			// Check acquire validity. See:https://redis.io/topics/distlock
-			if (acquired >= (nodes.size() / 2 + 1)) { // Most are successful?
-				// Didn't spend too much time?
-				return abs(System.currentTimeMillis() - firstTime) < expiredMs;
-			}
-			return false;
+//			// Solve the problem of master node failover.
+//			Map<String, JedisPool> nodes = jedisCluster.getClusterNodes();
+//			notEmpty(nodes, "No redis cluster nodes available!");
+//
+//			Iterator<Entry<String, JedisPool>> it = nodes.entrySet().iterator();
+//			long acquired = 0L, firstTime = 0L;
+//			for (int i = 0; it.hasNext(); i++) {
+//				Entry<String, JedisPool> ent = it.next();
+//				try (Jedis jedis = ent.getValue().getResource()) {
+//					if (assertValidity(jedis.set(name, currentProcessId, NXXX, EXPX, expiredMs))) {
+//						++acquired;
+//						if (i == 0) {
+//							// [#issue] It's best not to rely too much on system
+//							// time.
+//							// See:https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
+//							firstTime = System.currentTimeMillis();
+//						}
+//					}
+//				} catch (Exception e) {
+//					log.warn(String.format("Can't to tryAcquire lock for node:%s", ent.getKey()), e);
+//				}
+//			}
+//
+//			// Check acquire validity. See:https://redis.io/topics/distlock
+//			if (acquired >= (nodes.size() / 2 + 1)) { // Most are successful?
+//				// Didn't spend too much time?
+//				return abs(System.currentTimeMillis() - firstTime) < expiredMs;
+//			}
+//			return false;
 		}
 
 		/**

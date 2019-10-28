@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,6 +32,7 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository;
  * @since
  */
 @Configuration
+@ConditionalOnProperty(name = "spring.cloud.devops.support.cli.enabled", matchIfMissing = false)
 public class CommandLineAutoConfiguration {
 
 	@Bean
@@ -39,7 +41,7 @@ public class CommandLineAutoConfiguration {
 	}
 
 	@Bean
-	public ProcessManager nodeProcessManager() {
+	public ProcessManager nodeProcessManagerImpl() {
 		return new NodeProcessManagerImpl();
 	}
 
