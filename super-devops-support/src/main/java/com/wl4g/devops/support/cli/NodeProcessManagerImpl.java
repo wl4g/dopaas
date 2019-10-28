@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
@@ -44,11 +46,11 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	final public static long DEFAULT_MAX_WATCH_MS = 2_000L;
 	/** Default destruction signal expired seconds. */
 	final public static int DEFAULT_SIGNAL_EXPIRED_SEC = (int) (3 * TimeUnit.MILLISECONDS.toSeconds(DEFAULT_MAX_WATCH_MS));
+	/** Command-line process watcher locker. */
+	final public static String DEFAULT_DESTROY_LOCK = "cli-process.destroy";
 
-	/**
-	 * Command-line process watcher locker.
-	 */
-	final public static String DEFAULT_PROCESS_DESTROY_LOCK = "process.watch.destroy.lock";
+	@Autowired
+	protected ConfigurableEnvironment environment;
 
 	/**
 	 * Send signal for destroy command-line process.</br>
@@ -76,7 +78,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	@Override
 	public void run() {
 		try {
-			loopWatchProcessesDestroy();
+			loopWatchProcessesDestroy(getDestroyLockName());
 		} catch (InterruptedException e) {
 			log.error("Grave warning!!! Killed node process watcher, commands process on this node will not be manual cancel.",
 					e);
@@ -86,13 +88,14 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	/**
 	 * Watching process destroy all.
 	 * 
+	 * @param destroyLockName
 	 * @throws InterruptedException
 	 */
-	private synchronized void loopWatchProcessesDestroy() throws InterruptedException {
+	private synchronized void loopWatchProcessesDestroy(String destroyLockName) throws InterruptedException {
 		while (true) {
 			sleepRandom(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS);
 
-			Lock lock = lockManager.getLock(DEFAULT_PROCESS_DESTROY_LOCK);
+			Lock lock = lockManager.getLock(destroyLockName);
 			try {
 				// Let cluster this node process destroy, nodes that do not
 				// acquire lock are on ready in place.
@@ -126,6 +129,15 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 			}
 		}
 
+	}
+
+	/**
+	 * Obtain process destruction lock name.
+	 * 
+	 * @return
+	 */
+	private String getDestroyLockName() {
+		return environment.getRequiredProperty("spring.application.name") + "." + DEFAULT_DESTROY_LOCK;
 	}
 
 	/**

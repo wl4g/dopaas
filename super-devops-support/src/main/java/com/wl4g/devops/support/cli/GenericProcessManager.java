@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import static com.wl4g.devops.common.utils.io.ByteStreams2.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
+import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -160,21 +161,24 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			try {
 				process.getOutputStream().close();
 			} catch (IOException e) {
+				log.error("", e);
 			}
 			try {
 				process.getInputStream().close();
 			} catch (IOException e) {
+				log.error("", e);
 			}
 			try {
 				process.getErrorStream().close();
 			} catch (IOException e) {
+				log.error("", e);
 			}
 
 			// Destroy force.
 			for (long i = 0, c = (signal.getTimeoutMs() / DEFAULT_DESTROY_ROUND_MS); (process.isAlive() || i < c); i++) {
 				try {
 					process.destroyForcibly();
-					Thread.sleep(DEFAULT_DESTROY_ROUND_MS);
+					sleep(DEFAULT_DESTROY_ROUND_MS);
 				} catch (Exception e) {
 					log.error("Failed to destory process.", e);
 					break;

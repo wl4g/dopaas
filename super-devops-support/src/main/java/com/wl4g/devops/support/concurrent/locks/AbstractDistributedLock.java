@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.concurrent.locks;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.google.common.hash.Hashing.md5;
 import static com.wl4g.devops.common.utils.lang.SystemUtils2.GLOBAL_PROCESS_SERIAL;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
@@ -46,17 +44,17 @@ public abstract class AbstractDistributedLock implements Lock, Serializable {
 	/** Current locker expired time(MS). */
 	final protected long expiredMs;
 
-	public AbstractDistributedLock(String name, String processId, long expiredMs) {
+	public AbstractDistributedLock(String name, String currentProcessId, long expiredMs) {
 		hasText(name, "Lock name must not be empty.");
-		hasText(processId, "Lock processId must not be empty.");
+		hasText(currentProcessId, "Lock current processId must not be empty.");
 		isTrue(expiredMs > 0, "Lock expiredMs must greater than 0");
-		this.name = md5().hashString(name, UTF_8).toString();
-		this.currentProcessId = processId;
+		this.name = name;
+		this.currentProcessId = currentProcessId;
 		this.expiredMs = expiredMs;
 	}
 
 	/**
-	 * Get current thread lock process request ID. </br>
+	 * Get current thread unique process ID. </br>
 	 * 
 	 * <pre>
 	 * Host serial + local processId + threadId
@@ -64,7 +62,7 @@ public abstract class AbstractDistributedLock implements Lock, Serializable {
 	 * 
 	 * @return
 	 */
-	public final static String getCurrentThreadLockProcessId() {
+	public final static String getThreadCurrentProcessId() {
 		return GLOBAL_PROCESS_SERIAL + "-" + Thread.currentThread().getId();
 	}
 
