@@ -17,17 +17,33 @@
     from sys_role_user
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectRoleIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+    role_id
+    from sys_role_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_role_user
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByUserId" parameterType="java.lang.Integer" >
+    delete from sys_role_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.RoleUser" >
     insert into sys_role_user (id, user_id, role_id, 
       create_by, create_date)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.RoleUser" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.RoleUser" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_role_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

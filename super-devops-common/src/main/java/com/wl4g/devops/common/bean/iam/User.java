@@ -3,11 +3,10 @@ package com.wl4g.devops.common.bean.iam;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;
-
-    private Integer departId;
 
     private String userName;
 
@@ -41,13 +40,14 @@ public class User extends BaseBean implements Serializable {
 
     private String awsId;
 
-    public Integer getDepartId() {
-        return departId;
-    }
+    //other
+    private List<Integer> roleIds;
 
-    public void setDepartId(Integer departId) {
-        this.departId = departId;
-    }
+    private String roleStrs;
+
+    private List<Integer> groupIds;
+
+    private String groupNameStrs;
 
     public String getUserName() {
         return userName;
@@ -175,5 +175,37 @@ public class User extends BaseBean implements Serializable {
 
     public void setAwsId(String awsId) {
         this.awsId = awsId == null ? null : awsId.trim();
+    }
+
+    public List<Integer> getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(List<Integer> roleIds) {
+        this.roleIds = roleIds;
+    }
+
+    public String getRoleStrs() {
+        return roleStrs;
+    }
+
+    public void setRoleStrs(String roleStrs) {
+        this.roleStrs = roleStrs;
+    }
+
+    public String getGroupNameStrs() {
+        return groupNameStrs;
+    }
+
+    public void setGroupNameStrs(String groupNameStrs) {
+        this.groupNameStrs = groupNameStrs;
+    }
+
+    public List<Integer> getGroupIds() {
+        return groupIds;
+    }
+
+    public void setGroupIds(List<Integer> groupIds) {
+        this.groupIds = groupIds;
     }
 }

@@ -2,6 +2,8 @@ package com.wl4g.devops.dao.iam;
 
 import com.wl4g.devops.common.bean.iam.RoleUser;
 
+import java.util.List;
+
 public interface RoleUserDao {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,9 @@ public interface RoleUserDao {
     int updateByPrimaryKeySelective(RoleUser record);
 
     int updateByPrimaryKey(RoleUser record);
+
+    int deleteByUserId(Integer userId);
+
+
+    List<Integer> selectRoleIdByUserId(Integer userID);
 }
