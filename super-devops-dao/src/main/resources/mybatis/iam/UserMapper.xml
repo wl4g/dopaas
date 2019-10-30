@@ -40,6 +40,22 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where user_name = #{userName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByUnionIdOrOpenId" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where del_flag!=1 and (wechat_union_id = #{unionId,jdbcType=VARCHAR} or wechat_open_id = #{openId,jdbcType=VARCHAR})
+  </select>
+
+
+
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
