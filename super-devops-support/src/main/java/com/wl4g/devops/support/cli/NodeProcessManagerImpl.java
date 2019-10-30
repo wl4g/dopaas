@@ -47,7 +47,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	/** Default destruction signal expired seconds. */
 	final public static int DEFAULT_SIGNAL_EXPIRED_SEC = (int) (3 * TimeUnit.MILLISECONDS.toSeconds(DEFAULT_MAX_WATCH_MS));
 	/** Command-line process watcher locker. */
-	final public static String DEFAULT_DESTROY_LOCK = "cli-process.destroy";
+	final public static String DEFAULT_DESTROY_LOCK = "cli.process.destroy";
 
 	@Autowired
 	protected ConfigurableEnvironment environment;
