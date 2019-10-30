@@ -68,7 +68,7 @@
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.Menu" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.Menu" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_menu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

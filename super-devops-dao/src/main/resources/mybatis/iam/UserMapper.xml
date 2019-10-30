@@ -3,7 +3,6 @@
 <mapper namespace="com.wl4g.devops.dao.iam.UserDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.User" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="depart_id" property="departId" jdbcType="INTEGER" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
     <result column="display_name" property="displayName" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
@@ -29,7 +28,7 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, depart_id, user_name, display_name, password, user_type, enable, status, email, 
+    id, user_name, display_name, password, user_type, enable, status, email,
     phone, wechat_open_id, wechat_union_id, facebook_id, google_id, twitter_id, linkedin_id, 
     alipay_id, github_id, aws_id, remark, create_by, create_date, update_by, update_date, 
     del_flag
@@ -40,12 +39,26 @@
     from sys_user
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where del_flag!=1
+    <if test="userName != null and userName !='' ">
+      AND user_name LIKE CONCAT('%','${userName}','%')
+    </if>
+    <if test="displayName != null and displayName !='' ">
+      AND display_name LIKE CONCAT('%','${displayName}','%')
+    </if>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_user
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.User" >
-    insert into sys_user (id, depart_id, user_name, 
+    insert into sys_user (id, user_name,
       display_name, password, user_type, 
       enable, status, email, 
       phone, wechat_open_id, wechat_union_id, 
@@ -54,7 +67,7 @@
       aws_id, remark, create_by, 
       create_date, update_by, update_date, 
       del_flag)
-    values (#{id,jdbcType=INTEGER}, #{departId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},
       #{displayName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, 
       #{enable,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{wechatOpenId,jdbcType=VARCHAR}, #{wechatUnionId,jdbcType=VARCHAR}, 
@@ -64,14 +77,11 @@
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.User" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.User" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
-      </if>
-      <if test="departId != null" >
-        depart_id,
       </if>
       <if test="userName != null" >
         user_name,
@@ -147,9 +157,6 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="departId != null" >
-        #{departId,jdbcType=INTEGER},
-      </if>
       <if test="userName != null" >
         #{userName,jdbcType=VARCHAR},
       </if>
@@ -224,9 +231,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.User" >
     update sys_user
     <set >
-      <if test="departId != null" >
-        depart_id = #{departId,jdbcType=INTEGER},
-      </if>
       <if test="userName != null" >
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
@@ -301,8 +305,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.User" >
     update sys_user
-    set depart_id = #{departId,jdbcType=INTEGER},
-      user_name = #{userName,jdbcType=VARCHAR},
+    set user_name = #{userName,jdbcType=VARCHAR},
       display_name = #{displayName,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       user_type = #{userType,jdbcType=INTEGER},

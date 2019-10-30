@@ -27,7 +27,7 @@
     values (#{id,jdbcType=INTEGER}, #{groupId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.GroupRole" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.GroupRole" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_group_role
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

@@ -17,17 +17,35 @@
     from sys_group_user
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+
+  <select id="selectGroupIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+    group_id
+    from sys_group_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_group_user
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByUserId" parameterType="java.lang.Integer" >
+    delete from sys_group_user
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+
+
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.GroupUser" >
     insert into sys_group_user (id, group_id, user_id, 
       create_by, create_date)
     values (#{id,jdbcType=INTEGER}, #{groupId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.GroupUser" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.GroupUser" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_group_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

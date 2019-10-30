@@ -27,7 +27,7 @@
     values (#{id,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{menuId,jdbcType=INTEGER}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.RoleMenu" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.RoleMenu" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_role_menu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
