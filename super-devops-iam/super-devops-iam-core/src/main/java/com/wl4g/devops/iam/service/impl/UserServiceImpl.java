@@ -7,7 +7,10 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.iam.*;
+import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
+import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.devops.iam.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -39,6 +42,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private GroupUserDao groupUserDao;
 
+    @Autowired
+    private CredentialsSecurer credentialsSecurer;
+
 
     @Override
     public Map<String,Object> list(CustomPage customPage,String userName,String displayName) {
@@ -69,6 +75,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
+        if(StringUtils.isNotBlank(user.getPassword())){
+            String signature = credentialsSecurer.signature(new CredentialsToken(user.getUserName(), user.getPassword()));
+            user.setPassword(signature);
+        }
         if(user.getId()!=null){
             update(user);
         }else{

@@ -20,5 +20,8 @@ public interface UserDao {
 
     List<User> list(@Param("userName") String userName,@Param("displayName") String displayName);
 
+    User selectByUserName(String userName);
+
+    User selectByUnionIdOrOpenId(@Param("unionId")String unionId,@Param("openId")String openId);
 
 }
