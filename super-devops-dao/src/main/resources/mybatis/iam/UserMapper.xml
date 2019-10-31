@@ -44,7 +44,7 @@
     select
     <include refid="Base_Column_List" />
     from sys_user
-    where user_name = #{userName,jdbcType=VARCHAR}
+    where del_flag!=1 and user_name = #{userName,jdbcType=VARCHAR}
   </select>
 
   <select id="selectByUnionIdOrOpenId" resultMap="BaseResultMap" parameterType="java.util.Map" >
