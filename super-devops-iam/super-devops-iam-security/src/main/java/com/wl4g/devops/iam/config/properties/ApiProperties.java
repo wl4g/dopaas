@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.config;
+package com.wl4g.devops.iam.config.properties;
 
-import com.wl4g.devops.support.task.RunnerProperties;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+
+import java.io.Serializable;
 
 /**
- * Alarm properties.
+ * IAM API configuration properties
  * 
- * @author wangl.sir
- * @version v1.0 2019年7月5日
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2019年10月31日
  * @since
  */
-public class AlarmProperties extends RunnerProperties {
-	private static final long serialVersionUID = -3690593536229115411L;
+public class ApiProperties implements Serializable {
+	private static final long serialVersionUID = -2694422471852860689L;
 
-	public AlarmProperties() {
-		// No need to start the asynchronous running of the boss.
-		setAsyncStartup(false);
-		setConcurrency(1); // By default
+	@Override
+	public String toString() {
+		return toJSONString(this);
 	}
 
 }

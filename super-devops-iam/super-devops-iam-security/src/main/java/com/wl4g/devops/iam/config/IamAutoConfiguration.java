@@ -72,6 +72,8 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
+import com.wl4g.devops.iam.mgt.GenericApiManagerImpl;
+import com.wl4g.devops.iam.mgt.IamApiManager;
 import com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
@@ -558,6 +560,16 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	@ConditionalOnMissingBean
 	public ServerSecurityCoprocessor serverSecurityCoprocessor() {
 		return new AnynothingSecurityCoprocessor();
+	}
+
+	// ==============================
+	// IAM API or metric's
+	// ==============================
+
+	@Bean
+	@ConditionalOnMissingBean
+	public IamApiManager genericApiManagerImpl() {
+		return new GenericApiManagerImpl();
 	}
 
 }

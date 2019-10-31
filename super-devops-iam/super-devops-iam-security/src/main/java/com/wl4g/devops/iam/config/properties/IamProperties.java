@@ -97,6 +97,11 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 */
 	private ServerParamProperties param = new ServerParamProperties();
 
+	/**
+	 * IAM server API configuration properties.
+	 */
+	private ApiProperties api = new ApiProperties();
+
 	public String getLoginUri() {
 		return loginUri;
 	}
@@ -162,6 +167,14 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 	public void setParam(ServerParamProperties param) {
 		this.param = param;
+	}
+
+	public ApiProperties getApi() {
+		return api;
+	}
+
+	public void setApi(ApiProperties api) {
+		this.api = api;
 	}
 
 	@Override
