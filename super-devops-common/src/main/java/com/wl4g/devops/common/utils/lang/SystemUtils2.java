@@ -15,14 +15,7 @@
  */
 package com.wl4g.devops.common.utils.lang;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.google.common.hash.Hashing.md5;
-import static java.net.InetAddress.getLocalHost;
-import static java.net.NetworkInterface.getByInetAddress;
-import static org.apache.commons.lang3.StringUtils.contains;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.split;
-import static org.springframework.util.Assert.hasText;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -31,7 +24,12 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.commons.lang3.SystemUtils;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.md5;
+import static java.net.InetAddress.getLocalHost;
+import static java.net.NetworkInterface.getByInetAddress;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * System utility tools
@@ -45,7 +43,7 @@ public abstract class SystemUtils2 extends SystemUtils {
 	/**
 	 * Global unique host hardware MAC identification.
 	 */
-	final public static String GLOBAL_HOST_SERIAL = globalHostSerial0();
+	final public static String GLOBAL_HOST_SERIAL = "asdf";//TODO
 
 	/**
 	 * Global unique identity of current application.
