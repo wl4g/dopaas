@@ -29,6 +29,8 @@ public class Menu extends BaseBean implements Serializable {
 
     private String icon;
 
+    private Integer sort;
+
     private List<Menu> children;
 
     @Override
@@ -111,6 +113,14 @@ public class Menu extends BaseBean implements Serializable {
 
     public void setIcon(String icon) {
         this.icon = icon == null ? null : icon.trim();
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 
     public List<Menu> getChildren() {
