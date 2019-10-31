@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.config.properties;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
@@ -29,6 +30,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.config.properties.ServerParamProperties;
+import com.wl4g.devops.iam.filter.InternalWhiteListServerAuthenticationFilter;
 import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
 
 /**
@@ -207,6 +209,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
 		// Verify(CAPTCHA/SMS) authenticator rules.
 		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
+		// API v1 rules.
+		getFilterChain().put(URI_S_API_V1_BASE + "/**", InternalWhiteListServerAuthenticationFilter.NAME);
 	}
 
 }

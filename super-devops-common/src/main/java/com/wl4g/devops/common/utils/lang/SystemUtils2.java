@@ -19,15 +19,18 @@ import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
-import static java.net.InetAddress.getLocalHost;
-import static java.net.NetworkInterface.getByInetAddress;
+import static java.net.NetworkInterface.getNetworkInterfaces;
+import static java.util.Collections.list;
+import static java.util.Collections.sort;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.Assert.hasText;
 
@@ -43,7 +46,7 @@ public abstract class SystemUtils2 extends SystemUtils {
 	/**
 	 * Global unique host hardware MAC identification.
 	 */
-	final public static String GLOBAL_HOST_SERIAL = "asdf";//TODO
+	final public static String GLOBAL_HOST_SERIAL = globalHostSerial0();
 
 	/**
 	 * Global unique identity of current application.
@@ -68,8 +71,20 @@ public abstract class SystemUtils2 extends SystemUtils {
 	private static String globalHostSerial0() {
 		// Getting MAC Address Information of Network Card
 		try {
-			byte[] mac = getByInetAddress(getLocalHost()).getHardwareAddress();
-			StringBuffer sb = new StringBuffer("");
+			List<NetworkInterface> nis = list(getNetworkInterfaces());
+			// Ascii dict sort.
+			sort(nis, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+			byte[] mac = null;
+			for (NetworkInterface ni : nis) {
+				if (nonNull(ni) && !ni.isLoopback() && ni.isUp()) {
+					mac = ni.getHardwareAddress();
+					if (nonNull(mac)) {
+						break;
+					}
+				}
+			}
+
+			StringBuffer sb = new StringBuffer(32);
 			for (int i = 0; i < mac.length; i++) {
 				if (i != 0) {
 					sb.append("-");
@@ -83,9 +98,10 @@ public abstract class SystemUtils2 extends SystemUtils {
 					sb.append(str);
 			}
 			return sb.toString().toLowerCase().replaceAll("-", "");
-		} catch (SocketException | UnknownHostException e) {
+		} catch (SocketException e) {
 			throw new IllegalStateException(e);
 		}
+
 	}
 
 	/**

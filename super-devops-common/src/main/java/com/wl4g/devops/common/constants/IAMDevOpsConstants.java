@@ -160,6 +160,15 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_S_LOGIN_ERRREAD = "errread";
 
 	/**
+	 * Generic API v1 base URL.
+	 */
+	final public static String URI_S_API_V1_BASE = "/api/v1";
+	/**
+	 * Generic API v1 sessions list query.
+	 */
+	final public static String URI_S_API_V1_SESSIONS = "/sessions";
+
+	/**
 	 * IAM server authentication session stored cache name.
 	 */
 	final public static String CACHE_SESSION = "session_";
