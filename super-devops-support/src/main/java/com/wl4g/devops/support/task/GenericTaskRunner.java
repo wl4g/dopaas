@@ -92,7 +92,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			}
 
 			// Boss asynchronously execution.(if necessary)
-			if (config.isStartup()) {
+			if (config.isAsyncStartup()) {
 				String name = getClass().getSimpleName() + "-boss";
 				boss = new Thread(this, name);
 				boss.setDaemon(false);
@@ -201,7 +201,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 */
 	public void submitForComplete(List<Runnable> jobs, long timeoutMs) throws IllegalStateException {
 		submitForComplete(jobs, (ex, completed, uncompleted) -> {
-			if(nonNull(ex)){
+			if (nonNull(ex)) {
 				throw ex;
 			}
 		}, timeoutMs);
@@ -359,7 +359,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		}
 
 		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(2)) {
+		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
 		};
 		runner.run(null);
 

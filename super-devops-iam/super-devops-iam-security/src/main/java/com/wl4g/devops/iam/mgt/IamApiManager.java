@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.config;
-
-import com.wl4g.devops.support.task.RunnerProperties;
+package com.wl4g.devops.iam.mgt;
 
 /**
- * Alarm properties.
+ * IAM metric API interface.
  * 
- * @author wangl.sir
- * @version v1.0 2019年7月5日
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年10月31日
  * @since
  */
-public class AlarmProperties extends RunnerProperties {
-	private static final long serialVersionUID = -3690593536229115411L;
-
-	public AlarmProperties() {
-		// No need to start the asynchronous running of the boss.
-		setAsyncStartup(false);
-		setConcurrency(1); // By default
-	}
+public interface IamApiManager {
 
 }
