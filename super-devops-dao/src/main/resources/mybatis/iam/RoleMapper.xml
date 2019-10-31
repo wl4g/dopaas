@@ -38,6 +38,19 @@
     where ru.user_id = #{userId,jdbcType=INTEGER}
   </select>
 
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_role
+    where del_flag!=1
+    <if test="name != null and name !='' ">
+      AND name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="displayName != null and displayName !='' ">
+      AND display_name LIKE CONCAT('%','${displayName}','%')
+    </if>
+  </select>
+
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_role

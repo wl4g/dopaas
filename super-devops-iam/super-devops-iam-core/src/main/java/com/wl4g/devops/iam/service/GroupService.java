@@ -12,4 +12,10 @@ public interface GroupService {
 
     List<Group> getGroupsTree();
 
+    void save(Group group);
+
+    void del(Integer id);
+
+    Group detail(Integer id);
+
 }
