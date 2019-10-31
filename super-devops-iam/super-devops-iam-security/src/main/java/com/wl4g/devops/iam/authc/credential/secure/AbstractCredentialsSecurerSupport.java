@@ -227,11 +227,10 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 		if (log.isInfoEnabled()) {
 			String publicBase64String = keySpec.getPubHexString();
+
 			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
 			String privateBase64String = "Not output";
-			boolean output = true;
-
-			if (log.isDebugEnabled() || output) {
+			if (log.isDebugEnabled()) {
 				privateBase64String = keySpec.getBase64String();
 				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			} else {

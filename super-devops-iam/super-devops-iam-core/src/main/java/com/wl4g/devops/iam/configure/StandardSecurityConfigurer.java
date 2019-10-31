@@ -34,8 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
+import static org.apache.shiro.util.Assert.hasText;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Standard IAM Security context handler
@@ -73,9 +77,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public ApplicationInfo getApplicationInfo(String appName) {
-		// TODO(Using DB) For testing::
-		List<ApplicationInfo> apps = findApplicationInfo(appName);
-		return !apps.isEmpty() ? apps.get(0) : null;
+		List<ApplicationInfo> apps = safeList(findApplicationInfo(appName));
+		return !isEmpty(apps) ? apps.get(0) : null;
 	}
 
 	@Override
@@ -94,7 +97,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfoList.addAll(applications);
 		}
 
-		//// TODO(Using DB) for testing.
+		//// --- For testing. ---
 		//
 		// if (equalsAny("scm-server", appNames)) {
 		// ApplicationInfo appInfo = new ApplicationInfo("scm-server",
@@ -145,26 +148,17 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// By SNS authorizing
 		if (parameter instanceof SnsParameter) {
 			SnsParameter snsParameter = (SnsParameter) parameter;
-			user = userDao.selectByUnionIdOrOpenId(snsParameter.getUnionId(),snsParameter.getOpenId());
+			user = userDao.selectByUnionIdOrOpenId(snsParameter.getUnionId(), snsParameter.getOpenId());
 		}
 		// By general account
 		else if (parameter instanceof SimpleParameter) {
 			SimpleParameter simpleParameter = (SimpleParameter) parameter;
 			user = userDao.selectByUserName(simpleParameter.getPrincipal());
 		}
-
-		if (null != user) {
-			StandardIamAccountInfo info = new StandardIamAccountInfo();
-			info.setPrincipal(user.getUserName());
-			info.setStoredCredentials(user.getPassword());
-			return info;
+		if (nonNull(user)) {
+			return new StandardIamAccountInfo(user.getUserName(), user.getPassword());
 		}
 		return null;
-
-
-
-
-
 	}
 
 	@Override
@@ -198,13 +192,26 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	}
 
+	/**
+	 * Standard IAM account info implements.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月31日
+	 * @since
+	 */
 	public static class StandardIamAccountInfo implements IamAccountInfo {
 		private static final long serialVersionUID = 1L;
 
-		private String principal;
-		private String storedCredentials;
+		/** Authenticating principal name. */
+		final private String principal;
 
-		public void setStoredCredentials(String storedCredentials) {
+		/** Authenticating principal DB stored credenticals. */
+		final private String storedCredentials;
+
+		public StandardIamAccountInfo(String principal, String storedCredentials) {
+			hasText(principal, "Principal must not be empty.");
+			hasText(storedCredentials, "StoredCredentials must not be empty.");
+			this.principal = principal;
 			this.storedCredentials = storedCredentials;
 		}
 
@@ -216,10 +223,6 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		@Override
 		public String getStoredCredentials() {
 			return storedCredentials;
-		}
-
-		public void setPrincipal(String principal) {
-			this.principal = principal;
 		}
 
 	}
