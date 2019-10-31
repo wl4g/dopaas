@@ -45,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年12月7日
  * @since
+ * @see {@link SimpleSession}
  */
 public class IamSession implements ValidatingSession, Serializable {
 	private static final long serialVersionUID = -8534902655046557168L;

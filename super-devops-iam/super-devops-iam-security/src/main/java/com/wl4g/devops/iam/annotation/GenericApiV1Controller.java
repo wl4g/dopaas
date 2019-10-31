@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.mgt;
+package com.wl4g.devops.iam.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * IAM metric API interface.
- * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年10月31日
- * @since
+ * Generic API v1 controller configuration.
+ *
+ * @since 1.1.0
  */
-public interface IamApiManager {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+@Documented
+public @interface GenericApiV1Controller {
 
 }

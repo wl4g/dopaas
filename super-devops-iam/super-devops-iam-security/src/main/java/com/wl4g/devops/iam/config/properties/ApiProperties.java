@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.config.properties;
 
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static org.springframework.util.Assert.isTrue;
 
 import java.io.Serializable;
 
@@ -29,6 +30,18 @@ import java.io.Serializable;
  */
 public class ApiProperties implements Serializable {
 	private static final long serialVersionUID = -2694422471852860689L;
+
+	/** Sessions max iteration batch size. */
+	private int maxIteraSize = 200;
+
+	public int getMaxIteraSize() {
+		return maxIteraSize;
+	}
+
+	public void setMaxIteraSize(int maxIteraSize) {
+		isTrue(maxIteraSize > 0, "maxIteraSize must >0");
+		this.maxIteraSize = maxIteraSize;
+	}
 
 	@Override
 	public String toString() {
