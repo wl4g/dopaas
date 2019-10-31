@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.srm.Log;
 import com.wl4g.devops.common.bean.srm.QueryLogModel;
 import com.wl4g.devops.common.bean.srm.Querycriteria;
 import com.wl4g.devops.common.constants.SRMDevOpsConstants;
-import com.wl4g.devops.common.utils.DateUtils;
+import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.srm.handler.LogHandler;
 import com.wl4g.devops.srm.service.LogConsoleService;
 import org.elasticsearch.action.search.SearchRequest;

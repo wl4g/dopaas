@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,15 @@ package com.wl4g.devops.iam.config.properties;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
+import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.shiro.util.Assert;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.config.properties.ServerParamProperties;
 import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
@@ -58,14 +59,23 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	private String loginUri = DEFAULT_VIEW_LOGIN_URI;
 
 	/**
+	 * Login success redirection to end-point service name. </br>
+	 * 
+	 * <pre>
+	 * umc-manager@http://localhost:14048
+	 * </pre>
+	 */
+	private String successService = EMPTY;
+
+	/**
 	 * Login success redirection to end-point.(Must be back-end server URI)
 	 * </br>
 	 * 
 	 * <pre>
-	 * umc-admin@http://localhost:14048
+	 * umc-manager@http://localhost:14048
 	 * </pre>
 	 */
-	private String successEndpoint;
+	private String successUri = "http://localhost:8080";
 
 	/**
 	 * Unauthorized(403) page URI
@@ -92,23 +102,20 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	public void setLoginUri(String loginUri) {
-		this.loginUri = WebUtils2.cleanURI(loginUri);
-	}
-
-	public String getSuccessEndpoint() {
-		return successEndpoint;
+		this.loginUri = cleanURI(loginUri);
 	}
 
 	public void setSuccessEndpoint(String successEndpoint) {
-		this.successEndpoint = successEndpoint;
+		Assert.hasText(successEndpoint, "Success endpoint must not be empty.");
+		this.successService = successEndpoint.split("@")[0];
+		this.successUri = cleanURI(correctAuthenticaitorURI(successEndpoint.split("@")[1]));
 	}
 
 	public String getSuccessService() {
-		return getSuccessEndpoint().split("@")[0];
+		return successService;
 	}
 
 	/**
-	 * e.g. </br>
 	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1 Situation1:
 	 * /view/index.html ===> http://myapp.domain.com/myapp/authenticator?id=1
 	 * 
@@ -121,7 +128,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 */
 	@Override
 	public String getSuccessUri() {
-		return correctAuthenticaitorURI(getSuccessEndpoint().split("@")[1]);
+		return successUri;
 	}
 
 	@Override
@@ -162,15 +169,15 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		// Default URL filter chain.
 		addDefaultFilterChain();
 		// Default success endPoint.
-		if (isBlank(getSuccessEndpoint())) {
+		if (isBlank(getSuccessService())) {
 			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
 		}
 	}
 
 	@Override
 	protected void validation() {
-		Assert.hasText(getSuccessEndpoint(), "'successEndpoint' must not be empty.");
-		Assert.state(getSuccessEndpoint().contains("@"), "Invalid success endpoint, e.g. iam-example@http://localhost:14041");
+		Assert.hasText(getSuccessService(), "Success service must not be empty.");
+		Assert.hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
 		super.validation();
 	}
 

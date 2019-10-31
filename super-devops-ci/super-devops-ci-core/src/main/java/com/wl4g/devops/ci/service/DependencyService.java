@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Dependency;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.dto.TaskResult;
+
+import java.util.LinkedHashSet;
 
 /**
  * @author vjay
@@ -25,10 +25,6 @@ import com.wl4g.devops.common.bean.ci.dto.TaskResult;
  */
 public interface DependencyService {
 
-	void build(TaskHistory taskHistory, Dependency dependency, String branch, TaskResult taskResult, boolean isDependency)
-			throws Exception;
-
-	void rollback(TaskHistory taskHistory, TaskHistory refTaskHistory, Dependency dependency, String branch,
-			TaskResult taskResult, boolean isDependency) throws Exception;
+	LinkedHashSet<Dependency> getHierarchyDependencys(Integer projectId, LinkedHashSet<Dependency> set);
 
 }

@@ -17,9 +17,9 @@ package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,8 @@ import static java.util.Collections.emptyList;
  * @author wangl.sir
  * @version v1.0 2019年7月5日
  */
-public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<RunProperties> implements IndicatorsValveAlerter {
+public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<RunnerProperties>
+		implements IndicatorsValveAlerter {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -51,19 +52,14 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 	/**
 	 * REDIS lock manager.
 	 */
-	final protected SimpleRedisLockManager lockManager;
+	final protected JedisLockManager lockManager;
 
-	public AbstractIndicatorsValveAlerter(JedisService jedisService, SimpleRedisLockManager lockManager, AlarmProperties config) {
+	public AbstractIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config) {
 		super(config);
 		Assert.notNull(jedisService, "JedisService is null, please check config.");
 		Assert.notNull(lockManager, "LockManager is null, please check config.");
 		this.jedisService = jedisService;
 		this.lockManager = lockManager;
-	}
-
-	@Override
-	public void run() {
-		// Ignore
 	}
 
 	@Override
@@ -161,8 +157,5 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 		Assert.hasText(cacheKey, "cacheKey must not be empty");
 		return KEY_CACHE_ALARM_METRIC_QUEUE + cacheKey;
 	}
-
-
-
 
 }

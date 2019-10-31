@@ -10,7 +10,8 @@
     <result column="sha_git" property="shaGit" jdbcType="VARCHAR" />
     <result column="sha_local" property="shaLocal" jdbcType="VARCHAR" />
     <result column="ref_id" property="refId" jdbcType="INTEGER" />
-    <result column="tar_type" property="tarType" jdbcType="INTEGER" />
+    <result column="tar_type" property="tarType" jdbcType="VARCHAR" />
+    <result column="build_command" property="buildCommand" jdbcType="VARCHAR" />
     <result column="pre_command" property="preCommand" jdbcType="VARCHAR" />
     <result column="post_command" property="postCommand" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -30,11 +31,11 @@
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,tar_type,pre_command,post_command, remark, del_flag, create_date,
+    id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,tar_type,build_command,pre_command,post_command, remark, del_flag, create_date,
     create_by, update_date, update_by,result,contact_group_id
   </sql>
   <sql id="Base_Column_List_t" >
-    t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.tar_type,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
+    t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.tar_type,t.build_command,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
     t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id
   </sql>
   <sql id="Blob_Column_List" >
@@ -55,12 +56,12 @@
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
     insert into ci_task_history (id, type, project_id,
       status, branch_name, sha_git,sha_local,
-      ref_id, tar_type,pre_command,post_command,remark, del_flag,
+      ref_id, tar_type,build_command,pre_command,post_command,remark, del_flag,
       create_date, create_by, update_date, 
       update_by, result,contact_group_id)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
-      #{refId,jdbcType=INTEGER},#{tarType,jdbcType=INTEGER},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+      #{refId,jdbcType=INTEGER},#{tarType,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contact_group_id,jdbcType=INTEGER})
   </insert>
@@ -91,6 +92,9 @@
       </if>
       <if test="tarType != null" >
         tar_type,
+      </if>
+      <if test="buildCommand != null" >
+        build_command,
       </if>
       <if test="preCommand != null" >
         pre_command,
@@ -147,7 +151,10 @@
         #{refId,jdbcType=INTEGER},
       </if>
       <if test="tarType != null" >
-        #{tarType,jdbcType=INTEGER},
+        #{tarType,jdbcType=VARCHAR},
+      </if>
+      <if test="buildCommand != null" >
+        #{buildCommand,jdbcType=VARCHAR},
       </if>
       <if test="preCommand != null" >
         #{preCommand,jdbcType=VARCHAR},
@@ -206,7 +213,10 @@
         ref_id = #{refId,jdbcType=INTEGER},
       </if>
       <if test="tarType != null" >
-        tar_type = #{tarType,jdbcType=INTEGER},
+        tar_type = #{tarType,jdbcType=VARCHAR},
+      </if>
+      <if test="buildCommand != null" >
+        build_command = #{buildCommand,jdbcType=VARCHAR},
       </if>
       <if test="preCommand != null" >
         pre_command = #{preCommand,jdbcType=VARCHAR},
@@ -250,7 +260,8 @@
       sha_git = #{shaGit,jdbcType=VARCHAR},
       sha_local = #{shaLocal,jdbcType=VARCHAR},
       ref_id = #{refId,jdbcType=INTEGER},
-      tar_type = #{tarType,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=VARCHAR},
+      build_command = #{buildCommand,jdbcType=VARCHAR},
       pre_command = #{preCommand,jdbcType=VARCHAR},
       post_command = #{postCommand,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -272,7 +283,8 @@
       sha_git = #{shaGit,jdbcType=VARCHAR},
       sha_local = #{shaLocal,jdbcType=VARCHAR},
       ref_id = #{refId,jdbcType=INTEGER},
-      tar_type = #{tarType,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=VARCHAR},
+      build_command = #{buildCommand,jdbcType=VARCHAR},
       pre_command = #{preCommand,jdbcType=VARCHAR},
       post_command = #{postCommand,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -306,11 +318,11 @@
     order by t.create_date desc
   </select>
 
-  <update id="updateStatus" parameterType="java.lang.Integer" >
+  <update id="updateStatus" parameterType="java.lang.Long" >
     <![CDATA[
     update ci_task_history set status=4
-    where status not in(2,3,4)
-    and TIMESTAMPDIFF(second ,create_date,now())>#{time,jdbcType=INTEGER};
+    where status in(0,1)
+    and TIMESTAMPDIFF(second ,create_date,now())>#{time,jdbcType=BIGINT};
     ]]>
   </update>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,13 @@
 package com.wl4g.devops.common.constants;
 
 /**
- * CI/CD devops constants
+ * CI/CD DevOps constants.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-20 09:21:00
  */
 public abstract class CiDevOpsConstants extends DevOpsConstants {
-
-	// tar
-	public static final int TAR_TYPE_TAR = 1;
-	// jar
-	public static final int TAR_TYPE_JAR = 2;
-	// other
-	public static final int TAR_TYPE_DOCKER = 3;
 
 	// task-create
 	public static final int TASK_STATUS_CREATE = 0;
@@ -39,12 +32,14 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_STATUS_SUCCESS = 2;
 	// task-fail
 	public static final int TASK_STATUS_FAIL = 3;
+	// stop
+	public static final int TASK_STATUS_STOP = 5;
 
 	// Auto trigger
 	public static final int TASK_TYPE_TRIGGER = 1;
 	// Manual trigger
 	public static final int TASK_TYPE_MANUAL = 2;
-	// Rollback trigger
+	// Roll-back trigger
 	public static final int TASK_TYPE_ROLLBACK = 3;
 	// Auto trigger
 	public static final int TASK_TYPE_TIMMING = 4;
@@ -57,8 +52,18 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_ENABLE_STATUS = 1;
 	public static final int TASK_DISABLE_STATUS = 0;
 
-	// lock
-	public static final String CI_LOCK = "CI_LOCK";
-	public static final int LOCK_TIME = 10;
+	/**
+	 * Pipeline dependencies locker.
+	 */
+	public static final String LOCK_DEPENDENCY_BUILD = "ci.pipeline.build_";
+
+	/**
+	 * Log file start/end separation.
+	 */
+	public static final String LOG_FILE_START = "<[EOF]";
+	public static final String LOG_FILE_END = "[EOF]>";
+
+	// command replace
+	public static final String PROJECT_PATH = "#\\{projectPath}";
 
 }

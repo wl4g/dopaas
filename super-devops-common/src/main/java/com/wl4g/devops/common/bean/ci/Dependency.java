@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import java.io.Serializable;
-
 import com.wl4g.devops.common.bean.BaseBean;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 public class Dependency extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
@@ -88,5 +89,26 @@ public class Dependency extends BaseBean implements Serializable {
 
 	public void setParentName(String parentName) {
 		this.parentName = parentName;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Dependency that = (Dependency) o;
+		return Objects.equals(dependentId, that.dependentId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dependentId);
+	}
+
+	@Override
+	public String toString() {
+		return "Dependency{" + "id=" + id + ", projectId=" + projectId + ", dependentId=" + dependentId + ", branch='" + branch
+				+ '\'' + ", projectName='" + projectName + '\'' + ", parentName='" + parentName + '\'' + '}';
 	}
 }

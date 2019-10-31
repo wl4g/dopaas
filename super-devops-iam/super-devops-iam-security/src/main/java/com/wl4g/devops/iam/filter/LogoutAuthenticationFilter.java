@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.apache.shiro.SecurityUtils;
 
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 /**
@@ -44,9 +45,9 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	final public static String NAME = "logout";
 
 	@Override
-	protected LogoutAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return new LogoutAuthenticationToken(remoteHost, fromAppName, redirectUrl);
+	protected LogoutAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		return new LogoutAuthenticationToken(remoteHost, redirectInfo);
 	}
 
 	@Override

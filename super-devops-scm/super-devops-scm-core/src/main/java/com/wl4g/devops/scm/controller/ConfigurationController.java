@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class ConfigurationController extends BaseController {
 		RespBase<Object> resp = new RespBase<>();
 		try {
 			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 5;
+			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
 			Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
 			List<ConfigVersionList> list = configService.list(agl);
 			customPage.setPageNum(pageNum);

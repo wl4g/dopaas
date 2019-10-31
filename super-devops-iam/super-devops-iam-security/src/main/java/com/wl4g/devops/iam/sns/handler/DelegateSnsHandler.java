@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class DelegateSnsHandler implements SnsHandler {
 		Assert.notEmpty(handlers, "'handlers' must not be empty");
 		this.config = config;
 		for (SnsHandler handler : handlers) {
-			if (this.repository.putIfAbsent(handler.whichType(), handler) != null) {
+			if (repository.putIfAbsent(handler.whichType(), handler) != null) {
 				throw new IllegalStateException(String.format("Already sns handler register", handler.whichType()));
 			}
 		}
@@ -63,7 +63,7 @@ public class DelegateSnsHandler implements SnsHandler {
 	@Override
 	public String connect(Which which, String provider, String state, Map<String, String> connectParams) {
 		state = StringUtils.isEmpty(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
-		return this.getSnsHandler(which).connect(which, provider, state, connectParams);
+		return getSnsHandler(which).connect(which, provider, state, connectParams);
 	}
 
 	@Override
@@ -84,10 +84,10 @@ public class DelegateSnsHandler implements SnsHandler {
 	 */
 	private SnsHandler getSnsHandler(Which which) {
 		Assert.notNull(which, String.format("Illegal parameter %s[%s]", config.getParam().getWhich(), which));
-		if (!this.repository.containsKey(which)) {
+		if (!repository.containsKey(which)) {
 			throw new NoSuchBeanDefinitionException(String.format("No such sns handler of which[%s]", which));
 		}
-		return this.repository.get(which);
+		return repository.get(which);
 	}
 
 }

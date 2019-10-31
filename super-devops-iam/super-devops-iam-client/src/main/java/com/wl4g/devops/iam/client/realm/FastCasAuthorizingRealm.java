@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
@@ -43,6 +42,9 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSession;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATTRIBUTE_NAME;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Date;
 import java.util.List;
@@ -88,7 +90,7 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		String granticket = "";
+		String granticket = EMPTY;
 		try {
 			Assert.notNull(token, "'authenticationToken' must not be null");
 			FastCasAuthenticationToken fcToken = (FastCasAuthenticationToken) token;
@@ -106,9 +108,9 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 			String newGrantTicket = String.valueOf(assertion.getAttributes().get(config.getParam().getGrantTicket()));
 			fcToken.setCredentials(newGrantTicket);
 
-			/*
-			 * Synchronize with xx.xx..mgt.JedisIamSessionDAO#update <br/>
-			 * Update session expire date time
+			/**
+			 * {@link JedisIamSessionDAO#update()} </br>
+			 * Update session expire date time.
 			 */
 			Date validUntilDate = assertion.getValidUntilDate();
 			long maxIdleTimeMs = validUntilDate.getTime() - System.currentTimeMillis();
@@ -181,7 +183,7 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 	 * @return
 	 */
 	private TicketAssertion doRequestRemoteTicketValidation(String ticket) {
-		return this.ticketValidator.validate(new TicketValidationModel(ticket, config.getServiceName()));
+		return ticketValidator.validate(new TicketValidationModel(ticket, config.getServiceName()));
 	}
 
 	/**
@@ -191,27 +193,27 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 	 * @throws TicketValidateException
 	 */
 	private void assertTicketValidation(TicketAssertion assertion) throws TicketValidateException {
-		if (assertion == null) {
+		if (isNull(assertion)) {
 			throw new TicketValidateException("ticket assertion must not be null");
 		}
-		if (assertion.getAttributes().get(config.getParam().getGrantTicket()) == null) {
+		if (isNull(assertion.getAttributes().get(config.getParam().getGrantTicket()))) {
 			throw new TicketValidateException("grant ticket must not be null");
 		}
 		IamPrincipal principal = assertion.getPrincipal();
-		if (principal == null) {
+		if (isNull(principal)) {
 			throw new TicketValidateException("'principal' must not be null");
 		}
-		if (principal.getAttributes() == null || principal.getAttributes().isEmpty()) {
+		if (isNull(principal.getAttributes()) || principal.getAttributes().isEmpty()) {
 			throw new TicketValidateException("'principal.attributes' must not be empty");
 		}
-		if (!StringUtils.hasText((String) principal.getAttributes().get(KEY_ROLE_ATTRIBUTE_NAME))) {
+		if (isBlank((String) principal.getAttributes().get(KEY_ROLE_ATTRIBUTE_NAME))) {
 			if (log.isWarnEnabled()) {
 				log.warn("Principal '{}' role is empty", principal.getName());
 			}
 			// throw new TicketValidationException(String.format("Principal '%s'
 			// roles must not empty", principal.getName()));
 		}
-		if (!StringUtils.hasText((String) principal.getAttributes().get(KEY_PERMIT_ATTRIBUTE_NAME))) {
+		if (isBlank((String) principal.getAttributes().get(KEY_PERMIT_ATTRIBUTE_NAME))) {
 			if (log.isWarnEnabled()) {
 				log.warn("Principal '{}' permits is empty", principal.getName());
 			}

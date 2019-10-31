@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.iam.model.BasedModel;
 import com.wl4g.devops.common.exception.iam.ValidateException;
 
 /**
- * IAM validator
+ * IAM validator.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月31日

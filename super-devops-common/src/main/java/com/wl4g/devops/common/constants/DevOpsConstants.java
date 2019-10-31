@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,5 +34,10 @@ public abstract class DevOpsConstants {
 	 * Controlling Spring-enabled Unified Exception Handling Stack Information
 	 */
 	final public static String PARAM_STACK_TRACE = ENV.getOrDefault("spring.error.stack.trace", "_stacktrace");
+
+	/**
+	 * Command-line process destroy locker.
+	 */
+	final public static String LOCK_PROCESS_DESTROY_PREFIX = "cli.process.destroy_";
 
 }

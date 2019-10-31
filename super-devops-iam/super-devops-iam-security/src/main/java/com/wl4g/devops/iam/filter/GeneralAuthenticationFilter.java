@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,30 +24,29 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 
 @IamFilter
 public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter<GeneralAuthenticationToken> {
-
 	final public static String NAME = "general";
 
 	@Override
-	protected GeneralAuthenticationToken postCreateToken(String remoteHost, String fromAppName, String redirectUrl,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected GeneralAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		if (!POST.name().equalsIgnoreCase(request.getMethod())) {
 			response.setStatus(405);
 			throw new HttpRequestMethodNotSupportedException(request.getMethod(),
 					String.format("No support '%s' request method", request.getMethod()));
 		}
 
-		String username = getCleanParam(request, config.getParam().getPrincipalName());
+		String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
-		VerifyType verityType = VerifyType.of(request);
-		return new GeneralAuthenticationToken(remoteHost, fromAppName, redirectUrl, username, cipherPassword, clientRef,
-				verifiedToken, verityType);
+		return new GeneralAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword, clientRef, verifiedToken,
+				VerifyType.of(request));
 	}
 
 	@Override

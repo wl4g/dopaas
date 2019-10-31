@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,27 @@ package com.wl4g.devops.iam.common.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
+import com.wl4g.devops.common.utils.lang.Collections2;
+
 import static com.wl4g.devops.common.utils.web.WebUtils2.isSameWithOrigin;
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.web.cors.CorsConfiguration.ALL;
 
 /**
@@ -115,14 +122,18 @@ public class CorsProperties implements Serializable {
 		public CorsRule setAllowsOrigins(List<String> allowsOrigins) {
 			// "allowsOrigin" may have a "*" wildcard character.
 			// e.g. http://*.mydomain.com
-			this.allowsOrigins.addAll(allowsOrigins);
+			if (!isEmpty(allowsOrigins)) {
+				this.allowsOrigins.addAll(allowsOrigins);
+			}
 			return this;
 		}
 
 		public CorsRule addAllowsOrigin(String allowsOrigin) {
 			// "allowsOrigin" may have a "*" wildcard character.
 			// e.g. http://*.mydomain.com
-			this.allowsOrigins.add(allowsOrigin);
+			if (!isBlank(allowsOrigin)) {
+				this.allowsOrigins.add(allowsOrigin);
+			}
 			return this;
 		}
 
@@ -131,11 +142,17 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsHeaders(Set<String> allowsHeaders) {
-			return mergeWithSimpleAll(this.allowsHeaders, allowsHeaders);
+			if (!isEmpty(allowsHeaders)) {
+				this.allowsHeaders.addAll(allowsHeaders);
+			}
+			return this;
 		}
 
 		public CorsRule addAllowsHeader(String allowsHeader) {
-			return mergeWithSimpleAll(this.allowsHeaders, Arrays.asList(allowsHeader));
+			if (!isBlank(allowsHeader)) {
+				this.allowsHeaders.add(allowsHeader);
+			}
+			return this;
 		}
 
 		public List<String> getAllowsMethods() {
@@ -143,11 +160,17 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsMethods(List<String> allowsMethods) {
-			return mergeWithSimpleAll(this.allowsMethods, allowsMethods);
+			if (!isEmpty(allowsMethods)) {
+				this.allowsMethods.addAll(allowsMethods);
+			}
+			return this;
 		}
 
 		public CorsRule addAllowsMethod(String allowsMethod) {
-			return mergeWithSimpleAll(this.allowsMethods, Arrays.asList(allowsMethod));
+			if (!isBlank(allowsMethod)) {
+				this.allowsMethods.add(allowsMethod);
+			}
+			return this;
 		}
 
 		public List<String> getExposedHeaders() {
@@ -155,11 +178,17 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setExposedHeaders(List<String> exposedHeaders) {
-			return mergeWithSimpleAll(this.exposedHeaders, exposedHeaders);
+			if (!isEmpty(exposedHeaders)) {
+				this.exposedHeaders.addAll(exposedHeaders);
+			}
+			return this;
 		}
 
 		public CorsRule addExposedHeader(String exposedHeader) {
-			return mergeWithSimpleAll(this.exposedHeaders, Arrays.asList(exposedHeader));
+			if (!isBlank(exposedHeader)) {
+				this.exposedHeaders.add(exposedHeader);
+			}
+			return this;
 		}
 
 		public Long getMaxAge() {
@@ -208,6 +237,13 @@ public class CorsProperties implements Serializable {
 		 * @return
 		 */
 		public CorsConfiguration toSpringCorsConfiguration() {
+			// Merge and duplicate values elements.
+			mergeWithWildcardAndDisDuplicate(getAllowsOrigins());
+			mergeWithWildcardAndDisDuplicate(getAllowsHeaders());
+			mergeWithWildcardAndDisDuplicate(getAllowsMethods());
+			mergeWithWildcardAndDisDuplicate(getExposedHeaders());
+
+			// Convert to spring CORS configuration.
 			CorsConfiguration cors = new AdvancedCorsConfiguration();
 			cors.setAllowCredentials(isAllowCredentials());
 			cors.setMaxAge(getMaxAge());
@@ -219,25 +255,37 @@ public class CorsProperties implements Serializable {
 		}
 
 		/**
-		 * Simple merge collections.
+		 * Wild-card merge source collection and remove duplicate.
 		 * 
 		 * @param source
-		 * @param dest
 		 * @return
 		 */
-		private CorsRule mergeWithSimpleAll(Collection<String> source, Collection<String> dest) {
+		private CorsRule mergeWithWildcardAndDisDuplicate(Collection<String> source) {
 			Assert.notNull(source, "'source' must not be null");
-			if (!CollectionUtils.isEmpty(dest)) {
-				source.addAll(dest);
-			}
 			// Clear other specific item configurations if '*' is present
-			Iterator<String> it = source.iterator();
-			while (it.hasNext()) {
-				String s = it.next();
-				if (s.contains(ALL)) {
+			Iterator<String> it1 = source.iterator();
+			while (it1.hasNext()) {
+				String value = it1.next();
+				if (!isBlank(value) && trimToEmpty(value).equalsIgnoreCase(ALL)) {
 					source.clear();
 					source.add(ALL);
 					break;
+				}
+			}
+
+			// Remove duplicate.
+			Collections2.disDupCollection(source);
+
+			/*
+			 * Clean up invalid values that did not resolve successfully through
+			 * environment variables. e.g. http://${DEVOPS_DOMAIN_TOP}
+			 * https://${DEVOPS_DOMAIN_TOP}
+			 */
+			Iterator<String> it2 = source.iterator();
+			while (it2.hasNext()) {
+				String value = it2.next();
+				if (!isBlank(value) && contains(value, "{") && contains(value, "}")) {
+					it2.remove();
 				}
 			}
 			return this;
@@ -292,6 +340,16 @@ public class CorsProperties implements Serializable {
 				}
 			}
 			return null;
+		}
+
+		@Override
+		public void addAllowedMethod(String method) {
+			if (!isBlank(method)) {
+				// Add for invalid method check.
+				Assert.isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(Locale.ENGLISH))),
+						String.format("Invalid allowed http method: '%s'", method));
+				super.addAllowedMethod(method.toUpperCase(Locale.ENGLISH));
+			}
 		}
 
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 package com.wl4g.devops.iam.sns.handler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
 
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.iam.common.utils.SessionBindings;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
@@ -43,11 +43,11 @@ public class UnBindingSnsHandler extends BasedBindSnsHandler {
 	@Override
 	protected void postBindingProcess(SocialConnectInfo info) {
 		try {
-			this.context.unbindSocialConnection(info);
+			configurer.unbindSocialConnection(info);
 		} catch (Throwable e) {
-			log.warn("SNS binding processing error", e);
+			log.warn("Failed to unbinding sns.", e);
 			// Save error to session
-			SessionBindings.bind(KEY_ERR_SESSION_SAVED, Exceptions.getRootCauses(e).getMessage());
+			bind(KEY_ERR_SESSION_SAVED, getRootCauses(e).getMessage());
 		}
 	}
 

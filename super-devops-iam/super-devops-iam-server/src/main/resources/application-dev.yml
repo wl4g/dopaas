@@ -20,30 +20,30 @@ spring:
            - http://localhost:8080
            - http://localhost.com:8080
         allowsHeaders: '*'
-        allowsMethods: GET,POST,OPTION
+        allowsMethods: GET,POST
   cloud:
     devops:
       iam: # IAM configuration.
-        #login-uri: /view/login.html
-        login-uri: http://localhost:8080/#/login
+        login-uri: /view/login.html
+        #login-uri: http://localhost:8080/#/login # See: super-devops-view
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@http://localhost:14048/umc-manager
-        authc-internal-access:
+        acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allowIp: 127.0.0.1
-          denyIp:
+          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         captcha:
           #jigsaw:
             #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
         sns: # SNS configuration.
           oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
           wechat-mp:
-            app-id: wxec3f74a4062d650f
-            app-secret: 705595b5807d69e643d6e15fd7350499
-            redirect-url: http://passport.wl4g.com${server.contextPath}/sns/wechatmp/callback
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}${server.contextPath}/sns/wechatmp/callback
           wechat:
-            app-id: wx162814f9191f9d9b
-            app-secret: 9f1d914629bd9820351fb73f51e70495
+            app-id: yourappid
+            app-secret: yoursecret
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/wechat/callback
             href: https://static.wl4g.com:2443/iam/static/wx.css
           qq:

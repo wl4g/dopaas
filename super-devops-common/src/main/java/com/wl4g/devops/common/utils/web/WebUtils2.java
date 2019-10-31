@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -44,13 +46,16 @@ import com.google.common.base.Charsets;
 
 import static com.wl4g.devops.common.utils.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.*;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.split;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
@@ -197,7 +202,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static boolean isMediaRequest(String path) {
 		String ext = org.springframework.util.StringUtils.getFilenameExtension(path);
 		for (String media : MEDIA_BASE) {
-			if (StringUtils.equalsIgnoreCase(ext, media)) {
+			if (equalsIgnoreCase(ext, media)) {
 				return true;
 			}
 		}
@@ -243,14 +248,19 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	}
 
 	/**
-	 * To query URL parameters
+	 * To query URL parameters.
+	 * 
+	 * <pre>
+	 * toQueryParams("application=iam-example&redirect_url=http://my.com/index") == {application->iam-example, redirect_url=>http://my.com/index}
+	 * toQueryParams("application=iam-example&redirect_url=http://my.com/index/#/me") == {application->iam-example, redirect_url=>http://my.com/index/#/me}
+	 * </pre>
 	 * 
 	 * @param urlQuery
 	 * @return
 	 */
 	public static Map<String, String> toQueryParams(String urlQuery) {
-		if (StringUtils.isEmpty(urlQuery)) {
-			return Collections.emptyMap();
+		if (isBlank(urlQuery)) {
+			return emptyMap();
 		}
 		try {
 			String[] paramPairs = urlQuery.split("&");
@@ -375,11 +385,11 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 */
 	public static String safeEncodeURL(String url) {
 		try {
-			if (!url.toLowerCase().contains(URL_SEPAR_SLASH)) {
+			if (!contains(trimToEmpty(url).toLowerCase(Locale.ENGLISH), URL_SEPAR_SLASH)) {
 				return URLEncoder.encode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 		return url;
 	}
@@ -393,11 +403,11 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 */
 	public static String safeDecodeURL(String url) {
 		try {
-			if (url.toLowerCase().contains(URL_SEPAR_SLASH)) {
+			if (contains(trimToEmpty(url).toLowerCase(Locale.ENGLISH), URL_SEPAR_SLASH)) {
 				return URLDecoder.decode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 		return url;
 	}
@@ -424,11 +434,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		if (uria == null || urib == null) {
 			return false;
 		}
-		try {
-			return new URI(safeDecodeURL(uria)).getHost().equals(new URI(safeDecodeURL(urib)).getHost());
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return URI.create(safeDecodeURL(uria)).getHost().equals(URI.create(safeDecodeURL(urib)).getHost());
 	}
 
 	/**
@@ -602,7 +608,6 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		String ctxPath = request.getContextPath();
 		Assert.notNull(ctxPath, "Http request contextPath must not be null");
 		ctxPath = !hasCtxPath ? "" : ctxPath;
-
 		// Scheme
 		String scheme = request.getScheme();
 		for (String schemeKey : HEADER_REAL_PROTOCOL) {
@@ -612,8 +617,6 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 				break;
 			}
 		}
-		Assert.notNull(scheme, "Http request scheme must not be null");
-
 		// Host
 		String serverName = request.getServerName();
 		for (String hostKey : HEADER_REAL_HOST) {
@@ -624,17 +627,38 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 				break;
 			}
 		}
-		Assert.notNull(serverName, "Http request serverName must not be null");
-
 		// Port
 		int port = request.getServerPort();
-		Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
+
+		return getBaseURIForDefault(scheme, serverName, port) + ctxPath;
+	}
+
+	/**
+	 * Obtain base URI for default. </br>
+	 * 
+	 * <pre>
+	 * getBaseURIForDefault("http", "my.com", 8080) == "http://my.com:8080"
+	 * getBaseURIForDefault("http", "my.com", 80) == "http://my.com"
+	 * getBaseURIForDefault("https", "my.com", 443) == "https://my.com"
+	 * </pre>
+	 * 
+	 * @param scheme
+	 * @param serverName
+	 * @param port
+	 * @return
+	 */
+	public static String getBaseURIForDefault(String scheme, String serverName, int port) {
+		Assert.notNull(scheme, "Http request scheme must not be empty");
+		Assert.notNull(serverName, "Http request serverName must not be empty");
 
 		StringBuffer baseUri = new StringBuffer(scheme).append("://").append(serverName);
-		if (!((scheme.equalsIgnoreCase("HTTP") && port == 80) || (scheme.equalsIgnoreCase("HTTPS") && port == 443))) {
-			baseUri.append(":").append(port);
+		if (port > 0) {
+			Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
+			if (!((equalsIgnoreCase(scheme, "HTTP") && port == 80) || (equalsIgnoreCase(scheme, "HTTPS") && port == 443))) {
+				baseUri.append(":").append(port);
+			}
 		}
-		return baseUri.append(ctxPath).toString();
+		return baseUri.toString();
 	}
 
 	/**
@@ -644,6 +668,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * @param uri
 	 * @return
 	 */
+	@Beta
 	public static String cleanURI(String uri) {
 		if (isBlank(uri)) {
 			return uri;
@@ -653,16 +678,19 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		try {
 			uri = new URI(uri).toString();
 		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("Error syntax uri", e);
+			throw new IllegalArgumentException(String.format("Error syntax uri for %s", uri), e);
 		}
 
-		// Cleaning
+		/**
+		 * Cleaning.</br>
+		 * Note: that you cannot change the original URI case.
+		 */
 		try {
-			String uri0 = safeEncodeURL(uri).toLowerCase();
+			String uri0 = safeEncodeURL(uri);
 			String path = uri0, schema = "";
-			if (uri0.contains(URL_SEPAR_PROTO)) {
+			if (uri0.toLowerCase(Locale.ENGLISH).contains(URL_SEPAR_PROTO)) {
 				// Starting from "://"
-				int startIndex = uri0.indexOf(URL_SEPAR_PROTO);
+				int startIndex = uri0.toLowerCase(Locale.ENGLISH).indexOf(URL_SEPAR_PROTO);
 				schema = uri0.substring(0, startIndex) + URL_SEPAR_PROTO;
 				path = uri0.substring(startIndex + URL_SEPAR_PROTO.length());
 			}
@@ -676,6 +704,24 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	}
 
 	/**
+	 * Obtain the available request remember URL, for example: used to log in
+	 * successfully and redirect to the last remembered URL
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public static String getAvaliableRequestRememberUrl(HttpServletRequest request) {
+		String rememberUrl = request.getHeader("Referer");
+		// #[RFC7231], https://tools.ietf.org/html/rfc7231#section-5.5.2
+		rememberUrl = isNotBlank(rememberUrl) ? rememberUrl : request.getHeader("Referrer");
+		// Fallback
+		if (isBlank(rememberUrl) && request.getMethod().equalsIgnoreCase("GET")) {
+			rememberUrl = getFullRequestURL(request, true);
+		}
+		return rememberUrl;
+	}
+
+	/**
 	 * Generic dynamic web message response type processing enumeration.
 	 * 
 	 * @author Wangl.sir <983708408@qq.com>
@@ -686,17 +732,38 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	public static enum ResponseType {
 		auto, link, json;
 
-		final public static String DEFAULT_PARAM_NAME = "response_type";
+		/**
+		 * Default get response type parameter name.
+		 */
+		final public static String DEFAULT_RESPTYPE_NAME = "response_type";
+
+		/**
+		 * Get the name of the corresponding data type parameter. Note that
+		 * NGINX defaults to replace the underlined header, such as:
+		 * 
+		 * <pre>
+		 * header(response_type: json) => header(responsetype: json)
+		 * </pre>
+		 * 
+		 * and how to disable this feature of NGINX:
+		 * 
+		 * <pre>
+		 * http {
+		 * 	underscores_in_headers on;
+		 * }
+		 * </pre>
+		 */
+		final public static String[] RESPTYPE_NAMES = { DEFAULT_RESPTYPE_NAME, "responsetype", "Response-Type" };
 
 		/**
 		 * Safe converter string to {@link ResponseType}
 		 * 
-		 * @param responseType
+		 * @param respType
 		 * @return
 		 */
-		final public static ResponseType safeOf(String responseType) {
+		final public static ResponseType safeOf(String respType) {
 			for (ResponseType t : values()) {
-				if (String.valueOf(responseType).equalsIgnoreCase(t.name())) {
+				if (String.valueOf(respType).equalsIgnoreCase(t.name())) {
 					return t;
 				}
 			}
@@ -711,7 +778,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		 * @return
 		 */
 		final public static boolean isJSONResponse(String respTypeValue, HttpServletRequest request) {
-			return isJSONResponse(safeOf(respTypeValue), request);
+			return determineJSONResponse(safeOf(respTypeValue), request);
 		}
 
 		/**
@@ -721,45 +788,59 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 		 * @return
 		 */
 		final public static boolean isJSONResponse(HttpServletRequest request) {
-			String respTypeValue = request.getParameter(DEFAULT_PARAM_NAME);
-			respTypeValue = isBlank(respTypeValue) ? request.getHeader(DEFAULT_PARAM_NAME) : respTypeValue;
-			return isJSONResponse(safeOf(respTypeValue), request);
+			return isJSONResponse(request, null);
 		}
 
 		/**
 		 * Is response JSON message
 		 * 
 		 * @param request
-		 * @param respTypeParamName
+		 * @param respTypeName
 		 * @return
 		 */
-		final public static boolean isJSONResponse(HttpServletRequest request, String respTypeParamName) {
-			respTypeParamName = isBlank(respTypeParamName) ? DEFAULT_PARAM_NAME : respTypeParamName;
-			String respTypeValue = request.getParameter(respTypeParamName);
-			respTypeValue = isBlank(respTypeValue) ? request.getHeader(respTypeParamName) : respTypeValue;
-			return isJSONResponse(safeOf(respTypeValue), request);
+		final public static boolean isJSONResponse(HttpServletRequest request, String respTypeName) {
+			Assert.notNull(request, "Request must not be null");
+
+			List<String> paramNames = Arrays.asList(RESPTYPE_NAMES);
+			if (!isBlank(respTypeName)) {
+				paramNames.add(respTypeName);
+			}
+			for (String name : paramNames) {
+				String respTypeValue = request.getParameter(name);
+				respTypeValue = isBlank(respTypeValue) ? request.getHeader(name) : respTypeValue;
+				if (!isBlank(respTypeValue)) {
+					return determineJSONResponse(safeOf(respTypeValue), request);
+				}
+			}
+
+			// Using auto mode.
+			return determineJSONResponse(ResponseType.auto, request);
 		}
 
 		/**
-		 * Is response JSON message
+		 * Determine response JSON message
 		 * 
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(ResponseType respType, HttpServletRequest request) {
+		final public static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
+			Assert.notNull(request, "Request must not be null");
 			// Using default strategy
-			if (respType == null) {
+			if (Objects.isNull(respType)) {
 				respType = ResponseType.auto;
 			}
 
-			// Has accept[application/json] ?
-			boolean isAccpetJson = false;
+			// Has header(accept:application/json)
+			boolean hasAccpetJson = false;
 			for (String typePart : String.valueOf(request.getHeader("Accept")).split(",")) {
-				if (StringUtils.startsWithIgnoreCase(typePart, "application/json")) {
-					isAccpetJson = true;
+				if (startsWithIgnoreCase(typePart, "application/json")) {
+					hasAccpetJson = true;
 					break;
 				}
 			}
+
+			// Has header(origin:xx.domain.com)
+			boolean hasOrigin = isNotBlank(request.getHeader("Origin"));
 
 			// Is header[XHR] ?
 			boolean isXhr = isXHRRequest(request);
@@ -776,7 +857,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 				 * the line), it responds to the rendering page, otherwise it
 				 * responds to JSON.
 				 */
-				return isBrowser(request) ? (isXhr || isAccpetJson) : true;
+				return isBrowser(request) ? (isXhr || hasAccpetJson || hasOrigin) : true;
 			default:
 				throw new IllegalStateException(String.format("Illegal response type %s", respType));
 			}
@@ -785,7 +866,29 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	}
 
 	public static void main(String[] args) {
+		// URI s =
+		// URI.create("http://portal.wl4g.com/portal/authenticator?fragment=eleIndex/elecReport#/eleIndex/index");
+		URI s = URI.create(
+				"http://portal.wl4g.com/portal/authenticator?redirect_url=http://portal.wl4g.com/?fragment=eleIndex/elecReport#/authLogin");
+		System.out.println(s.getScheme());
+		System.out.println(s.getHost());
+		System.out.println(s.getPort());
+		System.out.println(s.getPath());
+		System.out.println(s.getQuery());
+		System.out.println(s.getFragment());
+		System.out.println("-----------------");
+
+		System.out.println(getBaseURIForDefault("http", "my.com", 8080));
+		System.out.println(getBaseURIForDefault("http", "my.com", 80));
+		System.out.println(getBaseURIForDefault("https", "my.com", 443));
+		System.out.println(getBaseURIForDefault("http", "my.com", -1));
+
+		System.out.println(URI.create("http://my.com/index/#/me").getQuery());
+		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index"));
+		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index/#/me"));
+
 		System.out.println(extractDomainString("http://*.aaa.anjiancloud.test/API/v2"));
+
 		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "http://bb.aa.domain.com/API/v2", true));
 		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "https://bb.aa.domain.com/API/v2", true));
 		System.out.println(isSameWithOrigin("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true));

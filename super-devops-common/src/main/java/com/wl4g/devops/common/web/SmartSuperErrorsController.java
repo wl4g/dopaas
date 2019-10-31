@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import com.wl4g.devops.common.annotation.DevOpsErrorController;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.web.RespBase.RetCode;
 
 import freemarker.template.Template;
 
@@ -157,9 +158,10 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			 */
 			if (isJSONResponse(request)) {
 				String errmsg = extractMeaningfulErrorsMessage(model);
-				writeJson(response, toJSONString(new RespBase<>(SYS_ERR, errmsg, null)));
+				int code = (int) model.getOrDefault("status", SYS_ERR.getErrcode());
+				writeJson(response, toJSONString(new RespBase<>(RetCode.create(code, errmsg))));
 			} else {
-				write(response, getStatus(request, response).value(), TEXT_HTML_VALUE,
+				write(response, getHttpStatus(request, response).value(), TEXT_HTML_VALUE,
 						renderErrorPage(model, request).getBytes(UTF_8));
 			}
 		} catch (IOException e) {
@@ -171,9 +173,10 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	 * Get error HTTP status
 	 * 
 	 * @param request
+	 * @param response
 	 * @return
 	 */
-	protected HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response) {
+	protected HttpStatus getHttpStatus(HttpServletRequest request, HttpServletResponse response) {
 		HttpStatus status = super.getStatus(request);
 		if (status != null) {
 			return status;
@@ -200,10 +203,9 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 			errmsg.append(message);
 		}
 
-		Object errors = model.get("errors");
+		Object errors = model.get("errors"); // @NotNull?
 		if (errors != null) {
 			errmsg.setLength(0); // Print only errors information
-
 			if (errors instanceof Collection) {
 				// Used to remove duplication
 				List<String> fieldErrs = new ArrayList<>(8);

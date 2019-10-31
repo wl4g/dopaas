@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.springframework.util.Assert;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
 
+import org.apache.shiro.authc.RememberMeAuthenticationToken;
+
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.ClientRef;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 
 /**
@@ -30,19 +32,25 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
  * @date 2018年11月19日
  * @since
  */
-public class GeneralAuthenticationToken extends UsernamePasswordToken
-		implements IamAuthenticationToken, VerifyAuthenticationToken {
+public class GeneralAuthenticationToken extends AbstractIamAuthenticationToken
+		implements RememberMeAuthenticationToken, VerifyAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/**
-	 * From client application name
+	 * The username principal
 	 */
-	final private String fromAppName;
+	private String principal;
 
 	/**
-	 * From client application callback URL
+	 * The password credentials
 	 */
-	final private String redirectUrl;
+	private String credentials;
+
+	/**
+	 * Whether or not 'rememberMe' should be enabled for the corresponding login
+	 * attempt; default is <code>false</code>
+	 */
+	private boolean rememberMe = false;
 
 	/**
 	 * User client type.
@@ -59,36 +67,45 @@ public class GeneralAuthenticationToken extends UsernamePasswordToken
 	 */
 	final private VerifyType verifyType;
 
-	public GeneralAuthenticationToken(final String remoteHost, final String fromAppName, final String redirectUrl,
-			final String username, final String password, String clientRef, final String verifiedToken,
-			final VerifyType verifyType) {
-		super(username, password, remoteHost);
-		this.fromAppName = fromAppName;
-		this.redirectUrl = redirectUrl;
+	public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType) {
+		this(remoteHost, redirectInfo, principal, credentials, clientRef, verifiedToken, verifyType, false);
+	}
+
+	public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType,
+			final boolean rememberMe) {
+		super(remoteHost, redirectInfo);
+		hasText(principal, "Username principal must not be empty.");
+		hasText(credentials, "Credentials must not be empty.");
+		hasText(clientRef, "ClientRef must not be empty.");
+		// hasText(verifiedToken, "Verified token must not be empty.");
+		notNull(verifyType, "Verify type must not be null.");
+		this.principal = principal;
+		this.credentials = credentials;
 		this.clientRef = ClientRef.of(clientRef);
 		this.verifiedToken = verifiedToken;
 		this.verifyType = verifyType;
+		this.rememberMe = rememberMe;
+	}
+
+	@Override
+	public Object getPrincipal() {
+		return principal;
 	}
 
 	@Override
 	public Object getCredentials() {
-		Object credentials = super.getCredentials();
-		Assert.notNull(credentials, "Credentials must not be null");
-		return new String((char[]) credentials);
+		return credentials;
+	}
+
+	@Override
+	public boolean isRememberMe() {
+		return rememberMe;
 	}
 
 	public ClientRef getClientRef() {
 		return clientRef;
-	}
-
-	@Override
-	public String getFromAppName() {
-		return fromAppName;
-	}
-
-	@Override
-	public String getRedirectUrl() {
-		return redirectUrl;
 	}
 
 	@Override

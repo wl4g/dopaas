@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,21 +21,23 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TaskHistoryDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(TaskHistory record);
+	int insert(TaskHistory record);
 
-    int insertSelective(TaskHistory record);
+	int insertSelective(TaskHistory record);
 
-    TaskHistory selectByPrimaryKey(Integer id);
+	TaskHistory selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(TaskHistory record);
+	int updateByPrimaryKeySelective(TaskHistory record);
 
-    int updateByPrimaryKeyWithBLOBs(TaskHistory record);
+	int updateByPrimaryKeyWithBLOBs(TaskHistory record);
 
-    int updateByPrimaryKey(TaskHistory record);
+	int updateByPrimaryKey(TaskHistory record);
 
-    List<TaskHistory> list(@Param("groupName") String groupName, @Param("projectName") String projectName, @Param("branchName") String branchName);
+	List<TaskHistory> list(@Param("groupName") String groupName, @Param("projectName") String projectName,
+			@Param("branchName") String branchName);
 
-    int updateStatus(Integer time);
+	int updateStatus(Long time);
+
 }

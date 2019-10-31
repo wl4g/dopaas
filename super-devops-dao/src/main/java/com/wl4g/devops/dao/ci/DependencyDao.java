@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,24 +21,22 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface DependencyDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(Dependency record);
+	int insert(Dependency record);
 
-    int insertSelective(Dependency record);
+	int insertSelective(Dependency record);
 
-    Dependency selectByPrimaryKey(Integer id);
+	Dependency selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Dependency record);
+	int updateByPrimaryKeySelective(Dependency record);
 
-    int updateByPrimaryKey(Dependency record);
+	int updateByPrimaryKey(Dependency record);
 
-    List<Dependency> getParentsByProjectId(Integer projectId);
+	List<Dependency> getParentsByProjectId(Integer projectId);
 
-    List<Dependency> list(@Param("projectName") String projectName);
+	List<Dependency> list(@Param("projectName") String projectName);
 
-    int deleteByProjectId(Integer projectId);
-
-
+	int deleteByProjectId(Integer projectId);
 
 }

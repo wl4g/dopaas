@@ -7,7 +7,7 @@
     <result column="app_cluster_id" property="appClusterId" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
-    <result column="tar_type" property="tarType" jdbcType="INTEGER" />
+    <result column="tar_type" property="tarType" jdbcType="VARCHAR" />
     <result column="branch_type" property="branchType" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
@@ -16,6 +16,7 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="build_command" property="buildCommand" jdbcType="LONGVARCHAR" />
     <result column="pre_command" property="preCommand" jdbcType="LONGVARCHAR" />
     <result column="post_command" property="postCommand" jdbcType="LONGVARCHAR" />
     <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
@@ -34,7 +35,7 @@
 
   <sql id="Base_Column_List" >
     id, task_name, app_cluster_id, project_id, branch_name, tar_type, branch_type, remark,
-    enable, del_flag, create_date, create_by, update_date, update_by,pre_command, post_command,contact_group_id
+    enable, del_flag, create_date, create_by, update_date, update_by,build_command,pre_command, post_command,contact_group_id
   </sql>
 
   <sql id="InstanceColumn">
@@ -45,7 +46,7 @@
 
   <sql id="Base_Column_List_t" >
     t.id, t.task_name, t.app_cluster_id, t.project_id, t.branch_name, t.tar_type, t.branch_type, t.remark,
-    t.enable, t.del_flag, t.create_date, t.create_by, t.update_date, t.update_by,t.pre_command, t.post_command,t.contact_group_id
+    t.enable, t.del_flag, t.create_date, t.create_by, t.update_date, t.update_by,t.build_command,t.pre_command, t.post_command,t.contact_group_id
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -63,13 +64,13 @@
       project_id, branch_name, tar_type, 
       branch_type, remark, enable, 
       del_flag, create_date, create_by, 
-      update_date, update_by, pre_command, 
+      update_date, update_by, build_command,pre_command,
       post_command,contact_group_id)
     values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
-      #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=INTEGER},
+      #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{tarType,jdbcType=VARCHAR},
       #{branchType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{preCommand,jdbcType=LONGVARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{buildCommand,jdbcType=LONGVARCHAR},#{preCommand,jdbcType=LONGVARCHAR},
       #{postCommand,jdbcType=LONGVARCHAR},#{contactGroupId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Task" useGeneratedKeys="true" keyProperty="id" >
@@ -117,6 +118,9 @@
       <if test="updateBy != null" >
         update_by,
       </if>
+      <if test="buildCommand != null" >
+        build_command,
+      </if>
       <if test="preCommand != null" >
         pre_command,
       </if>
@@ -144,7 +148,7 @@
         #{branchName,jdbcType=VARCHAR},
       </if>
       <if test="tarType != null" >
-        #{tarType,jdbcType=INTEGER},
+        #{tarType,jdbcType=VARCHAR},
       </if>
       <if test="branchType != null" >
         #{branchType,jdbcType=VARCHAR},
@@ -169,6 +173,9 @@
       </if>
       <if test="updateBy != null" >
         #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="buildCommand != null" >
+        #{buildCommand,jdbcType=LONGVARCHAR},
       </if>
       <if test="preCommand != null" >
         #{preCommand,jdbcType=LONGVARCHAR},
@@ -197,7 +204,7 @@
         branch_name = #{branchName,jdbcType=VARCHAR},
       </if>
       <if test="tarType != null" >
-        tar_type = #{tarType,jdbcType=INTEGER},
+        tar_type = #{tarType,jdbcType=VARCHAR},
       </if>
       <if test="branchType != null" >
         branch_type = #{branchType,jdbcType=VARCHAR},
@@ -223,6 +230,9 @@
       <if test="updateBy != null" >
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
+      <if test="buildCommand != null" >
+        build_command = #{buildCommand,jdbcType=LONGVARCHAR},
+      </if>
       <if test="preCommand != null" >
         pre_command = #{preCommand,jdbcType=LONGVARCHAR},
       </if>
@@ -241,7 +251,7 @@
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
-      tar_type = #{tarType,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=VARCHAR},
       branch_type = #{branchType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
@@ -250,6 +260,7 @@
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
+      build_command = #{buildCommand,jdbcType=LONGVARCHAR},
       pre_command = #{preCommand,jdbcType=LONGVARCHAR},
       post_command = #{postCommand,jdbcType=LONGVARCHAR},
       contact_group_id = #{contactGroupId,jdbcType=INTEGER}
@@ -261,7 +272,7 @@
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       branch_name = #{branchName,jdbcType=VARCHAR},
-      tar_type = #{tarType,jdbcType=INTEGER},
+      tar_type = #{tarType,jdbcType=VARCHAR},
       branch_type = #{branchType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
@@ -299,7 +310,7 @@
       AND t.branch_name LIKE CONCAT('%','${branchName}','%')
     </if>
     <if test="tarType != null and tarType != ''" >
-      AND t.tar_type = #{tarType,jdbcType=INTEGER}
+      AND t.tar_type = #{tarType,jdbcType=VARCHAR}
     </if>
     <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
       AND DATE_FORMAT(a.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')

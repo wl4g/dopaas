@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
 import com.wl4g.devops.iam.web.CentralAuthenticatorController;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 public class IamAutoConfiguration extends AbstractIamConfiguration {
 
@@ -111,7 +111,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public RSACryptographicService rsaCryptogaphicService(SimpleRedisLockManager lockManager) {
+	public RSACryptographicService rsaCryptogaphicService(JedisLockManager lockManager) {
 		return new RSACryptographicService(lockManager);
 	}
 
@@ -169,11 +169,13 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
+	@ConditionalOnMissingBean
 	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher() {
 		return new GeneralCredentialsHashedMatcher();
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public SmsCredentialsHashedMatcher smsCredentialsHashedMatcher() {
 		return new SmsCredentialsHashedMatcher();
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ package com.wl4g.devops.iam.authc.credential;
 
 import java.util.List;
 
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.iam.authc.VerifyAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 
 /**
  * General account credential matcher
@@ -35,6 +37,12 @@ public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
 	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
+		// Before pre-check.
+		if (!coprocessor.preAuthenticatingAllowed((IamAuthenticationToken) token, info)) {
+			throw new AccountException(bundle.getMessage("ServerSecurityCoprocessor.accessDenied", token.getPrincipal()));
+		}
+
+		// Matching credentials.
 		CredentialsToken credentialsToken = new CredentialsToken((String) token.getPrincipal(), (String) token.getCredentials());
 		return securer.validate(credentialsToken, info);
 	}

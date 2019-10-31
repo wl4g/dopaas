@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 /**
  * Watch properties .
@@ -25,7 +25,7 @@ import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
  * @date 2017年11月16日
  * @since
  */
-public class WatchProperties extends RunProperties {
+public class WatchProperties extends RunnerProperties {
 	private static final long serialVersionUID = 5508561234067054195L;
 
 	private String zkServers = "localhost:2181";

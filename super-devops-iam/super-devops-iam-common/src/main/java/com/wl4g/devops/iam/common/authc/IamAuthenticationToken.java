@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
+import static org.apache.commons.lang3.StringUtils.isAnyBlank;
+
+import java.io.Serializable;
+
 import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
@@ -27,8 +31,62 @@ import org.apache.shiro.authc.HostAuthenticationToken;
  */
 public interface IamAuthenticationToken extends HostAuthenticationToken {
 
-	String getFromAppName();
+	RedirectInfo getRedirectInfo();
 
-	String getRedirectUrl();
+	/**
+	 * IAM client authentication redirection information.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月18日
+	 * @since
+	 */
+	public static class RedirectInfo implements Serializable {
+		private static final long serialVersionUID = -7747661274396168460L;
+
+		final public static RedirectInfo EMPTY = new RedirectInfo(null, null);
+
+		/**
+		 * Client authentication redirection application.
+		 */
+		private String fromAppName;
+
+		/**
+		 * Client authentication redirection URL.
+		 */
+		private String redirectUrl;
+
+		public RedirectInfo(String fromAppName, String redirectUrl) {
+			// hasText(fromAppName, "Application name must not be empty.");
+			// hasText(redirectUrl, "Redirect url must not be empty.");
+			this.fromAppName = fromAppName;
+			this.redirectUrl = redirectUrl;
+		}
+
+		public String getFromAppName() {
+			return fromAppName;
+		}
+
+		public void setFromAppName(String fromAppName) {
+			this.fromAppName = fromAppName;
+		}
+
+		public String getRedirectUrl() {
+			return redirectUrl;
+		}
+
+		public void setRedirectUrl(String redirectUrl) {
+			this.redirectUrl = redirectUrl;
+		}
+
+		@Override
+		public String toString() {
+			return fromAppName + "@" + redirectUrl;
+		}
+
+		public boolean isValidity() {
+			return !isAnyBlank(getFromAppName(), getRedirectUrl());
+		}
+
+	}
 
 }

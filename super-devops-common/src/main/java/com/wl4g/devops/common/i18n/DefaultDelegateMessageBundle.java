@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.wl4g.devops.common.i18n;
 import java.util.Locale;
 
 /**
- * Default resource boundle message source bundle.
+ * Default resource delegate message source bundle.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月24日
@@ -32,7 +32,7 @@ public class DefaultDelegateMessageBundle extends AbstractDelegateMessageBundle 
 	 * @return
 	 */
 	protected Locale getSessionLocale() {
-		return Locale.getDefault();
+		return Locale.CHINESE;
 	}
 
 }

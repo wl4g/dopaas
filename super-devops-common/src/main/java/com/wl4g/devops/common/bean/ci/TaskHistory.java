@@ -1,6 +1,5 @@
-
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +36,13 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private Integer refId;
 
+	private String buildCommand;
+
 	private String preCommand;
 
 	private String postCommand;
 
-	private Integer tarType;
+	private String tarType;
 
 	private String result;
 
@@ -123,11 +124,11 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.postCommand = postCommand;
 	}
 
-	public Integer getTarType() {
+	public String getTarType() {
 		return tarType;
 	}
 
-	public void setTarType(Integer tarType) {
+	public void setTarType(String tarType) {
 		this.tarType = tarType;
 	}
 
@@ -161,5 +162,13 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setContactGroupId(Integer contactGroupId) {
 		this.contactGroupId = contactGroupId;
+	}
+
+	public String getBuildCommand() {
+		return buildCommand;
+	}
+
+	public void setBuildCommand(String buildCommand) {
+		this.buildCommand = buildCommand;
 	}
 }

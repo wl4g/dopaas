@@ -7,9 +7,9 @@
 	<link rel="shortcut icon" href="./favicon.ico"/>
 	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css"/>
 	<link rel="stylesheet" href="./static/css/bootstrap-3.3.7.min.css"/>
-	<link rel="stylesheet" href="./static/css/login.css"/>
+	<link rel="stylesheet" href="./static/css/login-1.5.1.css"/>
 	<link rel="stylesheet" href="./static/css/lanren.css"/>
-	<link rel="stylesheet" href="./static/css/iam-captcha-jigsaw.css"/>
+	<link rel="stylesheet" href="./static/css/iam-captcha-jigsaw-1.5.1.css"/>
 </head>
 <body>
 	<div id="wrap" style="background:url('./static/images/bg_icon/background.png') no-repeat;background-size: cover;">
@@ -166,12 +166,12 @@
 	</div>
 	<script type="text/javascript" src="./static/js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="./static/js/bootstrap-3.3.7.min.js"></script>
-	<script type="text/javascript" src="./static/js/common-util-1.5.0.min.js"></script>
-	<script type="text/javascript" src="./static/js/iam-core-1.5.0.min.js"></script>
-	<script type="text/javascript" src="./static/js/iam-crypto-1.5.0.min.js"></script>
-	<script type="text/javascript" src="./static/js/iam-captcha-jigsaw-1.5.0.min.js"></script>
-	<script type="text/javascript" src="./static/js/login.js"></script>
-	<script type="text/javascript" src="./static/js/tech-anima.js"></script>
+	<script type="text/javascript" src="./static/js/common-util-1.5.1.min.js"></script>
+	<script type="text/javascript" src="./static/js/iam-core-1.5.1.js"></script>
+	<script type="text/javascript" src="./static/js/iam-crypto-1.5.1.min.js"></script>
+	<script type="text/javascript" src="./static/js/iam-captcha-jigsaw-1.5.1.min.js"></script>
+	<script type="text/javascript" src="./static/js/login-1.5.1.js"></script>
+	<script type="text/javascript" src="./static/js/tech-anima-1.1.0.js"></script>
 	<script type="text/javascript">
 		//var iamBaseURI = "http://passport.anjiancloud.test/sso";
      	//var iamBaseURI = "http://passport.wl4g.com/sso";
@@ -238,10 +238,10 @@
 				sns: {
 					// 定义必须的请求参数
 					required: {
-						which: function () { // 执行操作类型，必须：当使用登录功能时值填"login",当使用绑定功能时值填"bind"
+						getWhich: function () { // 执行操作类型，必须：当使用登录功能时值填"login",当使用绑定功能时值填"bind"
 							return "login";
 						},
-						//refreshUrl: "" // SNS回调后重定向刷新的URL，可选，which=login时传空
+						//refreshUrl: "" // SNS回调后重定向刷新的URL，可选，which=login时可空
 					},
 					// 定义内嵌授权页面配置
 					qrcodePanel: {
