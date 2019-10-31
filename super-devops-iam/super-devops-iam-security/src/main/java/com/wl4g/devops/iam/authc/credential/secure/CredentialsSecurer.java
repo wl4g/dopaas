@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * IAM credentials securer
@@ -28,7 +28,7 @@ import org.apache.shiro.authc.CredentialsException;
  * @since
  * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
  */
-interface CredentialsSecurer {
+public interface CredentialsSecurer {
 
 	/**
 	 * Encryption credentials

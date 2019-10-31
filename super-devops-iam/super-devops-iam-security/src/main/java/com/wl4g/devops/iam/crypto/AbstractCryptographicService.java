@@ -21,9 +21,10 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.deserialize;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static io.netty.util.internal.ThreadLocalRandom.current;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
+import static org.springframework.util.Assert.notNull;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -35,7 +36,7 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.lock.SimpleRedisLockManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -56,14 +57,14 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * Simple lock manager.
-	 */
-	final protected Lock lock;
-
-	/**
 	 * KeySpec class.
 	 */
 	final protected Class<? extends KeySpecWrapper> keySpecClass;
+
+	/**
+	 * Simple lock manager.
+	 */
+	final protected Lock lock;
 
 	/**
 	 * Cryptic properties.
@@ -72,18 +73,19 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 	protected CryptoProperties config;
 
 	/**
-	 * REDIS service.
+	 * JEDIS service.
 	 */
 	@Autowired
 	protected JedisService jedisService;
 
 	@SuppressWarnings("unchecked")
-	public AbstractCryptographicService(SimpleRedisLockManager lockManager) {
-		Assert.notNull(lockManager, "Crypto lockManager must not be null.");
+	public AbstractCryptographicService(JedisLockManager lockManager) {
+		notNull(lockManager, "Crypto lockManager must not be null.");
 		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_KEY_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
+
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
 		this.keySpecClass = (Class<? extends KeySpecWrapper>) resolveType.getSuperType().getGeneric(0).resolve();
-		Assert.notNull(keySpecClass, "KeySpecClass must not be null.");
+		notNull(keySpecClass, "KeySpecClass must not be null.");
 	}
 
 	/**
@@ -113,8 +115,8 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 
 		// Load keySpec by index.
 		JedisCluster jdsCluster = jedisService.getJedisCluster();
-		byte[] data = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
-		if (Objects.isNull(data)) { // Expired?
+		byte[] keySpecBuf = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
+		if (isNull(keySpecBuf)) { // Expired?
 			try {
 				if (lock.tryLock(DEFAULT_KEY_INIT_TIMEOUTMS / 2, TimeUnit.MILLISECONDS)) {
 					initializingKeySpecPool();
@@ -125,9 +127,9 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 				lock.unlock();
 			}
 			// Retry get.
-			data = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
+			keySpecBuf = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
 		}
-		K keySpec = (K) deserialize(data, keySpecClass);
+		K keySpec = (K) deserialize(keySpecBuf, keySpecClass);
 		Assert.notNull(keySpec, "Unable to borrow keySpec resource.");
 		return keySpec;
 	}

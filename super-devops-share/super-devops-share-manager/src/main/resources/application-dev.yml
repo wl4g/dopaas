@@ -20,14 +20,14 @@ spring:
            - http://localhost:8080
            - http://localhost.com:8080
         allowsHeaders: '*'
-        allowsMethods: GET,POST,OPTION
+        allowsMethods: GET,POST
   cloud:
     devops:
       iam:
-        authc-internal-access:
+        acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allow-ip: 127.0.0.1
-          deny-ip:
+          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         client:
           server-uri: http://localhost:14040/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
@@ -62,3 +62,5 @@ redis:
   max-attempts: 10
   # Redis's cluster nodes.
   nodes: ${REDIS_NODES:safecloud-test:6379,safecloud-test:6380,safecloud-test:6381,safecloud-test:7380,safecloud-test:7380,safecloud-test:7381}
+
+cipher-key: 03DE18C2FC4E605F

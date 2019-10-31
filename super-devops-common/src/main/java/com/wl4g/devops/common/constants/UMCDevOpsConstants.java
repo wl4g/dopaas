@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,24 +158,17 @@ public abstract class UMCDevOpsConstants extends DevOpsConstants {
 	/** metric -- docker : block.out */
 	final public static String METRIC_DOCKER_BLOCK_OUT = "docker.block.out";
 
-
-
-	/*alarm limit*/
+	/* alarm limit */
 	final public static String ALARM_LIMIT_PHONE = "alarm_limit_phone";
 	final public static String ALARM_LIMIT_DINGTALK = "alarm_limit_dingtalk";
 	final public static String ALARM_LIMIT_FACEBOOK = "alarm_limit_facebook";
 	final public static String ALARM_LIMIT_TWITTER = "alarm_limit_twitter";
 	final public static String ALARM_LIMIT_WECHAT = "alarm_limit_wechat";
 
-
-	/*alarm notification contact status*/
+	/* alarm notification contact status */
 	final public static String ALARM_SATUS_SEND = "1";
 	final public static String ALARM_SATUS_UNSEND = "2";
 	final public static String ALARM_SATUS_ACCEPTED = "3";
 	final public static String ALARM_SATUS_UNACCEPTED = "4";
-
-
-
-
 
 }

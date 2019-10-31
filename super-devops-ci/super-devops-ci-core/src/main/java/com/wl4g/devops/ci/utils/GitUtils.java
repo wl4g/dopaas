@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.devops.common.annotation.Unused;
-import com.wl4g.devops.shell.utils.ShellContextHolder;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
@@ -40,58 +41,60 @@ import java.util.List;
  * @date 2019-05-06 09:54:00
  */
 public abstract class GitUtils {
-	public static final Logger log = LoggerFactory.getLogger(GitUtils.class);
+	final protected static Logger log = LoggerFactory.getLogger(GitUtils.class);
 
 	/**
-	 * Clone
+	 * Clone from remote GIT URI.
+	 *
+	 * @param credentials
+	 * @param remoteUrl
+	 * @param localPath
+	 * @return
+	 * @throws IOException
 	 */
-	public static void clone(CredentialsProvider credentials, String remoteUrl, String localPath) throws IOException {
-		File path = new File(localPath);
-		if (!path.exists()) {
-			path.mkdirs();
-		}
-		try {
-			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(credentials).call();
-
-			if (log.isInfoEnabled()) {
-				log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
-			}
-		} catch (Exception e) {
-			log.info(e.getMessage());
-		}
+	public static Git clone(CredentialsProvider credentials, String remoteUrl, String localPath) throws IOException {
+		return clone(credentials, remoteUrl, localPath, null);
 	}
 
 	/**
-	 * Clone
+	 * Clone from remote GIT URI.
+	 *
+	 * @param credentials
+	 * @param remoteUrl
+	 * @param localPath
+	 * @param branchName
+	 * @return
+	 * @throws IOException
 	 */
-	public static void clone(CredentialsProvider credentials, String remoteUrl, String localPath, String branchName)
+	public static Git clone(CredentialsProvider credentials, String remoteUrl, String localPath, String branchName)
 			throws IOException {
 		File path = new File(localPath);
 		if (!path.exists()) {
 			path.mkdirs();
 		}
 		try {
-			Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(credentials)
-					.setBranch(branchName).call();
-			if (log.isInfoEnabled()) {
-				log.info("Cloning from " + remoteUrl + " to " + git.getRepository());
+			CloneCommand cmd = Git.cloneRepository().setURI(remoteUrl).setDirectory(path).setCredentialsProvider(credentials);
+			if (!isBlank(branchName)) {
+				cmd.setBranch(branchName);
 			}
+			Git git = cmd.call();
 
-			ShellContextHolder.printfQuietly("Cloning from " + remoteUrl + " to " + git.getRepository());
+			String msg = "Cloning from '" + remoteUrl + "' to " + git.getRepository();
+			if (log.isInfoEnabled()) {
+				log.info(msg);
+			}
+			return git;
 		} catch (Exception e) {
-			log.info(e.getMessage());
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
 	 * Checkout and pull
 	 */
-	public static void checkout(CredentialsProvider credentials, String localPath, String branchName) {
-		String projectURL = localPath + "/.git";
-		Git git = null;
-		try {
-			git = Git.open(new File(projectURL));
+	public static void checkout(CredentialsProvider credentials, String projecDir, String branchName) {
+		String projectURL = projecDir + "/.git";
+		try (Git git = Git.open(new File(projectURL))) {
 			List<Ref> refs = git.branchList().call();
 			boolean exist = false;// is branch exist
 			for (Ref ref : refs) {
@@ -100,72 +103,64 @@ public abstract class GitUtils {
 					exist = true;
 				}
 			}
-			if (exist) {// if exist --checkout
+			if (exist) { // Exist to checkout
 				git.checkout().setName(branchName).call();
-			} else {// if not exist --checkout and create local branch
+			} else {// Not exist to checkout & create local branch
 				git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
 						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
 			}
-			// pull -- get newest code
+			// Pull & get latest source code.
 			git.pull().setCredentialsProvider(credentials).call();
 
+			String msg = "Checkout branch success;branchName=" + branchName + " localPath=" + projecDir;
 			if (log.isInfoEnabled()) {
-				log.info("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
+				log.info(msg);
 			}
-			ShellContextHolder.printfQuietly("checkout branch success;branchName=" + branchName + " localPath=" + localPath);
 		} catch (Exception e) {
-			String errmsg = String.format("checkout branch failure. branchName=%s, localPath=%s", branchName, localPath);
-			ShellContextHolder.printfQuietly(errmsg);
+			String errmsg = String.format("checkout branch failure. branchName=%s, localPath=%s", branchName, projecDir);
 			log.error(errmsg, e);
-			throw new RuntimeException(e);
-		} finally {
-			if (git != null) {
-				git.close();
-			}
+			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * Delete branch
+	 * Delete (local) branch.
+	 *
+	 * @param localProjectPath
+	 * @param branchName
+	 * @param force
+	 * @return
 	 */
-	@Unused
-	public static void delbranch(String localPath, String branchName) {
-		String projectURL = localPath + "/.git";
-		Git git = null;
-		try {
-			git = Git.open(new File(projectURL));
-			git.branchDelete().setForce(true).setBranchNames(branchName).call();
+	public static List<String> delLocalBranch(String localProjectPath, String branchName, boolean force) {
+		String gitPath = localProjectPath + "/.git";
+		try (Git git = Git.open(new File(gitPath))) {
+			return git.branchDelete().setForce(force).setBranchNames(branchName).call();
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (git != null) {
-				git.close();
-			}
+			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * Get local branch list
+	 * Get (local) branch list.
+	 *
+	 * @param projecDir
+	 * @return
 	 */
-	@Unused
-	public static void branchlist(String localPath) {
-		String projectURL = localPath + "/.git";
-		Git git = null;
-		try {
-			git = Git.open(new File(projectURL));
-			List<Ref> refs = git.branchList().call();
-			for (Ref ref : refs) {
-				System.out.println(ref.getName().substring(11));
-			}
+	public static List<Ref> getLocalBranchs(String projecDir) {
+		String gitPath = projecDir + "/.git";
+		try (Git git = Git.open(new File(gitPath))) {
+			return git.branchList().call();
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (git != null) {
-				git.close();
-			}
+			throw new IllegalStateException(e);
 		}
 	}
 
+	/**
+	 * Get (local) branch name.
+	 *
+	 * @param ref
+	 * @return
+	 */
 	private static String getBranchName(Ref ref) {
 		String name = ref.getName();
 		if ("HEAD".equals(name)) {
@@ -175,51 +170,68 @@ public abstract class GitUtils {
 			int index = name.lastIndexOf("/");
 			name = name.substring(index + 1);
 		}
-
 		return name;
 	}
 
-	public static boolean checkGitPahtExist(String path) {
+	/**
+	 * Check GIT local path exist?
+	 *
+	 * @param path
+	 * @return
+	 */
+	public static boolean checkGitPath(String path) {
 		File file = new File(path + "/.git");
 		return file.exists();
 	}
 
-	public static String getOldestCommitSha(String localPath) throws Exception {
-		Git git = Git.open(new File(localPath));
-		Iterable<RevCommit> iterable = git.log().setMaxCount(1).call();// 拿最新的comit-sha
-		Iterator<RevCommit> iter = iterable.iterator();
-		if (iter.hasNext()) {
-			RevCommit commit = iter.next();
-			String commitID = commit.getName(); // 这个应该就是提交的版本号
-			log.info("OldestCommitSha={} localPath={}", commitID, localPath);
-			return commitID;
+	/**
+	 * Get (local) latest committed ID.
+	 *
+	 * @param projecDir
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getLatestCommitted(String projecDir) throws Exception {
+		try (Git git = Git.open(new File(projecDir))) {
+			Iterable<RevCommit> iterb = git.log().setMaxCount(1).call();// 拿最新的comit-sha
+			Iterator<RevCommit> it = iterb.iterator();
+			if (it.hasNext()) {
+				RevCommit commit = it.next();
+				String commitID = commit.getName(); // Latest committed version?
+				if (log.isInfoEnabled()) {
+					log.info("Latest committed sha:{}, path:{}", commitID, projecDir);
+				}
+				return commitID;
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
 		}
 		return null;
 	}
 
 	/**
-	 * Checkout and pull
+	 * Roll-back GIT stored(fetch and checkout).
+	 *
+	 * @param credentials
+	 * @param projecDir
+	 * @param sha
+	 * @return
 	 */
-	public static void roolback(CredentialsProvider credentials, String localPath, String sha) {
-		String projectURL = localPath + "/.git";
-		Git git = null;
-		try {
-			git = Git.open(new File(projectURL));
+	public static Ref rollback(CredentialsProvider credentials, String projecDir, String sha) {
+		String projectURL = projecDir + "/.git";
+		try (Git git = Git.open(new File(projectURL))) {
 			git.fetch().setCredentialsProvider(credentials).call();
-			git.checkout().setName(sha).call();
+			Ref ref = git.checkout().setName(sha).call();
+
+			String msg = "Rollback branch completed, sha:" + sha + ", localPath:" + projecDir;
 			if (log.isInfoEnabled()) {
-				log.info("checkout branch success;sha={} localPath={}", sha, localPath);
+				log.info(msg);
 			}
-			ShellContextHolder.printfQuietly("rollback branch success;sha=" + sha + " localPath=" + localPath);
+			return ref;
 		} catch (Exception e) {
-			String errmsg = String.format("rollback branch failure. sha=%s, localPath=%s", sha, localPath);
-			ShellContextHolder.printfQuietly(errmsg);
+			String errmsg = String.format("Failed to rollback, sha:%s, localPath:%s", sha, projecDir);
 			log.error(errmsg, e);
-			throw new RuntimeException(e);
-		} finally {
-			if (git != null) {
-				git.close();
-			}
+			throw new IllegalStateException(e);
 		}
 	}
 

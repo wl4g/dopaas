@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,22 +27,27 @@ public enum ClientRef {
 	/**
 	 * Client android type.
 	 */
-	Android("android"),
+	Android("Android"),
 
 	/**
 	 * Client iOS type.
 	 */
-	iOS("ios"),
+	iOS("iOS"),
 
 	/**
-	 * Client Mac type.
+	 * Client MAC type.
 	 */
-	Mac("mac"),
+	Mac("Mac"),
+
+	/**
+	 * Client iPad type.
+	 */
+	IPad("IPad"),
 
 	/**
 	 * Client WeChat official platform type.
 	 */
-	WeChatMp("wechatmp"),
+	WeChatMp("wechatMp"),
 
 	/**
 	 * Client WeChat applet type.
@@ -52,7 +57,12 @@ public enum ClientRef {
 	/**
 	 * Client windows type.
 	 */
-	WINDOWS("windows");
+	WINDOWS("Windows"),
+
+	/**
+	 * Client unknown type.
+	 */
+	Unknown("Unknown");
 
 	final private String value;
 

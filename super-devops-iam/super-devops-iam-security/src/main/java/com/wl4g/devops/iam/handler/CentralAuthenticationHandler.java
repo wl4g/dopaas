@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 package com.wl4g.devops.iam.handler;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -48,12 +47,14 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.springframework.util.Assert.hasText;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
@@ -67,6 +68,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
+import com.wl4g.devops.common.exception.iam.LogoutException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.session.GrantTicketInfo;
@@ -105,9 +107,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public void checkAuthenticateRequests(String fromAppName, String redirectUrl) {
+	public void checkAuthenticateRedirectValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException {
 		// Check redirect URL(When source application is not empty)
-		if (isNotBlank(fromAppName)) {
+		if (!isBlank(fromAppName)) {
 			if (isBlank(redirectUrl)) {
 				throw new IllegalCallbackDomainException("Parameters redirectUrl and application cannot be null");
 			}
@@ -125,23 +127,19 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 			// Check redirect URL are legitimate callback URI?(As long as there
 			// is a match)
-			try {
-				String host = new URI(redirectUrl).getHost();
-				if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
-						|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri())
-						|| isEqualWithDomain(redirectUrl, app.getViewExtranetBaseUri()))) {
-					throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
-				}
-			} catch (URISyntaxException e) {
-				throw new IllegalArgumentException(e);
+			String host = URI.create(redirectUrl).getHost();
+			if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
+					|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri())
+					|| isEqualWithDomain(redirectUrl, app.getViewExtranetBaseUri()))) {
+				throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
 			}
 		}
 	}
 
 	@Override
-	public void checkApplicationAccessAuthorized(String principal, String fromAppName) {
-		Assert.hasText(principal, "'principal' must not be empty");
-		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
+	public void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException {
+		hasText(principal, "'principal' must not be empty");
+		hasText(fromAppName, "'fromAppName' must not be empty");
 		if (!configurer.isApplicationAccessAuthorized(principal, fromAppName)) {
 			throw new IllegalApplicationAccessException(
 					bundle.getMessage("GentralAuthenticationHandler.unaccessible", principal, fromAppName));
@@ -152,7 +150,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	public TicketAssertion validate(TicketValidationModel model) {
 		TicketAssertion assertion = new TicketAssertion();
 		String fromAppName = model.getApplication();
-		Assert.hasText(fromAppName, "'fromAppName' must not be empty.");
+		hasText(fromAppName, "'fromAppName' must not be empty.");
 
 		// Get subject session of grantTicket.
 		/*
@@ -163,11 +161,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			log.debug("Validate subject [{}] by grantTicket: '{}'", subject, model.getTicket());
 		}
 
-		// Assertion grantTicket validity.
+		// Assertion grantTicket.
 		assertGrantTicketValidity(subject, model);
 
 		// Check access authorized from application.
-		checkApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
+		assertApplicationAccessAuthorized((String) subject.getPrincipal(), fromAppName);
 
 		// Force clearance of last grant Ticket
 		/*
@@ -189,16 +187,15 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertion.setPrincipal(new IamPrincipal(principal));
 
 		// Grant validated start date.
-		Calendar calendar = Calendar.getInstance();
-		assertion.setValidFromDate(calendar.getTime());
+		long now = System.currentTimeMillis();
+		assertion.setValidFromDate(new Date(now));
 
 		/*
 		 * xx.xx...client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo
 		 * Grant term of validity(end date).
 		 */
 		long expiredMs = getSessionExpiredTime(session);
-		calendar.add(Calendar.MILLISECOND, (int) expiredMs);
-		assertion.setValidUntilDate(calendar.getTime());
+		assertion.setValidUntilDate(new Date(now + expiredMs));
 
 		// Updating grantTicket
 		/*
@@ -229,7 +226,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
 
 		// Check authentication.
-		if (subject != null && subject.isAuthenticated() && StringUtils.hasText((String) subject.getPrincipal())) {
+		if (nonNull(subject) && subject.isAuthenticated() && !isBlank((String) subject.getPrincipal())) {
 			Session session = subject.getSession(); // Session
 
 			// Generate grantTicket. Same: CAS/service-ticket
@@ -271,11 +268,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 */
 			Set<String> appNames = grantInfo.getApplications().keySet();
 			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
-			if (isEmpty(apps)) {
-				logoutAll = processLogoutAll(subject, grantInfo, apps); // logout-all
-			} else {
-				log.warn(String.format("Logout to no found application informations. %s", appNames));
+			if (apps == null || apps.isEmpty()) {
+				throw new LogoutException(String.format("Find application information is empty. %s", appNames));
 			}
+			// logout all
+			logoutAll = processLogoutAll(subject, grantInfo, apps);
 		}
 
 		if (forced || logoutAll) {
@@ -332,7 +329,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			if (info != null && info.hasApplications()) {
 				String savedGrantTicket = info.getApplications().get(assertion.getApplication());
 				// If exist grantTicket with application.
-				if (Objects.nonNull(savedGrantTicket)) {
+				if (nonNull(savedGrantTicket)) {
 					assertion.getTickets().remove(savedGrantTicket);
 				}
 			}
@@ -356,10 +353,10 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Assert.isTrue(StringUtils.hasText(grantTicket), "'grantTicket' must not be null");
 
 		/*
-		 * Synchronize with See:DefaultAuthenticationHandler#validate()
+		 * See:CentralAuthenticationHandler#validate()
 		 */
 		GrantTicketInfo info = getGrantTicket(session);
-		if (info == null) {
+		if (Objects.isNull(info)) {
 			info = new GrantTicketInfo();
 		}
 		if (info.getApplications().keySet().contains(grantApp)) {
@@ -399,8 +396,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * 
 	 * @param subject
 	 * @param model
+	 * @throws InvalidGrantTicketException
 	 */
-	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) {
+	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
 			log.warn("Invalid grantTicket has empty, appName: '{}', sessionId: '{}'", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
@@ -413,12 +411,17 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			log.debug("Got grantTicket info:{} by sessionId:{}", info, getSessionId());
 		}
 
+		// No grant ticket created or expired?
+		if (isNull(info)) {
+			throw new InvalidGrantTicketException("Invalid grantTicket.");
+		}
+
 		// Validate Request appName ticket and storedTicket match?
 		String storedTicket = info.getApplications().get(model.getApplication());
-		if (!(model.getTicket().equals(storedTicket) && subject.isAuthenticated() && Objects.nonNull(subject.getPrincipal()))) {
-			log.warn("Illegal grantTicket: '{}', appName: '{}', sessionId: '{}'", model.getTicket(), model.getApplication(),
+		if (!(model.getTicket().equals(storedTicket) && subject.isAuthenticated() && nonNull(subject.getPrincipal()))) {
+			log.warn("Invalid grantTicket:{}, appName:{}, sessionId:{}", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
-			throw new InvalidGrantTicketException("Illegal grantTicket");
+			throw new InvalidGrantTicketException("Invalid grantTicket.");
 		}
 
 	}
@@ -467,7 +470,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 					log.info("Logout finished for principal:{}, application:{} url:{}", subject.getPrincipal(), app.getAppName(),
 							url);
 				} else {
-					throw new IllegalStateException(resp != null ? resp.getMessage() : "No response");
+					throw new LogoutException(resp != null ? resp.getMessage() : "No response");
 				}
 			} catch (Exception e) {
 				logoutAll = false;

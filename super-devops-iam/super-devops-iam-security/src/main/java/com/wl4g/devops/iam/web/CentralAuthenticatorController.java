@@ -31,8 +31,8 @@ import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
-import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
+import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
+import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -82,21 +82,20 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 		try {
 			// Ticket assertion.
 			resp.getData().put(KEY_TICKET_ASSERT, authHandler.validate(param));
-		} catch (Exception e) {
-			log.warn("Failed to ticket validate. caused by: {}", e.getMessage());
-			if (e instanceof InvalidGrantTicketException) {
+		} catch (Throwable ex) {
+			resp.setCode(RetCode.SYS_ERR);
+			resp.handleError(ex);
+			if (ex instanceof UnauthenticatedException) {
 				// Only if the error is not authenticated, can it be redirected
 				// to the IAM server login page, otherwise the client will
 				// display the error page directly (to prevent unlimited
 				// redirection). See:com.wl4g.devops.iam.client.validation.
 				// AbstractBasedTicketValidator#getRemoteValidation()
 				resp.setCode(RetCode.UNAUTHC);
-			} else if (e instanceof IllegalApplicationAccessException) {
+			} else if (ex instanceof UnauthorizedException) {
 				resp.setCode(RetCode.UNAUTHZ);
-			} else {
-				resp.setCode(RetCode.SYS_ERR);
 			}
-			resp.setMessage(e.getMessage());
+			log.warn("Failed to ticket validate.", ex);
 		}
 
 		if (log.isInfoEnabled()) {

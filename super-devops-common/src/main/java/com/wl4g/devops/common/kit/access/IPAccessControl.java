@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.common.kit.access;
 
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -574,14 +575,14 @@ public class IPAccessControl {
 		private boolean secure = true;
 
 		/**
-		 * Default by local.
+		 * Allow IP ranges.
 		 */
-		private List<String> allowIp = new ArrayList<>();
+		private List<String> allowIpRange = new ArrayList<>();
 
 		/**
-		 * Use default EMPTY when not set.
+		 * Deny IP ranges.
 		 */
-		private List<String> denyIp = new ArrayList<>();
+		private List<String> denyIpRange = new ArrayList<>();
 
 		//
 		// Temporary.
@@ -598,13 +599,13 @@ public class IPAccessControl {
 			this.secure = trustAnyIntranet;
 		}
 
-		public List<String> getAllowIp() {
-			return allowIp;
+		public List<String> getAllowIpRange() {
+			return allowIpRange;
 		}
 
-		public void setAllowIp(List<String> allowIp) {
+		public void setAllowIpRange(List<String> allowIp) {
 			if (!isEmpty(allowIp)) {
-				this.allowIp.addAll(new HashSet<String>(allowIp.size()) {
+				this.allowIpRange.addAll(new HashSet<String>(allowIp.size()) {
 					private static final long serialVersionUID = -5256118509571850550L;
 					{
 						addAll(allowIp);
@@ -613,13 +614,13 @@ public class IPAccessControl {
 			}
 		}
 
-		public List<String> getDenyIp() {
-			return denyIp;
+		public List<String> getDenyIpRange() {
+			return denyIpRange;
 		}
 
-		public void setDenyIp(List<String> denyIp) {
+		public void setDenyIpRange(List<String> denyIp) {
 			if (!isEmpty(denyIp)) {
-				this.denyIp.addAll(new HashSet<String>(denyIp.size()) {
+				this.denyIpRange.addAll(new HashSet<String>(denyIp.size()) {
 					private static final long serialVersionUID = -5256118509571850550L;
 					{
 						addAll(denyIp);
@@ -640,29 +641,41 @@ public class IPAccessControl {
 		public void afterPropertiesSet() throws Exception {
 			// Allow list.
 			try {
-				for (String item : getAllowIp()) {
-					if (isBlank(item)) {
+				for (String range : getAllowIpRange()) {
+					if (isBlank(range) || isUselessRange(range)) {
 						continue;
 					}
-					getAllowList().add(new IPRange(item));
+					getAllowList().add(new IPRange(range));
 				}
 			} catch (Exception e) {
-				String msg = "Init config error, allow : " + getDenyIp();
+				String msg = "Parse acl ipRange error, allowRange: " + getAllowIpRange();
 				log.error(msg, e);
 			}
 
 			// Deny list.
 			try {
-				for (String item : getDenyIp()) {
-					if (isBlank(item)) {
+				for (String range : getDenyIpRange()) {
+					if (isBlank(range) || isUselessRange(range)) {
 						continue;
 					}
-					getDenyList().add(new IPRange(item));
+					getDenyList().add(new IPRange(range));
 				}
 			} catch (Exception e) {
-				String msg = "Init config error, deny : " + getDenyIp();
+				String msg = "Parse acl ipRange error, denyRange: " + getDenyIpRange();
 				log.error(msg, e);
 			}
+		}
+
+		/**
+		 * Useless values that did not resolve successfully through environment
+		 * variables. e.g. spring.cloud.devops.iam.acl.denyIpRange:
+		 * ${DEVOPS_IAM_ACL_DENY}
+		 * 
+		 * @param range
+		 * @return
+		 */
+		private boolean isUselessRange(String range) {
+			return contains(range, "{") && contains(range, "}");
 		}
 
 	}
@@ -670,7 +683,7 @@ public class IPAccessControl {
 	public static void main(String[] args) throws Exception {
 		IPAccessProperties config = new IPAccessProperties();
 		// config.getAllowIp().add("10.0.0.160");
-		config.getAllowIp().add("0.0.0.0/0");
+		config.getAllowIpRange().add("0.0.0.0/0");
 		config.afterPropertiesSet();
 		IPAccessControl ctl = new IPAccessControl(config);
 		System.out.println(ctl.isIPRangePermitted("10.0.0.160"));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,17 @@
  */
 package com.wl4g.devops.iam.client.configure;
 
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 
+/**
+ * IAM client security coprocessor.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-04-05
+ * @since
+ */
+@Beta
 public interface ClientSecurityCoprocessor extends SecurityCoprocessor {
 
 }

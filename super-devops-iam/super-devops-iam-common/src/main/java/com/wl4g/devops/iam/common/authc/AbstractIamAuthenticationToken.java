@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package com.wl4g.devops.iam.common.authc;
+
+import static org.apache.shiro.util.Assert.notNull;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * Abstract IAM authentication token
@@ -30,47 +33,36 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 	/**
 	 * Remote client host address
 	 */
-	final private String host;
+	final private String remoteHost;
 
 	/**
-	 * Source application name
+	 * Redirection information.
 	 */
-	final private String fromAppName;
-
-	/**
-	 * Source application callback URL
-	 */
-	final private String redirectUrl;
+	final private RedirectInfo redirectInfo;
 
 	public AbstractIamAuthenticationToken() {
 		this(null);
 	}
 
-	public AbstractIamAuthenticationToken(String remoteHost) {
-		this.host = remoteHost;
-		this.fromAppName = null;
-		this.redirectUrl = null;
+	public AbstractIamAuthenticationToken(final String remoteHost) {
+		this.remoteHost = remoteHost;
+		this.redirectInfo = null;
 	}
 
-	public AbstractIamAuthenticationToken(String remoteHost, String fromAppName, String redirectUrl) {
-		this.host = remoteHost;
-		this.fromAppName = fromAppName;
-		this.redirectUrl = redirectUrl;
+	public AbstractIamAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo) {
+		hasText(remoteHost, "Remote client host must not be null.");
+		notNull(redirectInfo, "Redirect info must not be null.");
+		this.remoteHost = remoteHost;
+		this.redirectInfo = redirectInfo;
 	}
 
 	@Override
 	public String getHost() {
-		return host;
+		return remoteHost;
 	}
 
-	@Override
-	public String getFromAppName() {
-		return fromAppName;
-	}
-
-	@Override
-	public String getRedirectUrl() {
-		return redirectUrl;
+	public RedirectInfo getRedirectInfo() {
+		return redirectInfo;
 	}
 
 }

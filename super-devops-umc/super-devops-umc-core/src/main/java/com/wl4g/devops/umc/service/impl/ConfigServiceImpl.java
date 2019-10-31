@@ -1,10 +1,26 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.wl4g.devops.umc.service.impl;
 
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.umc.service.ConfigService;
@@ -27,6 +43,9 @@ public class ConfigServiceImpl implements ConfigService {
 
 	@Autowired
 	private AppClusterDao appClusterDao;
+
+	@Autowired
+	private AppInstanceDao appInstanceDao;
 
 	@Override
 	public void save(AlarmConfig alarmConfig) {
@@ -56,9 +75,9 @@ public class ConfigServiceImpl implements ConfigService {
 		AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmConfig.getTemplateId());
 		Assert.notNull(alarmTemplate, "not found alarmTemplate");
 		alarmConfig.setClassify(alarmTemplate.getClassify());
-		AppInstance appInstance = appClusterDao.getAppInstance(alarmConfig.getCollectId().toString());
-		alarmConfig.setGroup(appInstance.getAppClusterId().intValue());
-		alarmConfig.setEnvironment(Integer.valueOf(appInstance.getEnvId()));
+		AppInstance appInstance = appInstanceDao.selectByPrimaryKey(alarmConfig.getCollectId());
+		alarmConfig.setGroup(appInstance.getClusterId());
+		alarmConfig.setEnvType(appInstance.getEnvType());
 		return alarmConfig;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 public class RootAuthenticationToken extends AbstractIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
-	public RootAuthenticationToken(final String remoteHost, String fromAppName, String redirectUrl) {
-		super(remoteHost, fromAppName, redirectUrl);
+	public RootAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo) {
+		super(remoteHost, redirectInfo);
 	}
 
 	@Override

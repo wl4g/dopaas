@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package com.wl4g.devops.share.service;
 
-import com.wl4g.devops.common.bean.share.*;
+import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.share.AppCluster;
+import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 应用组管理Service接口
@@ -27,40 +30,16 @@ import java.util.List;
  */
 public interface AppClusterService {
 
-	public void insert(InstanceOfGroup iog);
+	void save(AppCluster appCluster,String cipherKey);
 
-	public boolean delete(AppCluster group);
+	Map list(CustomPage customPage, String clusterName);
 
-	public boolean deleteEnv(Environment group);
+	void del(Integer clusterId);
 
-	public boolean update(AppCluster group);
+	AppCluster detail(Integer clusterId,String cipherKey);
 
-	public InstanceOfGroup select(AppCluster group);
+	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
 
-	public InstanceOfGroup selectEnv(AppCluster group);
 
-	public List<AppGroupList> list(AppGroupList agl);
-
-	public List<AppGroupList> groupEnvlist(AppGroupList agl);
-
-	public boolean insertInstance(InstanceOfGroup iog);
-
-	public boolean insertEnvironment(InstanceOfGroup iog);
-
-	public boolean deleteInstance(AppInstance instance);
-
-	public boolean updateInstance(AppInstance instance);
-
-	public boolean updateEnvironment(Environment instance);
-
-	public List<AppCluster> grouplist();
-
-	public List<Environment> environmentlist(String clusterId);
-
-	public List<AppInstance> instancelist(AppInstance appInstance);
-
-	public String selectEnvName(String envId);
-
-	public AppInstance getAppInstance(String id);
 
 }

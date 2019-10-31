@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.scm.config.ScmProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.GenericTaskRunner.RunProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2018年10月26日
  * @since
  */
-public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<RunProperties> implements ConfigSourcePublisher {
+public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<RunnerProperties> implements ConfigSourcePublisher {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -69,7 +69,6 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
 	public AbstractConfigSourcePublisher(ScmProperties config) {
-		super(new RunProperties());
 		this.config = config;
 		this.watchRequests = new ConcurrentHashMap<>(32);
 	}

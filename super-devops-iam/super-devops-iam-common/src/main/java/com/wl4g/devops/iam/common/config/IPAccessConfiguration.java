@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import com.wl4g.devops.common.kit.access.IPAccessControl.IPAccessProperties;
  */
 @Configuration
 public class IPAccessConfiguration {
-	final static String IP_ACCESS_PREFIX = "spring.cloud.devops.iam.authc-internal-access";
+	final static String IP_ACCESS_PREFIX = "spring.cloud.devops.iam.acl";
 
 	@Bean
 	public IPAccessControl ipAccessControl(IPAccessProperties properties) {

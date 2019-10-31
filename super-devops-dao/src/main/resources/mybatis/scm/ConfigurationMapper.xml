@@ -180,25 +180,22 @@
 			b.id as nodeId,
 			c.`name`,
 			c.id as appClusterId,
-			d.`remark` as envRemark,
-			d.id as envId
+			b.env_type as envType
 		FROM scm_version a
 		JOIN app_instance b ON a.id = b.version_id
 		left join app_host h on h.id=b.host_id
 		JOIN app_cluster c ON b.cluster_id = c.id
-		JOIN app_environment d ON b.env_id = d.id and d.cluster_id = c.id
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			AND c.del_flag = #{DEL_FLAG_NORMAL}
-			AND d.del_flag = #{DEL_FLAG_NORMAL}
 			<if test="appClusterId != null and appClusterId != ''">
 				AND c.id = #{appClusterId}
 			</if>
 			<if test="instanceId != null and instanceId != ''">
 				AND b.id = #{instanceId}
 			</if>
-			<if test="envId != null and envId != ''">
-				AND d.id = #{envId}
+			<if test="envType != null and envType != ''">
+				AND b.env_type = #{envType}
 			</if>
 		</where>
 	</select>

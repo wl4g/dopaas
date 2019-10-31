@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,66 +26,45 @@ import com.wl4g.devops.common.bean.BaseBean;
  */
 public class AppInstance extends BaseBean {
 
-	private Long appClusterId; // 应用分组ID
-	private Integer hostId;
-	private String endpoint; // 服务监听端口
-	private String envId; // 环境id
-	private String versionId; // 版本id
 
-	// 20190517add
-	// private String basePath;// 项目部署路径
-	private String sshUser;// 登录账号
+	private Integer clusterId;
+
+	private Integer versionId;
+
+	private Integer hostId;
+
+	private String envType;
+
+	private Integer enable;
+
+	private String endpoint;
+
+	private String remark;
+
+	private String sshUser;
+
 	private String sshKey;
+
+	private String sshKeyPub;
 
 	// other
 	private String hostname;
 
-	public Long getAppClusterId() {
-		return appClusterId;
+
+	public Integer getClusterId() {
+		return clusterId;
 	}
 
-	public void setAppClusterId(Long appClusterId) {
-		this.appClusterId = appClusterId;
+	public void setClusterId(Integer clusterId) {
+		this.clusterId = clusterId;
 	}
 
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
-	public String getEnvId() {
-		return envId;
-	}
-
-	public void setEnvId(String envId) {
-		this.envId = envId;
-	}
-
-	public String getVersionId() {
+	public Integer getVersionId() {
 		return versionId;
 	}
 
-	public void setVersionId(String versionId) {
+	public void setVersionId(Integer versionId) {
 		this.versionId = versionId;
-	}
-
-	public String getSshKey() {
-		return sshKey;
-	}
-
-	public void setSshKey(String sshKey) {
-		this.sshKey = sshKey;
-	}
-
-	public String getSshUser() {
-		return sshUser;
-	}
-
-	public void setSshUser(String sshUser) {
-		this.sshUser = sshUser;
 	}
 
 	public Integer getHostId() {
@@ -96,17 +75,71 @@ public class AppInstance extends BaseBean {
 		this.hostId = hostId;
 	}
 
+	public String getEnvType() {
+		return envType;
+	}
+
+	public void setEnvType(String envType) {
+		this.envType = envType;
+	}
+
+	@Override
+	public Integer getEnable() {
+		return enable;
+	}
+
+	@Override
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	@Override
+	public String getRemark() {
+		return remark;
+	}
+
+	@Override
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getSshUser() {
+		return sshUser;
+	}
+
+	public void setSshUser(String sshUser) {
+		this.sshUser = sshUser;
+	}
+
+	public String getSshKey() {
+		return sshKey;
+	}
+
+	public void setSshKey(String sshKey) {
+		this.sshKey = sshKey;
+	}
+
+	public String getSshKeyPub() {
+		return sshKeyPub;
+	}
+
+	public void setSshKeyPub(String sshKeyPub) {
+		this.sshKeyPub = sshKeyPub;
+	}
+
 	public String getHostname() {
 		return hostname;
 	}
 
 	public void setHostname(String hostname) {
 		this.hostname = hostname;
-	}
-
-	@Override
-	public String toString() {
-		return "AppInstance{" + "appClusterId=" + appClusterId + ", endpoint=" + endpoint + ", envId='" + envId + '\''
-				+ ", versionId='" + versionId + '\'' + ", sshUser='" + sshUser + '\'' + ", sshKey='" + sshKey + '\'' + '}';
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,13 +92,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	/**
 	 * IAM security context handler
 	 */
-	final protected ServerSecurityConfigurer context;
-
-	/**
-	 * IAM server security coprocessor
-	 */
-	@Autowired
-	protected ServerSecurityConfigurer coprocessor;
+	final protected ServerSecurityConfigurer configurer;
 
 	/**
 	 * Enhanced cache manager.
@@ -113,15 +107,15 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityConfigurer context) {
+			ServerSecurityConfigurer configurer) {
 		Assert.notNull(config, "'config' must not be null");
 		Assert.notNull(snsConfig, "'snsConfig' must not be null");
 		Assert.notNull(connectFactory, "'connectFactory' must not be null");
-		Assert.notNull(context, "'context' must not be null");
+		Assert.notNull(configurer, "'configurer' must not be null");
 		this.config = config;
 		this.snsConfig = snsConfig;
 		this.connectFactory = connectFactory;
-		this.context = context;
+		this.configurer = configurer;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

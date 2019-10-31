@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.security.MessageDigest;
-import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -27,6 +29,7 @@ import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.ByteSource.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +65,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Secure configuration.
 	 */
-	final private SecureConfig config;
+	final protected SecureConfig config;
 
 	/**
 	 * Using Distributed Cache to Ensure Concurrency Control under multiple-node
@@ -72,7 +75,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * The 'private' part of the hash salt.
 	 */
-	final private ByteSource privateSalt;
+	final protected ByteSource privateSalt;
 
 	/**
 	 * Cryptic service.
@@ -100,7 +103,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		Assert.notNull(config.getApplyPubkeyExpireMs() > 0, "'applyPubKeyExpireMs' must greater than 0");
 		Assert.notNull(cacheManager, "'cacheManager' must not be null");
 
-		this.privateSalt = ByteSource.Util.bytes(config.getPrivateSalt());
+		this.privateSalt = Util.bytes(config.getPrivateSalt());
 		this.config = config;
 		this.cacheManager = cacheManager;
 	}
@@ -147,7 +150,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		// Load secret keySpecPairs.
 		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
 		Integer index = (Integer) pubIdxCache.get(new EnhancedKey(authenticationCode, Integer.class));
-		if (Objects.isNull(index)) {
+		if (isNull(index)) {
 			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
 		if (log.isDebugEnabled()) {
@@ -212,7 +215,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		final int hashIters = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
 
 		// Hashing signature
-		return hasher.hashing(algorithm, ByteSource.Util.bytes(token.getCredentials()), salt, hashIters).toHex();
+		return hasher.hashing(algorithm, Util.bytes(token.getCredentials()), salt, hashIters).toHex();
 	}
 
 	/**
@@ -227,11 +230,10 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 		if (log.isInfoEnabled()) {
 			String publicBase64String = keySpec.getPubHexString();
+
 			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
 			String privateBase64String = "Not output";
-			boolean output = true;
-
-			if (log.isDebugEnabled() || output) {
+			if (log.isDebugEnabled()) {
 				privateBase64String = keySpec.getBase64String();
 				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			} else {
@@ -255,7 +257,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		EnhancedCache pubIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
 		try {
 			Integer index = (Integer) pubIdxCache.get(new EnhancedKey(principal, Integer.class));
-			if (Objects.nonNull(index)) {
+			if (nonNull(index)) {
 				return rsaCryptoService.borrow(index);
 			}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -37,7 +38,8 @@ public interface TaskHistoryService {
 	TaskHistory getById(Integer id);
 
 	TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer parentId, String preCommand, String postCommand, Integer tarType,Integer contactGroupId);
+			String sha, Integer parentId,String buildCommand,  String preCommand, String postCommand, String tarType, Integer contactGroupId,
+			List<TaskBuildCommand> taskBuildCommands);
 
 	void updateStatus(int taskId, int status);
 
@@ -46,5 +48,7 @@ public interface TaskHistoryService {
 	void updateDetailStatusAndResult(int taskDetailId, int status, String result);
 
 	void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
+
+	void stopByTaskHisId(Integer taskHisId);
 
 }

@@ -15,11 +15,16 @@
  */
 package com.wl4g.devops.tool.hbase.migrate;
 
+import static com.google.common.io.Resources.*;
+import static com.wl4g.devops.tool.hbase.migrate.mapred.AbstractTransformHfileMapper.*;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.utils.Assert;
 import com.wl4g.devops.tool.common.utils.CommandLines.Builder;
-import com.wl4g.devops.tool.hbase.migrate.mapred.ExamplePrefixMigrateMapper;
+import com.wl4g.devops.tool.hbase.migrate.mapred.NothingTransformMapper;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -38,6 +43,7 @@ import org.apache.hadoop.hbase.protobuf.generated.ClientProtos;
 import org.apache.hadoop.hbase.util.Base64;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -56,62 +62,78 @@ import java.sql.Timestamp;
 public class HfileBulkExporter {
 	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
 
-	final public static String DEFAULT_HBASE_FSTMP_DIR = "/tmp/fstmpdir";
+	final public static String DEFAULT_HBASE_MR_TMPDIR = "/tmp-devops/tmpdir";
+	final public static String DEFAULT_HFILE_OUTPUT_DIR = "/tmp-devops/outputdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
+	final public static String DEFAULT_MAPPER_CLASS = NothingTransformMapper.class.getName();
 
 	/**
 	 * e.g. </br>
 	 * 
 	 * <pre>
-	 * yarn jar super-devops-tool-hbase-migrate-master-jar-with-dependencies.jar \
+	 * yarn jar super-devops-tool-hbase-migrator-master-jar-with-dependencies.jar \
 	 * com.wl4g.devops.tool.hbase.migrate.HfileBulkExporter \
-	 * -z owner-node2:2181 \
-	 * -t safeclound.tb_ammeter \
-	 * -o hdfs://emr-header-1/bak/safeclound.tb_ammeter
+	 * -z emr-header-1:2181 \
+	 * -t safeclound.tb_elec_power \
+	 * -s 11111112,ELE_R_P,134,01,20180919110850989 \
+	 * -e 11111112,ELE_R_P,134,01,20180921124050540
 	 * </pre>
 	 * 
 	 * @param args
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
-		CommandLine line = new Builder().option("T", "tmpdir", false, "Hbase tmp directory. default:" + DEFAULT_HBASE_FSTMP_DIR)
-				.option("z", "zkaddr", true, "Zookeeper address.").option("t", "tabname", true, "Hbase table name.")
-				.option("o", "output", true, "Output hdfs path.")
-				.option("b", "batchsize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE)
-				.option("s", "startrow", false, "Scan start rowkey.").option("e", "endrow", false, "Scan end rowkey.")
-				.option("S", "starttime", false, "Scan start timestamp.").option("E", "endtime", false, "Scan end timestamp.")
-				.build(args);
+		System.out.println(Resources.toString(getResource(HfileBulkExporter.class, "banner.txt"), Charsets.UTF_8));
 
-		// Configuration
+		Builder builder = new Builder();
+		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
+		builder.option("z", "zkaddr", true, "Zookeeper address.");
+		builder.option("t", "tabname", true, "Hbase table name.");
+		builder.option("o", "output", false,
+				"Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}");
+		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
+		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS);
+		builder.option("s", "startRow", false, "Scan start rowkey.");
+		builder.option("e", "endRow", false, "Scan end rowkey.");
+		builder.option("S", "startTime", false, "Scan start timestamp.");
+		builder.option("E", "endTime", false, "Scan end timestamp.");
+		CommandLine line = builder.build(args);
+
+		// Configuration.
+		String tabname = line.getOptionValue("tabname");
 		Configuration conf = new Configuration();
-		conf.set("hbase.zookeeper.quorum", line.getOptionValue("z"));
-		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_FSTMP_DIR));
-		conf.set(TableInputFormat.INPUT_TABLE, line.getOptionValue("t"));
-		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("b", DEFAULT_SCAN_BATCH_SIZE));
+		conf.set("hbase.zookeeper.quorum", line.getOptionValue("zkaddr"));
+		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR));
+		conf.set(TableInputFormat.INPUT_TABLE, tabname);
+		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE));
 
 		// Check directory.
-		String output = line.getOptionValue("o");
-		FileSystem fs = FileSystem.get(new URI(output), new Configuration(), "root");
-		Assert.state(!fs.exists(new Path(output)), String.format("Catalogs do not allow other data. '%s'", output));
+		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
+		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), "root");
+		Assert.state(!fs.exists(new Path(outputDir)),
+				String.format("HDFS temporary directory already has data, path: '%s'", outputDir));
 
 		// Set scan condition.(if necessary)
 		setScanIfNecessary(conf, line);
 
-		// Job
+		// Job.
 		Connection conn = ConnectionFactory.createConnection(conf);
-		TableName tab = TableName.valueOf(line.getOptionValue("t"));
+		TableName tab = TableName.valueOf(tabname);
 		Job job = Job.getInstance(conf);
 		job.setJobName(HfileBulkExporter.class.getSimpleName() + "@" + tab.getNameAsString());
 		job.setJarByClass(HfileBulkExporter.class);
-		job.setMapperClass(ExamplePrefixMigrateMapper.class);
+		job.setMapperClass((Class<Mapper>) ClassUtils.getClass(line.getOptionValue("M", DEFAULT_MAPPER_CLASS)));
 		job.setInputFormatClass(TableInputFormat.class);
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
 		job.setMapOutputValueClass(Put.class);
 
 		HFileOutputFormat2.configureIncrementalLoad(job, conn.getTable(tab), conn.getRegionLocator(tab));
-		FileOutputFormat.setOutputPath(job, new Path(output));
+		FileOutputFormat.setOutputPath(job, new Path(outputDir));
 		if (job.waitForCompletion(true)) {
-			log.info("Exported to successfully !");
+			long total = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).getValue();
+			long filtered = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_FILTERED).getValue();
+			log.info(String.format("Exported to successfully! with processed:(%d)/total:(%d)", filtered, total));
 		}
 
 	}
@@ -124,10 +146,10 @@ public class HfileBulkExporter {
 	 * @throws IOException
 	 */
 	private static void setScanIfNecessary(Configuration conf, CommandLine line) throws IOException {
-		String startRow = line.getOptionValue("s");
-		String endRow = line.getOptionValue("e");
-		String startTime = line.getOptionValue("S");
-		String endTime = line.getOptionValue("E");
+		String startRow = line.getOptionValue("startRow");
+		String endRow = line.getOptionValue("endRow");
+		String startTime = line.getOptionValue("startTime");
+		String endTime = line.getOptionValue("endTime");
 
 		boolean enabledScan = false;
 		Scan scan = new Scan();

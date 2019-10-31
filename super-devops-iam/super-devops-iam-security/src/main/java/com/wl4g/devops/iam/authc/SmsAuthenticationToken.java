@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import org.springframework.util.Assert;
+import static org.springframework.util.Assert.hasText;
 
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 
@@ -50,8 +50,8 @@ public class SmsAuthenticationToken extends AbstractIamAuthenticationToken {
 
 	public SmsAuthenticationToken(final String remoteHost, final String action, final String principal, final String smsCode) {
 		super(remoteHost);
-		Assert.hasText(principal, "Dynamic principal must not be empty");
-		Assert.hasText(smsCode, "Dynamic smsCode credentials must not be empty");
+		hasText(principal, "Dynamic principal must not be empty");
+		hasText(smsCode, "Dynamic smsCode credentials must not be empty");
 		this.action = Action.of(action);
 		this.principal = principal;
 		this.smsCode = smsCode;

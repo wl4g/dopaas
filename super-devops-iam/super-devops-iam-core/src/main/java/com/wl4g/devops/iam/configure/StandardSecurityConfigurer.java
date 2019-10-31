@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,29 @@ package com.wl4g.devops.iam.configure;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.*;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
+import com.wl4g.devops.common.bean.iam.User;
+import com.wl4g.devops.dao.iam.UserDao;
 import com.wl4g.devops.dao.share.ApplicationDao;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.StringUtils.equalsAny;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
+import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.equalsAny;
+import static org.apache.shiro.util.Assert.hasText;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Standard IAM Security context handler
@@ -52,6 +60,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Autowired
 	private transient ApplicationDao applicationDao;
 
+	@Autowired
+	private transient UserDao userDao;
+
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
 			ServletResponse response) {
@@ -66,9 +77,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public ApplicationInfo getApplicationInfo(String appName) {
-		// TODO(Using DB) For testing::
-		List<ApplicationInfo> apps = findApplicationInfo(appName);
-		return !apps.isEmpty() ? apps.get(0) : null;
+		List<ApplicationInfo> apps = safeList(findApplicationInfo(appName));
+		return !isEmpty(apps) ? apps.get(0) : null;
 	}
 
 	@Override
@@ -87,7 +97,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfoList.addAll(applications);
 		}
 
-		//// TODO(Using DB) for testing.
+		//// --- For testing. ---
 		//
 		// if (equalsAny("scm-server", appNames)) {
 		// ApplicationInfo appInfo = new ApplicationInfo("scm-server",
@@ -133,29 +143,22 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public IamAccountInfo getIamAccount(Parameter parameter) {
-		return new IamAccountInfo() {
-			private static final long serialVersionUID = 7697544753707057845L;
+		User user = null;
 
-			@Override
-			public String getPrincipal() {
-				return "admin";
-			}
-
-			@Override
-			public String getStoredCredentials() {
-				if (parameter instanceof SnsParameter) {
-					SnsParameter snsParam = (SnsParameter) parameter;
-					System.out.println(snsParam);
-				} else {
-					SimpleParameter simpleParam = (SimpleParameter) parameter;
-					System.out.println(simpleParam);
-					// for test
-					return "5543f9567dcd41eca580a1724686a3a7"; // 123456
-				}
-				return null;
-			}
-
-		};
+		// By SNS authorizing
+		if (parameter instanceof SnsParameter) {
+			SnsParameter snsParameter = (SnsParameter) parameter;
+			user = userDao.selectByUnionIdOrOpenId(snsParameter.getUnionId(), snsParameter.getOpenId());
+		}
+		// By general account
+		else if (parameter instanceof SimpleParameter) {
+			SimpleParameter simpleParameter = (SimpleParameter) parameter;
+			user = userDao.selectByUserName(simpleParameter.getPrincipal());
+		}
+		if (nonNull(user)) {
+			return new StandardIamAccountInfo(user.getUserName(), user.getPassword());
+		}
+		return null;
 	}
 
 	@Override
@@ -186,6 +189,41 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public void unbindSocialConnection(SocialConnectInfo social) {
+
+	}
+
+	/**
+	 * Standard IAM account info implements.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月31日
+	 * @since
+	 */
+	public static class StandardIamAccountInfo implements IamAccountInfo {
+		private static final long serialVersionUID = 1L;
+
+		/** Authenticating principal name. */
+		final private String principal;
+
+		/** Authenticating principal DB stored credenticals. */
+		final private String storedCredentials;
+
+		public StandardIamAccountInfo(String principal, String storedCredentials) {
+			hasText(principal, "Principal must not be empty.");
+			hasText(storedCredentials, "StoredCredentials must not be empty.");
+			this.principal = principal;
+			this.storedCredentials = storedCredentials;
+		}
+
+		@Override
+		public String getPrincipal() {
+			return principal;
+		}
+
+		@Override
+		public String getStoredCredentials() {
+			return storedCredentials;
+		}
 
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,23 @@
 package com.wl4g.devops.common.web;
 
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.wl4g.devops.common.exception.restful.BizInvalidArgRESTfulException;
-import com.wl4g.devops.common.exception.restful.BizRuleRestrictRESTfulException;
-import com.wl4g.devops.common.exception.restful.ServiceUnavailableRESTfulException;
-import com.wl4g.devops.common.utils.lang.StringUtils2;
+import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
+import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
+import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 
 /**
  * Generic Restful response base class
@@ -47,7 +48,7 @@ public class RespBase<T extends Object> implements Serializable {
 	/**
 	 * Default status value.
 	 */
-	final public static String DEFAULT_STATUS = "normal";
+	final public transient static String DEFAULT_STATUS = "normal";
 
 	private RetCode code;
 	private String status; // Response status.
@@ -76,13 +77,13 @@ public class RespBase<T extends Object> implements Serializable {
 
 	public RespBase(RetCode retCode, String status, String message, DataMap<T> data) {
 		setCode(retCode);
-		setStatus(StringUtils2.isEmpty(status) ? DEFAULT_STATUS : status);
+		setStatus(isBlank(status) ? DEFAULT_STATUS : status);
 		setMessage(message);
 		setData(data);
 	}
 
 	public int getCode() {
-		return code.getCode();
+		return code.getErrcode();
 	}
 
 	public RespBase<T> setCode(RetCode retCode) {
@@ -95,18 +96,18 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	public RespBase<T> setStatus(String status) {
-		if (status != null) {
+		if (!isBlank(status)) {
 			this.status = status;
 		}
 		return this;
 	}
 
 	public String getMessage() {
-		return message == null ? code.getMsg() : message;
+		return message == null ? code.getErrmsg() : message;
 	}
 
 	public RespBase<T> setMessage(String message) {
-		this.message = message != null ? message : this.message;
+		this.message = !isBlank(message) ? message : this.message;
 		return this;
 	}
 
@@ -131,16 +132,16 @@ public class RespBase<T extends Object> implements Serializable {
 	public RespBase<T> handleError(Throwable th) {
 		this.message = getRootCausesString(th);
 		// Business restrictions
-		if (th instanceof BizRuleRestrictRESTfulException) {
-			this.code = ((BizRuleRestrictRESTfulException) th).getCode();
+		if (th instanceof BizRuleRestrictRestfulException) {
+			this.code = ((BizRuleRestrictRestfulException) th).getCode();
 		}
 		// Invalid arguments.
-		else if (th instanceof BizInvalidArgRESTfulException) {
-			this.code = ((BizInvalidArgRESTfulException) th).getCode();
+		else if (th instanceof BizInvalidArgRestfulException) {
+			this.code = ((BizInvalidArgRestfulException) th).getCode();
 		}
 		// Unavailable service
-		else if (th instanceof ServiceUnavailableRESTfulException) {
-			this.code = ((ServiceUnavailableRESTfulException) th).getCode();
+		else if (th instanceof ServiceUnavailableRestfulException) {
+			this.code = ((ServiceUnavailableRestfulException) th).getCode();
 		}
 		return this;
 	}
@@ -179,11 +180,11 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	public static boolean isSuccess(RespBase<?> resp) {
-		return resp != null && RetCode.OK.getCode() == resp.getCode();
+		return resp != null && RetCode.OK.getErrcode() == resp.getCode();
 	}
 
 	public static boolean eq(RespBase<?> resp, RetCode retCode) {
-		return resp != null && retCode.getCode() == resp.getCode();
+		return resp != null && retCode.getErrcode() == resp.getCode();
 	}
 
 	/**
@@ -247,7 +248,7 @@ public class RespBase<T extends Object> implements Serializable {
 	public static enum RetCode {
 
 		/**
-		 * Successfully<br/>
+		 * Successful code<br/>
 		 * {@link HttpStatus.OK}
 		 */
 		OK(HttpStatus.OK.value(), "ok"),
@@ -292,41 +293,105 @@ public class RespBase<T extends Object> implements Serializable {
 		 * System abnormality<br/>
 		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
-		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later");
+		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later"),
 
-		private int code;
-		private String msg;
+		/**
+		 * Customize code type definition.
+		 */
+		$CUSTOMIZE$(-1, "Unknown error");
+
+		/**
+		 * Create custom status code, refer to {@link #$CUSTOMIZE$} and
+		 * {@link #create(int, String)}
+		 */
+		final private static ThreadLocal<Object[]> customizeLocal = new InheritableThreadLocal<>();
+
+		private int errcode;
+		private String errmsg;
 
 		private RetCode(int code, String msg) {
-			this.code = code;
-			this.msg = msg;
-		}
-
-		public int getCode() {
-			return code;
-		}
-
-		public String getMsg() {
-			return msg;
+			Assert.hasText(msg, "Result message definition must not be empty.");
+			this.errcode = code;
+			this.errmsg = msg;
 		}
 
 		/**
-		 * JACKSON映射枚举大小写不敏感处理
+		 * Get error code.</br>
+		 * If custom status code ({@link #$CUSTOMIZE$}) is used, it takes
+		 * precedence.
 		 * 
-		 * https://www.cnblogs.com/chyu/p/9177140.htmlhttps://www.cnblogs.com/chyu/p/9177140.html
+		 * @return
+		 */
+		public int getErrcode() {
+			if (this == $CUSTOMIZE$) {
+				Object errcode = customizeLocal.get()[0];
+				Assert.notNull(errcode, "Respbase customize errcode must not be null.");
+				return (int) errcode;
+			}
+			return errcode;
+		}
+
+		/**
+		 * Get error message.</br>
+		 * If custom status error message ({@link #$CUSTOMIZE$}) is used, it
+		 * takes precedence.
+		 * 
+		 * @return
+		 */
+		public String getErrmsg() {
+			if (this == $CUSTOMIZE$) {
+				Object errmsg = customizeLocal.get()[1];
+				Assert.notNull(errmsg, "Respbase customize errmsg must not be null.");
+				return (String) errmsg;
+			}
+			return errmsg;
+		}
+
+		/**
+		 * Case insensitive handling of JACKSON mapping enumeration.
+		 * 
+		 * <a href=
+		 * "https://www.cnblogs.com/chyu/p/9177140.htmlhttps://www.cnblogs.com/chyu/p/9177140.html">See</a>
 		 * 
 		 * @param value
 		 * @return
 		 */
 		@JsonCreator
-		public static RetCode get(String nameOrCode) {
+		final public static RetCode get(String nameOrCode) {
+			RetCode code = safeOf(nameOrCode);
+			if (Objects.nonNull(code)) {
+				return code;
+			}
+			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
+		}
+
+		/**
+		 * Safe convert retCode.
+		 * 
+		 * @param nameOrCode
+		 * @return
+		 */
+		final public static RetCode safeOf(String nameOrCode) {
 			String tmp = String.valueOf(nameOrCode);
 			for (RetCode v : values()) {
-				if (v.name().equalsIgnoreCase(tmp) || String.valueOf(v.getCode()).equalsIgnoreCase(tmp)) {
+				if (v.name().equalsIgnoreCase(tmp) || String.valueOf(v.getErrcode()).equalsIgnoreCase(tmp)) {
 					return v;
 				}
 			}
-			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
+			return null;
+		}
+
+		/**
+		 * Create custom status code, refer to {@link #$CUSTOMIZE$}
+		 * 
+		 * @param errcode
+		 * @param errmsg
+		 * @return
+		 */
+		final public static RetCode create(int errcode, String errmsg) {
+			Assert.hasText(errmsg, "Result errmsg definition must not be empty.");
+			customizeLocal.set(new Object[] { errcode, errmsg });
+			return $CUSTOMIZE$;
 		}
 
 	}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import com.wl4g.devops.support.ms.mail.MailSenderTemplate;
+import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
 import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;

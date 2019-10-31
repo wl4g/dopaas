@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ package com.wl4g.devops.common.bean.scm;
  */
 public class ConfigVersionList extends ConfigVersion {
 	private String instanceId; // 节点id
-	private String envId;// 环境id=
+	private String envType;// 环境id=
 	private String historyId;// 轨迹id=
 	private Integer instanceCount; //
 	private Integer type;
@@ -35,12 +35,12 @@ public class ConfigVersionList extends ConfigVersion {
 		this.instanceId = instanceId;
 	}
 
-	public String getEnvId() {
-		return envId;
+	public String getEnvType() {
+		return envType;
 	}
 
-	public void setEnvId(String envId) {
-		this.envId = envId;
+	public void setEnvType(String envType) {
+		this.envType = envType;
 	}
 
 	public Integer getInstanceCount() {

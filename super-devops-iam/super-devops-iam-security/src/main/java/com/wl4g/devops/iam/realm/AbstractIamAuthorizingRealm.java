@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,19 +31,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_ACCOUNT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_TOKEN;
+import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.isTrue;
 
+import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
@@ -93,6 +101,12 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	 */
 	@Autowired
 	protected ServerSecurityConfigurer configurer;
+
+	/**
+	 * IAM server security processor
+	 */
+	@Autowired
+	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
 	 * Delegate message source.
@@ -157,21 +171,45 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
 		CredentialsMatcher matcher = getCredentialsMatcher();
-		if (matcher != null) {
+		if (nonNull(matcher)) {
 			if (!matcher.doCredentialsMatch(tk, info)) {
-				// not successful - throw an exception to indicate this:
 				throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
 			}
 
-			/*
-			 * Check whether have permission to access the target
-			 * application(Check only when accessing applications).
-			 */
-			if (!StringUtils.isEmpty(tk.getFromAppName())) {
-				Assert.isTrue(!info.getPrincipals().isEmpty(),
-						String.format("login user info is empty. please check the configure. info: %s", info));
-				String principal = (String) info.getPrincipals().iterator().next();
-				authHandler.checkApplicationAccessAuthorized(principal, tk.getFromAppName());
+			// Check whether the login user has access to the target IAM-client
+			// application. (Check only when access application).
+			String fromAppName = tk.getRedirectInfo().getFromAppName();
+			if (!isBlank(fromAppName)) {
+				isTrue(!info.getPrincipals().isEmpty(),
+						String.format("Authentication info principals is empty, please check the configure. [%s]", info));
+
+				// Note: for example, when using wechat scanning code (oauth2)
+				// to log in, token.getPrincipal() is empty,
+				// info.getPrimaryPrincipal() will not be empty.
+				String principal = (String) info.getPrincipals().getPrimaryPrincipal();
+				try {
+					authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
+				} catch (IllegalApplicationAccessException ex) {
+					// For example: first login to manager service(mp) with
+					// 'admin', then logout, and then login to portal
+					// service(portal) with user01. At this time, the check will
+					// return that 'user01' has no permission to access manager
+					// service(mp).
+					// e.g.->https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
+
+					// Fallback determine redirect to application.
+					RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
+							new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
+					/**
+					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters()}
+					 * See:{@link AbstractIamAuthenticationFilter#getRedirectInfo()}
+					 */
+					bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
+					if (log.isWarnEnabled()) {
+						log.info("The principal({}) no access to '{}', fallback redirect to:{}, caused by: {}", principal,
+								fromAppName, fallbackRedirect, getRootCausesString(ex));
+					}
+				}
 			}
 
 		} else {

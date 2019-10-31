@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 package com.wl4g.devops.iam.common.utils;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.shiro.util.Assert.hasText;
+import static org.apache.shiro.util.Assert.isTrue;
+import static org.apache.shiro.util.Assert.notEmpty;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -150,9 +153,9 @@ public abstract class SessionBindings extends Sessions {
 	 * @param keyValues
 	 */
 	public static void bindKVParameters(String sessionKey, Object... keyValues) throws InvalidSessionException {
-		Assert.hasText(sessionKey, "'sessionKey' must not be null");
-		Assert.notEmpty(keyValues, "'keyValues' must not be null");
-		Assert.isTrue(keyValues.length % 2 == 0, "Illegal 'keyValues' length");
+		hasText(sessionKey, "'sessionKey' must not be null");
+		notEmpty(keyValues, "'keyValues' must not be null");
+		isTrue(keyValues.length % 2 == 0, "Illegal 'keyValues' length");
 
 		// Extract key values
 		Map<Object, Object> parameters = new HashMap<>();

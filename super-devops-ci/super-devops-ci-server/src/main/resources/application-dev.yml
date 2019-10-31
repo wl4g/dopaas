@@ -20,14 +20,14 @@ spring:
            - http://localhost:8080
            - http://localhost.com:8080
         allowsHeaders: '*'
-        allowsMethods: GET,POST,OPTION
+        allowsMethods: GET,POST
   cloud:
     devops:
       iam:
-        authc-internal-access:
+        acl:
           secure: false # Turn off protection will trust any same intranet IP.
-          allow-ip: 127.0.0.1
-          deny-ip:
+          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         client:
           server-uri: http://localhost:14040/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
@@ -69,14 +69,25 @@ redis:
   # Redis's cluster nodes.
   nodes: ${REDIS_NODES:safecloud-test:6379,safecloud-test:6380,safecloud-test:6381,safecloud-test:7380,safecloud-test:7380,safecloud-test:7381}
 
-# Deploy git configuration.
-deploy:
-  git-url: http://git.anjiancloud.repo
-  git-username: heweijie
-  git-password: hwj13535248668
-  git-token: Xw6xYojnoj7SSDyyLXP7
-  cipher-key: 03DE18C2FC4E605F
-  task-timeout: 300
-  docker-push-username: xburnerair00
-  docker-push-passwd: hwj13535248668
-
+# Pipeline configuration.
+pipeline:
+  #workspace: # Default by to {user.home}/.ci-workspace
+  executor:
+    concurrency: 5
+    accept-queue: 2
+  vcs:
+    gitlab:
+      base-url: http://git.anjiancloud.repo
+      username: heweijie
+      password: hwj13535248668
+      token: Xw6xYojnoj7SSDyyLXP7
+  job:
+    job-clean-interval-ms: 30_000
+    job-timeout-ms: 600_000
+    shared-dependency-try-timeout-ms: 200_000
+  tranform:
+    cipher-key: 03DE18C2FC4E605F
+    transfer-timeout-ms: 100_000
+    docker-native:
+      docker-push-username: xburnerair00
+      docker-push-password: hwj13535248668

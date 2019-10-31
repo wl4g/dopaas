@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors.
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,26 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
-import com.wl4g.devops.dao.scm.AppClusterDao;
+import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.support.cli.ProcessManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
+
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOP;
 
 /**
  * @author vjay
@@ -48,6 +53,10 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	private ProjectDao projectDao;
 	@Autowired
 	private AppClusterDao appClusterDao;
+	@Autowired
+	private TaskHisBuildCommandDao taskHisBuildCommandDao;
+	@Autowired
+	protected ProcessManager processManager;
 
 	@Override
 	public List<TaskHistory> list(String groupName, String projectName, String branchName) {
@@ -64,7 +73,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		TaskHistory taskHistory = taskHistoryDao.selectByPrimaryKey(id);
 		Project project = projectDao.selectByPrimaryKey(taskHistory.getProjectId());
 		if (null != project && null != project.getAppClusterId()) {
-			AppCluster appCluster = appClusterDao.getAppGroup(project.getAppClusterId());
+			AppCluster appCluster = appClusterDao.selectByPrimaryKey(project.getAppClusterId());
 			if (null != appCluster) {
 				taskHistory.setGroupName(appCluster.getName());
 			}
@@ -76,7 +85,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Override
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer refId, String preCommand, String postCommand, Integer tarType,Integer contactGroupId) {
+			String sha, Integer refId,String buildCommand, String preCommand, String postCommand, String tarType, Integer contactGroupId,
+			List<TaskBuildCommand> taskBuildCommands) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
@@ -86,6 +96,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setBranchName(branchName);
 		taskHistory.setShaGit(sha);
 		taskHistory.setRefId(refId);
+		taskHistory.setBuildCommand(buildCommand);
 		taskHistory.setPreCommand(preCommand);
 		taskHistory.setPostCommand(postCommand);
 		taskHistory.setTarType(tarType);
@@ -99,6 +110,11 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 			taskHistoryDetail.setInstanceId(instance.getId());
 			taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
 			taskHistoryDetailDao.insertSelective(taskHistoryDetail);
+		}
+		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
+			taskBuildCommand.setId(null);
+			taskBuildCommand.setTaskId(taskHistory.getId());
+			taskHisBuildCommandDao.insertSelective(taskBuildCommand);
 		}
 		return taskHistory;
 	}
@@ -118,7 +134,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.preUpdate();
 		taskHistory.setId(taskId);
 		taskHistory.setStatus(status);
-		taskHistory.setResult(result);
+		// modify -- read fomr file
+		// taskHistory.setResult(result);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
 	}
 
@@ -128,10 +145,23 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.preUpdate();
 		taskHistory.setId(taskId);
 		taskHistory.setStatus(status);
-		taskHistory.setResult(result);
+		// modify -- read fomr file
+		// taskHistory.setResult(result);
 		taskHistory.setShaGit(sha);
 		taskHistory.setShaLocal(md5);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+	}
+
+	@Override
+	public void stopByTaskHisId(Integer taskHisId) {
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preUpdate();
+		taskHistory.setId(taskHisId);
+		taskHistory.setStatus(TASK_STATUS_STOP);
+		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+		//CommandUtils.killByTaskId(taskHisId);
+		processManager.destroy(String.valueOf(taskHisId),5000);
+
 	}
 
 	@Override
