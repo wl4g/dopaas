@@ -17,21 +17,25 @@ package com.wl4g.devops.iam.configure;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.*;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
+import com.wl4g.devops.common.bean.iam.User;
+import com.wl4g.devops.dao.iam.UserDao;
 import com.wl4g.devops.dao.share.ApplicationDao;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Standard IAM Security context handler
@@ -51,6 +55,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	 */
 	@Autowired
 	private transient ApplicationDao applicationDao;
+
+	@Autowired
+	private transient UserDao userDao;
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
@@ -133,29 +140,31 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public IamAccountInfo getIamAccount(Parameter parameter) {
-		return new IamAccountInfo() {
-			private static final long serialVersionUID = 7697544753707057845L;
+		User user = null;
 
-			@Override
-			public String getPrincipal() {
-				return "admin";
-			}
+		// By SNS authorizing
+		if (parameter instanceof SnsParameter) {
+			SnsParameter snsParameter = (SnsParameter) parameter;
+			user = userDao.selectByUnionIdOrOpenId(snsParameter.getUnionId(),snsParameter.getOpenId());
+		}
+		// By general account
+		else if (parameter instanceof SimpleParameter) {
+			SimpleParameter simpleParameter = (SimpleParameter) parameter;
+			user = userDao.selectByUserName(simpleParameter.getPrincipal());
+		}
 
-			@Override
-			public String getStoredCredentials() {
-				if (parameter instanceof SnsParameter) {
-					SnsParameter snsParam = (SnsParameter) parameter;
-					System.out.println(snsParam);
-				} else {
-					SimpleParameter simpleParam = (SimpleParameter) parameter;
-					System.out.println(simpleParam);
-					// for test
-					return "782a4e52a8cbbe87a5de6076d75ae9c348ddd15dc911d010fa64c2cb9b5f78b767c310c36f5dd5a3bebce3636e424bec33d9e29b0820665a7b8f352db9be4d2d"; // 123456
-				}
-				return null;
-			}
+		if (null != user) {
+			StandardIamAccountInfo info = new StandardIamAccountInfo();
+			info.setPrincipal(user.getUserName());
+			info.setStoredCredentials(user.getPassword());
+			return info;
+		}
+		return null;
 
-		};
+
+
+
+
 	}
 
 	@Override
@@ -186,6 +195,32 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public void unbindSocialConnection(SocialConnectInfo social) {
+
+	}
+
+	public static class StandardIamAccountInfo implements IamAccountInfo {
+		private static final long serialVersionUID = 1L;
+
+		private String principal;
+		private String storedCredentials;
+
+		public void setStoredCredentials(String storedCredentials) {
+			this.storedCredentials = storedCredentials;
+		}
+
+		@Override
+		public String getPrincipal() {
+			return principal;
+		}
+
+		@Override
+		public String getStoredCredentials() {
+			return storedCredentials;
+		}
+
+		public void setPrincipal(String principal) {
+			this.principal = principal;
+		}
 
 	}
 
