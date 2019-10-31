@@ -3,10 +3,8 @@ package com.wl4g.devops.common.bean.iam;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class Menu extends BaseBean implements Serializable {
     private static final long serialVersionUID = 381411777614066880L;
@@ -31,7 +29,7 @@ public class Menu extends BaseBean implements Serializable {
 
     private String icon;
 
-    private List<Menu> childrens;
+    private List<Menu> children;
 
     @Override
     public Integer getId() {
@@ -115,12 +113,12 @@ public class Menu extends BaseBean implements Serializable {
         this.icon = icon == null ? null : icon.trim();
     }
 
-    public List<Menu> getChildrens() {
-        return childrens;
+    public List<Menu> getChildren() {
+        return children;
     }
 
-    public void setChildrens(List<Menu> childrens) {
-        this.childrens = childrens;
+    public void setChildren(List<Menu> children) {
+        this.children = children;
     }
 
     @Override

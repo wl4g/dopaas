@@ -38,7 +38,7 @@
     select
     <include refid="Base_Column_List" />
     from sys_menu
-    where id = #{parentId,jdbcType=INTEGER}
+    where del_flag!=1 and parent_id = #{parentId,jdbcType=INTEGER}
   </select>
 
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -47,7 +47,7 @@
     from sys_menu m
     left join  sys_role_menu rm on rm.menu_id=m.id
     left join sys_role_user ru on rm.role_id=ru.role_id
-    where ru.user_id = #{userId,jdbcType=INTEGER}
+    where m.del_flag!=1 and ru.user_id = #{userId,jdbcType=INTEGER}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
