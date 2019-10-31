@@ -13,6 +13,7 @@ import com.wl4g.devops.iam.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -87,6 +88,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private void insert(User user){
+        User user1 = userDao.selectByUserName(user.getUserName());
+        Assert.isTrue(user1==null,user.getUserName()+" is exist");
         user.preInsert();
         userDao.insertSelective(user);
         List<Integer> roleIds = user.getRoleIds();
