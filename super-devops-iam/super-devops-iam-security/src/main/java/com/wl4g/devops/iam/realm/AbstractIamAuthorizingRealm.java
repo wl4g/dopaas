@@ -40,6 +40,7 @@ import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
@@ -159,6 +160,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			 */
 			// Obtain authentication info.
 			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
+			notNull(info, "Authentication information must be returned. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
 			/**
 			 * [Extension]: Save authenticate info, For example, for online
@@ -170,6 +172,18 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 		}
 	}
 
+	/**
+	 * Obtain authentication information.</br>
+	 * 
+	 * <font style='color:red'>Note: At least empty authentication information
+	 * should be returned. Reason reference:
+	 * {@link org.apache.shiro.authz.ModularRealmAuthorizer.isPermitted()}</font>
+	 * 
+	 * @param token
+	 * @return
+	 * @throws AuthenticationException
+	 * @see {@link org.apache.shiro.authz.ModularRealmAuthorizer#isPermitted()}
+	 */
 	protected abstract AuthenticationInfo doAuthenticationInfo(T token) throws AuthenticationException;
 
 	@Override

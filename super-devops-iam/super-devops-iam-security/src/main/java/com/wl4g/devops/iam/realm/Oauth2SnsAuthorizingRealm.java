@@ -87,7 +87,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 
 	/**
 	 * Retrieves the AuthorizationInfo for the given principals (the CAS
-	 * previously authenticated user : id + attributes).
+	 * previously authenticated user : id + attributes).</br>
 	 * 
 	 * @param principals
 	 *            the primary identifying principals of the AuthorizationInfo

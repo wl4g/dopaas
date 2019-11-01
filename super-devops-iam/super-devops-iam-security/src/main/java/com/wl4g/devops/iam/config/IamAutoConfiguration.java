@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.config;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,8 +127,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
 		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream()
-				.collect(Collectors.toList());
+		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream().collect(toList());
 		securityManager.setRealms(realms);
 		securityManager.setSubjectFactory(subjectFactory);
 		// Multiple realm authenticator controller

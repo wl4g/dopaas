@@ -23,6 +23,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 
 import com.wl4g.devops.iam.authc.QrcodeAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
+import com.wl4g.devops.iam.authz.QrcodeAuthorizationInfo;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -77,7 +78,7 @@ public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAu
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		throw new UnsupportedOperationException();
+		return new QrcodeAuthorizationInfo();
 	}
 
 }
