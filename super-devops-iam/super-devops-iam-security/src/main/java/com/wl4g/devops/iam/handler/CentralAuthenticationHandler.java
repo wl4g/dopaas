@@ -58,6 +58,7 @@ import static org.springframework.util.Assert.hasText;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
+import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
 import com.wl4g.devops.common.bean.iam.model.LoggedModel;
 import com.wl4g.devops.common.bean.iam.model.LogoutModel;
 import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
@@ -71,7 +72,6 @@ import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.utils.Sessions;
@@ -87,7 +87,7 @@ import com.wl4g.devops.support.cache.ScanCursor;
  * @since
  */
 public class CentralAuthenticationHandler extends AbstractAuthenticationHandler {
-	final public static String SAVE_GRANT_SESSION = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
+	final public static String GRANT_APP_INFO_KEY = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
 
 	final public static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
 
@@ -365,7 +365,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 		}
 		// Update grantTicket info and saved.
-		session.setAttribute(SAVE_GRANT_SESSION, info.addApplications(grantApp, grantTicket));
+		session.setAttribute(GRANT_APP_INFO_KEY, info.addApplications(grantApp, grantTicket));
 		if (log.isDebugEnabled()) {
 			log.debug("Update grantTicket info to session. {}", info);
 		}
@@ -433,7 +433,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @return
 	 */
 	private GrantTicketInfo getGrantTicket(Session session) {
-		return (GrantTicketInfo) session.getAttribute(SAVE_GRANT_SESSION);
+		return (GrantTicketInfo) session.getAttribute(GRANT_APP_INFO_KEY);
 	}
 
 	/**

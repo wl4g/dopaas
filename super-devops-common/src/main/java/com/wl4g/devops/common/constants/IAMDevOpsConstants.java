@@ -68,9 +68,9 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_LANG_ATTRIBUTE_NAME = "authzPrincipalLangAttributeName";
 
 	/** authentication token save session key-name */
-	final public static String KEY_SESSION_TOKEN = "authcTokenAttributeName";
+	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
 	/** authentication info save session key-name */
-	final public static String KEY_SESSION_ACCOUNT = "authcAccountInfoAttributeName";
+	final public static String KEY_AUTHC_INFO = "authcInfoAttributeKey";
 
 	/**
 	 * IAM system service role parameter name.</br>
@@ -166,7 +166,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Generic API v1 sessions list query.
 	 */
-	final public static String URI_S_API_V1_SESSIONS = "/sessions";
+	final public static String URI_S_API_V1_SESSION = "/sessions";
 
 	/**
 	 * IAM server authentication session stored cache name.
@@ -216,10 +216,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * The public key index by logged-in users
 	 */
 	final public static String KEY_SECRET_INDEX = "securerSecretKeyPairIndex";
-	/**
-	 * Token used to save current session authenticating
-	 */
-	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeName";
 	/**
 	 * Limiter login failure prefix based on user-name.
 	 */
