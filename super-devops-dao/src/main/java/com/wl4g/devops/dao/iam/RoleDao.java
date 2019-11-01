@@ -18,7 +18,7 @@ public interface RoleDao {
 
     int updateByPrimaryKey(Role record);
 
-    List selectByUserId(Integer userId);
+    List<Role> selectByUserId(Integer userId);
 
-    List list(@Param("name") String name, @Param("displayName") String displayName);
+    List<Role> list(@Param("name") String name, @Param("displayName") String displayName);
 }
