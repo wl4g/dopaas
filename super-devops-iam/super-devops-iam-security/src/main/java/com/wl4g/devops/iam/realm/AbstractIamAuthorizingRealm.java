@@ -34,12 +34,9 @@ import org.springframework.core.ResolvableType;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.*;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_ACCOUNT;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_TOKEN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
@@ -152,13 +149,22 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			validator.validate(token);
 
 			/*
-			 * Extension Point Tips:: can be used to check the parameter
+			 * [Extension]: Can be used to check the parameter
 			 * 'pre-grant-ticket'</br>
 			 */
 
-			// Get authentication info and save it(Also include token)
-			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_SESSION_TOKEN, token));
-			return bind(KEY_SESSION_ACCOUNT, info);
+			/**
+			 * [Extension]: Save authenticate token, For example, for online
+			 * session management and analysis.
+			 */
+			// Obtain authentication info.
+			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
+
+			/**
+			 * [Extension]: Save authenticate info, For example, for online
+			 * session management and analysis.
+			 */
+			return bind(KEY_AUTHC_TOKEN, info);
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}

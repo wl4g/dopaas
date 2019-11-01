@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
+import static org.springframework.util.Assert.isTrue;
 
 import com.google.common.base.Charsets;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
@@ -45,7 +46,7 @@ import redis.clients.jedis.ScanParams;
  * @since
  */
 public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSessionDAO {
-	final protected Logger log = LoggerFactory.getLogger(JedisIamSessionDAO.class);
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * IAM properties
@@ -104,9 +105,11 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 
 	@Override
 	public ScanCursor<IamSession> getActiveSessions(final int batchSize, @Deprecated final Object principal) {
+		isTrue(batchSize > 0, "activeSessions batchSize must >0");
+
 		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(batchSize).match(match);
-		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), null, params) {
+		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), params) {
 		}.open();
 	}
 
