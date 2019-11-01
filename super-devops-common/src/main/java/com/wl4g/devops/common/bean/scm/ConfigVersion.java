@@ -23,7 +23,7 @@ import com.wl4g.devops.common.bean.BaseBean;
  * @date 2018年9月25日
  */
 public class ConfigVersion extends BaseBean {
-
+	private static final long serialVersionUID = 4996129446638218612L;
 	final public static String DEFUALT_SIGN = "MD5";
 
 	private String sign; // 摘要计算字符串

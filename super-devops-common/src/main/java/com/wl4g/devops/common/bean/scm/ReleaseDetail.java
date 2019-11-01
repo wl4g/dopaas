@@ -23,6 +23,7 @@ import com.wl4g.devops.common.bean.BaseBean;
  * @date 2018年9月26日
  */
 public class ReleaseDetail extends BaseBean {
+	private static final long serialVersionUID = 499612966365438612L;
 
 	private int releaseId; // 历史轨迹ID
 	private int instanceId; // 命名空间ID

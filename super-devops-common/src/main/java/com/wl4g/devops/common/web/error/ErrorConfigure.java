@@ -16,12 +16,12 @@
 package com.wl4g.devops.common.web.error;
 
 /**
- * Anynothing errors configure.
+ * Error configuration adapter.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月1日
  * @since
  */
-public class AnynothingErrorConfigure implements ErrorConfigureAdapter {
+public interface ErrorConfigure {
 
 }

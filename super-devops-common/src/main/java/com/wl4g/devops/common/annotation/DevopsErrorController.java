@@ -24,6 +24,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @Documented
-public @interface DevOpsErrorController {
+public @interface DevopsErrorController {
 
 }

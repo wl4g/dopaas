@@ -78,15 +78,19 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	public V put(K key, V value) {
 		Assert.notNull(key, "Once modifiable final map key must not be null.");
 		Assert.notNull(value, "Once modifiable final map value must not be null.");
-		if (this.modified.compareAndSet(false, true)) {
-			return this.readOnlyMap.put(key, value);
+		if (modified.compareAndSet(false, true)) {
+			return readOnlyMap.put(key, value);
 		}
 		throw new UnsupportedOperationException("A modifiable map does not support multiple modifications.");
 	}
 
 	@Override
 	public V remove(Object key) {
-		throw new UnsupportedOperationException();
+		Assert.notNull(key, "Once modifiable final map key must not be null.");
+		if (modified.compareAndSet(false, true)) {
+			return readOnlyMap.remove(key);
+		}
+		throw new UnsupportedOperationException("A modifiable map does not support multiple modifications.");
 	}
 
 	/**
@@ -95,8 +99,8 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	@Override
 	public void putAll(Map<? extends K, ? extends V> finalMap) {
 		Assert.state(null != finalMap, "Once modifiable final map must not be null.");
-		if (this.modified.compareAndSet(false, true)) {
-			this.readOnlyMap.putAll(finalMap);
+		if (modified.compareAndSet(false, true)) {
+			readOnlyMap.putAll(finalMap);
 		} else {
 			throw new UnsupportedOperationException("A modifiable map does not support multiple modifications.");
 		}
@@ -104,7 +108,7 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 
 	@Override
 	public void clear() {
-		throw new UnsupportedOperationException();
+		readOnlyMap.clear();
 	}
 
 	@Override

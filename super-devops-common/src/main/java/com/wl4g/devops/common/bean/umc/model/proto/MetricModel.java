@@ -829,7 +829,8 @@ public final class MetricModel {
 							metrics_ = other.metrics_;
 							bitField0_ = (bitField0_ & ~0x00000001);
 							metricsBuilder_ = com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
-									? getMetricsFieldBuilder() : null;
+									? getMetricsFieldBuilder()
+									: null;
 						} else {
 							metricsBuilder_.addAllMessages(other.metrics_);
 						}
