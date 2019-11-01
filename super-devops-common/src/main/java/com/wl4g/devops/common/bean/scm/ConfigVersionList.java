@@ -21,6 +21,8 @@ package com.wl4g.devops.common.bean.scm;
  * @date 2018年9月20日
  */
 public class ConfigVersionList extends ConfigVersion {
+	private static final long serialVersionUID = 4996119446638218612L;
+
 	private String instanceId; // 节点id
 	private String envType;// 环境id=
 	private String historyId;// 轨迹id=

@@ -18,6 +18,8 @@ package com.wl4g.devops.common.bean.scm;
 import java.util.List;
 
 public class VersionOfDetail extends ConfigVersion {
+	private static final long serialVersionUID = 987629446638218612L;
+
 	private int envId; // 环境
 	private List<String> nodeIdList;// 节点集合
 	private List<VersionContentBean> configGurations;

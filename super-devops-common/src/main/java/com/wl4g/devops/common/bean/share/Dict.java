@@ -17,9 +17,7 @@ package com.wl4g.devops.common.bean.share;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-import java.io.Serializable;
-
-public class Dict extends BaseBean implements Serializable {
+public class Dict extends BaseBean {
 	private static final long serialVersionUID = -7546448616357790576L;
 
 	private String key;

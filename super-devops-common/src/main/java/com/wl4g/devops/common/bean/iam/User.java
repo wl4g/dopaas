@@ -6,206 +6,206 @@ import java.io.Serializable;
 import java.util.List;
 
 public class User extends BaseBean implements Serializable {
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
-    private String userName;
+	private String userName;
 
-    private String displayName;
+	private String displayName;
 
-    private String password;
+	private String password;
 
-    private Integer userType;
+	private Integer userType;
 
-    private Integer status;
+	private Integer status;
 
-    private String email;
+	private String email;
 
-    private String phone;
+	private String phone;
 
-    private String wechatOpenId;
+	private String wechatOpenId;
 
-    private String wechatUnionId;
+	private String wechatUnionId;
 
-    private String facebookId;
+	private String facebookId;
 
-    private String googleId;
+	private String googleId;
 
-    private String twitterId;
+	private String twitterId;
 
-    private String linkedinId;
+	private String linkedinId;
 
-    private String alipayId;
+	private String alipayId;
 
-    private String githubId;
+	private String githubId;
 
-    private String awsId;
+	private String awsId;
 
-    //other
-    private List<Integer> roleIds;
+	// other
+	private List<Integer> roleIds;
 
-    private String roleStrs;
+	private String roleStrs;
 
-    private List<Integer> groupIds;
+	private List<Integer> groupIds;
 
-    private String groupNameStrs;
+	private String groupNameStrs;
 
-    public String getUserName() {
-        return userName;
-    }
+	public String getUserName() {
+		return userName;
+	}
 
-    public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
-    }
+	public void setUserName(String userName) {
+		this.userName = userName == null ? null : userName.trim();
+	}
 
-    public String getDisplayName() {
-        return displayName;
-    }
+	public String getDisplayName() {
+		return displayName;
+	}
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName == null ? null : displayName.trim();
-    }
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName == null ? null : displayName.trim();
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
-    }
+	public void setPassword(String password) {
+		this.password = password == null ? null : password.trim();
+	}
 
-    public Integer getUserType() {
-        return userType;
-    }
+	public Integer getUserType() {
+		return userType;
+	}
 
-    public void setUserType(Integer userType) {
-        this.userType = userType;
-    }
+	public void setUserType(Integer userType) {
+		this.userType = userType;
+	}
 
-    public Integer getStatus() {
-        return status;
-    }
+	public Integer getStatus() {
+		return status;
+	}
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setEmail(String email) {
-        this.email = email == null ? null : email.trim();
-    }
+	public void setEmail(String email) {
+		this.email = email == null ? null : email.trim();
+	}
 
-    public String getPhone() {
-        return phone;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public void setPhone(String phone) {
-        this.phone = phone == null ? null : phone.trim();
-    }
+	public void setPhone(String phone) {
+		this.phone = phone == null ? null : phone.trim();
+	}
 
-    public String getWechatOpenId() {
-        return wechatOpenId;
-    }
+	public String getWechatOpenId() {
+		return wechatOpenId;
+	}
 
-    public void setWechatOpenId(String wechatOpenId) {
-        this.wechatOpenId = wechatOpenId == null ? null : wechatOpenId.trim();
-    }
+	public void setWechatOpenId(String wechatOpenId) {
+		this.wechatOpenId = wechatOpenId == null ? null : wechatOpenId.trim();
+	}
 
-    public String getWechatUnionId() {
-        return wechatUnionId;
-    }
+	public String getWechatUnionId() {
+		return wechatUnionId;
+	}
 
-    public void setWechatUnionId(String wechatUnionId) {
-        this.wechatUnionId = wechatUnionId == null ? null : wechatUnionId.trim();
-    }
+	public void setWechatUnionId(String wechatUnionId) {
+		this.wechatUnionId = wechatUnionId == null ? null : wechatUnionId.trim();
+	}
 
-    public String getFacebookId() {
-        return facebookId;
-    }
+	public String getFacebookId() {
+		return facebookId;
+	}
 
-    public void setFacebookId(String facebookId) {
-        this.facebookId = facebookId == null ? null : facebookId.trim();
-    }
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId == null ? null : facebookId.trim();
+	}
 
-    public String getGoogleId() {
-        return googleId;
-    }
+	public String getGoogleId() {
+		return googleId;
+	}
 
-    public void setGoogleId(String googleId) {
-        this.googleId = googleId == null ? null : googleId.trim();
-    }
+	public void setGoogleId(String googleId) {
+		this.googleId = googleId == null ? null : googleId.trim();
+	}
 
-    public String getTwitterId() {
-        return twitterId;
-    }
+	public String getTwitterId() {
+		return twitterId;
+	}
 
-    public void setTwitterId(String twitterId) {
-        this.twitterId = twitterId == null ? null : twitterId.trim();
-    }
+	public void setTwitterId(String twitterId) {
+		this.twitterId = twitterId == null ? null : twitterId.trim();
+	}
 
-    public String getLinkedinId() {
-        return linkedinId;
-    }
+	public String getLinkedinId() {
+		return linkedinId;
+	}
 
-    public void setLinkedinId(String linkedinId) {
-        this.linkedinId = linkedinId == null ? null : linkedinId.trim();
-    }
+	public void setLinkedinId(String linkedinId) {
+		this.linkedinId = linkedinId == null ? null : linkedinId.trim();
+	}
 
-    public String getAlipayId() {
-        return alipayId;
-    }
+	public String getAlipayId() {
+		return alipayId;
+	}
 
-    public void setAlipayId(String alipayId) {
-        this.alipayId = alipayId == null ? null : alipayId.trim();
-    }
+	public void setAlipayId(String alipayId) {
+		this.alipayId = alipayId == null ? null : alipayId.trim();
+	}
 
-    public String getGithubId() {
-        return githubId;
-    }
+	public String getGithubId() {
+		return githubId;
+	}
 
-    public void setGithubId(String githubId) {
-        this.githubId = githubId == null ? null : githubId.trim();
-    }
+	public void setGithubId(String githubId) {
+		this.githubId = githubId == null ? null : githubId.trim();
+	}
 
-    public String getAwsId() {
-        return awsId;
-    }
+	public String getAwsId() {
+		return awsId;
+	}
 
-    public void setAwsId(String awsId) {
-        this.awsId = awsId == null ? null : awsId.trim();
-    }
+	public void setAwsId(String awsId) {
+		this.awsId = awsId == null ? null : awsId.trim();
+	}
 
-    public List<Integer> getRoleIds() {
-        return roleIds;
-    }
+	public List<Integer> getRoleIds() {
+		return roleIds;
+	}
 
-    public void setRoleIds(List<Integer> roleIds) {
-        this.roleIds = roleIds;
-    }
+	public void setRoleIds(List<Integer> roleIds) {
+		this.roleIds = roleIds;
+	}
 
-    public String getRoleStrs() {
-        return roleStrs;
-    }
+	public String getRoleStrs() {
+		return roleStrs;
+	}
 
-    public void setRoleStrs(String roleStrs) {
-        this.roleStrs = roleStrs;
-    }
+	public void setRoleStrs(String roleStrs) {
+		this.roleStrs = roleStrs;
+	}
 
-    public String getGroupNameStrs() {
-        return groupNameStrs;
-    }
+	public String getGroupNameStrs() {
+		return groupNameStrs;
+	}
 
-    public void setGroupNameStrs(String groupNameStrs) {
-        this.groupNameStrs = groupNameStrs;
-    }
+	public void setGroupNameStrs(String groupNameStrs) {
+		this.groupNameStrs = groupNameStrs;
+	}
 
-    public List<Integer> getGroupIds() {
-        return groupIds;
-    }
+	public List<Integer> getGroupIds() {
+		return groupIds;
+	}
 
-    public void setGroupIds(List<Integer> groupIds) {
-        this.groupIds = groupIds;
-    }
+	public void setGroupIds(List<Integer> groupIds) {
+		this.groupIds = groupIds;
+	}
 }

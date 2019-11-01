@@ -17,14 +17,19 @@ package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 实体基类
+ * DB based bean entity.
  * 
- * @date 2018年9月25日
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2018-09-05
+ * @since
  */
-public abstract class BaseBean {
+public abstract class BaseBean implements Serializable {
+	private static final long serialVersionUID = 8940373806493080114L;
+
 	/**
 	 * 启用状态:启用
 	 */

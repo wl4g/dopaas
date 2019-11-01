@@ -19,10 +19,11 @@ package com.wl4g.devops.common.bean.scm;
  * 列表展示实体
  * 
  * @author sut
- * @Description: TODO
  * @date 2018年9月20日
  */
 public class ReleaseDetailList extends ReleaseDetail {
+	private static final long serialVersionUID = 4996112344663821862L;
+
 	private String clusterId; // 组id
 	private String releInstanceId; // 节点id
 	private String envId;// 环境id=

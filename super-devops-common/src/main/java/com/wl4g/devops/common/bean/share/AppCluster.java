@@ -25,6 +25,7 @@ import java.util.List;
  * @date 2018年9月19日
  */
 public class AppCluster extends BaseBean {
+	private static final long serialVersionUID = -3298424126317938674L;
 
 	private Integer deptId;
 
@@ -36,10 +37,10 @@ public class AppCluster extends BaseBean {
 
 	private String remark;
 
-	//other
+	// --- Temporary. ---
+
 	private int instanceCount;
 	private List<AppInstance> instances;
-
 
 	public Integer getDeptId() {
 		return deptId;

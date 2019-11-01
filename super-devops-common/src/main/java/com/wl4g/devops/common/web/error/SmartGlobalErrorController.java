@@ -31,21 +31,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.*;
 import static org.springframework.http.MediaType.*;
-import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 import static com.google.common.base.Charsets.UTF_8;
@@ -56,7 +60,7 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
-import com.wl4g.devops.common.annotation.DevOpsErrorController;
+import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -64,20 +68,23 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
 import freemarker.template.Template;
 
 /**
- * Smart global error controller
+ * Smart global error controller.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月10日
  * @since
  */
-@DevOpsErrorController
-public class SmartSuperErrorsController extends AbstractErrorController implements InitializingBean {
+@DevopsErrorController
+@Order(Ordered.HIGHEST_PRECEDENCE)
+@ControllerAdvice
+public class SmartGlobalErrorController extends AbstractErrorController implements InitializingBean {
 	final private static String DEFAULT_DIR_VIEW = "/default-error-view/";
 	final private static String DEFAULT_PATH_ERROR = "/error";
-	final private static Logger log = LoggerFactory.getLogger(SmartSuperErrorsController.class);
+	final private static Logger log = LoggerFactory.getLogger(SmartGlobalErrorController.class);
 
-	/** Custom errors configuration adapters. */
-	final private List<ErrorConfigureAdapter> adapters; // TODO
+	/** Errors configuration adapter. */
+	@Autowired
+	private CompositeErrorConfigureAdapter adapter;
 
 	@Value("${spring.cloud.devops.error.enabled:true}")
 	private boolean enabled;
@@ -94,20 +101,18 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	private Template tpl403;
 	private Template tpl50x;
 
-	public SmartSuperErrorsController(ErrorAttributes errorAttributes, List<ErrorConfigureAdapter> adapters) {
+	public SmartGlobalErrorController(ErrorAttributes errorAttributes) {
 		super(errorAttributes);
-		notNull(adapters, "CustomErrorConfigureAdapters must not be null.");
-		this.adapters = adapters;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (!enabled) {
-			log.warn("Disabled global error handing.");
+			log.warn("Disabled global error handler");
 			return;
 		}
 		if (log.isInfoEnabled()) {
-			log.info("Enabled global error handling ...");
+			log.info("Enabled global error handler ...");
 		}
 
 		FreeMarkerConfigurer config = new FreeMarkerConfigurer();
@@ -144,14 +149,16 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	}
 
 	/**
-	 * Execution handle global error
+	 * Any exception error handle.
 	 * 
 	 * @param request
 	 * @param response
+	 * @param ex
 	 * @return
 	 */
-	@RequestMapping(value = DEFAULT_PATH_ERROR)
-	public void doHandleErrors(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(DEFAULT_PATH_ERROR)
+	@ExceptionHandler({ Exception.class/* ,Throwable.class */ })
+	public void doAnyHandleError(HttpServletRequest request, HttpServletResponse response, Exception ex) {
 		try {
 			Map<String, Object> model = getOriginErrorDetails(request);
 			if (log.isErrorEnabled()) {
@@ -171,7 +178,7 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 						renderErrorPage(model, request).getBytes(UTF_8));
 			}
 		} catch (IOException e) {
-			log.error("\n===========>> Global unified errors response failure <<===========\n", e);
+			log.error("\n===========>> Global errors handling failure <<===========\n", e);
 		}
 	}
 
@@ -309,7 +316,7 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	}
 
 	/**
-	 * Smart global error controller configuration
+	 * Smart error controller auto configuration
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月10日
@@ -317,17 +324,21 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 	 */
 	@Configuration
 	@ConditionalOnProperty(value = "spring.cloud.devops.error.enabled", matchIfMissing = true)
-	public static class SuperErrorsControllerAutoConfiguration extends AbstractOptionalControllerConfiguration {
+	public static class SmartErrorControllerAutoConfiguration extends AbstractOptionalControllerConfiguration {
 
 		@Bean
-		public AnynothingErrorConfigure anynothingErrorConfigure() {
-			return new AnynothingErrorConfigure();
+		public ErrorConfigure noneErrorConfigure() {
+			return new NoneErrorConfigure();
 		}
 
 		@Bean
-		public SmartSuperErrorsController superErrorsController(ErrorAttributes errorAttributes,
-				List<ErrorConfigureAdapter> adapters) {
-			return new SmartSuperErrorsController(errorAttributes, adapters);
+		public CompositeErrorConfigureAdapter compositeErrorConfigureAdapter(List<ErrorConfigure> configures) {
+			return new CompositeErrorConfigureAdapter(configures);
+		}
+
+		@Bean
+		public SmartGlobalErrorController smartGlobalErrorController(ErrorAttributes errorAttributes) {
+			return new SmartGlobalErrorController(errorAttributes);
 		}
 
 		@Bean
@@ -342,7 +353,7 @@ public class SmartSuperErrorsController extends AbstractErrorController implemen
 
 		@Override
 		protected Class<? extends Annotation> annotationClass() {
-			return DevOpsErrorController.class;
+			return DevopsErrorController.class;
 		}
 
 	}
