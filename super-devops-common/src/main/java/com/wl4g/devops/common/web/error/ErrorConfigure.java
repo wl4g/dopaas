@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.common.web.error;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpStatus;
+
 /**
  * Error configuration adapter.
  * 
@@ -23,5 +30,27 @@ package com.wl4g.devops.common.web.error;
  * @since
  */
 public interface ErrorConfigure {
+
+	/**
+	 * Obtain exception {@link HttpStatus}
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param ex
+	 * @return
+	 */
+	HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex);
+
+	/**
+	 * Obtain exception as string.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param ex
+	 * @return
+	 */
+	String getCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex);
 
 }
