@@ -21,11 +21,20 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
 
+
     @RequestMapping(value = "/getMenuTree")
     public RespBase<?> getMenuTree() {
         RespBase<Object> resp = RespBase.create();
         List<Menu> menuTree = menuService.getMenuTree();
         resp.getData().put("data",menuTree);
+        return resp;
+    }
+
+    @RequestMapping(value = "/getMenuList")
+    public RespBase<?> getMenuList() {
+        RespBase<Object> resp = RespBase.create();
+        List<Menu> menus = menuService.getMenuList();
+        resp.getData().put("data",menus);
         return resp;
     }
 
