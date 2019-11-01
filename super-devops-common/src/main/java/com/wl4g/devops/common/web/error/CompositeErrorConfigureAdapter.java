@@ -18,7 +18,12 @@ package com.wl4g.devops.common.web.error;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import com.wl4g.devops.common.utils.lang.OnceModifiableList;
 
@@ -39,6 +44,18 @@ public class CompositeErrorConfigureAdapter implements ErrorConfigure {
 	public CompositeErrorConfigureAdapter(List<ErrorConfigure> configures) {
 		Assert.state(!isEmpty(configures), "Error configures has at least one.");
 		this.errorConfigures.addAll(configures);
+	}
+
+	@Override
+	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
+			Exception ex) {
+		// TODO
+		return null;
+	}
+
+	@Override
+	public String getCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
+		return null;
 	}
 
 }

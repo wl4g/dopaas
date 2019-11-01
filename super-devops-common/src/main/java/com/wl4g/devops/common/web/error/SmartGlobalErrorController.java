@@ -15,11 +15,7 @@
  */
 package com.wl4g.devops.common.web.error;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -43,7 +39,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +54,6 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.write;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
-import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.common.web.RespBase;
@@ -160,7 +154,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	@ExceptionHandler({ Exception.class/* ,Throwable.class */ })
 	public void doAnyHandleError(HttpServletRequest request, HttpServletResponse response, Exception ex) {
 		try {
-			Map<String, Object> model = getOriginErrorDetails(request);
+			Map<String, Object> model = getErrorAttributes(request);
 			if (log.isErrorEnabled()) {
 				log.error("=> Global error handling - {}", model);
 			}
@@ -169,89 +163,19 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			 * If and only if the client is a browser and not an XHR request
 			 * returns to the page, otherwise it returns to JSON
 			 */
+			HttpStatus status = adapter.getStatus(request, response, model, ex);
+			String errmsg = adapter.getCause(request, response, model, ex);
+
+			// Error response.
 			if (isJSONResponse(request)) {
-				String errmsg = extractMeaningfulErrorsMessage(model);
-				int code = (int) model.getOrDefault("status", SYS_ERR.getErrcode());
-				writeJson(response, toJSONString(new RespBase<>(RetCode.create(code, errmsg))));
+				writeJson(response, toJSONString(new RespBase<>(RetCode.create(status.value(), errmsg))));
 			} else {
-				write(response, getHttpStatus(request, response).value(), TEXT_HTML_VALUE,
-						renderErrorPage(model, request).getBytes(UTF_8));
+				String renderString = renderErrorPage(model, request, response, ex);
+				write(response, status.value(), TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
 			}
-		} catch (IOException e) {
-			log.error("\n===========>> Global errors handling failure <<===========\n", e);
+		} catch (Throwable th) {
+			log.error("\n===========>> Global errors handling failure <<===========\n", th);
 		}
-	}
-
-	/**
-	 * Get error HTTP status
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	protected HttpStatus getHttpStatus(HttpServletRequest request, HttpServletResponse response) {
-		HttpStatus status = super.getStatus(request);
-		if (status != null) {
-			return status;
-		}
-		try {
-			return HttpStatus.valueOf(response.getStatus());
-		} catch (Exception ex) {
-			return HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-	}
-
-	/**
-	 * Extract meaningful errors messages.
-	 * 
-	 * @param model
-	 * @return
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private String extractMeaningfulErrorsMessage(Map<String, Object> model) {
-		StringBuffer errmsg = new StringBuffer();
-		Object message = model.get("message");
-		if (message != null) {
-			errmsg.append(message);
-		}
-
-		Object errors = model.get("errors"); // @NotNull?
-		if (errors != null) {
-			errmsg.setLength(0); // Print only errors information
-			if (errors instanceof Collection) {
-				// Used to remove duplication
-				List<String> fieldErrs = new ArrayList<>(8);
-
-				Collection<Object> _errors = (Collection) errors;
-				Iterator<Object> it = _errors.iterator();
-				while (it.hasNext()) {
-					Object err = it.next();
-					if (err instanceof FieldError) {
-						FieldError ferr = (FieldError) err;
-						/*
-						 * Remove duplicate field validation errors,
-						 * e.g. @NotNull and @NotEmpty
-						 */
-						String fieldErr = ferr.getField();
-						if (!fieldErrs.contains(fieldErr)) {
-							errmsg.append("'");
-							errmsg.append(fieldErr);
-							errmsg.append("'");
-							errmsg.append(ferr.getDefaultMessage());
-							errmsg.append(", ");
-						}
-						fieldErrs.add(fieldErr);
-					} else {
-						errmsg.append(err.toString());
-						errmsg.append(", ");
-					}
-				}
-			} else {
-				errmsg.append(errors.toString());
-			}
-		}
-
-		return errmsg.toString();
 	}
 
 	/**
@@ -273,13 +197,13 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	}
 
 	/**
-	 * Extract error details information
+	 * Extract error details model
 	 * 
 	 * @param request
 	 * @return
 	 */
-	private Map<String, Object> getOriginErrorDetails(HttpServletRequest request) {
-		return getErrorAttributes(request, isStackTrace(request));
+	private Map<String, Object> getErrorAttributes(HttpServletRequest request) {
+		return super.getErrorAttributes(request, isStackTrace(request));
 	}
 
 	/**
@@ -289,9 +213,10 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @param request
 	 * @return
 	 */
-	private String renderErrorPage(Map<String, Object> model, HttpServletRequest request) {
+	private String renderErrorPage(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response,
+			Exception ex) {
 		// Replace the exception message that appears to be meaningful.
-		model.put("message", extractMeaningfulErrorsMessage(model));
+		model.put("message", adapter.getCause(request, response, model, ex));
 
 		Template tpl = this.tpl50x;
 		switch (getStatus(request)) {
@@ -328,7 +253,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 
 		@Bean
 		public ErrorConfigure noneErrorConfigure() {
-			return new NoneErrorConfigure();
+			return new DefaultErrorConfigure();
 		}
 
 		@Bean

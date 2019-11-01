@@ -16,8 +16,11 @@
 package com.wl4g.devops.common.web;
 
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
@@ -131,13 +134,7 @@ public class RespBase<T extends Object> implements Serializable {
 	 */
 	public RespBase<T> handleError(Throwable th) {
 		this.message = getRootCausesString(th);
-		if (th instanceof BizRuleRestrictRestfulException) {
-			this.code = ((BizRuleRestrictRestfulException) th).getCode();
-		} else if (th instanceof BizInvalidArgRestfulException) {
-			this.code = ((BizInvalidArgRestfulException) th).getCode();
-		} else if (th instanceof ServiceUnavailableRestfulException) {
-			this.code = ((ServiceUnavailableRestfulException) th).getCode();
-		}
+		this.code = getRestfulCode(th);
 		return this;
 	}
 
@@ -154,7 +151,7 @@ public class RespBase<T extends Object> implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public DataMap<Object> build(String name) {
-		Assert.hasText(name, "Build datamap name must not be empty");
+		hasText(name, "Build datamap name must not be empty");
 		DataMap<Object> node = new DataMap<>();
 		getData().put(name, (T) node);
 		return node;
@@ -164,6 +161,36 @@ public class RespBase<T extends Object> implements Serializable {
 	public String toString() {
 		return "{" + (code != null ? "code=" + code + ", " : "") + (message != null ? "message=" + message + ", " : "")
 				+ (data != null ? "data=" + data : "") + "}";
+	}
+
+	/**
+	 * Obtain handle RESTful exceptions, corresponding response status code.
+	 * 
+	 * @param th
+	 * @return
+	 */
+	public static RetCode getRestfulCode(Throwable th) {
+		return getRestfulCode(th, null);
+	}
+
+	/**
+	 * Obtain handle RESTful exceptions, corresponding response status code.
+	 * 
+	 * @param th
+	 * @param defaultRestfulCode
+	 * @return
+	 */
+	public static RetCode getRestfulCode(Throwable th, RetCode defaultRestfulCode) {
+		if (nonNull(th)) {
+			if (th instanceof BizRuleRestrictRestfulException) {
+				return ((BizRuleRestrictRestfulException) th).getCode();
+			} else if (th instanceof BizInvalidArgRestfulException) {
+				return ((BizInvalidArgRestfulException) th).getCode();
+			} else if (th instanceof ServiceUnavailableRestfulException) {
+				return ((ServiceUnavailableRestfulException) th).getCode();
+			}
+		}
+		return defaultRestfulCode;
 	}
 
 	public static <T> RespBase<T> create() {
@@ -293,13 +320,13 @@ public class RespBase<T extends Object> implements Serializable {
 		/**
 		 * Customize code type definition.
 		 */
-		$CUSTOMIZE$(-1, "Unknown error");
+		_$$CUSTOMIZER(-1, "Unknown error");
 
 		/**
-		 * Create custom status code, refer to {@link #$CUSTOMIZE$} and
+		 * Create custom status code, refer to {@link #_$$CUSTOMIZER} and
 		 * {@link #create(int, String)}
 		 */
-		final private static ThreadLocal<Object[]> customizeLocal = new InheritableThreadLocal<>();
+		final private static ThreadLocal<Object[]> customizerLocal = new InheritableThreadLocal<>();
 
 		private int errcode;
 		private String errmsg;
@@ -312,15 +339,15 @@ public class RespBase<T extends Object> implements Serializable {
 
 		/**
 		 * Get error code.</br>
-		 * If custom status code ({@link #$CUSTOMIZE$}) is used, it takes
+		 * If custom status code ({@link #_$$CUSTOMIZER}) is used, it takes
 		 * precedence.
 		 * 
 		 * @return
 		 */
 		public int getErrcode() {
-			if (this == $CUSTOMIZE$) {
-				Object errcode = customizeLocal.get()[0];
-				Assert.notNull(errcode, "Respbase customize errcode must not be null.");
+			if (this == _$$CUSTOMIZER) {
+				Object errcode = customizerLocal.get()[0];
+				notNull(errcode, "Respbase customizer errcode must not be null.");
 				return (int) errcode;
 			}
 			return errcode;
@@ -328,15 +355,15 @@ public class RespBase<T extends Object> implements Serializable {
 
 		/**
 		 * Get error message.</br>
-		 * If custom status error message ({@link #$CUSTOMIZE$}) is used, it
+		 * If custom status error message ({@link #_$$CUSTOMIZER}) is used, it
 		 * takes precedence.
 		 * 
 		 * @return
 		 */
 		public String getErrmsg() {
-			if (this == $CUSTOMIZE$) {
-				Object errmsg = customizeLocal.get()[1];
-				Assert.notNull(errmsg, "Respbase customize errmsg must not be null.");
+			if (this == _$$CUSTOMIZER) {
+				Object errmsg = customizerLocal.get()[1];
+				notNull(errmsg, "Respbase customizer errmsg must not be null.");
 				return (String) errmsg;
 			}
 			return errmsg;
@@ -377,7 +404,7 @@ public class RespBase<T extends Object> implements Serializable {
 		}
 
 		/**
-		 * Create custom status code, refer to {@link #$CUSTOMIZE$}
+		 * Create custom status code, refer to {@link #_$$CUSTOMIZER}
 		 * 
 		 * @param errcode
 		 * @param errmsg
@@ -385,8 +412,8 @@ public class RespBase<T extends Object> implements Serializable {
 		 */
 		final public static RetCode create(int errcode, String errmsg) {
 			Assert.hasText(errmsg, "Result errmsg definition must not be empty.");
-			customizeLocal.set(new Object[] { errcode, errmsg });
-			return $CUSTOMIZE$;
+			customizerLocal.set(new Object[] { errcode, errmsg });
+			return _$$CUSTOMIZER;
 		}
 
 	}
