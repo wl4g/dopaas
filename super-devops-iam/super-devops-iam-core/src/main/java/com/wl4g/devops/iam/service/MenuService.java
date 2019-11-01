@@ -12,6 +12,8 @@ public interface MenuService {
 
     List<Menu> getMenuTree();
 
+    List<Menu> getMenuList();
+
     void save(Menu menu);
 
     void del(Integer id);

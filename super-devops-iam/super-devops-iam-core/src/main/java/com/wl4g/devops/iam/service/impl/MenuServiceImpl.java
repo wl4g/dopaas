@@ -2,8 +2,11 @@ package com.wl4g.devops.iam.service.impl;
 
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.iam.Menu;
+import com.wl4g.devops.common.bean.iam.User;
 import com.wl4g.devops.dao.iam.MenuDao;
+import com.wl4g.devops.dao.iam.UserDao;
 import com.wl4g.devops.iam.service.MenuService;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -20,6 +23,9 @@ public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private MenuDao menuDao;
+
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public List<Menu> getMenuTree() {
@@ -38,6 +44,14 @@ public class MenuServiceImpl implements MenuService {
                 getChildren(childrens);
             }
         }
+    }
+
+    public List<Menu> getMenuList(){
+        String principal = (String) SecurityUtils.getSubject().getPrincipal();
+        Assert.hasText(principal,"principal is null");
+        User user = userDao.selectByUserName(principal);
+        Assert.notNull(user,"user is null");
+        return menuDao.selectByUserId(user.getId());
     }
 
     @Override
