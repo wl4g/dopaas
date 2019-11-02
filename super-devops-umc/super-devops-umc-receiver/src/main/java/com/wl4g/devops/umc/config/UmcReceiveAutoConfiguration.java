@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
@@ -53,7 +53,7 @@ import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
  */
 @Configuration
 @ImportAutoConfiguration(UmcWatchAutoConfiguration.class)
-public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	final public static String BEAN_HTTP_RECEIVER = "httpCollectReceiver";
 	final public static String BEAN_KAFKA_RECEIVER = "kafkaCollectReceiver";

@@ -15,11 +15,10 @@
  */
 package com.wl4g.devops.common.web.error;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import static java.util.Locale.*;
+import static java.util.Objects.isNull;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,11 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -44,6 +40,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
@@ -55,7 +53,6 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
 import com.wl4g.devops.common.annotation.DevopsErrorController;
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
@@ -78,7 +75,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 
 	/** Errors configuration adapter. */
 	@Autowired
-	private CompositeErrorConfigureAdapter adapter;
+	private CompositeErrorConfiguringAdapter adapter;
 
 	@Value("${spring.cloud.devops.error.enabled:true}")
 	private boolean enabled;
@@ -124,12 +121,12 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			this.tpl404 = config.getConfiguration().getTemplate(tpl404Name, "UTF-8");
 			this.tpl403 = config.getConfiguration().getTemplate(tpl403Name, "UTF-8");
 			this.tpl50x = config.getConfiguration().getTemplate(tpl500Name, "UTF-8");
+			Assert.notNull(tpl404, "Default 404 view template must not be null");
+			Assert.notNull(tpl403, "Default 403 view template must not be null");
+			Assert.notNull(tpl50x, "Default 500 view template must not be null");
 		} catch (Exception e) {
 			ReflectionUtils.rethrowRuntimeException(e);
 		}
-		Assert.notNull(tpl404, "Default 404 view template must not be null");
-		Assert.notNull(tpl403, "Default 403 view template must not be null");
-		Assert.notNull(tpl50x, "Default 500 view template must not be null");
 	}
 
 	/**
@@ -159,14 +156,17 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 				log.error("=> Global error handling - {}", model);
 			}
 
+			// Obtain custom extension response status.
+			HttpStatus status = adapter.getStatus(request, response, model, ex);
+			String errmsg = adapter.getRootCause(request, response, model, ex);
+			// Fallback.
+			status = !isNull(status) ? status : SERVICE_UNAVAILABLE;
+			errmsg = !isBlank(errmsg) ? errmsg : "Unknown error";
+
 			/*
 			 * If and only if the client is a browser and not an XHR request
 			 * returns to the page, otherwise it returns to JSON
 			 */
-			HttpStatus status = adapter.getStatus(request, response, model, ex);
-			String errmsg = adapter.getCause(request, response, model, ex);
-
-			// Error response.
 			if (isJSONResponse(request)) {
 				writeJson(response, toJSONString(new RespBase<>(RetCode.create(status.value(), errmsg))));
 			} else {
@@ -174,7 +174,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 				write(response, status.value(), TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
 			}
 		} catch (Throwable th) {
-			log.error("\n===========>> Global errors handling failure <<===========\n", th);
+			log.error("\n=======>>> Basic global errors handling failure!\n", th);
 		}
 	}
 
@@ -216,7 +216,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	private String renderErrorPage(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response,
 			Exception ex) {
 		// Replace the exception message that appears to be meaningful.
-		model.put("message", adapter.getCause(request, response, model, ex));
+		model.put("message", adapter.getRootCause(request, response, model, ex));
 
 		Template tpl = this.tpl50x;
 		switch (getStatus(request)) {
@@ -230,57 +230,14 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			tpl = tpl50x;
 		}
 
-		// Reader
-		String renderedString = null;
+		// Readering
+		String renderString = null;
 		try {
-			renderedString = processTemplateIntoString(tpl, model);
+			renderString = processTemplateIntoString(tpl, model);
 		} catch (Exception e) {
 			rethrowRuntimeException(e);
 		}
-		return renderedString;
-	}
-
-	/**
-	 * Smart error controller auto configuration
-	 * 
-	 * @author wangl.sir
-	 * @version v1.0 2019年1月10日
-	 * @since
-	 */
-	@Configuration
-	@ConditionalOnProperty(value = "spring.cloud.devops.error.enabled", matchIfMissing = true)
-	public static class SmartErrorControllerAutoConfiguration extends AbstractOptionalControllerConfiguration {
-
-		@Bean
-		public ErrorConfigure noneErrorConfigure() {
-			return new DefaultErrorConfigure();
-		}
-
-		@Bean
-		public CompositeErrorConfigureAdapter compositeErrorConfigureAdapter(List<ErrorConfigure> configures) {
-			return new CompositeErrorConfigureAdapter(configures);
-		}
-
-		@Bean
-		public SmartGlobalErrorController smartGlobalErrorController(ErrorAttributes errorAttributes) {
-			return new SmartGlobalErrorController(errorAttributes);
-		}
-
-		@Bean
-		public PrefixHandlerMapping errorControllerPrefixHandlerMapping() {
-			return super.createPrefixHandlerMapping();
-		}
-
-		@Override
-		protected String getMappingPrefix() {
-			return "/"; // Fixed to Spring-MVC default: /
-		}
-
-		@Override
-		protected Class<? extends Annotation> annotationClass() {
-			return DevopsErrorController.class;
-		}
-
+		return renderString;
 	}
 
 }

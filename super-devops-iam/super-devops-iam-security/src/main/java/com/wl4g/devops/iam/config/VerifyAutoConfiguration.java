@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.iam.annotation.VerifyAuthController;
 import com.wl4g.devops.iam.web.VerifyAuthenticatorController;
 
@@ -34,7 +34,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_B
  * @since
  */
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
-public class VerifyAutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class VerifyAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	@Bean
 	public VerifyAuthenticatorController verifyAuthenticatorController() {

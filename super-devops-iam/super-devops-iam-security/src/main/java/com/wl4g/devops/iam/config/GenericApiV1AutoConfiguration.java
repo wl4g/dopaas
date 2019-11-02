@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import java.lang.annotation.Annotation;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.iam.web.api.GenericApiV1Controller;
 
 /**
@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.web.api.GenericApiV1Controller;
  * @since
  */
 @AutoConfigureAfter({ IamAutoConfiguration.class })
-public class GenericApiV1AutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class GenericApiV1AutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	@Bean
 	public GenericApiV1Controller genericApiV1Controller() {

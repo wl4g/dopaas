@@ -37,7 +37,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  * @version v1.0 2019年1月10日
  * @since
  */
-public abstract class AbstractOptionalControllerConfiguration implements ApplicationContextAware {
+public abstract class AbstractOptionalControllerAutoConfiguration implements ApplicationContextAware {
 
 	protected ApplicationContext actx;
 

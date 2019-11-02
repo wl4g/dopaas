@@ -29,7 +29,7 @@ import org.springframework.http.HttpStatus;
  * @version v1.0 2019年11月1日
  * @since
  */
-public interface ErrorConfigure {
+public interface ErrorConfiguring {
 
 	/**
 	 * Obtain exception {@link HttpStatus}
@@ -51,6 +51,6 @@ public interface ErrorConfigure {
 	 * @param ex
 	 * @return
 	 */
-	String getCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex);
+	String getRootCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex);
 
 }
