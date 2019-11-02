@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.core.annotation.AnnotationUtils.*;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
@@ -73,7 +75,8 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 				return status;
 			}
 		}
-		return null;
+		// Fallback.
+		return SERVICE_UNAVAILABLE;
 	}
 
 	@Override
@@ -85,7 +88,8 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 				return errmsg;
 			}
 		}
-		return null;
+		// Fallback.
+		return "Unknown error";
 	}
 
 }

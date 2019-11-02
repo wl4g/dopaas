@@ -109,12 +109,8 @@ public abstract class Securitys {
 	 *  http://iam.xx.com/xx/list?id=1             =>  http://iam.xx.com/xx/authenticator?id=1
 	 *  http://iam.xx.com/xx/list/?id=1            =>  http://iam.xx.com/xx/authenticator?id=1
 	 *  http://iam.xx.com:8080/xx/list/?id=1       =>  http://iam.xx.com:8080/xx/authenticator?id=1
+	 *  /view/index.html					       =>  /view/index.html
 	 * </pre>
-	 * 
-	 * e.g. </br>
-	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1</br>
-	 * Situation1: /view/index.html =>
-	 * http://myapp.domain.com/myapp/authenticator?id=1
 	 * 
 	 * Implementing the IAM-CAS protocol: When successful login, you must
 	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
@@ -129,9 +125,13 @@ public abstract class Securitys {
 		if (isBlank(url)) {
 			return EMPTY;
 		}
-
 		try {
 			URI _uri = new URI(url);
+			// e.g. /view/index.html => /view/index.html
+			if (isAnyBlank(_uri.getScheme(), _uri.getHost())) {
+				return url;
+			}
+
 			if (!endsWith(_uri.getPath(), URI_AUTHENTICATOR)) {
 				String portPart = (_uri.getPort() == 80 || _uri.getPort() == 443 || _uri.getPort() < 0) ? EMPTY
 						: (":" + _uri.getPort());

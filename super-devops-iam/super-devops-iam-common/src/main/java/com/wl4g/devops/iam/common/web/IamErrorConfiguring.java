@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.common.web;
 
-import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +22,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 
-import com.wl4g.devops.common.web.error.DefaultBasicErrorConfiguring;
+import com.wl4g.devops.common.utils.Exceptions;
+import com.wl4g.devops.common.web.error.ErrorConfiguring;
 
 /**
  * IAM authorization error configuring.
@@ -35,7 +36,8 @@ import com.wl4g.devops.common.web.error.DefaultBasicErrorConfiguring;
  * @version v1.0.0 2019-11-02
  * @since
  */
-public class IamErrorConfiguring extends DefaultBasicErrorConfiguring {
+@Order(Ordered.LOWEST_PRECEDENCE - 1)
+public class IamErrorConfiguring implements ErrorConfiguring {
 
 	@Override
 	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
@@ -62,7 +64,8 @@ public class IamErrorConfiguring extends DefaultBasicErrorConfiguring {
 		if ((ex instanceof UnauthenticatedException) || (ex instanceof UnauthorizedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
-			return getRootCausesString(ex);
+			// return Exceptions.getRootCausesString(ex);
+			return Exceptions.getMessage(ex);
 		}
 
 		// Using next chain configuring.

@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.common.web.error;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import static java.util.Locale.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,24 +28,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.*;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+import static org.springframework.util.Assert.notNull;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.springframework.http.MediaType.*;
-import static org.springframework.util.ReflectionUtils.rethrowRuntimeException;
 
 import static com.google.common.base.Charsets.UTF_8;
 
@@ -52,11 +50,15 @@ import static com.wl4g.devops.common.utils.web.WebUtils2.write;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.annotation.DevopsErrorController;
+import com.wl4g.devops.common.config.ErrorControllerAutoConfiguration.ErrorControllerProperties;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * Smart global error controller.
@@ -69,63 +71,62 @@ import freemarker.template.Template;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class SmartGlobalErrorController extends AbstractErrorController implements InitializingBean {
-	final private static String DEFAULT_DIR_VIEW = "/default-error-view/";
 	final private static String DEFAULT_PATH_ERROR = "/error";
-	final private static Logger log = LoggerFactory.getLogger(SmartGlobalErrorController.class);
+	final private static String DEFAULT_REDIRECT_PREFIX = "redirect:";
+	final private static String DEFAULT_REDIRECT_KEY = "redirectUrl";
 
+	final private Logger log = LoggerFactory.getLogger(getClass());
+	/** Errors configuration properties. */
+	final private ErrorControllerProperties config;
 	/** Errors configuration adapter. */
-	@Autowired
-	private CompositeErrorConfiguringAdapter adapter;
-
-	@Value("${spring.cloud.devops.error.enabled:true}")
-	private boolean enabled;
-	@Value("${spring.cloud.devops.error.base-path:" + DEFAULT_DIR_VIEW + "}")
-	private String basePath;
-	@Value("${spring.cloud.devops.error.404:404.html}")
-	private String tpl404Name;
-	@Value("${spring.cloud.devops.error.403:403.html}")
-	private String tpl403Name;
-	@Value("${spring.cloud.devops.error.500:500.html}")
-	private String tpl500Name;
+	final private CompositeErrorConfiguringAdapter adapter;
 
 	private Template tpl404;
 	private Template tpl403;
 	private Template tpl50x;
 
-	public SmartGlobalErrorController(ErrorAttributes errorAttributes) {
+	public SmartGlobalErrorController(ErrorAttributes errorAttributes, ErrorControllerProperties config,
+			CompositeErrorConfiguringAdapter adapter) {
 		super(errorAttributes);
+		notNull(config, "ErrorControllerProperties must not be null.");
+		notNull(adapter, "CompositeErrorConfiguringAdapter must not be null.");
+		this.config = config;
+		this.adapter = adapter;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (!enabled) {
-			log.warn("Disabled global error handler");
-			return;
-		}
 		if (log.isInfoEnabled()) {
-			log.info("Enabled global error handler ...");
+			log.info("Initializing smart global error controller ...");
 		}
 
-		FreeMarkerConfigurer config = new FreeMarkerConfigurer();
-		config.setTemplateLoaderPath(basePath);
-		Properties settings = new Properties();
-		settings.setProperty("template_update_delay", "0");
-		settings.setProperty("default_encoding", "UTF-8");
-		settings.setProperty("number_format", "0.####");
-		settings.setProperty("datetime_format", "yyyy-MM-dd HH:mm:ss");
-		settings.setProperty("classic_compatible", "true");
-		settings.setProperty("template_exception_handler", "ignore");
-		config.setFreemarkerSettings(settings);
 		try {
-			config.afterPropertiesSet();
-			this.tpl404 = config.getConfiguration().getTemplate(tpl404Name, "UTF-8");
-			this.tpl403 = config.getConfiguration().getTemplate(tpl403Name, "UTF-8");
-			this.tpl50x = config.getConfiguration().getTemplate(tpl500Name, "UTF-8");
-			Assert.notNull(tpl404, "Default 404 view template must not be null");
-			Assert.notNull(tpl403, "Default 403 view template must not be null");
-			Assert.notNull(tpl50x, "Default 500 view template must not be null");
+			FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
+			configurer.setTemplateLoaderPath(config.getBasePath());
+			Properties settings = new Properties();
+			settings.setProperty("template_update_delay", "0");
+			settings.setProperty("default_encoding", "UTF-8");
+			settings.setProperty("number_format", "0.####");
+			settings.setProperty("datetime_format", "yyyy-MM-dd HH:mm:ss");
+			settings.setProperty("classic_compatible", "true");
+			settings.setProperty("template_exception_handler", "ignore");
+			configurer.setFreemarkerSettings(settings);
+			configurer.afterPropertiesSet();
+
+			if (!isRedirectURIError(config.getErrorTplOrUri404())) {
+				this.tpl404 = configurer.getConfiguration().getTemplate(config.getErrorTplOrUri404(), "UTF-8");
+				Assert.notNull(tpl404, "Default 404 view template must not be null");
+			}
+			if (!isRedirectURIError(config.getErrorTplOrUri403())) {
+				this.tpl403 = configurer.getConfiguration().getTemplate(config.getErrorTplOrUri403(), "UTF-8");
+				Assert.notNull(tpl403, "Default 403 view template must not be null");
+			}
+			if (!isRedirectURIError(config.getErrorTplOrUri50x())) {
+				this.tpl50x = configurer.getConfiguration().getTemplate(config.getErrorTplOrUri50x(), "UTF-8");
+				Assert.notNull(tpl50x, "Default 500 view template must not be null");
+			}
 		} catch (Exception e) {
-			ReflectionUtils.rethrowRuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -151,27 +152,40 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	@ExceptionHandler({ Exception.class/* ,Throwable.class */ })
 	public void doAnyHandleError(HttpServletRequest request, HttpServletResponse response, Exception ex) {
 		try {
-			Map<String, Object> model = getErrorAttributes(request);
-			if (log.isErrorEnabled()) {
-				log.error("=> Global error handling - {}", model);
-			}
+			// Obtain errors attributes.
+			Map<String, Object> model = getErrorAttributes(request, response, ex);
 
 			// Obtain custom extension response status.
 			HttpStatus status = adapter.getStatus(request, response, model, ex);
 			String errmsg = adapter.getRootCause(request, response, model, ex);
-			// Fallback.
-			status = !isNull(status) ? status : SERVICE_UNAVAILABLE;
-			errmsg = !isBlank(errmsg) ? errmsg : "Unknown error";
 
-			/*
-			 * If and only if the client is a browser and not an XHR request
-			 * returns to the page, otherwise it returns to JSON
-			 */
+			// Get redirectUri or rendering template.
+			Object uriOrTpl = getRedirectUriOrRenderErrorView(model, status);
+
+			// If and only if the client is a browser and not an XHR request
+			// returns to the page, otherwise it returns to JSON.
 			if (isJSONResponse(request)) {
-				writeJson(response, toJSONString(new RespBase<>(RetCode.create(status.value(), errmsg))));
+				RespBase<Object> resp = new RespBase<>(RetCode.create(status.value(), errmsg));
+				if (!(uriOrTpl instanceof Template)) {
+					resp.getData().put(DEFAULT_REDIRECT_KEY, uriOrTpl);
+				}
+				String errJson = toJSONString(resp);
+				log.error("Response Json Errors => {}", errJson);
+				writeJson(response, errJson);
 			} else {
-				String renderString = renderErrorPage(model, request, response, ex);
-				write(response, status.value(), TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
+				if (uriOrTpl instanceof Template) {
+					log.error("Response View Errors => httpStatus[{}]", status.value());
+					// Merge configuration map model.
+					model.putAll(parseJSON(toJSONString(config), new TypeReference<HashMap<String, Object>>() {
+					}));
+
+					// Readering
+					String renderString = processTemplateIntoString((Template) uriOrTpl, model);
+					write(response, status.value(), TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
+				} else {
+					log.error("Redirect View Errors => [{}]", uriOrTpl);
+					response.sendRedirect((String) uriOrTpl);
+				}
 			}
 		} catch (Throwable th) {
 			log.error("\n=======>>> Basic global errors handling failure!\n", th);
@@ -202,42 +216,53 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @param request
 	 * @return
 	 */
-	private Map<String, Object> getErrorAttributes(HttpServletRequest request) {
-		return super.getErrorAttributes(request, isStackTrace(request));
+	private Map<String, Object> getErrorAttributes(HttpServletRequest request, HttpServletResponse response, Exception ex) {
+		Map<String, Object> model = super.getErrorAttributes(request, isStackTrace(request));
+		log.error("Origin Errors - {}", model);
+
+		// Replace the exception message that appears to be meaningful.
+		model.put("message", adapter.getRootCause(request, response, model, ex));
+		return model;
 	}
 
 	/**
-	 * Render errors page
+	 * Get redirectUri rendering errors page view.
 	 * 
 	 * @param model
-	 * @param request
+	 * @param status
+	 * @return
+	 * @throws TemplateException
+	 * @throws IOException
+	 */
+	private Object getRedirectUriOrRenderErrorView(Map<String, Object> model, HttpStatus status)
+			throws IOException, TemplateException {
+		switch (status) {
+		case NOT_FOUND:
+			if (nonNull(tpl404)) {
+				return tpl404;
+			}
+			return config.getErrorTplOrUri404().substring(DEFAULT_REDIRECT_PREFIX.length());
+		case FORBIDDEN:
+			if (nonNull(tpl403)) {
+				return tpl403;
+			}
+			return config.getErrorTplOrUri403().substring(DEFAULT_REDIRECT_PREFIX.length());
+		default:
+			if (nonNull(tpl50x)) {
+				return tpl50x;
+			}
+			return config.getErrorTplOrUri50x().substring(DEFAULT_REDIRECT_PREFIX.length());
+		}
+	}
+
+	/**
+	 * Is redirection error URI.
+	 * 
+	 * @param uri
 	 * @return
 	 */
-	private String renderErrorPage(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response,
-			Exception ex) {
-		// Replace the exception message that appears to be meaningful.
-		model.put("message", adapter.getRootCause(request, response, model, ex));
-
-		Template tpl = this.tpl50x;
-		switch (getStatus(request)) {
-		case NOT_FOUND:
-			tpl = tpl404;
-			break;
-		case FORBIDDEN:
-			tpl = tpl403;
-			break;
-		default:
-			tpl = tpl50x;
-		}
-
-		// Readering
-		String renderString = null;
-		try {
-			renderString = processTemplateIntoString(tpl, model);
-		} catch (Exception e) {
-			rethrowRuntimeException(e);
-		}
-		return renderString;
+	private boolean isRedirectURIError(String uri) {
+		return startsWithIgnoreCase(uri, DEFAULT_REDIRECT_PREFIX);
 	}
 
 }

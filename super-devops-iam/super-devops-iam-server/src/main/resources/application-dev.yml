@@ -28,6 +28,7 @@ spring:
         #login-uri: http://localhost:8080/#/login # See: super-devops-view
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@http://localhost:14048/umc-manager
+        #success-endpoint: ${spring.application.name}@/view/index.html
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
@@ -71,11 +72,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-
-# Spring-security config.
-security.user:
-  name: sba_user
-  password: 123456
 
 # Redis configuration.
 redis:

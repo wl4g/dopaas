@@ -1,10 +1,13 @@
 package com.wl4g.devops.common.config;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.lang.annotation.Annotation;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,8 +39,15 @@ public class ErrorControllerAutoConfiguration extends AbstractOptionalController
 	}
 
 	@Bean
-	public SmartGlobalErrorController smartGlobalErrorController(ErrorAttributes errorAttributes) {
-		return new SmartGlobalErrorController(errorAttributes);
+	@ConfigurationProperties(prefix = "spring.cloud.devops.error")
+	public ErrorControllerProperties errorControllerProperties() {
+		return new ErrorControllerProperties();
+	}
+
+	@Bean
+	public SmartGlobalErrorController smartGlobalErrorController(ErrorAttributes errorAttrs,
+			CompositeErrorConfiguringAdapter adapter, ErrorControllerProperties config) {
+		return new SmartGlobalErrorController(errorAttrs, config, adapter);
 	}
 
 	@Bean
@@ -53,6 +63,79 @@ public class ErrorControllerAutoConfiguration extends AbstractOptionalController
 	@Override
 	protected Class<? extends Annotation> annotationClass() {
 		return DevopsErrorController.class;
+	}
+
+	/**
+	 * Error controller properties.
+	 * 
+	 * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version v1.0.0 2019-11-02
+	 * @since
+	 */
+	public static class ErrorControllerProperties {
+		final public static String DEFAULT_DIR_VIEW = "/default-error-view/";
+
+		private String basePath = DEFAULT_DIR_VIEW;
+		private String errorTplOrUri404 = "1404.tpl.html";
+		private String errorTplOrUri403 = "403.tpl.html";
+		private String errorTplOrUri50x = "50x.tpl.html";
+
+		/**
+		 * Error return previous page URI.</br>
+		 * Default for browser location origin.
+		 */
+		private String homeUri = "javascript:location.href = location.origin";
+
+		public String getBasePath() {
+			return basePath;
+		}
+
+		public void setBasePath(String basePath) {
+			if (!isBlank(basePath)) {
+				this.basePath = basePath;
+			}
+		}
+
+		public String getErrorTplOrUri404() {
+			return errorTplOrUri404;
+		}
+
+		public void setErrorTplOrUri404(String errorTplOrUri404) {
+			if (!isBlank(errorTplOrUri404)) {
+				this.errorTplOrUri404 = errorTplOrUri404;
+			}
+		}
+
+		public String getErrorTplOrUri403() {
+			return errorTplOrUri403;
+		}
+
+		public void setErrorTplOrUri403(String errorTplOrUri403) {
+			if (!isBlank(errorTplOrUri403)) {
+				this.errorTplOrUri403 = errorTplOrUri403;
+			}
+		}
+
+		public String getErrorTplOrUri50x() {
+			return errorTplOrUri50x;
+		}
+
+		public void setErrorTplOrUri50x(String errorTplOrUri50x) {
+			if (!isBlank(errorTplOrUri50x)) {
+				this.errorTplOrUri50x = errorTplOrUri50x;
+			}
+		}
+
+		public String getHomeUri() {
+			return homeUri;
+		}
+
+		public void setHomeUri(String homeUri) {
+			if (!isBlank(homeUri)) {
+				this.homeUri = homeUri;
+			}
+		}
+
 	}
 
 }
