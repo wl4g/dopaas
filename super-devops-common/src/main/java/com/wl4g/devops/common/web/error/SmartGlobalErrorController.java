@@ -113,16 +113,16 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			configurer.setFreemarkerSettings(settings);
 			configurer.afterPropertiesSet();
 
-			if (!isRedirectURIError(config.getErrorTplOrUri404())) {
-				this.tpl404 = configurer.getConfiguration().getTemplate(config.getErrorTplOrUri404(), "UTF-8");
+			if (!isRedirectURIError(config.getNotFountUriOrTpl())) {
+				this.tpl404 = configurer.getConfiguration().getTemplate(config.getNotFountUriOrTpl(), "UTF-8");
 				Assert.notNull(tpl404, "Default 404 view template must not be null");
 			}
-			if (!isRedirectURIError(config.getErrorTplOrUri403())) {
-				this.tpl403 = configurer.getConfiguration().getTemplate(config.getErrorTplOrUri403(), "UTF-8");
+			if (!isRedirectURIError(config.getUnauthorizedUriOrTpl())) {
+				this.tpl403 = configurer.getConfiguration().getTemplate(config.getUnauthorizedUriOrTpl(), "UTF-8");
 				Assert.notNull(tpl403, "Default 403 view template must not be null");
 			}
-			if (!isRedirectURIError(config.getErrorTplOrUri50x())) {
-				this.tpl50x = configurer.getConfiguration().getTemplate(config.getErrorTplOrUri50x(), "UTF-8");
+			if (!isRedirectURIError(config.getErrorUriOrTpl())) {
+				this.tpl50x = configurer.getConfiguration().getTemplate(config.getErrorUriOrTpl(), "UTF-8");
 				Assert.notNull(tpl50x, "Default 500 view template must not be null");
 			}
 		} catch (Exception e) {
@@ -241,17 +241,17 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			if (nonNull(tpl404)) {
 				return tpl404;
 			}
-			return config.getErrorTplOrUri404().substring(DEFAULT_REDIRECT_PREFIX.length());
+			return config.getNotFountUriOrTpl().substring(DEFAULT_REDIRECT_PREFIX.length());
 		case FORBIDDEN:
 			if (nonNull(tpl403)) {
 				return tpl403;
 			}
-			return config.getErrorTplOrUri403().substring(DEFAULT_REDIRECT_PREFIX.length());
+			return config.getUnauthorizedUriOrTpl().substring(DEFAULT_REDIRECT_PREFIX.length());
 		default:
 			if (nonNull(tpl50x)) {
 				return tpl50x;
 			}
-			return config.getErrorTplOrUri50x().substring(DEFAULT_REDIRECT_PREFIX.length());
+			return config.getErrorUriOrTpl().substring(DEFAULT_REDIRECT_PREFIX.length());
 		}
 	}
 
