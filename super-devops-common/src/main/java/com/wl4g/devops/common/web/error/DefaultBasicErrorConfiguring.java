@@ -28,6 +28,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 
@@ -35,19 +37,19 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
 /**
- * Default error configure.
+ * Default basic error configure.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月1日
  * @since
  */
-public class DefaultErrorConfigure implements ErrorConfigure {
+@Order(Ordered.LOWEST_PRECEDENCE)
+public class DefaultBasicErrorConfiguring implements ErrorConfiguring {
 
 	@Override
 	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
 			Exception ex) {
 		Integer statusCode = (Integer) model.getOrDefault("status", SYS_ERR.getErrcode());
-
 		if (isNull(statusCode)) {
 			RetCode retCode = RespBase.getRestfulCode(ex);
 			if (nonNull(retCode)) {
@@ -56,19 +58,15 @@ public class DefaultErrorConfigure implements ErrorConfigure {
 				statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
 			}
 		}
-
-		if (statusCode == null) {
-			return HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		try {
+		if (!isNull(statusCode)) {
 			return HttpStatus.valueOf(statusCode);
-		} catch (Exception e) {
-			return HttpStatus.INTERNAL_SERVER_ERROR;
 		}
+		return null;
 	}
 
 	@Override
-	public String getCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
+	public String getRootCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
+			Exception ex) {
 		return extractMeaningfulErrorsMessage(model);
 	}
 

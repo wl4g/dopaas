@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
@@ -62,6 +62,7 @@ import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
+import com.wl4g.devops.iam.common.web.IamErrorConfiguring;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -72,7 +73,7 @@ import redis.clients.jedis.JedisCluster;
  * @version v1.0 2018年12月23日
  * @since
  */
-public abstract class AbstractIamConfiguration extends AbstractOptionalControllerConfiguration {
+public abstract class AbstractIamConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	// ==============================
 	// Locale i18n configuration.
@@ -355,5 +356,10 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	// ==============================
 	// IAM _ O T H E R _ C O N F I G's.
 	// ==============================
+
+	@Bean
+	public IamErrorConfiguring iamErrorConfiguring() {
+		return new IamErrorConfiguring();
+	}
 
 }

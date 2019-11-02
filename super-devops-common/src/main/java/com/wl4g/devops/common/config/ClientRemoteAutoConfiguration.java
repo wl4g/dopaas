@@ -42,7 +42,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 @Configuration
 @ConditionalOnClass({ RestTemplate.class, Netty4ClientHttpRequestFactory.class })
-public class ClientRemoteConfiguration {
+public class ClientRemoteAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
