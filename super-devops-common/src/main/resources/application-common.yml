@@ -13,9 +13,19 @@
 #
 
 # Global error handling configuration.
-spring.cloud.devops.error:
-  404: 404.html
-  500: 500.html
+spring:
+  cloud:
+    devops:
+      error:
+        enabled: true
+        base-path: /default-error-view/
+        # Rendering template path or redirect URI on exception,
+        # e.g. redirect:http://domain.com/404.html or /404.tpl.html
+        error-tpl-or-uri-404: 404.tpl.html
+        error-tpl-or-uri-403: 403.tpl.html
+        error-tpl-or-uri-50x: 50x.tpl.html
+        # Default for empty, The default is to intercept the domain name of the browser address bar.
+        home-uri: 
 
 # Starting banner configuration.
 banner:
