@@ -66,7 +66,9 @@ public class ErrorControllerAutoConfiguration extends AbstractOptionalController
 	}
 
 	/**
-	 * Error controller properties.
+	 * Error controller properties.</br>
+	 * <font color=red>Note: When {@link @ConfigurationProperties} is used, the
+	 * field name cannot contain numbers, otherwise</font>
 	 * 
 	 * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
 	 * @version v1.0.0 2019-11-02
@@ -75,10 +77,11 @@ public class ErrorControllerAutoConfiguration extends AbstractOptionalController
 	public static class ErrorControllerProperties {
 		final public static String DEFAULT_DIR_VIEW = "/default-error-view/";
 
+		// <<Alarm: Field name cannot contain numbers>>.
 		private String basePath = DEFAULT_DIR_VIEW;
-		private String errorTplOrUri404 = "1404.tpl.html";
-		private String errorTplOrUri403 = "403.tpl.html";
-		private String errorTplOrUri50x = "50x.tpl.html";
+		private String notFountUriOrTpl = "404.tpl.html"; //
+		private String unauthorizedUriOrTpl = "403.tpl.html";
+		private String errorUriOrTpl = "50x.tpl.html";
 
 		/**
 		 * Error return previous page URI.</br>
@@ -96,33 +99,33 @@ public class ErrorControllerAutoConfiguration extends AbstractOptionalController
 			}
 		}
 
-		public String getErrorTplOrUri404() {
-			return errorTplOrUri404;
+		public String getNotFountUriOrTpl() {
+			return notFountUriOrTpl;
 		}
 
-		public void setErrorTplOrUri404(String errorTplOrUri404) {
-			if (!isBlank(errorTplOrUri404)) {
-				this.errorTplOrUri404 = errorTplOrUri404;
+		public void setNotFountUriOrTpl(String notFountUriOrTpl) {
+			if (!isBlank(notFountUriOrTpl)) {
+				this.notFountUriOrTpl = notFountUriOrTpl;
 			}
 		}
 
-		public String getErrorTplOrUri403() {
-			return errorTplOrUri403;
+		public String getUnauthorizedUriOrTpl() {
+			return unauthorizedUriOrTpl;
 		}
 
-		public void setErrorTplOrUri403(String errorTplOrUri403) {
-			if (!isBlank(errorTplOrUri403)) {
-				this.errorTplOrUri403 = errorTplOrUri403;
+		public void setUnauthorizedUriOrTpl(String unauthorizedUriOrTpl) {
+			if (!isBlank(unauthorizedUriOrTpl)) {
+				this.unauthorizedUriOrTpl = unauthorizedUriOrTpl;
 			}
 		}
 
-		public String getErrorTplOrUri50x() {
-			return errorTplOrUri50x;
+		public String getErrorUriOrTpl() {
+			return errorUriOrTpl;
 		}
 
-		public void setErrorTplOrUri50x(String errorTplOrUri50x) {
-			if (!isBlank(errorTplOrUri50x)) {
-				this.errorTplOrUri50x = errorTplOrUri50x;
+		public void setErrorUriOrTpl(String errorUriOrTpl) {
+			if (!isBlank(errorUriOrTpl)) {
+				this.errorUriOrTpl = errorUriOrTpl;
 			}
 		}
 
