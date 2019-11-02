@@ -83,7 +83,7 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	}
 
 	/**
-	 * Creating remote directory.
+	 * Creating replace remote directory.
 	 * 
 	 * @param remoteHost
 	 * @param user
@@ -91,9 +91,9 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	 * @param sshkey
 	 * @throws Exception
 	 */
-	protected void createRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
+	protected void createReplaceRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
 		String command = "mkdir -p " + path;
-		logAdd("Creating remote directory: %s", command);
+		logAdd("Creating replace remote directory for command:[%s]", command);
 
 		// Do directory creating.
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);

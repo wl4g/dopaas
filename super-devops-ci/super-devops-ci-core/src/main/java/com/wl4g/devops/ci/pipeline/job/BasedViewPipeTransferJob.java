@@ -53,11 +53,11 @@ public abstract class BasedViewPipeTransferJob<P extends AbstractPipelineProvide
 	 * @throws Exception
 	 */
 	protected void handOut(String remoteHost, String user, String rsa) throws Exception {
-		createRemoteDirectory(remoteHost, user, "/home/" + user + "/tmp", rsa);
+		createReplaceRemoteDirectory(remoteHost, user, "/home/" + user + "/tmp", rsa);
 		// scp
 		scpToTmp(remoteHost, user, rsa);
 		// mkdir
-		createRemoteDirectory(remoteHost, user, provider.getPipelineInfo().getProject().getParentAppHome(), rsa);
+		createReplaceRemoteDirectory(remoteHost, user, provider.getPipelineInfo().getProject().getParentAppHome(), rsa);
 		// tar
 		tar(remoteHost, user, rsa);
 		// remove

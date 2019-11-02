@@ -27,18 +27,18 @@ import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
 public interface Pipeline {
 
 	/**
-	 * Startup pipeline task job.
+	 * Startup new pipeline task job.
 	 * 
 	 * @param taskId
 	 */
-	void startup(Integer taskId);
+	void newPipeline(Integer taskId);
 
 	/**
 	 * Roll-back pipeline task job.
 	 * 
 	 * @param taskId
 	 */
-	void rollback(Integer taskId);
+	void rollbackPipeline(Integer taskId);
 
 	/**
 	 * Hook pipeline task job.
@@ -47,7 +47,7 @@ public interface Pipeline {
 	 * @param branchName
 	 * @param url
 	 */
-	void hook(String projectName, String branchName, String url);
+	void hookPipeline(String projectName, String branchName, String url);
 
 	/**
 	 * Reader pipeline task job logs.

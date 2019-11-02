@@ -44,63 +44,99 @@ public abstract class BasedMavenPipeTransferJob<P extends BasedMavenPipelineProv
 	}
 
 	/**
-	 * Do executable to instances transfer.</br>
-	 * SCP & move & decompression to target directory.
+	 * Deploying executable to remote host instances.</br>
+	 * SCP & Uncompress & cleanup.
 	 * 
 	 * @param path
 	 * @param remoteHost
 	 * @param user
 	 * @param targetPath
-	 * @param rsa
+	 * @param sshkey
 	 * @throws Exception
 	 */
-	public void doExecutableTransfer(String path, String remoteHost, String user, String targetPath, String rsa)
+	public void doRemoteDeploying(String path, String remoteHost, String user, String targetPath, String sshkey)
 			throws Exception {
-		createRemoteDirectory(remoteHost, user, "/home/" + user + "/tmp", rsa);
-		// scp
-		scpToTmpDir(path, remoteHost, user, rsa);
-		// tar
-		tarToTmp(remoteHost, user, path, rsa);
-		// remove
-		removeTarPath(remoteHost, user, path, targetPath, rsa);
-		// move
-		moveToTarPath(remoteHost, user, path, targetPath, rsa);
-	}
+		// Create replace remote directory.
+		createReplaceRemoteDirectory(remoteHost, user, config.getTranform().getRemoteHomeTmpDir(), sshkey);
 
-	public void scpToTmpDir(String path, String remoteHost, String user, String sshkey) throws Exception {
-		// Transfer file to remote.
-		transferFile(remoteHost, user, provider.getUsableCipherSSHKey(sshkey), new File(path), "/home/" + user + "/tmp");
+		// Transfer to remote temporary directory.
+		transferToRemoteTmpDir(remoteHost, user, sshkey, path);
+
+		// Uncompress program.
+		decompressExecutableProgram(remoteHost, user, sshkey, path);
+
+		// UnInstall older remote executable program.
+		unInstallOlderRemoteProgram(remoteHost, user, path, targetPath, sshkey);
+
+		// Install newer executable program.
+		installNewerRemoteProgram(remoteHost, user, path, targetPath, sshkey);
 	}
 
 	/**
-	 * Unzip in tmp
+	 * Transfer executable file to remote directory.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param sshkey
+	 * @param localFile
+	 * @throws Exception
 	 */
-	public void tarToTmp(String remoteHost, String user, String path, String rsa) throws Exception {
+	private void transferToRemoteTmpDir(String remoteHost, String user, String sshkey, String localFile) throws Exception {
+		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
+		transferFile(remoteHost, user, provider.getUsableCipherSSHKey(sshkey), new File(localFile), remoteTmpDir);
+	}
+
+	/**
+	 * Decompression executable program file.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param sshkey
+	 * @param path
+	 * @throws Exception
+	 */
+	private void decompressExecutableProgram(String remoteHost, String user, String sshkey, String path) throws Exception {
 		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
 		String command = "tar -xvf " + remoteTmpDir + "/" + subPackname(path) + " -C " + remoteTmpDir;
-		provider.doRemoteCommand(remoteHost, user, command, rsa);
+		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
-	 * remove tar path
+	 * UnInstall older last remote program.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param sshkey
+	 * @param path
+	 * @param targetPath
+	 * @throws Exception
 	 */
-	public void removeTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
+	private void unInstallOlderRemoteProgram(String remoteHost, String user, String sshkey, String path, String targetPath)
+			throws Exception {
 		String s = targetPath + "/" + subPacknameWithOutPostfix(path);
 		if (isBlank(s) || s.trim().equals("/")) {
-			throw new RuntimeException("bad command");
+			throw new IllegalArgumentException("Bad command");
 		}
 		String command = "rm -Rf " + targetPath + "/" + subPacknameWithOutPostfix(path);
-		provider.doRemoteCommand(remoteHost, user, command, rsa);
+		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
-	 * Move to tar path
+	 * Install newer remote program to location.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param path
+	 * @param targetPath
+	 * @param sshkey
+	 * @throws Exception
 	 */
-	public void moveToTarPath(String remoteHost, String user, String path, String targetPath, String rsa) throws Exception {
+	private void installNewerRemoteProgram(String remoteHost, String user, String path, String targetPath, String sshkey)
+			throws Exception {
 		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
 		String command = "mv " + remoteTmpDir + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
 				+ subPacknameWithOutPostfix(path);
-		provider.doRemoteCommand(remoteHost, user, command, rsa);
+		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 }
