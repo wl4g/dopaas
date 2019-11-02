@@ -64,7 +64,7 @@ public class MvnAssembleTarPipeTransferJob extends BasedMavenPipeTransferJob<Mvn
 					instance.getSshKey());
 
 			// Scp to tmp,rename,move to webapps
-			doExecutableTransfer(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
+			doRemoteDeploying(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
 					instance.getSshKey());
 
 			// Post remote commands (e.g. restart)

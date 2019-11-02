@@ -105,7 +105,7 @@ public class TaskHistoryController extends BaseController {
 	public RespBase<?> rollback(Integer taskId) {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
-		pipelineCoreProcessor.rollback(taskId);
+		pipelineCoreProcessor.rollbackPipeline(taskId);
 		return resp;
 	}
 

@@ -71,7 +71,7 @@ public class TimingPipelineJob implements Runnable {
 			for (TaskDetail taskDetail : taskDetails) {
 				instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
 			}
-			pipelineProcessor.startup(task.getId());
+			pipelineProcessor.newPipeline(task.getId());
 
 			// set new sha in db
 			String path = config.getWorkspace() + "/" + project.getProjectName();

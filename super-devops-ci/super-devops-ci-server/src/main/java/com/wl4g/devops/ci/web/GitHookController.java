@@ -51,7 +51,7 @@ public class GitHookController extends BaseController {
 		String branchName = hook.getBranchName();
 		String url = hook.getRepository().getGitHttpUrl();
 		String projectName = hook.getRepository().getName();
-		pipelineCoreProcessor.hook(projectName, branchName, url);
+		pipelineCoreProcessor.hookPipeline(projectName, branchName, url);
 	}
 
 }

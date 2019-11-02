@@ -24,7 +24,6 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
-import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.share.AppClusterDao;
@@ -42,14 +41,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.wl4g.devops.common.utils.io.FileIOUtils.*;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
-import static com.wl4g.devops.common.utils.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
 
@@ -90,10 +90,10 @@ public class DefaultPipeline implements Pipeline {
 	protected TaskBuildCommandDao taskBuildCmdDao;
 
 	@Override
-	public void startup(Integer taskId) {
+	public void newPipeline(Integer taskId) {
 		notNull(taskId, "Pipeline job taskId must not be null");
 		if (log.isInfoEnabled()) {
-			log.info("On creating pipeline job. taskId:{}", taskId);
+			log.info("On pipeline job for taskId: {}", taskId);
 		}
 
 		// Obtain task details.
@@ -125,25 +125,28 @@ public class DefaultPipeline implements Pipeline {
 				task.getTarType(), task.getContactGroupId(), taskBuildCmds);
 
 		// Execution pipeline job.
-		doExecute0(taskHisy.getId(), getPipelineProvider(taskHisy));
+		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
 	}
 
 	@Override
-	public void rollback(Integer taskId) {
+	public void rollbackPipeline(Integer taskId) {
+		notNull(taskId, "Pipeline job taskId must not be null");
 		if (log.isInfoEnabled()) {
-			log.info("into PipelineCoreProcessorImpl.rollback prarms::" + "taskId = {} ", taskId);
+			log.info("On rollback pipeline job for taskId:{}", taskId);
 		}
-		Assert.notNull(taskId, "Rollback taskId must not be null.");
 
 		// Task
 		TaskHistory backupTaskHisy = taskHistoryService.getById(taskId);
 		Assert.notNull(backupTaskHisy, String.format("Not found pipeline task history for taskId:%s", taskId));
+
 		// Details
 		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
 		Assert.notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
+
 		// Project.
 		Project project = projectDao.selectByPrimaryKey(backupTaskHisy.getProjectId());
 		Assert.notNull(project, String.format("Not found project history for projectId:%s", backupTaskHisy.getProjectId()));
+
 		// Instance.
 		List<AppInstance> instances = new ArrayList<>();
 		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
@@ -159,11 +162,11 @@ public class DefaultPipeline implements Pipeline {
 				backupTaskHisy.getContactGroupId(), commands);
 
 		// Do roll-back pipeline job.
-		doRollback(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
+		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
 	}
 
 	@Override
-	public void hook(String projectName, String branchName, String url) {
+	public void hookPipeline(String projectName, String branchName, String url) {
 		if (log.isInfoEnabled()) {
 			log.info("On hook pipeline job. project:{}, branch:{}, url:{}", projectName, branchName, url);
 		}
@@ -198,7 +201,7 @@ public class DefaultPipeline implements Pipeline {
 				task.getContactGroupId(), taskBuildCmds);
 
 		// Execution pipeline job.
-		doExecute0(taskHisy.getId(), getPipelineProvider(taskHisy));
+		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
 	}
 
 	@Override
@@ -211,37 +214,47 @@ public class DefaultPipeline implements Pipeline {
 		}
 		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
 		// End if 'EOF'
-		return FileIOUtils.seekReadLines(logPath, index, size, line -> line.equalsIgnoreCase("EOF"));
+		return seekReadLines(logPath, index, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
 	}
 
 	/**
-	 * Execution pipeline job.
+	 * Execution new pipeline job.
 	 *
 	 * @param taskId
 	 * @param provider
 	 */
-	protected void doExecute0(Integer taskId, PipelineProvider provider) {
+	protected void doExecutePipeline(Integer taskId, PipelineProvider provider) {
 		notNull(taskId, "Pipeline taskId must not be null");
 		notNull(provider, "Pipeline provider must not be null");
 		if (log.isInfoEnabled()) {
-			log.info("Startup pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
+			log.info("Starting pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 		}
+
 		// Setup status to running.
 		taskHistoryService.updateStatus(taskId, TASK_STATUS_RUNNING);
+		log.info("Updated pipeline job status to {} for {}", TASK_STATUS_RUNNING, taskId);
 
 		// Starting pipeline job.
 		jobExecutor.getWorker().execute(() -> {
 			try {
+				// Log file start EOF.
+				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
+
+				// Execution pipeline.
 				provider.execute();
-				if (log.isInfoEnabled()) {
-					log.info("Pipeline job exec successful for taskId: {}, provider: {}", taskId,
-							provider.getClass().getSimpleName());
-				}
+
+				// Pipeline success.
+				log.info(String.format("Pipeline job successful for taskId: %s, provider: %s", taskId,
+						provider.getClass().getSimpleName()));
+
 				// Setup status to success.
 				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getShaGit(),
 						provider.getShaLocal());
+				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 
-				// Post successful process.
+				// Successful process.
+				log.info("Process pipeline job success properties for taskId: {}, provider: {}", taskId,
+						provider.getClass().getSimpleName());
 				postPipelineExecuteSuccess(taskId, provider);
 			} catch (Throwable e) {
 				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
@@ -249,12 +262,16 @@ public class DefaultPipeline implements Pipeline {
 
 				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
+				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_STOP, taskId);
 
-				// Post failure process.
+				// Failure process.
+				log.info("Process pipeline job failure properties for taskId: {}, provider: {}", taskId,
+						provider.getClass().getSimpleName());
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
-				// Force mark end EOF.
+				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
+				log.info("Completed for pipeline taskId: {}", taskId);
 			}
 		});
 	}
@@ -308,7 +325,7 @@ public class DefaultPipeline implements Pipeline {
 	 * @param taskHisy
 	 * @return
 	 */
-	private PipelineProvider getPipelineProvider(TaskHistory taskHisy) {
+	protected PipelineProvider getPipelineProvider(TaskHistory taskHisy) {
 		notNull(taskHisy, "TaskHistory can not be null");
 
 		Project project = projectDao.selectByPrimaryKey(taskHisy.getProjectId());
@@ -345,30 +362,47 @@ public class DefaultPipeline implements Pipeline {
 	}
 
 	/**
-	 * Do roll-back pipeline job.
+	 * Execution roll-back pipeline job.
 	 *
 	 * @param taskId
 	 * @param provider
 	 */
-	private void doRollback(Integer taskId, PipelineProvider provider) {
+	protected void doRollbackPipeline(Integer taskId, PipelineProvider provider) {
 		notNull(taskId, "TaskId must not be null.");
 		if (log.isInfoEnabled()) {
-			log.info("Rollback pipeline job for taskId: {}", taskId);
+			log.info("Starting rollback pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 		}
+
 		// Update status to running.
 		taskHistoryService.updateStatus(taskId, TASK_STATUS_RUNNING);
+		log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_RUNNING, taskId);
 
 		// Submit roll-back job.
 		jobExecutor.getWorker().execute(() -> {
 			try {
+				// Log file start EOF.
+				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
+
+				// Execution roll-back pipeline.
 				provider.rollback();
+
+				// Success.
+				log.info(String.format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
+						provider.getClass().getSimpleName()));
 
 				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getShaGit(),
 						provider.getShaLocal());
-
+				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
+				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
+						provider.getClass().getSimpleName()), e);
+
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
-				e.printStackTrace();
+				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_FAIL, taskId);
+			} finally {
+				// Log file end EOF.
+				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
+				log.info("Completed for rollback pipeline taskId: {}", taskId);
 			}
 		});
 	}

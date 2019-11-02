@@ -129,7 +129,7 @@ public class CiCdConsole {
 
 				// Create async task
 				// TODO 修改后与原有逻辑有差异，必须多一个环节，选task
-				pipelineCoreProcessor.startup(argument.getTaskId());
+				pipelineCoreProcessor.newPipeline(argument.getTaskId());
 
 			} else {
 				printfQuietly("One Task is running ,Please try again later");

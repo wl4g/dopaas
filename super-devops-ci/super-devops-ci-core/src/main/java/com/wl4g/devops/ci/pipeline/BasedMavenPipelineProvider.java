@@ -32,7 +32,6 @@ import java.util.concurrent.locks.Lock;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-import static com.wl4g.devops.common.utils.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
@@ -58,8 +57,6 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		if (log.isInfoEnabled()) {
 			log.info("Building started, stdout to {}", jobLog.getAbsolutePath());
 		}
-		// Mark start EOF.
-		writeALineFile(jobLog, LOG_FILE_START);
 
 		// Dependencies.
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(taskHistory.getProjectId(), null);
@@ -71,12 +68,12 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHistory.getId());
 		for (Dependency depd : dependencys) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doInternalMvnBuild(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
+			doMvnBuildInternal(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
 					depCmd);
 		}
 
 		// Do MAVEN building.
-		doInternalMvnBuild(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
+		doMvnBuildInternal(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
 				taskHistory.getBuildCommand());
 	}
 
@@ -129,7 +126,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	/**
-	 * Execution dependency project building.
+	 * Execution internal project dependency building.
 	 * 
 	 * @param taskHisy
 	 * @param projectId
@@ -141,7 +138,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doInternalMvnBuild(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+	private void doMvnBuildInternal(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
