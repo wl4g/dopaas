@@ -167,19 +167,15 @@ public abstract class SSH2Utils {
 	 */
 	public static CommandResult executeWithCommand(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws IOException {
-		return executeWithCommand(host, user, pemPrivateKey, command, new CommandProcessor() {
-			@SuppressWarnings({ "unchecked" })
-			@Override
-			public CommandResult process(Session s) {
-				String message = null, errmsg = null;
-				if (nonNull(s.getStdout())) {
-					message = unsafeReadFullyToString(s.getStdout());
-				}
-				if (nonNull(s.getStderr())) {
-					errmsg = unsafeReadFullyToString(s.getStderr());
-				}
-				return new CommandResult(s.getExitSignal(), s.getExitStatus(), message, errmsg);
+		return executeWithCommand(host, user, pemPrivateKey, command, (s) -> {
+			String message = null, errmsg = null;
+			if (nonNull(s.getStdout())) {
+				message = unsafeReadFullyToString(s.getStdout());
 			}
+			if (nonNull(s.getStderr())) {
+				errmsg = unsafeReadFullyToString(s.getStderr());
+			}
+			return new CommandResult(s.getExitSignal(), s.getExitStatus(), message, errmsg);
 		}, timeoutMs);
 	}
 
@@ -195,6 +191,7 @@ public abstract class SSH2Utils {
 	 * @return
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T executeWithCommand(String host, String user, char[] pemPrivateKey, String command,
 			CommandProcessor processor, long timeoutMs) throws IOException {
 		hasText(host, "SSH2 command host must not be empty.");
@@ -227,7 +224,7 @@ public abstract class SSH2Utils {
 			session.waitForCondition((CLOSED | EOF | TIMEOUT), timeoutMs);
 
 			// Customize process.
-			return processor.process(session);
+			return (T) processor.process(session);
 		} catch (IOException e) {
 			throw e;
 		} finally {
@@ -257,7 +254,7 @@ public abstract class SSH2Utils {
 	 * @since
 	 */
 	public static interface CommandProcessor {
-		<T> T process(Session session);
+		Object process(Session session);
 	}
 
 	/**

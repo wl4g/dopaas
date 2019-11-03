@@ -78,7 +78,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		backupLocal();
 
 		// Startup pipeline jobs.
-		doTransferInstances();
+		doTransferToRemoteInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");

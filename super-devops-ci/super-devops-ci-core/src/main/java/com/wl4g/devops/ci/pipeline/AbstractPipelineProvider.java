@@ -33,10 +33,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.ci.utils.LogHolder.logAdd;
+import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
@@ -131,23 +132,23 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
-		logAdd("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
+		logDefault("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
 		// Execution command.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSSHKey(sshkey), command, timeoutMs);
 
-		logAdd("\n----------------- Stdout -------------------\n");
+		logDefault("\n%s@%s -> [stdout]\n", user, remoteHost);
 		if (!isBlank(result.getMessage())) {
-			logAdd(result.getMessage());
+			logDefault(result.getMessage());
 		}
-		logAdd("\n----------------- Stderr -------------------\n");
+		logDefault("\n%s@%s -> [stderr]\n", user, remoteHost);
 		if (!isBlank(result.getErrmsg())) {
-			logAdd(result.getErrmsg());
+			logDefault(result.getErrmsg());
 		}
 
 	}
 
 	/**
-	 * Decryption usable cipher SSH2 key.
+	 * Deciphering usable cipher SSH2 key.
 	 * 
 	 * @param sshkey
 	 * @return
@@ -158,20 +159,19 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		String cipherKey = config.getTranform().getCipherKey();
 		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
 		if (log.isInfoEnabled()) {
-			log.info("Transfer decrypted sshkey: {} => {}", cipherKey, "******");
+			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
 		}
 
-		logAdd("Transfer decrypted sshkey: %s => %s", cipherKey, "******");
+		logDefault("Transfer plain sshkey: %s => %s", cipherKey, "******");
 		return sshkeyPlain;
 	}
 
 	/**
-	 * Do startup transfer instances jobs.
+	 * Distribution transfer to remote instances for executable file.
 	 */
-	protected void doTransferInstances() {
+	protected void doTransferToRemoteInstances() {
 		// Creating transfer instances jobs.
-		List<Runnable> jobs = getPipelineInfo().getInstances().stream().map(instance -> newTransferJob(instance))
-				.collect(toList());
+		List<Runnable> jobs = safeList(getPipelineInfo().getInstances()).stream().map(i -> newTransferJob(i)).collect(toList());
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {

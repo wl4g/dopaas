@@ -26,6 +26,8 @@ import static org.springframework.util.Assert.state;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.annotations.Beta;
 
 /**
@@ -51,12 +53,12 @@ public abstract class LogHolder {
 	 * @param args
 	 * @return
 	 */
-	public static LogAppender logAdd(String format, Object... args) {
-		return getDefault().logAdd(format, args);
+	public static LogAppender logDefault(String format, Object... args) {
+		return getDefault().log(format, args);
 	}
 
 	/**
-	 * Append log message to current buffer cache.
+	 * Append log message to key-buffer cache.
 	 * 
 	 * @param key
 	 * @param message
@@ -67,37 +69,41 @@ public abstract class LogHolder {
 	}
 
 	/**
-	 * Get message buffer cache by key.
+	 * Get default message buffer cache by key.
 	 * 
-	 * @param key
 	 * @return
 	 */
-	public static String getCleanup(String key) {
-		String text = null;
-		LogAppender appender = getLogAppender(key);
-		StringBuffer buffer = appender.getMessage();
-		if (nonNull(buffer)) {
-			text = buffer.toString();
-			buffer.setLength(0);
-		}
-		return text;
+	public static String cleanupDefault() {
+		return cleanup(DEFAULT_LOG_APPENDER);
 	}
 
 	/**
 	 * Cleanup multiple buffer cache by key.
 	 * 
 	 * @param key
+	 * @return
 	 */
-	public static void cleanup(String key) {
-		LogAppender appender = getLogAppender(key);
-		appender.getMessage().setLength(0);
-		logCache.get().remove(key);
+	public static String cleanup(String key) {
+		StringBuffer buffer = null;
+		try {
+			LogAppender appender = getLogAppender(key);
+			buffer = appender.getMessage();
+			if (nonNull(buffer)) {
+				return buffer.toString();
+			}
+			return null;
+		} finally {
+			if (nonNull(buffer)) {
+				buffer.setLength(0);
+			}
+			logCache.get().remove(key);
+		}
 	}
 
 	/**
 	 * Cleanup multiple buffer cache all.
 	 */
-	public static void cleanup() {
+	public static void cleanupAll() {
 		logCache.get().clear();
 	}
 
@@ -147,6 +153,7 @@ public abstract class LogHolder {
 	 * @since
 	 */
 	public static class LogAppender {
+		final public static LogAppender EMPTY = new LogAppender(StringUtils.EMPTY);
 
 		/** Log appender key-name. */
 		final private String key;
@@ -174,7 +181,7 @@ public abstract class LogHolder {
 		 * @param args
 		 * @return
 		 */
-		public LogAppender logAdd(String format, Object... args) {
+		public LogAppender log(String format, Object... args) {
 			LogHolder.addLog(key, String.format(format, args));
 			return this;
 		}
@@ -185,20 +192,20 @@ public abstract class LogHolder {
 		 * @param key
 		 * @return
 		 */
-		public String getCleanup(String key) {
-			return LogHolder.getCleanup(key);
+		public String cleanup(String key) {
+			return LogHolder.cleanup(key);
 		}
 
 	}
 
 	public static void main(String[] args) {
 		LogAppender appender1 = LogHolder.getLogAppender("test1");
-		appender1.logAdd("asasdfasdf");
-		appender1.logAdd("6734665347");
+		appender1.log("asasdfasdf");
+		appender1.log("6734665347");
 		LogAppender appender2 = LogHolder.getLogAppender("test2");
-		appender2.logAdd("2rerwqsadfa");
-		System.out.println(appender1.getCleanup("test1"));
-		System.out.println(appender2.getCleanup("test2"));
+		appender2.log("2rerwqsadfa");
+		System.out.println(appender1.cleanup("test1"));
+		System.out.println(appender2.cleanup("test2"));
 	}
 
 }

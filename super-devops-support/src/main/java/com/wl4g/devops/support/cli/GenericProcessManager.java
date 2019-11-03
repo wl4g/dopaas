@@ -73,10 +73,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	@Override
-	public void execFile(String processId, String multiCommands, File file, File stdout, long timeoutMs)
+	public void execFile(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
-		writeFile(file, multiCommands, false);
-		exec(processId, "sh " + file.getAbsolutePath(), stdout, timeoutMs);
+		writeFile(execFile, multiCommands, false);
+		exec(processId, "sh " + execFile.getAbsolutePath(), stdout, timeoutMs);
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.pipeline.model.DefaultPipelineInfo;
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.TaskHistoryService;
+import com.wl4g.devops.ci.utils.LogHolder;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -70,6 +71,7 @@ public class DefaultPipeline implements Pipeline {
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
 	protected MailSenderTemplate mailSender;
+
 	@Autowired
 	protected AppInstanceDao appInstanceDao;
 	@Autowired
@@ -269,6 +271,8 @@ public class DefaultPipeline implements Pipeline {
 						provider.getClass().getSimpleName());
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
+				LogHolder.cleanupDefault(); // Help GC
+
 				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
@@ -400,6 +404,8 @@ public class DefaultPipeline implements Pipeline {
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_FAIL, taskId);
 			} finally {
+				LogHolder.cleanupDefault(); // Help GC
+
 				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for rollback pipeline taskId: {}", taskId);

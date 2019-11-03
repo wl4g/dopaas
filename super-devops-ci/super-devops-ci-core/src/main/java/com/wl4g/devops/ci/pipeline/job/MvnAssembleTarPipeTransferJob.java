@@ -23,6 +23,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.util.List;
 
+import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
@@ -50,40 +51,45 @@ public class MvnAssembleTarPipeTransferJob extends BasedMavenPipeTransferJob<Mvn
 
 	@Override
 	public void run() {
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is starting ...");
-		}
 		notNull(taskDetailId, "taskDetailId can not be null");
+		log.info("Deploy task is starting for instance:{}, projectId:{}, projectName:{} ...", instance.getId(), project.getId(),
+				project.getProjectName());
+
 		try {
 			TaskHistory taskHisy = provider.getPipelineInfo().getTaskHistory();
 			// Update status to running.
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+			log.info("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
 
-			// Pre local commands.
+			// Call PRE commands.
 			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
 					instance.getSshKey());
 
-			// Scp to tmp,rename,move to webapps
+			// Distributed deploying to remote.
 			doRemoteDeploying(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
 					instance.getSshKey());
 
-			// Post remote commands (e.g. restart)
+			// Call post remote commands (e.g. restart)
 			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
 					instance.getSshKey());
 
 			// Update status to success.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, ""); // TODO
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, getLogMessage(null));
+			log.error("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
 
-		} catch (Exception e) {
-			log.error("Deploy job failed", e);
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, e.toString());
-			throw new IllegalStateException(e);
+		} catch (Exception ex) {
+			log.error("Failed to transfer job", ex);
+
+			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, getLogMessage(ex));
+			log.error("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+					TASK_STATUS_FAIL, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
+		} finally {
+			cleanupDefault(); // Help GC
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is finished!");
-		}
-
+		log.info("Mvn transfer task of finished!");
 	}
 
 }
