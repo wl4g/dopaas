@@ -20,8 +20,6 @@ import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 
-import org.springframework.util.Assert;
-
 import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -144,7 +142,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
-				doPullSourceAndBuild(taskHisy, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				pullSourceAndBuild(taskHisy, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -183,10 +181,10 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doPullSourceAndBuild(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+	private void pullSourceAndBuild(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
-			log.info("Pipeline building for projectId={}", projectId);
+			log.info("Pipeline building for projectId: {}", projectId);
 		}
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		notNull(project, String.format("Not found project by %s", projectId));
@@ -197,7 +195,8 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			String sha;
 			if (isDependency) {
 				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependencyId, taskHisy.getRefId());
-				Assert.notNull(taskSign, "Not found taskSign");
+				notNull(taskSign, String.format("Not found taskSign for dependencyId:%s, taskHistoryRefId:%s", dependencyId,
+						taskHisy.getRefId()));
 				sha = taskSign.getShaGit();
 			} else {
 				sha = taskHisy.getShaGit();
@@ -225,17 +224,17 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			taskSignDao.insertSelective(taskSign);
 		}
 
-		File logPath = config.getJobLog(taskHisy.getId());
+		File logFile = config.getJobLog(taskHisy.getId());
 		// Building.
 		if (isBlank(buildCommand)) {
-			doBuildWithDefaultCommand(projectDir, logPath, taskHisy.getId());
+			doBuildWithDefaultCommand(projectDir, logFile, taskHisy.getId());
 		} else {
-			// Obtain temporary command file.
+			// Temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
-			// Resolve placeholders.
+			// Resolve placeholder variables.
 			buildCommand = resolvePlaceholderVariables(buildCommand, projectDir);
-			// Execute with file.
-			processManager.execFile(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logPath, 300000);
+			// Execute shell file.
+			processManager.execFile(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logFile, 300000);
 		}
 
 	}

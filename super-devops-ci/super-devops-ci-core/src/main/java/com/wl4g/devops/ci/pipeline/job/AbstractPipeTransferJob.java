@@ -20,9 +20,12 @@ import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.support.cli.ProcessManager;
 
-import static com.wl4g.devops.ci.utils.LogHolder.logAdd;
+import static com.wl4g.devops.ci.utils.LogHolder.getDefault;
+import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
+import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
@@ -48,20 +51,16 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	/** Pipeline CICD properties configuration. */
 	@Autowired
 	protected CiCdProperties config;
-
+	/** Pipeline provider. */
+	final protected P provider;
 	/** Command-line process manager. */
 	@Autowired
 	protected ProcessManager processManager;
 
-	/** Pipeline provider. */
-	final protected P provider;
-
 	/** Pipeline application instance. */
 	final protected AppInstance instance;
-
 	/** Pipeline application project. */
 	final protected Project project;
-
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
@@ -93,10 +92,25 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	 */
 	protected void createReplaceRemoteDirectory(String remoteHost, String user, String path, String sshkey) throws Exception {
 		String command = "mkdir -p " + path;
-		logAdd("Creating replace remote directory for command:[%s]", command);
+		logDefault("Creating replace remote directory for %s@%s -> [%s]", user, remoteHost, command);
 
 		// Do directory creating.
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+	}
+
+	/**
+	 * Obtain log message text.
+	 * 
+	 * @param ex
+	 * @return
+	 */
+	protected String getLogMessage(Exception ex) {
+		StringBuffer message = getDefault().getMessage();
+		if (nonNull(ex)) {
+			message.append("\n");
+			message.append(Exceptions.getStackTraceAsString(ex));
+		}
+		return message.toString();
 	}
 
 }

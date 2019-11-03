@@ -312,6 +312,8 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		public void run() {
 			try {
 				this.job.run();
+			} catch (Exception e) {
+				log.error("Execution failure task", e);
 			} finally {
 				this.latch.countDown();
 			}
