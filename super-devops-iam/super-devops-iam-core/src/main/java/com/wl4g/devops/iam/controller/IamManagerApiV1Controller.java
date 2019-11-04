@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
-import static org.springframework.util.Assert.hasText;
-
+import com.wl4g.devops.common.bean.iam.model.SessionModel;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.web.GenericApiController.SessionDestroy;
+import com.wl4g.devops.iam.common.web.GenericApiController.SessionQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -29,11 +30,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.common.bean.iam.model.SessionModel;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.iam.common.web.GenericApiController.SessionDestroy;
-import com.wl4g.devops.iam.common.web.GenericApiController.SessionQuery;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * IAM management API v1 controller.</br>
@@ -61,7 +60,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	public RespBase<?> getRemoteSessions(@Validated SessionQuery query) throws Exception {
 		log.info("Get remote sessions for <= {} ...", query);
 
-		// TODO --- get remote api baseUri from DB.
+		// TODO --- get remote api baseUri from DB.//name ==> http://localhost:14040/iam-server
 
 		// Remote session API uri.
 		String url = getRemoteApiV1SessionUri("");
