@@ -4,11 +4,14 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.iam.Group;
 import com.wl4g.devops.common.bean.iam.Role;
 import com.wl4g.devops.common.bean.iam.RoleMenu;
 import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.dao.iam.GroupDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.RoleMenuDao;
+import com.wl4g.devops.iam.handler.UserUtil;
 import com.wl4g.devops.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +33,24 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleMenuDao roleMenuDao;
 
+    @Autowired
+    private UserUtil userUtil;
+
+    @Autowired
+    private GroupDao groupDao;
+
     @Override
     public List getRolesByUserGroups() {
-        //TODO get current logined userId
+        //TODO get current logined userId ==> get Groups by this user ==> get Roles by Groups
+        Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
+        List<Group> groups = groupDao.selectByUserId(currentLoginUserId);
+        List<Role> list = new ArrayList<>();
+        for(Group group : groups){
+            List<Role> roles = roleDao.selectByGroupId(group.getId());
+            list.addAll(roles);
+        }
+
+        //return list;
         return roleDao.selectByUserId(4);
     }
 

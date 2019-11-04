@@ -20,5 +20,7 @@ public interface RoleDao {
 
     List<Role> selectByUserId(Integer userId);
 
+    List<Role> selectByGroupId(Integer groupId);
+
     List<Role> list(@Param("name") String name, @Param("displayName") String displayName);
 }
