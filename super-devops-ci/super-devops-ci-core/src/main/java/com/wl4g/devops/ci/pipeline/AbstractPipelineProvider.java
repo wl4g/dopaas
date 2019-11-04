@@ -112,6 +112,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		this.shaLocal = shaLocal;
 	}
 
+	@Override
 	public TaskHistoryService getTaskHistoryService() {
 		return taskHistoryService;
 	}
@@ -154,6 +155,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 * @throws Exception
 	 */
+	@Override
 	public char[] getUsableCipherSSHKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
 		String cipherKey = config.getTranform().getCipherKey();

@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
 
 /**
@@ -49,6 +50,13 @@ public interface PipelineProvider extends DelegateAliasPrototypeBean {
 	PipelineInfo getPipelineInfo();
 
 	/**
+	 * Get task history service.
+	 * 
+	 * @return
+	 */
+	TaskHistoryService getTaskHistoryService();
+
+	/**
 	 * Invoke remote commands.
 	 * 
 	 * @param remoteHost
@@ -58,6 +66,8 @@ public interface PipelineProvider extends DelegateAliasPrototypeBean {
 	 * @throws Exception
 	 */
 	void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception;
+
+	char[] getUsableCipherSSHKey(String sshkey) throws Exception;
 
 	String getShaLocal();
 

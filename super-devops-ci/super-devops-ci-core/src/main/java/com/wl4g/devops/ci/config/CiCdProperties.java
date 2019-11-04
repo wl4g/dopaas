@@ -27,6 +27,7 @@ import static com.wl4g.devops.common.utils.lang.SystemUtils2.cleanSystemPath;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
 /**
@@ -142,7 +143,7 @@ public class CiCdProperties implements InitializingBean {
 	}
 
 	//
-	// Functions.
+	// Function's.
 	//
 
 	public File getJobBaseDir(Integer taskHisyId) {
@@ -182,6 +183,12 @@ public class CiCdProperties implements InitializingBean {
 		isTrue(instanceCount > 0, "Job instance count must greater than or equal to 0");
 		int tmpMultilpe = (instanceCount / getExecutor().getConcurrency() * 2);
 		return getTranform().getTransferTimeoutMs() * tmpMultilpe;
+	}
+
+	public File getTransferRemoteProgramTmpFile(String projectName, String suffix) {
+		hasText(projectName, "Transfer project name must not be empty.");
+		hasText(projectName, "Transfer project file suffix must not be empty.");
+		return new File(getTranform().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);
 	}
 
 }

@@ -20,10 +20,8 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
+import java.io.File;
 import java.util.List;
-
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-import static org.springframework.util.Assert.notNull;
 
 /**
  * NPM view deployments pipeline handler tasks.
@@ -32,7 +30,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class NpmViewPipeTransferJob extends BasedViewPipeTransferJob<NpmViewPipelineProvider> {
+public class NpmViewPipeTransferJob extends GenericHostPipeTransferJob<NpmViewPipelineProvider> {
 
 	public NpmViewPipeTransferJob(NpmViewPipelineProvider provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
@@ -40,39 +38,39 @@ public class NpmViewPipeTransferJob extends BasedViewPipeTransferJob<NpmViewPipe
 	}
 
 	@Override
-	public void run() {
-		notNull(taskDetailId, "taskDetailId can not be null");
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is starting ...");
-		}
-		try {
-			// Update status to running.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+		// Create replace remote home temporary directory.
+		createReplaceRemoteDirectory(remoteHost, user, config.getTranform().getRemoteHomeTmpDir(), sshkey);
 
-			// Pre commands.
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
-					provider.getPipelineInfo().getTaskHistory().getPreCommand(), instance.getSshKey());
+		// Transfer to remote temporary directory.
+		String localFile = config.getJobBackup(provider.getPipelineInfo().getTaskHistory().getId()) + "/"
+				+ provider.getPipelineInfo().getProject().getProjectName() + ".tar.gz";
+		transferToRemoteTmpDir(remoteHost, user, sshkey, localFile);
 
-			// Scp to tmp,rename,move to webapps
-			handOut(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
+		// Create replace remote appHome directory.
+		createReplaceRemoteDirectory(remoteHost, user, provider.getPipelineInfo().getProject().getParentAppHome(), sshkey);
 
-			// Post commands. (restart command)
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(),
-					provider.getPipelineInfo().getTaskHistory().getPostCommand(), instance.getSshKey());
+		// Uncompress program.
+		decompressRemoteProgram(remoteHost, user, sshkey);
 
-			// Update status to success.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, ""); // TODO
+		// Cleanup temporary program file.
+		cleanupRemoteTmpProgramFile(remoteHost, user, sshkey, "tar.gz");
+	}
 
-		} catch (Exception e) {
-			String errmsg = String.format("Transfer deploy failed. project(%s), taskDetailId(%s)",
-					provider.getPipelineInfo().getProject().getProjectName(), taskDetailId);
-			log.error(errmsg, e);
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, "");// TODO
-		}
-
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is finished!");
-		}
+	/**
+	 * Decompression executable program assets file.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param sshkey
+	 * @throws Exception
+	 */
+	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey) throws Exception {
+		File remoteTmpFile = config.getTransferRemoteProgramTmpFile(provider.getPipelineInfo().getProject().getProjectName(),
+				"tar.gz");
+		String command = "tar -zxvf " + remoteTmpFile.getAbsolutePath() + " -C "
+				+ provider.getPipelineInfo().getProject().getParentAppHome();
+		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 }

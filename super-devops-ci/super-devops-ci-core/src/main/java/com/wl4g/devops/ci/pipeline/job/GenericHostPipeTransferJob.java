@@ -15,6 +15,12 @@
  */
 package com.wl4g.devops.ci.pipeline.job;
 
+import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.share.AppInstance;
+
+import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPacknameWithOutPostfix;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
@@ -23,53 +29,41 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import java.io.File;
 import java.util.List;
 
-import com.wl4g.devops.ci.pipeline.BasedMavenPipelineProvider;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Based MAVEN deploy transfer job.
+ * Generic based host deploying transfer job.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年10月25日
+ * @version v1.0 2019年05月23日
  * @since
  * @param <P>
  */
-public abstract class BasedMavenPipeTransferJob<P extends BasedMavenPipelineProvider> extends AbstractPipeTransferJob<P> {
+public abstract class GenericHostPipeTransferJob<P extends PipelineProvider> extends AbstractPipeTransferJob<P> {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public BasedMavenPipeTransferJob(P provider, Project project, AppInstance instance,
+	public GenericHostPipeTransferJob(P provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(provider, project, instance, taskHistoryDetails);
 	}
 
 	/**
-	 * Deploying executable to remote host instances.</br>
-	 * SCP & Uncompress & cleanup.
+	 * Creating replace remote directory.
 	 * 
-	 * @param path
 	 * @param remoteHost
 	 * @param user
-	 * @param targetPath
+	 * @param remoteDir
 	 * @param sshkey
 	 * @throws Exception
 	 */
-	public void doRemoteDeploying(String path, String remoteHost, String user, String targetPath, String sshkey)
+	protected void createReplaceRemoteDirectory(String remoteHost, String user, String remoteDir, String sshkey)
 			throws Exception {
-		// Create replace remote directory.
-		createReplaceRemoteDirectory(remoteHost, user, config.getTranform().getRemoteHomeTmpDir(), sshkey);
+		String command = "mkdir -p " + remoteDir;
+		logDefault("Creating replace remote directory for %s@%s -> [%s]", user, remoteHost, command);
 
-		// Transfer to remote temporary directory.
-		transferToRemoteTmpDir(remoteHost, user, sshkey, path);
-
-		// Uncompress program.
-		decompressExecutableProgram(remoteHost, user, sshkey, path);
-
-		// UnInstall older remote executable program.
-		unInstallOlderRemoteProgram(remoteHost, user, path, targetPath, sshkey);
-
-		// Install newer executable program.
-		installNewerRemoteProgram(remoteHost, user, path, targetPath, sshkey);
+		// Do directory creating.
+		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
@@ -81,7 +75,7 @@ public abstract class BasedMavenPipeTransferJob<P extends BasedMavenPipelineProv
 	 * @param localFile
 	 * @throws Exception
 	 */
-	private void transferToRemoteTmpDir(String remoteHost, String user, String sshkey, String localFile) throws Exception {
+	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey, String localFile) throws Exception {
 		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
 		transferFile(remoteHost, user, provider.getUsableCipherSSHKey(sshkey), new File(localFile), remoteTmpDir);
 	}
@@ -95,9 +89,9 @@ public abstract class BasedMavenPipeTransferJob<P extends BasedMavenPipelineProv
 	 * @param path
 	 * @throws Exception
 	 */
-	private void decompressExecutableProgram(String remoteHost, String user, String sshkey, String path) throws Exception {
+	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey, String path) throws Exception {
 		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
-		String command = "tar -xvf " + remoteTmpDir + "/" + subPackname(path) + " -C " + remoteTmpDir;
+		String command = "tar -zxvf " + remoteTmpDir + "/" + subPackname(path) + " -C " + remoteTmpDir; // TODO?
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
@@ -111,7 +105,7 @@ public abstract class BasedMavenPipeTransferJob<P extends BasedMavenPipelineProv
 	 * @param targetPath
 	 * @throws Exception
 	 */
-	private void unInstallOlderRemoteProgram(String remoteHost, String user, String sshkey, String path, String targetPath)
+	protected void unInstallOlderRemoteProgram(String remoteHost, String user, String sshkey, String path, String targetPath)
 			throws Exception {
 		String s = targetPath + "/" + subPacknameWithOutPostfix(path);
 		if (isBlank(s) || s.trim().equals("/")) {
@@ -131,11 +125,27 @@ public abstract class BasedMavenPipeTransferJob<P extends BasedMavenPipelineProv
 	 * @param sshkey
 	 * @throws Exception
 	 */
-	private void installNewerRemoteProgram(String remoteHost, String user, String path, String targetPath, String sshkey)
+	protected void installNewerRemoteProgram(String remoteHost, String user, String path, String targetPath, String sshkey)
 			throws Exception {
 		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
 		String command = "mv " + remoteTmpDir + "/" + subPacknameWithOutPostfix(path) + " " + targetPath + "/"
 				+ subPacknameWithOutPostfix(path);
+		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+	}
+
+	/**
+	 * Cleanup remote temporary program file.
+	 * 
+	 * @param remoteHost
+	 * @param user
+	 * @param sshkey
+	 * @param suffix
+	 * @throws Exception
+	 */
+	protected void cleanupRemoteTmpProgramFile(String remoteHost, String user, String sshkey, String suffix) throws Exception {
+		File remoteTmpFile = config.getTransferRemoteProgramTmpFile(provider.getPipelineInfo().getProject().getProjectName(),
+				suffix);
+		String command = "rm -Rf " + remoteTmpFile.getAbsolutePath();
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 

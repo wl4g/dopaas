@@ -29,7 +29,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  * @version v1.0 2019年10月25日
  * @since
  */
-public class DjangoStandardTransferJob extends AbstractPipeTransferJob<DjangoStandardPipelineProvider> {
+public class DjangoStandardTransferJob extends GenericHostPipeTransferJob<DjangoStandardPipelineProvider> {
 
 	public DjangoStandardTransferJob(DjangoStandardPipelineProvider provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
@@ -37,7 +37,7 @@ public class DjangoStandardTransferJob extends AbstractPipeTransferJob<DjangoSta
 	}
 
 	@Override
-	public void run() {
+	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
