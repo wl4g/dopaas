@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -25,8 +26,8 @@ public class MenuController {
     @RequestMapping(value = "/getMenuTree")
     public RespBase<?> getMenuTree() {
         RespBase<Object> resp = RespBase.create();
-        List<Menu> menuTree = menuService.getMenuTree();
-        resp.getData().put("data",menuTree);
+        Map<String, Object> result = menuService.getMenuTree();
+        resp.setData(result);
         return resp;
     }
 

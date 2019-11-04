@@ -3,7 +3,6 @@ package com.wl4g.devops.iam.controller;
 import com.wl4g.devops.common.bean.iam.Group;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.GroupService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,7 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @RequiresPermissions("iam:group:tree")
+    //@RequiresPermissions("iam:group:tree")
     @RequestMapping(value = "/getGroupsTree")
     public RespBase<?> getGroupsTree() {
         RespBase<Object> resp = RespBase.create();

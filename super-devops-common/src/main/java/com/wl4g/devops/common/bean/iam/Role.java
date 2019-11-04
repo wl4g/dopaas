@@ -2,16 +2,20 @@ package com.wl4g.devops.common.bean.iam;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
+import java.util.List;
+
 public class Role extends BaseBean {
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;;
+	private String name;
 
 	private String displayName;
 
 	private Integer type;
 
 	private Integer status;
+
+	private List<Integer> menuIds;
 
 	public String getName() {
 		return name;
@@ -45,4 +49,11 @@ public class Role extends BaseBean {
 		this.status = status;
 	}
 
+	public List<Integer> getMenuIds() {
+		return menuIds;
+	}
+
+	public void setMenuIds(List<Integer> menuIds) {
+		this.menuIds = menuIds;
+	}
 }

@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -28,20 +31,26 @@ public class MenuServiceImpl implements MenuService {
     private UserDao userDao;
 
     @Override
-    public List<Menu> getMenuTree() {
+    public Map<String,Object> getMenuTree() {
+        Map<String,Object> result = new HashMap<>();
         //get top-level menu
         List<Menu> menus = menuDao.selectByParentId(0);
+        List<Menu> menus2 = new ArrayList<>();
+        menus2.addAll(menus);
         //get childrens
-        getChildren(menus);
-        return menus;
+        getChildren(menus,menus2);
+        result.put("data",menus);
+        result.put("data2",menus2);
+        return result;
     }
 
-    private void getChildren(List<Menu> menus) {
+    private void getChildren(List<Menu> menus,List<Menu> menus2) {
         for (Menu menu : menus) {
             List<Menu> childrens = menuDao.selectByParentId(menu.getId());
+            menus2.addAll(childrens);
             if (!CollectionUtils.isEmpty(childrens)) {
                 menu.setChildren(childrens);
-                getChildren(childrens);
+                getChildren(childrens,menus2);
             }
         }
     }

@@ -23,10 +23,10 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @RequestMapping(value = "/getRoles")
-    public RespBase<?> detail() {
+    @RequestMapping(value = "/getRolesByUserGroups")
+    public RespBase<?> getRolesByUserGroups() {
         RespBase<Object> resp = RespBase.create();
-        List roles = roleService.getRoles();
+        List roles = roleService.getRolesByUserGroups();
         resp.getData().put("data",roles);
         return resp;
     }
