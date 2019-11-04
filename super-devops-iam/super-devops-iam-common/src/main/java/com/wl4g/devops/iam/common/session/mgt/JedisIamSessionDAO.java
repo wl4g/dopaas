@@ -100,23 +100,23 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 	}
 
 	@Override
-	public ScanCursor<IamSession> getAccessSessions(final int limit) {
+	public IamSessionScanCursor getAccessSessions(final int limit) {
 		return getAccessSessions(new CursorWrapper(), 200);
 	}
 
 	@Override
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
+	public IamSessionScanCursor getAccessSessions(final CursorWrapper cursor, int limit) {
 		return getAccessSessions(cursor, limit, null);
 	}
 
 	@SuppressWarnings("resource")
 	@Override
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
+	public IamSessionScanCursor getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
 
 		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
-		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), cursor, IamSession.class, params) {
+		return new IamSessionScanCursor(cacheManager.getJedisCluster(), cursor, IamSession.class, params) {
 		}.open();
 	}
 

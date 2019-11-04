@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.web.api;
+package com.wl4g.devops.iam.common.web;
 
-import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.bean.iam.model.SessionModel;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.iam.config.properties.IamProperties;
-import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
 import com.wl4g.devops.support.cache.ScanCursor;
 import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 
@@ -51,19 +50,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Generic metric API controller.
+ * Generic abstract API controller.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月31日
  * @since
  */
-@com.wl4g.devops.iam.annotation.GenericApiV1Controller
+@Beta
 @ResponseBody
-public class GenericApiV1Controller extends BaseController {
+public abstract class GenericApiController extends BaseController {
 
 	/** IAM properties configuration. */
 	@Autowired
-	protected IamProperties config;
+	protected AbstractIamProperties<?> config;
 
 	/**
 	 * Session delegate message source bundle.
@@ -133,9 +132,9 @@ public class GenericApiV1Controller extends BaseController {
 
 		// Scan active sessions all.
 		CursorWrapper cursor = CursorWrapper.parse(query.getCursor());
-		try (ScanCursor<IamSession> scanCursor = sessionDAO.getAccessSessions(cursor, query.getLimit())) {
-			List<SessionModel> sm = scanCursor.readValues().stream().map(s -> wrapToSessionModel(s)).collect(toList());
-			resp.getData().andPut(KEY_SESSIONS, sm).andPut(KEY_SESSIONS_CURSOR, scanCursor.getCursorId());
+		try (ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit())) {
+			List<SessionModel> sm = sc.readValues().stream().map(s -> wrapSessionModel(s)).collect(toList());
+			resp.getData().andPut(KEY_SESSIONS, sm).andPut(KEY_SESSIONS_INDEX, sc.getCursor());
 		}
 
 		if (log.isInfoEnabled()) {
@@ -229,7 +228,7 @@ public class GenericApiV1Controller extends BaseController {
 	 * @param s
 	 * @return
 	 */
-	private SessionModel wrapToSessionModel(IamSession s) {
+	protected SessionModel wrapSessionModel(IamSession s) {
 		SessionModel sm = new SessionModel();
 		sm.setId(String.valueOf(s.getId()));
 		sm.setLastAccessTime(s.getLastAccessTime());
@@ -254,12 +253,6 @@ public class GenericApiV1Controller extends BaseController {
 		PrincipalCollection principals = (PrincipalCollection) s.getAttribute(PRINCIPALS_SESSION_KEY);
 		if (nonNull(principals)) {
 			sm.setPrincipal(principals.getPrimaryPrincipal());
-		}
-
-		// Application grant info.
-		GrantTicketInfo grantInfo = (GrantTicketInfo) s.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
-		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
-			sm.setGrantApplications(grantInfo.getApplications().keySet());
 		}
 
 		return sm;

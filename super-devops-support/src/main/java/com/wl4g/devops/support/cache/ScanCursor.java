@@ -17,9 +17,11 @@ package com.wl4g.devops.support.cache;
 
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.Assert.hasText;
@@ -40,7 +42,9 @@ import java.util.NoSuchElementException;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Charsets;
 
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
@@ -128,7 +132,6 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 */
 	public ScanCursor(JedisCluster cluster, CursorWrapper cursor, Class<?> valueType, ScanParams param) {
 		notNull(cluster, "jedisCluster must not be null");
-		CursorWrapper.validate(cursor);
 		if (isNull(valueType)) {
 			valueType = ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
 		}
@@ -140,6 +143,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 		this.state = CursorState.READY;
 		this.cursor = cursor;
 		this.iter = new ScanIterable<>(cursor, emptyList());
+		CursorWrapper.validate(cursor);
 		notEmpty(jedisNodes, "Jedis nodes is empty.");
 	}
 
@@ -148,17 +152,9 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 * 
 	 * @see org.springframework.data.redis.core.Cursor#getCursorId()
 	 */
-	public String getCursorId() {
-		return cursor.getCursor();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.data.redis.core.Cursor#getPosition()
-	 */
-	public int getSelectionPos() {
-		return cursor.getSelectionPos();
+	public CursorWrapper getCursor() {
+		Assert.state(nonNull(cursor), "Jedis scanner cursor is null.");
+		return cursor;
 	}
 
 	/**
@@ -214,15 +210,16 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	/**
 	 * Initialize the {@link CursorWrapper} prior to usage.
 	 */
-	public synchronized final ScanCursor<E> open() {
+	@SuppressWarnings("unchecked")
+	public synchronized final <T extends ScanCursor<E>> T open() {
 		if (!isReady()) {
 			throw new IllegalStateException("Cursor already " + state + ". Cannot (re)open it.");
 		}
 
 		state = CursorState.OPEN;
-		scan(getCursorId());
+		nextScan();
 
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -285,7 +282,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 		assertCursorIsOpen();
 
 		if (!hasNext()) {
-			throw new NoSuchElementException("No more elements available for cursor " + getCursorId() + ".");
+			throw new NoSuchElementException("No more elements available for cursor " + getCursor() + ".");
 		}
 
 		return (E) deserialize(cluster.get(iter.iterator().next()), valueType);
@@ -303,23 +300,21 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 		// If the current 'iter' is fully traversed, you need to check whether
 		// the next node has data.
 		while (!iter.iterator().hasNext() && CursorState.FINISHED != state) {
-			scan(getCursorId());
+			nextScan();
 		}
 
 		return (iter.iterator().hasNext() || !checkScanFinished());
 	}
 
 	/**
-	 * Execute scan by cursor id
-	 * 
-	 * @param cursorVal
+	 * Execute scan by cursor index.
 	 */
-	protected synchronized void scan(String cursorVal) {
+	protected synchronized void nextScan() {
 		// Select a node
-		try (Jedis jedis = jedisNodes.get(getSelectionPos()).getResource()) {
+		try (Jedis jedis = jedisNodes.get(getCursor().getSelectionPos()).getResource()) {
 			// Traverse only the primary node
 			if (containsIgnoreCase(jedis.info(REPLICATION), ROLE_MASTER)) {
-				processResult(doScan(jedis, cursorVal, params));
+				processResult(doScanNode(jedis));
 			} else {
 				nextTo();
 			}
@@ -331,12 +326,10 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 * The given {@literal options} are never {@code null}.
 	 * 
 	 * @param jedis
-	 * @param cursorVal
-	 * @param params
 	 * @return
 	 */
-	protected synchronized ScanIterable<byte[]> doScan(Jedis jedis, String cursorVal, ScanParams params) {
-		ScanResult<byte[]> res = jedis.scan(cursorVal.getBytes(Charsets.UTF_8), params);
+	protected synchronized ScanIterable<byte[]> doScanNode(Jedis jedis) {
+		ScanResult<byte[]> res = jedis.scan(getCursor().getCursorByteArray(), params);
 
 		List<byte[]> items = res.getResult();
 		if (isEmpty(items)) {
@@ -365,8 +358,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 * Selection next node
 	 */
 	private synchronized void nextTo() {
-		cursor.setCursor("0"); // Reset cursor.
-		cursor.nextSelectionPos(); // Next node.
+		cursor.nextSelectiveNode(); // Next new node.
 
 		// Safe check fully scanned.
 		if (checkScanNodesCompleted()) {
@@ -384,7 +376,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 * @return
 	 */
 	private boolean checkScanFinished() {
-		return trimToEmpty(getCursorId()).equalsIgnoreCase("0");
+		return trimToEmpty(getCursor().getCursor()).equalsIgnoreCase("0");
 	}
 
 	/**
@@ -426,11 +418,14 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	final public static class CursorWrapper implements Serializable {
 		private static final long serialVersionUID = 4547949424670284416L;
 
+		/** Cursor end spec. */
+		private transient static final String STARTEND = "0";
+
 		/** Scan node position */
 		private Integer selectionPos = 0;
 
 		/** Scan node cursor value */
-		private String cursor = "0";
+		private String cursor = STARTEND;
 
 		public CursorWrapper() {
 			super();
@@ -441,12 +436,9 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 			setCursor(cursor);
 		}
 
+		@JsonIgnore
 		public Integer getSelectionPos() {
 			return selectionPos;
-		}
-
-		public Integer nextSelectionPos() {
-			return ++this.selectionPos;
 		}
 
 		public CursorWrapper setSelectionPos(Integer selectionPos) {
@@ -456,6 +448,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 			return this;
 		}
 
+		@JsonIgnore
 		public String getCursor() {
 			return cursor;
 		}
@@ -466,12 +459,37 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 			return this;
 		}
 
+		@Override
+		public String toString() {
+			return getCursorString();
+		}
+
+		@JsonIgnore
+		public void nextSelectiveNode() {
+			++this.selectionPos; // Reset cursor.
+			setCursor("0");// Reset cursor.
+		}
+
+		@JsonIgnore
+		public byte[] getCursorByteArray() {
+			return cursor.getBytes(Charsets.UTF_8);
+		}
+
 		/**
-		 * As cursor to text string.
+		 * Check has hext records.
 		 * 
 		 * @return
 		 */
-		public String asString() {
+		public boolean getHasNext() {
+			return !endsWithIgnoreCase(getCursor(), STARTEND);
+		}
+
+		/**
+		 * As cursor to string.
+		 * 
+		 * @return
+		 */
+		public String getCursorString() {
 			return getCursor() + "@" + getSelectionPos();
 		}
 
@@ -513,7 +531,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 */
 	final static class ScanIterable<K> implements Iterable<K> {
 
-		final private CursorWrapper cursorId;
+		final private CursorWrapper cursor;
 		final private List<K> items;
 		final private Iterator<K> iter;
 
@@ -541,7 +559,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 		 * @param items
 		 */
 		public ScanIterable(CursorWrapper cursor, List<K> items) {
-			this.cursorId = cursor;
+			this.cursor = cursor;
 			this.items = (isEmpty(items) ? emptyList() : new ArrayList<K>(items));
 			this.iter = this.items.iterator();
 		}
@@ -552,7 +570,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 		 * @return
 		 */
 		public CursorWrapper getCursor() {
-			return cursorId;
+			return cursor;
 		}
 
 		/**

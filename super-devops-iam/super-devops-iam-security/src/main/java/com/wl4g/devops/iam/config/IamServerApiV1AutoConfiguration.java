@@ -18,11 +18,8 @@ package com.wl4g.devops.iam.config;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
-import java.lang.annotation.Annotation;
-
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
-import com.wl4g.devops.iam.web.api.GenericApiV1Controller;
+import com.wl4g.devops.iam.common.config.GenericApiAutoConfiguration;
+import com.wl4g.devops.iam.web.IamServerApiV1Controller;
 
 /**
  * Generic API v1 auto configuration.
@@ -32,26 +29,11 @@ import com.wl4g.devops.iam.web.api.GenericApiV1Controller;
  * @since
  */
 @AutoConfigureAfter({ IamAutoConfiguration.class })
-public class GenericApiV1AutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class IamServerApiV1AutoConfiguration extends GenericApiAutoConfiguration {
 
 	@Bean
-	public GenericApiV1Controller genericApiV1Controller() {
-		return new GenericApiV1Controller();
-	}
-
-	@Override
-	protected String getMappingPrefix() {
-		return URI_S_API_V1_BASE;
-	}
-
-	@Bean
-	public PrefixHandlerMapping genericApiV1ControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return com.wl4g.devops.iam.annotation.GenericApiV1Controller.class;
+	public IamServerApiV1Controller iamServerApiV1Controller() {
+		return new IamServerApiV1Controller();
 	}
 
 }

@@ -24,6 +24,9 @@ import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.support.cache.ScanCursor;
 import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.ScanParams;
+
 public interface IamSessionDAO extends SessionDAO {
 
 	@Deprecated
@@ -67,5 +70,20 @@ public interface IamSessionDAO extends SessionDAO {
 	 *            Removal of target users
 	 */
 	public void removeAccessSession(Object principal);
+
+	/**
+	 * IAM session scanner cursor.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月4日
+	 * @since
+	 */
+	public static class IamSessionScanCursor extends ScanCursor<IamSession> {
+
+		public IamSessionScanCursor(JedisCluster cluster, CursorWrapper cursor, Class<?> valueType, ScanParams param) {
+			super(cluster, cursor, valueType, param);
+		}
+
+	}
 
 }
