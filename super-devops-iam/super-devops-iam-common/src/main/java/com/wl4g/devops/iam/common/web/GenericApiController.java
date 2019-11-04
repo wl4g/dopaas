@@ -152,7 +152,7 @@ public abstract class GenericApiController extends BaseController {
 	 */
 	@DeleteMapping(path = URI_S_API_V1_SESSION)
 	public RespBase<?> destroySession(@Validated SessionDestroy destroy) throws Exception {
-		RespBase<Object> resp = RespBase.create();
+		RespBase<String> resp = RespBase.create();
 		if (log.isInfoEnabled()) {
 			log.info("Destroy sessions by <= {}", destroy);
 		}
