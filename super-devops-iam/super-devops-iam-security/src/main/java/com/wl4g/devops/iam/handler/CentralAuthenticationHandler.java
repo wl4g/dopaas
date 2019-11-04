@@ -318,9 +318,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public SessionValidationAssertion sessionValidate(SessionValidationAssertion assertion) {
-		Assert.hasText(assertion.getApplication(), "'application' cannot not be empty");
+		hasText(assertion.getApplication(), "'application' cannot not be empty");
 
-		ScanCursor<IamSession> cursor = sessionDAO.getActiveSessions(DEFAULT_BATCH_SIZE);
+		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
 		while (cursor.hasNext()) {
 			Session session = cursor.next();
 			// GrantTicket by session.
