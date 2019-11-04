@@ -71,6 +71,7 @@ public abstract class BaseBean implements Serializable {
 		this.createDate = this.updateDate;
 		this.createBy = DEFAULT_USER_ID;
 		updateBy = DEFAULT_USER_ID;
+		this.delFlag = DEL_FLAG_NORMAL;
 	}
 
 	/**

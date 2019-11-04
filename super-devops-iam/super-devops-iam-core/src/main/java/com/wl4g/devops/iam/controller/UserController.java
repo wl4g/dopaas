@@ -5,6 +5,7 @@ import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.UserService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
     @RequestMapping(value = "/list")
     public RespBase<?> list(CustomPage customPage,String userName,String displayName) {
         RespBase<Object> resp = RespBase.create();

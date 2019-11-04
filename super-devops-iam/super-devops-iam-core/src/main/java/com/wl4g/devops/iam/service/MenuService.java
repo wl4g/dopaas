@@ -3,6 +3,7 @@ package com.wl4g.devops.iam.service;
 import com.wl4g.devops.common.bean.iam.Menu;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public interface MenuService {
 
-    List<Menu> getMenuTree();
+    Map<String,Object> getMenuTree();
 
     List<Menu> getMenuList();
 

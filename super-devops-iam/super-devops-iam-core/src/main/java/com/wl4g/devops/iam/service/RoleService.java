@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface RoleService {
 
-    List getRoles();
+    List getRolesByUserGroups();
 
     Map<String,Object> list(CustomPage customPage, String name, String displayName);
 

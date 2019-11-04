@@ -5,16 +5,17 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.iam.Role;
+import com.wl4g.devops.common.bean.iam.RoleMenu;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.iam.RoleDao;
+import com.wl4g.devops.dao.iam.RoleMenuDao;
 import com.wl4g.devops.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author vjay
@@ -26,8 +27,11 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleDao roleDao;
 
+    @Autowired
+    private RoleMenuDao roleMenuDao;
+
     @Override
-    public List getRoles() {
+    public List getRolesByUserGroups() {
         //TODO get current logined userId
         return roleDao.selectByUserId(4);
     }
@@ -54,6 +58,11 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void save(Role role) {
+        if(!CollectionUtils.isEmpty(role.getMenuIds())){//handle repeat
+            Set<Integer> set = new HashSet();
+            set.addAll(role.getMenuIds());
+            role.setMenuIds(new ArrayList<>(set));
+        }
         if (role.getId() != null) {
             update(role);
         } else {
@@ -61,14 +70,36 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+
     private void insert(Role role) {
         role.preInsert();
         roleDao.insertSelective(role);
+        List<Integer> menuIds = role.getMenuIds();
+        List<RoleMenu> roleMenus = new ArrayList<>();
+        for(Integer menuId :menuIds){
+            RoleMenu roleMenu = new RoleMenu();
+            roleMenu.preInsert();
+            roleMenu.setMenuId(menuId);
+            roleMenu.setRoleId(role.getId());
+            roleMenus.add(roleMenu);
+        }
+        roleMenuDao.insertBatch(roleMenus);
     }
 
     private void update(Role role) {
         role.preUpdate();
         roleDao.updateByPrimaryKeySelective(role);
+        roleMenuDao.deleteByRoleId(role.getId());
+        List<Integer> menuIds = role.getMenuIds();
+        List<RoleMenu> roleMenus = new ArrayList<>();
+        for(Integer menuId :menuIds){
+            RoleMenu roleMenu = new RoleMenu();
+            roleMenu.preInsert();
+            roleMenu.setMenuId(menuId);
+            roleMenu.setRoleId(role.getId());
+            roleMenus.add(roleMenu);
+        }
+        roleMenuDao.insertBatch(roleMenus);
     }
 
     @Override
@@ -82,6 +113,10 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role detail(Integer id){
-        return roleDao.selectByPrimaryKey(id);
+        Role role = roleDao.selectByPrimaryKey(id);
+        List<Integer> menuIds = roleMenuDao.selectMenuIdByRoleId(id);
+        role.setMenuIds(menuIds);
+        return role;
+
     }
 }
