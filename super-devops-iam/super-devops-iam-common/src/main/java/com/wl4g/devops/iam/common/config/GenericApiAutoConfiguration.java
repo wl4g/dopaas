@@ -15,34 +15,36 @@
  */
 package com.wl4g.devops.iam.common.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.common.kit.access.IPAccessControl;
-import com.wl4g.devops.common.kit.access.IPAccessControl.IPAccessProperties;
+import java.lang.annotation.Annotation;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 
 /**
- * IP access configuration processor.
+ * Abstract generic API auto configuration.
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年5月24日
+ * @version v1.0 2019年1月8日
  * @since
  */
-@Configuration
-public class IPAccessConfiguration {
-	final static String IP_ACCESS_PREFIX = "spring.cloud.devops.iam.acl";
+public class GenericApiAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
-	@Bean
-	public IPAccessControl ipAccessControl(IPAccessProperties properties) {
-		return new IPAccessControl(properties);
+	@Override
+	protected String getMappingPrefix() {
+		return URI_S_API_V1_BASE;
 	}
 
 	@Bean
-	@ConfigurationProperties(prefix = IP_ACCESS_PREFIX)
-	public IPAccessProperties ipAccessProperties() {
-		return new IPAccessProperties();
+	public PrefixHandlerMapping genericApiV1ControllerPrefixHandlerMapping() {
+		return super.createPrefixHandlerMapping();
+	}
+
+	@Override
+	protected Class<? extends Annotation> annotationClass() {
+		return IamApiV1Controller.class;
 	}
 
 }

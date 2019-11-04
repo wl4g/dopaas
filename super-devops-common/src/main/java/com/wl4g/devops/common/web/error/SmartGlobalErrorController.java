@@ -49,6 +49,7 @@ import static com.wl4g.devops.common.constants.DevOpsConstants.PARAM_STACK_TRACE
 import static com.wl4g.devops.common.utils.web.WebUtils2.write;
 import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
+import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -188,7 +189,8 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 				}
 			}
 		} catch (Throwable th) {
-			log.error("\n=======>>> Basic global errors handling failure!\n", th);
+			log.error(String.format("Failed to global errors for origin causes: \n%s at causes:\n%s", getStackTraceAsString(ex),
+					getStackTraceAsString(th)));
 		}
 	}
 

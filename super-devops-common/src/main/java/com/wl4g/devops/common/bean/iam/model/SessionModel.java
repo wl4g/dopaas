@@ -42,7 +42,7 @@ public class SessionModel implements Serializable {
 	/**
 	 * Access sessions cursor response key-name.
 	 */
-	final public static String KEY_SESSIONS_CURSOR = "sessions";
+	final public static String KEY_SESSIONS_INDEX = "index";
 
 	private String id;
 	private Date startTimestamp;
