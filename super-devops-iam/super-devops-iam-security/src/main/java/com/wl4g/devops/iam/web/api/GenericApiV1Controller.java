@@ -33,8 +33,10 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -128,7 +130,7 @@ public class GenericApiV1Controller extends BaseController {
 
 		// Scan active sessions all.
 		try (ScanCursor<IamSession> cursor = sessionDAO.getActiveSessions(query.getLimit())) {
-			List<SessionModel> ss = cursor.readValues().stream().map(s -> convertToSessionModel(s)).collect(toList());
+			List<SessionModel> ss = cursor.readValues().stream().map(s -> wrapToSessionModel(s)).collect(toList());
 			resp.getData().put(KEY_SESSIONS, ss);
 		}
 
@@ -139,20 +141,32 @@ public class GenericApiV1Controller extends BaseController {
 	}
 
 	/**
-	 * Cleanup remove session.
+	 * Destroy cleanup session.
 	 *
-	 * @param query
+	 * @param destroy
 	 * @return
 	 * @throws Exception
 	 */
 	@DeleteMapping(path = URI_S_API_V1_SESSION)
-	public RespBase<?> deleteSession(SessionQuery query) throws Exception {
-		// TODO
-		return null;
+	public RespBase<?> destroySession(SessionDestroy destroy) throws Exception {
+		RespBase<List<SessionModel>> resp = RespBase.create();
+		if (log.isInfoEnabled()) {
+			log.info("Destroy sessions by <= {}", destroy);
+		}
+
+		// Destroy sessions.
+		for (Serializable sessionId : destroy.getSessionIds()) {
+			sessionDAO.delete(new IamSession(sessionId));
+		}
+
+		if (log.isInfoEnabled()) {
+			log.info("Destroy sessions => {}", resp);
+		}
+		return resp;
 	}
 
 	/**
-	 * Convert {@link IamSession} to {@link SessionModel}. </br>
+	 * Convert wrap {@link IamSession} to {@link SessionModel}. </br>
 	 * </br>
 	 * 
 	 * <b>Origin {@link IamSession} json string example:</b>
@@ -211,9 +225,9 @@ public class GenericApiV1Controller extends BaseController {
 	 * @param s
 	 * @return
 	 */
-	private SessionModel convertToSessionModel(IamSession s) {
+	private SessionModel wrapToSessionModel(IamSession s) {
 		SessionModel sm = new SessionModel();
-		sm.setId(s.getId());
+		sm.setId(String.valueOf(s.getId()));
 		sm.setLastAccessTime(s.getLastAccessTime());
 		sm.setStartTimestamp(s.getStartTimestamp());
 		sm.setStopTimestamp(s.getStopTimestamp());
@@ -297,14 +311,16 @@ public class GenericApiV1Controller extends BaseController {
 	public static class SessionDestroy implements Serializable {
 		private static final long serialVersionUID = 2579844578836104918L;
 
-		private String sessionId;
+		private List<Serializable> sessionIds = new ArrayList<>(4);
 
-		public String getSessionId() {
-			return sessionId;
+		public List<Serializable> getSessionIds() {
+			return sessionIds;
 		}
 
-		public void setSessionId(String sessionId) {
-			this.sessionId = sessionId;
+		public void setSessionIds(List<Serializable> sessionIds) {
+			if (!isEmpty(sessionIds)) {
+				this.sessionIds.addAll(sessionIds);
+			}
 		}
 
 		@Override
