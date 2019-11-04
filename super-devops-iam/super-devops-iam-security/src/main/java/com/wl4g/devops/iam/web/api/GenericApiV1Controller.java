@@ -25,6 +25,7 @@ import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
 import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 
 import static com.wl4g.devops.common.bean.iam.model.SessionModel.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
@@ -40,9 +41,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -122,16 +125,17 @@ public class GenericApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@GetMapping(path = URI_S_API_V1_SESSION)
-	public RespBase<?> getSessions(SessionQuery query) throws Exception {
-		RespBase<List<SessionModel>> resp = RespBase.create();
+	public RespBase<?> getSessions(@Validated SessionQuery query) throws Exception {
+		RespBase<Object> resp = RespBase.create();
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions by <= {}", query);
 		}
 
 		// Scan active sessions all.
-		try (ScanCursor<IamSession> cursor = sessionDAO.getActiveSessions(query.getLimit())) {
-			List<SessionModel> ss = cursor.readValues().stream().map(s -> wrapToSessionModel(s)).collect(toList());
-			resp.getData().put(KEY_SESSIONS, ss);
+		CursorWrapper cursor = CursorWrapper.parse(query.getCursor());
+		try (ScanCursor<IamSession> scanCursor = sessionDAO.getAccessSessions(cursor, query.getLimit())) {
+			List<SessionModel> sm = scanCursor.readValues().stream().map(s -> wrapToSessionModel(s)).collect(toList());
+			resp.getData().andPut(KEY_SESSIONS, sm).andPut(KEY_SESSIONS_CURSOR, scanCursor.getCursorId());
 		}
 
 		if (log.isInfoEnabled()) {
@@ -148,8 +152,8 @@ public class GenericApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@DeleteMapping(path = URI_S_API_V1_SESSION)
-	public RespBase<?> destroySession(SessionDestroy destroy) throws Exception {
-		RespBase<List<SessionModel>> resp = RespBase.create();
+	public RespBase<?> destroySession(@Validated SessionDestroy destroy) throws Exception {
+		RespBase<Object> resp = RespBase.create();
 		if (log.isInfoEnabled()) {
 			log.info("Destroy sessions by <= {}", destroy);
 		}
@@ -272,8 +276,8 @@ public class GenericApiV1Controller extends BaseController {
 		private static final long serialVersionUID = 5766036036946339544L;
 
 		/** Scan cursor. */
-		@NotBlank
-		private String cursor;
+		@NotBlank(message = "Invalid argument cursor.(e.g. cursor=0@0)")
+		private String cursor = "0@0";
 
 		/** Page size. */
 		private int limit = 200;
@@ -311,6 +315,7 @@ public class GenericApiV1Controller extends BaseController {
 	public static class SessionDestroy implements Serializable {
 		private static final long serialVersionUID = 2579844578836104918L;
 
+		@NotEmpty
 		private List<Serializable> sessionIds = new ArrayList<>(4);
 
 		public List<Serializable> getSessionIds() {

@@ -35,9 +35,14 @@ public class SessionModel implements Serializable {
 	private static final long serialVersionUID = 1990530522326712114L;
 
 	/**
-	 * Active sessions response key-name.
+	 * Access sessions response key-name.
 	 */
 	final public static String KEY_SESSIONS = "sessions";
+
+	/**
+	 * Access sessions cursor response key-name.
+	 */
+	final public static String KEY_SESSIONS_CURSOR = "sessions";
 
 	private String id;
 	private Date startTimestamp;
