@@ -19,11 +19,8 @@ import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import org.springframework.util.Assert;
 
 import java.util.List;
-
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 
 /**
  * Docker native deployments task.
@@ -32,7 +29,7 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class DockerNativePipeTransferJob extends AbstractPipeTransferJob<DockerNativePipelineProvider> {
+public class DockerNativePipeTransferJob extends GenericHostPipeTransferJob<DockerNativePipelineProvider> {
 
 	public DockerNativePipeTransferJob(DockerNativePipelineProvider provider, Project project, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
@@ -40,48 +37,25 @@ public class DockerNativePipeTransferJob extends AbstractPipeTransferJob<DockerN
 	}
 
 	@Override
-	public void run() {
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is starting ...");
-		}
+	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+		// Pull
+		provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
+				+ ":master"/*
+							 * TODO 要改成动态的
+							 * provider.getTaskHistory().getPreCommand()
+							 */, instance.getSshKey());
+		// Restart
+		provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(), instance.getSshKey());
 
-		Assert.notNull(taskDetailId, "taskDetailId can not be null");
-		StringBuffer result = new StringBuffer();
-		try {
-			// Update status
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
-
-			// Pull
-			provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
-					+ ":master"/*
-								 * TODO 要改成动态的
-								 * provider.getTaskHistory().getPreCommand()
-								 */, instance.getSshKey());
-			// Restart
-			provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(), instance.getSshKey());
-
-			// Remove Container
-			provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
-					instance.getSshKey());
-			// Run
-			provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + project.getGroupName()
-					+ ":master"/*
-								 * TODO 要改成动态的
-								 * provider.getTaskHistory().getPostCommand()
-								 */, instance.getSshKey());
-			// Update status
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, result.toString());
-
-		} catch (Exception e) {
-			log.error("Deploy job failed", e);
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL,
-					result.toString() + "\n" + e.toString());
-			// throw new RuntimeException(e);
-		}
-
-		if (log.isInfoEnabled()) {
-			log.info("Deploy task is finished!");
-		}
+		// Remove Container
+		provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
+				instance.getSshKey());
+		// Run
+		provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + project.getGroupName()
+				+ ":master"/*
+							 * TODO 要改成动态的
+							 * provider.getTaskHistory().getPostCommand()
+							 */, instance.getSshKey());
 	}
 
 }

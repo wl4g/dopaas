@@ -17,16 +17,12 @@ package com.wl4g.devops.ci.pipeline.job;
 
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.util.List;
 
-import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
 
 /**
  * MAVEN assemble tar deployments task.
@@ -35,7 +31,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class MvnAssembleTarPipeTransferJob extends BasedMavenPipeTransferJob<MvnAssembleTarPipelineProvider> {
+public class MvnAssembleTarPipeTransferJob extends GenericHostPipeTransferJob<MvnAssembleTarPipelineProvider> {
 
 	final protected String path;
 	final protected String tarPath;
@@ -50,46 +46,23 @@ public class MvnAssembleTarPipeTransferJob extends BasedMavenPipeTransferJob<Mvn
 	}
 
 	@Override
-	public void run() {
-		notNull(taskDetailId, "taskDetailId can not be null");
-		log.info("Deploy task is starting for instance:{}, projectId:{}, projectName:{} ...", instance.getId(), project.getId(),
-				project.getProjectName());
+	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+		String path0 = path + tarPath;
 
-		try {
-			TaskHistory taskHisy = provider.getPipelineInfo().getTaskHistory();
-			// Update status to running.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
-			log.info("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
-					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
+		// Create replace remote home temporary directory.
+		createReplaceRemoteDirectory(remoteHost, user, config.getTranform().getRemoteHomeTmpDir(), sshkey);
 
-			// Call PRE commands.
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
-					instance.getSshKey());
+		// Transfer to remote temporary directory.
+		transferToRemoteTmpDir(remoteHost, user, sshkey, path0);
 
-			// Distributed deploying to remote.
-			doRemoteDeploying(path + tarPath, instance.getHostname(), instance.getSshUser(), project.getParentAppHome(),
-					instance.getSshKey());
+		// Uncompress program.
+		decompressRemoteProgram(remoteHost, user, sshkey, path0);
 
-			// Call post remote commands (e.g. restart)
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
-					instance.getSshKey());
+		// UnInstall older remote executable program.
+		unInstallOlderRemoteProgram(remoteHost, user, path0, project.getParentAppHome(), sshkey);
 
-			// Update status to success.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, getLogMessage(null));
-			log.error("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
-					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
-
-		} catch (Exception ex) {
-			log.error("Failed to transfer job", ex);
-
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, getLogMessage(ex));
-			log.error("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
-					TASK_STATUS_FAIL, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
-		} finally {
-			cleanupDefault(); // Help GC
-		}
-
-		log.info("Mvn transfer task of finished!");
+		// Install newer executable program.
+		installNewerRemoteProgram(remoteHost, user, path0, project.getParentAppHome(), sshkey);
 	}
 
 }
