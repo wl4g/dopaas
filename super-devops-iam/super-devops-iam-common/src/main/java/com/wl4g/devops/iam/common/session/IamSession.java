@@ -95,33 +95,35 @@ public class IamSession implements ValidatingSession, Serializable {
 	// http://mail-archives.apache.org/mod_mbox/shiro-user/201109.mbox/%3C4E81BCBD.8060909@metaphysis.net%3E
 	//
 	// ==============================================================
-	private String id;
-	private Date startTimestamp;
+	private Serializable id;
+	private Date startTimestamp = new Date();
 	private Date stopTimestamp;
-	private Date lastAccessTime;
-	private long timeout;
+	private Date lastAccessTime = startTimestamp;
+	// Remove concrete reference to DefaultSessionManager
+	private long timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
 	private boolean expired;
 	private String host;
 	private Map<Object, Object> attributes;
 
 	public IamSession() {
-		// Remove concrete reference to DefaultSessionManager
-		this.timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
-		this.startTimestamp = new Date();
-		this.lastAccessTime = this.startTimestamp;
+	}
+
+	public IamSession(Serializable id) {
+		setId(id);
 	}
 
 	public IamSession(String host) {
-		this();
-		this.host = host;
+		setHost(host);
 	}
 
 	@Override
-	public String getId() {
+	public Serializable getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Serializable id) {
+		// isTrue((isNull(id) || isBlank(id.toString())), "Iam session id must
+		// not be empty.");
 		this.id = id;
 	}
 
