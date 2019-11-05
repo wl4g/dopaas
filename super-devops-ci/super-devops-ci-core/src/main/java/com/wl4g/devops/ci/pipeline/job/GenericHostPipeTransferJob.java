@@ -143,7 +143,7 @@ public abstract class GenericHostPipeTransferJob<P extends PipelineProvider> ext
 	 * @throws Exception
 	 */
 	protected void cleanupRemoteTmpProgramFile(String remoteHost, String user, String sshkey, String suffix) throws Exception {
-		File remoteTmpFile = config.getTransferRemoteProgramTmpFile(provider.getPipelineInfo().getProject().getProjectName(),
+		File remoteTmpFile = config.getTransferRemoteHomeTmpFile(provider.getPipelineInfo().getProject().getProjectName(),
 				suffix);
 		String command = "rm -Rf " + remoteTmpFile.getAbsolutePath();
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);

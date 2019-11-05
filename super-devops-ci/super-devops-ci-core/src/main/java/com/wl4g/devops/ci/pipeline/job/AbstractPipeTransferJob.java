@@ -21,7 +21,6 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.support.cli.ProcessManager;
 
 import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
@@ -29,6 +28,7 @@ import static com.wl4g.devops.ci.utils.LogHolder.getDefault;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_FAIL;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_RUNNING;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_SUCCESS;
+import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notEmpty;
@@ -55,16 +55,20 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	/** Pipeline CICD properties configuration. */
 	@Autowired
 	protected CiCdProperties config;
+
 	/** Command-line process manager. */
 	@Autowired
 	protected ProcessManager processManager;
 
 	/** Pipeline provider. */
 	final protected P provider;
+
 	/** Pipeline deploy project. */
 	final protected Project project;
+
 	/** Pipeline deploy instance. */
 	final protected AppInstance instance;
+
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
@@ -95,7 +99,7 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 			TaskHistory taskHisy = provider.getPipelineInfo().getTaskHistory();
 			// Update status to running.
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
-			log.info("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+			log.info("[PRE]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
 					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
 
 			// Call PRE commands.
@@ -111,14 +115,14 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 
 			// Update status to success.
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, getLogMessage(null));
-			log.info("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+			log.info("[SUCCESS]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
 
 		} catch (Exception ex) {
 			log.error("Failed to transfer job", ex);
 
 			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, getLogMessage(ex));
-			log.error("Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+			log.error("[FAILED]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 					TASK_STATUS_FAIL, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
 		} finally {
 			cleanupDefault(); // Help GC
@@ -148,8 +152,8 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	protected String getLogMessage(Exception ex) {
 		StringBuffer message = getDefault().getMessage();
 		if (nonNull(ex)) {
-			message.append("\n");
-			message.append(Exceptions.getStackTraceAsString(ex));
+			message.append("\nat cause:\n");
+			message.append(getStackTraceAsString(ex));
 		}
 		return message.toString();
 	}

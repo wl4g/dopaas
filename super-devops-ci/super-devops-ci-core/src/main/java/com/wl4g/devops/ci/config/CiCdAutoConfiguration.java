@@ -16,19 +16,27 @@
 package com.wl4g.devops.ci.config;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
-import com.wl4g.devops.ci.core.DefaultPipeline;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.DefaultPipelineManager;
+import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.job.DjangoStandardTransferJob;
 import com.wl4g.devops.ci.pipeline.job.DockerNativePipeTransferJob;
+import com.wl4g.devops.ci.pipeline.job.GolangTransferJob;
 import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipeTransferJob;
 import com.wl4g.devops.ci.pipeline.job.NpmViewPipeTransferJob;
 import com.wl4g.devops.ci.pipeline.job.SpringExecutableJarTransferJob;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
+import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.ci.vcs.VcsOperator;
+import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
+import com.wl4g.devops.ci.vcs.bitbucket.BitbucketVcsOperator;
+import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
+import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
+import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
+import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineJob;
-import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
@@ -75,13 +83,8 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public Pipeline defaultPipeline() {
-		return new DefaultPipeline();
-	}
-
-	@Bean
-	public GitlabV4VcsOperator gitlabV4Operator() {
-		return new GitlabV4VcsOperator();
+	public PipelineManager defaultPipeliner() {
+		return new DefaultPipelineManager();
 	}
 
 	@Bean
@@ -96,41 +99,85 @@ public class CiCdAutoConfiguration {
 		return new CiCdConsole();
 	}
 
+	// --- VCS ---
+
+	@Bean
+	public VcsOperator gitlabV4VcsOperator() {
+		return new GitlabV4VcsOperator();
+	}
+
+	@Bean
+	public VcsOperator githubV4VcsOperator() {
+		return new GithubVcsOperator();
+	}
+
+	@Bean
+	public VcsOperator bitbucketVcsOperator() {
+		return new BitbucketVcsOperator();
+	}
+
+	@Bean
+	public VcsOperator codingVcsOperator() {
+		return new CodingVcsOperator();
+	}
+
+	@Bean
+	public VcsOperator giteeVcsOperator() {
+		return new GiteeVcsOperator();
+	}
+
+	@Bean
+	public VcsOperator alicodeVcsOperator() {
+		return new AlicodeVcsOperator();
+	}
+
+	@Bean
+	public CompositeVcsOperateAdapter compositeVcsOperateAdapter(List<VcsOperator> operators) {
+		return new CompositeVcsOperateAdapter(operators);
+	}
+
 	// --- PIPELINE PROVIDERs ---
 
 	@Bean
 	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineInfo info) {
+	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext info) {
 		return new MvnAssembleTarPipelineProvider(info);
 	}
 
 	@Bean
 	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineInfo info) {
+	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext info) {
 		return new SpringExecutableJarPipelineProvider(info);
 	}
 
 	@Bean
 	@DelegateAlias({ PipelineType.DOCKER_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineInfo info) {
+	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext info) {
 		return new DockerNativePipelineProvider(info);
-	}
-
-	@Bean
-	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineInfo info) {
-		return new DjangoStandardPipelineProvider(info);
 	}
 
 	@Bean
 	@DelegateAlias({ PipelineType.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineInfo info) {
+	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext info) {
 		return new NpmViewPipelineProvider(info);
+	}
+
+	@Bean
+	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineContext info) {
+		return new DjangoStandardPipelineProvider(info);
+	}
+
+	@Bean
+	@DelegateAlias({ PipelineType.GOLANG_STANDARD })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public GolangPipelineProvider golangPipelineProvider(PipelineContext info) {
+		return new GolangPipelineProvider(info);
 	}
 
 	// --- PIPELINE TRANSFER JOBs ---
@@ -168,6 +215,13 @@ public class CiCdAutoConfiguration {
 	public DjangoStandardTransferJob djangoStandardTransferJob(DjangoStandardPipelineProvider provider, Project project,
 			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
 		return new DjangoStandardTransferJob(provider, project, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public GolangTransferJob golangTransferJob(DjangoStandardPipelineProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		return new GolangTransferJob(provider, project, instance, taskHistoryDetails);
 	}
 
 	// --- TIMING SCHEDULE ---

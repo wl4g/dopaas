@@ -13,36 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.pipeline.job;
 
-import com.wl4g.devops.ci.core.PipelineContext;
+import java.util.List;
+
+import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * Spring boot executable deployments provider.
- *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
+ * Golang stdandard transfer job.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年10月25日
  * @since
  */
-public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvider {
+public class GolangTransferJob extends GenericHostPipeTransferJob<DjangoStandardPipelineProvider> {
 
-	public SpringExecutableJarPipelineProvider(PipelineContext info) {
-		super(info);
+	public GolangTransferJob(DjangoStandardPipelineProvider provider, Project project, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		super(provider, project, instance, taskHistoryDetails);
 	}
 
 	@Override
-	public void execute() throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void rollback() throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
+	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

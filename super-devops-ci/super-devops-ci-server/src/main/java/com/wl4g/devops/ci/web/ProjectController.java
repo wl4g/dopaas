@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.web;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
+import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.BaseController;
@@ -48,13 +48,13 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATU
 public class ProjectController extends BaseController {
 
 	@Autowired
+	private CompositeVcsOperateAdapter vcsAdapter;
+
+	@Autowired
 	private ProjectService projectService;
 
 	@Autowired
 	private ProjectDao projectDao;
-
-	@Autowired
-	private GitlabV4VcsOperator gitlabTemplate;
 
 	/**
 	 * list
@@ -186,16 +186,16 @@ public class ProjectController extends BaseController {
 
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
-		Integer gitlabProjectId = gitlabTemplate.findRemoteProjectId(projectName);
+		Integer gitlabProjectId = vcsAdapter.forDefault().findRemoteProjectId(projectName);
 		Assert.notNull(gitlabProjectId, String.format("No found projectId of name: %s", projectName));
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			List<String> branchNames = gitlabTemplate.getRemoteTags(gitlabProjectId);
+			List<String> branchNames = vcsAdapter.forDefault().getRemoteTags(gitlabProjectId);
 			resp.getData().put("branchNames", branchNames);
 		}
 		// Branch
 		else {
-			List<String> branchNames = gitlabTemplate.getRemoteBranchNames(gitlabProjectId);
+			List<String> branchNames = vcsAdapter.forDefault().getRemoteBranchNames(gitlabProjectId);
 			resp.getData().put("branchNames", branchNames);
 		}
 		return resp;

@@ -13,30 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.test;
-
-import com.wl4g.devops.CiServer;
-import com.wl4g.devops.ci.core.PipelineManager;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
 /**
- * @author vjay
- * @date 2019-09-29 10:51:00
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年11月5日
+ * @since
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = CiServer.class)
-public class CiTest {
-
-	@Autowired
-	private PipelineManager pipelineProcessor;
-
-	@Test
-	public void createTask() {
-		pipelineProcessor.newPipeline(152);
-	}
-
-}
+package com.wl4g.devops.ci.vcs.alicode;

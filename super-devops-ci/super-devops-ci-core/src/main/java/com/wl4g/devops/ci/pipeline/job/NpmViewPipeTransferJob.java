@@ -66,7 +66,7 @@ public class NpmViewPipeTransferJob extends GenericHostPipeTransferJob<NpmViewPi
 	 * @throws Exception
 	 */
 	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey) throws Exception {
-		File remoteTmpFile = config.getTransferRemoteProgramTmpFile(provider.getPipelineInfo().getProject().getProjectName(),
+		File remoteTmpFile = config.getTransferRemoteHomeTmpFile(provider.getPipelineInfo().getProject().getProjectName(),
 				"tar.gz");
 		String command = "tar -zxvf " + remoteTmpFile.getAbsolutePath() + " -C "
 				+ provider.getPipelineInfo().getProject().getParentAppHome();

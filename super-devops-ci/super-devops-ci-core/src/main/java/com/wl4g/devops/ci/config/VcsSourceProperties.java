@@ -27,7 +27,23 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  */
 public class VcsSourceProperties {
 
+	/** Gitlab properties. */
 	private GitlabProperties gitlab = new GitlabProperties();
+
+	/** Github properties. */
+	private GithubProperties github = new GithubProperties();
+
+	/** Gitee properties. */
+	private GiteeProperties gitee = new GiteeProperties();
+
+	/** Bitbucket properties. */
+	private BitbucketProperties bitbucket = new BitbucketProperties();
+
+	/** Coding properties. */
+	private CodingProperties coding = new CodingProperties();
+
+	/** Alicode properties. */
+	private AlicodeProperties alicode = new AlicodeProperties();
 
 	public GitlabProperties getGitlab() {
 		return gitlab;
@@ -35,6 +51,46 @@ public class VcsSourceProperties {
 
 	public void setGitlab(GitlabProperties git) {
 		this.gitlab = git;
+	}
+
+	public GithubProperties getGithub() {
+		return github;
+	}
+
+	public void setGithub(GithubProperties github) {
+		this.github = github;
+	}
+
+	public GiteeProperties getGitee() {
+		return gitee;
+	}
+
+	public void setGitee(GiteeProperties gitee) {
+		this.gitee = gitee;
+	}
+
+	public BitbucketProperties getBitbucket() {
+		return bitbucket;
+	}
+
+	public void setBitbucket(BitbucketProperties bitbucket) {
+		this.bitbucket = bitbucket;
+	}
+
+	public CodingProperties getCoding() {
+		return coding;
+	}
+
+	public void setCoding(CodingProperties coding) {
+		this.coding = coding;
+	}
+
+	public AlicodeProperties getAlicode() {
+		return alicode;
+	}
+
+	public void setAlicode(AlicodeProperties alicode) {
+		this.alicode = alicode;
 	}
 
 	/**
@@ -93,6 +149,61 @@ public class VcsSourceProperties {
 			}
 			return credentials;
 		}
+	}
+
+	/**
+	 * Github properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public static class GithubProperties {
+
+	}
+
+	/**
+	 * Gitee properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public static class GiteeProperties {
+
+	}
+
+	/**
+	 * Bitbucket properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public static class BitbucketProperties {
+
+	}
+
+	/**
+	 * Coding properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public static class CodingProperties {
+
+	}
+
+	/**
+	 * Aliyun code pipeline service properties.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public static class AlicodeProperties {
+
 	}
 
 }

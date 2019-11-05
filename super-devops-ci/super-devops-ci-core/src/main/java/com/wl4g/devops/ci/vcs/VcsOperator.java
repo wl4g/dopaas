@@ -27,6 +27,13 @@ import java.util.List;
 public interface VcsOperator {
 
 	/**
+	 * Vcs type definition.
+	 * 
+	 * @return
+	 */
+	String vcsType();
+
+	/**
 	 * Get VCS remote branch names.
 	 *
 	 * @param projectId
@@ -49,5 +56,33 @@ public interface VcsOperator {
 	 * @return
 	 */
 	Integer findRemoteProjectId(String projectName);
+
+	/**
+	 * VCS type definitions.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public final static class VcsType {
+
+		/** Vcs for GITLAB. */
+		final public static String GITLAB = "VcsWithGitlab";
+
+		/** Vcs for github. */
+		final public static String GITHUB = "VcsWithGithub";
+
+		/** Vcs for gitee. */
+		final public static String GITEE = "VcsWithGitee";
+
+		/** Vcs for alicode. */
+		final public static String ALICODE = "VcsWithAlicode";
+
+		/** Vcs for bitbucket. */
+		final public static String BITBUCKET = "VcsWithBitbucket";
+
+		/** Vcs for coding. */
+		final public static String CODING = "VcsWithCoding";
+	}
 
 }

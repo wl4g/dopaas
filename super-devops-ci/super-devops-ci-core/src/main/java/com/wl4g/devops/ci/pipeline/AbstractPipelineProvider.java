@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -34,7 +34,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
-import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
@@ -79,18 +78,17 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected TaskSignDao taskSignDao;
 
 	/** Pipeline information. */
-	final protected PipelineInfo pipelineInfo;
+	final protected PipelineContext pipelineInfo;
 
 	protected String shaGit;
 	protected String shaLocal;
 
-	public AbstractPipelineProvider(PipelineInfo info) {
-		notNull(info, "Pipeline info must not be null.");
-		this.pipelineInfo = info;
-		this.pipelineInfo.setTarName(subPackname(info.getProject().getTarPath()));
+	public AbstractPipelineProvider(PipelineContext pipelineInfo) {
+		notNull(pipelineInfo, "Pipeline info must not be null.");
+		this.pipelineInfo = pipelineInfo;
 	}
 
-	public PipelineInfo getPipelineInfo() {
+	public PipelineContext getPipelineInfo() {
 		return pipelineInfo;
 	}
 

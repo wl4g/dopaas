@@ -146,28 +146,64 @@ public class CiCdProperties implements InitializingBean {
 	// Function's.
 	//
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/
+	 * 
+	 * @param taskHisyId
+	 * @return
+	 */
 	public File getJobBaseDir(Integer taskHisyId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getWorkspace() + "/" + DEFUALT_JOB_BASEDIR + "/job." + taskHisyId);
 	}
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/build.out.log
+	 * 
+	 * @param taskHisyId
+	 * @return
+	 */
 	public File getJobLog(Integer taskHisyId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/build.out.log");
 	}
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/{PROJECT_NAME}
+	 * 
+	 * @param taskHisId
+	 * @return
+	 */
 	public File getJobBackup(Integer taskHisId) {
 		Assert.notNull(taskHisId, "Rollback task history ref ID must not be null.");
 		return new File(getJobBaseDir(taskHisId).getAbsolutePath());
 	}
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/tmp.build.2.sh
+	 * 
+	 * @param taskHisyId
+	 * @param projectId
+	 * @return
+	 */
 	public File getJobTmpCommandFile(Integer taskHisyId, Integer projectId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		Assert.notNull(projectId, "Task project ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/" + "tmp.build." + projectId + ".sh");
 	}
 
-	public File getProjectDir(String projectName) {
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/sources/example-web/[pom.xml]
+	 * 
+	 * @param projectName
+	 * @return
+	 */
+	public File getProjectSourceDir(String projectName) {
 		Assert.hasText(projectName, "ProjectName must not be empty.");
 		return new File(getWorkspace() + "/" + DEFUALT_VCS_SOURCEDIR + "/" + projectName);
 	}
@@ -185,7 +221,15 @@ public class CiCdProperties implements InitializingBean {
 		return getTranform().getTransferTimeoutMs() * tmpMultilpe;
 	}
 
-	public File getTransferRemoteProgramTmpFile(String projectName, String suffix) {
+	/**
+	 * e.g. </br>
+	 * ~/.ci-temporary/{PROJECT_NAME}.{SUFFIX}
+	 * 
+	 * @param projectName
+	 * @param suffix
+	 * @return
+	 */
+	public File getTransferRemoteHomeTmpFile(String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(projectName, "Transfer project file suffix must not be empty.");
 		return new File(getTranform().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);

@@ -17,8 +17,6 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
-import com.wl4g.devops.ci.pipeline.model.DefaultPipelineInfo;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.utils.LogHolder;
 import com.wl4g.devops.common.bean.ci.*;
@@ -60,7 +58,7 @@ import static org.springframework.util.Assert.notNull;
  * @author vjay
  * @date 2019-05-16 14:50:00
  */
-public class DefaultPipeline implements Pipeline {
+public class DefaultPipelineManager implements PipelineManager {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -351,18 +349,12 @@ public class DefaultPipeline implements Pipeline {
 		List<AppInstance> instances = safeList(taskHisyDetails).stream()
 				.map(detail -> appInstanceDao.selectByPrimaryKey(detail.getInstanceId())).collect(toList());
 
-		PipelineInfo info = new DefaultPipelineInfo();
-		info.setProject(project);
-		info.setTarType(taskHisy.getTarType());
-		info.setPath(config.getProjectDir(project.getProjectName()).getAbsolutePath());
-		info.setBranch(taskHisy.getBranchName());
-		info.setAlias(appCluster.getName());
-		info.setInstances(instances);
-		info.setTaskHistory(taskHisy);
-		info.setRefTaskHistory(refTaskHisy);
-		info.setTaskHistoryDetails(taskHisyDetails);
+		// New pipelineInfo.
+		String projectSourceDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+		PipelineContext info = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, taskHisy, refTaskHisy,
+				taskHisyDetails);
 
-		return beanFactory.getPrototypeBean(info.getTarType(), info);
+		return beanFactory.getPrototypeBean(info.getTaskHistory().getTarType(), info);
 	}
 
 	/**

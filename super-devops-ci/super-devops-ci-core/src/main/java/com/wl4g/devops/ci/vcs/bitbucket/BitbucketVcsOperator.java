@@ -13,37 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.vcs.bitbucket;
 
-import com.wl4g.devops.ci.core.PipelineContext;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import java.util.List;
+
+import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 
 /**
- * Spring boot executable deployments provider.
- *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
+ * Bitbucket Vcs operator.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年11月5日
  * @since
  */
-public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvider {
+public class BitbucketVcsOperator extends AbstractVcsOperator {
 
-	public SpringExecutableJarPipelineProvider(PipelineContext info) {
-		super(info);
+	@Override
+	public String vcsType() {
+		return VcsType.BITBUCKET;
 	}
 
 	@Override
-	public void execute() throws Exception {
-		throw new UnsupportedOperationException();
+	public List<String> getRemoteBranchNames(int projectId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void rollback() throws Exception {
-		throw new UnsupportedOperationException();
+	public List<String> getRemoteTags(int projectId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
-		throw new UnsupportedOperationException();
+	public Integer findRemoteProjectId(String projectName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

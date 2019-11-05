@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.console.args.BuildArgument;
 import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.GlobalTimeoutJobCleanupFinalizer;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.utils.lang.TableFormatters;
@@ -56,7 +56,7 @@ public class CiCdConsole {
 	private CiCdProperties config;
 
 	@Autowired
-	private Pipeline pipelineCoreProcessor;
+	private PipelineManager pipelineCoreProcessor;
 
 	@Autowired
 	private JedisLockManager lockManager;
