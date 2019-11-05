@@ -11,6 +11,8 @@ public class UserCacheDto implements Serializable {
 
     private int userId;
 
+    private String loginName;
+
     private String roles;
 
     private String permissions;
@@ -38,5 +40,13 @@ public class UserCacheDto implements Serializable {
 
     public void setPermissions(String permissions) {
         this.permissions = permissions;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
     }
 }
