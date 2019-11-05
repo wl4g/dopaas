@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.pipeline.job;
 
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
@@ -31,27 +30,27 @@ import java.util.List;
  */
 public class DockerNativePipeTransferJob extends GenericHostPipeTransferJob<DockerNativePipelineProvider> {
 
-	public DockerNativePipeTransferJob(DockerNativePipelineProvider provider, Project project, AppInstance instance,
+	public DockerNativePipeTransferJob(DockerNativePipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(provider, project, instance, taskHistoryDetails);
+		super(provider, instance, taskHistoryDetails);
 	}
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+		String groupName = getContext().getProject().getGroupName();
 		// Pull
-		provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + project.getGroupName()
+		provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + groupName
 				+ ":master"/*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPreCommand()
 							 */, instance.getSshKey());
 		// Restart
-		provider.dockerStop(instance.getHostname(), instance.getSshUser(), project.getGroupName(), instance.getSshKey());
+		provider.dockerStop(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
 
 		// Remove Container
-		provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), project.getGroupName(),
-				instance.getSshKey());
+		provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
 		// Run
-		provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + project.getGroupName()
+		provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + groupName
 				+ ":master"/*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPostCommand()

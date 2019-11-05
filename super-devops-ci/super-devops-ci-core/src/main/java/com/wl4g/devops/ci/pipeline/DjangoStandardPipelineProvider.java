@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.PipelineContext;
+import com.wl4g.devops.ci.pipeline.job.DjangoStandardTransferJob;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
@@ -43,7 +44,8 @@ public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
 
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
-		throw new UnsupportedOperationException();
+		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+		return beanFactory.getBean(DjangoStandardTransferJob.class, args);
 	}
 
 }

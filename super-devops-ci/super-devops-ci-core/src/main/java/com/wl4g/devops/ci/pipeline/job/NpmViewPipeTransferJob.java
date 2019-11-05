@@ -16,11 +16,9 @@
 package com.wl4g.devops.ci.pipeline.job;
 
 import com.wl4g.devops.ci.pipeline.NpmViewPipelineProvider;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -32,45 +30,14 @@ import java.util.List;
  */
 public class NpmViewPipeTransferJob extends GenericHostPipeTransferJob<NpmViewPipelineProvider> {
 
-	public NpmViewPipeTransferJob(NpmViewPipelineProvider provider, Project project, AppInstance instance,
+	public NpmViewPipeTransferJob(NpmViewPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(provider, project, instance, taskHistoryDetails);
+		super(provider, instance, taskHistoryDetails);
 	}
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		// Create replace remote home temporary directory.
-		createReplaceRemoteDirectory(remoteHost, user, config.getTranform().getRemoteHomeTmpDir(), sshkey);
-
-		// Transfer to remote temporary directory.
-		String localFile = config.getJobBackup(provider.getPipelineInfo().getTaskHistory().getId()) + "/"
-				+ provider.getPipelineInfo().getProject().getProjectName() + ".tar.gz";
-		transferToRemoteTmpDir(remoteHost, user, sshkey, localFile);
-
-		// Create replace remote appHome directory.
-		createReplaceRemoteDirectory(remoteHost, user, provider.getPipelineInfo().getProject().getParentAppHome(), sshkey);
-
-		// Uncompress program.
-		decompressRemoteProgram(remoteHost, user, sshkey);
-
-		// Cleanup temporary program file.
-		cleanupRemoteTmpProgramFile(remoteHost, user, sshkey, "tar.gz");
-	}
-
-	/**
-	 * Decompression executable program assets file.
-	 * 
-	 * @param remoteHost
-	 * @param user
-	 * @param sshkey
-	 * @throws Exception
-	 */
-	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey) throws Exception {
-		File remoteTmpFile = config.getTransferRemoteHomeTmpFile(provider.getPipelineInfo().getProject().getProjectName(),
-				"tar.gz");
-		String command = "tar -zxvf " + remoteTmpFile.getAbsolutePath() + " -C "
-				+ provider.getPipelineInfo().getProject().getParentAppHome();
-		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+		super.doRemoteDeploying(remoteHost, user, sshkey);
 	}
 
 }

@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.wl4g.devops.common.utils.io.FileIOUtils.*;
+import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
@@ -248,8 +249,8 @@ public class DefaultPipelineManager implements PipelineManager {
 						provider.getClass().getSimpleName()));
 
 				// Setup status to success.
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getShaGit(),
-						provider.getShaLocal());
+				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getVcsSourceFileFingerprint(),
+						provider.getAssetsFileFingerprint());
 				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 
 				// Successful process.
@@ -269,7 +270,7 @@ public class DefaultPipelineManager implements PipelineManager {
 						provider.getClass().getSimpleName());
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
-				LogHolder.cleanupDefault(); // Help GC
+				cleanupDefault(); // Help GC
 
 				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
@@ -286,8 +287,8 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void postPipelineExecuteSuccess(Integer taskId, PipelineProvider provider) {
 		// Successful execute job notification.
-		notificationResult(provider.getPipelineInfo().getTaskHistory().getContactGroupId(), "Task Build Success taskId=" + taskId
-				+ " projectName=" + provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()));
+		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Success taskId=" + taskId
+				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()));
 	}
 
 	/**
@@ -299,8 +300,8 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void postPipelineExecuteFailure(Integer taskId, PipelineProvider provider, Throwable e) {
 		// Failure execute job notification.
-		notificationResult(provider.getPipelineInfo().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
-				+ " projectName=" + provider.getPipelineInfo().getProject().getProjectName() + " time=" + (new Date()) + "\n");
+		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
+				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()) + "\n");
 	}
 
 	/**
@@ -349,12 +350,13 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<AppInstance> instances = safeList(taskHisyDetails).stream()
 				.map(detail -> appInstanceDao.selectByPrimaryKey(detail.getInstanceId())).collect(toList());
 
-		// New pipelineInfo.
+		// New pipeline context.
 		String projectSourceDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		PipelineContext info = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, taskHisy, refTaskHisy,
-				taskHisyDetails);
+		PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, taskHisy,
+				refTaskHisy, taskHisyDetails);
 
-		return beanFactory.getPrototypeBean(info.getTaskHistory().getTarType(), info);
+		// Get prototype PipelineContext
+		return beanFactory.getPrototypeBean(context.getTaskHistory().getTarType(), context);
 	}
 
 	/**
@@ -386,8 +388,8 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.info(String.format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()));
 
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getShaGit(),
-						provider.getShaLocal());
+				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getVcsSourceFileFingerprint(),
+						provider.getAssetsFileFingerprint());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
 				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,

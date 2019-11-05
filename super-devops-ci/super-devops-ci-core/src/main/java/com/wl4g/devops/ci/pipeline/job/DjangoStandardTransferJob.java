@@ -18,7 +18,6 @@ package com.wl4g.devops.ci.pipeline.job;
 import java.util.List;
 
 import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
@@ -31,14 +30,14 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  */
 public class DjangoStandardTransferJob extends GenericHostPipeTransferJob<DjangoStandardPipelineProvider> {
 
-	public DjangoStandardTransferJob(DjangoStandardPipelineProvider provider, Project project, AppInstance instance,
+	public DjangoStandardTransferJob(DjangoStandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(provider, project, instance, taskHistoryDetails);
+		super(provider, instance, taskHistoryDetails);
 	}
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		throw new UnsupportedOperationException();
+		super.doRemoteDeploying(remoteHost, user, sshkey);
 	}
 
 }

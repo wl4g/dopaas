@@ -6,9 +6,8 @@
     <result column="project_name" jdbcType="VARCHAR" property="projectName" />
     <result column="git_url" jdbcType="VARCHAR" property="gitUrl" />
     <result column="app_cluster_id" jdbcType="INTEGER" property="appClusterId" />
-    <result column="tar_path" jdbcType="VARCHAR" property="tarPath" />
+    <result column="assets_path" jdbcType="VARCHAR" property="assetsPath" />
     <result column="parent_app_home" jdbcType="VARCHAR" property="parentAppHome" />
-    <result column="link_app_home" jdbcType="VARCHAR" property="linkAppHome" />
     <result column="lock_status" jdbcType="INTEGER" property="lockStatus" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="del_flag" jdbcType="CHAR" property="delFlag" />
@@ -20,11 +19,11 @@
     <result column="group_name" property="groupName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, project_name, git_url, app_cluster_id, tar_path, parent_app_home, link_app_home,lock_status,
+    id, project_name, git_url, app_cluster_id, assets_path, parent_app_home, lock_status,
     remark, del_flag, create_date, create_by, update_date, update_by
   </sql>
   <sql id="Base_Column_List_p">
-    p.id, p.project_name, p.git_url, p.app_cluster_id, p.tar_path, p.parent_app_home, p.link_app_home,p.lock_status,
+    p.id, p.project_name, p.git_url, p.app_cluster_id, p.assets_path, p.parent_app_home, p.lock_status,
     p.remark, p.del_flag, p.create_date, p.create_by, p.update_date, p.update_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -39,12 +38,12 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project">
     insert into ci_project (id, project_name, git_url,
-      app_cluster_id, tar_path, parent_app_home,
-      link_app_home,lock_status, remark, del_flag,
+      app_cluster_id, assets_path, parent_app_home,
+      lock_status, remark, del_flag,
       create_date, create_by, update_date,
       update_by)
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{gitUrl,jdbcType=VARCHAR},
-      #{appClusterId,jdbcType=INTEGER}, #{tarPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
+      #{appClusterId,jdbcType=INTEGER}, #{assetsPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
       #{linkAppHome,jdbcType=VARCHAR},#{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
@@ -64,14 +63,11 @@
       <if test="appClusterId != null">
         app_cluster_id,
       </if>
-      <if test="tarPath != null">
-        tar_path,
+      <if test="assetsPath != null">
+        assets_path,
       </if>
       <if test="parentAppHome != null">
         parent_app_home,
-      </if>
-      <if test="linkAppHome != null">
-        link_app_home,
       </if>
       <if test="lockStatus != null">
         lock_status,
@@ -108,8 +104,8 @@
       <if test="appClusterId != null">
         #{appClusterId,jdbcType=INTEGER},
       </if>
-      <if test="tarPath != null">
-        #{tarPath,jdbcType=VARCHAR},
+      <if test="assetsPath != null">
+        #{assetsPath,jdbcType=VARCHAR},
       </if>
       <if test="parentAppHome != null">
         #{parentAppHome,jdbcType=VARCHAR},
@@ -152,14 +148,11 @@
       <if test="appClusterId != null">
         app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
-      <if test="tarPath != null">
-        tar_path = #{tarPath,jdbcType=VARCHAR},
+      <if test="assetsPath != null">
+        assets_path = #{assetsPath,jdbcType=VARCHAR},
       </if>
       <if test="parentAppHome != null">
         parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
-      </if>
-      <if test="linkAppHome != null">
-        link_app_home = #{linkAppHome,jdbcType=VARCHAR},
       </if>
       <if test="lockStatus != null">
         lock_status = #{lockStatus,jdbcType=INTEGER},
@@ -190,9 +183,8 @@
     set project_name = #{projectName,jdbcType=VARCHAR},
       git_url = #{gitUrl,jdbcType=VARCHAR},
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},
-      tar_path = #{tarPath,jdbcType=VARCHAR},
+      assets_path = #{assetsPath,jdbcType=VARCHAR},
       parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
-      link_app_home = #{linkAppHome,jdbcType=VARCHAR},
       lock_status = #{lockStatus,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=CHAR},

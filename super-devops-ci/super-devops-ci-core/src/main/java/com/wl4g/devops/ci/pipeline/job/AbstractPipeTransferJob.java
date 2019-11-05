@@ -16,8 +16,9 @@
 package com.wl4g.devops.ci.pipeline.job;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
-import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -60,11 +61,12 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	@Autowired
 	protected ProcessManager processManager;
 
+	/** Task history service. */
+	@Autowired
+	protected TaskHistoryService taskHistoryService;
+
 	/** Pipeline provider. */
 	final protected P provider;
-
-	/** Pipeline deploy project. */
-	final protected Project project;
 
 	/** Pipeline deploy instance. */
 	final protected AppInstance instance;
@@ -72,14 +74,11 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
-	public AbstractPipeTransferJob(P provider, Project project, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
+	public AbstractPipeTransferJob(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
 		notNull(provider, "Pipeline provider must not be null.");
-		notNull(project, "Pipeline job project must not be null.");
 		notNull(instance, "Pipeline job instance must not be null.");
 		notEmpty(taskHistoryDetails, "Pipeline task historyDetails must not be null.");
 		this.provider = provider;
-		this.project = project;
 		this.instance = instance;
 
 		// Task details.
@@ -92,15 +91,17 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	@Override
 	public void run() {
 		notNull(taskDetailId, "Transfer job for taskDetailId inmust not be null");
-		log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), project.getId(),
-				project.getProjectName());
 
+		Integer projectId = getContext().getProject().getId();
+		String projectName = getContext().getProject().getProjectName();
+		log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
+				projectName);
 		try {
-			TaskHistory taskHisy = provider.getPipelineInfo().getTaskHistory();
+			TaskHistory taskHisy = provider.getContext().getTaskHistory();
 			// Update status to running.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
 			log.info("[PRE]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
-					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
+					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
 
 			// Call PRE commands.
 			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
@@ -114,22 +115,22 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 					instance.getSshKey());
 
 			// Update status to success.
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, getLogMessage(null));
+			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, getLogMessage(null));
 			log.info("[SUCCESS]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
-					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
+					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), projectId, projectName);
 
 		} catch (Exception ex) {
 			log.error("Failed to transfer job", ex);
 
-			provider.getTaskHistoryService().updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, getLogMessage(ex));
+			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, getLogMessage(ex));
 			log.error("[FAILED]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
-					TASK_STATUS_FAIL, taskDetailId, instance.getId(), project.getId(), project.getProjectName());
+					TASK_STATUS_FAIL, taskDetailId, instance.getId(), projectId, projectName);
 		} finally {
 			cleanupDefault(); // Help GC
 		}
 
-		log.info("Completed of transfer job for instanceId:{}, projectId:{}, projectName:{}", instance.getId(), project.getId(),
-				project.getProjectName());
+		log.info("Completed of transfer job for instanceId:{}, projectId:{}, projectName:{}", instance.getId(), projectId,
+				projectName);
 	}
 
 	/**
@@ -142,6 +143,15 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	 * @throws Exception
 	 */
 	protected abstract void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception;
+
+	/**
+	 * Get provider pipeline context.
+	 * 
+	 * @return
+	 */
+	protected PipelineContext getContext() {
+		return provider.getContext();
+	}
 
 	/**
 	 * Obtain log message text.

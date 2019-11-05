@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.pipeline.job.DockerNativePipeTransferJob;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.codec.FileCodec;
+import com.wl4g.devops.common.utils.codec.FingerprintCodec;
 
 import java.io.File;
 
@@ -45,17 +45,17 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void execute() throws Exception {
 		Dependency dependency = new Dependency();
-		dependency.setProjectId(getPipelineInfo().getProject().getId());
-		build(getPipelineInfo().getTaskHistory(), false);
+		dependency.setProjectId(getContext().getProject().getId());
+		mvnBuild(getContext().getTaskHistory(), false);
 
 		// get sha and md5
-		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
+		setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// docker build
-		dockerBuild(getPipelineInfo().getProjectSourceDir());
+		dockerBuild(getContext().getProjectSourceDir());
 
 		// Startup pipeline jobs.
-		doTransferToRemoteInstances();
+		doExecuteTransferToRemoteInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -70,15 +70,15 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void rollback() throws Exception {
 		Dependency dependency = new Dependency();
-		dependency.setProjectId(getPipelineInfo().getProject().getId());
+		dependency.setProjectId(getContext().getProject().getId());
 
-		build(getPipelineInfo().getTaskHistory(), true);
-		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
+		mvnBuild(getContext().getTaskHistory(), true);
+		setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 
-		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath())));
+		setupAssetsFileFingerprint(FingerprintCodec.getMd5Fingerprint(new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath())));
 
 		// Startup pipeline jobs.
-		doTransferToRemoteInstances();
+		doExecuteTransferToRemoteInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -92,7 +92,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getTranform().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getTranform().getDockerNative().getDockerPushPasswd();
-		processManager.exec(command, config.getJobLog(getPipelineInfo().getTaskHistory().getId()), 300000);
+		processManager.exec(command, config.getJobLog(getContext().getTaskHistory().getId()), 300000);
 	}
 
 	/**
@@ -128,8 +128,8 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
-		return new DockerNativePipeTransferJob(this, getPipelineInfo().getProject(), instance,
-				getPipelineInfo().getTaskHistoryDetails());
+		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+		return beanFactory.getBean(DockerNativePipeTransferJob.class, args);
 	}
 
 }
