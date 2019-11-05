@@ -16,28 +16,23 @@
 package com.wl4g.devops.ci.console;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.console.args.BuildArgument;
-import com.wl4g.devops.ci.console.args.ModifyTimingTaskExpressionArgument;
+import com.wl4g.devops.ci.console.args.ResetTimeoutCleanupExpressionArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.GlobalTimeoutJobCleanupFinalizer;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.utils.lang.TableFormatters;
-import com.wl4g.devops.common.utils.task.CronUtils;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
-import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
+import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.common.utils.task.CronUtils.*;
+import static com.wl4g.devops.shell.processor.ShellHolder.*;
 
 /**
  * CI/CD console point
@@ -49,102 +44,87 @@ import static com.wl4g.devops.shell.utils.ShellContextHolder.*;
  */
 @ShellComponent
 public class CiCdConsole {
-
 	final public static String GROUP = "Devops CI/CD console commands";
 
+	/** {@link GlobalTimeoutJobCleanupFinalizer}. */
 	@Autowired
-	private CiCdProperties config;
+	private GlobalTimeoutJobCleanupFinalizer finalizer;
 
+	/** {@link PipelineManager}. */
 	@Autowired
-	private PipelineManager pipelineCoreProcessor;
+	private PipelineManager pipeManager;
 
-	@Autowired
-	private JedisLockManager lockManager;
-
-	@Autowired
-	private GlobalTimeoutJobCleanupFinalizer timingTasks;
-
+	/** {@link TaskDao}. */
 	@Autowired
 	private TaskDao taskDao;
 
+	/**
+	 * Reset timeout cleanup expression.
+	 * 
+	 * @param arg
+	 * @return
+	 */
 	@ShellMethod(keys = "expression", group = GROUP, help = "modify the expression of the timing task")
-	public String modifyTimingTaskExpression(ModifyTimingTaskExpressionArgument argument) {
-		String expression = argument.getExpression();
-		// Open console printer.
-		open();
+	public String resetTimeoutCleanupExpression(ResetTimeoutCleanupExpressionArgument arg) {
+		open(); // Open console.
 		try {
 			// Print to client
-			printfQuietly(String.format("expression = <%s>", expression));
-			if (CronUtils.isValidExpression(expression)) {
-				timingTasks.resetTimeoutCheckerExpression(expression);
-				printfQuietly(String.format("modify the success , expression = <%s>", expression));
+			printf(String.format("expression = <%s>", arg.getExpression()));
+			if (isValidExpression(arg.getExpression())) {
+				finalizer.resetTimeoutCheckerExpression(arg.getExpression());
+				printf(String.format("modify the success , expression = <%s>", arg.getExpression()));
 			} else {
-				printfQuietly(String.format("the expression is not valid , expression = <%s>", expression));
+				printf(String.format("the expression is not valid , expression = <%s>", arg.getExpression()));
 			}
 		} catch (Exception e) {
-			printfQuietly(String.format("modify the fail , expression = <%s>", expression));
-			printfQuietly(e);
+			printf(String.format("Failed to timeout cleanup expression. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			// Close console printer.
-			close();
+			close(); // Close console
 		}
-
-		return "Deployment task finished!";
-	}
-
-	@ShellMethod(keys = "taskList", group = GROUP, help = "get task list")
-	public String taskList(TaskListArgument argument) {
-		// Open console printer.
-		open();
-		try {
-			// Print to client
-			int pageNum = StringUtils.isNotBlank(argument.getPageNum()) ? Integer.valueOf(argument.getPageNum()) : 1;
-			int pageSize = StringUtils.isNotBlank(argument.getPageSize()) ? Integer.valueOf(argument.getPageSize()) : 10;
-			PageHelper.startPage(pageNum, pageSize, true);
-			List<Task> list = taskDao.list(null, null, null, null, null, null, null);
-			String result = TableFormatters.build(list).setH('=').setV('!').getTableString();
-			return result;
-		} catch (Exception e) {
-			printfQuietly(e);
-			throw e;
-		} finally {
-			// Close console printer.
-			close();
-		}
+		return "Reset cleanup expression completed!";
 	}
 
 	/**
-	 * Execution deployments
+	 * Get task list.
+	 * 
+	 * @param arg
+	 * @return
 	 */
-	@ShellMethod(keys = "deploy", group = GROUP, help = "Execute application deployment")
-	public String deploy(BuildArgument argument) {
-
-		// Open console printer.
-		open();
-
-		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD, config.getJob().getJobTimeoutMs(), TimeUnit.MINUTES);
+	@ShellMethod(keys = "taskList", group = GROUP, help = "Pipeline task list.")
+	public String taskList(TaskListArgument arg) {
+		open(); // Open console
 		try {
-			if (lock.tryLock()) {
-				// Print to client
+			// Setup pagers.
+			PageHelper.startPage(arg.getPageNum(), arg.getPageSize(), true);
 
-				// Create async task
-				// TODO 修改后与原有逻辑有差异，必须多一个环节，选task
-				pipelineCoreProcessor.newPipeline(argument.getTaskId());
-
-			} else {
-				printfQuietly("One Task is running ,Please try again later");
-			}
-
+			// Print to client
+			List<Task> list = taskDao.list(null, null, null, null, null, null, null);
+			return TableFormatters.build(list).setH('=').setV('!').getTableString();
 		} catch (Exception e) {
-			printfQuietly(e);
+			printf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			// Close console printer.
-			close();
-			lock.unlock();
+			close(); // Close console
 		}
-
-		return "Deployment task finished!";
+		return "Load pipeline task list completed!";
 	}
 
+	/**
+	 * Pipeline deploy.
+	 * 
+	 * @param arg
+	 * @return
+	 */
+	@ShellMethod(keys = "deploy", group = GROUP, help = "Deployment of pipeline job")
+	public String deploy(BuildArgument arg) {
+		open(); // Open console.
+		try {
+			pipeManager.newPipeline(arg.getTaskId());
+		} catch (Exception e) {
+			printf(String.format("Failed to pipeline job. cause by: %s", getStackTraceAsString(e)));
+		} finally {
+			close(); // Close console
+		}
+		return "Deployment pipeline completed!";
+	}
 
 }

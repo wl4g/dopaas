@@ -28,8 +28,8 @@ import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.bean.MixedArgument;
 import com.wl4g.devops.shell.bean.SumArgument;
 import com.wl4g.devops.shell.bean.SumResult;
+import com.wl4g.devops.shell.processor.ShellHolder;
 import com.wl4g.devops.shell.service.ExampleService;
-import com.wl4g.devops.shell.utils.ShellContextHolder;
 
 @ShellComponent
 public class ExampleConsole {
@@ -84,7 +84,7 @@ public class ExampleConsole {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
-		ShellContextHolder.open();
+		ShellHolder.open();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
@@ -94,13 +94,13 @@ public class ExampleConsole {
 					System.out.println(message);
 
 					// Print stream message
-					ShellContextHolder.printf(message);
+					ShellHolder.printf(message);
 				}
-				ShellContextHolder.printf("Print successfully completed!");
+				ShellHolder.printf("Print successfully completed!");
 
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
-				ShellContextHolder.close();
+				ShellHolder.close();
 			}
 		}).start();
 
@@ -117,16 +117,16 @@ public class ExampleConsole {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
-		ShellContextHolder.open();
+		ShellHolder.open();
 
 		new Thread(() -> {
 			try {
-				for (int i = 1; !ShellContextHolder.isInterruptIfNecessary() && i <= num; i++) {
+				for (int i = 1; !ShellHolder.isInterruptIfNecessary() && i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					System.out.println(message);
 
 					// Print stream message
-					ShellContextHolder.printf(message);
+					ShellHolder.printf(message);
 
 					try {
 						Thread.sleep(sleep);
@@ -134,11 +134,11 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-				ShellContextHolder.printf("Print finished!");
+				ShellHolder.printf("Print finished!");
 
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
-				ShellContextHolder.close();
+				ShellHolder.close();
 			}
 		}).start();
 

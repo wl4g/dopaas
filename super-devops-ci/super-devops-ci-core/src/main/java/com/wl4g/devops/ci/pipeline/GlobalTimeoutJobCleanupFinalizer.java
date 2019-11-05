@@ -81,8 +81,8 @@ public class GlobalTimeoutJobCleanupFinalizer implements ApplicationRunner {
 
 		// Resume timeout scanner.
 		future = scheduler.schedule(() -> {
-			if (config.getJob().getJobTimeoutMs() > 0) {
-				taskHistoryDao.updateStatus(config.getJob().getJobTimeoutMs());
+			if (config.getBuild().getJobTimeoutMs() > 0) {
+				taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutMs());
 			}
 		}, new CronTrigger(expression));
 

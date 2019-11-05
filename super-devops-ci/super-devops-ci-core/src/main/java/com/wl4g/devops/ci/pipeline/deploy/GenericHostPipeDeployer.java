@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.job;
+package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -38,20 +38,20 @@ import org.slf4j.LoggerFactory;
  * @since
  * @param <P>
  */
-public abstract class GenericHostPipeTransferJob<P extends PipelineProvider> extends AbstractPipeTransferJob<P> {
+public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extends AbstractPipeDeployer<P> {
 	/** Default executable file suffix. */
 	final public static String DEFAULT_FILE_SUFFIX = "tar";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public GenericHostPipeTransferJob(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+	public GenericHostPipeDeployer(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
 		super(provider, instance, taskHistoryDetails);
 	}
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
 		// Ensure remote home temporary dir.
-		createReplaceRemoteDirectory(remoteHost, user, sshkey, config.getTranform().getRemoteHomeTmpDir());
+		createReplaceRemoteDirectory(remoteHost, user, sshkey, config.getDeploy().getRemoteHomeTmpDir());
 
 		// Transfer to remote home temporary dir.
 		transferToRemoteTmpDir(remoteHost, user, sshkey);
@@ -101,7 +101,7 @@ public abstract class GenericHostPipeTransferJob<P extends PipelineProvider> ext
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
 		String localFile = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
 		logDefault("Transfer to remote tmpdir for %s@%s -> [%s]", user, remoteHost, localFile);
-		String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
+		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		transferFile(remoteHost, user, provider.getUsableCipherSSHKey(sshkey), new File(localFile), remoteTmpDir);
 	}
 
@@ -114,7 +114,7 @@ public abstract class GenericHostPipeTransferJob<P extends PipelineProvider> ext
 	 * @throws Exception
 	 */
 	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey) throws Exception {
-		String command = "tar -zxvf " + getRemoteTmpFilePath() + " -C " + config.getTranform().getRemoteHomeTmpDir();
+		String command = "tar -zxvf " + getRemoteTmpFilePath() + " -C " + config.getDeploy().getRemoteHomeTmpDir();
 		logDefault("Decompress remote program for %s@%s -> [%s]", user, remoteHost, command);
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
@@ -142,7 +142,7 @@ public abstract class GenericHostPipeTransferJob<P extends PipelineProvider> ext
 	 * @throws Exception
 	 */
 	protected void installRemoteNewerProgram(String remoteHost, String user, String sshkey) throws Exception {
-		String decompressedTmpFile = config.getTranform().getRemoteHomeTmpDir() + getPrgramInstallFileName();
+		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir() + getPrgramInstallFileName();
 		String command = "mv " + decompressedTmpFile + " " + getProgramInstallDir();
 		logDefault("Install remote newer program for %s@%s -> [%s]", user, remoteHost, command);
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);

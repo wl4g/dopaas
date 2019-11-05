@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.job;
+package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.core.PipelineContext;
+import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since
  * @param <P>
  */
-public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implements Runnable {
+public abstract class AbstractPipeDeployer<P extends PipelineProvider> implements Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Pipeline CICD properties configuration. */
@@ -74,7 +74,7 @@ public abstract class AbstractPipeTransferJob<P extends PipelineProvider> implem
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
-	public AbstractPipeTransferJob(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+	public AbstractPipeDeployer(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
 		notNull(provider, "Pipeline provider must not be null.");
 		notNull(instance, "Pipeline job instance must not be null.");
 		notEmpty(taskHistoryDetails, "Pipeline task historyDetails must not be null.");

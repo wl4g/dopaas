@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.core.PipelineContext;
-import com.wl4g.devops.ci.pipeline.job.DockerNativePipeTransferJob;
+import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -90,8 +90,8 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	public void dockerBuild(String path) throws Exception {
 		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
-				+ config.getTranform().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
-				+ config.getTranform().getDockerNative().getDockerPushPasswd();
+				+ config.getDeploy().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
+				+ config.getDeploy().getDockerNative().getDockerPushPasswd();
 		processManager.exec(command, config.getJobLog(getContext().getTaskHistory().getId()), 300000);
 	}
 
@@ -129,7 +129,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
-		return beanFactory.getBean(DockerNativePipeTransferJob.class, args);
+		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
 	}
 
 }
