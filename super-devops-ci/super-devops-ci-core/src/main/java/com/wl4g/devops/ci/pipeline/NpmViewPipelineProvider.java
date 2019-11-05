@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.pipeline.job.NpmViewPipeTransferJob;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
+import org.eclipse.jgit.transport.CredentialsProvider;
 import org.springframework.util.Assert;
 
 import java.io.File;
@@ -36,7 +37,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 
-	public NpmViewPipelineProvider(PipelineInfo info) {
+	public NpmViewPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 
@@ -81,23 +82,25 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 		log.info("Pipeline building for projectId={}", getPipelineInfo().getProject().getId());
 		Project project = getPipelineInfo().getProject();
 		Assert.notNull(project, "project not exist");
-		// Obtain project source from VCS.
-		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
+
+		String branchName = getPipelineInfo().getTaskHistory().getBranchName();
+		CredentialsProvider credentials = config.getVcs().getGitlab().getCredentials();
+		// Project source directory.
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+
 		if (isRollback) {
 			String sha = getPipelineInfo().getTaskHistory().getShaGit();
 			if (GitUtils.checkGitPath(projectDir)) {
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
+				GitUtils.rollback(credentials, projectDir, sha);
 			} else {
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
-						getPipelineInfo().getBranch());
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
+				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
+				GitUtils.rollback(credentials, projectDir, sha);
 			}
 		} else {
 			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				GitUtils.checkout(config.getVcs().getGitlab().getCredentials(), projectDir, getPipelineInfo().getBranch());
+				GitUtils.checkout(credentials, projectDir, getPipelineInfo().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
-						getPipelineInfo().getBranch());
+				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
 			}
 		}
 	}
@@ -106,7 +109,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
 		File logPath = config.getJobLog(getPipelineInfo().getTaskHistory().getId());
-		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		// Building.
 		if (isBlank(taskHistory.getBuildCommand())) {
 			doBuildWithDefaultCommand(projectDir, logPath, taskHistory.getId());
@@ -132,7 +135,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 	private void pkg() throws Exception {
 		Project project = getPipelineInfo().getProject();
 		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
-		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		// tar
 		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
 				+ config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";

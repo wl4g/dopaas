@@ -24,7 +24,7 @@ import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
  * @author vjay
  * @date 2019-05-16 14:45:00
  */
-public interface Pipeline {
+public interface PipelineManager {
 
 	/**
 	 * Startup new pipeline task job.

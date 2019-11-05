@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -43,10 +43,10 @@ import java.util.List;
 public class TaskHistoryController extends BaseController {
 
 	@Autowired
-	private Pipeline pipelineCoreProcessor;
+	private TaskHistoryService taskHistoryService;
 
 	@Autowired
-	private TaskHistoryService taskHistoryService;
+	private PipelineManager pipeliner;
 
 	/**
 	 * List
@@ -105,19 +105,17 @@ public class TaskHistoryController extends BaseController {
 	public RespBase<?> rollback(Integer taskId) {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
-		pipelineCoreProcessor.rollbackPipeline(taskId);
+		pipeliner.rollbackPipeline(taskId);
 		return resp;
 	}
-
 
 	@RequestMapping(value = "/readLog")
-	public RespBase<?> readLog(Integer taskHisId,Integer index,Integer size) {
+	public RespBase<?> readLog(Integer taskHisId, Integer index, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipelineCoreProcessor.logfile(taskHisId, index, size);
-		resp.getData().put("data",readResult);
+		FileIOUtils.ReadResult readResult = pipeliner.logfile(taskHisId, index, size);
+		resp.getData().put("data", readResult);
 		return resp;
 	}
-
 
 	@RequestMapping(value = "/stopTask")
 	public RespBase<?> create(Integer taskHisId) {

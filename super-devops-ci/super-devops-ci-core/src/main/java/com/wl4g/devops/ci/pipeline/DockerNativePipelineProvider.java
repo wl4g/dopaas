@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.pipeline.job.DockerNativePipeTransferJob;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -33,7 +33,7 @@ import java.io.File;
  */
 public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 
-	public DockerNativePipelineProvider(PipelineInfo deployProviderBean) {
+	public DockerNativePipelineProvider(PipelineContext deployProviderBean) {
 		super(deployProviderBean);
 	}
 
@@ -49,10 +49,10 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		build(getPipelineInfo().getTaskHistory(), false);
 
 		// get sha and md5
-		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
 
 		// docker build
-		dockerBuild(getPipelineInfo().getPath());
+		dockerBuild(getPipelineInfo().getProjectSourceDir());
 
 		// Startup pipeline jobs.
 		doTransferToRemoteInstances();
@@ -73,9 +73,9 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dependency.setProjectId(getPipelineInfo().getProject().getId());
 
 		build(getPipelineInfo().getTaskHistory(), true);
-		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
 
-		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
+		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath())));
 
 		// Startup pipeline jobs.
 		doTransferToRemoteInstances();

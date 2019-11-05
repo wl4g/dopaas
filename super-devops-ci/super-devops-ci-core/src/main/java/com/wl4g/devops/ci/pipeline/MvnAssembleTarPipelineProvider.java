@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipeTransferJob;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.utils.codec.FileCodec;
@@ -34,7 +34,7 @@ import java.io.File;
  */
 public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
-	public MvnAssembleTarPipelineProvider(PipelineInfo info) {
+	public MvnAssembleTarPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 
@@ -43,7 +43,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		// maven install , include dependency
 		build(pipelineInfo.getTaskHistory(), false);
 		// get git sha
-		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
 		// MVN build.
 		doInternalMvnBuild0();
 	}
@@ -63,7 +63,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			// getDependencyService().rollback(getTaskHistory(),
 			// getRefTaskHistory(), dependency, getBranch(), taskResult, false);
 			build(getPipelineInfo().getTaskHistory(), true);
-			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
 		}
 		doInternalMvnBuild0();
 	}
@@ -73,7 +73,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	private void doInternalMvnBuild0() throws Exception {
 		// get local sha
-		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
+		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath())));
 		// backup in local
 		backupLocal();
 
@@ -95,7 +95,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
 		Object[] args = { this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails(),
-				getPipelineInfo().getPath(), getPipelineInfo().getProject().getTarPath() };
+				getPipelineInfo().getProjectSourceDir(), getPipelineInfo().getProject().getTarPath() };
 		return beanFactory.getBean(MvnAssembleTarPipeTransferJob.class, args);
 	}
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
@@ -44,7 +44,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvider {
 
-	public BasedMavenPipelineProvider(PipelineInfo info) {
+	public BasedMavenPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 
@@ -80,7 +80,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 */
 	protected void backupLocal() throws Exception {
 		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
-		String targetPath = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
+		String targetPath = getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath();
 		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 
@@ -100,7 +100,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
 				+ subPackname(getPipelineInfo().getProject().getTarPath());
 
-		String target = getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath();
+		String target = getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath();
 		String command = "cp -Rf " + backupPath + " " + target;
 		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
 	}
@@ -190,7 +190,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		notNull(project, String.format("Not found project by %s", projectId));
 
 		// Obtain project source from VCS.
-		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		if (isRollback) {
 			String sha;
 			if (isDependency) {

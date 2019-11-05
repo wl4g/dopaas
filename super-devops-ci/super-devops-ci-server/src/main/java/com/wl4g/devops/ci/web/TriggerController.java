@@ -55,7 +55,7 @@ public class TriggerController extends BaseController {
 	private TriggerService triggerService;
 
 	@Autowired
-	private TimingPipelineManager pipelineManager;
+	private TimingPipelineManager timingManager;
 
 	/**
 	 * Page List
@@ -143,7 +143,7 @@ public class TriggerController extends BaseController {
 	 */
 	private void restart(Integer triggerId) {
 		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-		pipelineManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
+		timingManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class TriggerController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		triggerService.delete(id);
-		pipelineManager.stopPipeline(id.toString());
+		timingManager.stopPipeline(id.toString());
 		return resp;
 	}
 

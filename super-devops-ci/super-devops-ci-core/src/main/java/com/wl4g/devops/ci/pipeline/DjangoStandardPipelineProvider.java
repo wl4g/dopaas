@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
@@ -27,7 +27,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  */
 public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
 
-	public DjangoStandardPipelineProvider(PipelineInfo info) {
+	public DjangoStandardPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 

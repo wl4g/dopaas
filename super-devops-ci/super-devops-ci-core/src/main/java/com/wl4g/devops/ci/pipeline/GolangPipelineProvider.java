@@ -19,15 +19,15 @@ import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * Spring boot executable deployments provider.
+ * Golang standard deployments provider.
  *
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
+ * @version v1.0 2019年5月22日
  * @since
  */
-public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvider {
+public class GolangPipelineProvider extends AbstractPipelineProvider {
 
-	public SpringExecutableJarPipelineProvider(PipelineContext info) {
+	public GolangPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 

@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
@@ -47,7 +47,7 @@ import java.util.List;
 public class TaskController extends BaseController {
 
 	@Autowired
-	private Pipeline pipelineCoreProcessor;
+	private PipelineManager pipeliner;
 
 	@Autowired
 	private TaskDao taskDao;
@@ -175,21 +175,18 @@ public class TaskController extends BaseController {
 	@RequestMapping(value = "/create")
 	public RespBase<?> create(Integer taskId) {
 		RespBase<Object> resp = RespBase.create();
-		pipelineCoreProcessor.newPipeline(taskId);
+		pipeliner.newPipeline(taskId);
 		return resp;
 	}
 
 	@RequestMapping(value = "/getDependencys")
 	public RespBase<?> getDependencys(Integer appClusterId) {
-		Assert.notNull(appClusterId,"appClusterId is null");
+		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();
 		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
-		resp.getData().put("list",taskBuildCommands);
+		resp.getData().put("list", taskBuildCommands);
 		return resp;
 
 	}
-
-
-
 
 }

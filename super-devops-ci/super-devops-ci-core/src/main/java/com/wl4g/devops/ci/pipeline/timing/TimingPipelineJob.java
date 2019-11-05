@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.pipeline.timing;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -46,7 +46,7 @@ public class TimingPipelineJob implements Runnable {
 	@Autowired
 	protected CiCdProperties config;
 	@Autowired
-	protected Pipeline pipelineProcessor;
+	protected PipelineManager pipelineProcessor;
 	@Autowired
 	protected TriggerService triggerService;
 
