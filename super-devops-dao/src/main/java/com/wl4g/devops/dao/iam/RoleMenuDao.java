@@ -8,7 +8,7 @@ import java.util.List;
 public interface RoleMenuDao {
     int deleteByPrimaryKey(Integer id);
 
-    int deleteByRoleId(Integer id);
+    int deleteByRoleId(Integer roleId);
 
     int insert(RoleMenu record);
 

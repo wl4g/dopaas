@@ -9,6 +9,7 @@ import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.iam.*;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
+import com.wl4g.devops.iam.handler.UserUtil;
 import com.wl4g.devops.iam.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+
+import static com.wl4g.devops.common.bean.BaseBean.ROOT_NAME;
 
 /**
  * @author vjay
@@ -46,6 +49,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CredentialsSecurer credentialsSecurer;
 
+    @Autowired
+    private UserUtil userUtil;
+
 
     @Override
     public Map<String,Object> list(CustomPage customPage,String userName,String displayName) {
@@ -53,7 +59,16 @@ public class UserServiceImpl implements UserService {
         Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
         Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
         Page<Project> page = PageHelper.startPage(pageNum, pageSize, true);
-        List<User> list = userDao.list(userName,displayName);
+
+        List<User> list = null;
+        String currentLoginUsername = userUtil.getCurrentLoginUsername();
+        if(ROOT_NAME.equals(currentLoginUsername)){
+            list = userDao.list(null,userName,displayName);
+        }else{
+            list = userDao.list(userUtil.getCurrentLoginUserId(),userName,displayName);
+        }
+
+
         for(User user : list){
             //group
             List<Group> groups = groupDao.selectByUserId(user.getId());
@@ -69,9 +84,6 @@ public class UserServiceImpl implements UserService {
         resp.put("list", list);
         return resp;
     }
-
-
-
 
 
     @Override
