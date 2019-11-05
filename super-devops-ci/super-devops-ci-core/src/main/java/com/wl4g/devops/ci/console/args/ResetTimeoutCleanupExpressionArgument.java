@@ -23,7 +23,7 @@ import java.io.Serializable;
  * @author vjay
  * @date 2019-05-21 16:18:00
  */
-public class ModifyTimingTaskExpressionArgument implements Serializable {
+public class ResetTimeoutCleanupExpressionArgument implements Serializable {
 	private static final long serialVersionUID = -90377698662015272L;
 
 	@ShellOption(opt = "e", lopt = "expression", help = "modify the expression of the timing task", required = true)

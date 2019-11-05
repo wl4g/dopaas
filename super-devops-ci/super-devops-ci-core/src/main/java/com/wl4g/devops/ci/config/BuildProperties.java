@@ -26,7 +26,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0.0 2019-10-13
  * @since
  */
-public class JobProperties {
+public class BuildProperties {
 
 	/** Clean for timeouts job interval time (Ms). */
 	private Long jobCleanIntervalMs = 30 * 1000L;

@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.job;
-
-import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
+package com.wl4g.devops.ci.pipeline.deploy;
 
 import java.util.List;
 
+import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.share.AppInstance;
+
 /**
- * MAVEN assemble tar deployments task.
- *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月24日
+ * Golang stdandard transfer job.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年10月25日
  * @since
  */
-public class MvnAssembleTarPipeTransferJob extends GenericHostPipeTransferJob<MvnAssembleTarPipelineProvider> {
+public class GolangPipeDeployer extends GenericHostPipeDeployer<DjangoStandardPipelineProvider> {
 
-	public MvnAssembleTarPipeTransferJob(MvnAssembleTarPipelineProvider provider, AppInstance instance,
+	public GolangPipeDeployer(DjangoStandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(provider, instance, taskHistoryDetails);
 	}

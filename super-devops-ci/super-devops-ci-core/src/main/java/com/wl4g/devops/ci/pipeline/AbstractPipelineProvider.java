@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
+import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -162,7 +162,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Override
 	public char[] getUsableCipherSSHKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
-		String cipherKey = config.getTranform().getCipherKey();
+		String cipherKey = config.getDeploy().getCipherKey();
 		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
 		if (log.isInfoEnabled()) {
 			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
@@ -184,7 +184,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			if (log.isInfoEnabled()) {
 				log.info("Transfer jobs starting...  for instances({}), {}", jobs.size(), getContext().getInstances());
 			}
-			jobExecutor.submitForComplete(jobs, config.getTranform().getTransferTimeoutMs());
+			jobExecutor.submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
 		}
 
 	}
@@ -271,7 +271,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			command = replace(command, PH_LOG_FILE, logFile.getAbsolutePath());
 
 			// Replace for remoteTmpDir.
-			String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
+			String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 			command = replace(command, PH_REMOTE_TMP_DIR, remoteTmpDir);
 
 			return this;

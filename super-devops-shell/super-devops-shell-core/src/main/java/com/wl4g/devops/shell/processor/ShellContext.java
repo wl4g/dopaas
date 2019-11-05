@@ -17,7 +17,6 @@ package com.wl4g.devops.shell.processor;
 
 import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.RunState;
-import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.bean.Message;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
@@ -29,6 +28,7 @@ import org.springframework.util.Assert;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 
 import static com.wl4g.devops.shell.handler.ChannelMessageHandler.*;
 import static com.wl4g.devops.shell.bean.RunState.*;
@@ -44,8 +44,12 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @since
  */
 public final class ShellContext implements InternalInjectable, Closeable {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
+
+	/**
+	 * Event listeners
+	 */
+	final private List<EventListener> eventListeners = new LinkedList<>();
 
 	/**
 	 * Shell handler client.
@@ -56,11 +60,6 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * Line result message state.
 	 */
 	private RunState state;
-
-	/**
-	 * Event listeners
-	 */
-	final private LinkedList<EventListener> eventListeners = new LinkedList<>();
 
 	public ShellContext(ShellHandler client) {
 		this(client, NONCE);
@@ -75,22 +74,18 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		addEventListener(() -> this.state = INTERRUPTED);
 	}
 
-	public RunState getState() {
+	RunState getState() {
 		return state;
-	}
-
-	public ShellHandler getClient() {
-		return client;
 	}
 
 	/**
 	 * Open console stream channel.
 	 */
-	public synchronized void open() {
+	public synchronized ShellContext open() {
 		this.state = RUNNING_WAIT;
-
 		// Print start mark
 		printf(BOF);
+		return this;
 	}
 
 	/**
@@ -99,9 +94,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	@Override
 	public synchronized void close() {
 		this.state = COMPLATED;
-
-		// Print end mark
-		printf(EOF);
+		printf(EOF); // Print end mark
 	}
 
 	/**
@@ -110,7 +103,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * @param message
 	 * @throws IllegalStateException
 	 */
-	public void printf(Object message) throws IllegalStateException {
+	public ShellContext printf(Object message) throws IllegalStateException {
 		Assert.notNull(message, "Printf message must not be null.");
 		Assert.isTrue((message instanceof Message || message instanceof CharSequence || message instanceof Throwable),
 				String.format("Unsupported print message types: %s", message.getClass()));
@@ -120,7 +113,6 @@ public final class ShellContext implements InternalInjectable, Closeable {
 			throw new IllegalStateException("The shell is not printable in the afternoon, has it not been opened or closed?");
 		}
 
-		ChannelMessageHandler client = getClient();
 		if (client != null && client.isActive()) {
 			try {
 				if (message instanceof CharSequence) {
@@ -138,33 +130,17 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		} else {
 			throw new IllegalStateException("The current console channel may be closed!");
 		}
-
+		return this;
 	}
 
 	/**
-	 * Print quietly message to client console
-	 *
-	 * @param message
+	 * Are you currently in an interrupt state? (if the current thread does not
+	 * open the shell channel, it will return false, that is, uninterrupted)
+	 * 
+	 * @return
 	 */
-	public void printfQuietly(String message) {
-		try {
-			printf(message);
-		} catch (Exception e) {
-			log.warn("Printf error. cause: {}", getRootCauseMessage(e));
-		}
-	}
-
-	/**
-	 * Print quietly throwable message to client console
-	 *
-	 * @param message
-	 */
-	public void printfQuietly(Throwable th) {
-		try {
-			printf(th);
-		} catch (Exception e) {
-			log.warn("Printf error. cause: {}", getRootCauseMessage(e));
-		}
+	public boolean isInterruptIfNecessary() {
+		return state != null ? (state == INTERRUPTED) : false;
 	}
 
 	/**
@@ -172,7 +148,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * 
 	 * @return
 	 */
-	public LinkedList<EventListener> getEventListeners() {
+	public List<EventListener> getEventListeners() {
 		return eventListeners;
 	}
 
@@ -187,23 +163,13 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	}
 
 	/**
-	 * Are you currently in an interrupt state? (if the current thread does not
-	 * open the shell channel, it will return false, that is, uninterrupted)
-	 * 
-	 * @return
-	 */
-	public boolean isInterruptIfNecessary() {
-		return state != null ? (state == INTERRUPTED) : false;
-	}
-
-	/**
 	 * Event listener
 	 * 
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年5月25日
 	 * @since
 	 */
-	public static interface EventListener {
+	static interface EventListener {
 		void onInterrupt();
 	}
 

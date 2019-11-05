@@ -31,7 +31,7 @@ import java.io.File;
  * @version v1.0.0 2019-10-13
  * @since
  */
-public class TranformProperties {
+public class DeployProperties {
 
 	/** Transfer bin file to remote host SSH2 key. */
 	private String cipherKey = EMPTY;

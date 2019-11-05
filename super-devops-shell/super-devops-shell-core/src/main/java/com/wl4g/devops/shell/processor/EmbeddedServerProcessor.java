@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import static org.springframework.util.Assert.state;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.slf4j.Logger;
@@ -52,7 +53,6 @@ import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
-import com.wl4g.devops.shell.utils.ShellContextHolder;
 
 /**
  * Socket server shell processor
@@ -61,7 +61,7 @@ import com.wl4g.devops.shell.utils.ShellContextHolder;
  * @version v1.0 2019年5月1日
  * @since
  */
-public class EmbeddedServerProcessor extends AbstractProcessor implements ApplicationRunner, Runnable {
+public class EmbeddedServerProcessor extends BasicShellProcessor implements ApplicationRunner, Runnable {
 
 	/**
 	 * Current server running status.
@@ -179,12 +179,11 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
 		// Get shellContext
 		ShellContext context = getClient().getContext();
-
 		// Default initialize
-		ShellContextHolder.bind(context);
+		ShellHolder.bind(context);
 
 		// Find ShellContext parameter index
-		int index = findParameterTypeIndex(tm, ShellContext.class);
+		int index = getShellContextParameterIndex(tm);
 		if (index >= 0) {
 			// Overwrite parameters
 			if (index < args.size()) {
@@ -193,7 +192,25 @@ public class EmbeddedServerProcessor extends AbstractProcessor implements Applic
 				args.add(context);
 			}
 		}
+	}
 
+	/**
+	 * Get {@link ShellContext} index by parameters classes.
+	 * 
+	 * @param tm
+	 * @param clazz
+	 * @return
+	 */
+	private int getShellContextParameterIndex(TargetMethodWrapper tm) {
+		int index = -1, i = 0;
+		for (Class<?> cls : tm.getMethod().getParameterTypes()) {
+			if (cls == ShellContext.class) {
+				state(index < 0, String.format("Multiple shellcontext type parameters are unsupported. %s", tm.getMethod()));
+				index = i;
+			}
+			++i;
+		}
+		return index;
 	}
 
 	/**

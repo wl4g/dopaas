@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.job;
+package com.wl4g.devops.ci.pipeline.deploy;
 
-import java.util.List;
-
-import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
+import com.wl4g.devops.ci.pipeline.NpmViewPipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
+import java.util.List;
+
 /**
- * Django stdandard transfer job.
- * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年10月25日
+ * NPM view deployments pipeline handler tasks.
+ *
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月24日
  * @since
  */
-public class DjangoStandardTransferJob extends GenericHostPipeTransferJob<DjangoStandardPipelineProvider> {
+public class NpmViewPipeDeployer extends GenericHostPipeDeployer<NpmViewPipelineProvider> {
 
-	public DjangoStandardTransferJob(DjangoStandardPipelineProvider provider, AppInstance instance,
+	public NpmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(provider, instance, taskHistoryDetails);
 	}

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.core.PipelineContext;
-import com.wl4g.devops.ci.pipeline.job.NpmViewPipeTransferJob;
+import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
@@ -57,7 +57,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
-		return beanFactory.getBean(NpmViewPipeTransferJob.class, args);
+		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
 	}
 
 	private void build() throws Exception {

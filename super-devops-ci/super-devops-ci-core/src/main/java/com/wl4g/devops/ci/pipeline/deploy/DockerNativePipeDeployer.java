@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.job;
+package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
@@ -28,9 +28,9 @@ import java.util.List;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class DockerNativePipeTransferJob extends GenericHostPipeTransferJob<DockerNativePipelineProvider> {
+public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNativePipelineProvider> {
 
-	public DockerNativePipeTransferJob(DockerNativePipelineProvider provider, AppInstance instance,
+	public DockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(provider, instance, taskHistoryDetails);
 	}

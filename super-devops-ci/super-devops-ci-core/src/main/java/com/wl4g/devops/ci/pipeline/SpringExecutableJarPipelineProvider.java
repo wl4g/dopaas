@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.core.PipelineContext;
-import com.wl4g.devops.ci.pipeline.job.SpringExecutableJarTransferJob;
+import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
@@ -45,7 +45,7 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
-		return beanFactory.getBean(SpringExecutableJarTransferJob.class, args);
+		return beanFactory.getBean(SpringExecutableJarPipeDeployer.class, args);
 	}
 
 }

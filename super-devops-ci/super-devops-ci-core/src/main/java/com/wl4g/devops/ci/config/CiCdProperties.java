@@ -59,14 +59,14 @@ public class CiCdProperties implements InitializingBean {
 	private VcsSourceProperties vcs = new VcsSourceProperties();
 
 	/**
-	 * Pipeline job properties.
+	 * Pipeline build properties.
 	 */
-	private JobProperties job = new JobProperties();
+	private BuildProperties build = new BuildProperties();
 
 	/**
-	 * Pipeline transform properties.
+	 * Pipeline deploy properties.
 	 */
-	private TranformProperties tranform = new TranformProperties();
+	private DeployProperties deploy = new DeployProperties();
 
 	public void setWorkspace(String workspace) {
 		if (!isBlank(workspace)) {
@@ -99,23 +99,23 @@ public class CiCdProperties implements InitializingBean {
 		}
 	}
 
-	public JobProperties getJob() {
-		return job;
+	public BuildProperties getBuild() {
+		return build;
 	}
 
-	public void setJob(JobProperties job) {
-		if (Objects.nonNull(job)) {
-			this.job = job;
+	public void setBuild(BuildProperties build) {
+		if (Objects.nonNull(build)) {
+			this.build = build;
 		}
 	}
 
-	public TranformProperties getTranform() {
-		return tranform;
+	public DeployProperties getDeploy() {
+		return deploy;
 	}
 
-	public void setTranform(TranformProperties tranform) {
-		if (Objects.nonNull(tranform)) {
-			this.tranform = tranform;
+	public void setDeploy(DeployProperties deploy) {
+		if (Objects.nonNull(deploy)) {
+			this.deploy = deploy;
 		}
 	}
 
@@ -128,17 +128,17 @@ public class CiCdProperties implements InitializingBean {
 	 * Apply default properties values.
 	 */
 	protected void applyDefaultProperties() {
-		if (isNull(getJob().getSharedDependencyTryTimeoutMs())) {
+		if (isNull(getBuild().getSharedDependencyTryTimeoutMs())) {
 			// Default to one third of the full job timeout.
-			getJob().setSharedDependencyTryTimeoutMs(getJob().getJobTimeoutMs() / 3);
-			log.info("Use sharedDependencyTryTimeoutMs of default value: {}", getJob().getSharedDependencyTryTimeoutMs());
-		}
-		if (isNull(getTranform().getTransferTimeoutMs())) {
-			// Default to one fifth of the full job timeout.
-			getTranform().setTransferTimeoutMs(getJob().getJobTimeoutMs() / 5);
-			log.info("Use transferTimeoutMs of default value: {}", getTranform().getTransferTimeoutMs());
+			getBuild().setSharedDependencyTryTimeoutMs(getBuild().getJobTimeoutMs() / 3);
+			log.info("Use sharedDependencyTryTimeoutMs of default value: {}", getBuild().getSharedDependencyTryTimeoutMs());
 		}
 
+		if (isNull(getDeploy().getTransferTimeoutMs())) {
+			// Default to one fifth of the full job timeout.
+			getDeploy().setTransferTimeoutMs(getBuild().getJobTimeoutMs() / 5);
+			log.info("Use transferTimeoutMs of default value: {}", getDeploy().getTransferTimeoutMs());
+		}
 	}
 
 	//
@@ -217,7 +217,7 @@ public class CiCdProperties implements InitializingBean {
 	public long getRemoteCommandTimeoutMs(int instances) {
 		// isTrue(instances > 0, "Job instance count must greater than or equal
 		// to 0");
-		return (long) (getTranform().getTransferTimeoutMs() * 0.76);
+		return (long) (getDeploy().getTransferTimeoutMs() * 0.76);
 	}
 
 	/**
@@ -245,7 +245,7 @@ public class CiCdProperties implements InitializingBean {
 	public File getTransferRemoteHomeTmpFile(String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(suffix, "Transfer project file suffix must not be empty.");
-		return new File(getTranform().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);
+		return new File(getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);
 	}
 
 }

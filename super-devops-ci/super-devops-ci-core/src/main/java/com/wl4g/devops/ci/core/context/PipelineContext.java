@@ -13,31 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.job;
+package com.wl4g.devops.ci.core.context;
+
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.share.AppCluster;
+import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.util.List;
 
-import com.wl4g.devops.ci.pipeline.SpringExecutableJarPipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
-
 /**
- * Spring executable JAR transfer job.
- * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年10月25日
+ * Deploy information wrapper API.
+ *
+ * @author Wangl.sir
+ * @version v1.0.0 2019-09-29
  * @since
  */
-public class SpringExecutableJarTransferJob extends GenericHostPipeTransferJob<SpringExecutableJarPipelineProvider> {
+public interface PipelineContext {
 
-	public SpringExecutableJarTransferJob(SpringExecutableJarPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(provider, instance, taskHistoryDetails);
-	}
+	Project getProject();
 
-	@Override
-	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		super.doRemoteDeploying(remoteHost, user, sshkey);
-	}
+	String getProjectSourceDir();
+
+	AppCluster getAppCluster();
+
+	List<AppInstance> getInstances();
+
+	TaskHistory getTaskHistory();
+
+	TaskHistory getRefTaskHistory();
+
+	List<TaskHistoryDetail> getTaskHistoryDetails();
 
 }
