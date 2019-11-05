@@ -55,6 +55,9 @@ import java.util.List;
 public abstract class AbstractPipelineProvider implements PipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	/** Pipeline context wrapper. */
+	final protected PipelineContext context;
+
 	@Autowired
 	protected CiCdProperties config;
 	@Autowired
@@ -77,43 +80,44 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected TaskSignDao taskSignDao;
 
-	/** Pipeline information. */
-	final protected PipelineContext pipelineInfo;
+	private String vcsSourceFileFingerprint;
+	private String assetsFileFingerprint;
 
-	protected String shaGit;
-	protected String shaLocal;
-
-	public AbstractPipelineProvider(PipelineContext pipelineInfo) {
-		notNull(pipelineInfo, "Pipeline info must not be null.");
-		this.pipelineInfo = pipelineInfo;
+	public AbstractPipelineProvider(PipelineContext context) {
+		notNull(context, "Pipeline context must not be null.");
+		this.context = context;
 	}
 
-	public PipelineContext getPipelineInfo() {
-		return pipelineInfo;
+	/**
+	 * Get pipeline context.
+	 */
+	public PipelineContext getContext() {
+		return context;
+	}
+
+	// --- Fingerprints. ---
+
+	@Override
+	public String getVcsSourceFileFingerprint() {
+		return vcsSourceFileFingerprint;
 	}
 
 	@Override
-	public String getShaGit() {
-		return shaGit;
+	public String getAssetsFileFingerprint() {
+		return assetsFileFingerprint;
 	}
 
-	@Override
-	public String getShaLocal() {
-		return shaLocal;
+	protected void setupVcsSourceFileFingerprint(String vcsSourceFileFingerprint) {
+		hasText(vcsSourceFileFingerprint, "vcsSourceFileFingerprint must not be empty.");
+		this.vcsSourceFileFingerprint = vcsSourceFileFingerprint;
 	}
 
-	public void setShaGit(String shaGit) {
-		this.shaGit = shaGit;
+	protected void setupAssetsFileFingerprint(String assetsFileFingerprint) {
+		hasText(assetsFileFingerprint, "assetsFileFingerprint must not be empty.");
+		this.assetsFileFingerprint = assetsFileFingerprint;
 	}
 
-	public void setShaLocal(String shaLocal) {
-		this.shaLocal = shaLocal;
-	}
-
-	@Override
-	public TaskHistoryService getTaskHistoryService() {
-		return taskHistoryService;
-	}
+	// --- Functions. ---
 
 	/**
 	 * Execution remote commands
@@ -130,7 +134,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		hasText(command, "Commands must not be empty.");
 
 		// Remote timeout(Ms)
-		long timeoutMs = config.getRemoteCommandTimeoutMs(getPipelineInfo().getInstances().size());
+		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
 		logDefault("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
 		// Execution command.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSSHKey(sshkey), command, timeoutMs);
@@ -167,29 +171,21 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Distribution transfer to remote instances for executable file.
+	 * Execution distribution transfer to remote instances for executable file.
 	 */
-	protected void doTransferToRemoteInstances() {
+	protected void doExecuteTransferToRemoteInstances() {
 		// Creating transfer instances jobs.
-		List<Runnable> jobs = safeList(getPipelineInfo().getInstances()).stream().map(i -> newTransferJob(i)).collect(toList());
+		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> newTransferJob(i)).collect(toList());
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
 			if (log.isInfoEnabled()) {
-				log.info("Transfer jobs starting...  for instances({}), {}", jobs.size(), getPipelineInfo().getInstances());
+				log.info("Transfer jobs starting...  for instances({}), {}", jobs.size(), getContext().getInstances());
 			}
 			jobExecutor.submitForComplete(jobs, config.getTranform().getTransferTimeoutMs());
 		}
 
 	}
-
-	/**
-	 * Create pipeline transfer job.
-	 * 
-	 * @param instance
-	 * @return
-	 */
-	protected abstract Runnable newTransferJob(AppInstance instance);
 
 	/**
 	 * Resolve placeholder variables.
@@ -202,5 +198,13 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
 		return command;
 	}
+
+	/**
+	 * Create pipeline transfer job.
+	 * 
+	 * @param instance
+	 * @return
+	 */
+	protected abstract Runnable newTransferJob(AppInstance instance);
 
 }

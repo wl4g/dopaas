@@ -50,28 +50,36 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 
 	// --- MAVEN building. ---
 
-	protected void build(TaskHistory taskHistory, boolean isRollback) throws Exception {
+	/**
+	 * Do maven building.
+	 * 
+	 * @param taskHistory
+	 * @param isRollback
+	 * @throws Exception
+	 */
+	protected void mvnBuild(TaskHistory taskHistory, boolean isRollback) throws Exception {
 		File jobLog = config.getJobLog(taskHistory.getId());
 		if (log.isInfoEnabled()) {
-			log.info("Building started, stdout to {}", jobLog.getAbsolutePath());
+			log.info("Building starting, stdout to {}", jobLog.getAbsolutePath());
 		}
 
-		// Dependencies.
-		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(taskHistory.getProjectId(), null);
+		// Resolve project dependencies.
+		LinkedHashSet<Dependency> dependencies = dependencyService.getHierarchyDependencys(taskHistory.getProjectId(), null);
 		if (log.isInfoEnabled()) {
-			log.info("Building Analysis dependencys={}", dependencys);
+			log.info("Resolved hierarchy dependencies: {}", dependencies);
 		}
 
-		// Custom dependencies commands.
+		// Custom dependency commands.
 		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHistory.getId());
-		for (Dependency depd : dependencys) {
+		for (Dependency depd : dependencies) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doMvnBuildInternal(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
+			// Do MAVEN building.
+			doMvnBuildDependencies(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
 					depCmd);
 		}
 
 		// Do MAVEN building.
-		doMvnBuildInternal(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
+		doMvnBuildDependencies(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
 				taskHistory.getBuildCommand());
 	}
 
@@ -79,10 +87,10 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * Local backup
 	 */
 	protected void backupLocal() throws Exception {
-		Integer taskHisId = getPipelineInfo().getTaskHistory().getId();
-		String targetPath = getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath();
+		Integer taskHisId = getContext().getTaskHistory().getId();
+		String targetPath = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
 		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
-				+ subPackname(getPipelineInfo().getProject().getTarPath());
+				+ subPackname(getContext().getProject().getAssetsPath());
 
 		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
 
@@ -96,11 +104,11 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @throws Exception
 	 */
 	protected void rollbackBackupFile() throws Exception {
-		Integer taskHisRefId = getPipelineInfo().getRefTaskHistory().getId();
+		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
 		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
-				+ subPackname(getPipelineInfo().getProject().getTarPath());
+				+ subPackname(getContext().getProject().getAssetsPath());
 
-		String target = getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath();
+		String target = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
 		String command = "cp -Rf " + backupPath + " " + target;
 		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
 	}
@@ -124,7 +132,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	/**
-	 * Execution internal project dependency building.
+	 * Execution MVN dependencies building.
 	 * 
 	 * @param taskHisy
 	 * @param projectId
@@ -136,7 +144,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doMvnBuildInternal(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+	private void doMvnBuildDependencies(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getJob().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
@@ -192,20 +200,20 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		if (isRollback) {
-			String sha;
+			String sign;
 			if (isDependency) {
 				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependencyId, taskHisy.getRefId());
 				notNull(taskSign, String.format("Not found taskSign for dependencyId:%s, taskHistoryRefId:%s", dependencyId,
 						taskHisy.getRefId()));
-				sha = taskSign.getShaGit();
+				sign = taskSign.getShaGit();
 			} else {
-				sha = taskHisy.getShaGit();
+				sign = taskHisy.getShaGit();
 			}
 			if (GitUtils.checkGitPath(projectDir)) {
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
+				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			} else {
 				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
+				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			}
 		} else {
 			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull

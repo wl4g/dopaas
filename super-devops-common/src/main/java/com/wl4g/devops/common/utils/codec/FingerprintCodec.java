@@ -17,26 +17,34 @@ package com.wl4g.devops.common.utils.codec;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
+ * File Fingerprint codec utility tools.
+ * 
+ * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-07-19 17:16:00
  */
-public class FileCodec {
+public abstract class FingerprintCodec {
 
-	public static String getFileSha1(File file) {
-		FileInputStream in = null;
-		try {
-			in = new FileInputStream(file);
+	/** Reader buffer size. */
+	final public static int READ_BUF_SIZE = 1024 * 8;
+
+	/**
+	 * Read the file and calculate the binary SHA1 fingerprint.
+	 * 
+	 * @param file
+	 * @return SHA1 string of file.
+	 */
+	public static String getSha1Fingerprint(File file) {
+		try (FileInputStream in = new FileInputStream(file);) {
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
-			byte[] buffer = new byte[1024 * 1024 * 10];
+			byte[] buf = new byte[READ_BUF_SIZE];
 			int len = 0;
-			while ((len = in.read(buffer)) > 0) {
-				digest.update(buffer, 0, len);
+			while ((len = in.read(buf)) > 0) {
+				digest.update(buf, 0, len);
 			}
 			String sha1 = new BigInteger(1, digest.digest()).toString(16);
 			int length = 40 - sha1.length();
@@ -46,31 +54,24 @@ public class FileCodec {
 				}
 			}
 			return sha1;
-		} catch (IOException e) {
-			System.out.println(e);
-		} catch (NoSuchAlgorithmException e) {
-			System.out.println(e);
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException e) {
-				System.out.println(e);
-			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
 		}
-		return null;
 	}
 
-	public static String getFileMD5(File file) {
-		FileInputStream in = null;
-		try {
-			in = new FileInputStream(file);
+	/**
+	 * Read the file and calculate the binary MD5 fingerprint.
+	 * 
+	 * @param file
+	 * @return md5 string of file.
+	 */
+	public static String getMd5Fingerprint(File file) {
+		try (FileInputStream in = new FileInputStream(file);) {
 			MessageDigest digest = MessageDigest.getInstance("MD5");
-			byte[] buffer = new byte[1024 * 1024 * 10];
+			byte[] buf = new byte[READ_BUF_SIZE];
 			int len = 0;
-			while ((len = in.read(buffer)) > 0) {
-				digest.update(buffer, 0, len);
+			while ((len = in.read(buf)) > 0) {
+				digest.update(buf, 0, len);
 			}
 			String md5 = new BigInteger(1, digest.digest()).toString(16);
 			int length = 32 - md5.length();
@@ -80,20 +81,9 @@ public class FileCodec {
 				}
 			}
 			return md5;
-		} catch (IOException e) {
-			System.out.println(e);
-		} catch (NoSuchAlgorithmException e) {
-			System.out.println(e);
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException e) {
-				System.out.println(e);
-			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
 		}
-		return null;
 	}
 
 }

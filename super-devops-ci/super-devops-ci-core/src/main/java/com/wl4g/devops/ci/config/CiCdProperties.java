@@ -28,7 +28,6 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
 
 /**
  * CICD configuration properties.
@@ -212,13 +211,27 @@ public class CiCdProperties implements InitializingBean {
 	 * Timeout for execution of each remote command during the distribution
 	 * deployment phase.
 	 * 
-	 * @param instanceCount
+	 * @param instances
 	 * @return
 	 */
-	public long getRemoteCommandTimeoutMs(int instanceCount) {
-		isTrue(instanceCount > 0, "Job instance count must greater than or equal to 0");
-		int tmpMultilpe = (instanceCount / getExecutor().getConcurrency() * 2);
-		return getTranform().getTransferTimeoutMs() * tmpMultilpe;
+	public long getRemoteCommandTimeoutMs(int instances) {
+		// isTrue(instances > 0, "Job instance count must greater than or equal
+		// to 0");
+		return (long) (getTranform().getTransferTimeoutMs() * 0.76);
+	}
+
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/{PROJECT_NAME}/{PROJECT_NAME}.{SUFFIX}
+	 * 
+	 * @param projectName
+	 * @param suffix
+	 * @return
+	 */
+	public File getTransferLocalTmpFile(Integer taskHisId, String projectName, String suffix) {
+		hasText(projectName, "Transfer project name must not be empty.");
+		hasText(suffix, "Transfer project file suffix must not be empty.");
+		return new File(getJobBackup(taskHisId).getAbsolutePath() + "/" + projectName + "." + suffix);
 	}
 
 	/**
@@ -231,7 +244,7 @@ public class CiCdProperties implements InitializingBean {
 	 */
 	public File getTransferRemoteHomeTmpFile(String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
-		hasText(projectName, "Transfer project file suffix must not be empty.");
+		hasText(suffix, "Transfer project file suffix must not be empty.");
 		return new File(getTranform().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);
 	}
 

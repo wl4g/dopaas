@@ -136,7 +136,7 @@ public class CiCdAutoConfiguration {
 		return new CompositeVcsOperateAdapter(operators);
 	}
 
-	// --- PIPELINE PROVIDERs ---
+	// --- Pipeline providers. ---
 
 	@Bean
 	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR })
@@ -180,48 +180,48 @@ public class CiCdAutoConfiguration {
 		return new GolangPipelineProvider(info);
 	}
 
-	// --- PIPELINE TRANSFER JOBs ---
+	// --- Pipeline transfer jobs. ---
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MvnAssembleTarPipeTransferJob mvnAssembleTarPipeTransferJob(MvnAssembleTarPipelineProvider provider, Project project,
-			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails, String tarPath, String path) {
-		return new MvnAssembleTarPipeTransferJob(provider, project, instance, taskHistoryDetails, tarPath, path);
-	}
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipeTransferJob dockerNativePipeTransferJob(DockerNativePipelineProvider provider, Project project,
+	public MvnAssembleTarPipeTransferJob mvnAssembleTarPipeTransferJob(MvnAssembleTarPipelineProvider provider,
 			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		return new DockerNativePipeTransferJob(provider, project, instance, taskHistoryDetails);
+		return new MvnAssembleTarPipeTransferJob(provider, instance, taskHistoryDetails);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public NpmViewPipeTransferJob npmViewPipeTransferJob(NpmViewPipelineProvider provider, Project project, AppInstance instance,
+	public DockerNativePipeTransferJob dockerNativePipeTransferJob(DockerNativePipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new NpmViewPipeTransferJob(provider, project, instance, taskHistoryDetails);
+		return new DockerNativePipeTransferJob(provider, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public NpmViewPipeTransferJob npmViewPipeTransferJob(NpmViewPipelineProvider provider, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		return new NpmViewPipeTransferJob(provider, instance, taskHistoryDetails);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarTransferJob springExecutableJarTransferJob(SpringExecutableJarPipelineProvider provider,
-			Project project, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		return new SpringExecutableJarTransferJob(provider, project, instance, taskHistoryDetails);
-	}
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardTransferJob djangoStandardTransferJob(DjangoStandardPipelineProvider provider, Project project,
 			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		return new DjangoStandardTransferJob(provider, project, instance, taskHistoryDetails);
+		return new SpringExecutableJarTransferJob(provider, instance, taskHistoryDetails);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangTransferJob golangTransferJob(DjangoStandardPipelineProvider provider, Project project, AppInstance instance,
+	public DjangoStandardTransferJob djangoStandardTransferJob(DjangoStandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new GolangTransferJob(provider, project, instance, taskHistoryDetails);
+		return new DjangoStandardTransferJob(provider, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public GolangTransferJob golangTransferJob(DjangoStandardPipelineProvider provider, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		return new GolangTransferJob(provider, instance, taskHistoryDetails);
 	}
 
 	// --- TIMING SCHEDULE ---

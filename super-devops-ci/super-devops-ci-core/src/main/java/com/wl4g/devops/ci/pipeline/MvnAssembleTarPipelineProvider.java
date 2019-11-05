@@ -19,9 +19,9 @@ import com.wl4g.devops.ci.core.PipelineContext;
 import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipeTransferJob;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.codec.FileCodec;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
+import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
 
 import java.io.File;
 
@@ -40,12 +40,14 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	public void execute() throws Exception {
-		// maven install , include dependency
-		build(pipelineInfo.getTaskHistory(), false);
-		// get git sha
-		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
+		// Maven building and include dependencies.
+		mvnBuild(getContext().getTaskHistory(), false);
+
+		// Setup Vcs source fingerprint.
+		setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+
 		// MVN build.
-		doInternalMvnBuild0();
+		doMvnBuildInternal();
 	}
 
 	/**
@@ -53,32 +55,37 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	@Override
 	public void rollback() throws Exception {
-		// Old file
+		// Older file
 		File backupFile = getBackupFile();
 		if (backupFile.exists()) {
-			// from git
+			// Direct using backup file.
 			rollbackBackupFile();
-			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
+			// Setup vcs source fingerprint.
+			setupVcsSourceFileFingerprint(getContext().getRefTaskHistory().getShaGit());
 		} else {
-			// getDependencyService().rollback(getTaskHistory(),
-			// getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-			build(getPipelineInfo().getTaskHistory(), true);
-			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getProjectSourceDir()));
+			// New building and include dependencies.
+			mvnBuild(getContext().getTaskHistory(), true);
+			// Setup vcs source fingerprint.
+			setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 		}
-		doInternalMvnBuild0();
+
+		// MVN build.
+		doMvnBuildInternal();
 	}
 
 	/**
 	 * Invoke internal MVN build.
 	 */
-	private void doInternalMvnBuild0() throws Exception {
-		// get local sha
-		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getProjectSourceDir() + getPipelineInfo().getProject().getTarPath())));
+	private void doMvnBuildInternal() throws Exception {
+		// Setup assets file fingerprint.
+		File file = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
+		setupAssetsFileFingerprint(getMd5Fingerprint(file));
+
 		// backup in local
 		backupLocal();
 
-		// Startup pipeline jobs.
-		doTransferToRemoteInstances();
+		// Do transfer to remote jobs.
+		doExecuteTransferToRemoteInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -87,15 +94,14 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	}
 
 	private File getBackupFile() {
-		String oldFilePath = config.getWorkspace() + "/" + getPipelineInfo().getTaskHistory().getRefId() + "/"
-				+ subPackname(getPipelineInfo().getProject().getTarPath());
+		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
+				+ subPackname(getContext().getProject().getAssetsPath());
 		return new File(oldFilePath);
 	}
 
 	@Override
 	protected Runnable newTransferJob(AppInstance instance) {
-		Object[] args = { this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails(),
-				getPipelineInfo().getProjectSourceDir(), getPipelineInfo().getProject().getTarPath() };
+		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(MvnAssembleTarPipeTransferJob.class, args);
 	}
 
