@@ -116,7 +116,8 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 		} else {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-			String buildCommand = resolvePlaceholderVariables(taskHistory.getBuildCommand(), projectDir);
+			// Resolve placeholder variables.
+			String buildCommand = resolvePlaceholderVariables(taskHistory.getBuildCommand());
 			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 	}

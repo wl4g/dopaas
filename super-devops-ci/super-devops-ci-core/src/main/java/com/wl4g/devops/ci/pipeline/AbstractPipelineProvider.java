@@ -34,15 +34,16 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.PROJECT_PATH;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.replace;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -53,6 +54,7 @@ import java.util.List;
  * @date 2019-05-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Pipeline context wrapper. */
@@ -89,7 +91,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Get pipeline context.
+	 * Pipeline context.
 	 */
 	public PipelineContext getContext() {
 		return context;
@@ -188,23 +190,103 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Resolve placeholder variables.
-	 * 
-	 * @param command
-	 * @param projectPath
-	 * @return
-	 */
-	protected String resolvePlaceholderVariables(String command, String projectPath) {
-		command = command.replaceAll(PROJECT_PATH, projectPath);// projectPath
-		return command;
-	}
-
-	/**
 	 * Create pipeline transfer job.
 	 * 
 	 * @param instance
 	 * @return
 	 */
 	protected abstract Runnable newTransferJob(AppInstance instance);
+
+	/**
+	 * Resolve placeholder variables.
+	 * 
+	 * @param command
+	 * @return
+	 */
+	protected String resolvePlaceholderVariables(String command) {
+		return new PlaceholderVariableResolver(command).resolve().getAssertion();
+	}
+
+	/**
+	 * Placeholder variables resolver.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	class PlaceholderVariableResolver {
+
+		/** Placeholder for projectDir. */
+		final public static String PH_PROJECT_DIR = "{pipe.projectDir}";
+
+		/** Placeholder for workspaceDir. */
+		final public static String PH_WORKSPACE_DIR = "{pipe.workspaceDir}";
+
+		/** Placeholder for temporary scripts file. */
+		final public static String PH_TMP_SCRIPT_FILE = "{pipe.tmpScriptFile}";
+
+		/** Placeholder for backupDir. */
+		final public static String PH_BACKUP_DIR = "{pipe.backupDir}";
+
+		/** Placeholder for logPath. */
+		final public static String PH_LOG_FILE = "{pipe.logFile}";
+
+		/** Placeholder for remoteTmpDir. */
+		final public static String PH_REMOTE_TMP_DIR = "{pipe.remoteTmpDir}";
+
+		/** Resolving commands. */
+		private String command;
+
+		public PlaceholderVariableResolver(String command) {
+			hasText(command, "Resolveing command must not be empty.");
+			this.command = command;
+		}
+
+		/**
+		 * Resolving placeholder variables.
+		 * 
+		 * @param context
+		 * @param command
+		 * @return
+		 */
+		PlaceholderVariableResolver resolve() {
+			// Replace for workspace.
+			command = replace(command, PH_WORKSPACE_DIR, config.getWorkspace());
+
+			// Replace for projectDir.
+			String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName()).getAbsolutePath();
+			command = replace(command, PH_PROJECT_DIR, projectDir);
+
+			// Replace for backupDir.
+			File tmpScriptFile = config.getJobTmpCommandFile(getContext().getTaskHistory().getId(),
+					getContext().getProject().getId());
+			command = replace(command, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
+
+			// Replace for backupDir.
+			File backupDir = config.getJobBackup(getContext().getTaskHistory().getId());
+			command = replace(command, PH_BACKUP_DIR, backupDir.getAbsolutePath());
+
+			// Replace for logPath.
+			File logFile = config.getJobLog(getContext().getTaskHistory().getId());
+			command = replace(command, PH_LOG_FILE, logFile.getAbsolutePath());
+
+			// Replace for remoteTmpDir.
+			String remoteTmpDir = config.getTranform().getRemoteHomeTmpDir();
+			command = replace(command, PH_REMOTE_TMP_DIR, remoteTmpDir);
+
+			return this;
+		}
+
+		/**
+		 * Get safety asserted commands.
+		 * 
+		 * @return
+		 */
+		String getAssertion() {
+			// TODO ---
+			return command;
+		}
+
+	}
 
 }

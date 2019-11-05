@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import static com.wl4g.devops.ci.utils.GitUtils.*;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
@@ -209,15 +210,15 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			} else {
 				sign = taskHisy.getShaGit();
 			}
-			if (GitUtils.checkGitPath(projectDir)) {
+			if (checkGitPath(projectDir)) {
 				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			} else {
 				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
 				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			}
 		} else {
-			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				GitUtils.checkout(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
+			if (checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
+				checkout(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
 				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
 			}
@@ -228,7 +229,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			TaskSign taskSign = new TaskSign();
 			taskSign.setTaskId(taskHisy.getId());
 			taskSign.setDependenvyId(dependencyId);
-			taskSign.setShaGit(GitUtils.getLatestCommitted(projectDir));
+			taskSign.setShaGit(getLatestCommitted(projectDir));
 			taskSignDao.insertSelective(taskSign);
 		}
 
@@ -240,7 +241,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			// Temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
 			// Resolve placeholder variables.
-			buildCommand = resolvePlaceholderVariables(buildCommand, projectDir);
+			buildCommand = resolvePlaceholderVariables(buildCommand);
 			// Execute shell file.
 			processManager.execFile(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logFile, 300000);
 		}
