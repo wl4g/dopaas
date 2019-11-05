@@ -3,6 +3,7 @@ package com.wl4g.devops.iam.service;
 import com.wl4g.devops.common.bean.iam.Group;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author vjay
@@ -17,5 +18,9 @@ public interface GroupService {
     void del(Integer id);
 
     Group detail(Integer id);
+
+    Set<Group> getGroupsSet();
+
+    Group getParent(List<Group> groups, Integer parentId);
 
 }

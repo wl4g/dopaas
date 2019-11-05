@@ -52,6 +52,11 @@ public abstract class BaseBean implements Serializable {
 	 */
 	public static final int DEFAULT_USER_ID = 1;
 
+	/*
+	* 管理员账户
+	 */
+	public static final String ROOT_NAME = "root";
+
 	private Integer id;
 	private Integer createBy; // 创建人
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

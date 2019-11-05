@@ -31,19 +31,35 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+
+  <select id="selectByRoot" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List_g" />
+    from sys_group g
+    where g.del_flag!=1
+  </select>
+
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List_g" />
     from sys_group g
     inner join sys_group_user gu on gu.group_id=g.id
-    where gu.user_id = #{userId,jdbcType=INTEGER}
+    where g.del_flag!=1 and gu.user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List_g" />
+    from sys_group g
+    inner join sys_group_role gr on g.id = gr.group_id
+    where g.del_flag!=1 and gr.role_id = #{roleId,jdbcType=INTEGER}
   </select>
 
   <select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     from sys_group
-    where parent_id = #{parentId,jdbcType=INTEGER}
+    where g.del_flag!=1 and parent_id = #{parentId,jdbcType=INTEGER}
   </select>
 
 

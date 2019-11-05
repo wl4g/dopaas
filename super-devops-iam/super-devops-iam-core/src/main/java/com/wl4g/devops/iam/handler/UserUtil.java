@@ -41,6 +41,11 @@ public class UserUtil {
         return currentLoginUser.getUserId();
     }
 
+    public String getCurrentLoginUsername(){
+        UserCacheDto currentLoginUser = getCurrentLoginUser();
+        return currentLoginUser.getLoginName();
+    }
+
     public String getCurrentLoginUserRoles(){
         UserCacheDto currentLoginUser = getCurrentLoginUser();
         return currentLoginUser.getRoles();
@@ -63,6 +68,8 @@ public class UserUtil {
             userCacheDto = new UserCacheDto();
             //userId
             userCacheDto.setUserId(user.getId());
+            //login name
+            userCacheDto.setLoginName(principal);
             //role
             String roles = findRoles(user);
             userCacheDto.setRoles(roles);
