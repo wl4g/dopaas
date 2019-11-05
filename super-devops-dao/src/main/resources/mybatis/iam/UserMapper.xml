@@ -67,6 +67,9 @@
     <if test="displayName != null and displayName !='' ">
       AND display_name LIKE CONCAT('%','${displayName}','%')
     </if>
+    <if test="userId != null">
+      exists(select 1 from sys_group_user gu inner join sys_group_user sgu on gu.group_id = sgu.group_id where u.id=gu.user_id and sgu.user_id=#{userId,jdbcType=INTEGER})
+    </if>
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
