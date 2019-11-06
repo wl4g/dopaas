@@ -23,6 +23,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.web.model.SessionModel;
+import com.wl4g.devops.iam.common.web.model.SessionModelList;
 import com.wl4g.devops.support.cache.ScanCursor;
 import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -41,8 +42,6 @@ import java.util.List;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.iam.common.web.model.SessionModel.KEY_SESSIONS;
-import static com.wl4g.devops.iam.common.web.model.SessionModel.KEY_SESSIONS_INDEX;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTHENTICATED_SESSION_KEY;
@@ -133,10 +132,15 @@ public abstract class GenericApiController extends BaseController {
 		// Parsing cursor.
 		CursorWrapper cursor = CursorWrapper.parse(query.getCursor());
 		// Do scan access sessions all.
-		ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit());
+		ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit()).open();
 		List<SessionModel> sm = sc.readValues().stream().map(s -> wrapSessionModel(s)).collect(toList());
 
-		resp.getData().andPut(KEY_SESSIONS, sm).andPut(KEY_SESSIONS_INDEX, sc.getCursor());
+		SessionModelList sessionModelList = new SessionModelList();
+		sessionModelList.getIndex().setCursorString(sc.getCursor().getCursorString());
+		sessionModelList.getIndex().setHasNext(sc.getCursor().getHasNext());
+		sessionModelList.setSessions(sm);
+		resp.getData().put("sessions",sessionModelList.getSessions());
+		resp.getData().put("index",sessionModelList.getIndex());
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions => {}", resp);
 		}
