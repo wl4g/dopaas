@@ -35,20 +35,20 @@ import java.util.Map;
 @RequestMapping("/application")
 public class ApplicationController extends BaseController {
 
-    @Autowired
-    private ApplicationDao applicationDao;
+	@Autowired
+	private ApplicationDao applicationDao;
 
-    @RequestMapping(value = "/info")
-    public RespBase<?> allType() {
-        RespBase<Object> resp = RespBase.create();
-        List<ApplicationInfo> list = applicationDao.getByAppNames(null);
-        Map<String,Object> map = new HashMap<>();
-        for(ApplicationInfo application : list){
-            map.put(application.getAppName(),application);
-        }
-        resp.getData().put("map", map);
-        //System.out.println(JacksonUtils.toJSONString(list));
-        return resp;
-    }
+	@RequestMapping(value = "/info")
+	public RespBase<?> allType() {
+		RespBase<Object> resp = RespBase.create();
+		List<ApplicationInfo> list = applicationDao.getByAppNames(null);
+		Map<String, Object> map = new HashMap<>();
+		for (ApplicationInfo application : list) {
+			map.put(application.getAppName(), application);
+		}
+		resp.getData().put("map", map);
+		// System.out.println(JacksonUtils.toJSONString(list));
+		return resp;
+	}
 
 }

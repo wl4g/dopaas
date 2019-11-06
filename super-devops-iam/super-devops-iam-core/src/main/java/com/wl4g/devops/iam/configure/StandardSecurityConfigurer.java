@@ -176,14 +176,14 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Override
 	public String findRoles(String principal, String application) {
 		User user = userDao.selectByUserName(principal);
-		//TODO cache
+		// TODO cache
 		List<Role> list = roleDao.selectByUserId(user.getId());
 		StringBuilder sb = new StringBuilder();
-		for(int i = 0;i<list.size();i++){
+		for (int i = 0; i < list.size(); i++) {
 			Role role = list.get(i);
-			if(i==list.size()-1){
+			if (i == list.size() - 1) {
 				sb.append(role.getName());
-			}else{
+			} else {
 				sb.append(role.getName()).append(",");
 			}
 		}
@@ -193,14 +193,14 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Override
 	public String findPermissions(String principal, String application) {
 		User user = userDao.selectByUserName(principal);
-		//TODO cache
+		// TODO cache
 		List<Menu> list = menuDao.selectByUserId(user.getId());
 		StringBuilder sb = new StringBuilder();
-		for(int i = 0;i<list.size();i++){
+		for (int i = 0; i < list.size(); i++) {
 			Menu menu = list.get(i);
-			if(i==list.size()-1){
+			if (i == list.size() - 1) {
 				sb.append(menu.getPermission());
-			}else{
+			} else {
 				sb.append(menu.getPermission()).append(",");
 			}
 		}

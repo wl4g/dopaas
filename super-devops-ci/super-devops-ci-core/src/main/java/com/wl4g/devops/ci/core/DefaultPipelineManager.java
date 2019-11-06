@@ -251,8 +251,8 @@ public class DefaultPipelineManager implements PipelineManager {
 						provider.getClass().getSimpleName()));
 
 				// Setup status to success.
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getVcsSourceFileFingerprint(),
-						provider.getAssetsFileFingerprint());
+				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null,
+						provider.getVcsSourceFileFingerprint(), provider.getAssetsFileFingerprint());
 				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 
 				// Successful process.
@@ -357,7 +357,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, taskHisy,
 				refTaskHisy, taskHisyDetails);
 
-		// Get prototype PipelineContext
+		// Get prototype provider.
 		return beanFactory.getPrototypeBean(context.getTaskHistory().getTarType(), context);
 	}
 
@@ -390,8 +390,8 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.info(String.format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()));
 
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getVcsSourceFileFingerprint(),
-						provider.getAssetsFileFingerprint());
+				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null,
+						provider.getVcsSourceFileFingerprint(), provider.getAssetsFileFingerprint());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
 				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
