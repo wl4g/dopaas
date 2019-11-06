@@ -21,7 +21,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.EntryAddressDao;
 import com.wl4g.devops.iam.common.web.GenericApiController.SessionDestroy;
 import com.wl4g.devops.iam.common.web.GenericApiController.SessionQuery;
-import com.wl4g.devops.iam.common.web.model.SessionModel;
+import com.wl4g.devops.iam.common.web.model.SessionModelList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -80,13 +80,15 @@ public class IamManagerApiV1Controller extends BaseController {
 		String url = getRemoteApiV1SessionUri(entryAddress.getExtranetBaseUri());
 		log.info("Request get remote sessions for: {}", url);
 		// Do request.
-		RespBase<List<SessionModel>> resp = restTemplate
-				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<List<SessionModel>>>() {
+		RespBase<SessionModelList> resp = restTemplate
+				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionModelList>>() {
 				}).getBody();
 
 		log.info("Got remote sessions response for => {}", resp);
 		return resp;
 	}
+
+
 
 
 	@RequestMapping(path = "getIamServer")

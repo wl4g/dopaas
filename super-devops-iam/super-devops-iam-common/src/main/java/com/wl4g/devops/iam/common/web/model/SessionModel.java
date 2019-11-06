@@ -15,16 +15,12 @@
  */
 package com.wl4g.devops.iam.common.web.model;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.support.cache.ScanCursor.CursorWrapper.parse;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -38,16 +34,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class SessionModel implements Serializable {
 	private static final long serialVersionUID = 1990530522326712114L;
 
-	/**
-	 * Access sessions response key-name.
-	 */
-	final public static String KEY_SESSIONS = "sessions";
-
-	/**
-	 * Access sessions cursor response key-name.
-	 */
-	final public static String KEY_SESSIONS_INDEX = "index";
-
 	private String id;
 	private Date startTimestamp;
 	private Date stopTimestamp;
@@ -59,7 +45,7 @@ public class SessionModel implements Serializable {
 	private Object principal;
 	private Set<String> grantApplications = new HashSet<>();
 
-	private CursorIndex index = new CursorIndex();
+
 
 	public String getId() {
 		return id;
@@ -145,47 +131,13 @@ public class SessionModel implements Serializable {
 		}
 	}
 
-	public CursorIndex getIndex() {
-		return index;
-	}
-
-	public void setIndex(CursorIndex index) {
-		this.index = index;
-	}
-
 	@Override
 	public String toString() {
 		return toJSONString(this);
 	}
 
 
-	public static class CursorIndex{
 
-		private String cursorString;
-
-		private Boolean hasNext = false;
-
-		public String getCursorString() {
-			return cursorString;
-		}
-
-		public void setCursorString(String cursorString) {
-			if(StringUtils.isNotBlank(cursorString)){
-				parse(cursorString);
-				this.cursorString = cursorString;
-			}
-		}
-
-		public Boolean getHasNext() {
-			return hasNext;
-		}
-
-		public void setHasNext(Boolean hasNext) {
-			if(Objects.nonNull(hasNext)){
-				this.hasNext = hasNext;
-			}
-		}
-	}
 
 
 
