@@ -33,28 +33,24 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
 import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
 import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 
 /**
- * Generic Restful response base class
+ * Generic restful response base model wrapper.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年3月9日
  * @since
  */
-public class RespBase<T extends Object> implements Serializable {
+public class RespBase<T> implements Serializable {
 	final private static long serialVersionUID = 2647155468624590650L;
 
-	/**
-	 * Default status value.
-	 */
-	final public transient static String DEFAULT_STATUS = "normal";
-
 	private RetCode code;
-	private String status; // Response status.
+	private String status; // [Extensible]
 	private String message;
 	private DataMap<T> data = new DataMap<>();
 
@@ -85,19 +81,41 @@ public class RespBase<T extends Object> implements Serializable {
 		setData(data);
 	}
 
+	/**
+	 * Get response code value.
+	 * 
+	 * @return
+	 */
 	public int getCode() {
 		return code.getErrcode();
 	}
 
+	/**
+	 * Setup response code of {@link RetCode}.
+	 * 
+	 * @param retCode
+	 * @return
+	 */
 	public RespBase<T> setCode(RetCode retCode) {
 		this.code = retCode != null ? retCode : this.code;
 		return this;
 	}
 
+	/**
+	 * Get status
+	 * 
+	 * @return
+	 */
 	public String getStatus() {
 		return status;
 	}
 
+	/**
+	 * Setup status.
+	 * 
+	 * @param status
+	 * @return
+	 */
 	public RespBase<T> setStatus(String status) {
 		if (!isBlank(status)) {
 			this.status = status;
@@ -105,17 +123,28 @@ public class RespBase<T extends Object> implements Serializable {
 		return this;
 	}
 
+	/**
+	 * Get error message text.
+	 * 
+	 * @return
+	 */
 	public String getMessage() {
-		return message == null ? code.getErrmsg() : message;
+		String errmsg = isBlank(message) ? code.getErrmsg() : message;
+		return String.format("[%s-%s]  %s", GLOBAL_ERR_PREFIX, code.getErrcode(), errmsg);
 	}
 
+	/**
+	 * Setup error message text.
+	 * 
+	 * @return
+	 */
 	public RespBase<T> setMessage(String message) {
 		this.message = !isBlank(message) ? message : this.message;
 		return this;
 	}
 
 	/**
-	 * Setting exception messages only does not set response status code.
+	 * Setup error throwable, does not set response status code.
 	 * 
 	 * @param th
 	 * @return
@@ -126,22 +155,34 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	/**
-	 * Handle API exceptions, setting exception messages and corresponding
-	 * response status code.
+	 * Handle exceptions, at the same time, the restful API compatible error
+	 * status code is automatically set. If there is no match, the default value
+	 * of {@link RetCode.SYS_ERR} is used
 	 * 
 	 * @param th
 	 * @return
 	 */
 	public RespBase<T> handleError(Throwable th) {
 		this.message = getRootCausesString(th);
-		this.code = getRestfulCode(th);
+		this.code = getRestfulCode(th, RetCode.SYS_ERR);
 		return this;
 	}
 
+	/**
+	 * Get response data.
+	 * 
+	 * @return
+	 */
 	public DataMap<T> getData() {
 		return data;
 	}
 
+	/**
+	 * Setup response data.
+	 * 
+	 * @param data
+	 * @return
+	 */
 	public RespBase<T> setData(Map<String, T> data) {
 		if (!isEmpty(data)) {
 			this.data.putAll(data);
@@ -149,12 +190,18 @@ public class RespBase<T extends Object> implements Serializable {
 		return this;
 	}
 
+	/**
+	 * Create child node data map.
+	 * 
+	 * @param node
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	public DataMap<Object> build(String name) {
-		hasText(name, "Build datamap name must not be empty");
-		DataMap<Object> node = new DataMap<>();
-		getData().put(name, (T) node);
-		return node;
+	public DataMap<Object> build(String node) {
+		hasText(node, "RespBase build datamap nodeName must not be empty");
+		DataMap<Object> nodeMap = new DataMap<>();
+		getData().put(node, (T) nodeMap);
+		return nodeMap;
 	}
 
 	@Override
@@ -163,24 +210,45 @@ public class RespBase<T extends Object> implements Serializable {
 				+ (data != null ? "data=" + data : "") + "}";
 	}
 
+	// --- Setup's. ---
+
 	/**
-	 * Obtain handle RESTful exceptions, corresponding response status code.
+	 * Setup global error of message prefix.</br>
+	 * e.g. </br>
+	 * alert("Authenticate failure.&nbsp;&nbsp;&nbsp;[<b>IAM</b>-4001]")
+	 * 
+	 * @param prefix
+	 */
+	public final static void globalErrPrefix(String prefix) {
+		hasText(prefix, "Global errors prefix can't be empty.");
+		GLOBAL_ERR_PREFIX = prefix;
+	}
+
+	// --- Function's. ---
+
+	/**
+	 * Get restful exceptions and corresponding response status code.
 	 * 
 	 * @param th
 	 * @return
 	 */
-	public static RetCode getRestfulCode(Throwable th) {
+	public final static RetCode getRestfulCode(Throwable th) {
 		return getRestfulCode(th, null);
 	}
 
 	/**
-	 * Obtain handle RESTful exceptions, corresponding response status code.
+	 * Get restful exceptions and corresponding response status code.
 	 * 
 	 * @param th
-	 * @param defaultRestfulCode
+	 * @param defaultCode
+	 *            default status code
 	 * @return
+	 * @see {@link RESTfulException}
+	 * @see {@link BizRuleRestrictRestfulException}
+	 * @see {@link BizInvalidArgRestfulException}
+	 * @see {@link ServiceUnavailableRestfulException}
 	 */
-	public static RetCode getRestfulCode(Throwable th, RetCode defaultRestfulCode) {
+	public final static RetCode getRestfulCode(Throwable th, RetCode defaultCode) {
 		if (nonNull(th)) {
 			if (th instanceof BizRuleRestrictRestfulException) {
 				return ((BizRuleRestrictRestfulException) th).getCode();
@@ -190,22 +258,46 @@ public class RespBase<T extends Object> implements Serializable {
 				return ((ServiceUnavailableRestfulException) th).getCode();
 			}
 		}
-		return defaultRestfulCode;
+		return defaultCode;
 	}
 
-	public static <T> RespBase<T> create() {
+	/**
+	 * New create {@link RespBase} instance.
+	 * 
+	 * @return
+	 */
+	public final static <T> RespBase<T> create() {
 		return create(null);
 	}
 
-	public static <T> RespBase<T> create(String status) {
+	/**
+	 * New create {@link RespBase} instance.
+	 * 
+	 * @param status
+	 * @return
+	 */
+	public final static <T> RespBase<T> create(String status) {
 		return new RespBase<T>().setStatus(status);
 	}
 
-	public static boolean isSuccess(RespBase<?> resp) {
+	/**
+	 * Checking the response status code for success.
+	 * 
+	 * @param resp
+	 * @return
+	 */
+	public final static boolean isSuccess(RespBase<?> resp) {
 		return resp != null && RetCode.OK.getErrcode() == resp.getCode();
 	}
 
-	public static boolean eq(RespBase<?> resp, RetCode retCode) {
+	/**
+	 * Check whether the {@link RespBase} status code is the expected value
+	 * 
+	 * @param resp
+	 * @param retCode
+	 * @return
+	 */
+	public final static boolean eq(RespBase<?> resp, RetCode retCode) {
 		return resp != null && retCode.getErrcode() == resp.getCode();
 	}
 
@@ -217,6 +309,7 @@ public class RespBase<T extends Object> implements Serializable {
 	 * @since
 	 * @param <V>
 	 */
+	@Beta
 	public static class DataMap<V> extends LinkedHashMap<String, V> {
 		private static final long serialVersionUID = 741193108777950437L;
 
@@ -261,7 +354,7 @@ public class RespBase<T extends Object> implements Serializable {
 	}
 
 	/**
-	 * Response code definition
+	 * Response code definitions
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月10日
@@ -318,13 +411,18 @@ public class RespBase<T extends Object> implements Serializable {
 		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later"),
 
 		/**
-		 * Customize code type definition.
+		 * Internal dynamic status code customizer.</br>
+		 * 
+		 * @see {@link com.wl4g.devops.common.web.RespBase.RetCode#create}
+		 * @see {@link com.wl4g.devops.common.web.RespBase.RetCode#customizerLocal}
 		 */
-		_$$CUSTOMIZER(-1, "Unknown error");
+		__$$InternalDynamicCustomizer(-1, "Unknown error");
 
 		/**
-		 * Create custom status code, refer to {@link #_$$CUSTOMIZER} and
-		 * {@link #create(int, String)}
+		 * Dynamic status code store customizer.</br>
+		 * 
+		 * @see {@link #__$$InternalDynamicCustomizer}
+		 * @see {@link #create(int, String)}
 		 */
 		final private static ThreadLocal<Object[]> customizerLocal = new InheritableThreadLocal<>();
 
@@ -339,13 +437,13 @@ public class RespBase<T extends Object> implements Serializable {
 
 		/**
 		 * Get error code.</br>
-		 * If custom status code ({@link #_$$CUSTOMIZER}) is used, it takes
-		 * precedence.
+		 * If custom status code ({@link #__$$InternalDynamicCustomizer}) is
+		 * used, it takes precedence.
 		 * 
 		 * @return
 		 */
 		public int getErrcode() {
-			if (this == _$$CUSTOMIZER) {
+			if (this == __$$InternalDynamicCustomizer) {
 				Object errcode = customizerLocal.get()[0];
 				notNull(errcode, "Respbase customizer errcode must not be null.");
 				return (int) errcode;
@@ -355,13 +453,14 @@ public class RespBase<T extends Object> implements Serializable {
 
 		/**
 		 * Get error message.</br>
-		 * If custom status error message ({@link #_$$CUSTOMIZER}) is used, it
-		 * takes precedence.
+		 * If custom status error message
+		 * ({@link #__$$InternalDynamicCustomizer}) is used, it takes
+		 * precedence.
 		 * 
 		 * @return
 		 */
 		public String getErrmsg() {
-			if (this == _$$CUSTOMIZER) {
+			if (this == __$$InternalDynamicCustomizer) {
 				Object errmsg = customizerLocal.get()[1];
 				notNull(errmsg, "Respbase customizer errmsg must not be null.");
 				return (String) errmsg;
@@ -404,7 +503,8 @@ public class RespBase<T extends Object> implements Serializable {
 		}
 
 		/**
-		 * Create custom status code, refer to {@link #_$$CUSTOMIZER}
+		 * Create custom status code, refer to
+		 * {@link #__$$InternalDynamicCustomizer}
 		 * 
 		 * @param errcode
 		 * @param errmsg
@@ -413,9 +513,21 @@ public class RespBase<T extends Object> implements Serializable {
 		final public static RetCode create(int errcode, String errmsg) {
 			Assert.hasText(errmsg, "Result errmsg definition must not be empty.");
 			customizerLocal.set(new Object[] { errcode, errmsg });
-			return _$$CUSTOMIZER;
+			return __$$InternalDynamicCustomizer;
 		}
 
 	}
+
+	/**
+	 * Default status value.
+	 */
+	final public static String DEFAULT_STATUS = "Normal";
+
+	/**
+	 * Global errors prefix.
+	 * 
+	 * @see {@link com.wl4g.devops.common.web.RespBase#globalErrPrefix()}
+	 */
+	public static String GLOBAL_ERR_PREFIX = "api";
 
 }

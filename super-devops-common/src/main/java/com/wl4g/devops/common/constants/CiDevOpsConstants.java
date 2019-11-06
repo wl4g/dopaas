@@ -58,6 +58,11 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final String LOCK_DEPENDENCY_BUILD = "ci.pipeline.build_";
 
 	/**
+	 * Global timeout cleanup finalizer intervalMs.
+	 */
+	public static final String KEY_FINALIZER_INTERVALMS = "ci.timeoutCleanupFinalizer.intervalMs_";
+
+	/**
 	 * Log file start/end separation.
 	 */
 	public static final String LOG_FILE_START = "<[EOF]";

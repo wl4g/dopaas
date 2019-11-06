@@ -30,7 +30,6 @@ import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ import redis.clients.jedis.ScanResult;
  * loading additional results from Redis server until reaching its starting
  * point {@code zero}. <br />
  * <strong>Note:</strong> Please note that the {@link ScanCursor} has to be
- * initialized ({@link #open()} prior to usage.
+ * initialized ({@link #start()} prior to usage.
  * 
  * <font color=red> Note: redis scan is reverse binary iteration, not sequential
  * pointer iteration. </font> See: <a href=
@@ -71,7 +70,7 @@ import redis.clients.jedis.ScanResult;
  * @since
  * @param <E>
  */
-public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
+public abstract class ScanCursor<E> implements Iterator<E> {
 	final public static String REPLICATION = "Replication";
 	final public static String ROLE_MASTER = "role:master";
 	final public static ScanParams NONE_PARAMS = new ScanParams();
@@ -180,7 +179,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 * 
 	 * @see org.springframework.data.redis.core.Cursor#isClosed()
 	 */
-	public boolean isClosed() {
+	public boolean isFinished() {
 		return state == CursorState.CLOSED;
 	}
 
@@ -189,11 +188,10 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 * 
 	 * @see java.io.Closeable#close()
 	 */
-	@Override
-	public synchronized final void close() throws IOException {
-		if (!isClosed()) {
+	public synchronized final void finished() {
+		if (!isFinished()) {
 			try {
-				doClose();
+				doFinished();
 			} finally {
 				state = CursorState.CLOSED;
 			}
@@ -202,9 +200,9 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 
 	/**
 	 * Customization hook for cleaning up resources on when calling
-	 * {@link #close()}.
+	 * {@link #finished()}.
 	 */
-	protected void doClose() {
+	protected synchronized void doFinished() {
 	}
 
 	/**
@@ -212,13 +210,13 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized final <T extends ScanCursor<E>> T open() {
-		if (!isReady()) {
-			throw new IllegalStateException("Cursor already " + state + ". Cannot (re)open it.");
+		if (isReady()) {
+			log.warn("Cursor already " + state + ", cannot (re)open it.");
+			return (T) this;
 		}
 
 		state = CursorState.OPEN;
 		nextScan();
-
 		return (T) this;
 	}
 
@@ -250,9 +248,9 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized List<E> readValues() throws IOException {
-		try (ScanCursor<E> that = this) {
+		try {
 			// Not iterated yet?
-			if (isEmpty(that.iter.getItems())) {
+			if (isEmpty(iter.getItems())) {
 				List<E> list = new ArrayList<>(64);
 				while (hasNext()) {
 					list.add(next());
@@ -261,11 +259,12 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 			}
 
 			// Iterated yet?
-			return (List<E>) that.iter.getItems().stream().map(key -> {
+			return (List<E>) iter.getItems().stream().map(key -> {
 				return deserialize(cluster.get(key), valueType);
 			}).collect(toList());
 		} finally {
 			iter.getItems().clear();
+			finished(); // Stop
 		}
 	}
 
@@ -392,7 +391,7 @@ public abstract class ScanCursor<E> implements Iterator<E>, Closeable {
 	 * Assertion cursor is open
 	 */
 	private synchronized void assertCursorIsOpen() {
-		if (isReady() || isClosed()) {
+		if (isReady() || isFinished()) {
 			throw new RuntimeException("Cannot access closed cursor. Did you forget to call open()?");
 		}
 	}
