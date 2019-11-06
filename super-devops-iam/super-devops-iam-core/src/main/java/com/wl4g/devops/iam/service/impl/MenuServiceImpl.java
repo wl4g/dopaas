@@ -31,7 +31,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static com.wl4g.devops.common.bean.BaseBean.ROOT_NAME;
+import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 
 /**
  * Menu service implements.
@@ -64,6 +64,84 @@ public class MenuServiceImpl implements MenuService {
 		result.put("data", menus);
 		result.put("data2", new ArrayList<>(menusSet));
 		return result;
+	}
+
+	public Menu getParent(List<Menu> menus, Integer parentId) {
+		for (Menu menu : menus) {
+			if (parentId != null && menu.getId() != null && menu.getId().intValue() == parentId.intValue()) {
+				return menu;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<Menu> getMenuList() {
+		return menuDao.selectByUserId(userUtil.getCurrentLoginUserId());
+	}
+
+	@Override
+	public void save(Menu menu) {
+		if (menu.getId() != null) {
+			update(menu);
+		} else {
+			insert(menu);
+		}
+	}
+
+	@Override
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		Menu menu = new Menu();
+		menu.setId(id);
+		menu.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		menuDao.updateByPrimaryKeySelective(menu);
+	}
+
+	@Override
+	public Menu detail(Integer id) {
+		return menuDao.selectByPrimaryKey(id);
+	}
+
+	private void insert(Menu menu) {
+		menu.preInsert();
+		menuDao.insertSelective(menu);
+
+		// Add group , default add the first group to group_menu
+		Set<Group> groupsSet = groupService.getGroupsSet();
+		List<Group> top = new ArrayList<>();
+		for (Group group : groupsSet) {
+			Group parent = groupService.getParent(new ArrayList<>(groupsSet), group.getParentId());
+			if (parent == null) {
+				top.add(group);
+			}
+		}
+		Assert.isTrue(CollectionUtils.isEmpty(groupsSet), "not found top group");
+		Group group = top.get(0);
+		GroupMenu groupMenu = new GroupMenu();
+		groupMenu.preInsert();
+		groupMenu.setGroupId(group.getId());
+		groupMenu.setMenuId(menu.getId());
+		groupMenuDao.insertSelective(groupMenu);
+	}
+
+	private void update(Menu menu) {
+		menu.preUpdate();
+		menuDao.updateByPrimaryKeySelective(menu);
+	}
+
+	private Set<Menu> getMenusSet() {
+		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
+		List<Menu> menus = null;
+		String currentLoginUsername = userUtil.getCurrentLoginUsername();
+		if (DEFAULT_USER_ROOT.equals(currentLoginUsername)) {
+			menus = menuDao.selectByRoot();
+		} else {
+			menus = menuDao.selectByUserIdAccessGroup(currentLoginUserId);
+		}
+		Set<Menu> set = new HashSet<>();
+		set.addAll(menus);
+		return set;
 	}
 
 	private List<Menu> set2Tree(List<Menu> menus) {
@@ -99,85 +177,6 @@ public class MenuServiceImpl implements MenuService {
 			}
 		}
 		return children;
-	}
-
-	public Menu getParent(List<Menu> menus, Integer parentId) {
-		for (Menu menu : menus) {
-			if (parentId != null && menu.getId() != null && menu.getId().intValue() == parentId.intValue()) {
-				return menu;
-			}
-		}
-		return null;
-	}
-
-	private Set<Menu> getMenusSet() {
-		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
-		List<Menu> menus = null;
-		String currentLoginUsername = userUtil.getCurrentLoginUsername();
-		if (ROOT_NAME.equals(currentLoginUsername)) {
-			menus = menuDao.selectByRoot();
-		} else {
-			menus = menuDao.selectByUserIdAccessGroup(currentLoginUserId);
-		}
-		Set<Menu> set = new HashSet<>();
-		set.addAll(menus);
-		return set;
-	}
-
-	@Override
-	public List<Menu> getMenuList() {
-		return menuDao.selectByUserId(userUtil.getCurrentLoginUserId());
-	}
-
-	@Override
-	public void save(Menu menu) {
-		if (menu.getId() != null) {
-			update(menu);
-		} else {
-			insert(menu);
-		}
-	}
-
-	private void insert(Menu menu) {
-		menu.preInsert();
-		menuDao.insertSelective(menu);
-
-		// TODO add group , default add the first group to group_menu
-		Set<Group> groupsSet = groupService.getGroupsSet();
-		List<Group> top = new ArrayList<>();
-		for (Group group : groupsSet) {
-			Group parent = groupService.getParent(new ArrayList<>(groupsSet), group.getParentId());
-			if (parent == null) {
-				top.add(group);
-			}
-		}
-		Assert.isTrue(CollectionUtils.isEmpty(groupsSet), "not found top group");
-		Group group = top.get(0);
-		GroupMenu groupMenu = new GroupMenu();
-		groupMenu.preInsert();
-		groupMenu.setGroupId(group.getId());
-		groupMenu.setMenuId(menu.getId());
-		groupMenuDao.insertSelective(groupMenu);
-
-	}
-
-	private void update(Menu menu) {
-		menu.preUpdate();
-		menuDao.updateByPrimaryKeySelective(menu);
-	}
-
-	@Override
-	public void del(Integer id) {
-		Assert.notNull(id, "id is null");
-		Menu menu = new Menu();
-		menu.setId(id);
-		menu.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		menuDao.updateByPrimaryKeySelective(menu);
-	}
-
-	@Override
-	public Menu detail(Integer id) {
-		return menuDao.selectByPrimaryKey(id);
 	}
 
 }

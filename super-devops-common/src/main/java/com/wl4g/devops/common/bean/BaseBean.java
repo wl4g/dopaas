@@ -31,31 +31,34 @@ public abstract class BaseBean implements Serializable {
 	private static final long serialVersionUID = 8940373806493080114L;
 
 	/**
-	 * 启用状态:启用
+	 * Status: enabled
 	 */
-	public static final int ENABLED = 1;
-	/**
-	 * 启用状态:禁用
-	 */
-	public static final int DISABLED = 0;
-	/**
-	 * 未删除状态
-	 */
-	public static final int DEL_FLAG_NORMAL = 0;
-	/**
-	 * 删除状态
-	 */
-	public static final int DEL_FLAG_DELETE = 1;
+	final public static int ENABLED = 1;
 
 	/**
-	 * 删除状态
+	 * Status: disabled
 	 */
-	public static final int DEFAULT_USER_ID = 1;
+	final public static int DISABLED = 0;
+
+	/**
+	 * Status: normal (not deleted)
+	 */
+	final public static int DEL_FLAG_NORMAL = 0;
+
+	/**
+	 * Status: deleted
+	 */
+	final public static int DEL_FLAG_DELETE = 1;
+
+	/**
+	 * Default userId.
+	 */
+	final public static int DEFAULT_USER_ID = 1;
 
 	/*
-	* 管理员账户
+	 * User: Super administrator account name
 	 */
-	public static final String ROOT_NAME = "root";
+	final public static String DEFAULT_USER_ROOT = "root";
 
 	private Integer id;
 	private Integer createBy; // 创建人
