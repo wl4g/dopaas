@@ -29,7 +29,7 @@ import static org.springframework.util.Assert.notNull;
 public class BuildProperties {
 
 	/** Clean for timeouts job interval time (Ms). */
-	private Long jobCleanIntervalMs = 30 * 1000L;
+	private Long jobCleanMaxIntervalMs = 30 * 1000L;
 
 	/**
 	 * Timeout practice of building a system completely, including multiple
@@ -43,16 +43,16 @@ public class BuildProperties {
 	 */
 	private Long sharedDependencyTryTimeoutMs;
 
-	public Long getJobCleanIntervalMs() {
-		notNull(jobCleanIntervalMs, "Job clean interval must not be null.");
-		isTrue(jobCleanIntervalMs > 0, "Job clean interval must greater than 0.");
-		return jobCleanIntervalMs;
+	public Long getJobCleanMaxIntervalMs() {
+		notNull(jobCleanMaxIntervalMs, "Job clean max interval must not be null.");
+		isTrue(jobCleanMaxIntervalMs > 0, "Job clean max interval must greater than 0.");
+		return jobCleanMaxIntervalMs;
 	}
 
-	public void setJobCleanIntervalMs(Long jobCleanInterval) {
-		if (nonNull(jobCleanInterval)) {
-			isTrue(jobCleanInterval > 0, "Job clean interval must greater than 0.");
-			this.jobCleanIntervalMs = jobCleanInterval;
+	public void setJobCleanMaxIntervalMs(Long jobCleanMaxIntervalMs) {
+		if (nonNull(jobCleanMaxIntervalMs)) {
+			isTrue(jobCleanMaxIntervalMs > 0, "Job clean max interval must greater than 0.");
+			this.jobCleanMaxIntervalMs = jobCleanMaxIntervalMs;
 		}
 	}
 
@@ -62,10 +62,10 @@ public class BuildProperties {
 		return jobTimeoutMs;
 	}
 
-	public void setJobTimeoutMs(Long jobTimeout) {
-		if (nonNull(jobTimeout)) {
-			isTrue(jobTimeout > 0, "Job timeout must greater than 0.");
-			this.jobTimeoutMs = jobTimeout;
+	public void setJobTimeoutMs(Long jobTimeoutMs) {
+		if (nonNull(jobTimeoutMs)) {
+			isTrue(jobTimeoutMs > 0, "Job timeout must greater than 0.");
+			this.jobTimeoutMs = jobTimeoutMs;
 		}
 	}
 

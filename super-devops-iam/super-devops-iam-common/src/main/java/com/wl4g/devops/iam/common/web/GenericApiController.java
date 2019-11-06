@@ -130,13 +130,13 @@ public abstract class GenericApiController extends BaseController {
 			log.info("Get sessions by <= {}", query);
 		}
 
-		// Scan active sessions all.
+		// Parsing cursor.
 		CursorWrapper cursor = CursorWrapper.parse(query.getCursor());
-		try (ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit())) {
-			List<SessionModel> sm = sc.readValues().stream().map(s -> wrapSessionModel(s)).collect(toList());
-			resp.getData().andPut(KEY_SESSIONS, sm).andPut(KEY_SESSIONS_INDEX, sc.getCursor());
-		}
+		// Do scan access sessions all.
+		ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit());
+		List<SessionModel> sm = sc.readValues().stream().map(s -> wrapSessionModel(s)).collect(toList());
 
+		resp.getData().andPut(KEY_SESSIONS, sm).andPut(KEY_SESSIONS_INDEX, sc.getCursor());
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions => {}", resp);
 		}

@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.console;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.console.args.BuildArgument;
-import com.wl4g.devops.ci.console.args.ResetTimeoutCleanupExpressionArgument;
+import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalMsArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.GlobalTimeoutJobCleanupFinalizer;
@@ -26,12 +26,13 @@ import com.wl4g.devops.common.utils.lang.TableFormatters;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
+import com.wl4g.devops.shell.processor.ShellHolder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
-import static com.wl4g.devops.common.utils.task.CronUtils.*;
 import static com.wl4g.devops.shell.processor.ShellHolder.*;
 
 /**
@@ -64,24 +65,21 @@ public class CiCdConsole {
 	 * @param arg
 	 * @return
 	 */
-	@ShellMethod(keys = "expression", group = GROUP, help = "modify the expression of the timing task")
-	public String resetTimeoutCleanupExpression(ResetTimeoutCleanupExpressionArgument arg) {
-		open(); // Open console.
+	@ShellMethod(keys = "modifyCleanupInterval", group = GROUP, help = "Modifying global jobs timeout finalizer max-interval")
+	public String modifyCleanupInterval(TimeoutCleanupIntervalMsArgument arg) {
+		ShellHolder.open();
 		try {
-			// Print to client
-			printf(String.format("expression = <%s>", arg.getExpression()));
-			if (isValidExpression(arg.getExpression())) {
-				finalizer.resetTimeoutCheckerExpression(arg.getExpression());
-				printf(String.format("modify the success , expression = <%s>", arg.getExpression()));
-			} else {
-				printf(String.format("the expression is not valid , expression = <%s>", arg.getExpression()));
-			}
+			printf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
+			// Refreshing global timeoutCleanupFinalizer
+			finalizer.refreshGlobalJobCleanMaxIntervalMs(arg.getMaxIntervalMs());
+
+			printf(String.format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
 		} catch (Exception e) {
-			printf(String.format("Failed to timeout cleanup expression. cause by: %s", getStackTraceAsString(e)));
+			printf(String.format("Failed to timeoutCleanup finalizer intervalMs. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			close(); // Close console
+			ShellHolder.close();
 		}
-		return "Reset cleanup expression completed!";
+		return "Reset timeoutCleanupFinalizer expression completed!";
 	}
 
 	/**
@@ -90,9 +88,9 @@ public class CiCdConsole {
 	 * @param arg
 	 * @return
 	 */
-	@ShellMethod(keys = "taskList", group = GROUP, help = "Pipeline task list.")
-	public String taskList(TaskListArgument arg) {
-		open(); // Open console
+	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
+	public String getPipelineList(TaskListArgument arg) {
+		ShellHolder.open();
 		try {
 			// Setup pagers.
 			PageHelper.startPage(arg.getPageNum(), arg.getPageSize(), true);
@@ -103,26 +101,27 @@ public class CiCdConsole {
 		} catch (Exception e) {
 			printf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			close(); // Close console
+			ShellHolder.close();
 		}
+
 		return "Load pipeline task list completed!";
 	}
 
 	/**
-	 * Pipeline deploy.
+	 * New pipeline task deployement.
 	 * 
 	 * @param arg
 	 * @return
 	 */
 	@ShellMethod(keys = "deploy", group = GROUP, help = "Deployment of pipeline job")
 	public String deploy(BuildArgument arg) {
-		open(); // Open console.
+		ShellHolder.open();
 		try {
 			pipeManager.newPipeline(arg.getTaskId());
 		} catch (Exception e) {
 			printf(String.format("Failed to pipeline job. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			close(); // Close console
+			ShellHolder.close();
 		}
 		return "Deployment pipeline completed!";
 	}

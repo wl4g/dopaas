@@ -16,18 +16,23 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.common.utils.task.CronUtils;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
+import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.task.GenericTaskRunner;
+import com.wl4g.devops.support.task.RunnerProperties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.support.CronTrigger;
 
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
+import static com.wl4g.devops.common.utils.concurrent.ThreadUtils.sleepRandom;
 import static java.util.Objects.nonNull;
-import java.util.concurrent.ScheduledFuture;
+
+import java.util.concurrent.locks.Lock;
 
 /**
  * Global timeout job handler finalizer.
@@ -36,59 +41,111 @@ import java.util.concurrent.ScheduledFuture;
  * @version v1.0.0 2019-10-15
  * @since
  */
-public class GlobalTimeoutJobCleanupFinalizer implements ApplicationRunner {
-
-	final public static String DEFAULT_CLEANER_EXPRESS = "00/30 * * * * ?";
+public class GlobalTimeoutJobCleanupFinalizer extends GenericTaskRunner<RunnerProperties> {
+	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private CiCdProperties config;
+	protected ThreadPoolTaskScheduler scheduler;
 	@Autowired
-	private TaskHistoryDao taskHistoryDao;
+	protected ConfigurableEnvironment environment;
 	@Autowired
-	private ThreadPoolTaskScheduler scheduler;
+	protected CiCdProperties config;
+	@Autowired
+	protected JedisLockManager lockManager;
+	@Autowired
+	protected JedisService jedisService;
 
-	private ScheduledFuture<?> future;
+	@Autowired
+	protected TaskHistoryDao taskHistoryDao;
 
-	/**
-	 * Scan timeout task , modify their status
-	 *
-	 * @param applicationArguments
-	 */
+	public GlobalTimeoutJobCleanupFinalizer() {
+		super(new RunnerProperties(true));
+	}
+
 	@Override
-	public void run(ApplicationArguments applicationArguments) {
-		// Initializing timeout checker.
-		resetTimeoutCheckerExpression(DEFAULT_CLEANER_EXPRESS);
+	public void run() {
+		if (isActive()) {
+			try {
+				loopWatchTimeoutCleanupFinalizer(getCleanupFinalizerLockName());
+			} catch (InterruptedException e) {
+				log.error("Critical error!!! Global timeout cleanup watcher interrupted, timeout jobs will not be cleanup.", e);
+			}
+		}
 	}
 
 	/**
-	 * Reseting timeout task checker, for update task status to Timeout
-	 *
-	 * @param expression
+	 * Watch timeout jobs, updating their status to failure.
+	 * 
+	 * @param cleanupFinalizerLockName
+	 * @throws InterruptedException
 	 */
-	public void resetTimeoutCheckerExpression(String expression) {
-		if (log.isInfoEnabled()) {
-			log.info("Reseting globalTimeout finalizer for expression: {}", expression);
-		}
-		if (!CronUtils.isValidExpression(expression)) {
-			log.warn("Failed to reset globalTimeout finalizer, because invalid expression: {}", expression);
-			return;
-		}
-		if (nonNull(future) && !future.isDone()) {
-			future.cancel(true);
-		}
-
-		// Resume timeout scanner.
-		future = scheduler.schedule(() -> {
-			if (config.getBuild().getJobTimeoutMs() > 0) {
-				taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutMs());
+	private void loopWatchTimeoutCleanupFinalizer(String cleanupFinalizerLockName) throws InterruptedException {
+		while (true) {
+			long maxIntervalMs = getGlobalJobCleanMaxIntervalMs();
+			sleepRandom(DEFAULT_MIN_WATCH_MS, maxIntervalMs);
+			if (log.isInfoEnabled()) {
+				log.info("Global jobs timeout finalizer cleaning up for global jobCleanMaxIntervalMs:{} ... ", maxIntervalMs);
 			}
-		}, new CronTrigger(expression));
 
-		if (log.isInfoEnabled()) {
-			log.info("Reseted globalTimeout finalizer for expression: {}", expression);
+			Lock lock = lockManager.getLock(cleanupFinalizerLockName);
+			try {
+				// Cleanup timeout jobs on this node, nodes that do not
+				// acquire lock are on ready in place.
+				if (lock.tryLock()) {
+					taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutMs());
+					log.info("Updated pipeline timeout jobs, with jobTimeoutMs:{}, global jobCleanMaxIntervalMs:{}",
+							config.getBuild().getJobTimeoutMs(), maxIntervalMs);
+				} else {
+					log.info("Skip cleaning up ...");
+				}
+			} catch (Throwable ex) {
+				log.error("Failed to timeout jobs cleanup", ex);
+			} finally {
+				lock.unlock();
+			}
 		}
+
+	}
+
+	/**
+	 * Refresh global distributed {@link GlobalTimeoutJobCleanupFinalizer}
+	 * watching intervalMs.
+	 * 
+	 * @param globalJobCleanMaxIntervalMs
+	 * @return
+	 */
+	public Long refreshGlobalJobCleanMaxIntervalMs(Long globalJobCleanMaxIntervalMs) {
+		// Distributed global intervalMs.
+		jedisService.setObjectT(KEY_FINALIZER_INTERVALMS, globalJobCleanMaxIntervalMs, -1);
+		if (log.isInfoEnabled()) {
+			log.info("Refreshed global timeoutCleanupFinalizer of intervalMs:<%s>", globalJobCleanMaxIntervalMs);
+		}
+
+		// Get available global intervalMs.
+		return getGlobalJobCleanMaxIntervalMs();
+	}
+
+	/**
+	 * Get {@link GlobalTimeoutJobCleanupFinalizer} watcher locker name.
+	 * 
+	 * @return
+	 */
+	private String getCleanupFinalizerLockName() {
+		return environment.getRequiredProperty("spring.application.name") + "."
+				+ GlobalTimeoutJobCleanupFinalizer.class.getSimpleName();
+	}
+
+	/**
+	 * Get global distributed {@link GlobalTimeoutJobCleanupFinalizer} watching
+	 * intervalMs.
+	 * 
+	 * @return
+	 */
+	private Long getGlobalJobCleanMaxIntervalMs() {
+		Long maxInternalMs = jedisService.getObjectT(KEY_FINALIZER_INTERVALMS, Long.class);
+		return nonNull(maxInternalMs) ? maxInternalMs : config.getBuild().getJobCleanMaxIntervalMs();
 	}
 
 }
