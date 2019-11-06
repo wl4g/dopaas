@@ -210,8 +210,10 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized final <T extends ScanCursor<E>> T open() {
-		if (isReady()) {
-			log.warn("Cursor already " + state + ", cannot (re)open it.");
+		if (isOpen()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Cursor already " + state + ", no need (re)open it.");
+			}
 			return (T) this;
 		}
 

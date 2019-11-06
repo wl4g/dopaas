@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.web.GenericApiController;
-import com.wl4g.devops.iam.common.web.model.SessionModel;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -37,7 +37,7 @@ import static java.util.Objects.nonNull;
 public class IamServerApiV1Controller extends GenericApiController {
 
 	/**
-	 * Convert wrap {@link IamSession} to {@link SessionModel}. </br>
+	 * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>
 	 * </br>
 	 * 
 	 * <b>Origin {@link IamSession} json string example:</b>
@@ -93,20 +93,19 @@ public class IamServerApiV1Controller extends GenericApiController {
 	 *	}
 	 * </pre>
 	 * 
-	 * @param s
+	 * @param session
 	 * @return
 	 */
 	@Override
-	protected SessionModel wrapSessionModel(IamSession s) {
-		SessionModel sm = super.wrapSessionModel(s);
+	protected SessionAttributeModel wrapSessionAttribute(IamSession session) {
+		SessionAttributeModel sa = super.wrapSessionAttribute(session);
 
 		// Application grant info.
-		GrantTicketInfo grantInfo = (GrantTicketInfo) s.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
+		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
 		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
-			sm.setGrantApplications(grantInfo.getApplications().keySet());
+			sa.setGrantApplications(grantInfo.getApplications().keySet());
 		}
-
-		return sm;
+		return sa;
 	}
 
 }
