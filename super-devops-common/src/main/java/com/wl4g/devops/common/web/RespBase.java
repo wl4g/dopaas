@@ -193,14 +193,14 @@ public class RespBase<T> implements Serializable {
 	/**
 	 * Create child node data map.
 	 * 
-	 * @param node
+	 * @param nodeKey
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public DataMap<Object> build(String node) {
-		hasText(node, "RespBase build datamap nodeName must not be empty");
+	public DataMap<Object> build(String nodeKey) {
+		hasText(nodeKey, "RespBase build datamap nodeKey name can't be empty");
 		DataMap<Object> nodeMap = new DataMap<>();
-		getData().put(node, (T) nodeMap);
+		getData().put(nodeKey, (T) nodeMap);
 		return nodeMap;
 	}
 
@@ -396,7 +396,7 @@ public class RespBase<T> implements Serializable {
 		 * Second Uncertified<br/>
 		 * {@link HttpStatus.PRECONDITION_FAILED}
 		 */
-		SECOND_UNAUTH(HttpStatus.PRECONDITION_FAILED.value(), "Second Uncertified"),
+		SECOND_UNAUTH(HttpStatus.PRECONDITION_FAILED.value(), "Second uncertified"),
 
 		/**
 		 * Unauthorized<br/>
@@ -416,12 +416,12 @@ public class RespBase<T> implements Serializable {
 		 * @see {@link com.wl4g.devops.common.web.RespBase.RetCode#create}
 		 * @see {@link com.wl4g.devops.common.web.RespBase.RetCode#customizerLocal}
 		 */
-		__$$InternalDynamicCustomizer(-1, "Unknown error");
+		_$$(-1, "Unknown error");
 
 		/**
 		 * Dynamic status code store customizer.</br>
 		 * 
-		 * @see {@link #__$$InternalDynamicCustomizer}
+		 * @see {@link #_$$}
 		 * @see {@link #create(int, String)}
 		 */
 		final private static ThreadLocal<Object[]> customizerLocal = new InheritableThreadLocal<>();
@@ -437,13 +437,12 @@ public class RespBase<T> implements Serializable {
 
 		/**
 		 * Get error code.</br>
-		 * If custom status code ({@link #__$$InternalDynamicCustomizer}) is
-		 * used, it takes precedence.
+		 * If custom status code ({@link #_$$}) is used, it takes precedence.
 		 * 
 		 * @return
 		 */
 		public int getErrcode() {
-			if (this == __$$InternalDynamicCustomizer) {
+			if (this == _$$) {
 				Object errcode = customizerLocal.get()[0];
 				notNull(errcode, "Respbase customizer errcode must not be null.");
 				return (int) errcode;
@@ -453,14 +452,13 @@ public class RespBase<T> implements Serializable {
 
 		/**
 		 * Get error message.</br>
-		 * If custom status error message
-		 * ({@link #__$$InternalDynamicCustomizer}) is used, it takes
+		 * If custom status error message ({@link #_$$}) is used, it takes
 		 * precedence.
 		 * 
 		 * @return
 		 */
 		public String getErrmsg() {
-			if (this == __$$InternalDynamicCustomizer) {
+			if (this == _$$) {
 				Object errmsg = customizerLocal.get()[1];
 				notNull(errmsg, "Respbase customizer errmsg must not be null.");
 				return (String) errmsg;
@@ -503,8 +501,7 @@ public class RespBase<T> implements Serializable {
 		}
 
 		/**
-		 * Create custom status code, refer to
-		 * {@link #__$$InternalDynamicCustomizer}
+		 * Create custom status code, refer to {@link #_$$}
 		 * 
 		 * @param errcode
 		 * @param errmsg
@@ -513,7 +510,7 @@ public class RespBase<T> implements Serializable {
 		final public static RetCode create(int errcode, String errmsg) {
 			Assert.hasText(errmsg, "Result errmsg definition must not be empty.");
 			customizerLocal.set(new Object[] { errcode, errmsg });
-			return __$$InternalDynamicCustomizer;
+			return _$$;
 		}
 
 	}

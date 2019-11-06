@@ -22,8 +22,10 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.iam.common.web.model.SessionModel;
-import com.wl4g.devops.iam.common.web.model.SessionModelList;
+import com.wl4g.devops.iam.common.web.model.CursorIndexModel;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
+import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
+import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
 import com.wl4g.devops.support.cache.ScanCursor;
 import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -33,20 +35,17 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.*;
+import static com.wl4g.devops.iam.common.web.model.CursorIndexModel.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTHENTICATED_SESSION_KEY;
 import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.PRINCIPALS_SESSION_KEY;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Generic abstract API controller.
@@ -123,24 +122,23 @@ public abstract class GenericApiController extends BaseController {
 	 * @throws Exception
 	 */
 	@GetMapping(path = URI_S_API_V1_SESSION)
-	public RespBase<?> getSessions(@Validated SessionQuery query) throws Exception {
+	public RespBase<?> getSessions(@Validated SessionQueryModel query) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions by <= {}", query);
 		}
 
-		// Parsing cursor.
+		// Parse cursor.
 		CursorWrapper cursor = CursorWrapper.parse(query.getCursor());
 		// Do scan access sessions all.
-		ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit()).open();
-		List<SessionModel> sm = sc.readValues().stream().map(s -> wrapSessionModel(s)).collect(toList());
+		ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit());
+		List<SessionAttributeModel> sas = sc.readValues().stream().map(s -> wrapSessionAttribute(s)).collect(toList());
 
-		SessionModelList sessionModelList = new SessionModelList();
-		sessionModelList.getIndex().setCursorString(sc.getCursor().getCursorString());
-		sessionModelList.getIndex().setHasNext(sc.getCursor().getHasNext());
-		sessionModelList.setSessions(sm);
-		resp.getData().put("sessions",sessionModelList.getSessions());
-		resp.getData().put("index",sessionModelList.getIndex());
+		// Setup response attributes.
+		resp.getData().put(KEY_SESSION_INDEX,
+				new CursorIndexModel(sc.getCursor().getCursorString(), sc.getCursor().getHasNext()));
+		resp.getData().put(KEY_SESSION_ATTRIBUTES, sas);
+
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions => {}", resp);
 		}
@@ -155,7 +153,7 @@ public abstract class GenericApiController extends BaseController {
 	 * @throws Exception
 	 */
 	@DeleteMapping(path = URI_S_API_V1_SESSION)
-	public RespBase<?> destroySession(@Validated SessionDestroy destroy) throws Exception {
+	public RespBase<?> destroySession(@Validated SessionDestroyModel destroy) throws Exception {
 		RespBase<String> resp = RespBase.create();
 		if (log.isInfoEnabled()) {
 			log.info("Destroy sessions by <= {}", destroy);
@@ -173,7 +171,7 @@ public abstract class GenericApiController extends BaseController {
 	}
 
 	/**
-	 * Convert wrap {@link IamSession} to {@link SessionModel}. </br>
+	 * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>
 	 * </br>
 	 * 
 	 * <b>Origin {@link IamSession} json string example:</b>
@@ -229,107 +227,37 @@ public abstract class GenericApiController extends BaseController {
 	 *	}
 	 * </pre>
 	 * 
-	 * @param s
+	 * @param session
 	 * @return
 	 */
-	protected SessionModel wrapSessionModel(IamSession s) {
-		SessionModel sm = new SessionModel();
-		sm.setId(String.valueOf(s.getId()));
-		sm.setLastAccessTime(s.getLastAccessTime());
-		sm.setStartTimestamp(s.getStartTimestamp());
-		sm.setStopTimestamp(s.getStopTimestamp());
-		sm.setHost(s.getHost());
-		sm.setExpired(s.isExpired());
-		sm.setTimeout(s.getTimeout());
+	protected SessionAttributeModel wrapSessionAttribute(IamSession session) {
+		SessionAttributeModel sa = new SessionAttributeModel();
+		sa.setId(String.valueOf(session.getId()));
+		sa.setLastAccessTime(session.getLastAccessTime());
+		sa.setStartTimestamp(session.getStartTimestamp());
+		sa.setStopTimestamp(session.getStopTimestamp());
+		sa.setHost(session.getHost());
+		sa.setExpired(session.isExpired());
+		sa.setTimeout(session.getTimeout());
 
 		// Authenticated.
-		Object authenticated = s.getAttribute(AUTHENTICATED_SESSION_KEY);
-		sm.setAuthenticated(false);
+		Object authenticated = session.getAttribute(AUTHENTICATED_SESSION_KEY);
+		sa.setAuthenticated(false);
 		if (nonNull(authenticated)) {
 			if (authenticated instanceof Boolean || authenticated.getClass() == boolean.class) {
-				sm.setAuthenticated((Boolean) authenticated);
+				sa.setAuthenticated((Boolean) authenticated);
 			} else {
-				sm.setAuthenticated(Boolean.parseBoolean((String) authenticated));
+				sa.setAuthenticated(Boolean.parseBoolean((String) authenticated));
 			}
 		}
 
 		// Authenticate principal.
-		PrincipalCollection principals = (PrincipalCollection) s.getAttribute(PRINCIPALS_SESSION_KEY);
+		PrincipalCollection principals = (PrincipalCollection) session.getAttribute(PRINCIPALS_SESSION_KEY);
 		if (nonNull(principals)) {
-			sm.setPrincipal(principals.getPrimaryPrincipal());
+			sa.setPrincipal(principals.getPrimaryPrincipal());
 		}
 
-		return sm;
-	}
-
-	/**
-	 * Sessions query model.
-	 * 
-	 * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version v1.0.0 2019-10-31
-	 * @since
-	 */
-	public static class SessionQuery implements Serializable {
-		private static final long serialVersionUID = 5766036036946339544L;
-
-		/** Scan cursor. */
-		@NotBlank(message = "Invalid argument cursor.(e.g. cursor=0@0)")
-		private String cursor = "0@0";
-
-		/** Page size. */
-		private int limit = 200;
-
-		public String getCursor() {
-			return cursor;
-		}
-
-		public void setCursor(String cursor) {
-			this.cursor = cursor;
-		}
-
-		public int getLimit() {
-			return limit;
-		}
-
-		public void setLimit(int limit) {
-			this.limit = limit;
-		}
-
-		@Override
-		public String toString() {
-			return toJSONString(this);
-		}
-
-	}
-
-	/**
-	 * Sessions destroy model.
-	 * 
-	 * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version v1.0.0 2019-10-31
-	 * @since
-	 */
-	public static class SessionDestroy implements Serializable {
-		private static final long serialVersionUID = 2579844578836104918L;
-
-		@NotEmpty
-		private List<Serializable> sessionIds = new ArrayList<>(4);
-
-		public List<Serializable> getSessionIds() {
-			return sessionIds;
-		}
-
-		public void setSessionIds(List<Serializable> sessionIds) {
-			if (!isEmpty(sessionIds)) {
-				this.sessionIds.addAll(sessionIds);
-			}
-		}
-
-		@Override
-		public String toString() {
-			return toJSONString(this);
-		}
-
+		return sa;
 	}
 
 }

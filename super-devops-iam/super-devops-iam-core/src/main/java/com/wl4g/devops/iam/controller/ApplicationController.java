@@ -38,11 +38,10 @@ public class ApplicationController extends BaseController {
 	@Autowired
 	private EntryAddressDao entryAddressDao;
 
-
 	@RequestMapping(value = "/info")
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
-		List<EntryAddress> list = entryAddressDao.getByAppNames(null,null,null);
+		List<EntryAddress> list = entryAddressDao.getByAppNames(null, null, null);
 		Map<String, Object> map = new HashMap<>();
 		for (EntryAddress entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);
