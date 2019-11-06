@@ -19,14 +19,16 @@ import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.SimpleParameter;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.SnsParameter;
+import com.wl4g.devops.common.bean.share.EntryAddress;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
-import com.wl4g.devops.dao.share.ApplicationDao;
+import com.wl4g.devops.dao.share.EntryAddressDao;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
@@ -58,8 +60,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	 * throw a serialization exception. This field must be ignored. </br>
 	 * The problem is method: {@link StandardSecurityConfigurer#getIamAccount()}
 	 */
+
 	@Autowired
-	private transient ApplicationDao applicationDao;
+	private transient EntryAddressDao entryAddressDao;
 
 	@Autowired
 	private transient UserDao userDao;
@@ -69,6 +72,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Autowired
 	private transient MenuDao menuDao;
+
+	@Value("${spring.profiles.active}")
+	private String profile;
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
@@ -83,24 +89,24 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public ApplicationInfo getApplicationInfo(String appName) {
-		List<ApplicationInfo> apps = safeList(findApplicationInfo(appName));
+	public EntryAddress getApplicationInfo(String appName) {
+		List<EntryAddress> apps = safeList(findApplicationInfo(appName));
 		return !isEmpty(apps) ? apps.get(0) : null;
 	}
 
 	@Override
-	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
-		List<ApplicationInfo> appInfoList = new ArrayList<>();
+	public List<EntryAddress> findApplicationInfo(String... appNames) {
+		List<EntryAddress> appInfoList = new ArrayList<>();
 		if (isEmptyArray(appNames)) {
 			return emptyList();
 		}
 		// Is IAM example demo.
 		if (equalsAny("iam-example", appNames)) {
-			ApplicationInfo appInfo = new ApplicationInfo("iam-example", "http://localhost:14041");
+			EntryAddress appInfo = new EntryAddress("iam-example", "http://localhost:14041");
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfoList.add(appInfo);
 		} else { // Formal environment.
-			List<ApplicationInfo> applications = applicationDao.getByAppNames(appNames);
+			List<EntryAddress> applications = entryAddressDao.getByAppNames(appNames,profile,null);
 			appInfoList.addAll(applications);
 		}
 

@@ -15,20 +15,25 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.iam.model.SessionModel;
+import com.wl4g.devops.common.bean.share.EntryAddress;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.dao.share.EntryAddressDao;
 import com.wl4g.devops.iam.common.web.GenericApiController.SessionDestroy;
 import com.wl4g.devops.iam.common.web.GenericApiController.SessionQuery;
+import com.wl4g.devops.iam.common.web.model.SessionModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
@@ -42,12 +47,18 @@ import static org.springframework.util.Assert.hasText;
  * @version v1.0 2019年11月4日
  * @since
  */
-@Controller
+@RestController
 @RequestMapping("/mgr/v1")
 public class IamManagerApiV1Controller extends BaseController {
 
 	@Autowired
 	protected RestTemplate restTemplate;
+
+	@Autowired
+	private EntryAddressDao entryAddressDao;
+
+	@Value("${spring.profiles.active}")
+	private String profile;
 
 	/**
 	 * Obtian remote IAM server sessions.
@@ -56,24 +67,37 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	@GetMapping(path = "getSessions")
-	public RespBase<?> getRemoteSessions(@Validated SessionQuery query) throws Exception {
+	@RequestMapping(path = "getSessions")
+	public RespBase<?> getRemoteSessions(@Validated SessionQuery query,Integer id) throws Exception {
 		log.info("Get remote sessions for <= {} ...", query);
+		Assert.notNull(id,"Please select a Iam server");
 
 		// TODO --- get remote api baseUri from DB.//name ==>
 		// http://localhost:14040/iam-server
+		EntryAddress entryAddress = entryAddressDao.selectByPrimaryKey(id);
 
-		// Remote session API uri.
-		String url = getRemoteApiV1SessionUri("");
+		// Remote session API uri.ex
+		String url = getRemoteApiV1SessionUri(entryAddress.getExtranetBaseUri());
 		log.info("Request get remote sessions for: {}", url);
 		// Do request.
-		RespBase<SessionModel> resp = restTemplate
-				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionModel>>() {
+		RespBase<List<SessionModel>> resp = restTemplate
+				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<List<SessionModel>>>() {
 				}).getBody();
 
 		log.info("Got remote sessions response for => {}", resp);
 		return resp;
 	}
+
+
+	@RequestMapping(path = "getIamServer")
+	public RespBase<?> getIamServer() throws Exception {
+		RespBase<Object> resp = RespBase.create();
+		List<EntryAddress> iamServer = entryAddressDao.getIamServer();
+		resp.getData().put("data", iamServer);
+		return resp;
+	}
+
+
 
 	/**
 	 * Destroy cleanup remote session.

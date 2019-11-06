@@ -15,15 +15,21 @@
  */
 package com.wl4g.devops.iam.handler;
 
-import java.net.URI;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
+import com.wl4g.devops.common.bean.iam.model.*;
+import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
+import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
+import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
+import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
+import com.wl4g.devops.iam.common.utils.Sessions;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.support.cache.ScanCursor;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.session.Session;
@@ -36,12 +42,16 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_S;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATTRIBUTE_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRIBUTE_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isEqualWithDomain;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
@@ -50,33 +60,8 @@ import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.StringUtils.equalsAny;
-import static org.apache.commons.lang3.StringUtils.isAnyBlank;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.Assert.hasText;
-import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
-
-import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
-import com.wl4g.devops.common.bean.iam.model.LoggedModel;
-import com.wl4g.devops.common.bean.iam.model.LogoutModel;
-import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
-import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
-import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
-import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.iam.common.utils.Sessions;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
  * Default authentication handler implements
@@ -115,11 +100,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 
 			// Get application.
-			ApplicationInfo app = configurer.getApplicationInfo(fromAppName);
+			EntryAddress app = configurer.getApplicationInfo(fromAppName);
 			if (Objects.isNull(app)) {
 				throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
 			}
-			Assert.state(!isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
+			Assert.state(!isAnyBlank(app.getName(), app.getExtranetBaseUri()),
 					String.format("Invalid redirection domain configure, application[%s]", fromAppName));
 			if (log.isDebugEnabled()) {
 				log.debug("Check authentication requests application [{}]", app);
@@ -129,8 +114,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			// is a match)
 			String host = URI.create(redirectUrl).getHost();
 			if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
-					|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri())
-					|| isEqualWithDomain(redirectUrl, app.getViewExtranetBaseUri()))) {
+					|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri()))) {
 				throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
 			}
 		}
@@ -267,7 +251,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 * Query applications by bind session names
 			 */
 			Set<String> appNames = grantInfo.getApplications().keySet();
-			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
+			List<EntryAddress> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (apps == null || apps.isEmpty()) {
 				throw new IamException(String.format("Find application information is empty. %s", appNames));
 			}
@@ -444,18 +428,18 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param apps
 	 * @return
 	 */
-	private boolean processLogoutAll(Subject subject, GrantTicketInfo grantInfo, List<ApplicationInfo> apps) {
+	private boolean processLogoutAll(Subject subject, GrantTicketInfo grantInfo, List<EntryAddress> apps) {
 		boolean logoutAll = true; // Represents all logged-out Tags
 
 		/*
 		 * Notification all logged-in applications to logout
 		 */
-		for (ApplicationInfo app : apps) {
+		for (EntryAddress app : apps) {
 			Assert.hasText(app.getIntranetBaseUri(),
-					String.format("Application[%s] 'internalBaseUri' must not be empty", app.getAppName()));
+					String.format("Application[%s] 'internalBaseUri' must not be empty", app.getName()));
 
 			// GrantTicket by application name
-			String grantTicket = grantInfo.getApplications().get(app.getAppName());
+			String grantTicket = grantInfo.getApplications().get(app.getName());
 
 			// Application logout URL
 			String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE).append("/").append(URI_C_LOGOUT)
@@ -467,7 +451,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 						.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
 						}).getBody();
 				if (RespBase.isSuccess(resp)) {
-					log.info("Logout finished for principal:{}, application:{} url:{}", subject.getPrincipal(), app.getAppName(),
+					log.info("Logout finished for principal:{}, application:{} url:{}", subject.getPrincipal(), app.getName(),
 							url);
 				} else {
 					throw new IamException(resp != null ? resp.getMessage() : "No response");
@@ -475,7 +459,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			} catch (Exception e) {
 				logoutAll = false;
 				log.error(String.format("Remote client logout failure. principal[%s] application[%s] url[%s]",
-						subject.getPrincipal(), app.getAppName(), url), e);
+						subject.getPrincipal(), app.getName(), url), e);
 			}
 		}
 
