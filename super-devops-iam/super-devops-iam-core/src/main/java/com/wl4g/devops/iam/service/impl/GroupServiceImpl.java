@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.wl4g.devops.common.bean.BaseBean.ROOT_NAME;
+import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.common.utils.lang.Collections2.disDupCollection;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -118,7 +118,7 @@ public class GroupServiceImpl implements GroupService {
 		List<Group> groups = null;
 
 		String currentLoginUsername = userUtil.getCurrentLoginUsername();
-		if (ROOT_NAME.equals(currentLoginUsername)) {
+		if (DEFAULT_USER_ROOT.equals(currentLoginUsername)) {
 			groups = groupDao.selectByRoot();
 		} else {
 			groups = groupDao.selectByUserId(currentLoginUserId);
