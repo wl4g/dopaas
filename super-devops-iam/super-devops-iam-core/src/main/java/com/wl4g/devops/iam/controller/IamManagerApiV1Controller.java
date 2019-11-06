@@ -60,7 +60,8 @@ public class IamManagerApiV1Controller extends BaseController {
 	public RespBase<?> getRemoteSessions(@Validated SessionQuery query) throws Exception {
 		log.info("Get remote sessions for <= {} ...", query);
 
-		// TODO --- get remote api baseUri from DB.//name ==> http://localhost:14040/iam-server
+		// TODO --- get remote api baseUri from DB.//name ==>
+		// http://localhost:14040/iam-server
 
 		// Remote session API uri.
 		String url = getRemoteApiV1SessionUri("");
