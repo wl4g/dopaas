@@ -69,7 +69,7 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 -->
 
-        <table tableName="sys_group" domainObjectName="Group"
+        <table tableName="sys_entry_address" domainObjectName="EntryAddress"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
 

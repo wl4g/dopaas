@@ -16,15 +16,14 @@
 package com.wl4g.devops.iam.web;
 
 import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
-import com.wl4g.devops.common.bean.iam.model.SessionModel;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.web.GenericApiController;
+import com.wl4g.devops.iam.common.web.model.SessionModel;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import static java.util.Objects.nonNull;
-
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * IAM server API v1 controller.

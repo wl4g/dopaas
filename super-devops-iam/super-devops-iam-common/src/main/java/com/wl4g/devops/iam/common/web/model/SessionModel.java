@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.iam.model;
+package com.wl4g.devops.iam.common.web.model;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.support.cache.ScanCursor.CursorWrapper.parse;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Sessions query model.
@@ -54,6 +58,8 @@ public class SessionModel implements Serializable {
 	private String host;
 	private Object principal;
 	private Set<String> grantApplications = new HashSet<>();
+
+	private CursorIndex index = new CursorIndex();
 
 	public String getId() {
 		return id;
@@ -139,9 +145,48 @@ public class SessionModel implements Serializable {
 		}
 	}
 
+	public CursorIndex getIndex() {
+		return index;
+	}
+
+	public void setIndex(CursorIndex index) {
+		this.index = index;
+	}
+
 	@Override
 	public String toString() {
 		return toJSONString(this);
 	}
+
+
+	public static class CursorIndex{
+
+		private String cursorString;
+
+		private Boolean hasNext = false;
+
+		public String getCursorString() {
+			return cursorString;
+		}
+
+		public void setCursorString(String cursorString) {
+			if(StringUtils.isNotBlank(cursorString)){
+				parse(cursorString);
+				this.cursorString = cursorString;
+			}
+		}
+
+		public Boolean getHasNext() {
+			return hasNext;
+		}
+
+		public void setHasNext(Boolean hasNext) {
+			if(Objects.nonNull(hasNext)){
+				this.hasNext = hasNext;
+			}
+		}
+	}
+
+
 
 }

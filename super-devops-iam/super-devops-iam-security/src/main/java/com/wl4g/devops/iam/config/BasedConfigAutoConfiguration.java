@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.iam.config;
 
+import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
+import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
+import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -22,18 +29,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
-import java.util.List;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
-import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
-import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import java.util.List;
 
 /**
  * Based context configuration
@@ -76,12 +74,12 @@ public class BasedConfigAutoConfiguration {
 		}
 
 		@Override
-		public ApplicationInfo getApplicationInfo(String applicationName) {
+		public EntryAddress getApplicationInfo(String applicationName) {
 			return null;
 		}
 
 		@Override
-		public List<ApplicationInfo> findApplicationInfo(String... applicationNames) {
+		public List<EntryAddress> findApplicationInfo(String... applicationNames) {
 			return null;
 		}
 
