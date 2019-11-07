@@ -17,7 +17,7 @@ package com.wl4g.devops.share.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -45,12 +45,12 @@ public class ContactGroupController extends BaseController {
 	private ContactGroupService contactGroupService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, CustomPage customPage) {
+	public RespBase<?> list(String name, PageModel customPage) {
 		log.info("into ContactGroupController.list prarms::" + "name = {} , customPage = {} ", name, customPage);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);

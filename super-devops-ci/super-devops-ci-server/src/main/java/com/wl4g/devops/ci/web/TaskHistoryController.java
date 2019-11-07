@@ -19,9 +19,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TaskHistoryService;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -58,7 +58,7 @@ public class TaskHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName, String projectName, String branchName, CustomPage customPage) {
+	public RespBase<?> list(String groupName, String projectName, String branchName, PageModel customPage) {
 		log.info(
 				"into TaskHistoryController.list prarms::"
 						+ "groupName = {} , projectName = {} , branchName = {} , customPage = {} ",

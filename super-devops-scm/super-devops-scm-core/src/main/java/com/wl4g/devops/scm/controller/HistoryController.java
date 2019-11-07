@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.bean.scm.HistoryOfDetail;
 import com.wl4g.devops.common.bean.scm.ReleaseDetail;
 import com.wl4g.devops.common.bean.scm.ReleaseHistory;
@@ -58,7 +58,7 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "version-list.json", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> versionlist(String startDate, String endDate, CustomPage customPage) {
+	public RespBase<?> versionlist(String startDate, String endDate, PageModel customPage) {
 		if (log.isInfoEnabled()) {
 			log.info("VersionList request ... {}, {}, {}", startDate, endDate, customPage);
 		}
@@ -250,7 +250,7 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "release-list.json", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> list(ConfigVersionList agl, CustomPage customPage) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel customPage) {
 		if (log.isInfoEnabled()) {
 			log.info("ReleaseList request... {}, {}", agl, customPage);
 		}
@@ -296,7 +296,7 @@ public class HistoryController extends BaseController {
 	 * 查询历史版本集合
 	 */
 	@RequestMapping(value = "history_list", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> historylist(ReleaseHistoryList agl, CustomPage customPage) {
+	public RespBase<?> historylist(ReleaseHistoryList agl, PageModel customPage) {
 		if (log.isInfoEnabled()) {
 			log.info("HistoryVersionList request ... {}, {}", agl, customPage);
 		}

@@ -26,18 +26,18 @@ import java.util.Map;
  */
 public interface DictService {
 
-    void insert(Dict dict);
+	void insert(Dict dict);
 
-    void update(Dict dict);
+	void update(Dict dict);
 
-    void del(String key);
+	void del(String key);
 
-    List<Dict> getBytype(String type);
+	List<Dict> getBytype(String type);
 
-    Dict getByKey(String key);
+	Dict getByKey(String key);
 
-    List<String> allType();
+	List<String> allType();
 
-    Map<String,Object> cache();
+	Map<String, Object> cache();
 
 }

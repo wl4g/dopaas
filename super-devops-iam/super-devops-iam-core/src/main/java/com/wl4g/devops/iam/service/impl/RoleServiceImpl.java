@@ -18,12 +18,12 @@ package com.wl4g.devops.iam.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.iam.Group;
 import com.wl4g.devops.common.bean.iam.GroupRole;
 import com.wl4g.devops.common.bean.iam.Role;
 import com.wl4g.devops.common.bean.iam.RoleMenu;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.iam.GroupDao;
 import com.wl4g.devops.dao.iam.GroupRoleDao;
 import com.wl4g.devops.dao.iam.RoleDao;
@@ -86,7 +86,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public Map<String, Object> list(CustomPage customPage, String name, String displayName) {
+	public Map<String, Object> list(PageModel customPage, String name, String displayName) {
 		Map<String, Object> resp = new HashMap<>();
 		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;

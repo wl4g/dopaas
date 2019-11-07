@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.share.service;
 
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
@@ -30,16 +30,14 @@ import java.util.Map;
  */
 public interface AppClusterService {
 
-	void save(AppCluster appCluster,String cipherKey);
+	void save(AppCluster appCluster, String cipherKey);
 
-	Map list(CustomPage customPage, String clusterName);
+	Map<String, Object> list(PageModel customPage, String clusterName);
 
 	void del(Integer clusterId);
 
-	AppCluster detail(Integer clusterId,String cipherKey);
+	AppCluster detail(Integer clusterId, String cipherKey);
 
 	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
-
-
 
 }

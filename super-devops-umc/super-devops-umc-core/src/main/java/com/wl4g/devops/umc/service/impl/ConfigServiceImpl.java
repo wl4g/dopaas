@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
@@ -40,9 +39,6 @@ public class ConfigServiceImpl implements ConfigService {
 
 	@Autowired
 	private AlarmTemplateDao alarmTemplateDao;
-
-	@Autowired
-	private AppClusterDao appClusterDao;
 
 	@Autowired
 	private AppInstanceDao appInstanceDao;

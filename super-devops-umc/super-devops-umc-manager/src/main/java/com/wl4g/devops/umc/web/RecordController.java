@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -44,13 +44,13 @@ public class RecordController extends BaseController {
 	private RecordService recordService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, CustomPage customPage, String startDate, String endDate) {
+	public RespBase<?> list(String name, PageModel customPage, String startDate, String endDate) {
 		log.info("into RecordController.list prarms::" + "name = {} , customPage = {} , startDate = {} , endDate = {} ", name,
 				customPage, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
 
 		List<AlarmRecord> list = alarmRecordDao.list(name, startDate, endDate);
 		customPage.setPageNum(pageNum);

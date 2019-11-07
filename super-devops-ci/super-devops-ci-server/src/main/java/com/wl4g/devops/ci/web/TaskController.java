@@ -19,9 +19,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -69,7 +69,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, Integer id, String taskName, String groupName, String branchName,
+	public RespBase<?> list(PageModel customPage, Integer id, String taskName, String groupName, String branchName,
 			Integer tarType, String startDate, String endDate) {
 		log.info(
 				"into TaskController.list prarms::"

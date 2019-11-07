@@ -13,24 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.scm;
+package com.wl4g.devops.common.bean;
+
+import static java.util.Objects.nonNull;
+
+import java.io.Serializable;
 
 /**
- * 分页实体类
+ * Customizaing page model.
  * 
- * @date 2018年9月20日
+ * @auhtor Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018年9月7日
+ * @since
  */
-public class CustomPage {
-	private Integer pageNum; // 页码
-	private Integer pageSize; // 每页显示数量
-	private Long total; // 总数
+public class PageModel implements Serializable {
+	private static final long serialVersionUID = -7002775417254397561L;
+
+	/** Page index number. */
+	private Integer pageNum = 1;
+
+	/** Page records size. */
+	private Integer pageSize = 10;
+
+	/** Total count. */
+	private Long total;
+
+	public PageModel() {
+		super();
+	}
+
+	public PageModel(Integer pageNum, Integer pageSize, Long total) {
+		setPageNum(pageNum);
+		setPageSize(pageSize);
+		setTotal(total);
+	}
 
 	public Integer getPageNum() {
 		return pageNum;
 	}
 
 	public void setPageNum(Integer pageNum) {
-		this.pageNum = pageNum;
+		if (nonNull(pageNum)) {
+			this.pageNum = pageNum;
+		}
 	}
 
 	public Integer getPageSize() {
@@ -38,7 +63,9 @@ public class CustomPage {
 	}
 
 	public void setPageSize(Integer pageSize) {
-		this.pageSize = pageSize;
+		if (nonNull(pageSize)) {
+			this.pageSize = pageSize;
+		}
 	}
 
 	public Long getTotal() {
@@ -46,13 +73,14 @@ public class CustomPage {
 	}
 
 	public void setTotal(Long total) {
-		this.total = total;
+		if (nonNull(total)) {
+			this.total = total;
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "CustomPage [" + (pageNum != null ? "pageNum=" + pageNum + ", " : "")
-				+ (pageSize != null ? "pageSize=" + pageSize + ", " : "") + (total != null ? "total=" + total : "") + "]";
+		return "CustomPage [pageNum=" + pageNum + ", pageSize=" + pageSize + ", total=" + total + "]";
 	}
 
 }

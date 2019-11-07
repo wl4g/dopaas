@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.iam.service;
 
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.common.bean.iam.User;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +32,7 @@ public interface UserService {
 
 	Set<Menu> getMenusByUserId(Integer userId);
 
-	Map<String, Object> list(CustomPage customPage, String userName, String displayName);
+	Map<String, Object> list(PageModel customPage, String userName, String displayName);
 
 	void save(User user);
 
