@@ -53,9 +53,9 @@ public class AppClusterController extends BaseController {
 	protected String cipherKey;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel customPage, String clusterName) {
+	public RespBase<?> list(PageModel pm, String clusterName) {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = appClusterService.list(customPage, clusterName);
+		Map<String, Object> result = appClusterService.list(pm, clusterName);
 		resp.setData(result);
 		return resp;
 	}

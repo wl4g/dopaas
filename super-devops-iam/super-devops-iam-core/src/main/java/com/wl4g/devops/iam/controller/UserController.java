@@ -41,9 +41,9 @@ public class UserController extends BaseController {
 
 	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel customPage, String userName, String displayName) {
+	public RespBase<?> list(PageModel pm, String userName, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = userService.list(customPage, userName, displayName);
+		Map<String, Object> result = userService.list(pm, userName, displayName);
 		resp.setData(result);
 		return resp;
 	}

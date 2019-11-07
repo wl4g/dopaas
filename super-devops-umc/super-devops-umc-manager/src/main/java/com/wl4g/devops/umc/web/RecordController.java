@@ -44,19 +44,17 @@ public class RecordController extends BaseController {
 	private RecordService recordService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, PageModel customPage, String startDate, String endDate) {
-		log.info("into RecordController.list prarms::" + "name = {} , customPage = {} , startDate = {} , endDate = {} ", name,
-				customPage, startDate, endDate);
+	public RespBase<?> list(String name, PageModel pm, String startDate, String endDate) {
+		log.info("into RecordController.list prarms::" + "name = {} , pm = {} , startDate = {} , endDate = {} ", name, pm,
+				startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 
 		List<AlarmRecord> list = alarmRecordDao.list(name, startDate, endDate);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

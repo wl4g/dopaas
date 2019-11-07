@@ -58,20 +58,16 @@ public class TaskHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName, String projectName, String branchName, PageModel customPage) {
-		log.info(
-				"into TaskHistoryController.list prarms::"
-						+ "groupName = {} , projectName = {} , branchName = {} , customPage = {} ",
-				groupName, projectName, branchName, customPage);
+	public RespBase<?> list(String groupName, String projectName, String branchName, PageModel pm) {
+		log.info("into TaskHistoryController.list prarms::" + "groupName = {} , projectName = {} , branchName = {} , pm = {} ",
+				groupName, projectName, branchName, pm);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<TaskHistory> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<TaskHistory> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<TaskHistory> list = taskHistoryService.list(groupName, projectName, branchName);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

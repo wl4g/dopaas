@@ -51,13 +51,12 @@ public class TemplateController extends BaseController {
 	private TemplateService templateService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, Integer metricId, String classify, PageModel customPage) {
-		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , customPage = {} ", name,
-				metricId, classify, customPage);
+	public RespBase<?> list(String name, Integer metricId, String classify, PageModel pm) {
+		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , pm = {} ", name, metricId,
+				classify, pm);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
 			String tags = alarmTpl.getTags();
@@ -66,10 +65,9 @@ public class TemplateController extends BaseController {
 				}));
 			}
 		}
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

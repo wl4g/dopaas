@@ -69,16 +69,15 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel customPage, Integer id, String taskName, String groupName, String branchName,
-			Integer tarType, String startDate, String endDate) {
+	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, Integer tarType,
+			String startDate, String endDate) {
 		log.info(
 				"into TaskController.list prarms::"
 						+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
-				customPage, id, taskName, groupName, branchName, tarType, startDate, endDate);
+				pm, id, taskName, groupName, branchName, tarType, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Task> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Task> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
@@ -86,10 +85,9 @@ public class TaskController extends BaseController {
 		}
 
 		List<Task> list = taskDao.list(id, taskName, groupName, branchName, tarType, startDate, endDateStr);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

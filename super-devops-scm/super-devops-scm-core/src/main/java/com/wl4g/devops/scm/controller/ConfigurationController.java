@@ -81,20 +81,18 @@ public class ConfigurationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "config-list.json", method = RequestMethod.POST)
-	public RespBase<?> list(ConfigVersionList agl, PageModel customPage) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("ConfigList request ... {}, {}", agl, customPage);
+			log.info("ConfigList request ... {}, {}", agl, pm);
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
+
+			Page<ConfigVersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 			List<ConfigVersionList> list = configService.list(agl);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
-			resp.forMap().put("page", customPage);
+
+			pm.setTotal(page.getTotal());
+			resp.forMap().put("page", pm);
 			resp.forMap().put("list", list);
 
 		} catch (Exception e) {

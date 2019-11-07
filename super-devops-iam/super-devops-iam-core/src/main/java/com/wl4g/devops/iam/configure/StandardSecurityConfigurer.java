@@ -106,7 +106,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfoList.add(appInfo);
 		} else { // Formal environment.
-			List<ClusterConfig> applications = clusterConfigDao.getByAppNames(appNames,profile,null);
+			List<ClusterConfig> applications = clusterConfigDao.getByAppNames(appNames, profile, null);
 			appInfoList.addAll(applications);
 		}
 

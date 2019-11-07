@@ -56,16 +56,14 @@ public class DictController extends BaseController {
 	private JedisService jedisService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel customPage, String key, String label, String type, String description) {
+	public RespBase<?> list(PageModel pm, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Dict> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Dict> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<Dict> list = dictDao.list(key, label, type, description);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

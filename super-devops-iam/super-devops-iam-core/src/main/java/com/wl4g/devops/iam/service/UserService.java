@@ -32,7 +32,7 @@ public interface UserService {
 
 	Set<Menu> getMenusByUserId(Integer userId);
 
-	Map<String, Object> list(PageModel customPage, String userName, String displayName);
+	Map<String, Object> list(PageModel pm, String userName, String displayName);
 
 	void save(User user);
 
