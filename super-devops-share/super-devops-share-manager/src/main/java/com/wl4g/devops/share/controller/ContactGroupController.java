@@ -45,17 +45,15 @@ public class ContactGroupController extends BaseController {
 	private ContactGroupService contactGroupService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, PageModel customPage) {
-		log.info("into ContactGroupController.list prarms::" + "name = {} , customPage = {} ", name, customPage);
+	public RespBase<?> list(String name, PageModel pm) {
+		log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

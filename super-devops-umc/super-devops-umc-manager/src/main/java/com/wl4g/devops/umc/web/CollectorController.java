@@ -46,7 +46,7 @@ public class CollectorController extends BaseController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(String name, String addr, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("Find collectors prarms::" + "name = {} , customPage = {} ", name, pm);
+			log.info("Find collectors prarms::" + "name = {} , pm = {} ", name, pm);
 		}
 
 		RespBase<Object> resp = RespBase.create();

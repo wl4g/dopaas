@@ -86,12 +86,11 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public Map<String, Object> list(PageModel customPage, String name, String displayName) {
+	public Map<String, Object> list(PageModel pm, String name, String displayName) {
 		Map<String, Object> resp = new HashMap<>();
 		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Project> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<Role> list = roleDao.list(currentLoginUserId, name, displayName);
 		Set<Group> groupsSet = groupService.getGroupsSet();// get user group
 		for (Role role : list) {
@@ -100,10 +99,9 @@ public class RoleServiceImpl implements RoleService {
 			String s = groups2Str(groups);
 			role.setGroupDisplayName(s);
 		}
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.put("page", pm);
 		resp.put("list", list);
 		return resp;
 	}

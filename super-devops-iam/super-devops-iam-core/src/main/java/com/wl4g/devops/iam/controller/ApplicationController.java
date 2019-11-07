@@ -41,7 +41,7 @@ public class ApplicationController extends BaseController {
 	@RequestMapping(value = "/info")
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
-		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null,null,null);
+		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, null, null);
 		Map<String, Object> map = new HashMap<>();
 		for (ClusterConfig entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);

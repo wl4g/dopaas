@@ -46,18 +46,16 @@ public class ConfigController extends BaseController {
 	private ConfigService configService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(Integer templateId, Integer contactGroupId, PageModel customPage) {
-		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , customPage = {} ", templateId,
-				contactGroupId, customPage);
+	public RespBase<?> list(Integer templateId, Integer contactGroupId, PageModel pm) {
+		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
+				contactGroupId, pm);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

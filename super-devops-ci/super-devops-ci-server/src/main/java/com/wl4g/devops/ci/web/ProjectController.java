@@ -65,19 +65,15 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName, String projectName, PageModel customPage) {
-		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , customPage = {} ", groupName,
-				projectName, customPage);
+	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
+		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , pm = {} ", groupName, projectName,
+				pm);
 
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Project> page = PageHelper.startPage(pageNum, pageSize, true);
+		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<Project> list = projectService.list(groupName, projectName);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

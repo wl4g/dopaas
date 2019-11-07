@@ -70,16 +70,15 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel customPage, Integer id, String name, Integer taskId, Integer enable, String startDate,
+	public RespBase<?> list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate,
 			String endDate) {
 		log.info(
 				"into TriggerController.list prarms::"
 						+ "customPage = {} , id = {} , name = {} , taskId = {} , enable = {} , startDate = {} , endDate = {} ",
-				customPage, id, name, taskId, enable, startDate, endDate);
+				pm, id, name, taskId, enable, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Trigger> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Trigger> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
@@ -87,11 +86,9 @@ public class TriggerController extends BaseController {
 		}
 
 		List<Trigger> list = triggerDao.list(id, name, taskId, enable, startDate, endDateStr);
-		customPage.setPageNum(pageNum);
 
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

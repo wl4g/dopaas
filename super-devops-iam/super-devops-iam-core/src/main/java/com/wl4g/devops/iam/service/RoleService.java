@@ -29,7 +29,7 @@ public interface RoleService {
 
 	List<Role> getRolesByUserGroups();
 
-	Map<String, Object> list(PageModel customPage, String name, String displayName);
+	Map<String, Object> list(PageModel pm, String name, String displayName);
 
 	void save(Role group);
 

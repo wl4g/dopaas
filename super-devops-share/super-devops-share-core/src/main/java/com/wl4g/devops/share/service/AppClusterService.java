@@ -32,7 +32,7 @@ public interface AppClusterService {
 
 	void save(AppCluster appCluster, String cipherKey);
 
-	Map<String, Object> list(PageModel customPage, String clusterName);
+	Map<String, Object> list(PageModel pm, String clusterName);
 
 	void del(Integer clusterId);
 

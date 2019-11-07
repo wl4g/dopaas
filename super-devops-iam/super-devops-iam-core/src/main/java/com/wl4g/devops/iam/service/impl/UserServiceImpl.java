@@ -71,11 +71,10 @@ public class UserServiceImpl implements UserService {
 	private UserUtil userUtil;
 
 	@Override
-	public Map<String, Object> list(PageModel customPage, String userName, String displayName) {
+	public Map<String, Object> list(PageModel pm, String userName, String displayName) {
 		Map<String, Object> resp = new HashMap<>();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Project> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 
 		List<User> list = null;
 		String currentLoginUsername = userUtil.getCurrentLoginUsername();
@@ -93,10 +92,9 @@ public class UserServiceImpl implements UserService {
 			List<Role> roles = roleDao.selectByUserId(user.getId());
 			user.setRoleStrs(roles2Str(roles));
 		}
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.put("page", customPage);
+
+		pm.setTotal(page.getTotal());
+		resp.put("page", pm);
 		resp.put("list", list);
 		return resp;
 	}

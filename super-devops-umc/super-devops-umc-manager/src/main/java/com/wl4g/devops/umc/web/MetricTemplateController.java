@@ -46,17 +46,14 @@ public class MetricTemplateController extends BaseController {
 	private MetricTemplateService metricTemplateService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String metric, String classify, PageModel customPage) {
+	public RespBase<?> list(String metric, String classify, PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<MetricTemplate> list = metricTemplateDao.list(metric, classify);
 
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.forMap().put("page", customPage);
+		pm.setTotal(page.getTotal());
+		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
 	}

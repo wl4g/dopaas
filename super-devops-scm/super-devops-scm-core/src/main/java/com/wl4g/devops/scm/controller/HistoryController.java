@@ -58,9 +58,9 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "version-list.json", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> versionlist(String startDate, String endDate, PageModel customPage) {
+	public RespBase<?> versionlist(String startDate, String endDate, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("VersionList request ... {}, {}, {}", startDate, endDate, customPage);
+			log.info("VersionList request ... {}, {}, {}", startDate, endDate, pm);
 		}
 
 		RespBase<Object> resp = new RespBase<>();
@@ -68,15 +68,13 @@ public class HistoryController extends BaseController {
 			HashMap<String, Object> param = new HashMap<>();
 			param.put("startDate", startDate);
 			param.put("endDate", endDate);
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<VersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-			List<VersionList> list = historyService.versionList(param);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
 
-			resp.forMap().put("page", customPage);
+			Page<VersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
+			List<VersionList> list = historyService.versionList(param);
+
+			pm.setTotal(page.getTotal());
+
+			resp.forMap().put("page", pm);
 			resp.forMap().put("list", list);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -250,20 +248,18 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "release-list.json", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> list(ConfigVersionList agl, PageModel customPage) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("ReleaseList request... {}, {}", agl, customPage);
+			log.info("ReleaseList request... {}, {}", agl, pm);
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
+
+			Page<ConfigVersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 			List<ConfigVersionList> list = historyService.list(agl);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
-			resp.forMap().put("page", customPage);
+
+			pm.setTotal(page.getTotal());
+			resp.forMap().put("page", pm);
 			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
@@ -296,21 +292,19 @@ public class HistoryController extends BaseController {
 	 * 查询历史版本集合
 	 */
 	@RequestMapping(value = "history_list", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> historylist(ReleaseHistoryList agl, PageModel customPage) {
+	public RespBase<?> historylist(ReleaseHistoryList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("HistoryVersionList request ... {}, {}", agl, customPage);
+			log.info("HistoryVersionList request ... {}, {}", agl, pm);
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<ReleaseHistoryList> page = PageHelper.startPage(pageNum, pageSize, true);
-			List<ReleaseHistoryList> list = historyService.historylist(agl);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
 
-			resp.forMap().put("page", customPage);
+			Page<ReleaseHistoryList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
+			List<ReleaseHistoryList> list = historyService.historylist(agl);
+
+			pm.setTotal(page.getTotal());
+
+			resp.forMap().put("page", pm);
 			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
