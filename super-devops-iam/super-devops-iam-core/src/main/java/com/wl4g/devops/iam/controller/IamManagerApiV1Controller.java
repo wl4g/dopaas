@@ -22,9 +22,7 @@ import com.wl4g.devops.dao.share.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.validation.annotation.Validated;
@@ -56,8 +54,6 @@ public class IamManagerApiV1Controller extends BaseController {
 	@Autowired
 	private ClusterConfigDao clusterConfigDao;
 
-	@Value("${spring.profiles.active}")
-	private String profile;
 
 	/**
 	 * Find IAM server list of app_cluster_config.
