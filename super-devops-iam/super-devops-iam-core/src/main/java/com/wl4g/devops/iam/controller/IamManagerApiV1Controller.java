@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.EntryAddressDao;
+import com.wl4g.devops.dao.share.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
@@ -56,7 +54,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	protected RestTemplate restTemplate;
 
 	@Autowired
-	private EntryAddressDao entryAddressDao;
+	private ClusterConfigDao clusterConfigDao;
 
 	@Value("${spring.profiles.active}")
 	private String profile;
@@ -67,11 +65,10 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(path = "getIamServer")
+	@RequestMapping(path = "findIamServers")
 	public RespBase<?> findIamServers() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		List<EntryAddress> iamServer = entryAddressDao.getIamServer();
-		resp.forMap().put("data", iamServer);
+		resp.setData(clusterConfigDao.getIamServer());
 		return resp;
 	}
 
@@ -89,14 +86,10 @@ public class IamManagerApiV1Controller extends BaseController {
 			log.info("Get remote sessions for <= {} ...", query);
 		}
 
-		// TODO
-		String url ="http://localhost:14040/iam-server/api/v1/sessions";
 		// Get remote IAM base URI.
-//		EntryAddress entryAddress = entryAddressDao.selectByPrimaryKey(id);
-//		String url = getRemoteApiV1SessionUri(entryAddress.getExtranetBaseUri());
-//		if (log.isInfoEnabled()) {
-//			log.info("Request get remote sessions for: {}", url);
-//		}
+		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(id);
+		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
+		log.info("Request get remote sessions for: {}", url);
 
 		// Do exchange.
 		RespBase<SessionAttributeModel> resp = restTemplate
@@ -126,12 +119,15 @@ public class IamManagerApiV1Controller extends BaseController {
 
 		String url = getRemoteApiV1SessionUri("");
 		log.info("Request destroy remote sessions for: {}", url);
+
 		// Do request.
 		RespBase<String> resp = restTemplate
 				.exchange(url, HttpMethod.DELETE, null, new ParameterizedTypeReference<RespBase<String>>() {
 				}).getBody();
 
-		log.info("Destroyed remote sessions response for => {}", resp);
+		if (log.isInfoEnabled()) {
+			log.info("Destroyed remote sessions response for => {}", resp);
+		}
 		return null;
 	}
 
