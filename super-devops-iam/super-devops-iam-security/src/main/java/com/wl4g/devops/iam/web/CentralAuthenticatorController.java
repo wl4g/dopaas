@@ -81,7 +81,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 		RespBase<TicketAssertion> resp = new RespBase<>();
 		try {
 			// Ticket assertion.
-			resp.forMap().put(KEY_TICKET_ASSERT, authHandler.validate(param));
+			resp.getData().put(KEY_TICKET_ASSERT, authHandler.validate(param));
 		} catch (Throwable ex) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.handleError(ex);
