@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.EntryAddressDao;
+import com.wl4g.devops.dao.share.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -55,7 +54,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	protected RestTemplate restTemplate;
 
 	@Autowired
-	private EntryAddressDao entryAddressDao;
+	private ClusterConfigDao clusterConfigDao;
 
 	@Value("${spring.profiles.active}")
 	private String profile;
@@ -74,16 +73,17 @@ public class IamManagerApiV1Controller extends BaseController {
 			log.info("Get remote sessions for <= {} ...", query);
 		}
 
-		// Get remote IAM base URI.
-		EntryAddress entryAddress = entryAddressDao.selectByPrimaryKey(id);
-		String url = getRemoteApiV1SessionUri(entryAddress.getExtranetBaseUri());
-		if (log.isInfoEnabled()) {
-			log.info("Request get remote sessions for: {}", url);
-		}
+		// TODO --- get remote api baseUri from DB.//name ==>
+		// http://localhost:14040/iam-server
+		ClusterConfig clusterConfig = clusterConfigDao.selectByPrimaryKey(id);
 
-		// Do exchange.
+		// Remote session API uri.ex
+		String url = getRemoteApiV1SessionUri(clusterConfig.getExtranetBaseUri());
+		log.info("Request get remote sessions for: {}", url);
+		// Do request.
 		RespBase<Object> resp = restTemplate
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<Object>>() {
+
 				}).getBody();
 
 		if (log.isInfoEnabled()) {
@@ -95,7 +95,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	@RequestMapping(path = "getIamServer")
 	public RespBase<?> getIamServer() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		List<EntryAddress> iamServer = entryAddressDao.getIamServer();
+		List<ClusterConfig> iamServer = clusterConfigDao.getIamServer();
 		resp.getData().put("data", iamServer);
 		return resp;
 	}

@@ -44,7 +44,7 @@
       update_by)
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{gitUrl,jdbcType=VARCHAR},
       #{appClusterId,jdbcType=INTEGER}, #{assetsPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
-      #{linkAppHome,jdbcType=VARCHAR},#{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+      #{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
   </insert>
@@ -109,9 +109,6 @@
       </if>
       <if test="parentAppHome != null">
         #{parentAppHome,jdbcType=VARCHAR},
-      </if>
-      <if test="linkAppHome != null">
-        #{linkAppHome,jdbcType=VARCHAR},
       </if>
       <if test="lockStatus != null">
         #{lockStatus,jdbcType=INTEGER},
