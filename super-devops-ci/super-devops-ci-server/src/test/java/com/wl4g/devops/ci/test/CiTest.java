@@ -32,11 +32,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CiTest {
 
 	@Autowired
-	private PipelineManager pipelineProcessor;
+	private PipelineManager pipeManager;
 
 	@Test
 	public void createTask() {
-		pipelineProcessor.newPipeline(152);
+		pipeManager.newPipeline(152, null, null, null);
 	}
 
 }

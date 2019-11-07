@@ -16,6 +16,8 @@
 package com.wl4g.devops.common.web;
 
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
@@ -620,8 +622,35 @@ public class RespBase<D> implements Serializable {
 	final public static String DEFAULT_STATUS = "normal";
 
 	/**
-	 * Default status data value.
+	 * Default status data value.</br>
+	 * <font color=red>Note: can't be {@link DEFAULT_DATA} = new Object(),
+	 * otherwise jackson serialization will have the following error:</font>
+	 * 
+	 * <pre>
+	 * Exception in thread "main" java.lang.IllegalArgumentException: com.fasterxml.jackson.databind.JsonMappingException: No serializer found for class java.lang.Object and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: com.wl4g.devops.common.web.RespBase["data"])
+	 * 	at com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString(JacksonUtils.java:52)
+	 * 	at com.wl4g.devops.common.web.RespBase.main(RespBase.java:633)
+	 * Caused by: com.fasterxml.jackson.databind.JsonMappingException: No serializer found for class java.lang.Object and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: com.wl4g.devops.common.web.RespBase["data"])
+	 * 	at com.fasterxml.jackson.databind.JsonMappingException.from(JsonMappingException.java:284)
+	 * 	at com.fasterxml.jackson.databind.SerializerProvider.mappingException(SerializerProvider.java:1110)
+	 * 	at com.fasterxml.jackson.databind.SerializerProvider.reportMappingProblem(SerializerProvider.java:1135)
+	 * 	at com.fasterxml.jackson.databind.ser.impl.UnknownSerializer.failForEmpty(UnknownSerializer.java:69)
+	 * 	at com.fasterxml.jackson.databind.ser.impl.UnknownSerializer.serialize(UnknownSerializer.java:32)
+	 * 	at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:704)
+	 * 	at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:689)
+	 * 	at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:155)
+	 * 	at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider.serializeValue(DefaultSerializerProvider.java:292)
+	 * 	at com.fasterxml.jackson.databind.ObjectMapper._configAndWriteValue(ObjectMapper.java:3697)
+	 * 	at com.fasterxml.jackson.databind.ObjectMapper.writeValueAsString(ObjectMapper.java:3073)
+	 * 	at com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString(JacksonUtils.java:50)
+	 * 	... 1 more
+	 * </pre>
 	 */
-	final public static Object DEFAULT_DATA = new Object();
+	final public static Object DEFAULT_DATA = emptyMap();
+
+	public static void main(String[] args) {
+		RespBase<Object> resp = new RespBase<>(RetCode.create(4001, "For testing message."));
+		System.out.println(toJSONString(resp));
+	}
 
 }

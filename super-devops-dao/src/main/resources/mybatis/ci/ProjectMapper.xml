@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Project">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="vcs_type" jdbcType="VARCHAR" property="vcsType" />
     <result column="git_url" jdbcType="VARCHAR" property="gitUrl" />
     <result column="app_cluster_id" jdbcType="INTEGER" property="appClusterId" />
     <result column="assets_path" jdbcType="VARCHAR" property="assetsPath" />
@@ -19,11 +20,11 @@
     <result column="group_name" property="groupName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, project_name, git_url, app_cluster_id, assets_path, parent_app_home, lock_status,
+    id, project_name,vcs_type, git_url, app_cluster_id, assets_path, parent_app_home, lock_status,
     remark, del_flag, create_date, create_by, update_date, update_by
   </sql>
   <sql id="Base_Column_List_p">
-    p.id, p.project_name, p.git_url, p.app_cluster_id, p.assets_path, p.parent_app_home, p.lock_status,
+    p.id, p.project_name,p.vcs_type, p.git_url, p.app_cluster_id, p.assets_path, p.parent_app_home, p.lock_status,
     p.remark, p.del_flag, p.create_date, p.create_by, p.update_date, p.update_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -37,12 +38,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project">
-    insert into ci_project (id, project_name, git_url,
+    insert into ci_project (id, project_name, vcs_type,git_url,
       app_cluster_id, assets_path, parent_app_home,
       lock_status, remark, del_flag,
       create_date, create_by, update_date,
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{gitUrl,jdbcType=VARCHAR},
+    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{vcsType,jdbcType=VARCHAR},,#{gitUrl,jdbcType=VARCHAR},
       #{appClusterId,jdbcType=INTEGER}, #{assetsPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
       #{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
@@ -56,6 +57,9 @@
       </if>
       <if test="projectName != null">
         project_name,
+      </if>
+      <if test="vcsType != null">
+        vcs_type,
       </if>
       <if test="gitUrl != null">
         git_url,
@@ -98,6 +102,9 @@
       <if test="projectName != null">
         #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="vcsType != null">
+        #{vcsType,jdbcType=VARCHAR},
+      </if>
       <if test="gitUrl != null">
         #{gitUrl,jdbcType=VARCHAR},
       </if>
@@ -139,6 +146,9 @@
       <if test="projectName != null">
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="vcsType != null">
+        vcs_type = #{vcsType,jdbcType=VARCHAR},
+      </if>
       <if test="gitUrl != null">
         git_url = #{gitUrl,jdbcType=VARCHAR},
       </if>
@@ -178,6 +188,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Project">
     update ci_project
     set project_name = #{projectName,jdbcType=VARCHAR},
+      vcs_type = #{vcsType,jdbcType=VARCHAR},
       git_url = #{gitUrl,jdbcType=VARCHAR},
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       assets_path = #{assetsPath,jdbcType=VARCHAR},

@@ -23,6 +23,7 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.dao.ci.TriggerDao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +50,11 @@ public class TimingPipelineJob implements Runnable {
 	protected PipelineManager pipeManager;
 	@Autowired
 	protected TriggerService triggerService;
+	@Autowired
+	protected TriggerDao triggerDao;
 
+	protected Trigger trigger;
 	final protected Task task;
-	final protected Trigger trigger;
 	final protected Project project;
 	final protected List<TaskDetail> taskDetails;
 
@@ -68,6 +71,9 @@ public class TimingPipelineJob implements Runnable {
 			log.info("Timing pipeline tasks ... project:{}, task:{}, trigger:{}", project, task, trigger);
 		}
 
+		// for update sha from db
+		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
+
 		try {
 			if (!checkCommittedChanged()) { // Changed?
 				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
@@ -75,7 +81,7 @@ public class TimingPipelineJob implements Runnable {
 			}
 
 			// Creating pipeline task.
-			pipeManager.newPipeline(task.getId());
+			pipeManager.newPipeline(task.getId(), null, null, null);
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();

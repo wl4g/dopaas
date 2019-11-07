@@ -16,10 +16,8 @@
 package com.wl4g.devops.ci.console;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.console.args.BuildArgument;
-import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalMsArgument;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
-import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalMsArgument;
 import com.wl4g.devops.ci.pipeline.GlobalTimeoutJobCleanupFinalizer;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.utils.lang.TableFormatters;
@@ -27,13 +25,12 @@ import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellHolder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
-import static com.wl4g.devops.shell.processor.ShellHolder.*;
+import static com.wl4g.devops.shell.processor.ShellHolder.printf;
 
 /**
  * CI/CD console point
@@ -50,10 +47,6 @@ public class CiCdConsole {
 	/** {@link GlobalTimeoutJobCleanupFinalizer}. */
 	@Autowired
 	private GlobalTimeoutJobCleanupFinalizer finalizer;
-
-	/** {@link PipelineManager}. */
-	@Autowired
-	private PipelineManager pipeManager;
 
 	/** {@link TaskDao}. */
 	@Autowired
@@ -105,25 +98,6 @@ public class CiCdConsole {
 		}
 
 		return "Load pipeline task list completed!";
-	}
-
-	/**
-	 * New pipeline task deployement.
-	 * 
-	 * @param arg
-	 * @return
-	 */
-	@ShellMethod(keys = "deploy", group = GROUP, help = "Deployment of pipeline job")
-	public String deploy(BuildArgument arg) {
-		ShellHolder.open();
-		try {
-			pipeManager.newPipeline(arg.getTaskId());
-		} catch (Exception e) {
-			printf(String.format("Failed to pipeline job. cause by: %s", getStackTraceAsString(e)));
-		} finally {
-			ShellHolder.close();
-		}
-		return "Deployment pipeline completed!";
 	}
 
 }
