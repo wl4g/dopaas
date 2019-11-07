@@ -18,6 +18,7 @@ package com.wl4g.devops.common.utils.serialize;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -87,6 +88,48 @@ public abstract class JacksonUtils {
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	/**
+	 * Convert value to target type.</br>
+	 * 
+	 * @see com.fasterxml.jackson.databind.ObjectMapper#convertValue(Object,
+	 *      Class)
+	 * @param <T>
+	 * @param bean
+	 * @param toType
+	 * @return
+	 */
+	public static <T> T convertBean(Object bean, Class<T> toType) {
+		return mapper.convertValue(bean, toType);
+	}
+
+	/**
+	 * Convert value to reference type.</br>
+	 * 
+	 * @see com.fasterxml.jackson.databind.ObjectMapper#convertValue(Object,
+	 *      TypeReference)
+	 * @param <T>
+	 * @param bean
+	 * @param typeRef
+	 * @return
+	 */
+	public static <T> T convertBean(Object bean, TypeReference<?> typeRef) {
+		return mapper.convertValue(bean, typeRef);
+	}
+
+	/**
+	 * Convert value to Java type.</br>
+	 * 
+	 * @see com.fasterxml.jackson.databind.ObjectMapper#convertValue(Object,
+	 *      JavaType)
+	 * @param <T>
+	 * @param bean
+	 * @param toJavaType
+	 * @return
+	 */
+	public static <T> T convertBean(Object bean, JavaType toJavaType) {
+		return mapper.convertValue(bean, toJavaType);
 	}
 
 }
