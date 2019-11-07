@@ -20,43 +20,43 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
  * RSA cryptographic service.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
  */
 public final class RSACryptographicService extends AbstractCryptographicService<RSAKeySpecWrapper> {
 
-	/**
-	 * Cryptic algorithm.
-	 */
-	final protected CryptoHolder crypto;
+    /**
+     * Cryptic algorithm.
+     */
+    final protected CryptoHolder crypto;
 
-	public RSACryptographicService(JedisLockManager lockManager) {
-		super(lockManager);
-		this.crypto = CryptoHolder.getInstance("RSA");
-	}
+    public RSACryptographicService(JedisLockManager lockManager) {
+        super(lockManager);
+        this.crypto = CryptoHolder.getInstance("RSA");
+    }
 
-	/*
-	 * Encryption from hex.
-	 * 
-	 * @see
-	 * com.wl4g.devops.iam.crypto.CryptographicService#encryptWithHex(com.wl4g.
-	 * devops.iam.crypto.Cryptos.KeySpecPair, java.lang.String)
-	 */
-	@Override
-	public String encryptWithHex(RSAKeySpecWrapper keySpec, String hexPlain) {
-		return crypto.build(keySpec).encrypt(hexPlain);
-	}
+    /*
+     * Encryption from hex.
+     *
+     * @see
+     * com.wl4g.devops.iam.crypto.CryptographicService#encryptWithHex(com.wl4g.
+     * devops.iam.crypto.Cryptos.KeySpecPair, java.lang.String)
+     */
+    @Override
+    public String encryptWithHex(RSAKeySpecWrapper keySpec, String hexPlain) {
+        return crypto.build(keySpec).encrypt(hexPlain);
+    }
 
-	@Override
-	public String decryptWithHex(RSAKeySpecWrapper keySpec, String hexCipher) {
-		return crypto.build(keySpec).decrypt(hexCipher);
-	}
+    @Override
+    public String decryptWithHex(RSAKeySpecWrapper keySpec, String hexCipher) {
+        return crypto.build(keySpec).decrypt(hexCipher);
+    }
 
-	@Override
-	protected RSAKeySpecWrapper generateKeySpec() {
-		return crypto.generateKeySpecPair();
-	}
+    @Override
+    protected RSAKeySpecWrapper generateKeySpec() {
+        return crypto.generateKeySpecPair();
+    }
 
 }

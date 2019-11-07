@@ -35,7 +35,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 /**
  * IAM client authenticator authorization filter.</br>
  * </br>
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月6日
@@ -44,50 +44,50 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 @Beta
 @IamFilter
 public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter {
-	final public static String NAME = "authenticatorFilter";
+    final public static String NAME = "authenticatorFilter";
 
-	@Override
-	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		Subject subject = getSubject(request, response);
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        Subject subject = getSubject(request, response);
 
-		try {
-			// Check authenticate redirect URL validity.
-			RedirectInfo redirect = getRedirectInfo(request, false);
-			authHandler.checkAuthenticateRedirectValidity(redirect.getFromAppName(), redirect.getRedirectUrl());
-		} catch (IllegalCallbackDomainException e) {
-			log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
-		}
+        try {
+            // Check authenticate redirect URL validity.
+            RedirectInfo redirect = getRedirectInfo(request, false);
+            authHandler.checkAuthenticateRedirectValidity(redirect.getFromAppName(), redirect.getRedirectUrl());
+        } catch (IllegalCallbackDomainException e) {
+            log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));
+        }
 
-		/*
-		 * If it is an authenticated state, execute the success logic directly,
-		 * Exclude default success pages to prevent unlimited redirects.
-		 */
-		if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(), request, response)) {
-			try {
-				return onLoginSuccess(createToken(request, response), subject, request, response);
-			} catch (Exception e) {
-				log.error("Failed to redirect successUrl with authenticated.", e);
-			}
-		}
+        /*
+         * If it is an authenticated state, execute the success logic directly,
+         * Exclude default success pages to prevent unlimited redirects.
+         */
+        if (subject.isAuthenticated() && !matchRequest(getSuccessUrl(), request, response)) {
+            try {
+                return onLoginSuccess(createToken(request, response), subject, request, response);
+            } catch (Exception e) {
+                log.error("Failed to redirect successUrl with authenticated.", e);
+            }
+        }
 
-		// Pass processing
-		return super.isAccessAllowed(request, response, mappedValue);
-	}
+        // Pass processing
+        return super.isAccessAllowed(request, response, mappedValue);
+    }
 
-	@Override
-	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		return new AuthenticatorAuthenticationToken(remoteHost, redirectInfo);
-	}
+    @Override
+    protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+                                                     HttpServletResponse response) throws Exception {
+        return new AuthenticatorAuthenticationToken(remoteHost, redirectInfo);
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_AUTHENTICATOR;
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_AUTHENTICATOR;
+    }
 
 }

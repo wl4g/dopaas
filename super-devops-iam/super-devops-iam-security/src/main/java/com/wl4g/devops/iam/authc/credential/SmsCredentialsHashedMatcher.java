@@ -25,7 +25,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 
 /**
  * SMS dynamic credential matcher
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -33,16 +33,16 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
  */
 public class SmsCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
-	@Override
-	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
-		SmsAuthenticationToken tk = (SmsAuthenticationToken) token;
-		verifier.forAdapt(VerifyType.TEXT_SMS).validate(factors, (String) tk.getCredentials(), true);
-		return true;
-	}
+    @Override
+    public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
+        SmsAuthenticationToken tk = (SmsAuthenticationToken) token;
+        verifier.forAdapt(VerifyType.TEXT_SMS).validate(factors, (String) tk.getCredentials(), true);
+        return true;
+    }
 
-	@Override
-	protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
-		// Nothing
-	}
+    @Override
+    protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
+        // Nothing
+    }
 
 }

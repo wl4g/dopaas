@@ -22,33 +22,33 @@ import org.springframework.util.Assert;
 /**
  * KeySpec wrapper, include e.g.: RSA key pair algorithm and AES single key
  * algorithm key packaging.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-28
  * @since
  */
 public abstract class KeySpecWrapper {
 
-	/**
-	 * KeySpec unique identification.
-	 */
-	private String keySpecId;
+    /**
+     * KeySpec unique identification.
+     */
+    private String keySpecId;
 
-	public KeySpecWrapper() {
-		setKeySpecId("keySpec" + UUID.randomUUID().toString().replaceAll("-", "").substring(12));
-	}
+    public KeySpecWrapper() {
+        setKeySpecId("keySpec" + UUID.randomUUID().toString().replaceAll("-", "").substring(12));
+    }
 
-	public KeySpecWrapper(String keySpecId) {
-		Assert.hasText(keySpecId, "KeySpecId must not be empty.");
-		this.keySpecId = keySpecId;
-	}
+    public KeySpecWrapper(String keySpecId) {
+        Assert.hasText(keySpecId, "KeySpecId must not be empty.");
+        this.keySpecId = keySpecId;
+    }
 
-	public String getKeySpecId() {
-		return keySpecId;
-	}
+    public String getKeySpecId() {
+        return keySpecId;
+    }
 
-	public void setKeySpecId(String keySpecId) {
-		this.keySpecId = keySpecId;
-	}
+    public void setKeySpecId(String keySpecId) {
+        this.keySpecId = keySpecId;
+    }
 
 }

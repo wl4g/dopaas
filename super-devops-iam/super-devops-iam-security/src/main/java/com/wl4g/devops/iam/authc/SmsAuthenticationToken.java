@@ -21,109 +21,109 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 
 /**
  * SMS authentication token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
  * @since
  */
 public class SmsAuthenticationToken extends AbstractIamAuthenticationToken {
-	private static final long serialVersionUID = 8587329689973009598L;
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	/**
-	 * Principal(e.g. user-name or mobile number etc)
-	 */
-	final private String principal;
+    /**
+     * Principal(e.g. user-name or mobile number etc)
+     */
+    final private String principal;
 
-	/**
-	 * Dynamic verification code
-	 */
-	final private String smsCode;
+    /**
+     * Dynamic verification code
+     */
+    final private String smsCode;
 
-	final private Action action;
+    final private Action action;
 
-	public SmsAuthenticationToken() {
-		this.principal = null;
-		this.smsCode = null;
-		this.action = null;
-	}
+    public SmsAuthenticationToken() {
+        this.principal = null;
+        this.smsCode = null;
+        this.action = null;
+    }
 
-	public SmsAuthenticationToken(final String remoteHost, final String action, final String principal, final String smsCode) {
-		super(remoteHost);
-		hasText(principal, "Dynamic principal must not be empty");
-		hasText(smsCode, "Dynamic smsCode credentials must not be empty");
-		this.action = Action.of(action);
-		this.principal = principal;
-		this.smsCode = smsCode;
-	}
+    public SmsAuthenticationToken(final String remoteHost, final String action, final String principal, final String smsCode) {
+        super(remoteHost);
+        hasText(principal, "Dynamic principal must not be empty");
+        hasText(smsCode, "Dynamic smsCode credentials must not be empty");
+        this.action = Action.of(action);
+        this.principal = principal;
+        this.smsCode = smsCode;
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
+    @Override
+    public Object getPrincipal() {
+        return principal;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return smsCode;
-	}
+    @Override
+    public Object getCredentials() {
+        return smsCode;
+    }
 
-	public Action getAction() {
-		return action;
-	}
+    public Action getAction() {
+        return action;
+    }
 
-	/**
-	 * SMS authentication action
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年4月19日
-	 * @since
-	 */
-	public static enum Action {
+    /**
+     * SMS authentication action
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年4月19日
+     * @since
+     */
+    public static enum Action {
 
-		/**
-		 * SMS login action type.
-		 */
-		LOGIN,
+        /**
+         * SMS login action type.
+         */
+        LOGIN,
 
-		/**
-		 * SMS bind action type.
-		 */
-		BIND,
+        /**
+         * SMS bind action type.
+         */
+        BIND,
 
-		/**
-		 * SMS unbind action type.
-		 */
-		UNBIND;
+        /**
+         * SMS unbind action type.
+         */
+        UNBIND;
 
-		/**
-		 * Converter string to {@link Action}
-		 * 
-		 * @param action
-		 * @return
-		 */
-		public static Action of(String action) {
-			Action wh = safeOf(action);
-			if (wh == null) {
-				throw new IllegalArgumentException(String.format("Illegal action '%s'", action));
-			}
-			return wh;
-		}
+        /**
+         * Converter string to {@link Action}
+         *
+         * @param action
+         * @return
+         */
+        public static Action of(String action) {
+            Action wh = safeOf(action);
+            if (wh == null) {
+                throw new IllegalArgumentException(String.format("Illegal action '%s'", action));
+            }
+            return wh;
+        }
 
-		/**
-		 * Safe converter string to {@link Action}
-		 * 
-		 * @param action
-		 * @return
-		 */
-		public static Action safeOf(String action) {
-			for (Action t : values()) {
-				if (String.valueOf(action).equalsIgnoreCase(t.name())) {
-					return t;
-				}
-			}
-			return null;
-		}
+        /**
+         * Safe converter string to {@link Action}
+         *
+         * @param action
+         * @return
+         */
+        public static Action safeOf(String action) {
+            for (Action t : values()) {
+                if (String.valueOf(action).equalsIgnoreCase(t.name())) {
+                    return t;
+                }
+            }
+            return null;
+        }
 
-	}
+    }
 
 }

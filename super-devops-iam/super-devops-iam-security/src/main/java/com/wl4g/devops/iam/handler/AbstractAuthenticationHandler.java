@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 
 /**
  * Abstract IAM authentication handler.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -42,75 +42,75 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * Rest template
-	 */
-	final protected RestTemplate restTemplate;
+    /**
+     * Rest template
+     */
+    final protected RestTemplate restTemplate;
 
-	/**
-	 * IAM security context handler
-	 */
-	final protected ServerSecurityConfigurer configurer;
+    /**
+     * IAM security context handler
+     */
+    final protected ServerSecurityConfigurer configurer;
 
-	/**
-	 * IAM server configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
+    /**
+     * IAM server configuration properties
+     */
+    @Autowired
+    protected IamProperties config;
 
-	/**
-	 * Key id generator
-	 */
-	@Autowired
-	protected SessionIdGenerator idGenerator;
+    /**
+     * Key id generator
+     */
+    @Autowired
+    protected SessionIdGenerator idGenerator;
 
-	/**
-	 * Enhanced cache manager.
-	 */
-	@Autowired
-	protected EnhancedCacheManager cacheManager;
+    /**
+     * Enhanced cache manager.
+     */
+    @Autowired
+    protected EnhancedCacheManager cacheManager;
 
-	/**
-	 * IAM server security processor
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
+    /**
+     * IAM server security processor
+     */
+    @Autowired
+    protected ServerSecurityCoprocessor coprocessor;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+    protected SessionDelegateMessageBundle bundle;
 
-	public AbstractAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
-		Assert.notNull(context, "'context' must not be null");
-		Assert.notNull(restTemplate, "'restTemplate' must not be null");
-		this.restTemplate = restTemplate;
-		this.configurer = context;
-	}
+    public AbstractAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
+        Assert.notNull(context, "'context' must not be null");
+        Assert.notNull(restTemplate, "'restTemplate' must not be null");
+        this.restTemplate = restTemplate;
+        this.configurer = context;
+    }
 
-	/**
-	 * Find current grantTicket principal system role.
-	 * 
-	 * @param principal
-	 * @param application
-	 * @return
-	 */
-	protected String getRoles(String principal, String application) {
-		return this.configurer.findRoles(principal, application);
-	}
+    /**
+     * Find current grantTicket principal system role.
+     *
+     * @param principal
+     * @param application
+     * @return
+     */
+    protected String getRoles(String principal, String application) {
+        return this.configurer.findRoles(principal, application);
+    }
 
-	/**
-	 * Find current grantTicket principal system Permission.
-	 * 
-	 * @param principal
-	 * @param application
-	 * @return
-	 */
-	protected String getPermits(String principal, String application) {
-		return this.configurer.findPermissions(principal, application);
-	}
+    /**
+     * Find current grantTicket principal system Permission.
+     *
+     * @param principal
+     * @param application
+     * @return
+     */
+    protected String getPermits(String principal, String application) {
+        return this.configurer.findPermissions(principal, application);
+    }
 
 }

@@ -45,8 +45,8 @@ import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
  */
 public class FacebookAuthorizingRealm extends Oauth2SnsAuthorizingRealm<FacebookAuthenticationToken> {
 
-	public FacebookAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public FacebookAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
 }

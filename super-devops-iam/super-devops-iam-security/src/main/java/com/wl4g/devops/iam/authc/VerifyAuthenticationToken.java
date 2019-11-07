@@ -19,7 +19,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 
 /**
  * Captcha & verification authentication token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
@@ -27,18 +27,18 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
  */
 public interface VerifyAuthenticationToken {
 
-	/**
-	 * Get verifyType.
-	 * 
-	 * @return
-	 */
-	VerifyType getVerifyType();
+    /**
+     * Get verifyType.
+     *
+     * @return
+     */
+    VerifyType getVerifyType();
 
-	/**
-	 * Get submitted verifiedToken.
-	 * 
-	 * @return
-	 */
-	String getVerifiedToken();
+    /**
+     * Get submitted verifiedToken.
+     *
+     * @return
+     */
+    String getVerifiedToken();
 
 }

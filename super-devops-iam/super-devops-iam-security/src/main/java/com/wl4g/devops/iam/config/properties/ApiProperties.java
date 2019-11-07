@@ -22,30 +22,32 @@ import java.io.Serializable;
 
 /**
  * IAM API configuration properties
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年10月31日
  * @since
  */
 public class ApiProperties implements Serializable {
-	private static final long serialVersionUID = -2694422471852860689L;
+    private static final long serialVersionUID = -2694422471852860689L;
 
-	/** Sessions max iteration batch size. */
-	private int maxIteraSize = 200;
+    /**
+     * Sessions max iteration batch size.
+     */
+    private int maxIteraSize = 200;
 
-	public int getMaxIteraSize() {
-		return maxIteraSize;
-	}
+    public int getMaxIteraSize() {
+        return maxIteraSize;
+    }
 
-	public void setMaxIteraSize(int maxIteraSize) {
-		isTrue(maxIteraSize > 0, "maxIteraSize must >0");
-		this.maxIteraSize = maxIteraSize;
-	}
+    public void setMaxIteraSize(int maxIteraSize) {
+        isTrue(maxIteraSize > 0, "maxIteraSize must >0");
+        this.maxIteraSize = maxIteraSize;
+    }
 
-	@Override
-	public String toString() {
-		return toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return toJSONString(this);
+    }
 
 }

@@ -48,247 +48,248 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * SMS verification code handler
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月16日
  * @since
  */
 public class SmsSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
-	/**
-	 * SMS verification code parameter name,
-	 */
-	final public static String PARAM_VERIFYCODE = "smsCode";
+    /**
+     * SMS verification code parameter name,
+     */
+    final public static String PARAM_VERIFYCODE = "smsCode";
 
-	/**
-	 * Target phone number parameter name sent by SMS verification code.
-	 */
-	final public static String PARAM_MOBILENUM = "mobileNumber";
+    /**
+     * Target phone number parameter name sent by SMS verification code.
+     */
+    final public static String PARAM_MOBILENUM = "mobileNumber";
 
-	/**
-	 * SMS hander sender.
-	 */
-	@Autowired
-	private SmsHandleSender sender;
+    /**
+     * SMS hander sender.
+     */
+    @Autowired
+    private SmsHandleSender sender;
 
-	/**
-	 * Attempts SMS accumulator
-	 */
-	private Cumulator applySmsCumulator;
+    /**
+     * Attempts SMS accumulator
+     */
+    private Cumulator applySmsCumulator;
 
-	@Override
-	public VerifyType verifyType() {
-		return VerifyType.TEXT_SMS;
-	}
+    @Override
+    public VerifyType verifyType() {
+        return VerifyType.TEXT_SMS;
+    }
 
-	@Override
-	public Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
-		// Ready send to SMS gateway.
-		sender.doSend(determineParameters(request, getVerifyCode(true).getCode()));
-		return null;
-	}
+    @Override
+    public Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) {
+        // Ready send to SMS gateway.
+        sender.doSend(determineParameters(request, getVerifyCode(true).getCode()));
+        return null;
+    }
 
-	@Override
-	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
-		SimpleVerifyImgModel model = parseJSON(params, SimpleVerifyImgModel.class);
-		validator.validate(model);
-		return model;
-	}
+    @Override
+    protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
+        SimpleVerifyImgModel model = parseJSON(params, SimpleVerifyImgModel.class);
+        validator.validate(model);
+        return model;
+    }
 
-	@Override
-	public boolean isEnabled(@NotNull List<String> factors) {
-		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-		return getVerifyCode(false) != null;
-	}
+    @Override
+    public boolean isEnabled(@NotNull List<String> factors) {
+        Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
+        return getVerifyCode(false) != null;
+    }
 
-	@Override
-	public long getVerifyCodeExpireMs() {
-		return config.getMatcher().getSmsExpireMs();
-	}
+    @Override
+    public long getVerifyCodeExpireMs() {
+        return config.getMatcher().getSmsExpireMs();
+    }
 
-	@Override
-	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
-		return super.getVerifyCode(assertion);
-	}
+    @Override
+    public VerifyCodeWrapper getVerifyCode(boolean assertion) {
+        return super.getVerifyCode(assertion);
+    }
 
-	@Override
-	protected String generateCode() {
-		return randomNumeric(6);
-	}
+    @Override
+    protected String generateCode() {
+        return randomNumeric(6);
+    }
 
-	/**
-	 * Determine SMS send parameters
-	 * 
-	 * @param request
-	 * @param smsCode
-	 * @return
-	 */
-	protected Map<String, Object> determineParameters(HttpServletRequest request, String smsCode) {
-		return new HashMap<String, Object>() {
-			private static final long serialVersionUID = 8964694616018054906L;
-			{
-				// SMS code.
-				put(PARAM_VERIFYCODE, smsCode);
-				// Mobile number.
-				String mobileNum = getCleanParam(request, config.getParam().getPrincipalName());
-				MobileNumber mn = MobileNumber.parse(mobileNum);
-				// Check mobile available.
-				checkMobileAvailable(request, mn.getNumber());
-				put(PARAM_MOBILENUM, mn);
-			}
-		};
-	}
+    /**
+     * Determine SMS send parameters
+     *
+     * @param request
+     * @param smsCode
+     * @return
+     */
+    protected Map<String, Object> determineParameters(HttpServletRequest request, String smsCode) {
+        return new HashMap<String, Object>() {
+            private static final long serialVersionUID = 8964694616018054906L;
 
-	@Override
-	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors) {
-		long failFastSmsMaxAttempts = config.getMatcher().getFailFastSmsMaxAttempts();
+            {
+                // SMS code.
+                put(PARAM_VERIFYCODE, smsCode);
+                // Mobile number.
+                String mobileNum = getCleanParam(request, config.getParam().getPrincipalName());
+                MobileNumber mn = MobileNumber.parse(mobileNum);
+                // Check mobile available.
+                checkMobileAvailable(request, mn.getNumber());
+                put(PARAM_MOBILENUM, mn);
+            }
+        };
+    }
 
-		// Accumulated number of apply
-		Long applySmsCount = applySmsCumulator.accumulate(factors, 1);
-		if (applySmsCount >= failFastSmsMaxAttempts) {
-			log.warn("Apply for SMS verification code too often, actual: {}, maximum: {}, factors: {}", applySmsCount,
-					failFastSmsMaxAttempts, factors);
-			throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
-		}
-	}
+    @Override
+    protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors) {
+        long failFastSmsMaxAttempts = config.getMatcher().getFailFastSmsMaxAttempts();
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		this.applySmsCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
-				config.getMatcher().getFailFastSmsMaxDelay());
-		Assert.notNull(applySmsCumulator, "applyCumulator is null, please check configure");
-	}
+        // Accumulated number of apply
+        Long applySmsCount = applySmsCumulator.accumulate(factors, 1);
+        if (applySmsCount >= failFastSmsMaxAttempts) {
+            log.warn("Apply for SMS verification code too often, actual: {}, maximum: {}, factors: {}", applySmsCount,
+                    failFastSmsMaxAttempts, factors);
+            throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+        }
+    }
 
-	/**
-	 * Check mobile number available.
-	 * 
-	 * @param mobile
-	 */
-	private void checkMobileAvailable(HttpServletRequest request, @NotNull long mobile) {
-		String action = getCleanParam(request, config.getParam().getSmsActionName());
-		// bind phone , needn't Check account exist
-		if (BIND == (Action.safeOf(action))) {
-			return;
-		}
-		// Getting account information
-		IamAccountInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.applySmsCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+                config.getMatcher().getFailFastSmsMaxDelay());
+        Assert.notNull(applySmsCumulator, "applyCumulator is null, please check configure");
+    }
 
-		// Check mobile(user) available
-		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {
-			log.warn("Illegal users, because mobile phone number: {} corresponding users do not exist", mobile);
-			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", String.valueOf(mobile)));
-		}
+    /**
+     * Check mobile number available.
+     *
+     * @param mobile
+     */
+    private void checkMobileAvailable(HttpServletRequest request, @NotNull long mobile) {
+        String action = getCleanParam(request, config.getParam().getSmsActionName());
+        // bind phone , needn't Check account exist
+        if (BIND == (Action.safeOf(action))) {
+            return;
+        }
+        // Getting account information
+        IamAccountInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
 
-	}
+        // Check mobile(user) available
+        if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {
+            log.warn("Illegal users, because mobile phone number: {} corresponding users do not exist", mobile);
+            throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", String.valueOf(mobile)));
+        }
 
-	/**
-	 * SMS verification template handle sender.
-	 * 
-	 * @author wangl.sir
-	 * @version v1.0 2019年4月17日
-	 * @since
-	 */
-	public static interface SmsHandleSender {
+    }
 
-		/**
-		 * Do send to SMS provider gateway
-		 * 
-		 * @param parameters
-		 */
-		void doSend(Map<String, Object> parameters);
+    /**
+     * SMS verification template handle sender.
+     *
+     * @author wangl.sir
+     * @version v1.0 2019年4月17日
+     * @since
+     */
+    public static interface SmsHandleSender {
 
-	}
+        /**
+         * Do send to SMS provider gateway
+         *
+         * @param parameters
+         */
+        void doSend(Map<String, Object> parameters);
 
-	/**
-	 * Default print SMS verification template handle sender.
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年4月20日
-	 * @since
-	 */
-	public static class PrintSmsHandleSender implements SmsHandleSender {
+    }
 
-		final protected Logger log = LoggerFactory.getLogger(getClass());
+    /**
+     * Default print SMS verification template handle sender.
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年4月20日
+     * @since
+     */
+    public static class PrintSmsHandleSender implements SmsHandleSender {
 
-		@Override
-		public void doSend(Map<String, Object> parameters) {
-			log.info(">>>> Start Sent SMS verification >>>>", parameters);
-			log.info("SMS verification for : {}", parameters);
-			log.info("<<<< End Sent SMS verification <<<<");
-		}
+        final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	}
+        @Override
+        public void doSend(Map<String, Object> parameters) {
+            log.info(">>>> Start Sent SMS verification >>>>", parameters);
+            log.info("SMS verification for : {}", parameters);
+            log.info("<<<< End Sent SMS verification <<<<");
+        }
 
-	/**
-	 * Mobile number parser.</br>
-	 * See:<a href=
-	 * "https://www.51-n.com/t-4274-1-1.html">https://www.51-n.com/t-4274-1-1.html</a>
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年4月22日
-	 * @since
-	 */
-	public static class MobileNumber implements Serializable {
+    }
 
-		private static final long serialVersionUID = 6285416806548742944L;
+    /**
+     * Mobile number parser.</br>
+     * See:<a href=
+     * "https://www.51-n.com/t-4274-1-1.html">https://www.51-n.com/t-4274-1-1.html</a>
+     *
+     * @author Wangl.sir <983708408@qq.com>
+     * @version v1.0 2019年4月22日
+     * @since
+     */
+    public static class MobileNumber implements Serializable {
 
-		final private int countryCode;
+        private static final long serialVersionUID = 6285416806548742944L;
 
-		final private long number;
+        final private int countryCode;
 
-		private MobileNumber(int countryCode, long number) {
-			super();
-			this.countryCode = countryCode;
-			this.number = number;
-		}
+        final private long number;
 
-		public int getCountryCode() {
-			return countryCode;
-		}
+        private MobileNumber(int countryCode, long number) {
+            super();
+            this.countryCode = countryCode;
+            this.number = number;
+        }
 
-		public long getNumber() {
-			return number;
-		}
+        public int getCountryCode() {
+            return countryCode;
+        }
 
-		public String asNumberText() {
-			return String.valueOf(getNumber());
-		}
+        public long getNumber() {
+            return number;
+        }
 
-		/**
-		 * Check and parse mobile number.</br>
-		 * 
-		 * <pre>
-		 * parse(null)   = false
-		 * parse("null")   = false
-		 * parse("")     = false
-		 * parse(" ")   = false
-		 * parse("123")  = false
-		 * parse("+08618112349876")  = true
-		 * parse("+8618112349876") = false
-		 * parse("+086181123498 6") = false
-		 * parse("08618112349876") = false
-		 * parse("+018112349876") = false
-		 * </pre>
-		 * 
-		 * @param number
-		 */
-		public static MobileNumber parse(String mobileNumString) {
-			Assert.isTrue((StringUtils.isNotBlank(mobileNumString) && mobileNumString.length() >= 15),
-					"Mobile number must be 15 digits long");
-			Assert.isTrue(StringUtils.startsWith(mobileNumString, "+"),
-					String.format("Mobile number '%s' must start with '+', e.g. +08618112349876", mobileNumString));
-			Assert.isTrue(StringUtils.isNumeric(mobileNumString.substring(1)),
-					String.format("Mobile number '%s' suffix exist non-numeric characters", mobileNumString));
+        public String asNumberText() {
+            return String.valueOf(getNumber());
+        }
 
-			return new MobileNumber(Integer.parseInt(mobileNumString.substring(1, 4)),
-					Long.parseLong(mobileNumString.substring(4)));
-		}
+        /**
+         * Check and parse mobile number.</br>
+         *
+         * <pre>
+         * parse(null)   = false
+         * parse("null")   = false
+         * parse("")     = false
+         * parse(" ")   = false
+         * parse("123")  = false
+         * parse("+08618112349876")  = true
+         * parse("+8618112349876") = false
+         * parse("+086181123498 6") = false
+         * parse("08618112349876") = false
+         * parse("+018112349876") = false
+         * </pre>
+         *
+         * @param number
+         */
+        public static MobileNumber parse(String mobileNumString) {
+            Assert.isTrue((StringUtils.isNotBlank(mobileNumString) && mobileNumString.length() >= 15),
+                    "Mobile number must be 15 digits long");
+            Assert.isTrue(StringUtils.startsWith(mobileNumString, "+"),
+                    String.format("Mobile number '%s' must start with '+', e.g. +08618112349876", mobileNumString));
+            Assert.isTrue(StringUtils.isNumeric(mobileNumString.substring(1)),
+                    String.format("Mobile number '%s' suffix exist non-numeric characters", mobileNumString));
 
-		@Override
-		public String toString() {
-			return "MobileNumber [countryCode=" + countryCode + ", number=" + number + "]";
-		}
+            return new MobileNumber(Integer.parseInt(mobileNumString.substring(1, 4)),
+                    Long.parseLong(mobileNumString.substring(4)));
+        }
 
-	}
+        @Override
+        public String toString() {
+            return "MobileNumber [countryCode=" + countryCode + ", number=" + number + "]";
+        }
+
+    }
 
 }

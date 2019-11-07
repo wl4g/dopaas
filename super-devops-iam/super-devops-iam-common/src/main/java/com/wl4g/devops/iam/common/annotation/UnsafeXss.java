@@ -23,11 +23,11 @@ import java.lang.annotation.Target;
 
 /**
  * IAM unsafe XSS attacks request handler point.
- * 
+ *
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
 @Documented
 public @interface UnsafeXss {
 

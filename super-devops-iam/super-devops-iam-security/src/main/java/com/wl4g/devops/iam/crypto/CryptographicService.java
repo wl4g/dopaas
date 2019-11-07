@@ -17,44 +17,44 @@ package com.wl4g.devops.iam.crypto;
 
 /**
  * Cryptographic Services.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
  */
 public interface CryptographicService<K extends KeySpecWrapper> {
 
-	/**
-	 * Encryption with hex plain.
-	 * 
-	 * @param keySpec
-	 * @param hexPlain
-	 * @return
-	 */
-	String encryptWithHex(K keySpec, String hexPlain);
+    /**
+     * Encryption with hex plain.
+     *
+     * @param keySpec
+     * @param hexPlain
+     * @return
+     */
+    String encryptWithHex(K keySpec, String hexPlain);
 
-	/**
-	 * Decryption with hex cipher.
-	 * 
-	 * @param keySpec
-	 * @param hexCipher
-	 * @return
-	 */
-	String decryptWithHex(K keySpec, String hexCipher);
+    /**
+     * Decryption with hex cipher.
+     *
+     * @param keySpec
+     * @param hexCipher
+     * @return
+     */
+    String decryptWithHex(K keySpec, String hexCipher);
 
-	/**
-	 * Apply keySpec resource.
-	 * 
-	 * @return
-	 */
-	K borrow();
+    /**
+     * Apply keySpec resource.
+     *
+     * @return
+     */
+    K borrow();
 
-	/**
-	 * Apply keySpec resource.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	K borrow(int index);
+    /**
+     * Apply keySpec resource.
+     *
+     * @param index
+     * @return
+     */
+    K borrow(int index);
 
 }

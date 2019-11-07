@@ -29,28 +29,28 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
  */
 public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
-	@Override
-	public Subject createSubject(SubjectContext context) {
-		// the authenticated flag is only set by the SecurityManager after a
-		// successful authentication attempt.
-		boolean authenticated = context.isAuthenticated();
+    @Override
+    public Subject createSubject(SubjectContext context) {
+        // the authenticated flag is only set by the SecurityManager after a
+        // successful authentication attempt.
+        boolean authenticated = context.isAuthenticated();
 
-		// although the SecurityManager 'sees' the submission as a successful
-		// authentication, in reality, the
-		// login might have been just a CAS rememberMe login. If so, set the
-		// authenticated flag appropriately:
-		if (authenticated) {
-			AuthenticationToken token = context.getAuthenticationToken();
-			if (token != null && token instanceof RememberMeAuthenticationToken) {
-				RememberMeAuthenticationToken iamCasToken = (RememberMeAuthenticationToken) token;
-				// set the authenticated flag of the context to true only if the
-				// CAS subject is not in a remember me mode
-				if (iamCasToken.isRememberMe()) {
-					context.setAuthenticated(false);
-				}
-			}
-		}
-		return super.createSubject(context);
-	}
+        // although the SecurityManager 'sees' the submission as a successful
+        // authentication, in reality, the
+        // login might have been just a CAS rememberMe login. If so, set the
+        // authenticated flag appropriately:
+        if (authenticated) {
+            AuthenticationToken token = context.getAuthenticationToken();
+            if (token != null && token instanceof RememberMeAuthenticationToken) {
+                RememberMeAuthenticationToken iamCasToken = (RememberMeAuthenticationToken) token;
+                // set the authenticated flag of the context to true only if the
+                // CAS subject is not in a remember me mode
+                if (iamCasToken.isRememberMe()) {
+                    context.setAuthenticated(false);
+                }
+            }
+        }
+        return super.createSubject(context);
+    }
 
 }

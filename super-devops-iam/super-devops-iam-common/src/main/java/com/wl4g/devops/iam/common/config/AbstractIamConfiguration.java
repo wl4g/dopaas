@@ -68,298 +68,298 @@ import redis.clients.jedis.JedisCluster;
 
 /**
  * Abstract IAM common based configuration.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年12月23日
  * @since
  */
 public abstract class AbstractIamConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
-	// ==============================
-	// Locale i18n configuration.
-	// ==============================
+    // ==============================
+    // Locale i18n configuration.
+    // ==============================
 
-	/**
-	 * A delegate message resource. Note that this bean can instantiate multiple
-	 * different 'base-names', so the name must be unique
-	 * 
-	 * @return
-	 */
-	@Bean(BEAN_DELEGATE_MSG_SOURCE)
-	@ConditionalOnMissingBean
-	public SessionDelegateMessageBundle sessionDelegateMessageBundle() {
-		return new SessionDelegateMessageBundle(AbstractIamConfiguration.class);
-	}
+    /**
+     * A delegate message resource. Note that this bean can instantiate multiple
+     * different 'base-names', so the name must be unique
+     *
+     * @return
+     */
+    @Bean(BEAN_DELEGATE_MSG_SOURCE)
+    @ConditionalOnMissingBean
+    public SessionDelegateMessageBundle sessionDelegateMessageBundle() {
+        return new SessionDelegateMessageBundle(AbstractIamConfiguration.class);
+    }
 
-	// ==============================
-	// S H I R O _ C O N F I G's.
-	// ==============================
+    // ==============================
+    // S H I R O _ C O N F I G's.
+    // ==============================
 
-	@Bean
-	public FilterChainManager filterChainManager() {
-		return new IamFilterChainManager();
-	}
+    @Bean
+    public FilterChainManager filterChainManager() {
+        return new IamFilterChainManager();
+    }
 
-	@Bean
-	public ShiroFilterFactoryBean shiroFilter(AbstractIamProperties<? extends ParamProperties> config,
-			DefaultWebSecurityManager securityManager, FilterChainManager chainManager) {
-		/*
-		 * Note: The purpose of using Iam Shiro FilterFactory Bean is to use Iam
-		 * Path Matching Filter Chain Resolver, while Iam Path Matching Filter
-		 * Chain Resolver mainly implements the servlet/filter matching
-		 * specification of getChain () method for default enhancements (because
-		 * Shiro does not implement it, this causes serious problems)
-		 */
-		IamShiroFilterFactoryBean shiroFilter = new IamShiroFilterFactoryBean(chainManager);
-		shiroFilter.setSecurityManager(securityManager);
+    @Bean
+    public ShiroFilterFactoryBean shiroFilter(AbstractIamProperties<? extends ParamProperties> config,
+                                              DefaultWebSecurityManager securityManager, FilterChainManager chainManager) {
+        /*
+         * Note: The purpose of using Iam Shiro FilterFactory Bean is to use Iam
+         * Path Matching Filter Chain Resolver, while Iam Path Matching Filter
+         * Chain Resolver mainly implements the servlet/filter matching
+         * specification of getChain () method for default enhancements (because
+         * Shiro does not implement it, this causes serious problems)
+         */
+        IamShiroFilterFactoryBean shiroFilter = new IamShiroFilterFactoryBean(chainManager);
+        shiroFilter.setSecurityManager(securityManager);
 
-		/*
-		 * IAM server login page.(shiro default by "/login.jsp")
-		 */
-		shiroFilter.setLoginUrl(config.getLoginUri());
-		// Default login success callback URL.
-		shiroFilter.setSuccessUrl(config.getSuccessUri());
-		// IAM server 403 page URL
-		shiroFilter.setUnauthorizedUrl(config.getUnauthorizedUri());
+        /*
+         * IAM server login page.(shiro default by "/login.jsp")
+         */
+        shiroFilter.setLoginUrl(config.getLoginUri());
+        // Default login success callback URL.
+        shiroFilter.setSuccessUrl(config.getSuccessUri());
+        // IAM server 403 page URL
+        shiroFilter.setUnauthorizedUrl(config.getUnauthorizedUri());
 
-		// Register define filters.
-		Map<String, Filter> filters = new LinkedHashMap<>();
-		// Register define filter mapping.
-		Map<String, String> filterChain = new LinkedHashMap<>();
-		actx.getBeansWithAnnotation(IamFilter.class).values().stream().forEach(filter -> {
-			String filterName = null, uriPertten = null;
-			if (filter instanceof NameableFilter) {
-				filterName = (String) ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(filter.getClass(), "getName"),
-						filter);
-			}
-			if (filter instanceof IamAuthenticationFilter) {
-				uriPertten = ((IamAuthenticationFilter) filter).getUriMapping();
-			}
-			Assert.notNull(filterName, "'filterName' must not be null");
-			Assert.notNull(uriPertten, "'uriPertten' must not be null");
+        // Register define filters.
+        Map<String, Filter> filters = new LinkedHashMap<>();
+        // Register define filter mapping.
+        Map<String, String> filterChain = new LinkedHashMap<>();
+        actx.getBeansWithAnnotation(IamFilter.class).values().stream().forEach(filter -> {
+            String filterName = null, uriPertten = null;
+            if (filter instanceof NameableFilter) {
+                filterName = (String) ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(filter.getClass(), "getName"),
+                        filter);
+            }
+            if (filter instanceof IamAuthenticationFilter) {
+                uriPertten = ((IamAuthenticationFilter) filter).getUriMapping();
+            }
+            Assert.notNull(filterName, "'filterName' must not be null");
+            Assert.notNull(uriPertten, "'uriPertten' must not be null");
 
-			if (filters.putIfAbsent(filterName, (Filter) filter) != null) {
-				throw new IllegalStateException(String.format("Already filter. [%s]", filterName));
-			}
-			if (filterChain.putIfAbsent(uriPertten, filterName) != null) {
-				throw new IllegalStateException(String.format("Already filter mapping. [%s] = %s", uriPertten, filterName));
-			}
-		});
-		// Filter chain definition register
-		shiroFilter.setFilters(filters);
+            if (filters.putIfAbsent(filterName, (Filter) filter) != null) {
+                throw new IllegalStateException(String.format("Already filter. [%s]", filterName));
+            }
+            if (filterChain.putIfAbsent(uriPertten, filterName) != null) {
+                throw new IllegalStateException(String.format("Already filter mapping. [%s] = %s", uriPertten, filterName));
+            }
+        });
+        // Filter chain definition register
+        shiroFilter.setFilters(filters);
 
-		// Add external filter chain configuration
-		config.getFilterChain().forEach((uriPertten, filterName) -> {
-			if (filterChain.putIfAbsent(uriPertten, filterName) != null) {
-				throw new IllegalStateException(String.format("Already filter mapping. [%s] = %s", uriPertten, filterName));
-			}
-		});
+        // Add external filter chain configuration
+        config.getFilterChain().forEach((uriPertten, filterName) -> {
+            if (filterChain.putIfAbsent(uriPertten, filterName) != null) {
+                throw new IllegalStateException(String.format("Already filter mapping. [%s] = %s", uriPertten, filterName));
+            }
+        });
 
-		// Filter chain mappings register
-		shiroFilter.setFilterChainDefinitionMap(filterChain);
+        // Filter chain mappings register
+        shiroFilter.setFilterChainDefinitionMap(filterChain);
 
-		return shiroFilter;
-	}
+        return shiroFilter;
+    }
 
-	@Bean
-	public IamSubjectFactory iamSubjectFactory() {
-		return new IamSubjectFactory();
-	}
+    @Bean
+    public IamSubjectFactory iamSubjectFactory() {
+        return new IamSubjectFactory();
+    }
 
-	@Bean
-	public JedisCacheManager jedisCacheManager(AbstractIamProperties<? extends ParamProperties> config,
-			JedisCluster jedisCluster) {
-		return new JedisCacheManager(config.getCache().getPrefix(), jedisCluster);
-	}
+    @Bean
+    public JedisCacheManager jedisCacheManager(AbstractIamProperties<? extends ParamProperties> config,
+                                               JedisCluster jedisCluster) {
+        return new JedisCacheManager(config.getCache().getPrefix(), jedisCluster);
+    }
 
-	@Bean
-	public IamUidSessionIdGenerator iamUidSessionIdGenerator() {
-		return new IamUidSessionIdGenerator();
-	}
+    @Bean
+    public IamUidSessionIdGenerator iamUidSessionIdGenerator() {
+        return new IamUidSessionIdGenerator();
+    }
 
-	@Bean
-	public JedisIamSessionDAO jedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config,
-			JedisCacheManager cacheManager, IamUidSessionIdGenerator sessionIdGenerator) {
-		JedisIamSessionDAO sessionDAO = new JedisIamSessionDAO(config, cacheManager);
-		sessionDAO.setSessionIdGenerator(sessionIdGenerator);
-		return sessionDAO;
-	}
+    @Bean
+    public JedisIamSessionDAO jedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config,
+                                                 JedisCacheManager cacheManager, IamUidSessionIdGenerator sessionIdGenerator) {
+        JedisIamSessionDAO sessionDAO = new JedisIamSessionDAO(config, cacheManager);
+        sessionDAO.setSessionIdGenerator(sessionIdGenerator);
+        return sessionDAO;
+    }
 
-	@Bean
-	public IamSessionFactory iamSessionFactory() {
-		return new IamSessionFactory();
-	}
+    @Bean
+    public IamSessionFactory iamSessionFactory() {
+        return new IamSessionFactory();
+    }
 
-	@Bean
-	public SimpleCookie simpleCookie(AbstractIamProperties<? extends ParamProperties> config) {
-		return new SimpleCookie(config.getCookie());
-	}
+    @Bean
+    public SimpleCookie simpleCookie(AbstractIamProperties<? extends ParamProperties> config) {
+        return new SimpleCookie(config.getCookie());
+    }
 
-	/**
-	 * Ensuring the execution of beans that implement lifecycle functions within
-	 * Shiro
-	 * 
-	 * @return
-	 */
-	@Bean("lifecycleBeanPostProcessor")
-	public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-		return new LifecycleBeanPostProcessor();
-	}
+    /**
+     * Ensuring the execution of beans that implement lifecycle functions within
+     * Shiro
+     *
+     * @return
+     */
+    @Bean("lifecycleBeanPostProcessor")
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
 
-	@Bean
-	@DependsOn("lifecycleBeanPostProcessor")
-	public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-		DefaultAdvisorAutoProxyCreator advisorCreator = new DefaultAdvisorAutoProxyCreator();
-		advisorCreator.setProxyTargetClass(true);
-		return advisorCreator;
-	}
+    @Bean
+    @DependsOn("lifecycleBeanPostProcessor")
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator advisorCreator = new DefaultAdvisorAutoProxyCreator();
+        advisorCreator.setProxyTargetClass(true);
+        return advisorCreator;
+    }
 
-	@Bean
-	public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
-		AuthorizationAttributeSourceAdvisor authzAdvisor = new AuthorizationAttributeSourceAdvisor();
-		authzAdvisor.setSecurityManager(securityManager);
-		return authzAdvisor;
-	}
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authzAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authzAdvisor.setSecurityManager(securityManager);
+        return authzAdvisor;
+    }
 
-	// ==============================
-	// A U T H E N T I C A T I O N _ C O N F I G's.
-	// ==============================
+    // ==============================
+    // A U T H E N T I C A T I O N _ C O N F I G's.
+    // ==============================
 
-	// ==============================
-	// A U T H E N T I C A T I O N _ R E G I S T R A T I O N _ C O N F I G's.
-	// Reference See: http://www.hillfly.com/2017/179.html
-	// org.apache.catalina.core.ApplicationFilterChain#internalDoFilter
-	// ==============================
+    // ==============================
+    // A U T H E N T I C A T I O N _ R E G I S T R A T I O N _ C O N F I G's.
+    // Reference See: http://www.hillfly.com/2017/179.html
+    // org.apache.catalina.core.ApplicationFilterChain#internalDoFilter
+    // ==============================
 
-	// ==============================
-	// A U T H O R I Z I N G _ R E A L M _ C O N F I G's.
-	// ==============================
+    // ==============================
+    // A U T H O R I Z I N G _ R E A L M _ C O N F I G's.
+    // ==============================
 
-	// ==============================
-	// A U T H E N T I C A T I O N _ H A N D L E R _ C O N F I G's.
-	// ==============================
+    // ==============================
+    // A U T H E N T I C A T I O N _ H A N D L E R _ C O N F I G's.
+    // ==============================
 
-	// ==============================
-	// I A M _ C O N T R O L L E R _ C O N F I G's.
-	// ==============================
+    // ==============================
+    // I A M _ C O N T R O L L E R _ C O N F I G's.
+    // ==============================
 
-	@Bean
-	public PrefixHandlerMapping iamControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
+    @Bean
+    public PrefixHandlerMapping iamControllerPrefixHandlerMapping() {
+        return super.createPrefixHandlerMapping();
+    }
 
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return IamController.class;
-	}
+    @Override
+    protected Class<? extends Annotation> annotationClass() {
+        return IamController.class;
+    }
 
-	// ==============================
-	// IAM security attacks protect's
-	// ==============================
+    // ==============================
+    // IAM security attacks protect's
+    // ==============================
 
-	//
-	// X S S _ I N T E R C E P T O R _ C O N F I G's.
-	//
+    //
+    // X S S _ I N T E R C E P T O R _ C O N F I G's.
+    //
 
-	@Bean
-	@ConditionalOnProperty(name = XssProperties.PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = XssProperties.PREFIX)
-	public XssProperties xssProperties() {
-		return new XssProperties();
-	}
+    @Bean
+    @ConditionalOnProperty(name = XssProperties.PREFIX + ".enabled", matchIfMissing = true)
+    @ConfigurationProperties(prefix = XssProperties.PREFIX)
+    public XssProperties xssProperties() {
+        return new XssProperties();
+    }
 
-	@Bean
-	@ConditionalOnBean(XssProperties.class)
-	public XssSecurityResolver xssSecurityResolver() {
-		return new XssSecurityResolver() {
-		};
-	}
+    @Bean
+    @ConditionalOnBean(XssProperties.class)
+    public XssSecurityResolver xssSecurityResolver() {
+        return new XssSecurityResolver() {
+        };
+    }
 
-	@Bean
-	@ConditionalOnBean({ XssProperties.class, XssSecurityResolver.class })
-	public XssSecurityResolveInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
-		return new XssSecurityResolveInterceptor(config, resolver);
-	}
+    @Bean
+    @ConditionalOnBean({XssProperties.class, XssSecurityResolver.class})
+    public XssSecurityResolveInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
+        return new XssSecurityResolveInterceptor(config, resolver);
+    }
 
-	@Bean
-	@ConditionalOnBean(XssSecurityResolveInterceptor.class)
-	public AspectJExpressionPointcutAdvisor xssSecurityResolveAspectJExpressionPointcutAdvisor(XssProperties config,
-			XssSecurityResolveInterceptor advice) {
-		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-		advisor.setExpression(config.getExpression());
-		advisor.setAdvice(advice);
-		return advisor;
-	}
+    @Bean
+    @ConditionalOnBean(XssSecurityResolveInterceptor.class)
+    public AspectJExpressionPointcutAdvisor xssSecurityResolveAspectJExpressionPointcutAdvisor(XssProperties config,
+                                                                                               XssSecurityResolveInterceptor advice) {
+        AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
+        advisor.setExpression(config.getExpression());
+        advisor.setAdvice(advice);
+        return advisor;
+    }
 
-	//
-	// C O R S _ F I L T E R _ C O N F I G's.
-	//
+    //
+    // C O R S _ F I L T E R _ C O N F I G's.
+    //
 
-	@Bean
-	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = "spring.web.cors")
-	public CorsProperties corsProperties() {
-		return new CorsProperties();
-	}
+    @Bean
+    @ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
+    @ConfigurationProperties(prefix = "spring.web.cors")
+    public CorsProperties corsProperties() {
+        return new CorsProperties();
+    }
 
-	@Bean
-	public AdvancedCorsProcessor advancedCorsProcessor() {
-		return new AdvancedCorsProcessor();
-	}
+    @Bean
+    public AdvancedCorsProcessor advancedCorsProcessor() {
+        return new AdvancedCorsProcessor();
+    }
 
-	@Bean
-	public CorsResolveSecurityFilter corsResolveSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		// Merger transformation configuration
-		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
-		CorsResolveSecurityFilter filter = new CorsResolveSecurityFilter(source);
-		filter.setCorsProcessor(corsProcessor);
-		return filter;
-	}
+    @Bean
+    public CorsResolveSecurityFilter corsResolveSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Merger transformation configuration
+        config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
+        CorsResolveSecurityFilter filter = new CorsResolveSecurityFilter(source);
+        filter.setCorsProcessor(corsProcessor);
+        return filter;
+    }
 
-	/**
-	 * The requirement for using the instruction is that the creation of
-	 * {@link CorsProperties} object beans must precede this</br>
-	 * e.g.
-	 * 
-	 * <pre>
-	 * &#64;Bean
-	 * public CorsProperties corsProperties() {
-	 * 	...
-	 * }
-	 * </pre>
-	 * 
-	 * <b style="color:red;font-size:40px">&nbsp;↑</b>
-	 * 
-	 * <pre>
-	 * &#64;Bean
-	 * &#64;ConditionalOnBean(CorsProperties.class)
-	 * public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
-	 * 	...
-	 * }
-	 * </pre>
-	 */
-	@Bean
-	@ConditionalOnBean(CorsProperties.class)
-	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsResolveSecurityFilter filter) {
-		// Register CORS filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
-		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
-		/*
-		 * Cannot use '/*' or it will not be added to the container chain (only
-		 * '/**').
-		 */
-		filterBean.addUrlPatterns("/*");
-		return filterBean;
-	}
+    /**
+     * The requirement for using the instruction is that the creation of
+     * {@link CorsProperties} object beans must precede this</br>
+     * e.g.
+     *
+     * <pre>
+     * &#64;Bean
+     * public CorsProperties corsProperties() {
+     * 	...
+     * }
+     * </pre>
+     *
+     * <b style="color:red;font-size:40px">&nbsp;↑</b>
+     *
+     * <pre>
+     * &#64;Bean
+     * &#64;ConditionalOnBean(CorsProperties.class)
+     * public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
+     * 	...
+     * }
+     * </pre>
+     */
+    @Bean
+    @ConditionalOnBean(CorsProperties.class)
+    public FilterRegistrationBean corsResolveSecurityFilterBean(CorsResolveSecurityFilter filter) {
+        // Register CORS filter
+        FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+        filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
+        /*
+         * Cannot use '/*' or it will not be added to the container chain (only
+         * '/**').
+         */
+        filterBean.addUrlPatterns("/*");
+        return filterBean;
+    }
 
-	// ==============================
-	// IAM _ O T H E R _ C O N F I G's.
-	// ==============================
+    // ==============================
+    // IAM _ O T H E R _ C O N F I G's.
+    // ==============================
 
-	@Bean
-	public IamErrorConfiguring iamErrorConfiguring() {
-		return new IamErrorConfiguring();
-	}
+    @Bean
+    public IamErrorConfiguring iamErrorConfiguring() {
+        return new IamErrorConfiguring();
+    }
 
 }

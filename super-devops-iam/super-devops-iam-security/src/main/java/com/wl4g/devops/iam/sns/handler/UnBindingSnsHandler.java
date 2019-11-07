@@ -28,32 +28,32 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
 /**
  * UnBinding SNS handler
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月28日
  * @since
  */
 public class UnBindingSnsHandler extends BasedBindSnsHandler {
 
-	public UnBindingSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityConfigurer context) {
-		super(config, snsConfig, connectFactory, context);
-	}
+    public UnBindingSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+                               ServerSecurityConfigurer context) {
+        super(config, snsConfig, connectFactory, context);
+    }
 
-	@Override
-	protected void postBindingProcess(SocialConnectInfo info) {
-		try {
-			configurer.unbindSocialConnection(info);
-		} catch (Throwable e) {
-			log.warn("Failed to unbinding sns.", e);
-			// Save error to session
-			bind(KEY_ERR_SESSION_SAVED, getRootCauses(e).getMessage());
-		}
-	}
+    @Override
+    protected void postBindingProcess(SocialConnectInfo info) {
+        try {
+            configurer.unbindSocialConnection(info);
+        } catch (Throwable e) {
+            log.warn("Failed to unbinding sns.", e);
+            // Save error to session
+            bind(KEY_ERR_SESSION_SAVED, getRootCauses(e).getMessage());
+        }
+    }
 
-	@Override
-	public Which whichType() {
-		return Which.UNBIND;
-	}
+    @Override
+    public Which whichType() {
+        return Which.UNBIND;
+    }
 
 }

@@ -89,25 +89,33 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public ClusterConfig getApplicationInfo(String appName) {
-		List<ClusterConfig> apps = safeList(findApplicationInfo(appName));
+	public ApplicationInfo getApplicationInfo(String appName) {
+		List<ApplicationInfo> apps = safeList(findApplicationInfo(appName));
 		return !isEmpty(apps) ? apps.get(0) : null;
 	}
 
 	@Override
-	public List<ClusterConfig> findApplicationInfo(String... appNames) {
-		List<ClusterConfig> appInfoList = new ArrayList<>();
+	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
+		List<ApplicationInfo> appInfoList = new ArrayList<>();
 		if (isEmptyArray(appNames)) {
 			return emptyList();
 		}
 		// Is IAM example demo.
 		if (equalsAny("iam-example", appNames)) {
-			ClusterConfig appInfo = new ClusterConfig("iam-example", "http://localhost:14041");
+			ApplicationInfo appInfo = new ApplicationInfo("iam-example", "http://localhost:14041");
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
 			appInfoList.add(appInfo);
 		} else { // Formal environment.
-			List<ClusterConfig> applications = clusterConfigDao.getByAppNames(appNames, profile, null);
-			appInfoList.addAll(applications);
+			List<ClusterConfig> clustrerConfigs = clusterConfigDao.getByAppNames(appNames, profile, null);
+			for(ClusterConfig clusterConfig : clustrerConfigs){
+				ApplicationInfo applicationInfo = new ApplicationInfo();
+				applicationInfo.setAppName(clusterConfig.getName());
+				applicationInfo.setExtranetBaseUri(clusterConfig.getExtranetBaseUri());
+				applicationInfo.setIntranetBaseUri(clusterConfig.getIntranetBaseUri());
+				applicationInfo.setViewExtranetBaseUri(clusterConfig.getViewExtranetBaseUri());
+				applicationInfo.setRemark(clusterConfig.getRemark());
+				appInfoList.add(applicationInfo);
+			}
 		}
 
 		//// --- For testing. ---

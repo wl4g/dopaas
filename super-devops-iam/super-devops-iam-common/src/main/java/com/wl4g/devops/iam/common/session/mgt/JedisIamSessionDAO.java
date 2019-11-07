@@ -40,134 +40,134 @@ import redis.clients.jedis.ScanParams;
 
 /**
  * Redis shiro session DAO.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月28日
  * @since
  */
 public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSessionDAO {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * IAM properties
-	 */
-	final private AbstractIamProperties<? extends ParamProperties> config;
+    /**
+     * IAM properties
+     */
+    final private AbstractIamProperties<? extends ParamProperties> config;
 
-	/**
-	 * Jedis cache manager.
-	 */
-	final private JedisCacheManager cacheManager;
+    /**
+     * Jedis cache manager.
+     */
+    final private JedisCacheManager cacheManager;
 
-	public JedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config, JedisCacheManager cacheManager) {
-		Assert.notNull(config, "'config' must not be null");
-		Assert.notNull(cacheManager, "'cacheManager' must not be null");
-		this.config = config;
-		this.cacheManager = cacheManager;
-	}
+    public JedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config, JedisCacheManager cacheManager) {
+        Assert.notNull(config, "'config' must not be null");
+        Assert.notNull(cacheManager, "'cacheManager' must not be null");
+        this.config = config;
+        this.cacheManager = cacheManager;
+    }
 
-	@Override
-	public void update(final Session session) throws UnknownSessionException {
-		if (session == null || session.getId() == null) {
-			return;
-		}
-		// Get logged ID
-		// PrincipalCollection pc = (PrincipalCollection)
-		// session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
-		// String principalId = pc != null ?
-		// pc.getPrimaryPrincipal().toString() : "";
+    @Override
+    public void update(final Session session) throws UnknownSessionException {
+        if (session == null || session.getId() == null) {
+            return;
+        }
+        // Get logged ID
+        // PrincipalCollection pc = (PrincipalCollection)
+        // session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+        // String principalId = pc != null ?
+        // pc.getPrimaryPrincipal().toString() : "";
 
-		if (log.isDebugEnabled()) {
-			log.debug("update {}", session.getId());
-		}
+        if (log.isDebugEnabled()) {
+            log.debug("update {}", session.getId());
+        }
 
-		/**
-		 * Update session latest expiration time to timeout time
-		 */
-		cacheManager.getEnhancedCache(CACHE_SESSION).put(new EnhancedKey(session.getId(), session.getTimeout()), session);
-	}
+        /**
+         * Update session latest expiration time to timeout time
+         */
+        cacheManager.getEnhancedCache(CACHE_SESSION).put(new EnhancedKey(session.getId(), session.getTimeout()), session);
+    }
 
-	@Override
-	public void delete(final Session session) {
-		if (session == null || session.getId() == null) {
-			return;
-		}
+    @Override
+    public void delete(final Session session) {
+        if (session == null || session.getId() == null) {
+            return;
+        }
 
-		if (log.isDebugEnabled()) {
-			log.debug("delete {} ", session.getId());
-		}
-		cacheManager.getEnhancedCache(CACHE_SESSION).remove(new EnhancedKey(session.getId()));
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("delete {} ", session.getId());
+        }
+        cacheManager.getEnhancedCache(CACHE_SESSION).remove(new EnhancedKey(session.getId()));
+    }
 
-	@Override
-	public ScanCursor<IamSession> getAccessSessions(final int limit) {
-		return getAccessSessions(new CursorWrapper(), 200);
-	}
+    @Override
+    public ScanCursor<IamSession> getAccessSessions(final int limit) {
+        return getAccessSessions(new CursorWrapper(), 200);
+    }
 
-	@Override
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
-		return getAccessSessions(cursor, limit, null);
-	}
+    @Override
+    public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
+        return getAccessSessions(cursor, limit, null);
+    }
 
-	@Override
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
-		isTrue(limit > 0, "accessSessions batchSize must >0");
+    @Override
+    public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
+        isTrue(limit > 0, "accessSessions batchSize must >0");
 
-		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
-		ScanParams params = new ScanParams().count(limit).match(match);
-		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), cursor, IamSession.class, params) {
-		}.open();
-	}
+        byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
+        ScanParams params = new ScanParams().count(limit).match(match);
+        return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), cursor, IamSession.class, params) {
+        }.open();
+    }
 
-	@Override
-	public void removeAccessSession(Object principal) {
-		if (log.isDebugEnabled()) {
-			log.debug("removeActiveSession principal: {} ", principal);
-		}
+    @Override
+    public void removeAccessSession(Object principal) {
+        if (log.isDebugEnabled()) {
+            log.debug("removeActiveSession principal: {} ", principal);
+        }
 
-		ScanCursor<IamSession> cursor = getAccessSessions(new CursorWrapper(), 200, principal).open();
-		while (cursor.hasNext()) {
-			delete(cursor.next());
-		}
-	}
+        ScanCursor<IamSession> cursor = getAccessSessions(new CursorWrapper(), 200, principal).open();
+        while (cursor.hasNext()) {
+            delete(cursor.next());
+        }
+    }
 
-	@Override
-	protected Serializable doCreate(Session session) {
-		if (log.isDebugEnabled()) {
-			log.debug("doCreate {}", session.getId());
-		}
-		Serializable sessionId = generateSessionId(session);
-		assignSessionId(session, sessionId);
-		update(session);
-		return sessionId;
-	}
+    @Override
+    protected Serializable doCreate(Session session) {
+        if (log.isDebugEnabled()) {
+            log.debug("doCreate {}", session.getId());
+        }
+        Serializable sessionId = generateSessionId(session);
+        assignSessionId(session, sessionId);
+        update(session);
+        return sessionId;
+    }
 
-	@Override
-	protected Session doReadSession(final Serializable sessionId) {
-		if (sessionId == null) {
-			return null;
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("doReadSession {}", sessionId);
-		}
-		return (Session) cacheManager.getEnhancedCache(CACHE_SESSION).get(new EnhancedKey(sessionId, IamSession.class));
-	}
+    @Override
+    protected Session doReadSession(final Serializable sessionId) {
+        if (sessionId == null) {
+            return null;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("doReadSession {}", sessionId);
+        }
+        return (Session) cacheManager.getEnhancedCache(CACHE_SESSION).get(new EnhancedKey(sessionId, IamSession.class));
+    }
 
-	@Override
-	public Session readSession(Serializable sessionId) throws UnknownSessionException {
-		if (log.isDebugEnabled()) {
-			log.debug("readSession {}", sessionId);
-		}
-		try {
-			return super.readSession(sessionId);
-		} catch (UnknownSessionException e) {
-			return null;
-		}
-	}
+    @Override
+    public Session readSession(Serializable sessionId) throws UnknownSessionException {
+        if (log.isDebugEnabled()) {
+            log.debug("readSession {}", sessionId);
+        }
+        try {
+            return super.readSession(sessionId);
+        } catch (UnknownSessionException e) {
+            return null;
+        }
+    }
 
-	@Override
-	public void assignSessionId(Session session, Serializable sessionId) {
-		((IamSession) session).setId((String) sessionId);
-	}
+    @Override
+    public void assignSessionId(Session session, Serializable sessionId) {
+        ((IamSession) session).setId((String) sessionId);
+    }
 
 }

@@ -26,46 +26,44 @@ import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 
 public interface IamSessionDAO extends SessionDAO {
 
-	@Deprecated
-	@Override
-	default Collection<Session> getActiveSessions() {
-		return null;
-	}
+    @Deprecated
+    @Override
+    default Collection<Session> getActiveSessions() {
+        return null;
+    }
 
-	/**
-	 * Get access sessions
-	 * 
-	 * @param limit
-	 * @return
-	 */
-	public ScanCursor<IamSession> getAccessSessions(final int limit);
+    /**
+     * Get access sessions
+     *
+     * @param limit
+     * @return
+     */
+    public ScanCursor<IamSession> getAccessSessions(final int limit);
 
-	/**
-	 * Get access sessions
-	 * 
-	 * @param cursorString
-	 * @param limit
-	 * @return
-	 */
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit);
+    /**
+     * Get access sessions
+     *
+     * @param cursorString
+     * @param limit
+     * @return
+     */
+    public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit);
 
-	/**
-	 * Get access sessions
-	 * 
-	 * @param cursorString
-	 * @param limit
-	 * @param principal
-	 *            Getting active sessions based on logon objects
-	 * @return
-	 */
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal);
+    /**
+     * Get access sessions
+     *
+     * @param cursorString
+     * @param limit
+     * @param principal    Getting active sessions based on logon objects
+     * @return
+     */
+    public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal);
 
-	/**
-	 * Remove access current users
-	 * 
-	 * @param principal
-	 *            Removal of target users
-	 */
-	public void removeAccessSession(Object principal);
+    /**
+     * Remove access current users
+     *
+     * @param principal Removal of target users
+     */
+    public void removeAccessSession(Object principal);
 
 }

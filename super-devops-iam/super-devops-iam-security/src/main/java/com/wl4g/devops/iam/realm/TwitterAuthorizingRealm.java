@@ -45,8 +45,8 @@ import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
  */
 public class TwitterAuthorizingRealm extends Oauth2SnsAuthorizingRealm<TwitterAuthenticationToken> {
 
-	public TwitterAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public TwitterAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
 }

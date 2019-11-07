@@ -23,13 +23,13 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to enabled SNS oauth2 controller configuration.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年9月17日
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Documented
 public @interface SnsController {
 

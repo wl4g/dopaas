@@ -22,7 +22,7 @@ import com.google.common.base.Charsets;
 
 /**
  * Enhanced implementation of Shiro cache support for automatic expiratio
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -30,66 +30,65 @@ import com.google.common.base.Charsets;
  */
 public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 
-	final static byte[] NXXX = "NX".getBytes(Charsets.UTF_8);
-	final static byte[] EXPX = "PX".getBytes(Charsets.UTF_8);
+    final static byte[] NXXX = "NX".getBytes(Charsets.UTF_8);
+    final static byte[] EXPX = "PX".getBytes(Charsets.UTF_8);
 
-	/**
-	 * Decay counter
-	 * 
-	 * @param key
-	 *            Key that contains the actual EnhancedKey and expiration date
-	 * @param value
-	 * @return Returns the remaining valid time of this EnhancedKey before this
-	 *         setup
-	 * @throws CacheException
-	 */
-	Long timeToLive(final EnhancedKey key, Object value) throws CacheException;
+    /**
+     * Decay counter
+     *
+     * @param key   Key that contains the actual EnhancedKey and expiration date
+     * @param value
+     * @return Returns the remaining valid time of this EnhancedKey before this
+     * setup
+     * @throws CacheException
+     */
+    Long timeToLive(final EnhancedKey key, Object value) throws CacheException;
 
-	/**
-	 * Get and add an atomic counter at the same time
-	 * 
-	 * @param key
-	 * @return
-	 * @throws CacheException
-	 */
-	Long incrementGet(final EnhancedKey key) throws CacheException;
+    /**
+     * Get and add an atomic counter at the same time
+     *
+     * @param key
+     * @return
+     * @throws CacheException
+     */
+    Long incrementGet(final EnhancedKey key) throws CacheException;
 
-	/**
-	 * Get and add an atomic counter at the same time
-	 * 
-	 * @param key
-	 * @param incrBy
-	 * @return
-	 * @throws CacheException
-	 */
-	Long incrementGet(final EnhancedKey key, long incrBy) throws CacheException;
+    /**
+     * Get and add an atomic counter at the same time
+     *
+     * @param key
+     * @param incrBy
+     * @return
+     * @throws CacheException
+     */
+    Long incrementGet(final EnhancedKey key, long incrBy) throws CacheException;
 
-	/**
-	 * Acquisition and reduction of atomic counter once at a time
-	 * 
-	 * @param key
-	 * @return
-	 * @throws CacheException
-	 */
-	Long decrementGet(final EnhancedKey key) throws CacheException;
+    /**
+     * Acquisition and reduction of atomic counter once at a time
+     *
+     * @param key
+     * @return
+     * @throws CacheException
+     */
+    Long decrementGet(final EnhancedKey key) throws CacheException;
 
-	/**
-	 * Acquisition and reduction of atomic counter once at a time
-	 * 
-	 * @param key
-	 * @param decrBy
-	 * @return
-	 * @throws CacheException
-	 */
-	Long decrementGet(final EnhancedKey key, long decrBy) throws CacheException;
+    /**
+     * Acquisition and reduction of atomic counter once at a time
+     *
+     * @param key
+     * @param decrBy
+     * @return
+     * @throws CacheException
+     */
+    Long decrementGet(final EnhancedKey key, long decrBy) throws CacheException;
 
-	/**
-	 * Put(If not exist)
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	boolean putIfAbsent(final EnhancedKey key, final Object value);
+    /**
+     * Put(If not exist)
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    boolean putIfAbsent(final EnhancedKey key, final Object value);
 
 }

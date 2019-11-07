@@ -34,18 +34,18 @@ import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
 
 /**
  * Controls whether IAM servers are enabled
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月27日
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Documented
-@Import({ BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
-		VerifyAutoConfiguration.class, SnsAutoConfiguration.class, DefaultViewAutoConfiguration.class,
-		IamServerApiV1AutoConfiguration.class })
+@Import({BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
+        VerifyAutoConfiguration.class, SnsAutoConfiguration.class, DefaultViewAutoConfiguration.class,
+        IamServerApiV1AutoConfiguration.class})
 public @interface EnableIamServer {
 
 }

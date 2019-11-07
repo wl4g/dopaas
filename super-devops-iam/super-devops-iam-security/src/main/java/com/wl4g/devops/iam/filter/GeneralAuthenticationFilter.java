@@ -30,33 +30,33 @@ import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 
 @IamFilter
 public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter<GeneralAuthenticationToken> {
-	final public static String NAME = "general";
+    final public static String NAME = "general";
 
-	@Override
-	protected GeneralAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		if (!POST.name().equalsIgnoreCase(request.getMethod())) {
-			response.setStatus(405);
-			throw new HttpRequestMethodNotSupportedException(request.getMethod(),
-					String.format("No support '%s' request method", request.getMethod()));
-		}
+    @Override
+    protected GeneralAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+                                                         HttpServletResponse response) throws Exception {
+        if (!POST.name().equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(405);
+            throw new HttpRequestMethodNotSupportedException(request.getMethod(),
+                    String.format("No support '%s' request method", request.getMethod()));
+        }
 
-		String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
-		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
-		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
-		return new GeneralAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword, clientRef, verifiedToken,
-				VerifyType.of(request));
-	}
+        String principal = getCleanParam(request, config.getParam().getPrincipalName());
+        String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
+        String clientRef = getCleanParam(request, config.getParam().getClientRefName());
+        String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
+        return new GeneralAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword, clientRef, verifiedToken,
+                VerifyType.of(request));
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + NAME;
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + NAME;
+    }
 
 }

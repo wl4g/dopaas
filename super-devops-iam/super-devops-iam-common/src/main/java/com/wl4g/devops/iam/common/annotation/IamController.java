@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * on the Controller class using the {@link IamController @IamController}
  * annotation, there is no need to use {@link RequestMapping @RequestMapping}
  * again, otherwise spring-MVC will add two mappings.
- * 
+ *
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Documented
 public @interface IamController {
 

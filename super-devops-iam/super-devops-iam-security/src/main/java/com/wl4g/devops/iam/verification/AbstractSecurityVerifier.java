@@ -49,7 +49,7 @@ import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
 
 /**
  * Abstract IAM verification handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月28日
@@ -57,245 +57,241 @@ import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
  */
 public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * Verified token bit.
-	 */
-	final public static int DEFAULT_VERIFIED_TOKEN_BIT = 128;
+    /**
+     * Verified token bit.
+     */
+    final public static int DEFAULT_VERIFIED_TOKEN_BIT = 128;
 
-	/**
-	 * Verified token expiredMs.
-	 */
-	final public static long DEFAULT_VERIFIED_TOKEN_EXPIREDMS = 60_000;
+    /**
+     * Verified token expiredMs.
+     */
+    final public static long DEFAULT_VERIFIED_TOKEN_EXPIREDMS = 60_000;
 
-	/**
-	 * Server configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
+    /**
+     * Server configuration properties
+     */
+    @Autowired
+    protected IamProperties config;
 
-	/**
-	 * IAM security configure handler
-	 */
-	@Autowired
-	protected ServerSecurityConfigurer configurer;
+    /**
+     * IAM security configure handler
+     */
+    @Autowired
+    protected ServerSecurityConfigurer configurer;
 
-	/**
-	 * Enhanced cache manager.
-	 */
-	@Autowired
-	protected EnhancedCacheManager cacheManager;
+    /**
+     * Enhanced cache manager.
+     */
+    @Autowired
+    protected EnhancedCacheManager cacheManager;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+    protected SessionDelegateMessageBundle bundle;
 
-	/**
-	 * Validation
-	 */
-	@Autowired
-	protected Validator validator;
+    /**
+     * Validation
+     */
+    @Autowired
+    protected Validator validator;
 
-	/**
-	 * Get stored verify code of session
-	 * 
-	 * @param assertion
-	 *            Do you need to assertion
-	 * @return Returns the currently valid verify-code (if create = true, the
-	 *         newly generated value or the old value)
-	 */
-	@Override
-	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
-		// Already created verify-code
-		VerifyCodeWrapper code = getBindValue(getVerifyCodeStoredKey());
-		if (code != null && code.getCode() != null) { // Assertion
-			return code;
-		}
+    /**
+     * Get stored verify code of session
+     *
+     * @param assertion Do you need to assertion
+     * @return Returns the currently valid verify-code (if create = true, the
+     * newly generated value or the old value)
+     */
+    @Override
+    public VerifyCodeWrapper getVerifyCode(boolean assertion) {
+        // Already created verify-code
+        VerifyCodeWrapper code = getBindValue(getVerifyCodeStoredKey());
+        if (code != null && code.getCode() != null) { // Assertion
+            return code;
+        }
 
-		if (assertion) {
-			log.warn("Assertion verifyCode expired. expireMs: {}", getVerifyCodeExpireMs());
-			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
-		}
-		return null;
-	}
+        if (assertion) {
+            log.warn("Assertion verifyCode expired. expireMs: {}", getVerifyCodeExpireMs());
+            throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
+        }
+        return null;
+    }
 
-	@Override
-	public Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
-		// Check limit attempts
-		checkApplyAttempts(request, factors);
-		// Renew or verify-code.
-		reset(owner, true);
+    @Override
+    public Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
+        // Check limit attempts
+        checkApplyAttempts(request, factors);
+        // Renew or verify-code.
+        reset(owner, true);
 
-		// Do apply processing.
-		return doApply(owner, factors, request);
-	}
+        // Do apply processing.
+        return doApply(owner, factors, request);
+    }
 
-	/**
-	 * Apply verify code processing.
-	 * 
-	 * @param owner
-	 * @param factors
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	public abstract Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request)
-			throws IOException;
+    /**
+     * Apply verify code processing.
+     *
+     * @param owner
+     * @param factors
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    public abstract Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request)
+            throws IOException;
 
-	@Override
-	public String verify(@NotBlank String params, @NotNull HttpServletRequest request, @NotNull List<String> factors)
-			throws VerificationException {
-		Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty.");
-		VerifyCodeWrapper storedCode = null;
-		try {
-			/*
-			 * If required is true, the forced verification policy is executed,
-			 * otherwise the maximum retry policy check is performed (that is,
-			 * the verification needs to be started only when the number of
-			 * times is retried).
-			 */
-			if (!isEnabled(factors)) {
-				return null; // not enabled
-			}
+    @Override
+    public String verify(@NotBlank String params, @NotNull HttpServletRequest request, @NotNull List<String> factors)
+            throws VerificationException {
+        Assert.isTrue(!CollectionUtils.isEmpty(factors), "Verify factors must not be empty.");
+        VerifyCodeWrapper storedCode = null;
+        try {
+            /*
+             * If required is true, the forced verification policy is executed,
+             * otherwise the maximum retry policy check is performed (that is,
+             * the verification needs to be started only when the number of
+             * times is retried).
+             */
+            if (!isEnabled(factors)) {
+                return null; // not enabled
+            }
 
-			// Verification
-			Object submitCode = getRequestVerifyCode(params, request);
-			storedCode = getVerifyCode(true);
-			if (!doMatch(storedCode, submitCode)) {
-				log.error("Verification mismatched. {} => {}", submitCode, storedCode);
-				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch"));
-			}
+            // Verification
+            Object submitCode = getRequestVerifyCode(params, request);
+            storedCode = getVerifyCode(true);
+            if (!doMatch(storedCode, submitCode)) {
+                log.error("Verification mismatched. {} => {}", submitCode, storedCode);
+                throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch"));
+            }
 
-			// Storage verified token.
-			String verifiedToken = "vefdt" + randomAlphabetic(DEFAULT_VERIFIED_TOKEN_BIT);
-			if (log.isInfoEnabled()) {
-				log.info("Saving to verified token: {}", verifiedToken);
-			}
-			return bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
-		} finally {
-			if (storedCode != null) {
-				reset(storedCode.getOwner(), false); // Reset or create
-			}
-		}
-	}
+            // Storage verified token.
+            String verifiedToken = "vefdt" + randomAlphabetic(DEFAULT_VERIFIED_TOKEN_BIT);
+            if (log.isInfoEnabled()) {
+                log.info("Saving to verified token: {}", verifiedToken);
+            }
+            return bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
+        } finally {
+            if (storedCode != null) {
+                reset(storedCode.getOwner(), false); // Reset or create
+            }
+        }
+    }
 
-	@Override
-	public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
-			throws VerificationException {
-		// No verification required.
-		if (!(required || isEnabled(factors))) {
-			return;
-		}
+    @Override
+    public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
+            throws VerificationException {
+        // No verification required.
+        if (!(required || isEnabled(factors))) {
+            return;
+        }
 
-		// Check stored token.
-		String storedVerifiedToken = getBindValue(getVerifiedTokenStoredKey(), true);
-		if (isBlank(storedVerifiedToken)) {
-			throw new VerificationException(bundle.getMessage("General.parameter.invalid"));
-		}
-		// Assertion verified token.
-		if (!StringUtils.equals(storedVerifiedToken, verifiedToken)) {
-			throw new VerificationException(bundle.getMessage("General.parameter.illegal"));
-		}
-	}
+        // Check stored token.
+        String storedVerifiedToken = getBindValue(getVerifiedTokenStoredKey(), true);
+        if (isBlank(storedVerifiedToken)) {
+            throw new VerificationException(bundle.getMessage("General.parameter.invalid"));
+        }
+        // Assertion verified token.
+        if (!StringUtils.equals(storedVerifiedToken, verifiedToken)) {
+            throw new VerificationException(bundle.getMessage("General.parameter.illegal"));
+        }
+    }
 
-	/**
-	 * Reset the validate code to indicate a new generation when create is true
-	 * 
-	 * @param owner
-	 *            Validate code owner(Optional).
-	 * @param renew
-	 *            is new create.
-	 */
-	protected void reset(String owner, boolean renew) {
-		unbind(getVerifyCodeStoredKey());
-		if (renew) {
-			// Store verify-code in the session
-			bind(getVerifyCodeStoredKey(), new VerifyCodeWrapper(owner, generateCode()), getVerifyCodeExpireMs());
-		}
-	}
+    /**
+     * Reset the validate code to indicate a new generation when create is true
+     *
+     * @param owner Validate code owner(Optional).
+     * @param renew is new create.
+     */
+    protected void reset(String owner, boolean renew) {
+        unbind(getVerifyCodeStoredKey());
+        if (renew) {
+            // Store verify-code in the session
+            bind(getVerifyCodeStoredKey(), new VerifyCodeWrapper(owner, generateCode()), getVerifyCodeExpireMs());
+        }
+    }
 
-	/**
-	 * Get submitted verify code.
-	 * 
-	 * @param params
-	 * @param request
-	 * @return
-	 */
-	protected abstract Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request);
+    /**
+     * Get submitted verify code.
+     *
+     * @param params
+     * @param request
+     * @return
+     */
+    protected abstract Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request);
 
-	/**
-	 * Match submitted validation code
-	 * 
-	 * @param storedCode
-	 * @param submitCode
-	 * @return
-	 */
-	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
-		if (Objects.isNull(submitCode)) {
-			return false;
-		}
-		if (submitCode instanceof SimpleVerifyImgModel) {
-			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((SimpleVerifyImgModel) submitCode).getVerifyCode());
-		}
-		throw new UnsupportedOperationException(String.format("Unsupported verify-code: %s, Override the doMatch() method",
-				submitCode.getClass().getSimpleName()));
-	}
+    /**
+     * Match submitted validation code
+     *
+     * @param storedCode
+     * @param submitCode
+     * @return
+     */
+    protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
+        if (Objects.isNull(submitCode)) {
+            return false;
+        }
+        if (submitCode instanceof SimpleVerifyImgModel) {
+            return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((SimpleVerifyImgModel) submitCode).getVerifyCode());
+        }
+        throw new UnsupportedOperationException(String.format("Unsupported verify-code: %s, Override the doMatch() method",
+                submitCode.getClass().getSimpleName()));
+    }
 
-	/**
-	 * Generate verify code
-	 * 
-	 * @return Verify code object
-	 */
-	protected Object generateCode() {
-		return randomAlphabetic(5); // By-default
-	}
+    /**
+     * Generate verify code
+     *
+     * @return Verify code object
+     */
+    protected Object generateCode() {
+        return randomAlphabetic(5); // By-default
+    }
 
-	/**
-	 * Check the number of attempts to apply.
-	 * 
-	 * @param request
-	 * @param response
-	 * @param factors
-	 *            Safety limiting factor(e.g. Client remote IP and login
-	 *            user-name)
-	 */
-	protected abstract void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors);
+    /**
+     * Check the number of attempts to apply.
+     *
+     * @param request
+     * @param response
+     * @param factors  Safety limiting factor(e.g. Client remote IP and login
+     *                 user-name)
+     */
+    protected abstract void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors);
 
-	/**
-	 * Validity of the verification code (in milliseconds).
-	 * 
-	 * @return
-	 */
-	protected abstract long getVerifyCodeExpireMs();
+    /**
+     * Validity of the verification code (in milliseconds).
+     *
+     * @return
+     */
+    protected abstract long getVerifyCodeExpireMs();
 
-	/**
-	 * Validity of the verified token (in milliseconds).
-	 * 
-	 * @return
-	 */
-	protected long getVerifiedTokenExpireMs() {
-		return DEFAULT_VERIFIED_TOKEN_EXPIREDMS;
-	}
+    /**
+     * Validity of the verified token (in milliseconds).
+     *
+     * @return
+     */
+    protected long getVerifiedTokenExpireMs() {
+        return DEFAULT_VERIFIED_TOKEN_EXPIREDMS;
+    }
 
-	/**
-	 * Get verification code stored sessionKey.
-	 * 
-	 * @return
-	 */
-	private String getVerifyCodeStoredKey() {
-		return "VERIFY_CODE." + verifyType().name();
-	}
+    /**
+     * Get verification code stored sessionKey.
+     *
+     * @return
+     */
+    private String getVerifyCodeStoredKey() {
+        return "VERIFY_CODE." + verifyType().name();
+    }
 
-	/**
-	 * Get verification code stored sessionKey.
-	 * 
-	 * @return
-	 */
-	private String getVerifiedTokenStoredKey() {
-		return "VERIFIED_TOKEN." + verifyType().name();
-	}
+    /**
+     * Get verification code stored sessionKey.
+     *
+     * @return
+     */
+    private String getVerifiedTokenStoredKey() {
+        return "VERIFIED_TOKEN." + verifyType().name();
+    }
 
 }

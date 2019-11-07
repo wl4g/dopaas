@@ -57,51 +57,48 @@ import com.wl4g.devops.iam.authz.GeneralAuthorizationInfo;
  */
 public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<GeneralAuthenticationToken> {
 
-	public GeneralAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public GeneralAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
-	/**
-	 * Authenticates a user and retrieves its information.
-	 * 
-	 * @param token
-	 *            the authentication token
-	 * @throws AuthenticationException
-	 *             if there is an error during authentication.
-	 */
-	@Override
-	protected AuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
-		// Get account by loginId(user-name)
-		IamAccountInfo acc = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
-		if (log.isDebugEnabled()) {
-			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
-		}
+    /**
+     * Authenticates a user and retrieves its information.
+     *
+     * @param token the authentication token
+     * @throws AuthenticationException if there is an error during authentication.
+     */
+    @Override
+    protected AuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
+        // Get account by loginId(user-name)
+        IamAccountInfo acc = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+        if (log.isDebugEnabled()) {
+            log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
+        }
 
-		// To authenticationInfo
-		if (acc == null || isBlank(acc.getPrincipal())) {
-			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
-		}
+        // To authenticationInfo
+        if (acc == null || isBlank(acc.getPrincipal())) {
+            throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
+        }
 
-		/*
-		 * Password is a string that may be set to empty.
-		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
-		 */
-		String storedCredentials = (acc != null) ? acc.getStoredCredentials() : StringUtils.EMPTY_STRING;
-		return new GeneralAuthenticationInfo(acc, acc.getPrincipal(), storedCredentials, getName());
-	}
+        /*
+         * Password is a string that may be set to empty.
+         * See:xx.secure.AbstractCredentialsSecurerSupport#validate
+         */
+        String storedCredentials = (acc != null) ? acc.getStoredCredentials() : StringUtils.EMPTY_STRING;
+        return new GeneralAuthenticationInfo(acc, acc.getPrincipal(), storedCredentials, getName());
+    }
 
-	/**
-	 * Retrieves the AuthorizationInfo for the given principals (the CAS
-	 * previously authenticated user : id + attributes).
-	 * 
-	 * @param principals
-	 *            the primary identifying principals of the AuthorizationInfo
-	 *            that should be retrieved.
-	 * @return the AuthorizationInfo associated with this principals.
-	 */
-	@Override
-	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		return new GeneralAuthorizationInfo();
-	}
+    /**
+     * Retrieves the AuthorizationInfo for the given principals (the CAS
+     * previously authenticated user : id + attributes).
+     *
+     * @param principals the primary identifying principals of the AuthorizationInfo
+     *                   that should be retrieved.
+     * @return the AuthorizationInfo associated with this principals.
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        return new GeneralAuthorizationInfo();
+    }
 
 }

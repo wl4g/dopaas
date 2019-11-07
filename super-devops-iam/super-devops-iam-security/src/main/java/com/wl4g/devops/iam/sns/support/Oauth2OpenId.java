@@ -17,10 +17,10 @@ package com.wl4g.devops.iam.sns.support;
 
 public interface Oauth2OpenId {
 
-	String openId();
+    String openId();
 
-	String unionId();
+    String unionId();
 
-	<O extends Oauth2OpenId> O build(String message);
+    <O extends Oauth2OpenId> O build(String message);
 
 }

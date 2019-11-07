@@ -25,105 +25,105 @@ import org.springframework.util.Assert;
 
 /**
  * XSS configuration properties
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月26日
  * @since
  */
 public class XssProperties implements InitializingBean, Serializable {
-	final private static long serialVersionUID = -5701992202744439835L;
+    final private static long serialVersionUID = -5701992202744439835L;
 
-	final public static String PREFIX = "spring.web.xss";
+    final public static String PREFIX = "spring.web.xss";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * Enable internal protection, which merges expressions of internal
-	 * endpoint's.
-	 */
-	private boolean internalProtect = true;
+    /**
+     * Enable internal protection, which merges expressions of internal
+     * endpoint's.
+     */
+    private boolean internalProtect = true;
 
-	/**
-	 * XSS attack solves AOP section expression
-	 */
-	private String expression;
+    /**
+     * XSS attack solves AOP section expression
+     */
+    private String expression;
 
-	public boolean isInternalProtect() {
-		return internalProtect;
-	}
+    public boolean isInternalProtect() {
+        return internalProtect;
+    }
 
-	public void setInternalProtect(boolean enableInternalProtect) {
-		this.internalProtect = enableInternalProtect;
-	}
+    public void setInternalProtect(boolean enableInternalProtect) {
+        this.internalProtect = enableInternalProtect;
+    }
 
-	public String getExpression() {
-		Assert.hasText(expression, String
-				.format("XSS interception expression is required, and the '%s' configuration item does not exist?", PREFIX));
-		return expression;
-	}
+    public String getExpression() {
+        Assert.hasText(expression, String
+                .format("XSS interception expression is required, and the '%s' configuration item does not exist?", PREFIX));
+        return expression;
+    }
 
-	public void setExpression(String expression) {
-		Assert.hasText(expression, "expression is emtpy, please check configure");
-		this.expression = expression;
-	}
+    public void setExpression(String expression) {
+        Assert.hasText(expression, "expression is emtpy, please check configure");
+        this.expression = expression;
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		mergeIamInternalEndpointXssExpr();
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        mergeIamInternalEndpointXssExpr();
+    }
 
-	/**
-	 * Merge IAM XSS security internal configuration.
-	 */
-	private void mergeIamInternalEndpointXssExpr() {
-		if (!isInternalProtect()) {
-			return;
-		}
+    /**
+     * Merge IAM XSS security internal configuration.
+     */
+    private void mergeIamInternalEndpointXssExpr() {
+        if (!isInternalProtect()) {
+            return;
+        }
 
-		/*
-		 * [Expect]: In order to solve slight package structure changes.(The
-		 * first four levels of package start can be modified at will)
-		 * 
-		 * execution(* com.wl4g.devops.iam.sns.web.*Controller.*(..)) or
-		 * execution(* com.wl4g.devops.iam.web.*Controller.*(..)) or ...
-		 */
-		int basedIamProjectPkgIndex = 4;
-		String[] pkgParts = getClass().getName().split("\\.");
-		if (pkgParts == null || pkgParts.length <= basedIamProjectPkgIndex) {
-			throw new Error(String.format("", basedIamProjectPkgIndex));
-		}
+        /*
+         * [Expect]: In order to solve slight package structure changes.(The
+         * first four levels of package start can be modified at will)
+         *
+         * execution(* com.wl4g.devops.iam.sns.web.*Controller.*(..)) or
+         * execution(* com.wl4g.devops.iam.web.*Controller.*(..)) or ...
+         */
+        int basedIamProjectPkgIndex = 4;
+        String[] pkgParts = getClass().getName().split("\\.");
+        if (pkgParts == null || pkgParts.length <= basedIamProjectPkgIndex) {
+            throw new Error(String.format("", basedIamProjectPkgIndex));
+        }
 
-		StringBuffer basedIamProjectPkg = new StringBuffer(16);
-		// e.g. com.wl4g.devops.iam
-		for (int i = 0; i < pkgParts.length; i++) {
-			if (i < basedIamProjectPkgIndex) {
-				basedIamProjectPkg.append(pkgParts[i]);
-				basedIamProjectPkg.append(".");
-			} else {
-				break;
-			}
-		}
+        StringBuffer basedIamProjectPkg = new StringBuffer(16);
+        // e.g. com.wl4g.devops.iam
+        for (int i = 0; i < pkgParts.length; i++) {
+            if (i < basedIamProjectPkgIndex) {
+                basedIamProjectPkg.append(pkgParts[i]);
+                basedIamProjectPkg.append(".");
+            } else {
+                break;
+            }
+        }
 
-		// Merge internal XSS expression.(Level names cannot be changed after
-		// package)
-		StringBuffer expression = new StringBuffer(128);
-		expression.append("execution(* ");
-		expression.append(basedIamProjectPkg.toString());
-		expression.append("sns.web.*Controller.*(..)) or execution(* ");
-		expression.append(basedIamProjectPkg.toString());
-		expression.append("web.*Controller.*(..)) ");
+        // Merge internal XSS expression.(Level names cannot be changed after
+        // package)
+        StringBuffer expression = new StringBuffer(128);
+        expression.append("execution(* ");
+        expression.append(basedIamProjectPkg.toString());
+        expression.append("sns.web.*Controller.*(..)) or execution(* ");
+        expression.append(basedIamProjectPkg.toString());
+        expression.append("web.*Controller.*(..)) ");
 
-		if (getExpression().trim().toUpperCase(Locale.ENGLISH).startsWith("OR")) {
-			expression.append(getExpression());
-		} else {
-			expression.append("or ");
-			expression.append(getExpression());
-		}
-		setExpression(expression.toString());
+        if (getExpression().trim().toUpperCase(Locale.ENGLISH).startsWith("OR")) {
+            expression.append(getExpression());
+        } else {
+            expression.append("or ");
+            expression.append(getExpression());
+        }
+        setExpression(expression.toString());
 
-		if (log.isInfoEnabled()) {
-			log.info("After merged the XSS interception expression as: {}", getExpression());
-		}
-	}
+        if (log.isInfoEnabled()) {
+            log.info("After merged the XSS interception expression as: {}", getExpression());
+        }
+    }
 
 }
