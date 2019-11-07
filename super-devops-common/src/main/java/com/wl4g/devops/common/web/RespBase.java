@@ -176,9 +176,9 @@ public class RespBase<D> implements Serializable {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public DataMap<D> forMap() {
-		if (!isInstanceOfDataMap()) {
+		if (isInstanceOfMap() && isEmpty((Map) data)) {
 			this.data = new DataMap<>();
 		}
 		return (DataMap<D>) data;
@@ -203,7 +203,7 @@ public class RespBase<D> implements Serializable {
 	public RespBase<D> setData(Object data) {
 		if (nonNull(data)) {
 			// Check.
-			if (isInstanceOfDataMap() && !isEmpty((Map) this.data)) {
+			if (isInstanceOfMap() && !isEmpty((Map) this.data)) {
 				throw new IllegalStateException(
 						String.format("RespBase.data already elements, setData() requires data to be empty. - %s", this.data));
 			}
@@ -232,8 +232,8 @@ public class RespBase<D> implements Serializable {
 	 * 
 	 * @return
 	 */
-	private boolean isInstanceOfDataMap() {
-		return nonNull(data) && (data instanceof DataMap);
+	private boolean isInstanceOfMap() {
+		return nonNull(data) && (data instanceof Map);
 	}
 
 	@Override
