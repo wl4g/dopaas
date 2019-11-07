@@ -48,6 +48,8 @@ public class Project extends BaseBean implements Serializable {
 
 	private List<Dependency> dependencies;
 
+	private String vcsType;
+
 	public String getProjectName() {
 		return projectName;
 	}
@@ -110,6 +112,14 @@ public class Project extends BaseBean implements Serializable {
 
 	public void setDependencies(List<Dependency> dependencies) {
 		this.dependencies = dependencies;
+	}
+
+	public String getVcsType() {
+		return vcsType;
+	}
+
+	public void setVcsType(String vcsType) {
+		this.vcsType = vcsType;
 	}
 
 	@Override
