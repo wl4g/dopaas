@@ -45,8 +45,8 @@ import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
  */
 public class GithubAuthorizingRealm extends Oauth2SnsAuthorizingRealm<GithubAuthenticationToken> {
 
-	public GithubAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public GithubAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
 }

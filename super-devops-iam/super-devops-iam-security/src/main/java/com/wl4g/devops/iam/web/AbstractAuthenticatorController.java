@@ -29,35 +29,35 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
  * IAM abstract basic authenticator internal controller
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月22日
  * @since
  */
 public abstract class AbstractAuthenticatorController extends BaseController {
 
-	/**
-	 * IAM server properties configuration
-	 */
-	@Autowired
-	protected IamProperties config;
+    /**
+     * IAM server properties configuration
+     */
+    @Autowired
+    protected IamProperties config;
 
-	/**
-	 * Authentication handler
-	 */
-	@Autowired
-	protected AuthenticationHandler authHandler;
+    /**
+     * Authentication handler
+     */
+    @Autowired
+    protected AuthenticationHandler authHandler;
 
-	/**
-	 * IAM server security coprocessor.
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
+    /**
+     * IAM server security coprocessor.
+     */
+    @Autowired
+    protected ServerSecurityCoprocessor coprocessor;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+    protected SessionDelegateMessageBundle bundle;
 
 }

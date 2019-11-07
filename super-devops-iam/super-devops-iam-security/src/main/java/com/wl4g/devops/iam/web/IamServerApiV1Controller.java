@@ -28,7 +28,7 @@ import static java.util.Objects.nonNull;
 
 /**
  * IAM server API v1 controller.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月31日
  * @since
@@ -37,76 +37,76 @@ import static java.util.Objects.nonNull;
 @ResponseBody
 public class IamServerApiV1Controller extends GenericApiController {
 
-	/**
-	 * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>
-	 * </br>
-	 * 
-	 * <b>Origin {@link IamSession} json string example:</b>
-	 * 
-	 * <pre>
-	 *	{
-	 *	  "code": 200,
-	 *	  "status": "normal",
-	 *	  "message": "ok",
-	 *	  "data": {
-	 *	    "sessions": [
-	 *	      {
-	 *	        "id": "sid4c034ff4e95741dcb3b20f687c952cd4",
-	 *	        "startTimestamp": 1572593959441,
-	 *	        "stopTimestamp": null,
-	 *	        "lastAccessTime": 1572593993963,
-	 *	        "timeout": 1800000,
-	 *	        "expired": false,
-	 *	        "host": "0:0:0:0:0:0:0:1",
-	 *	        "attributes": {
-	 *	          "org.apache.shiro.subject.support.DefaultSubjectContext_AUTHENTICATED_SESSION_KEY": true,
-	 *	          "authcTokenAttributeKey": {
-	 *	            "principals": {
-	 *	              "empty": false,
-	 *	              "primaryPrincipal": "root",
-	 *	              "realmNames": [
-	 *	                "com.wl4g.devops.iam.realm.GeneralAuthorizingRealm_0"
-	 *	              ]
-	 *	            },
-	 *	            "credentials": "911ef082b5de81151ba25d8442efb6e77bb380fd36ac349ee737ee5461ae6d3e8a13e4366a20e6dd71f95e8939fe375e203577568297cdbc34d598dd47475a7c",
-	 *	            "credentialsSalt": null,
-	 *	            "accountInfo": {
-	 *	              "principal": "root",
-	 *	              "storedCredentials": "911ef082b5de81151ba25d8442efb6e77bb380fd36ac349ee737ee5461ae6d3e8a13e4366a20e6dd71f95e8939fe375e203577568297cdbc34d598dd47475a7c"
-	 *	            }
-	 *	          },
-	 *	          "CentralAuthenticationHandler.GRANT_TICKET": {
-	 *	            "applications": {
-	 *	              "umc-manager": "stzgotzYWGdweoBGgEOtDKpXwJsxyEaqCrttfMSgFMYkZuIWrDWNpzPYWFa"
-	 *	            }
-	 *	          },
-	 *	          "org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY": {
-	 *	            "empty": false,
-	 *	            "primaryPrincipal": "root",
-	 *	            "realmNames": [
-	 *	              "com.wl4g.devops.iam.realm.GeneralAuthorizingRealm_0"
-	 *	            ]
-	 *	          }
-	 *	        }
-	 *	      }
-	 *	    ]
-	 *	  }
-	 *	}
-	 * </pre>
-	 * 
-	 * @param session
-	 * @return
-	 */
-	@Override
-	protected SessionAttribute wrapSessionAttribute(IamSession session) {
-		SessionAttribute sa = super.wrapSessionAttribute(session);
+    /**
+     * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>
+     * </br>
+     *
+     * <b>Origin {@link IamSession} json string example:</b>
+     *
+     * <pre>
+     *    {
+     * 	  "code": 200,
+     * 	  "status": "normal",
+     * 	  "message": "ok",
+     * 	  "data": {
+     * 	    "sessions": [
+     *          {
+     * 	        "id": "sid4c034ff4e95741dcb3b20f687c952cd4",
+     * 	        "startTimestamp": 1572593959441,
+     * 	        "stopTimestamp": null,
+     * 	        "lastAccessTime": 1572593993963,
+     * 	        "timeout": 1800000,
+     * 	        "expired": false,
+     * 	        "host": "0:0:0:0:0:0:0:1",
+     * 	        "attributes": {
+     * 	          "org.apache.shiro.subject.support.DefaultSubjectContext_AUTHENTICATED_SESSION_KEY": true,
+     * 	          "authcTokenAttributeKey": {
+     * 	            "principals": {
+     * 	              "empty": false,
+     * 	              "primaryPrincipal": "root",
+     * 	              "realmNames": [
+     * 	                "com.wl4g.devops.iam.realm.GeneralAuthorizingRealm_0"
+     * 	              ]
+     *                },
+     * 	            "credentials": "911ef082b5de81151ba25d8442efb6e77bb380fd36ac349ee737ee5461ae6d3e8a13e4366a20e6dd71f95e8939fe375e203577568297cdbc34d598dd47475a7c",
+     * 	            "credentialsSalt": null,
+     * 	            "accountInfo": {
+     * 	              "principal": "root",
+     * 	              "storedCredentials": "911ef082b5de81151ba25d8442efb6e77bb380fd36ac349ee737ee5461ae6d3e8a13e4366a20e6dd71f95e8939fe375e203577568297cdbc34d598dd47475a7c"
+     *                }
+     *              },
+     * 	          "CentralAuthenticationHandler.GRANT_TICKET": {
+     * 	            "applications": {
+     * 	              "umc-manager": "stzgotzYWGdweoBGgEOtDKpXwJsxyEaqCrttfMSgFMYkZuIWrDWNpzPYWFa"
+     *                }
+     *              },
+     * 	          "org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY": {
+     * 	            "empty": false,
+     * 	            "primaryPrincipal": "root",
+     * 	            "realmNames": [
+     * 	              "com.wl4g.devops.iam.realm.GeneralAuthorizingRealm_0"
+     * 	            ]
+     *              }
+     *            }
+     *          }
+     * 	    ]
+     *      }
+     *    }
+     * </pre>
+     *
+     * @param session
+     * @return
+     */
+    @Override
+    protected SessionAttribute wrapSessionAttribute(IamSession session) {
+        SessionAttribute sa = super.wrapSessionAttribute(session);
 
-		// Application grant info.
-		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
-		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
-			sa.setGrantApplications(grantInfo.getApplications().keySet());
-		}
-		return sa;
-	}
+        // Application grant info.
+        GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
+        if (nonNull(grantInfo) && grantInfo.hasApplications()) {
+            sa.setGrantApplications(grantInfo.getApplications().keySet());
+        }
+        return sa;
+    }
 
 }

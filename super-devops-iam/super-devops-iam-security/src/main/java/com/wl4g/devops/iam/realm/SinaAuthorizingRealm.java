@@ -45,8 +45,8 @@ import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
  */
 public class SinaAuthorizingRealm extends Oauth2SnsAuthorizingRealm<SinaAuthenticationToken> {
 
-	public SinaAuthorizingRealm(IamBasedMatcher matcher) {
-		super(matcher);
-	}
+    public SinaAuthorizingRealm(IamBasedMatcher matcher) {
+        super(matcher);
+    }
 
 }

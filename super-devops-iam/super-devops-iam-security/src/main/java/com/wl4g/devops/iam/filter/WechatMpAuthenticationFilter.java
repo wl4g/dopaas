@@ -21,19 +21,19 @@ import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 @IamFilter
 public class WechatMpAuthenticationFilter extends Oauth2SnsAuthenticationFilter<WechatMpAuthenticationToken> {
 
-	@Override
-	public String getName() {
-		return ProviderSupport.WECHATMP.getName();
-	}
+    @Override
+    public String getName() {
+        return ProviderSupport.WECHATMP.getName();
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupport.WECHATMP.getName();
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + ProviderSupport.WECHATMP.getName();
+    }
 
-	@Override
-	protected boolean enabled() {
-		return true;
-	}
+    @Override
+    protected boolean enabled() {
+        return true;
+    }
 
 }

@@ -21,37 +21,38 @@ import org.springframework.context.annotation.Bean;
 import java.lang.annotation.Annotation;
 
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.*;
+
 import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.iam.web.DefaultViewController;
 
 /**
  * Default view configuration
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({ IamAutoConfiguration.class })
+@AutoConfigureAfter({IamAutoConfiguration.class})
 public class DefaultViewAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
-	@Bean
-	public DefaultViewController defaultViewController() {
-		return new DefaultViewController();
-	}
+    @Bean
+    public DefaultViewController defaultViewController() {
+        return new DefaultViewController();
+    }
 
-	@Override
-	protected String getMappingPrefix() {
-		return DEFAULT_VIEW_BASE_URI;
-	}
+    @Override
+    protected String getMappingPrefix() {
+        return DEFAULT_VIEW_BASE_URI;
+    }
 
-	@Bean
-	public PrefixHandlerMapping defaultViewControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
+    @Bean
+    public PrefixHandlerMapping defaultViewControllerPrefixHandlerMapping() {
+        return super.createPrefixHandlerMapping();
+    }
 
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return com.wl4g.devops.iam.annotation.DefaultViewController.class;
-	}
+    @Override
+    protected Class<? extends Annotation> annotationClass() {
+        return com.wl4g.devops.iam.annotation.DefaultViewController.class;
+    }
 
 }

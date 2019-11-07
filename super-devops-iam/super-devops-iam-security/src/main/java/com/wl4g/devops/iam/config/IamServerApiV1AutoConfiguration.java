@@ -23,17 +23,17 @@ import com.wl4g.devops.iam.web.IamServerApiV1Controller;
 
 /**
  * Generic API v1 auto configuration.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({ IamAutoConfiguration.class })
+@AutoConfigureAfter({IamAutoConfiguration.class})
 public class IamServerApiV1AutoConfiguration extends GenericApiAutoConfiguration {
 
-	@Bean
-	public IamServerApiV1Controller iamServerApiV1Controller() {
-		return new IamServerApiV1Controller();
-	}
+    @Bean
+    public IamServerApiV1Controller iamServerApiV1Controller() {
+        return new IamServerApiV1Controller();
+    }
 
 }

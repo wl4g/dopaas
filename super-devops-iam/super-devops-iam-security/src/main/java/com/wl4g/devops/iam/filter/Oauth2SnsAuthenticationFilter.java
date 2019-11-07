@@ -36,76 +36,76 @@ import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBA
 
 /**
  * SNS oauth2 authentication abstract filter
- * 
+ *
+ * @param <T>
  * @author wangl.sir
  * @version v1.0 2019年1月8日
  * @since
- * @param <T>
  */
 public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthenticationToken>
-		extends AbstractIamAuthenticationFilter<T> implements InitializingBean {
+        extends AbstractIamAuthenticationFilter<T> implements InitializingBean {
 
-	/**
-	 * Oauth2 authentication token constructor.
-	 */
-	private Constructor<T> authenticationTokenConstructor;
+    /**
+     * Oauth2 authentication token constructor.
+     */
+    private Constructor<T> authenticationTokenConstructor;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		try {
-			initialize();
-			Assert.state(authenticationTokenConstructor != null, "'authenticationTokenConstructor' is null");
-		} catch (NoSuchMethodException | SecurityException e) {
-			throw new IllegalStateException(e);
-		}
-		// Add supported SNS provider
-		if (enabled()) {
-			ProviderSupport.addSupport(getName());
-		}
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            initialize();
+            Assert.state(authenticationTokenConstructor != null, "'authenticationTokenConstructor' is null");
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new IllegalStateException(e);
+        }
+        // Add supported SNS provider
+        if (enabled()) {
+            ProviderSupport.addSupport(getName());
+        }
+    }
 
-	@Override
-	protected T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		String callbackId = WebUtils.getCleanParam(request, PARAM_SNS_CALLBACK_ID);
-		Assert.hasText(callbackId, String.format("'%s' must not be empty", PARAM_SNS_CALLBACK_ID));
+    @Override
+    protected T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+                                HttpServletResponse response) throws Exception {
+        String callbackId = WebUtils.getCleanParam(request, PARAM_SNS_CALLBACK_ID);
+        Assert.hasText(callbackId, String.format("'%s' must not be empty", PARAM_SNS_CALLBACK_ID));
 
-		// Cache key name
-		String key = KEY_SNS_CALLBACK_PARAMS + callbackId;
-		try {
-			// SNS authorized callback info,
-			// See:xx.sns.handler.AbstractSnsHandler#afterCallbackSet()
-			SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getEnhancedCache(CACHE_SNSAUTH)
-					.get(new EnhancedKey(key, SocialAuthorizeInfo.class));
+        // Cache key name
+        String key = KEY_SNS_CALLBACK_PARAMS + callbackId;
+        try {
+            // SNS authorized callback info,
+            // See:xx.sns.handler.AbstractSnsHandler#afterCallbackSet()
+            SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getEnhancedCache(CACHE_SNSAUTH)
+                    .get(new EnhancedKey(key, SocialAuthorizeInfo.class));
 
-			// Create authentication token instance
-			return authenticationTokenConstructor.newInstance(remoteHost, redirectInfo, authorizedInfo);
-		} finally { // Clean-up cache
-			cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(key));
-		}
-	}
+            // Create authentication token instance
+            return authenticationTokenConstructor.newInstance(remoteHost, redirectInfo, authorizedInfo);
+        } finally { // Clean-up cache
+            cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(key));
+        }
+    }
 
-	/**
-	 * Initialize the constructor for obtaining authentication tokens
-	 * 
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 */
-	@SuppressWarnings("unchecked")
-	private void initialize() throws NoSuchMethodException, SecurityException {
-		ResolvableType resolveType = ResolvableType.forClass(this.getClass());
-		Class<T> authenticationTokenClass = (Class<T>) resolveType.getSuperType().getGeneric(0).resolve();
-		this.authenticationTokenConstructor = authenticationTokenClass
-				.getConstructor(new Class[] { String.class, RedirectInfo.class, SocialAuthorizeInfo.class });
-	}
+    /**
+     * Initialize the constructor for obtaining authentication tokens
+     *
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     */
+    @SuppressWarnings("unchecked")
+    private void initialize() throws NoSuchMethodException, SecurityException {
+        ResolvableType resolveType = ResolvableType.forClass(this.getClass());
+        Class<T> authenticationTokenClass = (Class<T>) resolveType.getSuperType().getGeneric(0).resolve();
+        this.authenticationTokenConstructor = authenticationTokenClass
+                .getConstructor(new Class[]{String.class, RedirectInfo.class, SocialAuthorizeInfo.class});
+    }
 
-	/**
-	 * Whether social networking authentication provider enabled
-	 * 
-	 * @return
-	 */
-	protected boolean enabled() {
-		return false;
-	}
+    /**
+     * Whether social networking authentication provider enabled
+     *
+     * @return
+     */
+    protected boolean enabled() {
+        return false;
+    }
 
 }

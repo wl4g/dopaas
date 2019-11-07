@@ -21,19 +21,19 @@ import com.wl4g.devops.iam.authc.QQAuthenticationToken;
 @IamFilter
 public class QQAuthenticationFilter extends Oauth2SnsAuthenticationFilter<QQAuthenticationToken> {
 
-	@Override
-	public String getName() {
-		return ProviderSupport.QQ.getName();
-	}
+    @Override
+    public String getName() {
+        return ProviderSupport.QQ.getName();
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupport.QQ.getName();
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + ProviderSupport.QQ.getName();
+    }
 
-	@Override
-	public boolean enabled() {
-		return true;
-	}
+    @Override
+    public boolean enabled() {
+        return true;
+    }
 
 }

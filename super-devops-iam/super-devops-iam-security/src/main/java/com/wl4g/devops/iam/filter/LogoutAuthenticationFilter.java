@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 /**
  * Logout authentication filter
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月6日
@@ -40,43 +40,43 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
  */
 @IamFilter
 public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<LogoutAuthenticationToken>
-		implements IamAuthenticationFilter {
+        implements IamAuthenticationFilter {
 
-	final public static String NAME = "logout";
+    final public static String NAME = "logout";
 
-	@Override
-	protected LogoutAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		return new LogoutAuthenticationToken(remoteHost, redirectInfo);
-	}
+    @Override
+    protected LogoutAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+                                                        HttpServletResponse response) throws Exception {
+        return new LogoutAuthenticationToken(remoteHost, redirectInfo);
+    }
 
-	@Override
-	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-		// Using coercion ignores remote exit failures
-		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-		if (log.isInfoEnabled()) {
-			log.info("Sign out... for forced[{}], session[{}]", forced, SecurityUtils.getSubject().getSession());
-		}
+    @Override
+    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+        // Using coercion ignores remote exit failures
+        boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
+        if (log.isInfoEnabled()) {
+            log.info("Sign out... for forced[{}], session[{}]", forced, SecurityUtils.getSubject().getSession());
+        }
 
-		// Logout all logged-in external applications
-		super.authHandler.logout(forced, null, toHttp(request), toHttp(response));
+        // Logout all logged-in external applications
+        super.authHandler.logout(forced, null, toHttp(request), toHttp(response));
 
-		/*
-		 * Execute login failure redirect login page logic first, (prevent
-		 * logout from getting binding parameters later)
-		 */
-		super.onLoginFailure(createToken(request, response), null, request, response);
-		return false;
-	}
+        /*
+         * Execute login failure redirect login page logic first, (prevent
+         * logout from getting binding parameters later)
+         */
+        super.onLoginFailure(createToken(request, response), null, request, response);
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getUriMapping() {
-		return "/logout";
-	}
+    @Override
+    public String getUriMapping() {
+        return "/logout";
+    }
 
 }

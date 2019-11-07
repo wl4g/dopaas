@@ -54,7 +54,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_
 
 /**
  * IAM central authenticator controller
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月22日
  * @since
@@ -62,145 +62,143 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_
 @IamController
 public class CentralAuthenticatorController extends AbstractAuthenticatorController {
 
-	/**
-	 * Verification based on 'cas1' extension protocol.
-	 * 
-	 * @param param
-	 *            TicketValidationRequest parameters
-	 * @param bind
-	 *            BindingResult
-	 * @return TicketAssertion result.
-	 */
-	@PostMapping(URI_S_VALIDATE)
-	@ResponseBody
-	public RespBase<TicketAssertion> validate(HttpServletRequest request, @NotNull @RequestBody TicketValidationModel param) {
-		if (log.isInfoEnabled()) {
-			log.info("Ticket validate sessionId {} <= {}", getSessionId(), toJSONString(param));
-		}
+    /**
+     * Verification based on 'cas1' extension protocol.
+     *
+     * @param param TicketValidationRequest parameters
+     * @param bind  BindingResult
+     * @return TicketAssertion result.
+     */
+    @PostMapping(URI_S_VALIDATE)
+    @ResponseBody
+    public RespBase<TicketAssertion> validate(HttpServletRequest request, @NotNull @RequestBody TicketValidationModel param) {
+        if (log.isInfoEnabled()) {
+            log.info("Ticket validate sessionId {} <= {}", getSessionId(), toJSONString(param));
+        }
 
-		RespBase<TicketAssertion> resp = new RespBase<>();
-		try {
-			// Ticket assertion.
-			resp.forMap().put(KEY_TICKET_ASSERT, authHandler.validate(param));
-		} catch (Throwable ex) {
-			resp.setCode(RetCode.SYS_ERR);
-			resp.handleError(ex);
-			if (ex instanceof UnauthenticatedException) {
-				// Only if the error is not authenticated, can it be redirected
-				// to the IAM server login page, otherwise the client will
-				// display the error page directly (to prevent unlimited
-				// redirection). See:com.wl4g.devops.iam.client.validation.
-				// AbstractBasedTicketValidator#getRemoteValidation()
-				resp.setCode(RetCode.UNAUTHC);
-			} else if (ex instanceof UnauthorizedException) {
-				resp.setCode(RetCode.UNAUTHZ);
-			}
-			log.warn("Failed to ticket validate.", ex);
-		}
+        RespBase<TicketAssertion> resp = new RespBase<>();
+        try {
+            // Ticket assertion.
+            resp.forMap().put(KEY_TICKET_ASSERT, authHandler.validate(param));
+        } catch (Throwable ex) {
+            resp.setCode(RetCode.SYS_ERR);
+            resp.handleError(ex);
+            if (ex instanceof UnauthenticatedException) {
+                // Only if the error is not authenticated, can it be redirected
+                // to the IAM server login page, otherwise the client will
+                // display the error page directly (to prevent unlimited
+                // redirection). See:com.wl4g.devops.iam.client.validation.
+                // AbstractBasedTicketValidator#getRemoteValidation()
+                resp.setCode(RetCode.UNAUTHC);
+            } else if (ex instanceof UnauthorizedException) {
+                resp.setCode(RetCode.UNAUTHZ);
+            }
+            log.warn("Failed to ticket validate.", ex);
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Ticket validate => {}", resp);
-		}
-		return resp;
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Ticket validate => {}", resp);
+        }
+        return resp;
+    }
 
-	/**
-	 * Global applications logout all
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@PostMapping(URI_S_LOGOUT)
-	@ResponseBody
-	public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
-		if (log.isInfoEnabled()) {
-			log.info("Sessions logout <= {}", getFullRequestURL(request));
-		}
+    /**
+     * Global applications logout all
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @PostMapping(URI_S_LOGOUT)
+    @ResponseBody
+    public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
+        if (log.isInfoEnabled()) {
+            log.info("Sessions logout <= {}", getFullRequestURL(request));
+        }
 
-		RespBase<LogoutModel> resp = new RespBase<>();
-		try {
-			// Source application logout processing
-			String fromAppName = getCleanParam(request, config.getParam().getApplication());
-			Assert.hasText(fromAppName, String.format("'%s' must not be empty", config.getParam().getApplication()));
+        RespBase<LogoutModel> resp = new RespBase<>();
+        try {
+            // Source application logout processing
+            String fromAppName = getCleanParam(request, config.getParam().getApplication());
+            Assert.hasText(fromAppName, String.format("'%s' must not be empty", config.getParam().getApplication()));
 
-			// Using coercion ignores remote exit failures
-			boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-			resp.forMap().put(KEY_LOGOUT_INFO, authHandler.logout(forced, fromAppName, request, response));
-		} catch (Exception e) {
-			if (e instanceof IamException) {
-				log.error("Failed to logout. caused by:{}", Exceptions.getRootCauseMessage(e));
-			} else {
-				log.error("Failed to logout.", e);
-			}
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(Exceptions.getRootCauseMessage(e));
-		}
-		if (log.isInfoEnabled()) {
-			log.info("Sessions logout => ", resp);
-		}
-		return resp;
-	}
+            // Using coercion ignores remote exit failures
+            boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
+            resp.forMap().put(KEY_LOGOUT_INFO, authHandler.logout(forced, fromAppName, request, response));
+        } catch (Exception e) {
+            if (e instanceof IamException) {
+                log.error("Failed to logout. caused by:{}", Exceptions.getRootCauseMessage(e));
+            } else {
+                log.error("Failed to logout.", e);
+            }
+            resp.setCode(RetCode.SYS_ERR);
+            resp.setMessage(Exceptions.getRootCauseMessage(e));
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Sessions logout => ", resp);
+        }
+        return resp;
+    }
 
-	/**
-	 * Secondary certification validation
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@PostMapping(URI_S_SECOND_VALIDATE)
-	@ResponseBody
-	public RespBase<SecondAuthcAssertion> seondValidate(HttpServletRequest request) {
-		if (log.isInfoEnabled()) {
-			log.info("Second authentication validate <= {}", getFullRequestURL(request));
-		}
+    /**
+     * Secondary certification validation
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping(URI_S_SECOND_VALIDATE)
+    @ResponseBody
+    public RespBase<SecondAuthcAssertion> seondValidate(HttpServletRequest request) {
+        if (log.isInfoEnabled()) {
+            log.info("Second authentication validate <= {}", getFullRequestURL(request));
+        }
 
-		RespBase<SecondAuthcAssertion> resp = new RespBase<>();
-		try {
-			// Required parameters
-			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondAuthCode());
-			String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
-			// Secondary authentication assertion.
-			resp.forMap().put(KEY_SECOND_AUTH_ASSERT, authHandler.secondValidate(secondAuthCode, fromAppName));
-		} catch (Exception e) {
-			log.error("Failed to second authentication validate.", e);
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(e.getMessage());
-		}
+        RespBase<SecondAuthcAssertion> resp = new RespBase<>();
+        try {
+            // Required parameters
+            String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondAuthCode());
+            String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
+            // Secondary authentication assertion.
+            resp.forMap().put(KEY_SECOND_AUTH_ASSERT, authHandler.secondValidate(secondAuthCode, fromAppName));
+        } catch (Exception e) {
+            log.error("Failed to second authentication validate.", e);
+            resp.setCode(RetCode.SYS_ERR);
+            resp.setMessage(e.getMessage());
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Second authentication validate => {}", resp);
-		}
-		return resp;
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Second authentication validate => {}", resp);
+        }
+        return resp;
+    }
 
-	/**
-	 * Sessions expired validation
-	 * 
-	 * @param param
-	 * @return
-	 */
-	@PostMapping(URI_S_SESSION_VALIDATE)
-	@ResponseBody
-	public RespBase<SessionValidationAssertion> sessionValidate(@NotNull @RequestBody SessionValidationAssertion param) {
-		if (log.isInfoEnabled()) {
-			log.info("Sessions expire validate <= {}", toJSONString(param));
-		}
+    /**
+     * Sessions expired validation
+     *
+     * @param param
+     * @return
+     */
+    @PostMapping(URI_S_SESSION_VALIDATE)
+    @ResponseBody
+    public RespBase<SessionValidationAssertion> sessionValidate(@NotNull @RequestBody SessionValidationAssertion param) {
+        if (log.isInfoEnabled()) {
+            log.info("Sessions expire validate <= {}", toJSONString(param));
+        }
 
-		RespBase<SessionValidationAssertion> resp = new RespBase<>();
-		try {
-			// Session expire validate assertion.
-			resp.forMap().put(KEY_SESSION_VALID_ASSERT, authHandler.sessionValidate(param));
-		} catch (Exception e) {
-			log.error("Failed to session expire validate.", e);
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(e.getMessage());
-		}
+        RespBase<SessionValidationAssertion> resp = new RespBase<>();
+        try {
+            // Session expire validate assertion.
+            resp.forMap().put(KEY_SESSION_VALID_ASSERT, authHandler.sessionValidate(param));
+        } catch (Exception e) {
+            log.error("Failed to session expire validate.", e);
+            resp.setCode(RetCode.SYS_ERR);
+            resp.setMessage(e.getMessage());
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Sessions expire validate => {}", resp);
-		}
-		return resp;
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Sessions expire validate => {}", resp);
+        }
+        return resp;
+    }
 
 }

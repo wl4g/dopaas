@@ -25,62 +25,62 @@ import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 
 public class QQAccessToken implements Oauth2AccessToken {
-	private static final long serialVersionUID = 6525294825751214763L;
+    private static final long serialVersionUID = 6525294825751214763L;
 
-	@JsonProperty("access_token")
-	private String accessToken;
+    @JsonProperty("access_token")
+    private String accessToken;
 
-	@JsonProperty("expires_in")
-	private Long expiresIn;
+    @JsonProperty("expires_in")
+    private Long expiresIn;
 
-	@JsonProperty("refresh_token")
-	private String refreshToken;
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
-	@Override
-	public String accessToken() {
-		return getAccessToken();
-	}
+    @Override
+    public String accessToken() {
+        return getAccessToken();
+    }
 
-	public String getAccessToken() {
-		return accessToken;
-	}
+    public String getAccessToken() {
+        return accessToken;
+    }
 
-	public void setAccessToken(String accessToken) {
-		Assert.notNull(accessToken, "'accessToken' must not be null");
-		this.accessToken = accessToken;
-	}
+    public void setAccessToken(String accessToken) {
+        Assert.notNull(accessToken, "'accessToken' must not be null");
+        this.accessToken = accessToken;
+    }
 
-	public Long getExpiresIn() {
-		return expiresIn;
-	}
+    public Long getExpiresIn() {
+        return expiresIn;
+    }
 
-	public void setExpiresIn(Long expiresIn) {
-		Assert.notNull(expiresIn, "'expiresIn' must not be null");
-		this.expiresIn = expiresIn;
-	}
+    public void setExpiresIn(Long expiresIn) {
+        Assert.notNull(expiresIn, "'expiresIn' must not be null");
+        this.expiresIn = expiresIn;
+    }
 
-	public String getRefreshToken() {
-		return refreshToken;
-	}
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 
-	public void setRefreshToken(String refreshToken) {
-		Assert.notNull(refreshToken, "'refreshToken' must not be null");
-		this.refreshToken = refreshToken;
-	}
+    public void setRefreshToken(String refreshToken) {
+        Assert.notNull(refreshToken, "'refreshToken' must not be null");
+        this.refreshToken = refreshToken;
+    }
 
-	@Override
-	public String toString() {
-		return JacksonUtils.toJSONString(this);
-	}
+    @Override
+    public String toString() {
+        return JacksonUtils.toJSONString(this);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public QQAccessToken build(String message) {
-		Map<String, String> params = WebUtils2.toQueryParams(message);
-		this.setAccessToken(params.get("access_token"));
-		this.setRefreshToken(params.get("refresh_token"));
-		this.setExpiresIn(Long.parseLong(params.get("expires_in")));
-		return this;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public QQAccessToken build(String message) {
+        Map<String, String> params = WebUtils2.toQueryParams(message);
+        this.setAccessToken(params.get("access_token"));
+        this.setRefreshToken(params.get("refresh_token"));
+        this.setExpiresIn(Long.parseLong(params.get("expires_in")));
+        return this;
+    }
 
 }

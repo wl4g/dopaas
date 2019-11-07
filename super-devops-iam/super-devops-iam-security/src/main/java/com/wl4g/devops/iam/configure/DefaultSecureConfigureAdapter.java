@@ -17,17 +17,17 @@ package com.wl4g.devops.iam.configure;
 
 /**
  * Default securer configure adapter
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年3月19日
  * @since
  */
 public class DefaultSecureConfigureAdapter implements SecureConfigureAdapter {
 
-	@Override
-	public SecureConfig configure() {
-		return new SecureConfig(new String[] { "MD5", "SHA-256", "SHA-384", "SHA-512" }, "IAM", 5, 2 * 60 * 60 * 1000L,
-				3 * 60 * 1000L);
-	}
+    @Override
+    public SecureConfig configure() {
+        return new SecureConfig(new String[]{"MD5", "SHA-256", "SHA-384", "SHA-512"}, "IAM", 5, 2 * 60 * 60 * 1000L,
+                3 * 60 * 1000L);
+    }
 
 }

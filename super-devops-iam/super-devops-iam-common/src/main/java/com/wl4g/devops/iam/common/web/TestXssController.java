@@ -30,35 +30,35 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/test/")
 public class TestXssController extends BaseController {
 
-	@GetMapping("xss1")
-	@ResponseBody
-	public RespBase<?> xss1(String name, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		RespBase<Object> resp = RespBase.create();
-		System.out.println("On xss1 testing, parameters filtered by xss:\nname>> " + name + "\nrequest>> " + request);
-		resp.forMap().put("name", name);
-		return resp;
-	}
+    @GetMapping("xss1")
+    @ResponseBody
+    public RespBase<?> xss1(String name, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        RespBase<Object> resp = RespBase.create();
+        System.out.println("On xss1 testing, parameters filtered by xss:\nname>> " + name + "\nrequest>> " + request);
+        resp.forMap().put("name", name);
+        return resp;
+    }
 
-	/**
-	 * e.g.
-	 * 
-	 * <pre>
-	 * http://localhost:14040/devops-iam/test/xss2?name=&lt;script&gt;alert("fuck")&lt;/script&gt;
-	 * </pre>
-	 * 
-	 * @param name
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@GetMapping("xss2")
-	@ResponseBody
-	public RespBase<?> xss2(@UnsafeXss String name, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		RespBase<Object> resp = RespBase.create();
-		System.out.println("On xss2 testing, parameters filtered by xss:\nname>> " + name + "\nrequest>> " + request);
-		resp.forMap().put("name", name);
-		return resp;
-	}
+    /**
+     * e.g.
+     *
+     * <pre>
+     * http://localhost:14040/devops-iam/test/xss2?name=&lt;script&gt;alert("fuck")&lt;/script&gt;
+     * </pre>
+     *
+     * @param name
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("xss2")
+    @ResponseBody
+    public RespBase<?> xss2(@UnsafeXss String name, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        RespBase<Object> resp = RespBase.create();
+        System.out.println("On xss2 testing, parameters filtered by xss:\nname>> " + name + "\nrequest>> " + request);
+        resp.forMap().put("name", name);
+        return resp;
+    }
 
 }

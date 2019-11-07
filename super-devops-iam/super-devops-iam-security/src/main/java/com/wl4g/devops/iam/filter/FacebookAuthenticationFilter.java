@@ -21,14 +21,14 @@ import com.wl4g.devops.iam.authc.FacebookAuthenticationToken;
 @IamFilter
 public class FacebookAuthenticationFilter extends Oauth2SnsAuthenticationFilter<FacebookAuthenticationToken> {
 
-	@Override
-	public String getName() {
-		return ProviderSupport.FACEBOOK.getName();
-	}
+    @Override
+    public String getName() {
+        return ProviderSupport.FACEBOOK.getName();
+    }
 
-	@Override
-	public String getUriMapping() {
-		return URI_BASE_MAPPING + ProviderSupport.FACEBOOK.getName();
-	}
+    @Override
+    public String getUriMapping() {
+        return URI_BASE_MAPPING + ProviderSupport.FACEBOOK.getName();
+    }
 
 }

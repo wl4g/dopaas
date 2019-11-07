@@ -19,17 +19,17 @@ import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 
 /**
  * Wechat authentication token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
  * @since
  */
 public class WechatAuthenticationToken extends Oauth2SnsAuthenticationToken {
-	private static final long serialVersionUID = 8587329689973009598L;
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	public WechatAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, SocialAuthorizeInfo social) {
-		super(remoteHost, redirectInfo, social);
-	}
+    public WechatAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, SocialAuthorizeInfo social) {
+        super(remoteHost, redirectInfo, social);
+    }
 
 }

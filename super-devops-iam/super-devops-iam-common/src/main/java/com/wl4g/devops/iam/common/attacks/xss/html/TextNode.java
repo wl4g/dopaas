@@ -25,43 +25,42 @@ import java.io.Writer;
  * and
  * </p>
  * tags.
- * 
- * @author gt
  *
+ * @author gt
  */
 public class TextNode extends Node implements IHTMLVisitor {
 
-	private StringBuilder text = new StringBuilder();
-	private String tagName = null;
+    private StringBuilder text = new StringBuilder();
+    private String tagName = null;
 
-	public TextNode(String tagName, String text) {
-		super();
-		this.text.append(text);
-	}
+    public TextNode(String tagName, String text) {
+        super();
+        this.text.append(text);
+    }
 
-	// Add text to the node
-	public void addText(String text) {
-		this.text.append(text);
-	}
+    // Add text to the node
+    public void addText(String text) {
+        this.text.append(text);
+    }
 
-	// Return the text
-	public String getText() {
-		return text.toString();
-	}
+    // Return the text
+    public String getText() {
+        return text.toString();
+    }
 
-	// Write this node to the stream
-	public void writeAll(Writer writer, IHTMLFilter htmlFilter, boolean convertIntoValidXML, boolean filterText)
-			throws IOException {
+    // Write this node to the stream
+    public void writeAll(Writer writer, IHTMLFilter htmlFilter, boolean convertIntoValidXML, boolean filterText)
+            throws IOException {
 
-		if (filterText) {
-			return;
-		}
+        if (filterText) {
+            return;
+        }
 
-		if (htmlFilter != null) {
-			String newText = htmlFilter.modifyNodeText(tagName, getText());
-			writer.append(newText);
-		} else {
-			writer.append(getText());
-		}
-	}
+        if (htmlFilter != null) {
+            String newText = htmlFilter.modifyNodeText(tagName, getText());
+            writer.append(newText);
+        } else {
+            writer.append(getText());
+        }
+    }
 }

@@ -17,27 +17,27 @@ package com.wl4g.devops.iam.common.authc;
 
 /**
  * Authenticator authentication token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
  * @since
  */
 public class AuthenticatorAuthenticationToken extends AbstractIamAuthenticationToken {
-	private static final long serialVersionUID = 8587329689973009598L;
+    private static final long serialVersionUID = 8587329689973009598L;
 
-	public AuthenticatorAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
-		super(remoteHost, redirectInfo);
-	}
+    public AuthenticatorAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
+        super(remoteHost, redirectInfo);
+    }
 
-	@Override
-	public Object getPrincipal() {
-		return null;
-	}
+    @Override
+    public Object getPrincipal() {
+        return null;
+    }
 
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
 
 }

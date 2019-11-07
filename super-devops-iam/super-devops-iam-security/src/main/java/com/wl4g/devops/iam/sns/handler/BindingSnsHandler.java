@@ -28,32 +28,32 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
 /**
  * Binding SNS handler
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月28日
  * @since
  */
 public class BindingSnsHandler extends BasedBindSnsHandler {
 
-	public BindingSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-			ServerSecurityConfigurer context) {
-		super(config, snsConfig, connectFactory, context);
-	}
+    public BindingSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+                             ServerSecurityConfigurer context) {
+        super(config, snsConfig, connectFactory, context);
+    }
 
-	@Override
-	protected void postBindingProcess(SocialConnectInfo info) {
-		try {
-			configurer.bindSocialConnection(info);
-		} catch (Throwable e) {
-			log.warn("Failed to binding sns.", e);
-			// Save error to session
-			bind(KEY_ERR_SESSION_SAVED, getRootCauses(e).getMessage());
-		}
-	}
+    @Override
+    protected void postBindingProcess(SocialConnectInfo info) {
+        try {
+            configurer.bindSocialConnection(info);
+        } catch (Throwable e) {
+            log.warn("Failed to binding sns.", e);
+            // Save error to session
+            bind(KEY_ERR_SESSION_SAVED, getRootCauses(e).getMessage());
+        }
+    }
 
-	@Override
-	public Which whichType() {
-		return Which.BIND;
-	}
+    @Override
+    public Which whichType() {
+        return Which.BIND;
+    }
 
 }

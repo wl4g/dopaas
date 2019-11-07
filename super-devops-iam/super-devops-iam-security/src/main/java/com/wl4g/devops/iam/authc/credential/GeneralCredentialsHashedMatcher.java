@@ -27,7 +27,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 
 /**
  * General account credential matcher
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -35,24 +35,24 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
  */
 public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
-	@Override
-	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
-		// Before pre-check.
-		if (!coprocessor.preAuthenticatingAllowed((IamAuthenticationToken) token, info)) {
-			throw new AccountException(bundle.getMessage("ServerSecurityCoprocessor.accessDenied", token.getPrincipal()));
-		}
+    @Override
+    public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
+        // Before pre-check.
+        if (!coprocessor.preAuthenticatingAllowed((IamAuthenticationToken) token, info)) {
+            throw new AccountException(bundle.getMessage("ServerSecurityCoprocessor.accessDenied", token.getPrincipal()));
+        }
 
-		// Matching credentials.
-		CredentialsToken credentialsToken = new CredentialsToken((String) token.getPrincipal(), (String) token.getCredentials());
-		return securer.validate(credentialsToken, info);
-	}
+        // Matching credentials.
+        CredentialsToken credentialsToken = new CredentialsToken((String) token.getPrincipal(), (String) token.getCredentials());
+        return securer.validate(credentialsToken, info);
+    }
 
-	@Override
-	protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
-		if (token instanceof VerifyAuthenticationToken) {
-			VerifyAuthenticationToken tk = ((VerifyAuthenticationToken) token);
-			verifier.forAdapt(tk.getVerifyType()).validate(factors, tk.getVerifiedToken(), false);
-		}
-	}
+    @Override
+    protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
+        if (token instanceof VerifyAuthenticationToken) {
+            VerifyAuthenticationToken tk = ((VerifyAuthenticationToken) token);
+            verifier.forAdapt(tk.getVerifyType()).validate(factors, tk.getVerifiedToken(), false);
+        }
+    }
 
 }

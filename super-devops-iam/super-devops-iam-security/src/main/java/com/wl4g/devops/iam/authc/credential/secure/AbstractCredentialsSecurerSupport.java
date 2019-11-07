@@ -48,229 +48,225 @@ import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 
 /**
  * Abstract credentials securer adapter
- * 
- * @see {@link org.apache.shiro.crypto.hash.DefaultHashService}
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年3月11日
+ * @see {@link org.apache.shiro.crypto.hash.DefaultHashService}
  * @since
  */
 abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements IamCredentialsSecurer {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * Secure configuration.
-	 */
-	final protected SecureConfig config;
+    /**
+     * Secure configuration.
+     */
+    final protected SecureConfig config;
 
-	/**
-	 * Using Distributed Cache to Ensure Concurrency Control under multiple-node
-	 */
-	final protected EnhancedCacheManager cacheManager;
+    /**
+     * Using Distributed Cache to Ensure Concurrency Control under multiple-node
+     */
+    final protected EnhancedCacheManager cacheManager;
 
-	/**
-	 * The 'private' part of the hash salt.
-	 */
-	final protected ByteSource privateSalt;
+    /**
+     * The 'private' part of the hash salt.
+     */
+    final protected ByteSource privateSalt;
 
-	/**
-	 * Cryptic service.
-	 */
-	@Autowired
-	protected RSACryptographicService rsaCryptoService;
+    /**
+     * Cryptic service.
+     */
+    @Autowired
+    protected RSACryptographicService rsaCryptoService;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+    protected SessionDelegateMessageBundle bundle;
 
-	/**
-	 * IAM delegate credentials securer.
-	 */
-	@Autowired(required = false)
-	protected CredentialsSecurerAdapter delegate;
+    /**
+     * IAM delegate credentials securer.
+     */
+    @Autowired(required = false)
+    protected CredentialsSecurerAdapter delegate;
 
-	protected AbstractCredentialsSecurerSupport(SecureConfig config, EnhancedCacheManager cacheManager) {
-		Assert.notNull(config, "'config' must not be null");
-		Assert.notNull(config.getPrivateSalt(), "'privateSalt' must not be null");
-		Assert.notNull(config.getPreCryptPoolSize(), "'cryptSize' must not be null");
-		Assert.notNull(config.getCryptosExpireMs() > 0, "'cryptExpireMs' must greater than 0");
-		Assert.notNull(config.getApplyPubkeyExpireMs() > 0, "'applyPubKeyExpireMs' must greater than 0");
-		Assert.notNull(cacheManager, "'cacheManager' must not be null");
+    protected AbstractCredentialsSecurerSupport(SecureConfig config, EnhancedCacheManager cacheManager) {
+        Assert.notNull(config, "'config' must not be null");
+        Assert.notNull(config.getPrivateSalt(), "'privateSalt' must not be null");
+        Assert.notNull(config.getPreCryptPoolSize(), "'cryptSize' must not be null");
+        Assert.notNull(config.getCryptosExpireMs() > 0, "'cryptExpireMs' must greater than 0");
+        Assert.notNull(config.getApplyPubkeyExpireMs() > 0, "'applyPubKeyExpireMs' must greater than 0");
+        Assert.notNull(cacheManager, "'cacheManager' must not be null");
 
-		this.privateSalt = Util.bytes(config.getPrivateSalt());
-		this.config = config;
-		this.cacheManager = cacheManager;
-	}
+        this.privateSalt = Util.bytes(config.getPrivateSalt());
+        this.config = config;
+        this.cacheManager = cacheManager;
+    }
 
-	@Override
-	public String signature(@NotNull CredentialsToken token) {
-		// Delegate signature
-		if (delegate != null && !token.isResolved()) {
-			// Resolve request credentials
-			return delegate.signature(resolves(token));
-		}
+    @Override
+    public String signature(@NotNull CredentialsToken token) {
+        // Delegate signature
+        if (delegate != null && !token.isResolved()) {
+            // Resolve request credentials
+            return delegate.signature(resolves(token));
+        }
 
-		// When the delegate is null, it is unresolved.
-		if (!token.isResolved()) {
-			token = resolves(token); // It is necessary to resolve
-		}
+        // When the delegate is null, it is unresolved.
+        if (!token.isResolved()) {
+            token = resolves(token); // It is necessary to resolve
+        }
 
-		// Hashing signature
-		return doCredentialsHash(token,
-				(algorithm, source, salt, hashIters) -> new SimpleHash(algorithm, source, salt, hashIters));
-	}
+        // Hashing signature
+        return doCredentialsHash(token,
+                (algorithm, source, salt, hashIters) -> new SimpleHash(algorithm, source, salt, hashIters));
+    }
 
-	@Override
-	public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
-			throws CredentialsException, RuntimeException {
-		/*
-		 * Password is a string that may be set to empty.
-		 * See:xx.realm.GeneralAuthorizingRealm#doAuthenticationInfo
-		 */
-		Assert.notNull(info, "Stored credentials info is null, please check configure");
-		Assert.notNull(info.getCredentials(), "Stored credentials is null, please check configure");
+    @Override
+    public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
+            throws CredentialsException, RuntimeException {
+        /*
+         * Password is a string that may be set to empty.
+         * See:xx.realm.GeneralAuthorizingRealm#doAuthenticationInfo
+         */
+        Assert.notNull(info, "Stored credentials info is null, please check configure");
+        Assert.notNull(info.getCredentials(), "Stored credentials is null, please check configure");
 
-		// Delegate validate
-		if (delegate != null && !token.isResolved()) {
-			return delegate.validate(resolves(token), info);
-		}
+        // Delegate validate
+        if (delegate != null && !token.isResolved()) {
+            return delegate.validate(resolves(token), info);
+        }
 
-		// Compare request credentials with storage credentials
-		return MessageDigest.isEqual(toBytes(signature(token)), toBytes(info.getCredentials()));
-	}
+        // Compare request credentials with storage credentials
+        return MessageDigest.isEqual(toBytes(signature(token)), toBytes(info.getCredentials()));
+    }
 
-	@Override
-	public String applySecret() {
-		// Load secret keySpecPairs
-		Integer index = getBindValue(KEY_SECRET_INDEX);
-		if (index == null) {
-			index = current().nextInt(0, config.getPreCryptPoolSize());
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("Apply secret for index: {}", index);
-		}
+    @Override
+    public String applySecret() {
+        // Load secret keySpecPairs
+        Integer index = getBindValue(KEY_SECRET_INDEX);
+        if (index == null) {
+            index = current().nextInt(0, config.getPreCryptPoolSize());
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Apply secret for index: {}", index);
+        }
 
-		RSAKeySpecWrapper keyPair = rsaCryptoService.borrow(index);
-		// Save the applied keyPair index.
-		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
+        RSAKeySpecWrapper keyPair = rsaCryptoService.borrow(index);
+        // Save the applied keyPair index.
+        bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
-		if (log.isInfoEnabled()) {
-			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
-					index, keyPair.getPubHexString(), keyPair.getHexString());
-		}
-		return keyPair.getPubHexString();
-	}
+        if (log.isInfoEnabled()) {
+            log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
+                    index, keyPair.getPubHexString(), keyPair.getHexString());
+        }
+        return keyPair.getPubHexString();
+    }
 
-	/**
-	 * Combines the specified 'private' salt bytes with the specified additional
-	 * extra bytes to use as the total salt during hash computation.
-	 * {@code privateSaltBytes} will be {@code null} }if no private salt has
-	 * been configured.
-	 * 
-	 * @param privateSalt
-	 *            the (possibly {@code null}) 'private' salt to combine with the
-	 *            specified extra bytes
-	 * @param publicSalt
-	 *            the extra bytes to use in addition to the given private salt.
-	 * @return a combination of the specified private salt bytes and extra bytes
-	 *         that will be used as the total salt during hash computation.
-	 * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
-	 */
-	protected abstract ByteSource merge(ByteSource privateSalt, ByteSource publicSalt);
+    /**
+     * Combines the specified 'private' salt bytes with the specified additional
+     * extra bytes to use as the total salt during hash computation.
+     * {@code privateSaltBytes} will be {@code null} }if no private salt has
+     * been configured.
+     *
+     * @param privateSalt the (possibly {@code null}) 'private' salt to combine with the
+     *                    specified extra bytes
+     * @param publicSalt  the extra bytes to use in addition to the given private salt.
+     * @return a combination of the specified private salt bytes and extra bytes
+     * that will be used as the total salt during hash computation.
+     * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
+     */
+    protected abstract ByteSource merge(ByteSource privateSalt, ByteSource publicSalt);
 
-	/**
-	 * Get public salt
-	 * 
-	 * @param principal
-	 * @return
-	 */
-	protected abstract ByteSource getPublicSalt(@NotNull String principal);
+    /**
+     * Get public salt
+     *
+     * @param principal
+     * @return
+     */
+    protected abstract ByteSource getPublicSalt(@NotNull String principal);
 
-	/**
-	 * Execute hashing
-	 * 
-	 * @param token
-	 *            Resolved parameter token
-	 * @param hasher
-	 * @return
-	 */
-	protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull Hasher hasher) {
-		// Merge salt
-		ByteSource salt = merge(privateSalt, getPublicSalt(token.getPrincipal()));
-		if (log.isDebugEnabled()) {
-			log.debug("Merge salt. principal:[{}], salt:[{}]", token.getPrincipal(), salt);
-		}
+    /**
+     * Execute hashing
+     *
+     * @param token  Resolved parameter token
+     * @param hasher
+     * @return
+     */
+    protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull Hasher hasher) {
+        // Merge salt
+        ByteSource salt = merge(privateSalt, getPublicSalt(token.getPrincipal()));
+        if (log.isDebugEnabled()) {
+            log.debug("Merge salt. principal:[{}], salt:[{}]", token.getPrincipal(), salt);
+        }
 
-		// Determine which hashing algorithm to use
-		final String[] hashAlgorithms = config.getHashAlgorithms();
-		final int size = hashAlgorithms.length;
-		final long index = crc32(salt.getBytes()) % size & (size - 1);
-		final String algorithm = hashAlgorithms[(int) index];
-		final int hashIters = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
+        // Determine which hashing algorithm to use
+        final String[] hashAlgorithms = config.getHashAlgorithms();
+        final int size = hashAlgorithms.length;
+        final long index = crc32(salt.getBytes()) % size & (size - 1);
+        final String algorithm = hashAlgorithms[(int) index];
+        final int hashIters = (int) (Integer.MAX_VALUE % (index + 1)) + 1;
 
-		// Hashing signature
-		return hasher.hashing(algorithm, Util.bytes(token.getCredentials()), salt, hashIters).toHex();
-	}
+        // Hashing signature
+        return hasher.hashing(algorithm, Util.bytes(token.getCredentials()), salt, hashIters).toHex();
+    }
 
-	/**
-	 * Corresponding to the front end, RSA1 encryption is used by default.
-	 * 
-	 * @param token
-	 * @return
-	 */
-	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
-		// Determine keyPairSpec
-		RSAKeySpecWrapper keySpec = determineSecretKeySpecPair(token.getPrincipal());
+    /**
+     * Corresponding to the front end, RSA1 encryption is used by default.
+     *
+     * @param token
+     * @return
+     */
+    protected CredentialsToken resolves(@NotNull CredentialsToken token) {
+        // Determine keyPairSpec
+        RSAKeySpecWrapper keySpec = determineSecretKeySpecPair(token.getPrincipal());
 
-		if (log.isInfoEnabled()) {
-			String publicBase64String = keySpec.getPubHexString();
+        if (log.isInfoEnabled()) {
+            String publicBase64String = keySpec.getPubHexString();
 
-			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
-			String privateBase64String = "Not output";
-			if (log.isDebugEnabled()) {
-				privateBase64String = keySpec.getBase64String();
-				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
-			} else {
-				log.info(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
-			}
-		}
+            String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
+            String privateBase64String = "Not output";
+            if (log.isDebugEnabled()) {
+                privateBase64String = keySpec.getBase64String();
+                log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
+            } else {
+                log.info(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
+            }
+        }
 
-		// Mysterious DECRYPT them.
-		final String plainCredentials = rsaCryptoService.decryptWithHex(keySpec, token.getCredentials());
-		return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
-	}
+        // Mysterious DECRYPT them.
+        final String plainCredentials = rsaCryptoService.decryptWithHex(keySpec, token.getCredentials());
+        return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
+    }
 
-	/**
-	 * Determine asymmetric algorithms keyPair
-	 * 
-	 * @param checkCode
-	 * @return
-	 */
-	private RSAKeySpecWrapper determineSecretKeySpecPair(@NotNull String principal) {
-		// Choose the best one from the candidate key pair
-		Integer index = getBindValue(KEY_SECRET_INDEX, true);
-		if (index != null) {
-			return rsaCryptoService.borrow(index);
-		}
+    /**
+     * Determine asymmetric algorithms keyPair
+     *
+     * @param checkCode
+     * @return
+     */
+    private RSAKeySpecWrapper determineSecretKeySpecPair(@NotNull String principal) {
+        // Choose the best one from the candidate key pair
+        Integer index = getBindValue(KEY_SECRET_INDEX, true);
+        if (index != null) {
+            return rsaCryptoService.borrow(index);
+        }
 
-		if (log.isWarnEnabled()) {
-			log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
-		}
-		throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
-	}
+        if (log.isWarnEnabled()) {
+            log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
+        }
+        throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
+    }
 
-	/**
-	 * Hasher
-	 * 
-	 * @author wangl.sir
-	 * @version v1.0 2019年1月21日
-	 * @since
-	 */
-	private interface Hasher {
-		Hash hashing(String algorithm, ByteSource source, ByteSource salt, int hashIterations);
-	}
+    /**
+     * Hasher
+     *
+     * @author wangl.sir
+     * @version v1.0 2019年1月21日
+     * @since
+     */
+    private interface Hasher {
+        Hash hashing(String algorithm, ByteSource source, ByteSource salt, int hashIterations);
+    }
 
 }

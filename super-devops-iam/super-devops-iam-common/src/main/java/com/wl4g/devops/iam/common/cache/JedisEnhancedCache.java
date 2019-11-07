@@ -30,193 +30,193 @@ import redis.clients.jedis.JedisCluster;
 
 /**
  * REDIS enhanced implement cache
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月30日
  * @since
  */
 public class JedisEnhancedCache implements EnhancedCache {
-	final private Logger log = LoggerFactory.getLogger(JedisEnhancedCache.class);
-	private String name;
-	private JedisCluster jedisCluster;
+    final private Logger log = LoggerFactory.getLogger(JedisEnhancedCache.class);
+    private String name;
+    private JedisCluster jedisCluster;
 
-	public JedisEnhancedCache(String name, JedisCluster jedisCluster) {
-		this.name = name;
-		this.jedisCluster = jedisCluster;
-		Assert.notNull(name, "'name' must not be null");
-		Assert.notNull(jedisCluster, "'jedisCluster' must not be null");
-	}
+    public JedisEnhancedCache(String name, JedisCluster jedisCluster) {
+        this.name = name;
+        this.jedisCluster = jedisCluster;
+        Assert.notNull(name, "'name' must not be null");
+        Assert.notNull(jedisCluster, "'jedisCluster' must not be null");
+    }
 
-	@Override
-	public Object get(final EnhancedKey key) throws CacheException {
-		Assert.notNull(key, "'key' must not be null");
-		Assert.notNull(key.getValueClass(), "'valueClass' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Get key={}", key);
-		}
+    @Override
+    public Object get(final EnhancedKey key) throws CacheException {
+        Assert.notNull(key, "'key' must not be null");
+        Assert.notNull(key.getValueClass(), "'valueClass' must not be null");
+        if (log.isDebugEnabled()) {
+            log.debug("Get key={}", key);
+        }
 
-		byte[] data = jedisCluster.get(key.getKey(name));
-		if (key.getDeserializer() != null) { // Using a custom deserializer
-			return key.getDeserializer().deserialize(data, key.getValueClass());
-		}
+        byte[] data = jedisCluster.get(key.getKey(name));
+        if (key.getDeserializer() != null) { // Using a custom deserializer
+            return key.getDeserializer().deserialize(data, key.getValueClass());
+        }
 
-		return ProtostuffUtils.deserialize(data, key.getValueClass());
-	}
+        return ProtostuffUtils.deserialize(data, key.getValueClass());
+    }
 
-	@Override
-	public Object put(final EnhancedKey key, final Object value) throws CacheException {
-		Assert.notNull(key, "'key' must not be null");
-		Assert.notNull(value, "'value' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Put key={}, value={}", key, value);
-		}
+    @Override
+    public Object put(final EnhancedKey key, final Object value) throws CacheException {
+        Assert.notNull(key, "'key' must not be null");
+        Assert.notNull(value, "'value' must not be null");
+        if (log.isDebugEnabled()) {
+            log.debug("Put key={}, value={}", key, value);
+        }
 
-		byte[] data = null;
-		if (key.getSerializer() != null) { // Using a custom serializer
-			data = key.getSerializer().serialize(value);
-		} else {
-			data = ProtostuffUtils.serialize(value);
-		}
+        byte[] data = null;
+        if (key.getSerializer() != null) { // Using a custom serializer
+            data = key.getSerializer().serialize(value);
+        } else {
+            data = ProtostuffUtils.serialize(value);
+        }
 
-		String ret = null;
-		if (key.hasExpire()) {
-			ret = jedisCluster.setex(key.getKey(name), key.getExpire(), data);
-		} else {
-			ret = jedisCluster.set(key.getKey(name), data);
-		}
-		return String.valueOf(ret).equalsIgnoreCase("nil") ? null : ret;
-	}
+        String ret = null;
+        if (key.hasExpire()) {
+            ret = jedisCluster.setex(key.getKey(name), key.getExpire(), data);
+        } else {
+            ret = jedisCluster.set(key.getKey(name), data);
+        }
+        return String.valueOf(ret).equalsIgnoreCase("nil") ? null : ret;
+    }
 
-	@Override
-	public Object remove(final EnhancedKey key) throws CacheException {
-		Assert.notNull(key, "'key' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Remove key={}", key);
-		}
-		return jedisCluster.del(key.getKey(name));
-	}
+    @Override
+    public Object remove(final EnhancedKey key) throws CacheException {
+        Assert.notNull(key, "'key' must not be null");
+        if (log.isDebugEnabled()) {
+            log.debug("Remove key={}", key);
+        }
+        return jedisCluster.del(key.getKey(name));
+    }
 
-	@Override
-	public void clear() throws CacheException {
-		if (log.isDebugEnabled()) {
-			log.debug("Clear name={}", name);
-		}
-		jedisCluster.hdel(name);
-	}
+    @Override
+    public void clear() throws CacheException {
+        if (log.isDebugEnabled()) {
+            log.debug("Clear name={}", name);
+        }
+        jedisCluster.hdel(name);
+    }
 
-	@Override
-	public int size() {
-		if (log.isDebugEnabled()) {
-			log.debug("Size name={}", name);
-		}
-		return jedisCluster.hlen(name).intValue();
-	}
+    @Override
+    public int size() {
+        if (log.isDebugEnabled()) {
+            log.debug("Size name={}", name);
+        }
+        return jedisCluster.hlen(name).intValue();
+    }
 
-	@Deprecated
-	@Override
-	public Set<EnhancedKey> keys() {
-		// if (log.isDebugEnabled()) {
-		// log.debug("Keys name={}", name);
-		// }
-		// Set<byte[]> keys = jedisCluster.hkeys(name);
-		// if (keys != null && !keys.isEmpty()) {
-		// return keys.stream().map(key -> new
-		// EnhancedKey(key)).collect(Collectors.toSet());
-		// }
-		// return Collections.emptySet();
-		throw new UnsupportedOperationException();
-	}
+    @Deprecated
+    @Override
+    public Set<EnhancedKey> keys() {
+        // if (log.isDebugEnabled()) {
+        // log.debug("Keys name={}", name);
+        // }
+        // Set<byte[]> keys = jedisCluster.hkeys(name);
+        // if (keys != null && !keys.isEmpty()) {
+        // return keys.stream().map(key -> new
+        // EnhancedKey(key)).collect(Collectors.toSet());
+        // }
+        // return Collections.emptySet();
+        throw new UnsupportedOperationException();
+    }
 
-	@Deprecated
-	@Override
-	public Collection<Object> values() {
-		// if (log.isDebugEnabled()) {
-		// log.debug("Values name={}", name);
-		// }
-		// Collection<byte[]> vals = jedisCluster.hvals(name);
-		// if (vals != null && !vals.isEmpty()) {
-		// return vals.stream().collect(Collectors.toList());
-		// }
-		// return Collections.emptyList();
-		throw new UnsupportedOperationException();
-	}
+    @Deprecated
+    @Override
+    public Collection<Object> values() {
+        // if (log.isDebugEnabled()) {
+        // log.debug("Values name={}", name);
+        // }
+        // Collection<byte[]> vals = jedisCluster.hvals(name);
+        // if (vals != null && !vals.isEmpty()) {
+        // return vals.stream().collect(Collectors.toList());
+        // }
+        // return Collections.emptyList();
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Long timeToLive(EnhancedKey key, Object value) throws CacheException {
-		Assert.notNull(value, "TTL key is null, please check configure");
-		Assert.notNull(value, "TTL value is null, please check configure");
+    @Override
+    public Long timeToLive(EnhancedKey key, Object value) throws CacheException {
+        Assert.notNull(value, "TTL key is null, please check configure");
+        Assert.notNull(value, "TTL value is null, please check configure");
 
-		byte[] realKey = key.getKey(name);
-		// New create.
-		if (!jedisCluster.exists(realKey)) {
-			// key -> createTime
-			jedisCluster.set(realKey, String.valueOf(value).getBytes(Charsets.UTF_8));
-		}
+        byte[] realKey = key.getKey(name);
+        // New create.
+        if (!jedisCluster.exists(realKey)) {
+            // key -> createTime
+            jedisCluster.set(realKey, String.valueOf(value).getBytes(Charsets.UTF_8));
+        }
 
-		// Get last TTL expire
-		Long lastTTL = jedisCluster.ttl(realKey);
-		// Less than or equal to 0 means immediate expiration
-		if (key.hasExpire()) {
-			jedisCluster.expire(realKey, key.getExpire());
-		}
+        // Get last TTL expire
+        Long lastTTL = jedisCluster.ttl(realKey);
+        // Less than or equal to 0 means immediate expiration
+        if (key.hasExpire()) {
+            jedisCluster.expire(realKey, key.getExpire());
+        }
 
-		return lastTTL;
-	}
+        return lastTTL;
+    }
 
-	@Override
-	public Long incrementGet(EnhancedKey key) throws CacheException {
-		return incrementGet(key, 1);
-	}
+    @Override
+    public Long incrementGet(EnhancedKey key) throws CacheException {
+        return incrementGet(key, 1);
+    }
 
-	@Override
-	public Long incrementGet(EnhancedKey key, long incrBy) throws CacheException {
-		byte[] realKey = key.getKey(name);
-		// Increment
-		Long res = jedisCluster.incrBy(key.getKey(name), incrBy);
-		// Less than or equal to 0 means immediate expiration
-		if (key.hasExpire()) {
-			jedisCluster.expire(realKey, key.getExpire());
-		}
-		return res;
-	}
+    @Override
+    public Long incrementGet(EnhancedKey key, long incrBy) throws CacheException {
+        byte[] realKey = key.getKey(name);
+        // Increment
+        Long res = jedisCluster.incrBy(key.getKey(name), incrBy);
+        // Less than or equal to 0 means immediate expiration
+        if (key.hasExpire()) {
+            jedisCluster.expire(realKey, key.getExpire());
+        }
+        return res;
+    }
 
-	@Override
-	public Long decrementGet(EnhancedKey key) throws CacheException {
-		return decrementGet(key, 1);
-	}
+    @Override
+    public Long decrementGet(EnhancedKey key) throws CacheException {
+        return decrementGet(key, 1);
+    }
 
-	@Override
-	public Long decrementGet(EnhancedKey key, long decrBy) throws CacheException {
-		byte[] realKey = key.getKey(name);
-		// Decrement
-		Long res = jedisCluster.decr(realKey);
-		// Less than or equal to 0 means immediate expiration
-		if (key.hasExpire()) {
-			jedisCluster.expire(realKey, key.getExpire());
-		}
-		return res;
-	}
+    @Override
+    public Long decrementGet(EnhancedKey key, long decrBy) throws CacheException {
+        byte[] realKey = key.getKey(name);
+        // Decrement
+        Long res = jedisCluster.decr(realKey);
+        // Less than or equal to 0 means immediate expiration
+        if (key.hasExpire()) {
+            jedisCluster.expire(realKey, key.getExpire());
+        }
+        return res;
+    }
 
-	@Override
-	public boolean putIfAbsent(final EnhancedKey key, final Object value) {
-		Assert.notNull(key, "'key' must not be null");
-		Assert.notNull(value, "'value' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Put key={}, value={}", key, value);
-		}
+    @Override
+    public boolean putIfAbsent(final EnhancedKey key, final Object value) {
+        Assert.notNull(key, "'key' must not be null");
+        Assert.notNull(value, "'value' must not be null");
+        if (log.isDebugEnabled()) {
+            log.debug("Put key={}, value={}", key, value);
+        }
 
-		byte[] data = null;
-		if (key.getSerializer() != null) { // Using a custom serializer
-			data = key.getSerializer().serialize(value);
-		} else {
-			data = ProtostuffUtils.serialize(value);
-		}
+        byte[] data = null;
+        if (key.getSerializer() != null) { // Using a custom serializer
+            data = key.getSerializer().serialize(value);
+        } else {
+            data = ProtostuffUtils.serialize(value);
+        }
 
-		if (key.hasExpire()) {
-			return jedisCluster.set(key.getKey(name), data, NXXX, EXPX, key.getExpireMs()) != null;
-		}
-		return jedisCluster.setnx(key.getKey(name), data) != null;
-	}
+        if (key.hasExpire()) {
+            return jedisCluster.set(key.getKey(name), data, NXXX, EXPX, key.getExpireMs()) != null;
+        }
+        return jedisCluster.setnx(key.getKey(name), data) != null;
+    }
 
 }

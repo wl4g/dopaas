@@ -28,34 +28,34 @@ import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 
 /**
  * Social configure repository
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月25日
  * @since
  */
 public class SocialConfigureRepository implements SocialRepository {
 
-	/**
-	 * Binding connection repository
-	 */
-	final private Map<String, BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile>> repository = new ConcurrentHashMap<>();
+    /**
+     * Binding connection repository
+     */
+    final private Map<String, BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile>> repository = new ConcurrentHashMap<>();
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public SocialConfigureRepository(List<BindConnection> binds) {
-		Assert.notEmpty(binds, "'binds' must not be empty");
-		for (BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> bind : binds) {
-			if (this.repository.putIfAbsent(bind.providerId(), bind) != null) {
-				throw new IllegalStateException(String.format("Already provider register", bind.providerId()));
-			}
-		}
-	}
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public SocialConfigureRepository(List<BindConnection> binds) {
+        Assert.notEmpty(binds, "'binds' must not be empty");
+        for (BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> bind : binds) {
+            if (this.repository.putIfAbsent(bind.providerId(), bind) != null) {
+                throw new IllegalStateException(String.format("Already provider register", bind.providerId()));
+            }
+        }
+    }
 
-	@Override
-	public BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getBindConnection(String provider) {
-		if (!this.repository.containsKey(provider)) {
-			throw new NoSuchSocialProviderException(String.format("No such social provider [%s]", provider));
-		}
-		return this.repository.get(provider);
-	}
+    @Override
+    public BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getBindConnection(String provider) {
+        if (!this.repository.containsKey(provider)) {
+            throw new NoSuchSocialProviderException(String.format("No such social provider [%s]", provider));
+        }
+        return this.repository.get(provider);
+    }
 
 }

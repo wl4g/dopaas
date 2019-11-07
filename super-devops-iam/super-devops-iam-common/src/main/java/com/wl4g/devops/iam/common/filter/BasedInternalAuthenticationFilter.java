@@ -31,9 +31,9 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 /**
  * Interactive authentication processing filter for internal and application
  * services
- * 
+ * <p>
  * {@link org.apache.shiro.web.filter.authz.HostFilter}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月30日
@@ -41,28 +41,28 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
  */
 public abstract class BasedInternalAuthenticationFilter extends AuthenticatingFilter implements IamAuthenticationFilter {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	final protected AbstractIamProperties<? extends ParamProperties> config;
+    final protected AbstractIamProperties<? extends ParamProperties> config;
 
-	public BasedInternalAuthenticationFilter(AbstractIamProperties<? extends ParamProperties> config) {
-		Assert.notNull(config, "'config' must not be null");
-		this.config = config;
-	}
+    public BasedInternalAuthenticationFilter(AbstractIamProperties<? extends ParamProperties> config) {
+        Assert.notNull(config, "'config' must not be null");
+        this.config = config;
+    }
 
-	@Override
-	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		return super.isAccessAllowed(request, response, mappedValue);
-	}
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        return super.isAccessAllowed(request, response, mappedValue);
+    }
 
-	@Override
-	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-		return false;
-	}
+    @Override
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+        return false;
+    }
 
 }

@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 
 /**
  * IAM based matcher
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -41,42 +41,42 @@ import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
  */
 public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * IAM verification handler
-	 */
-	@Autowired
-	protected CompositeSecurityVerifierAdapter verifier;
+    /**
+     * IAM verification handler
+     */
+    @Autowired
+    protected CompositeSecurityVerifierAdapter verifier;
 
-	/**
-	 * Matcher configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
+    /**
+     * Matcher configuration properties
+     */
+    @Autowired
+    protected IamProperties config;
 
-	/**
-	 * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
-	 */
-	@Autowired
-	protected EnhancedCacheManager cacheManager;
+    /**
+     * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
+     */
+    @Autowired
+    protected EnhancedCacheManager cacheManager;
 
-	/**
-	 * IAM credentials securer
-	 */
-	@Autowired
-	protected IamCredentialsSecurer securer;
+    /**
+     * IAM credentials securer
+     */
+    @Autowired
+    protected IamCredentialsSecurer securer;
 
-	/**
-	 * IAM security Coprocessor
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
+    /**
+     * IAM security Coprocessor
+     */
+    @Autowired
+    protected ServerSecurityCoprocessor coprocessor;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+    /**
+     * Delegate message source.
+     */
+    @Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+    protected SessionDelegateMessageBundle bundle;
 
 }

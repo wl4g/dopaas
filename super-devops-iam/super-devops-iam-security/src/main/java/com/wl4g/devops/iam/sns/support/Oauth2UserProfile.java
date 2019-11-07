@@ -19,6 +19,6 @@ import java.io.Serializable;
 
 public interface Oauth2UserProfile extends Serializable {
 
-	<U extends Oauth2UserProfile> U build(String message);
+    <U extends Oauth2UserProfile> U build(String message);
 
 }
