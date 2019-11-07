@@ -18,8 +18,8 @@ package com.wl4g.devops.scm.controller;
 import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.bean.scm.VersionContentBean;
 import com.wl4g.devops.common.bean.scm.VersionOfDetail;
 import com.wl4g.devops.common.web.BaseController;
@@ -81,7 +81,7 @@ public class ConfigurationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "config-list.json", method = RequestMethod.POST)
-	public RespBase<?> list(ConfigVersionList agl, CustomPage customPage) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel customPage) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigList request ... {}, {}", agl, customPage);
 		}

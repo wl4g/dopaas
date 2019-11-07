@@ -19,8 +19,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.utils.task.CronUtils;
 import com.wl4g.devops.common.web.BaseController;
@@ -70,7 +70,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, Integer id, String name, Integer taskId, Integer enable, String startDate,
+	public RespBase<?> list(PageModel customPage, Integer id, String name, Integer taskId, Integer enable, String startDate,
 			String endDate) {
 		log.info(
 				"into TriggerController.list prarms::"

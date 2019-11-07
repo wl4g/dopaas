@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -46,11 +46,11 @@ public class MetricTemplateController extends BaseController {
 	private MetricTemplateService metricTemplateService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String metric, String classify, CustomPage customPage) {
+	public RespBase<?> list(String metric, String classify, PageModel customPage) {
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<MetricTemplate> list = metricTemplateDao.list(metric, classify);
 
 		customPage.setPageNum(pageNum);

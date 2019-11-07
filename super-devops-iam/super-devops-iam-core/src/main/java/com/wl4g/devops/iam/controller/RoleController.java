@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.controller;
 
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.iam.Role;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, String name, String displayName) {
+	public RespBase<?> list(PageModel customPage, String name, String displayName) {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = roleService.list(customPage, name, displayName);
 		resp.setData(result);

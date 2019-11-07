@@ -18,9 +18,9 @@ package com.wl4g.devops.iam.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.iam.*;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.dao.iam.*;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 	private UserUtil userUtil;
 
 	@Override
-	public Map<String, Object> list(CustomPage customPage, String userName, String displayName) {
+	public Map<String, Object> list(PageModel customPage, String userName, String displayName) {
 		Map<String, Object> resp = new HashMap<>();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;

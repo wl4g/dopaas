@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.controller;
 
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.iam.User;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.UserService;
@@ -41,7 +41,7 @@ public class UserController extends BaseController {
 
 	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, String userName, String displayName) {
+	public RespBase<?> list(PageModel customPage, String userName, String displayName) {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = userService.list(customPage, userName, displayName);
 		resp.setData(result);

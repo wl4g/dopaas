@@ -29,7 +29,6 @@ import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.share.DictDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.HistoryService;
-import com.wl4g.devops.share.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,8 +51,6 @@ public class HistoryServiceImpl implements HistoryService {
 	private AppClusterDao appClusterDao;
 	@Autowired
 	private ConfigContextHandler configServerService;
-	@Autowired
-	private AppClusterService appClusterService;
 	@Autowired
 	private DictDao dictDao;
 	@Autowired
@@ -158,7 +155,7 @@ public class HistoryServiceImpl implements HistoryService {
 		AppCluster appCluster = this.appClusterDao.selectByPrimaryKey(agl.getAppClusterId());
 
 		// Get application nodeList information
-		List<AppInstance> nodeList = appInstanceDao.selectByClusterIdAndEnvType(agl.getAppClusterId(),agl.getEnvType());
+		List<AppInstance> nodeList = appInstanceDao.selectByClusterIdAndEnvType(agl.getAppClusterId(), agl.getEnvType());
 		// Define release instance list.
 		List<ReleaseInstance> instances = new ArrayList<>();
 		for (AppInstance instance : nodeList) {
@@ -174,7 +171,7 @@ public class HistoryServiceImpl implements HistoryService {
 		for (VersionContentBean versionContentBean : versionContentBeans) {
 			Dict dict = dictDao.selectByPrimaryKey(versionContentBean.getNamespaceId());
 			String namespace = dict.getValue();
-			namespace = "application-"+namespace+".yml";
+			namespace = "application-" + namespace + ".yml";
 			namespaces.add(namespace);
 		}
 

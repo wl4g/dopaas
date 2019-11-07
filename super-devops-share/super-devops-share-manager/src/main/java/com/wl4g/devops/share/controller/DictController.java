@@ -18,7 +18,7 @@ package com.wl4g.devops.share.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.share.Dict;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
@@ -56,7 +56,7 @@ public class DictController extends BaseController {
 	private JedisService jedisService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, String key, String label, String type, String description) {
+	public RespBase<?> list(PageModel customPage, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;

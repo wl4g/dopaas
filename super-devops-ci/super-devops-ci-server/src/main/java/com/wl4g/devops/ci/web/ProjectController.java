@@ -19,8 +19,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -65,7 +65,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName, String projectName, CustomPage customPage) {
+	public RespBase<?> list(String groupName, String projectName, PageModel customPage) {
 		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , customPage = {} ", groupName,
 				projectName, customPage);
 

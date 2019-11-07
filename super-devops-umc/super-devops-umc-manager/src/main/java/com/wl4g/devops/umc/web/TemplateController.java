@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.web;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -51,13 +51,13 @@ public class TemplateController extends BaseController {
 	private TemplateService templateService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, Integer metricId, String classify, CustomPage customPage) {
+	public RespBase<?> list(String name, Integer metricId, String classify, PageModel customPage) {
 		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , customPage = {} ", name,
 				metricId, classify, customPage);
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+		Page<PageModel> page = PageHelper.startPage(pageNum, pageSize, true);
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
 			String tags = alarmTpl.getTags();
