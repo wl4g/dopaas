@@ -20,6 +20,7 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.ClusterConfigDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,10 +39,13 @@ public class ApplicationController extends BaseController {
 	@Autowired
 	private ClusterConfigDao clusterConfigDao;
 
+	@Value("${spring.profiles.active}")
+	private String profile;
+
 	@RequestMapping(value = "/info")
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
-		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, null, null);
+		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null,profile,null);
 		Map<String, Object> map = new HashMap<>();
 		for (ClusterConfig entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);
