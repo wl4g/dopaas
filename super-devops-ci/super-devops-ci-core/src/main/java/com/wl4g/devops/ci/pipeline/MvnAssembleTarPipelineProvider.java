@@ -44,7 +44,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		mvnBuild(getContext().getTaskHistory(), false);
 
 		// Setup Vcs source fingerprint.
-		setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// MVN build.
 		doMvnBuildInternal();
@@ -61,12 +61,12 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			// Direct using backup file.
 			rollbackBackupFile();
 			// Setup vcs source fingerprint.
-			setupVcsSourceFileFingerprint(getContext().getRefTaskHistory().getShaGit());
+			setupSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
 		} else {
 			// New building and include dependencies.
 			mvnBuild(getContext().getTaskHistory(), true);
 			// Setup vcs source fingerprint.
-			setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+			setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 		}
 
 		// MVN build.
@@ -79,7 +79,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	private void doMvnBuildInternal() throws Exception {
 		// Setup assets file fingerprint.
 		File file = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
-		setupAssetsFileFingerprint(getMd5Fingerprint(file));
+		setupAssetsFingerprint(getMd5Fingerprint(file));
 
 		// backup in local
 		backupLocal();
@@ -100,7 +100,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
+	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(MvnAssembleTarPipeDeployer.class, args);
 	}

@@ -43,7 +43,7 @@ public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
+	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(DjangoStandardPipeDeployer.class, args);
 	}

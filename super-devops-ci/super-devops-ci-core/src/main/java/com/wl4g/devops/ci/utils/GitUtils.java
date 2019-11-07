@@ -92,7 +92,7 @@ public abstract class GitUtils {
 	/**
 	 * Checkout and pull
 	 */
-	public static void checkout(CredentialsProvider credentials, String projecDir, String branchName) {
+	public static void checkoutAndPull(CredentialsProvider credentials, String projecDir, String branchName) {
 		String projectURL = projecDir + "/.git";
 		try (Git git = Git.open(new File(projectURL))) {
 			List<Ref> refs = git.branchList().call();
@@ -112,14 +112,13 @@ public abstract class GitUtils {
 			// Pull & get latest source code.
 			git.pull().setCredentialsProvider(credentials).call();
 
-			String msg = "Checkout branch success;branchName=" + branchName + " localPath=" + projecDir;
 			if (log.isInfoEnabled()) {
-				log.info(msg);
+				log.info("Checkout & pull successful for branchName:{}, projecDir:{}", branchName, projecDir);
 			}
 		} catch (Exception e) {
-			String errmsg = String.format("checkout branch failure. branchName=%s, localPath=%s", branchName, projecDir);
+			String errmsg = String.format("Failed to checkout & pull for branchName: %s, projecDir: %s", branchName, projecDir);
 			log.error(errmsg, e);
-			throw new IllegalStateException(e);
+			throw new IllegalStateException(errmsg, e);
 		}
 	}
 
@@ -196,12 +195,12 @@ public abstract class GitUtils {
 			Iterable<RevCommit> iterb = git.log().setMaxCount(1).call();// 拿最新的comit-sign
 			Iterator<RevCommit> it = iterb.iterator();
 			if (it.hasNext()) {
-				RevCommit commit = it.next();
-				String commitID = commit.getName(); // Latest committed version?
+				// Get latest version committed.
+				String commitSign = it.next().getName();
 				if (log.isInfoEnabled()) {
-					log.info("Latest committed sign:{}, path:{}", commitID, projecDir);
+					log.info("Latest committed sign:{}, path:{}", commitSign, projecDir);
 				}
-				return commitID;
+				return commitSign;
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e);

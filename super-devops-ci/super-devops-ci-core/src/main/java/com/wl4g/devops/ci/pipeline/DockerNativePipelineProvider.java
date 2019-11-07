@@ -49,7 +49,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		mvnBuild(getContext().getTaskHistory(), false);
 
 		// get sha and md5
-		setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// docker build
 		dockerBuild(getContext().getProjectSourceDir());
@@ -73,9 +73,9 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dependency.setProjectId(getContext().getProject().getId());
 
 		mvnBuild(getContext().getTaskHistory(), true);
-		setupVcsSourceFileFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 
-		setupAssetsFileFingerprint(FingerprintCodec.getMd5Fingerprint(new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath())));
+		setupAssetsFingerprint(FingerprintCodec.getMd5Fingerprint(new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath())));
 
 		// Startup pipeline jobs.
 		doExecuteTransferToRemoteInstances();
@@ -127,7 +127,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
+	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
 	}

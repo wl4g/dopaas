@@ -102,7 +102,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 		String localFile = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
 		logDefault("Transfer to remote tmpdir for %s@%s -> [%s]", user, remoteHost, localFile);
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
-		transferFile(remoteHost, user, provider.getUsableCipherSSHKey(sshkey), new File(localFile), remoteTmpDir);
+		transferFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), new File(localFile), remoteTmpDir);
 	}
 
 	/**

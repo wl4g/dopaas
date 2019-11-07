@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -37,6 +38,8 @@ import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.contains;
+import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.springframework.util.Assert.hasText;
@@ -82,8 +85,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected TaskSignDao taskSignDao;
 
-	private String vcsSourceFileFingerprint;
-	private String assetsFileFingerprint;
+	/**
+	 * Pull project source from VCS files fingerprint.
+	 */
+	private String sourceFingerprint;
+
+	/**
+	 * Build project assets files fingerprint.
+	 */
+	private String assetsFingerprint;
 
 	public AbstractPipelineProvider(PipelineContext context) {
 		notNull(context, "Pipeline context must not be null.");
@@ -99,24 +109,40 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	// --- Fingerprints. ---
 
+	/**
+	 * Get pull project source from VCS files fingerprint.
+	 */
 	@Override
-	public String getVcsSourceFileFingerprint() {
-		return vcsSourceFileFingerprint;
+	public String getSourceFingerprint() {
+		return sourceFingerprint;
 	}
 
+	/**
+	 * Get build project assets files fingerprint.
+	 */
 	@Override
-	public String getAssetsFileFingerprint() {
-		return assetsFileFingerprint;
+	public String getAssetsFingerprint() {
+		return assetsFingerprint;
 	}
 
-	protected void setupVcsSourceFileFingerprint(String vcsSourceFileFingerprint) {
-		hasText(vcsSourceFileFingerprint, "vcsSourceFileFingerprint must not be empty.");
-		this.vcsSourceFileFingerprint = vcsSourceFileFingerprint;
+	/**
+	 * Setup pull project source from VCS files fingerprint.
+	 * 
+	 * @param sourceFingerprint
+	 */
+	protected void setupSourceFingerprint(String sourceFingerprint) {
+		hasText(sourceFingerprint, "sourceFingerprint must not be empty.");
+		this.sourceFingerprint = sourceFingerprint;
 	}
 
-	protected void setupAssetsFileFingerprint(String assetsFileFingerprint) {
-		hasText(assetsFileFingerprint, "assetsFileFingerprint must not be empty.");
-		this.assetsFileFingerprint = assetsFileFingerprint;
+	/**
+	 * Setup build project assets files fingerprint.
+	 * 
+	 * @param assetsFingerprint
+	 */
+	protected void setupAssetsFingerprint(String assetsFingerprint) {
+		hasText(assetsFingerprint, "assetsFingerprint must not be empty.");
+		this.assetsFingerprint = assetsFingerprint;
 	}
 
 	// --- Functions. ---
@@ -139,7 +165,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
 		logDefault("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
 		// Execution command.
-		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSSHKey(sshkey), command, timeoutMs);
+		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 
 		logDefault("\n%s@%s -> [stdout]\n", user, remoteHost);
 		if (!isBlank(result.getMessage())) {
@@ -160,7 +186,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @throws Exception
 	 */
 	@Override
-	public char[] getUsableCipherSSHKey(String sshkey) throws Exception {
+	public char[] getUsableCipherSshKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
 		String cipherKey = config.getDeploy().getCipherKey();
 		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
@@ -177,7 +203,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected void doExecuteTransferToRemoteInstances() {
 		// Creating transfer instances jobs.
-		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> newTransferJob(i)).collect(toList());
+		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> newDeployer(i)).collect(toList());
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
@@ -195,16 +221,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @param instance
 	 * @return
 	 */
-	protected abstract Runnable newTransferJob(AppInstance instance);
+	protected abstract Runnable newDeployer(AppInstance instance);
 
 	/**
-	 * Resolve placeholder variables.
+	 * Resolve commands placeholder variables.
 	 * 
-	 * @param command
+	 * @param commands
 	 * @return
 	 */
-	protected String resolvePlaceholderVariables(String command) {
-		return new PlaceholderVariableResolver(command).resolve().getAssertion();
+	protected String resolveCmdPlaceholderVariables(String commands) {
+		return new PlaceholderVariableResolver(commands).resolve().get();
 	}
 
 	/**
@@ -235,11 +261,11 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		final public static String PH_REMOTE_TMP_DIR = "{pipe.remoteTmpDir}";
 
 		/** Resolving commands. */
-		private String command;
+		private String commands;
 
-		public PlaceholderVariableResolver(String command) {
-			hasText(command, "Resolveing command must not be empty.");
-			this.command = command;
+		public PlaceholderVariableResolver(String commands) {
+			hasText(commands, "Resolving pipeline commands must not be empty.");
+			this.commands = commands;
 		}
 
 		/**
@@ -251,28 +277,28 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		 */
 		PlaceholderVariableResolver resolve() {
 			// Replace for workspace.
-			command = replace(command, PH_WORKSPACE_DIR, config.getWorkspace());
+			commands = replace(commands, PH_WORKSPACE_DIR, config.getWorkspace());
 
 			// Replace for projectDir.
 			String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName()).getAbsolutePath();
-			command = replace(command, PH_PROJECT_DIR, projectDir);
+			commands = replace(commands, PH_PROJECT_DIR, projectDir);
 
 			// Replace for backupDir.
 			File tmpScriptFile = config.getJobTmpCommandFile(getContext().getTaskHistory().getId(),
 					getContext().getProject().getId());
-			command = replace(command, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
+			commands = replace(commands, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
 
 			// Replace for backupDir.
 			File backupDir = config.getJobBackup(getContext().getTaskHistory().getId());
-			command = replace(command, PH_BACKUP_DIR, backupDir.getAbsolutePath());
+			commands = replace(commands, PH_BACKUP_DIR, backupDir.getAbsolutePath());
 
 			// Replace for logPath.
 			File logFile = config.getJobLog(getContext().getTaskHistory().getId());
-			command = replace(command, PH_LOG_FILE, logFile.getAbsolutePath());
+			commands = replace(commands, PH_LOG_FILE, logFile.getAbsolutePath());
 
 			// Replace for remoteTmpDir.
 			String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
-			command = replace(command, PH_REMOTE_TMP_DIR, remoteTmpDir);
+			commands = replace(commands, PH_REMOTE_TMP_DIR, remoteTmpDir);
 
 			return this;
 		}
@@ -282,11 +308,31 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		 * 
 		 * @return
 		 */
-		String getAssertion() {
-			// TODO ---
-			return command;
+		String get() {
+			// Invalid placeholder ?
+			if (containsAny(commands, "{", "}")) {
+				if (contains(commands, "{") && contains(commands, "}")) {
+					String invalidVar = commands.substring(commands.indexOf("{"), commands.indexOf("}") + 1);
+					throw new InvalidCommandScriptException(String.format(
+							"Invalid placeholder '%s' in commands script. See:https://github.com/wl4g/super-devops/blob/master/super-devops-ci/README.md",
+							invalidVar));
+				} else {
+					throw new InvalidCommandScriptException(String.format("Invalid commands script for: %s", commands));
+				}
+			}
+
+			return commands;
 		}
 
+	}
+
+	public static void main(String[] args) {
+		String s = "aabb111b {pipe.remoteTmpDir} \n echo 1111 \n start...";
+		System.out.println(s);
+		if (containsAny(s, "{", "}")) {
+			System.out.println(s.substring(s.indexOf("{"), s.indexOf("}") + 1));
+		}
+		System.out.println();
 	}
 
 }

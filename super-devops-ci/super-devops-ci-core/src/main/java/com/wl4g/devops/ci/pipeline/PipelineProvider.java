@@ -59,10 +59,10 @@ public interface PipelineProvider extends DelegateAliasPrototypeBean {
 	 */
 	void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception;
 
-	char[] getUsableCipherSSHKey(String sshkey) throws Exception;
+	char[] getUsableCipherSshKey(String sshkey) throws Exception;
 
-	String getAssetsFileFingerprint();
+	String getAssetsFingerprint();
 
-	String getVcsSourceFileFingerprint();
+	String getSourceFingerprint();
 
 }
