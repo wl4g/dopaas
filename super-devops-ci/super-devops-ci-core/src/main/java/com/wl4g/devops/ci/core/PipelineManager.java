@@ -31,7 +31,7 @@ public interface PipelineManager {
 	 * 
 	 * @param taskId
 	 */
-	void newPipeline(Integer taskId);
+	void newPipeline(Integer taskId,Integer trackId,Integer trackType,String remark);
 
 	/**
 	 * Roll-back pipeline task job.
