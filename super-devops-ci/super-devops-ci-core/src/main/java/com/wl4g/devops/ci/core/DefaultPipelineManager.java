@@ -93,7 +93,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected TaskBuildCommandDao taskBuildCmdDao;
 
 	@Override
-	public void newPipeline(Integer taskId) {
+	public void newPipeline(Integer taskId,Integer trackId,Integer trackType,String remark) {
 		notNull(taskId, "Pipeline job taskId must not be null");
 		if (log.isInfoEnabled()) {
 			log.info("On pipeline job for taskId: {}", taskId);
@@ -125,7 +125,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Obtain task history.
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getTarType(), task.getContactGroupId(), taskBuildCmds);
+				task.getTarType(), task.getContactGroupId(), taskBuildCmds,trackId,trackType,remark);
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -162,7 +162,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
 				TASK_STATUS_CREATE, backupTaskHisy.getBranchName(), null, taskId, backupTaskHisy.getBuildCommand(),
 				backupTaskHisy.getPreCommand(), backupTaskHisy.getPostCommand(), backupTaskHisy.getTarType(),
-				backupTaskHisy.getContactGroupId(), commands);
+				backupTaskHisy.getContactGroupId(), commands,null,null,null);
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
@@ -201,7 +201,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				branchName, sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(), task.getTarType(),
-				task.getContactGroupId(), taskBuildCmds);
+				task.getContactGroupId(), taskBuildCmds,null,null,null);
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
