@@ -24,13 +24,13 @@ import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Date;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.springframework.util.Assert.hasText;
+
 import java.util.List;
 
 /**
@@ -46,7 +46,7 @@ public class TimingPipelineJob implements Runnable {
 	@Autowired
 	protected CiCdProperties config;
 	@Autowired
-	protected PipelineManager pipelineProcessor;
+	protected PipelineManager pipeManager;
 	@Autowired
 	protected TriggerService triggerService;
 
@@ -64,50 +64,55 @@ public class TimingPipelineJob implements Runnable {
 
 	@Override
 	public void run() {
-		log.info("Timing tasks start");
-		if (check()) {// check
-			log.info("Code had modify , create build task now triggetId={} ", trigger.getId());
-			List<String> instancesStr = new ArrayList<>();
-			for (TaskDetail taskDetail : taskDetails) {
-				instancesStr.add(String.valueOf(taskDetail.getInstanceId()));
+		if (log.isInfoEnabled()) {
+			log.info("Timing pipeline tasks ... project:{}, task:{}, trigger:{}", project, task, trigger);
+		}
+
+		try {
+			if (!checkCommittedChanged()) { // Changed?
+				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
+						task, trigger);
 			}
-			pipelineProcessor.newPipeline(task.getId());
+
+			// Creating pipeline task.
+			pipeManager.newPipeline(task.getId());
 
 			// set new sha in db
-			String path = config.getWorkspace() + "/" + project.getProjectName();
-			try {
-				String newSha = GitUtils.getLatestCommitted(path);
-				if (StringUtils.isNotBlank(newSha)) {
-					triggerService.updateSha(trigger.getId(), newSha);
-					trigger.setSha(newSha);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+			String latestSha = GitUtils.getLatestCommitted(projectDir);
+			hasText(latestSha, String.format("Trigger latest sha can't be empty for %s", projectDir));
 
-			log.info("Cron Create TaskHistory triggerId={} projectId={} projectName={} time={}", trigger.getId(), project.getId(),
-					project.getProjectName(), new Date());
+			// Update latest sign.
+			triggerService.updateSha(trigger.getId(), latestSha);
+			trigger.setSha(latestSha);
+
+			if (log.isInfoEnabled()) {
+				log.info("Timing pipeline tasks executed successful, with triggerId: {}, projectId:{}, projectName:{} ",
+						trigger.getId(), project.getId(), project.getProjectName());
+			}
+		} catch (Exception e) {
+			log.error("", e);
 		}
+
 	}
 
 	/**
-	 * check need or not build -- 当本地git仓库的sha和服务器上的不一致时(有代码提交)，则需要更新
+	 * Check for updates. </br>
+	 * When the Sha of the VCS local warehouse is different from the latest Sha
+	 * on the server, it indicates that there is code update
+	 * 
+	 * @return
+	 * @throws Exception
 	 */
-	private boolean check() {
-		String sha = trigger.getSha();
-		String path = config.getWorkspace() + "/" + project.getProjectName();
-		try {
-			if (GitUtils.checkGitPath(path)) {
-				GitUtils.checkout(config.getVcs().getGitlab().getCredentials(), path, task.getBranchName());
-			} else {
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), path, task.getBranchName());
-			}
-			String oldestSha = GitUtils.getLatestCommitted(path);
-			return !StringUtils.equals(sha, oldestSha);
-		} catch (Exception e) {
-			e.printStackTrace();
+	private boolean checkCommittedChanged() throws Exception {
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+		if (GitUtils.checkGitPath(projectDir)) {
+			GitUtils.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, task.getBranchName());
+		} else {
+			GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, task.getBranchName());
 		}
-		return false;
+		String newSign = GitUtils.getLatestCommitted(projectDir);
+		return !equalsIgnoreCase(trigger.getSha(), newSign);
 	}
 
 }

@@ -54,14 +54,12 @@ public class AppClueterServiceImpl implements AppClusterService {
 		Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<AppCluster> list = appClusterDao.list(clusterName);
 		for (AppCluster appCluster : list) {
-			int i = appInstanceDao.countByClusterId(appCluster.getId());
-			appCluster.setInstanceCount(i);
+			int count = appInstanceDao.countByClusterId(appCluster.getId());
+			appCluster.setInstanceCount(count);
 		}
-		page.setPageNum(pm.getPageNum());
-		page.setPageSize(pm.getPageSize());
-		page.setTotal(page.getTotal());
+		pm.setTotal(page.getTotal());
 
-		data.put("page", page);
+		data.put("page", pm);
 		data.put("list", list);
 		return data;
 	}

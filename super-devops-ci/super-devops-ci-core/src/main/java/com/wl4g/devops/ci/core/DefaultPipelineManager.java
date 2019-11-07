@@ -252,7 +252,7 @@ public class DefaultPipelineManager implements PipelineManager {
 
 				// Setup status to success.
 				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null,
-						provider.getVcsSourceFileFingerprint(), provider.getAssetsFileFingerprint());
+						provider.getSourceFingerprint(), provider.getAssetsFingerprint());
 				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 
 				// Successful process.
@@ -391,7 +391,7 @@ public class DefaultPipelineManager implements PipelineManager {
 						provider.getClass().getSimpleName()));
 
 				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null,
-						provider.getVcsSourceFileFingerprint(), provider.getAssetsFileFingerprint());
+						provider.getSourceFingerprint(), provider.getAssetsFingerprint());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
 				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,

@@ -594,9 +594,9 @@ public class RespBase<D> implements Serializable {
 		 * @param errmsg
 		 * @return
 		 */
-		public static String build(RetCode retCode, String errmsg) {
+		final public static String build(RetCode retCode, String errmsg) {
 			if (!isBlank(errmsg)) {
-				String prefixString = String.format("[%s-%s]", ErrorPrefixString, retCode.getErrcode());
+				String prefixString = String.format("[%s-%s] ", ErrorPrefixString, retCode.getErrcode());
 				return contains(errmsg, prefixString) ? errmsg : (prefixString + errmsg);
 			}
 			return errmsg;
@@ -607,7 +607,7 @@ public class RespBase<D> implements Serializable {
 		 * 
 		 * @param errorPrefix
 		 */
-		public static void setup(String errorPrefix) {
+		final public static void setup(String errorPrefix) {
 			hasText(errorPrefix, "Global errors prefix can't be empty.");
 			ErrorPrefixString = errorPrefix;
 		}

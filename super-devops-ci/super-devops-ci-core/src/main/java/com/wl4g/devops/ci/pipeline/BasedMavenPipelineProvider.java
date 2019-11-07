@@ -218,7 +218,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			}
 		} else {
 			if (checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				checkout(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
+				checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
 				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
 			}
@@ -241,7 +241,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			// Temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
 			// Resolve placeholder variables.
-			buildCommand = resolvePlaceholderVariables(buildCommand);
+			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
 			// Execute shell file.
 			processManager.execFile(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logFile, 300000);
 		}

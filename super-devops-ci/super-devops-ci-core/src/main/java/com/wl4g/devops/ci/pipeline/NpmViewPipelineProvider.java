@@ -55,7 +55,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
+	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
 	}
@@ -98,7 +98,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 			}
 		} else {
 			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				GitUtils.checkout(credentials, projectDir, getContext().getTaskHistory().getBranchName());
+				GitUtils.checkoutAndPull(credentials, projectDir, getContext().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
 				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
 			}
@@ -117,7 +117,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			// Resolve placeholder variables.
-			String buildCommand = resolvePlaceholderVariables(taskHistory.getBuildCommand());
+			String buildCommand = resolveCmdPlaceholderVariables(taskHistory.getBuildCommand());
 			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 	}
