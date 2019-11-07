@@ -21,14 +21,14 @@ import com.wl4g.devops.iam.authc.SinaAuthenticationToken;
 @IamFilter
 public class SinaAuthenticationFilter extends Oauth2SnsAuthenticationFilter<SinaAuthenticationToken> {
 
-    @Override
-    public String getName() {
-        return ProviderSupport.SINA.getName();
-    }
+	@Override
+	public String getName() {
+		return ProviderSupport.SINA.getName();
+	}
 
-    @Override
-    public String getUriMapping() {
-        return URI_BASE_MAPPING + ProviderSupport.SINA.getName();
-    }
+	@Override
+	public String getUriMapping() {
+		return URI_BASE_MAPPING + ProviderSupport.SINA.getName();
+	}
 
 }

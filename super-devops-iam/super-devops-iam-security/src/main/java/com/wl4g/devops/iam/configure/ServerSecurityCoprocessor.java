@@ -36,50 +36,52 @@ import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 @Beta
 public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
-    /**
-     * Before apply CAPTCHA handle
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    default boolean preApplyCapcha(ServletRequest request, ServletResponse response) {
-        return true;
-    }
+	/**
+	 * Before apply CAPTCHA handle
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	default boolean preApplyCapcha(ServletRequest request, ServletResponse response) {
+		return true;
+	}
 
-    /**
-     * Before apply verify-code handle
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    default boolean preApplyVerify(ServletRequest request, ServletResponse response) {
-        return true;
-    }
+	/**
+	 * Before apply verify-code handle
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	default boolean preApplyVerify(ServletRequest request, ServletResponse response) {
+		return true;
+	}
 
-    /**
-     * Before Whether the generic authenticating check match is allowed.
-     *
-     * @param token
-     * @param info
-     * @return
-     */
-    default boolean preAuthenticatingAllowed(IamAuthenticationToken token, AuthenticationInfo info) throws AccountException {
-        return true;
-    }
+	/**
+	 * Before Whether the generic authenticating check match is allowed.
+	 *
+	 * @param token
+	 * @param info
+	 * @return
+	 */
+	default boolean preAuthenticatingAllowed(IamAuthenticationToken token, AuthenticationInfo info) throws AccountException {
+		return true;
+	}
 
-    /**
-     * When the authentication succeeds, but there is no access to the Iam
-     * client application, this method will be called fallback to get the
-     * redirection URL
-     *
-     * @param token           Authentication token.
-     * @param defaultRedirect Default redirection information for configuration.
-     * @return
-     */
-    default RedirectInfo fallbackGetRedirectInfo(IamAuthenticationToken token, RedirectInfo defaultRedirect) {
-        return defaultRedirect;
-    }
+	/**
+	 * When the authentication succeeds, but there is no access to the Iam
+	 * client application, this method will be called fallback to get the
+	 * redirection URL
+	 *
+	 * @param token
+	 *            Authentication token.
+	 * @param defaultRedirect
+	 *            Default redirection information for configuration.
+	 * @return
+	 */
+	default RedirectInfo fallbackGetRedirectInfo(IamAuthenticationToken token, RedirectInfo defaultRedirect) {
+		return defaultRedirect;
+	}
 
 }

@@ -30,27 +30,31 @@ import javax.validation.constraints.NotNull;
  */
 public interface CredentialsSecurer {
 
-    /**
-     * Encryption credentials
-     *
-     * @param token       External input principal and credentials
-     * @param credentials External input credentials
-     * @return
-     */
-    default String signature(@NotNull CredentialsToken token) {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * Encryption credentials
+	 *
+	 * @param token
+	 *            External input principal and credentials
+	 * @param credentials
+	 *            External input credentials
+	 * @return
+	 */
+	default String signature(@NotNull CredentialsToken token) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * Validation credentials
-     *
-     * @param token External input principal and credentials
-     * @param info  Database storage credentials information.
-     * @return
-     */
-    default boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
-            throws CredentialsException, RuntimeException {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * Validation credentials
+	 *
+	 * @param token
+	 *            External input principal and credentials
+	 * @param info
+	 *            Database storage credentials information.
+	 * @return
+	 */
+	default boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
+			throws CredentialsException, RuntimeException {
+		throw new UnsupportedOperationException();
+	}
 
 }

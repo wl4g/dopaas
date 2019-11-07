@@ -47,75 +47,76 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 @Beta
 @IamFilter
 public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<IamAuthenticationToken> {
-    final public static String NAME = "rootFilter";
+	final public static String NAME = "rootFilter";
 
-    @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        if (log.isInfoEnabled()) {
-            String url = getFullRequestURL(toHttp(request));
-            log.info("Root request URL: {}", url);
-        }
+	@Override
+	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+		if (log.isInfoEnabled()) {
+			String url = getFullRequestURL(toHttp(request));
+			log.info("Root request URL: {}", url);
+		}
 
-        // Logged-in or login page request passed
-        return (getSubject(request, response).isAuthenticated() || isLoginRequest(request, response)
-                || isMediaRequest((HttpServletRequest) request));
-    }
+		// Logged-in or login page request passed
+		return (getSubject(request, response).isAuthenticated() || isLoginRequest(request, response)
+				|| isMediaRequest((HttpServletRequest) request));
+	}
 
-    /**
-     * Cannot call executeLogin() because it's not a login submission request,
-     * just redirect to the login page, indicates that you currently need to
-     * login.
-     * {@link org.apache.shiro.web.filter.authc.AuthenticatingFilter#executeLogin}
-     */
-    @Override
-    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        if (!getSubject(request, response).isAuthenticated()) {
-            // When an unregistered or requested URL is a protected resource,
-            // the login failure logic (that is, redirect to the login page) is
-            // executed.
-            return super.onLoginFailure(createToken(request, response), null, request, response);
-        }
-        return false;
-    }
+	/**
+	 * Cannot call executeLogin() because it's not a login submission request,
+	 * just redirect to the login page, indicates that you currently need to
+	 * login.
+	 * {@link org.apache.shiro.web.filter.authc.AuthenticatingFilter#executeLogin}
+	 */
+	@Override
+	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+		if (!getSubject(request, response).isAuthenticated()) {
+			// When an unregistered or requested URL is a protected resource,
+			// the login failure logic (that is, redirect to the login page) is
+			// executed.
+			return super.onLoginFailure(createToken(request, response), null, request, response);
+		}
+		return false;
+	}
 
-    @Override
-    protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-                                                     HttpServletResponse response) throws Exception {
-        return new RootAuthenticationToken(remoteHost, redirectInfo);
-    }
+	@Override
+	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		return new RootAuthenticationToken(remoteHost, redirectInfo);
+	}
 
-    @Override
-    protected boolean isLoginRequest(ServletRequest request, ServletResponse response) {
-        return matchRequest(getLoginUrl(), request, response);
-    }
+	@Override
+	protected boolean isLoginRequest(ServletRequest request, ServletResponse response) {
+		return matchRequest(getLoginUrl(), request, response);
+	}
 
-    /**
-     * To solve the problem of mismatching request URLs, such as: only pages
-     * embedded in containers are matched, that is, the page path at the
-     * beginning of "/". For example, if the login URI is
-     * 'http://passport.mydomain.com/devops-iam/login.html', it will not be
-     * matched successfully, but it is indeed embedded in its own page, which
-     * needs to continue matching (to be compatible).
-     *
-     * @param defineUrl Configuration defined URLs
-     * @param request
-     * @param response
-     * @return
-     */
-    protected boolean matchRequest(String defineUrl, ServletRequest request, ServletResponse response) {
-        Assert.hasText(defineUrl, "'defineUrl' is empty");
-        // Relative path and complete path matching
-        return (pathsMatch(defineUrl, request) || defineUrl.equals(getFullRequestURL(toHttp(request), false)));
-    }
+	/**
+	 * To solve the problem of mismatching request URLs, such as: only pages
+	 * embedded in containers are matched, that is, the page path at the
+	 * beginning of "/". For example, if the login URI is
+	 * 'http://passport.mydomain.com/devops-iam/login.html', it will not be
+	 * matched successfully, but it is indeed embedded in its own page, which
+	 * needs to continue matching (to be compatible).
+	 *
+	 * @param defineUrl
+	 *            Configuration defined URLs
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected boolean matchRequest(String defineUrl, ServletRequest request, ServletResponse response) {
+		Assert.hasText(defineUrl, "'defineUrl' is empty");
+		// Relative path and complete path matching
+		return (pathsMatch(defineUrl, request) || defineUrl.equals(getFullRequestURL(toHttp(request), false)));
+	}
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
-    @Override
-    public String getUriMapping() {
-        return "/**";
-    }
+	@Override
+	public String getUriMapping() {
+		return "/**";
+	}
 
 }

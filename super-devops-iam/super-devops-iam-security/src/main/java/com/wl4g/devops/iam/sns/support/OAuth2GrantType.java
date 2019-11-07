@@ -24,63 +24,63 @@ package com.wl4g.devops.iam.sns.support;
  */
 public enum OAuth2GrantType {
 
-    /**
-     * Authorization code mode (i.e. first login to get code, then token)
-     */
-    AUTHORIZATION_CODE(true),
+	/**
+	 * Authorization code mode (i.e. first login to get code, then token)
+	 */
+	AUTHORIZATION_CODE(true),
 
-    /**
-     * Simplified mode (passing token in redirect_uri Hash; Auth client running
-     * in browsers, such as JS, Flash)
-     */
-    IMPLICIT_GRANT,
+	/**
+	 * Simplified mode (passing token in redirect_uri Hash; Auth client running
+	 * in browsers, such as JS, Flash)
+	 */
+	IMPLICIT_GRANT,
 
-    /**
-     * Password mode (Pass user name, password, get token directly)
-     */
-    PASSWORD,
+	/**
+	 * Password mode (Pass user name, password, get token directly)
+	 */
+	PASSWORD,
 
-    /**
-     * Client mode (no user, the user registers with the client, and the client
-     * obtains resources from the server in its own name).<br/>
-     * <br/>
-     * Note: WeChat public platform, the parameter
-     * <font color=red>grant_type=client_credential</font> in get access_token
-     * of the basic API (instead of <font color=red>client_credentials)</font>.
-     * See:<a href=
-     * "https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183">https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183</a>
-     */
-    CLIENT_CREDENTIALS,
+	/**
+	 * Client mode (no user, the user registers with the client, and the client
+	 * obtains resources from the server in its own name).<br/>
+	 * <br/>
+	 * Note: WeChat public platform, the parameter
+	 * <font color=red>grant_type=client_credential</font> in get access_token
+	 * of the basic API (instead of <font color=red>client_credentials)</font>.
+	 * See:<a href=
+	 * "https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183">https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183</a>
+	 */
+	CLIENT_CREDENTIALS,
 
-    /**
-     * Refresh access_token
-     */
-    REFRESH_TOKEN;
+	/**
+	 * Refresh access_token
+	 */
+	REFRESH_TOKEN;
 
-    private boolean isDefault = false;
+	private boolean isDefault = false;
 
-    private OAuth2GrantType() {
-    }
+	private OAuth2GrantType() {
+	}
 
-    private OAuth2GrantType(boolean isDefault) {
-        this.isDefault = isDefault;
-    }
+	private OAuth2GrantType(boolean isDefault) {
+		this.isDefault = isDefault;
+	}
 
-    public boolean isDefault() {
-        return isDefault;
-    }
+	public boolean isDefault() {
+		return isDefault;
+	}
 
-    public static OAuth2GrantType getDefault() {
-        OAuth2GrantType defaultGrantType = null;
-        for (OAuth2GrantType gt : values()) {
-            if (gt.isDefault()) {
-                if (defaultGrantType != null) {
-                    throw new IllegalStateException("There can only be one default value");
-                }
-                defaultGrantType = gt;
-            }
-        }
-        return defaultGrantType;
-    }
+	public static OAuth2GrantType getDefault() {
+		OAuth2GrantType defaultGrantType = null;
+		for (OAuth2GrantType gt : values()) {
+			if (gt.isDefault()) {
+				if (defaultGrantType != null) {
+					throw new IllegalStateException("There can only be one default value");
+				}
+				defaultGrantType = gt;
+			}
+		}
+		return defaultGrantType;
+	}
 
 }

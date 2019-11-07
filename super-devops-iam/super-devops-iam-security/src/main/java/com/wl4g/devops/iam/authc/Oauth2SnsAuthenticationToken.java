@@ -32,37 +32,37 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
  * @since
  */
 public abstract class Oauth2SnsAuthenticationToken extends AbstractIamAuthenticationToken {
-    private static final long serialVersionUID = 8587329689973009598L;
+	private static final long serialVersionUID = 8587329689973009598L;
 
-    /**
-     * Social networking authorized information.
-     */
-    final private SocialAuthorizeInfo social;
+	/**
+	 * Social networking authorized information.
+	 */
+	final private SocialAuthorizeInfo social;
 
-    public Oauth2SnsAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo,
-                                        final SocialAuthorizeInfo social) {
-        super(remoteHost, redirectInfo);
-        notNull(social, "'social' must not be null");
-        this.social = (social == null ? new SocialAuthorizeInfo() : social);
-    }
+	public Oauth2SnsAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo,
+			final SocialAuthorizeInfo social) {
+		super(remoteHost, redirectInfo);
+		notNull(social, "'social' must not be null");
+		this.social = (social == null ? new SocialAuthorizeInfo() : social);
+	}
 
-    @Override
-    final public Object getPrincipal() {
-        return null; // Oauth2 login, no principal
-    }
+	@Override
+	final public Object getPrincipal() {
+		return null; // Oauth2 login, no principal
+	}
 
-    @Override
-    final public Object getCredentials() {
-        return null; // Oauth2 login, no credentials
-    }
+	@Override
+	final public Object getCredentials() {
+		return null; // Oauth2 login, no credentials
+	}
 
-    public SocialAuthorizeInfo getSocial() {
-        return social;
-    }
+	public SocialAuthorizeInfo getSocial() {
+		return social;
+	}
 
-    @Override
-    public String toString() {
-        return "[social=" + social + "]";
-    }
+	@Override
+	public String toString() {
+		return "[social=" + social + "]";
+	}
 
 }

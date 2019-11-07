@@ -46,54 +46,57 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
  */
 public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticationToken> extends AbstractIamAuthorizingRealm<T> {
 
-    /**
-     * IAM Social connection factory
-     */
-    @Autowired
-    protected SocialConnectionFactory connectFactory;
+	/**
+	 * IAM Social connection factory
+	 */
+	@Autowired
+	protected SocialConnectionFactory connectFactory;
 
-    public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher) {
-        super(matcher);
-    }
+	public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
+	}
 
-    /**
-     * Authenticates a user and retrieves its information.
-     *
-     * @param token the authentication token
-     * @throws AuthenticationException if there is an error during authentication.
-     */
-    @Override
-    protected AuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
-        // Check provider
-        ProviderSupport.checkSupport(token.getSocial().getProvider());
+	/**
+	 * Authenticates a user and retrieves its information.
+	 *
+	 * @param token
+	 *            the authentication token
+	 * @throws AuthenticationException
+	 *             if there is an error during authentication.
+	 */
+	@Override
+	protected AuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
+		// Check provider
+		ProviderSupport.checkSupport(token.getSocial().getProvider());
 
-        /**
-         * Obtain the account information bound by openId.
-         * {@link Oauth2AuthorizingBoundMatcher#doCredentialsMatch()}
-         */
-        Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
-                token.getSocial().getUnionId());
-        IamAccountInfo account = configurer.getIamAccount(parameter);
-        if (log.isInfoEnabled()) {
-            log.info("The accountInfo obtained through {} -> {}", toJSONString(parameter), toJSONString(account));
-        }
-        if (nonNull(account) && !isBlank(account.getPrincipal())) {
-            return new SimpleAuthenticationInfo(account.getPrincipal(), null, this.getName());
-        }
-        return EmptyOauth2AuthorizationInfo.EMPTY;
-    }
+		/**
+		 * Obtain the account information bound by openId.
+		 * {@link Oauth2AuthorizingBoundMatcher#doCredentialsMatch()}
+		 */
+		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
+				token.getSocial().getUnionId());
+		IamAccountInfo account = configurer.getIamAccount(parameter);
+		if (log.isInfoEnabled()) {
+			log.info("The accountInfo obtained through {} -> {}", toJSONString(parameter), toJSONString(account));
+		}
+		if (nonNull(account) && !isBlank(account.getPrincipal())) {
+			return new SimpleAuthenticationInfo(account.getPrincipal(), null, this.getName());
+		}
+		return EmptyOauth2AuthorizationInfo.EMPTY;
+	}
 
-    /**
-     * Retrieves the AuthorizationInfo for the given principals (the CAS
-     * previously authenticated user : id + attributes).</br>
-     *
-     * @param principals the primary identifying principals of the AuthorizationInfo
-     *                   that should be retrieved.
-     * @return the AuthorizationInfo associated with this principals.
-     */
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return new SimpleAuthorizationInfo();
-    }
+	/**
+	 * Retrieves the AuthorizationInfo for the given principals (the CAS
+	 * previously authenticated user : id + attributes).</br>
+	 *
+	 * @param principals
+	 *            the primary identifying principals of the AuthorizationInfo
+	 *            that should be retrieved.
+	 * @return the AuthorizationInfo associated with this principals.
+	 */
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		return new SimpleAuthorizationInfo();
+	}
 
 }

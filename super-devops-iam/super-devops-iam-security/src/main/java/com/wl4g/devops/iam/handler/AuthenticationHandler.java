@@ -39,77 +39,85 @@ import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
  */
 public abstract interface AuthenticationHandler {
 
-    /**
-     * Assertion the validity of the request parameters before executing the
-     * login. (that is, verify that the <b>'source application'</b> and the
-     * secure callback <b>'redirectUrl'</b> are legitimate)
-     *
-     * @param fromAppName
-     * @param redirectUrl
-     * @throws IllegalCallbackDomainException
-     */
-    void checkAuthenticateRedirectValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException;
+	/**
+	 * Assertion the validity of the request parameters before executing the
+	 * login. (that is, verify that the <b>'source application'</b> and the
+	 * secure callback <b>'redirectUrl'</b> are legitimate)
+	 *
+	 * @param fromAppName
+	 * @param redirectUrl
+	 * @throws IllegalCallbackDomainException
+	 */
+	void checkAuthenticateRedirectValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException;
 
-    /**
-     * Assertion whether the current login account has permission to access the
-     * application. (that is, validating the legitimacy of <b>'principal'</b>
-     * and <b>'application'</b>)
-     *
-     * @param principal
-     * @param fromAppName From source application
-     * @throws IllegalApplicationAccessException
-     */
-    void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException;
+	/**
+	 * Assertion whether the current login account has permission to access the
+	 * application. (that is, validating the legitimacy of <b>'principal'</b>
+	 * and <b>'application'</b>)
+	 *
+	 * @param principal
+	 * @param fromAppName
+	 *            From source application
+	 * @throws IllegalApplicationAccessException
+	 */
+	void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException;
 
-    /**
-     * Validate application request ticket
-     *
-     * @param model ticket validation request
-     * @return validation assert result
-     */
-    TicketAssertion validate(TicketValidationModel model);
+	/**
+	 * Validate application request ticket
+	 *
+	 * @param model
+	 *            ticket validation request
+	 * @return validation assert result
+	 */
+	TicketAssertion validate(TicketValidationModel model);
 
-    /**
-     * Shiro authentication success callback process.
-     *
-     * @param fromAppName from source application name
-     * @param subject     Shiro subject
-     * @return Redirect callback information
-     */
-    LoggedModel loggedin(String fromAppName, Subject subject);
+	/**
+	 * Shiro authentication success callback process.
+	 *
+	 * @param fromAppName
+	 *            from source application name
+	 * @param subject
+	 *            Shiro subject
+	 * @return Redirect callback information
+	 */
+	LoggedModel loggedin(String fromAppName, Subject subject);
 
-    /**
-     * Logout server session, including all external applications logged-in<br/>
-     * <br/>
-     * The Iam server logs out with two entries: <br/>
-     * 1: access http://iam-client/logout <br/>
-     * 2: direct access http://iam-server/logout <br/>
-     * {@link com.wl4g.devops.iam.web.CentralAuthenticatorController#logout()}
-     * {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#preHandle()}
-     *
-     * @param forced      logout forced
-     * @param fromAppName from source application name
-     * @param request
-     * @param response
-     * @return
-     */
-    LogoutModel logout(boolean forced, String fromAppName, HttpServletRequest request, HttpServletResponse response);
+	/**
+	 * Logout server session, including all external applications logged-in<br/>
+	 * <br/>
+	 * The Iam server logs out with two entries: <br/>
+	 * 1: access http://iam-client/logout <br/>
+	 * 2: direct access http://iam-server/logout <br/>
+	 * {@link com.wl4g.devops.iam.web.CentralAuthenticatorController#logout()}
+	 * {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#preHandle()}
+	 *
+	 * @param forced
+	 *            logout forced
+	 * @param fromAppName
+	 *            from source application name
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	LogoutModel logout(boolean forced, String fromAppName, HttpServletRequest request, HttpServletResponse response);
 
-    /**
-     * Validation application secondary authentication
-     *
-     * @param secondAuthCode Secondary authentication code
-     * @param fromAppName    from source application name
-     * @return
-     */
-    SecondAuthcAssertion secondValidate(String secondAuthCode, String fromAppName);
+	/**
+	 * Validation application secondary authentication
+	 *
+	 * @param secondAuthCode
+	 *            Secondary authentication code
+	 * @param fromAppName
+	 *            from source application name
+	 * @return
+	 */
+	SecondAuthcAssertion secondValidate(String secondAuthCode, String fromAppName);
 
-    /**
-     * Sessions expired validation
-     *
-     * @param param
-     * @return
-     */
-    SessionValidationAssertion sessionValidate(SessionValidationAssertion param);
+	/**
+	 * Sessions expired validation
+	 *
+	 * @param param
+	 * @return
+	 */
+	SessionValidationAssertion sessionValidate(SessionValidationAssertion param);
 
 }

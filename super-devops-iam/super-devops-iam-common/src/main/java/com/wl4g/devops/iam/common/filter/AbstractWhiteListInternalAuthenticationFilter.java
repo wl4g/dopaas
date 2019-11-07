@@ -43,51 +43,51 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
  */
 public abstract class AbstractWhiteListInternalAuthenticationFilter extends BasedInternalAuthenticationFilter {
 
-    /**
-     * Request remote IP checker.
-     */
-    private IPAccessControl control;
+	/**
+	 * Request remote IP checker.
+	 */
+	private IPAccessControl control;
 
-    public AbstractWhiteListInternalAuthenticationFilter(IPAccessControl control,
-                                                         AbstractIamProperties<? extends ParamProperties> config) {
-        super(config);
-        Assert.notNull(control, "'control' must not be null");
-        this.control = control;
-    }
+	public AbstractWhiteListInternalAuthenticationFilter(IPAccessControl control,
+			AbstractIamProperties<? extends ParamProperties> config) {
+		super(config);
+		Assert.notNull(control, "'control' must not be null");
+		this.control = control;
+	}
 
-    @Override
-    protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        String requestUrl = "[" + toHttp(request).getMethod() + "] " + getFullRequestURL(toHttp(request), true);
-        String remoteIp = getHttpRemoteIp(request);
-        if (log.isDebugEnabled()) {
-            log.debug("Request with remoteIp: {}, '{}'", remoteIp, requestUrl);
-        }
+	@Override
+	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+		String requestUrl = "[" + toHttp(request).getMethod() + "] " + getFullRequestURL(toHttp(request), true);
+		String remoteIp = getHttpRemoteIp(request);
+		if (log.isDebugEnabled()) {
+			log.debug("Request with remoteIp: {}, '{}'", remoteIp, requestUrl);
+		}
 
-        final boolean allowed = control.isPermitted(remoteIp);
-        if (!allowed) {
-            log.warn("Rejected request with remoteIp: {}, '{}'", remoteIp, requestUrl);
-        }
-        return allowed;
-    }
+		final boolean allowed = control.isPermitted(remoteIp);
+		if (!allowed) {
+			log.warn("Rejected request with remoteIp: {}, '{}'", remoteIp, requestUrl);
+		}
+		return allowed;
+	}
 
-    @Override
-    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        return false;
-    }
+	@Override
+	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+		return false;
+	}
 
-    /**
-     * Get HTTP remote client IP
-     *
-     * @param request
-     * @return
-     */
-    protected String getHttpRemoteIp(ServletRequest request) {
-        return WebUtils2.getHttpRemoteAddr(WebUtils.toHttp(request));
-    }
+	/**
+	 * Get HTTP remote client IP
+	 *
+	 * @param request
+	 * @return
+	 */
+	protected String getHttpRemoteIp(ServletRequest request) {
+		return WebUtils2.getHttpRemoteAddr(WebUtils.toHttp(request));
+	}
 
 }

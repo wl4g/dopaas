@@ -29,14 +29,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
  */
 public interface AdviceProcessor<A extends Annotation> {
 
-    /**
-     * Perform AOP section notification interception
-     *
-     * @param jp
-     * @param annotation
-     * @return
-     * @throws Throwable
-     */
-    Object doIntercept(ProceedingJoinPoint jp, A annotation) throws Throwable;
+	/**
+	 * Perform AOP section notification interception
+	 *
+	 * @param jp
+	 * @param annotation
+	 * @return
+	 * @throws Throwable
+	 */
+	Object doIntercept(ProceedingJoinPoint jp, A annotation) throws Throwable;
 
 }

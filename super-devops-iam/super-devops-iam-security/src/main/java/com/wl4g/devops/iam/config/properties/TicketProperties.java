@@ -26,6 +26,6 @@ import java.io.Serializable;
  * @since
  */
 public class TicketProperties implements Serializable {
-    private static final long serialVersionUID = -2694422471852860689L;
+	private static final long serialVersionUID = -2694422471852860689L;
 
 }

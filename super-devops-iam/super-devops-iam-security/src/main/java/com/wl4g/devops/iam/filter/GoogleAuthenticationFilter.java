@@ -21,14 +21,14 @@ import com.wl4g.devops.iam.authc.GoogleAuthenticationToken;
 @IamFilter
 public class GoogleAuthenticationFilter extends Oauth2SnsAuthenticationFilter<GoogleAuthenticationToken> {
 
-    @Override
-    public String getName() {
-        return ProviderSupport.GOOGLE.getName();
-    }
+	@Override
+	public String getName() {
+		return ProviderSupport.GOOGLE.getName();
+	}
 
-    @Override
-    public String getUriMapping() {
-        return URI_BASE_MAPPING + ProviderSupport.GOOGLE.getName();
-    }
+	@Override
+	public String getUriMapping() {
+		return URI_BASE_MAPPING + ProviderSupport.GOOGLE.getName();
+	}
 
 }

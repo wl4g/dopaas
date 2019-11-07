@@ -61,153 +61,153 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @LoginAuthController
 public class LoginAuthenticatorController extends AbstractAuthenticatorController {
 
-    /**
-     * Composite verification handler.
-     */
-    @Autowired
-    protected CompositeSecurityVerifierAdapter verifier;
+	/**
+	 * Composite verification handler.
+	 */
+	@Autowired
+	protected CompositeSecurityVerifierAdapter verifier;
 
-    /**
-     * IAM credentials securer
-     */
-    @Autowired
-    protected IamCredentialsSecurer securer;
+	/**
+	 * IAM credentials securer
+	 */
+	@Autowired
+	protected IamCredentialsSecurer securer;
 
-    /**
-     * Apply session, applicable to mobile token session.
-     *
-     * @param request
-     */
-    @RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = {GET, POST})
-    @ResponseBody
-    public RespBase<?> applySession(HttpServletRequest request) {
-        RespBase<Object> resp = RespBase.create(sessionStatus());
-        try {
-            resp.forMap().put(config.getCookie().getName(), getSessionId());
-        } catch (Exception e) {
-            if (e instanceof IamException) {
-                resp.setCode(RetCode.BIZ_ERR);
-            } else {
-                resp.setCode(RetCode.SYS_ERR);
-            }
-            resp.setMessage(getRootCausesString(e));
-            log.error("Failed to apply session.", e);
-        }
-        return resp;
-    }
+	/**
+	 * Apply session, applicable to mobile token session.
+	 *
+	 * @param request
+	 */
+	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { GET, POST })
+	@ResponseBody
+	public RespBase<?> applySession(HttpServletRequest request) {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		try {
+			resp.forMap().put(config.getCookie().getName(), getSessionId());
+		} catch (Exception e) {
+			if (e instanceof IamException) {
+				resp.setCode(RetCode.BIZ_ERR);
+			} else {
+				resp.setCode(RetCode.SYS_ERR);
+			}
+			resp.setMessage(getRootCausesString(e));
+			log.error("Failed to apply session.", e);
+		}
+		return resp;
+	}
 
-    /**
-     * Apply international locale.</br>
-     * See:{@link com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle}
-     * See:{@link org.springframework.context.support.MessageSourceAccessor}
-     *
-     * @param response
-     */
-    @RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = {GET, POST})
-    @ResponseBody
-    public RespBase<?> applyLocale(HttpServletRequest request) {
-        RespBase<Locale> resp = RespBase.create(sessionStatus());
-        try {
-            String lang = getCleanParam(request, config.getParam().getI18nLang());
+	/**
+	 * Apply international locale.</br>
+	 * See:{@link com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle}
+	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
+	 *
+	 * @param response
+	 */
+	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET, POST })
+	@ResponseBody
+	public RespBase<?> applyLocale(HttpServletRequest request) {
+		RespBase<Locale> resp = RespBase.create(sessionStatus());
+		try {
+			String lang = getCleanParam(request, config.getParam().getI18nLang());
 
-            Locale locale = request.getLocale(); // by default
-            if (isNotBlank(lang)) {
-                locale = new Locale(lang);
-            }
-            bind(KEY_LANG_ATTRIBUTE_NAME, locale);
-            resp.forMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
-        } catch (Exception e) {
-            if (e instanceof IamException) {
-                resp.setCode(RetCode.PARAM_ERR);
-            } else {
-                resp.setCode(RetCode.SYS_ERR);
-            }
-            resp.setMessage(getRootCausesString(e));
-            log.error("Failed to apply for locale", e);
-        }
-        return resp;
-    }
+			Locale locale = request.getLocale(); // by default
+			if (isNotBlank(lang)) {
+				locale = new Locale(lang);
+			}
+			bind(KEY_LANG_ATTRIBUTE_NAME, locale);
+			resp.forMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
+		} catch (Exception e) {
+			if (e instanceof IamException) {
+				resp.setCode(RetCode.PARAM_ERR);
+			} else {
+				resp.setCode(RetCode.SYS_ERR);
+			}
+			resp.setMessage(getRootCausesString(e));
+			log.error("Failed to apply for locale", e);
+		}
+		return resp;
+	}
 
-    /**
-     * Login before environmental security check.
-     *
-     * @param request
-     */
-    @RequestMapping(value = URI_S_LOGIN_CHECK, method = {GET, POST})
-    @ResponseBody
-    public RespBase<?> safeCheck(HttpServletRequest request) {
-        RespBase<Object> resp = RespBase.create(sessionStatus());
-        try {
-            // Limit factors
-            List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
+	/**
+	 * Login before environmental security check.
+	 *
+	 * @param request
+	 */
+	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
+	@ResponseBody
+	public RespBase<?> safeCheck(HttpServletRequest request) {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		try {
+			// Limit factors
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
 
-            // Secret(pubKey).
-            resp.forMap().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
+			// Secret(pubKey).
+			resp.forMap().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
 
-            // CAPTCHA check.
-            CaptchaCheckModel model = new CaptchaCheckModel(false);
-            if (verifier.forAdapt(request).isEnabled(factors)) {
-                model.setEnabled(true);
-                model.setSupport(VerifyType.SUPPORT_ALL); // Default
-                model.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
-            }
-            resp.forMap().put(KEY_CAPTCHA_CHECK, model);
+			// CAPTCHA check.
+			CaptchaCheckModel model = new CaptchaCheckModel(false);
+			if (verifier.forAdapt(request).isEnabled(factors)) {
+				model.setEnabled(true);
+				model.setSupport(VerifyType.SUPPORT_ALL); // Default
+				model.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
+			}
+			resp.forMap().put(KEY_CAPTCHA_CHECK, model);
 
-            // SMS check.
-            /*
-             * When the SMS verification code is not empty, this creation
-             * time-stamp is returned (used to display the current remaining
-             * number of seconds before the front end can re-send the SMS
-             * verification code).
-             */
-            VerifyCodeWrapper code = verifier.forAdapt(VerifyType.TEXT_SMS).getVerifyCode(false);
+			// SMS check.
+			/*
+			 * When the SMS verification code is not empty, this creation
+			 * time-stamp is returned (used to display the current remaining
+			 * number of seconds before the front end can re-send the SMS
+			 * verification code).
+			 */
+			VerifyCodeWrapper code = verifier.forAdapt(VerifyType.TEXT_SMS).getVerifyCode(false);
 
-            // SMS apply owner(mobile number).
-            Long mobileNum = null;
-            if (code != null && code.getOwner() != null && isNumeric(code.getOwner())) {
-                mobileNum = Long.parseLong(code.getOwner());
-            }
+			// SMS apply owner(mobile number).
+			Long mobileNum = null;
+			if (code != null && code.getOwner() != null && isNumeric(code.getOwner())) {
+				mobileNum = Long.parseLong(code.getOwner());
+			}
 
-            // Remaining delay.
-            Long remainDelay = null;
-            if (Objects.nonNull(code)) {
-                remainDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
-            }
-            resp.forMap().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainDelay));
+			// Remaining delay.
+			Long remainDelay = null;
+			if (Objects.nonNull(code)) {
+				remainDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
+			}
+			resp.forMap().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainDelay));
 
-        } catch (Exception e) {
-            if (e instanceof IamException) {
-                resp.setCode(RetCode.BIZ_ERR);
-            } else {
-                resp.setCode(RetCode.SYS_ERR);
-            }
-            resp.setMessage(getRootCausesString(e));
-            log.error("Failed to safety check.", e);
-        }
-        return resp;
-    }
+		} catch (Exception e) {
+			if (e instanceof IamException) {
+				resp.setCode(RetCode.BIZ_ERR);
+			} else {
+				resp.setCode(RetCode.SYS_ERR);
+			}
+			resp.setMessage(getRootCausesString(e));
+			log.error("Failed to safety check.", e);
+		}
+		return resp;
+	}
 
-    /**
-     * Read the error message stored in the current session.
-     *
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = URI_S_LOGIN_ERRREAD, method = {GET, POST})
-    @ResponseBody
-    public RespBase<?> errorRead(HttpServletRequest request, HttpServletResponse response) {
-        RespBase<String> resp = RespBase.create(sessionStatus());
-        try {
-            // Get error message in session
-            String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
-            errmsg = isBlank(errmsg) ? "" : errmsg;
-            resp.forMap().put(KEY_ERR_SESSION_SAVED, errmsg);
-        } catch (Exception e) {
-            resp.setCode(RetCode.SYS_ERR);
-            resp.setMessage(getRootCausesString(e));
-            log.error("Failed to error reads.", e);
-        }
-        return resp;
-    }
+	/**
+	 * Read the error message stored in the current session.
+	 *
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET, POST })
+	@ResponseBody
+	public RespBase<?> errorRead(HttpServletRequest request, HttpServletResponse response) {
+		RespBase<String> resp = RespBase.create(sessionStatus());
+		try {
+			// Get error message in session
+			String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
+			errmsg = isBlank(errmsg) ? "" : errmsg;
+			resp.forMap().put(KEY_ERR_SESSION_SAVED, errmsg);
+		} catch (Exception e) {
+			resp.setCode(RetCode.SYS_ERR);
+			resp.setMessage(getRootCausesString(e));
+			log.error("Failed to error reads.", e);
+		}
+		return resp;
+	}
 
 }

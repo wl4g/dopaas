@@ -28,41 +28,41 @@ import static org.springframework.util.Assert.hasText;
  */
 public abstract class AbstractIamAuthenticationToken implements IamAuthenticationToken {
 
-    private static final long serialVersionUID = 5483061935073949894L;
+	private static final long serialVersionUID = 5483061935073949894L;
 
-    /**
-     * Remote client host address
-     */
-    final private String remoteHost;
+	/**
+	 * Remote client host address
+	 */
+	final private String remoteHost;
 
-    /**
-     * Redirection information.
-     */
-    final private RedirectInfo redirectInfo;
+	/**
+	 * Redirection information.
+	 */
+	final private RedirectInfo redirectInfo;
 
-    public AbstractIamAuthenticationToken() {
-        this(null);
-    }
+	public AbstractIamAuthenticationToken() {
+		this(null);
+	}
 
-    public AbstractIamAuthenticationToken(final String remoteHost) {
-        this.remoteHost = remoteHost;
-        this.redirectInfo = null;
-    }
+	public AbstractIamAuthenticationToken(final String remoteHost) {
+		this.remoteHost = remoteHost;
+		this.redirectInfo = null;
+	}
 
-    public AbstractIamAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo) {
-        hasText(remoteHost, "Remote client host must not be null.");
-        notNull(redirectInfo, "Redirect info must not be null.");
-        this.remoteHost = remoteHost;
-        this.redirectInfo = redirectInfo;
-    }
+	public AbstractIamAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo) {
+		hasText(remoteHost, "Remote client host must not be null.");
+		notNull(redirectInfo, "Redirect info must not be null.");
+		this.remoteHost = remoteHost;
+		this.redirectInfo = redirectInfo;
+	}
 
-    @Override
-    public String getHost() {
-        return remoteHost;
-    }
+	@Override
+	public String getHost() {
+		return remoteHost;
+	}
 
-    public RedirectInfo getRedirectInfo() {
-        return redirectInfo;
-    }
+	public RedirectInfo getRedirectInfo() {
+		return redirectInfo;
+	}
 
 }

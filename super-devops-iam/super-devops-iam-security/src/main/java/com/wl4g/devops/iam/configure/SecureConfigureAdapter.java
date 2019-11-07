@@ -24,6 +24,6 @@ package com.wl4g.devops.iam.configure;
  */
 public interface SecureConfigureAdapter {
 
-    SecureConfig configure();
+	SecureConfig configure();
 
 }

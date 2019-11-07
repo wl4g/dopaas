@@ -39,37 +39,37 @@ import com.wl4g.devops.common.web.error.ErrorConfiguring;
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 public class IamErrorConfiguring implements ErrorConfiguring {
 
-    @Override
-    public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
-                                Exception ex) {
-        // IAM Unauthenticated error?
-        if ((ex instanceof UnauthenticatedException)
-                || (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)) {
-            return HttpStatus.UNAUTHORIZED;
-        }
-        // IAM Unauthorized error?
-        else if ((ex instanceof UnauthorizedException)
-                || (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
-            return HttpStatus.FORBIDDEN;
-        }
+	@Override
+	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
+			Exception ex) {
+		// IAM Unauthenticated error?
+		if ((ex instanceof UnauthenticatedException)
+				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)) {
+			return HttpStatus.UNAUTHORIZED;
+		}
+		// IAM Unauthorized error?
+		else if ((ex instanceof UnauthorizedException)
+				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
+			return HttpStatus.FORBIDDEN;
+		}
 
-        // Using next chain configuring.
-        return null;
-    }
+		// Using next chain configuring.
+		return null;
+	}
 
-    @Override
-    public String getRootCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
-                               Exception ex) {
-        // IAM Unauthenticated or Unauthorized error?
-        if ((ex instanceof UnauthenticatedException) || (ex instanceof UnauthorizedException)
-                || (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)
-                || (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
-            // return Exceptions.getRootCausesString(ex);
-            return Exceptions.getMessage(ex);
-        }
+	@Override
+	public String getRootCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
+			Exception ex) {
+		// IAM Unauthenticated or Unauthorized error?
+		if ((ex instanceof UnauthenticatedException) || (ex instanceof UnauthorizedException)
+				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)
+				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
+			// return Exceptions.getRootCausesString(ex);
+			return Exceptions.getMessage(ex);
+		}
 
-        // Using next chain configuring.
-        return null;
-    }
+		// Using next chain configuring.
+		return null;
+	}
 
 }

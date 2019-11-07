@@ -30,7 +30,7 @@ import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
  */
 public interface SocialConnectionFactory {
 
-    BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getBindConnection(String provider)
-            throws NoSuchSocialProviderException;
+	BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getBindConnection(String provider)
+			throws NoSuchSocialProviderException;
 
 }

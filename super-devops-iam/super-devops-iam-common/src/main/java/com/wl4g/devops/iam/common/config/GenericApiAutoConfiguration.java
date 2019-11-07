@@ -33,19 +33,19 @@ import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
  */
 public class GenericApiAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
-    @Override
-    protected String getMappingPrefix() {
-        return URI_S_API_V1_BASE;
-    }
+	@Override
+	protected String getMappingPrefix() {
+		return URI_S_API_V1_BASE;
+	}
 
-    @Bean
-    public PrefixHandlerMapping genericApiV1ControllerPrefixHandlerMapping() {
-        return super.createPrefixHandlerMapping();
-    }
+	@Bean
+	public PrefixHandlerMapping genericApiV1ControllerPrefixHandlerMapping() {
+		return super.createPrefixHandlerMapping();
+	}
 
-    @Override
-    protected Class<? extends Annotation> annotationClass() {
-        return IamApiV1Controller.class;
-    }
+	@Override
+	protected Class<? extends Annotation> annotationClass() {
+		return IamApiV1Controller.class;
+	}
 
 }

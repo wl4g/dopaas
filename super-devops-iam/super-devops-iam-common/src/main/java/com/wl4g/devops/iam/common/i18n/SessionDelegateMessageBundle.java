@@ -32,22 +32,22 @@ import com.wl4g.devops.common.i18n.AbstractDelegateMessageBundle;
  */
 public class SessionDelegateMessageBundle extends AbstractDelegateMessageBundle {
 
-    public SessionDelegateMessageBundle() {
-        super();
-    }
+	public SessionDelegateMessageBundle() {
+		super();
+	}
 
-    public SessionDelegateMessageBundle(Class<?> withClassPath) {
-        super(withClassPath);
-    }
+	public SessionDelegateMessageBundle(Class<?> withClassPath) {
+		super(withClassPath);
+	}
 
-    public SessionDelegateMessageBundle(String... basenames) {
-        super(basenames);
-    }
+	public SessionDelegateMessageBundle(String... basenames) {
+		super(basenames);
+	}
 
-    @Override
-    protected Locale getSessionLocale() {
-        Locale locale = (Locale) getBindValue(KEY_LANG_ATTRIBUTE_NAME);
-        return Objects.isNull(locale) ? Locale.SIMPLIFIED_CHINESE : locale;
-    }
+	@Override
+	protected Locale getSessionLocale() {
+		Locale locale = (Locale) getBindValue(KEY_LANG_ATTRIBUTE_NAME);
+		return Objects.isNull(locale) ? Locale.SIMPLIFIED_CHINESE : locale;
+	}
 
 }

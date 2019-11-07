@@ -21,14 +21,14 @@ import com.wl4g.devops.iam.authc.GithubAuthenticationToken;
 @IamFilter
 public class GithubAuthenticationFilter extends Oauth2SnsAuthenticationFilter<GithubAuthenticationToken> {
 
-    @Override
-    public String getName() {
-        return ProviderSupport.GITHUB.getName();
-    }
+	@Override
+	public String getName() {
+		return ProviderSupport.GITHUB.getName();
+	}
 
-    @Override
-    public String getUriMapping() {
-        return URI_BASE_MAPPING + ProviderSupport.GITHUB.getName();
-    }
+	@Override
+	public String getUriMapping() {
+		return URI_BASE_MAPPING + ProviderSupport.GITHUB.getName();
+	}
 
 }

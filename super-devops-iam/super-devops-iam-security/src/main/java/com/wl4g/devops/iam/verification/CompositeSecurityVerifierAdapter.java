@@ -41,87 +41,87 @@ import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
  */
 public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 
-    /**
-     * Verification registry.
-     */
-    final protected Map<VerifyType, SecurityVerifier> registry = new OnceModifiableMap<>(new HashMap<>());
+	/**
+	 * Verification registry.
+	 */
+	final protected Map<VerifyType, SecurityVerifier> registry = new OnceModifiableMap<>(new HashMap<>());
 
-    /**
-     * Real delegate securityVerifier.
-     */
-    final private ThreadLocal<SecurityVerifier> delegate = new InheritableThreadLocal<>();
+	/**
+	 * Real delegate securityVerifier.
+	 */
+	final private ThreadLocal<SecurityVerifier> delegate = new InheritableThreadLocal<>();
 
-    public CompositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
-        Assert.state(!isEmpty(verifiers), "Verifications has at least one.");
-        this.registry.putAll(verifiers.stream().collect(toMap(SecurityVerifier::verifyType, verifier -> verifier)));
-    }
+	public CompositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
+		Assert.state(!isEmpty(verifiers), "Verifications has at least one.");
+		this.registry.putAll(verifiers.stream().collect(toMap(SecurityVerifier::verifyType, verifier -> verifier)));
+	}
 
-    @Override
-    public VerifyType verifyType() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public VerifyType verifyType() {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * Making the adaptation actually execute securityVerifier.
-     *
-     * @param type
-     * @return
-     */
-    public SecurityVerifier forAdapt(@NotNull VerifyType type) {
-        SecurityVerifier verifier = registry.get(type);
-        Assert.notNull(verifier, String.format("Unsupport securityVerifier for '%s'", type));
-        delegate.set(verifier);
-        return verifier;
-    }
+	/**
+	 * Making the adaptation actually execute securityVerifier.
+	 *
+	 * @param type
+	 * @return
+	 */
+	public SecurityVerifier forAdapt(@NotNull VerifyType type) {
+		SecurityVerifier verifier = registry.get(type);
+		Assert.notNull(verifier, String.format("Unsupport securityVerifier for '%s'", type));
+		delegate.set(verifier);
+		return verifier;
+	}
 
-    /**
-     * Making the adaptation actually execute securityVerifier.
-     *
-     * @param request
-     * @return
-     */
-    public SecurityVerifier forAdapt(@NotNull HttpServletRequest request) {
-        return forAdapt(VerifyType.of(request));
-    }
+	/**
+	 * Making the adaptation actually execute securityVerifier.
+	 *
+	 * @param request
+	 * @return
+	 */
+	public SecurityVerifier forAdapt(@NotNull HttpServletRequest request) {
+		return forAdapt(VerifyType.of(request));
+	}
 
-    @Override
-    public Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
-        return getAdapted().apply(owner, factors, request);
-    }
+	@Override
+	public Object apply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
+		return getAdapted().apply(owner, factors, request);
+	}
 
-    @Override
-    public VerifyCodeWrapper getVerifyCode(boolean assertion) {
-        return getAdapted().getVerifyCode(assertion);
-    }
+	@Override
+	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
+		return getAdapted().getVerifyCode(assertion);
+	}
 
-    @Override
-    public boolean isEnabled(@NotNull List<String> factors) {
-        return getAdapted().isEnabled(factors);
-    }
+	@Override
+	public boolean isEnabled(@NotNull List<String> factors) {
+		return getAdapted().isEnabled(factors);
+	}
 
-    @Override
-    public String verify(@NotBlank String params, @NotNull HttpServletRequest request, @NotNull List<String> factors)
-            throws VerificationException {
-        return getAdapted().verify(params, request, factors);
-    }
+	@Override
+	public String verify(@NotBlank String params, @NotNull HttpServletRequest request, @NotNull List<String> factors)
+			throws VerificationException {
+		return getAdapted().verify(params, request, factors);
+	}
 
-    @Override
-    public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
-            throws VerificationException {
-        getAdapted().validate(factors, verifiedToken, required);
-    }
+	@Override
+	public void validate(@NotNull List<String> factors, @NotNull String verifiedToken, boolean required)
+			throws VerificationException {
+		getAdapted().validate(factors, verifiedToken, required);
+	}
 
-    /**
-     * Get adapted securityVerifier.
-     *
-     * @param type
-     * @return
-     */
-    private SecurityVerifier getAdapted() {
-        SecurityVerifier verifier = delegate.get();
-        Assert.state(verifier != null,
-                "Not adapted to specify actual securityVerifier, You must use adapted() to adapt before you can.");
-        return verifier;
-    }
+	/**
+	 * Get adapted securityVerifier.
+	 *
+	 * @param type
+	 * @return
+	 */
+	private SecurityVerifier getAdapted() {
+		SecurityVerifier verifier = delegate.get();
+		Assert.state(verifier != null,
+				"Not adapted to specify actual securityVerifier, You must use adapted() to adapt before you can.");
+		return verifier;
+	}
 
 }

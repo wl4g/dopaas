@@ -24,20 +24,20 @@ package com.wl4g.devops.iam.common.authc;
  * @since
  */
 public class AuthenticatorAuthenticationToken extends AbstractIamAuthenticationToken {
-    private static final long serialVersionUID = 8587329689973009598L;
+	private static final long serialVersionUID = 8587329689973009598L;
 
-    public AuthenticatorAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
-        super(remoteHost, redirectInfo);
-    }
+	public AuthenticatorAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
+		super(remoteHost, redirectInfo);
+	}
 
-    @Override
-    public Object getPrincipal() {
-        return null;
-    }
+	@Override
+	public Object getPrincipal() {
+		return null;
+	}
 
-    @Override
-    public Object getCredentials() {
-        return null;
-    }
+	@Override
+	public Object getCredentials() {
+		return null;
+	}
 
 }

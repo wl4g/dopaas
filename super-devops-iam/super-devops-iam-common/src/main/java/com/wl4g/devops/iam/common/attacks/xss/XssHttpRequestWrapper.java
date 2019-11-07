@@ -27,24 +27,24 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public abstract class XssHttpRequestWrapper extends HttpServletRequestWrapper {
 
-    private HttpServletRequest orig;
+	private HttpServletRequest orig;
 
-    public XssHttpRequestWrapper(HttpServletRequest request) {
-        super(request);
-        this.orig = request;
-    }
+	public XssHttpRequestWrapper(HttpServletRequest request) {
+		super(request);
+		this.orig = request;
+	}
 
-    protected abstract <O, I> O _xssEncode(I value);
+	protected abstract <O, I> O _xssEncode(I value);
 
-    public HttpServletRequest getOrigRequest() {
-        return orig;
-    }
+	public HttpServletRequest getOrigRequest() {
+		return orig;
+	}
 
-    public static HttpServletRequest getOrigRequest(HttpServletRequest request) {
-        if (request instanceof XssHttpRequestWrapper) {
-            return ((XssHttpRequestWrapper) request).getOrigRequest();
-        }
-        return request;
-    }
+	public static HttpServletRequest getOrigRequest(HttpServletRequest request) {
+		if (request instanceof XssHttpRequestWrapper) {
+			return ((XssHttpRequestWrapper) request).getOrigRequest();
+		}
+		return request;
+	}
 
 }

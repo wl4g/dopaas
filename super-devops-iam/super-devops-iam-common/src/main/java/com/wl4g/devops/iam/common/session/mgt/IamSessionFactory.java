@@ -29,23 +29,24 @@ import com.wl4g.devops.iam.common.session.IamSession;
  */
 public class IamSessionFactory implements SessionFactory {
 
-    /**
-     * Creates a new {@link SimpleSession SimpleSession} instance retaining the
-     * context's {@link SessionContext#getHost() host} if one can be found.
-     *
-     * @param initData the initialization data to be used during {@link Session}
-     *                 creation.
-     * @return a new {@link SimpleSession SimpleSession} instance
-     */
-    @Override
-    public Session createSession(SessionContext initData) {
-        if (initData != null) {
-            String host = initData.getHost();
-            if (host != null) {
-                return new IamSession(host);
-            }
-        }
-        return new IamSession();
-    }
+	/**
+	 * Creates a new {@link SimpleSession SimpleSession} instance retaining the
+	 * context's {@link SessionContext#getHost() host} if one can be found.
+	 *
+	 * @param initData
+	 *            the initialization data to be used during {@link Session}
+	 *            creation.
+	 * @return a new {@link SimpleSession SimpleSession} instance
+	 */
+	@Override
+	public Session createSession(SessionContext initData) {
+		if (initData != null) {
+			String host = initData.getHost();
+			if (host != null) {
+				return new IamSession(host);
+			}
+		}
+		return new IamSession();
+	}
 
 }

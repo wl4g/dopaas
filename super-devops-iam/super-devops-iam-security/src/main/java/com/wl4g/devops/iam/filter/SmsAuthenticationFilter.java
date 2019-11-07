@@ -35,25 +35,25 @@ import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 @IamFilter
 @Beta
 public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<SmsAuthenticationToken> {
-    final public static String NAME = "sms";
+	final public static String NAME = "sms";
 
-    @Override
-    protected SmsAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
-                                                     HttpServletResponse response) throws Exception {
-        String action = getCleanParam(request, config.getParam().getSmsActionName());
-        String principal = getCleanParam(request, config.getParam().getPrincipalName());
-        String smsCode = getCleanParam(request, config.getParam().getCredentialName());
-        return new SmsAuthenticationToken(remoteHost, action, principal, smsCode);
-    }
+	@Override
+	protected SmsAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		String action = getCleanParam(request, config.getParam().getSmsActionName());
+		String principal = getCleanParam(request, config.getParam().getPrincipalName());
+		String smsCode = getCleanParam(request, config.getParam().getCredentialName());
+		return new SmsAuthenticationToken(remoteHost, action, principal, smsCode);
+	}
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
-    @Override
-    public String getUriMapping() {
-        return URI_BASE_MAPPING + NAME;
-    }
+	@Override
+	public String getUriMapping() {
+		return URI_BASE_MAPPING + NAME;
+	}
 
 }

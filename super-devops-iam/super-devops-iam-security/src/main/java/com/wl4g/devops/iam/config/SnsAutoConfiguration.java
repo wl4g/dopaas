@@ -55,107 +55,107 @@ import com.wl4g.devops.iam.sns.wechat.WechatOauth2Template;
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({IamAutoConfiguration.class})
+@AutoConfigureAfter({ IamAutoConfiguration.class })
 public class SnsAutoConfiguration extends AbstractIamConfiguration {
 
-    @Bean
-    public SnsProperties snsProperties() {
-        return new SnsProperties();
-    }
+	@Bean
+	public SnsProperties snsProperties() {
+		return new SnsProperties();
+	}
 
-    //
-    // Social provider template's
-    //
+	//
+	// Social provider template's
+	//
 
-    @Bean
-    public QQOauth2Template qqOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
-        return new QQOauth2Template(config.getQq(), restTemplate, cacheManager);
-    }
+	@Bean
+	public QQOauth2Template qqOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
+		return new QQOauth2Template(config.getQq(), restTemplate, cacheManager);
+	}
 
-    @Bean
-    public WechatOauth2Template wechatOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
-        return new WechatOauth2Template(config.getWechat(), restTemplate, cacheManager);
-    }
+	@Bean
+	public WechatOauth2Template wechatOauth2Template(SnsProperties config, RestTemplate restTemplate, CacheManager cacheManager) {
+		return new WechatOauth2Template(config.getWechat(), restTemplate, cacheManager);
+	}
 
-    @Bean
-    public WechatMpOauth2Template wechatMpOauth2Template(SnsProperties config, RestTemplate restTemplate,
-                                                         CacheManager cacheManager) {
-        return new WechatMpOauth2Template(config.getWechatMp(), restTemplate, cacheManager);
-    }
+	@Bean
+	public WechatMpOauth2Template wechatMpOauth2Template(SnsProperties config, RestTemplate restTemplate,
+			CacheManager cacheManager) {
+		return new WechatMpOauth2Template(config.getWechatMp(), restTemplate, cacheManager);
+	}
 
-    @SuppressWarnings("rawtypes")
-    @Bean
-    public SocialConfigureRepository socialConfigureRepository(List<BindConnection> binds) {
-        return new SocialConfigureRepository(binds);
-    }
+	@SuppressWarnings("rawtypes")
+	@Bean
+	public SocialConfigureRepository socialConfigureRepository(List<BindConnection> binds) {
+		return new SocialConfigureRepository(binds);
+	}
 
-    @Bean
-    public SocialConnectionFactory socialConnectFactory(SocialConfigureRepository repository) {
-        return new DefaultSocialConnectionFactory(repository);
-    }
+	@Bean
+	public SocialConnectionFactory socialConnectFactory(SocialConfigureRepository repository) {
+		return new DefaultSocialConnectionFactory(repository);
+	}
 
-    //
-    // SNS handler's
-    //
+	//
+	// SNS handler's
+	//
 
-    @Bean
-    public DelegateSnsHandler delegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
-        return new DelegateSnsHandler(config, handlers);
-    }
+	@Bean
+	public DelegateSnsHandler delegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
+		return new DelegateSnsHandler(config, handlers);
+	}
 
-    @Bean
-    public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-                                           ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
-        return new LoginSnsHandler(config, snsConfig, connectFactory, context);
-    }
+	@Bean
+	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+			ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+		return new LoginSnsHandler(config, snsConfig, connectFactory, context);
+	}
 
-    @Bean
-    public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-                                                       SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-        return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
-    }
+	@Bean
+	public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
+	}
 
-    @Bean
-    public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-                                               SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-        return new BindingSnsHandler(config, snsConfig, connectFactory, context);
-    }
+	@Bean
+	public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+		return new BindingSnsHandler(config, snsConfig, connectFactory, context);
+	}
 
-    @Bean
-    public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-                                                   SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-        return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
-    }
+	@Bean
+	public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+		return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
+	}
 
-    @Bean
-    public SecondAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-                                                       SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-        return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, context);
-    }
+	@Bean
+	public SecondAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
+			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, context);
+	}
 
-    //
-    // SNS controller's
-    //
+	//
+	// SNS controller's
+	//
 
-    @Bean
-    public DefaultOauth2SnsController defaultOauth2SnsController(IamProperties config, SnsProperties snsConfig,
-                                                                 DelegateSnsHandler delegate) {
-        return new DefaultOauth2SnsController(config, snsConfig, delegate);
-    }
+	@Bean
+	public DefaultOauth2SnsController defaultOauth2SnsController(IamProperties config, SnsProperties snsConfig,
+			DelegateSnsHandler delegate) {
+		return new DefaultOauth2SnsController(config, snsConfig, delegate);
+	}
 
-    @Override
-    protected String getMappingPrefix() {
-        return URI_S_SNS_BASE;
-    }
+	@Override
+	protected String getMappingPrefix() {
+		return URI_S_SNS_BASE;
+	}
 
-    @Bean
-    public PrefixHandlerMapping snsControllerPrefixHandlerMapping() {
-        return super.createPrefixHandlerMapping();
-    }
+	@Bean
+	public PrefixHandlerMapping snsControllerPrefixHandlerMapping() {
+		return super.createPrefixHandlerMapping();
+	}
 
-    @Override
-    protected Class<? extends Annotation> annotationClass() {
-        return SnsController.class;
-    }
+	@Override
+	protected Class<? extends Annotation> annotationClass() {
+		return SnsController.class;
+	}
 
 }

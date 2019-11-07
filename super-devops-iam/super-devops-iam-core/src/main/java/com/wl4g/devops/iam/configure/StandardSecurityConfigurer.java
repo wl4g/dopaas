@@ -56,25 +56,21 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	/**
-	 * Because ProtoStuff can't serialize XXXDao created by MyBatis, it will
-	 * throw a serialization exception. This field must be ignored. </br>
+	 * ProtoStuff can't serialize XXXDao created by MyBatis, it will throw a
+	 * serialization exception. This field must be ignored. </br>
 	 * The problem is method: {@link StandardSecurityConfigurer#getIamAccount()}
 	 */
-
 	@Autowired
-	private transient ClusterConfigDao clusterConfigDao;
-
+	private transient ClusterConfigDao configDao;
 	@Autowired
 	private transient UserDao userDao;
-
 	@Autowired
 	private transient RoleDao roleDao;
-
 	@Autowired
 	private transient MenuDao menuDao;
 
 	@Value("${spring.profiles.active}")
-	private String profile;
+	private String active;
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
@@ -96,25 +92,26 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
-		List<ApplicationInfo> appInfoList = new ArrayList<>();
+		List<ApplicationInfo> appInfos = new ArrayList<>();
 		if (isEmptyArray(appNames)) {
 			return emptyList();
 		}
+
 		// Is IAM example demo.
 		if (equalsAny("iam-example", appNames)) {
 			ApplicationInfo appInfo = new ApplicationInfo("iam-example", "http://localhost:14041");
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
-			appInfoList.add(appInfo);
+			appInfos.add(appInfo);
 		} else { // Formal environment.
-			List<ClusterConfig> clustrerConfigs = clusterConfigDao.getByAppNames(appNames, profile, null);
-			for(ClusterConfig clusterConfig : clustrerConfigs){
-				ApplicationInfo applicationInfo = new ApplicationInfo();
-				applicationInfo.setAppName(clusterConfig.getName());
-				applicationInfo.setExtranetBaseUri(clusterConfig.getExtranetBaseUri());
-				applicationInfo.setIntranetBaseUri(clusterConfig.getIntranetBaseUri());
-				applicationInfo.setViewExtranetBaseUri(clusterConfig.getViewExtranetBaseUri());
-				applicationInfo.setRemark(clusterConfig.getRemark());
-				appInfoList.add(applicationInfo);
+			List<ClusterConfig> ccs = configDao.getByAppNames(appNames, active, null);
+			for (ClusterConfig cc : ccs) {
+				ApplicationInfo app = new ApplicationInfo();
+				app.setAppName(cc.getName());
+				app.setExtranetBaseUri(cc.getExtranetBaseUri());
+				app.setIntranetBaseUri(cc.getIntranetBaseUri());
+				app.setViewExtranetBaseUri(cc.getViewExtranetBaseUri());
+				app.setRemark(cc.getRemark());
+				appInfos.add(app);
 			}
 		}
 
@@ -159,7 +156,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// http://localhost:14051 # share-manager
 		//
 
-		return appInfoList;
+		return appInfos;
 	}
 
 	@Override

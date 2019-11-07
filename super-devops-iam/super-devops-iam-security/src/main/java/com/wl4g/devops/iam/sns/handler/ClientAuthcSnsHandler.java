@@ -38,51 +38,51 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
  */
 public class ClientAuthcSnsHandler extends AbstractSnsHandler {
 
-    public ClientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
-                                 ServerSecurityConfigurer context) {
-        super(config, snsConfig, connectFactory, context);
-    }
+	public ClientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+			ServerSecurityConfigurer context) {
+		super(config, snsConfig, connectFactory, context);
+	}
 
-    @Override
-    protected Map<String, String> getAuthorizeUrlQueryParams(Which which, String provider, String state,
-                                                             Map<String, String> connectParams) {
-        Map<String, String> queryParams = super.getAuthorizeUrlQueryParams(which, provider, state, connectParams);
-        /*
-         * For redirect login needs,
-         * <br/><br/>see:i.f.AbstractIamAuthenticationFilter#onLoginSuccess()
-         * <br/><br/>grantTicket by xx.i.h.AuthenticationHandler#loggedin()
-         */
-        String appKey = config.getParam().getApplication();
-        queryParams.put(appKey, connectParams.get(appKey));
-        return queryParams;
-    }
+	@Override
+	protected Map<String, String> getAuthorizeUrlQueryParams(Which which, String provider, String state,
+			Map<String, String> connectParams) {
+		Map<String, String> queryParams = super.getAuthorizeUrlQueryParams(which, provider, state, connectParams);
+		/*
+		 * For redirect login needs,
+		 * <br/><br/>see:i.f.AbstractIamAuthenticationFilter#onLoginSuccess()
+		 * <br/><br/>grantTicket by xx.i.h.AuthenticationHandler#loggedin()
+		 */
+		String appKey = config.getParam().getApplication();
+		queryParams.put(appKey, connectParams.get(appKey));
+		return queryParams;
+	}
 
-    @Override
-    protected void checkConnectRequireds(String provider, String state, Map<String, String> connectParams) {
-        super.checkConnectRequireds(provider, state, connectParams);
+	@Override
+	protected void checkConnectRequireds(String provider, String state, Map<String, String> connectParams) {
+		super.checkConnectRequireds(provider, state, connectParams);
 
-        // Check application
-        Assert.hasText(connectParams.get(config.getParam().getApplication()),
-                String.format("'%s' must not be empty", config.getParam().getApplication()));
-    }
+		// Check application
+		Assert.hasText(connectParams.get(config.getParam().getApplication()),
+				String.format("'%s' must not be empty", config.getParam().getApplication()));
+	}
 
-    @Override
-    protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
-        return Collections.singletonMap(config.getParam().getApplication(),
-                WebUtils.getCleanParam(request, config.getParam().getApplication()));
-    }
+	@Override
+	protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
+		return Collections.singletonMap(config.getParam().getApplication(),
+				WebUtils.getCleanParam(request, config.getParam().getApplication()));
+	}
 
-    @Override
-    protected String buildResponseMessage(String provider, String callbackId, Map<String, String> connectParams,
-                                          HttpServletRequest request) {
-        String appKey = config.getParam().getApplication();
-        return new StringBuffer(getLoginSubmissionUrl(provider, callbackId, request)).append("&").append(appKey).append("=")
-                .append(connectParams.get(appKey)).toString();
-    }
+	@Override
+	protected String buildResponseMessage(String provider, String callbackId, Map<String, String> connectParams,
+			HttpServletRequest request) {
+		String appKey = config.getParam().getApplication();
+		return new StringBuffer(getLoginSubmissionUrl(provider, callbackId, request)).append("&").append(appKey).append("=")
+				.append(connectParams.get(appKey)).toString();
+	}
 
-    @Override
-    public Which whichType() {
-        return Which.CLIENT_AUTH;
-    }
+	@Override
+	public Which whichType() {
+		return Which.CLIENT_AUTH;
+	}
 
 }

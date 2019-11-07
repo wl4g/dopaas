@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER })
 @Documented
 public @interface UnsafeXss {
 

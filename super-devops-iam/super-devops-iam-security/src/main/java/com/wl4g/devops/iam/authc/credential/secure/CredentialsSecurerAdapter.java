@@ -30,18 +30,18 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class CredentialsSecurerAdapter implements CredentialsSecurer {
 
-    @Autowired
-    private IamCredentialsSecurer securer;
+	@Autowired
+	private IamCredentialsSecurer securer;
 
-    @Override
-    public String signature(@NotNull CredentialsToken token) {
-        return securer.signature(token);
-    }
+	@Override
+	public String signature(@NotNull CredentialsToken token) {
+		return securer.signature(token);
+	}
 
-    @Override
-    public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
-            throws CredentialsException, RuntimeException {
-        return securer.validate(token, info);
-    }
+	@Override
+	public boolean validate(@NotNull CredentialsToken token, @NotNull AuthenticationInfo info)
+			throws CredentialsException, RuntimeException {
+		return securer.validate(token, info);
+	}
 
 }

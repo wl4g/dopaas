@@ -41,11 +41,11 @@ import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
-@Import({BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
-        VerifyAutoConfiguration.class, SnsAutoConfiguration.class, DefaultViewAutoConfiguration.class,
-        IamServerApiV1AutoConfiguration.class})
+@Import({ BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
+		VerifyAutoConfiguration.class, SnsAutoConfiguration.class, DefaultViewAutoConfiguration.class,
+		IamServerApiV1AutoConfiguration.class })
 public @interface EnableIamServer {
 
 }

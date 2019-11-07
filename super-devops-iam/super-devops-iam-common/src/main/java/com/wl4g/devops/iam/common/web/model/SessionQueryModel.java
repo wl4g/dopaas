@@ -16,38 +16,38 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
  */
 @Beta
 public class SessionQueryModel implements Serializable {
-    private static final long serialVersionUID = 5766036036946339544L;
+	private static final long serialVersionUID = 5766036036946339544L;
 
-    /**
-     * Scan cursor.
-     */
-    @NotBlank(message = "Invalid argument cursor.(e.g. cursor=0@0)")
-    private String cursor = "0@0";
+	/**
+	 * Scan cursor.
+	 */
+	@NotBlank(message = "Invalid argument cursor.(e.g. cursor=0@0)")
+	private String cursor = "0@0";
 
-    /**
-     * Page size.
-     */
-    private int limit = 200;
+	/**
+	 * Page size.
+	 */
+	private int limit = 200;
 
-    public String getCursor() {
-        return cursor;
-    }
+	public String getCursor() {
+		return cursor;
+	}
 
-    public void setCursor(String cursor) {
-        this.cursor = cursor;
-    }
+	public void setCursor(String cursor) {
+		this.cursor = cursor;
+	}
 
-    public int getLimit() {
-        return limit;
-    }
+	public int getLimit() {
+		return limit;
+	}
 
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
 
-    @Override
-    public String toString() {
-        return toJSONString(this);
-    }
+	@Override
+	public String toString() {
+		return toJSONString(this);
+	}
 
 }

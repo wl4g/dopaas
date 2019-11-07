@@ -54,127 +54,128 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @VerifyAuthController
 public class VerifyAuthenticatorController extends AbstractAuthenticatorController {
 
-    /**
-     * Verify CAPTCHA apply model key-name.
-     */
-    final public static String KEY_APPLY_MODEL = "applyModel";
+	/**
+	 * Verify CAPTCHA apply model key-name.
+	 */
+	final public static String KEY_APPLY_MODEL = "applyModel";
 
-    /**
-     * Verify CAPTCHA verified model key-name.
-     */
-    final public static String KEY_VWEIFIED_MODEL = "verifiedModel";
+	/**
+	 * Verify CAPTCHA verified model key-name.
+	 */
+	final public static String KEY_VWEIFIED_MODEL = "verifiedModel";
 
-    /**
-     * Composite verification handler.
-     */
-    @Autowired
-    protected CompositeSecurityVerifierAdapter verifier;
+	/**
+	 * Composite verification handler.
+	 */
+	@Autowired
+	protected CompositeSecurityVerifierAdapter verifier;
 
-    /**
-     * Apply CAPTCHA.
-     *
-     * @param param    CAPTCHA parameter, required
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = {GET})
-    @ResponseBody
-    public RespBase<?> applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        RespBase<Object> resp = RespBase.create(sessionStatus());
-        try {
-            if (!coprocessor.preApplyCapcha(request, response)) {
-                throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
-            }
-            // LoginId number or mobileNum(Optional)
-            String principal = getCleanParam(request, config.getParam().getPrincipalName());
-            // Limit factors
-            List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
+	/**
+	 * Apply CAPTCHA.
+	 *
+	 * @param param
+	 *            CAPTCHA parameter, required
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = { GET })
+	@ResponseBody
+	public RespBase<?> applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		try {
+			if (!coprocessor.preApplyCapcha(request, response)) {
+				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+			}
+			// LoginId number or mobileNum(Optional)
+			String principal = getCleanParam(request, config.getParam().getPrincipalName());
+			// Limit factors
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
-            // Apply CAPTCHA
-            if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
-                resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
-            } else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
-                log.warn("Invalid request, no captcha enabled, factors: {}", factors);
-            }
+			// Apply CAPTCHA
+			if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
+				resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
+			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
+				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
+			}
 
-        } catch (Exception e) {
-            resp.handleError(e);
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to apply captcha.", e);
-            } else {
-                log.warn("Failed to apply captcha. caused by: {}", resp.getMessage());
-            }
-        }
+		} catch (Exception e) {
+			resp.handleError(e);
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to apply captcha.", e);
+			} else {
+				log.warn("Failed to apply captcha. caused by: {}", resp.getMessage());
+			}
+		}
 
-        return resp;
-    }
+		return resp;
+	}
 
-    /**
-     * Verify CAPTCHA code.
-     *
-     * @param request
-     * @param response
-     * @throws Exception
-     */
-    @RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = {POST})
-    @ResponseBody
-    public RespBase<?> verifyAnalyzeCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request,
-                                            HttpServletResponse response) throws Exception {
-        RespBase<Object> resp = RespBase.create(sessionStatus());
-        try {
-            // Limit factors
-            List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
-            // Verifying
-            String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
-            resp.forMap().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
-        } catch (Exception e) {
-            resp.handleError(e);
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to verifyAnalyze captcha.", e);
-            }
-        }
-        return resp;
-    }
+	/**
+	 * Verify CAPTCHA code.
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { POST })
+	@ResponseBody
+	public RespBase<?> verifyAnalyzeCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		try {
+			// Limit factors
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
+			// Verifying
+			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
+			resp.forMap().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
+		} catch (Exception e) {
+			resp.handleError(e);
+			if (log.isWarnEnabled()) {
+				log.warn("Failed to verifyAnalyze captcha.", e);
+			}
+		}
+		return resp;
+	}
 
-    /**
-     * Apply verification code
-     *
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = {GET})
-    @ResponseBody
-    public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
-        RespBase<Object> resp = RespBase.create(sessionStatus());
-        try {
-            if (!coprocessor.preApplyVerify(request, response)) {
-                throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
-            }
-            // Login account number or mobile number(Required)
-            MobileNumber mn = parse(getCleanParam(request, config.getParam().getPrincipalName()));
-            // Lock factors
-            List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
+	/**
+	 * Apply verification code
+	 *
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = { GET })
+	@ResponseBody
+	public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		try {
+			if (!coprocessor.preApplyVerify(request, response)) {
+				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+			}
+			// Login account number or mobile number(Required)
+			MobileNumber mn = parse(getCleanParam(request, config.getParam().getPrincipalName()));
+			// Lock factors
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
 
-            // Graph validation
-            verifier.forAdapt(request).validate(factors, getCleanParam(request, config.getParam().getVerifiedTokenName()), false);
+			// Graph validation
+			verifier.forAdapt(request).validate(factors, getCleanParam(request, config.getParam().getVerifiedTokenName()), false);
 
-            // Apply SMS verify code.
-            resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
+			// Apply SMS verify code.
+			resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
 
-            // The creation time of the currently created SMS authentication
-            // code (must exist).
-            VerifyCodeWrapper code = verifier.forAdapt(TEXT_SMS).getVerifyCode(true);
-            resp.forMap().put(KEY_SMS_CHECK,
-                    new SmsCheckModel(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
-        } catch (Exception e) {
-            resp.handleError(e);
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to apply for sms verify-code", e);
-            } else {
-                log.warn("Failed to apply for sms verify-code. caused by: {}", resp.getMessage());
-            }
-        }
-        return resp;
-    }
+			// The creation time of the currently created SMS authentication
+			// code (must exist).
+			VerifyCodeWrapper code = verifier.forAdapt(TEXT_SMS).getVerifyCode(true);
+			resp.forMap().put(KEY_SMS_CHECK,
+					new SmsCheckModel(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
+		} catch (Exception e) {
+			resp.handleError(e);
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to apply for sms verify-code", e);
+			} else {
+				log.warn("Failed to apply for sms verify-code. caused by: {}", resp.getMessage());
+			}
+		}
+		return resp;
+	}
 
 }
