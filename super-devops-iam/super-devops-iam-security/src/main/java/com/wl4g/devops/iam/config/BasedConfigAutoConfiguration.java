@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.config;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
@@ -74,12 +74,12 @@ public class BasedConfigAutoConfiguration {
 		}
 
 		@Override
-		public EntryAddress getApplicationInfo(String applicationName) {
+		public ClusterConfig getApplicationInfo(String applicationName) {
 			return null;
 		}
 
 		@Override
-		public List<EntryAddress> findApplicationInfo(String... applicationNames) {
+		public List<ClusterConfig> findApplicationInfo(String... applicationNames) {
 			return null;
 		}
 

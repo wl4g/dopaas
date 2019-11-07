@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.EntryAddressDao;
+import com.wl4g.devops.dao.share.ClusterConfigDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,14 +36,14 @@ import java.util.Map;
 public class ApplicationController extends BaseController {
 
 	@Autowired
-	private EntryAddressDao entryAddressDao;
+	private ClusterConfigDao clusterConfigDao;
 
 	@RequestMapping(value = "/info")
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
-		List<EntryAddress> list = entryAddressDao.getByAppNames(null, null, null);
+		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null,null,null);
 		Map<String, Object> map = new HashMap<>();
-		for (EntryAddress entryAddress : list) {
+		for (ClusterConfig entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);
 		}
 		resp.getData().put("map", map);
