@@ -22,7 +22,6 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.iam.common.web.model.CursorIndexModel;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
@@ -39,7 +38,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.*;
-import static com.wl4g.devops.iam.common.web.model.CursorIndexModel.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
 import static java.util.Objects.nonNull;
@@ -132,12 +130,11 @@ public abstract class GenericApiController extends BaseController {
 		CursorWrapper cursor = CursorWrapper.parse(query.getCursor());
 		// Do scan access sessions all.
 		ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit());
-		List<SessionAttributeModel> sas = sc.readValues().stream().map(s -> wrapSessionAttribute(s)).collect(toList());
+		List<SessionAttribute> sas = sc.readValues().stream().map(s -> wrapSessionAttribute(s)).collect(toList());
 
 		// Setup response attributes.
-		resp.getData().put(KEY_SESSION_INDEX,
-				new CursorIndexModel(sc.getCursor().getCursorString(), sc.getCursor().getHasNext()));
-		resp.getData().put(KEY_SESSION_ATTRIBUTES, sas);
+		CursorIndexModel index = new CursorIndexModel(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
+		resp.setData(new SessionAttributeModel(index, sas));
 
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions => {}", resp);
@@ -230,8 +227,8 @@ public abstract class GenericApiController extends BaseController {
 	 * @param session
 	 * @return
 	 */
-	protected SessionAttributeModel wrapSessionAttribute(IamSession session) {
-		SessionAttributeModel sa = new SessionAttributeModel();
+	protected SessionAttribute wrapSessionAttribute(IamSession session) {
+		SessionAttribute sa = new SessionAttribute();
 		sa.setId(String.valueOf(session.getId()));
 		sa.setLastAccessTime(session.getLastAccessTime());
 		sa.setStartTimestamp(session.getStartTimestamp());

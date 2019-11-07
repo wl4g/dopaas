@@ -20,6 +20,7 @@ import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.web.GenericApiController;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -97,8 +98,8 @@ public class IamServerApiV1Controller extends GenericApiController {
 	 * @return
 	 */
 	@Override
-	protected SessionAttributeModel wrapSessionAttribute(IamSession session) {
-		SessionAttributeModel sa = super.wrapSessionAttribute(session);
+	protected SessionAttribute wrapSessionAttribute(IamSession session) {
+		SessionAttribute sa = super.wrapSessionAttribute(session);
 
 		// Application grant info.
 		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);

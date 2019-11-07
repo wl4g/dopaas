@@ -41,7 +41,7 @@ public class GroupController {
 	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
 		List<Group> groupsTree = groupService.getGroupsTree();
-		resp.getData().put("data", groupsTree);
+		resp.forMap().put("data", groupsTree);
 		return resp;
 	}
 
@@ -63,7 +63,7 @@ public class GroupController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Group group = groupService.detail(id);
-		resp.getData().put("data", group);
+		resp.forMap().put("data", group);
 		return resp;
 	}
 

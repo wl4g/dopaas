@@ -248,7 +248,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 					RespBase<String> loggedResp = makeLoggedResponse(request, grantTicket, redirect.getRedirectUrl(), params);
 
 					// Handle success processing.
-					coprocessor.postAuthenticatingSuccess(tk, subject, request, response, loggedResp.getData());
+					coprocessor.postAuthenticatingSuccess(tk, subject, request, response, loggedResp.forMap());
 
 					String logged = toJSONString(loggedResp);
 					if (log.isInfoEnabled()) {
@@ -521,8 +521,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
 		resp.setCode(OK).setMessage("Authentication successful");
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
-		resp.getData().putAll(params);
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
+		resp.forMap().putAll(params);
+		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return resp;
 	}
 
@@ -545,9 +545,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
 		resp.setCode(UNAUTHC).setMessage(errmsg);
-		resp.getData().putAll(params);
-		resp.getData().put(config.getParam().getRedirectUrl(), failRedirectUrl);
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
+		resp.forMap().putAll(params);
+		resp.forMap().put(config.getParam().getRedirectUrl(), failRedirectUrl);
+		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return toJSONString(resp);
 	}
 

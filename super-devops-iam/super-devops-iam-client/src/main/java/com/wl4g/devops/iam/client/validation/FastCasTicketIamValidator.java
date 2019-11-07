@@ -66,7 +66,7 @@ public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketV
 			}
 			throw new TicketValidateException(resp != null ? resp.getMessage() : "Unknown error");
 		}
-		return resp.getData().get(KEY_TICKET_ASSERT);
+		return resp.forMap().get(KEY_TICKET_ASSERT);
 	}
 
 	@Override

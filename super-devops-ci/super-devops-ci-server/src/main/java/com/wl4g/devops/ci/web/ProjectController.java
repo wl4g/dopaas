@@ -68,6 +68,7 @@ public class ProjectController extends BaseController {
 	public RespBase<?> list(String groupName, String projectName, CustomPage customPage) {
 		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , customPage = {} ", groupName,
 				projectName, customPage);
+
 		RespBase<Object> resp = RespBase.create();
 		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
 		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
@@ -76,8 +77,8 @@ public class ProjectController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -116,7 +117,7 @@ public class ProjectController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		Project project = projectService.selectByPrimaryKey(id);
-		resp.getData().put("project", project);
+		resp.forMap().put("project", project);
 		return resp;
 	}
 
@@ -144,7 +145,7 @@ public class ProjectController extends BaseController {
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
 		List<Project> list = projectService.list(null, null);
-		resp.getData().put("list", list);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -191,12 +192,12 @@ public class ProjectController extends BaseController {
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
 			List<String> branchNames = vcsAdapter.forDefault().getRemoteTags(gitlabProjectId);
-			resp.getData().put("branchNames", branchNames);
+			resp.forMap().put("branchNames", branchNames);
 		}
 		// Branch
 		else {
 			List<String> branchNames = vcsAdapter.forDefault().getRemoteBranchNames(gitlabProjectId);
-			resp.getData().put("branchNames", branchNames);
+			resp.forMap().put("branchNames", branchNames);
 		}
 		return resp;
 	}

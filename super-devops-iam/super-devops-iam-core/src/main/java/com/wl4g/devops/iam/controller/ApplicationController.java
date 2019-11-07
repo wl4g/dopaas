@@ -46,7 +46,7 @@ public class ApplicationController extends BaseController {
 		for (EntryAddress entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);
 		}
-		resp.getData().put("map", map);
+		resp.forMap().put("map", map);
 		// System.out.println(JacksonUtils.toJSONString(list));
 		return resp;
 	}

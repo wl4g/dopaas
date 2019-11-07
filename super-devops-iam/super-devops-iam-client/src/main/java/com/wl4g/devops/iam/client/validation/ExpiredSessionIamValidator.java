@@ -38,7 +38,8 @@ import java.util.Map;
  * @date 2018年11月29日
  * @since
  */
-public class ExpiredSessionIamValidator extends AbstractBasedIamValidator<SessionValidationAssertion, SessionValidationAssertion> {
+public class ExpiredSessionIamValidator
+		extends AbstractBasedIamValidator<SessionValidationAssertion, SessionValidationAssertion> {
 
 	public ExpiredSessionIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
@@ -58,7 +59,7 @@ public class ExpiredSessionIamValidator extends AbstractBasedIamValidator<Sessio
 			}
 			throw new SessionValidateException(String.format("Remote validate error, %s", resp.getMessage()));
 		}
-		return resp.getData().get(KEY_SESSION_VALID_ASSERT);
+		return resp.forMap().get(KEY_SESSION_VALID_ASSERT);
 	}
 
 	@Override

@@ -56,8 +56,8 @@ public class RecordController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -66,7 +66,7 @@ public class RecordController extends BaseController {
 		log.info("into CollectorController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmRecord alarmRecord = recordService.detail(id);
-		resp.getData().put("alarmRecord", alarmRecord);
+		resp.forMap().put("alarmRecord", alarmRecord);
 		return resp;
 	}
 

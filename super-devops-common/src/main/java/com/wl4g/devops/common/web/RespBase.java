@@ -17,6 +17,8 @@ package com.wl4g.devops.common.web;
 
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.Assert.hasText;
@@ -46,37 +48,38 @@ import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulExcepti
  * @date 2018年3月9日
  * @since
  */
-public class RespBase<T> implements Serializable {
+@Beta
+public class RespBase<D> implements Serializable {
 	final private static long serialVersionUID = 2647155468624590650L;
 
-	private RetCode code;
-	private String status; // [Extensible]
-	private String message;
-	private DataMap<T> data = new DataMap<>();
+	private RetCode code = RetCode.OK;
+	private String status = DEFAULT_STATUS; // [Extensible]
+	private String message = EMPTY;
+	private Object data = DEFAULT_DATA;
 
 	public RespBase() {
-		this(RetCode.OK);
+		this(null);
 	}
 
 	public RespBase(RetCode retCode) {
 		this(retCode, null);
 	}
 
-	public RespBase(DataMap<T> data) {
+	public RespBase(DataMap<D> data, String status) {
 		this(null, data);
 	}
 
-	public RespBase(RetCode retCode, DataMap<T> data) {
+	public RespBase(RetCode retCode, DataMap<D> data) {
 		this(retCode, null, data);
 	}
 
-	public RespBase(RetCode retCode, String message, DataMap<T> data) {
+	public RespBase(RetCode retCode, String message, DataMap<D> data) {
 		this(retCode, null, message, data);
 	}
 
-	public RespBase(RetCode retCode, String status, String message, DataMap<T> data) {
+	public RespBase(RetCode retCode, String status, String message, DataMap<D> data) {
 		setCode(retCode);
-		setStatus(isBlank(status) ? DEFAULT_STATUS : status);
+		setStatus(status);
 		setMessage(message);
 		setData(data);
 	}
@@ -96,7 +99,7 @@ public class RespBase<T> implements Serializable {
 	 * @param retCode
 	 * @return
 	 */
-	public RespBase<T> setCode(RetCode retCode) {
+	public RespBase<D> setCode(RetCode retCode) {
 		this.code = retCode != null ? retCode : this.code;
 		return this;
 	}
@@ -116,7 +119,7 @@ public class RespBase<T> implements Serializable {
 	 * @param status
 	 * @return
 	 */
-	public RespBase<T> setStatus(String status) {
+	public RespBase<D> setStatus(String status) {
 		if (!isBlank(status)) {
 			this.status = status;
 		}
@@ -129,8 +132,7 @@ public class RespBase<T> implements Serializable {
 	 * @return
 	 */
 	public String getMessage() {
-		String errmsg = isBlank(message) ? code.getErrmsg() : message;
-		return String.format("[%s-%s]  %s", GLOBAL_ERR_PREFIX, code.getErrcode(), errmsg);
+		return isBlank(message) ? code.getErrmsg() : message;
 	}
 
 	/**
@@ -138,8 +140,8 @@ public class RespBase<T> implements Serializable {
 	 * 
 	 * @return
 	 */
-	public RespBase<T> setMessage(String message) {
-		this.message = !isBlank(message) ? message : this.message;
+	public RespBase<D> setMessage(String message) {
+		this.message = ErrorMessagePrefixBuilder.build(code, !isBlank(message) ? message : this.message);
 		return this;
 	}
 
@@ -149,9 +151,8 @@ public class RespBase<T> implements Serializable {
 	 * @param th
 	 * @return
 	 */
-	public RespBase<T> setThrowable(Throwable th) {
-		this.message = getRootCausesString(th);
-		return this;
+	public RespBase<D> setThrowable(Throwable th) {
+		return setMessage(getRootCausesString(th));
 	}
 
 	/**
@@ -162,18 +163,31 @@ public class RespBase<T> implements Serializable {
 	 * @param th
 	 * @return
 	 */
-	public RespBase<T> handleError(Throwable th) {
-		this.message = getRootCausesString(th);
-		this.code = getRestfulCode(th, RetCode.SYS_ERR);
+	public RespBase<D> handleError(Throwable th) {
+		setCode(getRestfulCode(th, RetCode.SYS_ERR));
+		setMessage(this.message = getRootCausesString(th));
 		return this;
 	}
 
 	/**
-	 * Get response data.
+	 * Get for response data node of {@link DataMap}.
 	 * 
 	 * @return
 	 */
-	public DataMap<T> getData() {
+	@SuppressWarnings("unchecked")
+	public DataMap<D> forMap() {
+		if (!isInstanceOfDataMap()) {
+			this.data = new DataMap<>();
+		}
+		return (DataMap<D>) data;
+	}
+
+	/**
+	 * Get response data node of {@link Object}.
+	 * 
+	 * @return
+	 */
+	public Object getData() {
 		return data;
 	}
 
@@ -183,9 +197,15 @@ public class RespBase<T> implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	public RespBase<T> setData(Map<String, T> data) {
-		if (!isEmpty(data)) {
-			this.data.putAll(data);
+	@SuppressWarnings("rawtypes")
+	public RespBase<D> setData(Object data) {
+		if (nonNull(data)) {
+			// Check.
+			if (isInstanceOfDataMap() && !isEmpty((Map) this.data)) {
+				throw new IllegalStateException(
+						String.format("RespBase.data already elements, setData() requires data to be empty. - %s", this.data));
+			}
+			this.data = data;
 		}
 		return this;
 	}
@@ -197,31 +217,27 @@ public class RespBase<T> implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public DataMap<Object> build(String nodeKey) {
+	public DataMap<Object> buildNodeMap(String nodeKey) {
 		hasText(nodeKey, "RespBase build datamap nodeKey name can't be empty");
 		DataMap<Object> nodeMap = new DataMap<>();
-		getData().put(nodeKey, (T) nodeMap);
+		forMap().put(nodeKey, (D) nodeMap);
 		return nodeMap;
+	}
+
+	/**
+	 * Check whether the current data node belongs to the instance of
+	 * {@link DataMap}
+	 * 
+	 * @return
+	 */
+	private boolean isInstanceOfDataMap() {
+		return nonNull(data) && (data instanceof DataMap);
 	}
 
 	@Override
 	public String toString() {
 		return "{" + (code != null ? "code=" + code + ", " : "") + (message != null ? "message=" + message + ", " : "")
 				+ (data != null ? "data=" + data : "") + "}";
-	}
-
-	// --- Setup's. ---
-
-	/**
-	 * Setup global error of message prefix.</br>
-	 * e.g. </br>
-	 * alert("Authenticate failure.&nbsp;&nbsp;&nbsp;[<b>IAM</b>-4001]")
-	 * 
-	 * @param prefix
-	 */
-	public final static void globalErrPrefix(String prefix) {
-		hasText(prefix, "Global errors prefix can't be empty.");
-		GLOBAL_ERR_PREFIX = prefix;
 	}
 
 	// --- Function's. ---
@@ -312,6 +328,45 @@ public class RespBase<T> implements Serializable {
 	@Beta
 	public static class DataMap<V> extends LinkedHashMap<String, V> {
 		private static final long serialVersionUID = 741193108777950437L;
+
+		/**
+		 * Constructs an empty insertion-ordered <tt>LinkedHashMap</tt> instance
+		 * with the specified initial capacity and a default load factor (0.75).
+		 *
+		 * @throws IllegalArgumentException
+		 *             if the initial capacity is negative
+		 */
+		public DataMap() {
+		}
+
+		/**
+		 * Constructs an empty insertion-ordered <tt>LinkedHashMap</tt> instance
+		 * with the specified initial capacity and a default load factor (0.75).
+		 *
+		 * @param initialCapacity
+		 *            the initial capacity
+		 * @throws IllegalArgumentException
+		 *             if the initial capacity is negative
+		 */
+		public DataMap(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		/**
+		 * Constructs an empty insertion-ordered <tt>LinkedHashMap</tt> instance
+		 * with the specified initial capacity and load factor.
+		 *
+		 * @param initialCapacity
+		 *            the initial capacity
+		 * @param loadFactor
+		 *            the load factor
+		 * @throws IllegalArgumentException
+		 *             if the initial capacity is negative or the load factor is
+		 *             nonpositive
+		 */
+		public DataMap(int initialCapacity, float loadFactor) {
+			super(initialCapacity, loadFactor);
+		}
 
 		@Override
 		public V put(String key, V value) {
@@ -516,15 +571,57 @@ public class RespBase<T> implements Serializable {
 	}
 
 	/**
-	 * Default status value.
+	 *
+	 * Global errors code message prefix builder.
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月7日
+	 * @since
 	 */
-	final public static String DEFAULT_STATUS = "Normal";
+	final static class ErrorMessagePrefixBuilder {
+
+		/**
+		 * Errors prefix definition.
+		 * 
+		 * @see {@link com.wl4g.devops.common.web.RespBase#globalErrPrefix()}
+		 */
+		private static String ErrorPrefixString = "api"; // by-default.
+
+		/**
+		 * Building error message with prefix.
+		 * 
+		 * @param retCode
+		 * @param errmsg
+		 * @return
+		 */
+		public static String build(RetCode retCode, String errmsg) {
+			if (!isBlank(errmsg)) {
+				String prefixString = String.format("[%s-%s]", ErrorPrefixString, retCode.getErrcode());
+				return contains(errmsg, prefixString) ? errmsg : (prefixString + errmsg);
+			}
+			return errmsg;
+		}
+
+		/**
+		 * Setup global error message prefix.
+		 * 
+		 * @param errorPrefix
+		 */
+		public static void setup(String errorPrefix) {
+			hasText(errorPrefix, "Global errors prefix can't be empty.");
+			ErrorPrefixString = errorPrefix;
+		}
+
+	}
 
 	/**
-	 * Global errors prefix.
-	 * 
-	 * @see {@link com.wl4g.devops.common.web.RespBase#globalErrPrefix()}
+	 * Default status value.
 	 */
-	public static String GLOBAL_ERR_PREFIX = "api";
+	final public static String DEFAULT_STATUS = "normal";
+
+	/**
+	 * Default status data value.
+	 */
+	final public static Object DEFAULT_DATA = new Object();
 
 }

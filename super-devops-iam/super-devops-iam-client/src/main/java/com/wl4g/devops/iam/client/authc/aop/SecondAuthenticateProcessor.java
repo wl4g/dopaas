@@ -126,7 +126,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		// Response JSON message
 		if (isJSONResponse(http.getRequest())) {
 			RespBase<String> resp = new RespBase<>(SECOND_UNAUTH, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
-			resp.getData().put(config.getParam().getRedirectUrl(), redirectUrl);
+			resp.forMap().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);
 			writeJson(http.getResponse(), toJSONString(resp));
 		}
@@ -244,7 +244,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 
 		// Check successful
 		if (RespBase.isSuccess(resp)) {
-			SecondAuthcAssertion assertion = resp.getData().get(KEY_SECOND_AUTH_ASSERT);
+			SecondAuthcAssertion assertion = resp.forMap().get(KEY_SECOND_AUTH_ASSERT);
 			if (!(assertion != null && assertion.getStatus() != null && assertion.getStatus() == Authenticated
 					&& String.valueOf(assertion.getFunctionId()).equals(annotation.funcId()))) {
 				throw new SecondAuthenticationException(assertion.getErrdesc());

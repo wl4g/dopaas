@@ -53,7 +53,7 @@ public class UserController extends BaseController {
 		Assert.notNull(userId, "userId is null");
 		RespBase<Object> resp = RespBase.create();
 		User detail = userService.detail(userId);
-		resp.getData().put("data", detail);
+		resp.forMap().put("data", detail);
 		return resp;
 	}
 

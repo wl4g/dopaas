@@ -156,7 +156,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		if (!RespBase.isSuccess(resp)) {
 			throw new IamException(resp.getMessage());
 		}
-		return resp.getData().get(KEY_LOGOUT_INFO);
+		return resp.forMap().get(KEY_LOGOUT_INFO);
 	}
 
 	/**

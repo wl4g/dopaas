@@ -83,7 +83,7 @@ public class ScmServerEndpoint extends BaseController {
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
 		// Fetch configuration source
-		resp.getData().put(KEY_RELEASE, contextHandler.getSource(get));
+		resp.forMap().put(KEY_RELEASE, contextHandler.getSource(get));
 
 		if (log.isInfoEnabled()) {
 			log.info("Fetch config source => {}", resp);
