@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Documented
 public @interface IamFilter {
 

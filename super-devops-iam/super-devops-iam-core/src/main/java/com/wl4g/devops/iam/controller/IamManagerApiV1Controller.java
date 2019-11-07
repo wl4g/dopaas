@@ -54,7 +54,6 @@ public class IamManagerApiV1Controller extends BaseController {
 	@Autowired
 	private ClusterConfigDao clusterConfigDao;
 
-
 	/**
 	 * Find IAM server list of app_cluster_config.
 	 * 

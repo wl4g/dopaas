@@ -59,68 +59,71 @@ import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.LOGIN;
  */
 public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenticationToken> {
 
-    public SmsAuthorizingRealm(IamBasedMatcher matcher) {
-        super(matcher);
-    }
+	public SmsAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
+	}
 
-    /**
-     * Authenticates a user and retrieves its information.
-     *
-     * @param token the authentication token
-     * @throws AuthenticationException if there is an error during authentication.
-     */
-    @Override
-    protected AuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
-        // Get account by mobile phone
-        IamAccountInfo acc = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
-        if (log.isDebugEnabled()) {
-            log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
-        }
+	/**
+	 * Authenticates a user and retrieves its information.
+	 *
+	 * @param token
+	 *            the authentication token
+	 * @throws AuthenticationException
+	 *             if there is an error during authentication.
+	 */
+	@Override
+	protected AuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
+		// Get account by mobile phone
+		IamAccountInfo acc = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
+		if (log.isDebugEnabled()) {
+			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
+		}
 
-        String principal = null; // Current login principal
+		String principal = null; // Current login principal
 
-        // If the operation is not logged-in, Princial is the currently
-        // logged-in subject.
-        if (LOGIN != token.getAction()) {
-            principal = (String) SecurityUtils.getSubject().getPrincipal();
-        }
+		// If the operation is not logged-in, Princial is the currently
+		// logged-in subject.
+		if (LOGIN != token.getAction()) {
+			principal = (String) SecurityUtils.getSubject().getPrincipal();
+		}
 
-        // Actions are unbind or login, account information is required.
-        if (BIND != token.getAction()) {
-            assertAccountInfo(acc, token);
-            principal = acc.getPrincipal();
-        }
+		// Actions are unbind or login, account information is required.
+		if (BIND != token.getAction()) {
+			assertAccountInfo(acc, token);
+			principal = acc.getPrincipal();
+		}
 
-        /*
-         * Password is a string that may be set to empty.
-         * See:xx.secure.AbstractCredentialsSecurerSupport#validate
-         */
-        return new SmsAuthenticationInfo(acc, principal, token.getCredentials(), getName());
-    }
+		/*
+		 * Password is a string that may be set to empty.
+		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
+		 */
+		return new SmsAuthenticationInfo(acc, principal, token.getCredentials(), getName());
+	}
 
-    /**
-     * Retrieves the AuthorizationInfo for the given principals (the CAS
-     * previously authenticated user : id + attributes).
-     *
-     * @param principals the primary identifying principals of the AuthorizationInfo
-     *                   that should be retrieved.
-     * @return the AuthorizationInfo associated with this principals.
-     */
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return new SmsAuthorizationInfo();
-    }
+	/**
+	 * Retrieves the AuthorizationInfo for the given principals (the CAS
+	 * previously authenticated user : id + attributes).
+	 *
+	 * @param principals
+	 *            the primary identifying principals of the AuthorizationInfo
+	 *            that should be retrieved.
+	 * @return the AuthorizationInfo associated with this principals.
+	 */
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		return new SmsAuthorizationInfo();
+	}
 
-    /**
-     * Assertion account information
-     *
-     * @param acc
-     * @param token
-     */
-    private void assertAccountInfo(IamAccountInfo acc, SmsAuthenticationToken token) {
-        if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
-            throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
-        }
-    }
+	/**
+	 * Assertion account information
+	 *
+	 * @param acc
+	 * @param token
+	 */
+	private void assertAccountInfo(IamAccountInfo acc, SmsAuthenticationToken token) {
+		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
+			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
+		}
+	}
 
 }

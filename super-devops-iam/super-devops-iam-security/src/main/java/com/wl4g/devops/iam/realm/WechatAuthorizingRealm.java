@@ -45,8 +45,8 @@ import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
  */
 public class WechatAuthorizingRealm extends Oauth2SnsAuthorizingRealm<WechatAuthenticationToken> {
 
-    public WechatAuthorizingRealm(IamBasedMatcher matcher) {
-        super(matcher);
-    }
+	public WechatAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
+	}
 
 }

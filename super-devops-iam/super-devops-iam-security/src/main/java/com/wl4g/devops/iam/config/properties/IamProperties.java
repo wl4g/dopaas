@@ -43,174 +43,174 @@ import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
  */
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam")
 public class IamProperties extends AbstractIamProperties<ServerParamProperties> {
-    private static final long serialVersionUID = -5858422822181237865L;
+	private static final long serialVersionUID = -5858422822181237865L;
 
-    /**
-     * Default view loader path
-     */
-    final public static String DEFAULT_VIEW_LOADER_PATH = "classpath:/default-view";
+	/**
+	 * Default view loader path
+	 */
+	final public static String DEFAULT_VIEW_LOADER_PATH = "classpath:/default-view";
 
-    /**
-     * Default view login URI.
-     */
-    final public static String DEFAULT_VIEW_LOGIN_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
+	/**
+	 * Default view login URI.
+	 */
+	final public static String DEFAULT_VIEW_LOGIN_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
 
-    /**
-     * Login page URI
-     */
-    private String loginUri = DEFAULT_VIEW_LOGIN_URI;
+	/**
+	 * Login page URI
+	 */
+	private String loginUri = DEFAULT_VIEW_LOGIN_URI;
 
-    /**
-     * Login success redirection to end-point service name. </br>
-     *
-     * <pre>
-     * umc-manager@http://localhost:14048
-     * </pre>
-     */
-    private String successService = EMPTY;
+	/**
+	 * Login success redirection to end-point service name. </br>
+	 *
+	 * <pre>
+	 * umc-manager@http://localhost:14048
+	 * </pre>
+	 */
+	private String successService = EMPTY;
 
-    /**
-     * Login success redirection to end-point.(Must be back-end server URI)
-     * </br>
-     *
-     * <pre>
-     * umc-manager@http://localhost:14048
-     * </pre>
-     */
-    private String successUri = "http://localhost:8080";
+	/**
+	 * Login success redirection to end-point.(Must be back-end server URI)
+	 * </br>
+	 *
+	 * <pre>
+	 * umc-manager@http://localhost:14048
+	 * </pre>
+	 */
+	private String successUri = "http://localhost:8080";
 
-    /**
-     * Unauthorized(403) page URI
-     */
-    private String unauthorizedUri = DEFAULT_VIEW_403_URI;
+	/**
+	 * Unauthorized(403) page URI
+	 */
+	private String unauthorizedUri = DEFAULT_VIEW_403_URI;
 
-    /**
-     * Matcher configuration properties.
-     */
-    private MatcherProperties matcher = new MatcherProperties();
+	/**
+	 * Matcher configuration properties.
+	 */
+	private MatcherProperties matcher = new MatcherProperties();
 
-    /**
-     * Ticket configuration properties.
-     */
-    private TicketProperties ticket = new TicketProperties();
+	/**
+	 * Ticket configuration properties.
+	 */
+	private TicketProperties ticket = new TicketProperties();
 
-    /**
-     * IAM server parameters configuration properties.
-     */
-    private ServerParamProperties param = new ServerParamProperties();
+	/**
+	 * IAM server parameters configuration properties.
+	 */
+	private ServerParamProperties param = new ServerParamProperties();
 
-    /**
-     * IAM server API configuration properties.
-     */
-    private ApiProperties api = new ApiProperties();
+	/**
+	 * IAM server API configuration properties.
+	 */
+	private ApiProperties api = new ApiProperties();
 
-    public String getLoginUri() {
-        return loginUri;
-    }
+	public String getLoginUri() {
+		return loginUri;
+	}
 
-    public void setLoginUri(String loginUri) {
-        this.loginUri = cleanURI(loginUri);
-    }
+	public void setLoginUri(String loginUri) {
+		this.loginUri = cleanURI(loginUri);
+	}
 
-    public void setSuccessEndpoint(String successEndpoint) {
-        Assert.hasText(successEndpoint, "Success endpoint must not be empty.");
-        this.successService = successEndpoint.split("@")[0];
-        this.successUri = cleanURI(correctAuthenticaitorURI(successEndpoint.split("@")[1]));
-    }
+	public void setSuccessEndpoint(String successEndpoint) {
+		Assert.hasText(successEndpoint, "Success endpoint must not be empty.");
+		this.successService = successEndpoint.split("@")[0];
+		this.successUri = cleanURI(correctAuthenticaitorURI(successEndpoint.split("@")[1]));
+	}
 
-    public String getSuccessService() {
-        return successService;
-    }
+	public String getSuccessService() {
+		return successService;
+	}
 
-    /**
-     * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1 Situation1:
-     * /view/index.html ===> http://myapp.domain.com/myapp/authenticator?id=1
-     * <p>
-     * Implementing the IAM-CAS protocol: When successful login, you must
-     * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
-     * front-end pages can not be used directly).
-     *
-     * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
-     * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
-     */
-    @Override
-    public String getSuccessUri() {
-        return successUri;
-    }
+	/**
+	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1 Situation1:
+	 * /view/index.html ===> http://myapp.domain.com/myapp/authenticator?id=1
+	 * <p>
+	 * Implementing the IAM-CAS protocol: When successful login, you must
+	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
+	 * front-end pages can not be used directly).
+	 *
+	 * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
+	 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
+	 */
+	@Override
+	public String getSuccessUri() {
+		return successUri;
+	}
 
-    @Override
-    public String getUnauthorizedUri() {
-        return unauthorizedUri;
-    }
+	@Override
+	public String getUnauthorizedUri() {
+		return unauthorizedUri;
+	}
 
-    public void setUnauthorizedUri(String unauthorizedUri) {
-        this.unauthorizedUri = unauthorizedUri;
-    }
+	public void setUnauthorizedUri(String unauthorizedUri) {
+		this.unauthorizedUri = unauthorizedUri;
+	}
 
-    public MatcherProperties getMatcher() {
-        return matcher;
-    }
+	public MatcherProperties getMatcher() {
+		return matcher;
+	}
 
-    public void setMatcher(MatcherProperties matcher) {
-        this.matcher = matcher;
-    }
+	public void setMatcher(MatcherProperties matcher) {
+		this.matcher = matcher;
+	}
 
-    public TicketProperties getTicket() {
-        return ticket;
-    }
+	public TicketProperties getTicket() {
+		return ticket;
+	}
 
-    public void setTicket(TicketProperties ticket) {
-        this.ticket = ticket;
-    }
+	public void setTicket(TicketProperties ticket) {
+		this.ticket = ticket;
+	}
 
-    public ServerParamProperties getParam() {
-        return this.param;
-    }
+	public ServerParamProperties getParam() {
+		return this.param;
+	}
 
-    public void setParam(ServerParamProperties param) {
-        this.param = param;
-    }
+	public void setParam(ServerParamProperties param) {
+		this.param = param;
+	}
 
-    public ApiProperties getApi() {
-        return api;
-    }
+	public ApiProperties getApi() {
+		return api;
+	}
 
-    public void setApi(ApiProperties api) {
-        this.api = api;
-    }
+	public void setApi(ApiProperties api) {
+		this.api = api;
+	}
 
-    @Override
-    protected void applyDefaultIfNecessary() {
-        // Default URL filter chain.
-        addDefaultFilterChain();
-        // Default success endPoint.
-        if (isBlank(getSuccessService())) {
-            setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
-        }
-    }
+	@Override
+	protected void applyDefaultIfNecessary() {
+		// Default URL filter chain.
+		addDefaultFilterChain();
+		// Default success endPoint.
+		if (isBlank(getSuccessService())) {
+			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
+		}
+	}
 
-    @Override
-    protected void validation() {
-        Assert.hasText(getSuccessService(), "Success service must not be empty.");
-        Assert.hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
-        super.validation();
-    }
+	@Override
+	protected void validation() {
+		Assert.hasText(getSuccessService(), "Success service must not be empty.");
+		Assert.hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
+		super.validation();
+	}
 
-    /**
-     * Add default filter chain settings.<br/>
-     * {@link DefaultOauth2SnsController#connect}<br/>
-     */
-    private void addDefaultFilterChain() {
-        // Default view access files request rules.
-        getFilterChain().put(DEFAULT_VIEW_BASE_URI + URI_STATIC + "/**", "anon");
-        // SNS authenticator rules.
-        getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
-        // Login authenticator rules.
-        getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
-        // Verify(CAPTCHA/SMS) authenticator rules.
-        getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
-        // API v1 rules.
-        getFilterChain().put(URI_S_API_V1_BASE + "/**", InternalWhiteListServerAuthenticationFilter.NAME);
-    }
+	/**
+	 * Add default filter chain settings.<br/>
+	 * {@link DefaultOauth2SnsController#connect}<br/>
+	 */
+	private void addDefaultFilterChain() {
+		// Default view access files request rules.
+		getFilterChain().put(DEFAULT_VIEW_BASE_URI + URI_STATIC + "/**", "anon");
+		// SNS authenticator rules.
+		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
+		// Login authenticator rules.
+		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
+		// Verify(CAPTCHA/SMS) authenticator rules.
+		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
+		// API v1 rules.
+		getFilterChain().put(URI_S_API_V1_BASE + "/**", InternalWhiteListServerAuthenticationFilter.NAME);
+	}
 
 }

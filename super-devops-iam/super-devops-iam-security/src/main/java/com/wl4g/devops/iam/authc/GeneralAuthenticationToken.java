@@ -33,89 +33,89 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
  * @since
  */
 public class GeneralAuthenticationToken extends AbstractIamAuthenticationToken
-        implements RememberMeAuthenticationToken, VerifyAuthenticationToken {
-    private static final long serialVersionUID = 8587329689973009598L;
+		implements RememberMeAuthenticationToken, VerifyAuthenticationToken {
+	private static final long serialVersionUID = 8587329689973009598L;
 
-    /**
-     * The username principal
-     */
-    private String principal;
+	/**
+	 * The username principal
+	 */
+	private String principal;
 
-    /**
-     * The password credentials
-     */
-    private String credentials;
+	/**
+	 * The password credentials
+	 */
+	private String credentials;
 
-    /**
-     * Whether or not 'rememberMe' should be enabled for the corresponding login
-     * attempt; default is <code>false</code>
-     */
-    private boolean rememberMe = false;
+	/**
+	 * Whether or not 'rememberMe' should be enabled for the corresponding login
+	 * attempt; default is <code>false</code>
+	 */
+	private boolean rememberMe = false;
 
-    /**
-     * User client type.
-     */
-    final private ClientRef clientRef;
+	/**
+	 * User client type.
+	 */
+	final private ClientRef clientRef;
 
-    /**
-     * Verification code verifiedToken.
-     */
-    final private String verifiedToken;
+	/**
+	 * Verification code verifiedToken.
+	 */
+	final private String verifiedToken;
 
-    /**
-     * Verifier type.
-     */
-    final private VerifyType verifyType;
+	/**
+	 * Verifier type.
+	 */
+	final private VerifyType verifyType;
 
-    public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-                                      final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType) {
-        this(remoteHost, redirectInfo, principal, credentials, clientRef, verifiedToken, verifyType, false);
-    }
+	public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType) {
+		this(remoteHost, redirectInfo, principal, credentials, clientRef, verifiedToken, verifyType, false);
+	}
 
-    public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-                                      final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType,
-                                      final boolean rememberMe) {
-        super(remoteHost, redirectInfo);
-        hasText(principal, "Username principal must not be empty.");
-        hasText(credentials, "Credentials must not be empty.");
-        hasText(clientRef, "ClientRef must not be empty.");
-        // hasText(verifiedToken, "Verified token must not be empty.");
-        notNull(verifyType, "Verify type must not be null.");
-        this.principal = principal;
-        this.credentials = credentials;
-        this.clientRef = ClientRef.of(clientRef);
-        this.verifiedToken = verifiedToken;
-        this.verifyType = verifyType;
-        this.rememberMe = rememberMe;
-    }
+	public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType,
+			final boolean rememberMe) {
+		super(remoteHost, redirectInfo);
+		hasText(principal, "Username principal must not be empty.");
+		hasText(credentials, "Credentials must not be empty.");
+		hasText(clientRef, "ClientRef must not be empty.");
+		// hasText(verifiedToken, "Verified token must not be empty.");
+		notNull(verifyType, "Verify type must not be null.");
+		this.principal = principal;
+		this.credentials = credentials;
+		this.clientRef = ClientRef.of(clientRef);
+		this.verifiedToken = verifiedToken;
+		this.verifyType = verifyType;
+		this.rememberMe = rememberMe;
+	}
 
-    @Override
-    public Object getPrincipal() {
-        return principal;
-    }
+	@Override
+	public Object getPrincipal() {
+		return principal;
+	}
 
-    @Override
-    public Object getCredentials() {
-        return credentials;
-    }
+	@Override
+	public Object getCredentials() {
+		return credentials;
+	}
 
-    @Override
-    public boolean isRememberMe() {
-        return rememberMe;
-    }
+	@Override
+	public boolean isRememberMe() {
+		return rememberMe;
+	}
 
-    public ClientRef getClientRef() {
-        return clientRef;
-    }
+	public ClientRef getClientRef() {
+		return clientRef;
+	}
 
-    @Override
-    public String getVerifiedToken() {
-        return verifiedToken;
-    }
+	@Override
+	public String getVerifiedToken() {
+		return verifiedToken;
+	}
 
-    @Override
-    public VerifyType getVerifyType() {
-        return verifyType;
-    }
+	@Override
+	public VerifyType getVerifyType() {
+		return verifyType;
+	}
 
 }

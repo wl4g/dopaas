@@ -39,55 +39,55 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
  */
 public class DelegateSnsHandler implements SnsHandler {
 
-    /**
-     * SNS handler repository
-     */
-    final private Map<Which, SnsHandler> repository = new ConcurrentHashMap<>();
+	/**
+	 * SNS handler repository
+	 */
+	final private Map<Which, SnsHandler> repository = new ConcurrentHashMap<>();
 
-    /**
-     * IAM server properties configuration
-     */
-    final protected IamProperties config;
+	/**
+	 * IAM server properties configuration
+	 */
+	final protected IamProperties config;
 
-    public DelegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
-        Assert.notNull(config, "'config' must not be null");
-        Assert.notEmpty(handlers, "'handlers' must not be empty");
-        this.config = config;
-        for (SnsHandler handler : handlers) {
-            if (repository.putIfAbsent(handler.whichType(), handler) != null) {
-                throw new IllegalStateException(String.format("Already sns handler register", handler.whichType()));
-            }
-        }
-    }
+	public DelegateSnsHandler(IamProperties config, List<SnsHandler> handlers) {
+		Assert.notNull(config, "'config' must not be null");
+		Assert.notEmpty(handlers, "'handlers' must not be empty");
+		this.config = config;
+		for (SnsHandler handler : handlers) {
+			if (repository.putIfAbsent(handler.whichType(), handler) != null) {
+				throw new IllegalStateException(String.format("Already sns handler register", handler.whichType()));
+			}
+		}
+	}
 
-    @Override
-    public String connect(Which which, String provider, String state, Map<String, String> connectParams) {
-        state = StringUtils.isEmpty(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
-        return getSnsHandler(which).connect(which, provider, state, connectParams);
-    }
+	@Override
+	public String connect(Which which, String provider, String state, Map<String, String> connectParams) {
+		state = StringUtils.isEmpty(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
+		return getSnsHandler(which).connect(which, provider, state, connectParams);
+	}
 
-    @Override
-    public String callback(Which which, String provider, String state, String code, HttpServletRequest request) {
-        return getSnsHandler(which).callback(which, provider, state, code, request);
-    }
+	@Override
+	public String callback(Which which, String provider, String state, String code, HttpServletRequest request) {
+		return getSnsHandler(which).callback(which, provider, state, code, request);
+	}
 
-    @Override
-    public Which whichType() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Which whichType() {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * Get target SNS handler
-     *
-     * @param which
-     * @return
-     */
-    private SnsHandler getSnsHandler(Which which) {
-        Assert.notNull(which, String.format("Illegal parameter %s[%s]", config.getParam().getWhich(), which));
-        if (!repository.containsKey(which)) {
-            throw new NoSuchBeanDefinitionException(String.format("No such sns handler of which[%s]", which));
-        }
-        return repository.get(which);
-    }
+	/**
+	 * Get target SNS handler
+	 *
+	 * @param which
+	 * @return
+	 */
+	private SnsHandler getSnsHandler(Which which) {
+		Assert.notNull(which, String.format("Illegal parameter %s[%s]", config.getParam().getWhich(), which));
+		if (!repository.containsKey(which)) {
+			throw new NoSuchBeanDefinitionException(String.format("No such sns handler of which[%s]", which));
+		}
+		return repository.get(which);
+	}
 
 }

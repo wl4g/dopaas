@@ -19,8 +19,8 @@ import java.io.Serializable;
 
 public interface Oauth2AccessToken extends Serializable {
 
-    String accessToken();
+	String accessToken();
 
-    <T extends Oauth2AccessToken> T build(String message);
+	<T extends Oauth2AccessToken> T build(String message);
 
 }

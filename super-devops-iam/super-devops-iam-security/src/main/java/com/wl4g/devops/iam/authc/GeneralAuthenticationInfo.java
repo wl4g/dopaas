@@ -22,27 +22,27 @@ import org.apache.shiro.util.ByteSource;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 
 public class GeneralAuthenticationInfo extends SimpleAuthenticationInfo {
-    private static final long serialVersionUID = 1558934819432102687L;
+	private static final long serialVersionUID = 1558934819432102687L;
 
-    /**
-     * IAM account information.
-     */
-    final private IamAccountInfo accountInfo;
+	/**
+	 * IAM account information.
+	 */
+	final private IamAccountInfo accountInfo;
 
-    public GeneralAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, String realmName) {
-        this(accountInfo, principal, credentials, null, realmName);
-    }
+	public GeneralAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, String realmName) {
+		this(accountInfo, principal, credentials, null, realmName);
+	}
 
-    public GeneralAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, ByteSource credentialsSalt,
-                                     String realmName) {
-        this.accountInfo = accountInfo;
-        this.principals = new SimplePrincipalCollection(principal, realmName);
-        this.credentials = credentials;
-        this.credentialsSalt = credentialsSalt;
-    }
+	public GeneralAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, ByteSource credentialsSalt,
+			String realmName) {
+		this.accountInfo = accountInfo;
+		this.principals = new SimplePrincipalCollection(principal, realmName);
+		this.credentials = credentials;
+		this.credentialsSalt = credentialsSalt;
+	}
 
-    public IamAccountInfo getAccountInfo() {
-        return accountInfo;
-    }
+	public IamAccountInfo getAccountInfo() {
+		return accountInfo;
+	}
 
 }

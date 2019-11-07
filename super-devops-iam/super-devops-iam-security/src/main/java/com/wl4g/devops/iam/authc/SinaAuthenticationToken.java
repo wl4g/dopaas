@@ -26,10 +26,10 @@ import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
  * @since
  */
 public class SinaAuthenticationToken extends Oauth2SnsAuthenticationToken {
-    private static final long serialVersionUID = 8587329689973009598L;
+	private static final long serialVersionUID = 8587329689973009598L;
 
-    public SinaAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, SocialAuthorizeInfo social) {
-        super(remoteHost, redirectInfo, social);
-    }
+	public SinaAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, SocialAuthorizeInfo social) {
+		super(remoteHost, redirectInfo, social);
+	}
 
 }

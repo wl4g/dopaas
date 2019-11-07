@@ -59,124 +59,124 @@ import com.google.common.io.ByteStreams;
 @com.wl4g.devops.iam.annotation.DefaultViewController
 public class DefaultViewController extends BaseController {
 
-    final public static String URI_STATIC = "/static";
+	final public static String URI_STATIC = "/static";
 
-    /**
-     * Default view page file cache buffer
-     */
-    final private Map<String, byte[]> bufferCache = new ConcurrentHashMap<>();
+	/**
+	 * Default view page file cache buffer
+	 */
+	final private Map<String, byte[]> bufferCache = new ConcurrentHashMap<>();
 
-    /**
-     * Resource loader
-     */
-    final private ResourceLoader loader = new DefaultResourceLoader();
+	/**
+	 * Resource loader
+	 */
+	final private ResourceLoader loader = new DefaultResourceLoader();
 
-    /**
-     * IAM server configuration
-     */
-    @Autowired
-    protected IamProperties config;
+	/**
+	 * IAM server configuration
+	 */
+	@Autowired
+	protected IamProperties config;
 
-    /**
-     * Session delegate message source bundle.
-     */
-    @javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-    protected SessionDelegateMessageBundle bundle;
+	/**
+	 * Session delegate message source bundle.
+	 */
+	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	protected SessionDelegateMessageBundle bundle;
 
-    /**
-     * Reader view files
-     *
-     * @param filename
-     * @param response
-     */
-    @GetMapping(path = "**/{filename:.+}")
-    public void readerView(@PathVariable("filename") String filename, HttpServletResponse response) throws Exception {
-        responseFile(null, filename, response);
-    }
+	/**
+	 * Reader view files
+	 *
+	 * @param filename
+	 * @param response
+	 */
+	@GetMapping(path = "**/{filename:.+}")
+	public void readerView(@PathVariable("filename") String filename, HttpServletResponse response) throws Exception {
+		responseFile(null, filename, response);
+	}
 
-    /**
-     * Reader static resource files
-     *
-     * @param filename
-     * @param response
-     */
-    @GetMapping(path = URI_STATIC + "/**")
-    public void readerResource(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String uri = request.getRequestURI();
-        String filepath = uri.substring(uri.indexOf(URI_STATIC) + URI_STATIC.length());
-        responseFile(URI_STATIC, filepath, response);
-    }
+	/**
+	 * Reader static resource files
+	 *
+	 * @param filename
+	 * @param response
+	 */
+	@GetMapping(path = URI_STATIC + "/**")
+	public void readerResource(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String uri = request.getRequestURI();
+		String filepath = uri.substring(uri.indexOf(URI_STATIC) + URI_STATIC.length());
+		responseFile(URI_STATIC, filepath, response);
+	}
 
-    /**
-     * Response file
-     *
-     * @param basePath
-     * @param filepath
-     * @param response
-     * @throws Exception
-     */
-    protected void responseFile(String basePath, String filepath, HttpServletResponse response) throws Exception {
-        notNull(filepath, "'filename' must not be null");
-        basePath = trimToEmpty(basePath);
+	/**
+	 * Response file
+	 *
+	 * @param basePath
+	 * @param filepath
+	 * @param response
+	 * @throws Exception
+	 */
+	protected void responseFile(String basePath, String filepath, HttpServletResponse response) throws Exception {
+		notNull(filepath, "'filename' must not be null");
+		basePath = trimToEmpty(basePath);
 
-        // Get buffer cache
-        byte[] buf = bufferCache.get(filepath);
-        if (isNull(buf)) {
-            Resource resource = getResource(basePath, filepath);
-            if (resource.exists()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Read file path:[{}]", resource.getURL());
-                }
-                buf = ByteStreams.toByteArray(resource.getInputStream());
-                // Caching is enabled when in non-debug mode.
-                if (!isJVMDebugging) {
-                    bufferCache.put(filepath, buf);
-                }
-            } else { // Not found
-                write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
-                return;
-            }
-        }
-        response.setDateHeader("expires", System.currentTimeMillis() + 600_000);
-        response.addHeader("Pragma", "Pragma");
-        response.addHeader("Cache-Control", "public");
-        response.addHeader("Last-Modified", String.valueOf(System.currentTimeMillis()));
+		// Get buffer cache
+		byte[] buf = bufferCache.get(filepath);
+		if (isNull(buf)) {
+			Resource resource = getResource(basePath, filepath);
+			if (resource.exists()) {
+				if (log.isDebugEnabled()) {
+					log.debug("Read file path:[{}]", resource.getURL());
+				}
+				buf = ByteStreams.toByteArray(resource.getInputStream());
+				// Caching is enabled when in non-debug mode.
+				if (!isJVMDebugging) {
+					bufferCache.put(filepath, buf);
+				}
+			} else { // Not found
+				write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
+				return;
+			}
+		}
+		response.setDateHeader("expires", System.currentTimeMillis() + 600_000);
+		response.addHeader("Pragma", "Pragma");
+		response.addHeader("Cache-Control", "public");
+		response.addHeader("Last-Modified", String.valueOf(System.currentTimeMillis()));
 
-        // Response file buffer.
-        write(response, OK.value(), getContentType(filepath), buf);
-    }
+		// Response file buffer.
+		write(response, OK.value(), getContentType(filepath), buf);
+	}
 
-    /**
-     * Load resource file
-     *
-     * @param basePath
-     * @param filepath
-     * @return
-     */
-    private Resource getResource(String basePath, String filepath) {
-        String location = new StringBuffer(DEFAULT_VIEW_LOADER_PATH).append(basePath).append("/").append(filepath).toString();
-        return loader.getResource(cleanURI(location));
-    }
+	/**
+	 * Load resource file
+	 *
+	 * @param basePath
+	 * @param filepath
+	 * @return
+	 */
+	private Resource getResource(String basePath, String filepath) {
+		String location = new StringBuffer(DEFAULT_VIEW_LOADER_PATH).append(basePath).append("/").append(filepath).toString();
+		return loader.getResource(cleanURI(location));
+	}
 
-    /**
-     * Get content type by file path.
-     *
-     * @param filepath
-     * @return
-     */
-    private String getContentType(String filepath) {
-        filepath = filepath.toLowerCase(Locale.US);
-        String contentType = EMPTY;
-        if (endsWithAny(filepath, "html", "shtml", "htm")) {
-            contentType = TEXT_HTML_VALUE;
-        } else if (endsWithAny(filepath, "css")) {
-            contentType = "text/css";
-        } else if (endsWithAny(filepath, "js")) {
-            contentType = "application/javascript";
-        } else if (isMediaRequest(filepath)) {
-            contentType = "image/" + org.springframework.util.StringUtils.getFilenameExtension(filepath);
-        }
-        return contentType;
-    }
+	/**
+	 * Get content type by file path.
+	 *
+	 * @param filepath
+	 * @return
+	 */
+	private String getContentType(String filepath) {
+		filepath = filepath.toLowerCase(Locale.US);
+		String contentType = EMPTY;
+		if (endsWithAny(filepath, "html", "shtml", "htm")) {
+			contentType = TEXT_HTML_VALUE;
+		} else if (endsWithAny(filepath, "css")) {
+			contentType = "text/css";
+		} else if (endsWithAny(filepath, "js")) {
+			contentType = "application/javascript";
+		} else if (isMediaRequest(filepath)) {
+			contentType = "image/" + org.springframework.util.StringUtils.getFilenameExtension(filepath);
+		}
+		return contentType;
+	}
 
 }

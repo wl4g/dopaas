@@ -33,27 +33,27 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_B
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({LoginAutoConfiguration.class})
+@AutoConfigureAfter({ LoginAutoConfiguration.class })
 public class VerifyAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
-    @Bean
-    public VerifyAuthenticatorController verifyAuthenticatorController() {
-        return new VerifyAuthenticatorController();
-    }
+	@Bean
+	public VerifyAuthenticatorController verifyAuthenticatorController() {
+		return new VerifyAuthenticatorController();
+	}
 
-    @Override
-    protected String getMappingPrefix() {
-        return URI_S_VERIFY_BASE;
-    }
+	@Override
+	protected String getMappingPrefix() {
+		return URI_S_VERIFY_BASE;
+	}
 
-    @Bean
-    public PrefixHandlerMapping verifyAuthenticatorControllerPrefixHandlerMapping() {
-        return super.createPrefixHandlerMapping();
-    }
+	@Bean
+	public PrefixHandlerMapping verifyAuthenticatorControllerPrefixHandlerMapping() {
+		return super.createPrefixHandlerMapping();
+	}
 
-    @Override
-    protected Class<? extends Annotation> annotationClass() {
-        return VerifyAuthController.class;
-    }
+	@Override
+	protected Class<? extends Annotation> annotationClass() {
+		return VerifyAuthController.class;
+	}
 
 }

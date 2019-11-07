@@ -27,23 +27,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.crypto")
 public class CryptoProperties {
 
-    private int keyPairPools = 64;
-    private int keyPairExpireMs = 600_000;
+	private int keyPairPools = 64;
+	private int keyPairExpireMs = 600_000;
 
-    public int getKeyPairPools() {
-        return keyPairPools;
-    }
+	public int getKeyPairPools() {
+		return keyPairPools;
+	}
 
-    public void setKeyPairPools(int keyPairPools) {
-        this.keyPairPools = keyPairPools;
-    }
+	public void setKeyPairPools(int keyPairPools) {
+		this.keyPairPools = keyPairPools;
+	}
 
-    public int getKeyPairExpireMs() {
-        return keyPairExpireMs;
-    }
+	public int getKeyPairExpireMs() {
+		return keyPairExpireMs;
+	}
 
-    public void setKeyPairExpireMs(int keyPairExpireMs) {
-        this.keyPairExpireMs = keyPairExpireMs;
-    }
+	public void setKeyPairExpireMs(int keyPairExpireMs) {
+		this.keyPairExpireMs = keyPairExpireMs;
+	}
 
 }

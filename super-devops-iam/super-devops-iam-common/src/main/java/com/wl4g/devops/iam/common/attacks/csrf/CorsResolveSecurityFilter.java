@@ -38,32 +38,32 @@ import org.springframework.web.filter.CorsFilter;
  */
 public class CorsResolveSecurityFilter extends CorsFilter {
 
-    public CorsResolveSecurityFilter(CorsConfigurationSource configSource) {
-        super(configSource);
-    }
+	public CorsResolveSecurityFilter(CorsConfigurationSource configSource) {
+		super(configSource);
+	}
 
-    /**
-     * Advanced matches CORS processor.
-     *
-     * @author Wangl.sir
-     * @version v1.0 2019年8月21日
-     * @since
-     */
-    public static class AdvancedCorsProcessor extends DefaultCorsProcessor {
+	/**
+	 * Advanced matches CORS processor.
+	 *
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月21日
+	 * @since
+	 */
+	public static class AdvancedCorsProcessor extends DefaultCorsProcessor {
 
-        final protected Logger log = LoggerFactory.getLogger(getClass());
+		final protected Logger log = LoggerFactory.getLogger(getClass());
 
-        @Override
-        public boolean processRequest(CorsConfiguration config, HttpServletRequest request, HttpServletResponse response)
-                throws IOException {
-            // CORS check processing.
-            final boolean corsAllowed = super.processRequest(config, request, response);
-            if (!corsAllowed && log.isWarnEnabled()) {
-                log.warn("Rejected cors request of URL: '{}'", (request.getMethod() + " " + getFullRequestURL(request)));
-            }
-            return corsAllowed;
-        }
+		@Override
+		public boolean processRequest(CorsConfiguration config, HttpServletRequest request, HttpServletResponse response)
+				throws IOException {
+			// CORS check processing.
+			final boolean corsAllowed = super.processRequest(config, request, response);
+			if (!corsAllowed && log.isWarnEnabled()) {
+				log.warn("Rejected cors request of URL: '{}'", (request.getMethod() + " " + getFullRequestURL(request)));
+			}
+			return corsAllowed;
+		}
 
-    }
+	}
 
 }

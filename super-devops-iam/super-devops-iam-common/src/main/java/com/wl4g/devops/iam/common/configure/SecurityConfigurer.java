@@ -34,40 +34,40 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface SecurityConfigurer {
 
-    //
-    // A U T H E N T I C A T I N G _ M E T H O D
-    //
+	//
+	// A U T H E N T I C A T I N G _ M E T H O D
+	//
 
-    /**
-     * Determine the URL of the login success redirection, default: successURL,
-     * can support customization.
-     *
-     * @param successUrl
-     * @param token
-     * @param subject
-     * @param request
-     * @param response
-     * @return
-     */
-    default String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
-                                            ServletResponse response) {
-        return successUrl;
-    }
+	/**
+	 * Determine the URL of the login success redirection, default: successURL,
+	 * can support customization.
+	 *
+	 * @param successUrl
+	 * @param token
+	 * @param subject
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	default String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
+			ServletResponse response) {
+		return successUrl;
+	}
 
-    /**
-     * Determine the URL of the login failure redirection, default: loginURL,
-     * can support customization.
-     *
-     * @param loginUrl
-     * @param token
-     * @param ae
-     * @param request
-     * @param response
-     * @return
-     */
-    default String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
-                                            ServletRequest request, ServletResponse response) {
-        return loginUrl;
-    }
+	/**
+	 * Determine the URL of the login failure redirection, default: loginURL,
+	 * can support customization.
+	 *
+	 * @param loginUrl
+	 * @param token
+	 * @param ae
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	default String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+			ServletRequest request, ServletResponse response) {
+		return loginUrl;
+	}
 
 }

@@ -26,32 +26,32 @@ package com.wl4g.devops.iam.sns.support;
  */
 public enum OAuth2ResponseType {
 
-    CODE(true), TOKEN;
+	CODE(true), TOKEN;
 
-    private boolean isDefault = false;
+	private boolean isDefault = false;
 
-    private OAuth2ResponseType() {
-    }
+	private OAuth2ResponseType() {
+	}
 
-    private OAuth2ResponseType(boolean isDefault) {
-        this.isDefault = isDefault;
-    }
+	private OAuth2ResponseType(boolean isDefault) {
+		this.isDefault = isDefault;
+	}
 
-    public boolean isDefault() {
-        return isDefault;
-    }
+	public boolean isDefault() {
+		return isDefault;
+	}
 
-    public static OAuth2ResponseType getDefault() {
-        OAuth2ResponseType defaultResponseType = null;
-        for (OAuth2ResponseType rt : values()) {
-            if (rt.isDefault()) {
-                if (defaultResponseType != null) {
-                    throw new IllegalStateException("There can only be one default value");
-                }
-                defaultResponseType = rt;
-            }
-        }
-        return defaultResponseType;
-    }
+	public static OAuth2ResponseType getDefault() {
+		OAuth2ResponseType defaultResponseType = null;
+		for (OAuth2ResponseType rt : values()) {
+			if (rt.isDefault()) {
+				if (defaultResponseType != null) {
+					throw new IllegalStateException("There can only be one default value");
+				}
+				defaultResponseType = rt;
+			}
+		}
+		return defaultResponseType;
+	}
 
 }

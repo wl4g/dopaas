@@ -38,112 +38,112 @@ import com.wl4g.devops.iam.crypto.KeySpecWrapper;
  * @since
  */
 final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializable {
-    final private static long serialVersionUID = -6748188131949785684L;
-    final transient private static Map<String, KeyFactory> keyFactoryCache = new ConcurrentHashMap<>();
+	final private static long serialVersionUID = -6748188131949785684L;
+	final transient private static Map<String, KeyFactory> keyFactoryCache = new ConcurrentHashMap<>();
 
-    final private String algorithm;
-    final private KeySpec keySpec;
-    final private KeySpec pubKeySpec;
+	final private String algorithm;
+	final private KeySpec keySpec;
+	final private KeySpec pubKeySpec;
 
-    // Temporary hex string.
-    private transient String keyHexString;
-    private transient String pubKeyHexString;
+	// Temporary hex string.
+	private transient String keyHexString;
+	private transient String pubKeyHexString;
 
-    // Temporary base64 string.
-    private transient String keyBase64String;
-    private transient String pubKeyBase64String;
+	// Temporary base64 string.
+	private transient String keyBase64String;
+	private transient String pubKeyBase64String;
 
-    public RSAKeySpecWrapper(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
-        Assert.notNull(algorithm, "'algorithm' must not be null");
-        Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
-        Assert.notNull(keySpec, "'privateKeySpec' must not be null");
-        this.algorithm = algorithm;
-        this.pubKeySpec = pubKeySpec;
-        this.keySpec = keySpec;
-    }
+	public RSAKeySpecWrapper(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		Assert.notNull(algorithm, "'algorithm' must not be null");
+		Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
+		Assert.notNull(keySpec, "'privateKeySpec' must not be null");
+		this.algorithm = algorithm;
+		this.pubKeySpec = pubKeySpec;
+		this.keySpec = keySpec;
+	}
 
-    public RSAKeySpecWrapper(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
-        super(keySpecId);
-        Assert.notNull(algorithm, "'algorithm' must not be null");
-        Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
-        Assert.notNull(keySpec, "'privateKeySpec' must not be null");
-        this.algorithm = algorithm;
-        this.pubKeySpec = pubKeySpec;
-        this.keySpec = keySpec;
-    }
+	public RSAKeySpecWrapper(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		super(keySpecId);
+		Assert.notNull(algorithm, "'algorithm' must not be null");
+		Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
+		Assert.notNull(keySpec, "'privateKeySpec' must not be null");
+		this.algorithm = algorithm;
+		this.pubKeySpec = pubKeySpec;
+		this.keySpec = keySpec;
+	}
 
-    public String getAlgorithm() {
-        return algorithm;
-    }
+	public String getAlgorithm() {
+		return algorithm;
+	}
 
-    public KeySpec getKeySpec() {
-        return keySpec;
-    }
+	public KeySpec getKeySpec() {
+		return keySpec;
+	}
 
-    public KeySpec getPubKeySpec() {
-        return pubKeySpec;
-    }
+	public KeySpec getPubKeySpec() {
+		return pubKeySpec;
+	}
 
-    public String getHexString() {
-        if (isBlank(keyHexString)) {
-            try {
-                keyHexString = Hex.encodeToString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        return keyHexString;
-    }
+	public String getHexString() {
+		if (isBlank(keyHexString)) {
+			try {
+				keyHexString = Hex.encodeToString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return keyHexString;
+	}
 
-    public String getPubHexString() {
-        if (isBlank(pubKeyHexString)) {
-            try {
-                pubKeyHexString = Hex.encodeToString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        return pubKeyHexString;
-    }
+	public String getPubHexString() {
+		if (isBlank(pubKeyHexString)) {
+			try {
+				pubKeyHexString = Hex.encodeToString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return pubKeyHexString;
+	}
 
-    public String getBase64String() {
-        if (isBlank(keyBase64String)) {
-            try {
-                keyBase64String = Base64.encodeBase64String(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        return keyBase64String;
-    }
+	public String getBase64String() {
+		if (isBlank(keyBase64String)) {
+			try {
+				keyBase64String = Base64.encodeBase64String(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return keyBase64String;
+	}
 
-    public String getPubBase64String() {
-        if (isBlank(pubKeyBase64String)) {
-            try {
-                pubKeyBase64String = Base64.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        return pubKeyBase64String;
-    }
+	public String getPubBase64String() {
+		if (isBlank(pubKeyBase64String)) {
+			try {
+				pubKeyBase64String = Base64.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return pubKeyBase64String;
+	}
 
-    private KeyFactory getKeyFactory() {
-        KeyFactory kf = keyFactoryCache.get(getAlgorithm());
-        if (kf == null) {
-            try {
-                keyFactoryCache.put(getAlgorithm(), (kf = KeyFactory.getInstance(getAlgorithm())));
-            } catch (NoSuchAlgorithmException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        return kf;
-    }
+	private KeyFactory getKeyFactory() {
+		KeyFactory kf = keyFactoryCache.get(getAlgorithm());
+		if (kf == null) {
+			try {
+				keyFactoryCache.put(getAlgorithm(), (kf = KeyFactory.getInstance(getAlgorithm())));
+			} catch (NoSuchAlgorithmException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return kf;
+	}
 
-    @Override
-    public String toString() {
-        return "KeySpecPair [algorithm=" + getAlgorithm() + ", pubKeyString=" + getPubHexString() + ", keyString="
-                + getHexString() + "]";
-    }
+	@Override
+	public String toString() {
+		return "KeySpecPair [algorithm=" + getAlgorithm() + ", pubKeyString=" + getPubHexString() + ", keyString="
+				+ getHexString() + "]";
+	}
 
 }

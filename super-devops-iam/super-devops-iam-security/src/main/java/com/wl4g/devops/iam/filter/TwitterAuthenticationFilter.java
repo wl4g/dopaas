@@ -21,14 +21,14 @@ import com.wl4g.devops.iam.authc.TwitterAuthenticationToken;
 @IamFilter
 public class TwitterAuthenticationFilter extends Oauth2SnsAuthenticationFilter<TwitterAuthenticationToken> {
 
-    @Override
-    public String getName() {
-        return ProviderSupport.TWITTER.getName();
-    }
+	@Override
+	public String getName() {
+		return ProviderSupport.TWITTER.getName();
+	}
 
-    @Override
-    public String getUriMapping() {
-        return URI_BASE_MAPPING + ProviderSupport.TWITTER.getName();
-    }
+	@Override
+	public String getUriMapping() {
+		return URI_BASE_MAPPING + ProviderSupport.TWITTER.getName();
+	}
 
 }

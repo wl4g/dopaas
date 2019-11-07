@@ -32,27 +32,27 @@ import com.wl4g.devops.iam.web.DefaultViewController;
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({IamAutoConfiguration.class})
+@AutoConfigureAfter({ IamAutoConfiguration.class })
 public class DefaultViewAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
-    @Bean
-    public DefaultViewController defaultViewController() {
-        return new DefaultViewController();
-    }
+	@Bean
+	public DefaultViewController defaultViewController() {
+		return new DefaultViewController();
+	}
 
-    @Override
-    protected String getMappingPrefix() {
-        return DEFAULT_VIEW_BASE_URI;
-    }
+	@Override
+	protected String getMappingPrefix() {
+		return DEFAULT_VIEW_BASE_URI;
+	}
 
-    @Bean
-    public PrefixHandlerMapping defaultViewControllerPrefixHandlerMapping() {
-        return super.createPrefixHandlerMapping();
-    }
+	@Bean
+	public PrefixHandlerMapping defaultViewControllerPrefixHandlerMapping() {
+		return super.createPrefixHandlerMapping();
+	}
 
-    @Override
-    protected Class<? extends Annotation> annotationClass() {
-        return com.wl4g.devops.iam.annotation.DefaultViewController.class;
-    }
+	@Override
+	protected Class<? extends Annotation> annotationClass() {
+		return com.wl4g.devops.iam.annotation.DefaultViewController.class;
+	}
 
 }

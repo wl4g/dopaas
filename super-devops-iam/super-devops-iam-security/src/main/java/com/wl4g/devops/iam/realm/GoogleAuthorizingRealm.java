@@ -45,8 +45,8 @@ import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
  */
 public class GoogleAuthorizingRealm extends Oauth2SnsAuthorizingRealm<GoogleAuthenticationToken> {
 
-    public GoogleAuthorizingRealm(IamBasedMatcher matcher) {
-        super(matcher);
-    }
+	public GoogleAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
+	}
 
 }

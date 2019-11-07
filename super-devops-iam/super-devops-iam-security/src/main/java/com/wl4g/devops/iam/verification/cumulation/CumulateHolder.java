@@ -28,27 +28,29 @@ import com.wl4g.devops.iam.common.cache.EnhancedCache;
  */
 public abstract class CumulateHolder {
 
-    /**
-     * New create default/(distributed caching) accumulator
-     *
-     * @param cache
-     * @param expireMs Expired milliseconds
-     * @return
-     */
-    public static Cumulator newCumulator(EnhancedCache cache, long expireMs) {
-        Assert.notNull(cache, "cache is null, please check configure");
-        return new DefaultCumulator(cache, expireMs);
-    }
+	/**
+	 * New create default/(distributed caching) accumulator
+	 *
+	 * @param cache
+	 * @param expireMs
+	 *            Expired milliseconds
+	 * @return
+	 */
+	public static Cumulator newCumulator(EnhancedCache cache, long expireMs) {
+		Assert.notNull(cache, "cache is null, please check configure");
+		return new DefaultCumulator(cache, expireMs);
+	}
 
-    /**
-     * New create session cache accumulator
-     *
-     * @param sessionKey
-     * @param expireMs   Expired milliseconds
-     * @return
-     */
-    public static Cumulator newSessionCumulator(String sessionKey, long expireMs) {
-        return new SessionCumulator(sessionKey, expireMs);
-    }
+	/**
+	 * New create session cache accumulator
+	 *
+	 * @param sessionKey
+	 * @param expireMs
+	 *            Expired milliseconds
+	 * @return
+	 */
+	public static Cumulator newSessionCumulator(String sessionKey, long expireMs) {
+		return new SessionCumulator(sessionKey, expireMs);
+	}
 
 }

@@ -28,12 +28,12 @@ import org.apache.shiro.cache.CacheManager;
  */
 public interface EnhancedCacheManager extends CacheManager {
 
-    /**
-     * Getting enhanced cache instance
-     *
-     * @param name
-     * @return
-     * @throws CacheException
-     */
-    EnhancedCache getEnhancedCache(String name) throws CacheException;
+	/**
+	 * Getting enhanced cache instance
+	 *
+	 * @param name
+	 * @return
+	 * @throws CacheException
+	 */
+	EnhancedCache getEnhancedCache(String name) throws CacheException;
 }

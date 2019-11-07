@@ -29,45 +29,45 @@ import org.springframework.util.Assert;
  * @since
  */
 public abstract class BasedVerifyCodeModel implements Serializable {
-    private static final long serialVersionUID = -333742824989510195L;
+	private static final long serialVersionUID = -333742824989510195L;
 
-    /**
-     * Applied CAPTCHA graph token.
-     */
-    @NotBlank
-    private String applyToken;
+	/**
+	 * Applied CAPTCHA graph token.
+	 */
+	@NotBlank
+	private String applyToken;
 
-    /**
-     * Applied verification type.
-     */
-    @NotBlank
-    private String verifyType;
+	/**
+	 * Applied verification type.
+	 */
+	@NotBlank
+	private String verifyType;
 
-    public BasedVerifyCodeModel() {
-        super();
-    }
+	public BasedVerifyCodeModel() {
+		super();
+	}
 
-    public BasedVerifyCodeModel(@NotBlank String applyToken, @NotBlank String verifyType) {
-        setApplyToken(applyToken);
-        setVerifyType(verifyType);
-    }
+	public BasedVerifyCodeModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+		setApplyToken(applyToken);
+		setVerifyType(verifyType);
+	}
 
-    public String getApplyToken() {
-        return applyToken;
-    }
+	public String getApplyToken() {
+		return applyToken;
+	}
 
-    public void setApplyToken(String applyToken) {
-        Assert.hasText(applyToken, "applyToken must not be empty");
-        this.applyToken = applyToken;
-    }
+	public void setApplyToken(String applyToken) {
+		Assert.hasText(applyToken, "applyToken must not be empty");
+		this.applyToken = applyToken;
+	}
 
-    public String getVerifyType() {
-        return verifyType;
-    }
+	public String getVerifyType() {
+		return verifyType;
+	}
 
-    public void setVerifyType(String verifyType) {
-        Assert.hasText(verifyType, "verifyType must not be empty");
-        this.verifyType = verifyType;
-    }
+	public void setVerifyType(String verifyType) {
+		Assert.hasText(verifyType, "verifyType must not be empty");
+		this.verifyType = verifyType;
+	}
 
 }

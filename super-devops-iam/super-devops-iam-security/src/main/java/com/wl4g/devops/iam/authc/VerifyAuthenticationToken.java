@@ -27,18 +27,18 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
  */
 public interface VerifyAuthenticationToken {
 
-    /**
-     * Get verifyType.
-     *
-     * @return
-     */
-    VerifyType getVerifyType();
+	/**
+	 * Get verifyType.
+	 *
+	 * @return
+	 */
+	VerifyType getVerifyType();
 
-    /**
-     * Get submitted verifiedToken.
-     *
-     * @return
-     */
-    String getVerifiedToken();
+	/**
+	 * Get submitted verifiedToken.
+	 *
+	 * @return
+	 */
+	String getVerifiedToken();
 
 }

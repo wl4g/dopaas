@@ -39,64 +39,64 @@ import javax.servlet.ServletResponse;
 @Beta
 public interface SecurityCoprocessor {
 
-    /**
-     * Before get session ID.
-     *
-     * @param request
-     * @param response
-     * @return Returning to a non-empty SID will be preferred.
-     */
-    default String preGetSessionId(ServletRequest request, ServletResponse response) {
-        return null;
-    }
+	/**
+	 * Before get session ID.
+	 *
+	 * @param request
+	 * @param response
+	 * @return Returning to a non-empty SID will be preferred.
+	 */
+	default String preGetSessionId(ServletRequest request, ServletResponse response) {
+		return null;
+	}
 
-    /**
-     * Call pre authentication, For example, the implementation of restricting
-     * client IP white-list to prevent violent cracking of large number of
-     * submission login requests.
-     *
-     * @param filter
-     * @param request
-     * @param response
-     * @return
-     */
-    default boolean preAuthentication(Filter filter, ServletRequest request, ServletResponse response) {
-        return true;
-    }
+	/**
+	 * Call pre authentication, For example, the implementation of restricting
+	 * client IP white-list to prevent violent cracking of large number of
+	 * submission login requests.
+	 *
+	 * @param filter
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	default boolean preAuthentication(Filter filter, ServletRequest request, ServletResponse response) {
+		return true;
+	}
 
-    /**
-     * Call post of authenticating success
-     *
-     * @param token
-     * @param subject
-     * @param request
-     * @param response
-     * @param respParams
-     */
-    default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-                                           ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
-    }
+	/**
+	 * Call post of authenticating success
+	 *
+	 * @param token
+	 * @param subject
+	 * @param request
+	 * @param response
+	 * @param respParams
+	 */
+	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
+			ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
+	}
 
-    /**
-     * Call post authenticating failure
-     *
-     * @param token
-     * @param ae
-     * @param request
-     * @param response
-     */
-    default void postAuthenticatingFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
-                                           ServletResponse response) throws AfterAuthenticatFailException {
-    }
+	/**
+	 * Call post authenticating failure
+	 *
+	 * @param token
+	 * @param ae
+	 * @param request
+	 * @param response
+	 */
+	default void postAuthenticatingFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
+			ServletResponse response) throws AfterAuthenticatFailException {
+	}
 
-    /**
-     * Call before logout
-     *
-     * @param forced
-     * @param request
-     * @param response
-     */
-    default void preLogout(boolean forced, ServletRequest request, ServletResponse response) {
-    }
+	/**
+	 * Call before logout
+	 *
+	 * @param forced
+	 * @param request
+	 * @param response
+	 */
+	default void preLogout(boolean forced, ServletRequest request, ServletResponse response) {
+	}
 
 }

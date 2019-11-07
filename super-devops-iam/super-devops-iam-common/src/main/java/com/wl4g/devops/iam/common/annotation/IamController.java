@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Documented
 public @interface IamController {
 

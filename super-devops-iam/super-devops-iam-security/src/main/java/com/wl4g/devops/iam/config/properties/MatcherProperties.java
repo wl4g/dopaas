@@ -29,180 +29,180 @@ import org.springframework.util.Assert;
  * @since
  */
 public class MatcherProperties implements InitializingBean, Serializable {
-    private static final long serialVersionUID = -6194767776312196341L;
+	private static final long serialVersionUID = -6194767776312196341L;
 
-    // --- Credentials ---
+	// --- Credentials ---
 
-    /**
-     * Maximum attempt request login count limit
-     */
-    private int failFastMatchMaxAttempts = 10;
+	/**
+	 * Maximum attempt request login count limit
+	 */
+	private int failFastMatchMaxAttempts = 10;
 
-    /**
-     * Lock request waits for milliseconds after requesting authentication
-     * failure.
-     */
-    private long failFastMatchDelay = 60 * 60 * 1000L;
+	/**
+	 * Lock request waits for milliseconds after requesting authentication
+	 * failure.
+	 */
+	private long failFastMatchDelay = 60 * 60 * 1000L;
 
-    // --- CAPTCHA ---
+	// --- CAPTCHA ---
 
-    /**
-     * Continuous match error begins the maximum attempt to enable the
-     * verification code.
-     */
-    private int enabledCaptchaMaxAttempts = 3;
+	/**
+	 * Continuous match error begins the maximum attempt to enable the
+	 * verification code.
+	 */
+	private int enabledCaptchaMaxAttempts = 3;
 
-    /**
-     * Apply CAPTCHA graph token name.
-     */
-    private String applyGraphTokenName = "graphToken";
+	/**
+	 * Apply CAPTCHA graph token name.
+	 */
+	private String applyGraphTokenName = "graphToken";
 
-    /**
-     * Maximum number of consecutive attempts to request an graph
-     * verification code.
-     */
-    private int failFastCaptchaMaxAttempts = 20;
+	/**
+	 * Maximum number of consecutive attempts to request an graph verification
+	 * code.
+	 */
+	private int failFastCaptchaMaxAttempts = 20;
 
-    /**
-     * The millisecond of lock wait after requesting CAPTCHA authentication
-     * fails.
-     */
-    private long failFastCaptchaDelay = 10 * 60 * 1000L;
+	/**
+	 * The millisecond of lock wait after requesting CAPTCHA authentication
+	 * fails.
+	 */
+	private long failFastCaptchaDelay = 10 * 60 * 1000L;
 
-    /**
-     * The graph verification code requesting the application expires in
-     * milliseconds.
-     */
-    private long captchaExpireMs = 1 * 60 * 1000L;
+	/**
+	 * The graph verification code requesting the application expires in
+	 * milliseconds.
+	 */
+	private long captchaExpireMs = 1 * 60 * 1000L;
 
-    // --- SMS ---
+	// --- SMS ---
 
-    /**
-     * Try to apply for the maximum number of SMS dynamic passwords multiple
-     * times (it will be locked for a while after it is exceeded).
-     */
-    private int failFastSmsMaxAttempts = 3;
+	/**
+	 * Try to apply for the maximum number of SMS dynamic passwords multiple
+	 * times (it will be locked for a while after it is exceeded).
+	 */
+	private int failFastSmsMaxAttempts = 3;
 
-    /**
-     * The length of time (in milliseconds) that will be locked after trying
-     * to apply for the maximum number of SMS dynamic passwords multiple
-     * times. Reference: failFastSmsMaxAttempts.
-     */
-    private long failFastSmsMaxDelay = 30 * 60 * 1000L;
+	/**
+	 * The length of time (in milliseconds) that will be locked after trying to
+	 * apply for the maximum number of SMS dynamic passwords multiple times.
+	 * Reference: failFastSmsMaxAttempts.
+	 */
+	private long failFastSmsMaxDelay = 30 * 60 * 1000L;
 
-    /**
-     * The number of milliseconds to wait after applying for an SMS dynamic
-     * password (you can reapply).
-     */
-    private long failFastSmsDelay = (long) (1.5 * 60 * 1000L);
+	/**
+	 * The number of milliseconds to wait after applying for an SMS dynamic
+	 * password (you can reapply).
+	 */
+	private long failFastSmsDelay = (long) (1.5 * 60 * 1000L);
 
-    /**
-     * Apply for SMS dynamic password every time, valid for authentication
-     * (milliseconds).
-     */
-    private long smsExpireMs = 5 * 60 * 1000L;
+	/**
+	 * Apply for SMS dynamic password every time, valid for authentication
+	 * (milliseconds).
+	 */
+	private long smsExpireMs = 5 * 60 * 1000L;
 
-    public int getFailFastMatchMaxAttempts() {
-        return failFastMatchMaxAttempts;
-    }
+	public int getFailFastMatchMaxAttempts() {
+		return failFastMatchMaxAttempts;
+	}
 
-    public void setFailFastMatchMaxAttempts(int failureMaxAttempts) {
-        Assert.isTrue(failureMaxAttempts > 0, "failureMaxAttempts code expiration time must be greater than 0");
-        this.failFastMatchMaxAttempts = failureMaxAttempts;
-    }
+	public void setFailFastMatchMaxAttempts(int failureMaxAttempts) {
+		Assert.isTrue(failureMaxAttempts > 0, "failureMaxAttempts code expiration time must be greater than 0");
+		this.failFastMatchMaxAttempts = failureMaxAttempts;
+	}
 
-    public long getFailFastMatchDelay() {
-        return failFastMatchDelay;
-    }
+	public long getFailFastMatchDelay() {
+		return failFastMatchDelay;
+	}
 
-    public void setFailFastMatchDelay(long failureDelaySecond) {
-        this.failFastMatchDelay = failureDelaySecond;
-    }
+	public void setFailFastMatchDelay(long failureDelaySecond) {
+		this.failFastMatchDelay = failureDelaySecond;
+	}
 
-    public int getEnabledCaptchaMaxAttempts() {
-        return enabledCaptchaMaxAttempts;
-    }
+	public int getEnabledCaptchaMaxAttempts() {
+		return enabledCaptchaMaxAttempts;
+	}
 
-    public void setEnabledCaptchaMaxAttempts(int enabledCaptchaMaxAttempts) {
-        this.enabledCaptchaMaxAttempts = enabledCaptchaMaxAttempts;
-    }
+	public void setEnabledCaptchaMaxAttempts(int enabledCaptchaMaxAttempts) {
+		this.enabledCaptchaMaxAttempts = enabledCaptchaMaxAttempts;
+	}
 
-    public String getApplyGraphTokenName() {
-        return applyGraphTokenName;
-    }
+	public String getApplyGraphTokenName() {
+		return applyGraphTokenName;
+	}
 
-    public void setApplyGraphTokenName(String applyGraphTokenName) {
-        this.applyGraphTokenName = applyGraphTokenName;
-    }
+	public void setApplyGraphTokenName(String applyGraphTokenName) {
+		this.applyGraphTokenName = applyGraphTokenName;
+	}
 
-    public int getFailFastCaptchaMaxAttempts() {
-        return failFastCaptchaMaxAttempts;
-    }
+	public int getFailFastCaptchaMaxAttempts() {
+		return failFastCaptchaMaxAttempts;
+	}
 
-    public void setFailFastCaptchaMaxAttempts(int failFastCaptchaMaxAttempts) {
-        this.failFastCaptchaMaxAttempts = failFastCaptchaMaxAttempts;
-    }
+	public void setFailFastCaptchaMaxAttempts(int failFastCaptchaMaxAttempts) {
+		this.failFastCaptchaMaxAttempts = failFastCaptchaMaxAttempts;
+	}
 
-    public long getFailFastCaptchaDelay() {
-        return failFastCaptchaDelay;
-    }
+	public long getFailFastCaptchaDelay() {
+		return failFastCaptchaDelay;
+	}
 
-    public void setFailFastCaptchaDelay(long failFastCaptchaDelay) {
-        this.failFastCaptchaDelay = failFastCaptchaDelay;
-    }
+	public void setFailFastCaptchaDelay(long failFastCaptchaDelay) {
+		this.failFastCaptchaDelay = failFastCaptchaDelay;
+	}
 
-    public long getCaptchaExpireMs() {
-        return captchaExpireMs;
-    }
+	public long getCaptchaExpireMs() {
+		return captchaExpireMs;
+	}
 
-    public void setCaptchaExpireMs(long captchaExpireMs) {
-        Assert.isTrue(captchaExpireMs > 0, "Verification code expiration time must be greater than 0");
-        this.captchaExpireMs = captchaExpireMs;
-    }
+	public void setCaptchaExpireMs(long captchaExpireMs) {
+		Assert.isTrue(captchaExpireMs > 0, "Verification code expiration time must be greater than 0");
+		this.captchaExpireMs = captchaExpireMs;
+	}
 
-    public int getFailFastSmsMaxAttempts() {
-        return failFastSmsMaxAttempts;
-    }
+	public int getFailFastSmsMaxAttempts() {
+		return failFastSmsMaxAttempts;
+	}
 
-    public void setFailFastSmsMaxAttempts(int captchaRequiredAttempts) {
-        // Assert.isTrue((captchaRequiredAttempts > 0 &&
-        // captchaRequiredAttempts < this.getFailFastMatchMaxAttempts()),
-        // String.format(
-        // "'captchaRequiredAttempts':%s should be must be greater than 0 or
-        // less than 'failureMaxAttempts':%s",
-        // captchaRequiredAttempts, getFailFastMatchMaxAttempts()));
-        this.failFastSmsMaxAttempts = captchaRequiredAttempts;
-    }
+	public void setFailFastSmsMaxAttempts(int captchaRequiredAttempts) {
+		// Assert.isTrue((captchaRequiredAttempts > 0 &&
+		// captchaRequiredAttempts < this.getFailFastMatchMaxAttempts()),
+		// String.format(
+		// "'captchaRequiredAttempts':%s should be must be greater than 0 or
+		// less than 'failureMaxAttempts':%s",
+		// captchaRequiredAttempts, getFailFastMatchMaxAttempts()));
+		this.failFastSmsMaxAttempts = captchaRequiredAttempts;
+	}
 
-    public long getFailFastSmsMaxDelay() {
-        return failFastSmsMaxDelay;
-    }
+	public long getFailFastSmsMaxDelay() {
+		return failFastSmsMaxDelay;
+	}
 
-    public void setFailFastSmsMaxDelay(long failFastSmsMaxDelay) {
-        this.failFastSmsMaxDelay = failFastSmsMaxDelay;
-    }
+	public void setFailFastSmsMaxDelay(long failFastSmsMaxDelay) {
+		this.failFastSmsMaxDelay = failFastSmsMaxDelay;
+	}
 
-    public long getFailFastSmsDelay() {
-        return failFastSmsDelay;
-    }
+	public long getFailFastSmsDelay() {
+		return failFastSmsDelay;
+	}
 
-    public void setFailFastSmsDelay(long failFastSmsDelay) {
-        this.failFastSmsDelay = failFastSmsDelay;
-    }
+	public void setFailFastSmsDelay(long failFastSmsDelay) {
+		this.failFastSmsDelay = failFastSmsDelay;
+	}
 
-    public long getSmsExpireMs() {
-        return smsExpireMs;
-    }
+	public long getSmsExpireMs() {
+		return smsExpireMs;
+	}
 
-    public void setSmsExpireMs(long smsExpireMs) {
-        this.smsExpireMs = smsExpireMs;
-    }
+	public void setSmsExpireMs(long smsExpireMs) {
+		this.smsExpireMs = smsExpireMs;
+	}
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        // Assert.isTrue(getFailFastSmsMaxAttempts() <
-        // getFailFastMatchMaxAttempts(),
-        // "failVerifyMaxAttempts must be less than failLockMaxAttempts");
-    }
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// Assert.isTrue(getFailFastSmsMaxAttempts() <
+		// getFailFastMatchMaxAttempts(),
+		// "failVerifyMaxAttempts must be less than failLockMaxAttempts");
+	}
 
 }

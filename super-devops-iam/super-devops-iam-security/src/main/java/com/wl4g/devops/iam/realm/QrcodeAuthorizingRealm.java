@@ -50,32 +50,35 @@ import com.wl4g.devops.iam.authz.QrcodeAuthorizationInfo;
  */
 public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAuthenticationToken> {
 
-    public QrcodeAuthorizingRealm(IamBasedMatcher matcher) {
-        super(matcher);
-    }
+	public QrcodeAuthorizingRealm(IamBasedMatcher matcher) {
+		super(matcher);
+	}
 
-    /**
-     * Authenticates a user and retrieves its information.
-     *
-     * @param token the authentication token
-     * @throws AuthenticationException if there is an error during authentication.
-     */
-    @Override
-    protected AuthenticationInfo doAuthenticationInfo(QrcodeAuthenticationToken token) throws AuthenticationException {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * Authenticates a user and retrieves its information.
+	 *
+	 * @param token
+	 *            the authentication token
+	 * @throws AuthenticationException
+	 *             if there is an error during authentication.
+	 */
+	@Override
+	protected AuthenticationInfo doAuthenticationInfo(QrcodeAuthenticationToken token) throws AuthenticationException {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * Retrieves the AuthorizationInfo for the given principals (the CAS
-     * previously authenticated user : id + attributes).
-     *
-     * @param principals the primary identifying principals of the AuthorizationInfo
-     *                   that should be retrieved.
-     * @return the AuthorizationInfo associated with this principals.
-     */
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return new QrcodeAuthorizationInfo();
-    }
+	/**
+	 * Retrieves the AuthorizationInfo for the given principals (the CAS
+	 * previously authenticated user : id + attributes).
+	 *
+	 * @param principals
+	 *            the primary identifying principals of the AuthorizationInfo
+	 *            that should be retrieved.
+	 * @return the AuthorizationInfo associated with this principals.
+	 */
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		return new QrcodeAuthorizationInfo();
+	}
 
 }

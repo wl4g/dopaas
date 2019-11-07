@@ -20,24 +20,24 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 @Beta
 public class SessionDestroyModel implements Serializable {
-    private static final long serialVersionUID = 2579844578836104918L;
+	private static final long serialVersionUID = 2579844578836104918L;
 
-    @NotEmpty
-    private List<Serializable> sessionIds = new ArrayList<>(4);
+	@NotEmpty
+	private List<Serializable> sessionIds = new ArrayList<>(4);
 
-    public List<Serializable> getSessionIds() {
-        return sessionIds;
-    }
+	public List<Serializable> getSessionIds() {
+		return sessionIds;
+	}
 
-    public void setSessionIds(List<Serializable> sessionIds) {
-        if (!isEmpty(sessionIds)) {
-            this.sessionIds.addAll(sessionIds);
-        }
-    }
+	public void setSessionIds(List<Serializable> sessionIds) {
+		if (!isEmpty(sessionIds)) {
+			this.sessionIds.addAll(sessionIds);
+		}
+	}
 
-    @Override
-    public String toString() {
-        return toJSONString(this);
-    }
+	@Override
+	public String toString() {
+		return toJSONString(this);
+	}
 
 }

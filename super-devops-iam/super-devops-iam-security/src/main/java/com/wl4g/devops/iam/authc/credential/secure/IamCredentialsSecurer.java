@@ -25,13 +25,13 @@ package com.wl4g.devops.iam.authc.credential.secure;
  */
 public interface IamCredentialsSecurer extends CredentialsSecurer {
 
-    /**
-     * Apply asymmetric algorithm secret public key
-     *
-     * @return
-     */
-    default String applySecret() {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * Apply asymmetric algorithm secret public key
+	 *
+	 * @return
+	 */
+	default String applySecret() {
+		throw new UnsupportedOperationException();
+	}
 
 }

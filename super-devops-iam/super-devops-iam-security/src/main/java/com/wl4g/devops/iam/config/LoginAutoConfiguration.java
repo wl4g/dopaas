@@ -32,27 +32,27 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BA
  * @version v1.0 2019年1月8日
  * @since
  */
-@AutoConfigureAfter({IamAutoConfiguration.class})
+@AutoConfigureAfter({ IamAutoConfiguration.class })
 public class LoginAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
-    @Bean
-    public LoginAuthenticatorController loginAuthenticatorController() {
-        return new LoginAuthenticatorController();
-    }
+	@Bean
+	public LoginAuthenticatorController loginAuthenticatorController() {
+		return new LoginAuthenticatorController();
+	}
 
-    @Override
-    protected String getMappingPrefix() {
-        return URI_S_LOGIN_BASE;
-    }
+	@Override
+	protected String getMappingPrefix() {
+		return URI_S_LOGIN_BASE;
+	}
 
-    @Bean
-    public PrefixHandlerMapping loginAuthenticatorControllerPrefixHandlerMapping() {
-        return super.createPrefixHandlerMapping();
-    }
+	@Bean
+	public PrefixHandlerMapping loginAuthenticatorControllerPrefixHandlerMapping() {
+		return super.createPrefixHandlerMapping();
+	}
 
-    @Override
-    protected Class<? extends Annotation> annotationClass() {
-        return LoginAuthController.class;
-    }
+	@Override
+	protected Class<? extends Annotation> annotationClass() {
+		return LoginAuthController.class;
+	}
 
 }

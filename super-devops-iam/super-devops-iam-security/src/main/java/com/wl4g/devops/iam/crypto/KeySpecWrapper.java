@@ -29,26 +29,26 @@ import org.springframework.util.Assert;
  */
 public abstract class KeySpecWrapper {
 
-    /**
-     * KeySpec unique identification.
-     */
-    private String keySpecId;
+	/**
+	 * KeySpec unique identification.
+	 */
+	private String keySpecId;
 
-    public KeySpecWrapper() {
-        setKeySpecId("keySpec" + UUID.randomUUID().toString().replaceAll("-", "").substring(12));
-    }
+	public KeySpecWrapper() {
+		setKeySpecId("keySpec" + UUID.randomUUID().toString().replaceAll("-", "").substring(12));
+	}
 
-    public KeySpecWrapper(String keySpecId) {
-        Assert.hasText(keySpecId, "KeySpecId must not be empty.");
-        this.keySpecId = keySpecId;
-    }
+	public KeySpecWrapper(String keySpecId) {
+		Assert.hasText(keySpecId, "KeySpecId must not be empty.");
+		this.keySpecId = keySpecId;
+	}
 
-    public String getKeySpecId() {
-        return keySpecId;
-    }
+	public String getKeySpecId() {
+		return keySpecId;
+	}
 
-    public void setKeySpecId(String keySpecId) {
-        this.keySpecId = keySpecId;
-    }
+	public void setKeySpecId(String keySpecId) {
+		this.keySpecId = keySpecId;
+	}
 
 }

@@ -63,178 +63,180 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
  */
 public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken> extends AuthorizingRealm {
 
-    final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-    /**
-     * Credential matcher
-     */
-    final protected IamBasedMatcher matcher;
+	/**
+	 * Credential matcher
+	 */
+	final protected IamBasedMatcher matcher;
 
-    /**
-     * Validation
-     */
-    @Autowired
-    protected Validator validator;
+	/**
+	 * Validation
+	 */
+	@Autowired
+	protected Validator validator;
 
-    /**
-     * Rest template
-     */
-    @Autowired
-    protected RestTemplate restTemplate;
+	/**
+	 * Rest template
+	 */
+	@Autowired
+	protected RestTemplate restTemplate;
 
-    /**
-     * IAM server configuration properties
-     */
-    @Autowired
-    protected IamProperties config;
+	/**
+	 * IAM server configuration properties
+	 */
+	@Autowired
+	protected IamProperties config;
 
-    /**
-     * IAM authentication handler
-     */
-    @Autowired
-    protected AuthenticationHandler authHandler;
+	/**
+	 * IAM authentication handler
+	 */
+	@Autowired
+	protected AuthenticationHandler authHandler;
 
-    /**
-     * IAM security configure handler
-     */
-    @Autowired
-    protected ServerSecurityConfigurer configurer;
+	/**
+	 * IAM security configure handler
+	 */
+	@Autowired
+	protected ServerSecurityConfigurer configurer;
 
-    /**
-     * IAM server security processor
-     */
-    @Autowired
-    protected ServerSecurityCoprocessor coprocessor;
+	/**
+	 * IAM server security processor
+	 */
+	@Autowired
+	protected ServerSecurityCoprocessor coprocessor;
 
-    /**
-     * Delegate message source.
-     */
-    @Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-    protected SessionDelegateMessageBundle bundle;
+	/**
+	 * Delegate message source.
+	 */
+	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
+	protected SessionDelegateMessageBundle bundle;
 
-    public AbstractIamAuthorizingRealm(IamBasedMatcher matcher) {
-        Assert.notNull(matcher, "'matcher' must not be null");
-        this.matcher = matcher;
-    }
+	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher) {
+		Assert.notNull(matcher, "'matcher' must not be null");
+		this.matcher = matcher;
+	}
 
-    /**
-     * {@link org.apache.shiro.authc.pam.ModularRealmAuthenticator#doMultiRealmAuthentication}
-     */
-    @SuppressWarnings("unchecked")
-    @PostConstruct
-    @Override
-    protected void onInit() {
-        // Initialization.
-        super.onInit();
-        // Credentials matcher set.
-        super.setCredentialsMatcher(matcher);
-        // AuthenticationTokenClass set.
-        ResolvableType resolveType = ResolvableType.forClass(getClass());
-        super.setAuthenticationTokenClass(
-                (Class<? extends AuthenticationToken>) resolveType.getSuperType().getGeneric(0).resolve());
-    }
+	/**
+	 * {@link org.apache.shiro.authc.pam.ModularRealmAuthenticator#doMultiRealmAuthentication}
+	 */
+	@SuppressWarnings("unchecked")
+	@PostConstruct
+	@Override
+	protected void onInit() {
+		// Initialization.
+		super.onInit();
+		// Credentials matcher set.
+		super.setCredentialsMatcher(matcher);
+		// AuthenticationTokenClass set.
+		ResolvableType resolveType = ResolvableType.forClass(getClass());
+		super.setAuthenticationTokenClass(
+				(Class<? extends AuthenticationToken>) resolveType.getSuperType().getGeneric(0).resolve());
+	}
 
-    /**
-     * Authenticates a user and retrieves its information.
-     *
-     * @param token the authentication token
-     * @throws AuthenticationException if there is an error during authentication.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        try {
-            // Validation token.
-            validator.validate(token);
+	/**
+	 * Authenticates a user and retrieves its information.
+	 *
+	 * @param token
+	 *            the authentication token
+	 * @throws AuthenticationException
+	 *             if there is an error during authentication.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+		try {
+			// Validation token.
+			validator.validate(token);
 
-            /*
-             * [Extension]: Can be used to check the parameter
-             * 'pre-grant-ticket'</br>
-             */
+			/*
+			 * [Extension]: Can be used to check the parameter
+			 * 'pre-grant-ticket'</br>
+			 */
 
-            /**
-             * [Extension]: Save authenticate token, For example, for online
-             * session management and analysis.
-             */
-            // Obtain authentication info.
-            AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
-            notNull(info, "Authentication information must be returned. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
+			/**
+			 * [Extension]: Save authenticate token, For example, for online
+			 * session management and analysis.
+			 */
+			// Obtain authentication info.
+			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
+			notNull(info, "Authentication information must be returned. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
-            /**
-             * [Extension]: Save authenticate info, For example, for online
-             * session management and analysis.
-             */
-            return bind(KEY_AUTHC_TOKEN, info);
-        } catch (Throwable e) {
-            throw new AuthenticationException(e);
-        }
-    }
+			/**
+			 * [Extension]: Save authenticate info, For example, for online
+			 * session management and analysis.
+			 */
+			return bind(KEY_AUTHC_TOKEN, info);
+		} catch (Throwable e) {
+			throw new AuthenticationException(e);
+		}
+	}
 
-    /**
-     * Obtain authentication information.</br>
-     *
-     * <font style='color:red'>Note: At least empty authentication information
-     * should be returned. Reason reference:
-     * {@link org.apache.shiro.authz.ModularRealmAuthorizer.isPermitted()}</font>
-     *
-     * @param token
-     * @return
-     * @throws AuthenticationException
-     * @see {@link org.apache.shiro.authz.ModularRealmAuthorizer#isPermitted()}
-     */
-    protected abstract AuthenticationInfo doAuthenticationInfo(T token) throws AuthenticationException;
+	/**
+	 * Obtain authentication information.</br>
+	 *
+	 * <font style='color:red'>Note: At least empty authentication information
+	 * should be returned. Reason reference:
+	 * {@link org.apache.shiro.authz.ModularRealmAuthorizer.isPermitted()}</font>
+	 *
+	 * @param token
+	 * @return
+	 * @throws AuthenticationException
+	 * @see {@link org.apache.shiro.authz.ModularRealmAuthorizer#isPermitted()}
+	 */
+	protected abstract AuthenticationInfo doAuthenticationInfo(T token) throws AuthenticationException;
 
-    @Override
-    protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
-        IamAuthenticationToken tk = (IamAuthenticationToken) token;
+	@Override
+	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
+		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
-        CredentialsMatcher matcher = getCredentialsMatcher();
-        if (nonNull(matcher)) {
-            if (!matcher.doCredentialsMatch(tk, info)) {
-                throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
-            }
+		CredentialsMatcher matcher = getCredentialsMatcher();
+		if (nonNull(matcher)) {
+			if (!matcher.doCredentialsMatch(tk, info)) {
+				throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
+			}
 
-            // Check whether the login user has access to the target IAM-client
-            // application. (Check only when access application).
-            String fromAppName = tk.getRedirectInfo().getFromAppName();
-            if (!isBlank(fromAppName)) {
-                isTrue(!info.getPrincipals().isEmpty(),
-                        String.format("Authentication info principals is empty, please check the configure. [%s]", info));
+			// Check whether the login user has access to the target IAM-client
+			// application. (Check only when access application).
+			String fromAppName = tk.getRedirectInfo().getFromAppName();
+			if (!isBlank(fromAppName)) {
+				isTrue(!info.getPrincipals().isEmpty(),
+						String.format("Authentication info principals is empty, please check the configure. [%s]", info));
 
-                // Note: for example, when using wechat scanning code (oauth2)
-                // to log in, token.getPrincipal() is empty,
-                // info.getPrimaryPrincipal() will not be empty.
-                String principal = (String) info.getPrincipals().getPrimaryPrincipal();
-                try {
-                    authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
-                } catch (IllegalApplicationAccessException ex) {
-                    // For example: first login to manager service(mp) with
-                    // 'admin', then logout, and then login to portal
-                    // service(portal) with user01. At this time, the check will
-                    // return that 'user01' has no permission to access manager
-                    // service(mp).
-                    // e.g.->https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
+				// Note: for example, when using wechat scanning code (oauth2)
+				// to log in, token.getPrincipal() is empty,
+				// info.getPrimaryPrincipal() will not be empty.
+				String principal = (String) info.getPrincipals().getPrimaryPrincipal();
+				try {
+					authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
+				} catch (IllegalApplicationAccessException ex) {
+					// For example: first login to manager service(mp) with
+					// 'admin', then logout, and then login to portal
+					// service(portal) with user01. At this time, the check will
+					// return that 'user01' has no permission to access manager
+					// service(mp).
+					// e.g.->https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
 
-                    // Fallback determine redirect to application.
-                    RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
-                            new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
-                    /**
-                     * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters()}
-                     * See:{@link AbstractIamAuthenticationFilter#getRedirectInfo()}
-                     */
-                    bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
-                    if (log.isWarnEnabled()) {
-                        log.info("The principal({}) no access to '{}', fallback redirect to:{}, caused by: {}", principal,
-                                fromAppName, fallbackRedirect, getRootCausesString(ex));
-                    }
-                }
-            }
+					// Fallback determine redirect to application.
+					RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
+							new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
+					/**
+					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters()}
+					 * See:{@link AbstractIamAuthenticationFilter#getRedirectInfo()}
+					 */
+					bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
+					if (log.isWarnEnabled()) {
+						log.info("The principal({}) no access to '{}', fallback redirect to:{}, caused by: {}", principal,
+								fromAppName, fallbackRedirect, getRootCausesString(ex));
+					}
+				}
+			}
 
-        } else {
-            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
-                    + "credentials during authentication.  If you do not wish for credentials to be examined, you "
-                    + "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
-        }
-    }
+		} else {
+			throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
+					+ "credentials during authentication.  If you do not wish for credentials to be examined, you "
+					+ "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
+		}
+	}
 
 }

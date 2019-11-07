@@ -21,28 +21,28 @@ package com.wl4g.devops.iam.verification.model;
  */
 public class VerifiedTokenModel {
 
-    private boolean verified;
+	private boolean verified;
 
-    private String verifiedToken;
+	private String verifiedToken;
 
-    public VerifiedTokenModel(boolean verified, String verifiedToken) {
-        this.verified = verified;
-        this.verifiedToken = verifiedToken;
-    }
+	public VerifiedTokenModel(boolean verified, String verifiedToken) {
+		this.verified = verified;
+		this.verifiedToken = verifiedToken;
+	}
 
-    public boolean isVerified() {
-        return verified;
-    }
+	public boolean isVerified() {
+		return verified;
+	}
 
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
 
-    public String getVerifiedToken() {
-        return verifiedToken;
-    }
+	public String getVerifiedToken() {
+		return verifiedToken;
+	}
 
-    public void setVerifiedToken(String verifiedToken) {
-        this.verifiedToken = verifiedToken;
-    }
+	public void setVerifiedToken(String verifiedToken) {
+		this.verifiedToken = verifiedToken;
+	}
 }

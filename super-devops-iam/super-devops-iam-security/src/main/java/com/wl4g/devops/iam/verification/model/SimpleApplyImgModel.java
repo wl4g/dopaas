@@ -25,25 +25,25 @@ import javax.validation.constraints.NotBlank;
  * @since
  */
 public class SimpleApplyImgModel extends BasedVerifyCodeModel {
-    private static final long serialVersionUID = -5065908011134214117L;
+	private static final long serialVersionUID = -5065908011134214117L;
 
-    @NotBlank
-    private String primaryImg;
+	@NotBlank
+	private String primaryImg;
 
-    public SimpleApplyImgModel() {
-        super();
-    }
+	public SimpleApplyImgModel() {
+		super();
+	}
 
-    public SimpleApplyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
-        super(applyToken, verifyType);
-    }
+	public SimpleApplyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+		super(applyToken, verifyType);
+	}
 
-    public String getPrimaryImg() {
-        return primaryImg;
-    }
+	public String getPrimaryImg() {
+		return primaryImg;
+	}
 
-    public void setPrimaryImg(String primaryImg) {
-        this.primaryImg = primaryImg;
-    }
+	public void setPrimaryImg(String primaryImg) {
+		this.primaryImg = primaryImg;
+	}
 
 }

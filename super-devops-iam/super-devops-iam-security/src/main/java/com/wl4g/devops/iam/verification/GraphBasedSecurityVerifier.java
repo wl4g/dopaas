@@ -52,180 +52,180 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
  */
 public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
-    /**
-     * Apply token parameter name.
-     */
-    final public static String DEFAULT_APPLY_TOKEN = "applyToken";
+	/**
+	 * Apply token parameter name.
+	 */
+	final public static String DEFAULT_APPLY_TOKEN = "applyToken";
 
-    /**
-     * Apply token expireMs.
-     */
-    final public static long DEFAULT_APPLY_TOKEN_EXPIREMS = 60_000;
+	/**
+	 * Apply token expireMs.
+	 */
+	final public static long DEFAULT_APPLY_TOKEN_EXPIREMS = 60_000;
 
-    /**
-     * Apply UUID bit.
-     */
-    final public static int DEFAULT_APPLY_TOKEN_BIT = 48;
+	/**
+	 * Apply UUID bit.
+	 */
+	final public static int DEFAULT_APPLY_TOKEN_BIT = 48;
 
-    /**
-     * RSA cryptoGrapic service.
-     */
-    @Autowired
-    protected RSACryptographicService rsaCryptoService;
+	/**
+	 * RSA cryptoGrapic service.
+	 */
+	@Autowired
+	protected RSACryptographicService rsaCryptoService;
 
-    /**
-     * Matching attempts accumulator
-     */
-    protected Cumulator matchCumulator;
+	/**
+	 * Matching attempts accumulator
+	 */
+	protected Cumulator matchCumulator;
 
-    /**
-     * Apply CAPTCHA attempts accumulator.(Session-based)
-     */
-    protected Cumulator sessionMatchCumulator;
+	/**
+	 * Apply CAPTCHA attempts accumulator.(Session-based)
+	 */
+	protected Cumulator sessionMatchCumulator;
 
-    /**
-     * Apply CAPTCHA attempts accumulator
-     */
-    protected Cumulator applyCaptchaCumulator;
+	/**
+	 * Apply CAPTCHA attempts accumulator
+	 */
+	protected Cumulator applyCaptchaCumulator;
 
-    /**
-     * Apply CAPTCHA attempts accumulator.(Session-based)
-     */
-    protected Cumulator sessionApplyCaptchaCumulator;
+	/**
+	 * Apply CAPTCHA attempts accumulator.(Session-based)
+	 */
+	protected Cumulator sessionApplyCaptchaCumulator;
 
-    /**
-     * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
-     */
-    @Override
-    public Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
-        // Check and generate apply UUID.
-        VerifyCodeWrapper wrap = getVerifyCode(true);
-        Assert.state(Objects.nonNull(wrap), "Failed to apply captcha.");
+	/**
+	 * {@link com.google.code.kaptcha.servlet.KaptchaServlet#doGet(HttpServletRequest, HttpServletResponse)}
+	 */
+	@Override
+	public Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
+		// Check and generate apply UUID.
+		VerifyCodeWrapper wrap = getVerifyCode(true);
+		Assert.state(Objects.nonNull(wrap), "Failed to apply captcha.");
 
-        // Get RSA key.(Used to encrypt sliding X position)
-        RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();
-        String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
-        bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
-        if (log.isDebugEnabled()) {
-            log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
-        }
+		// Get RSA key.(Used to encrypt sliding X position)
+		RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();
+		String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
+		bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
+		if (log.isDebugEnabled()) {
+			log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
+		}
 
-        // Custom processing.
-        return postApplyGraphProperties(applyToken, wrap, keySpec);
-    }
+		// Custom processing.
+		return postApplyGraphProperties(applyToken, wrap, keySpec);
+	}
 
-    @Override
-    public boolean isEnabled(@NotNull List<String> factors) {
-        Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
-        int enabledCaptchaMaxAttempts = config.getMatcher().getEnabledCaptchaMaxAttempts();
+	@Override
+	public boolean isEnabled(@NotNull List<String> factors) {
+		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
+		int enabledCaptchaMaxAttempts = config.getMatcher().getEnabledCaptchaMaxAttempts();
 
-        // Cumulative number of matches based on cache, If the number of
-        // failures exceeds the upper limit, verification is enabled
-        Long matchCount = matchCumulator.getCumulatives(factors);
-        if (log.isInfoEnabled()) {
-            log.info("Logon match count: {}, factors: {}", matchCount, factors);
-        }
-        // Login matching failures exceed the upper limit.
-        if (matchCount >= enabledCaptchaMaxAttempts) {
-            return true;
-        }
+		// Cumulative number of matches based on cache, If the number of
+		// failures exceeds the upper limit, verification is enabled
+		Long matchCount = matchCumulator.getCumulatives(factors);
+		if (log.isInfoEnabled()) {
+			log.info("Logon match count: {}, factors: {}", matchCount, factors);
+		}
+		// Login matching failures exceed the upper limit.
+		if (matchCount >= enabledCaptchaMaxAttempts) {
+			return true;
+		}
 
-        // Cumulative number of matches based on session.
-        long sessionMatchCount = sessionMatchCumulator.getCumulatives(factors);
-        if (log.isInfoEnabled()) {
-            log.info("Logon session match count: {}, factors: {}", sessionMatchCount, factors);
-        }
+		// Cumulative number of matches based on session.
+		long sessionMatchCount = sessionMatchCumulator.getCumulatives(factors);
+		if (log.isInfoEnabled()) {
+			log.info("Logon session match count: {}, factors: {}", sessionMatchCount, factors);
+		}
 
-        // Graphic verify-code apply over the upper limit.
-        if (sessionMatchCount >= enabledCaptchaMaxAttempts) {
-            return true;
-        }
+		// Graphic verify-code apply over the upper limit.
+		if (sessionMatchCount >= enabledCaptchaMaxAttempts) {
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * After apply graph properties processing.
-     *
-     * @param applyToken
-     * @param codeWrap
-     * @param keySpec
-     * @return
-     * @throws IOException
-     */
-    protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec)
-            throws IOException;
+	/**
+	 * After apply graph properties processing.
+	 *
+	 * @param applyToken
+	 * @param codeWrap
+	 * @param keySpec
+	 * @return
+	 * @throws IOException
+	 */
+	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec)
+			throws IOException;
 
-    @Override
-    protected long getVerifyCodeExpireMs() {
-        return config.getMatcher().getCaptchaExpireMs();
-    }
+	@Override
+	protected long getVerifyCodeExpireMs() {
+		return config.getMatcher().getCaptchaExpireMs();
+	}
 
-    @Override
-    protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors) {
-        int failFastCaptchaMaxAttempts = config.getMatcher().getFailFastCaptchaMaxAttempts();
+	@Override
+	protected void checkApplyAttempts(@NotNull HttpServletRequest request, @NotNull List<String> factors) {
+		int failFastCaptchaMaxAttempts = config.getMatcher().getFailFastCaptchaMaxAttempts();
 
-        // Cumulative number of applications based on caching.
-        long applyCaptchaCount = applyCaptchaCumulator.accumulate(factors, 1);
-        if (log.isInfoEnabled()) {
-            log.info("Check graph verify-code apply, for apply count : {}", applyCaptchaCount);
-        }
-        if (applyCaptchaCount >= failFastCaptchaMaxAttempts) {
-            log.warn("Too many times to apply for graph verify-code, actual: {}, maximum: {}, factors: {}", applyCaptchaCount,
-                    failFastCaptchaMaxAttempts, factors);
-            throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
-        }
+		// Cumulative number of applications based on caching.
+		long applyCaptchaCount = applyCaptchaCumulator.accumulate(factors, 1);
+		if (log.isInfoEnabled()) {
+			log.info("Check graph verify-code apply, for apply count : {}", applyCaptchaCount);
+		}
+		if (applyCaptchaCount >= failFastCaptchaMaxAttempts) {
+			log.warn("Too many times to apply for graph verify-code, actual: {}, maximum: {}, factors: {}", applyCaptchaCount,
+					failFastCaptchaMaxAttempts, factors);
+			throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
+		}
 
-        // Cumulative number of applications based on session
-        long sessionApplyCaptchaCount = sessionApplyCaptchaCumulator.accumulate(factors, 1);
-        if (log.isInfoEnabled()) {
-            log.info("Check graph verify-code apply, for session apply count : {}", sessionApplyCaptchaCount);
-        }
-        // Exceeding the limit
-        if (sessionApplyCaptchaCount >= failFastCaptchaMaxAttempts) {
-            log.warn("Too many times to apply for session graph verify-code, actual: {}, maximum: {}, factors: {}",
-                    sessionApplyCaptchaCount, failFastCaptchaMaxAttempts, factors);
-            throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
-        }
+		// Cumulative number of applications based on session
+		long sessionApplyCaptchaCount = sessionApplyCaptchaCumulator.accumulate(factors, 1);
+		if (log.isInfoEnabled()) {
+			log.info("Check graph verify-code apply, for session apply count : {}", sessionApplyCaptchaCount);
+		}
+		// Exceeding the limit
+		if (sessionApplyCaptchaCount >= failFastCaptchaMaxAttempts) {
+			log.warn("Too many times to apply for session graph verify-code, actual: {}, maximum: {}, factors: {}",
+					sessionApplyCaptchaCount, failFastCaptchaMaxAttempts, factors);
+			throw new VerificationException(bundle.getMessage("GraphBasedVerification.locked"));
+		}
 
-    }
+	}
 
-    /**
-     * Building image to base64.
-     *
-     * @param data
-     * @return
-     */
-    protected String convertToBase64(byte[] data) {
-        return "data:image/jpeg;base64," + encodeBase64(data);
-    }
+	/**
+	 * Building image to base64.
+	 *
+	 * @param data
+	 * @return
+	 */
+	protected String convertToBase64(byte[] data) {
+		return "data:image/jpeg;base64," + encodeBase64(data);
+	}
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        MatcherProperties matcher = config.getMatcher();
-        // Match accumulator.
-        this.matchCumulator = newCumulator(getCache(CACHE_FAILFAST_MATCH_COUNTER), matcher.getFailFastMatchDelay());
-        this.sessionMatchCumulator = newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER, matcher.getFailFastMatchDelay());
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		MatcherProperties matcher = config.getMatcher();
+		// Match accumulator.
+		this.matchCumulator = newCumulator(getCache(CACHE_FAILFAST_MATCH_COUNTER), matcher.getFailFastMatchDelay());
+		this.sessionMatchCumulator = newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER, matcher.getFailFastMatchDelay());
 
-        // CAPTCHA accumulator.
-        this.applyCaptchaCumulator = newCumulator(getCache(CACHE_FAILFAST_CAPTCHA_COUNTER), matcher.getFailFastCaptchaDelay());
-        this.sessionApplyCaptchaCumulator = newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
-                matcher.getFailFastCaptchaDelay());
+		// CAPTCHA accumulator.
+		this.applyCaptchaCumulator = newCumulator(getCache(CACHE_FAILFAST_CAPTCHA_COUNTER), matcher.getFailFastCaptchaDelay());
+		this.sessionApplyCaptchaCumulator = newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
+				matcher.getFailFastCaptchaDelay());
 
-        Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
-        Assert.notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
-        Assert.notNull(applyCaptchaCumulator, "applyCumulator is null, please check configure");
-        Assert.notNull(sessionApplyCaptchaCumulator, "sessionApplyCumulator is null, please check configure");
-    }
+		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
+		Assert.notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
+		Assert.notNull(applyCaptchaCumulator, "applyCumulator is null, please check configure");
+		Assert.notNull(sessionApplyCaptchaCumulator, "sessionApplyCumulator is null, please check configure");
+	}
 
-    /**
-     * Get enhanced cache.
-     *
-     * @param suffix
-     * @return
-     */
-    private EnhancedCache getCache(String suffix) {
-        return cacheManager.getEnhancedCache(suffix);
-    }
+	/**
+	 * Get enhanced cache.
+	 *
+	 * @param suffix
+	 * @return
+	 */
+	private EnhancedCache getCache(String suffix) {
+		return cacheManager.getEnhancedCache(suffix);
+	}
 
 }
