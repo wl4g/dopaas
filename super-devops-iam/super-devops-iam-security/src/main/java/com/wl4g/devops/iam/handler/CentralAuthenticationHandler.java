@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.handler;
 import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
 import com.wl4g.devops.common.bean.iam.model.*;
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
-import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
@@ -100,7 +100,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 
 			// Get application.
-			EntryAddress app = configurer.getApplicationInfo(fromAppName);
+			ClusterConfig app = configurer.getApplicationInfo(fromAppName);
 			if (Objects.isNull(app)) {
 				throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
 			}
@@ -251,7 +251,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			 * Query applications by bind session names
 			 */
 			Set<String> appNames = grantInfo.getApplications().keySet();
-			List<EntryAddress> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
+			List<ClusterConfig> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (apps == null || apps.isEmpty()) {
 				throw new IamException(String.format("Find application information is empty. %s", appNames));
 			}
@@ -428,13 +428,13 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param apps
 	 * @return
 	 */
-	private boolean processLogoutAll(Subject subject, GrantTicketInfo grantInfo, List<EntryAddress> apps) {
+	private boolean processLogoutAll(Subject subject, GrantTicketInfo grantInfo, List<ClusterConfig> apps) {
 		boolean logoutAll = true; // Represents all logged-out Tags
 
 		/*
 		 * Notification all logged-in applications to logout
 		 */
-		for (EntryAddress app : apps) {
+		for (ClusterConfig app : apps) {
 			Assert.hasText(app.getIntranetBaseUri(),
 					String.format("Application[%s] 'internalBaseUri' must not be empty", app.getName()));
 

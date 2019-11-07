@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.configure;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.bean.share.EntryAddress;
+import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.iam.common.configure.SecurityConfigurer;
 
@@ -45,7 +45,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	 *            application name
 	 * @return aplication information
 	 */
-	EntryAddress getApplicationInfo(String appName);
+	ClusterConfig getApplicationInfo(String appName);
 
 	/**
 	 * Find application information list by names
@@ -54,7 +54,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	 *            application names
 	 * @return aplication information
 	 */
-	List<EntryAddress> findApplicationInfo(String... appNames);
+	List<ClusterConfig> findApplicationInfo(String... appNames);
 
 	/**
 	 * Obtain account information based on loginId
