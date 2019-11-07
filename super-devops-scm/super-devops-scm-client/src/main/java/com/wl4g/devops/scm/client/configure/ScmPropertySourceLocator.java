@@ -130,7 +130,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			}
 
 			// Extract release
-			ReleaseMessage release = resp.getData().get(KEY_RELEASE);
+			ReleaseMessage release = resp.forMap().get(KEY_RELEASE);
 			Assert.notNull(release, "Release message is required, it must not be null");
 			release.validation(true, true);
 

@@ -56,8 +56,8 @@ public class MetricTemplateController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -76,7 +76,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		MetricTemplate metricTemplate = metricTemplateDao.selectByPrimaryKey(id);
-		resp.getData().put("metricTemplate", metricTemplate);
+		resp.forMap().put("metricTemplate", metricTemplate);
 		return resp;
 	}
 
@@ -92,7 +92,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> getByClassify(String classify) {
 		RespBase<Object> resp = RespBase.create();
 		List<MetricTemplate> metricTemplate = metricTemplateService.getByClassify(classify);
-		resp.getData().put("list", metricTemplate);
+		resp.forMap().put("list", metricTemplate);
 		return resp;
 	}
 

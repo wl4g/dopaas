@@ -65,8 +65,8 @@ public class DictController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -87,7 +87,7 @@ public class DictController extends BaseController {
 	public RespBase<?> detail(String key) {
 		RespBase<Object> resp = RespBase.create();
 		Dict dict = dictDao.selectByPrimaryKey(key);
-		resp.getData().put("dict", dict);
+		resp.forMap().put("dict", dict);
 		return resp;
 	}
 
@@ -104,7 +104,7 @@ public class DictController extends BaseController {
 	public RespBase<?> getByType(String type) {
 		RespBase<Object> resp = RespBase.create();
 		List<Dict> list = dictService.getBytype(type);
-		resp.getData().put("list", list);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -112,7 +112,7 @@ public class DictController extends BaseController {
 	public RespBase<?> getByKey(String key) {
 		RespBase<Object> resp = RespBase.create();
 		Dict dict = dictService.getByKey(key);
-		resp.getData().put("dict", dict);
+		resp.forMap().put("dict", dict);
 		return resp;
 	}
 
@@ -120,7 +120,7 @@ public class DictController extends BaseController {
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
 		List<String> list = dictService.allType();
-		resp.getData().put("list", list);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 

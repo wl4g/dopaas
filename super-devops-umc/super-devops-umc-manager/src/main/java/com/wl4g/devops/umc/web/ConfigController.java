@@ -57,8 +57,8 @@ public class ConfigController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -77,7 +77,7 @@ public class ConfigController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		AlarmConfig alarmConfig = configService.detail(id);
-		resp.getData().put("alarmConfig", alarmConfig);
+		resp.forMap().put("alarmConfig", alarmConfig);
 		return resp;
 	}
 

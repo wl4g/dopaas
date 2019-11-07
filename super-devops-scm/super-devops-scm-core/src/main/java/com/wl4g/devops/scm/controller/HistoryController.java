@@ -76,8 +76,8 @@ public class HistoryController extends BaseController {
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
 
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			resp.forMap().put("page", customPage);
+			resp.forMap().put("list", list);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("获取应用组列表失败", e);
@@ -263,8 +263,8 @@ public class HistoryController extends BaseController {
 			customPage.setPageNum(pageNum);
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			resp.forMap().put("page", customPage);
+			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -310,8 +310,8 @@ public class HistoryController extends BaseController {
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
 
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			resp.forMap().put("page", customPage);
+			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

@@ -44,7 +44,7 @@ public class LogConsoleController {
         RespBase<Object> resp = RespBase.create();
         try {
             List<String> result = logConsoleService.console(model);
-            resp.getData().put("data", result);
+            resp.forMap().put("data", result);
         } catch (Exception e) {
             resp.setCode(RespBase.RetCode.PARAM_ERR);
             resp.setMessage("调用接口异常" + e.getMessage());

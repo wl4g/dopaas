@@ -94,8 +94,8 @@ public class ConfigurationController extends BaseController {
 			customPage.setPageNum(pageNum);
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			resp.forMap().put("page", customPage);
+			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -119,7 +119,7 @@ public class ConfigurationController extends BaseController {
 		try {
 			List<VersionContentBean> configs = configService.selectVersion(id);
 			if (null != configs) {
-				resp.getData().put("configVersions", configs);
+				resp.forMap().put("configVersions", configs);
 			}
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

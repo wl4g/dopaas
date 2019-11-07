@@ -19,6 +19,7 @@ import com.wl4g.devops.common.bean.share.EntryAddress;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.EntryAddressDao;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
 
@@ -61,6 +62,20 @@ public class IamManagerApiV1Controller extends BaseController {
 	private String profile;
 
 	/**
+	 * Find IAM server list of app_cluster_config.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(path = "getIamServer")
+	public RespBase<?> findIamServers() throws Exception {
+		RespBase<Object> resp = RespBase.create();
+		List<EntryAddress> iamServer = entryAddressDao.getIamServer();
+		resp.forMap().put("data", iamServer);
+		return resp;
+	}
+
+	/**
 	 * Obtain remote IAM server sessions.
 	 * 
 	 * @param query
@@ -74,29 +89,23 @@ public class IamManagerApiV1Controller extends BaseController {
 			log.info("Get remote sessions for <= {} ...", query);
 		}
 
+		// TODO
+		String url ="http://localhost:14040/iam-server/api/v1/sessions";
 		// Get remote IAM base URI.
-		EntryAddress entryAddress = entryAddressDao.selectByPrimaryKey(id);
-		String url = getRemoteApiV1SessionUri(entryAddress.getExtranetBaseUri());
-		if (log.isInfoEnabled()) {
-			log.info("Request get remote sessions for: {}", url);
-		}
+//		EntryAddress entryAddress = entryAddressDao.selectByPrimaryKey(id);
+//		String url = getRemoteApiV1SessionUri(entryAddress.getExtranetBaseUri());
+//		if (log.isInfoEnabled()) {
+//			log.info("Request get remote sessions for: {}", url);
+//		}
 
 		// Do exchange.
-		RespBase<Object> resp = restTemplate
-				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<Object>>() {
+		RespBase<SessionAttributeModel> resp = restTemplate
+				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
 
 		if (log.isInfoEnabled()) {
 			log.info("Got remote sessions response for => {}", resp);
 		}
-		return resp;
-	}
-
-	@RequestMapping(path = "getIamServer")
-	public RespBase<?> getIamServer() throws Exception {
-		RespBase<Object> resp = RespBase.create();
-		List<EntryAddress> iamServer = entryAddressDao.getIamServer();
-		resp.getData().put("data", iamServer);
 		return resp;
 	}
 

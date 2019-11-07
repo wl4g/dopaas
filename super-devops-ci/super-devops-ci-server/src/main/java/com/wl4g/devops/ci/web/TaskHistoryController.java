@@ -71,8 +71,8 @@ public class TaskHistoryController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -88,10 +88,10 @@ public class TaskHistoryController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		TaskHistory taskHistory = taskHistoryService.getById(taskId);
 		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
-		resp.getData().put("group", taskHistory.getGroupName());
-		resp.getData().put("branch", taskHistory.getBranchName());
-		resp.getData().put("result", taskHistory.getResult());
-		resp.getData().put("taskDetails", taskHistoryDetails);
+		resp.forMap().put("group", taskHistory.getGroupName());
+		resp.forMap().put("branch", taskHistory.getBranchName());
+		resp.forMap().put("result", taskHistory.getResult());
+		resp.forMap().put("taskDetails", taskHistoryDetails);
 		return resp;
 	}
 
@@ -113,7 +113,7 @@ public class TaskHistoryController extends BaseController {
 	public RespBase<?> readLog(Integer taskHisId, Integer index, Integer size) {
 		RespBase<Object> resp = RespBase.create();
 		FileIOUtils.ReadResult readResult = pipeliner.logfile(taskHisId, index, size);
-		resp.getData().put("data", readResult);
+		resp.forMap().put("data", readResult);
 		return resp;
 	}
 

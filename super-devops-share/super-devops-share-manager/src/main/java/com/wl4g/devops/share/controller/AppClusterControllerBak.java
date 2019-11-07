@@ -271,7 +271,7 @@ public class AppClusterControllerBak extends BaseController {
 		try {
 			InstanceOfGroup iof = appClusterService.select(ap);
 			if (null != iof) {
-				resp.getData().put("iof", iof);
+				resp.forMap().put("iof", iof);
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 				log.error("请求失败，请确认请求参数！");
@@ -304,7 +304,7 @@ public class AppClusterControllerBak extends BaseController {
 		try {
 			InstanceOfGroup iof = appClusterService.selectEnv(ap);
 			if (null != iof) {
-				resp.getData().put("iof", iof);
+				resp.forMap().put("iof", iof);
 			} else {
 				resp.setCode(RetCode.SYS_ERR);
 				log.error("请求失败，请确认请求参数！");
@@ -342,8 +342,8 @@ public class AppClusterControllerBak extends BaseController {
 			customPage.setPageNum(pageNum);
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			resp.forMap().put("page", customPage);
+			resp.forMap().put("list", list);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("获取应用组列表失败{0}", e);
@@ -376,8 +376,8 @@ public class AppClusterControllerBak extends BaseController {
 			customPage.setPageNum(pageNum);
 			customPage.setPageSize(pageSize);
 			customPage.setTotal(page.getTotal());
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			resp.forMap().put("page", customPage);
+			resp.forMap().put("list", list);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("获取应用组列表失败", e);
@@ -522,7 +522,7 @@ public class AppClusterControllerBak extends BaseController {
 		RespBase<Object> resp = new RespBase<>();
 		try {
 			List<AppCluster> grouplist = appClusterService.grouplist();
-			resp.getData().put("grouplist", grouplist);
+			resp.forMap().put("grouplist", grouplist);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("查询分组列表失败", e);
@@ -549,7 +549,7 @@ public class AppClusterControllerBak extends BaseController {
 		RespBase<Object> resp = new RespBase<>();
 		try {
 			List<Environment> envlist = appClusterService.environmentlist(clusterId);
-			resp.getData().put("envlist", envlist);
+			resp.forMap().put("envlist", envlist);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("查询分组列表失败", e);
@@ -576,7 +576,7 @@ public class AppClusterControllerBak extends BaseController {
 		RespBase<Object> resp = new RespBase<>();
 		try {
 			List<AppInstance> instancelist = appClusterService.instancelist(appInstance);
-			resp.getData().put("instancelist", instancelist);
+			resp.forMap().put("instancelist", instancelist);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("查询分组列表失败", e);

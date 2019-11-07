@@ -62,8 +62,8 @@ public class ContactController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -84,7 +84,7 @@ public class ContactController extends BaseController {
 		log.info("into ContactController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmContact contact = contactService.detail(id);
-		resp.getData().put("contact", contact);
+		resp.forMap().put("contact", contact);
 		return resp;
 	}
 
@@ -92,7 +92,7 @@ public class ContactController extends BaseController {
 	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
 		List<AlarmContactGroup> alarmContactGroups = alarmContactGroupDao.list(null);
-		resp.getData().put("list", alarmContactGroups);
+		resp.forMap().put("list", alarmContactGroups);
 		return resp;
 	}
 

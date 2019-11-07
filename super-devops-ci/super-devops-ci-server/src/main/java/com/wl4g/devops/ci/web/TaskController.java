@@ -89,8 +89,8 @@ public class TaskController extends BaseController {
 		customPage.setPageNum(pageNum);
 		customPage.setPageSize(pageSize);
 		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		resp.forMap().put("page", customPage);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -163,7 +163,7 @@ public class TaskController extends BaseController {
 		Assert.notNull(appClusterId, "appClusterId can not be null");
 		RespBase<Object> resp = RespBase.create();
 		List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
-		resp.getData().put("tasks", tasks);
+		resp.forMap().put("tasks", tasks);
 		return resp;
 	}
 
@@ -184,7 +184,7 @@ public class TaskController extends BaseController {
 		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();
 		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
-		resp.getData().put("list", taskBuildCommands);
+		resp.forMap().put("list", taskBuildCommands);
 		return resp;
 
 	}
