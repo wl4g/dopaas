@@ -138,7 +138,7 @@ public abstract class GenericApiController extends BaseController {
 
 		// Setup response attributes.
 		CursorIndexModel index = new CursorIndexModel(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
-		resp.setData(new SessionAttributeModel(index, sas));
+		resp.setBean(new SessionAttributeModel(index, sas));
 
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions => {}", resp);

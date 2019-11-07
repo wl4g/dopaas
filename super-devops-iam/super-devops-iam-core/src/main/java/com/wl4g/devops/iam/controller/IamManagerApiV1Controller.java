@@ -63,7 +63,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	@RequestMapping(path = "findIamServers")
 	public RespBase<?> findIamServers() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(clusterConfigDao.getIamServer());
+		resp.setBean(clusterConfigDao.getIamServer());
 		return resp;
 	}
 
