@@ -58,7 +58,7 @@ import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 
 /**
  * Abstract based social networking services handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月7日
@@ -166,7 +166,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Check connect required parameters
-	 * 
+	 *
 	 * @param provider
 	 * @param refreshUrl
 	 */
@@ -179,7 +179,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Get authorize URL query parameters
-	 * 
+	 *
 	 * @param which
 	 * @param provider
 	 * @param state
@@ -195,7 +195,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Check connect callback required parameters
-	 * 
+	 *
 	 * @param provider
 	 * @param state
 	 * @param code
@@ -209,7 +209,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Save oauth2 connect parameters
-	 * 
+	 *
 	 * @param which
 	 * @param provider
 	 * @param state
@@ -240,7 +240,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Get oauth2 connect parameters
-	 * 
+	 *
 	 * @param state
 	 * @return
 	 */
@@ -253,7 +253,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * After SNS callback process.<br/>
-	 * 
+	 *
 	 * @param provider
 	 * @param code
 	 * @param connect
@@ -285,7 +285,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Building response message.(Default:Refresh redirection URL)
-	 * 
+	 *
 	 * @param provider
 	 * @param result
 	 * @param connectParams
@@ -299,10 +299,10 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 * Get login submission URL. <br/>
 	 * Synchronized at com.wl4g.devops.iam.common.filter.Iam
 	 * AuthenticationFilter#getUriMapping <br/>
-	 * 
+	 *
 	 * <font color=red>Note: Social network login does not require login
 	 * account(principal)</font>
-	 * 
+	 *
 	 * @param provider
 	 *            SNS connect provider name
 	 * @param callbackId
@@ -325,7 +325,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Release clean oauth2 connect parameters etc.
-	 * 
+	 *
 	 * @param state
 	 */
 	protected void releaseConnects(String state) {
@@ -336,7 +336,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	/**
 	 * Wrap response.(Default: Wrap after callback agent refresh redirection
 	 * URL)
-	 * 
+	 *
 	 * @param refreshUrl
 	 *            Default: Refresh redirection URL, or other message
 	 * @param connectParams
@@ -363,7 +363,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 
 	/**
 	 * Generate callback-id
-	 * 
+	 *
 	 * @return
 	 */
 	protected String generateCallbackId() {

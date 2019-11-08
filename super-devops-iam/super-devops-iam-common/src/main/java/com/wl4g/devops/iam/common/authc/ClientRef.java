@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.common.authc;
 
 /**
  * IAM authentication client reference type definition.
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年3月8日
  * @since

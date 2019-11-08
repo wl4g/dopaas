@@ -35,7 +35,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 /**
  * IAM client authenticator authorization filter.</br>
  * </br>
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月6日

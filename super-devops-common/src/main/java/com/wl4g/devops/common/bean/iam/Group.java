@@ -4,78 +4,126 @@ import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class Group extends BaseBean implements Serializable {
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
-    private String name;
+	private Integer id;
 
-    private String displayName;
+	private String name;
 
-    private Integer type;
+	private String displayName;
 
-    private Integer parentId;
+	private Integer type;
 
-    private Integer dutyUserId;
+	private Integer parentId;
 
-    private Integer status;
+	private Integer dutyUserId;
 
-    //other
-    private List<Group> children;
+	private Integer status;
 
-    public String getName() {
-        return name;
-    }
+	// other
+	private List<Group> children;
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
+	private List<Integer> menuIds;
 
-    public String getDisplayName() {
-        return displayName;
-    }
+	private List<Integer> roleIds;
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName == null ? null : displayName.trim();
-    }
+	@Override
+	public Integer getId() {
+		return id;
+	}
 
-    public Integer getType() {
-        return type;
-    }
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setType(Integer type) {
-        this.type = type;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Integer getParentId() {
-        return parentId;
-    }
+	public void setName(String name) {
+		this.name = name == null ? null : name.trim();
+	}
 
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
-    }
+	public String getDisplayName() {
+		return displayName;
+	}
 
-    public Integer getDutyUserId() {
-        return dutyUserId;
-    }
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName == null ? null : displayName.trim();
+	}
 
-    public void setDutyUserId(Integer dutyUserId) {
-        this.dutyUserId = dutyUserId;
-    }
+	public Integer getType() {
+		return type;
+	}
 
-    public Integer getStatus() {
-        return status;
-    }
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+	public Integer getParentId() {
+		return parentId;
+	}
 
-    public List<Group> getChildren() {
-        return children;
-    }
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
 
-    public void setChildren(List<Group> children) {
-        this.children = children;
-    }
+	public Integer getDutyUserId() {
+		return dutyUserId;
+	}
+
+	public void setDutyUserId(Integer dutyUserId) {
+		this.dutyUserId = dutyUserId;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public List<Group> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Group> children) {
+		this.children = children;
+	}
+
+	public List<Integer> getMenuIds() {
+		return menuIds;
+	}
+
+	public void setMenuIds(List<Integer> menuIds) {
+		this.menuIds = menuIds;
+	}
+
+	public List<Integer> getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(List<Integer> roleIds) {
+		this.roleIds = roleIds;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Group group = (Group) o;
+		return Objects.equals(id, group.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

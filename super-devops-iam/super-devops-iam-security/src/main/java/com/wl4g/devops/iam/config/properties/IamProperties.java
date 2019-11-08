@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.config.properties;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
@@ -29,11 +30,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.config.properties.ServerParamProperties;
+import com.wl4g.devops.iam.filter.InternalWhiteListServerAuthenticationFilter;
 import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
 
 /**
  * IAM server properties
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月4日
@@ -60,7 +62,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 	/**
 	 * Login success redirection to end-point service name. </br>
-	 * 
+	 *
 	 * <pre>
 	 * umc-manager@http://localhost:14048
 	 * </pre>
@@ -70,7 +72,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	/**
 	 * Login success redirection to end-point.(Must be back-end server URI)
 	 * </br>
-	 * 
+	 *
 	 * <pre>
 	 * umc-manager@http://localhost:14048
 	 * </pre>
@@ -97,6 +99,11 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 */
 	private ServerParamProperties param = new ServerParamProperties();
 
+	/**
+	 * IAM server API configuration properties.
+	 */
+	private ApiProperties api = new ApiProperties();
+
 	public String getLoginUri() {
 		return loginUri;
 	}
@@ -118,11 +125,11 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	/**
 	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1 Situation1:
 	 * /view/index.html ===> http://myapp.domain.com/myapp/authenticator?id=1
-	 * 
+	 * <p>
 	 * Implementing the IAM-CAS protocol: When successful login, you must
 	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
 	 * front-end pages can not be used directly).
-	 * 
+	 *
 	 * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
 	 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
 	 */
@@ -164,6 +171,14 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		this.param = param;
 	}
 
+	public ApiProperties getApi() {
+		return api;
+	}
+
+	public void setApi(ApiProperties api) {
+		this.api = api;
+	}
+
 	@Override
 	protected void applyDefaultIfNecessary() {
 		// Default URL filter chain.
@@ -194,6 +209,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
 		// Verify(CAPTCHA/SMS) authenticator rules.
 		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
+		// API v1 rules.
+		getFilterChain().put(URI_S_API_V1_BASE + "/**", InternalWhiteListServerAuthenticationFilter.NAME);
 	}
 
 }

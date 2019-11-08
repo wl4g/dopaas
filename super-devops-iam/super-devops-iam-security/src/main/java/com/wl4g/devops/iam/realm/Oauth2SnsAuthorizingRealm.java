@@ -38,7 +38,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
 /**
  * Default SNS oauth2 authorizing realm
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月8日
@@ -58,7 +58,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 
 	/**
 	 * Authenticates a user and retrieves its information.
-	 * 
+	 *
 	 * @param token
 	 *            the authentication token
 	 * @throws AuthenticationException
@@ -87,8 +87,8 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 
 	/**
 	 * Retrieves the AuthorizationInfo for the given principals (the CAS
-	 * previously authenticated user : id + attributes).
-	 * 
+	 * previously authenticated user : id + attributes).</br>
+	 *
 	 * @param principals
 	 *            the primary identifying principals of the AuthorizationInfo
 	 *            that should be retrieved.

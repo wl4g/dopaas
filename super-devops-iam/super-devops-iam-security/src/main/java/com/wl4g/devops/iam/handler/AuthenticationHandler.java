@@ -31,7 +31,7 @@ import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 
 /**
  * IAM authentication handler.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -43,7 +43,7 @@ public abstract interface AuthenticationHandler {
 	 * Assertion the validity of the request parameters before executing the
 	 * login. (that is, verify that the <b>'source application'</b> and the
 	 * secure callback <b>'redirectUrl'</b> are legitimate)
-	 * 
+	 *
 	 * @param fromAppName
 	 * @param redirectUrl
 	 * @throws IllegalCallbackDomainException
@@ -54,7 +54,7 @@ public abstract interface AuthenticationHandler {
 	 * Assertion whether the current login account has permission to access the
 	 * application. (that is, validating the legitimacy of <b>'principal'</b>
 	 * and <b>'application'</b>)
-	 * 
+	 *
 	 * @param principal
 	 * @param fromAppName
 	 *            From source application
@@ -64,7 +64,7 @@ public abstract interface AuthenticationHandler {
 
 	/**
 	 * Validate application request ticket
-	 * 
+	 *
 	 * @param model
 	 *            ticket validation request
 	 * @return validation assert result
@@ -73,7 +73,7 @@ public abstract interface AuthenticationHandler {
 
 	/**
 	 * Shiro authentication success callback process.
-	 * 
+	 *
 	 * @param fromAppName
 	 *            from source application name
 	 * @param subject
@@ -90,7 +90,7 @@ public abstract interface AuthenticationHandler {
 	 * 2: direct access http://iam-server/logout <br/>
 	 * {@link com.wl4g.devops.iam.web.CentralAuthenticatorController#logout()}
 	 * {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#preHandle()}
-	 * 
+	 *
 	 * @param forced
 	 *            logout forced
 	 * @param fromAppName
@@ -103,7 +103,7 @@ public abstract interface AuthenticationHandler {
 
 	/**
 	 * Validation application secondary authentication
-	 * 
+	 *
 	 * @param secondAuthCode
 	 *            Secondary authentication code
 	 * @param fromAppName
@@ -114,7 +114,7 @@ public abstract interface AuthenticationHandler {
 
 	/**
 	 * Sessions expired validation
-	 * 
+	 *
 	 * @param param
 	 * @return
 	 */

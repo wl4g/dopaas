@@ -46,7 +46,7 @@ public abstract class SystemUtils2 extends SystemUtils {
 	/**
 	 * Global unique host hardware MAC identification.
 	 */
-	final public static String GLOBAL_HOST_SERIAL = globalHostSerial0();
+	final public static String DEFAULT_GLOBAL_HOST_SERIAL = defaultGlobalHostSerial0();
 
 	/**
 	 * Global unique identity of current application.
@@ -64,11 +64,11 @@ public abstract class SystemUtils2 extends SystemUtils {
 	final public static String GLOBAL_PROCESS_SERIAL = globalProcessSerial0();
 
 	/**
-	 * Obtain local host hardware MAC address identity.
+	 * (Default)Obtain local host hardware MAC address identity.
 	 * 
 	 * @return
 	 */
-	private static String globalHostSerial0() {
+	private static String defaultGlobalHostSerial0() {
 		// Getting MAC Address Information of Network Card
 		try {
 			List<NetworkInterface> nis = list(getNetworkInterfaces());
@@ -110,9 +110,9 @@ public abstract class SystemUtils2 extends SystemUtils {
 	 * @return
 	 */
 	private static String globalAppSerial0() {
-		hasText(GLOBAL_HOST_SERIAL, "HostSerial is empty.");
+		hasText(DEFAULT_GLOBAL_HOST_SERIAL, "HostSerial is empty.");
 		String packagePath = SystemUtils2.class.getProtectionDomain().getCodeSource().getLocation().toString();
-		return md5().hashString(GLOBAL_HOST_SERIAL + packagePath, UTF_8).toString();
+		return md5().hashString(DEFAULT_GLOBAL_HOST_SERIAL + packagePath, UTF_8).toString();
 	}
 
 	/**
@@ -174,7 +174,7 @@ public abstract class SystemUtils2 extends SystemUtils {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(GLOBAL_HOST_SERIAL);
+		System.out.println(DEFAULT_GLOBAL_HOST_SERIAL);
 		System.out.println(GLOBAL_APP_SERIAL);
 		System.out.println(LOCAL_PROCESS_ID);
 		System.out.println(GLOBAL_PROCESS_SERIAL);

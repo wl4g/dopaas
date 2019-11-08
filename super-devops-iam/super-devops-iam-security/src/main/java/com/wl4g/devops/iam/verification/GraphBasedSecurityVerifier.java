@@ -146,7 +146,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 	/**
 	 * After apply graph properties processing.
-	 * 
+	 *
 	 * @param applyToken
 	 * @param codeWrap
 	 * @param keySpec
@@ -192,7 +192,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 	/**
 	 * Building image to base64.
-	 * 
+	 *
 	 * @param data
 	 * @return
 	 */

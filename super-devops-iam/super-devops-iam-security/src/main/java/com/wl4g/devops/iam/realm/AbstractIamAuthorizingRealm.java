@@ -34,15 +34,13 @@ import org.springframework.core.ResolvableType;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.*;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_ACCOUNT;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_TOKEN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bindKVParameters;
+import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
@@ -57,7 +55,7 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
 /**
  * Multiple realm routing processing.
  * {@link org.apache.shiro.authc.pam.ModularRealmAuthenticator#doMultiRealmAuthentication()}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月27日
@@ -138,7 +136,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 
 	/**
 	 * Authenticates a user and retrieves its information.
-	 * 
+	 *
 	 * @param token
 	 *            the authentication token
 	 * @throws AuthenticationException
@@ -152,18 +150,42 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			validator.validate(token);
 
 			/*
-			 * Extension Point Tips:: can be used to check the parameter
+			 * [Extension]: Can be used to check the parameter
 			 * 'pre-grant-ticket'</br>
 			 */
 
-			// Get authentication info and save it(Also include token)
-			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_SESSION_TOKEN, token));
-			return bind(KEY_SESSION_ACCOUNT, info);
+			/**
+			 * [Extension]: Save authenticate token, For example, for online
+			 * session management and analysis.
+			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
+			 */
+			// Obtain authentication info.
+			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
+			notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
+
+			/**
+			 * [Extension]: Save authenticate info, For example, for online
+			 * session management and analysis. *
+			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
+			 */
+			return bind(KEY_AUTHC_INFO, info);
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}
 	}
 
+	/**
+	 * Obtain authentication information.</br>
+	 *
+	 * <font style='color:red'>Note: At least empty authentication information
+	 * should be returned. Reason reference:
+	 * {@link org.apache.shiro.authz.ModularRealmAuthorizer.isPermitted()}</font>
+	 *
+	 * @param token
+	 * @return
+	 * @throws AuthenticationException
+	 * @see {@link org.apache.shiro.authz.ModularRealmAuthorizer#isPermitted()}
+	 */
 	protected abstract AuthenticationInfo doAuthenticationInfo(T token) throws AuthenticationException;
 
 	@Override

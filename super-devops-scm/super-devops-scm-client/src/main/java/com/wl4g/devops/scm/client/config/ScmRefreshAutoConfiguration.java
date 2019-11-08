@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
@@ -47,7 +47,7 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
  * @since {@link de.codecentric.boot.admin.web.PrefixHandlerMapping}
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
-public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	//
 	// Refresher's

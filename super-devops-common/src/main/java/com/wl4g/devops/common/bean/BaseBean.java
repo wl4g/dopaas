@@ -17,35 +17,48 @@ package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 实体基类
+ * DB based bean entity.
  * 
- * @date 2018年9月25日
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2018-09-05
+ * @since
  */
-public abstract class BaseBean {
-	/**
-	 * 启用状态:启用
-	 */
-	public static final int ENABLED = 1;
-	/**
-	 * 启用状态:禁用
-	 */
-	public static final int DISABLED = 0;
-	/**
-	 * 未删除状态
-	 */
-	public static final int DEL_FLAG_NORMAL = 0;
-	/**
-	 * 删除状态
-	 */
-	public static final int DEL_FLAG_DELETE = 1;
+public abstract class BaseBean implements Serializable {
+	private static final long serialVersionUID = 8940373806493080114L;
 
 	/**
-	 * 删除状态
+	 * Status: enabled
 	 */
-	public static final int DEFAULT_USER_ID = 1;
+	final public static int ENABLED = 1;
+
+	/**
+	 * Status: disabled
+	 */
+	final public static int DISABLED = 0;
+
+	/**
+	 * Status: normal (not deleted)
+	 */
+	final public static int DEL_FLAG_NORMAL = 0;
+
+	/**
+	 * Status: deleted
+	 */
+	final public static int DEL_FLAG_DELETE = 1;
+
+	/**
+	 * Default userId.
+	 */
+	final public static int DEFAULT_USER_ID = 1;
+
+	/*
+	 * User: Super administrator account name
+	 */
+	final public static String DEFAULT_USER_ROOT = "root";
 
 	private Integer id;
 	private Integer createBy; // 创建人
@@ -66,6 +79,7 @@ public abstract class BaseBean {
 		this.createDate = this.updateDate;
 		this.createBy = DEFAULT_USER_ID;
 		updateBy = DEFAULT_USER_ID;
+		this.delFlag = DEL_FLAG_NORMAL;
 	}
 
 	/**

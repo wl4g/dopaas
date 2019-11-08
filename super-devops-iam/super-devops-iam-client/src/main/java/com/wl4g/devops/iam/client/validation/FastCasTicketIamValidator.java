@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.client.validation;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_TICKET_ASSERT;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
@@ -66,7 +64,7 @@ public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketV
 			}
 			throw new TicketValidateException(resp != null ? resp.getMessage() : "Unknown error");
 		}
-		return resp.getData().get(KEY_TICKET_ASSERT);
+		return resp.getData();
 	}
 
 	@Override

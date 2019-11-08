@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.common.bean.esm;
 
-public class ScalingRule {
+import com.wl4g.devops.common.bean.BaseBean;
+
+public class ScalingRule extends BaseBean {
+	private static final long serialVersionUID = 1484674384011891765L;
 
 }

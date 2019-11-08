@@ -92,7 +92,7 @@ public abstract class GitUtils {
 	/**
 	 * Checkout and pull
 	 */
-	public static void checkout(CredentialsProvider credentials, String projecDir, String branchName) {
+	public static void checkoutAndPull(CredentialsProvider credentials, String projecDir, String branchName) {
 		String projectURL = projecDir + "/.git";
 		try (Git git = Git.open(new File(projectURL))) {
 			List<Ref> refs = git.branchList().call();
@@ -112,14 +112,13 @@ public abstract class GitUtils {
 			// Pull & get latest source code.
 			git.pull().setCredentialsProvider(credentials).call();
 
-			String msg = "Checkout branch success;branchName=" + branchName + " localPath=" + projecDir;
 			if (log.isInfoEnabled()) {
-				log.info(msg);
+				log.info("Checkout & pull successful for branchName:{}, projecDir:{}", branchName, projecDir);
 			}
 		} catch (Exception e) {
-			String errmsg = String.format("checkout branch failure. branchName=%s, localPath=%s", branchName, projecDir);
+			String errmsg = String.format("Failed to checkout & pull for branchName: %s, projecDir: %s", branchName, projecDir);
 			log.error(errmsg, e);
-			throw new IllegalStateException(e);
+			throw new IllegalStateException(errmsg, e);
 		}
 	}
 
@@ -193,15 +192,15 @@ public abstract class GitUtils {
 	 */
 	public static String getLatestCommitted(String projecDir) throws Exception {
 		try (Git git = Git.open(new File(projecDir))) {
-			Iterable<RevCommit> iterb = git.log().setMaxCount(1).call();// 拿最新的comit-sha
+			Iterable<RevCommit> iterb = git.log().setMaxCount(1).call();// 拿最新的comit-sign
 			Iterator<RevCommit> it = iterb.iterator();
 			if (it.hasNext()) {
-				RevCommit commit = it.next();
-				String commitID = commit.getName(); // Latest committed version?
+				// Get latest version committed.
+				String commitSign = it.next().getName();
 				if (log.isInfoEnabled()) {
-					log.info("Latest committed sha:{}, path:{}", commitID, projecDir);
+					log.info("Latest committed sign:{}, path:{}", commitSign, projecDir);
 				}
-				return commitID;
+				return commitSign;
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -214,22 +213,22 @@ public abstract class GitUtils {
 	 *
 	 * @param credentials
 	 * @param projecDir
-	 * @param sha
+	 * @param sign
 	 * @return
 	 */
-	public static Ref rollback(CredentialsProvider credentials, String projecDir, String sha) {
+	public static Ref rollback(CredentialsProvider credentials, String projecDir, String sign) {
 		String projectURL = projecDir + "/.git";
 		try (Git git = Git.open(new File(projectURL))) {
 			git.fetch().setCredentialsProvider(credentials).call();
-			Ref ref = git.checkout().setName(sha).call();
+			Ref ref = git.checkout().setName(sign).call();
 
-			String msg = "Rollback branch completed, sha:" + sha + ", localPath:" + projecDir;
+			String msg = "Rollback branch completed, sign:" + sign + ", localPath:" + projecDir;
 			if (log.isInfoEnabled()) {
 				log.info(msg);
 			}
 			return ref;
 		} catch (Exception e) {
-			String errmsg = String.format("Failed to rollback, sha:%s, localPath:%s", sha, projecDir);
+			String errmsg = String.format("Failed to rollback, sign:%s, localPath:%s", sign, projecDir);
 			log.error(errmsg, e);
 			throw new IllegalStateException(e);
 		}

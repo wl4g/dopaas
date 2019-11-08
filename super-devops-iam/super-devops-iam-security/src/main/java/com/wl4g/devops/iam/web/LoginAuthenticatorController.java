@@ -97,7 +97,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				locale = new Locale(lang);
 			}
 			bind(KEY_LANG_ATTRIBUTE_NAME, locale);
-			resp.getData().put(KEY_LANG_ATTRIBUTE_NAME, locale);
+			resp.buildMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				resp.setCode(RetCode.PARAM_ERR);
@@ -128,7 +128,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				log.debug("Apply authentication code: '{}'", authCode);
 			}
 			cacheManager.getCache(CACHE_AUTH_CODE).put(new EnhancedKey(authCode, 600), "");
-			resp.getData().put(KEY_AUTHENTICATION_MODEL, new AuthenticationCodeModel(authCode));
+			resp.buildMap().put(KEY_AUTHENTICATION_MODEL, new AuthenticationCodeModel(authCode));
 		} catch (Exception e) {
 			resp.handleError(e);
 			log.error("Failed to apply session.", e);
@@ -150,7 +150,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
 
 			// Secret(pubKey).
-			resp.getData().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret(authCode.getAuthenticationCode())));
+			resp.buildMap().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret(authCode.getAuthenticationCode())));
 
 			// CAPTCHA check.
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
@@ -159,7 +159,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				model.setSupport(VerifyType.SUPPORT_ALL); // Default
 				model.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
 			}
-			resp.getData().put(KEY_CAPTCHA_CHECK, model);
+			resp.buildMap().put(KEY_CAPTCHA_CHECK, model);
 
 			// SMS check.
 			/*
@@ -181,7 +181,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (Objects.nonNull(code)) {
 				remainDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
 			}
-			resp.getData().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainDelay));
+			resp.buildMap().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainDelay));
 
 		} catch (Exception e) {
 			if (e instanceof IamException) {
@@ -209,7 +209,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// Get error message in session
 			String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
 			errmsg = isBlank(errmsg) ? "" : errmsg;
-			resp.getData().put(KEY_ERR_SESSION_SAVED, errmsg);
+			resp.buildMap().put(KEY_ERR_SESSION_SAVED, errmsg);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(getRootCausesString(e));

@@ -27,7 +27,7 @@ import redis.clients.jedis.JedisCluster;
 
 /**
  * RedisCache Manager implements let Shiro use Redis caching
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @time 2017年4月13日
@@ -59,7 +59,7 @@ public class JedisCacheManager implements EnhancedCacheManager {
 
 	/**
 	 * Getting enhanced cache instance
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 * @throws CacheException

@@ -54,6 +54,7 @@ public class SpringContexts implements ApplicationContextAware, DisposableBean {
 					+ _actx);
 		}
 		_actx = actx; // NOSONAR
+
 	}
 
 	/**

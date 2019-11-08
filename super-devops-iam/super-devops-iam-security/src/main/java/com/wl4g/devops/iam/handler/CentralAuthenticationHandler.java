@@ -15,15 +15,21 @@
  */
 package com.wl4g.devops.iam.handler;
 
-import java.net.URI;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.wl4g.devops.common.bean.iam.ApplicationInfo;
+import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
+import com.wl4g.devops.common.bean.iam.model.*;
+import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
+import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
+import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
+import com.wl4g.devops.iam.common.utils.Sessions;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import com.wl4g.devops.support.cache.ScanCursor;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.session.Session;
@@ -36,12 +42,16 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_S;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PERMIT_ATTRIBUTE_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ROLE_ATTRIBUTE_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isEqualWithDomain;
 import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
 import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
@@ -50,44 +60,19 @@ import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.StringUtils.equalsAny;
-import static org.apache.commons.lang3.StringUtils.isAnyBlank;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.Assert.hasText;
-import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
-
-import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.model.LoggedModel;
-import com.wl4g.devops.common.bean.iam.model.LogoutModel;
-import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
-import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
-import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
-import com.wl4g.devops.common.exception.iam.LogoutException;
-import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.session.GrantTicketInfo;
-import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.iam.common.utils.Sessions;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
  * Default authentication handler implements
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月22日
  * @since
  */
 public class CentralAuthenticationHandler extends AbstractAuthenticationHandler {
-	final public static String SAVE_GRANT_SESSION = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
+	final public static String GRANT_APP_INFO_KEY = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
 
 	final public static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
 
@@ -129,8 +114,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			// is a match)
 			String host = URI.create(redirectUrl).getHost();
 			if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
-					|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri())
-					|| isEqualWithDomain(redirectUrl, app.getViewExtranetBaseUri()))) {
+					|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri()))) {
 				throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
 			}
 		}
@@ -269,7 +253,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			Set<String> appNames = grantInfo.getApplications().keySet();
 			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (apps == null || apps.isEmpty()) {
-				throw new LogoutException(String.format("Find application information is empty. %s", appNames));
+				throw new IamException(String.format("Find application information is empty. %s", appNames));
 			}
 			// logout all
 			logoutAll = processLogoutAll(subject, grantInfo, apps);
@@ -318,9 +302,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public SessionValidationAssertion sessionValidate(SessionValidationAssertion assertion) {
-		Assert.hasText(assertion.getApplication(), "'application' cannot not be empty");
+		hasText(assertion.getApplication(), "'application' cannot not be empty");
 
-		ScanCursor<IamSession> cursor = sessionDAO.getActiveSessions(DEFAULT_BATCH_SIZE);
+		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
 		while (cursor.hasNext()) {
 			Session session = cursor.next();
 			// GrantTicket by session.
@@ -339,7 +323,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	/**
 	 * Saved grantTicket to session => grant application<br/>
-	 * 
+	 *
 	 * @param session
 	 *            Session
 	 * @param grantApp
@@ -365,7 +349,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 		}
 		// Update grantTicket info and saved.
-		session.setAttribute(SAVE_GRANT_SESSION, info.addApplications(grantApp, grantTicket));
+		session.setAttribute(GRANT_APP_INFO_KEY, info.addApplications(grantApp, grantTicket));
 		if (log.isDebugEnabled()) {
 			log.debug("Update grantTicket info to session. {}", info);
 		}
@@ -391,12 +375,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	/**
 	 * Assert grantTicket validity </br>
-	 * 
-	 * @see {@link com.wl4g.devops.iam.handler.CentralAuthenticationHandler#loggedin}
-	 * 
+	 *
 	 * @param subject
 	 * @param model
 	 * @throws InvalidGrantTicketException
+	 * @see {@link com.wl4g.devops.iam.handler.CentralAuthenticationHandler#loggedin}
 	 */
 	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
@@ -428,17 +411,17 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	/**
 	 * Get bind session grantTicket information.
-	 * 
+	 *
 	 * @param session
 	 * @return
 	 */
 	private GrantTicketInfo getGrantTicket(Session session) {
-		return (GrantTicketInfo) session.getAttribute(SAVE_GRANT_SESSION);
+		return (GrantTicketInfo) session.getAttribute(GRANT_APP_INFO_KEY);
 	}
 
 	/**
 	 * Processing logout all
-	 * 
+	 *
 	 * @param subject
 	 * @param grantInfo
 	 * @param apps
@@ -470,7 +453,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 					log.info("Logout finished for principal:{}, application:{} url:{}", subject.getPrincipal(), app.getAppName(),
 							url);
 				} else {
-					throw new LogoutException(resp != null ? resp.getMessage() : "No response");
+					throw new IamException(resp != null ? resp.getMessage() : "No response");
 				}
 			} catch (Exception e) {
 				logoutAll = false;
@@ -484,7 +467,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	/**
 	 * Generate grantTicket.
-	 * 
+	 *
 	 * @return
 	 */
 	private String generateGrantTicket() {

@@ -14,25 +14,27 @@ import org.springframework.util.Assert;
  * @since
  */
 public class RunnerProperties implements Serializable {
-
-	private static final long serialVersionUID = -1996272636830701232L;
+	final private static long serialVersionUID = -1996272636830701232L;
+	final private static int DEFAULT_CONCURRENCY = -1;
+	final private static long DEFAULT_KEEP_ALIVE_TIME = 0L;
+	final private static int DEFAULT_ACCEPT_QUEUE = 2;
 
 	/** Whether to start the boss thread asynchronously. */
-	private boolean startup = false;
+	private boolean asyncStartup = false;
 
 	/**
 	 * When the concurrency is less than 0, it means that the worker thread
 	 * group is not enabled (only the boss asynchronous thread is started)
 	 */
-	private int concurrency = -1;
+	private int concurrency = DEFAULT_CONCURRENCY;
 
 	/** Watch dog delay */
-	private long keepAliveTime = 0L;
+	private long keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
 
 	/**
 	 * Consumption receive queue size
 	 */
-	private int acceptQueue = 2;
+	private int acceptQueue = DEFAULT_ACCEPT_QUEUE;
 
 	/** Rejected execution handler. */
 	private RejectedExecutionHandler reject = new AbortPolicy();
@@ -41,12 +43,12 @@ public class RunnerProperties implements Serializable {
 		super();
 	}
 
-	public RunnerProperties(boolean startup) {
-		this(-1);
+	public RunnerProperties(boolean asyncStartup) {
+		this(asyncStartup, DEFAULT_CONCURRENCY);
 	}
 
-	public RunnerProperties(int concurrency) {
-		this(concurrency, 0L, 2, null);
+	public RunnerProperties(boolean asyncStartup, int concurrency) {
+		this(concurrency, DEFAULT_KEEP_ALIVE_TIME, DEFAULT_ACCEPT_QUEUE, null);
 	}
 
 	public RunnerProperties(int concurrency, long keepAliveTime, int acceptQueue) {
@@ -57,21 +59,21 @@ public class RunnerProperties implements Serializable {
 		this(true, concurrency, keepAliveTime, acceptQueue, reject);
 	}
 
-	public RunnerProperties(boolean startup, int concurrency, long keepAliveTime, int acceptQueue,
+	public RunnerProperties(boolean asyncStartup, int concurrency, long keepAliveTime, int acceptQueue,
 			RejectedExecutionHandler reject) {
-		setStartup(startup);
+		setAsyncStartup(asyncStartup);
 		setConcurrency(concurrency);
 		setKeepAliveTime(keepAliveTime);
 		setAcceptQueue(acceptQueue);
 		setReject(reject);
 	}
 
-	public boolean isStartup() {
-		return startup;
+	public boolean isAsyncStartup() {
+		return asyncStartup;
 	}
 
-	public void setStartup(boolean async) {
-		this.startup = async;
+	public void setAsyncStartup(boolean asyncStartup) {
+		this.asyncStartup = asyncStartup;
 	}
 
 	public int getConcurrency() {

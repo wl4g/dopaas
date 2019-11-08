@@ -29,7 +29,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
 /**
  * IAM security utility tools.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月21日
  * @since
@@ -48,7 +48,7 @@ public abstract class Securitys {
 
 	/**
 	 * Safety limiting factor(e.g. Client remote IP and loginId)
-	 * 
+	 *
 	 * @param remoteHost
 	 * @param uid
 	 * @return
@@ -56,6 +56,7 @@ public abstract class Securitys {
 	public static List<String> createLimitFactors(String remoteHost, String uid) {
 		return new ArrayList<String>(2) {
 			private static final long serialVersionUID = -5976569540781454836L;
+
 			{
 				String uidFactor = createUIDLimitFactor(uid);
 				if (isNotBlank(uidFactor)) {
@@ -72,7 +73,7 @@ public abstract class Securitys {
 
 	/**
 	 * Create limit remote host factor.
-	 * 
+	 *
 	 * @param remoteHost
 	 * @return
 	 */
@@ -82,7 +83,7 @@ public abstract class Securitys {
 
 	/**
 	 * Create limit login UID factor.
-	 * 
+	 *
 	 * @param uid
 	 * @return
 	 */
@@ -92,7 +93,7 @@ public abstract class Securitys {
 
 	/**
 	 * Current session authentication status.
-	 * 
+	 *
 	 * @return
 	 */
 	public static String sessionStatus() {
@@ -103,35 +104,35 @@ public abstract class Securitys {
 	 * Get the URI address of the authenticator interface on the client or
 	 * server side.</br>
 	 * e.g.
-	 * 
+	 *
 	 * <pre>
 	 *  http://iam.xx.com/iam-server/xx/list?id=1  =>  http://iam.xx.com/iam-server/authenticator?id=1
 	 *  http://iam.xx.com/xx/list?id=1             =>  http://iam.xx.com/xx/authenticator?id=1
 	 *  http://iam.xx.com/xx/list/?id=1            =>  http://iam.xx.com/xx/authenticator?id=1
 	 *  http://iam.xx.com:8080/xx/list/?id=1       =>  http://iam.xx.com:8080/xx/authenticator?id=1
+	 *  /view/index.html					       =>  /view/index.html
 	 * </pre>
-	 * 
-	 * e.g. </br>
-	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1</br>
-	 * Situation1: /view/index.html =>
-	 * http://myapp.domain.com/myapp/authenticator?id=1
-	 * 
+	 * <p>
 	 * Implementing the IAM-CAS protocol: When successful login, you must
 	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
 	 * front-end pages can not be used directly).
-	 * 
-	 * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
-	 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
+	 *
 	 * @param url
 	 * @return
+	 * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
+	 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
 	 */
 	public static String correctAuthenticaitorURI(String url) {
 		if (isBlank(url)) {
 			return EMPTY;
 		}
-
 		try {
 			URI _uri = new URI(url);
+			// e.g. /view/index.html => /view/index.html
+			if (isAnyBlank(_uri.getScheme(), _uri.getHost())) {
+				return url;
+			}
+
 			if (!endsWith(_uri.getPath(), URI_AUTHENTICATOR)) {
 				String portPart = (_uri.getPort() == 80 || _uri.getPort() == 443 || _uri.getPort() < 0) ? EMPTY
 						: (":" + _uri.getPort());

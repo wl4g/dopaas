@@ -22,6 +22,7 @@ import org.apache.shiro.session.mgt.eis.SessionDAO;
 
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 
 public interface IamSessionDAO extends SessionDAO {
 
@@ -32,31 +33,39 @@ public interface IamSessionDAO extends SessionDAO {
 	}
 
 	/**
-	 * Get active sessions
-	 * 
-	 * @param cursor
-	 * @param size
+	 * Get access sessions
+	 *
+	 * @param limit
 	 * @return
 	 */
-	public ScanCursor<IamSession> getActiveSessions(final int batchSize);
+	public ScanCursor<IamSession> getAccessSessions(final int limit);
 
 	/**
-	 * Get active sessions
-	 * 
-	 * @param cursor
-	 * @param size
+	 * Get access sessions
+	 *
+	 * @param cursorString
+	 * @param limit
+	 * @return
+	 */
+	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit);
+
+	/**
+	 * Get access sessions
+	 *
+	 * @param cursorString
+	 * @param limit
 	 * @param principal
 	 *            Getting active sessions based on logon objects
 	 * @return
 	 */
-	public ScanCursor<IamSession> getActiveSessions(final int batchSize, final Object principal);
+	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal);
 
 	/**
-	 * Remove active current users
-	 * 
+	 * Remove access current users
+	 *
 	 * @param principal
 	 *            Removal of target users
 	 */
-	public void removeActiveSession(Object principal);
+	public void removeAccessSession(Object principal);
 
 }

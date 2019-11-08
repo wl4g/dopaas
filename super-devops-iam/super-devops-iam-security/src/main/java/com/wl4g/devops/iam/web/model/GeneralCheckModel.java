@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.web.model;
 
 /**
  * General check model.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-24
  * @since

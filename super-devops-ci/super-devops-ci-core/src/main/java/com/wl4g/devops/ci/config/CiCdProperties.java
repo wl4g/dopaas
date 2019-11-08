@@ -27,7 +27,7 @@ import static com.wl4g.devops.common.utils.lang.SystemUtils2.cleanSystemPath;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
-import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * CICD configuration properties.
@@ -59,14 +59,14 @@ public class CiCdProperties implements InitializingBean {
 	private VcsSourceProperties vcs = new VcsSourceProperties();
 
 	/**
-	 * Pipeline job properties.
+	 * Pipeline build properties.
 	 */
-	private JobProperties job = new JobProperties();
+	private BuildProperties build = new BuildProperties();
 
 	/**
-	 * Pipeline transform properties.
+	 * Pipeline deploy properties.
 	 */
-	private TranformProperties tranform = new TranformProperties();
+	private DeployProperties deploy = new DeployProperties();
 
 	public void setWorkspace(String workspace) {
 		if (!isBlank(workspace)) {
@@ -99,23 +99,23 @@ public class CiCdProperties implements InitializingBean {
 		}
 	}
 
-	public JobProperties getJob() {
-		return job;
+	public BuildProperties getBuild() {
+		return build;
 	}
 
-	public void setJob(JobProperties job) {
-		if (Objects.nonNull(job)) {
-			this.job = job;
+	public void setBuild(BuildProperties build) {
+		if (Objects.nonNull(build)) {
+			this.build = build;
 		}
 	}
 
-	public TranformProperties getTranform() {
-		return tranform;
+	public DeployProperties getDeploy() {
+		return deploy;
 	}
 
-	public void setTranform(TranformProperties tranform) {
-		if (Objects.nonNull(tranform)) {
-			this.tranform = tranform;
+	public void setDeploy(DeployProperties deploy) {
+		if (Objects.nonNull(deploy)) {
+			this.deploy = deploy;
 		}
 	}
 
@@ -128,45 +128,81 @@ public class CiCdProperties implements InitializingBean {
 	 * Apply default properties values.
 	 */
 	protected void applyDefaultProperties() {
-		if (isNull(getJob().getSharedDependencyTryTimeoutMs())) {
+		if (isNull(getBuild().getSharedDependencyTryTimeoutMs())) {
 			// Default to one third of the full job timeout.
-			getJob().setSharedDependencyTryTimeoutMs(getJob().getJobTimeoutMs() / 3);
-			log.info("Use sharedDependencyTryTimeoutMs of default value: {}", getJob().getSharedDependencyTryTimeoutMs());
-		}
-		if (isNull(getTranform().getTransferTimeoutMs())) {
-			// Default to one fifth of the full job timeout.
-			getTranform().setTransferTimeoutMs(getJob().getJobTimeoutMs() / 5);
-			log.info("Use transferTimeoutMs of default value: {}", getTranform().getTransferTimeoutMs());
+			getBuild().setSharedDependencyTryTimeoutMs(getBuild().getJobTimeoutMs() / 3);
+			log.info("Use sharedDependencyTryTimeoutMs of default value: {}", getBuild().getSharedDependencyTryTimeoutMs());
 		}
 
+		if (isNull(getDeploy().getTransferTimeoutMs())) {
+			// Default to one fifth of the full job timeout.
+			getDeploy().setTransferTimeoutMs(getBuild().getJobTimeoutMs() / 5);
+			log.info("Use transferTimeoutMs of default value: {}", getDeploy().getTransferTimeoutMs());
+		}
 	}
 
 	//
-	// Functions.
+	// Function's.
 	//
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/
+	 * 
+	 * @param taskHisyId
+	 * @return
+	 */
 	public File getJobBaseDir(Integer taskHisyId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getWorkspace() + "/" + DEFUALT_JOB_BASEDIR + "/job." + taskHisyId);
 	}
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/build.out.log
+	 * 
+	 * @param taskHisyId
+	 * @return
+	 */
 	public File getJobLog(Integer taskHisyId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/build.out.log");
 	}
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/{PROJECT_NAME}
+	 * 
+	 * @param taskHisId
+	 * @return
+	 */
 	public File getJobBackup(Integer taskHisId) {
 		Assert.notNull(taskHisId, "Rollback task history ref ID must not be null.");
 		return new File(getJobBaseDir(taskHisId).getAbsolutePath());
 	}
 
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/tmp.build.2.sh
+	 * 
+	 * @param taskHisyId
+	 * @param projectId
+	 * @return
+	 */
 	public File getJobTmpCommandFile(Integer taskHisyId, Integer projectId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		Assert.notNull(projectId, "Task project ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/" + "tmp.build." + projectId + ".sh");
 	}
 
-	public File getProjectDir(String projectName) {
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/sources/example-web/[pom.xml]
+	 * 
+	 * @param projectName
+	 * @return
+	 */
+	public File getProjectSourceDir(String projectName) {
 		Assert.hasText(projectName, "ProjectName must not be empty.");
 		return new File(getWorkspace() + "/" + DEFUALT_VCS_SOURCEDIR + "/" + projectName);
 	}
@@ -175,13 +211,41 @@ public class CiCdProperties implements InitializingBean {
 	 * Timeout for execution of each remote command during the distribution
 	 * deployment phase.
 	 * 
-	 * @param instanceCount
+	 * @param instances
 	 * @return
 	 */
-	public long getRemoteCommandTimeoutMs(int instanceCount) {
-		isTrue(instanceCount > 0, "Job instance count must greater than or equal to 0");
-		int tmpMultilpe = (instanceCount / getExecutor().getConcurrency() * 2);
-		return getTranform().getTransferTimeoutMs() * tmpMultilpe;
+	public long getRemoteCommandTimeoutMs(int instances) {
+		// isTrue(instances > 0, "Job instance count must greater than or equal
+		// to 0");
+		return (long) (getDeploy().getTransferTimeoutMs() * 0.76);
+	}
+
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/{PROJECT_NAME}/{PROJECT_NAME}.{SUFFIX}
+	 * 
+	 * @param projectName
+	 * @param suffix
+	 * @return
+	 */
+	public File getTransferLocalTmpFile(Integer taskHisId, String projectName, String suffix) {
+		hasText(projectName, "Transfer project name must not be empty.");
+		hasText(suffix, "Transfer project file suffix must not be empty.");
+		return new File(getJobBackup(taskHisId).getAbsolutePath() + "/" + projectName + "." + suffix);
+	}
+
+	/**
+	 * e.g. </br>
+	 * ~/.ci-temporary/{PROJECT_NAME}.{SUFFIX}
+	 * 
+	 * @param projectName
+	 * @param suffix
+	 * @return
+	 */
+	public File getTransferRemoteHomeTmpFile(String projectName, String suffix) {
+		hasText(projectName, "Transfer project name must not be empty.");
+		hasText(suffix, "Transfer project file suffix must not be empty.");
+		return new File(getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);
 	}
 
 }

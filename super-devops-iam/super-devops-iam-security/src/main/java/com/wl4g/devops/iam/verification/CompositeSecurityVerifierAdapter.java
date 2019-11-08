@@ -34,7 +34,7 @@ import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 
 /**
  * Composite verification adapter.
- * 
+ *
  * @author Wangl.sir
  * @version v1.0 2019年8月29日
  * @since
@@ -63,7 +63,7 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 
 	/**
 	 * Making the adaptation actually execute securityVerifier.
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
@@ -76,7 +76,7 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 
 	/**
 	 * Making the adaptation actually execute securityVerifier.
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -113,7 +113,7 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 
 	/**
 	 * Get adapted securityVerifier.
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */

@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
 
 /**
  * IAM customize shiro-spring filter factory bean
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月25日
  * @since
@@ -129,7 +129,7 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
 	/**
 	 * See: {@link ShiroFilterFactoryBean#applyLoginUrlIfNecessary}
-	 * 
+	 *
 	 * @param filter
 	 */
 	private void applyLoginUrlIfNecessary(Filter filter) {
@@ -147,7 +147,7 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
 	/**
 	 * See: {@link ShiroFilterFactoryBean#applySuccessUrlIfNecessary}
-	 * 
+	 *
 	 * @param filter
 	 */
 	private void applySuccessUrlIfNecessary(Filter filter) {
@@ -165,7 +165,7 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
 	/**
 	 * See: {@link ShiroFilterFactoryBean#applyUnauthorizedUrlIfNecessary}
-	 * 
+	 *
 	 * @param filter
 	 */
 	private void applyUnauthorizedUrlIfNecessary(Filter filter) {
@@ -183,7 +183,7 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
 	/**
 	 * See: {@link ShiroFilterFactoryBean#applyGlobalPropertiesIfNecessary}
-	 * 
+	 *
 	 * @param filter
 	 */
 	private void applyGlobalPropertiesIfNecessary(Filter filter) {

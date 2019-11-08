@@ -15,17 +15,20 @@
  */
 package com.wl4g.devops.iam.configure;
 
-import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.*;
-import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.bean.iam.User;
+import com.wl4g.devops.common.bean.iam.*;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.SimpleParameter;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.SnsParameter;
+import com.wl4g.devops.common.bean.share.ClusterConfig;
+import com.wl4g.devops.dao.iam.MenuDao;
+import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
-import com.wl4g.devops.dao.share.ApplicationDao;
+import com.wl4g.devops.dao.share.ClusterConfigDao;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
@@ -53,15 +56,21 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	/**
-	 * Because ProtoStuff can't serialize XXXDao created by MyBatis, it will
-	 * throw a serialization exception. This field must be ignored. </br>
+	 * ProtoStuff can't serialize XXXDao created by MyBatis, it will throw a
+	 * serialization exception. This field must be ignored. </br>
 	 * The problem is method: {@link StandardSecurityConfigurer#getIamAccount()}
 	 */
 	@Autowired
-	private transient ApplicationDao applicationDao;
-
+	private transient ClusterConfigDao configDao;
 	@Autowired
 	private transient UserDao userDao;
+	@Autowired
+	private transient RoleDao roleDao;
+	@Autowired
+	private transient MenuDao menuDao;
+
+	@Value("${spring.profiles.active}")
+	private String active;
 
 	@Override
 	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
@@ -83,18 +92,27 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public List<ApplicationInfo> findApplicationInfo(String... appNames) {
-		List<ApplicationInfo> appInfoList = new ArrayList<>();
+		List<ApplicationInfo> appInfos = new ArrayList<>();
 		if (isEmptyArray(appNames)) {
 			return emptyList();
 		}
+
 		// Is IAM example demo.
 		if (equalsAny("iam-example", appNames)) {
 			ApplicationInfo appInfo = new ApplicationInfo("iam-example", "http://localhost:14041");
 			appInfo.setIntranetBaseUri("http://localhost:14041/iam-example");
-			appInfoList.add(appInfo);
+			appInfos.add(appInfo);
 		} else { // Formal environment.
-			List<ApplicationInfo> applications = applicationDao.getByAppNames(appNames);
-			appInfoList.addAll(applications);
+			List<ClusterConfig> ccs = configDao.getByAppNames(appNames, active, null);
+			for (ClusterConfig cc : ccs) {
+				ApplicationInfo app = new ApplicationInfo();
+				app.setAppName(cc.getName());
+				app.setExtranetBaseUri(cc.getExtranetBaseUri());
+				app.setIntranetBaseUri(cc.getIntranetBaseUri());
+				app.setViewExtranetBaseUri(cc.getViewExtranetBaseUri());
+				app.setRemark(cc.getRemark());
+				appInfos.add(app);
+			}
 		}
 
 		//// --- For testing. ---
@@ -138,7 +156,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		// http://localhost:14051 # share-manager
 		//
 
-		return appInfoList;
+		return appInfos;
 	}
 
 	@Override
@@ -168,12 +186,36 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	@Override
 	public String findRoles(String principal, String application) {
-		return "sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack";
+		User user = userDao.selectByUserName(principal);
+		// TODO cache
+		List<Role> list = roleDao.selectByUserId(user.getId());
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < list.size(); i++) {
+			Role role = list.get(i);
+			if (i == list.size() - 1) {
+				sb.append(role.getName());
+			} else {
+				sb.append(role.getName()).append(",");
+			}
+		}
+		return sb.toString();
 	}
 
 	@Override
 	public String findPermissions(String principal, String application) {
-		return "sys:user:view,sys:user:edit,goods:order:view,goods:order:edit";
+		User user = userDao.selectByUserName(principal);
+		// TODO cache
+		List<Menu> list = menuDao.selectByUserId(user.getId());
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < list.size(); i++) {
+			Menu menu = list.get(i);
+			if (i == list.size() - 1) {
+				sb.append(menu.getPermission());
+			} else {
+				sb.append(menu.getPermission()).append(",");
+			}
+		}
+		return sb.toString();
 	}
 
 	@Override

@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * XSS HttpServlet request wrapper
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月26日
  * @since

@@ -18,7 +18,7 @@ public interface UserDao {
 
     int updateByPrimaryKey(User record);
 
-    List<User> list(@Param("userName") String userName,@Param("displayName") String displayName);
+    List<User> list(@Param("userId") Integer userId,@Param("userName") String userName,@Param("displayName") String displayName);
 
     User selectByUserName(String userName);
 

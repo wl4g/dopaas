@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * IAM unsafe XSS attacks request handler point.
- * 
+ *
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

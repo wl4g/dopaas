@@ -19,16 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.wl4g.devops.common.kit.jvm.JVMRuntimeKit;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 
+import static com.wl4g.devops.common.kit.jvm.JVMRuntimeKit.*;
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
@@ -37,7 +36,9 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Locale;
 import java.util.Map;
@@ -46,12 +47,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
 /**
  * Default view controller
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月9日
  * @since
@@ -85,7 +85,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Reader view files
-	 * 
+	 *
 	 * @param filename
 	 * @param response
 	 */
@@ -96,7 +96,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Reader static resource files
-	 * 
+	 *
 	 * @param filename
 	 * @param response
 	 */
@@ -109,7 +109,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Response file
-	 * 
+	 *
 	 * @param basePath
 	 * @param filepath
 	 * @param response
@@ -129,11 +129,11 @@ public class DefaultViewController extends BaseController {
 				}
 				buf = ByteStreams.toByteArray(resource.getInputStream());
 				// Caching is enabled when in non-debug mode.
-				if (!JVMRuntimeKit.isJVMDebugging) {
+				if (!isJVMDebugging) {
 					bufferCache.put(filepath, buf);
 				}
 			} else { // Not found
-				write(response, HttpStatus.NOT_FOUND.value(), MediaType.TEXT_HTML_VALUE, "Not Found".getBytes(Charsets.UTF_8));
+				write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
 				return;
 			}
 		}
@@ -143,12 +143,12 @@ public class DefaultViewController extends BaseController {
 		response.addHeader("Last-Modified", String.valueOf(System.currentTimeMillis()));
 
 		// Response file buffer.
-		write(response, HttpStatus.OK.value(), getContentType(filepath), buf);
+		write(response, OK.value(), getContentType(filepath), buf);
 	}
 
 	/**
 	 * Load resource file
-	 * 
+	 *
 	 * @param basePath
 	 * @param filepath
 	 * @return
@@ -160,7 +160,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Get content type by file path.
-	 * 
+	 *
 	 * @param filepath
 	 * @return
 	 */
@@ -168,7 +168,7 @@ public class DefaultViewController extends BaseController {
 		filepath = filepath.toLowerCase(Locale.US);
 		String contentType = EMPTY;
 		if (endsWithAny(filepath, "html", "shtml", "htm")) {
-			contentType = MediaType.TEXT_HTML_VALUE;
+			contentType = TEXT_HTML_VALUE;
 		} else if (endsWithAny(filepath, "css")) {
 			contentType = "text/css";
 		} else if (endsWithAny(filepath, "js")) {

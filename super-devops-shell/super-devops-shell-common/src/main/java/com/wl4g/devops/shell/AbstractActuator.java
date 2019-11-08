@@ -211,7 +211,7 @@ public abstract class AbstractActuator implements Actuator {
 	}
 
 	/**
-	 * Preprocess parameters.
+	 * Pre-process parameters.
 	 * 
 	 * @param tm
 	 * @param args

@@ -80,7 +80,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 		try {
 			loopWatchProcessesDestroy(getDestroyLockName());
 		} catch (InterruptedException e) {
-			log.error("Grave warning!!! Killed node process watcher, commands process on this node will not be manual cancel.",
+			log.error("Critical error!!! Killed node process watcher, commands process on this node will not be manual cancel.",
 					e);
 		}
 	}

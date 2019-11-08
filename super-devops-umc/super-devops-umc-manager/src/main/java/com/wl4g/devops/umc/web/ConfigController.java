@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -46,19 +46,17 @@ public class ConfigController extends BaseController {
 	private ConfigService configService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(Integer templateId, Integer contactGroupId, CustomPage customPage) {
-		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , customPage = {} ", templateId,
-				contactGroupId, customPage);
+	public RespBase<?> list(Integer templateId, Integer contactGroupId, PageModel pm) {
+		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
+				contactGroupId, pm);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -77,7 +75,7 @@ public class ConfigController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		AlarmConfig alarmConfig = configService.detail(id);
-		resp.getData().put("alarmConfig", alarmConfig);
+		resp.buildMap().put("alarmConfig", alarmConfig);
 		return resp;
 	}
 

@@ -28,7 +28,7 @@ import com.wl4g.devops.iam.sns.wechat.model.WxBasedOpenId;
 
 /**
  * Based abstract WeChat social oauth2 template
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月18日
  * @since
@@ -91,7 +91,7 @@ public abstract class BasedWechatOauth2Template<C extends AbstractSocialProperti
 
 	/**
 	 * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年1月6日
 	 * @since

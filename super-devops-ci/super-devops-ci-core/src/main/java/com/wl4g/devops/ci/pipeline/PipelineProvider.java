@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
 
 /**
@@ -46,7 +46,7 @@ public interface PipelineProvider extends DelegateAliasPrototypeBean {
 	 * 
 	 * @return
 	 */
-	PipelineInfo getPipelineInfo();
+	PipelineContext getContext();
 
 	/**
 	 * Invoke remote commands.
@@ -59,8 +59,10 @@ public interface PipelineProvider extends DelegateAliasPrototypeBean {
 	 */
 	void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception;
 
-	String getShaLocal();
+	char[] getUsableCipherSshKey(String sshkey) throws Exception;
 
-	String getShaGit();
+	String getAssetsFingerprint();
+
+	String getSourceFingerprint();
 
 }

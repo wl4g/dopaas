@@ -13,6 +13,9 @@
     <result column="update_by" property="updateBy" jdbcType="INTEGER" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+
+    <!--other-->
+
   </resultMap>
   <sql id="Base_Column_List" >
     id, name, display_name, type, enable, status, create_by, create_date, update_by, 
@@ -35,7 +38,32 @@
     <include refid="Base_Column_List_r" />
     from sys_role r
     left join sys_role_user ru on r.id=ru.role_id
-    where ru.user_id = #{userId,jdbcType=INTEGER}
+    where r.del_flag!=1 and ru.user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List_r" />
+    from sys_role r
+    left join sys_group_role gr on r.id=gr.role_id
+    where r.del_flag!=1 and gr.group_id = #{groupId,jdbcType=INTEGER}
+  </select>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List_r" />
+    from sys_role r
+
+    where r.del_flag!=1
+    and exists(select 1 from sys_group_role gr inner join sys_group_user gu on gr.group_id=gu.group_id where r.id=gr.role_id and gu.user_id=#{userId,jdbcType=INTEGER})
+
+    <if test="name != null and name !='' ">
+      AND r.name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="displayName != null and displayName !='' ">
+      AND r.display_name LIKE CONCAT('%','${displayName}','%')
+    </if>
+
   </select>
 
 

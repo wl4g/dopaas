@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Securer configuration properties
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年3月20日
  * @since

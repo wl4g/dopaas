@@ -25,7 +25,6 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_VALID_ASSERT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
 
 import java.util.Map;
@@ -38,7 +37,8 @@ import java.util.Map;
  * @date 2018年11月29日
  * @since
  */
-public class ExpiredSessionIamValidator extends AbstractBasedIamValidator<SessionValidationAssertion, SessionValidationAssertion> {
+public class ExpiredSessionIamValidator
+		extends AbstractBasedIamValidator<SessionValidationAssertion, SessionValidationAssertion> {
 
 	public ExpiredSessionIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
@@ -58,7 +58,7 @@ public class ExpiredSessionIamValidator extends AbstractBasedIamValidator<Sessio
 			}
 			throw new SessionValidateException(String.format("Remote validate error, %s", resp.getMessage()));
 		}
-		return resp.getData().get(KEY_SESSION_VALID_ASSERT);
+		return resp.getData();
 	}
 
 	@Override

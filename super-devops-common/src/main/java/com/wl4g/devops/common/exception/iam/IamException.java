@@ -17,7 +17,7 @@ package com.wl4g.devops.common.exception.iam;
 
 import com.wl4g.devops.common.exception.DevOpsException;
 
-public abstract class IamException extends DevOpsException {
+public class IamException extends DevOpsException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**

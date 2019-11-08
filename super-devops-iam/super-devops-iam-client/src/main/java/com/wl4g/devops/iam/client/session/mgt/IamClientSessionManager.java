@@ -74,7 +74,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 		}
 
 		try {
-			ScanCursor<IamSession> cursor = this.sessionDAO.getActiveSessions(DEFAULT_BATCH_SIZE);
+			ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
 			while (cursor.hasNext()) {
 				List<IamSession> activeSessions = cursor.readValues();
 
@@ -90,11 +90,11 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 				}
 
 				// Validation execution
-				SessionValidationAssertion assertion = this.validator.validate(request);
+				SessionValidationAssertion assertion = validator.validate(request);
 				for (String expiredTicket : assertion.getTickets()) {
 					Session session = tmp.get(expiredTicket);
 					try {
-						this.sessionDAO.delete(session);
+						sessionDAO.delete(session);
 					} catch (Exception e) {
 						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", Sessions.getSessionId(session),
 								expiredTicket);

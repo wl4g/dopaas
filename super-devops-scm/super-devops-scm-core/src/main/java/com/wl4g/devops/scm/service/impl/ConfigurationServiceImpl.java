@@ -137,7 +137,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 			// Get application instance information.
 			ReleaseInstance releaseInstance = new ReleaseInstance();
-			//TODO
+			// TODO
 			releaseInstance.setHost(instance.getHostname());
 			releaseInstance.setEndpoint(instance.getEndpoint());
 			instances.add(releaseInstance);
@@ -149,7 +149,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		for (VersionContentBean vcb : vd.getConfigGurations()) {
 			Dict dict = dictDao.selectByPrimaryKey((vcb.getNamespaceId()));
 			String namespace = dict.getValue();
-			namespace = "application-"+namespace+".yml";
+			namespace = "application-" + namespace + ".yml";
 			namespaces.add(namespace);
 		}
 

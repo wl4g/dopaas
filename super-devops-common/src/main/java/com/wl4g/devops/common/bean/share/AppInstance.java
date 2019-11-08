@@ -25,7 +25,7 @@ import com.wl4g.devops.common.bean.BaseBean;
  * @date 2018年9月25日
  */
 public class AppInstance extends BaseBean {
-
+	private static final long serialVersionUID = 4324569366421220002L;
 
 	private Integer clusterId;
 
@@ -49,7 +49,6 @@ public class AppInstance extends BaseBean {
 
 	// other
 	private String hostname;
-
 
 	public Integer getClusterId() {
 		return clusterId;

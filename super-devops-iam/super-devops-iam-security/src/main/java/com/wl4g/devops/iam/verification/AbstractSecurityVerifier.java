@@ -49,7 +49,7 @@ import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
 
 /**
  * Abstract IAM verification handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月28日
@@ -101,7 +101,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Get stored verify code of session
-	 * 
+	 *
 	 * @param assertion
 	 *            Do you need to assertion
 	 * @return Returns the currently valid verify-code (if create = true, the
@@ -135,7 +135,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Apply verify code processing.
-	 * 
+	 *
 	 * @param owner
 	 * @param factors
 	 * @param request
@@ -203,7 +203,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Reset the validate code to indicate a new generation when create is true
-	 * 
+	 *
 	 * @param owner
 	 *            Validate code owner(Optional).
 	 * @param renew
@@ -219,7 +219,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Get submitted verify code.
-	 * 
+	 *
 	 * @param params
 	 * @param request
 	 * @return
@@ -228,7 +228,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Match submitted validation code
-	 * 
+	 *
 	 * @param storedCode
 	 * @param submitCode
 	 * @return
@@ -246,7 +246,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Generate verify code
-	 * 
+	 *
 	 * @return Verify code object
 	 */
 	protected Object generateCode() {
@@ -255,7 +255,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Check the number of attempts to apply.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param factors
@@ -266,14 +266,14 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Validity of the verification code (in milliseconds).
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract long getVerifyCodeExpireMs();
 
 	/**
 	 * Validity of the verified token (in milliseconds).
-	 * 
+	 *
 	 * @return
 	 */
 	protected long getVerifiedTokenExpireMs() {
@@ -282,7 +282,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Get verification code stored sessionKey.
-	 * 
+	 *
 	 * @return
 	 */
 	private String getVerifyCodeStoredKey() {
@@ -291,7 +291,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 	/**
 	 * Get verification code stored sessionKey.
-	 * 
+	 *
 	 * @return
 	 */
 	private String getVerifiedTokenStoredKey() {

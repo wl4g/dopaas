@@ -7,131 +7,143 @@ import java.util.List;
 import java.util.Objects;
 
 public class Menu extends BaseBean implements Serializable {
-    private static final long serialVersionUID = 381411777614066880L;
+	private static final long serialVersionUID = 381411777614066880L;
 
-    private Integer id;
+	private Integer id;
 
-    private String name;
+	private String name;
 
-    private String displayName;
+	private String displayName;
 
-    private Integer type;
+	private Integer type;
 
-    private Integer status;
+	private Integer status;
 
-    private Integer parentId;
+	private Integer parentId;
 
-    private String parentIds;
+	private String parentIds;
 
-    private String permission;
+	private String permission;
 
-    private String accessUri;
+	private String accessUri;
 
-    private String icon;
+	private String icon;
 
-    private List<Menu> children;
+	private Integer sort;
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
+	private List<Menu> children;
 
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	@Override
+	public Integer getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getDisplayName() {
-        return displayName;
-    }
+	public void setName(String name) {
+		this.name = name == null ? null : name.trim();
+	}
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName == null ? null : displayName.trim();
-    }
+	public String getDisplayName() {
+		return displayName;
+	}
 
-    public Integer getType() {
-        return type;
-    }
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName == null ? null : displayName.trim();
+	}
 
-    public void setType(Integer type) {
-        this.type = type;
-    }
+	public Integer getType() {
+		return type;
+	}
 
-    public Integer getStatus() {
-        return status;
-    }
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+	public Integer getStatus() {
+		return status;
+	}
 
-    public Integer getParentId() {
-        return parentId;
-    }
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
-    }
+	public Integer getParentId() {
+		return parentId;
+	}
 
-    public String getParentIds() {
-        return parentIds;
-    }
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
 
-    public void setParentIds(String parentIds) {
-        this.parentIds = parentIds == null ? null : parentIds.trim();
-    }
+	public String getParentIds() {
+		return parentIds;
+	}
 
-    public String getPermission() {
-        return permission;
-    }
+	public void setParentIds(String parentIds) {
+		this.parentIds = parentIds == null ? null : parentIds.trim();
+	}
 
-    public void setPermission(String permission) {
-        this.permission = permission == null ? null : permission.trim();
-    }
+	public String getPermission() {
+		return permission;
+	}
 
-    public String getAccessUri() {
-        return accessUri;
-    }
+	public void setPermission(String permission) {
+		this.permission = permission == null ? null : permission.trim();
+	}
 
-    public void setAccessUri(String accessUri) {
-        this.accessUri = accessUri == null ? null : accessUri.trim();
-    }
+	public String getAccessUri() {
+		return accessUri;
+	}
 
-    public String getIcon() {
-        return icon;
-    }
+	public void setAccessUri(String accessUri) {
+		this.accessUri = accessUri == null ? null : accessUri.trim();
+	}
 
-    public void setIcon(String icon) {
-        this.icon = icon == null ? null : icon.trim();
-    }
+	public String getIcon() {
+		return icon;
+	}
 
-    public List<Menu> getChildren() {
-        return children;
-    }
+	public void setIcon(String icon) {
+		this.icon = icon == null ? null : icon.trim();
+	}
 
-    public void setChildren(List<Menu> children) {
-        this.children = children;
-    }
+	public Integer getSort() {
+		return sort;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Menu menu = (Menu) o;
-        return Objects.equals(id, menu.id);
-    }
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+	public List<Menu> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Menu> children) {
+		this.children = children;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Menu menu = (Menu) o;
+		return Objects.equals(id, menu.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
 }

@@ -19,7 +19,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
 /**
  * IAM server parameters configuration properties
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日

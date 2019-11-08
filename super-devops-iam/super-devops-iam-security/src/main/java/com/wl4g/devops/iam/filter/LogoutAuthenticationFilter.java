@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 /**
  * Logout authentication filter
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月6日

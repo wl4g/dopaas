@@ -21,16 +21,14 @@ import com.wl4g.devops.common.bean.BaseBean;
  * 对应表：scm_release_history
  * 
  * @author zzh
- * @Description: TODO
  * @date 2018年9月26日
  */
 public class ReleaseHistory extends BaseBean {
+	private static final long serialVersionUID = 499669446638218612L;
 
 	private int versionid; // 版本号ID
-	// private String namespaceid; // 命名空间ID
 	private String status; // 发布状态（1:成功/2:失败）
 	private Integer type; // （1:成功/2:失败）
-	// 关系层级枚举
 
 	public enum type {
 

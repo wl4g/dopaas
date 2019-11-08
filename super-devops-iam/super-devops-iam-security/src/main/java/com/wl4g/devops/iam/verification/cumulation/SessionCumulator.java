@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
 
 /**
  * Session verification limiter accumulator
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月19日
  * @since
@@ -115,7 +115,7 @@ public class SessionCumulator implements Cumulator {
 
 	/**
 	 * Actual session key.
-	 * 
+	 *
 	 * @param factor
 	 * @return
 	 */
@@ -125,7 +125,7 @@ public class SessionCumulator implements Cumulator {
 
 	/**
 	 * Current accumulated count of session is expired.
-	 * 
+	 *
 	 * @param createTime
 	 * @return
 	 */
@@ -138,7 +138,7 @@ public class SessionCumulator implements Cumulator {
 	 * session cannot be tracked without an account name when applying for an
 	 * image authentication code. Reference: the accumulator corresponding to
 	 * {@link CACHE_FAILFAST_CAPTCHA_COUNTER}.
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年5月16日
 	 * @since

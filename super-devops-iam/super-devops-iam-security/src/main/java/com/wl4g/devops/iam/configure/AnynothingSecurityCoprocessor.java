@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.configure;
 
 /**
  * IAM default anynothing security processor
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月18日
  * @since

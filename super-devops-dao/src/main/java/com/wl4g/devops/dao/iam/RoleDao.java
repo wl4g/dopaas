@@ -1,6 +1,7 @@
 package com.wl4g.devops.dao.iam;
 
 import com.wl4g.devops.common.bean.iam.Role;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,5 +18,9 @@ public interface RoleDao {
 
     int updateByPrimaryKey(Role record);
 
-    List selectByUserId(Integer userId);
+    List<Role> selectByUserId(Integer userId);
+
+    List<Role> selectByGroupId(Integer groupId);
+
+    List<Role> list(@Param("userId") Integer userId,@Param("name") String name, @Param("displayName") String displayName);
 }
