@@ -91,6 +91,8 @@ public class IamManagerApiV1Controller extends BaseController {
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
 
+		// String resp = restTemplate.exchange(url, HttpMethod.GET, null,
+		// String.class).getBody();
 		if (log.isInfoEnabled()) {
 			log.info("Got remote sessions response for => {}", resp);
 		}

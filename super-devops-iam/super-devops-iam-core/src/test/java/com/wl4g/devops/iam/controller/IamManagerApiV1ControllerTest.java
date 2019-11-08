@@ -1,0 +1,71 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.wl4g.devops.iam.controller;
+
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+
+import java.util.Date;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndexModel;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
+
+public class IamManagerApiV1ControllerTest {
+
+	public static void main(String[] args) {
+		// for controller output(model).
+		RespBase<Object> resp11 = new RespBase<>(RetCode.create(4001, "message2"));
+		resp11.getData().put("testKey", newSessionAttributeModel());
+
+		String json11 = toJSONString(resp11);
+		System.out.println(json11);
+		RespBase<SessionAttributeModel> resp12 = parseJSON(json11, new TypeReference<RespBase<SessionAttributeModel>>() {
+		});
+		System.out.println(resp12.getData().get("testKey"));
+		System.out.println("===================================================");
+
+		// for controller output(model).
+		RespBase<Object> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
+		resp21.setBean(newSessionAttributeModel());
+
+		String json21 = toJSONString(resp21);
+		System.out.println(json21);
+		RespBase<SessionAttributeModel> resp22 = parseJSON(json21, new TypeReference<RespBase<SessionAttributeModel>>() {
+		});
+		System.out.println(resp22.getData());
+		System.out.println("===================================================");
+	}
+
+	static SessionAttributeModel newSessionAttributeModel() {
+		SessionAttributeModel sam = new SessionAttributeModel();
+		sam.setIndex(new CursorIndexModel("0@5", false));
+		SessionAttribute sa1 = new SessionAttribute();
+		sa1.setId("1111");
+		sa1.setLastAccessTime(new Date());
+		sa1.setAuthenticated(false);
+		sa1.setExpired(false);
+		sa1.setHost("0.0.0.01");
+		sa1.setPrincipal("root");
+		sa1.getGrantApplications().add("umc-manager");
+		sam.getSessions().add(sa1);
+		return sam;
+	}
+
+}
