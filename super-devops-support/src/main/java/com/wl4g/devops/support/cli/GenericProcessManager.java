@@ -24,6 +24,7 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,6 @@ import static org.springframework.util.Assert.*;
  * @since
  */
 public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements ProcessManager {
-
 	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -73,10 +73,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	@Override
-	public void execFile(String processId, String multiCommands, File file, File stdout, long timeoutMs)
+	public void execFile(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
-		writeFile(file, multiCommands, false);
-		exec(processId, "sh " + file.getAbsolutePath(), stdout, timeoutMs);
+		writeFile(execFile, multiCommands, false);
+		exec(processId, "sh " + execFile.getAbsolutePath(), stdout, timeoutMs);
 	}
 
 	@Override

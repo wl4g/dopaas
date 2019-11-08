@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * {@link com.wl4g.devops.iam.common.config.AbstractIamConfiguration#shiroFilter}
  * {@link com.wl4g.devops.iam.common.core.IamPathMatchingFilterChainResolver#getChain}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月3日

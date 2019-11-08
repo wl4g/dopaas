@@ -19,6 +19,13 @@ import java.io.Serializable;
 
 import org.springframework.util.Assert;
 
+/**
+ * IAM account information.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2018-04-31
+ * @since
+ */
 public interface IamAccountInfo extends Serializable {
 
 	/**

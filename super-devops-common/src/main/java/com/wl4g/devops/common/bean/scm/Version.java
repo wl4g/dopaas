@@ -21,10 +21,10 @@ import com.wl4g.devops.common.bean.BaseBean;
  * 对应表：scm_release_history
  * 
  * @author zzh
- * @Description: TODO
  * @date 2018年9月26日
  */
 public class Version extends BaseBean {
+	private static final long serialVersionUID = 499612944667718612L;
 
 	private String sign; // 签名字符串
 	private String signtype; // 签名类型

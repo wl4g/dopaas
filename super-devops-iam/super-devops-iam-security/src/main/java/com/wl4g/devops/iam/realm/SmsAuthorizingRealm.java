@@ -20,6 +20,7 @@ import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.iam.authc.SmsAuthenticationInfo;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
+import com.wl4g.devops.iam.authz.SmsAuthorizationInfo;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -110,12 +111,12 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		throw new UnsupportedOperationException();
+		return new SmsAuthorizationInfo();
 	}
 
 	/**
 	 * Assertion account information
-	 * 
+	 *
 	 * @param acc
 	 * @param token
 	 */

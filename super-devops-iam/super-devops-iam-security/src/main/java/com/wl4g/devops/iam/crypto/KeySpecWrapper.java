@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
 /**
  * KeySpec wrapper, include e.g.: RSA key pair algorithm and AES single key
  * algorithm key packaging.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-28
  * @since

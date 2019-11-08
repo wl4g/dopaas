@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.web.LoginAuthenticatorController;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -27,13 +27,13 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BA
 
 /**
  * IAM extra configuration
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since
  */
 @AutoConfigureAfter({ IamAutoConfiguration.class })
-public class LoginAutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class LoginAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	@Bean
 	public LoginAuthenticatorController loginAuthenticatorController() {

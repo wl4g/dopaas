@@ -22,7 +22,7 @@ import com.wl4g.devops.common.exception.iam.NoSuchSocialProviderException;
 
 /**
  * Save Supported Social Network Service Providers
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月7日
@@ -108,7 +108,7 @@ public enum ProviderSupport {
 
 	/**
 	 * Check if you are a supported social network provider
-	 * 
+	 *
 	 * @param providerId
 	 * @throws NoSuchSocialProviderException
 	 */
@@ -120,7 +120,7 @@ public enum ProviderSupport {
 
 	/**
 	 * Check if you are a supported social network provider
-	 * 
+	 *
 	 * @param provider
 	 * @return
 	 */
@@ -130,7 +130,7 @@ public enum ProviderSupport {
 
 	/**
 	 * Add supported social networking service provider
-	 * 
+	 *
 	 * @param providerId
 	 */
 	final static void addSupport(String providerId) {

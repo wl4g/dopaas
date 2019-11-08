@@ -26,7 +26,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 
 /**
  * General (Username/Password) authentication token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
@@ -116,6 +116,13 @@ public class GeneralAuthenticationToken extends AbstractIamAuthenticationToken
 	@Override
 	public VerifyType getVerifyType() {
 		return verifyType;
+	}
+
+	@Override
+	public String toString() {
+		return "GeneralAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
+				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyType
+				+ "]";
 	}
 
 }

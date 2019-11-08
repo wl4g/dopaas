@@ -32,23 +32,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	//
 
 	/**
-	 * Get server validation response ticket assert key(Abbreviation:
-	 * ticket-assert).
-	 */
-	final public static String KEY_TICKET_ASSERT = "ticketAssert";
-	/**
-	 * Get server validation response secondary authentication assert key.
-	 */
-	final public static String KEY_SECOND_AUTH_ASSERT = "secondAuthAssert";
-	/**
-	 * Get server validation response sessions expire assert key.
-	 */
-	final public static String KEY_SESSION_VALID_ASSERT = "sessionValidAssert";
-	/**
-	 * Fast-Cas remote logout result information.
-	 */
-	final public static String KEY_LOGOUT_INFO = "logoutInfo";
-	/**
 	 * Of the fast-CAS attribute for remember me authentication (CAS 3.4.10+)
 	 */
 	final public static String KEY_REMEMBERME_NAME = "longTermAuthenticationRequestTokenUsed";
@@ -68,9 +51,9 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_LANG_ATTRIBUTE_NAME = "authzPrincipalLangAttributeName";
 
 	/** authentication token save session key-name */
-	final public static String KEY_SESSION_TOKEN = "authcTokenAttributeName";
+	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
 	/** authentication info save session key-name */
-	final public static String KEY_SESSION_ACCOUNT = "authcAccountInfoAttributeName";
+	final public static String KEY_AUTHC_INFO = "authcInfoAttributeKey";
 
 	/**
 	 * IAM system service role parameter name.</br>
@@ -160,6 +143,15 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String URI_S_LOGIN_ERRREAD = "errread";
 
 	/**
+	 * Generic API v1 base URL.
+	 */
+	final public static String URI_S_API_V1_BASE = "/api/v1";
+	/**
+	 * Generic API v1 sessions list query.
+	 */
+	final public static String URI_S_API_V1_SESSION = "/sessions";
+
+	/**
 	 * IAM server authentication session stored cache name.
 	 */
 	final public static String CACHE_SESSION = "session_";
@@ -209,10 +201,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_AUTH_CODE = "authcode_";
 
-	/**
-	 * Token used to save current session authenticating
-	 */
-	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeName";
 	/**
 	 * Limiter login failure prefix based on user-name.
 	 */

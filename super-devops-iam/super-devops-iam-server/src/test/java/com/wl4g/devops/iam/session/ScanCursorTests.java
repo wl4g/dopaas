@@ -17,6 +17,8 @@ package com.wl4g.devops.iam.session;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +48,15 @@ public class ScanCursorTests {
 	}
 
 	@Test
-	public void test2() {
+	public void test2() throws IOException {
 		byte[] match = ("iam_" + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(200).match(match);
 
-		ScanCursor<IamSession> res = new ScanCursor<IamSession>(cluster, null, params) {
+		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(cluster, null, params) {
 		}.open();
-
-		System.out.println("ScanResult: " + res);
-		while (res.hasNext()) {
-			System.out.println("IamSession: " + res.next());
+		System.out.println("ScanResult: " + sc);
+		while (sc.hasNext()) {
+			System.out.println("IamSession: " + sc.next());
 		}
 
 	}

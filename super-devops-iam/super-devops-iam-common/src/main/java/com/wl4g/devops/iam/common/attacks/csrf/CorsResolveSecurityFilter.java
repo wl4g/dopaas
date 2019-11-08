@@ -31,7 +31,7 @@ import org.springframework.web.filter.CorsFilter;
 
 /**
  * CORS(CSRF attack) resolve filter
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月25日
  * @since
@@ -44,7 +44,7 @@ public class CorsResolveSecurityFilter extends CorsFilter {
 
 	/**
 	 * Advanced matches CORS processor.
-	 * 
+	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月21日
 	 * @since

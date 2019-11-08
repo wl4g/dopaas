@@ -21,12 +21,13 @@ import org.apache.shiro.util.ByteSource.Util;
 import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.utils.codec.CheckSums.*;
+
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.configure.SecureConfig;
 
 /**
  * Default credentials securer
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月16日
  * @since
@@ -49,7 +50,7 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 
 	/**
 	 * Cross combined of bytes
-	 * 
+	 *
 	 * @param privateSalt
 	 * @param publicSalt
 	 * @return

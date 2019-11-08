@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
 
 /**
  * Session binding utility
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月21日
@@ -42,7 +42,7 @@ public abstract class SessionBindings extends Sessions {
 	/**
 	 * Whether the comparison with the target is equal from the session
 	 * attribute-Map
-	 * 
+	 *
 	 * @param sessionKey
 	 *            Keys to save and session
 	 * @param target
@@ -62,7 +62,7 @@ public abstract class SessionBindings extends Sessions {
 	/**
 	 * Whether the comparison with the target is equal from the session
 	 * attribute-Map
-	 * 
+	 *
 	 * @param sessionKey
 	 *            Keys to save and session
 	 * @param target
@@ -88,7 +88,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Get bind of session value
-	 * 
+	 *
 	 * @param sessionKey
 	 *            Keys to save and session
 	 * @param unbind
@@ -105,7 +105,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Get bind of session value
-	 * 
+	 *
 	 * @param sessionKey
 	 *            Keys to save and session
 	 * @return
@@ -128,7 +128,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Extract key value parameters
-	 * 
+	 *
 	 * @param sessionKey
 	 * @param paramKey
 	 * @return
@@ -148,7 +148,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Bind value to session
-	 * 
+	 *
 	 * @param sessionKey
 	 * @param keyValues
 	 */
@@ -175,7 +175,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Bind value to session
-	 * 
+	 *
 	 * @param sessionKey
 	 * @param value
 	 * @param expireMs
@@ -190,7 +190,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Bind value to session
-	 * 
+	 *
 	 * @param sessionKey
 	 * @param value
 	 */
@@ -202,7 +202,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * UN-bind sessionKey of session
-	 * 
+	 *
 	 * @param sessionKey
 	 * @return
 	 */
@@ -214,7 +214,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Get expire key.
-	 * 
+	 *
 	 * @param sessionKey
 	 * @return
 	 */
@@ -225,7 +225,7 @@ public abstract class SessionBindings extends Sessions {
 
 	/**
 	 * Session attribute timeToLive model
-	 * 
+	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月23日
 	 * @since

@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.crypto;
 
 /**
  * Cryptographic Services.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
@@ -26,7 +26,7 @@ public interface CryptographicService<K extends KeySpecWrapper> {
 
 	/**
 	 * Encryption with hex plain.
-	 * 
+	 *
 	 * @param keySpec
 	 * @param hexPlain
 	 * @return
@@ -35,7 +35,7 @@ public interface CryptographicService<K extends KeySpecWrapper> {
 
 	/**
 	 * Decryption with hex cipher.
-	 * 
+	 *
 	 * @param keySpec
 	 * @param hexCipher
 	 * @return
@@ -44,14 +44,14 @@ public interface CryptographicService<K extends KeySpecWrapper> {
 
 	/**
 	 * Apply keySpec resource.
-	 * 
+	 *
 	 * @return
 	 */
 	K borrow();
 
 	/**
 	 * Apply keySpec resource.
-	 * 
+	 *
 	 * @param index
 	 * @return
 	 */

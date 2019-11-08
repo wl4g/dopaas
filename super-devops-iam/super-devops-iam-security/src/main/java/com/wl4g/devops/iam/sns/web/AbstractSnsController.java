@@ -29,7 +29,7 @@ import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
 
 /**
  * Abstract based social networking services controller
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月7日

@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.bean.scm.HistoryOfDetail;
 import com.wl4g.devops.common.bean.scm.ReleaseDetail;
 import com.wl4g.devops.common.bean.scm.ReleaseHistory;
@@ -58,9 +58,9 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "version-list.json", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> versionlist(String startDate, String endDate, CustomPage customPage) {
+	public RespBase<?> versionlist(String startDate, String endDate, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("VersionList request ... {}, {}, {}", startDate, endDate, customPage);
+			log.info("VersionList request ... {}, {}, {}", startDate, endDate, pm);
 		}
 
 		RespBase<Object> resp = new RespBase<>();
@@ -68,16 +68,14 @@ public class HistoryController extends BaseController {
 			HashMap<String, Object> param = new HashMap<>();
 			param.put("startDate", startDate);
 			param.put("endDate", endDate);
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<VersionList> page = PageHelper.startPage(pageNum, pageSize, true);
-			List<VersionList> list = historyService.versionList(param);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
 
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			Page<VersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
+			List<VersionList> list = historyService.versionList(param);
+
+			pm.setTotal(page.getTotal());
+
+			resp.buildMap().put("page", pm);
+			resp.buildMap().put("list", list);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("获取应用组列表失败", e);
@@ -250,21 +248,19 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "release-list.json", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> list(ConfigVersionList agl, CustomPage customPage) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("ReleaseList request... {}, {}", agl, customPage);
+			log.info("ReleaseList request... {}, {}", agl, pm);
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
+
+			Page<ConfigVersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 			List<ConfigVersionList> list = historyService.list(agl);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+
+			pm.setTotal(page.getTotal());
+			resp.buildMap().put("page", pm);
+			resp.buildMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -296,22 +292,20 @@ public class HistoryController extends BaseController {
 	 * 查询历史版本集合
 	 */
 	@RequestMapping(value = "history_list", method = { RequestMethod.POST, RequestMethod.GET })
-	public RespBase<?> historylist(ReleaseHistoryList agl, CustomPage customPage) {
+	public RespBase<?> historylist(ReleaseHistoryList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("HistoryVersionList request ... {}, {}", agl, customPage);
+			log.info("HistoryVersionList request ... {}, {}", agl, pm);
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<ReleaseHistoryList> page = PageHelper.startPage(pageNum, pageSize, true);
-			List<ReleaseHistoryList> list = historyService.historylist(agl);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
 
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+			Page<ReleaseHistoryList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
+			List<ReleaseHistoryList> list = historyService.historylist(agl);
+
+			pm.setTotal(page.getTotal());
+
+			resp.buildMap().put("page", pm);
+			resp.buildMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

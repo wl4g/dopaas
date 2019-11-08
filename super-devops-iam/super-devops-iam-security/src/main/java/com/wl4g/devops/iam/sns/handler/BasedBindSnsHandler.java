@@ -40,7 +40,7 @@ import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 
 /**
  * Abstract based binding or UnBinding SNS handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年2月24日
  * @since
@@ -130,7 +130,7 @@ public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
 
 	/**
 	 * Follow-up actions related to binding or UnBinding.
-	 * 
+	 *
 	 * @param info
 	 */
 	protected abstract void postBindingProcess(SocialConnectInfo info);

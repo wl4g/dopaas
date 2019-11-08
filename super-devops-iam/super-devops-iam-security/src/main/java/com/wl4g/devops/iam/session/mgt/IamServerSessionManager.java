@@ -27,7 +27,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_S
 
 /**
  * Custom WEB session manager
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日

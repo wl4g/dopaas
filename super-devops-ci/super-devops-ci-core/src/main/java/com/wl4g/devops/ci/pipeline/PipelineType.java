@@ -40,13 +40,18 @@ public abstract class PipelineType {
 	final public static String DOCKER_NATIVE = "PipeWithDockerNative";
 
 	/**
+	 * NPM provider alias.
+	 */
+	final public static String NPM_VIEW = "PipeWithNpm";
+
+	/**
 	 * DJANGO standard provider alias.
 	 */
 	final public static String DJANGO_STANDARD = "PipeWithDjangoStandard";
 
 	/**
-	 * NPM provider alias.
+	 * Golang standard provider alias.
 	 */
-	final public static String NPM_VIEW = "PipeWithNpm";
+	final public static String GOLANG_STANDARD = "PipeWithGolang";
 
 }

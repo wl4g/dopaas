@@ -81,11 +81,11 @@ pipeline:
       username: heweijie
       password: hwj13535248668
       token: Xw6xYojnoj7SSDyyLXP7
-  job:
-    job-clean-interval-ms: 30_000
+  build:
+    job-max-clean-interval-ms: 30_000
     job-timeout-ms: 600_000
     shared-dependency-try-timeout-ms: 200_000
-  tranform:
+  deploy:
     cipher-key: 03DE18C2FC4E605F
     transfer-timeout-ms: 100_000
     docker-native:

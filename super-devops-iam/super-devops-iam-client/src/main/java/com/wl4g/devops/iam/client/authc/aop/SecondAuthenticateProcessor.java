@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.client.authc.aop;
 
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.Authenticated;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SECOND_AUTH_ASSERT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
@@ -47,6 +46,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
+import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.SecondAuthenticationException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
@@ -125,7 +125,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		// Response JSON message
 		if (isJSONResponse(http.getRequest())) {
 			RespBase<String> resp = new RespBase<>(SECOND_UNAUTH, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
-			resp.getData().put(config.getParam().getRedirectUrl(), redirectUrl);
+			resp.buildMap().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);
 			writeJson(http.getResponse(), toJSONString(resp));
 		}
@@ -243,13 +243,13 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 
 		// Check successful
 		if (RespBase.isSuccess(resp)) {
-			SecondAuthcAssertion assertion = resp.getData().get(KEY_SECOND_AUTH_ASSERT);
+			SecondAuthcAssertion assertion = resp.getData();
 			if (!(assertion != null && assertion.getStatus() != null && assertion.getStatus() == Authenticated
 					&& String.valueOf(assertion.getFunctionId()).equals(annotation.funcId()))) {
 				throw new SecondAuthenticationException(assertion.getErrdesc());
 			}
 		} else {
-			throw new SecondAuthenticationException(String.format("System internal error. %s", JacksonUtils.toJSONString(resp)));
+			throw new IamException(String.format("System internal error. %s", JacksonUtils.toJSONString(resp)));
 		}
 	}
 

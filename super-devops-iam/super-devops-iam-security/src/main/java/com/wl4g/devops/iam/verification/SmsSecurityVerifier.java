@@ -48,7 +48,7 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 /**
  * SMS verification code handler
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月16日
  * @since
@@ -118,7 +118,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 	/**
 	 * Determine SMS send parameters
-	 * 
+	 *
 	 * @param request
 	 * @param smsCode
 	 * @return
@@ -126,6 +126,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	protected Map<String, Object> determineParameters(HttpServletRequest request, String smsCode) {
 		return new HashMap<String, Object>() {
 			private static final long serialVersionUID = 8964694616018054906L;
+
 			{
 				// SMS code.
 				put(PARAM_VERIFYCODE, smsCode);
@@ -161,7 +162,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 	/**
 	 * Check mobile number available.
-	 * 
+	 *
 	 * @param mobile
 	 */
 	private void checkMobileAvailable(HttpServletRequest request, @NotNull long mobile) {
@@ -183,7 +184,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 	/**
 	 * SMS verification template handle sender.
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年4月17日
 	 * @since
@@ -192,7 +193,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 		/**
 		 * Do send to SMS provider gateway
-		 * 
+		 *
 		 * @param parameters
 		 */
 		void doSend(Map<String, Object> parameters);
@@ -201,7 +202,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 	/**
 	 * Default print SMS verification template handle sender.
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年4月20日
 	 * @since
@@ -223,7 +224,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	 * Mobile number parser.</br>
 	 * See:<a href=
 	 * "https://www.51-n.com/t-4274-1-1.html">https://www.51-n.com/t-4274-1-1.html</a>
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年4月22日
 	 * @since
@@ -256,7 +257,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 		/**
 		 * Check and parse mobile number.</br>
-		 * 
+		 *
 		 * <pre>
 		 * parse(null)   = false
 		 * parse("null")   = false
@@ -269,7 +270,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 		 * parse("08618112349876") = false
 		 * parse("+018112349876") = false
 		 * </pre>
-		 * 
+		 *
 		 * @param number
 		 */
 		public static MobileNumber parse(String mobileNumString) {

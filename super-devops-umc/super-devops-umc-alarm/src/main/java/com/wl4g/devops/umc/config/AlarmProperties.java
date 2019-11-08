@@ -29,7 +29,7 @@ public class AlarmProperties extends RunnerProperties {
 
 	public AlarmProperties() {
 		// No need to start the asynchronous running of the boss.
-		setStartup(false);
+		setAsyncStartup(false);
 		setConcurrency(1); // By default
 	}
 

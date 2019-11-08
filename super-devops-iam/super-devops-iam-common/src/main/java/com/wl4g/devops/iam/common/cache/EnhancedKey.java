@@ -25,7 +25,7 @@ import com.google.common.base.Charsets;
 /**
  * Support for automatic expiration support, which can be used for login failure
  * retry restrictions
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @time 2017年6月20日
@@ -125,7 +125,7 @@ public class EnhancedKey {
 
 	/**
 	 * Serializer
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月22日
 	 * @since
@@ -136,7 +136,7 @@ public class EnhancedKey {
 
 	/**
 	 * Deserializer
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月22日
 	 * @since

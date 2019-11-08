@@ -1,12 +1,31 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.wl4g.devops.iam.controller;
 
+import com.wl4g.devops.common.bean.PageModel;
+import com.wl4g.devops.common.bean.iam.Role;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -16,16 +35,45 @@ import java.util.List;
 @RequestMapping("/role")
 public class RoleController {
 
-    @Autowired
-    private RoleService roleService;
+	@Autowired
+	private RoleService roleService;
 
+	@RequestMapping(value = "/getRolesByUserGroups")
+	public RespBase<?> getRolesByUserGroups() {
+		RespBase<Object> resp = RespBase.create();
+		List<Role> roles = roleService.getRolesByUserGroups();
+		resp.buildMap().put("data", roles);
+		return resp;
+	}
 
-    @RequestMapping(value = "/getRoles")
-    public RespBase<?> detail() {
-        RespBase<Object> resp = RespBase.create();
-        List roles = roleService.getRoles();
-        resp.getData().put("data",roles);
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(PageModel pm, String name, String displayName) {
+		RespBase<Object> resp = RespBase.create();
+		Map<String, Object> result = roleService.list(pm, name, displayName);
+		resp.setData(result);
+		return resp;
+	}
+
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(@RequestBody Role role) {
+		RespBase<Object> resp = RespBase.create();
+		roleService.save(role);
+		return resp;
+	}
+
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		roleService.del(id);
+		return resp;
+	}
+
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		Role role = roleService.detail(id);
+		resp.buildMap().put("data", role);
+		return resp;
+	}
 
 }

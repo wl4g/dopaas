@@ -21,6 +21,7 @@ package com.wl4g.devops.common.bean.scm;
  * @date 2018年9月20日
  */
 public class ReleaseHistoryList extends ReleaseHistory {
+	private static final long serialVersionUID = 49961288638218612L;
 
 	private Integer instanceCount; // 节点（实例）数
 

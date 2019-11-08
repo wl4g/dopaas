@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.share.controller;
 
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
@@ -53,18 +53,17 @@ public class AppClusterController extends BaseController {
 	protected String cipherKey;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, String clusterName) {
+	public RespBase<?> list(PageModel pm, String clusterName) {
 		RespBase<Object> resp = RespBase.create();
-		Map result = appClusterService.list(customPage, clusterName);
+		Map<String, Object> result = appClusterService.list(pm, clusterName);
 		resp.setData(result);
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/save")
 	public RespBase<?> save(@RequestBody AppCluster appCluster) {
 		RespBase<Object> resp = RespBase.create();
-		appClusterService.save(appCluster,cipherKey);
+		appClusterService.save(appCluster, cipherKey);
 		return resp;
 	}
 
@@ -78,8 +77,8 @@ public class AppClusterController extends BaseController {
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer clusterId) {
 		RespBase<Object> resp = RespBase.create();
-		AppCluster detail = appClusterService.detail(clusterId,cipherKey);
-		resp.getData().put("data",detail);
+		AppCluster detail = appClusterService.detail(clusterId, cipherKey);
+		resp.buildMap().put("data", detail);
 		return resp;
 	}
 
@@ -87,19 +86,16 @@ public class AppClusterController extends BaseController {
 	public RespBase<?> clusters() {
 		RespBase<Object> resp = RespBase.create();
 		List<AppCluster> clusters = appClusterDao.list(null);
-		resp.getData().put("clusters",clusters);
+		resp.buildMap().put("clusters", clusters);
 		return resp;
 	}
 
 	@RequestMapping(value = "/instances")
-	public RespBase<?> instances(Integer clusterId,String envType) {
+	public RespBase<?> instances(Integer clusterId, String envType) {
 		RespBase<Object> resp = RespBase.create();
 		List<AppInstance> instances = appClusterService.getInstancesByClusterIdAndEnvType(clusterId, envType);
-		resp.getData().put("instances",instances);
+		resp.buildMap().put("instances", instances);
 		return resp;
 	}
-
-
-
 
 }

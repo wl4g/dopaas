@@ -19,7 +19,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Social networking services configuration
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月8日
  * @since

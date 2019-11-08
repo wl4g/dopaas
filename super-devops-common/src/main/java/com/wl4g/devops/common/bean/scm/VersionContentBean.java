@@ -18,6 +18,7 @@ package com.wl4g.devops.common.bean.scm;
 import com.wl4g.devops.common.bean.BaseBean;
 
 public class VersionContentBean extends BaseBean {
+	private static final long serialVersionUID = 7654969446638218612L;
 
 	private Integer versionId; // 版本号ID
 	private String namespaceId; // 命名空间ID（sys_dict表ID）

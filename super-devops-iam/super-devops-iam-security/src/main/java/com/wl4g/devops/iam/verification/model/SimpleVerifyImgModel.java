@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * Verify simple image model
- * 
+ *
  * @author Wangl.sir
  * @version v1.0 2019年9月4日
  * @since

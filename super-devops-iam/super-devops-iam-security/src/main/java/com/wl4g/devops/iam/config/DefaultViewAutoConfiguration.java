@@ -21,18 +21,19 @@ import org.springframework.context.annotation.Bean;
 import java.lang.annotation.Annotation;
 
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.*;
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.iam.web.DefaultViewController;
 
 /**
  * Default view configuration
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since
  */
 @AutoConfigureAfter({ IamAutoConfiguration.class })
-public class DefaultViewAutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class DefaultViewAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	@Bean
 	public DefaultViewController defaultViewController() {

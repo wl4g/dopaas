@@ -25,7 +25,7 @@ import com.wl4g.devops.common.i18n.AbstractDelegateMessageBundle;
 
 /**
  * Session delegate resource bundle message source.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月24日
  * @since

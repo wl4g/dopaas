@@ -36,16 +36,16 @@ public interface ProcessManager {
 	 * execution.
 	 * 
 	 * @param multiCommands
-	 * @param file
+	 * @param execFile
 	 * @param stdout
 	 * @param timeoutMs
 	 * @throws IllegalProcessStateException
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	default void execFile(String multiCommands, File file, File stdout, long timeoutMs)
+	default void execFile(String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
-		execFile(null, multiCommands, file, stdout, timeoutMs);
+		execFile(null, multiCommands, execFile, stdout, timeoutMs);
 	}
 
 	/**
@@ -133,14 +133,14 @@ public interface ProcessManager {
 	 *            reference will be saved, which can be used to interrupt the
 	 *            execution of commands in a timely manner.
 	 * @param multiCommands
-	 * @param file
+	 * @param execFile
 	 * @param stdout
 	 * @param timeoutMs
 	 * @throws IllegalProcessStateException
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	void execFile(String processId, String multiCommands, File file, File stdout, long timeoutMs)
+	void execFile(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException;
 
 	/**

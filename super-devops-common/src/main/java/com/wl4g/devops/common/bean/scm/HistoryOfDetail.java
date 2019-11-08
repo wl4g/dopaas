@@ -18,6 +18,7 @@ package com.wl4g.devops.common.bean.scm;
 import java.util.List;
 
 public class HistoryOfDetail extends ReleaseHistory {
+	private static final long serialVersionUID = 4996121112338218612L;
 
 	private List<ReleaseDetail> releaseDetails;
 

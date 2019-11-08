@@ -28,7 +28,7 @@ import com.wl4g.devops.iam.sns.qq.model.QQUserInfo;
 
 /**
  * QQ social networking services template
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月18日
  * @since

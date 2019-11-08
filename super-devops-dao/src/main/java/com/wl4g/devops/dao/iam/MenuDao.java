@@ -21,4 +21,8 @@ public interface MenuDao {
 
     List<Menu> selectByUserId(Integer userId);
 
+    List<Menu> selectByUserIdAccessGroup(Integer userId);
+
+    List<Menu> selectByRoot();
+
 }

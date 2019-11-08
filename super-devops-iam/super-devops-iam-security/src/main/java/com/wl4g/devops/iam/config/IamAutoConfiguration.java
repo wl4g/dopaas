@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.config;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
+
 import com.wl4g.devops.common.kit.access.IPAccessControl;
 import com.wl4g.devops.iam.authc.credential.GeneralCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
@@ -125,8 +128,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
 		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream()
-				.collect(Collectors.toList());
+		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream().collect(toList());
 		securityManager.setRealms(realms);
 		securityManager.setSubjectFactory(subjectFactory);
 		// Multiple realm authenticator controller
@@ -512,7 +514,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	 * {@link com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier}.
 	 * {@link com.wl4g.devops.iam.captcha.verification.KaptchaSecurityVerifier}.
 	 * {@link com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier}.
-	 * 
+	 *
 	 * @return
 	 */
 	@Bean

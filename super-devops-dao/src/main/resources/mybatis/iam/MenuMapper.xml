@@ -13,6 +13,7 @@
     <result column="permission" property="permission" jdbcType="VARCHAR" />
     <result column="access_uri" property="accessUri" jdbcType="VARCHAR" />
     <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="INTEGER" />
@@ -21,11 +22,11 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, name, display_name, type, enable, status, parent_id, parent_ids, permission, 
-    access_uri, icon, create_by, create_date, update_by, update_date, del_flag
+    access_uri, icon, sort,create_by, create_date, update_by, update_date, del_flag
   </sql>
   <sql id="Base_Column_List_m" >
     m.id, m.name, m.display_name, m.type, m.enable, m.status, m.parent_id, m.parent_ids, m.permission,
-    m.access_uri, m.icon, m.create_by, m.create_date, m.update_by, m.update_date, m.del_flag
+    m.access_uri, m.icon, m.sort,m.create_by, m.create_date, m.update_by, m.update_date, m.del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -40,6 +41,22 @@
     from sys_menu
     where del_flag!=1 and parent_id = #{parentId,jdbcType=INTEGER}
   </select>
+
+
+  <select id="selectByUserIdAccessGroup" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List_m" />
+    from sys_menu m
+    where m.del_flag!=1 and  exists(select 1 from sys_group_menu mg inner join sys_group_user gu on mg.group_id=gu.group_id where m.id=mg.menu_id and gu.user_id=#{userId,jdbcType=INTEGER} );
+  </select>
+
+  <select id="selectByRoot" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List_m" />
+    from sys_menu m
+    where m.del_flag!=1;
+  </select>
+
 
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
@@ -58,13 +75,13 @@
     insert into sys_menu (id, name, display_name, 
       type, enable, status, 
       parent_id, parent_ids, permission, 
-      access_uri, icon, create_by, 
+      access_uri, icon,sort, create_by,
       create_date, update_by, update_date, 
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
       #{type,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
       #{parentId,jdbcType=INTEGER}, #{parentIds,jdbcType=VARCHAR}, #{permission,jdbcType=VARCHAR}, 
-      #{accessUri,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{createBy,jdbcType=INTEGER}, 
+      #{accessUri,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER},  #{createBy,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
@@ -103,6 +120,9 @@
       </if>
       <if test="icon != null" >
         icon,
+      </if>
+      <if test="sort != null" >
+        sort,
       </if>
       <if test="createBy != null" >
         create_by,
@@ -154,6 +174,9 @@
       <if test="icon != null" >
         #{icon,jdbcType=VARCHAR},
       </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
       <if test="createBy != null" >
         #{createBy,jdbcType=INTEGER},
       </if>
@@ -204,6 +227,9 @@
       <if test="icon != null" >
         icon = #{icon,jdbcType=VARCHAR},
       </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
       <if test="createBy != null" >
         create_by = #{createBy,jdbcType=INTEGER},
       </if>
@@ -234,6 +260,7 @@
       permission = #{permission,jdbcType=VARCHAR},
       access_uri = #{accessUri,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=INTEGER},

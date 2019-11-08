@@ -21,7 +21,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedCache;
 
 /**
  * Accumulator tools
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月19日
  * @since
@@ -30,7 +30,7 @@ public abstract class CumulateHolder {
 
 	/**
 	 * New create default/(distributed caching) accumulator
-	 * 
+	 *
 	 * @param cache
 	 * @param expireMs
 	 *            Expired milliseconds
@@ -43,7 +43,7 @@ public abstract class CumulateHolder {
 
 	/**
 	 * New create session cache accumulator
-	 * 
+	 *
 	 * @param sessionKey
 	 * @param expireMs
 	 *            Expired milliseconds

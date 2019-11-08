@@ -17,11 +17,11 @@ package com.wl4g.devops.ci.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TaskHistoryService;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -43,10 +43,10 @@ import java.util.List;
 public class TaskHistoryController extends BaseController {
 
 	@Autowired
-	private Pipeline pipelineCoreProcessor;
+	private TaskHistoryService taskHistoryService;
 
 	@Autowired
-	private TaskHistoryService taskHistoryService;
+	private PipelineManager pipeliner;
 
 	/**
 	 * List
@@ -58,21 +58,17 @@ public class TaskHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName, String projectName, String branchName, CustomPage customPage) {
-		log.info(
-				"into TaskHistoryController.list prarms::"
-						+ "groupName = {} , projectName = {} , branchName = {} , customPage = {} ",
-				groupName, projectName, branchName, customPage);
+	public RespBase<?> list(String groupName, String projectName, String branchName, PageModel pm) {
+		log.info("into TaskHistoryController.list prarms::" + "groupName = {} , projectName = {} , branchName = {} , pm = {} ",
+				groupName, projectName, branchName, pm);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<TaskHistory> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<TaskHistory> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<TaskHistory> list = taskHistoryService.list(groupName, projectName, branchName);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -88,10 +84,10 @@ public class TaskHistoryController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		TaskHistory taskHistory = taskHistoryService.getById(taskId);
 		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
-		resp.getData().put("group", taskHistory.getGroupName());
-		resp.getData().put("branch", taskHistory.getBranchName());
-		resp.getData().put("result", taskHistory.getResult());
-		resp.getData().put("taskDetails", taskHistoryDetails);
+		resp.buildMap().put("group", taskHistory.getGroupName());
+		resp.buildMap().put("branch", taskHistory.getBranchName());
+		resp.buildMap().put("result", taskHistory.getResult());
+		resp.buildMap().put("taskDetails", taskHistoryDetails);
 		return resp;
 	}
 
@@ -105,19 +101,17 @@ public class TaskHistoryController extends BaseController {
 	public RespBase<?> rollback(Integer taskId) {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
-		pipelineCoreProcessor.rollback(taskId);
+		pipeliner.rollbackPipeline(taskId);
 		return resp;
 	}
-
 
 	@RequestMapping(value = "/readLog")
-	public RespBase<?> readLog(Integer taskHisId,Integer index,Integer size) {
+	public RespBase<?> readLog(Integer taskHisId, Integer index, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipelineCoreProcessor.logfile(taskHisId, index, size);
-		resp.getData().put("data",readResult);
+		FileIOUtils.ReadResult readResult = pipeliner.logfile(taskHisId, index, size);
+		resp.buildMap().put("data", readResult);
 		return resp;
 	}
-
 
 	@RequestMapping(value = "/stopTask")
 	public RespBase<?> create(Integer taskHisId) {

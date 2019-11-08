@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerConfiguration;
+import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.context.CheckImpledConfigContextHandler;
@@ -41,7 +41,7 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
  * @version v1.0 2019年5月27日
  * @since
  */
-public class ScmAutoConfiguration extends AbstractOptionalControllerConfiguration {
+public class ScmAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
 
 	final public static String BEAN_MVC_EXECUTOR = "mvcTaskExecutor";
 
