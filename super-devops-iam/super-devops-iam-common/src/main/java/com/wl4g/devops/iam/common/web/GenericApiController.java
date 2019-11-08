@@ -141,7 +141,7 @@ public abstract class GenericApiController extends BaseController {
 		resp.setBean(new SessionAttributeModel(index, sas));
 
 		if (log.isInfoEnabled()) {
-			log.info("Get sessions => {}", resp);
+			log.info("Get sessions => {}", resp.asJson());
 		}
 		return resp;
 	}

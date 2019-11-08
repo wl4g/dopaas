@@ -242,10 +242,18 @@ public class RespBase<D> implements Serializable {
 		return nodeMap;
 	}
 
+	/**
+	 * As convert {@link RespBase} to JSON string.
+	 * 
+	 * @return
+	 */
+	public String asJson() {
+		return toJSONString(this);
+	}
+
 	@Override
 	public String toString() {
-		return "RespBase [code=" + getCode() + ", status=" + getStatus() + ", message=" + getMessage() + ", data=" + getData()
-				+ "]";
+		return "RespBase [code=" + code + ", status=" + status + ", message=" + message + ", data=" + data + "]";
 	}
 
 	// --- Function tool's. ---
@@ -660,14 +668,5 @@ public class RespBase<D> implements Serializable {
 	 * Default status value.
 	 */
 	final public static String DEFAULT_STATUS = "Normal";
-
-	public static void main(String[] args) {
-		RespBase<Object> resp = new RespBase<>(RetCode.create(4001, "testing message"));
-		System.out.println(toJSONString(resp));
-		System.out.println("---------------");
-
-		resp.forMap().put("index", "123");
-		System.out.println(resp);
-	}
 
 }
