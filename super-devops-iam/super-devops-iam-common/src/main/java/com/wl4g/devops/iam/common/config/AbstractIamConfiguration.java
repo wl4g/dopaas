@@ -68,7 +68,7 @@ import redis.clients.jedis.JedisCluster;
 
 /**
  * Abstract IAM common based configuration.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年12月23日
  * @since
@@ -82,7 +82,7 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	/**
 	 * A delegate message resource. Note that this bean can instantiate multiple
 	 * different 'base-names', so the name must be unique
-	 * 
+	 *
 	 * @return
 	 */
 	@Bean(BEAN_DELEGATE_MSG_SOURCE)
@@ -198,7 +198,7 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	/**
 	 * Ensuring the execution of beans that implement lifecycle functions within
 	 * Shiro
-	 * 
+	 *
 	 * @return
 	 */
 	@Bean("lifecycleBeanPostProcessor")
@@ -321,16 +321,16 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	 * The requirement for using the instruction is that the creation of
 	 * {@link CorsProperties} object beans must precede this</br>
 	 * e.g.
-	 * 
+	 *
 	 * <pre>
 	 * &#64;Bean
 	 * public CorsProperties corsProperties() {
 	 * 	...
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * <b style="color:red;font-size:40px">&nbsp;↑</b>
-	 * 
+	 *
 	 * <pre>
 	 * &#64;Bean
 	 * &#64;ConditionalOnBean(CorsProperties.class)

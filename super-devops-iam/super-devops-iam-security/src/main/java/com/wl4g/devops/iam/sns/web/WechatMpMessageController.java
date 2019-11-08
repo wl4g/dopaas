@@ -43,8 +43,9 @@ import javax.validation.constraints.NotBlank;
  * Annotation to enabled WechatMp controller configuration.<br/>
  * *See:<a
  * href=*"https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5">https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5</a>
- **
- * @author Wangl.sir<983708408 @qq.com >*@version v1.02018年9月17日*@since
+ * *
+ *
+ * @author Wangl.sir<9 8 3 7 0 8 4 0 8 @ qq.com >*@version v1.02018年9月17日*@since
  */
 public abstract class WechatMpMessageController extends BaseController {
 
@@ -53,7 +54,7 @@ public abstract class WechatMpMessageController extends BaseController {
 	 * message interaction API See:<code>
 	 * <a href=
 	 * "https://mp.weixin.qq.com/advanced/advanced?action=interface&t=advanced/interface&lang=zh_CN">https://mp.weixin.qq.com/advanced/advanced?action=interface&t=advanced/interface&lang=zh_CN</a>
-	 *</code>
+	 * </code>
 	 */
 	protected String validateToken;
 

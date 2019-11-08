@@ -28,7 +28,7 @@ import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 
 /**
  * Social configure repository
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月25日
  * @since

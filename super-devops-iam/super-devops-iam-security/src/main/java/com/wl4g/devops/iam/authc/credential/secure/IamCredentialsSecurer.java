@@ -17,17 +17,17 @@ package com.wl4g.devops.iam.authc.credential.secure;
 
 /**
  * IAM credentials securer
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月16日
- * @since
  * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
+ * @since
  */
 public interface IamCredentialsSecurer extends CredentialsSecurer {
 
 	/**
 	 * Apply asymmetric algorithm secret public key
-	 * 
+	 *
 	 * @return
 	 */
 	default String applySecret() {

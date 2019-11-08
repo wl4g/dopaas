@@ -51,7 +51,7 @@ import com.google.common.io.ByteStreams;
 
 /**
  * Default view controller
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月9日
  * @since
@@ -85,7 +85,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Reader view files
-	 * 
+	 *
 	 * @param filename
 	 * @param response
 	 */
@@ -96,7 +96,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Reader static resource files
-	 * 
+	 *
 	 * @param filename
 	 * @param response
 	 */
@@ -109,7 +109,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Response file
-	 * 
+	 *
 	 * @param basePath
 	 * @param filepath
 	 * @param response
@@ -148,7 +148,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Load resource file
-	 * 
+	 *
 	 * @param basePath
 	 * @param filepath
 	 * @return
@@ -160,7 +160,7 @@ public class DefaultViewController extends BaseController {
 
 	/**
 	 * Get content type by file path.
-	 * 
+	 *
 	 * @param filepath
 	 * @return
 	 */

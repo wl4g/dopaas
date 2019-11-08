@@ -31,7 +31,7 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 
 /**
  * IAM Social delegate handler factory
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月4日
@@ -78,7 +78,7 @@ public class DelegateSnsHandler implements SnsHandler {
 
 	/**
 	 * Get target SNS handler
-	 * 
+	 *
 	 * @param which
 	 * @return
 	 */

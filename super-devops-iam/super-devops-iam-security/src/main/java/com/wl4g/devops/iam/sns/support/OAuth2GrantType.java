@@ -19,7 +19,7 @@ package com.wl4g.devops.iam.sns.support;
  * OAuth2 supports two types of authorization flow, typically referred to as
  * "Client-side" and "Server-side". Use of implicit grant is discouraged unless
  * there is no other option available.
- * 
+ *
  * @author Roy Clarkson
  */
 public enum OAuth2GrantType {

@@ -33,9 +33,9 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 /**
  * Interactive authentication processing filter for internal and application
  * services
- * 
+ * <p>
  * {@link org.apache.shiro.web.filter.authz.HostFilter}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月30日
@@ -82,7 +82,7 @@ public abstract class AbstractWhiteListInternalAuthenticationFilter extends Base
 
 	/**
 	 * Get HTTP remote client IP
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */

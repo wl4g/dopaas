@@ -35,7 +35,7 @@ import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
 
 /**
  * IAM server properties
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月4日
@@ -62,7 +62,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 	/**
 	 * Login success redirection to end-point service name. </br>
-	 * 
+	 *
 	 * <pre>
 	 * umc-manager@http://localhost:14048
 	 * </pre>
@@ -72,7 +72,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	/**
 	 * Login success redirection to end-point.(Must be back-end server URI)
 	 * </br>
-	 * 
+	 *
 	 * <pre>
 	 * umc-manager@http://localhost:14048
 	 * </pre>
@@ -125,11 +125,11 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	/**
 	 * Situation1: http://myapp.domain.com/myapp/xxx/list?id=1 Situation1:
 	 * /view/index.html ===> http://myapp.domain.com/myapp/authenticator?id=1
-	 * 
+	 * <p>
 	 * Implementing the IAM-CAS protocol: When successful login, you must
 	 * redirect to the back-end server URI of IAM-CAS-Client. (Note: URI of
 	 * front-end pages can not be used directly).
-	 * 
+	 *
 	 * @see {@link com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter}
 	 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#determineSuccessUrl()}
 	 */

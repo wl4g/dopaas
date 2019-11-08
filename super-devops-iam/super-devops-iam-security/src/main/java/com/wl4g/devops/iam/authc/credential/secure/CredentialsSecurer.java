@@ -22,17 +22,17 @@ import javax.validation.constraints.NotNull;
 
 /**
  * IAM credentials securer
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月16日
- * @since
  * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
+ * @since
  */
 public interface CredentialsSecurer {
 
 	/**
 	 * Encryption credentials
-	 * 
+	 *
 	 * @param token
 	 *            External input principal and credentials
 	 * @param credentials
@@ -45,7 +45,7 @@ public interface CredentialsSecurer {
 
 	/**
 	 * Validation credentials
-	 * 
+	 *
 	 * @param token
 	 *            External input principal and credentials
 	 * @param info

@@ -34,7 +34,7 @@ public class ExampleClientSecurityCoprocessor implements ClientSecurityCoprocess
 
 	@Override
 	public void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
+			ServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
 		// TODO Auto-generated method stub
 
 		subject.getSession().setAttribute(KEY_EXAMPLE_STORE_IN_SESSION, "12345");

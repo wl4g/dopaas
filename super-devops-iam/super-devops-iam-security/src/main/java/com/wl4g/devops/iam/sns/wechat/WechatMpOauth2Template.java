@@ -27,7 +27,7 @@ import com.wl4g.devops.iam.sns.wechat.model.WxUserInfo;
 
 /**
  * WeChat platform social networking services template
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月18日
  * @since

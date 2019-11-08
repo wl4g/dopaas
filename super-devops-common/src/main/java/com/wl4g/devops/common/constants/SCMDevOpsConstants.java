@@ -31,8 +31,6 @@ public abstract class SCMDevOpsConstants extends DevOpsConstants {
 
 	/** Server pre-release source response data key. */
 	final public static String KEY_PRE_RELEASE = "pre-release-source";
-	/** Server release source response data key. */
-	final public static String KEY_RELEASE = "release-source";
 	/** Client environment source response data key. */
 	final public static String KEY_USED_SOURCES = "used-source";
 

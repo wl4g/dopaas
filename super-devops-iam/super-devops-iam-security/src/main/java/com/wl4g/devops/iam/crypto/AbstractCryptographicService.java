@@ -42,7 +42,7 @@ import redis.clients.jedis.JedisCluster;
 
 /**
  * Abstract cryptographic service
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
@@ -90,7 +90,7 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 
 	/**
 	 * Get random borrow generated key-pairs.
-	 * 
+	 *
 	 * @return
 	 */
 	public K borrow() {
@@ -99,7 +99,7 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 
 	/**
 	 * Get random borrow JIGSAW image code.
-	 * 
+	 *
 	 * @param index
 	 * @return
 	 */
@@ -136,14 +136,14 @@ public abstract class AbstractCryptographicService<K extends KeySpecWrapper> imp
 
 	/**
 	 * Generate keySpec.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract K generateKeySpec();
 
 	/**
 	 * Initialize keySpec pool.
-	 * 
+	 *
 	 * @return
 	 */
 	private synchronized void initializingKeySpecPool() {

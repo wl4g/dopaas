@@ -31,9 +31,9 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 /**
  * Interactive authentication processing filter for internal and application
  * services
- * 
+ * <p>
  * {@link org.apache.shiro.web.filter.authz.HostFilter}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月30日

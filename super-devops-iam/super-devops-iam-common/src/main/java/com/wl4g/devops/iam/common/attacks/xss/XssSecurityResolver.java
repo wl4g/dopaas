@@ -24,7 +24,7 @@ import org.springframework.web.util.HtmlUtils;
 
 /**
  * XSS security resolver.
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月29日
  * @since
@@ -33,7 +33,7 @@ public interface XssSecurityResolver {
 
 	/**
 	 * Perform parsing to convert XSS attack strings to safe strings.
-	 * 
+	 *
 	 * @param method
 	 *            Current method of parsing XSS
 	 * @param index
@@ -48,7 +48,7 @@ public interface XssSecurityResolver {
 
 	/**
 	 * Newly created XSS secure HttpServletRequestWrapper object
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */

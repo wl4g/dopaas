@@ -39,7 +39,7 @@ import java.util.List;
 
 /**
  * Abstract custom attempts credential matcher
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -113,7 +113,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 	/**
 	 * Execution custom match
-	 * 
+	 *
 	 * @param token
 	 * @param info
 	 * @param factors
@@ -123,7 +123,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 	/**
 	 * After matched failure processing
-	 * 
+	 *
 	 * @param principal
 	 * @param factors
 	 * @return
@@ -152,7 +152,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 	/**
 	 * After matched success processing
-	 * 
+	 *
 	 * @param principal
 	 * @param factors
 	 */
@@ -179,7 +179,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 	/**
 	 * Assertion check if the account has been locked
-	 * 
+	 *
 	 * @param principal
 	 * @param factors
 	 * @return
@@ -250,7 +250,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	/**
 	 * Assertion some verifications before requesting authentication (e.g, graph
 	 * verification code when password is logged in)
-	 * 
+	 *
 	 * @param token
 	 * @param principal
 	 * @param factors
@@ -286,7 +286,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 	/**
 	 * Destroy verification accumulators all.
-	 * 
+	 *
 	 * @param factors
 	 */
 	private void destroyCumulators(@NotNull List<String> factors) {

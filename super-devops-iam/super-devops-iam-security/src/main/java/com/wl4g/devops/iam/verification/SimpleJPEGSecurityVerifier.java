@@ -33,7 +33,7 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * Default JDK CAPTCHA handler.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月29日
@@ -73,7 +73,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	/**
 	 * Create captcha image buffer.
-	 * 
+	 *
 	 * @param verifyCode
 	 * @return
 	 */
@@ -99,7 +99,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	/**
 	 * Drawing texts
-	 * 
+	 *
 	 * @param g
 	 * @param str
 	 * @param i
@@ -114,7 +114,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	/**
 	 * Drawing interference lines
-	 * 
+	 *
 	 * @param g
 	 */
 	private void drowLine(Graphics g) {
@@ -127,7 +127,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	/**
 	 * Get color
-	 * 
+	 *
 	 * @param fc
 	 * @param bc
 	 * @return
@@ -145,7 +145,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	/**
 	 * Get default font
-	 * 
+	 *
 	 * @return
 	 */
 	private static Font defaultFont() {

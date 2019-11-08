@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 
 /**
  * IAM based matcher
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日

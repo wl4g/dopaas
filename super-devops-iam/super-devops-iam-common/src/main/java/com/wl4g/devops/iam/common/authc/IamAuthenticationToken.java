@@ -23,7 +23,7 @@ import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
  * IAM authentication token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日
@@ -35,7 +35,7 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 
 	/**
 	 * IAM client authentication redirection information.
-	 * 
+	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019年10月18日
 	 * @since

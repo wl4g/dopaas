@@ -31,7 +31,7 @@ import com.wl4g.devops.common.web.error.ErrorConfiguring;
 
 /**
  * IAM authorization error configuring.
- * 
+ *
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-11-02
  * @since

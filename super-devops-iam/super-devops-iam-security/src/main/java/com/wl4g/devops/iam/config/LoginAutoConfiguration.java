@@ -27,7 +27,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BA
 
 /**
  * IAM extra configuration
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since

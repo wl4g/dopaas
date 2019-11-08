@@ -41,7 +41,7 @@ import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 
 /**
  * Abstract based social networking connection binding implement
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月7日

@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 
 /**
  * Final credentials token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月6日
  * @since

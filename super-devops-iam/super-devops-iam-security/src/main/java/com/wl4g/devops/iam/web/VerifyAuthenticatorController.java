@@ -93,7 +93,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 
 			// Apply CAPTCHA
 			if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
-				resp.getData().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
+				resp.buildMap().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
 			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -112,7 +112,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 
 	/**
 	 * Verify CAPTCHA code.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @throws Exception
@@ -127,7 +127,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
 			// Verifying
 			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
-			resp.getData().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
+			resp.buildMap().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
 			resp.handleError(e);
 			if (log.isWarnEnabled()) {
@@ -139,7 +139,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 
 	/**
 	 * Apply verification code
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 */
@@ -160,12 +160,12 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			verifier.forAdapt(request).validate(factors, getCleanParam(request, config.getParam().getVerifiedTokenName()), false);
 
 			// Apply SMS verify code.
-			resp.getData().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
+			resp.buildMap().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			VerifyCodeWrapper code = verifier.forAdapt(TEXT_SMS).getVerifyCode(true);
-			resp.getData().put(KEY_SMS_CHECK,
+			resp.buildMap().put(KEY_SMS_CHECK,
 					new SmsCheckModel(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
 		} catch (Exception e) {
 			resp.handleError(e);

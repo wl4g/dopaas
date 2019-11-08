@@ -203,7 +203,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
 
 				// Callback custom success handling.
-				coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, loggedResp.getData());
+				coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, loggedResp.buildMap());
 
 				String logged = toJSONString(loggedResp);
 				if (log.isInfoEnabled()) {
@@ -400,12 +400,12 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
 		resp.setCode(OK).setMessage("Authentication successful");
-		resp.getData().put(config.getParam().getRedirectUrl(), redirectUri);
+		resp.buildMap().put(config.getParam().getRedirectUrl(), redirectUri);
 
 		// e.g. Used by mobile APP.
-		resp.getData().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
-		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
+		resp.buildMap().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
+		resp.buildMap().put(config.getParam().getApplication(), config.getServiceName());
+		resp.buildMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
 		return resp;
 	}
 
@@ -424,9 +424,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
 		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
-		resp.getData().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
-		resp.getData().put(config.getParam().getApplication(), config.getServiceName());
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
+		resp.buildMap().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
+		resp.buildMap().put(config.getParam().getApplication(), config.getServiceName());
+		resp.buildMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
 		return toJSONString(resp);
 	}
 

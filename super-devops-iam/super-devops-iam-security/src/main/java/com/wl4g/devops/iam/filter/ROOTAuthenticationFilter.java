@@ -38,7 +38,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
  * Filter's execution chain's
  * {@link org.apache.catalina.core.StandardWrapperValve.invoke}
  * {@link org.apache.catalina.core.ApplicationFilterChain#internalDoFilter}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月6日
@@ -96,7 +96,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	 * 'http://passport.mydomain.com/devops-iam/login.html', it will not be
 	 * matched successfully, but it is indeed embedded in its own page, which
 	 * needs to continue matching (to be compatible).
-	 * 
+	 *
 	 * @param defineUrl
 	 *            Configuration defined URLs
 	 * @param request

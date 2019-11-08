@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
 
 /**
  * XSS configuration properties
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月26日
  * @since
@@ -83,7 +83,7 @@ public class XssProperties implements InitializingBean, Serializable {
 		/*
 		 * [Expect]: In order to solve slight package structure changes.(The
 		 * first four levels of package start can be modified at will)
-		 * 
+		 *
 		 * execution(* com.wl4g.devops.iam.sns.web.*Controller.*(..)) or
 		 * execution(* com.wl4g.devops.iam.web.*Controller.*(..)) or ...
 		 */

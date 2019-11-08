@@ -31,7 +31,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
 /**
  * Client AUTHC SNS handler.(e.g:WeChat official platform account)
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年2月24日
  * @since

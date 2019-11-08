@@ -41,7 +41,7 @@ import javax.crypto.Cipher;
 
 /**
  * Asymmetric cryptic definition
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月21日
  * @since
@@ -69,7 +69,7 @@ abstract class CryptoHolder {
 
 	/**
 	 * Register cryptic instance
-	 * 
+	 *
 	 * @param crypto
 	 */
 	final private static void register(CryptoHolder crypto) {
@@ -80,7 +80,7 @@ abstract class CryptoHolder {
 
 	/**
 	 * Get cryptic instance
-	 * 
+	 *
 	 * @param algorithm
 	 * @return
 	 */
@@ -93,7 +93,7 @@ abstract class CryptoHolder {
 
 	/**
 	 * Secret key constructor
-	 * 
+	 *
 	 * @param keyWrap
 	 */
 	private CryptoHolder() {
@@ -106,7 +106,7 @@ abstract class CryptoHolder {
 
 	/**
 	 * Generate keySpecPair
-	 * 
+	 *
 	 * @return
 	 */
 	final public RSAKeySpecWrapper generateKeySpecPair() {
@@ -124,7 +124,7 @@ abstract class CryptoHolder {
 
 	/**
 	 * Encrypt plain text based on the built key pair
-	 * 
+	 *
 	 * @param plaintext
 	 * @return
 	 */
@@ -144,7 +144,7 @@ abstract class CryptoHolder {
 
 	/**
 	 * Solve the cipher text based on the constructed key pair
-	 * 
+	 *
 	 * @param ciphertext
 	 * @return
 	 */
@@ -166,7 +166,7 @@ abstract class CryptoHolder {
 	/**
 	 * Initialize the build of a password instance based on the specified key
 	 * pair
-	 * 
+	 *
 	 * @param keySpecPair
 	 * @return
 	 */
@@ -200,42 +200,42 @@ abstract class CryptoHolder {
 
 	/**
 	 * Get algorithm name
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract String getAlgorithmPrimary();
 
 	/**
 	 * Get algorithm padding
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract String getPadAlgorithm();
 
 	/**
 	 * Get asymmetric key digits
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract int getKeyBit();
 
 	/**
 	 * Get public key description of asymmetric algorithms
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Class<? extends KeySpec> getPublicKeySpecClass();
 
 	/**
 	 * Get private key description of asymmetric algorithms
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Class<? extends KeySpec> getPrivateKeySpecClass();
 
 	/**
 	 * RivestShamirAdleman algorithm
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年1月20日
 	 * @since

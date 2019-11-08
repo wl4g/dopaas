@@ -17,16 +17,53 @@
     from sys_group_role
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectGroupIdByRoleId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+    group_id
+    from sys_group_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectRoleIdsByGroupId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select
+    role_id
+    from sys_group_role
+    where group_id = #{groupId,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_group_role
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByRoleId" parameterType="java.lang.Integer" >
+    delete from sys_group_role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByGroupId" parameterType="java.lang.Integer" >
+    delete from sys_group_role
+    where group_id = #{groupId,jdbcType=INTEGER}
+  </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.GroupRole" >
     insert into sys_group_role (id, group_id, role_id, 
       create_by, create_date)
     values (#{id,jdbcType=INTEGER}, #{groupId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into sys_group_role (group_id, role_id,create_by, create_date)
+    VALUES
+    <foreach collection="groupRoles" item="groupRole" separator=",">
+      (#{groupRole.groupId,jdbcType=INTEGER}, #{groupRole.roleId,jdbcType=INTEGER},
+      #{groupRole.createBy,jdbcType=INTEGER}, #{groupRole.createDate,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.GroupRole" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_group_role
     <trim prefix="(" suffix=")" suffixOverrides="," >

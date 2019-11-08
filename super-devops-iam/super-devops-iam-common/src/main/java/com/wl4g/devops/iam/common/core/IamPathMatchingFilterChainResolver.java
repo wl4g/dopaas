@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * IAM request matching filter chain URI pattern resolver
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月27日
@@ -115,7 +115,7 @@ public class IamPathMatchingFilterChainResolver extends PathMatchingFilterChainR
 		/**
 		 * Compare two patterns to determine which should match first, i.e.
 		 * which is the most specific regarding the current path.
-		 * 
+		 *
 		 * @return a negative integer, zero, or a positive integer as pattern1
 		 *         is more specific, equally specific, or less specific than
 		 *         pattern2.

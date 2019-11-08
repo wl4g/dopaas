@@ -19,6 +19,10 @@ public interface GroupDao {
 
     List<Group> selectByUserId(Integer userId);
 
+    List<Group> selectByRoot();
+
+    List<Group> selectByRoleId(Integer roleId);
+
     List<Group> selectByParentId(Integer parentId);
 
 

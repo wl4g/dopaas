@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.job.NpmViewPipeTransferJob;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
+import org.eclipse.jgit.transport.CredentialsProvider;
 import org.springframework.util.Assert;
 
 import java.io.File;
@@ -36,7 +37,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 
-	public NpmViewPipelineProvider(PipelineInfo info) {
+	public NpmViewPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 
@@ -54,9 +55,9 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 	}
 
 	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
-		Object[] args = { this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails() };
-		return beanFactory.getBean(NpmViewPipeTransferJob.class, args);
+	protected Runnable newDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
 	}
 
 	private void build() throws Exception {
@@ -70,7 +71,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 		// step4 scp ==> tar -x
 
 		// Startup pipeline jobs.
-		doTransferInstances();
+		doExecuteTransferToRemoteInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Npm pipeline execution successful!");
@@ -78,49 +79,52 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 	}
 
 	private void getSources(boolean isRollback) throws Exception {
-		log.info("Pipeline building for projectId={}", getPipelineInfo().getProject().getId());
-		Project project = getPipelineInfo().getProject();
+		log.info("Pipeline building for projectId={}", getContext().getProject().getId());
+		Project project = getContext().getProject();
 		Assert.notNull(project, "project not exist");
-		// Obtain project source from VCS.
-		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
+
+		String branchName = getContext().getTaskHistory().getBranchName();
+		CredentialsProvider credentials = config.getVcs().getGitlab().getCredentials();
+		// Project source directory.
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+
 		if (isRollback) {
-			String sha = getPipelineInfo().getTaskHistory().getShaGit();
+			String sha = getContext().getTaskHistory().getShaGit();
 			if (GitUtils.checkGitPath(projectDir)) {
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
+				GitUtils.rollback(credentials, projectDir, sha);
 			} else {
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
-						getPipelineInfo().getBranch());
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sha);
+				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
+				GitUtils.rollback(credentials, projectDir, sha);
 			}
 		} else {
 			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				GitUtils.checkout(config.getVcs().getGitlab().getCredentials(), projectDir, getPipelineInfo().getBranch());
+				GitUtils.checkoutAndPull(credentials, projectDir, getContext().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
-						getPipelineInfo().getBranch());
+				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
 			}
 		}
 	}
 
 	private void npmBuild() throws Exception {
-		Project project = getPipelineInfo().getProject();
-		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
-		File logPath = config.getJobLog(getPipelineInfo().getTaskHistory().getId());
-		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
+		Project project = getContext().getProject();
+		TaskHistory taskHistory = getContext().getTaskHistory();
+		File logPath = config.getJobLog(getContext().getTaskHistory().getId());
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		// Building.
 		if (isBlank(taskHistory.getBuildCommand())) {
 			doBuildWithDefaultCommand(projectDir, logPath, taskHistory.getId());
 		} else {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-			String buildCommand = resolvePlaceholderVariables(taskHistory.getBuildCommand(), projectDir);
+			// Resolve placeholder variables.
+			String buildCommand = resolveCmdPlaceholderVariables(taskHistory.getBuildCommand());
 			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 	}
 
 	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
-		Project project = getPipelineInfo().getProject();
-		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
+		Project project = getContext().getProject();
+		TaskHistory taskHistory = getContext().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
 		processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
@@ -130,15 +134,15 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 	 * tar -cvf ***.tar -C /home/ci/view * tar -xvf ***.tar -C /opt/apps/view
 	 */
 	private void pkg() throws Exception {
-		Project project = getPipelineInfo().getProject();
-		TaskHistory taskHistory = getPipelineInfo().getTaskHistory();
-		String projectDir = config.getProjectDir(project.getProjectName()).getAbsolutePath();
+		Project project = getContext().getProject();
+		TaskHistory taskHistory = getContext().getTaskHistory();
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		// tar
 		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
-				+ config.getJobBackup(getPipelineInfo().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
+				+ config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
 		processManager.execFile(String.valueOf(taskHistory.getId()), tarCommand,
-				config.getJobTmpCommandFile(taskHistory.getId(), -1),
-				config.getJobLog(getPipelineInfo().getTaskHistory().getId()), 300000);
+				config.getJobTmpCommandFile(taskHistory.getId(), -1), config.getJobLog(getContext().getTaskHistory().getId()),
+				300000);
 	}
 
 }

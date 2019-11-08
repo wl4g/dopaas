@@ -15,18 +15,6 @@
  */
 package com.wl4g.devops.iam.config;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-
-import java.util.List;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
@@ -34,10 +22,20 @@ import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.util.List;
 
 /**
  * Based context configuration
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月24日
  * @since
@@ -56,7 +54,7 @@ public class BasedConfigAutoConfiguration {
 
 	/**
 	 * Check whether ServerSecurityConfigurer has been implemented.
-	 * 
+	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019-07-27
 	 * @since

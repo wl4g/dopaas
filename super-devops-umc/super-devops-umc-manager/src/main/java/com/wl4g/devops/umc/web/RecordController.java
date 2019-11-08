@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -44,20 +44,18 @@ public class RecordController extends BaseController {
 	private RecordService recordService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, CustomPage customPage, String startDate, String endDate) {
-		log.info("into RecordController.list prarms::" + "name = {} , customPage = {} , startDate = {} , endDate = {} ", name,
-				customPage, startDate, endDate);
+	public RespBase<?> list(String name, PageModel pm, String startDate, String endDate) {
+		log.info("into RecordController.list prarms::" + "name = {} , pm = {} , startDate = {} , endDate = {} ", name, pm,
+				startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 
 		List<AlarmRecord> list = alarmRecordDao.list(name, startDate, endDate);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -66,7 +64,7 @@ public class RecordController extends BaseController {
 		log.info("into CollectorController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmRecord alarmRecord = recordService.detail(id);
-		resp.getData().put("alarmRecord", alarmRecord);
+		resp.buildMap().put("alarmRecord", alarmRecord);
 		return resp;
 	}
 

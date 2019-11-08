@@ -116,7 +116,7 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 
 	/**
 	 * Assertion account information
-	 * 
+	 *
 	 * @param acc
 	 * @param token
 	 */

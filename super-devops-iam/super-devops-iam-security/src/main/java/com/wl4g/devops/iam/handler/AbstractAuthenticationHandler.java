@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 
 /**
  * Abstract IAM authentication handler.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -93,7 +93,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
 	/**
 	 * Find current grantTicket principal system role.
-	 * 
+	 *
 	 * @param principal
 	 * @param application
 	 * @return
@@ -104,7 +104,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
 	/**
 	 * Find current grantTicket principal system Permission.
-	 * 
+	 *
 	 * @param principal
 	 * @param application
 	 * @return

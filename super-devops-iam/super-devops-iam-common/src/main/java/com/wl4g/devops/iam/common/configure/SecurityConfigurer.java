@@ -26,7 +26,7 @@ import com.google.common.annotations.Beta;
 
 /**
  * IAM security configure handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年3月10日
  * @since
@@ -41,7 +41,7 @@ public interface SecurityConfigurer {
 	/**
 	 * Determine the URL of the login success redirection, default: successURL,
 	 * can support customization.
-	 * 
+	 *
 	 * @param successUrl
 	 * @param token
 	 * @param subject
@@ -57,7 +57,7 @@ public interface SecurityConfigurer {
 	/**
 	 * Determine the URL of the login failure redirection, default: loginURL,
 	 * can support customization.
-	 * 
+	 *
 	 * @param loginUrl
 	 * @param token
 	 * @param ae

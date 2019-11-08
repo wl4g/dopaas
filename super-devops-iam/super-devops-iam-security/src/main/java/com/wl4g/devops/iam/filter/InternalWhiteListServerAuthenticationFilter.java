@@ -19,6 +19,7 @@ import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.filter.AbstractWhiteListInternalAuthenticationFilter;
+
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 
 import com.wl4g.devops.common.kit.access.IPAccessControl;
@@ -26,9 +27,9 @@ import com.wl4g.devops.common.kit.access.IPAccessControl;
 /**
  * Interactive authentication processing filter for internal and application
  * services
- * 
+ * <p>
  * {@link org.apache.shiro.web.filter.authz.HostFilter}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月30日

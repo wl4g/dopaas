@@ -28,7 +28,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 
 /**
  * UnBinding SNS handler
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月28日
  * @since

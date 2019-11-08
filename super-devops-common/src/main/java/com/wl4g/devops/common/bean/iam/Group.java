@@ -4,9 +4,12 @@ import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class Group extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
+
+	private Integer id;
 
 	private String name;
 
@@ -22,6 +25,20 @@ public class Group extends BaseBean implements Serializable {
 
 	// other
 	private List<Group> children;
+
+	private List<Integer> menuIds;
+
+	private List<Integer> roleIds;
+
+	@Override
+	public Integer getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -77,5 +94,36 @@ public class Group extends BaseBean implements Serializable {
 
 	public void setChildren(List<Group> children) {
 		this.children = children;
+	}
+
+	public List<Integer> getMenuIds() {
+		return menuIds;
+	}
+
+	public void setMenuIds(List<Integer> menuIds) {
+		this.menuIds = menuIds;
+	}
+
+	public List<Integer> getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(List<Integer> roleIds) {
+		this.roleIds = roleIds;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Group group = (Group) o;
+		return Objects.equals(id, group.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  * IAM API configuration properties
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年10月31日
@@ -31,7 +31,9 @@ import java.io.Serializable;
 public class ApiProperties implements Serializable {
 	private static final long serialVersionUID = -2694422471852860689L;
 
-	/** Sessions max iteration batch size. */
+	/**
+	 * Sessions max iteration batch size.
+	 */
 	private int maxIteraSize = 200;
 
 	public int getMaxIteraSize() {

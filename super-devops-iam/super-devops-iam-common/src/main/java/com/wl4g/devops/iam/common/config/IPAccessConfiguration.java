@@ -24,7 +24,7 @@ import com.wl4g.devops.common.kit.access.IPAccessControl.IPAccessProperties;
 
 /**
  * IP access configuration processor.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年5月24日
