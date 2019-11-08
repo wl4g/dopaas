@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.wl4g.devops.iam.common.authc.ClientRef;
+
 /**
  * Session attribute model.
  *
@@ -39,25 +41,31 @@ import java.util.Set;
 public class SessionAttributeModel implements Serializable {
 	private static final long serialVersionUID = -245342258661231356L;
 
-	private CursorIndexModel index = new CursorIndexModel();
+	/**
+	 * Session cursor indexer.
+	 */
+	private CursorIndex index = new CursorIndex();
 
+	/**
+	 * Sessoin attributes.
+	 */
 	private List<SessionAttribute> sessions = new ArrayList<>(2);
 
 	public SessionAttributeModel() {
 		super();
 	}
 
-	public SessionAttributeModel(CursorIndexModel index, List<SessionAttribute> sessions) {
+	public SessionAttributeModel(CursorIndex index, List<SessionAttribute> sessions) {
 		super();
 		this.index = index;
 		this.sessions = sessions;
 	}
 
-	public CursorIndexModel getIndex() {
+	public CursorIndex getIndex() {
 		return index;
 	}
 
-	public void setIndex(CursorIndexModel index) {
+	public void setIndex(CursorIndex index) {
 		this.index = index;
 	}
 
@@ -76,10 +84,8 @@ public class SessionAttributeModel implements Serializable {
 	 * @version v1.0.0 2019-11-06
 	 * @since
 	 */
-	public static class CursorIndexModel implements Serializable {
+	public static class CursorIndex implements Serializable {
 		private static final long serialVersionUID = 8491557330003820999L;
-
-		final public static String KEY_SESSION_INDEX = "index";
 
 		/**
 		 * Cursor string.
@@ -91,11 +97,11 @@ public class SessionAttributeModel implements Serializable {
 		 */
 		private Boolean hasNext = false;
 
-		public CursorIndexModel() {
+		public CursorIndex() {
 			super();
 		}
 
-		public CursorIndexModel(String cursorString, Boolean hasNext) {
+		public CursorIndex(String cursorString, Boolean hasNext) {
 			setCursorString(cursorString);
 			setHasNext(hasNext);
 		}
@@ -120,6 +126,12 @@ public class SessionAttributeModel implements Serializable {
 				this.hasNext = hasNext;
 			}
 		}
+
+		@Override
+		public String toString() {
+			return toJSONString(this);
+		}
+
 	}
 
 	/**
@@ -132,18 +144,17 @@ public class SessionAttributeModel implements Serializable {
 	public static class SessionAttribute implements Serializable {
 		private static final long serialVersionUID = 1990530522326712114L;
 
-		final public static String KEY_SESSION_ATTRIBUTES = "sessions";
-
 		private String id;
-		private Date startTimestamp;
-		private Date stopTimestamp;
+		private Date startTime;
+		private Date stopTime;
 		private Date lastAccessTime;
-		private long timeout;
 		private boolean expired;
 		private boolean authenticated;
 		private String host;
 		private Object principal;
-		private Set<String> grantApplications = new HashSet<>();
+		private Set<String> grants = new HashSet<>(4);
+		private ClientRef clientRef = ClientRef.Unknown;
+		private String oauth2Provider; // if exist
 
 		public String getId() {
 			return id;
@@ -153,20 +164,20 @@ public class SessionAttributeModel implements Serializable {
 			this.id = id;
 		}
 
-		public Date getStartTimestamp() {
-			return startTimestamp;
+		public Date getStartTime() {
+			return startTime;
 		}
 
-		public void setStartTimestamp(Date startTimestamp) {
-			this.startTimestamp = startTimestamp;
+		public void setStartTime(Date startTimestamp) {
+			this.startTime = startTimestamp;
 		}
 
-		public Date getStopTimestamp() {
-			return stopTimestamp;
+		public Date getStopTime() {
+			return stopTime;
 		}
 
-		public void setStopTimestamp(Date stopTimestamp) {
-			this.stopTimestamp = stopTimestamp;
+		public void setStopTime(Date stopTimestamp) {
+			this.stopTime = stopTimestamp;
 		}
 
 		public Date getLastAccessTime() {
@@ -175,14 +186,6 @@ public class SessionAttributeModel implements Serializable {
 
 		public void setLastAccessTime(Date lastAccessTime) {
 			this.lastAccessTime = lastAccessTime;
-		}
-
-		public long getTimeout() {
-			return timeout;
-		}
-
-		public void setTimeout(long timeout) {
-			this.timeout = timeout;
 		}
 
 		public boolean isExpired() {
@@ -219,14 +222,30 @@ public class SessionAttributeModel implements Serializable {
 			}
 		}
 
-		public Set<String> getGrantApplications() {
-			return grantApplications;
+		public Set<String> getGrants() {
+			return grants;
 		}
 
-		public void setGrantApplications(Set<String> grantApplications) {
+		public void setGrants(Set<String> grantApplications) {
 			if (!isEmpty(grantApplications)) {
-				this.grantApplications.addAll(grantApplications);
+				this.grants.addAll(grantApplications);
 			}
+		}
+
+		public ClientRef getClientRef() {
+			return clientRef;
+		}
+
+		public void setClientRef(ClientRef clientRef) {
+			this.clientRef = clientRef;
+		}
+
+		public String getOauth2Provider() {
+			return oauth2Provider;
+		}
+
+		public void setOauth2Provider(String oauth2Provider) {
+			this.oauth2Provider = oauth2Provider;
 		}
 
 		@Override

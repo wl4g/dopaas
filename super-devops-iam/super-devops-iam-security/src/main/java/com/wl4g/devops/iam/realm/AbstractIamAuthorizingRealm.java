@@ -157,16 +157,18 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			/**
 			 * [Extension]: Save authenticate token, For example, for online
 			 * session management and analysis.
+			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
 			// Obtain authentication info.
 			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
-			notNull(info, "Authentication information must be returned. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
+			notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
 			/**
 			 * [Extension]: Save authenticate info, For example, for online
-			 * session management and analysis.
+			 * session management and analysis. *
+			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
-			return bind(KEY_AUTHC_TOKEN, info);
+			return bind(KEY_AUTHC_INFO, info);
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}

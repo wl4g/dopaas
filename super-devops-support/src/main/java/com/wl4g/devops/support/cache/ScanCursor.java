@@ -266,7 +266,6 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 			}).collect(toList());
 		} finally {
 			iter.getItems().clear();
-			finished(); // Stop
 		}
 	}
 

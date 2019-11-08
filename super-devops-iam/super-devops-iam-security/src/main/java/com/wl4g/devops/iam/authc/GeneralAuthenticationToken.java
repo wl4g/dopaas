@@ -118,4 +118,11 @@ public class GeneralAuthenticationToken extends AbstractIamAuthenticationToken
 		return verifyType;
 	}
 
+	@Override
+	public String toString() {
+		return "GeneralAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
+				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyType
+				+ "]";
+	}
+
 }
