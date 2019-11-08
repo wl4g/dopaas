@@ -49,7 +49,7 @@ public class MenuController {
 	public RespBase<?> getMenuList() {
 		RespBase<Object> resp = RespBase.create();
 		List<Menu> menus = menuService.getMenuList();
-		resp.forMap().put("data", menus);
+		resp.buildMap().put("data", menus);
 		return resp;
 	}
 
@@ -71,7 +71,7 @@ public class MenuController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Menu menu = menuService.detail(id);
-		resp.forMap().put("data", menu);
+		resp.buildMap().put("data", menu);
 		return resp;
 	}
 

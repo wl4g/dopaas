@@ -53,8 +53,8 @@ public class ContactGroupController extends BaseController {
 		List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
 
 		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -80,7 +80,7 @@ public class ContactGroupController extends BaseController {
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
 		List<AlarmContactGroup> list = alarmContactGroupDao.list(null);
-		resp.forMap().put("list", list);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 

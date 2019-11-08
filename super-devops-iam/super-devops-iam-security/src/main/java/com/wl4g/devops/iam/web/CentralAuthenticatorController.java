@@ -38,10 +38,6 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LOGOUT_INFO;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_TICKET_ASSERT;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SECOND_AUTH_ASSERT;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SESSION_VALID_ASSERT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
@@ -81,7 +77,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 		RespBase<TicketAssertion> resp = new RespBase<>();
 		try {
 			// Ticket assertion.
-			resp.getData().put(KEY_TICKET_ASSERT, authHandler.validate(param));
+			resp.setData(authHandler.validate(param));
 		} catch (Throwable ex) {
 			resp.setCode(RetCode.SYS_ERR);
 			resp.handleError(ex);
@@ -126,7 +122,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 
 			// Using coercion ignores remote exit failures
 			boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-			resp.forMap().put(KEY_LOGOUT_INFO, authHandler.logout(forced, fromAppName, request, response));
+			resp.setData(authHandler.logout(forced, fromAppName, request, response));
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				log.error("Failed to logout. caused by:{}", Exceptions.getRootCauseMessage(e));
@@ -161,7 +157,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondAuthCode());
 			String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
 			// Secondary authentication assertion.
-			resp.forMap().put(KEY_SECOND_AUTH_ASSERT, authHandler.secondValidate(secondAuthCode, fromAppName));
+			resp.setData(authHandler.secondValidate(secondAuthCode, fromAppName));
 		} catch (Exception e) {
 			log.error("Failed to second authentication validate.", e);
 			resp.setCode(RetCode.SYS_ERR);
@@ -190,7 +186,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 		RespBase<SessionValidationAssertion> resp = new RespBase<>();
 		try {
 			// Session expire validate assertion.
-			resp.forMap().put(KEY_SESSION_VALID_ASSERT, authHandler.sessionValidate(param));
+			resp.setData(authHandler.sessionValidate(param));
 		} catch (Exception e) {
 			log.error("Failed to session expire validate.", e);
 			resp.setCode(RetCode.SYS_ERR);

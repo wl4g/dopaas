@@ -50,7 +50,7 @@ public class ApplicationController extends BaseController {
 		for (ClusterConfig entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);
 		}
-		resp.forMap().put("map", map);
+		resp.buildMap().put("map", map);
 		// System.out.println(JacksonUtils.toJSONString(list));
 		return resp;
 	}

@@ -63,7 +63,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	@RequestMapping(path = "findIamServers")
 	public RespBase<?> findIamServers() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		resp.setBean(clusterConfigDao.getIamServer());
+		resp.setData(clusterConfigDao.getIamServer());
 		return resp;
 	}
 
@@ -90,9 +90,9 @@ public class IamManagerApiV1Controller extends BaseController {
 		RespBase<SessionAttributeModel> resp = restTemplate
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
-
 		// String resp = restTemplate.exchange(url, HttpMethod.GET, null,
 		// String.class).getBody();
+
 		if (log.isInfoEnabled()) {
 			log.info("Got remote sessions response for => {}", resp);
 		}

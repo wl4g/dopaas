@@ -54,8 +54,8 @@ public class RecordController extends BaseController {
 		List<AlarmRecord> list = alarmRecordDao.list(name, startDate, endDate);
 
 		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -64,7 +64,7 @@ public class RecordController extends BaseController {
 		log.info("into CollectorController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmRecord alarmRecord = recordService.detail(id);
-		resp.forMap().put("alarmRecord", alarmRecord);
+		resp.buildMap().put("alarmRecord", alarmRecord);
 		return resp;
 	}
 

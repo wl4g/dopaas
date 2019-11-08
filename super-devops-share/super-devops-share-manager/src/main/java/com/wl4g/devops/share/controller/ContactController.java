@@ -60,8 +60,8 @@ public class ContactController extends BaseController {
 		List<AlarmContact> list = alarmContactDao.list(name, email, phone);
 
 		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -82,7 +82,7 @@ public class ContactController extends BaseController {
 		log.info("into ContactController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmContact contact = contactService.detail(id);
-		resp.forMap().put("contact", contact);
+		resp.buildMap().put("contact", contact);
 		return resp;
 	}
 
@@ -90,7 +90,7 @@ public class ContactController extends BaseController {
 	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
 		List<AlarmContactGroup> alarmContactGroups = alarmContactGroupDao.list(null);
-		resp.forMap().put("list", alarmContactGroups);
+		resp.buildMap().put("list", alarmContactGroups);
 		return resp;
 	}
 

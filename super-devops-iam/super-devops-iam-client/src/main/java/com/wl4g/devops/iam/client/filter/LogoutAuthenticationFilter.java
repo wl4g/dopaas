@@ -43,7 +43,6 @@ import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LOGOUT_INFO;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
@@ -156,7 +155,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		if (!RespBase.isSuccess(resp)) {
 			throw new IamException(resp.getMessage());
 		}
-		return resp.forMap().get(KEY_LOGOUT_INFO);
+		return resp.getData();
 	}
 
 	/**

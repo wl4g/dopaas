@@ -74,7 +74,7 @@ public interface SecurityCoprocessor {
 	 * @param respParams
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
+			ServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
 	}
 
 	/**
