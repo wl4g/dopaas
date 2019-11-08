@@ -22,7 +22,7 @@ import com.google.common.base.Charsets;
 
 /**
  * Enhanced implementation of Shiro cache support for automatic expiratio
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -35,7 +35,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 
 	/**
 	 * Decay counter
-	 * 
+	 *
 	 * @param key
 	 *            Key that contains the actual EnhancedKey and expiration date
 	 * @param value
@@ -47,7 +47,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 
 	/**
 	 * Get and add an atomic counter at the same time
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 * @throws CacheException
@@ -56,7 +56,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 
 	/**
 	 * Get and add an atomic counter at the same time
-	 * 
+	 *
 	 * @param key
 	 * @param incrBy
 	 * @return
@@ -66,7 +66,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 * @throws CacheException
@@ -75,7 +75,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
-	 * 
+	 *
 	 * @param key
 	 * @param decrBy
 	 * @return
@@ -85,7 +85,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 
 	/**
 	 * Put(If not exist)
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 * @return

@@ -17,12 +17,12 @@ package com.wl4g.devops.iam.sns.support;
 
 /**
  * OAuth2 response_type definition
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月3日
- * @since
  * @see https://www.cnblogs.com/giserliu/p/4372455.html
+ * @since
  */
 public enum OAuth2ResponseType {
 

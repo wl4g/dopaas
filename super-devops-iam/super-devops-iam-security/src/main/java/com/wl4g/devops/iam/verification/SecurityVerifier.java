@@ -32,7 +32,7 @@ import com.wl4g.devops.common.exception.iam.VerificationException;
 
 /**
  * Verification handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月28日
@@ -42,20 +42,19 @@ public abstract interface SecurityVerifier {
 
 	/**
 	 * Verifier type definition.
-	 * 
+	 *
 	 * @return
 	 */
 	VerifyType verifyType();
 
 	/**
 	 * New create verification meta information.
-	 * 
+	 *
 	 * @param owner
 	 *            Validate code owner(Optional).
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
-	 * 
 	 * @param request
 	 *            HttpServletRequest
 	 * @return apply meta information.
@@ -65,7 +64,7 @@ public abstract interface SecurityVerifier {
 
 	/**
 	 * Check whether validation code is turned on
-	 * 
+	 *
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -76,7 +75,7 @@ public abstract interface SecurityVerifier {
 
 	/**
 	 * Get verification code
-	 * 
+	 *
 	 * @param assertion
 	 *            If assertion is enabled, an exception is thrown when the
 	 *            authentication code is not obtained
@@ -86,7 +85,7 @@ public abstract interface SecurityVerifier {
 
 	/**
 	 * Analyze and verification.
-	 * 
+	 *
 	 * @param params
 	 *            parameter DTO model
 	 * @param request
@@ -103,7 +102,7 @@ public abstract interface SecurityVerifier {
 
 	/**
 	 * Validation verified token.
-	 * 
+	 *
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -119,7 +118,7 @@ public abstract interface SecurityVerifier {
 
 	/**
 	 * Verification type definition.
-	 * 
+	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月29日
 	 * @since
@@ -177,7 +176,7 @@ public abstract interface SecurityVerifier {
 
 		/**
 		 * Get support verify type.
-		 * 
+		 *
 		 * @return
 		 */
 		private static String supportAsString() {
@@ -200,7 +199,7 @@ public abstract interface SecurityVerifier {
 
 	/**
 	 * Wrapper verify code
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年4月18日
 	 * @since

@@ -42,7 +42,7 @@ import static org.springframework.web.cors.CorsConfiguration.ALL;
 
 /**
  * CORS configuration properties
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年3月4日
  * @since
@@ -52,6 +52,7 @@ public class CorsProperties implements Serializable {
 
 	private List<CorsRule> rules = new ArrayList<CorsRule>() {
 		private static final long serialVersionUID = -8576461225674624807L;
+
 		{
 			add(new CorsRule().setPath("/**").addAllowsMethod("GET").addAllowsOrigin("http://localhost:8080"));
 		}
@@ -78,7 +79,7 @@ public class CorsProperties implements Serializable {
 
 	/**
 	 * CORS rule configuration
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年3月4日
 	 * @since
@@ -233,7 +234,7 @@ public class CorsProperties implements Serializable {
 
 		/**
 		 * To Spring CORS configuration
-		 * 
+		 *
 		 * @return
 		 */
 		public CorsConfiguration toSpringCorsConfiguration() {
@@ -256,7 +257,7 @@ public class CorsProperties implements Serializable {
 
 		/**
 		 * Wild-card merge source collection and remove duplicate.
-		 * 
+		 *
 		 * @param source
 		 * @return
 		 */
@@ -295,7 +296,7 @@ public class CorsProperties implements Serializable {
 
 	/**
 	 * Custom advanced logic CORS configuration processing.
-	 * 
+	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月21日
 	 * @since

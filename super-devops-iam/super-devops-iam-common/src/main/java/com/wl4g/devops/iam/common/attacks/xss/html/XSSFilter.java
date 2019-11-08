@@ -23,14 +23,13 @@ import java.util.Set;
  * dangerous tags and attributes from tags. It does not verify the validity of
  * URL's (that may contain links to JavaScript for example). It does not remove
  * all event handlers that may still contain XSS vulnerabilities.
- * 
+ * <p>
  * Embedded objects are removed because those may contain XSS vulnerabilities in
  * their own scripting language (ActionScript for Flash for example).
- * 
+ * <p>
  * Feel free to derive your own implementation from this file.
- * 
- * @author gt
  *
+ * @author gt
  */
 public class XSSFilter implements IHTMLFilter {
 
@@ -54,7 +53,7 @@ public class XSSFilter implements IHTMLFilter {
 	/**
 	 * This function is called to determine if an attribute should be filtered
 	 * or not.
-	 * 
+	 *
 	 * @param tagName
 	 *            The name of the tag the attribute belongs to
 	 * @param attrName
@@ -72,7 +71,7 @@ public class XSSFilter implements IHTMLFilter {
 
 	/**
 	 * This method is called to determine if a tag should be filtered
-	 * 
+	 *
 	 * @param tagName
 	 *            The name of the tag that was parsed
 	 */
@@ -85,7 +84,7 @@ public class XSSFilter implements IHTMLFilter {
 
 	/**
 	 * This method is called to modify attribute values, if required
-	 * 
+	 *
 	 * @param tagName
 	 *            The name of the tag the attribute belongs to
 	 * @param attrName
@@ -99,7 +98,7 @@ public class XSSFilter implements IHTMLFilter {
 
 	/**
 	 * This method is called to be able to modify the text of a node.
-	 * 
+	 *
 	 * @param tagName
 	 *            The name of the tag where the text is part of.
 	 * @param text
@@ -113,7 +112,7 @@ public class XSSFilter implements IHTMLFilter {
 	/**
 	 * Private method that determines if an attribute value is scripted
 	 * (potentially loaded with an XSS attack vector).
-	 * 
+	 *
 	 * @param attrValue
 	 *            The value of the attribute
 	 * @return "true" if the attribute is scripted. "false" if not.
@@ -154,7 +153,7 @@ public class XSSFilter implements IHTMLFilter {
 
 	/**
 	 * Private method to remove control characters from the value
-	 * 
+	 *
 	 * @param value
 	 *            The value being modified
 	 * @return The value free from control characters

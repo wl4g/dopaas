@@ -22,7 +22,7 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 
 /**
  * WeChat based response message model
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月19日
  * @since

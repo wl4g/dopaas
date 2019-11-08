@@ -18,7 +18,7 @@ package com.wl4g.devops.share.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.share.Dict;
 import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
@@ -56,17 +56,15 @@ public class DictController extends BaseController {
 	private JedisService jedisService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, String key, String label, String type, String description) {
+	public RespBase<?> list(PageModel pm, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Dict> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Dict> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<Dict> list = dictDao.list(key, label, type, description);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -87,7 +85,7 @@ public class DictController extends BaseController {
 	public RespBase<?> detail(String key) {
 		RespBase<Object> resp = RespBase.create();
 		Dict dict = dictDao.selectByPrimaryKey(key);
-		resp.getData().put("dict", dict);
+		resp.buildMap().put("dict", dict);
 		return resp;
 	}
 
@@ -104,7 +102,7 @@ public class DictController extends BaseController {
 	public RespBase<?> getByType(String type) {
 		RespBase<Object> resp = RespBase.create();
 		List<Dict> list = dictService.getBytype(type);
-		resp.getData().put("list", list);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -112,7 +110,7 @@ public class DictController extends BaseController {
 	public RespBase<?> getByKey(String key) {
 		RespBase<Object> resp = RespBase.create();
 		Dict dict = dictService.getByKey(key);
-		resp.getData().put("dict", dict);
+		resp.buildMap().put("dict", dict);
 		return resp;
 	}
 
@@ -120,7 +118,7 @@ public class DictController extends BaseController {
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
 		List<String> list = dictService.allType();
-		resp.getData().put("list", list);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 

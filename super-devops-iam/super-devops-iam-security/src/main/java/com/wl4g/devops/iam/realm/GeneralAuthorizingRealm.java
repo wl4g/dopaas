@@ -63,7 +63,7 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 
 	/**
 	 * Authenticates a user and retrieves its information.
-	 * 
+	 *
 	 * @param token
 	 *            the authentication token
 	 * @throws AuthenticationException
@@ -93,7 +93,7 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	/**
 	 * Retrieves the AuthorizationInfo for the given principals (the CAS
 	 * previously authenticated user : id + attributes).
-	 * 
+	 *
 	 * @param principals
 	 *            the primary identifying principals of the AuthorizationInfo
 	 *            that should be retrieved.

@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.common.aop;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import static java.lang.reflect.Modifier.*;
 
 import javax.servlet.ServletRequest;
@@ -34,9 +35,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.ReflectionUtils.*;
+
 import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.*;
+
 import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
@@ -44,7 +47,7 @@ import com.wl4g.devops.iam.common.config.XssProperties;
 
 /**
  * XSS security resolve aspect intercept handle
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年2月28日
  * @since
@@ -54,10 +57,14 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/** XSS properties configuration */
+	/**
+	 * XSS properties configuration
+	 */
 	final protected XssProperties config;
 
-	/** XSS resolve processor */
+	/**
+	 * XSS resolve processor
+	 */
 	final protected XssSecurityResolver resolver;
 
 	public XssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
@@ -117,7 +124,7 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 
 	/**
 	 * String argument XSS encoding.
-	 * 
+	 *
 	 * @param controller
 	 * @param method
 	 * @param index
@@ -133,7 +140,7 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 
 	/**
 	 * Object argument XSS encoding.
-	 * 
+	 *
 	 * @param controller
 	 * @param method
 	 * @param index
@@ -170,7 +177,7 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 
 	/**
 	 * Processing HttpServlet request(if necessary)
-	 * 
+	 *
 	 * @param argument
 	 * @return
 	 */

@@ -25,9 +25,8 @@ import java.io.Writer;
  * and
  * </p>
  * tags.
- * 
- * @author gt
  *
+ * @author gt
  */
 public class TextNode extends Node implements IHTMLVisitor {
 

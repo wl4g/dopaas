@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.devops.ci.pipeline.job.MvnAssembleTarPipeTransferJob;
-import com.wl4g.devops.ci.pipeline.model.PipelineInfo;
+import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.codec.FileCodec;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
+import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
 
 import java.io.File;
 
@@ -34,18 +34,20 @@ import java.io.File;
  */
 public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
-	public MvnAssembleTarPipelineProvider(PipelineInfo info) {
+	public MvnAssembleTarPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 
 	@Override
 	public void execute() throws Exception {
-		// maven install , include dependency
-		build(pipelineInfo.getTaskHistory(), false);
-		// get git sha
-		setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+		// Maven building and include dependencies.
+		mvnBuild(getContext().getTaskHistory(), false);
+
+		// Setup Vcs source fingerprint.
+		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+
 		// MVN build.
-		doInternalMvnBuild0();
+		doMvnBuildInternal();
 	}
 
 	/**
@@ -53,32 +55,37 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	@Override
 	public void rollback() throws Exception {
-		// Old file
+		// Older file
 		File backupFile = getBackupFile();
 		if (backupFile.exists()) {
-			// from git
+			// Direct using backup file.
 			rollbackBackupFile();
-			setShaGit(getPipelineInfo().getRefTaskHistory().getShaGit());
+			// Setup vcs source fingerprint.
+			setupSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
 		} else {
-			// getDependencyService().rollback(getTaskHistory(),
-			// getRefTaskHistory(), dependency, getBranch(), taskResult, false);
-			build(getPipelineInfo().getTaskHistory(), true);
-			setShaGit(GitUtils.getLatestCommitted(getPipelineInfo().getPath()));
+			// New building and include dependencies.
+			mvnBuild(getContext().getTaskHistory(), true);
+			// Setup vcs source fingerprint.
+			setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
 		}
-		doInternalMvnBuild0();
+
+		// MVN build.
+		doMvnBuildInternal();
 	}
 
 	/**
 	 * Invoke internal MVN build.
 	 */
-	private void doInternalMvnBuild0() throws Exception {
-		// get local sha
-		setShaLocal(FileCodec.getFileMD5(new File(getPipelineInfo().getPath() + getPipelineInfo().getProject().getTarPath())));
+	private void doMvnBuildInternal() throws Exception {
+		// Setup assets file fingerprint.
+		File file = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
+		setupAssetsFingerprint(getMd5Fingerprint(file));
+
 		// backup in local
 		backupLocal();
 
-		// Startup pipeline jobs.
-		doTransferInstances();
+		// Do transfer to remote jobs.
+		doExecuteTransferToRemoteInstances();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -87,16 +94,15 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	}
 
 	private File getBackupFile() {
-		String oldFilePath = config.getWorkspace() + "/" + getPipelineInfo().getTaskHistory().getRefId() + "/"
-				+ subPackname(getPipelineInfo().getProject().getTarPath());
+		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
+				+ subPackname(getContext().getProject().getAssetsPath());
 		return new File(oldFilePath);
 	}
 
 	@Override
-	protected Runnable newTransferJob(AppInstance instance) {
-		Object[] args = { this, getPipelineInfo().getProject(), instance, getPipelineInfo().getTaskHistoryDetails(),
-				getPipelineInfo().getPath(), getPipelineInfo().getProject().getTarPath() };
-		return beanFactory.getBean(MvnAssembleTarPipeTransferJob.class, args);
+	protected Runnable newDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+		return beanFactory.getBean(MvnAssembleTarPipeDeployer.class, args);
 	}
 
 }

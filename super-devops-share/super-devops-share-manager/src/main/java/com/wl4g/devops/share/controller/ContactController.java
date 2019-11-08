@@ -17,7 +17,7 @@ package com.wl4g.devops.share.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
 import com.wl4g.devops.common.web.BaseController;
@@ -51,19 +51,17 @@ public class ContactController extends BaseController {
 	private AlarmContactGroupDao alarmContactGroupDao;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String name, String email, String phone, CustomPage customPage) {
-		log.info("into ContactController.list prarms::" + "name = {} , email = {} , phone = {} , customPage = {} ", name, email,
-				phone, customPage);
+	public RespBase<?> list(String name, String email, String phone, PageModel pm) {
+		log.info("into ContactController.list prarms::" + "name = {} , email = {} , phone = {} , pm = {} ", name, email, phone,
+				pm);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<AlarmContact> list = alarmContactDao.list(name, email, phone);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -84,7 +82,7 @@ public class ContactController extends BaseController {
 		log.info("into ContactController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmContact contact = contactService.detail(id);
-		resp.getData().put("contact", contact);
+		resp.buildMap().put("contact", contact);
 		return resp;
 	}
 
@@ -92,7 +90,7 @@ public class ContactController extends BaseController {
 	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
 		List<AlarmContactGroup> alarmContactGroups = alarmContactGroupDao.list(null);
-		resp.getData().put("list", alarmContactGroups);
+		resp.buildMap().put("list", alarmContactGroups);
 		return resp;
 	}
 

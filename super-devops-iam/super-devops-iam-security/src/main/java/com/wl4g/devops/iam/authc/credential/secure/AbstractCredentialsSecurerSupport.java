@@ -48,11 +48,10 @@ import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 
 /**
  * Abstract credentials securer adapter
- * 
- * @see {@link org.apache.shiro.crypto.hash.DefaultHashService}
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年3月11日
+ * @see {@link org.apache.shiro.crypto.hash.DefaultHashService}
  * @since
  */
 abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements IamCredentialsSecurer {
@@ -169,7 +168,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * extra bytes to use as the total salt during hash computation.
 	 * {@code privateSaltBytes} will be {@code null} }if no private salt has
 	 * been configured.
-	 * 
+	 *
 	 * @param privateSalt
 	 *            the (possibly {@code null}) 'private' salt to combine with the
 	 *            specified extra bytes
@@ -183,7 +182,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 	/**
 	 * Get public salt
-	 * 
+	 *
 	 * @param principal
 	 * @return
 	 */
@@ -191,7 +190,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 	/**
 	 * Execute hashing
-	 * 
+	 *
 	 * @param token
 	 *            Resolved parameter token
 	 * @param hasher
@@ -217,7 +216,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 	/**
 	 * Corresponding to the front end, RSA1 encryption is used by default.
-	 * 
+	 *
 	 * @param token
 	 * @return
 	 */
@@ -245,7 +244,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 	/**
 	 * Determine asymmetric algorithms keyPair
-	 * 
+	 *
 	 * @param checkCode
 	 * @return
 	 */
@@ -264,7 +263,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 	/**
 	 * Hasher
-	 * 
+	 *
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月21日
 	 * @since

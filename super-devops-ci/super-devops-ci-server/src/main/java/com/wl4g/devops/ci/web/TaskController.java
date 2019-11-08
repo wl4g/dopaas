@@ -17,11 +17,11 @@ package com.wl4g.devops.ci.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -47,7 +47,7 @@ import java.util.List;
 public class TaskController extends BaseController {
 
 	@Autowired
-	private Pipeline pipelineCoreProcessor;
+	private PipelineManager pipeliner;
 
 	@Autowired
 	private TaskDao taskDao;
@@ -69,16 +69,15 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, Integer id, String taskName, String groupName, String branchName,
-			Integer tarType, String startDate, String endDate) {
+	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, Integer tarType,
+			String startDate, String endDate) {
 		log.info(
 				"into TaskController.list prarms::"
 						+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
-				customPage, id, taskName, groupName, branchName, tarType, startDate, endDate);
+				pm, id, taskName, groupName, branchName, tarType, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Task> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Task> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
@@ -86,11 +85,10 @@ public class TaskController extends BaseController {
 		}
 
 		List<Task> list = taskDao.list(id, taskName, groupName, branchName, tarType, startDate, endDateStr);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -163,7 +161,7 @@ public class TaskController extends BaseController {
 		Assert.notNull(appClusterId, "appClusterId can not be null");
 		RespBase<Object> resp = RespBase.create();
 		List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
-		resp.getData().put("tasks", tasks);
+		resp.buildMap().put("tasks", tasks);
 		return resp;
 	}
 
@@ -173,23 +171,20 @@ public class TaskController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	public RespBase<?> create(Integer taskId) {
+	public RespBase<?> create(Integer taskId,Integer trackId,Integer trackType,String remark) {
 		RespBase<Object> resp = RespBase.create();
-		pipelineCoreProcessor.startup(taskId);
+		pipeliner.newPipeline(taskId,trackId,trackType,remark);
 		return resp;
 	}
 
 	@RequestMapping(value = "/getDependencys")
 	public RespBase<?> getDependencys(Integer appClusterId) {
-		Assert.notNull(appClusterId,"appClusterId is null");
+		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();
 		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
-		resp.getData().put("list",taskBuildCommands);
+		resp.buildMap().put("list", taskBuildCommands);
 		return resp;
 
 	}
-
-
-
 
 }

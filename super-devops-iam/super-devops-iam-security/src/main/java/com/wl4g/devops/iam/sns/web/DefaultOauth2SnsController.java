@@ -55,7 +55,7 @@ import javax.validation.constraints.NotBlank;
 
 /**
  * Default oauth2 social networking services controller
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月2日
@@ -73,7 +73,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 
 	/**
 	 * Connection social networking
-	 * 
+	 *
 	 * @param provider
 	 *            social platform name
 	 * @param which
@@ -130,7 +130,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 
 	/**
 	 * Unified callback address for social service providers
-	 * 
+	 *
 	 * @param provider
 	 * @param state
 	 */
@@ -176,9 +176,9 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 
 	/**
 	 * Intermediate pages handled by agents after SNS callback
-	 * 
+	 * <p>
 	 * {@link com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController#callback()}
-	 * 
+	 *
 	 * @param response
 	 * @param refreshUrl
 	 *            Actual after callback refresh URL

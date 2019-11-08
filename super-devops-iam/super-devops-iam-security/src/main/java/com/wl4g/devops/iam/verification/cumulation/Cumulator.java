@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Verification limiter accumulator
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月19日
  * @since
@@ -32,7 +32,7 @@ public interface Cumulator {
 	/**
 	 * Number of cumulative processing (e.g. to limit the number of login
 	 * failures or the number of short messages sent by same source IP requests)
-	 * 
+	 *
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -47,7 +47,7 @@ public interface Cumulator {
 
 	/**
 	 * Get the cumulative number of failures for the specified condition
-	 * 
+	 *
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -60,7 +60,7 @@ public interface Cumulator {
 
 	/**
 	 * Gets the cumulative number of failures for the specified condition
-	 * 
+	 *
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)
@@ -73,7 +73,7 @@ public interface Cumulator {
 
 	/**
 	 * Cancel verification code
-	 * 
+	 *
 	 * @param factors
 	 *            Safety limiting factor(e.g. Client remote IP and login
 	 *            user-name)

@@ -29,7 +29,7 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
 /**
  * IAM abstract basic authenticator internal controller
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月22日
  * @since

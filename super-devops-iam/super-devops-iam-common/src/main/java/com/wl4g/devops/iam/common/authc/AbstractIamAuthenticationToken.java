@@ -20,7 +20,7 @@ import static org.springframework.util.Assert.hasText;
 
 /**
  * Abstract IAM authentication token
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日

@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.CustomPage;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -46,18 +46,15 @@ public class MetricTemplateController extends BaseController {
 	private MetricTemplateService metricTemplateService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String metric, String classify, CustomPage customPage) {
+	public RespBase<?> list(String metric, String classify, PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<CustomPage> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<MetricTemplate> list = metricTemplateDao.list(metric, classify);
 
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -76,7 +73,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		MetricTemplate metricTemplate = metricTemplateDao.selectByPrimaryKey(id);
-		resp.getData().put("metricTemplate", metricTemplate);
+		resp.buildMap().put("metricTemplate", metricTemplate);
 		return resp;
 	}
 
@@ -92,7 +89,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> getByClassify(String classify) {
 		RespBase<Object> resp = RespBase.create();
 		List<MetricTemplate> metricTemplate = metricTemplateService.getByClassify(classify);
-		resp.getData().put("list", metricTemplate);
+		resp.buildMap().put("list", metricTemplate);
 		return resp;
 	}
 

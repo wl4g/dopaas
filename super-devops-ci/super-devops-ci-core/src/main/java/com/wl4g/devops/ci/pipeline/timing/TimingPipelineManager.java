@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.pipeline.timing;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
@@ -59,7 +59,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 	@Autowired
 	protected CiCdProperties config;
 	@Autowired
-	protected Pipeline pipeline;
+	protected PipelineManager pipeline;
 	@Autowired
 	protected BeanFactory beanFactory;
 

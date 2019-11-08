@@ -18,8 +18,8 @@ package com.wl4g.devops.scm.controller;
 import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.bean.scm.VersionContentBean;
 import com.wl4g.devops.common.bean.scm.VersionOfDetail;
 import com.wl4g.devops.common.web.BaseController;
@@ -81,21 +81,19 @@ public class ConfigurationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "config-list.json", method = RequestMethod.POST)
-	public RespBase<?> list(ConfigVersionList agl, CustomPage customPage) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
-			log.info("ConfigList request ... {}, {}", agl, customPage);
+			log.info("ConfigList request ... {}, {}", agl, pm);
 		}
 		RespBase<Object> resp = new RespBase<>();
 		try {
-			Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-			Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-			Page<ConfigVersionList> page = PageHelper.startPage(pageNum, pageSize, true);
+
+			Page<ConfigVersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 			List<ConfigVersionList> list = configService.list(agl);
-			customPage.setPageNum(pageNum);
-			customPage.setPageSize(pageSize);
-			customPage.setTotal(page.getTotal());
-			resp.getData().put("page", customPage);
-			resp.getData().put("list", list);
+
+			pm.setTotal(page.getTotal());
+			resp.buildMap().put("page", pm);
+			resp.buildMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -119,7 +117,7 @@ public class ConfigurationController extends BaseController {
 		try {
 			List<VersionContentBean> configs = configService.selectVersion(id);
 			if (null != configs) {
-				resp.getData().put("configVersions", configs);
+				resp.buildMap().put("configVersions", configs);
 			}
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

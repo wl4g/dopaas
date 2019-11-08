@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
+
 import com.wl4g.devops.common.kit.access.IPAccessControl;
 import com.wl4g.devops.iam.authc.credential.GeneralCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
@@ -513,7 +514,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	 * {@link com.wl4g.devops.iam.captcha.verification.GifSecurityVerifier}.
 	 * {@link com.wl4g.devops.iam.captcha.verification.KaptchaSecurityVerifier}.
 	 * {@link com.wl4g.devops.iam.captcha.verification.JigsawSecurityVerifier}.
-	 * 
+	 *
 	 * @return
 	 */
 	@Bean

@@ -69,7 +69,7 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 -->
 
-        <table tableName="sys_group" domainObjectName="Group"
+        <table tableName="app_cluster_config" domainObjectName="ClusterConfig"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
 

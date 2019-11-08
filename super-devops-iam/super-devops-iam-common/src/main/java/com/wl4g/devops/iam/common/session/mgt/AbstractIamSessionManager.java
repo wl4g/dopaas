@@ -27,6 +27,7 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -60,7 +61,7 @@ import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 
 /**
  * Abstract custom WEB session management
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月29日
@@ -365,7 +366,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * safeCheckText(" ") == false<br/>
 	 * safeCheckText("12345") == true<br/>
 	 * safeCheckText(" 12345 ") == true<br/>
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -375,7 +376,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 	/**
 	 * Storage session token(cookie)
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param sessionId

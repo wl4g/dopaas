@@ -32,7 +32,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
 /**
  * IAM abstract properties.
- * 
+ *
  * @author Wangl.sir
  * @version v1.0.0 2018-09-22
  * @since
@@ -86,21 +86,21 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * e.g. </br>
 	 * In IAM-Client: {iam-server-uri}/authenticator </br>
 	 * In IAM-Server: {iam-server-uri}/view/login.html
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract String getLoginUri();
 
 	/**
 	 * Success URI.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract String getSuccessUri();
 
 	/**
 	 * Unauthorized(403) URI.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract String getUnauthorizedUri();
@@ -139,7 +139,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	/**
 	 * IAM parameters configuration properties.
-	 * 
+	 *
 	 * @param param
 	 */
 	public abstract P getParam();
@@ -170,7 +170,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	/**
 	 * Session cache configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0
 	 * @date 2018年11月29日
@@ -200,7 +200,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	/**
 	 * Cookie configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0
 	 * @date 2018年11月29日
@@ -229,7 +229,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	/**
 	 * Session configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0
 	 * @date 2018年11月29日
@@ -299,7 +299,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	/**
 	 * IAM parameters configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0
 	 * @date 2018年11月29日
@@ -501,7 +501,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * When a which request connects to a social network (requesting oauth2
 	 * authorization), the type of destination operation (e.g. login,
 	 * registration binding)
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0
 	 * @date 2019年1月7日
@@ -542,7 +542,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		/**
 		 * Converter string to {@link Which}
-		 * 
+		 *
 		 * @param which
 		 * @return
 		 */
@@ -556,7 +556,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		/**
 		 * Safe converter string to {@link Which}
-		 * 
+		 *
 		 * @param which
 		 * @return
 		 */

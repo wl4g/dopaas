@@ -19,8 +19,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.utils.task.CronUtils;
 import com.wl4g.devops.common.web.BaseController;
@@ -55,7 +55,7 @@ public class TriggerController extends BaseController {
 	private TriggerService triggerService;
 
 	@Autowired
-	private TimingPipelineManager pipelineManager;
+	private TimingPipelineManager timingManager;
 
 	/**
 	 * Page List
@@ -70,16 +70,15 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(CustomPage customPage, Integer id, String name, Integer taskId, Integer enable, String startDate,
+	public RespBase<?> list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate,
 			String endDate) {
 		log.info(
 				"into TriggerController.list prarms::"
 						+ "customPage = {} , id = {} , name = {} , taskId = {} , enable = {} , startDate = {} , endDate = {} ",
-				customPage, id, name, taskId, enable, startDate, endDate);
+				pm, id, name, taskId, enable, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Trigger> page = PageHelper.startPage(pageNum, pageSize, true);
+
+		Page<Trigger> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
@@ -87,12 +86,10 @@ public class TriggerController extends BaseController {
 		}
 
 		List<Trigger> list = triggerDao.list(id, name, taskId, enable, startDate, endDateStr);
-		customPage.setPageNum(pageNum);
 
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -143,7 +140,7 @@ public class TriggerController extends BaseController {
 	 */
 	private void restart(Integer triggerId) {
 		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-		pipelineManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
+		timingManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 	}
 
 	/**
@@ -160,8 +157,8 @@ public class TriggerController extends BaseController {
 		Trigger trigger = triggerDao.selectByPrimaryKey(id);
 		Assert.notNull(trigger, "not found trigger");
 
-		resp.getData().put("trigger", trigger);
-		resp.getData().put("appClusterId", trigger.getAppClusterId());
+		resp.buildMap().put("trigger", trigger);
+		resp.buildMap().put("appClusterId", trigger.getAppClusterId());
 
 		return resp;
 	}
@@ -178,7 +175,7 @@ public class TriggerController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		triggerService.delete(id);
-		pipelineManager.stopPipeline(id.toString());
+		timingManager.stopPipeline(id.toString());
 		return resp;
 	}
 
@@ -193,7 +190,7 @@ public class TriggerController extends BaseController {
 		log.debug("into TriggerController.checkCronExpression prarms::" + "expression = {} ", expression);
 		RespBase<Object> resp = RespBase.create();
 		boolean isValid = CronUtils.isValidExpression(expression);
-		resp.getData().put("validExpression", isValid);
+		resp.buildMap().put("validExpression", isValid);
 		return resp;
 	}
 
@@ -212,15 +209,15 @@ public class TriggerController extends BaseController {
 			numTimes = 5;
 		}
 		boolean isValid = CronUtils.isValidExpression(expression);
-		resp.getData().put("validExpression", isValid);
+		resp.buildMap().put("validExpression", isValid);
 		if (!isValid) {
 			return resp;
 		}
 		try {
 			List<String> nextExecTime = CronUtils.getNextExecTime(expression, numTimes);
-			resp.getData().put("nextExecTime", StringUtils.join(nextExecTime, "\n"));
+			resp.buildMap().put("nextExecTime", StringUtils.join(nextExecTime, "\n"));
 		} catch (Exception e) {
-			resp.getData().put("validExpression", false);
+			resp.buildMap().put("validExpression", false);
 			return resp;
 		}
 		return resp;

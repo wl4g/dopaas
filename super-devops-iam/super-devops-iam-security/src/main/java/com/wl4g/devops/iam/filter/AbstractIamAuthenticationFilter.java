@@ -86,13 +86,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Multiple channel login authentication submitted processing based filter
- * 
+ * <p>
  * {@link org.apache.shiro.web.filter.mgt.DefaultFilterChainManager#proxy()}
  * {@link org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver#pathMatches()}
  * {@link org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver#getChain()}
  * {@link org.apache.shiro.web.servlet.AbstractShiroFilter#getExecutionChain()}
  * {@link org.apache.shiro.web.servlet.AbstractShiroFilter#executeChain()}
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月27日
@@ -248,7 +248,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 					RespBase<String> loggedResp = makeLoggedResponse(request, grantTicket, redirect.getRedirectUrl(), params);
 
 					// Handle success processing.
-					coprocessor.postAuthenticatingSuccess(tk, subject, request, response, loggedResp.getData());
+					coprocessor.postAuthenticatingSuccess(tk, subject, request, response, loggedResp.asMap());
 
 					String logged = toJSONString(loggedResp);
 					if (log.isInfoEnabled()) {
@@ -351,7 +351,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	/**
 	 * Determine is the JSON interactive strategy, or get it from
 	 * session(flexible API).
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -369,7 +369,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * {@link AuthenticatorAuthenticationFilter#rememberProtocolParameters(ServletRequest, ServletResponse)}
 	 * </br>
 	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
-	 * 
+	 *
 	 * @param request
 	 * @param bindOnly
 	 *            Whether to get only the redirection information of the binding
@@ -394,7 +394,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * source application, etc.</br>
 	 * E.G.:</br>
 	 * </br>
-	 * 
+	 *
 	 * <b>Req1：</b>http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
 	 * <b>Resp1：</b>login.html</br>
 	 * </br>
@@ -405,10 +405,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * </br>
 	 * <b>Req3：</b>http://localhost:14040/iam-server/view/login.html</br>
 	 * </br>
-	 * 
+	 * <p>
 	 * No parameters for the second request for login.html ??? This is the
 	 * problem to be solved by this method.
-	 * 
+	 *
 	 * @param redirect
 	 * @param request
 	 * @param response
@@ -433,15 +433,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	/**
 	 * The redirection URI of the secure encoding loop is mainly used to prevent
 	 * the loss of fragments such as for example "/#/index".
-	 * 
+	 *
 	 * </br>
 	 * e.g.
-	 * 
+	 *
 	 * <pre>
 	 * http://mydomain.com/iam-example/authenticator?redirect_url=http://mydomain.com/#/index
 	 * => http://mydomain.com/iam-example/authenticator?redirect_url=http%3A%2F%2Fmydomain.com%2F%23%2Findex
 	 * </pre>
-	 * 
+	 *
 	 * @param redirectUrl
 	 * @return
 	 */
@@ -465,7 +465,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 	/**
 	 * Cleaning-up.(e.g.Save request parameters)
-	 * 
+	 *
 	 * @param token
 	 * @param subject
 	 * @param request
@@ -485,7 +485,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 	/**
 	 * Make logged-in response message.
-	 * 
+	 *
 	 * @param request
 	 *            Servlet request
 	 * @param fromAppName
@@ -521,14 +521,14 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
 		resp.setCode(OK).setMessage("Authentication successful");
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
-		resp.getData().putAll(params);
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
+		resp.buildMap().putAll(params);
+		resp.buildMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return resp;
 	}
 
 	/**
 	 * Make login failed response message.
-	 * 
+	 *
 	 * @param failRedirectUrl
 	 *            failure redirect URL
 	 * @param request
@@ -545,16 +545,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
 		resp.setCode(UNAUTHC).setMessage(errmsg);
-		resp.getData().putAll(params);
-		resp.getData().put(config.getParam().getRedirectUrl(), failRedirectUrl);
-		resp.getData().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
+		resp.buildMap().putAll(params);
+		resp.buildMap().put(config.getParam().getRedirectUrl(), failRedirectUrl);
+		resp.buildMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return toJSONString(resp);
 	}
 
 	/**
 	 * Determine the URL of the login success redirection, default: successURL,
 	 * can support customization.
-	 * 
+	 *
 	 * @param token
 	 * @param subject
 	 * @param request
@@ -573,7 +573,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	/**
 	 * Determine the URL of the login failure redirection, default: loginURL,
 	 * can support customization.
-	 * 
+	 *
 	 * @param token
 	 * @param ae
 	 * @param request

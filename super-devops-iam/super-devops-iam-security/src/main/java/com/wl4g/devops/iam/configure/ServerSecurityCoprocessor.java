@@ -28,7 +28,7 @@ import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 
 /**
  * IAM server security coprocessor
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月5日
  * @since
@@ -38,7 +38,7 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
 	/**
 	 * Before apply CAPTCHA handle
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @return
@@ -49,7 +49,7 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
 	/**
 	 * Before apply verify-code handle
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @return
@@ -60,7 +60,7 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
 	/**
 	 * Before Whether the generic authenticating check match is allowed.
-	 * 
+	 *
 	 * @param token
 	 * @param info
 	 * @return
@@ -73,7 +73,7 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 	 * When the authentication succeeds, but there is no access to the Iam
 	 * client application, this method will be called fallback to get the
 	 * redirection URL
-	 * 
+	 *
 	 * @param token
 	 *            Authentication token.
 	 * @param defaultRedirect

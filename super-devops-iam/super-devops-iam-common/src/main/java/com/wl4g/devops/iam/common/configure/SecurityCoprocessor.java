@@ -31,7 +31,7 @@ import javax.servlet.ServletResponse;
 
 /**
  * IAM security coprocessor
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月5日
  * @since
@@ -41,7 +41,7 @@ public interface SecurityCoprocessor {
 
 	/**
 	 * Before get session ID.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @return Returning to a non-empty SID will be preferred.
@@ -54,7 +54,7 @@ public interface SecurityCoprocessor {
 	 * Call pre authentication, For example, the implementation of restricting
 	 * client IP white-list to prevent violent cracking of large number of
 	 * submission login requests.
-	 * 
+	 *
 	 * @param filter
 	 * @param request
 	 * @param response
@@ -66,7 +66,7 @@ public interface SecurityCoprocessor {
 
 	/**
 	 * Call post of authenticating success
-	 * 
+	 *
 	 * @param token
 	 * @param subject
 	 * @param request
@@ -74,12 +74,12 @@ public interface SecurityCoprocessor {
 	 * @param respParams
 	 */
 	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, Map<String, String> respParams) throws AfterAuthenticatSuccessException {
+			ServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
 	}
 
 	/**
 	 * Call post authenticating failure
-	 * 
+	 *
 	 * @param token
 	 * @param ae
 	 * @param request
@@ -91,7 +91,7 @@ public interface SecurityCoprocessor {
 
 	/**
 	 * Call before logout
-	 * 
+	 *
 	 * @param forced
 	 * @param request
 	 * @param response

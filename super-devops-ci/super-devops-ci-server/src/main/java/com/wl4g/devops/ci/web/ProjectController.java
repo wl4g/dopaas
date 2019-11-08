@@ -18,9 +18,9 @@ package com.wl4g.devops.ci.web;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.ci.vcs.git.GitlabV4VcsOperator;
+import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.scm.CustomPage;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -48,13 +48,13 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATU
 public class ProjectController extends BaseController {
 
 	@Autowired
+	private CompositeVcsOperateAdapter vcsAdapter;
+
+	@Autowired
 	private ProjectService projectService;
 
 	@Autowired
 	private ProjectDao projectDao;
-
-	@Autowired
-	private GitlabV4VcsOperator gitlabTemplate;
 
 	/**
 	 * list
@@ -65,19 +65,16 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName, String projectName, CustomPage customPage) {
-		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , customPage = {} ", groupName,
-				projectName, customPage);
+	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
+		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , pm = {} ", groupName, projectName,
+				pm);
+
 		RespBase<Object> resp = RespBase.create();
-		Integer pageNum = null != customPage.getPageNum() ? customPage.getPageNum() : 1;
-		Integer pageSize = null != customPage.getPageSize() ? customPage.getPageSize() : 10;
-		Page<Project> page = PageHelper.startPage(pageNum, pageSize, true);
+		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<Project> list = projectService.list(groupName, projectName);
-		customPage.setPageNum(pageNum);
-		customPage.setPageSize(pageSize);
-		customPage.setTotal(page.getTotal());
-		resp.getData().put("page", customPage);
-		resp.getData().put("list", list);
+		pm.setTotal(page.getTotal());
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -116,7 +113,7 @@ public class ProjectController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		Project project = projectService.selectByPrimaryKey(id);
-		resp.getData().put("project", project);
+		resp.buildMap().put("project", project);
 		return resp;
 	}
 
@@ -144,7 +141,7 @@ public class ProjectController extends BaseController {
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
 		List<Project> list = projectService.list(null, null);
-		resp.getData().put("list", list);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -186,17 +183,17 @@ public class ProjectController extends BaseController {
 
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
-		Integer gitlabProjectId = gitlabTemplate.findRemoteProjectId(projectName);
+		Integer gitlabProjectId = vcsAdapter.forDefault().findRemoteProjectId(projectName);
 		Assert.notNull(gitlabProjectId, String.format("No found projectId of name: %s", projectName));
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			List<String> branchNames = gitlabTemplate.getRemoteTags(gitlabProjectId);
-			resp.getData().put("branchNames", branchNames);
+			List<String> branchNames = vcsAdapter.forDefault().getRemoteTags(gitlabProjectId);
+			resp.buildMap().put("branchNames", branchNames);
 		}
 		// Branch
 		else {
-			List<String> branchNames = gitlabTemplate.getRemoteBranchNames(gitlabProjectId);
-			resp.getData().put("branchNames", branchNames);
+			List<String> branchNames = vcsAdapter.forDefault().getRemoteBranchNames(gitlabProjectId);
+			resp.buildMap().put("branchNames", branchNames);
 		}
 		return resp;
 	}

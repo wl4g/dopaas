@@ -32,23 +32,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	//
 
 	/**
-	 * Get server validation response ticket assert key(Abbreviation:
-	 * ticket-assert).
-	 */
-	final public static String KEY_TICKET_ASSERT = "ticketAssert";
-	/**
-	 * Get server validation response secondary authentication assert key.
-	 */
-	final public static String KEY_SECOND_AUTH_ASSERT = "secondAuthAssert";
-	/**
-	 * Get server validation response sessions expire assert key.
-	 */
-	final public static String KEY_SESSION_VALID_ASSERT = "sessionValidAssert";
-	/**
-	 * Fast-Cas remote logout result information.
-	 */
-	final public static String KEY_LOGOUT_INFO = "logoutInfo";
-	/**
 	 * Of the fast-CAS attribute for remember me authentication (CAS 3.4.10+)
 	 */
 	final public static String KEY_REMEMBERME_NAME = "longTermAuthenticationRequestTokenUsed";

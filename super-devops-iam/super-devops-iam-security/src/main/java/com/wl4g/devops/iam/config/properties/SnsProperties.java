@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Social networking services configuration
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年1月8日
  * @since
@@ -74,7 +74,7 @@ public class SnsProperties {
 
 	/**
 	 * Abstract socical networking services platform configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年2月17日
 	 * @since
@@ -112,7 +112,7 @@ public class SnsProperties {
 
 	/**
 	 * QQ open platform configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年2月17日
 	 * @since
@@ -123,7 +123,7 @@ public class SnsProperties {
 
 	/**
 	 * Wechat open platform configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年2月17日
 	 * @since
@@ -154,7 +154,7 @@ public class SnsProperties {
 
 	/**
 	 * Wechat public platform configuration properties
-	 * 
+	 *
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年2月17日
 	 * @since

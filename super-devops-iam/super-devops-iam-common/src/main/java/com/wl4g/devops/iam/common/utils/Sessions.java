@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 
 /**
  * SHIRO session utility
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年3月13日
  * @since
@@ -33,7 +33,7 @@ public abstract class Sessions {
 
 	/**
 	 * Getting current session
-	 * 
+	 *
 	 * @param create
 	 * @return
 	 */
@@ -43,7 +43,7 @@ public abstract class Sessions {
 
 	/**
 	 * Getting current session
-	 * 
+	 *
 	 * @param create
 	 * @return
 	 */
@@ -53,7 +53,7 @@ public abstract class Sessions {
 
 	/**
 	 * Getting session-id
-	 * 
+	 *
 	 * @return
 	 */
 	public static Serializable getSessionId() {
@@ -62,7 +62,7 @@ public abstract class Sessions {
 
 	/**
 	 * Getting session-id
-	 * 
+	 *
 	 * @param subject
 	 * @return
 	 */
@@ -73,7 +73,7 @@ public abstract class Sessions {
 
 	/**
 	 * Getting session-id
-	 * 
+	 *
 	 * @param session
 	 * @return
 	 */
@@ -83,7 +83,7 @@ public abstract class Sessions {
 
 	/**
 	 * Get session expire time
-	 * 
+	 *
 	 * @param session
 	 *            Shiro session
 	 * @return Current remaining expired milliseconds of the session
@@ -94,7 +94,7 @@ public abstract class Sessions {
 
 	/**
 	 * Get session expire time
-	 * 
+	 *
 	 * @param session
 	 *            Shiro session
 	 * @return Current remaining expired milliseconds of the session

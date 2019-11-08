@@ -56,7 +56,7 @@ public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAu
 
 	/**
 	 * Authenticates a user and retrieves its information.
-	 * 
+	 *
 	 * @param token
 	 *            the authentication token
 	 * @throws AuthenticationException
@@ -70,7 +70,7 @@ public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAu
 	/**
 	 * Retrieves the AuthorizationInfo for the given principals (the CAS
 	 * previously authenticated user : id + attributes).
-	 * 
+	 *
 	 * @param principals
 	 *            the primary identifying principals of the AuthorizationInfo
 	 *            that should be retrieved.

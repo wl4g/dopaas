@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * SMS verify check model.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-24
  * @since

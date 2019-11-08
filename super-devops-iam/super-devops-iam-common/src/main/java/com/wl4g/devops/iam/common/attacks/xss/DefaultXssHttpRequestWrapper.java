@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.common.attacks.xss.html.XSSFilter;
 
 /**
  * Default XSS HttpServlet request wrapper
- * 
+ *
  * @author wangl.sir
  * @version v1.0 2019年4月26日
  * @since

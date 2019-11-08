@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 import com.wl4g.devops.iam.config.DefaultViewAutoConfiguration;
-import com.wl4g.devops.iam.config.GenericApiV1AutoConfiguration;
+import com.wl4g.devops.iam.config.IamServerApiV1AutoConfiguration;
 import com.wl4g.devops.iam.config.LoginAutoConfiguration;
 import com.wl4g.devops.iam.config.IamAutoConfiguration;
 import com.wl4g.devops.iam.config.BasedConfigAutoConfiguration;
@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
 
 /**
  * Controls whether IAM servers are enabled
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月27日
@@ -45,7 +45,7 @@ import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
 @Documented
 @Import({ BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
 		VerifyAutoConfiguration.class, SnsAutoConfiguration.class, DefaultViewAutoConfiguration.class,
-		GenericApiV1AutoConfiguration.class })
+		IamServerApiV1AutoConfiguration.class })
 public @interface EnableIamServer {
 
 }

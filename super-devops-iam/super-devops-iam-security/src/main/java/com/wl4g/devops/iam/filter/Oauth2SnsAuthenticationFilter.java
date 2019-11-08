@@ -36,11 +36,11 @@ import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBA
 
 /**
  * SNS oauth2 authentication abstract filter
- * 
+ *
+ * @param <T>
  * @author wangl.sir
  * @version v1.0 2019年1月8日
  * @since
- * @param <T>
  */
 public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthenticationToken>
 		extends AbstractIamAuthenticationFilter<T> implements InitializingBean {
@@ -87,7 +87,7 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 
 	/**
 	 * Initialize the constructor for obtaining authentication tokens
-	 * 
+	 *
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
 	 */
@@ -101,7 +101,7 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 
 	/**
 	 * Whether social networking authentication provider enabled
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean enabled() {

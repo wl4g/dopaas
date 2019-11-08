@@ -22,10 +22,10 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 
 /**
  * Abstract SNS Oauth2 authentication token<br/>
- * 
+ *
  * <font color=red>Note: Social network login does not require login
  * account(principal)</font>
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月19日

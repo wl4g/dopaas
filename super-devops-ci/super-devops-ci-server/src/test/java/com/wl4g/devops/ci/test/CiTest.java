@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.test;
 
 import com.wl4g.devops.CiServer;
-import com.wl4g.devops.ci.core.Pipeline;
+import com.wl4g.devops.ci.core.PipelineManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +32,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CiTest {
 
 	@Autowired
-	private Pipeline pipelineProcessor;
+	private PipelineManager pipeManager;
 
 	@Test
 	public void createTask() {
-		pipelineProcessor.startup(152);
+		pipeManager.newPipeline(152, null, null, null);
 	}
 
 }

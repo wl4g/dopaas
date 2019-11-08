@@ -49,7 +49,7 @@ import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 
 /**
  * Secondary authentication SNS handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年2月24日
  * @since
@@ -197,9 +197,8 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 	}
 
 	/**
-	 * 
 	 * Generate second authentication code
-	 * 
+	 *
 	 * @param application
 	 * @return
 	 */

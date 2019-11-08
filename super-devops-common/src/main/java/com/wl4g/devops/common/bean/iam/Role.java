@@ -2,16 +2,27 @@ package com.wl4g.devops.common.bean.iam;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
+import java.util.List;
+import java.util.Objects;
+
 public class Role extends BaseBean {
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;;
+	private Integer id;
+
+	private String name;
 
 	private String displayName;
 
 	private Integer type;
 
 	private Integer status;
+
+	private String groupDisplayName;
+
+	private List<Integer> menuIds;
+
+	private List<Integer> groupIds;
 
 	public String getName() {
 		return name;
@@ -45,4 +56,52 @@ public class Role extends BaseBean {
 		this.status = status;
 	}
 
+	public List<Integer> getMenuIds() {
+		return menuIds;
+	}
+
+	public void setMenuIds(List<Integer> menuIds) {
+		this.menuIds = menuIds;
+	}
+
+	public String getGroupDisplayName() {
+		return groupDisplayName;
+	}
+
+	public void setGroupDisplayName(String groupDisplayName) {
+		this.groupDisplayName = groupDisplayName;
+	}
+
+	public List<Integer> getGroupIds() {
+		return groupIds;
+	}
+
+	public void setGroupIds(List<Integer> groupIds) {
+		this.groupIds = groupIds;
+	}
+
+	@Override
+	public Integer getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Role role = (Role) o;
+		return Objects.equals(id, role.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

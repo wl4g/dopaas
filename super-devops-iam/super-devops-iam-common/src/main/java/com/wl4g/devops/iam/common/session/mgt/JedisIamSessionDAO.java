@@ -34,12 +34,13 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
 
 import redis.clients.jedis.ScanParams;
 
 /**
  * Redis shiro session DAO.
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年11月28日
@@ -83,7 +84,7 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 		/**
 		 * Update session latest expiration time to timeout time
 		 */
-		this.cacheManager.getEnhancedCache(CACHE_SESSION).put(new EnhancedKey(session.getId(), session.getTimeout()), session);
+		cacheManager.getEnhancedCache(CACHE_SESSION).put(new EnhancedKey(session.getId(), session.getTimeout()), session);
 	}
 
 	@Override
@@ -95,31 +96,36 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 		if (log.isDebugEnabled()) {
 			log.debug("delete {} ", session.getId());
 		}
-		this.cacheManager.getEnhancedCache(CACHE_SESSION).remove(new EnhancedKey(session.getId()));
+		cacheManager.getEnhancedCache(CACHE_SESSION).remove(new EnhancedKey(session.getId()));
 	}
 
 	@Override
-	public ScanCursor<IamSession> getActiveSessions(final int batchSize) {
-		return this.getActiveSessions(batchSize, null);
+	public ScanCursor<IamSession> getAccessSessions(final int limit) {
+		return getAccessSessions(new CursorWrapper(), 200);
 	}
 
 	@Override
-	public ScanCursor<IamSession> getActiveSessions(final int batchSize, @Deprecated final Object principal) {
-		isTrue(batchSize > 0, "activeSessions batchSize must >0");
+	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
+		return getAccessSessions(cursor, limit, null);
+	}
+
+	@Override
+	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
+		isTrue(limit > 0, "accessSessions batchSize must >0");
 
 		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
-		ScanParams params = new ScanParams().count(batchSize).match(match);
-		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), params) {
+		ScanParams params = new ScanParams().count(limit).match(match);
+		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), cursor, IamSession.class, params) {
 		}.open();
 	}
 
 	@Override
-	public void removeActiveSession(Object principal) {
+	public void removeAccessSession(Object principal) {
 		if (log.isDebugEnabled()) {
 			log.debug("removeActiveSession principal: {} ", principal);
 		}
 
-		ScanCursor<IamSession> cursor = this.getActiveSessions(200, principal).open();
+		ScanCursor<IamSession> cursor = getAccessSessions(new CursorWrapper(), 200, principal).open();
 		while (cursor.hasNext()) {
 			delete(cursor.next());
 		}
@@ -130,9 +136,9 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 		if (log.isDebugEnabled()) {
 			log.debug("doCreate {}", session.getId());
 		}
-		Serializable sessionId = this.generateSessionId(session);
-		this.assignSessionId(session, sessionId);
-		this.update(session);
+		Serializable sessionId = generateSessionId(session);
+		assignSessionId(session, sessionId);
+		update(session);
 		return sessionId;
 	}
 
@@ -144,7 +150,7 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 		if (log.isDebugEnabled()) {
 			log.debug("doReadSession {}", sessionId);
 		}
-		return (Session) this.cacheManager.getEnhancedCache(CACHE_SESSION).get(new EnhancedKey(sessionId, IamSession.class));
+		return (Session) cacheManager.getEnhancedCache(CACHE_SESSION).get(new EnhancedKey(sessionId, IamSession.class));
 	}
 
 	@Override

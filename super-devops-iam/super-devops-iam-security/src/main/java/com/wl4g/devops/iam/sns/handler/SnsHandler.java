@@ -23,7 +23,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 
 /**
  * Social networking services handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月7日
@@ -33,7 +33,7 @@ public interface SnsHandler {
 
 	/**
 	 * Getting request SNS authorizing URL
-	 * 
+	 *
 	 * @param which
 	 * @param provider
 	 * @param state
@@ -44,7 +44,7 @@ public interface SnsHandler {
 
 	/**
 	 * SNS authorizing callback
-	 * 
+	 *
 	 * @param which
 	 * @param provider
 	 * @param state
@@ -56,7 +56,7 @@ public interface SnsHandler {
 
 	/**
 	 * Handling which(action) type
-	 * 
+	 *
 	 * @return
 	 */
 	Which whichType();

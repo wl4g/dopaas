@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Enhanced modular authentication processor that throws out exception handling
  * information
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月26日
  * @since

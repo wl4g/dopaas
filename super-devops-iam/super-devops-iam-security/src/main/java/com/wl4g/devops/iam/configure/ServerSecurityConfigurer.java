@@ -15,18 +15,18 @@
  */
 package com.wl4g.devops.iam.configure;
 
-import java.util.List;
-
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.iam.common.configure.SecurityConfigurer;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
+
+import java.util.List;
 
 /**
  * IAM server security context handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月21日
@@ -40,7 +40,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Get application information by name
-	 * 
+	 *
 	 * @param appName
 	 *            application name
 	 * @return aplication information
@@ -49,7 +49,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Find application information list by names
-	 * 
+	 *
 	 * @param appNames
 	 *            application names
 	 * @return aplication information
@@ -58,10 +58,9 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Obtain account information based on loginId
-	 * 
+	 *
 	 * @param parameter
 	 *            query parameter
-	 * 
 	 * @return account information
 	 */
 	IamAccountInfo getIamAccount(Parameter parameter);
@@ -75,7 +74,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	 * In fact, it's application-level privilege control.<br/>
 	 * For example, User1 can access App1 and App2, but User2 can only access
 	 * App1
-	 * 
+	 *
 	 * @param principal
 	 *            principal
 	 * @param application
@@ -87,9 +86,9 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Query roles by principal<br/>
-	 * 
+	 * <p>
 	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
-	 * 
+	 *
 	 * @param principal
 	 * @param application
 	 * @return principal roles names
@@ -98,9 +97,9 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Query permissions by principal<br/>
-	 * 
+	 * <p>
 	 * EG: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
-	 * 
+	 *
 	 * @param principal
 	 * @param application
 	 * @return principal permission names
@@ -113,7 +112,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Query social connections list.
-	 * 
+	 *
 	 * @param principal
 	 *            login principal
 	 * @param provider
@@ -124,7 +123,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Save(bind) social connection information
-	 * 
+	 *
 	 * @param social
 	 * @throws BindingConstraintsException
 	 */
@@ -132,7 +131,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 
 	/**
 	 * Delete(UnBind) social connection
-	 * 
+	 *
 	 * @param social
 	 * @throws BindingConstraintsException
 	 */
