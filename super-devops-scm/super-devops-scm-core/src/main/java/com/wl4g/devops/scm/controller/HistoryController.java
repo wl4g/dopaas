@@ -74,8 +74,8 @@ public class HistoryController extends BaseController {
 
 			pm.setTotal(page.getTotal());
 
-			resp.forMap().put("page", pm);
-			resp.forMap().put("list", list);
+			resp.buildMap().put("page", pm);
+			resp.buildMap().put("list", list);
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("获取应用组列表失败", e);
@@ -259,8 +259,8 @@ public class HistoryController extends BaseController {
 			List<ConfigVersionList> list = historyService.list(agl);
 
 			pm.setTotal(page.getTotal());
-			resp.forMap().put("page", pm);
-			resp.forMap().put("list", list);
+			resp.buildMap().put("page", pm);
+			resp.buildMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -304,8 +304,8 @@ public class HistoryController extends BaseController {
 
 			pm.setTotal(page.getTotal());
 
-			resp.forMap().put("page", pm);
-			resp.forMap().put("list", list);
+			resp.buildMap().put("page", pm);
+			resp.buildMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

@@ -42,7 +42,7 @@ public class AppHostController extends BaseController {
 	public RespBase<?> allType() {
 		RespBase<Object> resp = RespBase.create();
 		List<AppHost> list = appHostDao.list(null, null, null);
-		resp.forMap().put("list", list);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 

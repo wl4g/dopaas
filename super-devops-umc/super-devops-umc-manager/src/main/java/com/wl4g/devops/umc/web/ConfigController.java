@@ -55,8 +55,8 @@ public class ConfigController extends BaseController {
 		List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
 
 		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -75,7 +75,7 @@ public class ConfigController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		AlarmConfig alarmConfig = configService.detail(id);
-		resp.forMap().put("alarmConfig", alarmConfig);
+		resp.buildMap().put("alarmConfig", alarmConfig);
 		return resp;
 	}
 

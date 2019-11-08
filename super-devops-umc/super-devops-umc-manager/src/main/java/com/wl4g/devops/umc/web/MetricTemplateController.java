@@ -53,8 +53,8 @@ public class MetricTemplateController extends BaseController {
 		List<MetricTemplate> list = metricTemplateDao.list(metric, classify);
 
 		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.buildMap().put("page", pm);
+		resp.buildMap().put("list", list);
 		return resp;
 	}
 
@@ -73,7 +73,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		MetricTemplate metricTemplate = metricTemplateDao.selectByPrimaryKey(id);
-		resp.forMap().put("metricTemplate", metricTemplate);
+		resp.buildMap().put("metricTemplate", metricTemplate);
 		return resp;
 	}
 
@@ -89,7 +89,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> getByClassify(String classify) {
 		RespBase<Object> resp = RespBase.create();
 		List<MetricTemplate> metricTemplate = metricTemplateService.getByClassify(classify);
-		resp.forMap().put("list", metricTemplate);
+		resp.buildMap().put("list", metricTemplate);
 		return resp;
 	}
 

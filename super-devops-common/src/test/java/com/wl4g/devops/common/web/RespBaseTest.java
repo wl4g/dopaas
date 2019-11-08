@@ -18,6 +18,7 @@ package com.wl4g.devops.common.web;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,8 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
 
 public class RespBaseTest {
 
-	static class TestModel {
+	static class TestModel implements Serializable {
+		private static final long serialVersionUID = 3984698842381556513L;
 		private String name;
 		private List<TestSubModel> subList = new ArrayList<TestSubModel>() {
 			private static final long serialVersionUID = 7144913810891463508L;
@@ -104,25 +106,35 @@ public class RespBaseTest {
 
 	public static void main(String[] args) {
 		// for controller output(map).
-		RespBase<Object> resp11 = new RespBase<>(RetCode.create(4001, "message1"));
-		resp11.getData().put("testModel", new TestModel("jack1"));
+		RespBase<TestModel> resp11 = new RespBase<>(RetCode.create(4001, "message1"));
+		resp11.buildMap().put("testModel11", new TestModel("jack11"));
+		resp11.buildMap().put("testModel12", new TestModel("jack12"));
+		resp11.buildNode("testNode1").put("node1", "n11");
+		System.out.println(">>As Map>>" + resp11.asMap());
 
 		String json11 = toJSONString(resp11);
 		System.out.println(json11);
 		RespBase<TestModel> resp12 = parseJSON(json11, new TypeReference<RespBase<TestModel>>() {
 		});
-		System.out.println(resp12.getData().get("testModel"));
+		// for testing unsupported
+		// TestModel tm1 = (TestModel) resp12.forMap().get("testModel");
+		TestModel tm1 = (TestModel) resp12.getData();
+		System.out.println(tm1);
 		System.out.println("-------------------------");
 
 		// for controller output(model).
-		RespBase<Object> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
-		resp21.setBean(new TestModel("jack2"));
+		RespBase<TestModel> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
+		resp21.setData(new TestModel("jack2"));
+		System.out.println(">>As Map>>" + resp21.asMap());
+		// for testing unsupported
+		// resp21.forNode("testNode2").put("node2", "n22");
 
 		String json21 = toJSONString(resp21);
 		System.out.println(json21);
 		RespBase<TestModel> resp22 = parseJSON(json21, new TypeReference<RespBase<TestModel>>() {
 		});
-		System.out.println(resp22.getData());
+		Object tm2 = resp22.getData();
+		System.out.println(tm2);
 		System.out.println("-------------------------");
 
 	}

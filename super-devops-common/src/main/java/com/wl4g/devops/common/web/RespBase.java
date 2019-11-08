@@ -18,6 +18,7 @@ package com.wl4g.devops.common.web;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.convertBean;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -26,7 +27,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -39,7 +39,6 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
 import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
@@ -60,7 +59,8 @@ public class RespBase<D> implements Serializable {
 	private RetCode code = RetCode.OK;
 	private String status = DEFAULT_STATUS; // [Extensible]
 	private String message = EMPTY;
-	private DataMap<D> data = new DataMap<>(4);
+	@SuppressWarnings("unchecked")
+	private D data = (D) DEFAULT_DATA;
 
 	public RespBase() {
 		this(null);
@@ -70,19 +70,19 @@ public class RespBase<D> implements Serializable {
 		this(retCode, null);
 	}
 
-	public RespBase(DataMap<D> data, String status) {
+	public RespBase(D data, String status) {
 		this(null, data);
 	}
 
-	public RespBase(RetCode retCode, DataMap<D> data) {
+	public RespBase(RetCode retCode, D data) {
 		this(retCode, null, data);
 	}
 
-	public RespBase(RetCode retCode, String message, DataMap<D> data) {
+	public RespBase(RetCode retCode, String message, D data) {
 		this(retCode, null, message, data);
 	}
 
-	public RespBase(RetCode retCode, String status, String message, DataMap<D> data) {
+	public RespBase(RetCode retCode, String status, String message, D data) {
 		setCode(retCode);
 		setStatus(status);
 		setMessage(message);
@@ -155,21 +155,8 @@ public class RespBase<D> implements Serializable {
 	 * 
 	 * @return
 	 */
-	public DataMap<D> getData() {
+	public D getData() {
 		return data;
-	}
-
-	/**
-	 * Setup response map data.
-	 * 
-	 * @param data
-	 * @return
-	 */
-	public RespBase<D> setData(Map<String, D> data) {
-		if (!isEmpty(data)) {
-			this.data.putAll(data);
-		}
-		return this;
 	}
 
 	// --- Expanded's. ---.
@@ -180,13 +167,16 @@ public class RespBase<D> implements Serializable {
 	 * @param data
 	 * @return
 	 */
-	@JsonIgnore
-	public RespBase<D> setBean(Object data) {
+	public RespBase<D> setData(D data) {
 		if (isNull(data)) {
 			return this;
 		}
-		this.data.putAll(convertBean(data, new TypeReference<DataMap<D>>() {
-		}));
+		if (isAvailablePayload()) { // Data already payLoad ?
+			throw new IllegalStateException(String.format(
+					"RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
+					getData()));
+		}
+		this.data = data;
 		return this;
 	}
 
@@ -217,29 +207,68 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get for response data node of {@link DataMap}.
+	 * As {@link RespBase#data} convert to {@link DataMap}.
 	 * 
 	 * @see {@link RespBase#getData()}
 	 * @return
 	 */
+	@SuppressWarnings({ "unchecked" })
 	@JsonIgnore
-	public DataMap<D> forMap() { // [Extensible]
-		return getData();
+	public DataMap<Object> asMap() {
+		if (data instanceof Map) { // type of Map ?
+			return (DataMap<Object>) data;
+		}
+		return convertBean(data, DataMap.class);
 	}
 
 	/**
-	 * Create child node data map.
+	 * Build for response data node of {@link DataMap}.
+	 * 
+	 * @see {@link RespBase#getData()}
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@JsonIgnore
+	public DataMap<Object> buildMap() {
+		if (!isAvailablePayload()) { // Data unalready ?
+			data = (D) new DataMap<>(); // Init
+		} else { // Convert to DataMap.
+			if (data instanceof Map) {
+				this.data = (D) new DataMap<>((Map) data);
+			} else {
+				String errmsg = String.format(
+						"Illegal type compatible operation, because RespBase.data has initialized the available data, class type is: %s, and forMap() requires RespBase.data to be uninitialized or the initialized data type is must an instance of Map",
+						data.getClass());
+				throw new UnsupportedOperationException(errmsg);
+			}
+		}
+		return (DataMap<Object>) data;
+	}
+
+	/**
+	 * Build child node data map.
 	 * 
 	 * @param nodeKey
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@JsonIgnore
-	public DataMap<Object> buildNodeMap(String nodeKey) {
+	public DataMap<Object> buildNode(String nodeKey) {
 		hasText(nodeKey, "RespBase build datamap nodeKey name can't be empty");
 		DataMap<Object> nodeMap = new DataMap<>();
-		forMap().put(nodeKey, (D) nodeMap);
+		buildMap().put(nodeKey, (D) nodeMap);
 		return nodeMap;
+	}
+
+	/**
+	 * Check whether the {@link RespBase#data} is available, for example, it
+	 * will become available payload after {@link RespBase#setData(Object)} or
+	 * {@link RespBase#buildMap()} has been invoked.
+	 * 
+	 * @return
+	 */
+	private boolean isAvailablePayload() {
+		return nonNull(data) && data != DEFAULT_DATA;
 	}
 
 	/**
@@ -253,7 +282,8 @@ public class RespBase<D> implements Serializable {
 
 	@Override
 	public String toString() {
-		return "RespBase [code=" + code + ", status=" + status + ", message=" + message + ", data=" + data + "]";
+		return "RespBase [code=" + getCode() + ", status=" + getStatus() + ", message=" + getMessage() + ", data=" + getData()
+				+ "]";
 	}
 
 	// --- Function tool's. ---
@@ -668,5 +698,17 @@ public class RespBase<D> implements Serializable {
 	 * Default status value.
 	 */
 	final public static String DEFAULT_STATUS = "Normal";
+
+	/**
+	 * Default data value.</br>
+	 * <font color=red>Note: can't be {@link DEFAULT_DATA} = new Object(),
+	 * otherwise jackson serialization will have the following error,
+	 * e.g.:</font>
+	 * 
+	 * <pre>
+	 *JsonMappingException: No serializer found for class java.lang.Object and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS) (through reference chain: com.wl4g.devops.common.web.RespBase["data"])
+	 * </pre>
+	 */
+	final public static Object DEFAULT_DATA = emptyMap();
 
 }

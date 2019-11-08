@@ -35,7 +35,7 @@ public class TestXssController extends BaseController {
 	public RespBase<?> xss1(String name, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		System.out.println("On xss1 testing, parameters filtered by xss:\nname>> " + name + "\nrequest>> " + request);
-		resp.forMap().put("name", name);
+		resp.buildMap().put("name", name);
 		return resp;
 	}
 
@@ -57,7 +57,7 @@ public class TestXssController extends BaseController {
 	public RespBase<?> xss2(@UnsafeXss String name, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		System.out.println("On xss2 testing, parameters filtered by xss:\nname>> " + name + "\nrequest>> " + request);
-		resp.forMap().put("name", name);
+		resp.buildMap().put("name", name);
 		return resp;
 	}
 

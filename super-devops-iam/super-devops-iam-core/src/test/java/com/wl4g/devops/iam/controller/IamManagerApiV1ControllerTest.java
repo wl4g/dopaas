@@ -31,25 +31,28 @@ public class IamManagerApiV1ControllerTest {
 
 	public static void main(String[] args) {
 		// for controller output(model).
-		RespBase<Object> resp11 = new RespBase<>(RetCode.create(4001, "message2"));
-		resp11.getData().put("testKey", newSessionAttributeModel());
+		RespBase<SessionAttributeModel> resp11 = new RespBase<>(RetCode.create(4001, "message2"));
+		resp11.buildMap().put("testKey", newSessionAttributeModel());
 
 		String json11 = toJSONString(resp11);
 		System.out.println(json11);
 		RespBase<SessionAttributeModel> resp12 = parseJSON(json11, new TypeReference<RespBase<SessionAttributeModel>>() {
 		});
-		System.out.println(resp12.getData().get("testKey"));
+		// SessionAttributeModel sam1 = resp12.forMap().get("testKey");
+		SessionAttributeModel sam1 = resp12.getData();
+		System.out.println(sam1);
 		System.out.println("===================================================");
 
 		// for controller output(model).
-		RespBase<Object> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
-		resp21.setBean(newSessionAttributeModel());
+		RespBase<SessionAttributeModel> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
+		resp21.setData(newSessionAttributeModel());
 
 		String json21 = toJSONString(resp21);
 		System.out.println(json21);
 		RespBase<SessionAttributeModel> resp22 = parseJSON(json21, new TypeReference<RespBase<SessionAttributeModel>>() {
 		});
-		System.out.println(resp22.getData());
+		Object sam2 = resp22.getData();
+		System.out.println(sam2);
 		System.out.println("===================================================");
 	}
 
