@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/application")
-public class ApplicationController extends BaseController {
+public class ClusterConfigController extends BaseController {
 
 	@Autowired
 	private ClusterConfigDao clusterConfigDao;

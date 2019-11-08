@@ -16,7 +16,11 @@
 package com.wl4g.devops.iam.web;
 
 import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
+import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
+import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
+import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
+import com.wl4g.devops.iam.common.authc.ClientRef;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.web.GenericApiController;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
@@ -24,6 +28,7 @@ import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribu
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static java.util.Objects.nonNull;
 
 /**
@@ -101,11 +106,26 @@ public class IamServerApiV1Controller extends GenericApiController {
 	protected SessionAttribute wrapSessionAttribute(IamSession session) {
 		SessionAttribute sa = super.wrapSessionAttribute(session);
 
-		// Application grant info.
+		// Authentication grant applications.
 		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
 		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
-			sa.setGrantApplications(grantInfo.getApplications().keySet());
+			sa.setGrants(grantInfo.getApplications().keySet());
 		}
+
+		// Authentication client type.
+		Object token = session.getAttribute(KEY_AUTHC_TOKEN);
+		if (nonNull(token)) {
+			if (token instanceof GeneralAuthenticationToken) {
+				sa.setClientRef(((GeneralAuthenticationToken) token).getClientRef());
+			} else if ((token instanceof WechatMpAuthenticationToken)) {
+				sa.setClientRef(ClientRef.WeChatMp);
+			}
+			// Only when oauth2 authorizes authentication
+			if ((token instanceof Oauth2SnsAuthenticationToken)) {
+				sa.setOauth2Provider(((Oauth2SnsAuthenticationToken) token).getSocial().getProvider());
+			}
+		}
+
 		return sa;
 	}
 

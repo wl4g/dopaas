@@ -27,6 +27,7 @@ import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
 import com.wl4g.devops.support.cache.ScanCursor;
 import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
+
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -75,53 +76,58 @@ public abstract class GenericApiController extends BaseController {
 	protected IamSessionDAO sessionDAO;
 
 	/**
-	 * Obtain sessions.</br>
+	 * Iterative scan gets the list of access sessions (including all clients
+	 * and authenticated and uncertified sessions).</br>
 	 * <p>
 	 * For example response:
 	 *
 	 * <pre>
 	 * {
-	 *  "code": 200,
-	 *  "status": "normal",
-	 *  "message": "ok",
-	 *  "data": {
-	 *    "sessions": [
-	 *      {
-	 *        "id": "sid2e5dae956fd2489b91f1706a63a5e26b",
-	 *        "startTimestamp": 1572596091090,
-	 *        "stopTimestamp": null,
-	 *        "lastAccessTime": 1572596812856,
-	 *        "timeout": 1800000,
-	 *        "expired": false,
-	 *        "authenticated": false,
-	 *        "host": "0:0:0:0:0:0:0:1",
-	 *        "principal": null,
-	 *        "grantApplications": [
-	 *
-	 *        ]
-	 *      },
-	 *      {
-	 *        "id": "sid0f0722a6c3a046c18564b279b7fab2b9",
-	 *        "startTimestamp": 1572596092031,
-	 *        "stopTimestamp": null,
-	 *        "lastAccessTime": 1572596092272,
-	 *        "timeout": 1800000,
-	 *        "expired": false,
-	 *        "authenticated": true,
-	 *        "host": "0:0:0:0:0:0:0:1",
-	 *        "principal": "root",
-	 *        "grantApplications": [
-	 *            "umc-manager"
-	 *         ]
-	 *      }
-	 *    ]
+	 *   "code": 200,
+	 *   "status": "Normal",
+	 *   "message": "Ok",
+	 *   "data": {
+	 *     "index": {
+	 *       "cursorString": "0@5",
+	 *       "hasNext": false
+	 *     },
+	 *     "sessions": [
+	 *       {
+	 *         "id": "sidad6d3cbae8e24b1488f439845b1c3540",
+	 *         "startTimestamp": 1573200604837,
+	 *         "stopTimestamp": null,
+	 *         "lastAccessTime": 1573200612065,
+	 *         "timeout": 2592000000,
+	 *         "expired": false,
+	 *         "authenticated": true,
+	 *         "host": "127.0.0.1",
+	 *         "principal": "admin2",
+	 *         "grants": [
+	 *           "portal",
+	 *           "base"
+	 *         ],
+	 *         "clientRef": "WINDOWS",
+	 *         "oauth2Provider": null
+	 *       },
+	 *       {
+	 *         "id": "sidc14af9cc44374d0c810d5a3d948766fb",
+	 *         "startTimestamp": 1573200412703,
+	 *         "stopTimestamp": null,
+	 *         "lastAccessTime": 1573200412703,
+	 *         "timeout": 2592000000,
+	 *         "expired": false,
+	 *         "authenticated": false,
+	 *         "host": "127.0.0.1",
+	 *         "principal": null,
+	 *         "grants": [
+	 *           
+	 *         ],
+	 *         "clientRef": "WINDOWS",
+	 *         "oauth2Provider": null
+	 *       ]
+	 *     }
 	 *  }
-	 * }
 	 * </pre>
-	 *
-	 * @param request
-	 * @param response
-	 * @throws Exception
 	 */
 	@GetMapping(path = URI_S_API_V1_SESSION)
 	public RespBase<?> getSessions(@Validated SessionQueryModel query) throws Exception {
@@ -137,7 +143,7 @@ public abstract class GenericApiController extends BaseController {
 		List<SessionAttribute> sas = sc.readValues().stream().map(s -> wrapSessionAttribute(s)).collect(toList());
 
 		// Setup response attributes.
-		CursorIndexModel index = new CursorIndexModel(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
+		CursorIndex index = new CursorIndex(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
 		resp.setData(new SessionAttributeModel(index, sas));
 
 		if (log.isInfoEnabled()) {
@@ -235,13 +241,12 @@ public abstract class GenericApiController extends BaseController {
 		SessionAttribute sa = new SessionAttribute();
 		sa.setId(String.valueOf(session.getId()));
 		sa.setLastAccessTime(session.getLastAccessTime());
-		sa.setStartTimestamp(session.getStartTimestamp());
-		sa.setStopTimestamp(session.getStopTimestamp());
+		sa.setStartTime(session.getStartTimestamp());
+		sa.setStopTime(session.getStopTimestamp());
 		sa.setHost(session.getHost());
 		sa.setExpired(session.isExpired());
-		sa.setTimeout(session.getTimeout());
 
-		// Authenticated.
+		// Authentication status.
 		Object authenticated = session.getAttribute(AUTHENTICATED_SESSION_KEY);
 		sa.setAuthenticated(false);
 		if (nonNull(authenticated)) {
@@ -252,9 +257,9 @@ public abstract class GenericApiController extends BaseController {
 			}
 		}
 
-		// Authenticate principal.
+		// Authentication principal.
 		PrincipalCollection principals = (PrincipalCollection) session.getAttribute(PRINCIPALS_SESSION_KEY);
-		if (nonNull(principals)) {
+		if (nonNull(principals) && !principals.isEmpty()) {
 			sa.setPrincipal(principals.getPrimaryPrincipal());
 		}
 

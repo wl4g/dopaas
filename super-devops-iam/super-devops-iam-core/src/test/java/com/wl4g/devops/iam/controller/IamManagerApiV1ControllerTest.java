@@ -24,7 +24,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndexModel;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
 
 public class IamManagerApiV1ControllerTest {
@@ -58,7 +58,7 @@ public class IamManagerApiV1ControllerTest {
 
 	static SessionAttributeModel newSessionAttributeModel() {
 		SessionAttributeModel sam = new SessionAttributeModel();
-		sam.setIndex(new CursorIndexModel("0@5", false));
+		sam.setIndex(new CursorIndex("0@5", false));
 		SessionAttribute sa1 = new SessionAttribute();
 		sa1.setId("1111");
 		sa1.setLastAccessTime(new Date());
@@ -66,7 +66,7 @@ public class IamManagerApiV1ControllerTest {
 		sa1.setExpired(false);
 		sa1.setHost("0.0.0.01");
 		sa1.setPrincipal("root");
-		sa1.getGrantApplications().add("umc-manager");
+		sa1.getGrants().add("umc-manager");
 		sam.getSessions().add(sa1);
 		return sam;
 	}

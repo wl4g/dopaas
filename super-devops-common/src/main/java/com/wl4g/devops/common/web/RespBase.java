@@ -233,6 +233,10 @@ public class RespBase<D> implements Serializable {
 		if (!isAvailablePayload()) { // Data unalready ?
 			data = (D) new DataMap<>(); // Init
 		} else { // Convert to DataMap.
+			/**
+			 * ###[Note(scene): This logic is to solve the data analysis of, for
+			 * example:{@link org.springframework.web.client.RestTemplate}.response]
+			 */
 			if (data instanceof Map) {
 				this.data = (D) new DataMap<>((Map) data);
 			} else {
