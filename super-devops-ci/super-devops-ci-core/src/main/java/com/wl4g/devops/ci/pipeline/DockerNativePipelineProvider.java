@@ -17,10 +17,10 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.codec.FingerprintCodec;
+
+import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
 
 import java.io.File;
 
@@ -49,7 +49,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		mvnBuild(getContext().getTaskHistory(), false);
 
 		// get sha and md5
-		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// docker build
 		dockerBuild(getContext().getProjectSourceDir());
@@ -73,9 +73,11 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dependency.setProjectId(getContext().getProject().getId());
 
 		mvnBuild(getContext().getTaskHistory(), true);
-		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
 
-		setupAssetsFingerprint(FingerprintCodec.getMd5Fingerprint(new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath())));
+		// Fingerprint.
+		File assetsFile = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
+		setupAssetsFingerprint(getMd5Fingerprint(assetsFile));
 
 		// Startup pipeline jobs.
 		doExecuteTransferToRemoteInstances();

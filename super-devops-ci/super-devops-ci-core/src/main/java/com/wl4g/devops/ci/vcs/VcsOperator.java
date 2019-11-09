@@ -15,47 +15,17 @@
  */
 package com.wl4g.devops.ci.vcs;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
- * VCS API operator.
+ * VCS APIs operator.
  *
  * @author Wangl.sir
  * @version v1.0 2019年8月2日
  * @since
  */
-public interface VcsOperator {
-
-	/**
-	 * Vcs type definition.
-	 * 
-	 * @return
-	 */
-	String vcsType();
-
-	/**
-	 * Get VCS remote branch names.
-	 *
-	 * @param projectId
-	 * @return
-	 */
-	List<String> getRemoteBranchNames(int projectId);
-
-	/**
-	 * Get VCS remote tag names.
-	 *
-	 * @param projectId
-	 * @return
-	 */
-	List<String> getRemoteTags(int projectId);
-
-	/**
-	 * Find remote project ID by project name.
-	 *
-	 * @param projectName
-	 * @return
-	 */
-	Integer findRemoteProjectId(String projectName);
+public abstract interface VcsOperator {
 
 	/**
 	 * VCS type definitions.
@@ -84,5 +54,130 @@ public interface VcsOperator {
 		/** Vcs for coding. */
 		final public static String CODING = "VcsWithCoding";
 	}
+
+	/**
+	 * VCS type definition.
+	 * 
+	 * @return
+	 */
+	default String vcsType() {
+		throw new UnsupportedOperationException();
+	}
+
+	// --- APIs operator. ---
+
+	/**
+	 * Get VCS remote branch names.
+	 *
+	 * @param projectId
+	 * @return
+	 */
+	List<String> getRemoteBranchNames(int projectId);
+
+	/**
+	 * Get VCS remote tag names.
+	 *
+	 * @param projectId
+	 * @return
+	 */
+	List<String> getRemoteTags(int projectId);
+
+	/**
+	 * Find remote project ID by project name.
+	 *
+	 * @param projectName
+	 * @return
+	 */
+	Integer findRemoteProjectId(String projectName);
+
+	// --- VCS operator. ---
+
+	/**
+	 * Clone from remote VCS server.
+	 * 
+	 * @param <T>
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param remoteUrl
+	 *            remote VCS server URI
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @return
+	 * @throws IOException
+	 */
+	default <T> T clone(Object credentials, String remoteUrl, String projecDir) throws IOException {
+		return clone(credentials, remoteUrl, projecDir, null);
+	}
+
+	/**
+	 * Clone from remote VCS server.
+	 * 
+	 * @param <T>
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param remoteUrl
+	 *            remote VCS server URI
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param branchName
+	 * @return
+	 * @throws IOException
+	 */
+	<T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException;
+
+	/**
+	 * Checkout and pull.
+	 * 
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param branchName
+	 */
+	void checkoutAndPull(Object credentials, String projecDir, String branchName);
+
+	/**
+	 * Delete (local) branch.
+	 * 
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param branchName
+	 * @param force
+	 * @return
+	 */
+	List<String> delLocalBranch(String projecDir, String branchName, boolean force);
+
+	/**
+	 * Check project local VCS repository exist, created when not present.
+	 * 
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @return
+	 */
+	boolean checkGitPath(String projecDir);
+
+	/**
+	 * Get (local) latest committed ID.
+	 * 
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @return
+	 * @throws Exception
+	 */
+	String getLatestCommitted(String projecDir) throws Exception;
+
+	/**
+	 * Roll-back VCS project local repository(fetch and checkout).
+	 * 
+	 * @param <T>
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param sign
+	 *            committed ID.
+	 * @return
+	 */
+	<T> T rollback(Object credentials, String projecDir, String sign);
 
 }

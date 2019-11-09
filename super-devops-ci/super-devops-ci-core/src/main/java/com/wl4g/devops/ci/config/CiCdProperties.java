@@ -37,7 +37,6 @@ import static org.springframework.util.Assert.hasText;
  * @since
  */
 public class CiCdProperties implements InitializingBean {
-
 	final public static String DEFUALT_JOB_BASEDIR = "jobs";
 	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
 
@@ -49,22 +48,22 @@ public class CiCdProperties implements InitializingBean {
 	private String workspace = USER_HOME + File.separator + ".ci-workspace"; // By-default.
 
 	/**
-	 * Pipeline executor properties.
+	 * Pipeline executor configuration properties.
 	 */
 	private ExecutorProperties executor = new ExecutorProperties();
 
 	/**
-	 * Pipeline VCS properties.
+	 * VCS configuration properties.
 	 */
 	private VcsSourceProperties vcs = new VcsSourceProperties();
 
 	/**
-	 * Pipeline build properties.
+	 * Pipeline build configuration properties.
 	 */
 	private BuildProperties build = new BuildProperties();
 
 	/**
-	 * Pipeline deploy properties.
+	 * Pipeline deploy configuration properties.
 	 */
 	private DeployProperties deploy = new DeployProperties();
 

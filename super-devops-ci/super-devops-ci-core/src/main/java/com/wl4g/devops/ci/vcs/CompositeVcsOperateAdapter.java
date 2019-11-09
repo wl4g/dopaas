@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.state;
 import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,11 +64,6 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 		});
 		// Register.
 		this.registry.putAll(operators.stream().collect(toMap(VcsOperator::vcsType, oper -> oper)));
-	}
-
-	@Override
-	public String vcsType() {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -117,6 +114,36 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 		Assert.state(operator != null,
 				"Not adapted to specify actual VcsOperator, You must use adapted() to adapt before you can.");
 		return operator;
+	}
+
+	@Override
+	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+		return getAdapted().clone(credentials, remoteUrl, projecDir, branchName);
+	}
+
+	@Override
+	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
+		getAdapted().checkoutAndPull(credentials, projecDir, branchName);
+	}
+
+	@Override
+	public List<String> delLocalBranch(String projecDir, String branchName, boolean force) {
+		return getAdapted().delLocalBranch(projecDir, branchName, force);
+	}
+
+	@Override
+	public boolean checkGitPath(String projecDir) {
+		return getAdapted().checkGitPath(projecDir);
+	}
+
+	@Override
+	public String getLatestCommitted(String projecDir) throws Exception {
+		return getAdapted().getLatestCommitted(projecDir);
+	}
+
+	@Override
+	public <T> T rollback(Object credentials, String projecDir, String sign) {
+		return getAdapted().rollback(credentials, projecDir, sign);
 	}
 
 }

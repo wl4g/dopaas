@@ -24,13 +24,54 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import java.util.List;
 
 /**
- * Deploy information wrapper API.
- *
- * @author Wangl.sir
+ * Pipeline context with composite information wrapper.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-09-29
  * @since
  */
-public interface PipelineContext {
+public abstract interface PipelineContext {
+
+	/**
+	 * The is empty for {@link PipelineContext} instance.
+	 */
+	final public static PipelineContext EMPTY = new PipelineContext() {
+
+		@Override
+		public List<TaskHistoryDetail> getTaskHistoryDetails() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public TaskHistory getTaskHistory() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public TaskHistory getRefTaskHistory() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String getProjectSourceDir() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Project getProject() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public List<AppInstance> getInstances() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public AppCluster getAppCluster() {
+			throw new UnsupportedOperationException();
+		}
+	};
 
 	Project getProject();
 

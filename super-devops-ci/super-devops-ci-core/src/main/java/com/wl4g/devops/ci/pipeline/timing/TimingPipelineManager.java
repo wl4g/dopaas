@@ -135,7 +135,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 			return;
 		}
 
-		TimingPipelineJob handler = beanFactory.getBean(TimingPipelineJob.class,
+		TimingPipelineProvider handler = beanFactory.getBean(TimingPipelineProvider.class,
 				new Object[] { trigger, project, task, taskDetails });
 		ScheduledFuture<?> future = scheduler.schedule(handler, new CronTrigger(expression));
 		// TODO distributed cluster??

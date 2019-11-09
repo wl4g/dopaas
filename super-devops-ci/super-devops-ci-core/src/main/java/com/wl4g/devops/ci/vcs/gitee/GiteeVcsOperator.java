@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.ci.vcs.gitee;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 
 /**
- * Gitee Vcs operator.
+ * VCS operator for GITEE.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月5日
@@ -35,20 +36,48 @@ public class GiteeVcsOperator extends AbstractVcsOperator {
 
 	@Override
 	public List<String> getRemoteBranchNames(int projectId) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<String> getRemoteTags(int projectId) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Integer findRemoteProjectId(String projectName) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
+		throw new UnsupportedOperationException();
+
+	}
+
+	@Override
+	public List<String> delLocalBranch(String projecDir, String branchName, boolean force) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean checkGitPath(String projecDir) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getLatestCommitted(String projecDir) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T rollback(Object credentials, String projecDir, String sign) {
+		throw new UnsupportedOperationException();
 	}
 
 }
