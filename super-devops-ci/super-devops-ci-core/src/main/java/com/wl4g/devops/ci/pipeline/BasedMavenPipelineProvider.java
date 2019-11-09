@@ -208,14 +208,14 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			} else {
 				sign = taskHisy.getShaGit();
 			}
-			if (vcsOperator.checkGitPath(projectDir)) {
+			if (vcsOperator.ensureLocalRepo(projectDir)) {
 				vcsOperator.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			} else {
 				vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
 				vcsOperator.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			}
 		} else {
-			if (vcsOperator.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
+			if (vcsOperator.ensureLocalRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
 				vcsOperator.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
 				vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);

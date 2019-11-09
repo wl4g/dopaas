@@ -66,7 +66,7 @@ public class BitbucketVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public boolean checkGitPath(String projecDir) {
+	public boolean ensureLocalRepo(String projecDir) {
 		throw new UnsupportedOperationException();
 	}
 
