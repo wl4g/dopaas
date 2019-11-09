@@ -20,6 +20,7 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
+import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
@@ -73,6 +74,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected JedisLockManager lockManager;
 	@Autowired
 	protected ProcessManager processManager;
+	@Autowired
+	protected CompositeVcsOperateAdapter vcsOperator;
 
 	@Autowired
 	protected DependencyService dependencyService;

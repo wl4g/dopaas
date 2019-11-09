@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
-import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
@@ -44,7 +43,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		mvnBuild(getContext().getTaskHistory(), false);
 
 		// Setup Vcs source fingerprint.
-		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// MVN build.
 		doMvnBuildInternal();
@@ -66,7 +65,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			// New building and include dependencies.
 			mvnBuild(getContext().getTaskHistory(), true);
 			// Setup vcs source fingerprint.
-			setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
+			setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
 		}
 
 		// MVN build.

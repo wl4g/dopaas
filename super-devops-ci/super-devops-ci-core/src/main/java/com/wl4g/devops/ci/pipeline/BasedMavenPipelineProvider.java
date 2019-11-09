@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 
@@ -27,7 +26,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.ci.utils.GitUtils.*;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
@@ -210,17 +208,17 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			} else {
 				sign = taskHisy.getShaGit();
 			}
-			if (checkGitPath(projectDir)) {
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
+			if (vcsOperator.checkGitPath(projectDir)) {
+				vcsOperator.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			} else {
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
-				GitUtils.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
+				vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
+				vcsOperator.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			}
 		} else {
-			if (checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
+			if (vcsOperator.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
+				vcsOperator.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
+				vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
 			}
 		}
 
@@ -229,7 +227,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 			TaskSign taskSign = new TaskSign();
 			taskSign.setTaskId(taskHisy.getId());
 			taskSign.setDependenvyId(dependencyId);
-			taskSign.setShaGit(getLatestCommitted(projectDir));
+			taskSign.setShaGit(vcsOperator.getLatestCommitted(projectDir));
 			taskSignDao.insertSelective(taskSign);
 		}
 

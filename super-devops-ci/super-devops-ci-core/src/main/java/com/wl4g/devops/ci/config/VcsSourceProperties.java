@@ -143,6 +143,8 @@ public class VcsSourceProperties {
 			this.token = token;
 		}
 
+		// --- Function's. ---
+
 		public CredentialsProvider getCredentials() {
 			if (null == credentials) {
 				credentials = new UsernamePasswordCredentialsProvider(username, password);

@@ -32,14 +32,18 @@ public interface PipelineProvider extends DelegateAliasPrototypeBean {
 	 * 
 	 * @throws Exception
 	 */
-	void execute() throws Exception;
+	default void execute() throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Roll-back with provider process.
 	 * 
 	 * @throws Exception
 	 */
-	void rollback() throws Exception;
+	default void rollback() throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Get pipeline information.

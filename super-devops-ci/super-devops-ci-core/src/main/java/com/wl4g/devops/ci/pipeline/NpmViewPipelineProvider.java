@@ -17,16 +17,15 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
-import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 import org.eclipse.jgit.transport.CredentialsProvider;
-import org.springframework.util.Assert;
 
 import java.io.File;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * NPM/(VUE/AngularJS/ReactJS...) standard deployments provider.
@@ -81,7 +80,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 	private void getSources(boolean isRollback) throws Exception {
 		log.info("Pipeline building for projectId={}", getContext().getProject().getId());
 		Project project = getContext().getProject();
-		Assert.notNull(project, "project not exist");
+		notNull(project, "project not exist");
 
 		String branchName = getContext().getTaskHistory().getBranchName();
 		CredentialsProvider credentials = config.getVcs().getGitlab().getCredentials();
@@ -90,17 +89,17 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 
 		if (isRollback) {
 			String sha = getContext().getTaskHistory().getShaGit();
-			if (GitUtils.checkGitPath(projectDir)) {
-				GitUtils.rollback(credentials, projectDir, sha);
+			if (vcsOperator.checkGitPath(projectDir)) {
+				vcsOperator.rollback(credentials, projectDir, sha);
 			} else {
-				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
-				GitUtils.rollback(credentials, projectDir, sha);
+				vcsOperator.clone(credentials, project.getGitUrl(), projectDir, branchName);
+				vcsOperator.rollback(credentials, projectDir, sha);
 			}
 		} else {
-			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				GitUtils.checkoutAndPull(credentials, projectDir, getContext().getTaskHistory().getBranchName());
+			if (vcsOperator.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
+				vcsOperator.checkoutAndPull(credentials, projectDir, getContext().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
+				vcsOperator.clone(credentials, project.getGitUrl(), projectDir, branchName);
 			}
 		}
 	}

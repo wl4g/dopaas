@@ -36,7 +36,7 @@ import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
 import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineJob;
+import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
@@ -228,8 +228,8 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public TimingPipelineJob timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
-		return new TimingPipelineJob(trigger, project, task, taskDetails);
+	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
+		return new TimingPipelineProvider(trigger, project, task, taskDetails);
 	}
 
 	@Bean

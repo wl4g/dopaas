@@ -17,12 +17,14 @@ package com.wl4g.devops.ci.pipeline.timing;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskDetail;
 import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.dao.ci.TriggerDao;
 
 import org.slf4j.Logger;
@@ -41,7 +43,7 @@ import java.util.List;
  * @author vjay
  * @date 2019-07-19 10:41:00
  */
-public class TimingPipelineJob implements Runnable {
+public class TimingPipelineProvider extends AbstractPipelineProvider implements Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -53,16 +55,22 @@ public class TimingPipelineJob implements Runnable {
 	@Autowired
 	protected TriggerDao triggerDao;
 
-	protected Trigger trigger;
 	final protected Task task;
 	final protected Project project;
 	final protected List<TaskDetail> taskDetails;
+	protected Trigger trigger;
 
-	public TimingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
+	public TimingPipelineProvider(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
+		super(PipelineContext.EMPTY);
 		this.trigger = trigger;
 		this.project = project;
 		this.task = task;
 		this.taskDetails = taskDetails;
+	}
+
+	@Override
+	protected Runnable newDeployer(AppInstance instance) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -85,7 +93,7 @@ public class TimingPipelineJob implements Runnable {
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-			String latestSha = GitUtils.getLatestCommitted(projectDir);
+			String latestSha = vcsOperator.getLatestCommitted(projectDir);
 			hasText(latestSha, String.format("Trigger latest sha can't be empty for %s", projectDir));
 
 			// Update latest sign.
@@ -112,12 +120,13 @@ public class TimingPipelineJob implements Runnable {
 	 */
 	private boolean checkCommittedChanged() throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		if (GitUtils.checkGitPath(projectDir)) {
-			GitUtils.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, task.getBranchName());
+		if (vcsOperator.checkGitPath(projectDir)) {
+			vcsOperator.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, task.getBranchName());
 		} else {
-			GitUtils.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, task.getBranchName());
+			vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
+					task.getBranchName());
 		}
-		String newSign = GitUtils.getLatestCommitted(projectDir);
+		String newSign = vcsOperator.getLatestCommitted(projectDir);
 		return !equalsIgnoreCase(trigger.getSha(), newSign);
 	}
 
