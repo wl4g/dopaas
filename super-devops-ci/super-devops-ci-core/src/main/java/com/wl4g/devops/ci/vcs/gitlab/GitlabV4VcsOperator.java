@@ -200,8 +200,8 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public boolean checkGitPath(String projecDir) {
-		super.checkGitPath(projecDir);
+	public boolean ensureLocalRepo(String projecDir) {
+		super.ensureLocalRepo(projecDir);
 
 		File file = new File(projecDir + "/.git");
 		return file.exists();

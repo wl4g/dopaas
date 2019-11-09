@@ -154,7 +154,7 @@ public abstract interface VcsOperator {
 	 *            project local VCS repository directory absolute path.
 	 * @return
 	 */
-	boolean checkGitPath(String projecDir);
+	boolean ensureLocalRepo(String projecDir);
 
 	/**
 	 * Get (local) latest committed ID.

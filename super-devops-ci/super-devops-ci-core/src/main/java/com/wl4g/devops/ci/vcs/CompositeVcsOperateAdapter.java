@@ -132,8 +132,8 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	}
 
 	@Override
-	public boolean checkGitPath(String projecDir) {
-		return getAdapted().checkGitPath(projecDir);
+	public boolean ensureLocalRepo(String projecDir) {
+		return getAdapted().ensureLocalRepo(projecDir);
 	}
 
 	@Override
