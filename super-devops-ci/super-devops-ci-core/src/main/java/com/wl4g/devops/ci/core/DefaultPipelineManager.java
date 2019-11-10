@@ -56,10 +56,12 @@ import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
 
 /**
- * CI/CD Service implements
+ * Default CI/CD pipeline management implements.
  *
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-05-16 14:50:00
+ * @version v1.0.0 2019-11-01
+ * @since
  */
 public class DefaultPipelineManager implements PipelineManager {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -93,7 +95,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected TaskBuildCommandDao taskBuildCmdDao;
 
 	@Override
-	public void newPipeline(Integer taskId,Integer trackId,Integer trackType,String remark) {
+	public void newPipeline(Integer taskId, Integer trackId, Integer trackType, String remark) {
 		notNull(taskId, "Pipeline job taskId must not be null");
 		if (log.isInfoEnabled()) {
 			log.info("On pipeline job for taskId: {}", taskId);
@@ -125,7 +127,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Obtain task history.
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getTarType(), task.getContactGroupId(), taskBuildCmds,trackId,trackType,remark);
+				task.getTarType(), task.getContactGroupId(), taskBuildCmds, trackId, trackType, remark);
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -162,7 +164,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
 				TASK_STATUS_CREATE, backupTaskHisy.getBranchName(), null, taskId, backupTaskHisy.getBuildCommand(),
 				backupTaskHisy.getPreCommand(), backupTaskHisy.getPostCommand(), backupTaskHisy.getTarType(),
-				backupTaskHisy.getContactGroupId(), commands,null,null,null);
+				backupTaskHisy.getContactGroupId(), commands, null, null, null);
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
@@ -201,7 +203,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				branchName, sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(), task.getTarType(),
-				task.getContactGroupId(), taskBuildCmds,null,null,null);
+				task.getContactGroupId(), taskBuildCmds, null, null, null);
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -251,8 +253,8 @@ public class DefaultPipelineManager implements PipelineManager {
 						provider.getClass().getSimpleName()));
 
 				// Setup status to success.
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null,
-						provider.getSourceFingerprint(), provider.getAssetsFingerprint());
+				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getSourceFingerprint(),
+						provider.getAssetsFingerprint());
 				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 
 				// Successful process.
@@ -390,8 +392,8 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.info(String.format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()));
 
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null,
-						provider.getSourceFingerprint(), provider.getAssetsFingerprint());
+				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getSourceFingerprint(),
+						provider.getAssetsFingerprint());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
 				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,

@@ -18,20 +18,20 @@ package com.wl4g.devops.ci.core;
 import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
 
 /**
- * CICD pipeline core entry processor.
+ * CICD pipeline entry management.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
- * @date 2019-05-16 14:45:00
+ * @date 2019-08-01 14:45:00
  */
-public interface PipelineManager {
+public abstract interface PipelineManager {
 
 	/**
 	 * Startup new pipeline task job.
 	 * 
 	 * @param taskId
 	 */
-	void newPipeline(Integer taskId,Integer trackId,Integer trackType,String remark);
+	void newPipeline(Integer taskId, Integer trackId, Integer trackType, String remark);
 
 	/**
 	 * Roll-back pipeline task job.

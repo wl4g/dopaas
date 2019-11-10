@@ -50,7 +50,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	// --- MAVEN building. ---
 
 	/**
-	 * Do maven building.
+	 * Do MAVEN building.
 	 * 
 	 * @param taskHistory
 	 * @param isRollback
@@ -73,13 +73,13 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		for (Dependency depd : dependencies) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
 			// Do MAVEN building.
-			doMvnBuildDependencies(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
-					depCmd);
+			doBuildMavenModulesDependencies(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true,
+					isRollback, depCmd);
 		}
 
 		// Do MAVEN building.
-		doMvnBuildDependencies(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false, isRollback,
-				taskHistory.getBuildCommand());
+		doBuildMavenModulesDependencies(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false,
+				isRollback, taskHistory.getBuildCommand());
 	}
 
 	/**
@@ -123,7 +123,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		if (isEmpty(buildCommands)) {
 			return null;
 		}
-		notNull(projectId, "Building dependency projectId is null");
+		notNull(projectId, "Mvn building dependency projectId is null");
 
 		Optional<TaskBuildCommand> buildCmdOp = safeList(buildCommands).stream()
 				.filter(cmd -> cmd.getProjectId().intValue() == projectId.intValue()).findFirst();
@@ -131,7 +131,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	/**
-	 * Execution MVN dependencies building.
+	 * Execution MAVEN modules dependencies building.
 	 * 
 	 * @param taskHisy
 	 * @param projectId
@@ -143,7 +143,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doMvnBuildDependencies(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+	private void doBuildMavenModulesDependencies(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
@@ -176,7 +176,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	/**
-	 * Pull merge source and MVN building.
+	 * Pull merge source and MVN build.
 	 * 
 	 * @param taskHisy
 	 * @param projectId
@@ -234,7 +234,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		File logFile = config.getJobLog(taskHisy.getId());
 		// Building.
 		if (isBlank(buildCommand)) {
-			doBuildWithDefaultCommand(projectDir, logFile, taskHisy.getId());
+			mvnBuildWithDefaultCommand(projectDir, logFile, taskHisy.getId());
 		} else {
 			// Temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
@@ -247,15 +247,14 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	/**
-	 * Build with default commands.
+	 * Execution MAVEN build with default commands.
 	 * 
 	 * @param projectDir
 	 * @param logPath
 	 * @throws Exception
 	 */
-	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
+	private void mvnBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
-		// SSHTool.exec(defaultCommand, logPath.getAbsolutePath(), taskId);
 		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}
 
