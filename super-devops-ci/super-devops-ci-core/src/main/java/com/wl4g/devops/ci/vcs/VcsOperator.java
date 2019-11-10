@@ -148,13 +148,13 @@ public abstract interface VcsOperator {
 	List<String> delLocalBranch(String projecDir, String branchName, boolean force);
 
 	/**
-	 * Check project local VCS repository exist, created when not present.
+	 * Check VCS project local repository exist, created when not present.
 	 * 
 	 * @param projecDir
 	 *            project local VCS repository directory absolute path.
 	 * @return
 	 */
-	boolean ensureLocalRepo(String projecDir);
+	boolean ensureRepo(String projecDir);
 
 	/**
 	 * Get (local) latest committed ID.

@@ -89,14 +89,14 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 
 		if (isRollback) {
 			String sha = getContext().getTaskHistory().getShaGit();
-			if (vcsOperator.ensureLocalRepo(projectDir)) {
+			if (vcsOperator.ensureRepo(projectDir)) {
 				vcsOperator.rollback(credentials, projectDir, sha);
 			} else {
 				vcsOperator.clone(credentials, project.getGitUrl(), projectDir, branchName);
 				vcsOperator.rollback(credentials, projectDir, sha);
 			}
 		} else {
-			if (vcsOperator.ensureLocalRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
+			if (vcsOperator.ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
 				vcsOperator.checkoutAndPull(credentials, projectDir, getContext().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
 				vcsOperator.clone(credentials, project.getGitUrl(), projectDir, branchName);

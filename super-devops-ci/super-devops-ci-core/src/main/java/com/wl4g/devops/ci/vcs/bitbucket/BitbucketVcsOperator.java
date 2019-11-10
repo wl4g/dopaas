@@ -36,47 +36,56 @@ public class BitbucketVcsOperator extends AbstractVcsOperator {
 
 	@Override
 	public List<String> getRemoteBranchNames(int projectId) {
+		super.getRemoteBranchNames(projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<String> getRemoteTags(int projectId) {
+		super.getRemoteTags(projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Integer findRemoteProjectId(String projectName) {
+		super.findRemoteProjectId(projectName);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+		super.clone(credentials, remoteUrl, projecDir, branchName);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
+		super.checkoutAndPull(credentials, projecDir, branchName);
 		throw new UnsupportedOperationException();
 
 	}
 
 	@Override
 	public List<String> delLocalBranch(String projecDir, String branchName, boolean force) {
+		super.delLocalBranch(projecDir, branchName, force);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean ensureLocalRepo(String projecDir) {
+	public boolean ensureRepo(String projecDir) {
+		super.ensureRepo(projecDir);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getLatestCommitted(String projecDir) throws Exception {
+		super.getLatestCommitted(projecDir);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <T> T rollback(Object credentials, String projecDir, String sign) {
+		super.rollback(credentials, projecDir, sign);
 		throw new UnsupportedOperationException();
 	}
 
