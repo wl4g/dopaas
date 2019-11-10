@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.ci.vcs.github;
 
-import java.io.IOException;
 import java.util.List;
 
-import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
+import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 
 /**
  * VCS operator for GITHUB.
@@ -27,7 +26,7 @@ import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
  * @version v1.0 2019年11月5日
  * @since
  */
-public class GithubVcsOperator extends AbstractVcsOperator {
+public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
 	public String vcsType() {
@@ -36,47 +35,19 @@ public class GithubVcsOperator extends AbstractVcsOperator {
 
 	@Override
 	public List<String> getRemoteBranchNames(int projectId) {
+		super.getRemoteBranchNames(projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public List<String> getRemoteTags(int projectId) {
+		super.getRemoteTags(projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Integer findRemoteProjectId(String projectName) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
-		throw new UnsupportedOperationException();
-
-	}
-
-	@Override
-	public List<String> delLocalBranch(String projecDir, String branchName, boolean force) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean ensureLocalRepo(String projecDir) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getLatestCommitted(String projecDir) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <T> T rollback(Object credentials, String projecDir, String sign) {
+		super.findRemoteProjectId(projectName);
 		throw new UnsupportedOperationException();
 	}
 

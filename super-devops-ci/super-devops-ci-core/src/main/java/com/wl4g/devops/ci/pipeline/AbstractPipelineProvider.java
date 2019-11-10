@@ -148,7 +148,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		this.assetsFingerprint = assetsFingerprint;
 	}
 
-	// --- Functions. ---
+	// --- Function's. ---
 
 	/**
 	 * Execution remote commands
@@ -327,15 +327,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			return commands;
 		}
 
-	}
-
-	public static void main(String[] args) {
-		String s = "aabb111b {pipe.remoteTmpDir} \n echo 1111 \n start...";
-		System.out.println(s);
-		if (containsAny(s, "{", "}")) {
-			System.out.println(s.substring(s.indexOf("{"), s.indexOf("}") + 1));
-		}
-		System.out.println();
 	}
 
 }

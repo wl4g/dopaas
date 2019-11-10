@@ -151,7 +151,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public boolean ensureLocalRepo(String projecDir) {
+	public boolean ensureRepo(String projecDir) {
 		hasText(projecDir, "Check VCS repository projecDir can't is empty");
 		if (log.isInfoEnabled()) {
 			log.info("Check VCS repository for projecDir: {}", projecDir);

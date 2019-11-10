@@ -16,27 +16,14 @@
 package com.wl4g.devops.ci.vcs.gitlab;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
+import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.CreateBranchCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.transport.CredentialsProvider;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -46,19 +33,13 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @version v1.0 2019年8月2日
  * @since
  */
-public class GitlabV4VcsOperator extends AbstractVcsOperator {
+public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
 	public String vcsType() {
 		return VcsType.GITLAB;
 	}
 
-	/**
-	 * Get GITLAB remote branch names.
-	 *
-	 * @param projectId
-	 * @return
-	 */
 	@Override
 	public List<String> getRemoteBranchNames(int projectId) {
 		super.getRemoteBranchNames(projectId);
@@ -76,12 +57,6 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 		return branchNames;
 	}
 
-	/**
-	 * Get GITLAB remote tag names.
-	 *
-	 * @param projectId
-	 * @return
-	 */
 	@Override
 	public List<String> getRemoteTags(int projectId) {
 		super.getRemoteTags(projectId);
@@ -99,12 +74,6 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 		return tagNames;
 	}
 
-	/**
-	 * Find remote project ID by project name.
-	 *
-	 * @param projectName
-	 * @return
-	 */
 	@Override
 	public Integer findRemoteProjectId(String projectName) {
 		super.findRemoteProjectId(projectName);
@@ -126,147 +95,6 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 			log.info("Extract remote project IDs: {}", id);
 		}
 		return id;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
-		super.clone(credentials, remoteUrl, projecDir, branchName);
-
-		File path = new File(projecDir);
-		if (!path.exists()) {
-			path.mkdirs();
-		}
-		try {
-			CloneCommand cmd = Git.cloneRepository().setURI(remoteUrl).setDirectory(path)
-					.setCredentialsProvider((CredentialsProvider) credentials);
-			if (!isBlank(branchName)) {
-				cmd.setBranch(branchName);
-			}
-			Git git = cmd.call();
-
-			if (log.isInfoEnabled()) {
-				log.info("Cloning from '" + remoteUrl + "' to " + git.getRepository());
-			}
-			return (T) git;
-		} catch (Exception e) {
-			throw new IllegalStateException(String.format("Faild to clone from '%s'", remoteUrl), e);
-		}
-	}
-
-	@Override
-	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
-		super.checkoutAndPull(credentials, projecDir, branchName);
-
-		String projectURL = projecDir + "/.git";
-		try (Git git = Git.open(new File(projectURL))) {
-			List<Ref> refs = git.branchList().call();
-			boolean exist = false;// is branch exist
-			for (Ref ref : refs) {
-				String branchNameHad = getBranchName(ref);
-				if (StringUtils.equals(branchName, branchNameHad)) {
-					exist = true;
-				}
-			}
-			if (exist) { // Exist to checkout
-				git.checkout().setName(branchName).call();
-			} else { // Not exist to checkout & create local branch
-				git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
-						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
-			}
-			// Pull & get latest source code.
-			git.pull().setCredentialsProvider((CredentialsProvider) credentials).call();
-
-			if (log.isInfoEnabled()) {
-				log.info("Checkout & pull successful for branchName:{}, projecDir:{}", branchName, projecDir);
-			}
-		} catch (Exception e) {
-			String errmsg = String.format("Failed to checkout & pull for branchName: %s, projecDir: %s", branchName, projecDir);
-			log.error(errmsg, e);
-			throw new IllegalStateException(errmsg, e);
-		}
-	}
-
-	@Override
-	public List<String> delLocalBranch(String projecDir, String branchName, boolean force) {
-		super.delLocalBranch(projecDir, branchName, force);
-
-		String gitPath = projecDir + "/.git";
-		try (Git git = Git.open(new File(gitPath))) {
-			return git.branchDelete().setForce(force).setBranchNames(branchName).call();
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	@Override
-	public boolean ensureLocalRepo(String projecDir) {
-		super.ensureLocalRepo(projecDir);
-
-		File file = new File(projecDir + "/.git");
-		return file.exists();
-	}
-
-	@Override
-	public String getLatestCommitted(String projecDir) throws Exception {
-		super.getLatestCommitted(projecDir);
-
-		try (Git git = Git.open(new File(projecDir))) {
-			Iterable<RevCommit> iterb = git.log().setMaxCount(1).call(); // Latest-commit
-			Iterator<RevCommit> it = iterb.iterator();
-			if (it.hasNext()) {
-				// Get latest version committed.
-				String commitSign = it.next().getName();
-				if (log.isInfoEnabled()) {
-					log.info("Latest committed sign:{}, path:{}", commitSign, projecDir);
-				}
-				return commitSign;
-			}
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T rollback(Object credentials, String projecDir, String sign) {
-		super.rollback(credentials, projecDir, sign);
-
-		String metaPath = projecDir + "/.git";
-		try (Git git = Git.open(new File(metaPath))) {
-			git.fetch().setCredentialsProvider((CredentialsProvider) credentials).call();
-			Ref ref = git.checkout().setName(sign).call();
-
-			String msg = "Rollback branch completed, sign:" + sign + ", localPath:" + projecDir;
-			if (log.isInfoEnabled()) {
-				log.info(msg);
-			}
-			return (T) ref;
-		} catch (Exception e) {
-			String errmsg = String.format("Failed to rollback, sign:%s, localPath:%s", sign, projecDir);
-			log.error(errmsg, e);
-			throw new IllegalStateException(e);
-		}
-
-	}
-
-	/**
-	 * Get (local) branch name.
-	 *
-	 * @param ref
-	 * @return
-	 */
-	private static String getBranchName(Ref ref) {
-		String name = ref.getName();
-		if ("HEAD".equals(name)) {
-			ObjectId objectId = ref.getObjectId();
-			name = objectId.getName();
-		} else {
-			int index = name.lastIndexOf("/");
-			name = name.substring(index + 1);
-		}
-		return name;
 	}
 
 }
