@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -232,12 +231,13 @@ public class RespBase<D> implements Serializable {
 	public DataMap<Object> buildMap() {
 		if (!isAvailablePayload()) { // Data unalready ?
 			data = (D) new DataMap<>(); // Init
-		} else { // Convert to DataMap.
+		} else {
+			// Convert to DataMap.
 			/**
 			 * ###[Note(scene): This logic is to solve the data analysis of, for
 			 * example:{@link org.springframework.web.client.RestTemplate}.response]
 			 */
-			if (data instanceof Map) {
+			if (data instanceof Map) { // e.g.LinkedHashMap
 				this.data = (D) new DataMap<>((Map) data);
 			} else {
 				String errmsg = String.format(
@@ -569,7 +569,7 @@ public class RespBase<D> implements Serializable {
 		private String errmsg;
 
 		private RetCode(int code, String msg) {
-			Assert.hasText(msg, "Result message definition must not be empty.");
+			hasText(msg, "Result message definition must not be empty.");
 			this.errcode = code;
 			this.errmsg = msg;
 		}
@@ -647,7 +647,7 @@ public class RespBase<D> implements Serializable {
 		 * @return
 		 */
 		final public static RetCode create(int errcode, String errmsg) {
-			Assert.hasText(errmsg, "Result errmsg definition must not be empty.");
+			hasText(errmsg, "Result errmsg definition must not be empty.");
 			customizerLocal.set(new Object[] { errcode, errmsg });
 			return _$$;
 		}

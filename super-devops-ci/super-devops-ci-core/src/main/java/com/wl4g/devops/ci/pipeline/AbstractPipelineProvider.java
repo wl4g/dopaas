@@ -61,7 +61,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/** Pipeline context wrapper. */
+	/**
+	 * Pipeline context wrapper.
+	 */
 	final protected PipelineContext context;
 
 	@Autowired
@@ -110,7 +112,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		return context;
 	}
 
-	// --- Fingerprints. ---
+	// --- Fingerprint's. ---
 
 	/**
 	 * Get pull project source from VCS files fingerprint.
