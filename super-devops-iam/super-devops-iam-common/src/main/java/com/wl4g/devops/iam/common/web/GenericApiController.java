@@ -46,7 +46,6 @@ import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTHENTICATED_SESSION_KEY;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Generic abstract API controller.
@@ -78,8 +77,8 @@ public abstract class GenericApiController extends BaseController {
 	protected IamSessionDAO sessionDAO;
 
 	/**
-	 * Iterative scan gets the list of access sessions (including all clients and
-	 * authenticated and uncertified sessions).</br>
+	 * Iterative scan gets the list of access sessions (including all clients
+	 * and authenticated and uncertified sessions).</br>
 	 * <p>
 	 * For example response:
 	 *
