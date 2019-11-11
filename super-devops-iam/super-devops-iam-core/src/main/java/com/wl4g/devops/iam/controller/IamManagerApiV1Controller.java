@@ -20,11 +20,14 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
+import com.wl4g.devops.iam.common.web.model.SessionDestroyModel.SessionDestroyClientModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -107,25 +110,29 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@PostMapping(path = "destroySessions")
-	public RespBase<?> destroyRemoteSession(@Validated SessionDestroyModel destroy) throws Exception {
+	public RespBase<?> destroyRemoteSession(@Validated SessionDestroyClientModel destroy) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Destroy remote sessions by <= {}", destroy);
 		}
 
 		// TODO --- get remote api baseUri from DB.
-
-		String url = getRemoteApiV1SessionUri("");
+		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(destroy.getId());
+		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
 		log.info("Request destroy remote sessions for: {}", url);
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<SessionDestroyClientModel> request = new HttpEntity<SessionDestroyClientModel>(destroy, headers);
+
 		// Do request.
-		RespBase<String> resp = restTemplate
-				.exchange(url, HttpMethod.DELETE, null, new ParameterizedTypeReference<RespBase<String>>() {
-				}).getBody();
+		RespBase resp = restTemplate.exchange(url, HttpMethod.POST, request, new ParameterizedTypeReference<RespBase>() {
+		}).getBody();
 
 		if (log.isInfoEnabled()) {
 			log.info("Destroyed remote sessions response for => {}", resp);
 		}
-		return null;
+		return resp;
 	}
 
 	/**
