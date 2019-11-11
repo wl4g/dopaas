@@ -78,8 +78,8 @@ public abstract class GenericApiController extends BaseController {
 	protected IamSessionDAO sessionDAO;
 
 	/**
-	 * Iterative scan gets the list of access sessions (including all clients
-	 * and authenticated and uncertified sessions).</br>
+	 * Iterative scan gets the list of access sessions (including all clients and
+	 * authenticated and uncertified sessions).</br>
 	 * <p>
 	 * For example response:
 	 *
@@ -174,10 +174,8 @@ public abstract class GenericApiController extends BaseController {
 		}
 
 		// Destroy with sessionIds.
-		if (!isEmpty(destroy.getSessionIds())) {
-			for (Serializable sessionId : destroy.getSessionIds()) {
-				sessionDAO.delete(new IamSession(sessionId));
-			}
+		if (!isBlank(destroy.getSessionId())) {
+			sessionDAO.delete(new IamSession((Serializable) destroy.getSessionId()));
 		}
 
 		// Destroy with principal.
