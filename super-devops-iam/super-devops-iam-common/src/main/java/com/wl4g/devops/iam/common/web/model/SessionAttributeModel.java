@@ -24,6 +24,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +50,7 @@ public class SessionAttributeModel implements Serializable {
 	/**
 	 * Sessoin attributes.
 	 */
-	private List<SessionAttribute> sessions = new ArrayList<>(2);
+	private Collection<SessionAttribute> sessions = new ArrayList<>(2);
 
 	public SessionAttributeModel() {
 		super();
@@ -69,11 +70,11 @@ public class SessionAttributeModel implements Serializable {
 		this.index = index;
 	}
 
-	public List<SessionAttribute> getSessions() {
+	public Collection<SessionAttribute> getSessions() {
 		return sessions;
 	}
 
-	public void setSessions(List<SessionAttribute> sessions) {
+	public void setSessions(Collection<SessionAttribute> sessions) {
 		this.sessions = sessions;
 	}
 
@@ -99,6 +100,10 @@ public class SessionAttributeModel implements Serializable {
 
 		public CursorIndex() {
 			super();
+		}
+
+		public CursorIndex(Boolean hasNext) {
+			this(null, hasNext);
 		}
 
 		public CursorIndex(String cursorString, Boolean hasNext) {

@@ -2,7 +2,6 @@ package com.wl4g.devops.iam.common.web.model;
 
 import com.google.common.annotations.Beta;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,23 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class SessionDestroyModel implements Serializable {
 	private static final long serialVersionUID = 2579844578836104918L;
 
-	@NotEmpty
+	/**
+	 * Destroy target principal.
+	 */
+	private String principal;
+
+	/**
+	 * Destroy target sessionIds.
+	 */
 	private List<String> sessionIds = new ArrayList<>(4);
+
+	public String getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
 
 	public List<String> getSessionIds() {
 		return sessionIds;
@@ -37,20 +51,6 @@ public class SessionDestroyModel implements Serializable {
 	@Override
 	public String toString() {
 		return toJSONString(this);
-	}
-
-	public static class SessionDestroyClientModel extends SessionDestroyModel implements Serializable {
-		private static final long serialVersionUID = 2579844578836104919L;
-
-		private Integer id;
-
-		public Integer getId() {
-			return id;
-		}
-
-		public void setId(Integer id) {
-			this.id = id;
-		}
 	}
 
 }

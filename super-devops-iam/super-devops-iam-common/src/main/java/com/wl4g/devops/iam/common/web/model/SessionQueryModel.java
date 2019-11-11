@@ -6,6 +6,7 @@ import java.io.Serializable;
 import com.google.common.annotations.Beta;
 
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Sessions query model.
@@ -19,6 +20,11 @@ public class SessionQueryModel implements Serializable {
 	private static final long serialVersionUID = 5766036036946339544L;
 
 	/**
+	 * Scan search principal name.
+	 */
+	private String principal;
+
+	/**
 	 * Scan cursor.
 	 */
 	@NotBlank(message = "Invalid argument cursor.(e.g. cursor=0@0)")
@@ -29,12 +35,22 @@ public class SessionQueryModel implements Serializable {
 	 */
 	private int limit = 200;
 
+	public String getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
+
 	public String getCursor() {
 		return cursor;
 	}
 
 	public void setCursor(String cursor) {
-		this.cursor = cursor;
+		if (!isBlank(cursor)) {
+			this.cursor = cursor;
+		}
 	}
 
 	public int getLimit() {
@@ -42,7 +58,9 @@ public class SessionQueryModel implements Serializable {
 	}
 
 	public void setLimit(int limit) {
-		this.limit = limit;
+		if (limit > 0) {
+			this.limit = limit;
+		}
 	}
 
 	@Override
