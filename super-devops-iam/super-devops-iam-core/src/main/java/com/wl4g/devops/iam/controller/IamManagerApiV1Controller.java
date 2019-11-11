@@ -16,13 +16,14 @@
 package com.wl4g.devops.iam.controller;
 
 import com.wl4g.devops.common.bean.share.ClusterConfig;
+import com.wl4g.devops.common.utils.bean.BeanMapConvert;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
 import com.wl4g.devops.iam.controller.model.SessionDestroyClientModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -34,6 +35,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
@@ -89,6 +92,10 @@ public class IamManagerApiV1Controller extends BaseController {
 		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(id);
 		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
 		log.info("Request get remote sessions for: {}", url);
+
+		Map map = JacksonUtils.convertBean(query, Map.class);
+		String s = BeanMapConvert.toUriParmaters(map);
+		url = url +"?"+ s;
 
 		// Do exchange.
 		RespBase<SessionAttributeModel> resp = restTemplate

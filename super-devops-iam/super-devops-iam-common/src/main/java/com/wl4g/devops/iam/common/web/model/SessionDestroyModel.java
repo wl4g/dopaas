@@ -3,11 +3,8 @@ package com.wl4g.devops.iam.common.web.model;
 import com.google.common.annotations.Beta;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Sessions destroy model.
@@ -28,7 +25,7 @@ public class SessionDestroyModel implements Serializable {
 	/**
 	 * Destroy target sessionIds.
 	 */
-	private List<String> sessionIds = new ArrayList<>(4);
+	private String sessionId;
 
 	public String getPrincipal() {
 		return principal;
@@ -38,14 +35,12 @@ public class SessionDestroyModel implements Serializable {
 		this.principal = principal;
 	}
 
-	public List<String> getSessionIds() {
-		return sessionIds;
+	public String getSessionId() {
+		return sessionId;
 	}
 
-	public void setSessionIds(List<String> sessionIds) {
-		if (!isEmpty(sessionIds)) {
-			this.sessionIds.addAll(sessionIds);
-		}
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
 	@Override
