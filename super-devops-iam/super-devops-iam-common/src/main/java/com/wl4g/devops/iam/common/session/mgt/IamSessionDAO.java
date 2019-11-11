@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.session.mgt;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
@@ -38,7 +39,7 @@ public interface IamSessionDAO extends SessionDAO {
 	 * @param limit
 	 * @return
 	 */
-	public ScanCursor<IamSession> getAccessSessions(final int limit);
+	ScanCursor<IamSession> getAccessSessions(final int limit);
 
 	/**
 	 * Get access sessions
@@ -47,10 +48,21 @@ public interface IamSessionDAO extends SessionDAO {
 	 * @param limit
 	 * @return
 	 */
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit);
+	ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit);
 
 	/**
-	 * Get access sessions
+	 * Get access sessions by principal.
+	 *
+	 * @param principal
+	 *            Getting active sessions based on logon objects
+	 * @return
+	 */
+	default Set<IamSession> getAccessSessions(final Object principal) {
+		return getAccessSessions(new CursorWrapper(), 200, principal);
+	}
+
+	/**
+	 * Get access sessions by principal.
 	 *
 	 * @param cursorString
 	 * @param limit
@@ -58,7 +70,7 @@ public interface IamSessionDAO extends SessionDAO {
 	 *            Getting active sessions based on logon objects
 	 * @return
 	 */
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal);
+	Set<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal);
 
 	/**
 	 * Remove access current users
@@ -66,6 +78,6 @@ public interface IamSessionDAO extends SessionDAO {
 	 * @param principal
 	 *            Removal of target users
 	 */
-	public void removeAccessSession(Object principal);
+	void removeAccessSession(Object principal);
 
 }

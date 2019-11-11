@@ -16,6 +16,8 @@
 package com.wl4g.devops.iam.common.session.mgt;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
@@ -25,7 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
+import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.google.common.base.Charsets;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
@@ -106,17 +110,27 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 
 	@Override
 	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
-		return getAccessSessions(cursor, limit, null);
-	}
-
-	@Override
-	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
-
 		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
 		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), cursor, IamSession.class, params) {
 		}.open();
+	}
+
+	@Override
+	public Set<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit, final Object principal) {
+		Set<IamSession> principalSessions = new HashSet<>(4);
+		ScanCursor<IamSession> sc = getAccessSessions(cursor, limit);
+		while (sc.hasNext()) {
+			IamSession s = sc.next();
+			if (nonNull(s)) {
+				Object primaryPrincipal = s.getPrimaryPrincipal();
+				if (nonNull(primaryPrincipal) && primaryPrincipal.equals(principal)) {
+					principalSessions.add(s);
+				}
+			}
+		}
+		return principalSessions;
 	}
 
 	@Override
@@ -125,9 +139,14 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 			log.debug("removeActiveSession principal: {} ", principal);
 		}
 
-		ScanCursor<IamSession> cursor = getAccessSessions(new CursorWrapper(), 200, principal).open();
-		while (cursor.hasNext()) {
-			delete(cursor.next());
+		Set<IamSession> sessions = getAccessSessions(principal);
+		if (!isEmpty(sessions)) {
+			for (IamSession s : sessions) {
+				delete(s);
+				if (log.isDebugEnabled()) {
+					log.debug("Removed iam session for principal: {}, session: {}", principal, s);
+				}
+			}
 		}
 	}
 

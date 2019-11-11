@@ -20,8 +20,9 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.devops.iam.common.web.model.SessionDestroyModel.SessionDestroyClientModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
+import com.wl4g.devops.iam.controller.model.SessionDestroyClientModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -108,22 +109,25 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@PostMapping(path = "destroySessions")
-	public RespBase<?> destroyRemoteSession(@Validated SessionDestroyClientModel destroy) throws Exception {
+	public RespBase<?> destroyRemoteSessions(@Validated SessionDestroyClientModel destroy) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Destroy remote sessions by <= {}", destroy);
 		}
 
+		// Get cluster configuration.
 		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(destroy.getId());
-		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
-		log.info("Request destroy remote sessions for: {}", url);
+		notNull(config, String.format("", destroy.getId()));
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-
-		HttpEntity<SessionDestroyClientModel> request = new HttpEntity<SessionDestroyClientModel>(destroy, headers);
+		HttpEntity<?> entity = new HttpEntity<>(destroy, headers);
+		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
+		if (log.isInfoEnabled()) {
+			log.info("Request destroy remote sessions for clusterConfigId: {}, URL: {}", destroy.getId(), url);
+		}
 
 		// Do request.
-		RespBase resp = restTemplate.exchange(url, HttpMethod.POST, request, new ParameterizedTypeReference<RespBase>() {
+		RespBase<?> resp = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<RespBase<?>>() {
 		}).getBody();
 
 		if (log.isInfoEnabled()) {

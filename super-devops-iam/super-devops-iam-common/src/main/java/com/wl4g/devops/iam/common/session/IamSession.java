@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.iam.common.session;
 
+import static java.util.Objects.nonNull;
+import static org.apache.shiro.subject.support.DefaultSubjectContext.PRINCIPALS_SESSION_KEY;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,6 +36,7 @@ import org.apache.shiro.session.StoppedSessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SimpleSession;
 import org.apache.shiro.session.mgt.ValidatingSession;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,6 +217,21 @@ public class IamSession implements ValidatingSession, Serializable {
 
 	public void setAttributes(Map<Object, Object> attributes) {
 		this.attributes = attributes;
+	}
+
+	/**
+	 * Get {@link IamSession} priary principal.
+	 * 
+	 * @see {@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()}
+	 * @return
+	 */
+	public Object getPrimaryPrincipal() {
+		// Authentication principal.
+		PrincipalCollection principals = (PrincipalCollection) getAttribute(PRINCIPALS_SESSION_KEY);
+		if (nonNull(principals) && !principals.isEmpty()) {
+			return principals.getPrimaryPrincipal();
+		}
+		return null;
 	}
 
 	@JsonIgnore
