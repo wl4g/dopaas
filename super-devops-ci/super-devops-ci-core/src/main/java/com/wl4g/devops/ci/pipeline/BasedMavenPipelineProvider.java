@@ -27,12 +27,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
-import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.springframework.util.StringUtils.getFilename;
 
 /**
  * Abstract based MAVEN pipeline provider.
@@ -73,43 +73,49 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 		for (Dependency depd : dependencies) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
 			// Do MAVEN building.
-			doBuildMavenModulesDependencies(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true,
+			doBuildMavenModulesInDependencies(taskHistory, depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true,
 					isRollback, depCmd);
 		}
 
 		// Do MAVEN building.
-		doBuildMavenModulesDependencies(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false,
+		doBuildMavenModulesInDependencies(taskHistory, taskHistory.getProjectId(), null, taskHistory.getBranchName(), false,
 				isRollback, taskHistory.getBuildCommand());
 	}
 
 	/**
-	 * Local backup
-	 */
-	protected void backupLocal() throws Exception {
-		Integer taskHisId = getContext().getTaskHistory().getId();
-		String targetPath = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
-		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
-				+ subPackname(getContext().getProject().getAssetsPath());
-
-		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
-
-		String command = "cp -Rf " + targetPath + " " + backupPath;
-		processManager.exec(command, config.getJobLog(taskHisId), 300000);
-	}
-
-	/**
-	 * Roll-back backup file.
+	 * Roll-back backup assets files.
 	 * 
 	 * @throws Exception
 	 */
-	protected void rollbackBackupFile() throws Exception {
+	protected void rollbackBackupAssets() throws Exception {
 		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
 		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
-				+ subPackname(getContext().getProject().getAssetsPath());
+				+ getFilename(getContext().getProject().getAssetsPath());
 
 		String target = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
 		String command = "cp -Rf " + backupPath + " " + target;
 		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
+	}
+
+	/**
+	 * Handling assets backup. The default implements is to copy the asset files
+	 * to the local shared disk. </br>
+	 * For example, the docker based deployment should be backed up to the
+	 * docker server image repository.
+	 * 
+	 * @throws Exception
+	 */
+	protected void handleBackupAssets() throws Exception {
+		Integer taskHisId = getContext().getTaskHistory().getId();
+		String targetPath = getContext().getProjectSourceDir() + "/" + getContext().getProject().getAssetsPath();
+		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
+				+ getFilename(getContext().getProject().getAssetsPath());
+
+		// Ensure backup directory.
+		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
+
+		String command = "cp -Rf " + targetPath + " " + backupPath;
+		processManager.exec(command, config.getJobLog(taskHisId), 300000);
 	}
 
 	/**
@@ -131,7 +137,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	/**
-	 * Execution MAVEN modules dependencies building.
+	 * Build MAVEN modules in dependencies.
 	 * 
 	 * @param taskHisy
 	 * @param projectId
@@ -143,13 +149,13 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doBuildMavenModulesDependencies(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+	private void doBuildMavenModulesInDependencies(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
-				pullSourceAndBuild(taskHisy, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				pullSourceAndMvnBuild(taskHisy, projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -176,7 +182,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	}
 
 	/**
-	 * Pull merge source and MVN build.
+	 * Pull & merge source and module MVN build.
 	 * 
 	 * @param taskHisy
 	 * @param projectId
@@ -188,7 +194,7 @@ public abstract class BasedMavenPipelineProvider extends AbstractPipelineProvide
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void pullSourceAndBuild(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
+	private void pullSourceAndMvnBuild(TaskHistory taskHisy, Integer projectId, Integer dependencyId, String branch,
 			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Pipeline building for projectId: {}", projectId);

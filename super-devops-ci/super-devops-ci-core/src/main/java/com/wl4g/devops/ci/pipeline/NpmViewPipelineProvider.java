@@ -70,7 +70,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 		// step4 scp ==> tar -x
 
 		// Startup pipeline jobs.
-		doExecuteTransferToRemoteInstances();
+		doTransferRemoteDeploying();
 
 		if (log.isInfoEnabled()) {
 			log.info("Npm pipeline execution successful!");

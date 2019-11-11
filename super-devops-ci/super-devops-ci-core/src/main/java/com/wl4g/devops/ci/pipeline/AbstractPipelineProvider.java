@@ -204,9 +204,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Execution distribution transfer to remote instances for executable file.
+	 * Execution distribution transfer to remote instances for deployments.
 	 */
-	protected void doExecuteTransferToRemoteInstances() {
+	protected void doTransferRemoteDeploying() {
 		// Creating transfer instances jobs.
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> newDeployer(i)).collect(toList());
 

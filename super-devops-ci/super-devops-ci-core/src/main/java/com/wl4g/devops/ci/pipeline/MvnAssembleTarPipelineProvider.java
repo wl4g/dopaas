@@ -19,8 +19,8 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
-import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
 import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
+import static org.springframework.util.StringUtils.getFilename;
 
 import java.io.File;
 
@@ -58,7 +58,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		File backupFile = getBackupFile();
 		if (backupFile.exists()) {
 			// Direct using backup file.
-			rollbackBackupFile();
+			rollbackBackupAssets();
 			// Setup vcs source fingerprint.
 			setupSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
 		} else {
@@ -81,10 +81,10 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		setupAssetsFingerprint(getMd5Fingerprint(file));
 
 		// backup in local
-		backupLocal();
+		handleBackupAssets();
 
 		// Do transfer to remote jobs.
-		doExecuteTransferToRemoteInstances();
+		doTransferRemoteDeploying();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -94,7 +94,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	private File getBackupFile() {
 		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
-				+ subPackname(getContext().getProject().getAssetsPath());
+				+ getFilename(getContext().getProject().getAssetsPath());
 		return new File(oldFilePath);
 	}
 
