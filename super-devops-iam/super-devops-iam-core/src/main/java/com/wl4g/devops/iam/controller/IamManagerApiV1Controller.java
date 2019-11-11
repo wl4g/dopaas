@@ -93,8 +93,6 @@ public class IamManagerApiV1Controller extends BaseController {
 		RespBase<SessionAttributeModel> resp = restTemplate
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
-		// String resp = restTemplate.exchange(url, HttpMethod.GET, null,
-		// String.class).getBody();
 
 		if (log.isInfoEnabled()) {
 			log.info("Got remote sessions response for => {}", resp);
@@ -115,7 +113,6 @@ public class IamManagerApiV1Controller extends BaseController {
 			log.info("Destroy remote sessions by <= {}", destroy);
 		}
 
-		// TODO --- get remote api baseUri from DB.
 		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(destroy.getId());
 		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
 		log.info("Request destroy remote sessions for: {}", url);
