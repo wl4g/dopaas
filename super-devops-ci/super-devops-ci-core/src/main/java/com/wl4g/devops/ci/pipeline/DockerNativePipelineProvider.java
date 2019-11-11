@@ -55,7 +55,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dockerBuild(getContext().getProjectSourceDir());
 
 		// Startup pipeline jobs.
-		doExecuteTransferToRemoteInstances();
+		doTransferRemoteDeploying();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
@@ -80,7 +80,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		setupAssetsFingerprint(getMd5Fingerprint(assetsFile));
 
 		// Startup pipeline jobs.
-		doExecuteTransferToRemoteInstances();
+		doTransferRemoteDeploying();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");

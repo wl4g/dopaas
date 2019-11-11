@@ -20,7 +20,7 @@ import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
-import static com.wl4g.devops.ci.utils.PipelineUtils.subPacknameWithOutPostfix;
+import static com.wl4g.devops.ci.utils.PipelineUtils.getUnExtensionFilename;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
 import static org.springframework.util.Assert.hasText;
 
@@ -178,7 +178,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected String getPrgramInstallFileName() {
 		String distFilePath = getContext().getProject().getAssetsPath();
-		return subPacknameWithOutPostfix(distFilePath);
+		return getUnExtensionFilename(distFilePath);
 	}
 
 	/**
