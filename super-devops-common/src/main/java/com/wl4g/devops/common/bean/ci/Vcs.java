@@ -8,6 +8,8 @@ public class Vcs extends BaseBean implements Serializable {
 
     private static final long serialVersionUID = 381411777614066880L;
 
+    private String name;
+
     private Integer provider;
 
     private Integer authType;
@@ -23,6 +25,14 @@ public class Vcs extends BaseBean implements Serializable {
     private String username;
 
     private String password;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getProvider() {
         return provider;
