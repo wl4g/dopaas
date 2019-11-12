@@ -13,31 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.share.service;
-
-import com.wl4g.devops.common.bean.share.AppCluster;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.page.PageModel;
-
-import java.util.List;
-import java.util.Map;
-
 /**
- * 应用组管理Service接口
- * 
- * @author sut
- * @date 2018年9月20日
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年11月12日
+ * @since
  */
-public interface AppClusterService {
-
-	void save(AppCluster appCluster, String cipherKey);
-
-	Map<String, Object> list(PageModel pm, String clusterName);
-
-	void del(Integer clusterId);
-
-	AppCluster detail(Integer clusterId, String cipherKey);
-
-	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
-
-}
+package com.wl4g.devops.page;

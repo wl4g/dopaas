@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.share.controller;
 
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.HistoryOfDetail;
 import com.wl4g.devops.common.bean.scm.ReleaseDetail;
@@ -36,6 +35,7 @@ import com.wl4g.devops.common.bean.scm.Version;
 import com.wl4g.devops.common.bean.scm.VersionList;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.scm.service.HistoryService;
 

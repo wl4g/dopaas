@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.service;
 
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.iam.Role;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 import java.util.Map;

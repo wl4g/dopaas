@@ -20,13 +20,14 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.command.NewCommand;
 import com.wl4g.devops.ci.service.TaskService;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.page.PageModel;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;

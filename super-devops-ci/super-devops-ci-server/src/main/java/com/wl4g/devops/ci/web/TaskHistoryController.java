@@ -20,12 +20,13 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.command.RollbackCommand;
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

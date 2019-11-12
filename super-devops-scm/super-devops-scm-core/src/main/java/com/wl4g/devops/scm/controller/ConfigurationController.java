@@ -18,7 +18,7 @@ package com.wl4g.devops.scm.controller;
 import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.common.bean.PageModel;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.VersionContentBean;
 import com.wl4g.devops.common.bean.scm.VersionOfDetail;

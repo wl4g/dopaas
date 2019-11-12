@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.dao.iam.*;
@@ -26,6 +25,8 @@ import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.devops.iam.handler.UserUtil;
 import com.wl4g.devops.iam.service.UserService;
+import com.wl4g.devops.page.PageModel;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
