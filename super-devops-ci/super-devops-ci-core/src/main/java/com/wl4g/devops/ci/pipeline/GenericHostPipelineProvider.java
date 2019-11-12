@@ -221,7 +221,9 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 				vcsOperator.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
 			}
 		} else {
+			//TODO vcsOperator.forAdapt()
 			if (vcsOperator.ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
+				//TODO config.getVcs().getGitlab().getCredentials() ==> vcsBean
 				vcsOperator.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
 				vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
