@@ -15,22 +15,28 @@
  */
 package com.wl4g.devops.ci.vcs;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.*;
+import org.eclipse.jgit.util.FS;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * Generic version control service operator program based on GIT protocol
@@ -181,6 +187,62 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 			name = name.substring(index + 1);
 		}
 		return name;
+	}
+
+	//=======================get by ssh
+
+	public static TransportConfigCallback getTransportConfigCallback(byte[] identity) throws Exception {
+
+		SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
+
+			@Override
+			protected void configure(OpenSshConfig.Host hc, Session session) {
+				session.setConfig("StrictHostKeyChecking","no");
+				//session.setPort(2022);
+			}
+			@Override
+			protected JSch createDefaultJSch(FS fs ) throws JSchException {
+				JSch defaultJSch = super.createDefaultJSch( fs );
+				defaultJSch.removeAllIdentity();
+				//defaultJSch.addIdentity( "/Users/vjay/.ssh/id_rsa");
+				//identity = getContent("/Users/vjay/.ssh/id_rsa");
+				defaultJSch.getIdentityRepository().add(identity);
+				return defaultJSch;
+			}
+		};
+
+		TransportConfigCallback transportConfigCallback = new TransportConfigCallback() {
+			@Override
+			public void configure(Transport transport) {
+				SshTransport sshTransport = (SshTransport) transport;
+				sshTransport.setSshSessionFactory(sshSessionFactory);
+			}
+		};
+		return transportConfigCallback;
+	}
+
+
+	public static byte[] getContent(String filePath) throws IOException {
+		File file = new File(filePath);
+		long fileSize = file.length();
+		if (fileSize > Integer.MAX_VALUE) {
+			return null;
+		}
+		FileInputStream fi = new FileInputStream(file);
+		byte[] buffer = new byte[(int) fileSize];
+		int offset = 0;
+		int numRead = 0;
+		while (offset < buffer.length
+				&& (numRead = fi.read(buffer, offset, buffer.length - offset)) >= 0) {
+			offset += numRead;
+		}
+		// 确保所有数据均被读取
+		if (offset != buffer.length) {
+			throw new IOException("Could not completely read file "
+					+ file.getName());
+		}
+		fi.close();
+		return buffer;
 	}
 
 }
