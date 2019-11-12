@@ -22,15 +22,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.*;
 import org.eclipse.jgit.util.FS;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +49,8 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * @since
  */
 public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
+
+	// --- Git commands. ---
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -189,57 +193,62 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 		return name;
 	}
 
-	// =======================get by ssh
+	// --- Authentication credentials. ---
 
-	public static TransportConfigCallback getTransportConfigCallback(byte[] identity) throws Exception {
-		SshSessionFactory sshFactory = new JschConfigSessionFactory() {
+	/**
+	 * Setup GIT commands authenticate credentials.
+	 * 
+	 * @param command
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
+	private <T extends TransportCommand> T setupCredentials(TransportCommand command) {
+		try {
+			// TODO ==> identity
+			return (T) command.setTransportConfigCallback(getTransportConfigCallback(null));
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
-			@Override
-			protected void configure(OpenSshConfig.Host hc, Session session) {
-				session.setConfig("StrictHostKeyChecking", "no");
-				// session.setPort(2022);
-			}
-
-			@Override
-			protected JSch createDefaultJSch(FS fs) throws JSchException {
-				JSch defaultJSch = super.createDefaultJSch(fs);
-				defaultJSch.removeAllIdentity();
-				// defaultJSch.addIdentity( "/Users/vjay/.ssh/id_rsa");
-				// identity = getContent("/Users/vjay/.ssh/id_rsa");
-				defaultJSch.getIdentityRepository().add(identity);
-				return defaultJSch;
-			}
-		};
-
-		TransportConfigCallback transportCallback = new TransportConfigCallback() {
+	/**
+	 * Get ssh-key authenticate credentials for {@link TransportConfigCallback}
+	 *
+	 * @param identity
+	 * @return
+	 * @throws Exception
+	 */
+	private TransportConfigCallback getTransportConfigCallback(byte[] identity) throws Exception {
+		return new TransportConfigCallback() {
 			@Override
 			public void configure(Transport transport) {
 				SshTransport sshTransport = (SshTransport) transport;
-				sshTransport.setSshSessionFactory(sshFactory);
+				sshTransport.setSshSessionFactory(new JschConfigSessionFactory() {
+					@Override
+					protected void configure(OpenSshConfig.Host hc, Session session) {
+						session.setConfig("StrictHostKeyChecking", "no");
+						// session.setPort(2022);
+					}
+
+					@Override
+					protected JSch createDefaultJSch(FS fs) throws JSchException {
+						JSch jsch = super.createDefaultJSch(fs);
+						jsch.removeAllIdentity();
+						// jsch.addIdentity("/Users/vjay/.ssh/id_rsa");
+						jsch.getIdentityRepository().add(identity);
+						return jsch;
+					}
+				});
 			}
 		};
-		return transportCallback;
 	}
 
-	public static byte[] getContent(String filePath) throws IOException {
-		File file = new File(filePath);
-		long fileSize = file.length();
-		if (fileSize > Integer.MAX_VALUE) {
-			return null;
-		}
-		FileInputStream fi = new FileInputStream(file);
-		byte[] buffer = new byte[(int) fileSize];
-		int offset = 0;
-		int numRead = 0;
-		while (offset < buffer.length && (numRead = fi.read(buffer, offset, buffer.length - offset)) >= 0) {
-			offset += numRead;
-		}
-		// 确保所有数据均被读取
-		if (offset != buffer.length) {
-			throw new IOException("Could not completely read file " + file.getName());
-		}
-		fi.close();
-		return buffer;
+	@Override
+	protected HttpEntity<String> createVcsRequestHttpEntity() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("PRIVATE-TOKEN", config.getVcs().getGitlab().getToken());
+		HttpEntity<String> entity = new HttpEntity<>(null, headers);
+		return entity;
 	}
 
 }
