@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.ci.VcsDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Vcs" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="provider" property="provider" jdbcType="INTEGER" />
+    <result column="auth_type" property="authType" jdbcType="INTEGER" />
+    <result column="base_uri" property="baseUri" jdbcType="VARCHAR" />
+    <result column="ssh_key_pub" property="sshKeyPub" jdbcType="VARCHAR" />
+    <result column="ssh_key" property="sshKey" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, provider, auth_type, base_uri, ssh_key_pub, ssh_key, token, username, password, 
+    remark, enable, del_flag, create_date, create_by, update_date, update_by
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_vcs
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_vcs
+    where del_flag != 1
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ci_vcs
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Vcs" >
+    insert into ci_vcs (id, provider, auth_type, 
+      base_uri, ssh_key_pub, ssh_key, 
+      token, username, password, 
+      remark, enable, del_flag, 
+      create_date, create_by, update_date, 
+      update_by)
+    values (#{id,jdbcType=INTEGER}, #{provider,jdbcType=INTEGER}, #{authType,jdbcType=INTEGER}, 
+      #{baseUri,jdbcType=VARCHAR}, #{sshKeyPub,jdbcType=VARCHAR}, #{sshKey,jdbcType=VARCHAR}, 
+      #{token,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{delFlag,jdbcType=CHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Vcs" useGeneratedKeys="true" keyProperty="id">
+    insert into ci_vcs
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="provider != null" >
+        provider,
+      </if>
+      <if test="authType != null" >
+        auth_type,
+      </if>
+      <if test="baseUri != null" >
+        base_uri,
+      </if>
+      <if test="sshKeyPub != null" >
+        ssh_key_pub,
+      </if>
+      <if test="sshKey != null" >
+        ssh_key,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="provider != null" >
+        #{provider,jdbcType=INTEGER},
+      </if>
+      <if test="authType != null" >
+        #{authType,jdbcType=INTEGER},
+      </if>
+      <if test="baseUri != null" >
+        #{baseUri,jdbcType=VARCHAR},
+      </if>
+      <if test="sshKeyPub != null" >
+        #{sshKeyPub,jdbcType=VARCHAR},
+      </if>
+      <if test="sshKey != null" >
+        #{sshKey,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Vcs" >
+    update ci_vcs
+    <set >
+      <if test="provider != null" >
+        provider = #{provider,jdbcType=INTEGER},
+      </if>
+      <if test="authType != null" >
+        auth_type = #{authType,jdbcType=INTEGER},
+      </if>
+      <if test="baseUri != null" >
+        base_uri = #{baseUri,jdbcType=VARCHAR},
+      </if>
+      <if test="sshKeyPub != null" >
+        ssh_key_pub = #{sshKeyPub,jdbcType=VARCHAR},
+      </if>
+      <if test="sshKey != null" >
+        ssh_key = #{sshKey,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Vcs" >
+    update ci_vcs
+    set provider = #{provider,jdbcType=INTEGER},
+      auth_type = #{authType,jdbcType=INTEGER},
+      base_uri = #{baseUri,jdbcType=VARCHAR},
+      ssh_key_pub = #{sshKeyPub,jdbcType=VARCHAR},
+      ssh_key = #{sshKey,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
