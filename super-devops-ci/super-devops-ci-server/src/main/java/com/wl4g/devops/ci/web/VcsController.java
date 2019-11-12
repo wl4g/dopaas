@@ -24,7 +24,7 @@ public class VcsController extends BaseController {
 	@RequestMapping("/list")
 	public RespBase<?> list(PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
-		resp.buildMap().andPut("list", vcsService.list(pm)).andPut("page", pm);
+		resp.setData(vcsService.list(pm));
 		return resp;
 	}
 

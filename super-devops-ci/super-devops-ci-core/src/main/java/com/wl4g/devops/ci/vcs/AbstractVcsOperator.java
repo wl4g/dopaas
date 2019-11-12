@@ -61,29 +61,26 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 */
 	protected <T> T doGitExchange(String url, TypeReference<T> typeRef) {
 		// Create httpEntity.
-		HttpEntity<String> entity = createHttpEntity();
+		HttpEntity<String> entity = createVcsRequestHttpEntity();
 
 		// Do request.
 		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 		if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
-			throw new IllegalStateException(String.format("Failed to request git remote, status: %s, body: %s",
+			throw new IllegalStateException(String.format("Failed to request vcs remote, status: %s, body: %s",
 					resp.getStatusCodeValue(), resp.getBody()));
 		}
 		if (log.isInfoEnabled()) {
-			log.info("Git remote response <= {}", resp.getBody());
+			log.info("Vcs remote response <= {}", resp.getBody());
 		}
 		return parseJSON(resp.getBody(), typeRef);
 	}
 
 	/**
-	 * Create httpEntity.
+	 * Create vcs API http request entity.
+	 * 
+	 * @return
 	 */
-	protected HttpEntity<String> createHttpEntity() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("PRIVATE-TOKEN", config.getVcs().getGitlab().getToken());
-		HttpEntity<String> entity = new HttpEntity<>(null, headers);
-		return entity;
-	}
+	protected abstract HttpEntity<String> createVcsRequestHttpEntity();
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

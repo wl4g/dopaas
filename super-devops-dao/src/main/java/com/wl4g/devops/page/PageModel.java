@@ -15,14 +15,16 @@
  */
 package com.wl4g.devops.page;
 
-import static java.util.Collections.emptyList;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.pagehelper.Page;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
-import com.github.pagehelper.Page;
+import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Customizaing page model.
@@ -34,61 +36,44 @@ import com.github.pagehelper.Page;
 public class PageModel implements Serializable {
 	private static final long serialVersionUID = -7002775417254397561L;
 
-	/** Page index number. */
-	private Integer pageNum = 1;
-
-	/** Page records size. */
-	private Integer pageSize = 10;
-
-	/** Total count. */
-	private Long total = 0L;
+	/**
+	 * Page of {@link Page}
+	 */
+	@JsonIgnore
+	private Page<Object> page;
 
 	/**
 	 * Page record rows.
 	 */
 	private List<Object> records = emptyList();
 
-	public PageModel() {
-		super();
-	}
-
-	public PageModel(Integer pageNum, Integer pageSize, Long total) {
-		setPageNum(pageNum);
-		setPageSize(pageSize);
-		setTotal(total);
-	}
-
-	public PageModel(Page<Object> records) {
-		setRecords(records);
-	}
-
 	public Integer getPageNum() {
-		return pageNum;
+		return ensurePage().getPageNum();
 	}
 
 	public void setPageNum(Integer pageNum) {
 		if (nonNull(pageNum)) {
-			this.pageNum = pageNum;
+			ensurePage().setPageNum(pageNum);
 		}
 	}
 
 	public Integer getPageSize() {
-		return pageSize;
+		return ensurePage().getPageSize();
 	}
 
 	public void setPageSize(Integer pageSize) {
 		if (nonNull(pageSize)) {
-			this.pageSize = pageSize;
+			ensurePage().setPageSize(pageSize);
 		}
 	}
 
 	public Long getTotal() {
-		return total;
+		return ensurePage().getTotal();
 	}
 
 	public void setTotal(Long total) {
 		if (nonNull(total)) {
-			this.total = total;
+			ensurePage().setTotal(total);
 		}
 	}
 
@@ -96,33 +81,33 @@ public class PageModel implements Serializable {
 		return records;
 	}
 
-	/**
-	 * Setup page records data.
-	 * 
-	 * @param records
-	 */
 	@SuppressWarnings("unchecked")
 	public <T> void setRecords(List<T> records) {
 		if (!isEmpty(records)) {
 			this.records = (List<Object>) records;
-			// if (records instanceof Page) {
-			// Page<Object> page = (Page<Object>) records;
-			// setPageNum(page.getPageNum());
-			// setPageSize(page.getPageSize());
-			// setTotal(page.getTotal());
-			// }
 		}
 	}
 
 	/**
-	 * Setup page information.
-	 * 
+	 * Setup page info.
+	 *
 	 * @param page
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> void page(Page<T> page) {
-		setPageNum(page.getPageNum());
-		setPageSize(page.getPageSize());
-		setTotal(page.getTotal());
+		this.page = (Page<Object>) page;
+	}
+
+	/**
+	 * Ensure get page.
+	 * 
+	 * @return
+	 */
+	private Page<Object> ensurePage() {
+		if (Objects.isNull(page)) {
+			page = new Page<>();
+		}
+		return page;
 	}
 
 	@Override

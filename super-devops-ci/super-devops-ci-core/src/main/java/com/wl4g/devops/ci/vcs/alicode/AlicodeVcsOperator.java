@@ -18,6 +18,8 @@ package com.wl4g.devops.ci.vcs.alicode;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.HttpEntity;
+
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 
 /**
@@ -86,6 +88,11 @@ public class AlicodeVcsOperator extends AbstractVcsOperator {
 	@Override
 	public <T> T rollback(Object credentials, String projecDir, String sign) {
 		super.rollback(credentials, projecDir, sign);
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected HttpEntity<String> createVcsRequestHttpEntity() {
 		throw new UnsupportedOperationException();
 	}
 
