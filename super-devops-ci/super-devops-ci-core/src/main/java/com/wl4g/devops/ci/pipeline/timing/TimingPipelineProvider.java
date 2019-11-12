@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.pipeline.timing;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.core.command.NewCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.service.TriggerService;
@@ -89,7 +90,8 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 			}
 
 			// Creating pipeline task.
-			pipeManager.newPipeline(task.getId(), null, null, null);
+			// TODO  traceId???
+			pipeManager.newPipeline(new NewCommand(task.getId(), null, null, null));
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();

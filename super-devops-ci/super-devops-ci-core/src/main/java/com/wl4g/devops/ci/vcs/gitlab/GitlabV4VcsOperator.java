@@ -36,8 +36,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
-	public String vcsType() {
-		return VcsType.GITLAB;
+	public VcsProvider vcsProvider() {
+		return VcsProvider.GITLAB;
 	}
 
 	@Override

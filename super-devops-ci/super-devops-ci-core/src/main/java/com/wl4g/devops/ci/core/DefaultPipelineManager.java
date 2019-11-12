@@ -16,6 +16,9 @@
 package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.core.command.HookCommand;
+import com.wl4g.devops.ci.core.command.NewCommand;
+import com.wl4g.devops.ci.core.command.RollbackCommand;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
@@ -36,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,20 +97,19 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected TaskBuildCommandDao taskBuildCmdDao;
 
 	@Override
-	public void newPipeline(Integer taskId, Integer trackId, Integer trackType, String remark) {
-		notNull(taskId, "Pipeline job taskId must not be null");
+	public void newPipeline(NewCommand cmd) {
 		if (log.isInfoEnabled()) {
-			log.info("On pipeline job for taskId: {}", taskId);
+			log.info("New pipeline job for: {}", cmd);
 		}
 
 		// Obtain task details.
-		List<String> instanceIds = safeList(taskDetailDao.selectByTaskId(taskId)).stream()
+		List<String> instanceIds = safeList(taskDetailDao.selectByTaskId(cmd.getTaskId())).stream()
 				.map(detail -> String.valueOf(detail.getInstanceId())).collect(toList());
 		notEmpty(instanceIds, "InstanceIds is empty, please check configure.");
 
 		// Obtain task.
-		Task task = taskDao.selectByPrimaryKey(taskId);
-		notNull(task, String.format("Not found task of %s", taskId));
+		Task task = taskDao.selectByPrimaryKey(cmd.getTaskId());
+		notNull(task, String.format("Not found task of %s", cmd.getTaskId()));
 		notNull(task.getAppClusterId(), "Task clusterId must not be null.");
 		AppCluster appCluster = appClusterDao.selectByPrimaryKey(task.getAppClusterId());
 		notNull(appCluster, "not found this app");
@@ -122,35 +123,35 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Obtain task project.
 		Project project = projectDao.getByAppClusterId(appCluster.getId());
 		// Obtain task build commands.
-		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(taskId);
+		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(cmd.getTaskId());
 
 		// Obtain task history.
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getTarType(), task.getContactGroupId(), taskBuildCmds, trackId, trackType, remark);
+				task.getTarType(), task.getContactGroupId(), taskBuildCmds, cmd.getTaskTraceId(), cmd.getTaskTraceType(),
+				cmd.getRemark());
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
 	}
 
 	@Override
-	public void rollbackPipeline(Integer taskId) {
-		notNull(taskId, "Pipeline job taskId must not be null");
+	public void rollbackPipeline(RollbackCommand cmd) {
 		if (log.isInfoEnabled()) {
-			log.info("On rollback pipeline job for taskId:{}", taskId);
+			log.info("On rollback pipeline job for: {}", cmd);
 		}
 
 		// Task
-		TaskHistory backupTaskHisy = taskHistoryService.getById(taskId);
-		Assert.notNull(backupTaskHisy, String.format("Not found pipeline task history for taskId:%s", taskId));
+		TaskHistory bakTaskHisy = taskHistoryService.getById(cmd.getTaskId());
+		notNull(bakTaskHisy, String.format("Not found pipeline task history for taskId:%s", cmd.getTaskId()));
 
 		// Details
-		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
-		Assert.notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
+		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(cmd.getTaskId());
+		notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
 
 		// Project.
-		Project project = projectDao.selectByPrimaryKey(backupTaskHisy.getProjectId());
-		Assert.notNull(project, String.format("Not found project history for projectId:%s", backupTaskHisy.getProjectId()));
+		Project project = projectDao.selectByPrimaryKey(bakTaskHisy.getProjectId());
+		notNull(project, String.format("Not found project history for projectId:%s", bakTaskHisy.getProjectId()));
 
 		// Instance.
 		List<AppInstance> instances = new ArrayList<>();
@@ -160,34 +161,34 @@ public class DefaultPipelineManager implements PipelineManager {
 		}
 
 		// Roll-back.
-		List<TaskBuildCommand> commands = taskBuildCmdDao.selectByTaskId(taskId);
+		List<TaskBuildCommand> commands = taskBuildCmdDao.selectByTaskId(cmd.getTaskId());
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
-				TASK_STATUS_CREATE, backupTaskHisy.getBranchName(), null, taskId, backupTaskHisy.getBuildCommand(),
-				backupTaskHisy.getPreCommand(), backupTaskHisy.getPostCommand(), backupTaskHisy.getTarType(),
-				backupTaskHisy.getContactGroupId(), commands, null, null, null);
+				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), null, cmd.getTaskId(), bakTaskHisy.getBuildCommand(),
+				bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(), bakTaskHisy.getTarType(),
+				bakTaskHisy.getContactGroupId(), commands, null, null, null);
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
 	}
 
 	@Override
-	public void hookPipeline(String projectName, String branchName, String url) {
+	public void hookPipeline(HookCommand cmd) {
 		if (log.isInfoEnabled()) {
-			log.info("On hook pipeline job. project:{}, branch:{}, url:{}", projectName, branchName, url);
+			log.info("On hook pipeline job for: {}", cmd);
 		}
 
 		// Obtain project.
-		Project project = projectDao.getByProjectName(projectName);
+		Project project = projectDao.getByProjectName(cmd.getProjectName());
 		if (isNull(project)) {
-			log.info("Skip hook pipeline job, becuase project not exist, project:{}, branch:{}, url:{}", projectName, branchName,
-					url);
+			log.info("Skip hook pipeline job, becuase project not exist, project:{}, branch:{}, url:{}", cmd.getProjectName(),
+					cmd.getBranchName());
 			return;
 		}
 		// Obtain hook triggers.
-		Trigger trigger = triggerDao.getTriggerByAppClusterIdAndBranch(project.getAppClusterId(), branchName);
+		Trigger trigger = triggerDao.getTriggerByAppClusterIdAndBranch(project.getAppClusterId(), cmd.getBranchName());
 		if (isNull(trigger)) {
-			log.info("Skip hook pipeline job, becuase trigger not exist, project:{}, clusterId:{}, branch:{}, url:{}",
-					projectName, project.getAppClusterId(), branchName, url);
+			log.info("Skip hook pipeline job, becuase trigger not exist, project:{}, clusterId:{}, branch:{}",
+					cmd.getProjectName(), project.getAppClusterId(), cmd.getBranchName());
 			return;
 		}
 
@@ -202,8 +203,8 @@ public class DefaultPipelineManager implements PipelineManager {
 		String sha = null;
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
-				branchName, sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(), task.getTarType(),
-				task.getContactGroupId(), taskBuildCmds, null, null, null);
+				cmd.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
+				task.getTarType(), task.getContactGroupId(), taskBuildCmds, null, null, null);
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));

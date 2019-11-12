@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.console;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
 import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalMsArgument;
-import com.wl4g.devops.ci.pipeline.GlobalTimeoutJobCleanupFinalizer;
+import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.utils.lang.TableFormatters;
 import com.wl4g.devops.dao.ci.TaskDao;
@@ -44,9 +44,9 @@ import static com.wl4g.devops.shell.processor.ShellHolder.printf;
 public class CiCdConsole {
 	final public static String GROUP = "Devops CI/CD console commands";
 
-	/** {@link GlobalTimeoutJobCleanupFinalizer}. */
+	/** {@link GlobalTimeoutJobCleanupCoordinator}. */
 	@Autowired
-	private GlobalTimeoutJobCleanupFinalizer finalizer;
+	private GlobalTimeoutJobCleanupCoordinator tjcCoordinator;
 
 	/** {@link TaskDao}. */
 	@Autowired
@@ -64,7 +64,7 @@ public class CiCdConsole {
 		try {
 			printf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
 			// Refreshing global timeoutCleanupFinalizer
-			finalizer.refreshGlobalJobCleanMaxIntervalMs(arg.getMaxIntervalMs());
+			tjcCoordinator.refreshGlobalJobCleanMaxIntervalMs(arg.getMaxIntervalMs());
 
 			printf(String.format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
 		} catch (Exception e) {

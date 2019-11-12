@@ -46,7 +46,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	public void execute() throws Exception {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getContext().getProject().getId());
-		mvnBuild(getContext().getTaskHistory(), false);
+		bulid(false);
 
 		// get sha and md5
 		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
@@ -72,7 +72,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getContext().getProject().getId());
 
-		mvnBuild(getContext().getTaskHistory(), true);
+		bulid(true);
 		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// Fingerprint.

@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
+import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.ci.pipeline.deploy.DjangoStandardPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.GolangPipeDeployer;
@@ -88,8 +89,8 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public GlobalTimeoutJobCleanupFinalizer globalTimeoutJobCleanFinalizer() {
-		return new GlobalTimeoutJobCleanupFinalizer();
+	public GlobalTimeoutJobCleanupCoordinator globalTimeoutJobCleanCoordinator() {
+		return new GlobalTimeoutJobCleanupCoordinator();
 	}
 
 	// --- CONSOLE ---

@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.ci.vcs;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.notNull;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -34,33 +37,64 @@ public abstract interface VcsOperator {
 	 * @version v1.0 2019年11月5日
 	 * @since
 	 */
-	public final static class VcsType {
+	public static enum VcsProvider {
 
 		/** Vcs for GITLAB. */
-		final public static String GITLAB = "VcsWithGitlab";
+		GITLAB,
 
 		/** Vcs for github. */
-		final public static String GITHUB = "VcsWithGithub";
+		GITHUB,
 
 		/** Vcs for gitee. */
-		final public static String GITEE = "VcsWithGitee";
+		GITEE,
 
 		/** Vcs for alicode. */
-		final public static String ALICODE = "VcsWithAlicode";
+		ALICODE,
 
 		/** Vcs for bitbucket. */
-		final public static String BITBUCKET = "VcsWithBitbucket";
+		BITBUCKET,
 
 		/** Vcs for coding. */
-		final public static String CODING = "VcsWithCoding";
+		CODING;
+
+		/**
+		 * Safe converter string to {@link VcsProvider}
+		 * 
+		 * @param vcsProvider
+		 * @return
+		 */
+		final public static VcsProvider safeOf(String vcsProvider) {
+			if (isBlank(vcsProvider)) {
+				return null;
+			}
+			for (VcsProvider t : values()) {
+				if (String.valueOf(vcsProvider).equalsIgnoreCase(t.name())) {
+					return t;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Converter string to {@link VcsProvider}
+		 * 
+		 * @param vcsProvider
+		 * @return
+		 */
+		final public static VcsProvider safe(String vcsProvider) {
+			VcsProvider type = safeOf(vcsProvider);
+			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
+			return type;
+		}
+
 	}
 
 	/**
-	 * VCS type definition.
+	 * VCS provider type definition.
 	 * 
 	 * @return
 	 */
-	default String vcsType() {
+	default VcsProvider vcsProvider() {
 		throw new UnsupportedOperationException();
 	}
 

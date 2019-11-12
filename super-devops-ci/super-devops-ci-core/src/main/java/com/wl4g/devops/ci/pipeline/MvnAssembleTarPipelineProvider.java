@@ -33,14 +33,14 @@ import java.io.File;
  */
 public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
-	public MvnAssembleTarPipelineProvider(PipelineContext info) {
-		super(info);
+	public MvnAssembleTarPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	@Override
 	public void execute() throws Exception {
-		// Maven building and include dependencies.
-		mvnBuild(getContext().getTaskHistory(), false);
+		// Building maven(dependencies)
+		bulid(false);
 
 		// Setup Vcs source fingerprint.
 		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
@@ -63,7 +63,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			setupSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
 		} else {
 			// New building and include dependencies.
-			mvnBuild(getContext().getTaskHistory(), true);
+			bulid(true);
 			// Setup vcs source fingerprint.
 			setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
 		}

@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.core.command.HookCommand;
 import com.wl4g.devops.common.bean.ci.dto.HookInfo;
 import com.wl4g.devops.common.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +50,9 @@ public class GitHookController extends BaseController {
 			log.info("Gitlab hook receive <= {}", hook);
 		}
 		String branchName = hook.getBranchName();
-		String url = hook.getRepository().getGitHttpUrl();
+		// String url = hook.getRepository().getGitHttpUrl();
 		String projectName = hook.getRepository().getName();
-		pipeliner.hookPipeline(projectName, branchName, url);
+		pipeliner.hookPipeline(new HookCommand(projectName, branchName));
 	}
 
 }

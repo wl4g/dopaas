@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.pipeline.coordinate;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
@@ -41,7 +41,7 @@ import java.util.concurrent.locks.Lock;
  * @version v1.0.0 2019-10-15
  * @since
  */
-public class GlobalTimeoutJobCleanupFinalizer extends GenericTaskRunner<RunnerProperties> {
+public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<RunnerProperties> {
 	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -60,7 +60,7 @@ public class GlobalTimeoutJobCleanupFinalizer extends GenericTaskRunner<RunnerPr
 	@Autowired
 	protected TaskHistoryDao taskHistoryDao;
 
-	public GlobalTimeoutJobCleanupFinalizer() {
+	public GlobalTimeoutJobCleanupCoordinator() {
 		super(new RunnerProperties(true));
 	}
 
@@ -110,7 +110,7 @@ public class GlobalTimeoutJobCleanupFinalizer extends GenericTaskRunner<RunnerPr
 	}
 
 	/**
-	 * Refresh global distributed {@link GlobalTimeoutJobCleanupFinalizer}
+	 * Refresh global distributed {@link GlobalTimeoutJobCleanupCoordinator}
 	 * watching intervalMs.
 	 * 
 	 * @param globalJobCleanMaxIntervalMs
@@ -128,18 +128,18 @@ public class GlobalTimeoutJobCleanupFinalizer extends GenericTaskRunner<RunnerPr
 	}
 
 	/**
-	 * Get {@link GlobalTimeoutJobCleanupFinalizer} watcher locker name.
+	 * Get {@link GlobalTimeoutJobCleanupCoordinator} watcher locker name.
 	 * 
 	 * @return
 	 */
 	private String getCleanupFinalizerLockName() {
 		return environment.getRequiredProperty("spring.application.name") + "."
-				+ GlobalTimeoutJobCleanupFinalizer.class.getSimpleName();
+				+ GlobalTimeoutJobCleanupCoordinator.class.getSimpleName();
 	}
 
 	/**
-	 * Get global distributed {@link GlobalTimeoutJobCleanupFinalizer} watching
-	 * intervalMs.
+	 * Get global distributed {@link GlobalTimeoutJobCleanupCoordinator}
+	 * watching intervalMs.
 	 * 
 	 * @return
 	 */
