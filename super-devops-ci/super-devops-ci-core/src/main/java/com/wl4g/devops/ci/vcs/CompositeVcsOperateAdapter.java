@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.vcs;
 
 import static java.util.stream.Collectors.toMap;
-import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.util.Assert;
 
@@ -46,7 +46,7 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	/**
 	 * Vcs operator.
 	 */
-	final protected Map<String, VcsOperator> registry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<VcsProvider, VcsOperator> registry = new OnceModifiableMap<>(new HashMap<>());
 
 	/**
 	 * Real delegate VcsOperator.
@@ -56,14 +56,15 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	public CompositeVcsOperateAdapter(List<VcsOperator> operators) {
 		Assert.state(!isEmpty(operators), "Vcs operators has at least one.");
 		// Duplicate checks.
-		Set<String> vcsTypes = new HashSet<>();
+		Set<VcsProvider> vcsProviders = new HashSet<>();
 		operators.forEach(o -> {
-			hasText(o.vcsType(), String.format("VcsType must not be empty for VcsOperator %s", o));
-			state(!vcsTypes.contains(o.vcsType()), String.format("Repeated definition VcsOperator with %s", o.vcsType()));
-			vcsTypes.add(o.vcsType());
+			notNull(o.vcsProvider(), String.format("Vcs provider must not be empty for VcsOperator %s", o));
+			state(!vcsProviders.contains(o.vcsProvider()),
+					String.format("Repeated definition VcsOperator with %s", o.vcsProvider()));
+			vcsProviders.add(o.vcsProvider());
 		});
 		// Register.
-		this.registry.putAll(operators.stream().collect(toMap(VcsOperator::vcsType, oper -> oper)));
+		this.registry.putAll(operators.stream().collect(toMap(VcsOperator::vcsProvider, oper -> oper)));
 	}
 
 	/**
@@ -72,18 +73,18 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	 * @return
 	 */
 	public VcsOperator forDefault() {
-		return forAdapt(VcsType.GITLAB);
+		return forAdapt(VcsProvider.GITLAB);
 	}
 
 	/**
 	 * Making the adaptation actually execute {@link VcsOperator}.
 	 * 
-	 * @param type
+	 * @param vcsProvider
 	 * @return
 	 */
-	public VcsOperator forAdapt(@NotBlank String type) {
-		VcsOperator operator = registry.get(type);
-		Assert.notNull(operator, String.format("Unsupport VcsOperator for '%s'", type));
+	public VcsOperator forAdapt(@NotNull VcsProvider vcsProvider) {
+		VcsOperator operator = registry.get(vcsProvider);
+		notNull(operator, String.format("Unsupported VcsOperator for '%s'", vcsProvider));
 		delegate.set(operator);
 		return operator;
 	}

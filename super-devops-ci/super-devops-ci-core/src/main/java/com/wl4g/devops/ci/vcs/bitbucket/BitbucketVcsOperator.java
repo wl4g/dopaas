@@ -30,8 +30,8 @@ import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 public class BitbucketVcsOperator extends AbstractVcsOperator {
 
 	@Override
-	public String vcsType() {
-		return VcsType.BITBUCKET;
+	public VcsProvider vcsProvider() {
+		return VcsProvider.BITBUCKET;
 	}
 
 	@Override

@@ -29,8 +29,8 @@ import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
-	public String vcsType() {
-		return VcsType.GITEE;
+	public VcsProvider vcsProvider() {
+		return VcsProvider.GITEE;
 	}
 
 	@Override

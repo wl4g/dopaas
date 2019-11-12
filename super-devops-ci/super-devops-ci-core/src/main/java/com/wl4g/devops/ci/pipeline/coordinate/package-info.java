@@ -13,29 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
-
-import com.wl4g.devops.ci.core.context.PipelineContext;
-
-import java.io.File;
-
 /**
- * Based MAVEN abstract pipeline provider.
- * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年10月12日
+ * @version v1.0 2019年11月12日
  * @since
  */
-public abstract class BasedMavenPipelineProvider extends GenericHostPipelineProvider {
-
-	public BasedMavenPipelineProvider(PipelineContext info) {
-		super(info);
-	}
-
-	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
-		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
-		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
-	}
-
-}
+package com.wl4g.devops.ci.pipeline.coordinate;

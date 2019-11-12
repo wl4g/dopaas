@@ -30,8 +30,8 @@ import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 public class AlicodeVcsOperator extends AbstractVcsOperator {
 
 	@Override
-	public String vcsType() {
-		return VcsType.ALICODE;
+	public VcsProvider vcsProvider() {
+		return VcsProvider.ALICODE;
 	}
 
 	@Override

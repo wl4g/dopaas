@@ -13,29 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
-
-import com.wl4g.devops.ci.core.context.PipelineContext;
-
-import java.io.File;
+package com.wl4g.devops.ci.core.command;
 
 /**
- * Based MAVEN abstract pipeline provider.
+ * Roll-back pipeline handle command.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年10月12日
+ * @version v1.0 2019年11月12日
  * @since
  */
-public abstract class BasedMavenPipelineProvider extends GenericHostPipelineProvider {
+public class RollbackCommand extends GenericCommand {
+	private static final long serialVersionUID = 1489325413465499589L;
 
-	public BasedMavenPipelineProvider(PipelineContext info) {
-		super(info);
+	public RollbackCommand() {
+		super();
 	}
 
-	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
-		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
-		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
+	public RollbackCommand(Integer taskId, String remark) {
+		super(taskId, remark);
 	}
 
 }

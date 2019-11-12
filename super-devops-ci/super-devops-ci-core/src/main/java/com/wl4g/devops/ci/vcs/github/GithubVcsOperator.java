@@ -29,8 +29,8 @@ import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
-	public String vcsType() {
-		return VcsType.GITHUB;
+	public VcsProvider vcsProvider() {
+		return VcsProvider.GITHUB;
 	}
 
 	@Override
