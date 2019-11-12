@@ -228,7 +228,7 @@ public class RespBase<D> implements Serializable {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@JsonIgnore
-	public DataMap<Object> buildMap() {
+	public synchronized DataMap<Object> buildMap() {
 		if (!isAvailablePayload()) { // Data unalready ?
 			data = (D) new DataMap<>(); // Init
 		} else {
@@ -238,7 +238,11 @@ public class RespBase<D> implements Serializable {
 			 * example:{@link org.springframework.web.client.RestTemplate}.response]
 			 */
 			if (data instanceof Map) { // e.g.LinkedHashMap
-				this.data = (D) new DataMap<>((Map) data);
+				if (data instanceof DataMap) {
+					this.data = (D) data;
+				} else {
+					this.data = (D) new DataMap<>((Map) data);
+				}
 			} else {
 				String errmsg = String.format(
 						"Illegal type compatible operation, because RespBase.data has initialized the available data, class type is: %s, and forMap() requires RespBase.data to be uninitialized or the initialized data type is must an instance of Map",
