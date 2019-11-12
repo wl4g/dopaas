@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean;
+package com.wl4g.devops.page;
 
+import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.github.pagehelper.Page;
 
 /**
  * Customizaing page model.
@@ -36,7 +41,12 @@ public class PageModel implements Serializable {
 	private Integer pageSize = 10;
 
 	/** Total count. */
-	private Long total;
+	private Long total = 0L;
+
+	/**
+	 * Page record rows.
+	 */
+	private List<Object> records = emptyList();
 
 	public PageModel() {
 		super();
@@ -46,6 +56,10 @@ public class PageModel implements Serializable {
 		setPageNum(pageNum);
 		setPageSize(pageSize);
 		setTotal(total);
+	}
+
+	public PageModel(Page<Object> records) {
+		setRecords(records);
 	}
 
 	public Integer getPageNum() {
@@ -78,9 +92,43 @@ public class PageModel implements Serializable {
 		}
 	}
 
+	public List<Object> getRecords() {
+		return records;
+	}
+
+	/**
+	 * Setup page records data.
+	 * 
+	 * @param records
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> void setRecords(List<T> records) {
+		if (!isEmpty(records)) {
+			this.records = (List<Object>) records;
+			// if (records instanceof Page) {
+			// Page<Object> page = (Page<Object>) records;
+			// setPageNum(page.getPageNum());
+			// setPageSize(page.getPageSize());
+			// setTotal(page.getTotal());
+			// }
+		}
+	}
+
+	/**
+	 * Setup page information.
+	 * 
+	 * @param page
+	 */
+	public <T> void page(Page<T> page) {
+		setPageNum(page.getPageNum());
+		setPageSize(page.getPageSize());
+		setTotal(page.getTotal());
+	}
+
 	@Override
 	public String toString() {
-		return "CustomPage [pageNum=" + pageNum + ", pageSize=" + pageSize + ", total=" + total + "]";
+		return "PageModel [pageNum=" + getPageNum() + ", pageSize=" + getPageSize() + ", total=" + getTotal() + ", records="
+				+ getRecords().size() + "]";
 	}
 
 }

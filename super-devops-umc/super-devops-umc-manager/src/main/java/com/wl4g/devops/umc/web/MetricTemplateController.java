@@ -17,11 +17,11 @@ package com.wl4g.devops.umc.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.umc.MetricTemplateDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.MetricTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.iam.service;
 
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.common.bean.iam.User;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.Map;
 import java.util.Set;

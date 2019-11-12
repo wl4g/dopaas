@@ -19,13 +19,14 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.utils.task.CronUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.TriggerDao;
+import com.wl4g.devops.page.PageModel;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;

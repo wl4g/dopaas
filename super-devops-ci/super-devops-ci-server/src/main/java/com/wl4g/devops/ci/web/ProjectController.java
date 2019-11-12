@@ -19,11 +19,12 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;

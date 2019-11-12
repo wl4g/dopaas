@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.iam.Role;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.RoleService;
+import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
