@@ -21,12 +21,12 @@ import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
+import java.util.List;
+
 import static java.util.Collections.emptyList;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.util.List;
 
 /**
  * Default deploy information implements.
@@ -51,7 +51,7 @@ public class DefaultPipelineContext implements PipelineContext {
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
 		notNull(taskHistory, "taskHistory must not be null");
-		notNull(refTaskHistory, "refTaskHistory must not be null");
+		//notNull(refTaskHistory, "refTaskHistory must not be null");
 		this.project = project;
 		this.projectSourceDir = projectSourceDir;
 		this.appCluster = appCluster;
