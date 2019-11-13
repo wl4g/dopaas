@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.vcs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.common.bean.ci.Vcs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,9 @@ import java.util.List;
 public abstract class AbstractVcsOperator implements VcsOperator, InitializingBean {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * CICD configuration.
+	 */
 	@Autowired
 	protected CiCdProperties config;
 
@@ -116,7 +120,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+	public <T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
 		notNull(credentials, "Clone credentials is requires.");
 		hasText(remoteUrl, "Clone remoteUrl can't is empty");
 		hasText(projecDir, "Clone projecDir can't is empty");
@@ -128,13 +132,14 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
+	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
 		notNull(credentials, "Checkout & pull credentials is requires.");
 		hasText(projecDir, "Checkout & pull projecDir can't is empty");
 		hasText(branchName, "Checkout & pull branchName can't is empty");
 		if (log.isInfoEnabled()) {
 			log.info("Checkout & pull for projecDir: {}, branchName: {}", projecDir, branchName);
 		}
+		return null;
 	}
 
 	@Override
@@ -166,7 +171,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T> T rollback(Object credentials, String projecDir, String sign) {
+	public <T> T rollback(Vcs credentials, String projecDir, String sign) {
 		notNull(credentials, "Rollback credentials is requires.");
 		hasText(projecDir, "Rollback projecDir can't is empty");
 		hasText(sign, "Rollback sign can't is empty");

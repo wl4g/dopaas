@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.http.HttpEntity;
 
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
+import com.wl4g.devops.common.bean.ci.Vcs;
 
 /**
  * VCS operator for Coding.
@@ -55,16 +56,15 @@ public class CodingVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+	public <T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
 		super.clone(credentials, remoteUrl, projecDir, branchName);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
+	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
 		super.checkoutAndPull(credentials, projecDir, branchName);
 		throw new UnsupportedOperationException();
-
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class CodingVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public <T> T rollback(Object credentials, String projecDir, String sign) {
+	public <T> T rollback(Vcs credentials, String projecDir, String sign) {
 		super.rollback(credentials, projecDir, sign);
 		throw new UnsupportedOperationException();
 	}

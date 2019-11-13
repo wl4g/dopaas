@@ -1,101 +1,183 @@
 package com.wl4g.devops.common.bean.ci;
 
+import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.notNull;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.wl4g.devops.common.bean.BaseBean;
 
-import java.io.Serializable;
+/**
+ * CICD project with VCS credentials information.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年11月12日
+ * @since
+ */
+public class Vcs extends BaseBean {
+	private static final long serialVersionUID = 381411777614066880L;
 
-public class Vcs extends BaseBean implements Serializable {
+	@NotBlank
+	private String name;
 
-    private static final long serialVersionUID = 381411777614066880L;
+	@NotNull
+	private Integer provider;
 
-    private String name;
+	@NotNull
+	private Integer authType;
 
-    private Integer provider;
+	@NotBlank
+	private String baseUri;
 
-    private Integer authType;
+	private String sshKeyPub;
 
-    private String baseUri;
+	private String sshKey;
 
-    private String sshKeyPub;
+	private String token;
 
-    private String sshKey;
+	private String username;
 
-    private String token;
+	private String password;
 
-    private String username;
+	public String getName() {
+		return name;
+	}
 
-    private String password;
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Integer getProvider() {
+		return provider;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setProvider(Integer provider) {
+		this.provider = provider;
+	}
 
-    public Integer getProvider() {
-        return provider;
-    }
+	public Integer getAuthType() {
+		return authType;
+	}
 
-    public void setProvider(Integer provider) {
-        this.provider = provider;
-    }
+	public void setAuthType(Integer authType) {
+		this.authType = authType;
+	}
 
-    public Integer getAuthType() {
-        return authType;
-    }
+	public String getBaseUri() {
+		return baseUri;
+	}
 
-    public void setAuthType(Integer authType) {
-        this.authType = authType;
-    }
+	public void setBaseUri(String baseUri) {
+		this.baseUri = baseUri == null ? null : baseUri.trim();
+	}
 
-    public String getBaseUri() {
-        return baseUri;
-    }
+	public String getSshKeyPub() {
+		return sshKeyPub;
+	}
 
-    public void setBaseUri(String baseUri) {
-        this.baseUri = baseUri == null ? null : baseUri.trim();
-    }
+	public void setSshKeyPub(String sshKeyPub) {
+		this.sshKeyPub = sshKeyPub == null ? null : sshKeyPub.trim();
+	}
 
-    public String getSshKeyPub() {
-        return sshKeyPub;
-    }
+	public String getSshKey() {
+		return sshKey;
+	}
 
-    public void setSshKeyPub(String sshKeyPub) {
-        this.sshKeyPub = sshKeyPub == null ? null : sshKeyPub.trim();
-    }
+	public void setSshKey(String sshKey) {
+		this.sshKey = sshKey == null ? null : sshKey.trim();
+	}
 
-    public String getSshKey() {
-        return sshKey;
-    }
+	public String getToken() {
+		return token;
+	}
 
-    public void setSshKey(String sshKey) {
-        this.sshKey = sshKey == null ? null : sshKey.trim();
-    }
+	public void setToken(String token) {
+		this.token = token == null ? null : token.trim();
+	}
 
-    public String getToken() {
-        return token;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public void setToken(String token) {
-        this.token = token == null ? null : token.trim();
-    }
+	public void setUsername(String username) {
+		this.username = username == null ? null : username.trim();
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
-    }
+	public void setPassword(String password) {
+		this.password = password == null ? null : password.trim();
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	@Override
+	public String toString() {
+		return "Vcs [name=" + name + ", provider=" + provider + ", authType=" + authType + ", baseUri=" + baseUri + ", sshKeyPub="
+				+ sshKeyPub + ", sshKey=" + sshKey + ", token=" + token + ", username=" + username + ", password=" + password
+				+ "]";
+	}
 
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
-    }
+	/**
+	 * VCS authentication type definitions.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月13日
+	 * @since
+	 */
+	public static enum VcsAuthType {
+
+		/**
+		 * VCS auth type for username-password.
+		 */
+		AUTH_PASSWD(1),
+
+		/**
+		 * VCS auth type for ssh-key.
+		 */
+		AUTH_SSH(2);
+
+		final private int value;
+
+		private VcsAuthType(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		/**
+		 * Safe converter string to {@link VcsAuthType}
+		 * 
+		 * @param vcsAuthType
+		 * @return
+		 */
+		final public static VcsAuthType safeOf(Integer vcsAuthType) {
+			if (isNull(vcsAuthType)) {
+				return null;
+			}
+			for (VcsAuthType t : values()) {
+				if (String.valueOf(vcsAuthType).equalsIgnoreCase(t.name())) {
+					return t;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Converter string to {@link VcsAuthType}
+		 * 
+		 * @param vcsAuthType
+		 * @return
+		 */
+		final public static VcsAuthType of(Integer vcsAuthType) {
+			VcsAuthType type = safeOf(vcsAuthType);
+			notNull(type, String.format("Unsupported VCS auth type for %s", vcsAuthType));
+			return type;
+		}
+
+	}
 
 }

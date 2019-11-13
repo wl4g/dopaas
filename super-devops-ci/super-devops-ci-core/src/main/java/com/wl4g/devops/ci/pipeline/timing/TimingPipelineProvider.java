@@ -90,12 +90,12 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 			}
 
 			// Creating pipeline task.
-			// TODO  traceId???
+			// TODO traceId???
 			pipeManager.newPipeline(new NewCommand(task.getId(), null, null, null));
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-			String latestSha = vcsOperator.getLatestCommitted(projectDir);
+			String latestSha = vcsAdapter.getLatestCommitted(projectDir);
 			hasText(latestSha, String.format("Trigger latest sha can't be empty for %s", projectDir));
 
 			// Update latest sign.
@@ -122,13 +122,12 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	 */
 	private boolean checkCommittedChanged() throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		if (vcsOperator.ensureRepo(projectDir)) {
-			vcsOperator.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, task.getBranchName());
+		if (vcsAdapter.ensureRepo(projectDir)) {
+			vcsAdapter.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName());
 		} else {
-			vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir,
-					task.getBranchName());
+			vcsAdapter.clone(project.getVcs(), project.getGitUrl(), projectDir, task.getBranchName());
 		}
-		String newSign = vcsOperator.getLatestCommitted(projectDir);
+		String newSign = vcsAdapter.getLatestCommitted(projectDir);
 		return !equalsIgnoreCase(trigger.getSha(), newSign);
 	}
 

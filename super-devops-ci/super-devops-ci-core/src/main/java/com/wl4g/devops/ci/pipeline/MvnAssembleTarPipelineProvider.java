@@ -43,7 +43,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		bulid(false);
 
 		// Setup Vcs source fingerprint.
-		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// MVN build.
 		doMvnBuildInternal();
@@ -65,7 +65,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			// New building and include dependencies.
 			bulid(true);
 			// Setup vcs source fingerprint.
-			setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
+			setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 		}
 
 		// MVN build.

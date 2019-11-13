@@ -21,6 +21,9 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.ci.vcs.VcsOperator;
+import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
@@ -77,7 +80,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected ProcessManager processManager;
 	@Autowired
-	protected CompositeVcsOperateAdapter vcsOperator;
+	protected CompositeVcsOperateAdapter vcsAdapter;
 
 	@Autowired
 	protected DependencyService dependencyService;
@@ -106,10 +109,32 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Pipeline context.
+	 * Basic pipeline.
 	 */
 	public PipelineContext getContext() {
 		return context;
+	}
+
+	/**
+	 * Get vcs operator for project.
+	 * 
+	 * @param vcsProvider
+	 * @return
+	 */
+	protected VcsOperator getVcsOperator(Project project) {
+		notNull(project, "Project can't be null.");
+		notNull(project.getVcs(), "Project.vcs can't be null.");
+		return getVcsOperator(project.getVcs().getProvider());
+	}
+
+	/**
+	 * Get vcs operator for provider.
+	 * 
+	 * @param vcsProvider
+	 * @return
+	 */
+	protected VcsOperator getVcsOperator(Integer vcsProvider) {
+		return vcsAdapter.forAdapt(VcsProvider.of(vcsProvider));
 	}
 
 	// --- Fingerprint's. ---
