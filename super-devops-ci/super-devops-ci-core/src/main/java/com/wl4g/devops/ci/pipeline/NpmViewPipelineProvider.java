@@ -89,7 +89,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 			if (getVcsOperator(project).ensureRepo(projectDir)) {
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sha);
 			} else {
-				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branchName);
+				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branchName);
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sha);
 			}
 		} else {
@@ -97,7 +97,7 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 				getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir,
 						getContext().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branchName);
+				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branchName);
 			}
 		}
 	}

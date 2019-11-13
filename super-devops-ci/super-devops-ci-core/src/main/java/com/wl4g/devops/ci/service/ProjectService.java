@@ -39,4 +39,6 @@ public interface ProjectService {
 
 	int updateLockStatus(Integer id, Integer lockStatus);
 
+	List<String> getBranchs(Integer appClusterId, Integer tarOrBranch);
+
 }

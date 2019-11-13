@@ -18,16 +18,17 @@ package com.wl4g.devops.ci.vcs.gitlab;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.model.GitlabV4ProjectSimpleModel;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * VCS operator for GITLAB V4.
@@ -99,6 +100,31 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 			log.info("Extract remote project IDs: {}", id);
 		}
 		return id;
+	}
+
+	@Override
+	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
+		//super.findRemoteProjectId(credentials, projectName);
+		String search = "";
+		if(StringUtils.isNotBlank(projectName)){
+			search = "&search="+projectName;
+		}
+		//TODO per_page = 50 , get from vcs
+		String url = credentials.getBaseUri() + "/api/v4/projects?simple=true&per_page=50" + search;
+		// Extract project IDs.
+		List<GitlabV4ProjectSimpleModel> projects = doGitExchange(credentials, url,
+				new TypeReference<List<GitlabV4ProjectSimpleModel>>() {
+				});
+		List<VcsProjectDto> vcsProjectDtos = new ArrayList<>();
+		for(GitlabV4ProjectSimpleModel gitlabV4ProjectSimpleModel : projects){
+			VcsProjectDto vcsProjectDto = new VcsProjectDto();
+			vcsProjectDto.setId(gitlabV4ProjectSimpleModel.getId());
+			vcsProjectDto.setName(gitlabV4ProjectSimpleModel.getName());
+			vcsProjectDto.setHttpUrl(gitlabV4ProjectSimpleModel.getHttp_url_to_repo());
+			vcsProjectDto.setSshUrl(gitlabV4ProjectSimpleModel.getSsh_url_to_repo());
+			vcsProjectDtos.add(vcsProjectDto);
+		}
+		return vcsProjectDtos;
 	}
 
 }

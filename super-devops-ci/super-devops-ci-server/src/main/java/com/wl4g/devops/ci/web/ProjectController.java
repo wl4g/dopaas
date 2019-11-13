@@ -19,12 +19,13 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,7 +56,7 @@ public class ProjectController extends BaseController {
 	private ProjectService projectService;
 
 	@Autowired
-	private ProjectDao projectDao;
+	private VcsDao vcsDao;
 
 	/**
 	 * list
@@ -163,6 +164,16 @@ public class ProjectController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/vcsProjects")
+	public RespBase<?> vcsProjects(Integer vcsId,String projectName) {
+		RespBase<Object> resp = RespBase.create();
+		Assert.notNull(vcsId, "vcsId can not be null");
+		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+		List<VcsProjectDto> remoteProjects = vcsAdapter.forDefault().findRemoteProjects(vcs, projectName);
+		resp.setData(remoteProjects);
+		return resp;
+	}
+
 	/**
 	 * Get a list of branches from GITLAB so that the front end can be displayed
 	 * drop-down.
@@ -173,47 +184,17 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/getBranchs")
 	public RespBase<?> getBranchs(Integer appClusterId, Integer tarOrBranch) {
-		log.debug("into ProjectController.getBranchs prarms::" + "appClusterId = {} , tarOrBranch = {} ", appClusterId,
-				tarOrBranch);
+		if(log.isInfoEnabled()){
+			log.info("into ProjectController.getBranchs prarms::" + "appClusterId = {} , tarOrBranch = {} ", appClusterId,
+					tarOrBranch);
+		}
 		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(appClusterId, "id can not be null");
+		List<String> branchs = projectService.getBranchs(appClusterId, tarOrBranch);
+		resp.forMap().put("branchNames", branchs);
 
-		Project project = projectDao.getByAppClusterId(appClusterId);
-		Assert.notNull(project, "not found project ,please check you project config");
-		String url = project.getGitUrl();
-
-		// Find remote projectIds.
-		String projectName = extProjectName(url);
-		// TODO ---credentials
-		Integer gitlabProjectId = vcsAdapter.forDefault().findRemoteProjectId(null, projectName);
-		Assert.notNull(gitlabProjectId, String.format("No found projectId of name: %s", projectName));
-
-		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			// TODO ---credentials
-			List<String> branchNames = vcsAdapter.forDefault().getRemoteTags(null, gitlabProjectId);
-			resp.forMap().put("branchNames", branchNames);
-		}
-		// Branch
-		else {
-			// TODO ---credentials
-			List<String> branchNames = vcsAdapter.forDefault().getRemoteBranchNames(null, gitlabProjectId);
-			resp.forMap().put("branchNames", branchNames);
-		}
 		return resp;
 	}
 
-	/**
-	 * Tool for this class : get Git Project Name from Url
-	 * 
-	 * @param url
-	 * @return
-	 */
-	private static String extProjectName(String url) {
-		int index = url.lastIndexOf("/");
-		url = url.substring(index + 1);
-		index = url.lastIndexOf(".");
-		url = url.substring(0, index);
-		return url;
-	}
+
 
 }

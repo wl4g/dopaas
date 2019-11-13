@@ -16,9 +16,10 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.ProjectService;
+import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Dependency;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
 	private DependencyDao dependencyDao;
+
+	@Autowired
+	private CompositeVcsOperateAdapter vcsAdapter;
 
 	@Override
 	@Transactional
@@ -115,5 +119,44 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setLockStatus(lockStatus);
 		return projectDao.updateByPrimaryKeySelective(project);
 	}
+
+	@Override
+	public List<String> getBranchs(Integer appClusterId, Integer tarOrBranch) {
+		Assert.notNull(appClusterId, "id can not be null");
+
+		Project project = projectDao.getByAppClusterId(appClusterId);
+		Assert.notNull(project, "not found project ,please check you project config");
+		String url = project.getHttpUrl();
+
+		// Find remote projectIds.
+		String projectName = extProjectName(url);
+		Integer gitlabProjectId = vcsAdapter.forAdapt(project.getVcs().getProvider()).findRemoteProjectId(project.getVcs(), projectName);
+		Assert.notNull(gitlabProjectId, String.format("No found projectId of name: %s", projectName));
+
+		if (tarOrBranch != null && tarOrBranch == 2) { // tag
+			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs().getProvider()).getRemoteTags(project.getVcs(), gitlabProjectId);
+			return branchNames;
+		}
+		// Branch
+		else {
+			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs().getProvider()).getRemoteBranchNames(project.getVcs(), gitlabProjectId);
+			return branchNames;
+		}
+	}
+
+	/**
+	 * Tool for this class : get Git Project Name from Url
+	 *
+	 * @param url
+	 * @return
+	 */
+	private static String extProjectName(String url) {
+		int index = url.lastIndexOf("/");
+		url = url.substring(index + 1);
+		index = url.lastIndexOf(".");
+		url = url.substring(0, index);
+		return url;
+	}
+
 
 }

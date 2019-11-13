@@ -217,14 +217,14 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 			if (getVcsOperator(project).ensureRepo(projectDir)) {
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
 			} else {
-				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branch);
+				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
 			}
 		} else {
 			if (getVcsOperator(project).ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
 				getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branch);
+				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
 			}
 		}
 

@@ -125,7 +125,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 		if (vcsAdapter.ensureRepo(projectDir)) {
 			vcsAdapter.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName());
 		} else {
-			vcsAdapter.clone(project.getVcs(), project.getGitUrl(), projectDir, task.getBranchName());
+			vcsAdapter.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
 		}
 		String newSign = vcsAdapter.getLatestCommitted(projectDir);
 		return !equalsIgnoreCase(trigger.getSha(), newSign);
