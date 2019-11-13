@@ -38,20 +38,20 @@ public class BitbucketVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
-		super.getRemoteBranchNames(projectId);
+	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+		super.getRemoteBranchNames(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<String> getRemoteTags(int projectId) {
-		super.getRemoteTags(projectId);
+	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+		super.getRemoteTags(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Integer findRemoteProjectId(String projectName) {
-		super.findRemoteProjectId(projectName);
+	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
+		super.findRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 
@@ -92,7 +92,7 @@ public class BitbucketVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	protected HttpEntity<String> createVcsRequestHttpEntity() {
+	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.ci.config;
 
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import static java.util.Objects.nonNull;
 
 /**
  * CICD pipeline process, acquiring project source code-related configuration.
@@ -101,56 +100,18 @@ public class VcsSourceProperties {
 	 * @since
 	 */
 	public static class GitlabProperties {
-		private String baseUrl;
-		private String username;
-		private String password;
-		private String token;
+		private Integer findRemoteProjectsMaxSize = 1000;
 
-		/**
-		 * credentials for git
-		 */
-		private CredentialsProvider credentials;
-
-		public String getBaseUrl() {
-			return baseUrl;
+		public Integer getFindRemoteProjectsMaxSize() {
+			return findRemoteProjectsMaxSize;
 		}
 
-		public void setBaseUrl(String baseUrl) {
-			this.baseUrl = baseUrl;
-		}
-
-		public String getUsername() {
-			return username;
-		}
-
-		public void setUsername(String username) {
-			this.username = username;
-		}
-
-		public String getPassword() {
-			return password;
-		}
-
-		public void setPassword(String password) {
-			this.password = password;
-		}
-
-		public String getToken() {
-			return token;
-		}
-
-		public void setToken(String token) {
-			this.token = token;
-		}
-
-		// --- Function's. ---
-
-		public CredentialsProvider getCredentials() {
-			if (null == credentials) {
-				credentials = new UsernamePasswordCredentialsProvider(username, password);
+		public void setFindRemoteProjectsMaxSize(Integer findRemoteProjectsMaxSize) {
+			if (nonNull(findRemoteProjectsMaxSize)) {
+				this.findRemoteProjectsMaxSize = findRemoteProjectsMaxSize;
 			}
-			return credentials;
 		}
+
 	}
 
 	/**

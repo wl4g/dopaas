@@ -17,6 +17,8 @@ package com.wl4g.devops.ci.vcs.gitlab;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
+import com.wl4g.devops.ci.vcs.gitlab.model.GitlabV4ProjectSimpleModel;
+import com.wl4g.devops.common.bean.ci.Vcs;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * VCS operator for GITLAB V4.
@@ -41,12 +44,12 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
-		super.getRemoteBranchNames(projectId);
+	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+		super.getRemoteBranchNames(credentials, projectId);
 
-		String url = config.getVcs().getGitlab().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/branches";
+		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches";
 		// Extract branch names.
-		List<Map<String, Object>> branchs = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
+		List<Map<String, Object>> branchs = doGitExchange(credentials, url, new TypeReference<List<Map<String, Object>>>() {
 		});
 		List<String> branchNames = safeList(branchs).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
 				.filter(s -> !isEmpty(s)).collect(toList());
@@ -58,12 +61,12 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<String> getRemoteTags(int projectId) {
-		super.getRemoteTags(projectId);
+	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+		super.getRemoteTags(credentials, projectId);
 
-		String url = config.getVcs().getGitlab().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/tags";
+		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/tags";
 		// Extract tag names.
-		List<Map<String, Object>> tags = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
+		List<Map<String, Object>> tags = doGitExchange(credentials, url, new TypeReference<List<Map<String, Object>>>() {
 		});
 		List<String> tagNames = safeList(tags).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
 				.filter(s -> !isEmpty(s)).collect(toList());
@@ -75,18 +78,19 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Integer findRemoteProjectId(String projectName) {
-		super.findRemoteProjectId(projectName);
+	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
+		super.findRemoteProjectId(credentials, projectName);
 
-		String url = config.getVcs().getGitlab().getBaseUrl() + "/api/v4/projects?simple=true&search=" + projectName;
+		String url = credentials.getBaseUri() + "/api/v4/projects?simple=true&search=" + projectName;
 		// Extract project IDs.
-		List<Map<String, Object>> projects = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
-		});
+		List<GitlabV4ProjectSimpleModel> projects = doGitExchange(credentials, url,
+				new TypeReference<List<GitlabV4ProjectSimpleModel>>() {
+				});
 
 		Integer id = null;
-		for (Map<String, Object> map : projects) {
-			if (map.getOrDefault("name", "-1").toString().equals(projectName)) {
-				id = Integer.parseInt(map.getOrDefault("id", "-1").toString());
+		for (GitlabV4ProjectSimpleModel p : projects) {
+			if (trimToEmpty(projectName).equals(p.getName())) {
+				id = p.getId();
 				break;
 			}
 		}

@@ -30,10 +30,10 @@ public class VcsServcieImpl implements VcsService {
 	@Override
 	public void save(Vcs vcs) {
 		if (vcs.getId() == null) {
-            vcs.preInsert();
+			vcs.preInsert();
 			insert(vcs);
 		} else {
-            vcs.preUpdate();
+			vcs.preUpdate();
 			update(vcs);
 		}
 	}

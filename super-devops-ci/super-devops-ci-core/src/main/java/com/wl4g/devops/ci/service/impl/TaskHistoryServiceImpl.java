@@ -85,8 +85,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Override
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer refId,String buildCommand, String preCommand, String postCommand, String tarType, Integer contactGroupId,
-			List<TaskBuildCommand> taskBuildCommands,Integer trackId,Integer trackType,String remark) {
+			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, Integer trackId, Integer trackType, String remark) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
@@ -102,7 +102,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setTarType(tarType);
 		taskHistory.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
 		taskHistory.setContactGroupId(contactGroupId);
-		//1107 add
+		// 1107 add
 		taskHistory.setTrackId(trackId);
 		taskHistory.setTrackType(trackType);
 		taskHistory.setRemark(remark);
@@ -163,8 +163,8 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setId(taskHisId);
 		taskHistory.setStatus(TASK_STATUS_STOP);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
-		//CommandUtils.killByTaskId(taskHisId);
-		processManager.destroy(String.valueOf(taskHisId),5000);
+		// CommandUtils.killByTaskId(taskHisId);
+		processManager.destroy(String.valueOf(taskHisId), 5000);
 
 	}
 
