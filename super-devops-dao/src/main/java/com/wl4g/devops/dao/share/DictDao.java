@@ -40,5 +40,5 @@ public interface DictDao {
 	Dict getByKey(String key);
 
 	List<Dict> list(@Param("key") String key, @Param("label") String label, @Param("type") String type,
-			@Param("description") String description);
+			@Param("description") String description,@Param("orderBySort") String orderBySort);
 }

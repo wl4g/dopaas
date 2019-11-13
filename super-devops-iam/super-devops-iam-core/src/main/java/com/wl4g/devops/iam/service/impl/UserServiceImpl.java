@@ -23,10 +23,10 @@ import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.dao.iam.*;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
+import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.handler.UserUtil;
 import com.wl4g.devops.iam.service.UserService;
 import com.wl4g.devops.page.PageModel;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,6 +71,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserUtil userUtil;
 
+	@Autowired
+	protected IamSessionDAO sessionDAO;
+
 	@Override
 	public Map<String, Object> list(PageModel pm, String userName, String displayName) {
 		Map<String, Object> resp = new HashMap<>();
@@ -105,6 +108,7 @@ public class UserServiceImpl implements UserService {
 		if (StringUtils.isNotBlank(user.getPassword())) {
 			String signature = credentialsSecurer.signature(new CredentialsToken(user.getUserName(), user.getPassword()));
 			user.setPassword(signature);
+			sessionDAO.removeAccessSession(user.getUserName());
 		}
 		if (user.getId() != null) {
 			update(user);
