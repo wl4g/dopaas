@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.http.HttpEntity;
 
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
 import com.wl4g.devops.common.bean.ci.Vcs;
 
 /**
@@ -52,6 +53,12 @@ public class AlicodeVcsOperator extends AbstractVcsOperator {
 	@Override
 	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
 		super.findRemoteProjectId(credentials, projectName);
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
+		super.findRemoteProjects(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 

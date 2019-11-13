@@ -17,10 +17,10 @@ package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-import static java.util.Objects.nonNull;
-
 import java.io.Serializable;
 import java.util.List;
+
+import static java.util.Objects.nonNull;
 
 /**
  * Project bean entity.
@@ -35,7 +35,11 @@ public class Project extends BaseBean implements Serializable {
 
 	private String projectName;
 
-	private String gitUrl;
+	private Integer vcsId;
+
+	private String httpUrl;
+
+	private String sshUrl;
 
 	private Integer appClusterId;
 
@@ -80,12 +84,12 @@ public class Project extends BaseBean implements Serializable {
 		this.assetsPath = tarPath;
 	}
 
-	public String getGitUrl() {
-		return gitUrl;
+	public String getHttpUrl() {
+		return httpUrl;
 	}
 
-	public void setGitUrl(String gitUrl) {
-		this.gitUrl = gitUrl;
+	public void setHttpUrl(String httpUrl) {
+		this.httpUrl = httpUrl;
 	}
 
 	public String getParentAppHome() {
@@ -124,6 +128,22 @@ public class Project extends BaseBean implements Serializable {
 		return vcs;
 	}
 
+	public Integer getVcsId() {
+		return vcsId;
+	}
+
+	public void setVcsId(Integer vcsId) {
+		this.vcsId = vcsId;
+	}
+
+	public String getSshUrl() {
+		return sshUrl;
+	}
+
+	public void setSshUrl(String sshUrl) {
+		this.sshUrl = sshUrl;
+	}
+
 	public void setVcs(Vcs vcs) {
 		if (nonNull(vcs)) {
 			this.vcs = vcs;
@@ -132,7 +152,7 @@ public class Project extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Project [projectName=" + projectName + ", gitUrl=" + gitUrl + ", appClusterId=" + appClusterId + ", tarPath="
+		return "Project [projectName=" + projectName + ", httpUrl=" + httpUrl + ", appClusterId=" + appClusterId + ", tarPath="
 				+ assetsPath + ", parentAppHome=" + parentAppHome + ", groupName=" + groupName + ", lockStatus=" + lockStatus
 				+ ", dependencies=" + dependencies + "]";
 	}

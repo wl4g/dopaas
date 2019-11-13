@@ -15,27 +15,22 @@
  */
 package com.wl4g.devops.ci.vcs;
 
-import static java.util.stream.Collectors.toMap;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
+import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.lib.Ref;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
-import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Composite VCS operator adapter.
@@ -92,6 +87,16 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 		return operator;
 	}
 
+	/**
+	 * Making the adaptation actually execute {@link VcsOperator}.
+	 *
+	 * @param vcsProvider
+	 * @return
+	 */
+	public VcsOperator forAdapt(@NotNull Integer vcsProvider) {
+		return forAdapt(VcsProvider.of(vcsProvider));
+	}
+
 	@Override
 	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
 		return getAdapted().getRemoteBranchNames(credentials, projectId);
@@ -106,6 +111,13 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
 		return getAdapted().findRemoteProjectId(credentials, projectName);
 	}
+
+	@Override
+	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
+		return getAdapted().findRemoteProjects(credentials, projectName);
+	}
+
+
 
 	/**
 	 * Get adapted {@link VcsOperator}.

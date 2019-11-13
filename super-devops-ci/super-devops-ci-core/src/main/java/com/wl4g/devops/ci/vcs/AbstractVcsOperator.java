@@ -17,23 +17,24 @@ package com.wl4g.devops.ci.vcs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
 import com.wl4g.devops.common.bean.ci.Vcs;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-
 import java.io.IOException;
 import java.util.List;
+
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static org.springframework.util.Assert.*;
 
 /**
  * Abstract VCS API operator.
@@ -118,6 +119,11 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		if (log.isInfoEnabled()) {
 			log.info("Search remote projectIds by projectName: {}", projectName);
 		}
+		return null;
+	}
+
+	@Override
+	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
 		return null;
 	}
 

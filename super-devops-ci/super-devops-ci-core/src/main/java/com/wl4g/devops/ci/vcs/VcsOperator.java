@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.ci.vcs;
 
-import static java.util.Objects.isNull;
-import static org.springframework.util.Assert.notNull;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.common.bean.ci.Vcs;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.wl4g.devops.common.bean.ci.Vcs;
+import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * VCS APIs operator.
@@ -141,6 +142,8 @@ public abstract interface VcsOperator {
 	 * @return
 	 */
 	Integer findRemoteProjectId(Vcs credentials, String projectName);
+
+	List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName);
 
 	// --- VCS operator. ---
 

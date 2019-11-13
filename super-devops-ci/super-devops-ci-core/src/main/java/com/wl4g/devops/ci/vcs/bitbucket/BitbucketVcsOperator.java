@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.vcs.bitbucket;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.common.bean.ci.Vcs;
 import org.springframework.http.HttpEntity;
 
-import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
-import com.wl4g.devops.common.bean.ci.Vcs;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * VCS operator for BITBUCKET.
@@ -52,6 +52,12 @@ public class BitbucketVcsOperator extends AbstractVcsOperator {
 	@Override
 	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
 		super.findRemoteProjectId(credentials, projectName);
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
+		super.findRemoteProjects(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 
