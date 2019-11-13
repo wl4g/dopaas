@@ -51,7 +51,7 @@ public class DefaultPipelineContext implements PipelineContext {
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
 		notNull(taskHistory, "taskHistory must not be null");
-		//notNull(refTaskHistory, "refTaskHistory must not be null");
+		// notNull(refTaskHistory, "refTaskHistory must not be null");
 		this.project = project;
 		this.projectSourceDir = projectSourceDir;
 		this.appCluster = appCluster;

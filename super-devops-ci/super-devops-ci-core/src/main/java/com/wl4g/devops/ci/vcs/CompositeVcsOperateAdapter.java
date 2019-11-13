@@ -93,18 +93,18 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	}
 
 	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
-		return getAdapted().getRemoteBranchNames(projectId);
+	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+		return getAdapted().getRemoteBranchNames(credentials, projectId);
 	}
 
 	@Override
-	public List<String> getRemoteTags(int projectId) {
-		return getAdapted().getRemoteTags(projectId);
+	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+		return getAdapted().getRemoteTags(credentials, projectId);
 	}
 
 	@Override
-	public Integer findRemoteProjectId(String projectName) {
-		return getAdapted().findRemoteProjectId(projectName);
+	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
+		return getAdapted().findRemoteProjectId(credentials, projectName);
 	}
 
 	/**

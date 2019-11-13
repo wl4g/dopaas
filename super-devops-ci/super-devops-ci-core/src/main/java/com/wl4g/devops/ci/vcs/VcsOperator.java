@@ -114,27 +114,33 @@ public abstract interface VcsOperator {
 
 	/**
 	 * Get VCS remote branch names.
-	 *
+	 * 
+	 * @param credentials
+	 *            VCS authentication credentials
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteBranchNames(int projectId);
+	List<String> getRemoteBranchNames(Vcs credentials, int projectId);
 
 	/**
 	 * Get VCS remote tag names.
-	 *
+	 * 
+	 * @param credentials
+	 *            VCS authentication credentials
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteTags(int projectId);
+	List<String> getRemoteTags(Vcs credentials, int projectId);
 
 	/**
 	 * Find remote project ID by project name.
-	 *
+	 * 
+	 * @param credentials
+	 *            VCS authentication credentials
 	 * @param projectName
 	 * @return
 	 */
-	Integer findRemoteProjectId(String projectName);
+	Integer findRemoteProjectId(Vcs credentials, String projectName);
 
 	// --- VCS operator. ---
 

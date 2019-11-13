@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.vcs.gitee;
 import java.util.List;
 
 import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
+import com.wl4g.devops.common.bean.ci.Vcs;
 
 /**
  * VCS operator for GITEE.
@@ -34,20 +35,20 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
-		super.getRemoteBranchNames(projectId);
+	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+		super.getRemoteBranchNames(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<String> getRemoteTags(int projectId) {
-		super.getRemoteTags(projectId);
+	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+		super.getRemoteTags(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Integer findRemoteProjectId(String projectName) {
-		super.findRemoteProjectId(projectName);
+	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
+		super.findRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 

@@ -59,13 +59,14 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	/**
 	 * Do VCS apiServer exchange.
 	 *
+	 * @param credentials
 	 * @param url
 	 * @param typeRef
 	 * @return
 	 */
-	protected <T> T doGitExchange(String url, TypeReference<T> typeRef) {
+	protected <T> T doGitExchange(Vcs credentials, String url, TypeReference<T> typeRef) {
 		// Create httpEntity.
-		HttpEntity<String> entity = createVcsRequestHttpEntity();
+		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
 
 		// Do request.
 		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -82,9 +83,10 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	/**
 	 * Create vcs API http request entity.
 	 * 
+	 * @param credentials
 	 * @return
 	 */
-	protected abstract HttpEntity<String> createVcsRequestHttpEntity();
+	protected abstract HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials);
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -93,7 +95,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
+	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
 		isTrue(projectId > 0, "Get remote branchs must projectId >= 0");
 		if (log.isInfoEnabled()) {
 			log.info("Get remote branchs by projectId: {}", projectId);
@@ -102,7 +104,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public List<String> getRemoteTags(int projectId) {
+	public List<String> getRemoteTags(Vcs credentials, int projectId) {
 		isTrue(projectId > 0, "Get remote tags must projectId >= 0");
 		if (log.isInfoEnabled()) {
 			log.info("Get remote tags by projectId: {}", projectId);
@@ -111,7 +113,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public Integer findRemoteProjectId(String projectName) {
+	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
 		hasText(projectName, "Project name can't is empty");
 		if (log.isInfoEnabled()) {
 			log.info("Search remote projectIds by projectName: {}", projectName);

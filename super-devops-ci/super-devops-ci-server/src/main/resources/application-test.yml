@@ -79,10 +79,7 @@ pipeline:
     accept-queue: 2
   vcs:
     gitlab:
-      base-url: http://git.anjiancloud.repo
-      username: heweijie
-      password: hwj13535248668
-      token: Xw6xYojnoj7SSDyyLXP7
+      find-remote-projects-max-size: 1000
   build:
     job-max-clean-interval-ms: 30_000
     job-timeout-ms: 600_000
