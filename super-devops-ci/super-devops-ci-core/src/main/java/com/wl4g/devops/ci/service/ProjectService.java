@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 
@@ -33,7 +34,9 @@ public interface ProjectService {
 
 	int removeById(Integer id);
 
-	List<Project> list(String groupName, String projectName);
+	PageModel list(PageModel pm, String groupName, String projectName);
+
+	List<Project> all();
 
 	Project selectByPrimaryKey(Integer id);
 
