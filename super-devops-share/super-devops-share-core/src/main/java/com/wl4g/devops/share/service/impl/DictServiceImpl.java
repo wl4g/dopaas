@@ -95,7 +95,7 @@ public class DictServiceImpl implements DictService {
 	@Override
 	public Map<String, Object> cache() {
 		Map<String, Object> result = new HashMap<>();
-		List<Dict> dicts = dictDao.list(null, null, null, null);
+		List<Dict> dicts = dictDao.list(null, null, null, null,"1");
 		Map<String, List<Dict>> dictList = new HashMap<>();
 		Map<String, Map<String, Dict>> dictMap = new HashMap<>();
 		for (Dict dict : dicts) {

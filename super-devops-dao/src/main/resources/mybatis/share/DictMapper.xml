@@ -240,6 +240,11 @@
       AND type = #{type,jdbcType=VARCHAR}
     </if>
 
+    <if test="orderBySort != null and orderBySort != ''" >
+      order by sort
+    </if>
+
+
   </select>
 
   <select id="allType" resultMap="allTypeResult">
