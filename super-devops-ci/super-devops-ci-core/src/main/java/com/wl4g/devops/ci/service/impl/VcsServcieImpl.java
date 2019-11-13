@@ -10,6 +10,8 @@ import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author vjay
  * @date 2019-11-12 11:05:00
@@ -57,6 +59,11 @@ public class VcsServcieImpl implements VcsService {
 	@Override
 	public Vcs detail(Integer id) {
 		return vcsDao.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public List<Vcs> all() {
+		return vcsDao.list();
 	}
 
 }
