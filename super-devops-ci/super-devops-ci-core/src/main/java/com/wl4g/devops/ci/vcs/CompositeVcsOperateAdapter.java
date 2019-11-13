@@ -29,9 +29,12 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.lib.Ref;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
+import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 
 /**
@@ -118,13 +121,14 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	}
 
 	@Override
-	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+	public <T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
 		return getAdapted().clone(credentials, remoteUrl, projecDir, branchName);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
-		getAdapted().checkoutAndPull(credentials, projecDir, branchName);
+	public PullResult checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
+		return getAdapted().checkoutAndPull(credentials, projecDir, branchName);
 	}
 
 	@Override
@@ -142,8 +146,9 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 		return getAdapted().getLatestCommitted(projecDir);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T rollback(Object credentials, String projecDir, String sign) {
+	public Ref rollback(Vcs credentials, String projecDir, String sign) {
 		return getAdapted().rollback(credentials, projecDir, sign);
 	}
 

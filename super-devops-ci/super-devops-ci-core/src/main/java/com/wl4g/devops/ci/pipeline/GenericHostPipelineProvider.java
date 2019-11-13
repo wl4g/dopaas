@@ -214,19 +214,17 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 			} else {
 				sign = taskHisy.getShaGit();
 			}
-			if (vcsOperator.ensureRepo(projectDir)) {
-				vcsOperator.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
+			if (getVcsOperator(project).ensureRepo(projectDir)) {
+				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
 			} else {
-				vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
-				vcsOperator.rollback(config.getVcs().getGitlab().getCredentials(), projectDir, sign);
+				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branch);
+				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
 			}
 		} else {
-			//TODO vcsOperator.forAdapt()
-			if (vcsOperator.ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
-				//TODO config.getVcs().getGitlab().getCredentials() ==> vcsBean
-				vcsOperator.checkoutAndPull(config.getVcs().getGitlab().getCredentials(), projectDir, branch);
+			if (getVcsOperator(project).ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
+				getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				vcsOperator.clone(config.getVcs().getGitlab().getCredentials(), project.getGitUrl(), projectDir, branch);
+				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branch);
 			}
 		}
 
@@ -235,7 +233,7 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 			TaskSign taskSign = new TaskSign();
 			taskSign.setTaskId(taskHisy.getId());
 			taskSign.setDependenvyId(dependencyId);
-			taskSign.setShaGit(vcsOperator.getLatestCommitted(projectDir));
+			taskSign.setShaGit(getVcsOperator(project).getLatestCommitted(projectDir));
 			taskSignDao.insertSelective(taskSign);
 		}
 

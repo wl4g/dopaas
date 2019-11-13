@@ -18,10 +18,14 @@ package com.wl4g.devops.ci.vcs;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.common.bean.ci.Vcs.VcsAuthType;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.TransportCommand;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.lib.ObjectId;
@@ -37,6 +41,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.wl4g.devops.common.utils.codec.Encodes.toBytes;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -50,11 +55,11 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  */
 public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 
-	// --- Git commands. ---
+	// --- Based Git commands. ---
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+	public Git clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
 		super.clone(credentials, remoteUrl, projecDir, branchName);
 
 		File path = new File(projecDir);
@@ -62,24 +67,24 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 			path.mkdirs();
 		}
 		try {
-			CloneCommand cmd = Git.cloneRepository().setURI(remoteUrl).setDirectory(path)
-					.setCredentialsProvider((CredentialsProvider) credentials);
+			// Authenticate credentials.
+			CloneCommand cmd = setupCredentials(credentials, Git.cloneRepository().setURI(remoteUrl).setDirectory(path));
 			if (!isBlank(branchName)) {
 				cmd.setBranch(branchName);
 			}
 			Git git = cmd.call();
-
 			if (log.isInfoEnabled()) {
 				log.info("Cloning from '" + remoteUrl + "' to " + git.getRepository());
 			}
-			return (T) git;
+			return git;
 		} catch (Exception e) {
 			throw new IllegalStateException(String.format("Faild to clone from '%s'", remoteUrl), e);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void checkoutAndPull(Object credentials, String projecDir, String branchName) {
+	public PullResult checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
 		super.checkoutAndPull(credentials, projecDir, branchName);
 
 		String projectURL = projecDir + "/.git";
@@ -98,12 +103,12 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 				git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
 						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
 			}
-			// Pull & get latest source code.
-			git.pull().setCredentialsProvider((CredentialsProvider) credentials).call();
-
+			// Pull latest source.
+			PullResult pullRes = setupCredentials(credentials, git.pull()).call();
 			if (log.isInfoEnabled()) {
 				log.info("Checkout & pull successful for branchName:{}, projecDir:{}", branchName, projecDir);
 			}
+			return pullRes;
 		} catch (Exception e) {
 			String errmsg = String.format("Failed to checkout & pull for branchName: %s, projecDir: %s", branchName, projecDir);
 			log.error(errmsg, e);
@@ -154,19 +159,19 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T rollback(Object credentials, String projecDir, String sign) {
+	public Ref rollback(Vcs credentials, String projecDir, String sign) {
 		super.rollback(credentials, projecDir, sign);
 
 		String metaPath = projecDir + "/.git";
 		try (Git git = Git.open(new File(metaPath))) {
-			git.fetch().setCredentialsProvider((CredentialsProvider) credentials).call();
+			setupCredentials(credentials, git.fetch()).call();
 			Ref ref = git.checkout().setName(sign).call();
 
 			String msg = "Rollback branch completed, sign:" + sign + ", localPath:" + projecDir;
 			if (log.isInfoEnabled()) {
 				log.info(msg);
 			}
-			return (T) ref;
+			return ref;
 		} catch (Exception e) {
 			String errmsg = String.format("Failed to rollback, sign:%s, localPath:%s", sign, projecDir);
 			log.error(errmsg, e);
@@ -198,27 +203,36 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	/**
 	 * Setup GIT commands authenticate credentials.
 	 * 
+	 * @param credentials
 	 * @param command
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unused", "unchecked" })
-	private <T extends TransportCommand> T setupCredentials(TransportCommand command) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private <T extends TransportCommand> T setupCredentials(Vcs credentials, T command) {
 		try {
-			// TODO ==> identity
-			return (T) command.setTransportConfigCallback(getTransportConfigCallback(null));
+			switch (VcsAuthType.of(credentials.getAuthType())) {
+			case AUTH_PASSWD:
+				return (T) command.setCredentialsProvider(
+						new UsernamePasswordCredentialsProvider(credentials.getUsername(), credentials.getPassword()));
+			case AUTH_SSH:
+				return (T) command.setTransportConfigCallback(newTransportConfigCallback(toBytes(credentials.getSshKey())));
+			default:
+				throw new Error("It shouldn't be do here");
+			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * Get ssh-key authenticate credentials for {@link TransportConfigCallback}
-	 *
+	 * New transport callback for ssh-key authenticate credentials.
+	 * 
 	 * @param identity
 	 * @return
 	 * @throws Exception
+	 * @see {@link TransportConfigCallback}
 	 */
-	private TransportConfigCallback getTransportConfigCallback(byte[] identity) throws Exception {
+	private TransportConfigCallback newTransportConfigCallback(byte[] identity) throws Exception {
 		return new TransportConfigCallback() {
 			@Override
 			public void configure(Transport transport) {

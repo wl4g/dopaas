@@ -15,11 +15,13 @@
  */
 package com.wl4g.devops.ci.vcs;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
 
 import java.io.IOException;
 import java.util.List;
+
+import com.wl4g.devops.common.bean.ci.Vcs;
 
 /**
  * VCS APIs operator.
@@ -40,22 +42,32 @@ public abstract interface VcsOperator {
 	public static enum VcsProvider {
 
 		/** Vcs for GITLAB. */
-		GITLAB,
+		GITLAB(1),
 
 		/** Vcs for github. */
-		GITHUB,
+		GITHUB(2),
 
 		/** Vcs for gitee. */
-		GITEE,
+		GITEE(3),
 
 		/** Vcs for alicode. */
-		ALICODE,
+		ALICODE(4),
 
 		/** Vcs for bitbucket. */
-		BITBUCKET,
+		BITBUCKET(5),
 
 		/** Vcs for coding. */
-		CODING;
+		CODING(6);
+
+		final private int value;
+
+		private VcsProvider(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
 
 		/**
 		 * Safe converter string to {@link VcsProvider}
@@ -63,8 +75,8 @@ public abstract interface VcsOperator {
 		 * @param vcsProvider
 		 * @return
 		 */
-		final public static VcsProvider safeOf(String vcsProvider) {
-			if (isBlank(vcsProvider)) {
+		final public static VcsProvider safeOf(Integer vcsProvider) {
+			if (isNull(vcsProvider)) {
 				return null;
 			}
 			for (VcsProvider t : values()) {
@@ -81,7 +93,7 @@ public abstract interface VcsOperator {
 		 * @param vcsProvider
 		 * @return
 		 */
-		final public static VcsProvider safe(String vcsProvider) {
+		final public static VcsProvider of(Integer vcsProvider) {
 			VcsProvider type = safeOf(vcsProvider);
 			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
 			return type;
@@ -139,7 +151,7 @@ public abstract interface VcsOperator {
 	 * @return
 	 * @throws IOException
 	 */
-	default <T> T clone(Object credentials, String remoteUrl, String projecDir) throws IOException {
+	default <T> T clone(Vcs credentials, String remoteUrl, String projecDir) throws IOException {
 		return clone(credentials, remoteUrl, projecDir, null);
 	}
 
@@ -157,7 +169,7 @@ public abstract interface VcsOperator {
 	 * @return
 	 * @throws IOException
 	 */
-	<T> T clone(Object credentials, String remoteUrl, String projecDir, String branchName) throws IOException;
+	<T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException;
 
 	/**
 	 * Checkout and pull.
@@ -168,7 +180,7 @@ public abstract interface VcsOperator {
 	 *            project local VCS repository directory absolute path.
 	 * @param branchName
 	 */
-	void checkoutAndPull(Object credentials, String projecDir, String branchName);
+	<T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName);
 
 	/**
 	 * Delete (local) branch.
@@ -212,6 +224,6 @@ public abstract interface VcsOperator {
 	 *            committed ID.
 	 * @return
 	 */
-	<T> T rollback(Object credentials, String projecDir, String sign);
+	<T> T rollback(Vcs credentials, String projecDir, String sign);
 
 }

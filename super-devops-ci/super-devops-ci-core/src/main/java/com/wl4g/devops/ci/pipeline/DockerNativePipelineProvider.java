@@ -49,7 +49,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		bulid(false);
 
 		// get sha and md5
-		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// docker build
 		dockerBuild(getContext().getProjectSourceDir());
@@ -73,7 +73,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		dependency.setProjectId(getContext().getProject().getId());
 
 		bulid(true);
-		setupSourceFingerprint(vcsOperator.getLatestCommitted(getContext().getProjectSourceDir()));
+		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// Fingerprint.
 		File assetsFile = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());

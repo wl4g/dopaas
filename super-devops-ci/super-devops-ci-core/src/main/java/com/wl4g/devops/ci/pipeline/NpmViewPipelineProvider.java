@@ -21,8 +21,6 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
-import org.eclipse.jgit.transport.CredentialsProvider;
-
 import java.io.File;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
@@ -83,23 +81,23 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 		notNull(project, "project not exist");
 
 		String branchName = getContext().getTaskHistory().getBranchName();
-		CredentialsProvider credentials = config.getVcs().getGitlab().getCredentials();
 		// Project source directory.
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 
 		if (isRollback) {
 			String sha = getContext().getTaskHistory().getShaGit();
-			if (vcsOperator.ensureRepo(projectDir)) {
-				vcsOperator.rollback(credentials, projectDir, sha);
+			if (getVcsOperator(project).ensureRepo(projectDir)) {
+				getVcsOperator(project).rollback(project.getVcs(), projectDir, sha);
 			} else {
-				vcsOperator.clone(credentials, project.getGitUrl(), projectDir, branchName);
-				vcsOperator.rollback(credentials, projectDir, sha);
+				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branchName);
+				getVcsOperator(project).rollback(project.getVcs(), projectDir, sha);
 			}
 		} else {
-			if (vcsOperator.ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
-				vcsOperator.checkoutAndPull(credentials, projectDir, getContext().getTaskHistory().getBranchName());
+			if (getVcsOperator(project).ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
+				getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir,
+						getContext().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				vcsOperator.clone(credentials, project.getGitUrl(), projectDir, branchName);
+				getVcsOperator(project).clone(project.getVcs(), project.getGitUrl(), projectDir, branchName);
 			}
 		}
 	}

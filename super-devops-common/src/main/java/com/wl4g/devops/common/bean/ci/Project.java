@@ -17,6 +17,8 @@ package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -48,7 +50,11 @@ public class Project extends BaseBean implements Serializable {
 
 	private List<Dependency> dependencies;
 
-	private String vcsType;
+	/**
+	 * Project mapping to Vcs credentials.</br>
+	 * Many(Project)-to-One(Vcs)
+	 */
+	private Vcs vcs = new Vcs();
 
 	public String getProjectName() {
 		return projectName;
@@ -114,12 +120,14 @@ public class Project extends BaseBean implements Serializable {
 		this.dependencies = dependencies;
 	}
 
-	public String getVcsType() {
-		return vcsType;
+	public Vcs getVcs() {
+		return vcs;
 	}
 
-	public void setVcsType(String vcsType) {
-		this.vcsType = vcsType;
+	public void setVcs(Vcs vcs) {
+		if (nonNull(vcs)) {
+			this.vcs = vcs;
+		}
 	}
 
 	@Override
