@@ -32,7 +32,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends AbstractPipelineProvider {
+public class NpmViewPipelineProvider extends BasedHostPipelineProvider {
 
 	public NpmViewPipelineProvider(PipelineContext info) {
 		super(info);
@@ -140,6 +140,12 @@ public class NpmViewPipelineProvider extends AbstractPipelineProvider {
 		processManager.execFile(String.valueOf(taskHistory.getId()), tarCommand,
 				config.getJobTmpCommandFile(taskHistory.getId(), -1), config.getJobLog(getContext().getTaskHistory().getId()),
 				300000);
+	}
+
+	@Override
+	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
+		String defaultCommand = "cd " + projectDir + " && npm install";
+		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}
 
 }

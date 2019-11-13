@@ -40,7 +40,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	@Override
 	public void execute() throws Exception {
 		// Building maven(dependencies)
-		bulid(false);
+		buildModular(false);
 
 		// Setup Vcs source fingerprint.
 		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
@@ -63,7 +63,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 			setupSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
 		} else {
 			// New building and include dependencies.
-			bulid(true);
+			buildModular(true);
 			// Setup vcs source fingerprint.
 			setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 		}

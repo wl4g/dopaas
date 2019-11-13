@@ -17,20 +17,20 @@ package com.wl4g.devops.ci.pipeline.deploy;
 
 import java.util.List;
 
-import com.wl4g.devops.ci.pipeline.DjangoStandardPipelineProvider;
+import com.wl4g.devops.ci.pipeline.Python3StandardPipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * Django stdandard transfer job.
+ * Python3 stdandard transfer job.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月25日
  * @since
  */
-public class DjangoStandardPipeDeployer extends GenericHostPipeDeployer<DjangoStandardPipelineProvider> {
+public class Python3StandardPipeDeployer extends GenericHostPipeDeployer<Python3StandardPipelineProvider> {
 
-	public DjangoStandardPipeDeployer(DjangoStandardPipelineProvider provider, AppInstance instance,
+	public Python3StandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(provider, instance, taskHistoryDetails);
 	}

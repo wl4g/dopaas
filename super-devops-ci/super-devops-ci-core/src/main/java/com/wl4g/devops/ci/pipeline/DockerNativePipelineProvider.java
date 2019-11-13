@@ -31,7 +31,7 @@ import java.io.File;
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
+public class DockerNativePipelineProvider extends GenericDependenciesPipelineProvider {
 
 	public DockerNativePipelineProvider(PipelineContext deployProviderBean) {
 		super(deployProviderBean);
@@ -46,7 +46,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	public void execute() throws Exception {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getContext().getProject().getId());
-		bulid(false);
+		buildModular(false);
 
 		// get sha and md5
 		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
@@ -72,7 +72,7 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 		Dependency dependency = new Dependency();
 		dependency.setProjectId(getContext().getProject().getId());
 
-		bulid(true);
+		buildModular(true);
 		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// Fingerprint.
@@ -132,6 +132,11 @@ public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
 	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
+	}
+
+	@Override
+	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
+
 	}
 
 }

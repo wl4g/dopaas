@@ -19,7 +19,7 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
 
 /**
- * Pipeline provider.
+ * Pipeline provider SPI.
  * 
  * @author vjay
  * @author Wangl.sir <983708408@qq.com>

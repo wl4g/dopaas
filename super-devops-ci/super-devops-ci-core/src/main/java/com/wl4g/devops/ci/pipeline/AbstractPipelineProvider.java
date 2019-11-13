@@ -61,11 +61,10 @@ import java.util.List;
  * @date 2019-05-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * Pipeline context wrapper.
+	 * Pipeline context.
 	 */
 	final protected PipelineContext context;
 
@@ -116,7 +115,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Get vcs operator for project.
+	 * Get VCS operator for project.
 	 * 
 	 * @param project
 	 * @return
@@ -128,7 +127,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Get vcs operator for provider.
+	 * Get VCS operator for provider.
 	 * 
 	 * @param vcsProvider
 	 * @return

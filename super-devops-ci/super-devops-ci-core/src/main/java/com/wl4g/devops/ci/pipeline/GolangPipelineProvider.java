@@ -15,21 +15,23 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import java.io.File;
+
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.GolangPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * Golang standard deployments provider.
+ * GOLANG standard deployments provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
-public class GolangPipelineProvider extends AbstractPipelineProvider {
+public class GolangPipelineProvider extends BasedHostPipelineProvider {
 
-	public GolangPipelineProvider(PipelineContext info) {
-		super(info);
+	public GolangPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	@Override
@@ -46,6 +48,12 @@ public class GolangPipelineProvider extends AbstractPipelineProvider {
 	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(GolangPipeDeployer.class, args);
+	}
+
+	@Override
+	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
+		String defaultCommand = "cd " + projectDir + " && go build";
+		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}
 
 }
