@@ -43,7 +43,7 @@ public class RoleController {
 	public RespBase<?> getRolesByUserGroups() {
 		RespBase<Object> resp = RespBase.create();
 		List<Role> roles = roleService.getRolesByUserGroups();
-		resp.buildMap().put("data", roles);
+		resp.forMap().put("data", roles);
 		return resp;
 	}
 
@@ -73,7 +73,7 @@ public class RoleController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Role role = roleService.detail(id);
-		resp.buildMap().put("data", role);
+		resp.forMap().put("data", role);
 		return resp;
 	}
 

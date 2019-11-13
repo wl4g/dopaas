@@ -228,7 +228,7 @@ public class RespBase<D> implements Serializable {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@JsonIgnore
-	public synchronized DataMap<Object> buildMap() {
+	public synchronized DataMap<Object> forMap() {
 		if (!isAvailablePayload()) { // Data unalready ?
 			data = (D) new DataMap<>(); // Init
 		} else {
@@ -264,14 +264,14 @@ public class RespBase<D> implements Serializable {
 	public DataMap<Object> buildNode(String nodeKey) {
 		hasText(nodeKey, "RespBase build datamap nodeKey name can't be empty");
 		DataMap<Object> nodeMap = new DataMap<>();
-		buildMap().put(nodeKey, (D) nodeMap);
+		forMap().put(nodeKey, (D) nodeMap);
 		return nodeMap;
 	}
 
 	/**
 	 * Check whether the {@link RespBase#data} is available, for example, it
 	 * will become available payload after {@link RespBase#setData(Object)} or
-	 * {@link RespBase#buildMap()} has been invoked.
+	 * {@link RespBase#forMap()} has been invoked.
 	 * 
 	 * @return
 	 */

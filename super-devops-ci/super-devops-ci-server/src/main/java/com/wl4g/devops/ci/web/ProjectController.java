@@ -74,8 +74,8 @@ public class ProjectController extends BaseController {
 		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<Project> list = projectService.list(groupName, projectName);
 		pm.setTotal(page.getTotal());
-		resp.buildMap().put("page", pm);
-		resp.buildMap().put("list", list);
+		resp.forMap().put("page", pm);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -114,7 +114,7 @@ public class ProjectController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		Project project = projectService.selectByPrimaryKey(id);
-		resp.buildMap().put("project", project);
+		resp.forMap().put("project", project);
 		return resp;
 	}
 
@@ -142,7 +142,7 @@ public class ProjectController extends BaseController {
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
 		List<Project> list = projectService.list(null, null);
-		resp.buildMap().put("list", list);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -189,12 +189,12 @@ public class ProjectController extends BaseController {
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
 			List<String> branchNames = vcsAdapter.forDefault().getRemoteTags(gitlabProjectId);
-			resp.buildMap().put("branchNames", branchNames);
+			resp.forMap().put("branchNames", branchNames);
 		}
 		// Branch
 		else {
 			List<String> branchNames = vcsAdapter.forDefault().getRemoteBranchNames(gitlabProjectId);
-			resp.buildMap().put("branchNames", branchNames);
+			resp.forMap().put("branchNames", branchNames);
 		}
 		return resp;
 	}

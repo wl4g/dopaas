@@ -89,8 +89,8 @@ public class TaskController extends BaseController {
 		List<Task> list = taskDao.list(id, taskName, groupName, branchName, tarType, startDate, endDateStr);
 
 		pm.setTotal(page.getTotal());
-		resp.buildMap().put("page", pm);
-		resp.buildMap().put("list", list);
+		resp.forMap().put("page", pm);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -163,7 +163,7 @@ public class TaskController extends BaseController {
 		Assert.notNull(appClusterId, "appClusterId can not be null");
 		RespBase<Object> resp = RespBase.create();
 		List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
-		resp.buildMap().put("tasks", tasks);
+		resp.forMap().put("tasks", tasks);
 		return resp;
 	}
 
@@ -184,7 +184,7 @@ public class TaskController extends BaseController {
 		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();
 		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
-		resp.buildMap().put("list", taskBuildCommands);
+		resp.forMap().put("list", taskBuildCommands);
 		return resp;
 
 	}

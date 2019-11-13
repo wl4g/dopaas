@@ -67,8 +67,8 @@ public class TemplateController extends BaseController {
 		}
 
 		pm.setTotal(page.getTotal());
-		resp.buildMap().put("page", pm);
-		resp.buildMap().put("list", list);
+		resp.forMap().put("page", pm);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -88,7 +88,7 @@ public class TemplateController extends BaseController {
 		log.info("into TemplateController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmTemplate alarmTemplate = templateService.detail(id);
-		resp.buildMap().put("alarmTemplate", alarmTemplate);
+		resp.forMap().put("alarmTemplate", alarmTemplate);
 		return resp;
 	}
 
@@ -105,7 +105,7 @@ public class TemplateController extends BaseController {
 	public RespBase<?> getByClassify(String classify) {
 		RespBase<Object> resp = RespBase.create();
 		List<AlarmTemplate> list = alarmTemplateDao.list(null, null, classify);
-		resp.buildMap().put("list", list);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 

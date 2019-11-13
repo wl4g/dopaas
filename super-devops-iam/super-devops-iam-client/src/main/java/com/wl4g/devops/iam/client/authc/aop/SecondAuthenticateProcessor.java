@@ -125,7 +125,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		// Response JSON message
 		if (isJSONResponse(http.getRequest())) {
 			RespBase<String> resp = new RespBase<>(SECOND_UNAUTH, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
-			resp.buildMap().put(config.getParam().getRedirectUrl(), redirectUrl);
+			resp.forMap().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);
 			writeJson(http.getResponse(), toJSONString(resp));
 		}
