@@ -118,7 +118,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Get vcs operator for project.
 	 * 
-	 * @param vcsProvider
+	 * @param project
 	 * @return
 	 */
 	protected VcsOperator getVcsOperator(Project project) {
