@@ -60,7 +60,7 @@ public class DictController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 
 		Page<Dict> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<Dict> list = dictDao.list(key, label, type, description);
+		List<Dict> list = dictDao.list(key, label, type, description,null);
 
 		pm.setTotal(page.getTotal());
 		resp.buildMap().put("page", pm);
