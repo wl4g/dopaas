@@ -92,8 +92,8 @@ public class ConfigurationController extends BaseController {
 			List<ConfigVersionList> list = configService.list(agl);
 
 			pm.setTotal(page.getTotal());
-			resp.buildMap().put("page", pm);
-			resp.buildMap().put("list", list);
+			resp.forMap().put("page", pm);
+			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -117,7 +117,7 @@ public class ConfigurationController extends BaseController {
 		try {
 			List<VersionContentBean> configs = configService.selectVersion(id);
 			if (null != configs) {
-				resp.buildMap().put("configVersions", configs);
+				resp.forMap().put("configVersions", configs);
 			}
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

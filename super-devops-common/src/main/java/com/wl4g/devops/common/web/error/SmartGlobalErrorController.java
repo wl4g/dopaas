@@ -168,7 +168,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			if (isJSONResponse(request)) {
 				RespBase<Object> resp = new RespBase<>(RetCode.create(status.value(), errmsg));
 				if (!(uriOrTpl instanceof Template)) {
-					resp.buildMap().put(DEFAULT_REDIRECT_KEY, uriOrTpl);
+					resp.forMap().put(DEFAULT_REDIRECT_KEY, uriOrTpl);
 				}
 				String errJson = toJSONString(resp);
 				log.error("Response Json Errors => {}", errJson);

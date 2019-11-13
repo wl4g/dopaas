@@ -107,8 +107,8 @@ public class RespBaseTest {
 	public static void main(String[] args) {
 		// for controller output(map).
 		RespBase<TestModel> resp11 = new RespBase<>(RetCode.create(4001, "message1"));
-		resp11.buildMap().put("testModel11", new TestModel("jack11"));
-		resp11.buildMap().put("testModel12", new TestModel("jack12"));
+		resp11.forMap().put("testModel11", new TestModel("jack11"));
+		resp11.forMap().put("testModel12", new TestModel("jack12"));
 		resp11.buildNode("testNode1").put("node1", "n11");
 		System.out.println(">>As Map>>" + resp11.asMap());
 

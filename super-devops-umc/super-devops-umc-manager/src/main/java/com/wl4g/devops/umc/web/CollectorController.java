@@ -56,8 +56,8 @@ public class CollectorController extends BaseController {
 		pm.setPageSize(pm.getPageSize());
 		pm.setTotal(page.getTotal());
 
-		resp.buildMap().put("page", pm);
-		resp.buildMap().put("list", list);
+		resp.forMap().put("page", pm);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -74,7 +74,7 @@ public class CollectorController extends BaseController {
 		log.info("into CollectorController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmCollector alarmCollector = alarmCollectorDao.selectByPrimaryKey(id);
-		resp.buildMap().put("alarmCollector", alarmCollector);
+		resp.forMap().put("alarmCollector", alarmCollector);
 		return resp;
 	}
 

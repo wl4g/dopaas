@@ -32,7 +32,7 @@ public class IamManagerApiV1ControllerTest {
 	public static void main(String[] args) {
 		// for controller output(model).
 		RespBase<SessionAttributeModel> resp11 = new RespBase<>(RetCode.create(4001, "message2"));
-		resp11.buildMap().put("testKey", newSessionAttributeModel());
+		resp11.forMap().put("testKey", newSessionAttributeModel());
 
 		String json11 = toJSONString(resp11);
 		System.out.println(json11);

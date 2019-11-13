@@ -78,7 +78,7 @@ public class AppClusterController extends BaseController {
 	public RespBase<?> detail(Integer clusterId) {
 		RespBase<Object> resp = RespBase.create();
 		AppCluster detail = appClusterService.detail(clusterId, cipherKey);
-		resp.buildMap().put("data", detail);
+		resp.forMap().put("data", detail);
 		return resp;
 	}
 
@@ -86,7 +86,7 @@ public class AppClusterController extends BaseController {
 	public RespBase<?> clusters() {
 		RespBase<Object> resp = RespBase.create();
 		List<AppCluster> clusters = appClusterDao.list(null);
-		resp.buildMap().put("clusters", clusters);
+		resp.forMap().put("clusters", clusters);
 		return resp;
 	}
 
@@ -94,7 +94,7 @@ public class AppClusterController extends BaseController {
 	public RespBase<?> instances(Integer clusterId, String envType) {
 		RespBase<Object> resp = RespBase.create();
 		List<AppInstance> instances = appClusterService.getInstancesByClusterIdAndEnvType(clusterId, envType);
-		resp.buildMap().put("instances", instances);
+		resp.forMap().put("instances", instances);
 		return resp;
 	}
 

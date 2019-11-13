@@ -89,8 +89,8 @@ public class TriggerController extends BaseController {
 		List<Trigger> list = triggerDao.list(id, name, taskId, enable, startDate, endDateStr);
 
 		pm.setTotal(page.getTotal());
-		resp.buildMap().put("page", pm);
-		resp.buildMap().put("list", list);
+		resp.forMap().put("page", pm);
+		resp.forMap().put("list", list);
 		return resp;
 	}
 
@@ -158,8 +158,8 @@ public class TriggerController extends BaseController {
 		Trigger trigger = triggerDao.selectByPrimaryKey(id);
 		Assert.notNull(trigger, "not found trigger");
 
-		resp.buildMap().put("trigger", trigger);
-		resp.buildMap().put("appClusterId", trigger.getAppClusterId());
+		resp.forMap().put("trigger", trigger);
+		resp.forMap().put("appClusterId", trigger.getAppClusterId());
 
 		return resp;
 	}
@@ -191,7 +191,7 @@ public class TriggerController extends BaseController {
 		log.debug("into TriggerController.checkCronExpression prarms::" + "expression = {} ", expression);
 		RespBase<Object> resp = RespBase.create();
 		boolean isValid = CronUtils.isValidExpression(expression);
-		resp.buildMap().put("validExpression", isValid);
+		resp.forMap().put("validExpression", isValid);
 		return resp;
 	}
 
@@ -210,15 +210,15 @@ public class TriggerController extends BaseController {
 			numTimes = 5;
 		}
 		boolean isValid = CronUtils.isValidExpression(expression);
-		resp.buildMap().put("validExpression", isValid);
+		resp.forMap().put("validExpression", isValid);
 		if (!isValid) {
 			return resp;
 		}
 		try {
 			List<String> nextExecTime = CronUtils.getNextExecTime(expression, numTimes);
-			resp.buildMap().put("nextExecTime", StringUtils.join(nextExecTime, "\n"));
+			resp.forMap().put("nextExecTime", StringUtils.join(nextExecTime, "\n"));
 		} catch (Exception e) {
-			resp.buildMap().put("validExpression", false);
+			resp.forMap().put("validExpression", false);
 			return resp;
 		}
 		return resp;
