@@ -184,16 +184,19 @@ public class ProjectController extends BaseController {
 
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
-		Integer gitlabProjectId = vcsAdapter.forDefault().findRemoteProjectId(projectName);
+		// TODO ---credentials
+		Integer gitlabProjectId = vcsAdapter.forDefault().findRemoteProjectId(null, projectName);
 		Assert.notNull(gitlabProjectId, String.format("No found projectId of name: %s", projectName));
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			List<String> branchNames = vcsAdapter.forDefault().getRemoteTags(gitlabProjectId);
+			// TODO ---credentials
+			List<String> branchNames = vcsAdapter.forDefault().getRemoteTags(null, gitlabProjectId);
 			resp.forMap().put("branchNames", branchNames);
 		}
 		// Branch
 		else {
-			List<String> branchNames = vcsAdapter.forDefault().getRemoteBranchNames(gitlabProjectId);
+			// TODO ---credentials
+			List<String> branchNames = vcsAdapter.forDefault().getRemoteBranchNames(null, gitlabProjectId);
 			resp.forMap().put("branchNames", branchNames);
 		}
 		return resp;
