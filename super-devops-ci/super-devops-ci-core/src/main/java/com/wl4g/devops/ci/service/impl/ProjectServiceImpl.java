@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.common.bean.BaseBean;
@@ -22,6 +23,7 @@ import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.page.PageModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,8 +102,19 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<Project> list(String groupName, String projectName) {
-		return projectDao.list(groupName, projectName);
+	public PageModel list(PageModel pm, String groupName, String projectName) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		List<Project> list = projectDao.list(groupName, projectName);
+		for(Project project : list){
+			project.setVcs(null);
+		}
+		pm.setRecords(list);
+		return pm;
+	}
+
+	@Override
+	public List<Project> all() {
+		return projectDao.list(null, null);
 	}
 
 	@Override

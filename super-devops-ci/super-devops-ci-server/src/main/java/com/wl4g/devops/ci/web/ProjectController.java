@@ -70,11 +70,9 @@ public class ProjectController extends BaseController {
 	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
 		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , pm = {} ", groupName, projectName,
 				pm);
-
 		RespBase<Object> resp = RespBase.create();
 		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<Project> list = projectService.list(groupName, projectName);
-		pm.setTotal(page.getTotal());
+		List<Object> list = projectService.list(pm,groupName, projectName).getRecords();
 		resp.forMap().put("page", pm);
 		resp.forMap().put("list", list);
 		return resp;
@@ -142,7 +140,7 @@ public class ProjectController extends BaseController {
 	@RequestMapping(value = "/all")
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
-		List<Project> list = projectService.list(null, null);
+		List<Project> list = projectService.all();
 		resp.forMap().put("list", list);
 		return resp;
 	}
