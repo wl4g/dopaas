@@ -20,13 +20,13 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import java.io.File;
 
 /**
- * Based MAVEN abstract pipeline provider.
+ * Based MAVEN pipeline provider.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月12日
  * @since
  */
-public abstract class BasedMavenPipelineProvider extends GenericHostPipelineProvider {
+public abstract class BasedMavenPipelineProvider extends BasedHostPipelineProvider {
 
 	public BasedMavenPipelineProvider(PipelineContext info) {
 		super(info);

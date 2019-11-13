@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
-import com.wl4g.devops.ci.pipeline.deploy.DjangoStandardPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.Python3StandardPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.GolangPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
@@ -170,8 +170,8 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineContext info) {
-		return new DjangoStandardPipelineProvider(info);
+	public Python3StandardPipelineProvider python3StandardPipelineProvider(PipelineContext info) {
+		return new Python3StandardPipelineProvider(info);
 	}
 
 	@Bean
@@ -213,14 +213,14 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardPipeDeployer djangoStandardPipeDeployer(DjangoStandardPipelineProvider provider, AppInstance instance,
+	public Python3StandardPipeDeployer python3StandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new DjangoStandardPipeDeployer(provider, instance, taskHistoryDetails);
+		return new Python3StandardPipeDeployer(provider, instance, taskHistoryDetails);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangPipeDeployer golangPipeDeployer(DjangoStandardPipelineProvider provider, AppInstance instance,
+	public GolangPipeDeployer golangPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		return new GolangPipeDeployer(provider, instance, taskHistoryDetails);
 	}

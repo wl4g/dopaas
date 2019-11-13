@@ -15,20 +15,22 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import java.io.File;
+
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.deploy.DjangoStandardPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.Python3StandardPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * Django standard deployments provider.
+ * Python3 standard deployments provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
-public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
+public class Python3StandardPipelineProvider extends BasedHostPipelineProvider {
 
-	public DjangoStandardPipelineProvider(PipelineContext info) {
+	public Python3StandardPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 
@@ -45,7 +47,12 @@ public class DjangoStandardPipelineProvider extends AbstractPipelineProvider {
 	@Override
 	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
-		return beanFactory.getBean(DjangoStandardPipeDeployer.class, args);
+		return beanFactory.getBean(Python3StandardPipeDeployer.class, args);
+	}
+
+	@Override
+	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
+		// Dynamic interpretation language, no execution to build command.
 	}
 
 }

@@ -26,34 +26,32 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static org.springframework.util.StringUtils.getFilename;
 
 /**
- * Abstract generic based host pipeline provider.
+ * Generic basic dependencies pipeline provider.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月12日
  * @since
  */
-public abstract class GenericHostPipelineProvider extends AbstractPipelineProvider {
+public abstract class GenericDependenciesPipelineProvider extends AbstractPipelineProvider {
 
-	public GenericHostPipelineProvider(PipelineContext info) {
+	public GenericDependenciesPipelineProvider(PipelineContext info) {
 		super(info);
 	}
 
 	/**
-	 * Generic building.
+	 * The building of generic modularization.
 	 * 
 	 * @param isRollback
 	 * @throws Exception
 	 */
-	protected void bulid(boolean isRollback) throws Exception {
+	protected void buildModular(boolean isRollback) throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		File jobLog = config.getJobLog(taskHisy.getId());
 		if (log.isInfoEnabled()) {
@@ -69,51 +67,15 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 		// Custom dependency commands.
 		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHisy.getId());
 
-		// Generic build modules.
+		// Build of dependencies sub-modules.
 		for (Dependency depd : dependencies) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
 			doBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback, depCmd);
 		}
 
-		// Generic build self.
+		// Build for primary(self).
 		doBuildModuleInDependencies(taskHisy.getProjectId(), null, taskHisy.getBranchName(), false, isRollback,
 				taskHisy.getBuildCommand());
-	}
-
-	/**
-	 * Roll-back backup assets files.
-	 * 
-	 * @throws Exception
-	 */
-	protected void rollbackBackupAssets() throws Exception {
-		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
-		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
-				+ getFilename(getContext().getProject().getAssetsPath());
-
-		String target = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
-		String command = "cp -Rf " + backupPath + " " + target;
-		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
-	}
-
-	/**
-	 * Handling assets backup. The default implements is to copy the asset files
-	 * to the local shared disk. </br>
-	 * For example, the docker based deployment should be backed up to the
-	 * docker server image repository.
-	 * 
-	 * @throws Exception
-	 */
-	protected void handleBackupAssets() throws Exception {
-		Integer taskHisId = getContext().getTaskHistory().getId();
-		String targetPath = getContext().getProjectSourceDir() + "/" + getContext().getProject().getAssetsPath();
-		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
-				+ getFilename(getContext().getProject().getAssetsPath());
-
-		// Ensure backup directory.
-		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
-
-		String command = "cp -Rf " + targetPath + " " + backupPath;
-		processManager.exec(command, config.getJobLog(taskHisId), 300000);
 	}
 
 	// --- Dependencies. ---
@@ -125,7 +87,7 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 	 * @param projectId
 	 * @return
 	 */
-	protected String extractDependencyBuildCommand(List<TaskBuildCommand> buildCommands, Integer projectId) {
+	private String extractDependencyBuildCommand(List<TaskBuildCommand> buildCommands, Integer projectId) {
 		if (isEmpty(buildCommands)) {
 			return null;
 		}
@@ -137,7 +99,7 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 	}
 
 	/**
-	 * Execution build module in dependencies.
+	 * Building module in dependencies.
 	 * 
 	 * @param projectId
 	 * @param dependencyId
@@ -147,13 +109,13 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	protected void doBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+	private void doBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
-				updateSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				updatingSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} finally {
 				lock.unlock();
 			}
@@ -182,7 +144,7 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 	// --- VCS source's. ---
 
 	/**
-	 * Execution update(pull & merge) source and module generic build.
+	 * Updating(pull & merge) source and module generic build.
 	 * 
 	 * @param projectId
 	 * @param dependencyId
@@ -192,7 +154,7 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	protected void updateSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+	private void updatingSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Pipeline building for projectId: {}", projectId);
@@ -237,7 +199,7 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 			taskSignDao.insertSelective(taskSign);
 		}
 
-		// Resolveing placeholer & execution build commands
+		// Resolving placeholder & execution.
 		doResolvedBuildCommands(project, projectDir, buildCommand);
 	}
 
@@ -251,7 +213,7 @@ public abstract class GenericHostPipelineProvider extends AbstractPipelineProvid
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	protected void doResolvedBuildCommands(Project project, String projectDir, String buildCommand) throws Exception {
+	private void doResolvedBuildCommands(Project project, String projectDir, String buildCommand) throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		File logFile = config.getJobLog(taskHisy.getId());
 
