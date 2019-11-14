@@ -6,6 +6,7 @@ import com.wl4g.devops.iam.service.ClusterConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
     @Override
     public Map<String, Object> info() {
         List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, profile, null);
+        Assert.notEmpty(list,"not found cluster config info , Please Check your db , table = 'app_cluster_config'");
         Map<String, Object> map = new HashMap<>();
         for (ClusterConfig entryAddress : list) {
             map.put(entryAddress.getName(), entryAddress);
