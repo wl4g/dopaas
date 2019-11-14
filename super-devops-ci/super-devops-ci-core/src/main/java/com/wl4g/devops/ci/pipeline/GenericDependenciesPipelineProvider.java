@@ -33,7 +33,9 @@ import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * Generic basic dependencies pipeline provider.
+ * Generic basic dependencies pipeline provider.</br>
+ * Purpose: Because any programming language or framework built project must be
+ * structure dependent.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月12日

@@ -28,7 +28,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class Python3StandardPipelineProvider extends BasedHostPipelineProvider {
+public class Python3StandardPipelineProvider extends BasedDiskBackupPipelineProvider {
 
 	public Python3StandardPipelineProvider(PipelineContext info) {
 		super(info);

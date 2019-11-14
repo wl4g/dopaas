@@ -668,12 +668,15 @@ public class RespBase<D> implements Serializable {
 	 */
 	final static class ErrorMessagePrefixBuilder {
 
+		/** Errors code and message separator. */
+		final public static String CODE_PREFIX_SEPAR = ",";
+
 		/**
 		 * Errors prefix definition.
 		 * 
 		 * @see {@link com.wl4g.devops.common.web.RespBase#globalErrPrefix()}
 		 */
-		private static String ErrorPrefixString = "api"; // by-default.
+		private static String CodePrefixString = "API"; // by-default.
 
 		/**
 		 * Building error message with prefix.
@@ -683,11 +686,17 @@ public class RespBase<D> implements Serializable {
 		 * @return
 		 */
 		final public static String build(RetCode retCode, String errmsg) {
-			if (!isBlank(errmsg)) {
-				String prefixString = String.format("[%s-%s] ", ErrorPrefixString, retCode.getErrcode());
-				return contains(errmsg, prefixString) ? errmsg : (prefixString + errmsg);
+			if (isBlank(errmsg)) {
+				return errmsg;
 			}
-			return errmsg;
+			String prefixString = String.format("[%s-%s], ", CodePrefixString, retCode.getErrcode());
+			if (contains(errmsg, CODE_PREFIX_SEPAR)) {
+				int index = errmsg.indexOf(CODE_PREFIX_SEPAR);
+				if (errmsg.length() > index) {
+					return (prefixString + errmsg.substring(errmsg.indexOf(CODE_PREFIX_SEPAR) + 1));
+				}
+			}
+			return (prefixString + errmsg);
 		}
 
 		/**
@@ -695,9 +704,9 @@ public class RespBase<D> implements Serializable {
 		 * 
 		 * @param errorPrefix
 		 */
-		final public static void setup(String errorPrefix) {
+		final public synchronized static void setup(String errorPrefix) {
 			hasText(errorPrefix, "Global errors prefix can't be empty.");
-			ErrorPrefixString = errorPrefix;
+			CodePrefixString = errorPrefix;
 		}
 
 	}
