@@ -16,10 +16,10 @@
 package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
+import com.wl4g.devops.common.task.GenericTaskRunner;
+import com.wl4g.devops.common.task.RunnerProperties;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
