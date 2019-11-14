@@ -17,74 +17,19 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
-import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
-
-import java.io.File;
-
 /**
- * Docker native integrate pipeline provider.
+ * Based docker native integrate pipeline provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-05 17:28:00
  */
-public class DockerNativePipelineProvider extends GenericDependenciesPipelineProvider {
+public class DockerNativePipelineProvider extends AbstractPipelineProvider {
 
-	public DockerNativePipelineProvider(PipelineContext deployProviderBean) {
-		super(deployProviderBean);
-	}
-
-	/**
-	 * execute -- build , push , pull , run
-	 *
-	 * @throws Exception
-	 */
-	@Override
-	public void execute() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getContext().getProject().getId());
-		buildModular(false);
-
-		// get sha and md5
-		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
-
-		// docker build
-		dockerBuild(getContext().getProjectSourceDir());
-
-		// Startup pipeline jobs.
-		doTransferRemoteDeploying();
-
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	}
-
-	/**
-	 * Roll-back
-	 *
-	 * @throws Exception
-	 */
-	@Override
-	public void rollback() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getContext().getProject().getId());
-
-		buildModular(true);
-		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
-
-		// Fingerprint.
-		File assetsFile = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
-		setupAssetsFingerprint(getMd5Fingerprint(assetsFile));
-
-		// Startup pipeline jobs.
-		doTransferRemoteDeploying();
-
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
+	public DockerNativePipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	/**
@@ -132,11 +77,6 @@ public class DockerNativePipelineProvider extends GenericDependenciesPipelinePro
 	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
 		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
-	}
-
-	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
-
 	}
 
 }

@@ -24,7 +24,7 @@ import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.ci.pipeline.deploy.Python3StandardPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.GolangPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
@@ -177,8 +177,8 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@DelegateAlias({ PipelineType.GOLANG_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangPipelineProvider golangPipelineProvider(PipelineContext info) {
-		return new GolangPipelineProvider(info);
+	public GolangStandardPipelineProvider golangStandardPipelineProvider(PipelineContext info) {
+		return new GolangStandardPipelineProvider(info);
 	}
 
 	// --- Pipeline deployer's. ---
@@ -220,9 +220,9 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangPipeDeployer golangPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
+	public GolangStandardPipeDeployer golangStandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new GolangPipeDeployer(provider, instance, taskHistoryDetails);
+		return new GolangStandardPipeDeployer(provider, instance, taskHistoryDetails);
 	}
 
 	// --- TIMING SCHEDULE ---

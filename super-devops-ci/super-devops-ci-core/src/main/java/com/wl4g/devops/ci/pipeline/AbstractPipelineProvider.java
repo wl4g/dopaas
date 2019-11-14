@@ -54,18 +54,16 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Abstract based deploy provider.
+ * Abstract basic developments pipeline provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
- * @date 2019-05-05 17:17:00
+ * @date 2019-08-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * Pipeline context.
-	 */
+	/** Pipeline context. */
 	final protected PipelineContext context;
 
 	@Autowired

@@ -26,7 +26,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 
 /**
- * NPM/(VUE/AngularJS/ReactJS...) standard deployments provider.
+ * Pipeline provider for deployment NPM/(VUE/AngularJS/ReactJS...) standard
+ * project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
@@ -34,8 +35,8 @@ import static org.springframework.util.Assert.notNull;
  */
 public class NpmViewPipelineProvider extends BasedDiskBackupPipelineProvider {
 
-	public NpmViewPipelineProvider(PipelineContext info) {
-		super(info);
+	public NpmViewPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	// --- NPM building. ---

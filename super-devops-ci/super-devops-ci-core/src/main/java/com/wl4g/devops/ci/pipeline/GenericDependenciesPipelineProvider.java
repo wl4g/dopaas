@@ -33,7 +33,7 @@ import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * Generic basic dependencies pipeline provider.</br>
+ * Generic modular dependencies pipeline provider.</br>
  * Purpose: Because any programming language or framework built project must be
  * structure dependent.
  * 
@@ -43,8 +43,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public abstract class GenericDependenciesPipelineProvider extends AbstractPipelineProvider {
 
-	public GenericDependenciesPipelineProvider(PipelineContext info) {
-		super(info);
+	public GenericDependenciesPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	/**

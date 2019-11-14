@@ -18,19 +18,19 @@ package com.wl4g.devops.ci.pipeline;
 import java.io.File;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.deploy.GolangPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * GOLANG standard deployments provider.
+ * Pipeline provider for deployment GOLANG project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
-public class GolangPipelineProvider extends BasedDiskBackupPipelineProvider {
+public class GolangStandardPipelineProvider extends BasedDiskBackupPipelineProvider {
 
-	public GolangPipelineProvider(PipelineContext context) {
+	public GolangStandardPipelineProvider(PipelineContext context) {
 		super(context);
 	}
 
@@ -47,7 +47,7 @@ public class GolangPipelineProvider extends BasedDiskBackupPipelineProvider {
 	@Override
 	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
-		return beanFactory.getBean(GolangPipeDeployer.class, args);
+		return beanFactory.getBean(GolangStandardPipeDeployer.class, args);
 	}
 
 	@Override

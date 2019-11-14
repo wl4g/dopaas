@@ -28,8 +28,8 @@ import java.io.File;
  */
 public abstract class BasedMavenPipelineProvider extends BasedDiskBackupPipelineProvider {
 
-	public BasedMavenPipelineProvider(PipelineContext info) {
-		super(info);
+	public BasedMavenPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	@Override

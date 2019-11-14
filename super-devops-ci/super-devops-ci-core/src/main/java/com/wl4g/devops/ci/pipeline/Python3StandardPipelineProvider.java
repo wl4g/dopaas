@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.pipeline.deploy.Python3StandardPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * Python3 standard deployments provider.
+ * Pipeline provider for deployment python3 standard project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
@@ -30,8 +30,8 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  */
 public class Python3StandardPipelineProvider extends BasedDiskBackupPipelineProvider {
 
-	public Python3StandardPipelineProvider(PipelineContext info) {
-		super(info);
+	public Python3StandardPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	@Override

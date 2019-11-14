@@ -28,9 +28,9 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  * @version v1.0 2019年10月25日
  * @since
  */
-public class GolangPipeDeployer extends GenericHostPipeDeployer<Python3StandardPipelineProvider> {
+public class GolangStandardPipeDeployer extends GenericHostPipeDeployer<Python3StandardPipelineProvider> {
 
-	public GolangPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
+	public GolangStandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		super(provider, instance, taskHistoryDetails);
 	}
