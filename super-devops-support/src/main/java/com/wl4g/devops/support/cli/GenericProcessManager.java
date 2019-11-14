@@ -17,13 +17,13 @@ package com.wl4g.devops.support.cli;
 
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
+import com.wl4g.devops.common.task.GenericTaskRunner;
+import com.wl4g.devops.common.task.RunnerProperties;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

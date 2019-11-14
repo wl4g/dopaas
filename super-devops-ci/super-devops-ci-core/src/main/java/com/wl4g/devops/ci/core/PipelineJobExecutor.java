@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.common.task.GenericTaskRunner;
+import com.wl4g.devops.common.task.RunnerProperties;
 
 import java.util.concurrent.ThreadPoolExecutor;
 

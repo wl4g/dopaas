@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.common.task.RunnerProperties;
 
 /**
  * Watch properties .

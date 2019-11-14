@@ -1,4 +1,4 @@
-package com.wl4g.devops.support.task;
+package com.wl4g.devops.common.task;
 
 import java.io.Serializable;
 import java.util.concurrent.RejectedExecutionHandler;

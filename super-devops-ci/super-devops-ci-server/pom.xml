@@ -28,6 +28,12 @@
 			<version>master</version>
 		</dependency>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-tool-devel</artifactId>
+			<version>master</version>
+			<scope>provided</scope> <!-- For development & testing only -->
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<version>1.5.13.RELEASE</version>

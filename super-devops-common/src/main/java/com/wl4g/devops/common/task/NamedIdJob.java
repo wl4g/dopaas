@@ -1,4 +1,4 @@
-package com.wl4g.devops.support.task;
+package com.wl4g.devops.common.task;
 
 import static org.springframework.util.Assert.hasText;
 
