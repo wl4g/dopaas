@@ -15,9 +15,15 @@
  */
 package com.wl4g.devops.share.service.impl;
 
-import com.wl4g.devops.share.service.DictService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.share.Dict;
+import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.dao.share.DictDao;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.share.service.DictService;
+import com.wl4g.devops.support.cache.JedisService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -28,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.devops.common.constants.ShareDevOpsConstants.CONFIG_DICT_CACHE_TIME_SECOND;
+import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
 
 /**
  * @author vjay
@@ -39,7 +47,26 @@ public class DictServiceImpl implements DictService {
 	@Autowired
 	private DictDao dictDao;
 
+	@Autowired
+	private JedisService jedisService;
+
 	@Override
+	public PageModel list(PageModel pm, String key, String label, String type, String description) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(dictDao.list(key, label, type, description, null));
+		return pm;
+	}
+
+	@Override
+	public void save(Dict dict, Boolean isEdit) {
+		if (isEdit) {
+			update(dict);
+		} else {
+			insert(dict);
+		}
+		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE);// when modify , remove cache from redis
+	}
+
 	public void insert(Dict dict) {
 		checkBeforePersistence(dict);
 		checkRepeat(dict);
@@ -47,10 +74,14 @@ public class DictServiceImpl implements DictService {
 		dictDao.insertSelective(dict);
 	}
 
-	@Override
 	public void update(Dict dict) {
 		dict.preUpdate();
 		dictDao.updateByPrimaryKeySelective(dict);
+	}
+
+	@Override
+	public Dict detail(String key) {
+		return dictDao.selectByPrimaryKey(key);
 	}
 
 	private void checkBeforePersistence(Dict dict) {
@@ -94,27 +125,37 @@ public class DictServiceImpl implements DictService {
 
 	@Override
 	public Map<String, Object> cache() {
-		Map<String, Object> result = new HashMap<>();
-		List<Dict> dicts = dictDao.list(null, null, null, null,"1");
-		Map<String, List<Dict>> dictList = new HashMap<>();
-		Map<String, Map<String, Dict>> dictMap = new HashMap<>();
-		for (Dict dict : dicts) {
-			String type = dict.getType();
-			List<Dict> list = dictList.get(type);
-			Map<String, Dict> map = dictMap.get(type);
-			if (null == list) {
-				list = new ArrayList<>();
+		String s = jedisService.get(KEY_CACHE_SYS_DICT_INIT_CACHE);
+		Map<String, Object> result;
+		if (StringUtils.isNotBlank(s)) {
+			result = JacksonUtils.parseJSON(s, new TypeReference<Map<String, Object>>() {
+			});
+		} else {
+			result = new HashMap<>();
+			List<Dict> dicts = dictDao.list(null, null, null, null, "1");
+			Map<String, List<Dict>> dictList = new HashMap<>();
+			Map<String, Map<String, Dict>> dictMap = new HashMap<>();
+			for (Dict dict : dicts) {
+				String type = dict.getType();
+				List<Dict> list = dictList.get(type);
+				Map<String, Dict> map = dictMap.get(type);
+				if (null == list) {
+					list = new ArrayList<>();
+				}
+				if (null == map) {
+					map = new HashMap<>();
+				}
+				list.add(dict);
+				map.put(dict.getValue(), dict);
+				dictList.put(type, list);
+				dictMap.put(type, map);
 			}
-			if (null == map) {
-				map = new HashMap<>();
-			}
-			list.add(dict);
-			map.put(dict.getValue(), dict);
-			dictList.put(type, list);
-			dictMap.put(type, map);
+			result.put("dictList", dictList);
+			result.put("dictMap", dictMap);
+			// cache to redis
+			String s1 = JacksonUtils.toJSONString(result);
+			jedisService.set(KEY_CACHE_SYS_DICT_INIT_CACHE, s1, CONFIG_DICT_CACHE_TIME_SECOND);
 		}
-		result.put("dictList", dictList);
-		result.put("dictMap", dictMap);
 		return result;
 	}
 

@@ -16,6 +16,7 @@
 package com.wl4g.devops.share.service;
 
 import com.wl4g.devops.common.bean.umc.AlarmContact;
+import com.wl4g.devops.page.PageModel;
 
 /**
  * @author vjay
@@ -28,5 +29,9 @@ public interface ContactService {
 	AlarmContact detail(Integer id);
 
 	void del(Integer id);
+
+	PageModel list(PageModel pm,String name, String email, String phone);
+
+
 
 }

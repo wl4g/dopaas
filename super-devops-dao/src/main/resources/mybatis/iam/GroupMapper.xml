@@ -59,7 +59,7 @@
     select
     <include refid="Base_Column_List" />
     from sys_group
-    where g.del_flag!=1 and parent_id = #{parentId,jdbcType=INTEGER}
+    where del_flag!=1 and parent_id = #{parentId,jdbcType=INTEGER}
   </select>
 
 

@@ -15,16 +15,11 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.TemplateService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,9 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
-
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * @author vjay
@@ -45,9 +37,6 @@ import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 public class TemplateController extends BaseController {
 
 	@Autowired
-	private AlarmTemplateDao alarmTemplateDao;
-
-	@Autowired
 	private TemplateService templateService;
 
 	@RequestMapping(value = "/list")
@@ -55,20 +44,8 @@ public class TemplateController extends BaseController {
 		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , pm = {} ", name, metricId,
 				classify, pm);
 		RespBase<Object> resp = RespBase.create();
-
-		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
-		for (AlarmTemplate alarmTpl : list) {
-			String tags = alarmTpl.getTags();
-			if (StringUtils.isNotBlank(tags)) {
-				alarmTpl.setTagMap(parseJSON(tags, new TypeReference<List<Map<String, String>>>() {
-				}));
-			}
-		}
-
-		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		PageModel list = templateService.list(pm, name, metricId, classify);
+		resp.setData(list);
 		return resp;
 	}
 
@@ -104,7 +81,7 @@ public class TemplateController extends BaseController {
 	@RequestMapping(value = "/getByClassify")
 	public RespBase<?> getByClassify(String classify) {
 		RespBase<Object> resp = RespBase.create();
-		List<AlarmTemplate> list = alarmTemplateDao.list(null, null, classify);
+		List<AlarmTemplate> list = templateService.getByClassify(classify);
 		resp.forMap().put("list", list);
 		return resp;
 	}

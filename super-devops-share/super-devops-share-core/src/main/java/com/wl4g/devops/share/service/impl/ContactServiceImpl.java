@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.share.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
 import com.wl4g.devops.common.bean.umc.AlarmContactGroupRef;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.dao.umc.AlarmContactGroupRefDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.ContactService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,7 @@ public class ContactServiceImpl implements ContactService {
 
 	@Autowired
 	private AlarmContactGroupRefDao alarmContactGroupRefDao;
+
 
 	@Override
 	@Transactional
@@ -95,5 +98,14 @@ public class ContactServiceImpl implements ContactService {
 		alarmContact.setDelFlag(1);
 		alarmContactDao.updateByPrimaryKeySelective(alarmContact);
 	}
+
+	@Override
+	public PageModel list(PageModel pm, String name, String email, String phone) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(alarmContactDao.list(name, email, phone));
+		return pm;
+	}
+
+
 
 }

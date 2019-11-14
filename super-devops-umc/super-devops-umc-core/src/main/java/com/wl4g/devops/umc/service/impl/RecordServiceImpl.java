@@ -15,11 +15,16 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.umc.*;
+import com.wl4g.devops.dao.umc.AlarmNotificationContactDao;
+import com.wl4g.devops.dao.umc.AlarmRecordDao;
+import com.wl4g.devops.dao.umc.AlarmRuleDao;
+import com.wl4g.devops.dao.umc.AlarmTemplateDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +50,13 @@ public class RecordServiceImpl implements RecordService {
 
 	@Autowired
 	private AlarmNotificationContactDao alarmNotificationContactDao;
+
+	@Override
+	public PageModel list(PageModel pm, String name, String startDate, String endDate) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(alarmRecordDao.list(name, startDate, endDate));
+		return pm;
+	}
 
 	@Override
 	public AlarmRecord detail(Integer id) {

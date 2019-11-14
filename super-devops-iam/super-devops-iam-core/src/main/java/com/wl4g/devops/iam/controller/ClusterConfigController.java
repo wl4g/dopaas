@@ -15,18 +15,12 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.ClusterConfigDao;
+import com.wl4g.devops.iam.service.ClusterConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author vjay
@@ -37,21 +31,12 @@ import java.util.Map;
 public class ClusterConfigController extends BaseController {
 
 	@Autowired
-	private ClusterConfigDao clusterConfigDao;
-
-	@Value("${spring.profiles.active}")
-	private String profile;
+	private ClusterConfigService clusterConfigService;
 
 	@RequestMapping(value = "/info")
-	public RespBase<?> allType() {
+	public RespBase<?> info() {
 		RespBase<Object> resp = RespBase.create();
-		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, profile, null);
-		Map<String, Object> map = new HashMap<>();
-		for (ClusterConfig entryAddress : list) {
-			map.put(entryAddress.getName(), entryAddress);
-		}
-		resp.forMap().put("map", map);
-		// System.out.println(JacksonUtils.toJSONString(list));
+		resp.setData(clusterConfigService.info());
 		return resp;
 	}
 

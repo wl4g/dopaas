@@ -26,6 +26,7 @@ import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -47,6 +48,9 @@ public class AppClueterServiceImpl implements AppClusterService {
 	@Autowired
 	private AppInstanceDao appInstanceDao;
 
+	@Value("${cipher-key}")
+	protected String cipherKey;
+
 	@Override
 	public Map<String, Object> list(PageModel pm, String clusterName) {
 		Map<String, Object> data = new HashMap<>();
@@ -65,7 +69,12 @@ public class AppClueterServiceImpl implements AppClusterService {
 	}
 
 	@Override
-	public void save(AppCluster appCluster, String cipherKey) {
+	public List<AppCluster> clusters() {
+		return appClusterDao.list(null);
+	}
+
+	@Override
+	public void save(AppCluster appCluster) {
 		if (appCluster.getId() == null) {
 			insert(appCluster, cipherKey);
 		} else {
@@ -143,7 +152,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	}
 
 	@Override
-	public AppCluster detail(Integer clusterId, String cipherKey) {
+	public AppCluster detail(Integer clusterId) {
 		Assert.notNull(clusterId, "clusterId is null");
 		AppCluster appCluster = appClusterDao.selectByPrimaryKey(clusterId);
 		List<AppInstance> appInstances = appInstanceDao.selectByClusterId(clusterId);

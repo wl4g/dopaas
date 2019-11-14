@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
@@ -28,6 +29,7 @@ import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.support.cli.ProcessManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,8 +61,10 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	protected ProcessManager processManager;
 
 	@Override
-	public List<TaskHistory> list(String groupName, String projectName, String branchName) {
-		return taskHistoryDao.list(groupName, projectName, branchName);
+	public PageModel list(PageModel pm,String groupName, String projectName, String branchName) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName));
+		return pm;
 	}
 
 	@Override

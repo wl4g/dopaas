@@ -20,6 +20,7 @@ import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.page.PageModel;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
 @Component
 public interface TaskHistoryService {
 
-	List<TaskHistory> list(String groupName, String projectName, String branchName);
+	PageModel list(PageModel pm,String groupName, String projectName, String branchName);
 
 	List<TaskHistoryDetail> getDetailByTaskId(Integer id);
 

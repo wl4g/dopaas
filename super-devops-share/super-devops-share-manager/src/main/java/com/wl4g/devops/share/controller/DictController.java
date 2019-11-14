@@ -15,18 +15,12 @@
  */
 package com.wl4g.devops.share.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.share.Dict;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.DictDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.DictService;
 import com.wl4g.devops.support.cache.JedisService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SYS_DICT_ALL;
+import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
 
 /**
  * Dictionaries controller
@@ -47,9 +41,6 @@ import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SY
 public class DictController extends BaseController {
 
 	@Autowired
-	private DictDao dictDao;
-
-	@Autowired
 	private DictService dictService;
 
 	@Autowired
@@ -58,34 +49,22 @@ public class DictController extends BaseController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
-
-		Page<Dict> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<Dict> list = dictDao.list(key, label, type, description,null);
-
-		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.setData(dictService.list(pm,key,label,type,description));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
 	public RespBase<?> save(Dict dict, Boolean isEdit) {
 		RespBase<Object> resp = RespBase.create();
-		if (isEdit) {
-			dictService.update(dict);
-		} else {
-			dictService.insert(dict);
-		}
-		jedisService.del(KEY_CACHE_SYS_DICT_ALL);// when modify , remove cache
-													// from redis
+
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(String key) {
 		RespBase<Object> resp = RespBase.create();
-		Dict dict = dictDao.selectByPrimaryKey(key);
-		resp.forMap().put("dict", dict);
+		Dict dict = dictService.detail(key);
+		resp.setData(dict);
 		return resp;
 	}
 
@@ -93,8 +72,7 @@ public class DictController extends BaseController {
 	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.del(key);
-		jedisService.del(KEY_CACHE_SYS_DICT_ALL);// when modify , remove cache
-													// from redis
+		jedisService.del(KEY_CACHE_SYS_DICT_INIT_CACHE);
 		return resp;
 	}
 
@@ -122,21 +100,10 @@ public class DictController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/cache")
-	public RespBase<?> cache() {
+	@RequestMapping(value = "/getInit")
+	public RespBase<?> getInit() {
 		RespBase<Object> resp = RespBase.create();
-		// get from redis first , not found then find from db
-		String s = jedisService.get(KEY_CACHE_SYS_DICT_ALL);
-		Map<String, Object> result;
-		if (StringUtils.isNotBlank(s)) {
-			result = JacksonUtils.parseJSON(s, new TypeReference<Map<String, Object>>() {
-			});
-		} else {
-			result = dictService.cache();
-			// cache to redis
-			String s1 = JacksonUtils.toJSONString(result);
-			jedisService.set(KEY_CACHE_SYS_DICT_ALL, s1, 0);
-		}
+		Map<String, Object> result = dictService.cache();
 		resp.setData(result);
 		return resp;
 	}
