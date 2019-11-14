@@ -15,18 +15,12 @@
  */
 package com.wl4g.devops.ci.web;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.utils.task.CronUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.page.PageModel;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -34,9 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
 
 /**
  * CI/CD controller
@@ -50,13 +41,9 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMI
 public class TriggerController extends BaseController {
 
 	@Autowired
-	private TriggerDao triggerDao;
-
-	@Autowired
 	private TriggerService triggerService;
 
-	@Autowired
-	private TimingPipelineManager timingManager;
+
 
 	/**
 	 * Page List
@@ -78,19 +65,8 @@ public class TriggerController extends BaseController {
 						+ "customPage = {} , id = {} , name = {} , taskId = {} , enable = {} , startDate = {} , endDate = {} ",
 				pm, id, name, taskId, enable, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-
-		Page<Trigger> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-
-		String endDateStr = null;
-		if (StringUtils.isNotBlank(endDate)) {
-			endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate), 1));
-		}
-
-		List<Trigger> list = triggerDao.list(id, name, taskId, enable, startDate, endDateStr);
-
-		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		PageModel list = triggerService.list(pm, id, name, taskId, enable, startDate, endDate);
+		resp.setData(list);
 		return resp;
 	}
 
@@ -104,45 +80,11 @@ public class TriggerController extends BaseController {
 	public RespBase<?> save(Trigger trigger) {
 		log.info("into TriggerController.save prarms::" + "trigger = {} ", trigger);
 		RespBase<Object> resp = RespBase.create();
-		checkTriggerCron(trigger);
-		if (null != trigger.getId() && trigger.getId() > 0) {
-			trigger.preUpdate();
-			trigger = triggerService.update(trigger);
-		} else {
-			trigger.preInsert();
-			trigger.setDelFlag(DEL_FLAG_NORMAL);
-			trigger = triggerService.insert(trigger);
-		}
-		if (trigger.getType() != null && trigger.getType() == TASK_TYPE_TIMMING) {
-			restart(trigger.getId());
-		}
-
+		triggerService.save(trigger);
 		return resp;
 	}
 
-	/**
-	 * Check form
-	 * 
-	 * @param trigger
-	 */
-	private void checkTriggerCron(Trigger trigger) {
-		Assert.notNull(trigger, "trigger can not be null");
-		Assert.notNull(trigger.getType(), "type can not be null");
-		Assert.notNull(trigger.getAppClusterId(), "project can not be null");
-		if (trigger.getType() == TASK_TYPE_TIMMING) {
-			Assert.notNull(trigger.getCron(), "cron can not be null");
-		}
-	}
 
-	/**
-	 * Restart Cron -- when modify or create the timing task , restart the cron
-	 * 
-	 * @param triggerId
-	 */
-	private void restart(Integer triggerId) {
-		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-		timingManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
-	}
 
 	/**
 	 * Detail by id
@@ -154,12 +96,8 @@ public class TriggerController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		log.info("into TriggerController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(id, "id can not be null");
-		Trigger trigger = triggerDao.selectByPrimaryKey(id);
-		Assert.notNull(trigger, "not found trigger");
-
-		resp.forMap().put("trigger", trigger);
-		resp.forMap().put("appClusterId", trigger.getAppClusterId());
+		Trigger trigger = triggerService.getById(id);
+		resp.setData(trigger);
 
 		return resp;
 	}
@@ -176,7 +114,6 @@ public class TriggerController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		triggerService.delete(id);
-		timingManager.stopPipeline(id.toString());
 		return resp;
 	}
 

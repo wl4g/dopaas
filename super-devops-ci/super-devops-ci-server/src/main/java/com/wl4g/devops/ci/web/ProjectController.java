@@ -21,10 +21,8 @@ import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -34,8 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK;
 
 /**
@@ -55,8 +51,6 @@ public class ProjectController extends BaseController {
 	@Autowired
 	private ProjectService projectService;
 
-	@Autowired
-	private VcsDao vcsDao;
 
 	/**
 	 * list
@@ -72,9 +66,8 @@ public class ProjectController extends BaseController {
 				pm);
 		RespBase<Object> resp = RespBase.create();
 		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<Object> list = projectService.list(pm,groupName, projectName).getRecords();
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		PageModel list = projectService.list(pm, groupName, projectName);
+		resp.setData(list);
 		return resp;
 	}
 
@@ -88,16 +81,7 @@ public class ProjectController extends BaseController {
 	public RespBase<?> save(@RequestBody Project project) {
 		log.info("into ProjectController.save prarms::" + "project = {} ", project);
 		RespBase<Object> resp = RespBase.create();
-		if (null != project.getId() && project.getId() > 0) {
-			project.preUpdate();
-			projectService.update(project);
-		} else {
-			project.preInsert();
-			project.setDelFlag(DEL_FLAG_NORMAL);
-			project.setEnable(ENABLED);
-			project.setLockStatus(TASK_LOCK_STATUS__UNLOCK);
-			projectService.insert(project);
-		}
+		projectService.save(project);
 		return resp;
 	}
 
@@ -165,9 +149,7 @@ public class ProjectController extends BaseController {
 	@RequestMapping(value = "/vcsProjects")
 	public RespBase<?> vcsProjects(Integer vcsId,String projectName) {
 		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(vcsId, "vcsId can not be null");
-		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
-		List<VcsProjectDto> remoteProjects = vcsAdapter.forDefault().findRemoteProjects(vcs, projectName);
+		List<VcsProjectDto> remoteProjects = projectService.vcsProjects(vcsId, projectName);
 		resp.setData(remoteProjects);
 		return resp;
 	}
@@ -182,14 +164,9 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/getBranchs")
 	public RespBase<?> getBranchs(Integer appClusterId, Integer tarOrBranch) {
-		if(log.isInfoEnabled()){
-			log.info("into ProjectController.getBranchs prarms::" + "appClusterId = {} , tarOrBranch = {} ", appClusterId,
-					tarOrBranch);
-		}
 		RespBase<Object> resp = RespBase.create();
 		List<String> branchs = projectService.getBranchs(appClusterId, tarOrBranch);
 		resp.forMap().put("branchNames", branchs);
-
 		return resp;
 	}
 

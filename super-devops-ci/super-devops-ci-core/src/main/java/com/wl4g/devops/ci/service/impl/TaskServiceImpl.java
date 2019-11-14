@@ -15,15 +15,19 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
+import com.wl4g.devops.page.PageModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +81,17 @@ public class TaskServiceImpl implements TaskService {
 			task = insert(task, task.getInstance(), task.getTaskBuildCommands());
 		}
 		return task;
+	}
+
+	@Override
+	public PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, Integer tarType, String startDate, String endDate) {
+		String endDateStr = null;
+		if (StringUtils.isNotBlank(endDate)) {
+			endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate), 1));
+		}
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(taskDao.list(id, taskName, groupName, branchName, tarType, startDate, endDateStr));
+		return pm;
 	}
 
 	private Task insert(Task task, Integer[] instanceIds, List<TaskBuildCommand> taskBuildCommands) {
@@ -195,6 +210,12 @@ public class TaskServiceImpl implements TaskService {
 			taskBuildCommands.add(taskBuildCommand);
 		}
 		return taskBuildCommands;
+	}
+
+	@Override
+	public List<Task> getListByAppClusterId(Integer appClusterId) {
+		List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
+		return tasks;
 	}
 
 }

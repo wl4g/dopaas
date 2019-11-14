@@ -16,6 +16,9 @@
 package com.wl4g.devops.share.service;
 
 import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
+import com.wl4g.devops.page.PageModel;
+
+import java.util.List;
 
 /**
  * @author vjay
@@ -27,4 +30,7 @@ public interface ContactGroupService {
 
 	void del(Integer id);
 
+	List<AlarmContactGroup> contactGroups(String name);
+
+	PageModel list(PageModel pm,String name);
 }
