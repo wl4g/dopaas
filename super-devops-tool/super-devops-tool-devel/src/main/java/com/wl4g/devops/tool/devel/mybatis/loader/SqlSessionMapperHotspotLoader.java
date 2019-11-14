@@ -18,6 +18,7 @@ package com.wl4g.devops.tool.devel.mybatis.loader;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.replace;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
@@ -25,9 +26,12 @@ import static org.springframework.util.ReflectionUtils.findField;
 import static org.springframework.util.ReflectionUtils.getField;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,6 +43,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import com.wl4g.devops.common.task.GenericTaskRunner;
@@ -52,6 +57,9 @@ import com.wl4g.devops.common.task.RunnerProperties;
  * @since
  */
 public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerProperties> {
+	final public static String TARGET_PART_PATH = "target" + File.separator + "classes";
+	final public static String SRC_PART_PATH = "src" + File.separator + "main" + File.separator + "resources";
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Refresh configuration properties. */
@@ -120,12 +128,15 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	private synchronized void init() throws Exception {
 		state(isNull(configuration) && isNull(mapperLocations),
 				String.format("Already initialized mappers hotspot loader. configuration for: %s", configuration));
-
+		// Obtain configuration.
 		configuration = sessionFactory.getObject().getConfiguration();
-		// mapperLocations.
+		// Obtain mapperLocations.
 		Field mapperLocaionsField = findField(SqlSessionFactoryBean.class, "mapperLocations", Resource[].class);
 		makeAccessible(mapperLocaionsField);
 		mapperLocations = (Resource[]) getField(mapperLocaionsField, sessionFactory);
+		// Convert to origin resources.
+		mapperLocations = getOriginResources(mapperLocations);
+
 		notNull(configuration, "SqlSessionFactory configuration can't is null.");
 		notNull(mapperLocations, "SqlSessionFactory mapperLocations can't is null.");
 	}
@@ -138,14 +149,13 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	 */
 	private synchronized void refresh(Configuration configuration) throws Exception {
 		// 清理Mybatis的所有映射文件缓存, 目前由于未找到清空被修改文件的缓存的key值, 暂时仅支持全部清理, 然后全部加载
-		doCleanupLastCacheConfig(configuration);
+		doCleanupOlderCacheConfig(configuration);
 
 		for (Resource rs : mapperLocations) {
 			try {
-				XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(rs.getInputStream(), configuration, rs.toString(),
+				XMLMapperBuilder builder = new XMLMapperBuilder(rs.getInputStream(), configuration, rs.toString(),
 						configuration.getSqlFragments()); // Reload.
-				xmlMapperBuilder.parse();
-
+				builder.parse();
 				if (log.isInfoEnabled()) {
 					log.info("Refreshed for: {}", rs);
 				}
@@ -183,7 +193,7 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	 * @param configuration
 	 * @throws Exception
 	 */
-	private synchronized void doCleanupLastCacheConfig(Configuration configuration) throws Exception {
+	private synchronized void doCleanupOlderCacheConfig(Configuration configuration) throws Exception {
 		Class<?> classConfig = configuration.getClass();
 
 		clearMap(classConfig, configuration, "mappedStatements", null);
@@ -236,6 +246,27 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 		// 暂无法实现单个mapper热部署)
 		// setConfig.remove(clearKey);
 		setConfig.clear();
+	}
+
+	/**
+	 * Because idea does not hot update the mapper.xml file in the target
+	 * directory by default, it can only be converted to the source directory
+	 * (original file)
+	 * 
+	 * @param mapperLocations
+	 * @return
+	 * @throws IOException
+	 */
+	private Resource[] getOriginResources(Resource[] mapperLocations) throws IOException {
+		List<Resource> res = new ArrayList<>(mapperLocations.length);
+		if (nonNull(mapperLocations)) {
+			for (Resource r : mapperLocations) {
+				String path = r.getFile().getAbsolutePath();
+				path = replace(path, TARGET_PART_PATH, SRC_PART_PATH);
+				res.add(new FileSystemResource(path));
+			}
+		}
+		return res.toArray(new Resource[] {});
 	}
 
 	// /**
