@@ -38,11 +38,11 @@ import static org.springframework.util.Assert.hasText;
 import java.util.List;
 
 /**
- * Timing pipeline handler.
+ * Timing scheduling composite pipeline provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
- * @date 2019-07-19 10:41:00
+ * @date 2019-08-19 10:41:00
  */
 public class TimingPipelineProvider extends AbstractPipelineProvider implements Runnable {
 	final protected Logger log = LoggerFactory.getLogger(getClass());

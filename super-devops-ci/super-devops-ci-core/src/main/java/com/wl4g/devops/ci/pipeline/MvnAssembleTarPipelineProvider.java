@@ -25,7 +25,7 @@ import static org.springframework.util.StringUtils.getFilename;
 import java.io.File;
 
 /**
- * MAVEN assemble tar provider.
+ * Pipeline provider for deployment MAVEN assemble tar project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
