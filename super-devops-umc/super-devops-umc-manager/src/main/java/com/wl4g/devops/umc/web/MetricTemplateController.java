@@ -15,12 +15,9 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.umc.MetricTemplateDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.MetricTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +36,6 @@ import java.util.List;
 @RequestMapping("/metric")
 public class MetricTemplateController extends BaseController {
 
-	@Autowired
-	private MetricTemplateDao metricTemplateDao;
 
 	@Autowired
 	private MetricTemplateService metricTemplateService;
@@ -48,13 +43,8 @@ public class MetricTemplateController extends BaseController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(String metric, String classify, PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
-
-		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<MetricTemplate> list = metricTemplateDao.list(metric, classify);
-
-		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		PageModel list = metricTemplateService.list(pm, metric, classify);
+		resp.setData(list);
 		return resp;
 	}
 
@@ -72,8 +62,8 @@ public class MetricTemplateController extends BaseController {
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		MetricTemplate metricTemplate = metricTemplateDao.selectByPrimaryKey(id);
-		resp.forMap().put("metricTemplate", metricTemplate);
+		MetricTemplate metricTemplate = metricTemplateService.detal(id);
+		resp.setData(metricTemplate);
 		return resp;
 	}
 

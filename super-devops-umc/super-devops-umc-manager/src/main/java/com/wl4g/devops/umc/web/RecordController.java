@@ -15,19 +15,14 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.umc.AlarmRecordDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author vjay
@@ -38,9 +33,6 @@ import java.util.List;
 public class RecordController extends BaseController {
 
 	@Autowired
-	private AlarmRecordDao alarmRecordDao;
-
-	@Autowired
 	private RecordService recordService;
 
 	@RequestMapping(value = "/list")
@@ -48,14 +40,7 @@ public class RecordController extends BaseController {
 		log.info("into RecordController.list prarms::" + "name = {} , pm = {} , startDate = {} , endDate = {} ", name, pm,
 				startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-
-		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-
-		List<AlarmRecord> list = alarmRecordDao.list(name, startDate, endDate);
-
-		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.setData(recordService.list(pm,name,startDate,endDate));
 		return resp;
 	}
 

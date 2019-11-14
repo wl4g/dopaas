@@ -19,11 +19,9 @@ import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,13 +42,8 @@ import java.util.Map;
 public class AppClusterController extends BaseController {
 
 	@Autowired
-	private AppClusterDao appClusterDao;
-
-	@Autowired
 	private AppClusterService appClusterService;
 
-	@Value("${cipher-key}")
-	protected String cipherKey;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String clusterName) {
@@ -63,7 +56,7 @@ public class AppClusterController extends BaseController {
 	@RequestMapping(value = "/save")
 	public RespBase<?> save(@RequestBody AppCluster appCluster) {
 		RespBase<Object> resp = RespBase.create();
-		appClusterService.save(appCluster, cipherKey);
+		appClusterService.save(appCluster);
 		return resp;
 	}
 
@@ -77,7 +70,7 @@ public class AppClusterController extends BaseController {
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer clusterId) {
 		RespBase<Object> resp = RespBase.create();
-		AppCluster detail = appClusterService.detail(clusterId, cipherKey);
+		AppCluster detail = appClusterService.detail(clusterId);
 		resp.forMap().put("data", detail);
 		return resp;
 	}
@@ -85,7 +78,7 @@ public class AppClusterController extends BaseController {
 	@RequestMapping(value = "/clusters")
 	public RespBase<?> clusters() {
 		RespBase<Object> resp = RespBase.create();
-		List<AppCluster> clusters = appClusterDao.list(null);
+		List<AppCluster> clusters = appClusterService.clusters();
 		resp.forMap().put("clusters", clusters);
 		return resp;
 	}

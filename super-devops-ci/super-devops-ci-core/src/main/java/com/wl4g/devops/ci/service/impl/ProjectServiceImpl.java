@@ -18,11 +18,14 @@ package com.wl4g.devops.ci.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
+import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
+
+import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK;
 
 /**
  * @author vjay
@@ -48,7 +55,23 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	private CompositeVcsOperateAdapter vcsAdapter;
 
+	@Autowired
+	private VcsDao vcsDao;
+
 	@Override
+	public void save(Project project) {
+		if (null != project.getId() && project.getId() > 0) {
+			project.preUpdate();
+			update(project);
+		} else {
+			project.preInsert();
+			project.setDelFlag(DEL_FLAG_NORMAL);
+			project.setEnable(ENABLED);
+			project.setLockStatus(TASK_LOCK_STATUS__UNLOCK);
+			insert(project);
+		}
+	}
+
 	@Transactional
 	public int insert(Project project) {
 		Project hasProject = projectDao.getByAppClusterId(project.getAppClusterId());
@@ -67,7 +90,6 @@ public class ProjectServiceImpl implements ProjectService {
 		return result;
 	}
 
-	@Override
 	@Transactional
 	public int update(Project project) {
 		Project hasProject = projectDao.getByAppClusterId(project.getAppClusterId());
@@ -155,6 +177,14 @@ public class ProjectServiceImpl implements ProjectService {
 			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs().getProvider()).getRemoteBranchNames(project.getVcs(), gitlabProjectId);
 			return branchNames;
 		}
+	}
+
+	@Override
+	public List<VcsProjectDto> vcsProjects(Integer vcsId, String projectName) {
+		Assert.notNull(vcsId, "vcsId can not be null");
+		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+		List<VcsProjectDto> remoteProjects = vcsAdapter.forDefault().findRemoteProjects(vcs, projectName);
+		return remoteProjects;
 	}
 
 	/**

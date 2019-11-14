@@ -16,6 +16,7 @@
 package com.wl4g.devops.share.service;
 
 import com.wl4g.devops.common.bean.share.Dict;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 import java.util.Map;
@@ -26,9 +27,11 @@ import java.util.Map;
  */
 public interface DictService {
 
-	void insert(Dict dict);
+	PageModel list(PageModel pm, String key, String label, String type, String description);
 
-	void update(Dict dict);
+	void save(Dict dict,Boolean isEdit);
+
+	Dict detail(String key);
 
 	void del(String key);
 

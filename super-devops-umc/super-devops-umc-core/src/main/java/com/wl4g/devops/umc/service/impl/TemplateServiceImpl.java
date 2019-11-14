@@ -16,11 +16,14 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.TemplateService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
+import static com.wl4g.devops.common.bean.BaseBean.*;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -50,6 +51,26 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Autowired
 	private AlarmRuleDao alarmRuleDao;
+
+	@Override
+	public PageModel list(PageModel pm, String name, Integer metricId, String classify) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
+		for (AlarmTemplate alarmTpl : list) {
+			String tags = alarmTpl.getTags();
+			if (StringUtils.isNotBlank(tags)) {
+				alarmTpl.setTagMap(parseJSON(tags, new TypeReference<List<Map<String, String>>>() {
+				}));
+			}
+		}
+		pm.setRecords(list);
+		return pm;
+	}
+
+	@Override
+	public List<AlarmTemplate> getByClassify(String classify) {
+		return alarmTemplateDao.list(null, null, classify);
+	}
 
 	@Override
 	@Transactional
