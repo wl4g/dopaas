@@ -28,7 +28,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class GolangPipelineProvider extends BasedHostPipelineProvider {
+public class GolangPipelineProvider extends BasedDiskBackupPipelineProvider {
 
 	public GolangPipelineProvider(PipelineContext context) {
 		super(context);

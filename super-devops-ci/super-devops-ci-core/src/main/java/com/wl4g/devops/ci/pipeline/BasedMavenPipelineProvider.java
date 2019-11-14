@@ -26,7 +26,7 @@ import java.io.File;
  * @version v1.0 2019年10月12日
  * @since
  */
-public abstract class BasedMavenPipelineProvider extends BasedHostPipelineProvider {
+public abstract class BasedMavenPipelineProvider extends BasedDiskBackupPipelineProvider {
 
 	public BasedMavenPipelineProvider(PipelineContext info) {
 		super(info);

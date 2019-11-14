@@ -32,7 +32,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends BasedHostPipelineProvider {
+public class NpmViewPipelineProvider extends BasedDiskBackupPipelineProvider {
 
 	public NpmViewPipelineProvider(PipelineContext info) {
 		super(info);
