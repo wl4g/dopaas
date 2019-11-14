@@ -20,14 +20,11 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.UserService;
 import com.wl4g.devops.page.PageModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 /**
  * @author vjay
@@ -44,8 +41,8 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String userName, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = userService.list(pm, userName, displayName);
-		resp.setData(result);
+		PageModel list = userService.list(pm, userName, displayName);
+		resp.setData(list);
 		return resp;
 	}
 

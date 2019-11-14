@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.common.bean.iam.User;
 import com.wl4g.devops.page.PageModel;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,7 +31,7 @@ public interface UserService {
 
 	Set<Menu> getMenusByUserId(Integer userId);
 
-	Map<String, Object> list(PageModel pm, String userName, String displayName);
+	PageModel list(PageModel pm, String userName, String displayName);
 
 	void save(User user);
 

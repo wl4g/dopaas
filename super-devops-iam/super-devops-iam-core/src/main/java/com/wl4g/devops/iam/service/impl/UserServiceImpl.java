@@ -15,10 +15,8 @@
  */
 package com.wl4g.devops.iam.service.impl;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.dao.iam.*;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
@@ -75,13 +73,12 @@ public class UserServiceImpl implements UserService {
 	protected IamSessionDAO sessionDAO;
 
 	@Override
-	public Map<String, Object> list(PageModel pm, String userName, String displayName) {
-		Map<String, Object> resp = new HashMap<>();
-
-		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
+	public PageModel list(PageModel pm, String userName, String displayName) {
 
 		List<User> list = null;
 		String currentLoginUsername = userUtil.getCurrentLoginUsername();
+
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		if (DEFAULT_USER_ROOT.equals(currentLoginUsername)) {
 			list = userDao.list(null, userName, displayName);
 		} else {
@@ -96,11 +93,8 @@ public class UserServiceImpl implements UserService {
 			List<Role> roles = roleDao.selectByUserId(user.getId());
 			user.setRoleStrs(roles2Str(roles));
 		}
-
-		pm.setTotal(page.getTotal());
-		resp.put("page", pm);
-		resp.put("list", list);
-		return resp;
+		pm.setRecords(list);
+		return pm;
 	}
 
 	@Override
