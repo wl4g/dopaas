@@ -15,20 +15,14 @@
  */
 package com.wl4g.devops.ci.web;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.command.NewCommand;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
-import com.wl4g.devops.common.utils.lang.DateUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.page.PageModel;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,9 +44,6 @@ public class TaskController extends BaseController {
 
 	@Autowired
 	private PipelineManager pipeliner;
-
-	@Autowired
-	private TaskDao taskDao;
 
 	@Autowired
 	private TaskService taskService;
@@ -78,19 +69,8 @@ public class TaskController extends BaseController {
 						+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
 				pm, id, taskName, groupName, branchName, tarType, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-
-		Page<Task> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-
-		String endDateStr = null;
-		if (StringUtils.isNotBlank(endDate)) {
-			endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate), 1));
-		}
-
-		List<Task> list = taskDao.list(id, taskName, groupName, branchName, tarType, startDate, endDateStr);
-
-		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, tarType, startDate, endDate);
+		resp.setData(list);
 		return resp;
 	}
 
@@ -162,8 +142,8 @@ public class TaskController extends BaseController {
 	public RespBase<?> getListByAppClusterId(Integer appClusterId) {
 		Assert.notNull(appClusterId, "appClusterId can not be null");
 		RespBase<Object> resp = RespBase.create();
-		List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
-		resp.forMap().put("tasks", tasks);
+		List<Task> tasks = taskService.getListByAppClusterId(appClusterId);
+		resp.setData(tasks);
 		return resp;
 	}
 

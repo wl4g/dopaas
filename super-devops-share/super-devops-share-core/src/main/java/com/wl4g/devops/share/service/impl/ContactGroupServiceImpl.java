@@ -15,12 +15,16 @@
  */
 package com.wl4g.devops.share.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
 import com.wl4g.devops.dao.umc.AlarmContactGroupDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.ContactGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
@@ -56,5 +60,17 @@ public class ContactGroupServiceImpl implements ContactGroupService {
 		alarmContactGroup.setId(id);
 		alarmContactGroup.setDelFlag(1);
 		alarmContactGroupDao.updateByPrimaryKeySelective(alarmContactGroup);
+	}
+
+	@Override
+	public List<AlarmContactGroup> contactGroups(String name) {
+		return alarmContactGroupDao.list(name);
+	}
+
+	@Override
+	public PageModel list(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(alarmContactGroupDao.list(name));
+		return pm;
 	}
 }

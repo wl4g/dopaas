@@ -15,9 +15,11 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.dao.umc.MetricTemplateDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.MetricTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,18 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
 
 	@Autowired
 	private MetricTemplateDao metricTemplateDao;
+
+	@Override
+	public PageModel list(PageModel pm, String metric, String classify) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(metricTemplateDao.list(metric, classify));
+		return pm;
+	}
+
+	@Override
+	public MetricTemplate detal(Integer id) {
+		return metricTemplateDao.selectByPrimaryKey(id);
+	}
 
 	@Override
 	public void save(MetricTemplate metricTemplate) {

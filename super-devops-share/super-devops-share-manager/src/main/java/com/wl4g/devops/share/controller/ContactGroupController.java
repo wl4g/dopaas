@@ -15,12 +15,9 @@
  */
 package com.wl4g.devops.share.controller;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.umc.AlarmContactGroup;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.umc.AlarmContactGroupDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.ContactGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,22 +36,13 @@ import java.util.List;
 public class ContactGroupController extends BaseController {
 
 	@Autowired
-	private AlarmContactGroupDao alarmContactGroupDao;
-
-	@Autowired
 	private ContactGroupService contactGroupService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(String name, PageModel pm) {
 		log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
 		RespBase<Object> resp = RespBase.create();
-
-		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<AlarmContactGroup> list = alarmContactGroupDao.list(name);
-
-		pm.setTotal(page.getTotal());
-		resp.forMap().put("page", pm);
-		resp.forMap().put("list", list);
+		resp.setData(contactGroupService.list(pm, name));
 		return resp;
 	}
 
@@ -76,11 +64,11 @@ public class ContactGroupController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/all")
-	public RespBase<?> all() {
+	@RequestMapping(value = "/groupList")
+	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
-		List<AlarmContactGroup> list = alarmContactGroupDao.list(null);
-		resp.forMap().put("list", list);
+		List<AlarmContactGroup> alarmContactGroups = contactGroupService.contactGroups(null);
+		resp.setData(alarmContactGroups);
 		return resp;
 	}
 

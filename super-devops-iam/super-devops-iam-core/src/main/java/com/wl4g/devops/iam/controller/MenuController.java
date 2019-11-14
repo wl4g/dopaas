@@ -37,7 +37,7 @@ public class MenuController {
 	@Autowired
 	private MenuService menuService;
 
-	@RequestMapping(value = "/getMenuTree")
+	@RequestMapping(value = "/tree")
 	public RespBase<?> getMenuTree() {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = menuService.getMenuTree();
@@ -45,7 +45,7 @@ public class MenuController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/getMenuList")
+	@RequestMapping(value = "/list")
 	public RespBase<?> getMenuList() {
 		RespBase<Object> resp = RespBase.create();
 		List<Menu> menus = menuService.getMenuList();

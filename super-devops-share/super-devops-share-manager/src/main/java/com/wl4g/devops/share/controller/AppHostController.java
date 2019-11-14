@@ -18,7 +18,7 @@ package com.wl4g.devops.share.controller;
 import com.wl4g.devops.common.bean.share.AppHost;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.AppHostDao;
+import com.wl4g.devops.share.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,14 +35,15 @@ import java.util.List;
 @RequestMapping("/host")
 public class AppHostController extends BaseController {
 
-	@Autowired
-	private AppHostDao appHostDao;
 
-	@RequestMapping(value = "/all")
-	public RespBase<?> allType() {
+	@Autowired
+	private HostService hostService;
+
+	@RequestMapping(value = "/list")
+	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
-		List<AppHost> list = appHostDao.list(null, null, null);
-		resp.forMap().put("list", list);
+		List<AppHost> list = hostService.list(null, null, null);
+		resp.setData(list);
 		return resp;
 	}
 

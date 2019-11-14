@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.page.PageModel;
 
@@ -26,9 +27,7 @@ import java.util.List;
  */
 public interface ProjectService {
 
-	int insert(Project project);
-
-	int update(Project project);
+	void save(Project project);
 
 	int deleteById(Integer id);
 
@@ -43,5 +42,8 @@ public interface ProjectService {
 	int updateLockStatus(Integer id, Integer lockStatus);
 
 	List<String> getBranchs(Integer appClusterId, Integer tarOrBranch);
+
+
+	List<VcsProjectDto>  vcsProjects(Integer vcsId,String projectName);
 
 }
