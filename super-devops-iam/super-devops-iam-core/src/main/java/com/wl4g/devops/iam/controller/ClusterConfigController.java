@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019-09-16 14:32:00
  */
 @RestController
-@RequestMapping("/application")
+@RequestMapping("/clusterConfig")
 public class ClusterConfigController extends BaseController {
 
 	@Autowired

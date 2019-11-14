@@ -133,6 +133,7 @@ public class DictServiceImpl implements DictService {
 		} else {
 			result = new HashMap<>();
 			List<Dict> dicts = dictDao.list(null, null, null, null, "1");
+			Assert.notEmpty(dicts,"get dict from db is empty,Please check your db,table=sys_dict");
 			Map<String, List<Dict>> dictList = new HashMap<>();
 			Map<String, Map<String, Dict>> dictMap = new HashMap<>();
 			for (Dict dict : dicts) {
