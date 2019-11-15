@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.scm.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.scm.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
@@ -27,6 +28,7 @@ import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.share.DictDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,8 +96,10 @@ public class HistoryServiceImpl implements HistoryService {
 		return historyDao.list(agl);
 	}
 
-	public List<VersionList> versionList(Map<String, Object> param) {
-		return historyDao.versionList(param);
+	public PageModel versionList(PageModel pm,Map<String, Object> param) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(historyDao.versionList(param));
+		return pm;
 	}
 
 	@Override
