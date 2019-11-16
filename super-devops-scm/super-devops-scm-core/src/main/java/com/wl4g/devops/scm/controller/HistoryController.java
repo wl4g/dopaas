@@ -15,29 +15,22 @@
  */
 package com.wl4g.devops.scm.controller;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.ConfigVersionList;
-import com.wl4g.devops.common.bean.scm.HistoryOfDetail;
-import com.wl4g.devops.common.bean.scm.ReleaseDetail;
-import com.wl4g.devops.common.bean.scm.ReleaseHistory;
-import com.wl4g.devops.common.bean.scm.ReleaseHistoryList;
-import com.wl4g.devops.common.bean.scm.Version;
-import com.wl4g.devops.common.bean.scm.VersionList;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.scm.service.HistoryService;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 历史版本
@@ -62,25 +55,16 @@ public class HistoryController extends BaseController {
 		if (log.isInfoEnabled()) {
 			log.info("VersionList request ... {}, {}, {}", startDate, endDate, pm);
 		}
-
 		RespBase<Object> resp = new RespBase<>();
 		try {
 			HashMap<String, Object> param = new HashMap<>();
 			param.put("startDate", startDate);
 			param.put("endDate", endDate);
-
-			Page<VersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-			List<VersionList> list = historyService.versionList(param);
-
-			pm.setTotal(page.getTotal());
-
-			resp.forMap().put("page", pm);
-			resp.forMap().put("list", list);
+			resp.setData(historyService.versionList(pm,param));
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("获取应用组列表失败", e);
 		}
-
 		if (log.isInfoEnabled()) {
 			log.info("VersionList response. {}", resp);
 		}
