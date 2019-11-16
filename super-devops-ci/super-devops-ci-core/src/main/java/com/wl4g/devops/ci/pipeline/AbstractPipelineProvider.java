@@ -113,7 +113,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Get VCS operator for project.
+	 * Get VCS operator for specific project.
 	 * 
 	 * @param project
 	 * @return
@@ -125,7 +125,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Get VCS operator for provider.
+	 * Get VCS operator for specific provider.
 	 * 
 	 * @param vcsProvider
 	 * @return

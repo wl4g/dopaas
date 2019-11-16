@@ -23,6 +23,7 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.ci.pipeline.deploy.Python3StandardPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.RktNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
@@ -142,43 +143,50 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext info) {
-		return new MvnAssembleTarPipelineProvider(info);
+	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext context) {
+		return new MvnAssembleTarPipelineProvider(context);
 	}
 
 	@Bean
 	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext info) {
-		return new SpringExecutableJarPipelineProvider(info);
-	}
-
-	@Bean
-	@DelegateAlias({ PipelineType.DOCKER_NATIVE })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext info) {
-		return new DockerNativePipelineProvider(info);
+	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext context) {
+		return new SpringExecutableJarPipelineProvider(context);
 	}
 
 	@Bean
 	@DelegateAlias({ PipelineType.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext info) {
-		return new NpmViewPipelineProvider(info);
+	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext context) {
+		return new NpmViewPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
+	@DelegateAlias({ PipelineType.PYTHON3_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public Python3StandardPipelineProvider python3StandardPipelineProvider(PipelineContext info) {
-		return new Python3StandardPipelineProvider(info);
+	public Python3StandardPipelineProvider python3StandardPipelineProvider(PipelineContext context) {
+		return new Python3StandardPipelineProvider(context);
 	}
 
 	@Bean
 	@DelegateAlias({ PipelineType.GOLANG_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangStandardPipelineProvider golangStandardPipelineProvider(PipelineContext info) {
-		return new GolangStandardPipelineProvider(info);
+	public GolangStandardPipelineProvider golangStandardPipelineProvider(PipelineContext context) {
+		return new GolangStandardPipelineProvider(context);
+	}
+
+	@Bean
+	@DelegateAlias({ PipelineType.DOCKER_NATIVE })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext context) {
+		return new DockerNativePipelineProvider(context);
+	}
+
+	@Bean
+	@DelegateAlias({ PipelineType.RKT_NATIVE })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public RktNativePipelineProvider rktNativePipelineProvider(PipelineContext context) {
+		return new RktNativePipelineProvider(context);
 	}
 
 	// --- Pipeline deployer's. ---
@@ -188,13 +196,6 @@ public class CiCdAutoConfiguration {
 	public MvnAssembleTarPipeDeployer mvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		return new MvnAssembleTarPipeDeployer(provider, instance, taskHistoryDetails);
-	}
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipeDeployer dockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new DockerNativePipeDeployer(provider, instance, taskHistoryDetails);
 	}
 
 	@Bean
@@ -223,6 +224,20 @@ public class CiCdAutoConfiguration {
 	public GolangStandardPipeDeployer golangStandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryDetail> taskHistoryDetails) {
 		return new GolangStandardPipeDeployer(provider, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public DockerNativePipeDeployer dockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		return new DockerNativePipeDeployer(provider, instance, taskHistoryDetails);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public RktNativePipeDeployer rktNativePipeDeployer(RktNativePipelineProvider provider, AppInstance instance,
+			List<TaskHistoryDetail> taskHistoryDetails) {
+		return new RktNativePipeDeployer(provider, instance, taskHistoryDetails);
 	}
 
 	// --- TIMING SCHEDULE ---

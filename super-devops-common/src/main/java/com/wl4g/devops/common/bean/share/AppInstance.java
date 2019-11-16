@@ -21,7 +21,6 @@ import com.wl4g.devops.common.bean.BaseBean;
  * 对应：app_instance表
  * 
  * @author sut
- * @Description: TODO
  * @date 2018年9月25日
  */
 public class AppInstance extends BaseBean {
@@ -47,7 +46,10 @@ public class AppInstance extends BaseBean {
 
 	private String sshKeyPub;
 
-	// other
+	//
+	// --- Temporary fields. ---
+	//
+
 	private String hostname;
 
 	public Integer getClusterId() {

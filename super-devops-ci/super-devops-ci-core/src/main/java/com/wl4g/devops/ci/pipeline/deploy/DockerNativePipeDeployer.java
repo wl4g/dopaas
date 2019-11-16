@@ -39,18 +39,18 @@ public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNati
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
 		String groupName = getContext().getProject().getGroupName();
 		// Pull
-		provider.dockerPull(instance.getHostname(), instance.getSshUser(), "wl4g/" + groupName
+		provider.imagePull(instance.getHostname(), instance.getSshUser(), "wl4g/" + groupName
 				+ ":master"/*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPreCommand()
 							 */, instance.getSshKey());
 		// Restart
-		provider.dockerStop(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
+		provider.stopContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
 
 		// Remove Container
-		provider.dockerRemoveContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
+		provider.removeContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
 		// Run
-		provider.dockerRun(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + groupName
+		provider.startContainer(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + groupName
 				+ ":master"/*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPostCommand()

@@ -16,57 +16,49 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 /**
- * Docker native integrate pipeline provider.
- *
- * @author Wangl.sir <983708408@qq.com>
- * @author vjay
- * @date 2019-10-25
+ * CoreOS(Red hat) RKT integrate pipeline provider.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-11-16
+ * @since
  */
-public class DockerNativePipelineProvider extends AbstractPipelineProvider implements ContainerPipelineProvider {
+public class RktNativePipelineProvider extends AbstractPipelineProvider implements ContainerPipelineProvider {
 
-	public DockerNativePipelineProvider(PipelineContext context) {
+	public RktNativePipelineProvider(PipelineContext context) {
 		super(context);
 	}
 
 	@Override
 	public void buildContainer(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
-		String cmd = "mvn -f " + projectDir + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
-				+ config.getDeploy().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
-				+ config.getDeploy().getDockerNative().getDockerPushPasswd();
-		processManager.exec(cmd, config.getJobLog(getContext().getTaskHistory().getId()), 300000);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void imagePull(String remoteHost, String user, String sshkey, String image) throws Exception {
-		String command = "docker pull " + image;
-		doRemoteCommand(remoteHost, user, command, sshkey);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void stopContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
-		String command = "docker stop " + container;
-		doRemoteCommand(remoteHost, user, command, sshkey);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void removeContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
-		String command = "docker rm " + container;
-		doRemoteCommand(remoteHost, user, command, sshkey);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void startContainer(String remoteHost, String user, String sshkey, String runContainerCommands) throws Exception {
-		doRemoteCommand(remoteHost, user, runContainerCommands, sshkey);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
-		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
+		throw new UnsupportedOperationException();
 	}
 
 }
