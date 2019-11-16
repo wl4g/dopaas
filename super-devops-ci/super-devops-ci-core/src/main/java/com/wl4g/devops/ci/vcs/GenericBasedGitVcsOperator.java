@@ -129,8 +129,8 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public boolean ensureRepo(String projecDir) {
-		super.ensureRepo(projecDir);
+	public boolean ensureRepository(String projecDir) {
+		super.ensureRepository(projecDir);
 
 		File file = new File(projecDir + "/.git");
 		return file.exists();

@@ -33,7 +33,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends BasedDiskBackupPipelineProvider {
+public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider {
 
 	public NpmViewPipelineProvider(PipelineContext context) {
 		super(context);
@@ -87,14 +87,14 @@ public class NpmViewPipelineProvider extends BasedDiskBackupPipelineProvider {
 
 		if (isRollback) {
 			String sha = getContext().getTaskHistory().getShaGit();
-			if (getVcsOperator(project).ensureRepo(projectDir)) {
+			if (getVcsOperator(project).ensureRepository(projectDir)) {
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sha);
 			} else {
 				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branchName);
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sha);
 			}
 		} else {
-			if (getVcsOperator(project).ensureRepo(projectDir)) {// 若果目录存在则chekcout分支并pull
+			if (getVcsOperator(project).ensureRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
 				getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir,
 						getContext().getTaskHistory().getBranchName());
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支

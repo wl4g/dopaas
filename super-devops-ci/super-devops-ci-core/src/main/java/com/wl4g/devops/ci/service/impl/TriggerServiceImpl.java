@@ -46,7 +46,8 @@ public class TriggerServiceImpl implements TriggerService {
 	private TimingPipelineManager timingManager;
 
 	@Override
-	public PageModel list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate, String endDate) {
+	public PageModel list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate,
+			String endDate) {
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
 			endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate), 1));
@@ -124,7 +125,6 @@ public class TriggerServiceImpl implements TriggerService {
 		Assert.notNull(id, "id can not be null");
 		return triggerDao.selectByPrimaryKey(id);
 	}
-
 
 	/**
 	 * Check form

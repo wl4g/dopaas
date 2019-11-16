@@ -47,7 +47,7 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	// TaskHistory Lock Status -- Lock
 	public static final int TASK_LOCK_STATUS_LOCK = 1;
 	// TaskHistory Lock Status -- unLock
-	public static final int TASK_LOCK_STATUS__UNLOCK = 0;
+	public static final int TASK_LOCK_STATUS_UNLOCK = 0;
 
 	public static final int TASK_ENABLE_STATUS = 1;
 	public static final int TASK_DISABLE_STATUS = 0;

@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.vcs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @param typeRef
 	 * @return
 	 */
-	protected <T> T doGitExchange(Vcs credentials, String url, TypeReference<T> typeRef) {
+	protected <T> T doRemoteExchange(Vcs credentials, String url, TypeReference<T> typeRef) {
 		// Create httpEntity.
 		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
 
@@ -97,6 +97,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 
 	@Override
 	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+		notNull(credentials, "Get remote branchs credentials can't is null.");
 		isTrue(projectId > 0, "Get remote branchs must projectId >= 0");
 		if (log.isInfoEnabled()) {
 			log.info("Get remote branchs by projectId: {}", projectId);
@@ -106,7 +107,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 
 	@Override
 	public List<String> getRemoteTags(Vcs credentials, int projectId) {
-		isTrue(projectId > 0, "Get remote tags must projectId >= 0");
+		notNull(credentials, "Get remote tags credentials can't is null.");
+		isTrue(projectId >= 0, "Get remote tags must projectId >= 0");
 		if (log.isInfoEnabled()) {
 			log.info("Get remote tags by projectId: {}", projectId);
 		}
@@ -114,8 +116,9 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
-		hasText(projectName, "Project name can't is empty");
+	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+		notNull(credentials, "Get remote projectId credentials can't is null.");
+		hasText(projectName, "Get remote projectId can't is empty");
 		if (log.isInfoEnabled()) {
 			log.info("Search remote projectIds by projectName: {}", projectName);
 		}
@@ -123,7 +126,14 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
+	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
+		notNull(credentials, "Search remote projects credentials can't is null.");
+		/*
+		 * The item name to be searched can be empty. If it is empty, it means
+		 * unconditional.
+		 */
+		// hasText(projectName, "Search remote projects name can't is empty");
+		isTrue(limit > 0, "Search remote projects must limit > 0");
 		return null;
 	}
 
@@ -161,7 +171,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public boolean ensureRepo(String projecDir) {
+	public boolean ensureRepository(String projecDir) {
 		hasText(projecDir, "Check VCS repository projecDir can't is empty");
 		if (log.isInfoEnabled()) {
 			log.info("Check VCS repository for projecDir: {}", projecDir);

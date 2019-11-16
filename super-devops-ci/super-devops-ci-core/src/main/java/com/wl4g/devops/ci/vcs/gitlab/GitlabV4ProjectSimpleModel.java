@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.vcs.gitlab.model;
+package com.wl4g.devops.ci.vcs.gitlab;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 
 /**
  * Gitlab API-v4 for projects simple model.
@@ -26,7 +29,7 @@ import java.util.List;
  * @version v1.0 2019年11月13日
  * @since
  */
-public class GitlabV4ProjectSimpleModel implements Serializable {
+public class GitlabV4ProjectSimpleModel implements VcsProjectModel, Serializable {
 	private static final long serialVersionUID = 3384209918335868080L;
 
 	private int id;
@@ -190,6 +193,11 @@ public class GitlabV4ProjectSimpleModel implements Serializable {
 
 	public Namespace getNamespace() {
 		return namespace;
+	}
+
+	@Override
+	public CompositeBasicVcsProjectModel toCompositeVcsProject() {
+		return new CompositeBasicVcsProjectModel(getId(), getName(), getHttp_url_to_repo(), getSsh_url_to_repo());
 	}
 
 	/**

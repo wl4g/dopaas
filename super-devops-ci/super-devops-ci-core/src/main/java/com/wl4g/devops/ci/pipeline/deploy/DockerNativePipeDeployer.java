@@ -48,7 +48,7 @@ public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNati
 		provider.stopContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
 
 		// Remove Container
-		provider.removeContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
+		provider.destroyContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
 		// Run
 		provider.startContainer(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + groupName
 				+ ":master"/*

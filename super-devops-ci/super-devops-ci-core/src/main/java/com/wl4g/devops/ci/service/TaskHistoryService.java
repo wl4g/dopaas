@@ -32,7 +32,7 @@ import java.util.List;
 @Component
 public interface TaskHistoryService {
 
-	PageModel list(PageModel pm,String groupName, String projectName, String branchName);
+	PageModel list(PageModel pm, String groupName, String projectName, String branchName);
 
 	List<TaskHistoryDetail> getDetailByTaskId(Integer id);
 

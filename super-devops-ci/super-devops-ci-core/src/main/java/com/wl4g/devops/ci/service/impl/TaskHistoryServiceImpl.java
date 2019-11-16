@@ -61,7 +61,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	protected DestroableProcessManager processManager;
 
 	@Override
-	public PageModel list(PageModel pm,String groupName, String projectName, String branchName) {
+	public PageModel list(PageModel pm, String groupName, String projectName, String branchName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName));
 		return pm;

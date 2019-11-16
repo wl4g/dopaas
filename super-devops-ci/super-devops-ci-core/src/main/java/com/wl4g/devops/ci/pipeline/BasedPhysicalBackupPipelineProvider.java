@@ -21,15 +21,15 @@ import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static org.springframework.util.StringUtils.getFilename;
 
 /**
- * Based physical disk backing-up pipeline provider.
+ * Based physical disk backups pipeline provider.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月12日
  * @since
  */
-public abstract class BasedDiskBackupPipelineProvider extends GenericDependenciesPipelineProvider {
+public abstract class BasedPhysicalBackupPipelineProvider extends GenericDependenciesPipelineProvider {
 
-	public BasedDiskBackupPipelineProvider(PipelineContext context) {
+	public BasedPhysicalBackupPipelineProvider(PipelineContext context) {
 		super(context);
 	}
 

@@ -43,8 +43,6 @@ public class TriggerController extends BaseController {
 	@Autowired
 	private TriggerService triggerService;
 
-
-
 	/**
 	 * Page List
 	 * 
@@ -83,8 +81,6 @@ public class TriggerController extends BaseController {
 		triggerService.save(trigger);
 		return resp;
 	}
-
-
 
 	/**
 	 * Detail by id

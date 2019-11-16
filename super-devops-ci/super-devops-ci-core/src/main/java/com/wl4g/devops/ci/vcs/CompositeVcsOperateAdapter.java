@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.ci.vcs;
 
-import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
-import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 import org.eclipse.jgit.api.PullResult;
@@ -66,12 +65,13 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	}
 
 	/**
-	 * Adapt the default VCs operator {@link GitlabV4VcsOperator}.
+	 * Making the adaptation actually execute {@link Vcs}.
 	 * 
+	 * @param vcs
 	 * @return
 	 */
-	public VcsOperator forDefault() {
-		return forAdapt(VcsProvider.GITLAB);
+	public VcsOperator forAdapt(@NotNull Vcs vcs) {
+		return forAdapt(vcs.getProvider());
 	}
 
 	/**
@@ -108,16 +108,14 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	}
 
 	@Override
-	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
-		return getAdapted().findRemoteProjectId(credentials, projectName);
+	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+		return getAdapted().getRemoteProjectId(credentials, projectName);
 	}
 
 	@Override
-	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
-		return getAdapted().findRemoteProjects(credentials, projectName);
+	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
+		return getAdapted().searchRemoteProjects(credentials, projectName, 0);
 	}
-
-
 
 	/**
 	 * Get adapted {@link VcsOperator}.
@@ -149,8 +147,8 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	}
 
 	@Override
-	public boolean ensureRepo(String projecDir) {
-		return getAdapted().ensureRepo(projecDir);
+	public boolean ensureRepository(String projecDir) {
+		return getAdapted().ensureRepository(projecDir);
 	}
 
 	@Override

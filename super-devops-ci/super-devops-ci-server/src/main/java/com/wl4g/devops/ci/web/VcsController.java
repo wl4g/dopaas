@@ -50,7 +50,6 @@ public class VcsController extends BaseController {
 		return resp;
 	}
 
-
 	@RequestMapping("/all")
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();

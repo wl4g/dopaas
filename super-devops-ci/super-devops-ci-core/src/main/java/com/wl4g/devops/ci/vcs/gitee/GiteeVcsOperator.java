@@ -16,7 +16,8 @@
 package com.wl4g.devops.ci.vcs.gitee;
 
 import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
-import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.common.annotation.Reserved;
 import com.wl4g.devops.common.bean.ci.Vcs;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
  * @version v1.0 2019年11月5日
  * @since
  */
+@Reserved
 public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
@@ -48,14 +50,15 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Integer findRemoteProjectId(Vcs credentials, String projectName) {
-		super.findRemoteProjectId(credentials, projectName);
+	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName) {
-		super.findRemoteProjects(credentials, projectName);
+	public List<CompositeBasicVcsProjectModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
+		super.searchRemoteProjects(credentials, projectName, limit);
 		throw new UnsupportedOperationException();
 	}
 
