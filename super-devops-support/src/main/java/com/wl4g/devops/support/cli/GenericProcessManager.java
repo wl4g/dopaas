@@ -51,7 +51,7 @@ import static org.springframework.util.Assert.*;
  * @version v1.0.0 2019-10-20
  * @since
  */
-public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements ProcessManager {
+public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
 	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());

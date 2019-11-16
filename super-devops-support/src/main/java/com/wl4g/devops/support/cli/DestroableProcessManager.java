@@ -22,17 +22,17 @@ import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 
 /**
- * Commands line process management.
+ * Supports destroable(Interruptible) execution command line process manager.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-20
  * @since
  */
 @Beta
-public interface ProcessManager {
+public interface DestroableProcessManager {
 
 	/**
-	 * Blocking execution multi-commands, Save to temporary file before
+	 * Blocking execution multiple-commands, Save to temporary file before
 	 * execution.
 	 * 
 	 * @param multiCommands
@@ -125,7 +125,7 @@ public interface ProcessManager {
 	}
 
 	/**
-	 * Blocking execution multi-commands, Save to temporary file before
+	 * Blocking execution multiple-commands, Save to temporary file before
 	 * execution.
 	 * 
 	 * @param processId
