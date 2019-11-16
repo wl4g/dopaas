@@ -27,31 +27,36 @@ public abstract class PipelineType {
 	/**
 	 * MAVEN assemble tar provider alias.
 	 */
-	final public static String MVN_ASSEMBLE_TAR = "PipeWithMvnAssTar";
+	final public static String MVN_ASSEMBLE_TAR = "MvnAssTar";
 
 	/**
 	 * Spring boot executable jar provider alias.
 	 */
-	final public static String SPRING_EXECUTABLE_JAR = "PipeWithSpringExecJar";
-
-	/**
-	 * Docker native provider alias.
-	 */
-	final public static String DOCKER_NATIVE = "PipeWithDockerNative";
+	final public static String SPRING_EXECUTABLE_JAR = "SpringExecJar";
 
 	/**
 	 * NPM provider alias.
 	 */
-	final public static String NPM_VIEW = "PipeWithNpm";
+	final public static String NPM_VIEW = "NpmTar";
 
 	/**
-	 * DJANGO standard provider alias.
+	 * Python3 standard provider alias.
 	 */
-	final public static String DJANGO_STANDARD = "PipeWithDjangoStandard";
+	final public static String PYTHON3_STANDARD = "Python3Standard";
 
 	/**
-	 * Golang standard provider alias.
+	 * GOLANG standard provider alias.
 	 */
-	final public static String GOLANG_STANDARD = "PipeWithGolang";
+	final public static String GOLANG_STANDARD = "GolangStandard";
+
+	/**
+	 * Docker native provider alias.
+	 */
+	final public static String DOCKER_NATIVE = "DockerNative";
+
+	/**
+	 * CoreOS(Red hat) RKT native provider alias.
+	 */
+	final public static String RKT_NATIVE = "RktNative";
 
 }
