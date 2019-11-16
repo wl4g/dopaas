@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
@@ -53,9 +52,6 @@ import static org.springframework.util.Assert.notNull;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	protected CiCdProperties config;
 
 	@Autowired
 	private ProjectDao projectDao;
@@ -197,7 +193,7 @@ public class ProjectServiceImpl implements ProjectService {
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 
 		// Search remote projects.
-		List<VcsProjectModel> projects = vcsAdapter.forAdapt(vcs).searchRemoteProjects(vcs, projectName, 0);
+		List<VcsProjectModel> projects = vcsAdapter.forAdapt(vcs).searchRemoteProjects(vcs, projectName);
 		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 

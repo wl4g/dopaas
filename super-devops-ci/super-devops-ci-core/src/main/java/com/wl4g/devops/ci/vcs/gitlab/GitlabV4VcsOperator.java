@@ -100,7 +100,10 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 		super.searchRemoteProjects(credentials, projectName, limit);
 
 		// Parameters correcting.
-		projectName = isBlank(projectName) ? EMPTY : projectName;
+		if (isBlank(projectName)) {
+			projectName = EMPTY;
+			limit = config.getVcs().getGitlab().getSearchProjectsDefaultPageLimit();
+		}
 
 		// Search of remote URL.
 		String url = String.format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s"), projectName,
