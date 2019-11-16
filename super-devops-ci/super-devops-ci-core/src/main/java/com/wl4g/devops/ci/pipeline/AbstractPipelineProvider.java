@@ -32,7 +32,7 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.cli.ProcessManager;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -75,7 +75,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
-	protected ProcessManager processManager;
+	protected DestroableProcessManager processManager;
 	@Autowired
 	protected CompositeVcsOperateAdapter vcsAdapter;
 

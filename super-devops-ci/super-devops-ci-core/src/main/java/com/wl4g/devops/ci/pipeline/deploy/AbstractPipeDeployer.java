@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.cli.ProcessManager;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
 
 import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
 import static com.wl4g.devops.ci.utils.LogHolder.getDefault;
@@ -59,7 +59,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 	/** Command-line process manager. */
 	@Autowired
-	protected ProcessManager processManager;
+	protected DestroableProcessManager processManager;
 
 	/** Task history service. */
 	@Autowired

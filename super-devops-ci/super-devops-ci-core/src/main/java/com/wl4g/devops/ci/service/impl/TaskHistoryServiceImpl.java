@@ -30,7 +30,7 @@ import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.cli.ProcessManager;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +58,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Autowired
 	private TaskHisBuildCommandDao taskHisBuildCommandDao;
 	@Autowired
-	protected ProcessManager processManager;
+	protected DestroableProcessManager processManager;
 
 	@Override
 	public PageModel list(PageModel pm,String groupName, String projectName, String branchName) {
