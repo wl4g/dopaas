@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.common.annotation.StableApi;
 import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
 
 /**
@@ -25,6 +26,7 @@ import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
  * @author Wangl.sir <983708408@qq.com>
  * @date 2019-05-05 17:17:00
  */
+@StableApi
 public interface PipelineProvider extends DelegateAliasPrototypeBean {
 
 	/**

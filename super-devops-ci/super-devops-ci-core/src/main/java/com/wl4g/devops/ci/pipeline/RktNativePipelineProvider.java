@@ -32,7 +32,7 @@ public class RktNativePipelineProvider extends AbstractPipelineProvider implemen
 	}
 
 	@Override
-	public void buildContainer(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
+	public void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -47,7 +47,7 @@ public class RktNativePipelineProvider extends AbstractPipelineProvider implemen
 	}
 
 	@Override
-	public void removeContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
+	public void destroyContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

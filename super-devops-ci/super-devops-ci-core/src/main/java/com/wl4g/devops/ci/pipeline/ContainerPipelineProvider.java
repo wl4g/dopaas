@@ -25,7 +25,7 @@ package com.wl4g.devops.ci.pipeline;
 public interface ContainerPipelineProvider {
 
 	/**
-	 * Building of target container.
+	 * Building of target image.
 	 * 
 	 * @param remoteHost
 	 * @param user
@@ -33,7 +33,7 @@ public interface ContainerPipelineProvider {
 	 * @param projectDir
 	 * @throws Exception
 	 */
-	void buildContainer(String remoteHost, String user, String sshkey, String projectDir) throws Exception;
+	void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception;
 
 	/**
 	 * Pull container image.
@@ -60,7 +60,7 @@ public interface ContainerPipelineProvider {
 	void stopContainer(String remoteHost, String user, String sshkey, String container) throws Exception;
 
 	/**
-	 * Removing container.
+	 * Removing destroy container.
 	 * 
 	 * @param remoteHost
 	 * @param user
@@ -69,7 +69,7 @@ public interface ContainerPipelineProvider {
 	 *            ContainerId or container name.
 	 * @throws Exception
 	 */
-	void removeContainer(String remoteHost, String user, String sshkey, String container) throws Exception;
+	void destroyContainer(String remoteHost, String user, String sshkey, String container) throws Exception;
 
 	/**
 	 * Starting container.

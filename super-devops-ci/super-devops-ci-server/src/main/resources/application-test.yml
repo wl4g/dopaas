@@ -79,7 +79,7 @@ pipeline:
     accept-queue: 2
   vcs:
     gitlab:
-      find-remote-projects-max-size: 1000
+      search-projects-default-page-limit: 20
   build:
     job-max-clean-interval-ms: 30_000
     job-timeout-ms: 600_000

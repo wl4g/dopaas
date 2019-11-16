@@ -64,9 +64,8 @@ public class TaskController extends BaseController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, Integer tarType,
 			String startDate, String endDate) {
-		log.info(
-				"into TaskController.list prarms::"
-						+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
+		log.info("into TaskController.list prarms::"
+				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
 				pm, id, taskName, groupName, branchName, tarType, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, tarType, startDate, endDate);

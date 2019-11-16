@@ -15,11 +15,8 @@
  */
 package com.wl4g.devops.ci.web;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
-import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -32,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
 
 /**
  * CICD projects controller
@@ -46,11 +43,7 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATU
 public class ProjectController extends BaseController {
 
 	@Autowired
-	private CompositeVcsOperateAdapter vcsAdapter;
-
-	@Autowired
 	private ProjectService projectService;
-
 
 	/**
 	 * list
@@ -62,12 +55,12 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
-		log.info("into ProjectController.list prarms::" + "groupName = {} , projectName = {} , pm = {} ", groupName, projectName,
-				pm);
+		if (log.isInfoEnabled()) {
+			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
+		}
 		RespBase<Object> resp = RespBase.create();
-		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		PageModel list = projectService.list(pm, groupName, projectName);
-		resp.setData(list);
+		projectService.list(pm, groupName, projectName);
+		resp.setData(pm);
 		return resp;
 	}
 
@@ -142,14 +135,14 @@ public class ProjectController extends BaseController {
 		log.info("into ProjectController.unlock prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
-		projectService.updateLockStatus(id, TASK_LOCK_STATUS__UNLOCK);
+		projectService.updateLockStatus(id, TASK_LOCK_STATUS_UNLOCK);
 		return resp;
 	}
 
 	@RequestMapping(value = "/vcsProjects")
-	public RespBase<?> vcsProjects(Integer vcsId,String projectName) {
+	public RespBase<?> searchVcsProjects(Integer vcsId, String projectName) {
 		RespBase<Object> resp = RespBase.create();
-		List<VcsProjectDto> remoteProjects = projectService.vcsProjects(vcsId, projectName);
+		List<CompositeBasicVcsProjectModel> remoteProjects = projectService.vcsProjects(vcsId, projectName);
 		resp.setData(remoteProjects);
 		return resp;
 	}
@@ -169,7 +162,5 @@ public class ProjectController extends BaseController {
 		resp.forMap().put("branchNames", branchs);
 		return resp;
 	}
-
-
 
 }

@@ -15,7 +15,8 @@
  */
 package com.wl4g.devops.ci.vcs;
 
-import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.google.common.annotations.Beta;
+import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年8月2日
  * @since
  */
+@Beta
 public abstract interface VcsOperator {
 
 	/**
@@ -134,16 +136,38 @@ public abstract interface VcsOperator {
 	List<String> getRemoteTags(Vcs credentials, int projectId);
 
 	/**
-	 * Find remote project ID by project name.
+	 * Get remote project ID by project name.
 	 * 
 	 * @param credentials
 	 *            VCS authentication credentials
 	 * @param projectName
 	 * @return
 	 */
-	Integer findRemoteProjectId(Vcs credentials, String projectName);
+	Integer getRemoteProjectId(Vcs credentials, String projectName);
 
-	List<VcsProjectDto> findRemoteProjects(Vcs credentials, String projectName);
+	/**
+	 * Search find remote projects by name.(unlimited)
+	 * 
+	 * @param credentials
+	 * @param projectName
+	 * @return
+	 */
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName) {
+		return searchRemoteProjects(credentials, projectName, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Search find remote projects by name.
+	 * 
+	 * @param credentials
+	 * @param projectName
+	 *            The item name to be searched can be empty. If it is empty, it
+	 *            means unconditional.
+	 * @param limit
+	 *            Page limit maximum
+	 * @return
+	 */
+	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit);
 
 	// --- VCS operator. ---
 
@@ -209,7 +233,7 @@ public abstract interface VcsOperator {
 	 *            project local VCS repository directory absolute path.
 	 * @return
 	 */
-	boolean ensureRepo(String projecDir);
+	boolean ensureRepository(String projecDir);
 
 	/**
 	 * Get (local) latest committed ID.

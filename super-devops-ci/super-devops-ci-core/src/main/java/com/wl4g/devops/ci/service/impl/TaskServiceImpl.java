@@ -84,7 +84,8 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, Integer tarType, String startDate, String endDate) {
+	public PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, Integer tarType,
+			String startDate, String endDate) {
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
 			endDateStr = DateUtils.formatDate(DateUtils.addDays(DateUtils.parseDate(endDate), 1));

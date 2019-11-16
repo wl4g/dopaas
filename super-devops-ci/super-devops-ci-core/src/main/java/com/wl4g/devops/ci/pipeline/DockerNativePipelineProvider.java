@@ -33,7 +33,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 	}
 
 	@Override
-	public void buildContainer(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
+	public void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
 		String cmd = "mvn -f " + projectDir + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getDeploy().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getDeploy().getDockerNative().getDockerPushPasswd();
@@ -53,7 +53,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 	}
 
 	@Override
-	public void removeContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
+	public void destroyContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
 		String command = "docker rm " + container;
 		doRemoteCommand(remoteHost, user, command, sshkey);
 	}

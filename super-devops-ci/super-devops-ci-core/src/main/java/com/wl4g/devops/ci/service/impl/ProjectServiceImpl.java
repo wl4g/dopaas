@@ -16,9 +16,11 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
-import com.wl4g.devops.ci.vcs.model.VcsProjectDto;
+import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -28,6 +30,8 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +41,10 @@ import java.util.List;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS__UNLOCK;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
+import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * @author vjay
@@ -45,6 +52,10 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATU
  */
 @Service
 public class ProjectServiceImpl implements ProjectService {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
+
+	@Autowired
+	protected CiCdProperties config;
 
 	@Autowired
 	private ProjectDao projectDao;
@@ -67,7 +78,7 @@ public class ProjectServiceImpl implements ProjectService {
 			project.preInsert();
 			project.setDelFlag(DEL_FLAG_NORMAL);
 			project.setEnable(ENABLED);
-			project.setLockStatus(TASK_LOCK_STATUS__UNLOCK);
+			project.setLockStatus(TASK_LOCK_STATUS_UNLOCK);
 			insert(project);
 		}
 	}
@@ -127,7 +138,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public PageModel list(PageModel pm, String groupName, String projectName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Project> list = projectDao.list(groupName, projectName);
-		for(Project project : list){
+		for (Project project : list) {
 			project.setVcs(null);
 		}
 		pm.setRecords(list);
@@ -165,26 +176,29 @@ public class ProjectServiceImpl implements ProjectService {
 
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
-		Integer gitlabProjectId = vcsAdapter.forAdapt(project.getVcs().getProvider()).findRemoteProjectId(project.getVcs(), projectName);
-		Assert.notNull(gitlabProjectId, String.format("No found projectId of name: %s", projectName));
+		Integer vcsProjectId = vcsAdapter.forAdapt(project.getVcs()).getRemoteProjectId(project.getVcs(), projectName);
+		Assert.notNull(vcsProjectId, String.format("No found projectId of name: %s", projectName));
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs().getProvider()).getRemoteTags(project.getVcs(), gitlabProjectId);
+			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs()).getRemoteTags(project.getVcs(), vcsProjectId);
 			return branchNames;
 		}
 		// Branch
 		else {
-			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs().getProvider()).getRemoteBranchNames(project.getVcs(), gitlabProjectId);
+			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs()).getRemoteBranchNames(project.getVcs(), vcsProjectId);
 			return branchNames;
 		}
 	}
 
 	@Override
-	public List<VcsProjectDto> vcsProjects(Integer vcsId, String projectName) {
-		Assert.notNull(vcsId, "vcsId can not be null");
+	public List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName) {
+		notNull(vcsId, "vcsId can not be null");
+		// Get VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
-		List<VcsProjectDto> remoteProjects = vcsAdapter.forDefault().findRemoteProjects(vcs, projectName);
-		return remoteProjects;
+
+		// Search remote projects.
+		List<VcsProjectModel> projects = vcsAdapter.forAdapt(vcs).searchRemoteProjects(vcs, projectName, 0);
+		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 
 	/**
@@ -200,6 +214,5 @@ public class ProjectServiceImpl implements ProjectService {
 		url = url.substring(0, index);
 		return url;
 	}
-
 
 }

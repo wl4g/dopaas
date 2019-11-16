@@ -100,15 +100,16 @@ public class VcsSourceProperties {
 	 * @since
 	 */
 	public static class GitlabProperties {
-		private Integer findRemoteProjectsMaxSize = 1000;
 
-		public Integer getFindRemoteProjectsMaxSize() {
-			return findRemoteProjectsMaxSize;
+		private Integer searchProjectsDefaultPageLimit = 20;
+
+		public Integer getSearchProjectsDefaultPageLimit() {
+			return searchProjectsDefaultPageLimit;
 		}
 
-		public void setFindRemoteProjectsMaxSize(Integer findRemoteProjectsMaxSize) {
-			if (nonNull(findRemoteProjectsMaxSize)) {
-				this.findRemoteProjectsMaxSize = findRemoteProjectsMaxSize;
+		public void setSearchProjectsDefaultPageLimit(Integer defaultSearchProjectsPageLimit) {
+			if (nonNull(defaultSearchProjectsPageLimit)) {
+				this.searchProjectsDefaultPageLimit = defaultSearchProjectsPageLimit;
 			}
 		}
 
