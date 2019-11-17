@@ -15,20 +15,17 @@
  */
 package com.wl4g.devops.ci.console;
 
-import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.console.args.TaskListArgument;
 import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalMsArgument;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.utils.lang.TableFormatters;
-import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
+import static com.wl4g.devops.common.utils.lang.TableFormatters.*;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.shell.processor.ShellHolder.printf;
 
@@ -48,9 +45,9 @@ public class CiCdConsole {
 	@Autowired
 	private GlobalTimeoutJobCleanupCoordinator tjcCoordinator;
 
-	/** {@link TaskDao}. */
+	/** {@link TaskService}. */
 	@Autowired
-	private TaskDao taskDao;
+	private TaskService taskService;
 
 	/**
 	 * Reset timeout cleanup expression.
@@ -76,21 +73,22 @@ public class CiCdConsole {
 	}
 
 	/**
-	 * Get task list.
+	 * Get task pipeline list.
 	 * 
 	 * @param arg
 	 * @return
 	 */
 	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
-	public String getPipelineList(TaskListArgument arg) {
+	public String pipelineList(TaskListArgument arg) {
 		ShellHolder.open();
 		try {
-			// Setup pagers.
-			PageHelper.startPage(arg.getPageNum(), arg.getPageSize(), true);
+			// Find tasks.
+			PageModel pm = new PageModel(arg.getPageNum(), arg.getPageSize());
+			taskService.list(pm, arg.getId(), arg.getTaskName(), arg.getGroupName(), arg.getBranchName(), arg.getTarType(),
+					arg.getStartDate(), arg.getEndDate());
 
-			// Print to client
-			List<Task> list = taskDao.list(null, null, null, null, null, null, null);
-			return TableFormatters.build(list).setH('=').setV('!').getTableString();
+			// Print write to console.
+			printf(build(pm.getRecords()).setH('=').setV('!').getTableString());
 		} catch (Exception e) {
 			printf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
 		} finally {

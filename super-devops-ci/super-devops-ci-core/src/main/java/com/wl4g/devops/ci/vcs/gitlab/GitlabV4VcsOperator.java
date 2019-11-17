@@ -79,9 +79,9 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 		super.getRemoteProjectId(credentials, projectName);
 
 		// Search projects for GITLAB.
-		List<GitlabV4ProjectSimpleModel> projects = searchRemoteProjects(credentials, projectName);
+		List<GitlabV4SimpleProjectModel> projects = searchRemoteProjects(credentials, projectName);
 		Integer id = null;
-		for (GitlabV4ProjectSimpleModel p : projects) {
+		for (GitlabV4SimpleProjectModel p : projects) {
 			if (trimToEmpty(projectName).equals(p.getName())) {
 				id = p.getId();
 				break;
@@ -96,7 +96,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4ProjectSimpleModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
+	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
 		super.searchRemoteProjects(credentials, projectName, limit);
 
 		// Parameters correcting.
@@ -109,8 +109,8 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 		String url = String.format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s"), projectName,
 				limit);
 		// Search projects.
-		List<GitlabV4ProjectSimpleModel> projects = doRemoteExchange(credentials, url,
-				new TypeReference<List<GitlabV4ProjectSimpleModel>>() {
+		List<GitlabV4SimpleProjectModel> projects = doRemoteExchange(credentials, url,
+				new TypeReference<List<GitlabV4SimpleProjectModel>>() {
 				});
 		return safeList(projects);
 	}

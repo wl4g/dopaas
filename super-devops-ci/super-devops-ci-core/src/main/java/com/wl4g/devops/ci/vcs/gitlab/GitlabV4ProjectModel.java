@@ -27,7 +27,7 @@ import com.wl4g.devops.common.annotation.Reserved;
  * @since
  */
 @Reserved
-public class GitlabV4ProjectModel extends GitlabV4ProjectSimpleModel {
+public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 	private static final long serialVersionUID = 614084533443846624L;
 
 	private Links _links;

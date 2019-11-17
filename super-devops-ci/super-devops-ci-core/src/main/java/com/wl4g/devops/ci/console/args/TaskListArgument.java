@@ -29,9 +29,23 @@ public class TaskListArgument implements Serializable {
 
 	@ShellOption(opt = "p", lopt = "pagenum", help = "page num", required = false, defaultValue = "1")
 	private Integer pageNum = 1;
-
 	@ShellOption(opt = "s", lopt = "pagesize", help = "page size", required = false, defaultValue = "10")
 	private Integer pageSize = 10;
+
+	@ShellOption(opt = "i", lopt = "taskId", help = "page size", required = false)
+	private Integer id;
+	@ShellOption(opt = "t", lopt = "taskName", help = "task name", required = false)
+	private String taskName;
+	@ShellOption(opt = "g", lopt = "groupName", help = "task cluster name", required = false)
+	private String groupName;
+	@ShellOption(opt = "b", lopt = "branchName", help = "task project branch name", required = false)
+	private String branchName;
+	@ShellOption(opt = "t", lopt = "tarType", help = "task pipeline provider type", required = false)
+	private Integer tarType;
+	@ShellOption(opt = "s", lopt = "startDate", help = "task start date(yyyy-MM-dd HH:mm:ss)", required = false)
+	private String startDate;
+	@ShellOption(opt = "e", lopt = "endDate", help = "task end date(yyyy-MM-dd HH:mm:ss)", required = false)
+	private String endDate;
 
 	public Integer getPageNum() {
 		return pageNum;
@@ -49,9 +63,60 @@ public class TaskListArgument implements Serializable {
 		this.pageSize = pageSize;
 	}
 
-	@Override
-	public String toString() {
-		return "TaskListArgument [pageNum=" + pageNum + ", pageSize=" + pageSize + "]";
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getTaskName() {
+		return taskName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
+	public Integer getTarType() {
+		return tarType;
+	}
+
+	public void setTarType(Integer tarType) {
+		this.tarType = tarType;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 
 }

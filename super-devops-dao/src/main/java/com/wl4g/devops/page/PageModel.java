@@ -27,7 +27,7 @@ import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * Customizaing page model.
+ * Customized page model.
  * 
  * @auhtor Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018年9月7日
@@ -47,38 +47,48 @@ public class PageModel implements Serializable {
 	 */
 	private List<Object> records = emptyList();
 
+	public PageModel() {
+		super();
+	}
+
+	public PageModel(Integer pageNum, Integer pageSize) {
+		setPageNum(pageNum);
+		setPageSize(pageSize);
+	}
+
 	public Integer getPageNum() {
-		return ensurePage().getPageNum();
+		return forPage().getPageNum();
 	}
 
 	public void setPageNum(Integer pageNum) {
 		if (nonNull(pageNum)) {
-			ensurePage().setPageNum(pageNum);
+			forPage().setPageNum(pageNum);
 		}
 	}
 
 	public Integer getPageSize() {
-		return ensurePage().getPageSize();
+		return forPage().getPageSize();
 	}
 
 	public void setPageSize(Integer pageSize) {
 		if (nonNull(pageSize)) {
-			ensurePage().setPageSize(pageSize);
+			forPage().setPageSize(pageSize);
 		}
 	}
 
 	public Long getTotal() {
-		return ensurePage().getTotal();
+		return forPage().getTotal();
 	}
 
 	public void setTotal(Long total) {
 		if (nonNull(total)) {
-			ensurePage().setTotal(total);
+			forPage().setTotal(total);
 		}
 	}
 
-	public List<Object> getRecords() {
-		return records;
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getRecords() {
+		return (List<T>) records;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -99,11 +109,11 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Ensure get page.
+	 * Ensure for get page.
 	 * 
 	 * @return
 	 */
-	private Page<Object> ensurePage() {
+	private Page<Object> forPage() {
 		if (Objects.isNull(page)) {
 			page = new Page<>();
 		}

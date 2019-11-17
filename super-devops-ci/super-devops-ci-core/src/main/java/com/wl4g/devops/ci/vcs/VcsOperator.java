@@ -33,7 +33,7 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 @Beta
-public abstract interface VcsOperator {
+public interface VcsOperator {
 
 	/**
 	 * VCS type definitions.
@@ -169,7 +169,7 @@ public abstract interface VcsOperator {
 	 */
 	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit);
 
-	// --- VCS operator. ---
+	// --- VCS commands. ---
 
 	/**
 	 * Clone from remote VCS server.
@@ -205,7 +205,7 @@ public abstract interface VcsOperator {
 	<T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException;
 
 	/**
-	 * Checkout and pull.
+	 * Checkout and pull of VCS repository.
 	 * 
 	 * @param credentials
 	 *            VCS authentication credentials
