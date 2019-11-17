@@ -29,7 +29,7 @@ import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
  * @version v1.0 2019年11月13日
  * @since
  */
-public class GitlabV4ProjectSimpleModel implements VcsProjectModel, Serializable {
+public class GitlabV4SimpleProjectModel implements VcsProjectModel, Serializable {
 	private static final long serialVersionUID = 3384209918335868080L;
 
 	private int id;
