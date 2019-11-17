@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.console;
 
-import com.wl4g.devops.ci.console.args.TaskListArgument;
-import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalMsArgument;
+import com.wl4g.devops.ci.console.args.TasksArgument;
+import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalArgument;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.page.PageModel;
@@ -56,7 +56,7 @@ public class CiCdConsole {
 	 * @return
 	 */
 	@ShellMethod(keys = "modifyCleanupInterval", group = GROUP, help = "Modifying global jobs timeout finalizer max-interval")
-	public String modifyCleanupInterval(TimeoutCleanupIntervalMsArgument arg) {
+	public String modifyCleanupInterval(TimeoutCleanupIntervalArgument arg) {
 		ShellHolder.open();
 		try {
 			printf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
@@ -79,7 +79,7 @@ public class CiCdConsole {
 	 * @return
 	 */
 	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
-	public String pipelineList(TaskListArgument arg) {
+	public String pipelineList(TasksArgument arg) {
 		ShellHolder.open();
 		try {
 			// Find tasks.
