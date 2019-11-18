@@ -24,9 +24,9 @@ import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 
 import com.wl4g.devops.common.utils.Exceptions;
+import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.common.web.error.ErrorConfiguring;
 
 /**
@@ -40,17 +40,16 @@ import com.wl4g.devops.common.web.error.ErrorConfiguring;
 public class IamErrorConfiguring implements ErrorConfiguring {
 
 	@Override
-	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
-			Exception ex) {
+	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
 		// IAM Unauthenticated error?
 		if ((ex instanceof UnauthenticatedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)) {
-			return HttpStatus.UNAUTHORIZED;
+			return RetCode.UNAUTHC.getErrcode();
 		}
 		// IAM Unauthorized error?
 		else if ((ex instanceof UnauthorizedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
-			return HttpStatus.FORBIDDEN;
+			return RetCode.UNAUTHZ.getErrcode();
 		}
 
 		// Using next chain configuring.

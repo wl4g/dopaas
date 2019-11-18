@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.devel.coding;
+package com.wl4g.devops.tool.devel.license;
 
 import java.io.*;
 import java.awt.*;
@@ -21,8 +21,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import org.apache.commons.lang3.SystemUtils;
-
-import com.wl4g.devops.tool.devel.coding.factory.LisenceRegistryFactory;
 
 /**
  * Development coding license comments generator tool.

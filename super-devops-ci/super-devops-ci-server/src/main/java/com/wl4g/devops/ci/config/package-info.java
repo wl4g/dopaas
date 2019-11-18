@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * Mybatis DAO and mapper configuration generator module.
- * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年11月14日
+ * @version v1.0 2019年11月18日
  * @since
  */
-package com.wl4g.devops.tool.devel.mybatis;
+package com.wl4g.devops.ci.config;

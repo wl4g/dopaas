@@ -29,12 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.core.annotation.AnnotationUtils.*;
-import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import com.wl4g.devops.common.utils.lang.OnceModifiableList;
+import com.wl4g.devops.common.web.RespBase.RetCode;
 
 /**
  * Composite error configure adapter.
@@ -67,16 +66,15 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 	}
 
 	@Override
-	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
-			Exception ex) {
+	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
 		for (ErrorConfiguring c : errorConfigures) {
-			HttpStatus status = c.getStatus(request, response, model, ex);
+			int status = c.getStatus(request, response, model, ex);
 			if (nonNull(status)) {
 				return status;
 			}
 		}
 		// Fallback.
-		return SERVICE_UNAVAILABLE;
+		return RetCode.SYS_ERR.getErrcode();
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public class PageModel implements Serializable {
 	private List<Object> records = emptyList();
 
 	public PageModel() {
-		super();
+		this(1, 10);
 	}
 
 	public PageModel(Integer pageNum, Integer pageSize) {

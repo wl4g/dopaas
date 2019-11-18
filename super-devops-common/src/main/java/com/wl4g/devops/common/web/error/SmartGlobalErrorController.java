@@ -32,7 +32,6 @@ import org.springframework.boot.autoconfigure.web.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -157,7 +156,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			Map<String, Object> model = getErrorAttributes(request, response, ex);
 
 			// Obtain custom extension response status.
-			HttpStatus status = adapter.getStatus(request, response, model, ex);
+			int status = adapter.getStatus(request, response, model, ex);
 			String errmsg = adapter.getRootCause(request, response, model, ex);
 
 			// Get redirectUri or rendering template.
@@ -166,7 +165,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			// If and only if the client is a browser and not an XHR request
 			// returns to the page, otherwise it returns to JSON.
 			if (isJSONResponse(request)) {
-				RespBase<Object> resp = new RespBase<>(RetCode.create(status.value(), errmsg));
+				RespBase<Object> resp = new RespBase<>(RetCode.create(status, errmsg));
 				if (!(uriOrTpl instanceof Template)) {
 					resp.forMap().put(DEFAULT_REDIRECT_KEY, uriOrTpl);
 				}
@@ -175,14 +174,14 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 				writeJson(response, errJson);
 			} else {
 				if (uriOrTpl instanceof Template) {
-					log.error("Response View Errors => httpStatus[{}]", status.value());
+					log.error("Response View Errors => httpStatus[{}]", status);
 					// Merge configuration map model.
 					model.putAll(parseJSON(toJSONString(config), new TypeReference<HashMap<String, Object>>() {
 					}));
 
 					// Readering
 					String renderString = processTemplateIntoString((Template) uriOrTpl, model);
-					write(response, status.value(), TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
+					write(response, status, TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
 				} else {
 					log.error("Redirect View Errors => [{}]", uriOrTpl);
 					response.sendRedirect((String) uriOrTpl);
@@ -236,15 +235,14 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @throws TemplateException
 	 * @throws IOException
 	 */
-	private Object getRedirectUriOrRenderErrorView(Map<String, Object> model, HttpStatus status)
-			throws IOException, TemplateException {
+	private Object getRedirectUriOrRenderErrorView(Map<String, Object> model, int status) throws IOException, TemplateException {
 		switch (status) {
-		case NOT_FOUND:
+		case 404:
 			if (nonNull(tpl404)) {
 				return tpl404;
 			}
 			return config.getNotFountUriOrTpl().substring(DEFAULT_REDIRECT_PREFIX.length());
-		case FORBIDDEN:
+		case 403:
 			if (nonNull(tpl403)) {
 				return tpl403;
 			}

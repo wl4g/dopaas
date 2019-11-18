@@ -28,9 +28,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 
 import com.wl4g.devops.common.web.RespBase;
@@ -45,21 +46,22 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class DefaultBasicErrorConfiguring implements ErrorConfiguring {
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override
-	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
-			Exception ex) {
+	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
 		Integer statusCode = (Integer) model.getOrDefault("status", SYS_ERR.getErrcode());
 		if (isNull(statusCode)) {
 			RetCode retCode = RespBase.getRestfulCode(ex);
 			if (nonNull(retCode)) {
 				statusCode = retCode.getErrcode();
-			} else {
-				statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+			} else { // Has been setup to: 999?
+				// statusCode = (Integer)
+				// request.getAttribute("javax.servlet.error.status_code");
 			}
 		}
 		if (!isNull(statusCode)) {
-			return HttpStatus.valueOf(statusCode);
+			return statusCode;
 		}
 		return null;
 	}
