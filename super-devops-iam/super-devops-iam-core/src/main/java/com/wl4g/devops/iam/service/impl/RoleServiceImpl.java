@@ -15,10 +15,8 @@
  */
 package com.wl4g.devops.iam.service.impl;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.iam.Group;
 import com.wl4g.devops.common.bean.iam.GroupRole;
 import com.wl4g.devops.common.bean.iam.Role;
@@ -31,17 +29,20 @@ import com.wl4g.devops.iam.handler.UserUtil;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.RoleService;
 import com.wl4g.devops.page.PageModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.common.utils.lang.Collections2.disDupCollection;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.util.*;
 
 /**
  * Role service implements.
@@ -74,37 +75,66 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public List<Role> getRolesByUserGroups() {
-		// Obtain roles through the group tree of the current login user.
-		Integer currentUserId = userUtil.getCurrentLoginUserId();
-		// Groups of userId.
-		List<Group> groups = groupDao.selectByUserId(currentUserId);
-		// Roles of group.
-		List<Role> roles = new ArrayList<>();
-		for (Group group : groups) {
-			roles.addAll(roleDao.selectByGroupId(group.getId()));
+		String username = userUtil.getCurrentLoginUsername();
+		if(DEFAULT_USER_ROOT.equals(username)){
+			return roleDao.selectByRoot();
+		}else{
+			// Groups of userId.
+			Set<Group> groups = groupService.getGroupsSet();
+			List<Integer> groupIds = new ArrayList<>();
+			for (Group group : groups) {
+				groupIds.add(group.getId());
+			}
+			// Roles of group.
+			List<Role> roles = roleDao.selectByGroupIds(groupIds);
+			return roles;
 		}
-		return (List<Role>) disDupCollection(roles);
 	}
 
 	@Override
-	public Map<String, Object> list(PageModel pm, String name, String displayName) {
-		Map<String, Object> resp = new HashMap<>();
-		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
-
-		Page<Project> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<Role> list = roleDao.list(currentLoginUserId, name, displayName);
-		Set<Group> groupsSet = groupService.getGroupsSet();// get user group
-		for (Role role : list) {
-			List<Group> groups = groupDao.selectByRoleId(role.getId());
-			groups = removeUnhad(groups, groupsSet);// remove unhad
-			String s = groups2Str(groups);
-			role.setGroupDisplayName(s);
+	public PageModel list(PageModel pm, String name, String displayName) {
+		String username = userUtil.getCurrentLoginUsername();
+		Set<Group> groupSet = groupService.getGroupsSet();
+		if(DEFAULT_USER_ROOT.equals(username)){
+			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+			List<Role> roles = roleDao.selectByRoot();
+			for (Role role : roles) {
+				List<Group> groups = groupDao.selectByRoleId(role.getId());
+				groups = removeUnhad(groups, groupSet);// remove unhad
+				String s = groups2Str(groups);
+				role.setGroupDisplayName(s);
+			}
+			pm.setRecords(roles);
+		}else{
+			List<Integer> groupIds = new ArrayList<>();
+			for (Group group : groupSet) {
+				groupIds.add(group.getId());
+			}
+			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+			List<Role> roles = roleDao.selectByGroupIds(groupIds);
+			for (Role role : roles) {
+				List<Group> groups = groupDao.selectByRoleId(role.getId());
+				groups = removeUnhad(groups, groupSet);// remove unhad
+				String s = groups2Str(groups);
+				role.setGroupDisplayName(s);
+			}
+			pm.setRecords(roles);
 		}
+		return pm;
+	}
 
-		pm.setTotal(page.getTotal());
-		resp.put("page", pm);
-		resp.put("list", list);
-		return resp;
+
+	private List<Role> getRoleByUserGroups2(){
+		String username = userUtil.getCurrentLoginUsername();
+		if(DEFAULT_USER_ROOT.equals(username)){
+
+		}else{
+
+		}
+		Set<Group> groupsSet = groupService.getGroupsSet();// get user group
+
+
+		return null;
 	}
 
 	private List<Group> removeUnhad(List<Group> groups, Set<Group> groupsSet) {
