@@ -40,6 +40,7 @@ import java.util.List;
 import static com.wl4g.devops.support.cache.ScanCursor.CursorWrapper.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
+import static com.wl4g.devops.common.utils.lang.DateUtils2.formatDate;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
 import static java.util.Objects.nonNull;
@@ -57,6 +58,7 @@ import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTH
 @Beta
 @ResponseBody
 public abstract class GenericApiController extends BaseController {
+	final public static String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
 
 	/**
 	 * IAM properties configuration.
@@ -251,9 +253,9 @@ public abstract class GenericApiController extends BaseController {
 	protected SessionAttribute wrapSessionAttribute(IamSession session) {
 		SessionAttribute sa = new SessionAttribute();
 		sa.setId(String.valueOf(session.getId()));
-		sa.setLastAccessTime(session.getLastAccessTime());
-		sa.setStartTime(session.getStartTimestamp());
-		sa.setStopTime(session.getStopTimestamp());
+		sa.setLastAccessTime(formatDate(session.getLastAccessTime(), DEFAULT_DATE_PATTERN));
+		sa.setStartTime(formatDate(session.getStartTimestamp(), DEFAULT_DATE_PATTERN));
+		sa.setStopTime(formatDate(session.getStopTimestamp(), DEFAULT_DATE_PATTERN));
 		sa.setHost(session.getHost());
 		sa.setExpired(session.isExpired());
 

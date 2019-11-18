@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.srm.Log;
 import com.wl4g.devops.common.bean.srm.QueryLogModel;
 import com.wl4g.devops.common.bean.srm.Querycriteria;
 import com.wl4g.devops.common.constants.SRMDevOpsConstants;
-import com.wl4g.devops.common.utils.lang.DateUtils;
+import com.wl4g.devops.common.utils.lang.DateUtils2;
 import com.wl4g.devops.srm.handler.LogHandler;
 import com.wl4g.devops.srm.service.LogConsoleService;
 import org.elasticsearch.action.search.SearchRequest;
@@ -67,7 +67,7 @@ public class LogConsoleServiceImpl implements LogConsoleService {
         } else {
             startTimeD = new Date(startTime);
         }
-        index = index + "-" + DateUtils.formatDate(startTimeD);
+        index = index + "-" + DateUtils2.formatDate(startTimeD);
 
         List<Log> console = console(index, model.getStartTime(), model.getEndTime(), model.getFrom(), model.getLimit(), model.getQueryList(), model.getLevel());
         List<String> result = new ArrayList();
@@ -114,10 +114,10 @@ public class LogConsoleServiceImpl implements LogConsoleService {
         if (null != startTime && null != endTime && (endTime != 0 || startTime != 0)) {
             RangeQueryBuilder rqb = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString());
             if (null != startTime) {
-                rqb.gte(DateUtils.timeStampToUTC(startTime));
+                rqb.gte(DateUtils2.timeStampToUTC(startTime));
             }
             if (null != endTime) {
-                rqb.lt(DateUtils.timeStampToUTC(endTime));
+                rqb.lt(DateUtils2.timeStampToUTC(endTime));
             }
             boolQueryBuilder.filter(rqb);
         }

@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.utils.task;
 
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static com.wl4g.devops.common.utils.lang.DateUtils.formatDate;
+import static com.wl4g.devops.common.utils.lang.DateUtils2.formatDate;
 import static java.util.stream.Collectors.toList;
 import static org.quartz.TriggerUtils.computeFireTimes;
 import org.quartz.CronExpression;
