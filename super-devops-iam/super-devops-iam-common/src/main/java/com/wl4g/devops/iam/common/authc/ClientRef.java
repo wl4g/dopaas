@@ -57,7 +57,7 @@ public enum ClientRef {
 	/**
 	 * Client windows type.
 	 */
-	WINDOWS("Windows"),
+	Windows("Windows"),
 
 	/**
 	 * Client unknown type.

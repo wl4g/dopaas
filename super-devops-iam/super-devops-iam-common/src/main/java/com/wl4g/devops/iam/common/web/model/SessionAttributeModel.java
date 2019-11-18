@@ -25,7 +25,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,7 +47,7 @@ public class SessionAttributeModel implements Serializable {
 	private CursorIndex index = new CursorIndex();
 
 	/**
-	 * Sessoin attributes.
+	 * Session attributes.
 	 */
 	private Collection<SessionAttribute> sessions = new ArrayList<>(2);
 
@@ -150,9 +149,9 @@ public class SessionAttributeModel implements Serializable {
 		private static final long serialVersionUID = 1990530522326712114L;
 
 		private String id;
-		private Date startTime;
-		private Date stopTime;
-		private Date lastAccessTime;
+		private String startTime;
+		private String stopTime;
+		private String lastAccessTime;
 		private boolean expired;
 		private boolean authenticated;
 		private String host;
@@ -169,27 +168,27 @@ public class SessionAttributeModel implements Serializable {
 			this.id = id;
 		}
 
-		public Date getStartTime() {
+		public String getStartTime() {
 			return startTime;
 		}
 
-		public void setStartTime(Date startTimestamp) {
+		public void setStartTime(String startTimestamp) {
 			this.startTime = startTimestamp;
 		}
 
-		public Date getStopTime() {
+		public String getStopTime() {
 			return stopTime;
 		}
 
-		public void setStopTime(Date stopTimestamp) {
+		public void setStopTime(String stopTimestamp) {
 			this.stopTime = stopTimestamp;
 		}
 
-		public Date getLastAccessTime() {
+		public String getLastAccessTime() {
 			return lastAccessTime;
 		}
 
-		public void setLastAccessTime(Date lastAccessTime) {
+		public void setLastAccessTime(String lastAccessTime) {
 			this.lastAccessTime = lastAccessTime;
 		}
 
