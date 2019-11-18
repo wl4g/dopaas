@@ -33,6 +33,12 @@
     alipay_id, github_id, aws_id, remark, create_by, create_date, update_by, update_date, 
     del_flag
   </sql>
+  <sql id="Base_Column_List_u" >
+    u.id, u.user_name, u.display_name, u.password, u.user_type, u.enable, u.status, u.email,
+    u.phone, u.wechat_open_id, u.wechat_union_id, u.facebook_id, u.google_id, u.twitter_id, u.linkedin_id,
+    u.alipay_id, u.github_id, u.aws_id, u.remark, u.create_by, u.create_date, u.update_by, u.update_date,
+    u.del_flag
+  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -58,17 +64,17 @@
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
-    <include refid="Base_Column_List" />
-    from sys_user
-    where del_flag!=1
+    <include refid="Base_Column_List_u" />
+    from sys_user u
+    where u.del_flag!=1 and u.user_name!='root'
     <if test="userName != null and userName !='' ">
-      AND user_name LIKE CONCAT('%','${userName}','%')
+      AND u.user_name LIKE CONCAT('%','${userName}','%')
     </if>
     <if test="displayName != null and displayName !='' ">
-      AND display_name LIKE CONCAT('%','${displayName}','%')
+      AND u.display_name LIKE CONCAT('%','${displayName}','%')
     </if>
     <if test="userId != null">
-      exists(select 1 from sys_group_user gu inner join sys_group_user sgu on gu.group_id = sgu.group_id where u.id=gu.user_id and sgu.user_id=#{userId,jdbcType=INTEGER})
+      and exists(select 1 from sys_group_user gu inner join sys_group_user sgu on gu.group_id = sgu.group_id where u.id=gu.user_id and sgu.user_id=#{userId,jdbcType=INTEGER})
     </if>
   </select>
 

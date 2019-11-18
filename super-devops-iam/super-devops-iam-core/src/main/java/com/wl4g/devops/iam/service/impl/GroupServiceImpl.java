@@ -167,7 +167,10 @@ public class GroupServiceImpl implements GroupService {
 			groupMenu.setGroupId(group.getId());
 			groupMenus.add(groupMenu);
 		}
-		groupMenuDao.insertBatch(groupMenus);
+		if(!CollectionUtils.isEmpty(groupMenus)){
+			groupMenuDao.insertBatch(groupMenus);
+		}
+
 
 		// role
 		List<GroupRole> groupRoles = new ArrayList<>();
@@ -178,8 +181,9 @@ public class GroupServiceImpl implements GroupService {
 			groupRole.setRoleId(roleId);
 			groupRoles.add(groupRole);
 		}
-		groupRoleDao.insertBatch(groupRoles);
-
+		if(!CollectionUtils.isEmpty(groupRoles)){
+			groupRoleDao.insertBatch(groupRoles);
+		}
 	}
 
 	private void update(Group group) {
@@ -196,7 +200,9 @@ public class GroupServiceImpl implements GroupService {
 			groupMenu.setGroupId(group.getId());
 			groupMenus.add(groupMenu);
 		}
-		groupMenuDao.insertBatch(groupMenus);
+		if(!CollectionUtils.isEmpty(groupMenus)){
+			groupMenuDao.insertBatch(groupMenus);
+		}
 
 		// role
 		List<GroupRole> groupRoles = new ArrayList<>();
@@ -207,7 +213,9 @@ public class GroupServiceImpl implements GroupService {
 			groupRole.setRoleId(roleId);
 			groupRoles.add(groupRole);
 		}
-		groupRoleDao.insertBatch(groupRoles);
+		if(!CollectionUtils.isEmpty(groupRoles)){
+			groupRoleDao.insertBatch(groupRoles);
+		}
 	}
 
 	@Override
