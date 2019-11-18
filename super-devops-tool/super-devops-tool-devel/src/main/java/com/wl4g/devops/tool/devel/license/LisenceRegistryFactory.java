@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.devel.coding.factory;
+package com.wl4g.devops.tool.devel.license;
 
 import static java.util.Objects.nonNull;
 
