@@ -19,14 +19,12 @@ import com.wl4g.devops.common.bean.iam.Role;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.RoleService;
 import com.wl4g.devops.page.PageModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author vjay
@@ -50,8 +48,8 @@ public class RoleController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String name, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = roleService.list(pm, name, displayName);
-		resp.setData(result);
+		PageModel re = roleService.list(pm, name, displayName);
+		resp.setData(re);
 		return resp;
 	}
 

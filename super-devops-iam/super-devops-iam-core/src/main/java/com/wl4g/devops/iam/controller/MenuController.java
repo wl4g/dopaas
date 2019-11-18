@@ -19,6 +19,7 @@ import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,6 +50,7 @@ public class MenuController {
 	public RespBase<?> getMenuList() {
 		RespBase<Object> resp = RespBase.create();
 		List<Menu> menus = menuService.getMenuList();
+		Assert.notEmpty(menus,"not menu role found , Please ask you manager and check the user-role-menu config");
 		resp.forMap().put("data", menus);
 		return resp;
 	}

@@ -24,6 +24,7 @@ import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.iam.handler.UserUtil;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.MenuService;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -77,7 +78,13 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public List<Menu> getMenuList() {
-		return menuDao.selectByUserId(userUtil.getCurrentLoginUserId());
+		String principal = (String) SecurityUtils.getSubject().getPrincipal();
+		if (DEFAULT_USER_ROOT.equals(principal)) {
+			return menuDao.selectByRoot();//root
+		}else{
+			return menuDao.selectByUserId(userUtil.getCurrentLoginUserId());
+		}
+
 	}
 
 	@Override

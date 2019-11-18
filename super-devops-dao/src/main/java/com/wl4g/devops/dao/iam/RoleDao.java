@@ -14,6 +14,8 @@ public interface RoleDao {
 
     Role selectByPrimaryKey(Integer id);
 
+    List<Role> selectByRoot();
+
     int updateByPrimaryKeySelective(Role record);
 
     int updateByPrimaryKey(Role record);
@@ -22,5 +24,7 @@ public interface RoleDao {
 
     List<Role> selectByGroupId(Integer groupId);
 
-    List<Role> list(@Param("userId") Integer userId,@Param("name") String name, @Param("displayName") String displayName);
+    List<Role> selectByGroupIds(@Param("groupIds") List<Integer> groupIds);
+
+    List<Role> list(@Param("groupIds") List<Integer> groupIds,@Param("name") String name, @Param("displayName") String displayName);
 }
