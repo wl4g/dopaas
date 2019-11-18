@@ -1,6 +1,7 @@
 package com.wl4g.devops.dao.iam;
 
 import com.wl4g.devops.common.bean.iam.Menu;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface MenuDao {
 
     List<Menu> selectByParentId(Integer parentId);
 
-    List<Menu> selectByUserId(Integer userId);
+    List<Menu> selectByUserId(@Param("userId") Integer userId);
 
     List<Menu> selectByUserIdAccessGroup(Integer userId);
 

@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.iam.Role;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author vjay
@@ -29,7 +28,7 @@ public interface RoleService {
 
 	List<Role> getRolesByUserGroups();
 
-	Map<String, Object> list(PageModel pm, String name, String displayName);
+	PageModel list(PageModel pm, String name, String displayName);
 
 	void save(Role group);
 

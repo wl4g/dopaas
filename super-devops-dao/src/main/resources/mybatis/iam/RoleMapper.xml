@@ -33,6 +33,13 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
+  <select id="selectByRoot" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from sys_role
+    where del_flag!=1
+  </select>
+
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List_r" />
@@ -49,14 +56,32 @@
     where r.del_flag!=1 and gr.group_id = #{groupId,jdbcType=INTEGER}
   </select>
 
+  <select id="selectByGroupIds" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List_r" />
+    from sys_role r
+    left join sys_group_role gr on r.id=gr.role_id
+    where r.del_flag!=1
+    <if test="groupIds != null and groupIds.size() > 0">
+      and gr.group_id in
+      <foreach collection="groupIds" item="groupId" index="index" open="(" close=")" separator=",">
+        #{groupId}
+      </foreach>
+    </if>
+  </select>
+
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_r" />
     from sys_role r
-
+    left join sys_group_role gr on r.id=gr.role_id
     where r.del_flag!=1
-    and exists(select 1 from sys_group_role gr inner join sys_group_user gu on gr.group_id=gu.group_id where r.id=gr.role_id and gu.user_id=#{userId,jdbcType=INTEGER})
-
+    <if test="groupIds != null and groupIds.size() > 0">
+      and gr.group_id in
+      <foreach collection="groupIds" item="groupId" index="index" open="(" close=")" separator=",">
+        #{groupId}
+      </foreach>
+    </if>
     <if test="name != null and name !='' ">
       AND r.name LIKE CONCAT('%','${name}','%')
     </if>
