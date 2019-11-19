@@ -33,6 +33,7 @@ import com.wl4g.devops.ci.analyses.model.AnalysingModel;
 import com.wl4g.devops.ci.analyses.tasks.TaskManager;
 import com.wl4g.devops.common.task.GenericTaskRunner;
 import com.wl4g.devops.common.task.RunnerProperties;
+import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 
 /**
@@ -44,6 +45,7 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
  */
 public abstract class AbstractCodesAnalyzer<P extends AnalysingModel> extends GenericTaskRunner<RunnerProperties>
 		implements CodesAnalyzer<P> {
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
@@ -51,6 +53,9 @@ public abstract class AbstractCodesAnalyzer<P extends AnalysingModel> extends Ge
 
 	@Autowired
 	protected DestroableProcessManager processManager;
+
+	@Autowired
+	protected JedisService jedisService;
 
 	@Autowired
 	protected TaskManager manager;

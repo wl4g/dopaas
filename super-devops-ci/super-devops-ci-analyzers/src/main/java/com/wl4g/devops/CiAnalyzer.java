@@ -34,7 +34,14 @@ public class CiAnalyzer {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(CiAnalyzer.class, args);
+//		SpringApplication.run(CiAnalyzer.class, args);
+		
+	
+		
+		
+		
+		
+		
 	}
 
 }
