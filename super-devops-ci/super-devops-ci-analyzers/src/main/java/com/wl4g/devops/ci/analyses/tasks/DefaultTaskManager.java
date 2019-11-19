@@ -30,7 +30,7 @@ import com.wl4g.devops.common.task.GenericTaskRunner;
 import com.wl4g.devops.common.task.RunnerProperties;
 
 /**
- * Default Codes analyzing task respository.
+ * Default Codes analyzing task manager.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月19日
@@ -61,8 +61,6 @@ public final class DefaultTaskManager extends GenericTaskRunner<RunnerProperties
 	@Override
 	public void run() {
 
-		
-		
 	}
 
 }

@@ -51,7 +51,7 @@ public class CodesAnalyzerController extends BaseController {
 	protected CompositeCodesAnalyzerAdapter adapter;
 
 	/**
-	 * Submittion analyzing assets file for java.
+	 * Submitted analyzing assets file for java.
 	 * 
 	 * @param file
 	 * @return
@@ -84,7 +84,7 @@ public class CodesAnalyzerController extends BaseController {
 			log.info("Get analysis result bugCollection for: {}", model);
 		}
 		RespBase<SpotbugsAnalysisResultModel> resp = RespBase.create();
-		adapter.forAdapt(of(model.getAnalyzerKind())).getBugCollection(model);
+		adapter.forAdapt(of(model.getKind())).getBugCollection(model);
 		return resp;
 	}
 

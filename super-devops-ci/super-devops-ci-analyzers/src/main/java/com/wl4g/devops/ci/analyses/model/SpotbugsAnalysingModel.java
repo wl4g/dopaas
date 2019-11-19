@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.gui2.AnalysisCallback;
  */
 public class SpotbugsAnalysingModel extends AnalysingModel {
 
-	/** Teamporary analysis callback. */
+	/** Temporary analysis callback. */
 	@JsonIgnore
 	final private transient AnalysisCallback callback;
 

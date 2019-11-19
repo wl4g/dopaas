@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.ci.analyses.model;
 
+import com.wl4g.devops.ci.analyses.CodesAnalyzer.AnalyzerKind;
+
 /**
  * Analysis query result model.
  * 
@@ -24,14 +26,17 @@ package com.wl4g.devops.ci.analyses.model;
  */
 public class AnalysisQueryModel {
 
-	private int analyzerKind;
+	/**
+	 * Analyzer kind. {@link AnalyzerKind}
+	 */
+	private int kind;
 
-	public int getAnalyzerKind() {
-		return analyzerKind;
+	public int getKind() {
+		return kind;
 	}
 
-	public void setAnalyzerKind(int analyzerKind) {
-		this.analyzerKind = analyzerKind;
+	public void setKind(int analyzerKind) {
+		this.kind = analyzerKind;
 	}
 
 }
