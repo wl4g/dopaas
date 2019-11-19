@@ -2,7 +2,6 @@ package com.wl4g.devops.common.config;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,7 +25,7 @@ import com.wl4g.devops.common.web.error.SmartGlobalErrorController;
  */
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.devops.error.enabled", matchIfMissing = true)
-public class ErrorControllerAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class ErrorControllerAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	public ErrorConfiguring defaultBasicErrorConfiguring() {
@@ -52,17 +51,8 @@ public class ErrorControllerAutoConfiguration extends AbstractOptionalController
 
 	@Bean
 	public PrefixHandlerMapping errorControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected String getMappingPrefix() {
-		return "/"; // Fixed to Spring-MVC default: /
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return DevopsErrorController.class;
+		// Fixed to Spring-MVC default: /
+		return super.newPrefixHandlerMapping("/", DevopsErrorController.class);
 	}
 
 	/**

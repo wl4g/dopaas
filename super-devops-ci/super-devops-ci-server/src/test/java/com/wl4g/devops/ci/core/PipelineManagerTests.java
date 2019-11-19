@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.CiServer;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.core.command.NewCommand;
+import com.wl4g.devops.ci.core.param.NewParameter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +38,7 @@ public class PipelineManagerTests {
 
 	@Test
 	public void createTask() {
-		pipeManager.newPipeline(new NewCommand(152, null, null, null));
+		pipeManager.newPipeline(new NewParameter(152, null, null, null));
 	}
 
 }

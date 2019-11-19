@@ -18,8 +18,6 @@ package com.wl4g.devops.iam.controller;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -61,7 +59,6 @@ public class IamManagerApiV1ControllerTest {
 		sam.setIndex(new CursorIndex("0@5", false));
 		SessionAttribute sa1 = new SessionAttribute();
 		sa1.setId("1111");
-		sa1.setLastAccessTime(new Date());
 		sa1.setAuthenticated(false);
 		sa1.setExpired(false);
 		sa1.setHost("0.0.0.01");

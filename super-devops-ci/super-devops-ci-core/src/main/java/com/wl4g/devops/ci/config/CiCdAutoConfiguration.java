@@ -69,7 +69,7 @@ public class CiCdAutoConfiguration {
 	// --- BASIC ---
 
 	@Bean
-	@ConfigurationProperties(prefix = "pipeline")
+	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.pipeline")
 	public CiCdProperties ciCdProperties() {
 		return new CiCdProperties();
 	}

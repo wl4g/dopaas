@@ -15,15 +15,13 @@
  */
 package com.wl4g.devops.scm.config;
 
-import java.lang.annotation.Annotation;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.context.CheckImpledConfigContextHandler;
@@ -41,7 +39,7 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
  * @version v1.0 2019年5月27日
  * @since
  */
-public class ScmAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	final public static String BEAN_MVC_EXECUTOR = "mvcTaskExecutor";
 
@@ -88,17 +86,7 @@ public class ScmAutoConfiguration extends AbstractOptionalControllerAutoConfigur
 
 	@Bean
 	public PrefixHandlerMapping scmServerEndpointPrefixHandlerMapping() {
-		return createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected String getMappingPrefix() {
-		return URI_S_BASE;
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return ScmEndpoint.class;
+		return super.newPrefixHandlerMapping(URI_S_BASE, ScmEndpoint.class);
 	}
 
 }

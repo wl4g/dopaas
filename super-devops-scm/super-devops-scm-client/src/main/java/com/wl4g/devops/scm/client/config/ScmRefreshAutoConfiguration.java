@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
@@ -31,8 +31,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
-import java.lang.annotation.Annotation;
-
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
 
 /**
@@ -47,7 +45,7 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
  * @since {@link de.codecentric.boot.admin.web.PrefixHandlerMapping}
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
-public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class ScmRefreshAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	//
 	// Refresher's
@@ -94,17 +92,7 @@ public class ScmRefreshAutoConfiguration extends AbstractOptionalControllerAutoC
 
 	@Bean
 	public PrefixHandlerMapping scmClientEndpointPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected String getMappingPrefix() {
-		return URI_C_BASE;
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return ScmEndpoint.class;
+		return super.newPrefixHandlerMapping(URI_C_BASE, ScmEndpoint.class);
 	}
 
 }

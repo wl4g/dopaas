@@ -15,11 +15,14 @@
  */
 package com.wl4g.devops.ci.analyses.model;
 
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.apache.shiro.util.Assert.notEmpty;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import edu.umd.cs.findbugs.gui2.AnalysisCallback;
 
@@ -30,39 +33,37 @@ import edu.umd.cs.findbugs.gui2.AnalysisCallback;
  * @version v1.0.0 2019-11-18
  * @since
  */
-public class SpotbugsProjectModel implements ProjectModel {
+public class SpotbugsAnalysingModel extends AnalysingModel {
 
+	/** Teamporary analysis callback. */
+	@JsonIgnore
 	final private transient AnalysisCallback callback;
-
-	/**
-	 * The analyze project name.
-	 */
-	final private String projectName;
 
 	/**
 	 * The list of source directories.
 	 */
 	final private List<String> args;
 
-	public SpotbugsProjectModel(AnalysisCallback callback, String projectName, List<String> args) {
+	public SpotbugsAnalysingModel(AnalysisCallback callback, String projectName, List<String> args) {
+		super(projectName);
 		notNull(callback, "null analysisCallback");
 		notEmpty(args, "empty analysis arguments");
 		hasText(projectName, "empty analysis projectName");
 		this.callback = callback;
 		this.args = args;
-		this.projectName = projectName;
 	}
 
 	public AnalysisCallback getCallback() {
 		return callback;
 	}
 
-	public String getProjectName() {
-		return projectName;
-	}
-
 	public List<String> getArgs() {
 		return args;
+	}
+
+	@Override
+	public String toString() {
+		return toJSONString(this);
 	}
 
 }

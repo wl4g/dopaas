@@ -15,6 +15,23 @@
  */
 package com.wl4g.devops.ci.analyses.model;
 
-public interface ProjectModel {
+/**
+ * Analysis query result model.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年11月19日
+ * @since
+ */
+public class AnalysisQueryModel {
+
+	private int analyzerKind;
+
+	public int getAnalyzerKind() {
+		return analyzerKind;
+	}
+
+	public void setAnalyzerKind(int analyzerKind) {
+		this.analyzerKind = analyzerKind;
+	}
 
 }

@@ -34,6 +34,31 @@ spring:
           server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.test}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/ci/taskhis
+      ci:
+        analyzer: # CI analyses configuration.
+          spotbugs:
+            analyzer-run-class: edu.umd.cs.findbugs.FindBugs2
+            jvm-args: 
+              -Xms1G -Xmx4G
+              -XX:+HeapDumpOnOutOfMemoryError
+              -XX:HeapDumpPath=${server.tomcat.basedir}/jvm_dump.hprof
+              -XX:+UseG1GC
+              -XX:MaxGCPauseMillis=20
+              -XX:InitiatingHeapOccupancyPercent=35
+              -XX:+DisableExplicitGC
+              -verbose:gc
+              -Xloggc:${server.tomcat.basedir}/gc.log
+              -XX:+PrintGCDetails
+              -XX:+PrintGCDateStamps
+              -XX:+PrintGCTimeStamps
+              -XX:+UseGCLogFileRotation
+              -XX:NumberOfGCLogFiles=10
+              -XX:GCLogFileSize=100M
+              -XX:GCLogFileSize=100M
+              -Dfile.encoding=UTF-8
+              -Djava.awt.headless=true
+              -Djava.security.egd=file:/dev/./urandom
+
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -70,23 +95,3 @@ redis:
   max-attempts: 10
   # Redis's cluster nodes.
   nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
-
-# Pipeline configuration.
-pipeline:
-  #workspace: # Default by to {user.home}/.ci-workspace
-  executor:
-    concurrency: 5
-    accept-queue: 2
-  vcs:
-    gitlab:
-      search-projects-default-page-limit: 20
-  build:
-    job-max-clean-interval-ms: 30_000
-    job-timeout-ms: 600_000
-    shared-dependency-try-timeout-ms: 300_000
-  deploy:
-    cipher-key: 03DE18C2FC4E605F
-    transfer-timeout-ms: 100_000
-    docker-native:
-      docker-push-username: xburnerair00
-      docker-push-password: hwj13535248668

@@ -58,6 +58,13 @@ import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 
+/**
+ * IAM client auto configuration.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年03月19日
+ * @since
+ */
 public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
 	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
@@ -248,14 +255,14 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// IAM controller's
 	// ==============================
 
-	@Override
-	protected String getMappingPrefix() {
-		return URI_C_BASE;
-	}
-
 	@Bean
 	public ClientAuthenticatorController clientAuthenticatorController() {
 		return new ClientAuthenticatorController();
+	}
+
+	@Bean
+	public PrefixHandlerMapping iamClientAuthenticatorControllerPrefixHandlerMapping() {
+		return super.newIamControllerPrefixHandlerMapping(URI_C_BASE);
 	}
 
 }

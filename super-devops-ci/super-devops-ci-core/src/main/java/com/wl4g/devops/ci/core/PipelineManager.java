@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.ci.core.command.HookCommand;
-import com.wl4g.devops.ci.core.command.NewCommand;
-import com.wl4g.devops.ci.core.command.RollbackCommand;
+import com.wl4g.devops.ci.core.param.HookParameter;
+import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
 
 /**
@@ -32,23 +32,23 @@ public abstract interface PipelineManager {
 	/**
 	 * New create pipeline task job.
 	 * 
-	 * @param cmd
+	 * @param param
 	 */
-	void newPipeline(NewCommand cmd);
+	void newPipeline(NewParameter param);
 
 	/**
 	 * Roll-back pipeline task job.
 	 * 
-	 * @param cmd
+	 * @param param
 	 */
-	void rollbackPipeline(RollbackCommand cmd);
+	void rollbackPipeline(RollbackParameter param);
 
 	/**
 	 * Hook pipeline task job.
 	 * 
-	 * @param cmd
+	 * @param param
 	 */
-	void hookPipeline(HookCommand cmd);
+	void hookPipeline(HookParameter param);
 
 	/**
 	 * Reader pipeline task job logs.

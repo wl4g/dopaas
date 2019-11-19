@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.core.command.NewCommand;
+import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
@@ -154,7 +154,7 @@ public class TaskController extends BaseController {
 	@RequestMapping(value = "/create")
 	public RespBase<?> create(Integer taskId, Integer trackId, Integer trackType, String remark) {
 		RespBase<Object> resp = RespBase.create();
-		pipeliner.newPipeline(new NewCommand(taskId, remark, trackId, trackType));
+		pipeliner.newPipeline(new NewParameter(taskId, remark, trackId, trackType));
 		return resp;
 	}
 

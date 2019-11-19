@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import com.wl4g.devops.iam.annotation.SnsController;
@@ -63,7 +62,6 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 		return new SnsProperties();
 	}
 
-	//
 	// Social provider template's
 	//
 
@@ -143,19 +141,9 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 		return new DefaultOauth2SnsController(config, snsConfig, delegate);
 	}
 
-	@Override
-	protected String getMappingPrefix() {
-		return URI_S_SNS_BASE;
-	}
-
 	@Bean
 	public PrefixHandlerMapping snsControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return SnsController.class;
+		return super.newPrefixHandlerMapping(URI_S_SNS_BASE, SnsController.class);
 	}
 
 }

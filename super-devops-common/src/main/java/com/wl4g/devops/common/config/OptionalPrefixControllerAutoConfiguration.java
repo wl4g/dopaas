@@ -15,61 +15,61 @@
  */
 package com.wl4g.devops.common.config;
 
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
- * Abstract optional controller configuration
+ * Abstract optional prefix request mapping controller configuration.
  * 
  * @author wangl.sir
  * @version v1.0 2019年1月10日
  * @since
  */
-public abstract class AbstractOptionalControllerAutoConfiguration implements ApplicationContextAware {
+public abstract class OptionalPrefixControllerAutoConfiguration implements ApplicationContextAware {
 
+	/**
+	 * {@link ApplicationContext}
+	 */
 	protected ApplicationContext actx;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		Assert.notNull(applicationContext, "'applicationContext' must not be null");
+		notNull(applicationContext, "'applicationContext' must not be null");
 		this.actx = applicationContext;
 	}
 
 	/**
-	 * Get controller mapping prefix
+	 * New create prefix handler mapping.
 	 * 
+	 * @param mappingPrefix
+	 * @param annotationClass
 	 * @return
 	 */
-	protected abstract String getMappingPrefix();
+	protected PrefixHandlerMapping newPrefixHandlerMapping(@NotBlank String mappingPrefix,
+			@NotNull Class<? extends Annotation> annotationClass) {
+		hasText(mappingPrefix, "empty mappingPrefix");
+		notNull(annotationClass, "null annotationClass.");
 
-	/**
-	 * Controller annotation class
-	 * 
-	 * @return
-	 */
-	protected abstract Class<? extends Annotation> annotationClass();
-
-	/**
-	 * Create prefix handler mapping
-	 * 
-	 * @return
-	 */
-	protected PrefixHandlerMapping createPrefixHandlerMapping() {
-		Map<String, Object> beans = this.actx.getBeansWithAnnotation(this.annotationClass());
+		Map<String, Object> beans = actx.getBeansWithAnnotation(annotationClass);
 		PrefixHandlerMapping mapping = new PrefixHandlerMapping(beans.values().toArray(new Object[beans.size()]));
-		mapping.setPrefix(this.getMappingPrefix());
+		mapping.setPrefix(mappingPrefix);
 		return mapping;
 	}
 
