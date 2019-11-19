@@ -3,7 +3,7 @@
 <mapper namespace="com.wl4g.devops.dao.iam.RoleDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.Role" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="role_code" property="roleCode" jdbcType="VARCHAR" />
     <result column="display_name" property="displayName" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
@@ -18,11 +18,11 @@
 
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, display_name, type, enable, status, create_by, create_date, update_by, 
+    id, role_code, display_name, type, enable, status, create_by, create_date, update_by,
     update_date, del_flag
   </sql>
   <sql id="Base_Column_List_r" >
-    r.id, r.name, r.display_name, r.type, r.enable, r.status, r.create_by, r.create_date, r.update_by,
+    r.id, r.role_code, r.display_name, r.type, r.enable, r.status, r.create_by, r.create_date, r.update_by,
     r.update_date, r.del_flag
   </sql>
 
@@ -33,11 +33,17 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
-  <select id="selectByRoot" resultMap="BaseResultMap"  >
+  <select id="selectByRoot" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
     from sys_role
     where del_flag!=1
+    <if test="roleCode != null and roleCode !='' ">
+      AND role_code LIKE CONCAT('%','${roleCode}','%')
+    </if>
+    <if test="displayName != null and displayName !='' ">
+      AND display_name LIKE CONCAT('%','${displayName}','%')
+    </if>
   </select>
 
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -68,6 +74,12 @@
         #{groupId}
       </foreach>
     </if>
+    <if test="roleCode != null and roleCode !='' ">
+      AND r.role_code LIKE CONCAT('%','${roleCode}','%')
+    </if>
+    <if test="displayName != null and displayName !='' ">
+      AND r.display_name LIKE CONCAT('%','${displayName}','%')
+    </if>
   </select>
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
@@ -82,8 +94,8 @@
         #{groupId}
       </foreach>
     </if>
-    <if test="name != null and name !='' ">
-      AND r.name LIKE CONCAT('%','${name}','%')
+    <if test="roleCode != null and roleCode !='' ">
+      AND r.role_code LIKE CONCAT('%','${roleCode}','%')
     </if>
     <if test="displayName != null and displayName !='' ">
       AND r.display_name LIKE CONCAT('%','${displayName}','%')
@@ -97,11 +109,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.Role" >
-    insert into sys_role (id, name, display_name, 
+    insert into sys_role (id, role_code, display_name,
       type, enable, status, 
       create_by, create_date, update_by, 
       update_date, del_flag)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{roleCode,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR},
       #{type,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
@@ -112,8 +124,8 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="name != null" >
-        name,
+      <if test="roleCode != null" >
+        role_code,
       </if>
       <if test="displayName != null" >
         display_name,
@@ -147,8 +159,8 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
+      <if test="roleCode != null" >
+        #{roleCode,jdbcType=VARCHAR},
       </if>
       <if test="displayName != null" >
         #{displayName,jdbcType=VARCHAR},
@@ -182,8 +194,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.Role" >
     update sys_role
     <set >
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
+      <if test="roleCode != null" >
+        role_code = #{roleCode,jdbcType=VARCHAR},
       </if>
       <if test="displayName != null" >
         display_name = #{displayName,jdbcType=VARCHAR},
@@ -217,7 +229,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.Role" >
     update sys_role
-    set name = #{name,jdbcType=VARCHAR},
+    set role_code = #{roleCode,jdbcType=VARCHAR},
       display_name = #{displayName,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       enable = #{enable,jdbcType=INTEGER},

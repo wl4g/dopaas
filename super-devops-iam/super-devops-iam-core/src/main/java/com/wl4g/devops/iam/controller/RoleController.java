@@ -46,9 +46,9 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String name, String displayName) {
+	public RespBase<?> list(PageModel pm, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel re = roleService.list(pm, name, displayName);
+		PageModel re = roleService.list(pm, roleCode, displayName);
 		resp.setData(re);
 		return resp;
 	}
