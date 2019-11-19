@@ -10,7 +10,7 @@ public class Role extends BaseBean {
 
 	private Integer id;
 
-	private String name;
+	private String roleCode;
 
 	private String displayName;
 
@@ -24,15 +24,15 @@ public class Role extends BaseBean {
 
 	private List<Integer> groupIds;
 
-	public String getName() {
-		return name;
-	}
+    public String getRoleCode() {
+        return roleCode;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
+    }
 
-	public String getDisplayName() {
+    public String getDisplayName() {
 		return displayName;
 	}
 

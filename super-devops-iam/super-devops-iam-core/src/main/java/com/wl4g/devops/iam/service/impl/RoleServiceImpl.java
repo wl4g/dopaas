@@ -77,7 +77,7 @@ public class RoleServiceImpl implements RoleService {
 	public List<Role> getRolesByUserGroups() {
 		String username = userUtil.getCurrentLoginUsername();
 		if(DEFAULT_USER_ROOT.equals(username)){
-			return roleDao.selectByRoot();
+			return roleDao.selectByRoot(null,null);
 		}else{
 			// Groups of userId.
 			Set<Group> groups = groupService.getGroupsSet();
@@ -86,18 +86,18 @@ public class RoleServiceImpl implements RoleService {
 				groupIds.add(group.getId());
 			}
 			// Roles of group.
-			List<Role> roles = roleDao.selectByGroupIds(groupIds);
+			List<Role> roles = roleDao.selectByGroupIds(groupIds,null,null);
 			return roles;
 		}
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String name, String displayName) {
+	public PageModel list(PageModel pm, String roleCode, String displayName) {
 		String username = userUtil.getCurrentLoginUsername();
 		Set<Group> groupSet = groupService.getGroupsSet();
 		if(DEFAULT_USER_ROOT.equals(username)){
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			List<Role> roles = roleDao.selectByRoot();
+			List<Role> roles = roleDao.selectByRoot(roleCode,displayName);
 			for (Role role : roles) {
 				List<Group> groups = groupDao.selectByRoleId(role.getId());
 				groups = removeUnhad(groups, groupSet);// remove unhad
@@ -111,7 +111,7 @@ public class RoleServiceImpl implements RoleService {
 				groupIds.add(group.getId());
 			}
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			List<Role> roles = roleDao.selectByGroupIds(groupIds);
+			List<Role> roles = roleDao.selectByGroupIds(groupIds,roleCode,displayName);
 			for (Role role : roles) {
 				List<Group> groups = groupDao.selectByRoleId(role.getId());
 				groups = removeUnhad(groups, groupSet);// remove unhad
