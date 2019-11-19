@@ -1,6 +1,7 @@
 package com.wl4g.devops.common.bean.iam;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.iam.model.GroupExt;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,6 +30,8 @@ public class Group extends BaseBean implements Serializable {
 	private List<Integer> menuIds;
 
 	private List<Integer> roleIds;
+
+	private GroupExt groupExt;
 
 	@Override
 	public Integer getId() {
@@ -110,6 +113,14 @@ public class Group extends BaseBean implements Serializable {
 
 	public void setRoleIds(List<Integer> roleIds) {
 		this.roleIds = roleIds;
+	}
+
+	public GroupExt getGroupExt() {
+		return groupExt;
+	}
+
+	public void setGroupExt(GroupExt groupExt) {
+		this.groupExt = groupExt;
 	}
 
 	@Override
