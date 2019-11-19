@@ -40,7 +40,7 @@ spring:
         pipeline: # Pipeline configuration.
           #workspace: # Default by to {user.home}/.ci-workspace
           executor:
-            concurrency: 5
+            concurrency: 10
             accept-queue: 2
           vcs:
             gitlab:

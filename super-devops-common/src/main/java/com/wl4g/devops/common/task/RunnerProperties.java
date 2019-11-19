@@ -47,7 +47,7 @@ public class RunnerProperties implements Serializable {
 	private long keepAliveTime = DEFAULT_KEEP_ALIVE_TIME;
 
 	/**
-	 * Consumption receive queue size
+	 * When all threads are busy, consumption receive queue count.
 	 */
 	private int acceptQueue = DEFAULT_ACCEPT_QUEUE;
 

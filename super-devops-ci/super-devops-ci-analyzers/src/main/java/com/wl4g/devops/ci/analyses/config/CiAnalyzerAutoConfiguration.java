@@ -24,6 +24,8 @@ import org.springframework.context.annotation.Configuration;
 import com.wl4g.devops.ci.analyses.CodesAnalyzer;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
 import com.wl4g.devops.ci.analyses.spotbugs.SpotbugsCodesAnalyzer;
+import com.wl4g.devops.ci.analyses.tasks.DefaultTaskManager;
+import com.wl4g.devops.ci.analyses.tasks.TaskManager;
 import com.wl4g.devops.ci.analyses.web.CodesAnalyzerController;
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 
@@ -38,16 +40,9 @@ import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 public class CiAnalyzerAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
-	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.analyses")
-	public CiAnalyzerProperties ciAnalysesProperties() {
+	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.analyzers")
+	public CiAnalyzerProperties ciAnalyzerProperties() {
 		return new CiAnalyzerProperties();
-	}
-
-	// --- Codes analyzer. ---
-
-	@Bean
-	public CodesAnalyzer<SpotbugsAnalysingModel> spotbugsCodesAnalyzer() {
-		return new SpotbugsCodesAnalyzer();
 	}
 
 	// --- Analyzer controller. ---
@@ -61,6 +56,24 @@ public class CiAnalyzerAutoConfiguration extends OptionalPrefixControllerAutoCon
 	public PrefixHandlerMapping codesAnalyzerControllerPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URL_ANALYZER_BASE_PATH,
 				com.wl4g.devops.ci.analyses.annotation.CodesAnalyzerController.class);
+	}
+
+	// --- Codes analyzer. ---
+
+	@Bean
+	public CodesAnalyzer<SpotbugsAnalysingModel> spotbugsCodesAnalyzer() {
+		return new SpotbugsCodesAnalyzer();
+	}
+
+	// --- Task repository. ---
+
+	@Bean
+	public TaskManager defaultTaskManager(CiAnalyzerProperties config) {
+		/**
+		 * The initial capacity is equal to the maximum concurrent number, which
+		 * can reduce the {@link ConcurrentHashMap} memory copy.
+		 */
+		return new DefaultTaskManager(config.getExecutor().getConcurrency());
 	}
 
 }

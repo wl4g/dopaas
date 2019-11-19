@@ -21,6 +21,7 @@
 		<commons-math3.version>3.6.1</commons-math3.version>
 		<commons-cli.version>1.4</commons-cli.version>
 		<commons-io.version>2.6</commons-io.version>
+		<commons-fileupload.version>1.4</commons-fileupload.version>
 		<commons-csv.version>1.0</commons-csv.version>
 		<ganymed-ssh2.version>262</ganymed-ssh2.version>
 		<protobuf.version>3.8.0</protobuf.version>
@@ -191,6 +192,12 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons-io.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>${commons-fileupload.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

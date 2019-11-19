@@ -43,7 +43,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * Generic task schedule runner.
+ * Generic scheduler & task runner.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月2日

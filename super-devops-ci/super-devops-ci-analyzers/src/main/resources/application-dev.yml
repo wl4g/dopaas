@@ -37,7 +37,10 @@ spring:
           mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
             enable: true  # Default by: false
       ci:
-        analyzer: # CI analyses configuration.
+        analyzers: # CI analyses configuration.
+          executor:
+            concurrency: 10
+            accept-queue: 2
           spotbugs:
             analyzer-run-class: edu.umd.cs.findbugs.FindBugs2
             jvm-args: 

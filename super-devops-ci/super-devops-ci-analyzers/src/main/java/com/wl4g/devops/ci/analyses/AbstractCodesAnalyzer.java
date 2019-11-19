@@ -16,6 +16,13 @@
 package com.wl4g.devops.ci.analyses;
 
 import static java.util.Collections.singletonList;
+import static org.apache.shiro.util.Assert.notEmpty;
+
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.ci.analyses.config.CiAnalyzerProperties;
 import com.wl4g.devops.ci.analyses.model.AnalysingModel;
+import com.wl4g.devops.ci.analyses.tasks.TaskManager;
 import com.wl4g.devops.common.task.GenericTaskRunner;
 import com.wl4g.devops.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
@@ -44,18 +52,37 @@ public abstract class AbstractCodesAnalyzer<P extends AnalysingModel> extends Ge
 	@Autowired
 	protected DestroableProcessManager processManager;
 
+	@Autowired
+	protected TaskManager manager;
+
 	@Override
-	public void analyze(P param) throws Exception {
-		submitForComplete(singletonList(() -> {
-			try {
-				doAnalyze(param);
-			} catch (Exception e) {
-				log.error("", e);
+	public void analyze(P model) throws Exception {
+
+		// Submit task.
+		List<Future<File>> futures = getWorker().invokeAll(singletonList(new Callable<File>() {
+			@Override
+			public File call() throws Exception {
+				try {
+					doAnalyze(model);
+				} catch (Exception e) {
+					log.error("", e);
+				}
+				return null;
 			}
-		}), 15 * 60 * 1000);
+		}), 15 * 60 * 1000, TimeUnit.SECONDS);
+
+		// Register task future.
+		notEmpty(futures, "empty codesAnalyzing task futures.");
+		manager.registerFuture(model.getProjectName(), futures.get(0));
 
 	}
 
-	protected abstract void doAnalyze(P param) throws Exception;
+	/**
+	 * Execution analyze.
+	 * 
+	 * @param model
+	 * @throws Exception
+	 */
+	protected abstract void doAnalyze(P model) throws Exception;
 
 }
