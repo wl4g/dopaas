@@ -13,8 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- * @see OWASP
- */
 package com.wl4g.devops.ci.analyses.sonar;

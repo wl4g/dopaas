@@ -80,8 +80,8 @@ public class MenuServiceImpl implements MenuService {
 	public List<Menu> getMenuList() {
 		String principal = (String) SecurityUtils.getSubject().getPrincipal();
 		if (DEFAULT_USER_ROOT.equals(principal)) {
-			return menuDao.selectByRoot();//root
-		}else{
+			return menuDao.selectByRoot();// root
+		} else {
 			return menuDao.selectByUserId(userUtil.getCurrentLoginUserId());
 		}
 

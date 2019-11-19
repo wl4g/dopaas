@@ -50,7 +50,7 @@ public class MenuController {
 	public RespBase<?> getMenuList() {
 		RespBase<Object> resp = RespBase.create();
 		List<Menu> menus = menuService.getMenuList();
-		Assert.notEmpty(menus,"not menu role found , Please ask you manager and check the user-role-menu config");
+		Assert.notEmpty(menus, "not menu role found , Please ask you manager and check the user-role-menu config");
 		resp.forMap().put("data", menus);
 		return resp;
 	}
