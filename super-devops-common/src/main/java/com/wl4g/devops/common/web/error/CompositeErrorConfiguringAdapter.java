@@ -15,25 +15,24 @@
  */
 package com.wl4g.devops.common.web.error;
 
-import static java.util.Collections.sort;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.devops.common.utils.lang.OnceModifiableList;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import org.springframework.core.annotation.Order;
+import org.springframework.util.Assert;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import static java.util.Collections.sort;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.core.annotation.AnnotationUtils.*;
-
-import org.springframework.core.annotation.Order;
-import org.springframework.util.Assert;
-import com.wl4g.devops.common.utils.lang.OnceModifiableList;
-import com.wl4g.devops.common.web.RespBase.RetCode;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Composite error configure adapter.
@@ -68,7 +67,7 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 	@Override
 	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
 		for (ErrorConfiguring c : errorConfigures) {
-			int status = c.getStatus(request, response, model, ex);
+			Integer status = c.getStatus(request, response, model, ex);
 			if (nonNull(status)) {
 				return status;
 			}
