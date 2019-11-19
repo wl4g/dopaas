@@ -106,9 +106,9 @@ public class UserUtil {
 		for (int i = 0; i < list.size(); i++) {
 			Role role = list.get(i);
 			if (i == list.size() - 1) {
-				sb.append(role.getName());
+				sb.append(role.getRoleCode());
 			} else {
-				sb.append(role.getName()).append(",");
+				sb.append(role.getRoleCode()).append(",");
 			}
 		}
 		return sb.toString();

@@ -20,9 +20,9 @@
 
   <select id="selectGroupIdByRoleId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select
-    group_id
-    from sys_group_role
-    where role_id = #{roleId,jdbcType=INTEGER}
+    gr.group_id
+    from sys_group_role gr left join sys_group g on g.id = gr.group_id
+    where gr.role_id = #{roleId,jdbcType=INTEGER} and g.del_flag != 1
   </select>
 
   <select id="selectRoleIdsByGroupId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
