@@ -171,10 +171,10 @@ public class GroupServiceImpl implements GroupService {
 			groupMenu.setGroupId(group.getId());
 			groupMenus.add(groupMenu);
 		}
-		if(!CollectionUtils.isEmpty(groupMenus)){
+		if (!CollectionUtils.isEmpty(groupMenus)) {
 			groupMenuDao.insertBatch(groupMenus);
 		}
-		if(Objects.nonNull(group.getGroupExt())){
+		if (Objects.nonNull(group.getGroupExt())) {
 
 		}
 		// role
@@ -186,7 +186,7 @@ public class GroupServiceImpl implements GroupService {
 			groupRole.setRoleId(roleId);
 			groupRoles.add(groupRole);
 		}
-		if(!CollectionUtils.isEmpty(groupRoles)){
+		if (!CollectionUtils.isEmpty(groupRoles)) {
 			groupRoleDao.insertBatch(groupRoles);
 		}
 		insertOrUpdateGroupExt(group);
@@ -206,7 +206,7 @@ public class GroupServiceImpl implements GroupService {
 			groupMenu.setGroupId(group.getId());
 			groupMenus.add(groupMenu);
 		}
-		if(!CollectionUtils.isEmpty(groupMenus)){
+		if (!CollectionUtils.isEmpty(groupMenus)) {
 			groupMenuDao.insertBatch(groupMenus);
 		}
 
@@ -219,48 +219,49 @@ public class GroupServiceImpl implements GroupService {
 			groupRole.setRoleId(roleId);
 			groupRoles.add(groupRole);
 		}
-		if(!CollectionUtils.isEmpty(groupRoles)){
+		if (!CollectionUtils.isEmpty(groupRoles)) {
 			groupRoleDao.insertBatch(groupRoles);
 		}
 		insertOrUpdateGroupExt(group);
 	}
 
-	private void insertOrUpdateGroupExt(Group group){//remenber: type can not update
-		if(group==null||group.getGroupExt()==null||group.getType()==null){
+	private void insertOrUpdateGroupExt(Group group) {// remenber: type can not
+														// update
+		if (group == null || group.getGroupExt() == null || group.getType() == null) {
 			return;
 		}
 		Integer id = group.getGroupExt().getId();
-		if(id==null){//insert
-			if(GroupExt.GroupType.Park.getValue()==group.getType()){
+		if (id == null) {// insert
+			if (GroupExt.GroupType.Park.getValue() == group.getType()) {
 				Park park = new Park();
-				BeanUtils.copyProperties(group.getGroupExt(),park);
+				BeanUtils.copyProperties(group.getGroupExt(), park);
 				park.setGroupId(group.getId());
 				parkDao.insertSelective(park);
-			}else if(GroupExt.GroupType.Company.getValue()==group.getType()){
+			} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
 				Company company = new Company();
-				BeanUtils.copyProperties(group.getGroupExt(),company);
+				BeanUtils.copyProperties(group.getGroupExt(), company);
 				company.setGroupId(group.getId());
 				companyDao.insertSelective(company);
-			}else if(GroupExt.GroupType.Department.getValue()==group.getType()){
+			} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
 				Department department = new Department();
-				BeanUtils.copyProperties(group.getGroupExt(),department);
+				BeanUtils.copyProperties(group.getGroupExt(), department);
 				department.setGroupId(group.getId());
 				departmentDao.insertSelective(department);
 			}
-		}else{//update
-			if(GroupExt.GroupType.Park.getValue()==group.getType()){
+		} else {// update
+			if (GroupExt.GroupType.Park.getValue() == group.getType()) {
 				Park park = new Park();
-				BeanUtils.copyProperties(group.getGroupExt(),park);
+				BeanUtils.copyProperties(group.getGroupExt(), park);
 				park.setGroupId(group.getId());
 				parkDao.updateByPrimaryKeySelective(park);
-			}else if(GroupExt.GroupType.Company.getValue()==group.getType()){
+			} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
 				Company company = new Company();
-				BeanUtils.copyProperties(group.getGroupExt(),company);
+				BeanUtils.copyProperties(group.getGroupExt(), company);
 				company.setGroupId(group.getId());
 				companyDao.updateByPrimaryKeySelective(company);
-			}else if(GroupExt.GroupType.Department.getValue()==group.getType()){
+			} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
 				Department department = new Department();
-				BeanUtils.copyProperties(group.getGroupExt(),department);
+				BeanUtils.copyProperties(group.getGroupExt(), department);
 				department.setGroupId(group.getId());
 				departmentDao.updateByPrimaryKeySelective(department);
 			}
@@ -285,17 +286,17 @@ public class GroupServiceImpl implements GroupService {
 		List<Integer> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
 		group.setMenuIds(menuIds);
 		group.setRoleIds(roleIds);
-		//group ext
+		// group ext
 		GroupExt groupExt = new GroupExt();
-		if(GroupExt.GroupType.Park.getValue()==group.getType()){
+		if (GroupExt.GroupType.Park.getValue() == group.getType()) {
 			Park park = parkDao.selectByGroupId(id);
-			BeanUtils.copyProperties(park,groupExt);
-		}else if(GroupExt.GroupType.Company.getValue()==group.getType()){
+			BeanUtils.copyProperties(park, groupExt);
+		} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
 			Company company = companyDao.selectByGroupId(id);
-			BeanUtils.copyProperties(company,groupExt);
-		}else if(GroupExt.GroupType.Department.getValue()==group.getType()){
+			BeanUtils.copyProperties(company, groupExt);
+		} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
 			Department department = departmentDao.selectByGroupId(id);
-			BeanUtils.copyProperties(department,groupExt);
+			BeanUtils.copyProperties(department, groupExt);
 		}
 		group.setGroupExt(groupExt);
 		return group;
