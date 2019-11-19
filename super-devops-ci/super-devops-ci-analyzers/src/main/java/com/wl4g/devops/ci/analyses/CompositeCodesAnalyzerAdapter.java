@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.ci.analyses;
 
-import com.wl4g.devops.ci.analyses.model.SpotbugsProjectModel;
+import com.wl4g.devops.ci.analyses.model.AnalysingModel;
+import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
+import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
 import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
 import org.springframework.util.Assert;
 
@@ -34,34 +36,29 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0 2019年11月18日
  * @since
  */
-public class CompositeCodesAnalyzerAdapter implements CodesAnalyzer {
+public class CompositeCodesAnalyzerAdapter implements CodesAnalyzer<AnalysingModel> {
 
 	/**
 	 * Codes analyzers.
 	 */
-	final protected Map<AnalyzerType, CodesAnalyzer> registry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<AnalyzerKind, CodesAnalyzer<AnalysingModel>> registry = new OnceModifiableMap<>(new HashMap<>());
 
 	/**
 	 * Real delegate CodeAnalyzer.
 	 */
-	final private ThreadLocal<CodesAnalyzer> delegate = new InheritableThreadLocal<>();
+	final private ThreadLocal<CodesAnalyzer<AnalysingModel>> delegate = new InheritableThreadLocal<>();
 
-	public CompositeCodesAnalyzerAdapter(List<CodesAnalyzer> operators) {
-		Assert.state(!isEmpty(operators), "Vcs operators has at least one.");
+	public CompositeCodesAnalyzerAdapter(List<CodesAnalyzer<AnalysingModel>> analyzers) {
+		Assert.state(!isEmpty(analyzers), "CodeAnalyzers has at least one.");
 		// Duplicate checks.
-		Set<AnalyzerType> analyzers = new HashSet<>();
-		operators.forEach(o -> {
-			notNull(o.provider(), String.format("Vcs provider must not be empty for CodeAnalyzer %s", o));
-			state(!analyzers.contains(o.provider()), String.format("Repeated definition CodeAnalyzer with %s", o.provider()));
-			analyzers.add(o.provider());
+		Set<AnalyzerKind> kinds = new HashSet<>();
+		analyzers.forEach(o -> {
+			notNull(o.kind(), String.format("Vcs provider must not be empty for CodeAnalyzer %s", o));
+			state(!kinds.contains(o.kind()), String.format("Repeated definition CodeAnalyzer with %s", o.kind()));
+			kinds.add(o.kind());
 		});
 		// Register.
-		this.registry.putAll(operators.stream().collect(toMap(CodesAnalyzer::provider, oper -> oper)));
-	}
-
-	@Override
-	public void analyze(SpotbugsProjectModel model) throws Exception {
-		getAdapted().analyze(model);
+		this.registry.putAll(analyzers.stream().collect(toMap(CodesAnalyzer::kind, oper -> oper)));
 	}
 
 	/**
@@ -70,8 +67,8 @@ public class CompositeCodesAnalyzerAdapter implements CodesAnalyzer {
 	 * @param analyzer
 	 * @return
 	 */
-	public CodesAnalyzer forAdapt(@NotNull AnalyzerType analyzer) {
-		CodesAnalyzer operator = registry.get(analyzer);
+	public CodesAnalyzer<AnalysingModel> forAdapt(@NotNull AnalyzerKind analyzer) {
+		CodesAnalyzer<AnalysingModel> operator = registry.get(analyzer);
 		notNull(operator, String.format("Unsupported CodeAnalyzer for '%s'", analyzer));
 		delegate.set(operator);
 		return operator;
@@ -83,8 +80,8 @@ public class CompositeCodesAnalyzerAdapter implements CodesAnalyzer {
 	 * @param analyzer
 	 * @return
 	 */
-	public CodesAnalyzer forAdapt(@NotNull Integer analyzer) {
-		return forAdapt(AnalyzerType.of(analyzer));
+	public CodesAnalyzer<AnalysingModel> forAdapt(@NotNull Integer analyzer) {
+		return forAdapt(AnalyzerKind.of(analyzer));
 	}
 
 	/**
@@ -93,11 +90,21 @@ public class CompositeCodesAnalyzerAdapter implements CodesAnalyzer {
 	 * @param type
 	 * @return
 	 */
-	private CodesAnalyzer getAdapted() {
-		CodesAnalyzer operator = delegate.get();
-		Assert.state(operator != null,
+	private CodesAnalyzer<AnalysingModel> getAdapted() {
+		CodesAnalyzer<AnalysingModel> analyzer = delegate.get();
+		Assert.state(analyzer != null,
 				"Not adapted to specify actual CodeAnalyzer, You must use adapted() to adapt before you can.");
-		return operator;
+		return analyzer;
+	}
+
+	@Override
+	public void analyze(AnalysingModel model) throws Exception {
+		getAdapted().analyze(model);
+	}
+
+	@Override
+	public AnalysisResultModel getBugCollection(AnalysisQueryModel model) {
+		return getAdapted().getBugCollection(model);
 	}
 
 }

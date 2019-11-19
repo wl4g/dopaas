@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.core.command;
+package com.wl4g.devops.ci.analyses.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Roll-back pipeline handle command.
+ * Codes analyzer controller annotation.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年11月12日
+ * @version v1.0 2019年11月19日
  * @since
  */
-public class RollbackCommand extends GenericCommand {
-	private static final long serialVersionUID = 1489325413465499589L;
-
-	public RollbackCommand() {
-		super();
-	}
-
-	public RollbackCommand(Integer taskId, String remark) {
-		super(taskId, remark);
-	}
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Documented
+public @interface CodesAnalyzerController {
 
 }

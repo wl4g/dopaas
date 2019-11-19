@@ -18,11 +18,9 @@ package com.wl4g.devops.iam.config;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
-import java.lang.annotation.Annotation;
-
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.*;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.web.DefaultViewController;
 
 /**
@@ -33,26 +31,16 @@ import com.wl4g.devops.iam.web.DefaultViewController;
  * @since
  */
 @AutoConfigureAfter({ IamAutoConfiguration.class })
-public class DefaultViewAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class DefaultViewAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	public DefaultViewController defaultViewController() {
 		return new DefaultViewController();
 	}
 
-	@Override
-	protected String getMappingPrefix() {
-		return DEFAULT_VIEW_BASE_URI;
-	}
-
 	@Bean
 	public PrefixHandlerMapping defaultViewControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return com.wl4g.devops.iam.annotation.DefaultViewController.class;
+		return super.newPrefixHandlerMapping(DEFAULT_VIEW_BASE_URI, com.wl4g.devops.iam.annotation.DefaultViewController.class);
 	}
 
 }

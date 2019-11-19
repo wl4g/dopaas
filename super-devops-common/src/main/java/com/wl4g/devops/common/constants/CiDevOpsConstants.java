@@ -68,4 +68,9 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final String LOG_FILE_START = "<[EOF]";
 	public static final String LOG_FILE_END = "[EOF]>";
 
+	// --- Codes analyzers. ---
+
+	/** Analyzers API base URI path. */
+	final public static String URL_ANALYZER_BASE_PATH = "/analyzer";
+
 }

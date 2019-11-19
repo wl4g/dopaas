@@ -15,15 +15,15 @@
  */
 package com.wl4g.devops.ci.analyses.spotbugs;
 
-import org.springframework.stereotype.Component;
+import java.io.File;
 
 import com.wl4g.devops.ci.analyses.AbstractCodesAnalyzer;
-import com.wl4g.devops.ci.analyses.model.SpotbugsProjectModel;
-
-import edu.umd.cs.findbugs.FindBugs2;
+import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
+import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
+import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
 
 /**
- * SPOTBUGS code scanner. </br>
+ * SPOTBUGS code scanner analyzer. </br>
  * 
  * <pre>
  * &#64;see https://github.com/spotbugs/spotbugs/blob/b38806a67ce454e271ab8f759787e228dc8cf78c/spotbugs/src/gui/main/edu/umd/cs/findbugs/gui2/NewProjectWizard.java#L211
@@ -40,16 +40,44 @@ import edu.umd.cs.findbugs.FindBugs2;
  * @version v1.0 2019年11月18日
  * @since
  */
-@Component
-public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer {
+public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysingModel> {
 
 	@Override
-	protected void doAnalyze(SpotbugsProjectModel model) throws Exception {
-		FindBugs2.main(model.getArgs().toArray(new String[] {}));
+	protected void doAnalyze(SpotbugsAnalysingModel param) throws Exception {
+		String command = getSpotbugsAnalyzerRunCommand(param);
+		try {
+			processManager.exec(param.getProjectName(), command, 15 * 60 * 1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println(System.getProperty("java.class.path"));
+	/**
+	 * Get SPOTBUGS analyzer run commands.</br>
+	 * e.g.
+	 * 
+	 * <pre>
+	 * java -Xmx1G -cp .:/opt/apps/acm/ci-analyzer-bin/lib edu.umd.cs.findbugs.FindBugs2
+	 * </pre>
+	 * 
+	 * @param param
+	 * @return
+	 */
+	private String getSpotbugsAnalyzerRunCommand(SpotbugsAnalysingModel param) {
+		StringBuffer cmd = new StringBuffer("java ");
+		cmd.append(config.getSpotbugs().getJvmArgs());
+		cmd.append(" -cp .");
+		cmd.append(File.pathSeparator);
+		cmd.append(System.getProperty("java.class.path"));
+		cmd.append(" ");
+		cmd.append(config.getSpotbugs().getAnalyzerRunClass());
+		return cmd.toString();
+	}
+
+	@Override
+	public AnalysisResultModel getBugCollection(AnalysisQueryModel model) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

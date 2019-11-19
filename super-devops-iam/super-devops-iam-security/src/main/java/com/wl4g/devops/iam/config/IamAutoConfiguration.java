@@ -98,6 +98,13 @@ import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
 import com.wl4g.devops.iam.web.CentralAuthenticatorController;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
+/**
+ * IAM server auto configuration.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年03月19日
+ * @since
+ */
 public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
@@ -542,14 +549,14 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// IAM controller's
 	// ==============================
 
-	@Override
-	protected String getMappingPrefix() {
-		return URI_S_BASE;
-	}
-
 	@Bean
 	public CentralAuthenticatorController centralAuthenticatorController() {
 		return new CentralAuthenticatorController();
+	}
+
+	@Bean
+	public PrefixHandlerMapping iamCentralAuthenticatorControllerPrefixHandlerMapping() {
+		return super.newIamControllerPrefixHandlerMapping(URI_S_BASE);
 	}
 
 	// ==============================

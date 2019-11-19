@@ -25,11 +25,11 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 
-import java.lang.annotation.Annotation;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.Filter;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
@@ -73,7 +73,7 @@ import redis.clients.jedis.JedisCluster;
  * @version v1.0 2018年12月23日
  * @since
  */
-public abstract class AbstractIamConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public abstract class AbstractIamConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	// ==============================
 	// Locale i18n configuration.
@@ -243,14 +243,14 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	// I A M _ C O N T R O L L E R _ C O N F I G's.
 	// ==============================
 
-	@Bean
-	public PrefixHandlerMapping iamControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return IamController.class;
+	/**
+	 * Ne IAM controller prefix request handler mapping.
+	 * 
+	 * @param mappingPrefix
+	 * @return
+	 */
+	protected PrefixHandlerMapping newIamControllerPrefixHandlerMapping(@NotBlank String mappingPrefix) {
+		return super.newPrefixHandlerMapping(mappingPrefix, IamController.class);
 	}
 
 	// ==============================

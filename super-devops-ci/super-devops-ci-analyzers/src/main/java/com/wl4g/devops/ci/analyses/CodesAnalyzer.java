@@ -18,7 +18,9 @@ package com.wl4g.devops.ci.analyses;
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
 
-import com.wl4g.devops.ci.analyses.model.SpotbugsProjectModel;
+import com.wl4g.devops.ci.analyses.model.AnalysingModel;
+import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
+import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
 
 /**
  * Source codes safety analyzer.
@@ -27,7 +29,7 @@ import com.wl4g.devops.ci.analyses.model.SpotbugsProjectModel;
  * @version v1.0 2019年11月18日
  * @since
  */
-public interface CodesAnalyzer {
+public interface CodesAnalyzer<P extends AnalysingModel> {
 
 	/**
 	 * Analyzer type definitions.
@@ -36,14 +38,14 @@ public interface CodesAnalyzer {
 	 * @version v1.0 2019年11月5日
 	 * @since
 	 */
-	public static enum AnalyzerType {
+	public static enum AnalyzerKind {
 
 		/** Analyzer for spotbugs. */
 		SPOTBUGS(1);
 
 		final private int value;
 
-		private AnalyzerType(int value) {
+		private AnalyzerKind(int value) {
 			this.value = value;
 		}
 
@@ -52,16 +54,16 @@ public interface CodesAnalyzer {
 		}
 
 		/**
-		 * Safe converter string to {@link AnalyzerType}
+		 * Safe converter string to {@link AnalyzerKind}
 		 * 
 		 * @param analyzer
 		 * @return
 		 */
-		final public static AnalyzerType safeOf(Integer analyzer) {
+		final public static AnalyzerKind safeOf(Integer analyzer) {
 			if (isNull(analyzer)) {
 				return null;
 			}
-			for (AnalyzerType t : values()) {
+			for (AnalyzerKind t : values()) {
 				if (String.valueOf(analyzer).equalsIgnoreCase(t.name())) {
 					return t;
 				}
@@ -70,14 +72,14 @@ public interface CodesAnalyzer {
 		}
 
 		/**
-		 * Converter string to {@link AnalyzerType}
+		 * Converter string to {@link AnalyzerKind}
 		 * 
 		 * @param vcsProvider
 		 * @return
 		 */
-		final public static AnalyzerType of(Integer vcsProvider) {
-			AnalyzerType type = safeOf(vcsProvider);
-			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
+		final public static AnalyzerKind of(Integer vcsProvider) {
+			AnalyzerKind type = safeOf(vcsProvider);
+			notNull(type, String.format("Unsupported codesAnalyzer kind for %s", vcsProvider));
 			return type;
 		}
 
@@ -88,15 +90,23 @@ public interface CodesAnalyzer {
 	 * 
 	 * @return
 	 */
-	default AnalyzerType provider() {
+	default AnalyzerKind kind() {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Execution codes analysis.
 	 * 
-	 * @param model
+	 * @param param
 	 */
-	void analyze(SpotbugsProjectModel model) throws Exception;
+	void analyze(P param) throws Exception;
+
+	/**
+	 * Get analysis resuslt bug collection.
+	 * 
+	 * @param model
+	 * @return
+	 */
+	AnalysisResultModel getBugCollection(AnalysisQueryModel model);
 
 }

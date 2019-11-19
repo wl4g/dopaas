@@ -13,56 +13,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.core.command;
+package com.wl4g.devops.ci.core.param;
 
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
 
 import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
- * Hook pipeline handle command.
+ * Generic pipeline handle command parameter.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月12日
  * @since
  */
-public class HookCommand implements Serializable {
-	private static final long serialVersionUID = 9219348162378842689L;
+public abstract class GenericParameter implements Serializable {
 
+	private static final long serialVersionUID = -5304513598862948298L;
+
+	/**
+	 * Pipeline taskId.
+	 */
+	@NotNull
+	private Integer taskId;
+
+	/**
+	 * Pipeline task remark.
+	 */
 	@NotBlank
-	private String projectName;
+	private String remark;
 
-	@NotBlank
-	private String branchName;
-
-	public HookCommand() {
+	public GenericParameter() {
 		super();
 	}
 
-	public HookCommand(String projectName, String branchName) {
-		setProjectName(projectName);
-		setBranchName(branchName);
+	public GenericParameter(Integer taskId, String remark) {
+		setTaskId(taskId);
+		setRemark(remark);
 	}
 
-	public String getProjectName() {
-		return projectName;
+	public Integer getTaskId() {
+		return taskId;
 	}
 
-	public void setProjectName(String projectName) {
-		hasText(projectName, "Hook pipeline projectName can't is empty.");
-		this.projectName = projectName;
+	public void setTaskId(Integer taskId) {
+		notNull(taskId, "Pipeline taskId can't be null.");
+		isTrue(taskId >= 0, "Pipeline taskId must be >=0.");
+		this.taskId = taskId;
 	}
 
-	public String getBranchName() {
-		return branchName;
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setBranchName(String branchName) {
-		hasText(branchName, "Hook pipeline branch can't is empty.");
-		this.branchName = branchName;
+	public void setRemark(String remark) {
+		hasText(remark, "Pipiline task remark can't be empty.");
+		this.remark = remark;
 	}
 
 	@Override

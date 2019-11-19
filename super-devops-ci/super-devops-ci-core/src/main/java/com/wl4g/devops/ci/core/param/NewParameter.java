@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.core.command;
+package com.wl4g.devops.ci.core.param;
 
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
@@ -21,13 +21,13 @@ import static org.springframework.util.Assert.notNull;
 import javax.validation.constraints.NotNull;
 
 /**
- * New create pipeline handle command.
+ * New create pipeline handle parameter.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月12日
  * @since
  */
-public class NewCommand extends GenericCommand {
+public class NewParameter extends GenericParameter {
 	private static final long serialVersionUID = -79398460376632146L;
 
 	/**
@@ -46,11 +46,11 @@ public class NewCommand extends GenericCommand {
 	@NotNull
 	private Integer taskTraceType;
 
-	public NewCommand() {
+	public NewParameter() {
 		super();
 	}
 
-	public NewCommand(Integer taskId, String remark, @NotNull Integer taskTraceId, @NotNull Integer taskTraceType) {
+	public NewParameter(Integer taskId, String remark, @NotNull Integer taskTraceId, @NotNull Integer taskTraceType) {
 		super(taskId, remark);
 		setTaskTraceId(taskTraceId);
 		setTaskTraceType(taskTraceType);

@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.web;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.wl4g.devops.common.web.BaseController;
+package com.wl4g.devops.ci.analyses.model;
 
 /**
- * Codes analysis controller.
+ * SPOTBUGS analysis result model.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年11月18日
+ * @version v1.0 2019年11月19日
  * @since
  */
-@RestController
-@RequestMapping("/analyzer/")
-public class CodesAnalyzerController extends BaseController {
+public class SpotbugsAnalysisResultModel extends AnalysisResultModel {
 
 }
