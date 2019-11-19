@@ -97,9 +97,9 @@ public interface CodesAnalyzer<P extends AnalysingModel> {
 	/**
 	 * Execution codes analysis.
 	 * 
-	 * @param param
+	 * @param model
 	 */
-	void analyze(P param) throws Exception;
+	void analyze(P model) throws Exception;
 
 	/**
 	 * Get analysis resuslt bug collection.

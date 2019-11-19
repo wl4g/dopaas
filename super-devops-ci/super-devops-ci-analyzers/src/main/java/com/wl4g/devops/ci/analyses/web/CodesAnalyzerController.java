@@ -34,6 +34,8 @@ import com.wl4g.devops.common.web.RespBase;
 
 import static com.wl4g.devops.ci.analyses.CodesAnalyzer.AnalyzerKind.*;
 
+import java.io.File;
+
 /**
  * Codes analysis controller.
  * 
@@ -62,6 +64,9 @@ public class CodesAnalyzerController extends BaseController {
 			log.info("Analyzing assetFile for spotbugs-java: {}", model);
 		}
 		RespBase<Object> resp = RespBase.create();
+
+		file.transferTo(new File("/mnt/disk1/ci-analyzer/data/assetFiles/" + model.getProjectName()));
+
 		adapter.forAdapt(AnalyzerKind.SPOTBUGS).analyze(model);
 		return resp;
 	}

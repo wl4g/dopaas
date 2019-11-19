@@ -35,7 +35,10 @@ spring:
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/ci/taskhis
       ci:
-        analyzer: # CI analyses configuration.
+        analyzers: # CI analyses configuration.
+          executor:
+            concurrency: 10
+            accept-queue: 2
           spotbugs:
             analyzer-run-class: edu.umd.cs.findbugs.FindBugs2
             jvm-args: 

@@ -32,7 +32,19 @@ import static org.springframework.util.ClassUtils.isPresent;
  */
 public class CiAnalyzerProperties {
 
+	/** Analyzing tasks executor properties. */
+	private ExecutorProperties executor = new ExecutorProperties();
+
+	/** SPOTBUGS configuration properties. */
 	private SpotbugsProperties spotbugs = new SpotbugsProperties();
+
+	public ExecutorProperties getExecutor() {
+		return executor;
+	}
+
+	public void setExecutor(ExecutorProperties executor) {
+		this.executor = executor;
+	}
 
 	public SpotbugsProperties getSpotbugs() {
 		return spotbugs;

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.ci.analyses.spotbugs;
 
+import static org.apache.commons.lang3.SystemUtils.JAVA_CLASS_PATH;
+
 import java.io.File;
 
 import com.wl4g.devops.ci.analyses.AbstractCodesAnalyzer;
@@ -43,10 +45,10 @@ import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
 public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysingModel> {
 
 	@Override
-	protected void doAnalyze(SpotbugsAnalysingModel param) throws Exception {
-		String command = getSpotbugsAnalyzerRunCommand(param);
+	protected void doAnalyze(SpotbugsAnalysingModel model) throws Exception {
+		String command = getSpotbugsAnalyzerRunCommand(model);
 		try {
-			processManager.exec(param.getProjectName(), command, 15 * 60 * 1000);
+			processManager.exec(model.getProjectName(), command, 15 * 60 * 1000);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -60,15 +62,15 @@ public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysi
 	 * java -Xmx1G -cp .:/opt/apps/acm/ci-analyzer-bin/lib edu.umd.cs.findbugs.FindBugs2
 	 * </pre>
 	 * 
-	 * @param param
+	 * @param model
 	 * @return
 	 */
-	private String getSpotbugsAnalyzerRunCommand(SpotbugsAnalysingModel param) {
+	private String getSpotbugsAnalyzerRunCommand(SpotbugsAnalysingModel model) {
 		StringBuffer cmd = new StringBuffer("java ");
 		cmd.append(config.getSpotbugs().getJvmArgs());
 		cmd.append(" -cp .");
 		cmd.append(File.pathSeparator);
-		cmd.append(System.getProperty("java.class.path"));
+		cmd.append(JAVA_CLASS_PATH);
 		cmd.append(" ");
 		cmd.append(config.getSpotbugs().getAnalyzerRunClass());
 		return cmd.toString();

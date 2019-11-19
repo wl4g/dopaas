@@ -13,4 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.task;
+package com.wl4g.devops.ci.analyses.config;
+
+import com.wl4g.devops.common.task.RunnerProperties;
+
+/**
+ * Task executor configuration such as codes analyzing tasks.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-10-13
+ * @since
+ */
+public class ExecutorProperties extends RunnerProperties {
+	private static final long serialVersionUID = -7007748978859003620L;
+
+	public ExecutorProperties() {
+		setConcurrency(10); // By default.
+	}
+
+}
