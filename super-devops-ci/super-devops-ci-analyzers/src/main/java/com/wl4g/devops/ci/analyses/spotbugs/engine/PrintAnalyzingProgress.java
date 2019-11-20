@@ -18,7 +18,8 @@ package com.wl4g.devops.ci.analyses.spotbugs.engine;
 import static org.springframework.util.Assert.notNull;
 
 import java.io.PrintStream;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +41,11 @@ public class PrintAnalyzingProgress implements FindBugsProgress {
 
 	final protected PrintStream out;
 
-	private AtomicInteger count = new AtomicInteger(0);
-	private AtomicInteger scanCount = new AtomicInteger(0);
-	private int[] classesPerPass;
+	private int totalArchives = 0;
+	private List<Integer> totalStageData = new ArrayList<>();
+	private int passStage = 0;
+	private int stageGoalAnalysised = 0;
+	private int passStageAnalysised = 0;
 
 	public PrintAnalyzingProgress(PrintStream out) {
 		notNull(out, "null PrintStream");
@@ -50,47 +53,55 @@ public class PrintAnalyzingProgress implements FindBugsProgress {
 	}
 
 	@Override
-	public void predictPassCount(int[] classesPerPass) {
-		this.classesPerPass = classesPerPass;
-	}
-
-	@Override
-	public void startAnalysis(int scanClassesCount) {
-		String msg = L10N.getLocalString("progress.analyzing_classes", "Analyzing classes...");
-		String stage = msg + ", scan " + scanCount.incrementAndGet() + "/" + classesPerPass.length;
-		updateStage(stage, 0, scanClassesCount);
+	public void reportNumberOfArchives(int numArchives) {
+		String stage = L10N.getLocalString("progress.scanning_archives", "Scanning archives...");
+		updateStage(stage);
 	}
 
 	@Override
 	public void startArchive(String name) {
-		// Ignore
+		updateStage(name);
 	}
 
 	@Override
 	public void finishArchive() {
-		count.incrementAndGet();
+		++this.totalArchives;
+		updateStage("已检索:" + totalArchives);
+	}
+
+	@Override
+	public void predictPassCount(int[] totalStages) {
+		for (int stages : totalStages) {
+			this.totalStageData.add(stages);
+		}
+	}
+
+	@Override
+	public void startAnalysis(int stageGoalAnalysised) {
+		this.stageGoalAnalysised = stageGoalAnalysised;
+		this.passStageAnalysised = 0; // Reset
+		++this.passStage;
+
+		String stage = L10N.getLocalString("progress.analyzing_classes", "Analyzing classes...");
+		updateStage(stage);
 	}
 
 	@Override
 	public void finishClass() {
-		count.incrementAndGet();
+		++this.passStageAnalysised;
+		updateStage("已分析:" + passStageAnalysised + "/" + stageGoalAnalysised + "/" + passStage);
 	}
 
 	@Override
 	public void finishPerClassAnalysis() {
 		String stage = L10N.getLocalString("progress.finishing_analysis", "Finishing archives...");
-		updateStage(stage, 0, 0);
+		updateStage(stage);
 	}
 
-	@Override
-	public void reportNumberOfArchives(int numArchives) {
-		String stage = L10N.getLocalString("progress.scanning_archives", "Scanning archives...");
-		updateStage(stage, 0, numArchives);
-	}
-
-	private void updateStage(String stage, final int count, final int goal) {
-		this.count.set(count);
-		out.print(new StageProgressModel(stage, count, goal));
+	private void updateStage(String stageLabel) {
+		StageProgressModel model = new StageProgressModel(stageLabel, totalArchives, totalStageData.size(), passStage,
+				passStageAnalysised, stageGoalAnalysised);
+		this.out.println(model);
 	}
 
 }
