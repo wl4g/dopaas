@@ -107,7 +107,7 @@ public class DefaultBasicErrorConfiguring implements ErrorConfiguring {
 						if (!fieldErrs.contains(fieldErr)) {
 							errmsg.append("'");
 							errmsg.append(fieldErr);
-							errmsg.append("'");
+							errmsg.append("' ");
 							errmsg.append(ferr.getDefaultMessage());
 							errmsg.append(", ");
 						}

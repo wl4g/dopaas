@@ -15,15 +15,20 @@
  */
 package com.wl4g.devops.common.config;
 
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.convertBean;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 
 import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.web.error.CompositeErrorConfiguringAdapter;
@@ -79,13 +84,28 @@ public class ErrorControllerAutoConfiguration extends OptionalPrefixControllerAu
 	 * @version v1.0.0 2019-11-02
 	 * @since
 	 */
-	public static class ErrorControllerProperties {
+	public static class ErrorControllerProperties implements InitializingBean {
 		final public static String DEFAULT_DIR_VIEW = "/default-error-view/";
 
-		// <<Alarm: Field name cannot contain numbers>>.
+		/**
+		 * Default error view configuration directory.
+		 */
 		private String basePath = DEFAULT_DIR_VIEW;
-		private String notFountUriOrTpl = "404.tpl.html"; //
+
+		/**
+		 * {@link HttpStatus#NOT_FOUND} error corresponding view template name.
+		 */
+		private String notFountUriOrTpl = "404.tpl.html";
+
+		/**
+		 * {@link HttpStatus#FORBIDDEN} error corresponding view template name.
+		 */
 		private String unauthorizedUriOrTpl = "403.tpl.html";
+
+		/**
+		 * {@link HttpStatus#SERVICE_UNAVAILABLE} error corresponding view
+		 * template name.
+		 */
 		private String errorUriOrTpl = "50x.tpl.html";
 
 		/**
@@ -93,6 +113,13 @@ public class ErrorControllerAutoConfiguration extends OptionalPrefixControllerAu
 		 * Default for browser location origin.
 		 */
 		private String homeUri = "javascript:location.href = location.origin";
+
+		// --- Temporary attribute's. ---
+
+		/**
+		 * That convert as map.
+		 */
+		private Map<String, Object> asMap;
 
 		public String getBasePath() {
 			return basePath;
@@ -142,6 +169,24 @@ public class ErrorControllerAutoConfiguration extends OptionalPrefixControllerAu
 			if (!isBlank(homeUri)) {
 				this.homeUri = homeUri;
 			}
+		}
+
+		// --- Function's. ---
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void afterPropertiesSet() throws Exception {
+			this.asMap = convertBean(this, HashMap.class);
+		}
+
+		/**
+		 * Convert bean to {@link Map} properties.
+		 * 
+		 * @return
+		 */
+
+		public Map<String, Object> asMap() {
+			return this.asMap;
 		}
 
 	}

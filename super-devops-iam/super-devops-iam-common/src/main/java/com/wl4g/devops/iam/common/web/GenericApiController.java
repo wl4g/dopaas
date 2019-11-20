@@ -253,9 +253,15 @@ public abstract class GenericApiController extends BaseController {
 	protected SessionAttribute wrapSessionAttribute(IamSession session) {
 		SessionAttribute sa = new SessionAttribute();
 		sa.setId(String.valueOf(session.getId()));
-		sa.setLastAccessTime(formatDate(session.getLastAccessTime(), DEFAULT_DATE_PATTERN));
-		sa.setStartTime(formatDate(session.getStartTimestamp(), DEFAULT_DATE_PATTERN));
-		sa.setStopTime(formatDate(session.getStopTimestamp(), DEFAULT_DATE_PATTERN));
+		if (nonNull(session.getLastAccessTime())) {
+			sa.setLastAccessTime(formatDate(session.getLastAccessTime(), DEFAULT_DATE_PATTERN));
+		}
+		if (nonNull(session.getStartTimestamp())) {
+			sa.setStartTime(formatDate(session.getStartTimestamp(), DEFAULT_DATE_PATTERN));
+		}
+		if (nonNull(session.getStopTimestamp())) {
+			sa.setStopTime(formatDate(session.getStopTimestamp(), DEFAULT_DATE_PATTERN));
+		}
 		sa.setHost(session.getHost());
 		sa.setExpired(session.isExpired());
 

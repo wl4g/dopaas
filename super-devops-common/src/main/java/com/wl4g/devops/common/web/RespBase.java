@@ -18,25 +18,38 @@ package com.wl4g.devops.common.web;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.convertBean;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.web.RespBase.RetCode.newCode;
+import static java.lang.reflect.Modifier.isFinal;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.LOCKED;
+import static org.springframework.http.HttpStatus.PRECONDITION_FAILED;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
@@ -104,7 +117,20 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 */
 	public RespBase<D> setCode(RetCode retCode) {
-		this.code = retCode != null ? retCode : this.code;
+		if (nonNull(retCode)) {
+			this.code = (RetCode) retCode;
+		}
+		return this;
+	}
+
+	/**
+	 * Setup response code of int.
+	 * 
+	 * @param retCode
+	 * @return
+	 */
+	public RespBase<D> setCode(int retCode) {
+		this.code = newCode(retCode, "");
 		return this;
 	}
 
@@ -503,77 +529,79 @@ public class RespBase<D> implements Serializable {
 	 * @version v1.0 2019年1月10日
 	 * @since
 	 */
-	public static enum RetCode {
+	public static class RetCode {
 
 		/**
 		 * Successful code<br/>
 		 * {@link HttpStatus.OK}
 		 */
-		OK(HttpStatus.OK.value(), "Ok"),
+		final public static RetCode OK = new RetCode(HttpStatus.OK.value(), "Ok");
 
 		/**
 		 * Parameter error<br/>
 		 * {@link HttpStatus.BAD_REQUEST}
 		 */
-		PARAM_ERR(HttpStatus.BAD_REQUEST.value(), "Parameter error"),
+		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Parameter error");
 
 		/**
 		 * Business constraints<br/>
 		 * {@link HttpStatus.NOT_IMPLEMENTED}
 		 */
-		BIZ_ERR(HttpStatus.EXPECTATION_FAILED.value(), "Business restricted"),
+		final public static RetCode BIZ_ERR = new RetCode(EXPECTATION_FAILED.value(), "Business restricted");
 
 		/**
 		 * Business locked constraints<br/>
 		 * {@link HttpStatus.LOCKED}
 		 */
-		LOCKD_ERR(HttpStatus.LOCKED.value(), "Locked"),
+		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Locked");
 
 		/**
 		 * Unauthenticated<br/>
 		 * {@link HttpStatus.UNAUTHORIZED}
 		 */
-		UNAUTHC(HttpStatus.UNAUTHORIZED.value(), "Unauthenticated"),
+		final public static RetCode UNAUTHC = new RetCode(UNAUTHORIZED.value(), "Unauthenticated");
 
 		/**
 		 * Second Uncertified<br/>
 		 * {@link HttpStatus.PRECONDITION_FAILED}
 		 */
-		SECOND_UNAUTH(HttpStatus.PRECONDITION_FAILED.value(), "Second uncertified"),
+		final public static RetCode SECOND_UNAUTH = new RetCode(PRECONDITION_FAILED.value(), "Second uncertified");
 
 		/**
 		 * Unauthorized<br/>
 		 * {@link HttpStatus.FORBIDDEN}
 		 */
-		UNAUTHZ(HttpStatus.FORBIDDEN.value(), "Unauthorized"),
+		final public static RetCode UNAUTHZ = new RetCode(FORBIDDEN.value(), "Unauthorized");
 
 		/**
 		 * System abnormality<br/>
 		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
-		SYS_ERR(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service unavailable, please try again later"),
+		final public static RetCode SYS_ERR = new RetCode(SERVICE_UNAVAILABLE.value(),
+				"Service unavailable, please try again later");
 
 		/**
-		 * Internal dynamic status code customizer.</br>
-		 * 
-		 * @see {@link com.wl4g.devops.common.web.RespBase.RetCode#create}
-		 * @see {@link com.wl4g.devops.common.web.RespBase.RetCode#customizerLocal}
+		 * Name to {@link RetCode} value definitions.
 		 */
-		_$$(-1, "Unknown error");
+		final private static Map<String, RetCode> nameValueDefinition;
 
 		/**
-		 * Dynamic status code store customizer.</br>
-		 * 
-		 * @see {@link #_$$}
-		 * @see {@link #create(int, String)}
+		 * Code to {@link RetCode} value definitions.
 		 */
-		final private static ThreadLocal<Object[]> customizerLocal = new InheritableThreadLocal<>();
+		final private static Map<Integer, RetCode> codeValueDefinition;
 
-		private int errcode;
-		private String errmsg;
+		/**
+		 * Errors code.
+		 */
+		final private int errcode;
+
+		/**
+		 * Errors message.
+		 */
+		final private String errmsg;
 
 		private RetCode(int code, String msg) {
-			hasText(msg, "Result message definition must not be empty.");
+			// hasText(msg, "Result message can't empty.");
 			this.errcode = code;
 			this.errmsg = msg;
 		}
@@ -584,12 +612,7 @@ public class RespBase<D> implements Serializable {
 		 * 
 		 * @return
 		 */
-		public int getErrcode() {
-			if (this == _$$) {
-				Object errcode = customizerLocal.get()[0];
-				notNull(errcode, "Respbase customizer errcode must not be null.");
-				return (int) errcode;
-			}
+		final public int getErrcode() {
 			return errcode;
 		}
 
@@ -600,12 +623,7 @@ public class RespBase<D> implements Serializable {
 		 * 
 		 * @return
 		 */
-		public String getErrmsg() {
-			if (this == _$$) {
-				Object errmsg = customizerLocal.get()[1];
-				notNull(errmsg, "Respbase customizer errmsg must not be null.");
-				return (String) errmsg;
-			}
+		final public String getErrmsg() {
 			return errmsg;
 		}
 
@@ -618,10 +636,9 @@ public class RespBase<D> implements Serializable {
 		 * @param value
 		 * @return
 		 */
-		@JsonCreator
-		final public static RetCode get(String nameOrCode) {
+		final public static RetCode of(String nameOrCode) {
 			RetCode code = safeOf(nameOrCode);
-			if (Objects.nonNull(code)) {
+			if (nonNull(code)) {
 				return code;
 			}
 			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
@@ -633,27 +650,58 @@ public class RespBase<D> implements Serializable {
 		 * @param nameOrCode
 		 * @return
 		 */
+		@SuppressWarnings("unlikely-arg-type")
 		final public static RetCode safeOf(String nameOrCode) {
-			String tmp = String.valueOf(nameOrCode);
-			for (RetCode v : values()) {
-				if (v.name().equalsIgnoreCase(tmp) || String.valueOf(v.getErrcode()).equalsIgnoreCase(tmp)) {
-					return v;
-				}
+			RetCode retCode = nameValueDefinition.get(nameOrCode);
+			if (isNull(retCode)) {
+				return codeValueDefinition.get(nameOrCode);
 			}
-			return null;
+			return retCode;
 		}
 
 		/**
-		 * Create custom status code, refer to {@link #_$$}
+		 * New create custom status code, refer to {@link #_$$}
 		 * 
 		 * @param errcode
 		 * @param errmsg
 		 * @return
 		 */
-		final public static RetCode create(int errcode, String errmsg) {
-			hasText(errmsg, "Result errmsg definition must not be empty.");
-			customizerLocal.set(new Object[] { errcode, errmsg });
-			return _$$;
+		final public static RetCode newCode(int errcode, String errmsg) {
+			return new RetCode(errcode, errmsg);
+		}
+
+		/**
+		 * Get internal default instance definitions.
+		 * 
+		 * @return
+		 */
+		static {
+			try {
+				final Map<String, RetCode> nameValueMap = new HashMap<>();
+				final Map<Integer, RetCode> codeValueMap = new HashMap<>();
+				for (Field f : RetCode.class.getDeclaredFields()) {
+					if (isStatic(f.getModifiers()) && isFinal(f.getModifiers()) && f.getType() == RetCode.class) {
+						AccessController.doPrivileged(new PrivilegedAction<Void>() {
+							@Override
+							public Void run() {
+								f.setAccessible(true);
+								return null;
+							}
+						});
+
+						Object fObj = f.get(null);
+						if (fObj instanceof RetCode) {
+							RetCode retCode = (RetCode) f.get(null);
+							state(isNull(nameValueMap.putIfAbsent(f.getName(), retCode)), "");
+							state(isNull(codeValueMap.putIfAbsent(retCode.getErrcode(), retCode)), "");
+						}
+					}
+				}
+				nameValueDefinition = unmodifiableMap(nameValueMap);
+				codeValueDefinition = unmodifiableMap(codeValueMap);
+			} catch (Exception ex) {
+				throw new IllegalStateException("", ex);
+			}
 		}
 
 	}

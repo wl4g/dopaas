@@ -106,7 +106,7 @@ public class RespBaseTest {
 
 	public static void main(String[] args) {
 		// for controller output(map).
-		RespBase<TestModel> resp11 = new RespBase<>(RetCode.create(4001, "message1"));
+		RespBase<TestModel> resp11 = new RespBase<>(RetCode.newCode(4001, "message1"));
 		resp11.forMap().put("testModel11", new TestModel("jack11"));
 		resp11.forMap().put("testModel12", new TestModel("jack12"));
 		resp11.buildNode("testNode1").put("node1", "n11");
@@ -123,7 +123,7 @@ public class RespBaseTest {
 		System.out.println("-------------------------");
 
 		// for controller output(model).
-		RespBase<TestModel> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
+		RespBase<TestModel> resp21 = new RespBase<>(RetCode.newCode(4001, "message2"));
 		resp21.setData(new TestModel("jack2"));
 		System.out.println(">>As Map>>" + resp21.asMap());
 		// for testing unsupported
