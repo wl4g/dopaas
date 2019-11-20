@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 
@@ -74,15 +74,15 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
-	public AbstractPipeDeployer(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+	public AbstractPipeDeployer(P provider, AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
 		notNull(provider, "Pipeline provider must not be null.");
 		notNull(instance, "Pipeline job instance must not be null.");
-		notEmpty(taskHistoryDetails, "Pipeline task historyDetails must not be null.");
+		notEmpty(taskHistoryInstances, "Pipeline task historyDetails must not be null.");
 		this.provider = provider;
 		this.instance = instance;
 
 		// Task details.
-		Optional<TaskHistoryDetail> taskHisyDetail = taskHistoryDetails.stream()
+		Optional<TaskHistoryInstance> taskHisyDetail = taskHistoryInstances.stream()
 				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
 		isTrue(taskHisyDetail.isPresent(), "Not found taskDetailId by details.");
 		this.taskDetailId = taskHisyDetail.get().getId();

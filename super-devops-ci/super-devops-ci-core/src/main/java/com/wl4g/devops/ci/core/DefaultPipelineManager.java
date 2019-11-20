@@ -146,8 +146,8 @@ public class DefaultPipelineManager implements PipelineManager {
 		notNull(bakTaskHisy, String.format("Not found pipeline task history for taskId:%s", param.getTaskId()));
 
 		// Details
-		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(param.getTaskId());
-		notEmpty(taskHistoryDetails, "taskHistoryDetails find empty list");
+		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryService.getDetailByTaskId(param.getTaskId());
+		notEmpty(taskHistoryInstances, "taskHistoryInstances find empty list");
 
 		// Project.
 		Project project = projectDao.selectByPrimaryKey(bakTaskHisy.getProjectId());
@@ -155,8 +155,8 @@ public class DefaultPipelineManager implements PipelineManager {
 
 		// Instance.
 		List<AppInstance> instances = new ArrayList<>();
-		for (TaskHistoryDetail taskHistoryDetail : taskHistoryDetails) {
-			AppInstance instance = appInstanceDao.selectByPrimaryKey(taskHistoryDetail.getInstanceId());
+		for (TaskHistoryInstance taskHistoryInstance : taskHistoryInstances) {
+			AppInstance instance = appInstanceDao.selectByPrimaryKey(taskHistoryInstance.getInstanceId());
 			instances.add(instance);
 		}
 
@@ -343,7 +343,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		notNull(appCluster, "AppCluster can not be null");
 		project.setGroupName(appCluster.getName());
 
-		List<TaskHistoryDetail> taskHisyDetails = taskHistoryService.getDetailByTaskId(taskHisy.getId());
+		List<TaskHistoryInstance> taskHisyDetails = taskHistoryService.getDetailByTaskId(taskHisy.getId());
 		notNull(taskHisyDetails, "taskHistoryDetails can not be null");
 
 		TaskHistory refTaskHisy = null;
