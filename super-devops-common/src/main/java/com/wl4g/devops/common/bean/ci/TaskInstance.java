@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import java.io.Serializable;
-
 import com.wl4g.devops.common.bean.BaseBean;
 
-public class TaskDetail extends BaseBean implements Serializable {
+import java.io.Serializable;
+
+public class TaskInstance extends BaseBean implements Serializable {
 
 	private static final long serialVersionUID = 381411777614066880L;
 

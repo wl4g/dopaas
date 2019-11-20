@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dao.ci;
 
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskInstance;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,20 +23,20 @@ import java.util.List;
 public interface TaskDetailDao {
 	int deleteByPrimaryKey(Integer id);
 
-	int insert(TaskDetail record);
+	int insert(TaskInstance record);
 
-	int insertSelective(TaskDetail record);
+	int insertSelective(TaskInstance record);
 
-	TaskDetail selectByPrimaryKey(Integer id);
+	TaskInstance selectByPrimaryKey(Integer id);
 
-	int updateByPrimaryKeySelective(TaskDetail record);
+	int updateByPrimaryKeySelective(TaskInstance record);
 
-	int updateByPrimaryKey(TaskDetail record);
+	int updateByPrimaryKey(TaskInstance record);
 
 	int deleteByTaskId(Integer taskId);
 
-	List<TaskDetail> getUsedInstance(@Param("appClusterId") Integer appClusterId, @Param("taskId") Integer taskId);
+	List<TaskInstance> getUsedInstance(@Param("appClusterId") Integer appClusterId, @Param("taskId") Integer taskId);
 
-	List<TaskDetail> selectByTaskId(Integer taskId);
+	List<TaskInstance> selectByTaskId(Integer taskId);
 
 }

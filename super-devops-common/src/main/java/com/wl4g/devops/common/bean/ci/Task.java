@@ -47,7 +47,7 @@ public class Task extends BaseBean implements Serializable {
 
 	private List<AppInstance> instances;
 
-	private List<TaskDetail> taskDetails;
+	private List<TaskInstance> taskInstances;
 
 	private Integer[] instance;
 
@@ -136,12 +136,12 @@ public class Task extends BaseBean implements Serializable {
 		this.instances = instances;
 	}
 
-	public List<TaskDetail> getTaskDetails() {
-		return taskDetails;
+	public List<TaskInstance> getTaskInstances() {
+		return taskInstances;
 	}
 
-	public void setTaskDetails(List<TaskDetail> taskDetails) {
-		this.taskDetails = taskDetails;
+	public void setTaskInstances(List<TaskInstance> taskInstances) {
+		this.taskInstances = taskInstances;
 	}
 
 	public Integer getContactGroupId() {
@@ -181,6 +181,6 @@ public class Task extends BaseBean implements Serializable {
 		return "Task{" + "taskName='" + taskName + '\'' + ", appClusterId=" + appClusterId + ", projectId=" + projectId
 				+ ", branchName='" + branchName + '\'' + ", tarType=" + tarType + ", branchType='" + branchType + '\''
 				+ ", preCommand='" + preCommand + '\'' + ", postCommand='" + postCommand + '\'' + ", instances=" + instances
-				+ ", taskDetails=" + taskDetails + ", groupName='" + groupName + '\'' + '}';
+				+ ", taskInstances=" + taskInstances + ", groupName='" + groupName + '\'' + '}';
 	}
 }

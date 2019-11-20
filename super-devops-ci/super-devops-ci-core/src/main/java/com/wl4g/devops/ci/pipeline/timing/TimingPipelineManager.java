@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskInstance;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
@@ -103,13 +103,13 @@ public class TimingPipelineManager implements ApplicationRunner {
 		stopPipeline(key);
 
 		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
-		List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(trigger.getTaskId());
+		List<TaskInstance> taskInstances = taskDetailDao.selectByTaskId(trigger.getTaskId());
 		Assert.notNull(task, "task not found");
-		Assert.notEmpty(taskDetails, "taskDetails is empty");
+		Assert.notEmpty(taskInstances, "taskInstances is empty");
 		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
 		Assert.notNull(project, "project not found");
 
-		startPipeline(key, expression, trigger, project, task, taskDetails);
+		startPipeline(key, expression, trigger, project, task, taskInstances);
 	}
 
 	/**
@@ -120,14 +120,14 @@ public class TimingPipelineManager implements ApplicationRunner {
 	 * @param trigger
 	 * @param project
 	 * @param task
-	 * @param taskDetails
+	 * @param taskInstances
 	 */
 	public void startPipeline(String key, String expression, Trigger trigger, Project project, Task task,
-			List<TaskDetail> taskDetails) {
+			List<TaskInstance> taskInstances) {
 		log.info(
 				"into DynamicTask.startCron prarms::"
-						+ "triggerId = {} , expression = {} , trigger = {} , project = {} , task = {} , taskDetails = {} ",
-				key, expression, trigger, project, task, taskDetails);
+						+ "triggerId = {} , expression = {} , trigger = {} , project = {} , task = {} , taskInstances = {} ",
+				key, expression, trigger, project, task, taskInstances);
 		if (map.containsKey(key)) {
 			stopPipeline(key);
 		}
@@ -136,7 +136,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 		}
 
 		TimingPipelineProvider handler = beanFactory.getBean(TimingPipelineProvider.class,
-				new Object[] { trigger, project, task, taskDetails });
+				new Object[] { trigger, project, task, taskInstances});
 		ScheduledFuture<?> future = scheduler.schedule(handler, new CronTrigger(expression));
 		// TODO distributed cluster??
 		TimingPipelineManager.map.put(key, future);
