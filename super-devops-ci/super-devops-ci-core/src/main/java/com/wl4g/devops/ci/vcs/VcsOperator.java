@@ -83,7 +83,7 @@ public interface VcsOperator {
 				return null;
 			}
 			for (VcsProvider t : values()) {
-				if (String.valueOf(vcsProvider).equalsIgnoreCase(t.name())) {
+				if (vcsProvider.intValue()==t.getValue()) {
 					return t;
 				}
 			}

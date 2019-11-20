@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.*;
 import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
@@ -101,7 +102,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		if (log.isInfoEnabled()) {
 			log.info("New pipeline job for: {}", param);
 		}
-
+		logDefault("Creating replace remote directory for test");
 		// Obtain task details.
 		List<String> instanceIds = safeList(taskDetailDao.selectByTaskId(param.getTaskId())).stream()
 				.map(detail -> String.valueOf(detail.getInstanceId())).collect(toList());
