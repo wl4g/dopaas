@@ -28,7 +28,7 @@ public interface TaskHistoryBuildCommandDao {
 
 	TaskBuildCommand selectByPrimaryKey(Integer id);
 
-	List<TaskBuildCommand> selectByTaskHisId(Integer taskHisId);
+	List<TaskBuildCommand> selectByTaskHisId(Integer taskId);
 
 	int updateByPrimaryKeySelective(TaskBuildCommand record);
 

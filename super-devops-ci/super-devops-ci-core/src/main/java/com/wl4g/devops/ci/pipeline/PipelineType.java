@@ -42,12 +42,12 @@ public abstract class PipelineType {
 	/**
 	 * Python3 standard provider alias.
 	 */
-	final public static String PYTHON3_STANDARD = "Python3Standard";
+	final public static String PYTHON3_STANDARD = "Python3";
 
 	/**
 	 * GOLANG standard provider alias.
 	 */
-	final public static String GOLANG_STANDARD = "GolangStandard";
+	final public static String GOLANG_STANDARD = "Golang";
 
 	/**
 	 * Docker native provider alias.
