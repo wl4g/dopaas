@@ -15,22 +15,20 @@
  */
 package com.wl4g.devops.common.utils.cli;
 
-import ch.ethz.ssh2.*;
-
-import static ch.ethz.ssh2.ChannelCondition.*;
-
-import java.io.*;
-
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.SCPClient;
+import ch.ethz.ssh2.SCPOutputStream;
+import ch.ethz.ssh2.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.wl4g.devops.common.utils.io.ByteStreams2.*;
+import java.io.*;
 
+import static ch.ethz.ssh2.ChannelCondition.*;
+import static com.wl4g.devops.common.utils.io.ByteStreams2.unsafeReadFullyToString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.*;
 
 /**
  * SSH connection utility tools.
@@ -113,7 +111,8 @@ public abstract class SSH2Utils {
 
 			// Transfer send file.
 			SCPClient scp = new SCPClient(conn);
-			sos = scp.put(localFile.getName(), localFile.length(), remoteDir, "0744");
+
+			sos = scp.put(localFile.getAbsolutePath(), localFile.length(), remoteDir, "0744");
 
 			fis = new FileInputStream(localFile);
 			int i = 0;
