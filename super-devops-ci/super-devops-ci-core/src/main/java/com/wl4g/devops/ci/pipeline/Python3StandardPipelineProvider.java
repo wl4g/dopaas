@@ -46,7 +46,7 @@ public class Python3StandardPipelineProvider extends BasedPhysicalBackupPipeline
 
 	@Override
 	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(Python3StandardPipeDeployer.class, args);
 	}
 

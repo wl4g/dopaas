@@ -44,7 +44,7 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 
 	@Override
 	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(SpringExecutableJarPipeDeployer.class, args);
 	}
 

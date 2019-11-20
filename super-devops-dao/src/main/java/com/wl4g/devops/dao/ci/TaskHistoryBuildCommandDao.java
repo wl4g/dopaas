@@ -13,33 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.ci;
+package com.wl4g.devops.dao.ci;
 
-import java.io.Serializable;
+import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 
-import com.wl4g.devops.common.bean.BaseBean;
+import java.util.List;
 
-public class TaskDetail extends BaseBean implements Serializable {
+public interface TaskHistoryBuildCommandDao {
+	int deleteByPrimaryKey(Integer id);
 
-	private static final long serialVersionUID = 381411777614066880L;
+	int insert(TaskBuildCommand record);
 
-	private Integer taskId;
+	int insertSelective(TaskBuildCommand record);
 
-	private Integer instanceId;
+	TaskBuildCommand selectByPrimaryKey(Integer id);
 
-	public Integer getTaskId() {
-		return taskId;
-	}
+	List<TaskBuildCommand> selectByTaskHisId(Integer taskHisId);
 
-	public void setTaskId(Integer taskId) {
-		this.taskId = taskId;
-	}
+	int updateByPrimaryKeySelective(TaskBuildCommand record);
 
-	public Integer getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(Integer instanceId) {
-		this.instanceId = instanceId;
-	}
+	int updateByPrimaryKey(TaskBuildCommand record);
 }

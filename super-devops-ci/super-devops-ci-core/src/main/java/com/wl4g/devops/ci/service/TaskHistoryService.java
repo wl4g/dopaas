@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.service;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public interface TaskHistoryService {
 
 	PageModel list(PageModel pm, String groupName, String projectName, String branchName);
 
-	List<TaskHistoryDetail> getDetailByTaskId(Integer id);
+	List<TaskHistoryInstance> getDetailByTaskId(Integer id);
 
 	TaskHistory getById(Integer id);
 

@@ -46,7 +46,7 @@ public class GolangStandardPipelineProvider extends BasedPhysicalBackupPipelineP
 
 	@Override
 	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(GolangStandardPipeDeployer.class, args);
 	}
 

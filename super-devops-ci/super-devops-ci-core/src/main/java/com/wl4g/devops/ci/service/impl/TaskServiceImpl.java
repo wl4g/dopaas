@@ -100,19 +100,19 @@ public class TaskServiceImpl implements TaskService {
 		task.setDelFlag(DEL_FLAG_NORMAL);
 		taskDao.insertSelective(task);
 		int taskId = task.getId();
-		List<TaskDetail> taskDetails = new ArrayList<>();
+		List<TaskInstance> taskInstances = new ArrayList<>();
 		for (Integer instanceId : instanceIds) {
-			TaskDetail taskDetail = new TaskDetail();
-			taskDetail.setTaskId(taskId);
-			taskDetail.setInstanceId(instanceId);
-			taskDetailDao.insertSelective(taskDetail);
-			taskDetails.add(taskDetail);
+			TaskInstance taskInstance = new TaskInstance();
+			taskInstance.setTaskId(taskId);
+			taskInstance.setInstanceId(instanceId);
+			taskDetailDao.insertSelective(taskInstance);
+			taskInstances.add(taskInstance);
 		}
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setTaskId(taskId);
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
-		task.setTaskDetails(taskDetails);
+		task.setTaskInstances(taskInstances);
 		return task;
 	}
 
@@ -120,21 +120,21 @@ public class TaskServiceImpl implements TaskService {
 		task.preUpdate();
 		task.preUpdate();
 		taskDao.updateByPrimaryKeySelective(task);
-		List<TaskDetail> taskDetails = new ArrayList<>();
+		List<TaskInstance> taskInstances = new ArrayList<>();
 		taskDetailDao.deleteByTaskId(task.getId());
 		for (Integer instanceId : instanceIds) {
-			TaskDetail taskDetail = new TaskDetail();
-			taskDetail.setTaskId(task.getId());
-			taskDetail.setInstanceId(instanceId);
-			taskDetailDao.insertSelective(taskDetail);
-			taskDetails.add(taskDetail);
+			TaskInstance taskInstance = new TaskInstance();
+			taskInstance.setTaskId(task.getId());
+			taskInstance.setInstanceId(instanceId);
+			taskDetailDao.insertSelective(taskInstance);
+			taskInstances.add(taskInstance);
 		}
 		taskBuildCommandDao.deleteByTaskId(task.getId());
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setTaskId(task.getId());
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
-		task.setTaskDetails(taskDetails);
+		task.setTaskInstances(taskInstances);
 		return task;
 	}
 
@@ -146,8 +146,8 @@ public class TaskServiceImpl implements TaskService {
 		Task task = getTaskDetailById(id);
 		data.put("task", task);
 		// Environment.
-		for (TaskDetail taskDetail : task.getTaskDetails()) {
-			Integer instanceId = taskDetail.getInstanceId();
+		for (TaskInstance taskInstance : task.getTaskInstances()) {
+			Integer instanceId = taskInstance.getInstanceId();
 			AppInstance instance = appInstanceDao.selectByPrimaryKey(instanceId);
 			if (instance != null && instance.getEnvType() != null) {
 				data.put("envId", instance.getEnvType());
@@ -155,9 +155,9 @@ public class TaskServiceImpl implements TaskService {
 			}
 		}
 		// Instances.
-		Integer[] instances = new Integer[task.getTaskDetails().size()];
-		for (int i = 0; i < task.getTaskDetails().size(); i++) {
-			instances[i] = task.getTaskDetails().get(i).getInstanceId();
+		Integer[] instances = new Integer[task.getTaskInstances().size()];
+		for (int i = 0; i < task.getTaskInstances().size(); i++) {
+			instances[i] = task.getTaskInstances().get(i).getInstanceId();
 		}
 		data.put("instances", instances);
 		// Commands.
@@ -185,8 +185,8 @@ public class TaskServiceImpl implements TaskService {
 		Assert.notNull(taskId, "taskId is null");
 		Task task = taskDao.selectByPrimaryKey(taskId);
 		Assert.notNull(task, "not found task");
-		List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
-		task.setTaskDetails(taskDetails);
+		List<TaskInstance> taskInstances = taskDetailDao.selectByTaskId(taskId);
+		task.setTaskInstances(taskInstances);
 		return task;
 	}
 

@@ -39,11 +39,8 @@ import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.common.bean.ci.*;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.support.beans.prototype.DelegateAlias;
 
@@ -194,58 +191,58 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipeDeployer mvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new MvnAssembleTarPipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new MvnAssembleTarPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public NpmViewPipeDeployer npmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new NpmViewPipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new NpmViewPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipeDeployer springExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider,
-			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		return new SpringExecutableJarPipeDeployer(provider, instance, taskHistoryDetails);
+			AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
+		return new SpringExecutableJarPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Python3StandardPipeDeployer python3StandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new Python3StandardPipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new Python3StandardPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public GolangStandardPipeDeployer golangStandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new GolangStandardPipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new GolangStandardPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipeDeployer dockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new DockerNativePipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new DockerNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public RktNativePipeDeployer rktNativePipeDeployer(RktNativePipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new RktNativePipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new RktNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	// --- TIMING SCHEDULE ---
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
-		return new TimingPipelineProvider(trigger, project, task, taskDetails);
+	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
+		return new TimingPipelineProvider(trigger, project, task, taskInstances);
 	}
 
 	@Bean
