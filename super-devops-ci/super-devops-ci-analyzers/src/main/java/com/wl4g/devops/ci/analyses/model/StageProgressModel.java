@@ -30,72 +30,72 @@ public class StageProgressModel implements Serializable {
 	private static final long serialVersionUID = 8386866351185047399L;
 
 	/**
-	 * Stage step label.
+	 * (stage label) Stage step label.
 	 */
-	private String stageLabel;
+	private AnalysisStage stage;
 
 	/**
-	 * Total number of files to be analyzed
+	 * (totalArchives) Total number of files to be analyzed
 	 */
-	private int totalArchives;
+	private int archives;
 
 	/**
-	 * Number of task phases expected to be performed
+	 * (totalStages) Number of task phases expected to be performed
 	 */
-	private int totalStages;
+	private int stages;
 
 	/**
-	 * Number of expected task phases completed
+	 * (passStage) Number of expected task phases completed
 	 */
 	private int passStage = 0;
 
 	/**
-	 * Number of classes analyzed in the current stage
+	 * (stagePassAnalysised) Number of classes analyzed in the current stage
 	 */
-	private int stagePassAnalysised;
+	private int passAnalysis;
 
 	/**
-	 * Total number of categories to be analyzed at the current stage
+	 * (stageGoalAnalysised) Total number of categories to be analyzed at the
+	 * current stage
 	 */
-	private int stageGoalAnalysised;
+	private int goalAnalysis;
 
 	public StageProgressModel() {
 		super();
 	}
 
-	public StageProgressModel(String stageLabel, int totalArchives, int totalStages, int passStage, int stagePassAnalysised,
-			int stageGoalAnalysised) {
+	public StageProgressModel(AnalysisStage stage, int archives, int stages, int passStage, int passAnalysis, int goalAnalysis) {
 		super();
-		this.stageLabel = stageLabel;
-		this.totalArchives = totalArchives;
-		this.totalStages = totalStages;
+		this.stage = stage;
+		this.archives = archives;
+		this.stages = stages;
 		this.passStage = passStage;
-		this.stagePassAnalysised = stagePassAnalysised;
-		this.stageGoalAnalysised = stageGoalAnalysised;
+		this.passAnalysis = passAnalysis;
+		this.goalAnalysis = goalAnalysis;
 	}
 
-	public String getStageLabel() {
-		return stageLabel;
+	public AnalysisStage getStage() {
+		return stage;
 	}
 
-	public void setStageLabel(String stageLabel) {
-		this.stageLabel = stageLabel;
+	public void setStageLabel(AnalysisStage stage) {
+		this.stage = stage;
 	}
 
-	public int getTotalArchives() {
-		return totalArchives;
+	public int getArchives() {
+		return archives;
 	}
 
-	public void setTotalArchives(int totalArchives) {
-		this.totalArchives = totalArchives;
+	public void setArchives(int totalArchives) {
+		this.archives = totalArchives;
 	}
 
-	public int getTotalStages() {
-		return totalStages;
+	public int getStages() {
+		return stages;
 	}
 
-	public void setTotalStages(int totalStages) {
-		this.totalStages = totalStages;
+	public void setStages(int totalStages) {
+		this.stages = totalStages;
 	}
 
 	public int getPassStage() {
@@ -106,25 +106,44 @@ public class StageProgressModel implements Serializable {
 		this.passStage = passStage;
 	}
 
-	public int getStagePassAnalysised() {
-		return stagePassAnalysised;
+	public int getPassAnalysis() {
+		return passAnalysis;
 	}
 
-	public void setStagePassAnalysised(int stagePassAnalysised) {
-		this.stagePassAnalysised = stagePassAnalysised;
+	public void setPassAnalysis(int stagePassAnalysised) {
+		this.passAnalysis = stagePassAnalysised;
 	}
 
-	public int getStageGoalAnalysised() {
-		return stageGoalAnalysised;
+	public int getGoalAnalysis() {
+		return goalAnalysis;
 	}
 
-	public void setStageGoalAnalysised(int stageGoalAnalysised) {
-		this.stageGoalAnalysised = stageGoalAnalysised;
+	public void setGoalAnalysis(int stageGoalAnalysised) {
+		this.goalAnalysis = stageGoalAnalysised;
 	}
 
 	@Override
 	public String toString() {
 		return toJSONString(this);
+	}
+
+	/**
+	 * Analysis stage definitions.
+	 * 
+	 * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version v1.0.0 2019-11-21
+	 * @since
+	 */
+	public static enum AnalysisStage {
+
+		READY,
+
+		SCAN_START, SCANING, SCAN_END,
+
+		ANALYSIS_START, ANALYSING, ANALYSIS_END,
+
+		DONE;
+
 	}
 
 }
