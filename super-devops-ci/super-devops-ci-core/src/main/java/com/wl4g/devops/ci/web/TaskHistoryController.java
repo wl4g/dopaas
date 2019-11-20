@@ -81,7 +81,7 @@ public class TaskHistoryController extends BaseController {
 		resp.forMap().put("group", taskHistory.getGroupName());
 		resp.forMap().put("branch", taskHistory.getBranchName());
 		resp.forMap().put("result", taskHistory.getResult());
-		resp.forMap().put("taskDetails", taskHistoryDetails);
+		resp.forMap().put("taskInstances", taskHistoryDetails);
 		return resp;
 	}
 
