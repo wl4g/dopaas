@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.core.context;
 
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
@@ -43,10 +43,10 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private List<AppInstance> instances;
 	final private TaskHistory taskHistory;
 	final private TaskHistory refTaskHistory;
-	final private List<TaskHistoryDetail> taskHistoryDetails;
+	final private List<TaskHistoryInstance> taskHistoryInstances;
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
-			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
+			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryInstance> taskHistoryInstances) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
@@ -58,7 +58,7 @@ public class DefaultPipelineContext implements PipelineContext {
 		this.taskHistory = taskHistory;
 		this.refTaskHistory = refTaskHistory;
 		this.instances = !isEmpty(instances) ? instances : emptyList();
-		this.taskHistoryDetails = !isEmpty(taskHistoryDetails) ? taskHistoryDetails : emptyList();
+		this.taskHistoryInstances = !isEmpty(taskHistoryInstances) ? taskHistoryInstances : emptyList();
 	}
 
 	@Override
@@ -92,8 +92,8 @@ public class DefaultPipelineContext implements PipelineContext {
 	}
 
 	@Override
-	public List<TaskHistoryDetail> getTaskHistoryDetails() {
-		return taskHistoryDetails;
+	public List<TaskHistoryInstance> getTaskHistoryInstances() {
+		return taskHistoryInstances;
 	}
 
 }

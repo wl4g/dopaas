@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
 import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
@@ -44,8 +44,8 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public GenericHostPipeDeployer(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(provider, instance, taskHistoryDetails);
+	public GenericHostPipeDeployer(P provider, AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
+		super(provider, instance, taskHistoryInstances);
 	}
 
 	@Override

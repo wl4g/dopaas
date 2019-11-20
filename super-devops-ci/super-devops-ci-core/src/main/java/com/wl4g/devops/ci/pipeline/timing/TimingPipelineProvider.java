@@ -23,7 +23,7 @@ import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
+import com.wl4g.devops.common.bean.ci.TaskInstance;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.dao.ci.TriggerDao;
@@ -58,15 +58,15 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 	final protected Task task;
 	final protected Project project;
-	final protected List<TaskDetail> taskDetails;
+	final protected List<TaskInstance> taskInstances;
 	protected Trigger trigger;
 
-	public TimingPipelineProvider(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
+	public TimingPipelineProvider(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
 		super(PipelineContext.EMPTY);
 		this.trigger = trigger;
 		this.project = project;
 		this.task = task;
-		this.taskDetails = taskDetails;
+		this.taskInstances = taskInstances;
 	}
 
 	@Override

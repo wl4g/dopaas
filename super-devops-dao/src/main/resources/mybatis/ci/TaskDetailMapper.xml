@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.devops.dao.ci.TaskDetailDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskDetail" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskInstance" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="instance_id" property="instanceId" jdbcType="INTEGER" />
@@ -12,21 +12,21 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from ci_task_detail
+    from ci_task_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from ci_task_detail
+    delete from ci_task_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
-    insert into ci_task_detail (id, task_id, instance_id
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskInstance" >
+    insert into ci_task_instance (id, task_id, instance_id
       )
     values (#{id,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
-    insert into ci_task_detail
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskInstance" >
+    insert into ci_task_instance
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -50,8 +50,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
-    update ci_task_detail
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskInstance" >
+    update ci_task_instance
     <set >
       <if test="taskId != null" >
         task_id = #{taskId,jdbcType=INTEGER},
@@ -62,21 +62,21 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskDetail" >
-    update ci_task_detail
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskInstance" >
+    update ci_task_instance
     set task_id = #{taskId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
   <delete id="deleteByTaskId" parameterType="java.lang.Integer" >
-    delete from ci_task_detail
+    delete from ci_task_instance
     where task_id = #{taskId,jdbcType=INTEGER}
   </delete>
 
   <select id="getUsedInstance" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select td.* from ci_task t
-    left join ci_task_detail td on t.id=td.task_id
+    left join ci_task_instance td on t.id=td.task_id
     where t.app_cluster_id=#{appClusterId,jdbcType=INTEGER}
     <if test="taskId != null">
       and t.id !=#{taskId,jdbcType=INTEGER}
@@ -85,7 +85,7 @@
   <select id="selectByTaskId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
-    from ci_task_detail
+    from ci_task_instance
     where task_id = #{taskId,jdbcType=INTEGER}
   </select>
 </mapper>
