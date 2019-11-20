@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.core.context;
 
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
@@ -38,7 +38,7 @@ public abstract interface PipelineContext {
 	final public static PipelineContext EMPTY = new PipelineContext() {
 
 		@Override
-		public List<TaskHistoryDetail> getTaskHistoryDetails() {
+		public List<TaskHistoryInstance> getTaskHistoryInstances() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -85,6 +85,6 @@ public abstract interface PipelineContext {
 
 	TaskHistory getRefTaskHistory();
 
-	List<TaskHistoryDetail> getTaskHistoryDetails();
+	List<TaskHistoryInstance> getTaskHistoryInstances();
 
 }

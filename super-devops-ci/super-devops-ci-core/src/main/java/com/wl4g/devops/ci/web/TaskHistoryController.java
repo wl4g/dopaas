@@ -19,7 +19,7 @@ import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -77,11 +77,11 @@ public class TaskHistoryController extends BaseController {
 		log.info("into TaskHistoryController.detail prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
 		TaskHistory taskHistory = taskHistoryService.getById(taskId);
-		List<TaskHistoryDetail> taskHistoryDetails = taskHistoryService.getDetailByTaskId(taskId);
+		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryService.getDetailByTaskId(taskId);
 		resp.forMap().put("group", taskHistory.getGroupName());
 		resp.forMap().put("branch", taskHistory.getBranchName());
 		resp.forMap().put("result", taskHistory.getResult());
-		resp.forMap().put("taskInstances", taskHistoryDetails);
+		resp.forMap().put("taskInstances", taskHistoryInstances);
 		return resp;
 	}
 

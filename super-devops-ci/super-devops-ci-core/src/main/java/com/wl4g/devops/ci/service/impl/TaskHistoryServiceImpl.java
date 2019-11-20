@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
@@ -68,7 +68,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	}
 
 	@Override
-	public List<TaskHistoryDetail> getDetailByTaskId(Integer id) {
+	public List<TaskHistoryInstance> getDetailByTaskId(Integer id) {
 		return taskHistoryDetailDao.getDetailByTaskId(id);
 	}
 
@@ -112,12 +112,12 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setRemark(remark);
 		taskHistoryDao.insertSelective(taskHistory);
 		for (AppInstance instance : instances) {
-			TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
-			taskHistoryDetail.preInsert();
-			taskHistoryDetail.setTaskId(taskHistory.getId());
-			taskHistoryDetail.setInstanceId(instance.getId());
-			taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
-			taskHistoryDetailDao.insertSelective(taskHistoryDetail);
+			TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();
+			taskHistoryInstance.preInsert();
+			taskHistoryInstance.setTaskId(taskHistory.getId());
+			taskHistoryInstance.setInstanceId(instance.getId());
+			taskHistoryInstance.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
+			taskHistoryDetailDao.insertSelective(taskHistoryInstance);
 		}
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setId(null);
@@ -174,12 +174,12 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 
 	@Override
 	public void updateDetailStatusAndResult(int taskDetailId, int status, String result) {
-		TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
-		taskHistoryDetail.preUpdate();
-		taskHistoryDetail.setId(taskDetailId);
-		taskHistoryDetail.setStatus(status);
-		taskHistoryDetail.setResult(result);
-		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryDetail);
+		TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();
+		taskHistoryInstance.preUpdate();
+		taskHistoryInstance.setId(taskDetailId);
+		taskHistoryInstance.setStatus(status);
+		taskHistoryInstance.setResult(result);
+		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryInstance);
 	}
 
 }
