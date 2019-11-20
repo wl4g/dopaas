@@ -23,24 +23,20 @@ import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
-
-import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
-import static com.wl4g.devops.ci.utils.LogHolder.getDefault;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_FAIL;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_RUNNING;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_SUCCESS;
-import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
+import static com.wl4g.devops.ci.utils.LogHolder.getDefault;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.Assert.*;
 
 /**
  * Abstract deploying transfer job.
@@ -104,15 +100,19 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
 
 			// Call PRE commands.
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
-					instance.getSshKey());
+			if(StringUtils.isNotBlank(taskHisy.getPreCommand())){
+				provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
+						instance.getSshKey());
+			}
 
 			// Distributed deploying to remote.
 			doRemoteDeploying(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
 
 			// Call post remote commands (e.g. restart)
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
-					instance.getSshKey());
+			if(StringUtils.isNotBlank(taskHisy.getPostCommand())){
+				provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
+						instance.getSshKey());
+			}
 
 			// Update status to success.
 			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, getLogMessage(null));

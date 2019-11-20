@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import static java.util.Objects.isNull;
-import static org.springframework.util.Assert.notNull;
+import com.wl4g.devops.common.bean.BaseBean;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.common.bean.BaseBean;
+import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * CICD project with VCS credentials information.
@@ -174,7 +174,7 @@ public class Vcs extends BaseBean {
 				return null;
 			}
 			for (VcsAuthType t : values()) {
-				if (String.valueOf(vcsAuthType).equalsIgnoreCase(t.name())) {
+				if (vcsAuthType.intValue()==t.getValue()) {
 					return t;
 				}
 			}
