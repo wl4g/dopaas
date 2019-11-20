@@ -130,7 +130,7 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 */
 	public RespBase<D> setCode(int retCode) {
-		this.code = newCode(retCode, "");
+		this.code = newCode(retCode);
 		return this;
 	}
 
@@ -657,6 +657,16 @@ public class RespBase<D> implements Serializable {
 				return codeValueDefinition.get(nameOrCode);
 			}
 			return retCode;
+		}
+
+		/**
+		 * New create custom status code, refer to {@link #_$$}
+		 * 
+		 * @param errcode
+		 * @return
+		 */
+		final public static RetCode newCode(int errcode) {
+			return new RetCode(errcode, null);
 		}
 
 		/**

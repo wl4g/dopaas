@@ -18,16 +18,9 @@ package com.wl4g.devops.ci.analyses.spotbugs.engine;
 import static org.springframework.util.Assert.notNull;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.ci.analyses.model.StageProgressModel;
-
-import edu.umd.cs.findbugs.FindBugsProgress;
-import edu.umd.cs.findbugs.L10N;
+import com.wl4g.devops.ci.analyses.model.StageProgressModel.AnalysisStage;
 
 /***
  * {@link PrintStream} analyzing progress.</br>
@@ -36,16 +29,10 @@ import edu.umd.cs.findbugs.L10N;
  * @version v1.0 2019年11月18日
  * @since
  */
-public class PrintAnalyzingProgress implements FindBugsProgress {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+public class PrintAnalyzingProgress extends AbstractAnalyzingProgress {
 
+	/** {@link PrintStream} */
 	final protected PrintStream out;
-
-	private int totalArchives = 0;
-	private List<Integer> totalStageData = new ArrayList<>();
-	private int passStage = 0;
-	private int stageGoalAnalysised = 0;
-	private int passStageAnalysised = 0;
 
 	public PrintAnalyzingProgress(PrintStream out) {
 		notNull(out, "null PrintStream");
@@ -53,54 +40,7 @@ public class PrintAnalyzingProgress implements FindBugsProgress {
 	}
 
 	@Override
-	public void reportNumberOfArchives(int numArchives) {
-		String stage = L10N.getLocalString("progress.scanning_archives", "Scanning archives...");
-		updateStage(stage);
-	}
-
-	@Override
-	public void startArchive(String name) {
-		updateStage(name);
-	}
-
-	@Override
-	public void finishArchive() {
-		++this.totalArchives;
-		updateStage("已检索:" + totalArchives);
-	}
-
-	@Override
-	public void predictPassCount(int[] totalStages) {
-		for (int stages : totalStages) {
-			this.totalStageData.add(stages);
-		}
-	}
-
-	@Override
-	public void startAnalysis(int stageGoalAnalysised) {
-		this.stageGoalAnalysised = stageGoalAnalysised;
-		this.passStageAnalysised = 0; // Reset
-		++this.passStage;
-
-		String stage = L10N.getLocalString("progress.analyzing_classes", "Analyzing classes...");
-		updateStage(stage);
-	}
-
-	@Override
-	public void finishClass() {
-		++this.passStageAnalysised;
-		updateStage("已分析:" + passStageAnalysised + "/" + stageGoalAnalysised + "/" + passStage);
-	}
-
-	@Override
-	public void finishPerClassAnalysis() {
-		String stage = L10N.getLocalString("progress.finishing_analysis", "Finishing archives...");
-		updateStage(stage);
-	}
-
-	private void updateStage(String stageLabel) {
-		StageProgressModel model = new StageProgressModel(stageLabel, totalArchives, totalStageData.size(), passStage,
-				passStageAnalysised, stageGoalAnalysised);
+	protected void doStage(AnalysisStage stage, StageProgressModel model) {
 		this.out.println(model);
 	}
 
