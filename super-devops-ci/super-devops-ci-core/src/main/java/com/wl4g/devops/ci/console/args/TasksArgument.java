@@ -40,11 +40,11 @@ public class TasksArgument implements Serializable {
 	private String groupName;
 	@ShellOption(opt = "b", lopt = "branchName", help = "task project branch name", required = false)
 	private String branchName;
-	@ShellOption(opt = "t", lopt = "tarType", help = "task pipeline provider type", required = false)
+	@ShellOption(opt = "P", lopt = "tarType", help = "task pipeline provider type", required = false)
 	private Integer tarType;
-	@ShellOption(opt = "s", lopt = "startDate", help = "task start date(yyyy-MM-dd HH:mm:ss)", required = false)
+	@ShellOption(opt = "S", lopt = "startDate", help = "task start date(yyyy-MM-dd HH:mm:ss)", required = false)
 	private String startDate;
-	@ShellOption(opt = "e", lopt = "endDate", help = "task end date(yyyy-MM-dd HH:mm:ss)", required = false)
+	@ShellOption(opt = "E", lopt = "endDate", help = "task end date(yyyy-MM-dd HH:mm:ss)", required = false)
 	private String endDate;
 
 	public Integer getPageNum() {
