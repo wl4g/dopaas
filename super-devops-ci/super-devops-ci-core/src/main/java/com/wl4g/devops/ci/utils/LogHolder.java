@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.utils;
 
 import com.google.common.annotations.Beta;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -150,7 +149,6 @@ public abstract class LogHolder {
 	 * @since
 	 */
 	public static class LogAppender {
-		final public static LogAppender EMPTY = new LogAppender(StringUtils.EMPTY);
 
 		/** Log appender key-name. */
 		final private String key;
