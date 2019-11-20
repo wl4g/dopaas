@@ -35,7 +35,7 @@ import static org.springframework.util.Assert.*;
  * @since
  */
 @Beta
-public class LogHolder {
+public abstract class LogHolder {
 
 	/** Current default logs appender ID. */
 	final private static String DEFAULT_LOG_APPENDER = "DefaultLogAppenderID";
