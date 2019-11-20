@@ -29,7 +29,7 @@ import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
 public class SessionQueryClientModel extends SessionQueryModel {
 	private static final long serialVersionUID = 2579844578836104919L;
 
-	@NotNull(message = "Iam server id must not be empty")
+	@NotNull(message = "(iamServerId) can't empty")
 	private Integer id;
 
 	public Integer getId() {

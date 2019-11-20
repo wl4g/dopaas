@@ -18,6 +18,8 @@ package com.wl4g.devops.common.utils.lang;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import static org.springframework.util.Assert.notNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -148,13 +150,11 @@ public abstract class DateUtils2 extends DateUtils {
 	 * 得到日期字符串 默认格式（yyyy-MM-dd） pattern可以为："yyyy-MM-dd" "HH:mm:ss" "E"
 	 */
 	public static String formatDate(Date date, Object... pattern) {
-		String formatDate = null;
+		notNull(date, "null Date");
 		if (pattern != null && pattern.length > 0) {
-			formatDate = DateFormatUtils.format(date, pattern[0].toString());
-		} else {
-			formatDate = DateFormatUtils.format(date, "yyyy-MM-dd");
+			return DateFormatUtils.format(date, pattern[0].toString());
 		}
-		return formatDate;
+		return DateFormatUtils.format(date, "yyyy-MM-dd");
 	}
 
 	/**

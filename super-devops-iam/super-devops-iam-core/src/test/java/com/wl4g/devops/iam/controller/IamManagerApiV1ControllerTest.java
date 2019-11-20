@@ -29,7 +29,7 @@ public class IamManagerApiV1ControllerTest {
 
 	public static void main(String[] args) {
 		// for controller output(model).
-		RespBase<SessionAttributeModel> resp11 = new RespBase<>(RetCode.create(4001, "message2"));
+		RespBase<SessionAttributeModel> resp11 = new RespBase<>(RetCode.newCode(4001, "message2"));
 		resp11.forMap().put("testKey", newSessionAttributeModel());
 
 		String json11 = toJSONString(resp11);
@@ -42,7 +42,7 @@ public class IamManagerApiV1ControllerTest {
 		System.out.println("===================================================");
 
 		// for controller output(model).
-		RespBase<SessionAttributeModel> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
+		RespBase<SessionAttributeModel> resp21 = new RespBase<>(RetCode.newCode(4001, "message2"));
 		resp21.setData(newSessionAttributeModel());
 
 		String json21 = toJSONString(resp21);
