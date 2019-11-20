@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.ci.analyses.model;
 
+import java.io.Serializable;
+
 import com.wl4g.devops.ci.analyses.CodesAnalyzer.AnalyzerKind;
 
 /**
@@ -24,7 +26,8 @@ import com.wl4g.devops.ci.analyses.CodesAnalyzer.AnalyzerKind;
  * @version v1.0 2019年11月19日
  * @since
  */
-public class AnalysisQueryModel {
+public class AnalysisQueryModel implements Serializable {
+	private static final long serialVersionUID = -9071662524738147385L;
 
 	/**
 	 * Analyzer kind. {@link AnalyzerKind}

@@ -86,7 +86,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 			long maxIntervalMs = getGlobalJobCleanMaxIntervalMs();
 			sleepRandom(DEFAULT_MIN_WATCH_MS, maxIntervalMs);
 			if (log.isInfoEnabled()) {
-				log.info("Global jobs timeout finalizer cleaning up for global jobCleanMaxIntervalMs:{} ... ", maxIntervalMs);
+				log.info("Global jobs timeout cleanup for maxIntervalMs: {}ms ... ", maxIntervalMs);
 			}
 
 			Lock lock = lockManager.getLock(cleanupFinalizerLockName);
@@ -95,10 +95,13 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
 					taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutMs());
-					log.info("Updated pipeline timeout jobs, with jobTimeoutMs:{}, global jobCleanMaxIntervalMs:{}",
+					if (log.isDebugEnabled()) {
+						log.debug("Updated pipeline timeout jobs, with jobTimeoutMs:{}, global jobCleanMaxIntervalMs:{}",
+								config.getBuild().getJobTimeoutMs(), maxIntervalMs);
+					}
+				} else if (log.isDebugEnabled()) {
+					log.debug("Skip cleanup jobs ... jobTimeoutMs:{}, global jobCleanMaxIntervalMs:{}",
 							config.getBuild().getJobTimeoutMs(), maxIntervalMs);
-				} else {
-					log.info("Skip cleaning up ...");
 				}
 			} catch (Throwable ex) {
 				log.error("Failed to timeout jobs cleanup", ex);

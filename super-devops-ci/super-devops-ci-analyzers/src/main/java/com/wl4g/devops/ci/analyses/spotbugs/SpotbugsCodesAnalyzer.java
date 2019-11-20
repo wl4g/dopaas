@@ -23,6 +23,8 @@ import com.wl4g.devops.ci.analyses.AbstractCodesAnalyzer;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
+import com.wl4g.devops.ci.analyses.spotbugs.engine.SpotbugsAnalyzerEngine;
+import com.wl4g.devops.support.cli.DestroableProcessManager.ProcessCallback;
 
 /**
  * SPOTBUGS code scanner analyzer. </br>
@@ -48,7 +50,18 @@ public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysi
 	protected void doAnalyze(SpotbugsAnalysingModel model) throws Exception {
 		String command = getSpotbugsAnalyzerRunCommand(model);
 		try {
-			processManager.exec(model.getProjectName(), command, 15 * 60 * 1000);
+			processManager.exec(model.getProjectName(), command, new ProcessCallback() {
+				@Override
+				public void onStdout(byte[] data) {
+
+				}
+
+				@Override
+				public void onStderr(byte[] err) {
+					throw new IllegalStateException(new String(err));
+				}
+			});
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -72,7 +85,8 @@ public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysi
 		cmd.append(File.pathSeparator);
 		cmd.append(JAVA_CLASS_PATH);
 		cmd.append(" ");
-		cmd.append(config.getSpotbugs().getAnalyzerRunClass());
+		// See:edu.umd.cs.findbugs.FindBugs2
+		cmd.append(SpotbugsAnalyzerEngine.class.getName());
 		return cmd.toString();
 	}
 

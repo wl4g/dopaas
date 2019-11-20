@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.ci.analyses.model;
 
+import java.io.Serializable;
+
 /**
  * Analysis result model.
  * 
@@ -22,6 +24,7 @@ package com.wl4g.devops.ci.analyses.model;
  * @version v1.0 2019年11月19日
  * @since
  */
-public class AnalysisResultModel {
+public class AnalysisResultModel implements Serializable {
+	private static final long serialVersionUID = 3732719190938021292L;
 
 }

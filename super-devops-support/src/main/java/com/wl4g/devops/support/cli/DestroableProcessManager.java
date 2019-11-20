@@ -45,7 +45,7 @@ public interface DestroableProcessManager {
 	 */
 	default void execFile(String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
-		execFile(null, multiCommands, execFile, stdout, timeoutMs);
+		execFileWaitFor(null, multiCommands, execFile, stdout, timeoutMs);
 	}
 
 	/**
@@ -59,9 +59,11 @@ public interface DestroableProcessManager {
 	 *            timeout Ms.
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
+	 * @throws InterruptedException
 	 */
-	default void exec(String cmd, File stdout, long timeoutMs) throws IllegalProcessStateException, IOException {
-		exec(null, cmd, null, stdout, timeoutMs);
+	default void execWaitFor(String cmd, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, IOException, InterruptedException {
+		execWaitFor(null, cmd, null, stdout, timeoutMs);
 	}
 
 	/**
@@ -77,9 +79,11 @@ public interface DestroableProcessManager {
 	 *            timeout Ms.
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
+	 * @throws InterruptedException
 	 */
-	default void exec(String cmd, File pwdDir, File stdout, long timeoutMs) throws IllegalProcessStateException, IOException {
-		exec(null, cmd, pwdDir, stdout, timeoutMs);
+	default void execWaitFor(String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, IOException, InterruptedException {
+		execWaitFor(null, cmd, pwdDir, stdout, timeoutMs);
 	}
 
 	/**
@@ -97,9 +101,9 @@ public interface DestroableProcessManager {
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
 	 */
-	default void exec(String processId, String cmd, long timeoutMs)
+	default void execWaitFor(String processId, String cmd, long timeoutMs)
 			throws InterruptedException, IllegalProcessStateException, IOException {
-		exec(processId, cmd, null, null, timeoutMs);
+		execWaitFor(processId, cmd, null, null, timeoutMs);
 	}
 
 	/**
@@ -119,9 +123,9 @@ public interface DestroableProcessManager {
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
 	 */
-	default void exec(String processId, String cmd, File stdout, long timeoutMs)
+	default void execWaitFor(String processId, String cmd, File stdout, long timeoutMs)
 			throws InterruptedException, IllegalProcessStateException, IOException {
-		exec(processId, cmd, null, stdout, timeoutMs);
+		execWaitFor(processId, cmd, null, stdout, timeoutMs);
 	}
 
 	/**
@@ -140,7 +144,7 @@ public interface DestroableProcessManager {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	void execFile(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
+	void execFileWaitFor(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException;
 
 	/**
@@ -160,9 +164,33 @@ public interface DestroableProcessManager {
 	 *            timeout Ms.
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
+	 * @throws InterruptedException
 	 */
-	void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException;
+	void execWaitFor(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, IOException, InterruptedException;
+
+	/**
+	 * Executio default command-line.
+	 * 
+	 * @param processId
+	 * @param cmd
+	 * @param callback
+	 * @throws IOException
+	 */
+	default void exec(String processId, String cmd, ProcessCallback callback) throws IOException {
+		exec(processId, cmd, null, callback);
+	}
+
+	/**
+	 * Executio default command-line.
+	 * 
+	 * @param processId
+	 * @param cmd
+	 * @param pwdDir
+	 * @param callback
+	 * @throws IOException
+	 */
+	void exec(String processId, String cmd, File pwdDir, ProcessCallback callback) throws IOException;
 
 	/**
 	 * Destroy command-line process.</br>
@@ -174,5 +202,13 @@ public interface DestroableProcessManager {
 	 *            Destroy process timeout Ms.
 	 */
 	void destroy(String processId, long timeoutMs);
+
+	public static interface ProcessCallback {
+
+		void onStdout(byte[] data);
+
+		void onStderr(byte[] err);
+
+	}
 
 }

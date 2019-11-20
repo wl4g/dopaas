@@ -53,7 +53,7 @@ public class GolangStandardPipelineProvider extends BasedPhysicalBackupPipelineP
 	@Override
 	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "cd " + projectDir + " && go build";
-		processManager.exec(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
+		processManager.execWaitFor(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}
 
 }
