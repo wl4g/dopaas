@@ -34,6 +34,7 @@ import edu.umd.cs.findbugs.gui2.AnalysisCallback;
  * @since
  */
 public class SpotbugsAnalysingModel extends AnalysingModel {
+	private static final long serialVersionUID = 8592166141479118698L;
 
 	/** Temporary analysis callback. */
 	@JsonIgnore

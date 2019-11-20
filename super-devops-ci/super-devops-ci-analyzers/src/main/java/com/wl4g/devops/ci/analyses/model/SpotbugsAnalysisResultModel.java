@@ -23,5 +23,6 @@ package com.wl4g.devops.ci.analyses.model;
  * @since
  */
 public class SpotbugsAnalysisResultModel extends AnalysisResultModel {
+	private static final long serialVersionUID = -3796091819368999431L;
 
 }

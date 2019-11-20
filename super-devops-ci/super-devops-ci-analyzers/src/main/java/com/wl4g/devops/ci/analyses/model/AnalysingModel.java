@@ -17,7 +17,10 @@ package com.wl4g.devops.ci.analyses.model;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class AnalysingModel {
+import java.io.Serializable;
+
+public class AnalysingModel implements Serializable {
+	private static final long serialVersionUID = 836325364871090288L;
 
 	/**
 	 * The analyze project name.

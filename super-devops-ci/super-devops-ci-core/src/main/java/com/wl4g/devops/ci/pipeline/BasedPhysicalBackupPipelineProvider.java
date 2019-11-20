@@ -45,7 +45,7 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 
 		String target = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
 		String command = "cp -Rf " + backupPath + " " + target;
-		processManager.exec(command, config.getJobLog(taskHisRefId), 300000);
+		processManager.execWaitFor(command, config.getJobLog(taskHisRefId), 300000);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
 
 		String command = "cp -Rf " + targetPath + " " + backupPath;
-		processManager.exec(command, config.getJobLog(taskHisId), 300000);
+		processManager.execWaitFor(command, config.getJobLog(taskHisId), 300000);
 	}
 
 }

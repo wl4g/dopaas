@@ -20,7 +20,7 @@ import com.wl4g.devops.common.exception.ci.CiException;
 public class IllegalProcessStateException extends CiException {
 	static final long serialVersionUID = -7034833390745766939L;
 
-	final private int exitValue;
+	final private Integer exitValue;
 
 	/**
 	 * Constructs a new runtime exception with the specified detail message. The
@@ -31,7 +31,7 @@ public class IllegalProcessStateException extends CiException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public IllegalProcessStateException(int exitValue, String message) {
+	public IllegalProcessStateException(Integer exitValue, String message) {
 		this(exitValue, message, null);
 	}
 
@@ -52,7 +52,7 @@ public class IllegalProcessStateException extends CiException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public IllegalProcessStateException(int exitValue, String message, Throwable cause) {
+	public IllegalProcessStateException(Integer exitValue, String message, Throwable cause) {
 		super(message, cause);
 		this.exitValue = exitValue;
 	}
@@ -71,12 +71,12 @@ public class IllegalProcessStateException extends CiException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public IllegalProcessStateException(int exitValue, Throwable cause) {
+	public IllegalProcessStateException(Integer exitValue, Throwable cause) {
 		super(cause);
 		this.exitValue = exitValue;
 	}
 
-	public int getExitValue() {
+	public Integer getExitValue() {
 		return exitValue;
 	}
 

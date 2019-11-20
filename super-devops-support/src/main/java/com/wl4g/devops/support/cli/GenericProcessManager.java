@@ -31,11 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 import static com.wl4g.devops.common.utils.io.ByteStreams2.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
+import static java.lang.System.arraycopy;
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -53,6 +56,7 @@ import static org.springframework.util.Assert.*;
  */
 public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
 	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
+	final public static long DEFAULT_DESTROY_TIMEOUTMS = 30 * 1000L;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -73,15 +77,15 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	@Override
-	public void execFile(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
+	public void execFileWaitFor(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
 		writeFile(execFile, multiCommands, false);
-		exec(processId, "sh " + execFile.getAbsolutePath(), stdout, timeoutMs);
+		execWaitFor(processId, "sh " + execFile.getAbsolutePath(), stdout, timeoutMs);
 	}
 
 	@Override
-	public void exec(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException {
+	public void execWaitFor(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, IOException, InterruptedException {
 		hasText(cmd, "Execution commands must not be empty");
 		isTrue(timeoutMs > 0, "Command-line timeoutMs must greater than 0");
 
@@ -113,12 +117,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 		// Check exited?
 		try {
-			try {
-				// Wait for completed.
-				ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
-			} catch (Throwable e) {
-				throw new IllegalProcessStateException(-1, e);
-			}
+			// Wait for completed.
+			ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
 
 			int exitCode = ps.exitValue();
 			if (exitCode != 0) { // e.g. destroy() was called.
@@ -135,6 +135,51 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			throw new IllegalProcessStateException(ex.getExitValue(), String.format(
 					"Failed to process(%s), commands:[%s], cause: %s", processId, asList(commands), getRootCausesString(ex)));
 		} finally {
+			// Destroy process.
+			destroyProcess0(processId, ps, DEFAULT_DESTROY_TIMEOUTMS);
+			// Cleanup if necessary.
+			if (!isBlank(processId)) {
+				repository.cleanup(processId);
+			}
+		}
+
+	}
+
+	@Override
+	public void exec(String processId, String cmd, File pwdDir, ProcessCallback callback) throws IOException {
+		hasText(cmd, "Execution commands must not be empty");
+		notNull(callback, "null ProcessCallback");
+
+		// Execution.
+		final String[] commands = { "/bin/bash", "-c", cmd };
+		if (log.isInfoEnabled()) {
+			log.info("Execution commands: [{}]", asList(commands));
+		}
+
+		Process ps = null;
+		if (nonNull(pwdDir)) {
+			state(pwdDir.exists(), String.format("No such directory for processId(%s), pwdDir:[%s]", processId, pwdDir));
+			ps = Runtime.getRuntime().exec(commands, null, pwdDir);
+		} else {
+			ps = Runtime.getRuntime().exec(commands);
+		}
+
+		// Register process if necessary.
+		if (!isBlank(processId)) {
+			repository.register(processId, new ProcessInfo(processId, pwdDir, asList(commands), null, ps));
+		}
+
+		// Do process.
+		try {
+			InputStream err = ps.getErrorStream();
+			if (!isNull(err)) {
+				readStreamProcess(ps, err, callback, true);
+			} else {
+				readStreamProcess(ps, ps.getInputStream(), callback, false);
+			}
+		} finally {
+			// Destroy process.
+			destroyProcess0(processId, ps, DEFAULT_DESTROY_TIMEOUTMS);
 			// Cleanup if necessary.
 			if (!isBlank(processId)) {
 				repository.cleanup(processId);
@@ -158,26 +203,70 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 		Process process = repository.get(signal.getProcessId()).getProcess();
 		if (nonNull(process)) {
+			// Destroy process.
+			destroyProcess0(signal.getProcessId(), process, signal.getTimeoutMs());
+
+			// Cleanup
+			repository.cleanup(signal.getProcessId());
+		}
+	}
+
+	/**
+	 * Read {@link InputStream} process.
+	 * 
+	 * @param ps
+	 * @param in
+	 * @param callback
+	 * @throws IOException
+	 */
+	private void readStreamProcess(Process ps, InputStream in, ProcessCallback callback, boolean err) throws IOException {
+		notNull(ps, "null Process");
+		notNull(in, "null InputStream");
+		notNull(callback, "null ProcessCallback");
+
+		int len = 0;
+		byte[] buf = new byte[1024];
+		while (ps.isAlive() && ((len = in.read(buf)) != -1)) {
+			byte[] data = new byte[len];
+			arraycopy(buf, 0, data, 0, len);
+			if (err) {
+				callback.onStderr(data);
+			} else {
+				callback.onStdout(data);
+			}
+		}
+	}
+
+	/**
+	 * Destroy process streams(IN/ERR {@link InputStream} and
+	 * {@link OutputStream}).
+	 * 
+	 * @param processId
+	 * @param ps
+	 * @param timeoutMs
+	 */
+	private void destroyProcess0(String processId, Process ps, long timeoutMs) {
+		if (nonNull(ps)) {
 			try {
-				process.getOutputStream().close();
+				ps.getOutputStream().close();
 			} catch (IOException e) {
 				log.error("", e);
 			}
 			try {
-				process.getInputStream().close();
+				ps.getInputStream().close();
 			} catch (IOException e) {
 				log.error("", e);
 			}
 			try {
-				process.getErrorStream().close();
+				ps.getErrorStream().close();
 			} catch (IOException e) {
 				log.error("", e);
 			}
 
 			// Destroy force.
-			for (long i = 0, c = (signal.getTimeoutMs() / DEFAULT_DESTROY_ROUND_MS); (process.isAlive() || i < c); i++) {
+			for (long i = 0, c = (timeoutMs / DEFAULT_DESTROY_ROUND_MS); (ps.isAlive() || i < c); i++) {
 				try {
-					process.destroyForcibly();
+					ps.destroyForcibly();
 					sleep(DEFAULT_DESTROY_ROUND_MS);
 				} catch (Exception e) {
 					log.error("Failed to destory process.", e);
@@ -186,13 +275,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			}
 
 			// Check destroyed?
-			if (process.isAlive()) {
+			if (ps.isAlive()) {
 				throw new TimeoutDestroyProcessException(
-						String.format("Still not destroyed '%s', destruction handling timeout", signal.getProcessId()));
+						String.format("Still not destroyed '%s', destruction handling timeout", processId));
 			}
-
-			// Cleanup
-			repository.cleanup(signal.getProcessId());
 		}
 	}
 

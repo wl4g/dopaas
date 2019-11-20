@@ -17,11 +17,8 @@ package com.wl4g.devops.ci.analyses.config;
 
 import static com.wl4g.devops.common.utils.lang.SystemUtils2.LOCAL_PROCESS_ID;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static java.lang.Thread.currentThread;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.ClassUtils.isPresent;
 
 /**
  * CI analyses properties configuration.
@@ -70,8 +67,6 @@ public class CiAnalyzerProperties {
 
 		private String jvmArgs = DEFAULT_JVM_ARGS;
 
-		private String analyzerRunClass = "edu.umd.cs.findbugs.FindBugs2";
-
 		public String getJvmArgs() {
 			return jvmArgs;
 		}
@@ -79,18 +74,6 @@ public class CiAnalyzerProperties {
 		public void setJvmArgs(String jvmArgs) {
 			if (!isBlank(jvmArgs)) {
 				this.jvmArgs = jvmArgs;
-			}
-		}
-
-		public String getAnalyzerRunClass() {
-			return analyzerRunClass;
-		}
-
-		public void setAnalyzerRunClass(String analyzerRunClass) {
-			if (!isBlank(analyzerRunClass)) {
-				isTrue(isPresent(analyzerRunClass, currentThread().getContextClassLoader()),
-						String.format("Not found analyzerRunClass for: %s", analyzerRunClass));
-				this.analyzerRunClass = analyzerRunClass;
 			}
 		}
 
