@@ -29,48 +29,102 @@ import java.io.Serializable;
 public class StageProgressModel implements Serializable {
 	private static final long serialVersionUID = 8386866351185047399L;
 
-	private String message;
-	private int pass;
-	private int goal;
+	/**
+	 * Stage step label.
+	 */
+	private String stageLabel;
+
+	/**
+	 * Total number of files to be analyzed
+	 */
+	private int totalArchives;
+
+	/**
+	 * Number of task phases expected to be performed
+	 */
+	private int totalStages;
+
+	/**
+	 * Number of expected task phases completed
+	 */
+	private int passStage = 0;
+
+	/**
+	 * Number of classes analyzed in the current stage
+	 */
+	private int stagePassAnalysised;
+
+	/**
+	 * Total number of categories to be analyzed at the current stage
+	 */
+	private int stageGoalAnalysised;
 
 	public StageProgressModel() {
 		super();
 	}
 
-	public StageProgressModel(String message, int pass, int goal) {
+	public StageProgressModel(String stageLabel, int totalArchives, int totalStages, int passStage, int stagePassAnalysised,
+			int stageGoalAnalysised) {
 		super();
-		this.message = message;
-		this.pass = pass;
-		this.goal = goal;
+		this.stageLabel = stageLabel;
+		this.totalArchives = totalArchives;
+		this.totalStages = totalStages;
+		this.passStage = passStage;
+		this.stagePassAnalysised = stagePassAnalysised;
+		this.stageGoalAnalysised = stageGoalAnalysised;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getStageLabel() {
+		return stageLabel;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setStageLabel(String stageLabel) {
+		this.stageLabel = stageLabel;
 	}
 
-	public int getPass() {
-		return pass;
+	public int getTotalArchives() {
+		return totalArchives;
 	}
 
-	public void setPass(int pass) {
-		this.pass = pass;
+	public void setTotalArchives(int totalArchives) {
+		this.totalArchives = totalArchives;
 	}
 
-	public int getGoal() {
-		return goal;
+	public int getTotalStages() {
+		return totalStages;
 	}
 
-	public void setGoal(int goal) {
-		this.goal = goal;
+	public void setTotalStages(int totalStages) {
+		this.totalStages = totalStages;
+	}
+
+	public int getPassStage() {
+		return passStage;
+	}
+
+	public void setPassStage(int passStage) {
+		this.passStage = passStage;
+	}
+
+	public int getStagePassAnalysised() {
+		return stagePassAnalysised;
+	}
+
+	public void setStagePassAnalysised(int stagePassAnalysised) {
+		this.stagePassAnalysised = stagePassAnalysised;
+	}
+
+	public int getStageGoalAnalysised() {
+		return stageGoalAnalysised;
+	}
+
+	public void setStageGoalAnalysised(int stageGoalAnalysised) {
+		this.stageGoalAnalysised = stageGoalAnalysised;
 	}
 
 	@Override
 	public String toString() {
-		return "AnalyzingProgressModel [" + toJSONString(this) + "]";
+		return toJSONString(this);
 	}
 
 }
