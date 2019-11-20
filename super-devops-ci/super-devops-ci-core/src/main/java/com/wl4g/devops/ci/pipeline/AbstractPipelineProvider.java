@@ -29,7 +29,7 @@ import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
+import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
@@ -84,7 +84,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected TaskHistoryService taskHistoryService;
 	@Autowired
-	protected TaskHisBuildCommandDao taskHisBuildCommandDao;
+	protected TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
 	@Autowired
 	protected ProjectDao projectDao;
 	@Autowired

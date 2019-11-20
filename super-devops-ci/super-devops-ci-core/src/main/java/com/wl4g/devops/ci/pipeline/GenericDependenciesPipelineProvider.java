@@ -67,7 +67,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		}
 
 		// Custom dependency commands.
-		List<TaskBuildCommand> commands = taskHisBuildCommandDao.selectByTaskHisId(taskHisy.getId());
+		List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(taskHisy.getId());
 
 		// Build of dependencies sub-modules.
 		for (Dependency depd : dependencies) {

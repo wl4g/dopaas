@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import java.io.Serializable;
-
 import com.wl4g.devops.common.bean.BaseBean;
+
+import java.io.Serializable;
 
 public class TaskHistoryInstance extends BaseBean implements Serializable {
 
