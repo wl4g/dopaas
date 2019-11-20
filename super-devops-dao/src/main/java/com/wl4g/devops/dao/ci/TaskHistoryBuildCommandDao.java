@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 
 import java.util.List;
 
-public interface TaskHisBuildCommandDao {
+public interface TaskHistoryBuildCommandDao {
 	int deleteByPrimaryKey(Integer id);
 
 	int insert(TaskBuildCommand record);

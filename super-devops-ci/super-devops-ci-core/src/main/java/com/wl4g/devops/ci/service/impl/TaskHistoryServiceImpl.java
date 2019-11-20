@@ -25,7 +25,7 @@ import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
+import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
@@ -56,7 +56,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Autowired
 	private AppClusterDao appClusterDao;
 	@Autowired
-	private TaskHisBuildCommandDao taskHisBuildCommandDao;
+	private TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
 	@Autowired
 	protected DestroableProcessManager processManager;
 
@@ -122,7 +122,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setId(null);
 			taskBuildCommand.setTaskId(taskHistory.getId());
-			taskHisBuildCommandDao.insertSelective(taskBuildCommand);
+			taskHistoryBuildCommandDao.insertSelective(taskBuildCommand);
 		}
 		return taskHistory;
 	}
