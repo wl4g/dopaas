@@ -637,9 +637,9 @@ public class RespBase<D> implements Serializable {
 		 * @return
 		 */
 		final public static RetCode of(String nameOrCode) {
-			RetCode code = safeOf(nameOrCode);
-			if (nonNull(code)) {
-				return code;
+			RetCode retCode = safeOf(nameOrCode);
+			if (nonNull(retCode)) {
+				return retCode;
 			}
 			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
 		}
@@ -650,7 +650,10 @@ public class RespBase<D> implements Serializable {
 		 * @param nameOrCode
 		 * @return
 		 */
-		final public static RetCode safeOf(String nameOrCode) {
+		final public static RetCode safeOf(Object nameOrCode) {
+			if (isNull(nameOrCode)) {
+				return null;
+			}
 			RetCode retCode = nameValueDefinition.get(nameOrCode);
 			if (isNull(retCode)) {
 				return codeValueDefinition.get(nameOrCode);

@@ -69,8 +69,8 @@ spring:
     driverClassName: com.mysql.jdbc.Driver
     druid:
       url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/devops_dev?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
-      username: gzsm
-      password: gzsm@%#jh?
+      username: ${DEVOPS_DB_USER:gzsm}
+      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10

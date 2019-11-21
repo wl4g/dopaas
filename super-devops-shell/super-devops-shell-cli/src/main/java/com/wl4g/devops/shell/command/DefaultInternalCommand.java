@@ -16,9 +16,11 @@
 package com.wl4g.devops.shell.command;
 
 import static java.lang.System.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +39,11 @@ import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 import com.wl4g.devops.shell.config.DefaultBeanRegistry;
 import com.wl4g.devops.shell.runner.AbstractRunner;
-import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
+
+import static com.wl4g.devops.shell.utils.Assert.hasText;
+import static com.wl4g.devops.shell.utils.Assert.notNull;
+import static com.wl4g.devops.shell.utils.Assert.state;
 import static com.wl4g.devops.shell.utils.StandardFormatter.getHelpFormat;
 
 /**
@@ -71,10 +76,10 @@ public class DefaultInternalCommand extends InternalCommand {
 	final protected AbstractRunner runner;
 
 	public DefaultInternalCommand(AbstractRunner runner) {
-		Assert.notNull(runner, "runner is null, please check configure");
+		notNull(runner, "runner is null, please check configure");
 		this.runner = runner;
 		this.registry = (DefaultBeanRegistry) runner.getRegistry();
-		Assert.notNull(registry, "Registry must not be null");
+		notNull(registry, "Registry must not be null");
 	}
 
 	@ShellMethod(keys = { INTERNAL_STACKTRACE, INTERNAL_ST }, group = DEFAULT_GROUP, help = "Exit current process")
@@ -120,54 +125,50 @@ public class DefaultInternalCommand extends InternalCommand {
 	@ShellMethod(keys = { INTERNAL_HELP, INTERNAL_HE }, group = DEFAULT_GROUP, help = "View supported commands help information")
 	public String help() {
 		try {
-			StringBuffer helpString = new StringBuffer();
 			// Input line string
 			String line = lineCache.get();
 			List<String> commands = LineUtils.parse(line);
-			if (!commands.isEmpty()) {
-				// Processing for e.g. help add
-				if (commands.size() > 1) {
-					String argname = commands.get(1);
-					HelpOptions hopts = registry.getHelpOptions().get(argname);
-					helpString.append(getHelpFormat(argname, hopts, hopts.getShellMethod().help()));
-				}
-				// Processing for e.g. add --help
-				else {
-					// Help options(group name dict sort)
-					Map<String, HelpGroupWrapper> helpGroup = new TreeMap<>(new Comparator<String>() {
-						@Override
-						public int compare(String o1, String o2) {
-							return o1.compareTo(o2);
-						}
-					});
-
-					// Transform to group options
-					for (Entry<String, HelpOptions> ent : registry.getHelpOptions().entrySet()) { // [MARK0]
-						String argname = ent.getKey();
-						HelpOptions hopts = ent.getValue();
-						ShellMethod sm = hopts.getShellMethod();
-
-						HelpGroupWrapper wrap = helpGroup.get(sm.group());
-						if (wrap == null) {
-							wrap = new HelpGroupWrapper(sm.group());
-						}
-						if (!wrap.getHelpMethods().contains(argname)) {
-							wrap.getHelpMethods().add(new HelpMethod(argname, hopts, sm.help()));
-						}
-						helpGroup.put(sm.group(), wrap);
-					}
-
-					// Move default commands to first place
-					HelpGroupWrapper defaultWrap = helpGroup.remove(DEFAULT_GROUP);
-					appendHelp(DEFAULT_GROUP, defaultWrap, helpString);
-
-					// Group options print
-					helpGroup.forEach((group, wrap) -> appendHelp(group, wrap, helpString));
-				}
-
+			if (isNull(commands) || commands.isEmpty()) {
+				return EMPTY;
 			}
 
-			return helpString.toString();
+			// For example: $> help add
+			if (commands.size() > 1) {
+				String argname = commands.get(1);
+				HelpOptions hopts = registry.getHelpOptions().get(argname);
+				return getHelpFormat(argname, hopts, hopts.getShellMethod().help());
+			}
+
+			// For example: $> add --help
+			StringBuffer helpBuf = new StringBuffer();
+			// Help options(group name dict sort)
+			Map<String, HelpGroupWrapper> hGroups = new TreeMap<>((o1, o2) -> o1.compareTo(o2));
+
+			// Transform to group options
+			for (Entry<String, HelpOptions> ent : registry.getHelpOptions().entrySet()) { // [MARK0]
+				String argname = ent.getKey();
+				HelpOptions hopts = ent.getValue();
+				ShellMethod sm = hopts.getShellMethod();
+
+				HelpGroupWrapper hGroup = hGroups.get(sm.group());
+				if (hGroup == null) {
+					hGroup = new HelpGroupWrapper(sm.group());
+				}
+				HelpMethod hm = new HelpMethod(argname, hopts, sm.help());
+				if (!hGroup.getHelpMethods().contains(hm)) {
+					hGroup.getHelpMethods().add(hm);
+				}
+				hGroups.put(sm.group(), hGroup);
+			}
+
+			// Move default group to first.
+			HelpGroupWrapper defaultGroup = hGroups.remove(DEFAULT_GROUP);
+			appendHelp(DEFAULT_GROUP, defaultGroup, helpBuf);
+
+			// Print group options.
+			hGroups.forEach((group, wrap) -> appendHelp(group, wrap, helpBuf));
+
+			return helpBuf.toString();
 		} finally {
 			lineCache.remove();
 		}
@@ -177,14 +178,14 @@ public class DefaultInternalCommand extends InternalCommand {
 	 * Append help as strings.
 	 * 
 	 * @param group
-	 * @param wrap
+	 * @param hGroup
 	 * @param helpString
 	 */
-	private void appendHelp(String group, HelpGroupWrapper wrap, StringBuffer helpString) {
-		Assert.state(wrap != null, "Internal error, help group is null, please check the server's log");
+	private void appendHelp(String group, HelpGroupWrapper hGroup, StringBuffer helpString) {
+		state(nonNull(hGroup), "Internal error, help group is null, please check the server's log");
 
 		helpString.append("\n----- " + group + " -----\n\n");
-		for (HelpMethod hm : wrap.getHelpMethods()) {
+		for (HelpMethod hm : hGroup.getHelpMethods()) {
 			helpString.append(getHelpFormat(hm.getArgname(), hm.getOptions(), hm.getHelp()));
 			// Optimize: Printing default commands does not require line feeds.
 			if (equalsIgnoreCase(group, DEFAULT_GROUP)) {
@@ -220,7 +221,7 @@ public class DefaultInternalCommand extends InternalCommand {
 		final private LinkedList<HelpMethod> helpMethods = new LinkedList<>();
 
 		public HelpGroupWrapper(String group) {
-			Assert.hasText(group, "Group must not be empty");
+			hasText(group, "Group must not be empty");
 			this.group = group;
 		}
 
@@ -230,6 +231,11 @@ public class DefaultInternalCommand extends InternalCommand {
 
 		public LinkedList<HelpMethod> getHelpMethods() {
 			return helpMethods;
+		}
+
+		@Override
+		public String toString() {
+			return "HelpGroupWrapper [group=" + group + ", helpMethods=" + helpMethods + "]";
 		}
 
 	}
@@ -250,9 +256,9 @@ public class DefaultInternalCommand extends InternalCommand {
 		final private String help;
 
 		public HelpMethod(String argname, Options options, String help) {
-			Assert.hasText(argname, "Argname must not be empty");
-			Assert.notNull(options, "options must not be null");
-			Assert.hasText(argname, "Arg help must not be empty");
+			hasText(argname, "Argname must not be empty");
+			notNull(options, "options must not be null");
+			hasText(argname, "Arg help must not be empty");
 			this.argname = argname;
 			this.options = options;
 			this.help = help;
@@ -296,6 +302,11 @@ public class DefaultInternalCommand extends InternalCommand {
 			} else if (!argname.equals(other.argname))
 				return false;
 			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "HelpMethod [argname=" + argname + ", options=" + options + ", help=" + help + "]";
 		}
 
 		private DefaultInternalCommand getOuterType() {
