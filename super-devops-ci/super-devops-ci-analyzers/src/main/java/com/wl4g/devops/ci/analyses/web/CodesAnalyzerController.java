@@ -24,15 +24,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.wl4g.devops.ci.analyses.CompositeCodesAnalyzerAdapter;
-import com.wl4g.devops.ci.analyses.CodesAnalyzer.AnalyzerKind;
+import com.wl4g.devops.ci.analyses.coordinate.CompositeAnalysisCoordinatorAdapter;
+import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator.AnalyzerKind;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysisResultModel;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 
-import static com.wl4g.devops.ci.analyses.CodesAnalyzer.AnalyzerKind.*;
+import static com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator.AnalyzerKind.*;
 
 import java.io.File;
 
@@ -48,7 +48,7 @@ import java.io.File;
 public class CodesAnalyzerController extends BaseController {
 
 	@Autowired
-	protected CompositeCodesAnalyzerAdapter adapter;
+	protected CompositeAnalysisCoordinatorAdapter adapter;
 
 	/**
 	 * Submitted analyzing assets file for java.

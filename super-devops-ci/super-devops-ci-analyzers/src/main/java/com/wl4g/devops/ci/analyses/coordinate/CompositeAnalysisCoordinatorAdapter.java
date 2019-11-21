@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.analyses;
+package com.wl4g.devops.ci.analyses.coordinate;
 
 import com.wl4g.devops.ci.analyses.model.AnalysingModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
@@ -36,19 +36,19 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0 2019年11月18日
  * @since
  */
-public class CompositeCodesAnalyzerAdapter implements CodesAnalyzer<AnalysingModel> {
+public class CompositeAnalysisCoordinatorAdapter implements AnalysisCoordinator<AnalysingModel> {
 
 	/**
 	 * Codes analyzers.
 	 */
-	final protected Map<AnalyzerKind, CodesAnalyzer<AnalysingModel>> registry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<AnalyzerKind, AnalysisCoordinator<AnalysingModel>> registry = new OnceModifiableMap<>(new HashMap<>());
 
 	/**
 	 * Real delegate CodeAnalyzer.
 	 */
-	final private ThreadLocal<CodesAnalyzer<AnalysingModel>> delegate = new InheritableThreadLocal<>();
+	final private ThreadLocal<AnalysisCoordinator<AnalysingModel>> delegate = new InheritableThreadLocal<>();
 
-	public CompositeCodesAnalyzerAdapter(List<CodesAnalyzer<AnalysingModel>> analyzers) {
+	public CompositeAnalysisCoordinatorAdapter(List<AnalysisCoordinator<AnalysingModel>> analyzers) {
 		Assert.state(!isEmpty(analyzers), "CodeAnalyzers has at least one.");
 		// Duplicate checks.
 		Set<AnalyzerKind> kinds = new HashSet<>();
@@ -58,40 +58,40 @@ public class CompositeCodesAnalyzerAdapter implements CodesAnalyzer<AnalysingMod
 			kinds.add(o.kind());
 		});
 		// Register.
-		this.registry.putAll(analyzers.stream().collect(toMap(CodesAnalyzer::kind, oper -> oper)));
+		this.registry.putAll(analyzers.stream().collect(toMap(AnalysisCoordinator::kind, oper -> oper)));
 	}
 
 	/**
-	 * Making the adaptation actually execute {@link CodesAnalyzer}.
+	 * Making the adaptation actually execute {@link AnalysisCoordinator}.
 	 * 
 	 * @param analyzer
 	 * @return
 	 */
-	public CodesAnalyzer<AnalysingModel> forAdapt(@NotNull AnalyzerKind analyzer) {
-		CodesAnalyzer<AnalysingModel> operator = registry.get(analyzer);
+	public AnalysisCoordinator<AnalysingModel> forAdapt(@NotNull AnalyzerKind analyzer) {
+		AnalysisCoordinator<AnalysingModel> operator = registry.get(analyzer);
 		notNull(operator, String.format("Unsupported CodeAnalyzer for '%s'", analyzer));
 		delegate.set(operator);
 		return operator;
 	}
 
 	/**
-	 * Making the adaptation actually execute {@link CodesAnalyzer}.
+	 * Making the adaptation actually execute {@link AnalysisCoordinator}.
 	 *
 	 * @param analyzer
 	 * @return
 	 */
-	public CodesAnalyzer<AnalysingModel> forAdapt(@NotNull Integer analyzer) {
+	public AnalysisCoordinator<AnalysingModel> forAdapt(@NotNull Integer analyzer) {
 		return forAdapt(AnalyzerKind.of(analyzer));
 	}
 
 	/**
-	 * Get adapted {@link CodesAnalyzer}.
+	 * Get adapted {@link AnalysisCoordinator}.
 	 * 
 	 * @param type
 	 * @return
 	 */
-	private CodesAnalyzer<AnalysingModel> getAdapted() {
-		CodesAnalyzer<AnalysingModel> analyzer = delegate.get();
+	private AnalysisCoordinator<AnalysingModel> getAdapted() {
+		AnalysisCoordinator<AnalysingModel> analyzer = delegate.get();
 		Assert.state(analyzer != null,
 				"Not adapted to specify actual CodeAnalyzer, You must use adapted() to adapt before you can.");
 		return analyzer;

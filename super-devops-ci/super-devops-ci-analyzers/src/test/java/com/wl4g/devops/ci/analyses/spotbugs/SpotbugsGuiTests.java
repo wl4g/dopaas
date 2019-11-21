@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.analyses.spotbugs;
 import java.io.File;
 import java.io.InputStream;
 
-import com.wl4g.devops.ci.analyses.spotbugs.engine.PrintAnalyzingProgress;
+import com.wl4g.devops.ci.analyses.agent.spotbugs.progress.PrintAnalyzingProgress;
 
 import edu.umd.cs.findbugs.BugCollection;
 import edu.umd.cs.findbugs.Project;

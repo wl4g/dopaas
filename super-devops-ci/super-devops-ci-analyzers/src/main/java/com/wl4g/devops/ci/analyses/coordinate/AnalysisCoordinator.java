@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.analyses;
+package com.wl4g.devops.ci.analyses.coordinate;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
@@ -29,7 +29,7 @@ import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
  * @version v1.0 2019年11月18日
  * @since
  */
-public interface CodesAnalyzer<P extends AnalysingModel> {
+public interface AnalysisCoordinator<P extends AnalysingModel> {
 
 	/**
 	 * Analyzer type definitions.

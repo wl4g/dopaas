@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.analyses.spotbugs;
+package com.wl4g.devops.ci.analyses.coordinate;
 
 import static org.apache.commons.lang3.SystemUtils.JAVA_CLASS_PATH;
 
 import java.io.File;
 
-import com.wl4g.devops.ci.analyses.AbstractCodesAnalyzer;
+import com.wl4g.devops.ci.analyses.config.ExecutorProperties;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
-import com.wl4g.devops.ci.analyses.spotbugs.engine.SpotbugsAnalyzerEngine;
 import com.wl4g.devops.support.cli.DestroableProcessManager.ProcessCallback;
 
 /**
- * SPOTBUGS code scanner analyzer. </br>
+ * SPOTBUGS analyzer coordinator. </br>
  * 
  * <pre>
  * &#64;see https://github.com/spotbugs/spotbugs/blob/b38806a67ce454e271ab8f759787e228dc8cf78c/spotbugs/src/gui/main/edu/umd/cs/findbugs/gui2/NewProjectWizard.java#L211
@@ -45,13 +44,22 @@ import com.wl4g.devops.support.cli.DestroableProcessManager.ProcessCallback;
  * @version v1.0 2019年11月18日
  * @since
  */
-public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysingModel> {
+public class SpotbugsAnalysisCoordinator extends AbstractAnalysisCoordinator<SpotbugsAnalysingModel> {
+
+	public SpotbugsAnalysisCoordinator(ExecutorProperties executor) {
+		super(executor);
+	}
+
+	/**
+	 * SPOTBUGS analyzer engine run-class.
+	 */
+	final public static String SPOTBUGS_ENGINE_CLASS = "com.wl4g.devops.ci.analyses.agent.spotbugs.SpotbugsAnalyzerEngine";
 
 	@Override
 	protected void doAnalyze(SpotbugsAnalysingModel model) throws Exception {
-		String command = getSpotbugsAnalyzerRunCommand(model);
+		String command = buildSpotbugsEngineCommand(model);
 		try {
-			processManager.exec(model.getProjectName(), command, new ProcessCallback() {
+			processManager.execAsync(model.getProjectName(), command, getWorker(), new ProcessCallback() {
 				@Override
 				public void onStdout(byte[] data) {
 
@@ -61,7 +69,7 @@ public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysi
 				public void onStderr(byte[] err) {
 					throw new IllegalStateException(new String(err));
 				}
-			});
+			}, 30 * 60 * 1000);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,7 +77,7 @@ public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysi
 	}
 
 	/**
-	 * Get SPOTBUGS analyzer run commands.</br>
+	 * Build SPOTBUGS engine analyzer run command.</br>
 	 * e.g.
 	 * 
 	 * <pre>
@@ -79,15 +87,15 @@ public class SpotbugsCodesAnalyzer extends AbstractCodesAnalyzer<SpotbugsAnalysi
 	 * @param model
 	 * @return
 	 */
-	private String getSpotbugsAnalyzerRunCommand(SpotbugsAnalysingModel model) {
+	private String buildSpotbugsEngineCommand(SpotbugsAnalysingModel model) {
 		StringBuffer cmd = new StringBuffer("java ");
 		cmd.append(config.getSpotbugs().getJvmArgs());
 		cmd.append(" -cp .");
 		cmd.append(File.pathSeparator);
 		cmd.append(JAVA_CLASS_PATH);
 		cmd.append(" ");
-		// See:edu.umd.cs.findbugs.FindBugs2
-		cmd.append(SpotbugsAnalyzerEngine.class.getName());
+		// See: edu.umd.cs.findbugs.FindBugs2
+		cmd.append(SPOTBUGS_ENGINE_CLASS);
 		return cmd.toString();
 	}
 

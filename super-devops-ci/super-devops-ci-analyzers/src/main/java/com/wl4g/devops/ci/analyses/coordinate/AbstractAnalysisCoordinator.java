@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.analyses;
+package com.wl4g.devops.ci.analyses.coordinate;
 
 import static java.util.Collections.singletonList;
 import static org.apache.shiro.util.Assert.notEmpty;
@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.ci.analyses.config.CiAnalyzerProperties;
+import com.wl4g.devops.ci.analyses.config.ExecutorProperties;
 import com.wl4g.devops.ci.analyses.model.AnalysingModel;
 import com.wl4g.devops.ci.analyses.tasks.TaskManager;
 import com.wl4g.devops.common.task.GenericTaskRunner;
@@ -43,8 +44,8 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
  * @version v1.0.0 2019-11-18
  * @since
  */
-public abstract class AbstractCodesAnalyzer<P extends AnalysingModel> extends GenericTaskRunner<RunnerProperties>
-		implements CodesAnalyzer<P> {
+public abstract class AbstractAnalysisCoordinator<P extends AnalysingModel> extends GenericTaskRunner<RunnerProperties>
+		implements AnalysisCoordinator<P> {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -59,6 +60,10 @@ public abstract class AbstractCodesAnalyzer<P extends AnalysingModel> extends Ge
 
 	@Autowired
 	protected TaskManager manager;
+
+	public AbstractAnalysisCoordinator(ExecutorProperties executor) {
+		super(executor);
+	}
 
 	@Override
 	public void analyze(P model) throws Exception {

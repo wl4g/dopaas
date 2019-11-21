@@ -21,9 +21,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.ci.analyses.CodesAnalyzer;
+import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator;
+import com.wl4g.devops.ci.analyses.coordinate.SpotbugsAnalysisCoordinator;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
-import com.wl4g.devops.ci.analyses.spotbugs.SpotbugsCodesAnalyzer;
 import com.wl4g.devops.ci.analyses.tasks.DefaultTaskManager;
 import com.wl4g.devops.ci.analyses.tasks.TaskManager;
 import com.wl4g.devops.ci.analyses.web.CodesAnalyzerController;
@@ -45,7 +45,7 @@ public class CiAnalyzerAutoConfiguration extends OptionalPrefixControllerAutoCon
 		return new CiAnalyzerProperties();
 	}
 
-	// --- Analyzer controller. ---
+	// --- Endpoint controller's. ---
 
 	@Bean
 	public CodesAnalyzerController codesAnalyzerController() {
@@ -58,14 +58,14 @@ public class CiAnalyzerAutoConfiguration extends OptionalPrefixControllerAutoCon
 				com.wl4g.devops.ci.analyses.annotation.CodesAnalyzerController.class);
 	}
 
-	// --- Codes analyzer. ---
+	// --- Analysis corrdinator's. ---
 
 	@Bean
-	public CodesAnalyzer<SpotbugsAnalysingModel> spotbugsCodesAnalyzer() {
-		return new SpotbugsCodesAnalyzer();
+	public AnalysisCoordinator<SpotbugsAnalysingModel> spotbugsCodesAnalyzer(CiAnalyzerProperties config) {
+		return new SpotbugsAnalysisCoordinator(config.getExecutor());
 	}
 
-	// --- Task repository. ---
+	// --- Tasks manager. ---
 
 	@Bean
 	public TaskManager defaultTaskManager(CiAnalyzerProperties config) {
