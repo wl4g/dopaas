@@ -118,6 +118,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
 				updatingSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+			}catch (Exception e){
+				throw e;
 			} finally {
 				lock.unlock();
 			}
