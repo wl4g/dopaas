@@ -239,11 +239,11 @@ public class RespBase<D> implements Serializable {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	@JsonIgnore
-	public DataMap<Object> asMap() {
+	public synchronized DataMap<Object> asMap() {
 		if (data instanceof Map) { // type of Map ?
 			return (DataMap<Object>) data;
 		}
-		return convertBean(data, DataMap.class);
+		return (DataMap<Object>) (data = (D) convertBean(data, DataMap.class));
 	}
 
 	/**

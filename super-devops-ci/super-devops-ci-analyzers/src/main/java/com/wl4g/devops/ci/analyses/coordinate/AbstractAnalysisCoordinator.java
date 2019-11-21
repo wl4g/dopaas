@@ -46,18 +46,14 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
  */
 public abstract class AbstractAnalysisCoordinator<P extends AnalysingModel> extends GenericTaskRunner<RunnerProperties>
 		implements AnalysisCoordinator<P> {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected CiAnalyzerProperties config;
-
 	@Autowired
 	protected DestroableProcessManager processManager;
-
 	@Autowired
 	protected JedisService jedisService;
-
 	@Autowired
 	protected TaskManager manager;
 
