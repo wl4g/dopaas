@@ -28,7 +28,7 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
-import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
+import com.wl4g.devops.common.utils.io.FileIOUtils.*;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
@@ -40,14 +40,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.wl4g.devops.common.utils.io.FileIOUtils.*;
 import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.*;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -243,8 +244,8 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Starting pipeline job.
 		jobExecutor.getWorker().execute(() -> {
 			try {
-				// Log file start EOF.
-				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
+				//Pre Pileline Execute
+				prePipelineExecuteSuccess(taskId);
 
 				// Execution pipeline.
 				provider.execute();
@@ -265,6 +266,8 @@ public class DefaultPipelineManager implements PipelineManager {
 			} catch (Throwable e) {
 				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
+				//TODO
+				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(),e.getMessage()+ getStackTraceAsString(e));
 
 				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
@@ -294,6 +297,23 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Successful execute job notification.
 		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Success taskId=" + taskId
 				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()));
+	}
+
+	/**
+	 * Pre pipeline job execution successful properties process.
+	 *
+	 * @param taskId
+	 * @param provider
+	 */
+	protected void prePipelineExecuteSuccess(Integer taskId) {
+		// Log file start EOF.
+		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
+
+		//remove log file if exist
+		File file = config.getJobLog(taskId).getAbsoluteFile();
+		if(file.exists()){
+			file.delete();
+		}
 	}
 
 	/**
