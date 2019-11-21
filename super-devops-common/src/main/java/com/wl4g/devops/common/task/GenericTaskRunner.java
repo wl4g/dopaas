@@ -40,6 +40,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -67,11 +68,11 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 
 	@SuppressWarnings("unchecked")
 	public GenericTaskRunner() {
-		this.config = (C) new RunnerProperties();
+		this((C) new RunnerProperties());
 	}
 
 	public GenericTaskRunner(C config) {
-		Assert.notNull(config, "TaskHistory properties must not be null");
+		notNull(config, "GenericTaskRunner properties can't null");
 		this.config = config;
 	}
 
@@ -223,7 +224,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			Map<Future<?>, Runnable> futureJob = new HashMap<Future<?>, Runnable>(total);
 			try {
 				CountDownLatch latch = new CountDownLatch(total); // Submit.
-				jobs.stream().forEach(job -> futureJob.put(getWorker().submit(new FutureDoneTaskWrapper(latch, job)), job));
+				jobs.stream().forEach(job -> futureJob.put(getWorker().submit(new FutureDoneTask(latch, job)), job));
 
 				if (!latch.await(timeoutMs, TimeUnit.MILLISECONDS)) { // Timeout?
 					Iterator<Entry<Future<?>, Runnable>> it = futureJob.entrySet().iterator();
@@ -251,7 +252,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	/**
-	 * Get thread worker.
+	 * Thread executor worker.
 	 * 
 	 * @return
 	 */
@@ -289,19 +290,21 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	/**
-	 * Wait future done runnable wrapper.
+	 * Future done runnable wrapper.
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019年10月17日
 	 * @since
 	 */
-	private class FutureDoneTaskWrapper implements Runnable {
+	private class FutureDoneTask implements Runnable {
 
+		/** {@link CountDownLatch} */
 		final private CountDownLatch latch;
 
+		/** Real runner job. */
 		final private Runnable job;
 
-		public FutureDoneTaskWrapper(CountDownLatch latch, Runnable job) {
+		public FutureDoneTask(CountDownLatch latch, Runnable job) {
 			Assert.notNull(latch, "Job runable latch must not be null.");
 			Assert.notNull(job, "Job runable must not be null.");
 			this.latch = latch;
@@ -311,11 +314,11 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		@Override
 		public void run() {
 			try {
-				this.job.run();
+				job.run();
 			} catch (Exception e) {
 				log.error("Execution failure task", e);
 			} finally {
-				this.latch.countDown();
+				latch.countDown();
 			}
 		}
 
@@ -339,37 +342,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		 * @throws Exception
 		 */
 		void onComplete(TimeoutException ex, long completed, Collection<Runnable> uncompleted) throws Exception;
-	}
-
-	@SuppressWarnings({ "resource", "unchecked", "rawtypes" })
-	public static void main(String[] args) throws Exception {
-		// Add testing jobs.
-		List<NamedIdJob> jobs = new ArrayList<>();
-		for (int i = 0; i < 3; i++) {
-			jobs.add(new NamedIdJob("testjob-" + i) {
-				@Override
-				public void run() {
-					try {
-						System.out.println("Starting... testjob-" + getId());
-						Thread.sleep(3000L);
-						System.out.println("Completed. testjob-" + getId());
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-
-		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
-		};
-		runner.run(null);
-
-		// Submit jobs & listen job timeout.
-		runner.submitForComplete(jobs, (ex, completed, uncompleted) -> {
-			ex.printStackTrace();
-			System.out.println(String.format("Completed: %s, uncompleted sets: %s", completed, uncompleted));
-		}, 4 * 1000l); // > 3*3000
 	}
 
 }

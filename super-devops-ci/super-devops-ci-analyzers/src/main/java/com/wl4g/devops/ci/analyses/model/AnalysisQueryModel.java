@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.analyses.model;
 
 import java.io.Serializable;
 
-import com.wl4g.devops.ci.analyses.CodesAnalyzer.AnalyzerKind;
+import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator.AnalyzerKind;
 
 /**
  * Analysis query result model.

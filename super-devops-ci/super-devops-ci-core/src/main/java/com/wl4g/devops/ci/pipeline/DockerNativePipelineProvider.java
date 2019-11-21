@@ -37,7 +37,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 		String cmd = "mvn -f " + projectDir + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getDeploy().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getDeploy().getDockerNative().getDockerPushPasswd();
-		processManager.execWaitFor(cmd, config.getJobLog(getContext().getTaskHistory().getId()), 300000);
+		processManager.execSync(cmd, config.getJobLog(getContext().getTaskHistory().getId()), 300000);
 	}
 
 	@Override

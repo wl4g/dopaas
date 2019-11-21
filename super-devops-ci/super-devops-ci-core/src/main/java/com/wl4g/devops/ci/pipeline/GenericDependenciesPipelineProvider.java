@@ -228,7 +228,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			// Resolve placeholder variables.
 			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
 			// Execute shell file.
-			processManager.execFileWaitFor(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logFile, 300000);
+			processManager.execFileSync(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logFile, 300000);
 		}
 
 	}

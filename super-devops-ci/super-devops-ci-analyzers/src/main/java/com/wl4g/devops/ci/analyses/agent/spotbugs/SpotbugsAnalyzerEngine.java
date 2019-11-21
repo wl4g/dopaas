@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.analyses.spotbugs.engine;
+package com.wl4g.devops.ci.analyses.agent.spotbugs;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,9 @@ import java.io.StringWriter;
 
 import javax.annotation.Nonnull;
 
-import edu.umd.cs.findbugs.BugCollection;
+import com.wl4g.devops.ci.analyses.agent.spotbugs.exporter.DefaultHtmlBugExporter;
+import com.wl4g.devops.ci.analyses.agent.spotbugs.progress.PrintAnalyzingProgress;
+
 import edu.umd.cs.findbugs.BugCollectionBugReporter;
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.DetectorFactoryCollection;
@@ -31,11 +33,24 @@ import edu.umd.cs.findbugs.FindBugsProgress;
 import edu.umd.cs.findbugs.IFindBugsEngine;
 import edu.umd.cs.findbugs.Priorities;
 import edu.umd.cs.findbugs.Project;
+import edu.umd.cs.findbugs.TextUIBugReporter;
 import edu.umd.cs.findbugs.config.UserPreferences;
 import edu.umd.cs.findbugs.gui2.Driver;
 
 /**
  * {@link edu.umd.cs.findbugs.gui2.BugLoader#doAnalysis(Project, FindBugsProgress)}
+ * 
+ * <pre>
+ * &#64;see https://github.com/spotbugs/spotbugs/blob/b38806a67ce454e271ab8f759787e228dc8cf78c/spotbugs/src/gui/main/edu/umd/cs/findbugs/gui2/NewProjectWizard.java#L211
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.NewProjectWizard}
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.new ActionListener(){...}#actionPerformed(ActionEvent)}
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog#show(Project)}
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog#show(Project,AnalysisCallback,boolean)}
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog.AnalysisThread}
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog#startAnalysis(int)}
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog#predictPassCount(int[])}
+ * &#64;see {@link edu.umd.cs.findbugs.gui2.MainFrameLoadSaveHelper#saveAs()}
+ * </pre>
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月20日
@@ -53,15 +68,16 @@ public class SpotbugsAnalyzerEngine {
 		// Create engine.
 		StringWriter warnWriter = new StringWriter();
 		// Do analyses.
-		BugCollection bugs = doAnalysis(project, warnWriter, new PrintAnalyzingProgress(System.out));
-
+		BugCollectionBugReporter reporter = new SpotbugsAnalyzerEngine().doAnalysis(project, warnWriter,
+				new PrintAnalyzingProgress(System.out));
 		// Has warnings?
 		String warnings = warnWriter.toString();
 		if (!warnings.isEmpty()) {
 			System.out.print(warnings);
 		}
 
-		bugs.writeXML("C:\\Users\\Administrator\\Desktop\\test-bugs.xml");
+		new DefaultHtmlBugExporter().doExport(project, reporter.getBugCollection(),
+				new File(("C:\\Users\\Administrator\\Desktop\\test-bugs.xml")));
 	}
 
 	/**
@@ -74,7 +90,8 @@ public class SpotbugsAnalyzerEngine {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	private final static BugCollection doAnalysis(@Nonnull Project project, @Nonnull StringWriter warnWriter,
+	@SuppressWarnings("unchecked")
+	private final <R extends TextUIBugReporter> R doAnalysis(@Nonnull Project project, @Nonnull StringWriter warnWriter,
 			@Nonnull FindBugsProgress progress) throws IOException, InterruptedException {
 		BugCollectionBugReporter reporter = new BugCollectionBugReporter(project, new PrintWriter(warnWriter, true));
 		reporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
@@ -83,7 +100,7 @@ public class SpotbugsAnalyzerEngine {
 		engine.setProgressCallback(progress);
 		engine.setProjectName(project.getProjectName());
 		engine.execute(); // Execution.
-		return reporter.getBugCollection();
+		return (R) reporter;
 	}
 
 	/**
@@ -95,7 +112,7 @@ public class SpotbugsAnalyzerEngine {
 	 *            the PrintCallBack
 	 * @return the IFindBugsEngine
 	 */
-	private final static IFindBugsEngine createEngine0(@Nonnull Project p, BugReporter reporter) {
+	private final IFindBugsEngine createEngine0(@Nonnull Project p, BugReporter reporter) {
 		FindBugs2 engine = new FindBugs2();
 		engine.setBugReporter(reporter);
 		engine.setProject(p);

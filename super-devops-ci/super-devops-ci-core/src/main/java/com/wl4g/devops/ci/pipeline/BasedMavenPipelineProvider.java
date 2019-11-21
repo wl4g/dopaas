@@ -35,7 +35,7 @@ public abstract class BasedMavenPipelineProvider extends BasedPhysicalBackupPipe
 	@Override
 	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
-		processManager.execWaitFor(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
+		processManager.execSync(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}
 
 }

@@ -116,7 +116,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			// Resolve placeholder variables.
 			String buildCommand = resolveCmdPlaceholderVariables(taskHistory.getBuildCommand());
-			processManager.execFileWaitFor(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
+			processManager.execFileSync(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 		}
 	}
 
@@ -125,7 +125,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
-		processManager.execFileWaitFor(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
+		processManager.execFileSync(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		// tar
 		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
 				+ config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
-		processManager.execFileWaitFor(String.valueOf(taskHistory.getId()), tarCommand,
+		processManager.execFileSync(String.valueOf(taskHistory.getId()), tarCommand,
 				config.getJobTmpCommandFile(taskHistory.getId(), -1), config.getJobLog(getContext().getTaskHistory().getId()),
 				300000);
 	}
@@ -146,7 +146,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 	@Override
 	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
 		String defaultCommand = "cd " + projectDir + " && npm install";
-		processManager.execWaitFor(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
+		processManager.execSync(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
 	}
 
 }
