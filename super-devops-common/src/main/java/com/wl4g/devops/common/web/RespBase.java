@@ -650,7 +650,6 @@ public class RespBase<D> implements Serializable {
 		 * @param nameOrCode
 		 * @return
 		 */
-		@SuppressWarnings("unlikely-arg-type")
 		final public static RetCode safeOf(String nameOrCode) {
 			RetCode retCode = nameValueDefinition.get(nameOrCode);
 			if (isNull(retCode)) {

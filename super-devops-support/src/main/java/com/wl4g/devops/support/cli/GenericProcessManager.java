@@ -245,36 +245,38 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @param ps
 	 * @param timeoutMs
 	 */
-	private void destroyProcess0(String processId, Process ps, long timeoutMs) {
+	final private void destroyProcess0(String processId, Process ps, long timeoutMs) {
 		if (nonNull(ps)) {
 			try {
 				ps.getOutputStream().close();
 			} catch (IOException e) {
-				log.error("", e);
+				log.error("Failed to outstream close", e);
 			}
 			try {
 				ps.getInputStream().close();
 			} catch (IOException e) {
-				log.error("", e);
+				log.error("Failed to instream close", e);
 			}
 			try {
 				ps.getErrorStream().close();
 			} catch (IOException e) {
-				log.error("", e);
+				log.error("Failed to errstream close", e);
 			}
 
 			// Destroy force.
 			for (long i = 0, c = (timeoutMs / DEFAULT_DESTROY_ROUND_MS); (ps.isAlive() || i < c); i++) {
 				try {
 					ps.destroyForcibly();
-					sleep(DEFAULT_DESTROY_ROUND_MS);
+					if (!ps.isAlive()) { // Failed destroy?
+						sleep(DEFAULT_DESTROY_ROUND_MS);
+					}
 				} catch (Exception e) {
 					log.error("Failed to destory process.", e);
 					break;
 				}
 			}
 
-			// Check destroyed?
+			// Assertion destroyed?
 			if (ps.isAlive()) {
 				throw new TimeoutDestroyProcessException(
 						String.format("Still not destroyed '%s', destruction handling timeout", processId));
