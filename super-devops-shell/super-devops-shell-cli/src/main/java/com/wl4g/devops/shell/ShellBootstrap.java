@@ -19,7 +19,7 @@ import com.wl4g.devops.shell.runner.InteractiveRunner;
 import com.wl4g.devops.shell.runner.RunnerBuilder;
 
 /**
- * Shell bootstrap program
+ * Shell bootstrap program for client.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月2日
@@ -27,6 +27,24 @@ import com.wl4g.devops.shell.runner.RunnerBuilder;
  */
 public class ShellBootstrap {
 
+	/**
+	 * For examples:</br>
+	 * 
+	 * <pre>
+	 * [Way1]:
+	 * java -Dservpoint=127.0.0.1:60103 -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-master-executable.jar
+	 * [Way2]:
+	 * java -Dservname=shell-example -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-master-executable.jar
+	 * </pre>
+	 * 
+	 * @param args
+	 * @see <a href=
+	 *      "https://gitee.com/wl4g/super-devops/blob/master/super-devops-shell/README.md">Quick
+	 *      start for Gitee</a>
+	 * @see <a href=
+	 *      "https://github.com/wl4g/super-devops/blob/master/super-devops-shell/README.md">Quick
+	 *      start for Github</a>
+	 */
 	public static void main(String[] args) {
 		RunnerBuilder.builder().provider(InteractiveRunner.class).build().run(args);
 	}

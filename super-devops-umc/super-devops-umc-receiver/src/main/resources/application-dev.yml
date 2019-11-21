@@ -11,28 +11,10 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web:
-    cors:
-      enabled: true # Defualt: true
-      rules:
-      - path: /**
-        allowCredentials: true
-        allowsOrigins:
-           - http://localhost:8080
-           - http://localhost.com:8080
-        allowsHeaders: '*'
-        allowsMethods: GET,POST
-  cloud:
-    devops:
-      iam:
-        acl:
-          secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-        client:
-          server-uri: http://localhost:14040/iam-server
-          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://localhost:8080/#/srm/console
+  boot: # Spring boot admin.
+    admin:
+      notify.composite:
+        href-url: http://127.0.0.1:${server.port}/${spring.application.name}
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -54,15 +36,40 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
+  cloud:
+    devops:
+      umc:
+        store:
+          derby:
+          opentsdb:
+            host: http://10.0.0.160
+            port: 4242
+        receiver:
+          http:
+            enabled: true
+          kafka:
+            enabled: true
+            concurrency: 3
+            queue-depth: 4092
+            properties:
+              group.id: defaultUmcReceiverClusterId
+              bootstrap.servers: ${KAFKA_NODES:owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092}
+              #bootstrap.servers: localhost:9092
+        watch:
+#          zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
+          zk-servers: safecloud-master:3181
+          fetch-cache-sec: 1800
+        alarm:
+          concurrency: 2
 
 # Spring-security config.
 security.user:
   name: sba_user
-  password: 123456
+  password: hnGsFm6k0klJP9j
 
 # Redis configuration.
 redis:
-  passwd: ${REDIS_PASSWD:zzx!@#$%}
+  passwd: zzx!@#$%
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.

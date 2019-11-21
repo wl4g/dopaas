@@ -21,6 +21,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
@@ -31,6 +35,17 @@ import com.wl4g.devops.shell.bean.SumResult;
 import com.wl4g.devops.shell.processor.ShellHolder;
 import com.wl4g.devops.shell.service.ExampleService;
 
+/**
+ * Example console.</br>
+ * Note: for the shell program to take effect, you must inject {@link Component}
+ * or {@link Service} or {@link Bean} into the spring
+ * {@link ApplicationContext}.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-04-21
+ * @since
+ */
+@Component
 @ShellComponent
 public class ExampleConsole {
 
