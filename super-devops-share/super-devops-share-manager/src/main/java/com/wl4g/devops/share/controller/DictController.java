@@ -56,7 +56,7 @@ public class DictController extends BaseController {
 	@RequestMapping(value = "/save")
 	public RespBase<?> save(Dict dict, Boolean isEdit) {
 		RespBase<Object> resp = RespBase.create();
-
+		dictService.save(dict,isEdit);
 		return resp;
 	}
 
