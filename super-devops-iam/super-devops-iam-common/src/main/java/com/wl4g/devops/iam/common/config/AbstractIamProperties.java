@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.config;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.hasText;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -26,12 +27,11 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
 /**
- * IAM abstract properties.
+ * IAM abstract configuration properties.
  *
  * @author Wangl.sir
  * @version v1.0.0 2018-09-22
@@ -146,6 +146,15 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	public abstract void setParam(P param);
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// Apply default properties if necessary.
+		applyDefaultIfNecessary();
+
+		// Validate attributes.
+		validation();
+	}
+
 	/**
 	 * Apply default properties if necessary.
 	 */
@@ -155,17 +164,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * Validation.
 	 */
 	protected void validation() {
-		Assert.hasText(getLoginUri(), "'loginUri' must be empty.");
-		Assert.hasText(getSuccessUri(), "'successUri' must be empty.");
-		Assert.hasText(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		// Apply default properties if necessary.
-		applyDefaultIfNecessary();
-		// Validate attributes.
-		validation();
+		hasText(getLoginUri(), "'loginUri' must be empty.");
+		hasText(getSuccessUri(), "'successUri' must be empty.");
+		hasText(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
 	}
 
 	/**
@@ -188,7 +189,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			if (isBlank(prefix)) {
 				setPrefix(environment.getProperty("spring.application.name") + "_iam_");
 			}
-			Assert.hasText(prefix, "Cache prefix must not be empty.");
+			hasText(prefix, "Cache prefix must not be empty.");
 			return prefix;
 		}
 
@@ -214,7 +215,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			if (isBlank(super.getName())) {
 				setName("IAMSID_" + environment.getProperty("spring.application.name"));
 			}
-			Assert.hasText(super.getName(), "Cookie name must not be empty.");
+			hasText(super.getName(), "Cookie name must not be empty.");
 			return super.getName();
 		}
 

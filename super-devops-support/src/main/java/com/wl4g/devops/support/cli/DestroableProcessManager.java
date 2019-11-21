@@ -171,7 +171,7 @@ public interface DestroableProcessManager {
 			throws IllegalProcessStateException, IOException, InterruptedException;
 
 	/**
-	 * Async execution default command-line.
+	 * Async execution command.
 	 * 
 	 * @param processId
 	 * @param cmd
@@ -187,7 +187,7 @@ public interface DestroableProcessManager {
 	}
 
 	/**
-	 * Async execution default command-line.
+	 * Async execution command.
 	 * 
 	 * @param processId
 	 * @param cmd
