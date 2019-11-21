@@ -290,14 +290,21 @@ public class GroupServiceImpl implements GroupService {
 		GroupExt groupExt = new GroupExt();
 		if (GroupExt.GroupType.Park.getValue() == group.getType()) {
 			Park park = parkDao.selectByGroupId(id);
-			BeanUtils.copyProperties(park, groupExt);
+			if(Objects.nonNull(park)){
+				BeanUtils.copyProperties(park, groupExt);
+			}
 		} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
 			Company company = companyDao.selectByGroupId(id);
-			BeanUtils.copyProperties(company, groupExt);
+			if(Objects.nonNull(company)){
+				BeanUtils.copyProperties(company, groupExt);
+			}
 		} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
 			Department department = departmentDao.selectByGroupId(id);
-			BeanUtils.copyProperties(department, groupExt);
+			if (Objects.nonNull(department)) {
+				BeanUtils.copyProperties(department, groupExt);
+			}
 		}
+
 		group.setGroupExt(groupExt);
 		return group;
 	}
