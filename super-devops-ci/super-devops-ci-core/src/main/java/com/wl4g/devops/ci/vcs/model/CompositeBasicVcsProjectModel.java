@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops.ci.vcs.model;
 
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
-
-import java.io.Serializable;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Composite VCS basic project model.</br>
@@ -78,7 +77,7 @@ public class CompositeBasicVcsProjectModel implements Serializable {
 	}
 
 	public void setName(String name) {
-		hasText(httpUrl, "name can't is empty.");
+		hasText(name, "name can't is empty.");
 		this.name = name;
 	}
 
