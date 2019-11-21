@@ -18,17 +18,16 @@ package com.wl4g.devops.ci.pipeline.deploy;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.List;
 
 import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
 import static com.wl4g.devops.ci.utils.PipelineUtils.getUnExtensionFilename;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
 import static org.springframework.util.Assert.hasText;
-
-import java.io.File;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Generic based host deploying transfer job.
@@ -114,7 +113,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey) throws Exception {
-		String command = "tar -zxvf " + getRemoteTmpFilePath() + " -C " + config.getDeploy().getRemoteHomeTmpDir();
+		String command = "tar -xvf " + getRemoteTmpFilePath() + " -C " + config.getDeploy().getRemoteHomeTmpDir();
 		logDefault("Decompress remote program for %s@%s -> [%s]", user, remoteHost, command);
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);
 	}
@@ -142,7 +141,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void installRemoteNewerProgram(String remoteHost, String user, String sshkey) throws Exception {
-		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir() + getPrgramInstallFileName();
+		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir()+"/" + getPrgramInstallFileName();
 		String command = "mv " + decompressedTmpFile + " " + getProgramInstallDir();
 		logDefault("Install remote newer program for %s@%s -> [%s]", user, remoteHost, command);
 		provider.doRemoteCommand(remoteHost, user, command, sshkey);
@@ -184,11 +183,11 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	/**
 	 * Get remote temporary executable file absolute path.
 	 * 
-	 * @return
+	 * @returns
 	 */
 	protected String getRemoteTmpFilePath() {
-		return config.getTransferRemoteHomeTmpFile(getContext().getProject().getProjectName(), DEFAULT_FILE_SUFFIX)
-				.getAbsolutePath();
+		String result = config.getDeploy().getRemoteHomeTmpDir()+"/"+getPrgramInstallFileName() +"." + DEFAULT_FILE_SUFFIX;
+		return result;
 	}
 
 }
