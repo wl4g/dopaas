@@ -24,8 +24,8 @@ import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorUR
 import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.hasText;
 
-import org.apache.shiro.util.Assert;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -113,7 +113,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	public void setSuccessEndpoint(String successEndpoint) {
-		Assert.hasText(successEndpoint, "Success endpoint must not be empty.");
+		hasText(successEndpoint, "Success endpoint must not be empty.");
 		this.successService = successEndpoint.split("@")[0];
 		this.successUri = cleanURI(correctAuthenticaitorURI(successEndpoint.split("@")[1]));
 	}
@@ -183,6 +183,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	protected void applyDefaultIfNecessary() {
 		// Default URL filter chain.
 		addDefaultFilterChain();
+
 		// Default success endPoint.
 		if (isBlank(getSuccessService())) {
 			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
@@ -191,8 +192,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 	@Override
 	protected void validation() {
-		Assert.hasText(getSuccessService(), "Success service must not be empty.");
-		Assert.hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
+		hasText(getSuccessService(), "Success service must not be empty.");
+		hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
 		super.validation();
 	}
 
@@ -200,7 +201,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 * Add default filter chain settings.<br/>
 	 * {@link DefaultOauth2SnsController#connect}<br/>
 	 */
-	private void addDefaultFilterChain() {
+	final private void addDefaultFilterChain() {
 		// Default view access files request rules.
 		getFilterChain().put(DEFAULT_VIEW_BASE_URI + URI_STATIC + "/**", "anon");
 		// SNS authenticator rules.
