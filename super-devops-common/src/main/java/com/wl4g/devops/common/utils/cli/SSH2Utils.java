@@ -112,7 +112,7 @@ public abstract class SSH2Utils {
 			// Transfer send file.
 			SCPClient scp = new SCPClient(conn);
 
-			sos = scp.put(localFile.getAbsolutePath(), localFile.length(), remoteDir, "0744");
+			sos = scp.put(localFile.getName(), localFile.length(), remoteDir, "0744");
 
 			fis = new FileInputStream(localFile);
 			int i = 0;

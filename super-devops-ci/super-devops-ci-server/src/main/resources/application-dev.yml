@@ -50,6 +50,7 @@ spring:
             job-timeout-ms: 600_000
             shared-dependency-try-timeout-ms: 300_000
           deploy:
+            #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
             cipher-key: 03DE18C2FC4E605F
             transfer-timeout-ms: 100_000
             docker-native:

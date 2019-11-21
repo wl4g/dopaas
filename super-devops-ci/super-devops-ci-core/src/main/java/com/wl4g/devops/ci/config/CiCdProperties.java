@@ -241,10 +241,10 @@ public class CiCdProperties implements InitializingBean {
 	 * @param suffix
 	 * @return
 	 */
-	public File getTransferRemoteHomeTmpFile(String projectName, String suffix) {
+	public String getTransferRemoteHomeTmpFile(String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(suffix, "Transfer project file suffix must not be empty.");
-		return new File(getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);
+		return getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix;
 	}
 
 }
