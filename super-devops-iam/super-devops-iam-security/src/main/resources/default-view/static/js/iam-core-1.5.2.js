@@ -1,5 +1,5 @@
 /**
- * Iam core v1.5.1 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Iam core v1.5.2 | (c) 2017, 2022 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
@@ -102,11 +102,6 @@
 
 	// Global settings.
 	var settings = {
-		deploy: { // 部署配置
-			baseUri: null, // IAM后端服务baseURI
-			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
-		},
 		// 字典参数定义
 		definition: {
 			responseType: "response_type", // 控制返回数据格式的参数名
@@ -130,6 +125,23 @@
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			codeOkValue: "200" // 接口返回成功码判定标准
 		},
+		deploy: { // 部署配置
+			baseUri: null, // IAM后端服务baseURI
+			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
+		},
+ 		init: { // 初始相关配置(Event)
+ 			onPreCheck: function(principal, checkUrl){
+ 				console.debug("onPostCheck... principal:"+ principal +", checkUrl:"+ checkUrl);
+ 				return true; // continue after?
+ 			},
+ 			onPostCheck: function(res){
+ 				console.debug("onPostCheck... " + res);
+ 			},
+ 			onError: function(req, status, errmsg){
+ 				console.error("Failed to initialize... "+ errmsg);
+ 			}
+ 		},
 		// 图像验证码配置
 		captcha: {
 			use: "VerifyWithGifGraph", // Default use gif
@@ -431,6 +443,12 @@
 				+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
 				+ Common.Util.checkEmpty("captcha.use", settings.captcha.use);
 
+			// 初始化前回调
+			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal, checkUrl)){
+				console.warn("Skip the init safeCheck, because onPreCheck() return false");
+				return;
+			}
+
 			// 请求安全预检
 			$.ajax({
 				url: checkUrl,
@@ -438,17 +456,18 @@
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				dataType: "json",
 				success: function(res){
+					// 初始化完成回调
+					Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
+
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-					if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
-						settings.account.onError(res.message); // 检查失败回调
-					} else {
+					if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 						runtime.safeCheck = res.data; // [MARK3]
 						callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
 					}
 				},
 				error: function(req, status, errmsg){
 					console.log("Failed to safe check, " + errmsg);
-					settings.account.onError(errmsg); // 登录异常回调
+					Common.Util.checkEmpty("init.onError", settings.init.onError)(req, status, errmsg); // 登录异常回调
 				}
 			});
 		});
