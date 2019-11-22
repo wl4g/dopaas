@@ -35,8 +35,6 @@ public class Group extends BaseBean implements Serializable {
 
 	private Integer parentId;
 
-	private Integer dutyUserId;
-
 	private Integer status;
 
 	// other
@@ -88,14 +86,6 @@ public class Group extends BaseBean implements Serializable {
 
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
-	}
-
-	public Integer getDutyUserId() {
-		return dutyUserId;
-	}
-
-	public void setDutyUserId(Integer dutyUserId) {
-		this.dutyUserId = dutyUserId;
 	}
 
 	public Integer getStatus() {
