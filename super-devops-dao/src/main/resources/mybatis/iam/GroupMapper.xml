@@ -7,7 +7,6 @@
     <result column="display_name" property="displayName" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
-    <result column="duty_user_id" property="dutyUserId" jdbcType="INTEGER" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
@@ -17,11 +16,11 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, display_name, type, parent_id, duty_user_id, enable, status, create_by, 
+    id, name, display_name, type, parent_id, enable, status, create_by,
     create_date, update_by, update_date, del_flag
   </sql>
   <sql id="Base_Column_List_g" >
-    g.id, g.name, g.display_name, g.type, g.parent_id, g.duty_user_id, g.enable, g.status, g.create_by,
+    g.id, g.name, g.display_name, g.type, g.parent_id, g.enable, g.status, g.create_by,
     g.create_date, g.update_by, g.update_date, g.del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -69,12 +68,12 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.Group" >
     insert into sys_group (id, name, display_name, 
-      type, parent_id, duty_user_id, 
+      type, parent_id,
       enable, status, create_by, 
       create_date, update_by, update_date, 
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
-      #{type,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{dutyUserId,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER},
       #{enable,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createBy,jdbcType=INTEGER}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
@@ -96,9 +95,6 @@
       </if>
       <if test="parentId != null" >
         parent_id,
-      </if>
-      <if test="dutyUserId != null" >
-        duty_user_id,
       </if>
       <if test="enable != null" >
         enable,
@@ -138,9 +134,6 @@
       <if test="parentId != null" >
         #{parentId,jdbcType=INTEGER},
       </if>
-      <if test="dutyUserId != null" >
-        #{dutyUserId,jdbcType=INTEGER},
-      </if>
       <if test="enable != null" >
         #{enable,jdbcType=INTEGER},
       </if>
@@ -179,9 +172,6 @@
       <if test="parentId != null" >
         parent_id = #{parentId,jdbcType=INTEGER},
       </if>
-      <if test="dutyUserId != null" >
-        duty_user_id = #{dutyUserId,jdbcType=INTEGER},
-      </if>
       <if test="enable != null" >
         enable = #{enable,jdbcType=INTEGER},
       </if>
@@ -212,7 +202,6 @@
       display_name = #{displayName,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       parent_id = #{parentId,jdbcType=INTEGER},
-      duty_user_id = #{dutyUserId,jdbcType=INTEGER},
       enable = #{enable,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=INTEGER},
