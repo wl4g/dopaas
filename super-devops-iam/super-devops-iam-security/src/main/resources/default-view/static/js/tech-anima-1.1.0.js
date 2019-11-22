@@ -78,8 +78,9 @@
 		//网上说7/8/9是不支持的，本人没有试验，
 		//当然加上是没有错的
 		i = i || window.event;
-		mouse.x = i.clientX;
-		mouse.y = i.clientY;
+		// 为了解决浏览器缩放, document.body.style.zoom表示当前缩放比例
+	    mouse.x = i.clientX/document.body.style.zoom;
+		mouse.y = i.clientY/document.body.style.zoom;
 	}
 	//鼠标移出窗口后，消除鼠标小方块
 	window.onmouseout = function() {
