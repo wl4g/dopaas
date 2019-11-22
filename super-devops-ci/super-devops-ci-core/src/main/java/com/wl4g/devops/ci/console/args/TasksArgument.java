@@ -41,7 +41,7 @@ public class TasksArgument implements Serializable {
 	@ShellOption(opt = "b", lopt = "branchName", help = "task project branch name", required = false)
 	private String branchName;
 	@ShellOption(opt = "P", lopt = "tarType", help = "task pipeline provider type", required = false)
-	private Integer tarType;
+	private String tarType;
 	@ShellOption(opt = "S", lopt = "startDate", help = "task start date(yyyy-MM-dd HH:mm:ss)", required = false)
 	private String startDate;
 	@ShellOption(opt = "E", lopt = "endDate", help = "task end date(yyyy-MM-dd HH:mm:ss)", required = false)
@@ -95,11 +95,11 @@ public class TasksArgument implements Serializable {
 		this.branchName = branchName;
 	}
 
-	public Integer getTarType() {
+	public String getTarType() {
 		return tarType;
 	}
 
-	public void setTarType(Integer tarType) {
+	public void setTarType(String tarType) {
 		this.tarType = tarType;
 	}
 

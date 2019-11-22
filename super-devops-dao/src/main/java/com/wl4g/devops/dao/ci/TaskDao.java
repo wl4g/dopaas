@@ -36,7 +36,7 @@ public interface TaskDao {
 	int updateByPrimaryKey(Task record);
 
 	List<Task> list(@Param("id") Integer id, @Param("taskName") String taskName, @Param("groupName") String groupName,
-			@Param("branchName") String branchName, @Param("tarType") Integer tarType, @Param("startDate") String startDate,
+			@Param("branchName") String branchName, @Param("tarType") String tarType, @Param("startDate") String startDate,
 			@Param("endDate") String endDate);
 
 	List<Task> selectByAppClusterId(Integer appClusterId);
