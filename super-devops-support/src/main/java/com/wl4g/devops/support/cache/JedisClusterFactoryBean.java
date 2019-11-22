@@ -71,8 +71,9 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 		// Parse cluster node's
 		Set<HostAndPort> haps = config.parseHostAndPort();
 		if (log.isInfoEnabled()) {
-			log.info("\n=> Connect to redis cluster nodes: {}", haps);
+			haps.forEach(n -> log.info("=> Connect to redis cluster node: {}", n));
 		}
+
 		try {
 			Assert.notEmpty(haps, "Redis nodes is empty.");
 			// Create REDIS cluster
