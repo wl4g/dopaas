@@ -62,7 +62,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, Integer tarType,
+	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String tarType,
 			String startDate, String endDate) {
 		log.info("into TaskController.list prarms::"
 				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
