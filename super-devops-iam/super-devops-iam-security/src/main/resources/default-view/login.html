@@ -8,9 +8,9 @@
 	<!-- https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css -->
     <link rel="stylesheet" href="./static/css/font-awesome-all.5.7.2.min.css"/>
 	<link rel="stylesheet" href="./static/css/bootstrap-3.3.7.min.css"/>
-	<link rel="stylesheet" href="./static/css/login-1.5.1.css"/>
+	<link rel="stylesheet" href="./static/css/login-1.5.2.css"/>
 	<link rel="stylesheet" href="./static/css/lanren.css"/>
-	<link rel="stylesheet" href="./static/css/iam-captcha-jigsaw-1.5.1.css"/>
+	<link rel="stylesheet" href="./static/css/iam-captcha-jigsaw-1.5.2.css"/>
 </head>
 <body style="background:url('./static/images/bg_icon/background.png') no-repeat;background-size: cover;">
     <script type="text/javascript">
@@ -178,12 +178,12 @@
 	<div class="gb_box"></div>
 	<script type="text/javascript" src="./static/js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="./static/js/bootstrap-3.3.7.min.js"></script>
-	<script type="text/javascript" src="./static/js/common-util-1.5.1.min.js"></script>
-	<script type="text/javascript" src="./static/js/iam-core-1.5.1.js"></script>
-	<script type="text/javascript" src="./static/js/iam-crypto-1.5.1.min.js"></script>
-	<script type="text/javascript" src="./static/js/iam-captcha-jigsaw-1.5.1.min.js"></script>
-	<script type="text/javascript" src="./static/js/login-1.5.1.js"></script>
-	<script type="text/javascript" src="./static/js/tech-anima-1.1.0.js"></script>
+	<script type="text/javascript" src="./static/js/common-util-1.5.2.min.js"></script>
+	<script type="text/javascript" src="./static/js/iam-core-1.5.2.min.js"></script>
+	<script type="text/javascript" src="./static/js/iam-crypto-1.5.2.min.js"></script>
+	<script type="text/javascript" src="./static/js/iam-captcha-jigsaw-1.5.2.min.js"></script>
+	<script type="text/javascript" src="./static/js/login-1.5.2.js"></script>
+	<script type="text/javascript" src="./static/js/tech-anima-1.1.1.js"></script>
 	<script type="text/javascript">
      	//var iamBaseURI = "http://passport.wl4g.com/sso";
      	//var iamBaseURI = "http://localhost:14040/iam-server";
@@ -194,6 +194,27 @@
             		//baseUri: iamBaseURI, // Using auto iamBaseUri
            			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
          			deaultContextPath: "/iam-server" // IAMServerd的context-path
+         		},
+         		// 初始相关配置(Event)
+         		init: {
+         			onPostCheck: function(res) {
+         				// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
+						var url = IAM.Core.getIamBaseUri() +"/login/errread";	
+						$.ajax({
+							url: url,
+							xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+							success: function (res) {
+								//console.log(res);
+								var errmsg = res.data["errorTipsInfo"];
+								if (errmsg != null && errmsg.length > 0) {
+									$("#err_tip").text(errmsg).show().delay(8000).hide(100);
+								}
+							}
+						});
+         			},
+         			onError: function(req, status, errmsg){
+ 						console.error("初始化失败... "+ errmsg);
+ 					}
          		},
 				// 定义验证码显示面板配置
 				captcha: {
@@ -298,22 +319,6 @@
 					window.location.href = JSON.parse(e.data).refresh_url;
 				}
 			}
-		})();
-	</script>
-	<script type="text/javascript">
-		// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
-		(function() {
-			var url = IAM.Core.getIamBaseUri() +"/login/errread";	
-			$.ajax({
-				url: url,
-				success: function (res) {
-					//console.log(res);
-					var errmsg = res.data["errorTipsInfo"];
-					if (errmsg != null && errmsg.length > 0) {
-						$("#err_tip").text(errmsg).show().delay(8000).hide(100);
-					}
-				}
-			});
 		})();
 	</script>
 </body>
