@@ -70,6 +70,9 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 	public void afterPropertiesSet() throws Exception {
 		// Parse cluster node's
 		Set<HostAndPort> haps = config.parseHostAndPort();
+		if (log.isInfoEnabled()) {
+			log.info("\n=> Connect to redis cluster nodes: {}", haps);
+		}
 		try {
 			Assert.notEmpty(haps, "Redis nodes is empty.");
 			// Create REDIS cluster
@@ -79,9 +82,6 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 			} else {
 				jedisCluster = new JedisCluster(haps, config.getConnTimeout(), config.getSoTimeout(), config.getMaxAttempts(),
 						config.getPasswd(), config.getPoolConfig());
-			}
-			if (log.isInfoEnabled()) {
-				log.info("Connected to redis cluster to => {}", haps);
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(String.format("Can't connect to redis cluster: %s", haps), e);

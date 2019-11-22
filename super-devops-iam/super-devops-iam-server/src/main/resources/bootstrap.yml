@@ -42,10 +42,10 @@ spring:
           session-validation-interval: 360_000
         cookie:
           name: IAMSID_TGC
-#        authc-internal-access:
-#          secure: true
-#          allowIp: 127.0.0.1
-#          denyIp:
+        #acl:
+          #secure: false # Turn off protection will trust any same intranet IP.
+          #allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          #denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         captcha:
           #kaptcha:
           #gif:
