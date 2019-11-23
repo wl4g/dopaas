@@ -16,14 +16,17 @@
 package com.wl4g.devops.iam.configure;
 
 import com.wl4g.devops.common.bean.iam.*;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SimpleParameter;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SnsParameter;
 import com.wl4g.devops.common.bean.share.ClusterConfig;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
 import com.wl4g.devops.dao.share.ClusterConfigDao;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SnsParameter;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -41,7 +44,6 @@ import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
-import static org.apache.shiro.util.Assert.hasText;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -160,7 +162,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public IamAccountInfo getIamAccount(Parameter parameter) {
+	public IamPrincipalInfo getIamAccount(Parameter parameter) {
 		User user = null;
 
 		// By SNS authorizing
@@ -174,7 +176,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			user = userDao.selectByUserName(simpleParameter.getPrincipal());
 		}
 		if (nonNull(user)) {
-			return new StandardIamAccountInfo(user.getUserName(), user.getPassword());
+			return new SimplePrincipalInfo(String.valueOf(user.getId()), user.getUserName(), user.getPassword(),
+					getRoles(user.getUserName()), getPermissions(user.getUserName()));
 		}
 		return null;
 	}
@@ -185,7 +188,27 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public String findRoles(String principal, String application) {
+	public void bindSocialConnection(SocialConnectInfo social) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<SocialConnectInfo> findSocialConnections(String principal, String provider) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void unbindSocialConnection(SocialConnectInfo social) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Get current authenticate principal role codes.
+	 * 
+	 * @param principal
+	 * @return
+	 */
+	private String getRoles(String principal) {
 		User user = userDao.selectByUserName(principal);
 		// TODO cache
 		List<Role> list = roleDao.selectByUserId(user.getId());
@@ -201,8 +224,13 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		return sb.toString();
 	}
 
-	@Override
-	public String findPermissions(String principal, String application) {
+	/**
+	 * Get current authenticate principal permissions.
+	 * 
+	 * @param principal
+	 * @return
+	 */
+	private String getPermissions(String principal) {
 		User user = userDao.selectByUserName(principal);
 		// TODO cache
 		List<Menu> list = menuDao.selectByUserId(user.getId());
@@ -216,57 +244,6 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			}
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public void bindSocialConnection(SocialConnectInfo social) {
-
-	}
-
-	@Override
-	public List<SocialConnectInfo> findSocialConnections(String principal, String provider) {
-
-		return null;
-	}
-
-	@Override
-	public void unbindSocialConnection(SocialConnectInfo social) {
-
-	}
-
-	/**
-	 * Standard IAM account info implements.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月31日
-	 * @since
-	 */
-	public static class StandardIamAccountInfo implements IamAccountInfo {
-		private static final long serialVersionUID = 1L;
-
-		/** Authenticating principal name. */
-		final private String principal;
-
-		/** Authenticating principal DB stored credenticals. */
-		final private String storedCredentials;
-
-		public StandardIamAccountInfo(String principal, String storedCredentials) {
-			hasText(principal, "Principal must not be empty.");
-			hasText(storedCredentials, "StoredCredentials must not be empty.");
-			this.principal = principal;
-			this.storedCredentials = storedCredentials;
-		}
-
-		@Override
-		public String getPrincipal() {
-			return principal;
-		}
-
-		@Override
-		public String getStoredCredentials() {
-			return storedCredentials;
-		}
-
 	}
 
 }

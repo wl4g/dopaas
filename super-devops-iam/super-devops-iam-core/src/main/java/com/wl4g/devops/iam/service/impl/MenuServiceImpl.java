@@ -21,10 +21,10 @@ import com.wl4g.devops.common.bean.iam.GroupMenu;
 import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.dao.iam.GroupMenuDao;
 import com.wl4g.devops.dao.iam.MenuDao;
-import com.wl4g.devops.iam.handler.UserUtil;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.MenuService;
-import org.apache.shiro.SecurityUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -33,6 +33,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.devops.common.utils.lang.TypeConverts.parseIntOrNull;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Menu service implements.
@@ -46,9 +49,6 @@ public class MenuServiceImpl implements MenuService {
 
 	@Autowired
 	private MenuDao menuDao;
-
-	@Autowired
-	private UserUtil userUtil;
 
 	@Autowired
 	private GroupService groupService;
@@ -78,13 +78,12 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public List<Menu> getMenuList() {
-		String principal = (String) SecurityUtils.getSubject().getPrincipal();
-		if (DEFAULT_USER_ROOT.equals(principal)) {
+		IamPrincipalInfo info = getPrincipalInfo();
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			return menuDao.selectByRoot();// root
 		} else {
-			return menuDao.selectByUserId(userUtil.getCurrentLoginUserId());
+			return menuDao.selectByUserId(parseIntOrNull(info.getPrincipalId()));
 		}
-
 	}
 
 	@Override
@@ -138,13 +137,17 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	private Set<Menu> getMenusSet() {
-		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
+		IamPrincipalInfo info = getPrincipalInfo();
+
 		List<Menu> menus = null;
-		String currentLoginUsername = userUtil.getCurrentLoginUsername();
-		if (DEFAULT_USER_ROOT.equals(currentLoginUsername)) {
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			menus = menuDao.selectByRoot();
 		} else {
-			menus = menuDao.selectByUserIdAccessGroup(currentLoginUserId);
+			Integer userId = null;
+			if (isBlank(info.getPrincipalId())) {
+				userId = Integer.parseInt(info.getPrincipalId());
+			}
+			menus = menuDao.selectByUserIdAccessGroup(userId);
 		}
 		Set<Menu> set = new HashSet<>();
 		set.addAll(menus);

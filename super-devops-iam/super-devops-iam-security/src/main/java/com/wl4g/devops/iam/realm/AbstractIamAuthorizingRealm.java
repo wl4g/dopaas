@@ -36,7 +36,7 @@ import org.springframework.web.client.RestTemplate;
 import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
@@ -44,9 +44,11 @@ import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -160,22 +162,25 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
 			// Obtain authentication info.
-			AuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
-			notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
+			IamAuthenticationInfo authcInfo = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
+			notNull(authcInfo, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
 			/**
 			 * [Extension]: Save authenticate info, For example, for online
 			 * session management and analysis. *
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
-			return bind(KEY_AUTHC_INFO, info);
+			IamPrincipalInfo principalInfo = authcInfo.getAccountInfo();
+			principalInfo.validate(); // Validation
+			bind(KEY_AUTHC_ACCOUNT_INFO, principalInfo);
+			return authcInfo;
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}
 	}
 
 	/**
-	 * Obtain authentication information.</br>
+	 * Get current authenticating principal {@link IamAuthenticationInfo}.</br>
 	 *
 	 * <font style='color:red'>Note: At least empty authentication information
 	 * should be returned. Reason reference:
@@ -186,7 +191,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	 * @throws AuthenticationException
 	 * @see {@link org.apache.shiro.authz.ModularRealmAuthorizer#isPermitted()}
 	 */
-	protected abstract AuthenticationInfo doAuthenticationInfo(T token) throws AuthenticationException;
+	protected abstract IamAuthenticationInfo doAuthenticationInfo(T token) throws AuthenticationException;
 
 	@Override
 	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {

@@ -26,6 +26,8 @@ import com.wl4g.devops.common.exception.iam.TicketValidateException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
+import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
+
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
 
 import java.util.Map;
@@ -38,7 +40,8 @@ import java.util.Map;
  * @date 2018年11月29日
  * @since
  */
-public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketValidationModel, TicketAssertion> {
+public class FastCasTicketIamValidator
+		extends AbstractBasedIamValidator<TicketValidationModel, TicketAssertion<SimplePrincipalInfo>> {
 
 	public FastCasTicketIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
@@ -50,8 +53,8 @@ public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketV
 	}
 
 	@Override
-	public TicketAssertion validate(TicketValidationModel req) throws TicketValidateException {
-		final RespBase<TicketAssertion> resp = doGetRemoteValidate(URI_S_VALIDATE, req);
+	public TicketAssertion<SimplePrincipalInfo> validate(TicketValidationModel req) throws TicketValidateException {
+		final RespBase<TicketAssertion<SimplePrincipalInfo>> resp = doGetRemoteValidate(URI_S_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
 			// Only if the error is not authenticated, can it be redirected to
 			// the IAM server login page, otherwise the client will display the
@@ -68,8 +71,8 @@ public class FastCasTicketIamValidator extends AbstractBasedIamValidator<TicketV
 	}
 
 	@Override
-	protected ParameterizedTypeReference<RespBase<TicketAssertion>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<TicketAssertion>>() {
+	protected ParameterizedTypeReference<RespBase<TicketAssertion<SimplePrincipalInfo>>> getTypeReference() {
+		return new ParameterizedTypeReference<RespBase<TicketAssertion<SimplePrincipalInfo>>>() {
 		};
 	}
 

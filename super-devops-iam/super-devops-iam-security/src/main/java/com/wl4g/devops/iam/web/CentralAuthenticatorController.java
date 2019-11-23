@@ -37,13 +37,14 @@ import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
-import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
@@ -69,12 +70,13 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
-	public RespBase<TicketAssertion> validate(HttpServletRequest request, @NotNull @RequestBody TicketValidationModel param) {
+	public RespBase<TicketAssertion<IamPrincipalInfo>> validate(HttpServletRequest request,
+			@NotNull @RequestBody TicketValidationModel param) {
 		if (log.isInfoEnabled()) {
-			log.info("Ticket validate sessionId {} <= {}", getSessionId(), toJSONString(param));
+			log.info("Ticket validate sessionId[{}] <= {}", getSessionId(), toJSONString(param));
 		}
 
-		RespBase<TicketAssertion> resp = new RespBase<>();
+		RespBase<TicketAssertion<IamPrincipalInfo>> resp = new RespBase<>();
 		try {
 			// Ticket assertion.
 			resp.setData(authHandler.validate(param));

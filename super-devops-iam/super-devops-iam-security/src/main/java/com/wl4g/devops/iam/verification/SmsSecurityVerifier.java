@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.verification;
 
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SmsParameter;
 import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
 
@@ -172,7 +172,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 			return;
 		}
 		// Getting account information
-		IamAccountInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
+		IamPrincipalInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
 
 		// Check mobile(user) available
 		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {

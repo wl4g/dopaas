@@ -41,7 +41,6 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
  * @since
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -89,28 +88,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 		Assert.notNull(restTemplate, "'restTemplate' must not be null");
 		this.restTemplate = restTemplate;
 		this.configurer = context;
-	}
-
-	/**
-	 * Find current grantTicket principal system role.
-	 *
-	 * @param principal
-	 * @param application
-	 * @return
-	 */
-	protected String getRoles(String principal, String application) {
-		return this.configurer.findRoles(principal, application);
-	}
-
-	/**
-	 * Find current grantTicket principal system Permission.
-	 *
-	 * @param principal
-	 * @param application
-	 * @return
-	 */
-	protected String getPermits(String principal, String application) {
-		return this.configurer.findPermissions(principal, application);
 	}
 
 }

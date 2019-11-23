@@ -28,6 +28,7 @@ import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 /**
  * IAM authentication handler.
@@ -69,7 +70,7 @@ public abstract interface AuthenticationHandler {
 	 *            ticket validation request
 	 * @return validation assert result
 	 */
-	TicketAssertion validate(TicketValidationModel model);
+	TicketAssertion<IamPrincipalInfo> validate(TicketValidationModel model);
 
 	/**
 	 * Shiro authentication success callback process.

@@ -47,7 +47,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
-import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

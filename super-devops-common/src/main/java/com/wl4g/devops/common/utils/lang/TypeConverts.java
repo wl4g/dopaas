@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.common.utils.lang;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
+
 /**
  * 类型字节转换器
  * 
@@ -23,7 +26,7 @@ package com.wl4g.devops.common.utils.lang;
  * @time 2016年9月26日
  * @since
  */
-public class TypeConverts {
+public abstract class TypeConverts {
 
 	/**
 	 * Used to build output as Hex
@@ -206,6 +209,30 @@ public class TypeConverts {
 			out[j++] = DIGITS_LOW[0x0F & data[i]];
 		}
 		return new String(out);
+	}
+
+	/**
+	 * Parse int of string value.
+	 * 
+	 * @param value
+	 *            If the value int to the number type, return to convert to the
+	 *            int value, otherwise return null
+	 * @return
+	 */
+	public static Integer parseIntOrNull(final String value) {
+		return isBlank(value) ? null : (isNumeric(value) ? Integer.parseInt(value) : null);
+	}
+
+	/**
+	 * Parse long of string value.
+	 * 
+	 * @param If
+	 *            the value long to the number type, return to convert to the
+	 *            long value, otherwise return null.
+	 * @return
+	 */
+	public static Long parseLongOrNull(final String value) {
+		return isBlank(value) ? null : (isNumeric(value) ? Long.parseLong(value) : null);
 	}
 
 }

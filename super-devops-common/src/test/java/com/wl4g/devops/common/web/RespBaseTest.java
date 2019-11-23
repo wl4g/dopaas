@@ -18,7 +18,6 @@ package com.wl4g.devops.common.web;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +28,7 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
 
 public class RespBaseTest {
 
-	static class TestModel implements Serializable {
-		private static final long serialVersionUID = 3984698842381556513L;
+	static class TestModel {
 		private String name;
 		private List<TestSubModel> subList = new ArrayList<TestSubModel>() {
 			private static final long serialVersionUID = 7144913810891463508L;
@@ -104,6 +102,28 @@ public class RespBaseTest {
 
 	}
 
+	static class TestGenericModel<T> {
+		private T value;
+
+		public TestGenericModel() {
+			super();
+		}
+
+		public TestGenericModel(T value) {
+			super();
+			this.value = value;
+		}
+
+		public T getValue() {
+			return value;
+		}
+
+		public void setValue(T value) {
+			this.value = value;
+		}
+
+	}
+
 	public static void main(String[] args) {
 		// for controller output(map).
 		RespBase<TestModel> resp11 = new RespBase<>(RetCode.newCode(4001, "message1"));
@@ -135,6 +155,20 @@ public class RespBaseTest {
 		});
 		Object tm2 = resp22.getData();
 		System.out.println(tm2);
+		System.out.println("-------------------------");
+
+		// for generic types.
+		RespBase<TestGenericModel<TestSubModel>> resp31 = new RespBase<>(RetCode.newCode(4001, "message3"));
+		resp31.setData(new TestGenericModel<TestSubModel>(new TestSubModel("jack3")));
+		System.out.println(">>As Map>>" + resp31.asMap());
+
+		String json31 = toJSONString(resp31);
+		System.out.println(json31);
+		RespBase<TestGenericModel<TestSubModel>> resp32 = parseJSON(json31,
+				new TypeReference<RespBase<TestGenericModel<TestSubModel>>>() {
+				});
+		Object tm3 = resp32.getData();
+		System.out.println(tm3);
 		System.out.println("-------------------------");
 
 	}

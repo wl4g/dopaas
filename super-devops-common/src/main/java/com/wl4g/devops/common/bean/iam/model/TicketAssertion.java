@@ -15,18 +15,15 @@
  */
 package com.wl4g.devops.common.bean.iam.model;
 
-import java.io.Serializable;
-import java.security.Principal;
+import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
+
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 
 /**
  * Concrete Implementation of the {@link TicketAssertion}.
@@ -36,7 +33,7 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
  * @Long 2018年11月22日
  * @since
  */
-public final class TicketAssertion {
+public final class TicketAssertion<T> {
 
 	/** The Long from which the assertion is valid(start Long). */
 	@NotNull
@@ -50,24 +47,15 @@ public final class TicketAssertion {
 	 * Map of key/value pairs associated with this assertion. I.e.
 	 * authentication type.
 	 */
-	private Map<String, Object> attributes = new HashMap<>(4);
+	@NotBlank
+	private String grantTicket = EMPTY;
 
 	/** The principal for which this assertion is valid for. */
 	@NotNull
-	private IamPrincipal principal;
+	private T principalInfo;
 
 	public TicketAssertion() {
 		super();
-	}
-
-	/**
-	 * Creates a new Assertion with the supplied Principal.
-	 *
-	 * @param principal
-	 *            the Principal to associate with the Assertion.
-	 */
-	public TicketAssertion(final IamPrincipal principal) {
-		this(principal, null, null);
 	}
 
 	/**
@@ -83,13 +71,15 @@ public final class TicketAssertion {
 	 * @param attributes
 	 *            the key/value pairs for this attribute.
 	 */
-	public TicketAssertion(final IamPrincipal principal, final Date validFromTime, final Date validUntilTime) {
-		this.setPrincipal(principal);
-		this.setValidFromDate(validFromTime);
-		this.setValidUntilDate(validUntilTime);
-		Assert.notNull(this.getPrincipal(), "'principal' cannot be null.");
-		Assert.notNull(this.getValidFromDate(), "'validFromLong' cannot be null.");
-		Assert.notNull(this.getValidUntilDate(), "'validUntilTime' cannot be null.");
+	public TicketAssertion(final String principal, final Date validFromTime, final Date validUntilTime, final String grantTicket,
+			final T principalInfo) {
+		hasText(principal, "Authenticate principal cannot be null.");
+		notNull(validFromTime, "Authenticate validFromTime cannot be null.");
+		notNull(validUntilTime, "Authenticate validUntilTime cannot be null.");
+		notNull(principalInfo, "Authenticate principalInfo cannot be null.");
+		setValidFromDate(validFromTime);
+		setValidUntilDate(validUntilTime);
+		setPrincipalInfo(principalInfo);
 	}
 
 	public final Date getValidFromDate() {
@@ -112,97 +102,28 @@ public final class TicketAssertion {
 		}
 	}
 
-	public final Map<String, Object> getAttributes() {
-		return attributes;
+	public String getGrantTicket() {
+		return grantTicket;
 	}
 
-	public final void setAttributes(Map<String, Object> attributes) {
-		if ((this.attributes == null || this.attributes.isEmpty()) && attributes != null) {
-			this.attributes = attributes;
-		}
+	public void setGrantTicket(String grantTicket) {
+		this.grantTicket = grantTicket;
 	}
 
 	@NotNull
-	public final IamPrincipal getPrincipal() {
-		return principal;
+	public final T getPrincipalInfo() {
+		return principalInfo;
 	}
 
-	public final void setPrincipal(IamPrincipal principal) {
-		if (this.principal == null && principal != null) {
-			this.principal = principal;
+	public final void setPrincipalInfo(T principalInfo) {
+		if (this.principalInfo == null && principalInfo != null) {
+			this.principalInfo = principalInfo;
 		}
 	}
 
 	@Override
 	public String toString() {
-		return JacksonUtils.toJSONString(this);
-	}
-
-	/**
-	 * Extension to the standard Java Principal that includes a way to retrieve
-	 * proxy tickets for a particular user and attributes.
-	 * <p>
-	 * Developer's who don't want their code tied to CAS merely need to work
-	 * with the Java Principal then. Working with the CAS-specific features
-	 * requires knowledge of the AttributePrincipal class.
-	 */
-	public final static class IamPrincipal implements Principal, Serializable {
-		/** Unique Id for Serialization */
-		private static final long serialVersionUID = -1443182634624927187L;
-
-		/** The unique identifier for this principal. */
-		@NotBlank
-		private String name;
-
-		/** Map of key/value pairs about this principal. */
-		private Map<String, Object> attributes = new HashMap<>(4);
-
-		public IamPrincipal() {
-			super();
-		}
-
-		public IamPrincipal(final String name) {
-			this(name, null);
-		}
-
-		/**
-		 * Constructs a new principal with the supplied name and attributes.
-		 *
-		 * @param name
-		 *            the unique identifier for the principal.
-		 * @param attributes
-		 *            the key/value pairs for this principal.
-		 */
-		public IamPrincipal(final String name, final Map<String, Object> attributes) {
-			this.setName(name);
-			this.setAttributes(attributes);
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			if (this.name == null && name != null) {
-				this.name = name;
-			}
-		}
-
-		public Map<String, Object> getAttributes() {
-			return attributes;
-		}
-
-		public void setAttributes(Map<String, Object> attributes) {
-			if ((this.attributes == null || this.attributes.isEmpty()) && attributes != null) {
-				this.attributes = attributes;
-			}
-		}
-
-		@Override
-		public String toString() {
-			return "IamPrincipal [name=" + name + ", attributes=" + attributes + "]";
-		}
-
+		return toJSONString(this);
 	}
 
 }

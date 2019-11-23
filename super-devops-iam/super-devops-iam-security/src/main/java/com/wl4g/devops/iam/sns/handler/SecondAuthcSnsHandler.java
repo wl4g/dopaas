@@ -31,14 +31,14 @@ import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.IllegalAuthorizer;
 
 import com.google.common.base.Splitter;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SnsAuthorizingParameter;
 import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
 import com.wl4g.devops.common.exception.iam.SecondAuthenticationException;
 import com.wl4g.devops.common.utils.id.RandomIds;
 import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SnsAuthorizingParameter;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
@@ -125,7 +125,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 		Oauth2OpenId openId = connect.getUserOpenId(ast);
 
 		// Account by openId
-		IamAccountInfo account = configurer
+		IamPrincipalInfo account = configurer
 				.getIamAccount(new SnsAuthorizingParameter(provider, openId.openId(), openId.unionId()));
 
 		// Second authentication assertion
@@ -179,7 +179,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 		return Which.SECOND_AUTH;
 	}
 
-	private void assertionSecondAuthentication(String provider, Oauth2OpenId openId, IamAccountInfo account, String authorizers,
+	private void assertionSecondAuthentication(String provider, Oauth2OpenId openId, IamPrincipalInfo account, String authorizers,
 			Map<String, String> connectParams) {
 		// Check authorizer effectiveness
 		if (account == null || StringUtils.isEmpty(account.getPrincipal())) {
