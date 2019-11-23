@@ -30,7 +30,7 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
-import com.wl4g.devops.iam.common.utils.Sessions;
+import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 
 /**
  * IAM client authenticator controller
@@ -52,7 +52,7 @@ public class ClientAuthenticatorController extends BaseController {
 	@ResponseBody
 	public RespBase<LogoutModel> logout(HttpServletRequest request) {
 		if (log.isInfoEnabled()) {
-			log.info("Logout processing... sessionId[{}]", Sessions.getSessionId());
+			log.info("Logout processing... sessionId[{}]", IamSecurityHolder.getSessionId());
 		}
 
 		RespBase<LogoutModel> resp = new RespBase<>();

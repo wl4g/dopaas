@@ -16,18 +16,18 @@
 package com.wl4g.devops.iam.handler;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
 import com.wl4g.devops.common.bean.iam.model.*;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion.IamPrincipal;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.iam.common.utils.Sessions;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.support.cache.ScanCursor;
 import org.apache.shiro.SecurityUtils;
@@ -53,9 +53,10 @@ import java.util.Set;
 import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.web.WebUtils2.isEqualWithDomain;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
-import static com.wl4g.devops.iam.common.utils.Sessions.getSessionExpiredTime;
-import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -73,7 +74,6 @@ import static org.springframework.util.Assert.hasText;
  */
 public class CentralAuthenticationHandler extends AbstractAuthenticationHandler {
 	final public static String GRANT_APP_INFO_KEY = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
-
 	final public static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
 
 	/**
@@ -131,8 +131,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public TicketAssertion validate(TicketValidationModel model) {
-		TicketAssertion assertion = new TicketAssertion();
+	public TicketAssertion<IamPrincipalInfo> validate(TicketValidationModel model) {
+		TicketAssertion<IamPrincipalInfo> assertion = new TicketAssertion<>();
 		String fromAppName = model.getApplication();
 		hasText(fromAppName, "'fromAppName' must not be empty.");
 
@@ -142,7 +142,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 */
 		Subject subject = SecurityUtils.getSubject();
 		if (log.isDebugEnabled()) {
-			log.debug("Validate subject [{}] by grantTicket: '{}'", subject, model.getTicket());
+			log.debug("Validate subject[{}] by grantTicket: '{}'", subject, model.getTicket());
 		}
 
 		// Assertion grantTicket.
@@ -158,7 +158,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 */
 		cacheManager.getCache(CACHE_TICKET_S).remove(new EnhancedKey(model.getTicket()));
 		if (log.isDebugEnabled()) {
-			log.debug("Clean used grantTicket: '{}'", model.getTicket());
+			log.debug("Clean older grantTicket[{}]", model.getTicket());
 		}
 
 		// Get current grant ticket session.
@@ -167,8 +167,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Grant attributes settings
 		//
 		// Principal
-		String principal = (String) subject.getPrincipal();
-		assertion.setPrincipal(new IamPrincipal(principal));
+		assertion.setPrincipalInfo(getPrincipalInfo());
 
 		// Grant validated start date.
 		long now = System.currentTimeMillis();
@@ -188,20 +187,17 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
 		String newGrantTicket = generateGrantTicket();
+		assertion.setGrantTicket(newGrantTicket);
 		if (log.isInfoEnabled()) {
-			log.info("New grantTicket: '{}', sessionId: '{}'", newGrantTicket, subject.getSession().getId());
+			log.info("New validate grantTicket[{}], sessionId[{}]", newGrantTicket, getSessionId());
 		}
-
 		/*
 		 * Re-bind granting session => applications
 		 */
 		savedGrantTicket(session, fromAppName, newGrantTicket);
 
-		assertion.getAttributes().put(config.getParam().getGrantTicket(), newGrantTicket);
 		// Authorized roles and permission information.
-		assertion.getPrincipal().getAttributes().put(KEY_ROLE_ATTRIBUTE_NAME, getRoles(principal, fromAppName));
-		assertion.getPrincipal().getAttributes().put(KEY_PERMIT_ATTRIBUTE_NAME, getPermits(principal, fromAppName));
-		assertion.getPrincipal().getAttributes().put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
+		assertion.getPrincipalInfo().getAttributes().put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
 		return assertion;
 	}
 
@@ -216,7 +212,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			// Generate grantTicket. Same: CAS/service-ticket
 			String initGrantTicket = generateGrantTicket();
 			if (log.isInfoEnabled()) {
-				log.info("Generate init grantTicket:[{}] by name:[{}]", initGrantTicket, fromAppName);
+				log.info("New init grantTicket[{}], fromAppName[{}]", initGrantTicket, fromAppName);
 			}
 
 			// Initial bind granting session => applications
@@ -267,7 +263,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 				// try/catch added for SHIRO-298:
 				subject.logout();
 				if (log.isDebugEnabled()) {
-					log.debug("Gentral logout. sessionId[{}]", Sessions.getSessionId(subject));
+					log.debug("Gentral logout. sessionId[{}]", IamSecurityHolder.getSessionId(subject));
 				}
 			} catch (SessionException e) {
 				log.warn("Encountered session exception during logout. This can generally safely be ignored.", e);

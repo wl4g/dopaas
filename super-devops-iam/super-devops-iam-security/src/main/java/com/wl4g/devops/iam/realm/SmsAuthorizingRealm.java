@@ -15,16 +15,15 @@
  */
 package com.wl4g.devops.iam.realm;
 
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.iam.authc.SmsAuthenticationInfo;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.authz.SmsAuthorizationInfo;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SmsParameter;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -33,6 +32,7 @@ import org.apache.shiro.util.StringUtils;
 
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.LOGIN;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -72,9 +72,9 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	 *             if there is an error during authentication.
 	 */
 	@Override
-	protected AuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
+	protected IamAuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
 		// Get account by mobile phone
-		IamAccountInfo acc = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
+		IamPrincipalInfo acc = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
 			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
 		}
@@ -84,7 +84,7 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 		// If the operation is not logged-in, Princial is the currently
 		// logged-in subject.
 		if (LOGIN != token.getAction()) {
-			principal = (String) SecurityUtils.getSubject().getPrincipal();
+			principal = getPrincipal();
 		}
 
 		// Actions are unbind or login, account information is required.
@@ -120,7 +120,7 @@ public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenti
 	 * @param acc
 	 * @param token
 	 */
-	private void assertAccountInfo(IamAccountInfo acc, SmsAuthenticationToken token) {
+	private void assertAccountInfo(IamPrincipalInfo acc, SmsAuthenticationToken token) {
 		if (acc == null || !StringUtils.hasText(acc.getPrincipal())) {
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}

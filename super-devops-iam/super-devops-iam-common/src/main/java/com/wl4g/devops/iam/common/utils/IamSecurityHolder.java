@@ -15,29 +15,140 @@
  */
 package com.wl4g.devops.iam.common.utils;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.util.Assert.isTrue;
 import static org.apache.shiro.util.Assert.notEmpty;
+import static org.springframework.util.Assert.notNull;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+
 /**
- * Session binding utility
+ * Session bind holder utility.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月21日
  * @since
  */
-public abstract class SessionBindings extends Sessions {
+public abstract class IamSecurityHolder extends SecurityUtils {
+	final private static String KEY_ATTR_TTL_PREFIX = "attribute_ttl_";
 
-	final private static String KEY_SESSION_ATTR_TTL_PREFIX = "attributeTTL_";
+	// --- Principal and session's. ---
+
+	/**
+	 * Getting current authenticate principal name.
+	 *
+	 * @param create
+	 * @return
+	 */
+	public static String getPrincipal() {
+		Object principal = getSubject().getPrincipal();
+		notNull(principal,
+				"The authentication subject is empty, and the authentication has not been completed yet? also pay attention to the invoke order!");
+		return (String) principal;
+	}
+
+	/**
+	 * Get current authenticate principal {@link IamPrincipalInfo}
+	 * 
+	 * @return
+	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
+	 */
+	public static IamPrincipalInfo getPrincipalInfo() {
+		IamPrincipalInfo info = getBindValue(KEY_AUTHC_ACCOUNT_INFO);
+		notNull(info,
+				"The authentication subject is empty, and the authentication has not been completed yet? also pay attention to the invoke order!");
+		return info;
+	}
+
+	/**
+	 * Getting current session
+	 *
+	 * @param create
+	 * @return
+	 */
+	public static Session getSession() {
+		return getSubject().getSession(true);
+	}
+
+	/**
+	 * Getting current session
+	 *
+	 * @param create
+	 * @return
+	 */
+	public static Session getSession(boolean create) {
+		return getSubject().getSession(create);
+	}
+
+	/**
+	 * Getting session-id
+	 *
+	 * @return
+	 */
+	public static Serializable getSessionId() {
+		return getSessionId(getSubject());
+	}
+
+	/**
+	 * Getting session-id
+	 *
+	 * @param subject
+	 * @return
+	 */
+	public static Serializable getSessionId(Subject subject) {
+		Session session = subject.getSession();
+		return (session != null) ? session.getId() : null;
+	}
+
+	/**
+	 * Getting session-id
+	 *
+	 * @param session
+	 * @return
+	 */
+	public static Serializable getSessionId(Session session) {
+		return (session != null) ? session.getId() : null;
+	}
+
+	/**
+	 * Get session expire time
+	 *
+	 * @param session
+	 *            Shiro session
+	 * @return Current remaining expired milliseconds of the session
+	 */
+	public static long getSessionExpiredTime() {
+		return getSessionExpiredTime(getSession());
+	}
+
+	/**
+	 * Get session expire time
+	 *
+	 * @param session
+	 *            Shiro session
+	 * @return Current remaining expired milliseconds of the session
+	 */
+	public static long getSessionExpiredTime(Session session) {
+		Assert.notNull(session, "'session' must not be null");
+		long now = System.currentTimeMillis();
+		long lastTime = session.getLastAccessTime().getTime();
+		return session.getTimeout() - (now - lastTime);
+	}
+
+	// --- Bind's. ---
 
 	/**
 	 * Whether the comparison with the target is equal from the session
@@ -220,17 +331,17 @@ public abstract class SessionBindings extends Sessions {
 	 */
 	private static String getExpireKey(String sessionKey) {
 		Assert.hasText(sessionKey, "'sessionKey' must not be empty");
-		return KEY_SESSION_ATTR_TTL_PREFIX + sessionKey;
+		return KEY_ATTR_TTL_PREFIX + sessionKey;
 	}
 
 	/**
-	 * Session attribute timeToLive model
+	 * Session attribute time to live model.
 	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月23日
 	 * @since
 	 */
-	public static class SessionValueTTL implements Serializable {
+	public final static class SessionValueTTL implements Serializable {
 		private static final long serialVersionUID = -5108678535942593956L;
 
 		/**

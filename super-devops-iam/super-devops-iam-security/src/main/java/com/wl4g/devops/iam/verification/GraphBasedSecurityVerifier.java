@@ -37,7 +37,7 @@ import java.util.Objects;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
 import static com.wl4g.devops.common.utils.codec.Encodes.encodeBase64;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newCumulator;
 import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newSessionCumulator;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;

@@ -15,17 +15,19 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalMap;
 
-public class EmptyOauth2AuthorizationInfo implements AuthenticationInfo {
+import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+
+public class EmptyOauth2AuthorizationInfo implements IamAuthenticationInfo {
 	private static final long serialVersionUID = -1824494219125412412L;
 
 	/**
 	 * Default only instance
 	 */
-	final public static AuthenticationInfo EMPTY = new EmptyOauth2AuthorizationInfo();
+	final public static EmptyOauth2AuthorizationInfo EMPTY = new EmptyOauth2AuthorizationInfo();
 
 	/**
 	 * Empty principal collection
@@ -39,6 +41,11 @@ public class EmptyOauth2AuthorizationInfo implements AuthenticationInfo {
 
 	@Override
 	public Object getCredentials() {
+		return null;
+	}
+
+	@Override
+	public IamPrincipalInfo getAccountInfo() {
 		return null;
 	}
 

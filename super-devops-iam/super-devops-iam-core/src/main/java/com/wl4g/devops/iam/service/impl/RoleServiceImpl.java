@@ -25,7 +25,7 @@ import com.wl4g.devops.dao.iam.GroupDao;
 import com.wl4g.devops.dao.iam.GroupRoleDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.RoleMenuDao;
-import com.wl4g.devops.iam.handler.UserUtil;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.RoleService;
 import com.wl4g.devops.page.PageModel;
@@ -41,6 +41,7 @@ import java.util.Set;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.common.utils.lang.Collections2.disDupCollection;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -62,9 +63,6 @@ public class RoleServiceImpl implements RoleService {
 	private RoleMenuDao roleMenuDao;
 
 	@Autowired
-	private UserUtil userUtil;
-
-	@Autowired
 	private GroupDao groupDao;
 
 	@Autowired
@@ -75,8 +73,9 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public List<Role> getRolesByUserGroups() {
-		String username = userUtil.getCurrentLoginUsername();
-		if (DEFAULT_USER_ROOT.equals(username)) {
+		IamPrincipalInfo info = getPrincipalInfo();
+
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			return roleDao.selectByRoot(null, null);
 		} else {
 			// Groups of userId.
@@ -93,14 +92,15 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public PageModel list(PageModel pm, String roleCode, String displayName) {
-		String username = userUtil.getCurrentLoginUsername();
+		IamPrincipalInfo info = getPrincipalInfo();
+
 		Set<Group> groupSet = groupService.getGroupsSet();
-		if (DEFAULT_USER_ROOT.equals(username)) {
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			List<Role> roles = roleDao.selectByRoot(roleCode, displayName);
 			for (Role role : roles) {
 				List<Group> groups = groupDao.selectByRoleId(role.getId());
-				groups = removeUnhad(groups, groupSet);// remove unhad
+				groups = removeUnhad(groups, groupSet); // remove unhad
 				String s = groups2Str(groups);
 				role.setGroupDisplayName(s);
 			}
@@ -114,7 +114,7 @@ public class RoleServiceImpl implements RoleService {
 			List<Role> roles = roleDao.selectByGroupIds(groupIds, roleCode, displayName);
 			for (Role role : roles) {
 				List<Group> groups = groupDao.selectByRoleId(role.getId());
-				groups = removeUnhad(groups, groupSet);// remove unhad
+				groups = removeUnhad(groups, groupSet); // remove unhad
 				String s = groups2Str(groups);
 				role.setGroupDisplayName(s);
 			}

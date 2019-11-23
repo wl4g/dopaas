@@ -33,9 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.unbind;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;

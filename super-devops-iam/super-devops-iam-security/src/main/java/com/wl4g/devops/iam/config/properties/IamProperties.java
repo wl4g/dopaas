@@ -20,7 +20,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BA
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
 import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
-import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;

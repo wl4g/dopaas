@@ -13,20 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.iam;
+package com.wl4g.devops.iam.common.subject;
+
+import static java.util.Collections.emptyMap;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.springframework.util.Assert;
 
 /**
- * IAM account information.
+ * IAM principal account information.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public interface IamAccountInfo extends Serializable {
+public interface IamPrincipalInfo extends Serializable {
+
+	/**
+	 * Get account principal Id.
+	 * 
+	 * @return
+	 */
+	String getPrincipalId();
 
 	/**
 	 * Get account principal name.
@@ -36,11 +46,47 @@ public interface IamAccountInfo extends Serializable {
 	String getPrincipal();
 
 	/**
+	 * Principal role codes. </br>
+	 * <p>
+	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
+	 *
+	 * @return principal role codes.
+	 */
+	String getRoles();
+
+	/**
+	 * Principal permissions. </br>
+	 * <p>
+	 * e.g.: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
+	 *
+	 * @return principal permission identifiers.
+	 */
+	String getPermissions();
+
+	/**
 	 * Stored encrypted credentials
 	 * 
 	 * @return Encrypted credentials string
 	 */
 	String getStoredCredentials();
+
+	/**
+	 * Get account attributes.
+	 * 
+	 * @return
+	 */
+	default Map<String, String> getAttributes() {
+		return emptyMap();
+	}
+
+	/**
+	 * Validation of principal information attribute.
+	 * 
+	 * @throws IllegalArgumentException
+	 */
+	void validate() throws IllegalArgumentException;
+
+	// --- Authenticating parameter's. ---
 
 	/**
 	 * Parameters for obtaining account information

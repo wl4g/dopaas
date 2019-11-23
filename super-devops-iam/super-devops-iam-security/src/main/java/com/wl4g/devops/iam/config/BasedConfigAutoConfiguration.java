@@ -16,12 +16,13 @@
 package com.wl4g.devops.iam.config;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -59,68 +60,59 @@ public class BasedConfigAutoConfiguration {
 	 * @version v1.0 2019-07-27
 	 * @since
 	 */
-	public static class CheckImpledServerSecurityConfigurer implements ServerSecurityConfigurer, InitializingBean {
+	public final static class CheckImpledServerSecurityConfigurer implements ServerSecurityConfigurer, InitializingBean {
 
 		@Override
 		public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
 				ServletRequest request, ServletResponse response) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
 				ServletRequest request, ServletResponse response) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public ApplicationInfo getApplicationInfo(String applicationName) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public List<ApplicationInfo> findApplicationInfo(String... applicationNames) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public IamAccountInfo getIamAccount(Parameter parameter) {
-			return null;
+		public IamPrincipalInfo getIamAccount(Parameter parameter) {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public boolean isApplicationAccessAuthorized(String principal, String application) {
-			return false;
-		}
-
-		@Override
-		public String findRoles(String principal, String application) {
-			return null;
-		}
-
-		@Override
-		public String findPermissions(String principal, String application) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public <T extends SocialConnectInfo> List<T> findSocialConnections(String principal, String provider) {
-			return null;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void bindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void unbindSocialConnection(SocialConnectInfo social) throws BindingConstraintsException {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void afterPropertiesSet() throws Exception {
-			String errmsg = "\n\n==>>\tWhen you rely on Iam security as a plug-in, you must implement the '"
-					+ ServerSecurityConfigurer.class.getName() + "' interface yourself !\n";
-			throw new IamException(errmsg);
+			throw new IamException("\n\n=>\tWhen you rely on Iam security as a plug-in, you must implement the '"
+					+ ServerSecurityConfigurer.class.getName() + "' interface yourself !\n");
 		}
 
 	}

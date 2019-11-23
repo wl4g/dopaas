@@ -19,8 +19,9 @@ import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.common.bean.iam.model.GroupExt;
 import com.wl4g.devops.dao.iam.*;
-import com.wl4g.devops.iam.handler.UserUtil;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.common.utils.lang.Collections2.disDupCollection;
+import static com.wl4g.devops.common.utils.lang.TypeConverts.parseIntOrNull;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -46,9 +49,6 @@ public class GroupServiceImpl implements GroupService {
 
 	@Autowired
 	private GroupDao groupDao;
-
-	@Autowired
-	private UserUtil userUtil;
 
 	@Autowired
 	private GroupMenuDao groupMenuDao;
@@ -118,14 +118,13 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public Set<Group> getGroupsSet() {
-		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
-		List<Group> groups = null;
+		IamPrincipalInfo info = getPrincipalInfo();
 
-		String currentLoginUsername = userUtil.getCurrentLoginUsername();
-		if (DEFAULT_USER_ROOT.equals(currentLoginUsername)) {
+		List<Group> groups = null;
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			groups = groupDao.selectByRoot();
 		} else {
-			groups = groupDao.selectByUserId(currentLoginUserId);
+			groups = groupDao.selectByUserId(parseIntOrNull(info.getPrincipalId()));
 		}
 
 		Set<Group> set = new HashSet<>();
@@ -290,12 +289,12 @@ public class GroupServiceImpl implements GroupService {
 		GroupExt groupExt = new GroupExt();
 		if (GroupExt.GroupType.Park.getValue() == group.getType()) {
 			Park park = parkDao.selectByGroupId(id);
-			if(Objects.nonNull(park)){
+			if (Objects.nonNull(park)) {
 				BeanUtils.copyProperties(park, groupExt);
 			}
 		} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
 			Company company = companyDao.selectByGroupId(id);
-			if(Objects.nonNull(company)){
+			if (Objects.nonNull(company)) {
 				BeanUtils.copyProperties(company, groupExt);
 			}
 		} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {

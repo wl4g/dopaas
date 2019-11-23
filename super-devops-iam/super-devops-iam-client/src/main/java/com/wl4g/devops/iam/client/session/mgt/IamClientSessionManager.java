@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
-import com.wl4g.devops.iam.common.utils.Sessions;
+import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
@@ -96,11 +96,11 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 					try {
 						sessionDAO.delete(session);
 					} catch (Exception e) {
-						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", Sessions.getSessionId(session),
+						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", IamSecurityHolder.getSessionId(session),
 								expiredTicket);
 					}
 					if (log.isInfoEnabled()) {
-						log.info("Cleaup expired session on: {}", Sessions.getSessionId(session));
+						log.info("Cleaup expired session on: {}", IamSecurityHolder.getSessionId(session));
 					}
 				}
 			}
