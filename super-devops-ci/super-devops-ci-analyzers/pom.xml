@@ -14,7 +14,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<final.name>ci-server</final.name>
+		<final.name>ci-analyzer</final.name>
 		<spotbugs.version>4.0.0-beta4</spotbugs.version>
 	</properties>
 	<dependencies>
