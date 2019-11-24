@@ -116,7 +116,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setRoles(String roles) {
-		hasText(roles, "Authenticate roles can't empty");
+		// hasText(roles, "Authenticate roles can't empty");
 		this.roles = roles;
 		return this;
 	}
@@ -127,7 +127,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPermissions(String permissions) {
-		hasText(permissions, "Authenticate permissions can't empty");
+		// hasText(permissions, "Authenticate permissions can't empty");
 		this.permissions = permissions;
 		return this;
 	}
