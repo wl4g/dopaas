@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.common.subject;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -84,7 +83,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPrincipalId(String principalId) {
-		hasText(principalId, "PrincipalId must not be empty.");
+		hasText(principalId, "Authenticate principalId must not be empty.");
 		this.principalId = principalId;
 		return this;
 	}
@@ -95,7 +94,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPrincipal(String principal) {
-		hasText(principal, "Authenticate principalId can't empty");
+		hasText(principal, "Authenticate principal name can't empty");
 		this.principal = principal;
 		return this;
 	}
@@ -117,10 +116,8 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setRoles(String roles) {
-		// hasText(roles, "Authenticate roles can't empty");
-		if (!isBlank(roles)) {
-			this.roles = roles;
-		}
+		hasText(roles, "Authenticate roles can't empty");
+		this.roles = roles;
 		return this;
 	}
 
@@ -130,10 +127,8 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPermissions(String permissions) {
-		// hasText(permissions, "Authenticate permissions can't empty");
-		if (!isBlank(permissions)) {
-			this.permissions = permissions;
-		}
+		hasText(permissions, "Authenticate permissions can't empty");
+		this.permissions = permissions;
 		return this;
 	}
 
@@ -166,9 +161,9 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	@Override
 	public final void validate() throws IllegalArgumentException {
 		hasText(getPrincipalId(), "Authenticate principalId can't empty");
-		hasText(getPrincipal(), "Authenticate principal can't empty");
-		hasText(getRoles(), "Authenticate roles can't empty");
-		hasText(getPermissions(), "Authenticate permissions can't empty");
+		hasText(getPrincipal(), "Authenticate principal name can't empty");
+		// hasText(getRoles(), "Authenticate roles can't empty");
+		// hasText(getPermissions(), "Authenticate permissions can't empty");
 	}
 
 }
