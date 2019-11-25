@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.common.utils.io;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.SystemUtils;
@@ -30,6 +31,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -201,8 +203,8 @@ public abstract class FileIOUtils extends FileUtils {
 			boolean hasNext = true; // Has next line?
 			long c = 0, lastPos = -1, endPos = (startPos + aboutLimit);
 			while (raf.getFilePointer() > lastPos && (lastPos = raf.getFilePointer()) < endPos && ++c < DEFAULT_SAFE_READ_COUNT) {
-				String line = raf.readLine();
-				if (!isBlank(line)) {
+				String line = new String (raf.readLine().getBytes("ISO-8859-1"),"UTF-8");
+				if (Objects.nonNull(line)) {
 					lines.add(line);
 					if (stopper.apply(line)) {
 						hasNext = false;
@@ -318,6 +320,8 @@ public abstract class FileIOUtils extends FileUtils {
 		private long endPos;
 		private long length;
 		private List<String> lines;
+
+		@JsonProperty
 		private boolean hasNext;
 
 		public ReadResult(long startPos, long endPos, long length, List<String> lines, boolean hasNext) {

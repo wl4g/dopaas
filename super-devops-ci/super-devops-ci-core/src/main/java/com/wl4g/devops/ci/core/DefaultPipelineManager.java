@@ -212,16 +212,16 @@ public class DefaultPipelineManager implements PipelineManager {
 	}
 
 	@Override
-	public ReadResult logfile(Integer taskHisId, Integer index, Integer size) {
-		if (isNull(index)) {
-			index = 0;
+	public ReadResult logfile(Integer taskHisId, Long startPos, Integer size) {
+		if (isNull(startPos)) {
+			startPos = 0l;
 		}
 		if (isNull(size)) {
 			size = 100;
 		}
 		String logPath = config.getJobLog(taskHisId).getAbsolutePath();
 		// End if 'EOF'
-		return seekReadLines(logPath, index, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
+		return seekReadLines(logPath, startPos, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
 	}
 
 	/**
