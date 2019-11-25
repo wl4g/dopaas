@@ -18,11 +18,11 @@ package com.wl4g.devops.common.utils.io;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.SystemUtils;
-import org.springframework.util.Assert;
 
-import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
 
@@ -66,7 +66,7 @@ public abstract class FileIOUtils extends FileUtils {
 	 */
 	final public static int DEFAULT_RW_BUF_SIZE = 4096;
 
-	// Writer
+	// -- Writer. ---
 
 	/**
 	 * Write string to file(before + {@link SystemUtils#LINE_SEPARATOR}).
@@ -141,7 +141,7 @@ public abstract class FileIOUtils extends FileUtils {
 		}
 	}
 
-	// Reader
+	// --- Reader. ---
 
 	/**
 	 * Reading lines for page.
@@ -191,24 +191,29 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @return
 	 */
 	public static ReadResult seekReadLines(String filename, long startPos, int aboutLimit, Function<String, Boolean> stopper) {
-		Assert.hasText(filename, "Read seek filename must not be empty.");
-		Assert.isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
-		Assert.isTrue(aboutLimit > 0, "Read about limit must be greater than to 0");
+		hasText(filename, "Read seek filename must not be empty.");
+		isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
+		isTrue(aboutLimit > 0, "Read about limit must be greater than to 0");
 
 		List<String> lines = new ArrayList<>();
 		try (RandomAccessFile raf = new RandomAccessFile(filename, "r")) {
 			raf.seek(startPos);
+			boolean hasNext = true; // Has next line?
 			long c = 0, lastPos = -1, endPos = (startPos + aboutLimit);
 			while (raf.getFilePointer() > lastPos && (lastPos = raf.getFilePointer()) < endPos && ++c < DEFAULT_SAFE_READ_COUNT) {
 				String line = raf.readLine();
-				if (nonNull(line)) {
+				if (!isBlank(line)) {
 					lines.add(line);
 					if (stopper.apply(line)) {
+						hasNext = false;
 						break;
 					}
+				} else {
+					hasNext = false;
+					break;
 				}
 			}
-			return new ReadResult(startPos, raf.getFilePointer(), raf.length(), lines);
+			return new ReadResult(startPos, raf.getFilePointer(), raf.length(), lines, hasNext);
 		} catch (Throwable ex) {
 			throw new IllegalStateException(ex);
 		}
@@ -249,9 +254,9 @@ public abstract class FileIOUtils extends FileUtils {
 	 *            Each read processing program
 	 */
 	public static void doSeekReadFile(String filename, long startPos, int limitPos, int bufSize, SeekProcessor processor) {
-		Assert.hasText(filename, "Read seek filename must not be empty.");
-		Assert.isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
-		Assert.isTrue(limitPos > 0, "Read limit position must be greater than to 0");
+		hasText(filename, "Read seek filename must not be empty.");
+		isTrue(startPos >= 0, "Read start position must be greater than or equal to 0");
+		isTrue(limitPos > 0, "Read limit position must be greater than to 0");
 
 		try (RandomAccessFile raf = new RandomAccessFile(filename, "r")) {
 			raf.seek(startPos);
@@ -309,54 +314,40 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @since
 	 */
 	public final static class ReadResult {
-
 		private long startPos;
 		private long endPos;
 		private long length;
 		private List<String> lines;
+		private boolean hasNext;
 
-		public ReadResult(long startPos, long endPos, long length, List<String> lines) {
+		public ReadResult(long startPos, long endPos, long length, List<String> lines, boolean hasNext) {
 			this.startPos = startPos;
 			this.endPos = endPos;
 			this.length = length;
 			this.lines = lines;
+			this.hasNext = hasNext;
 		}
 
 		public long getStartPos() {
 			return startPos;
 		}
 
-		public void setStartPos(long startPos) {
-			this.startPos = startPos;
-		}
-
 		public long getEndPos() {
 			return endPos;
-		}
-
-		public void setEndPos(long endPos) {
-			this.endPos = endPos;
 		}
 
 		public List<String> getLines() {
 			return lines;
 		}
 
-		public void setLines(List<String> lines) {
-			this.lines = lines;
-		}
-
 		public long getLength() {
 			return length;
 		}
 
-		public void setLength(long length) {
-			this.length = length;
-		}
-
 		@Override
 		public String toString() {
-			return "ReadResult [startPos=" + startPos + ", pointer=" + endPos + ", length=" + length + ", lines=" + lines + "]";
+			return "ReadResult [startPos=" + startPos + ", endPos=" + endPos + ", length=" + length + ", lines=" + lines
+					+ ", hasNext=" + hasNext + "]";
 		}
 
 	}
