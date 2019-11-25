@@ -264,7 +264,7 @@
 		settings = jQuery.extend(true, settings, obj);
 		console.debug("Default IAM baseURI is: "+ settings.deploy.baseUri);
 
-		// 获取默认IAM baseURL.
+		// 获取IAM默认baseURI.
 		var hostname = location.hostname;
 		var pathname = location.pathname;
 		var twoDomain = settings.deploy.defaultTwoDomain;
@@ -272,19 +272,15 @@
 		contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
 		var port = location.port;
 		var protocol = location.protocol;
-		var isIpv4 = window.Common.Util.isIpv4(hostname);
-        if (hostname == 'localhost' || hostname == '127.0.0.1'|| hostname == '0:0:0:0:0:0:0:1'|| isIpv4) {
-            settings.deploy.baseUri = protocol + "//" +hostname+ ":14040" + contextPath;
-            if(isIpv4){
-                alert("Please refer to the readme docs,Use domain name deployment. see:https://github.com/wl4g/super-devops-view/blob/master/README.md");
-            }
-        } else { // domain-name?
-			// Get domain top.
+	 	// 如果是用IP部署，为了简化操作，则认为所有服务(如：share-manager/ci-server等)都部署于这台机上.
+        if (hostname == 'localhost' || Common.Util.isIp(hostname)) {
+            settings.deploy.baseUri = protocol+"//"+hostname+":14040"+contextPath;
+        } else { // 如果是用域名部署，则认为其他服务(如：share-manager/ci-server等)通过二级子域名访问
         	var topDomainName = hostname.split('.').slice(-2).join('.');
-        	if(hostname.indexOf("com.cn") > 0){
+        	if(hostname.indexOf("com.cn") > 0) {
         		topDomainName = hostname.split('.').slice(-3).join('.');
         	}
-            settings.deploy.baseUri = protocol +"//"+ twoDomain +"."+ topDomainName + contextPath;
+            settings.deploy.baseUri = protocol+"//"+twoDomain+"."+topDomainName+contextPath;
         }
 		// Saved IAM baseUri.
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
@@ -298,7 +294,7 @@
 		var url = settings.deploy.baseUri + Common.Util.checkEmpty("definition.snsConnectUri", settings.definition.snsConnectUri) 
 			+ Common.Util.checkEmpty("provider",provider) + "?" + Common.Util.checkEmpty("definition.whichKey",settings.definition.whichKey) + "=" + which;
 
-		// 当绑定时必传 principal、refreshUrl
+		// 当绑定时必传 principal/refreshUrl
 		if(which.toLowerCase() == "bind" || which.toLowerCase() == "unbind"){
 			var principal = encodeURIComponent(Common.Util.checkEmpty("sns.principal", settings.sns.getPrincipal())); // 获取用户ID
 			var refreshUrl = encodeURIComponent(Common.Util.checkEmpty("sns.required.refreshUrl", settings.sns.required.refreshUrl)); // 回调刷新URL
