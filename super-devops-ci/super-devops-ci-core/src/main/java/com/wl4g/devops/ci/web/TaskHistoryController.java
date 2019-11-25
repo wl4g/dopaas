@@ -101,9 +101,9 @@ public class TaskHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/readLog")
-	public RespBase<?> readLog(Integer taskHisId, Integer index, Integer size) {
+	public RespBase<?> readLog(Integer taskHisId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipeliner.logfile(taskHisId, index, size);
+		FileIOUtils.ReadResult readResult = pipeliner.logfile(taskHisId, startPos, size);
 		resp.forMap().put("data", readResult);
 		return resp;
 	}
