@@ -56,7 +56,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	public static String getPrincipal() {
 		Object principal = getSubject().getPrincipal();
 		notNull(principal,
-				"The authentication subject is empty, and the authentication has not been completed yet? also pay attention to the invoke order!");
+				"The authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		return (String) principal;
 	}
 
@@ -69,7 +69,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	public static IamPrincipalInfo getPrincipalInfo() {
 		IamPrincipalInfo info = getBindValue(KEY_AUTHC_ACCOUNT_INFO);
 		notNull(info,
-				"The authentication subject is empty, and the authentication has not been completed yet? also pay attention to the invoke order!");
+				"The authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		return info;
 	}
 
