@@ -129,7 +129,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Obtain task history.
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getTarType(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
+				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
 				param.getRemark());
 
 		// Execution pipeline job.
@@ -165,7 +165,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> commands = taskBuildCmdDao.selectByTaskId(param.getTaskId());
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
 				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), null, param.getTaskId(), bakTaskHisy.getBuildCommand(),
-				bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(), bakTaskHisy.getTarType(),
+				bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(), bakTaskHisy.getProviderKind(),
 				bakTaskHisy.getContactGroupId(), commands, null, null, null);
 
 		// Do roll-back pipeline job.
@@ -205,7 +205,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getTarType(), task.getContactGroupId(), taskBuildCmds, null, null, null);
+				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null);
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -381,7 +381,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				refTaskHisy, taskHisyDetails);
 
 		// Get prototype provider.
-		return beanFactory.getPrototypeBean(context.getTaskHistory().getTarType(), context);
+		return beanFactory.getPrototypeBean(context.getTaskHistory().getProviderKind(), context);
 	}
 
 	/**

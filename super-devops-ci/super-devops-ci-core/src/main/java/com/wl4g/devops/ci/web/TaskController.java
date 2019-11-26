@@ -56,19 +56,19 @@ public class TaskController extends BaseController {
 	 * @param taskName
 	 * @param groupName
 	 * @param branchName
-	 * @param tarType
+	 * @param providerKind
 	 * @param startDate
 	 * @param endDate
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String tarType,
+	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
 			String startDate, String endDate) {
 		log.info("into TaskController.list prarms::"
-				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , tarType = {} , startDate = {} , endDate = {} ",
-				pm, id, taskName, groupName, branchName, tarType, startDate, endDate);
+				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , providerKind = {} , startDate = {} , endDate = {} ",
+				pm, id, taskName, groupName, branchName, providerKind, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, tarType, startDate, endDate);
+		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, providerKind, startDate, endDate);
 		resp.setData(list);
 		return resp;
 	}
@@ -128,7 +128,7 @@ public class TaskController extends BaseController {
 	private void checkTask(Task task) {
 		Assert.hasText(task.getTaskName(), "taskName is null");
 		Assert.notNull(task.getAppClusterId(), "clusterId is null");
-		Assert.notNull(task.getTarType(), "packType is null");
+		Assert.notNull(task.getProviderKind(), "packType is null");
 		Assert.hasText(task.getBranchName(), "branchName is null");
 	}
 
