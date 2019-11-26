@@ -261,8 +261,12 @@
             if (!isMouseDown) return false;
             var eventX = e.clientX;
             var eventY = e.clientY;
-            var moveX = (eventX - originX)/document.body.style.zoom;
-            var moveY = (eventY - originY)/document.body.style.zoom;
+            var scaling = 1.0;
+			if(document.body.style.zoom){
+				scaling = parseFloat(document.body.style.zoom);
+			}
+            var moveX = (eventX - originX)/scaling;
+            var moveY = (eventY - originY)/scaling;
             if (moveX < 0 || moveX + 46 > that.options.width) return false;
             that.slider.style.left = (moveX) + 'px';
             var blockLeft =  moveX;

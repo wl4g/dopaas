@@ -79,8 +79,12 @@
 		//当然加上是没有错的
 		i = i || window.event;
 		// 为了解决浏览器缩放, document.body.style.zoom表示当前缩放比例
-	    mouse.x = i.clientX/document.body.style.zoom;
-		mouse.y = i.clientY/document.body.style.zoom;
+		var scaling = 1.0;
+		if(document.body.style.zoom){
+			scaling = parseFloat(document.body.style.zoom);
+		}
+	    mouse.x = i.clientX/scaling;
+		mouse.y = i.clientY/scaling;
 	}
 	//鼠标移出窗口后，消除鼠标小方块
 	window.onmouseout = function() {
