@@ -5,17 +5,17 @@ body{height:100%;}
 .head .head_logo img{line-height:72px;margin-left:20px;width:141px;height:40px;margin-top:16px}
 a{text-decoration:none;font-size:12px;color:#1D5494}
 #top{width:100%;height:5vh;margin-left:-8%}
-#img_logo{margin-top:20px;margin-left:10%}
+#img_logo{margin-top:20px;margin-left:10%;width:150px;}
 #img5{margin:0 0 0 700px}
 #content_1 img{width:100%;height:100%}
 #content{margin:0 auto;width:1008px;height:115vh;position:relative}
-#content-right{box-shadow:0px 0px 0px #08112d;width:400px;height:500px;background:url('../images/bg_icon/dl-bg.png') no-repeat;background-size:100%;position:absolute;right:1%;top:48%;transform:translate(0,-50%);z-index:100}
+#content-right{box-shadow:0px 0px 0px #08112d;width:35%;height:60%;background:url('../images/bg_icon/dl-bg.png') no-repeat;background-size:100%;position:relative;float:right;right:8%;top:10%;z-index:100}
 #content-right:hover{color:#fff}
 #con-top{width:350px;height:35px;line-height:60px;text-align:center}
 #con-top span{color:#b8c3ce;cursor:pointer}
 #con-top span.active{color:#0b86f3;font-weight:bold}
 #con-top span:hover{opacity:0.8}
-#login_scan_pass,#login_phone{font-size:12px;color:#000000;position:absolute;left:64px;top:90px;height:254px}
+#login_scan_pass,#login_phone{font-size:12px;color:#000000;position:relative;left:45px;top:18px;height:254px}
 #login_scan_panel{font-size:12px;color:#000000;display:none;text-align:center;margin-top:18px}
 #pic{margin-top:30px}
 pre{color:#A0A0A0}
@@ -32,9 +32,9 @@ span a{color:#3481CF;text-decoration:none}
 #con-but a{color:#225592}
 #foot{font-size:12px;height:5vh;text-align:center;color:#8699db;background-color:#9eb3c53b}
 .main-right{position:absolute;top:0;right:0;float:right}
-.rightimageBox{position:relative;width:200px;height:230px;border:1px solid #eee;text-align:center;margin:140px 20px 0 0px;color:#000;background:#eee;z-index:1000;box-shadow:#ffdede 1px 1px 18px}
+.rightimageBox{position:relative;width:160px;height:190px;border:1px solid #eee;text-align:center;margin:140px 20px 0 0px;color:#000;background:#eee;z-index:1000;box-shadow:#ffdede 1px 1px 18px}
 #qrcode-title{margin:8px}
-.rightImage{position:relative;width:175px;height:175px;text-align:center;margin:0 0 0 0px;z-index:1000}
+.rightImage{position:relative;width:155px;height:150px;text-align:center;margin:0 0 0 0px;z-index:1000}
 .icon-user{position:absolute;z-index:5;margin-top:15px;background-image:url(../images/bg_icon/user.png);background-repeat:no-repeat;background-position:12px 0px;width:40px;height:35px}
 .icon-pass{position:absolute;z-index:5;margin-top:25px;background-image:url(../images/bg_icon/password.png);background-repeat:no-repeat;background-position:12px 0px;width:40px;height:35px}
 .icon-phone{position:absolute;z-index:5;margin-top:12px;background-image:url(../images/bg_icon/phone.png);background-repeat:no-repeat;background-position:12px 0px;background-size:50%;width:40px;height:35px}

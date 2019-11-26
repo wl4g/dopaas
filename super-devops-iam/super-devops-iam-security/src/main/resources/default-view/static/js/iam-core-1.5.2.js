@@ -78,9 +78,9 @@
 					// Apply captcha completed.
 					runtime.flags.isApplying = false;
 					runtime.applyModel = res.data.applyModel; // [MARK4]
-					$(imgInput).css({"display":"inline","cursor":"text"});
+					$(imgInput).css({"display":"none","cursor":"text"});
 					$(imgInput).removeAttr('disabled');
-					$(img).css({"display" : "inline"});
+					$(img).css({"display" : "none"});
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
 						$(img).attr("src", res.data.applyModel.primaryImg);
@@ -171,9 +171,7 @@
 					required: function() {
 						// Set the current application verify code.
 						runtime.flags.isApplying = false;
-
 						var jigsawPanel = Common.Util.checkEmpty("captcha.panel", settings.captcha.panel);
-						$(jigsawPanel).css({"display" : "inline"});
 
 						// 加载Jigsaw插件滑块
                         $(jigsawPanel).JigsawIamCaptcha({

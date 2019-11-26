@@ -21,7 +21,9 @@
     var JigsawCaptcha = function (element, options) {
         this.element0 = $(element);
         this.options = $.extend({}, JigsawCaptcha.DEFAULTS, options);
-        this.element0.css({'width': this.options.width + 'px', 'margin': '0 auto' });
+        var w = this.element0.width();
+        w = !w?this.options.width:w;
+        this.element0.css({'width':w+'px'/*,'margin':'0 auto'*/});
         this.initDOM();
         this.initImg();
         this.bindEvents();

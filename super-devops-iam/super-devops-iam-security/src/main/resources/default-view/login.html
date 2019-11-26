@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="./static/css/iam-captcha-jigsaw-1.5.2.css"/>
 </head>
 <body style="background:url('./static/images/bg_icon/background.png') no-repeat;background-size: cover;">
-    <script type="text/javascript">
+    <!--<script type="text/javascript">
        // 只有放<body>之后（内容元素之前）最合适，否则会出现缩放闪屏（但使用如VUE框架则没有此问题，可放在</body>之前）
        let w = window.screen.width;
        if (w >= 1500) {
@@ -25,7 +25,7 @@
        } else {
          document.body.style.zoom = '0.7';
        }
-    </script>
+    </script>-->
 	<div id="top">
 		<img id="img_logo" src="./static/images/bg_icon/logo.png" />
 	</div>
@@ -82,7 +82,7 @@
 							style="color: #fff;border: 1px solid #80c1fb;background:#253667;padding-left:40px;border-radius:2px 2px 2px 2px;"
 							name="password" type="password" maxlength=35 autocapitalize=off autocomplete=off>
 					</div>
-					<div id="jigsaw" class="jigsaw" style="display:none"></div>
+					<div id="jigsaw" class="jigsaw" style="width:270px"></div>
 					<div id="captcha_panel">
 						<input id="captcha_input" class="text4" name="captcha"
 							style="border:1px solid #dad2d2;padding-left:10px;border-radius:2px 2px 2px 2px;display:none;">
