@@ -30,7 +30,7 @@ public interface TaskService {
 
 	Task save(Task task);
 
-	PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String tarType,
+	PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
 			String startDate, String endDate);
 
 	Map<String, Object> detail(Integer id);
