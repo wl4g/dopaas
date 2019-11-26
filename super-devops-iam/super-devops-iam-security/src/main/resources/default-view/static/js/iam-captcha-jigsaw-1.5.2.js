@@ -18,15 +18,17 @@
 			verifiedToken: null,
 		},
 	};
-    var _JigsawCaptcha = function (element, options) {
-        this.$element = $(element);
-        this.options = $.extend({}, _JigsawCaptcha.DEFAULTS, options);
-        this.$element.css({'width': this.options.width + 'px', 'margin': '0 auto' });
-        this.init();
+    var JigsawCaptcha = function (element, options) {
+        this.element0 = $(element);
+        this.options = $.extend({}, JigsawCaptcha.DEFAULTS, options);
+        this.element0.css({'width': this.options.width + 'px', 'margin': '0 auto' });
+        this.initDOM();
+        this.initImg();
+        this.bindEvents();
     };
-    _JigsawCaptcha.VERSION = 'v1.5.0';
-    _JigsawCaptcha.Author = '<wanglsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>';
-    _JigsawCaptcha.DEFAULTS = {
+    JigsawCaptcha.VERSION = 'v1.5.2';
+    JigsawCaptcha.Author = '<Wanglsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>';
+    JigsawCaptcha.DEFAULTS = {
         width: 280, // canvas宽度
         height: 155, // canvas高度
         loadingText: Common.Util.isZhCN()?'加载中...':'Loading...',
@@ -77,6 +79,33 @@
             });
             return ret;
         },
+		applycaptcha: function(img1, img2, tipText) {
+			var that = this;
+			$.ajax({
+				url: Common.Util.checkEmpty("optinos.applycaptchaUrl", that.applycaptchaUrl),
+				type: 'GET',
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				success: function (res) {
+					if(res.code == 200){
+						runtime.applyModel = res.data.applyModel; // [MARK5]
+						img1.setSrc(runtime.applyModel.primaryImg);
+						img2.setSrc(runtime.applyModel.blockImg);
+						img2.imagey = runtime.applyModel.y;
+					} else {
+						// Remove silder mouse event all.
+						$(".sliderContainer").find(".slider").unbind(); // [MARK9], See: MARK6
+						$(tipText).text(res.message);
+						Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw apply captcha, " + res.message);
+					}
+				},
+				error: function(req, status, errmsg) {
+					console.debug(errmsg);
+					// Remove silder mouse event all.
+					$(".sliderContainer").find(".slider").unbind(); // [MARK8], See: MARK6
+					Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw apply captcha, " + errmsg);
+				}
+			});
+		},
 		onSuccess: function(verifiedToken){
 			console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);
 		},
@@ -85,25 +114,7 @@
 		}
     };
 
-    $.fn.JigsawIamCaptcha = function(option) {
-        return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('lgb.JigsawIamCaptcha');
-            var options = typeof option === 'object' && option;
-            if (data && !/reset/.test(option)) return;
-            if (!data) $this.data('lgb.JigsawIamCaptcha', data = new _JigsawCaptcha(this, options));
-            if (typeof option === 'string') data[option]();
-        });
-    };
-
-    var _proto = _JigsawCaptcha.prototype;
-    _proto.init = function () {
-        this.initDOM();
-        this.initImg();
-        this.bindEvents();
-    };
-
-    _proto.initDOM = function () {
+    JigsawCaptcha.prototype.initDOM = function () {
         var createElement = function (tagName, className) {
             var elment = document.createElement(tagName);
             elment.className = className;
@@ -142,7 +153,7 @@
         block.className = 'block';
         text.innerHTML = this.options.barText;
 
-        var el = this.$element;
+        var el = this.element0;
         el.append(card);
         card.append(cardHeader);
         cardHeader.append(cardHeaderText);
@@ -179,7 +190,7 @@
         }
     };
 
-    _proto.initImg = function () {
+    JigsawCaptcha.prototype.initImg = function () {
         var that = this;
         var img1 = new Image();
         img1.crossOrigin = "Anonymous";
@@ -203,57 +214,26 @@
             that.text.removeClass('text-danger');
             img2.src = imgBase64.startsWith("data:") ? imgBase64: ('data:image/png;base64,'+imgBase64);
         };
-		// Apply captcha.
-        var applycaptcha = function() {
-            $.ajax({
-                url: Common.Util.checkEmpty("optinos.applycaptchaUrl", that.options.applycaptchaUrl),
-				type: 'GET',
-				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-                success: function (res) {
-					if(res.code == 200){
-						runtime.applyModel = res.data.applyModel; // [MARK5]
-						img1.setSrc(runtime.applyModel.primaryImg);
-						img2.setSrc(runtime.applyModel.blockImg);
-						img2.imagey = runtime.applyModel.y;
-					} else {
-						// Remove silder mouse event all.
-						$(".sliderContainer").find(".slider").unbind(); // [MARK9], See: MARK6
-						that.text.text(res.message);
-						Common.Util.checkEmpty("options.onFail", that.options.onFail)("Failed to jigsaw apply captcha, " + res.message);
-					}
-                },
-				error: function(req, status, errmsg) {
-					console.debug(errmsg);
-					// Remove silder mouse event all.
-					$(".sliderContainer").find(".slider").unbind(); // [MARK8], See: MARK6
-					Common.Util.checkEmpty("options.onFail", that.options.onFail)("Failed to jigsaw apply captcha, " + errmsg);
-				}
-            });
-        };
-        applycaptcha();
+
         this.text.attr('data-text', this.options.barText);
         this.text.text(this.options.loadingText);
         this.img1 = img1;
         this.img2 = img2;
-        this.applycaptcha = applycaptcha;
+
+		// Apply captcha.
+        this.applycaptcha();
     };
 
-    _proto.clean = function () {
-        this.canvasCtx.clearRect(0, 0, this.options.width, this.options.height);
-        this.blockCtx.clearRect(0, 0, this.options.width, this.options.height);
-        this.block.width = this.options.width;
-    };
-
-    _proto.bindEvents = function () {
+    JigsawCaptcha.prototype.bindEvents = function () {
         var that = this;
-        this.$element.on('selectstart', function () {
+        this.element0.on('selectstart', function () {
             return false;
         });
 
         $(this.refreshIcon).on('click', function () {
             that.text.text(that.options.barText);
             that.reset();
-            if ($.isFunction(that.options.onRefresh)) that.options.onRefresh.call(that.$element);
+            if ($.isFunction(that.options.onRefresh)) that.options.onRefresh.call(that.element0);
         });
 
         var originX, originY, trails = [], isMouseDown = false;
@@ -272,7 +252,7 @@
         var handleOnmouseleave = function () {
             //console.info("into out");
             if(!that.sliderContainer.hasClass('sliderContainer_active')){
-                $(that.card).fadeOut(200);
+                $(that.card).fadeOut(50);
             }
         };
 
@@ -281,8 +261,8 @@
             if (!isMouseDown) return false;
             var eventX = e.clientX;
             var eventY = e.clientY;
-            var moveX = eventX - originX;
-            var moveY = eventY - originY;
+            var moveX = (eventX - originX)/document.body.style.zoom;
+            var moveY = (eventY - originY)/document.body.style.zoom;
             if (moveX < 0 || moveX + 46 > that.options.width) return false;
             that.slider.style.left = (moveX) + 'px';
             var blockLeft =  moveX;
@@ -308,10 +288,10 @@
                 that.sliderContainer.addClass('sliderContainer_success');
                 that.text.text(Common.Util.isZhCN()?'验证通过':'Verified');
 				// Call verified successful.
-                if ($.isFunction(that.options.onSuccess(data.verifiedToken))) that.options.onSuccess.call(that.$element);
+                if ($.isFunction(that.options.onSuccess(data.verifiedToken))) that.options.onSuccess.call(that.element0);
             } else {
                 that.sliderContainer.addClass('sliderContainer_fail');
-                //if ($.isFunction(that.options.onFail)) that.options.onFail.call(that.$element);
+                //if ($.isFunction(that.options.onFail)) that.options.onFail.call(that.element0);
                 setTimeout(function () {
                     that.text.text(that.options.failedText);
                     that.reset();
@@ -323,7 +303,7 @@
 		$(this.slider).bind("mousedown", handleDragStart);
 		$(this.slider).bind("touchstart", handleDragStart);
 		$(this.slider).bind("mouseenter", handleOnmouseenter);
-		$(this.$element).bind('mouseleave', handleOnmouseleave);
+		$(this.element0).bind('mouseleave', handleOnmouseleave);
 		$(document).bind("mousemove", handleDragMove);
 		$(document).bind("touchmove", handleDragMove);
 		$(document).bind("mouseup", handleDragEnd);
@@ -335,7 +315,7 @@
 		//this.slider.addEventListener('mousedown', handleDragStart);
         //this.slider.addEventListener('touchstart', handleDragStart);
         //this.slider.addEventListener('mouseenter', handleOnmouseenter);
-		//this.$element.on('mouseleave', handleOnmouseleave);
+		//this.element0.on('mouseleave', handleOnmouseleave);
         //document.addEventListener('mousemove', handleDragMove);
         //document.addEventListener('touchmove', handleDragMove);
         //document.addEventListener('mouseup', handleDragEnd);
@@ -345,23 +325,49 @@
         //document.addEventListener('swipe', function () { return false; });
     };
 
-	 // Verify submit captcha.
-    _proto.verify = function () {
+	// Apply captcha.
+    JigsawCaptcha.prototype.applycaptcha = function() {
+		var tipText = this.text;
+		this.options.applycaptcha(this.img1, this.img2, tipText);
+	};
+
+	// Verify captcha.
+    JigsawCaptcha.prototype.verify = function () {
         var left = parseInt(this.block.style.left);
         var verified = this.options.verify(this.trails, left); // 拖动时x/y轴的移动距离,最总x位置
         return verified;
     };
 
-	 // Reset apply captcha.
-    _proto.reset = function () {
+	// Reset apply captcha.
+    JigsawCaptcha.prototype.reset = function () {
         this.sliderContainer.removeClass('sliderContainer_fail sliderContainer_success');
         this.slider.style.left = 0;
         this.block.style.left = 0;
         this.sliderMask.style.width = 0;
-        this.clean();
+
+		this.canvasCtx.clearRect(0, 0, this.options.width, this.options.height);
+        this.blockCtx.clearRect(0, 0, this.options.width, this.options.height);
+        this.block.width = this.options.width;
+
         this.text.attr('data-text', this.text.text());
         this.text.text(this.options.loadingText);
         this.applycaptcha();
+    };
+
+	// Register to JQuery.
+    $.fn.JigsawIamCaptcha = function(option) {
+        return this.each(function () {
+            var $this = $(this);
+            var jigsawCaptcha0 = $this.data('lgb.JigsawIamCaptcha');
+			if (jigsawCaptcha0) {
+				//jigsawCaptcha0.reset(); return;
+				$(".sliderContainer").remove();
+				$this.removeData("lgb.JigsawIamCaptcha");
+			}
+            var options = typeof option === 'object' && option;
+            $this.data('lgb.JigsawIamCaptcha', jigsawCaptcha0 = new JigsawCaptcha(this, options));
+            if (typeof option === 'string') jigsawCaptcha0[option]();
+        });
     };
 
 })(jQuery);
