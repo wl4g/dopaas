@@ -33,7 +33,7 @@ public class Task extends BaseBean implements Serializable {
 
 	private String branchName;
 
-	private String tarType;
+	private String providerKind;
 
 	private String branchType;
 
@@ -104,12 +104,12 @@ public class Task extends BaseBean implements Serializable {
 		this.branchName = branchName == null ? null : branchName.trim();
 	}
 
-	public String getTarType() {
-		return tarType;
+	public String getProviderKind() {
+		return providerKind;
 	}
 
-	public void setTarType(String tarType) {
-		this.tarType = tarType;
+	public void setProviderKind(String providerKind) {
+		this.providerKind = providerKind;
 	}
 
 	public String getBranchType() {
@@ -179,7 +179,7 @@ public class Task extends BaseBean implements Serializable {
 	@Override
 	public String toString() {
 		return "Task{" + "taskName='" + taskName + '\'' + ", appClusterId=" + appClusterId + ", projectId=" + projectId
-				+ ", branchName='" + branchName + '\'' + ", tarType=" + tarType + ", branchType='" + branchType + '\''
+				+ ", branchName='" + branchName + '\'' + ", providerKind=" + providerKind + ", branchType='" + branchType + '\''
 				+ ", preCommand='" + preCommand + '\'' + ", postCommand='" + postCommand + '\'' + ", instances=" + instances
 				+ ", taskInstances=" + taskInstances + ", groupName='" + groupName + '\'' + '}';
 	}
