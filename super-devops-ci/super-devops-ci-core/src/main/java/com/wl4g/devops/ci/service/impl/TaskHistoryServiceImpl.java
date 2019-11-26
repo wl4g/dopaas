@@ -103,7 +103,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setBuildCommand(buildCommand);
 		taskHistory.setPreCommand(preCommand);
 		taskHistory.setPostCommand(postCommand);
-		taskHistory.setTarType(tarType);
+		taskHistory.setProviderKind(tarType);
 		taskHistory.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
 		taskHistory.setContactGroupId(contactGroupId);
 		// 1107 add
