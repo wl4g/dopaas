@@ -188,6 +188,8 @@
                             },
 							onFail: function(element){
 								console.debug("Failed to jigsaw captcha verify. element => "+ element);
+								runtime.flags.isApplying = false; // Apply captcha completed.
+								runtime.verifiedModel.verifiedToken = ""; // Clear
 								Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(element);
 							}
                         });
@@ -555,7 +557,7 @@
 					if(runtime.safeCheck.checkCaptcha.enabled){
 						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
 						if(Common.Util.isEmpty(verifiedToken)){ // Required
-							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete the man-machine verification");
+							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete the man-machine verify");
 							return;
 						}
 					}
@@ -594,6 +596,7 @@
 							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 						},
 						success: function(resp){
+							runtime.verifiedModel.verifiedToken = ""; // Clear
 							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 							if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
 								resetCaptcha(); // 刷新验证码
@@ -606,6 +609,7 @@
 							}
 						},
 						error: function(req, status, errmsg){
+							runtime.verifiedModel.verifiedToken = ""; // Clear
 							settings.account.onError(errmsg); // 登录异常回调
 						}
 					});
