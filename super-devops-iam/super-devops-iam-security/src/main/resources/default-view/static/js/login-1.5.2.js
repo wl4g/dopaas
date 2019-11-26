@@ -1,26 +1,3 @@
-$(function () {
-    var isPass = GetQueryString("isPass");
-    if (isPass == null || isPass.toString().length < 1 || isPass != 'true') {
-        myBrowser();
-    }
-})
-
-function GetQueryString(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    var r = window.location.search.substr(1).match(reg);
-    if (r != null) return unescape(r[2]);
-    return null;
-}
-
-function myBrowser() {
-    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-    var isChrome = userAgent.indexOf("Chrome") > -1 &&
-        userAgent.indexOf("Safari") > -1; //判断Chrome浏览器
-    if (!isChrome) {
-        window.location.href = "./upgrade.html";
-    }
-}
-
 function changeTab(showId, hideId) {
     $("#" + showId).show();
     $("#" + showId + "_1").css({
