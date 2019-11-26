@@ -11,6 +11,7 @@
     <result column="icon" property="icon" jdbcType="VARCHAR" />
     <result column="sort" property="sort" jdbcType="DECIMAL" />
     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
@@ -24,7 +25,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-     `key`, value, label,label_en, type, themes, icon, sort, status, create_by,
+     `key`, value, label,label_en, type, themes, icon, sort, status, enable, create_by,
     create_date, update_by, update_date, remark, del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -41,13 +42,13 @@
     insert into sys_dict ( `key`, value,
       label,label_en, type,
       themes, icon, sort, 
-      status, create_by, create_date, 
+      status,enable, create_by, create_date,
       update_by, update_date, remark, 
       del_flag)
     values (#{key,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR},
       #{label,jdbcType=VARCHAR},#{labelEn,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
       #{themes,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{sort,jdbcType=DECIMAL}, 
-      #{status,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER},#{enable,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
@@ -80,6 +81,9 @@
       </if>
       <if test="status != null" >
         status,
+      </if>
+      <if test="enable != null" >
+        enable,
       </if>
       <if test="createBy != null" >
         create_by,
@@ -128,6 +132,9 @@
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
       </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
       <if test="createBy != null" >
         #{createBy,jdbcType=VARCHAR},
       </if>
@@ -172,6 +179,9 @@
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
       </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
       <if test="createBy != null" >
         create_by = #{createBy,jdbcType=VARCHAR},
       </if>
@@ -202,6 +212,7 @@
       icon = #{icon,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=DECIMAL},
       status = #{status,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
