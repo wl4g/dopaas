@@ -27,12 +27,84 @@ import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 import java.lang.reflect.Field;
 
-import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldCopyer;
 import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
 
 public class BeanUtils2Tests {
 
+	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
+
+	}
+
+	public static void test1() throws Exception {
+		TestRole r = new TestRole(2, "jack");
+		r.setId(1);
+		r.setName("tom");
+
+		copyFullProperties(r, r, (ff, sourceProperty) -> {
+			Class<?> clazz = ff.getType();
+			int mod = ff.getModifiers();
+			return String.class.isAssignableFrom(clazz) && !isFinal(mod) && !isStatic(mod) && !isTransient(mod) && !isNative(mod)
+					&& !isVolatile(mod) && !isSynchronized(mod);
+		}, (target, tf, sf, sourcePropertyValue) -> {
+			if (sourcePropertyValue != null) {
+				makeAccessible(tf);
+				tf.set(target, sourcePropertyValue);
+			}
+		});
+
+		System.out.println(toJSONString(r));
+	}
+
+	public static void test2() throws Exception {
+		B b1 = new B();
+		b1.bb = "22";
+		A a1 = new A();
+		a1.cc = "33";
+		// a1.b = b1;
+
+		B b2 = new B();
+		b2.bb = "222";
+		A a2 = new A();
+		a2.cc = "333";
+		a2.b = b2;
+
+		System.out.println(a1);
+
+		copyFullProperties(a1, a2, (ff, sourcePropertyValue) -> {
+			return true;
+		});
+
+		System.out.println(a1);
+
+		System.out.println("=================");
+
+		B b3 = new B();
+		b3.bb = "22";
+		A a3 = new A();
+		a3.cc = "33";
+		a3.b = b3;
+
+		C c3 = new C();
+		c3.cc = "c33";
+
+		System.out.println(a3);
+
+		copyFullProperties(a3, c3, new FieldFilter() {
+			@Override
+			public boolean match(Field f, Object sourcePropertyValue) {
+				return true;
+			}
+		});
+
+		System.out.println(a3);
+
+		System.out.println("=================");
+	}
+
 	static class TestBaseBean {
+		final public static Integer ENABLE = 1;
+		final public static Integer DISABLE = 0;
+		final public static String DEFUALT_NAME = "defaultName";
 
 		private Integer id;
 		private String name;
@@ -97,31 +169,34 @@ public class BeanUtils2Tests {
 
 	}
 
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
-		TestRole r = new TestRole(2, "jack");
-		r.setId(1);
-		r.setName("tom");
+	static class A extends C {
+		B b;
 
-		copyFullProperties(r, r, new FieldFilter() {
-			@Override
-			public boolean match(Field f, Object sourceProperty) {
-				Class<?> clazz = f.getType();
-				int mod = f.getModifiers();
-				return String.class.isAssignableFrom(clazz) && !isFinal(mod) && !isStatic(mod) && !isTransient(mod)
-						&& !isNative(mod) && !isVolatile(mod) && !isSynchronized(mod);
-			}
-		}, new FieldCopyer() {
-			@Override
-			public void doCopy(Object target, Field tf, Field sf, Object sourcePropertyValue)
-					throws IllegalArgumentException, IllegalAccessException {
-				if (sourcePropertyValue != null) {
-					makeAccessible(tf);
-					tf.set(target, sourcePropertyValue);
-				}
-			}
-		});
+		@Override
+		public String toString() {
+			return "A [b=" + b + ", cc=" + cc + "]";
+		}
 
-		System.out.println(toJSONString(r));
+	}
+
+	static class B {
+		String bb;
+
+		@Override
+		public String toString() {
+			return "B [bb=" + bb + "]";
+		}
+
+	}
+
+	static class C {
+		String cc;
+
+		@Override
+		public String toString() {
+			return "C [cc=" + cc + "]";
+		}
+
 	}
 
 }

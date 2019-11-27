@@ -16,10 +16,7 @@
 package com.wl4g.devops.iam.common.aop;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import static java.lang.reflect.Modifier.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -40,7 +37,6 @@ import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.*;
 
-import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.config.XssProperties;
@@ -154,22 +150,12 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 				|| ServletResponse.class.isAssignableFrom(argument.getClass()))
 			return;
 
-		copyFullProperties(argument, argument, new FieldFilter() {
-			@Override
-			public boolean match(Field f, Object sourceProperty) {
-				Class<?> clazz = f.getType();
-				int mod = f.getModifiers();
-				return String.class.isAssignableFrom(clazz) && !isFinal(mod) && !isStatic(mod) && !isTransient(mod)
-						&& !isNative(mod) && !isVolatile(mod) && !isSynchronized(mod);
-			}
-		}, new FieldCopyer() {
-			@Override
-			public void doCopy(Object target, Field tf, Field sf, Object sourcePropertyValue)
-					throws IllegalArgumentException, IllegalAccessException {
-				if (sourcePropertyValue != null) {
-					makeAccessible(tf);
-					tf.set(target, resolver.doResolve(controller, method, index, (String) sourcePropertyValue));
-				}
+		copyFullProperties(argument, argument, (f, sourcePropertyValue) -> {
+			return String.class.isAssignableFrom(f.getType()) && DEFAULT_FIELD_FILTER.match(f, sourcePropertyValue);
+		}, (target, tf, sf, sourcePropertyValue) -> {
+			if (sourcePropertyValue != null) {
+				makeAccessible(tf);
+				tf.set(target, resolver.doResolve(controller, method, index, (String) sourcePropertyValue));
 			}
 		});
 

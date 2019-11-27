@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
-import com.wl4g.devops.shell.utils.Assert;
 import static com.wl4g.devops.shell.utils.LineUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * Internal commands
@@ -132,7 +132,7 @@ public abstract class InternalCommand {
 	 * @return
 	 */
 	final public static String getGNULong(String defineKey) {
-		Assert.hasText(defineKey, "defineKey must not be emtpy");
+		hasText(defineKey, "defineKey must not be emtpy");
 		return ShellOption.GNU_CMD_LONG + defineKey;
 	}
 
@@ -143,7 +143,7 @@ public abstract class InternalCommand {
 	 * @return
 	 */
 	final public static String getGNUShort(String defineKey) {
-		Assert.hasText(defineKey, "defineKey must not be emtpy");
+		hasText(defineKey, "defineKey must not be emtpy");
 		return ShellOption.GNU_CMD_SHORT + defineKey;
 	}
 

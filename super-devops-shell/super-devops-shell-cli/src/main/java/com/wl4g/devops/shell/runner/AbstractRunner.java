@@ -39,7 +39,6 @@ import com.wl4g.devops.shell.config.Configuration;
 import com.wl4g.devops.shell.config.DynamicCompleter;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
-import com.wl4g.devops.shell.utils.Assert;
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HE;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HELP;
@@ -53,6 +52,9 @@ import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.jline.reader.LineReader.HISTORY_FILE;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
 
 /**
  * Abstract shell component runner
@@ -117,7 +119,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 	public AbstractRunner(Configuration config) {
 		super(config, getSingle());
-		Assert.notNull(config, "configuration is null, please check configure");
+		notNull(config, "configuration is null, please check configure");
 		this.config = config;
 
 		// Build lineReader
@@ -259,13 +261,13 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		// Set history persist file
 		File file = new File(USER_HOME + "/.devops/shell/history");
 		if (!file.getParentFile().exists()) {
-			Assert.state(file.getParentFile().mkdirs(),
+			state(file.getParentFile().mkdirs(),
 					String.format("Failed to create, for directory: '%s'", file.getParentFile().getAbsolutePath()));
 		}
 		if (!file.exists()) {
 			String errmsg = String.format("Failed to create, for file: '%s'", file.getAbsolutePath());
 			try {
-				Assert.state(file.createNewFile(), errmsg);
+				state(file.createNewFile(), errmsg);
 			} catch (IOException e) {
 				throw new IllegalStateException(errmsg);
 			}
@@ -344,12 +346,12 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		// Can be used to connect to remote service console.
 		//
 		if (isNotBlank(servPoint)) {
-			Assert.isTrue(contains(servPoint, ":") && servPoint.length() > 8,
+			isTrue(contains(servPoint, ":") && servPoint.length() > 8,
 					String.format("Invalid server point. e.g. -D%s=10.0.0.11", ARG_SERV_POINT));
 			String[] parts = servPoint.split(":");
-			Assert.isTrue(isNumeric(parts[1]), String.format("Invalid server port is %s", servPoint));
+			isTrue(isNumeric(parts[1]), String.format("Invalid server port is %s", servPoint));
 			int port = Integer.parseInt(parts[1]);
-			Assert.isTrue((port > 1024 && port < 65535),
+			isTrue((port > 1024 && port < 65535),
 					String.format("Server port must be between 1024 and 65535, actual is %s", servPoint));
 			return new Object[] { parts[0], port };
 		}

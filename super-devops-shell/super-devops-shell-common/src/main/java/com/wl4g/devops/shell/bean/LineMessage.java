@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.bean;
 
-import com.wl4g.devops.shell.utils.Assert;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * Line commands message
@@ -30,7 +30,7 @@ public class LineMessage extends Message {
 	final private String line;
 
 	public LineMessage(String line) {
-		Assert.hasText(line, "line must not be empty");
+		hasText(line, "line must not be empty");
 		this.line = line;
 	}
 

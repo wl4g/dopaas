@@ -16,7 +16,6 @@
 package com.wl4g.devops.shell.handler;
 
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
-import com.wl4g.devops.shell.utils.Assert;
 
 import java.io.*;
 import java.net.Socket;
@@ -26,6 +25,7 @@ import java.util.function.Function;
 
 import static java.lang.System.err;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Shell message handler
@@ -73,9 +73,9 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	protected OutputStream _out;
 
 	public ChannelMessageHandler(ShellBeanRegistry registry, Socket client, Function<String, Object> function) {
-		Assert.notNull(client, "Socket client is null, please check configure");
-		Assert.notNull(function, "Function is null, please check configure");
-		Assert.notNull(registry, "Registry must not be null");
+		notNull(client, "Socket client is null, please check configure");
+		notNull(function, "Function is null, please check configure");
+		notNull(registry, "Registry must not be null");
 		this.registry = registry;
 		this.client = client;
 		this.function = function;
@@ -96,7 +96,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 * @throws IOException
 	 */
 	public synchronized void writeAndFlush(Object message) throws IOException {
-		Assert.notNull(message, "Message is null, please check configure");
+		notNull(message, "Message is null, please check configure");
 		if (!isActive()) {
 			throw new SocketException("No socket active!");
 		}

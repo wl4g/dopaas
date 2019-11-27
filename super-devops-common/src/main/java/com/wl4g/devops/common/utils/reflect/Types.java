@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.utils.reflect;
 
 import static java.lang.reflect.Modifier.*;
+import static java.util.Objects.isNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -92,7 +93,7 @@ public abstract class Types {
 	 * @return
 	 */
 	public static boolean isBaseType(Class<?> clazz) {
-		if (clazz == null) {
+		if (isNull(clazz)) {
 			return false;
 		}
 		return clazz.isPrimitive() || nativeClasses.contains(clazz) || nativePackages.contains(clazz.getName());

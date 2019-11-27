@@ -29,15 +29,20 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.cli.HelpOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
-import com.wl4g.devops.shell.utils.Assert;
-import static com.wl4g.devops.shell.utils.Reflections.*;
-import static com.wl4g.devops.shell.utils.Types.*;
+
+import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isSafetyModifier;
+import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
+import static com.wl4g.devops.common.utils.reflect.Types.isGeneralSetType;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
 import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 
@@ -82,19 +87,18 @@ public class TargetMethodWrapper implements Serializable {
 	 * @param target
 	 */
 	public TargetMethodWrapper(ShellMethod sm, Method method, Object target) {
-		Assert.notNull(sm, "Shell method must not be null");
-		Assert.notNull(method, "Shell target method must not be null");
-		Assert.notNull(sm.keys(), "Shell method keys must not be null");
+		notNull(sm, "Shell method must not be null");
+		notNull(method, "Shell target method must not be null");
+		notNull(sm.keys(), "Shell method keys must not be null");
 		this.shellMethod = sm;
 		this.method = method;
 		this.target = target;
 
 		// Check whether there is a keyword.(if not an internal command)
 		if (!(target instanceof InternalCommand)) {
-			Assert.isTrue(!contains(sm.keys()),
-					String.format(
-							"The shell method: '%s' definition exists in conflict with the keywords: '%s' and is recommended to be renamed.",
-							method, asCmdsString()));
+			isTrue(!contains(sm.keys()), String.format(
+					"The shell method: '%s' definition exists in conflict with the keywords: '%s' and is recommended to be renamed.",
+					method, asCmdsString()));
 		}
 
 		// Initialization
@@ -158,7 +162,7 @@ public class TargetMethodWrapper implements Serializable {
 
 		// Parameter types
 		Class<?>[] paramTypes = getMethod().getParameterTypes();
-		Assert.state(paramAnnos.length == paramTypes.length,
+		state(paramAnnos.length == paramTypes.length,
 				String.format("Error, method:%s parameter types length:%s parameter annotations:%s", getMethod(),
 						paramTypes.length, paramAnnos.length));
 
@@ -226,13 +230,13 @@ public class TargetMethodWrapper implements Serializable {
 	 * @param index
 	 */
 	private void validateShellOption(ShellOption opt, Method m, int index) {
-		Assert.state(opt != null, String
+		state(opt != null, String
 				.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", m, index));
-		Assert.hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", m));
-		Assert.hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", m));
-		Assert.isTrue(isAlpha(opt.opt().substring(0, 1)),
+		hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", m));
+		hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", m));
+		isTrue(isAlpha(opt.opt().substring(0, 1)),
 				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.opt(), m));
-		Assert.isTrue(isAlpha(opt.lopt().substring(0, 1)),
+		isTrue(isAlpha(opt.lopt().substring(0, 1)),
 				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), m));
 	}
 
@@ -278,16 +282,16 @@ public class TargetMethodWrapper implements Serializable {
 
 		public TargetParameter(Method method, Class<?> paramType, int index, ShellOption shOpt,
 				Map<HelpOption, String> attributes) {
-			Assert.notNull(method, "Method type is null, please check configure");
-			Assert.notNull(paramType, "Parameter type is null, please check configure");
-			Assert.isTrue(index >= 0, "Parameter index greater or equal to 0, please check configure");
+			notNull(method, "Method type is null, please check configure");
+			notNull(paramType, "Parameter type is null, please check configure");
+			isTrue(index >= 0, "Parameter index greater or equal to 0, please check configure");
 			this.method = method;
 			this.paramType = paramType;
 			this.index = index;
 
 			// Assertion shell option.
 			if (simpleType()) { // [MARK7]
-				Assert.state(shOpt != null,
+				state(shOpt != null,
 						String.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption",
 								getMethod(), getIndex()));
 			}
@@ -321,7 +325,7 @@ public class TargetMethodWrapper implements Serializable {
 		public final TargetParameter addAttribute(HelpOption option, String fieldName) {
 			validateOption(option);
 
-			Assert.state(attributes.putIfAbsent(option, fieldName) == null,
+			state(attributes.putIfAbsent(option, fieldName) == null,
 					String.format("Repeatedly defined shell parameter index: %s, paramType: %s, option: '%s', method: '%s'",
 							getIndex(), getParamType(), option, getMethod()));
 			return this;
@@ -330,13 +334,13 @@ public class TargetMethodWrapper implements Serializable {
 		private void validateOption(HelpOption option) {
 			// Option(opt)
 			List<String> opts = getAttributes().keySet().stream().map(op -> op.getOpt()).collect(Collectors.toList());
-			Assert.state(!opts.contains(option.getOpt()),
+			state(!opts.contains(option.getOpt()),
 					String.format("Repeatedly defined short option: '%s', parameter index: %s, paramType: %s, method: '%s'",
 							option.getOpt(), getIndex(), getParamType(), getMethod()));
 
 			// Option(longOpt)
 			List<String> lOpts = getAttributes().keySet().stream().map(op -> op.getLongOpt()).collect(Collectors.toList());
-			Assert.state(!lOpts.contains(option.getLongOpt()),
+			state(!lOpts.contains(option.getLongOpt()),
 					String.format("Repeatedly defined long option: '%s', parameter index: %s, paramType: %s, method: '%s'",
 							option.getLongOpt(), getIndex(), getParamType(), getMethod()));
 		}
@@ -369,7 +373,7 @@ public class TargetMethodWrapper implements Serializable {
 		 * @param attributes
 		 */
 		private static void extractHierarchyFields(Class<?> clazz, TargetParameter parameter) {
-			Assert.notNull(clazz, "The paramClazz must be null");
+			notNull(clazz, "The paramClazz must be null");
 			try {
 				for (Field f : clazz.getDeclaredFields()) {
 					Class<?> ftype = f.getType();

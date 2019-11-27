@@ -15,6 +15,15 @@
  */
 package com.wl4g.devops.common.utils.bean;
 
+import static java.lang.reflect.Modifier.isFinal;
+import static java.lang.reflect.Modifier.isNative;
+import static java.lang.reflect.Modifier.isStatic;
+import static java.lang.reflect.Modifier.isSynchronized;
+import static java.lang.reflect.Modifier.isTransient;
+import static java.lang.reflect.Modifier.isVolatile;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.lang.reflect.Field;
 
 import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
@@ -81,10 +90,10 @@ public abstract class BeanUtils2 {
 					String.format("Incompatible two objects, target class: %s, source class: %s", targetClass, sourceClass));
 		}
 
-		Class<?> cls = target.getClass(); // [MARK0]
+		Class<?> targetCls = target.getClass(); // [MARK0]
 		do {
-			copyDeepProperties(cls, target, source, ff, fc);
-		} while ((cls = cls.getSuperclass()) != Object.class);
+			copyDeepProperties(targetCls, target, source, ff, fc);
+		} while ((targetCls = targetCls.getSuperclass()) != Object.class);
 	}
 
 	/**
@@ -95,7 +104,7 @@ public abstract class BeanUtils2 {
 	 * compatible.</br>
 	 * Note: Attribute fields of parent and superclass are not included
 	 * 
-	 * @param hierarchyClass
+	 * @param hierarchyTargetClass
 	 *            The level of the class currently copied to (upward recursion)
 	 * @param target
 	 *            The target object to copy to
@@ -108,34 +117,34 @@ public abstract class BeanUtils2 {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void copyDeepProperties(Class<?> hierarchyClass, Object target, Object source, FieldFilter ff, FieldCopyer fc)
-			throws IllegalArgumentException, IllegalAccessException {
-		if (hierarchyClass == null || ff == null || fc == null) {
+	public static void copyDeepProperties(Class<?> hierarchyTargetClass, Object target, Object source, FieldFilter ff,
+			FieldCopyer fc) throws IllegalArgumentException, IllegalAccessException {
+		if (hierarchyTargetClass == null || ff == null || fc == null) {
 			throw new IllegalArgumentException(
 					"Hierarchy class and target or source field filter, field copyer must not be null");
 		}
 
 		// If the source is empty, skip the current level copy.
-		if (source == null || target == null) {
+		if (isNull(source) || isNull(target)) {
 			return;
 		}
 
 		// Recursive traversal matching and processing
 		Class<?> sourceClass = source.getClass();
-		for (Field tf : hierarchyClass.getDeclaredFields()) {
-			tf.setAccessible(true);
+		for (Field tf : hierarchyTargetClass.getDeclaredFields()) {
+			makeAccessible(tf);
 			Object targetPropertyValue = tf.get(target); // See:[MARK0]
 
 			Object sourcePropertyValue = null;
 			Field sf = findField(sourceClass, tf.getName());
-			if (sf != null) {
-				sf.setAccessible(true);
+			if (nonNull(sf)) {
+				makeAccessible(sf);
 				sourcePropertyValue = sf.get(source);
 			}
 
 			// If the source is not null and the target is null, the source can
 			// be assigned directly to the target.
-			if (targetPropertyValue == null) { // [MARK1]
+			if (isNull(targetPropertyValue)) { // [MARK1]
 				if (fc != null) {
 					fc.doCopy(target, tf, sf, sourcePropertyValue);
 				}
@@ -204,104 +213,19 @@ public abstract class BeanUtils2 {
 	/**
 	 * Default field filter.
 	 */
-	final public static FieldFilter DEFAULT_FIELD_FILTER = new FieldFilter() {
-		@Override
-		public boolean match(Field f, Object sourcePropertyValue) {
-			return true;
-		}
+	final public static FieldFilter DEFAULT_FIELD_FILTER = (tf, sourcePropertyValue) -> {
+		int mod = tf.getModifiers();
+		return !isFinal(mod) && !isStatic(mod) && !isTransient(mod) && !isNative(mod) && !isVolatile(mod) && !isSynchronized(mod);
 	};
 
 	/**
 	 * Default field copyer.
 	 */
-	final public static FieldCopyer DEFAULT_FIELD_COPYER = new FieldCopyer() {
-		@Override
-		public void doCopy(Object targetAttach, Field tf, Field sf, Object sourcePropertyValue)
-				throws IllegalArgumentException, IllegalAccessException {
-			if (sourcePropertyValue != null) {
-				tf.setAccessible(true);
-				tf.set(targetAttach, sourcePropertyValue);
-			}
+	final public static FieldCopyer DEFAULT_FIELD_COPYER = (targetAttach, tf, sf, sourcePropertyValue) -> {
+		if (sourcePropertyValue != null) {
+			tf.setAccessible(true);
+			tf.set(targetAttach, sourcePropertyValue);
 		}
 	};
-
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
-		B b1 = new B();
-		b1.bb = "22";
-		A a1 = new A();
-		a1.cc = "33";
-		// a1.b = b1;
-
-		B b2 = new B();
-		b2.bb = "222";
-		A a2 = new A();
-		a2.cc = "333";
-		a2.b = b2;
-
-		System.out.println(a1);
-
-		copyFullProperties(a1, a2, new FieldFilter() {
-			@Override
-			public boolean match(Field f, Object sourcePropertyValue) {
-				return true;
-			}
-		});
-
-		System.out.println(a1);
-
-		System.out.println("=================");
-
-		B b3 = new B();
-		b3.bb = "22";
-		A a3 = new A();
-		a3.cc = "33";
-		a3.b = b3;
-
-		C c3 = new C();
-		c3.cc = "c33";
-
-		System.out.println(a3);
-
-		copyFullProperties(a3, c3, new FieldFilter() {
-			@Override
-			public boolean match(Field f, Object sourcePropertyValue) {
-				return true;
-			}
-		});
-
-		System.out.println(a3);
-
-		System.out.println("=================");
-	}
-
-	static class A extends C {
-		B b;
-
-		@Override
-		public String toString() {
-			return "A [b=" + b + ", cc=" + cc + "]";
-		}
-
-	}
-
-	static class B {
-		String bb;
-
-		@Override
-		public String toString() {
-			return "B [bb=" + bb + "]";
-		}
-
-	}
-
-	static class C {
-		String cc;
-
-		@Override
-		public String toString() {
-			return "C [cc=" + cc + "]";
-		}
-
-	}
 
 }
