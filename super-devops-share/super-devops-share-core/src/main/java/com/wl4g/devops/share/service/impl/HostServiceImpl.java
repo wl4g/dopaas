@@ -15,13 +15,17 @@
  */
 package com.wl4g.devops.share.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.share.AppHost;
 import com.wl4g.devops.dao.share.AppHostDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 /**
  * @author vjay
@@ -38,4 +42,30 @@ public class HostServiceImpl implements HostService {
         List<AppHost> list = appHostDao.list(name, hostname, idcId);
         return list;
     }
+
+    @Override
+    public PageModel page(PageModel pm,String name, String hostname, Integer idcId) {
+        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+        pm.setRecords(appHostDao.list(name, hostname, idcId));
+        return pm;
+    }
+
+    public void save(AppHost host){
+        if(isNull(host.getId())){
+            insert(host);
+        }else{
+            update(host);
+        }
+    }
+
+    private void insert(AppHost host){
+
+    }
+
+    private void update(AppHost host){
+
+    }
+
+
+
 }
