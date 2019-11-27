@@ -55,4 +55,27 @@ public class AppHostController extends BaseController {
 		return resp;
 	}
 
+
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(AppHost host) {
+		RespBase<Object> resp = RespBase.create();
+		hostService.save(host);
+		return resp;
+	}
+
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(hostService.detail(id));
+		return resp;
+	}
+
+
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		hostService.del(id);
+		return resp;
+	}
+
 }

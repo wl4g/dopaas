@@ -35,7 +35,7 @@
       #{enable,jdbcType=INTEGER}, #{adress,jdbcType=VARCHAR}, #{timeZone,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.AppIdc" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.AppIdc" useGeneratedKeys="true" keyProperty="id">
     insert into app_idc
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
