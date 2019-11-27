@@ -29,4 +29,10 @@ public interface HostService {
 	List<AppHost> list(String name, String hostname, Integer idcId);
 
 	PageModel page(PageModel pm,String name, String hostname, Integer idcId);
+
+	void save(AppHost host);
+
+	AppHost detail(Integer id);
+
+	void del(Integer id);
 }

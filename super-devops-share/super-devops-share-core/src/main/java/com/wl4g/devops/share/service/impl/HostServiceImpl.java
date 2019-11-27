@@ -16,12 +16,14 @@
 package com.wl4g.devops.share.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.share.AppHost;
 import com.wl4g.devops.dao.share.AppHostDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -52,18 +54,34 @@ public class HostServiceImpl implements HostService {
 
     public void save(AppHost host){
         if(isNull(host.getId())){
+            host.preInsert();
             insert(host);
         }else{
+            host.preUpdate();
             update(host);
         }
     }
 
     private void insert(AppHost host){
-
+        appHostDao.insertSelective(host);
     }
 
     private void update(AppHost host){
+        appHostDao.updateByPrimaryKeySelective(host);
+    }
 
+
+    public AppHost detail(Integer id){
+        Assert.notNull(id,"id is null");
+        return appHostDao.selectByPrimaryKey(id);
+    }
+
+    public void del(Integer id){
+        Assert.notNull(id,"id is null");
+        AppHost host = new AppHost();
+        host.setId(id);
+        host.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        appHostDao.updateByPrimaryKeySelective(host);
     }
 
 
