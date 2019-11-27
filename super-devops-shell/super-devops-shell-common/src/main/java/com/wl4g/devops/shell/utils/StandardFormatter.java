@@ -19,15 +19,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import static org.apache.commons.lang3.StringUtils.*;
 
-import static com.wl4g.devops.shell.utils.Types.*;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
+
 import com.wl4g.devops.shell.annotation.PropertyDescription;
 
 /**
@@ -38,17 +41,12 @@ import com.wl4g.devops.shell.annotation.PropertyDescription;
  * @since
  */
 public class StandardFormatter {
-
-	final public static Charset UTF_8 = Charset.forName("UTF-8");
-
 	private Object object;
-
 	private boolean hasAttribute;
-
 	private int cellRow;
 
 	public StandardFormatter(Object object) {
-		Assert.notNull(object, "object must not be null");
+		notNull(object, "object must not be null");
 		this.object = object;
 		this.hasAttribute = true;
 		this.cellRow = 2;
@@ -94,7 +92,7 @@ public class StandardFormatter {
 	}
 
 	private void extractFlatBean(Class<?> clazz, List<ValueWrap> resultSet) {
-		Assert.notNull(clazz, "The clazz must be null");
+		notNull(clazz, "The clazz must be null");
 		try {
 			for (Field f : clazz.getDeclaredFields()) {
 				String fname = f.getName();
@@ -134,8 +132,8 @@ public class StandardFormatter {
 	 * @return
 	 */
 	public static String getHelpFormat(String argname, Options options, String help) {
-		Assert.hasText(argname, "Argname is empty");
-		Assert.notNull(options, String.format("No command: '%s' args options", argname));
+		hasText(argname, "Argname is empty");
+		notNull(options, String.format("No command: '%s' args options", argname));
 		help = trimToEmpty(help);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -24,18 +24,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.Optional;
+
+import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.doWithFullFields;
+import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isSafetyModifier;
+import static com.wl4g.devops.common.utils.reflect.Types.convertToBaseOrSimpleSet;
 import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.Assert.hasLength;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
+import static org.springframework.util.Assert.notEmpty;
+import static org.springframework.util.Assert.notNull;
 
-import static com.wl4g.devops.shell.utils.Types.*;
-import static com.wl4g.devops.shell.utils.Reflections.*;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.config.AbstractConfiguration;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
-import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
 
 /**
@@ -63,8 +69,8 @@ public abstract class AbstractActuator implements Actuator {
 	final protected AbstractConfiguration config;
 
 	public AbstractActuator(AbstractConfiguration config, ShellBeanRegistry registry) {
-		Assert.notNull(registry, "Registry must not be null");
-		Assert.notNull(config, "Registry must not be null");
+		notNull(registry, "Registry must not be null");
+		notNull(config, "Registry must not be null");
 		this.registry = registry;
 		this.config = config;
 	}
@@ -92,13 +98,13 @@ public abstract class AbstractActuator implements Actuator {
 	 * @throws Exception
 	 */
 	protected Object doProcess(List<String> commands) {
-		Assert.notNull(commands, "Console input commands must not be null");
+		notNull(commands, "Console input commands must not be null");
 
 		// Main argument option.(remove)
 		String mainArg = commands.remove(0);
 
 		// Target method wrap
-		Assert.isTrue(registry.contains(mainArg), String.format("'%s': command not found", mainArg));
+		isTrue(registry.contains(mainArg), String.format("'%s': command not found", mainArg));
 		TargetMethodWrapper tm = registry.getTargetMethods().get(mainArg);
 
 		try {
@@ -128,7 +134,7 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	protected List<Object> resolveArguments(List<String> commands, TargetMethodWrapper tm)
 			throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-		Assert.notNull(tm, "Error, Should targetMethodWrapper not be null?");
+		notNull(tm, "Error, Should targetMethodWrapper not be null?");
 
 		/*
 		 * Commands to javaBean map and validate protected. </br>
@@ -140,7 +146,7 @@ public abstract class AbstractActuator implements Actuator {
 				if (i % 2 == 0) {
 					// Input opt
 					String argname = commands.get(i);
-					Assert.hasText(argname, String.format("Unable to get parameter name, i:%s", i));
+					hasText(argname, String.format("Unable to get parameter name, i:%s", i));
 					// Value(May be empty) See:[MARK3]
 					String value = commands.get(i + 1);
 
@@ -165,7 +171,7 @@ public abstract class AbstractActuator implements Actuator {
 					return isSafetyModifier(f.getModifiers());
 				}, (attach, f, property) -> {
 					ShellOption shOpt = f.getDeclaredAnnotation(ShellOption.class);
-					Assert.notNull(shOpt, "Error, Should shellOption not be null?");
+					notNull(shOpt, "Error, Should shellOption not be null?");
 					Object value = beanMap.get(f.getName());
 					if (value == null) {
 						value = shOpt.defaultValue();
@@ -248,7 +254,7 @@ public abstract class AbstractActuator implements Actuator {
 	 */
 	protected List<String> resolveCommands(String line) {
 		List<String> commands = LineUtils.parse(line);
-		Assert.notEmpty(commands, "Commands must not be empty");
+		notEmpty(commands, "Commands must not be empty");
 		return commands;
 	}
 
@@ -259,7 +265,7 @@ public abstract class AbstractActuator implements Actuator {
 	 * @return
 	 */
 	protected int ensureDetermineServPort(String appName) {
-		Assert.hasLength(appName, "appName must not be empty");
+		hasLength(appName, "appName must not be empty");
 		String origin = trimToEmpty(appName).toUpperCase(Locale.ENGLISH);
 
 		CRC32 crc32 = new CRC32();

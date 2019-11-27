@@ -18,11 +18,13 @@ package com.wl4g.devops.shell.registry;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import static java.lang.reflect.Modifier.*;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.utils.Assert;
 
 /**
  * Shell bean registry
@@ -57,7 +59,7 @@ public abstract class ShellBeanRegistry implements Serializable {
 	 * @param bean
 	 */
 	public ShellBeanRegistry register(Object bean) {
-		Assert.notNull(bean, "bean is null, please check configure");
+		notNull(bean, "bean is null, please check configure");
 
 		for (Method m : bean.getClass().getDeclaredMethods()) {
 			int mod = m.getModifiers();
@@ -68,7 +70,7 @@ public abstract class ShellBeanRegistry implements Serializable {
 			// Shell method?
 			ShellMethod sm = m.getAnnotation(ShellMethod.class);
 			if (sm != null) {
-				Assert.notNull(sm.keys(), "Shell method key must not be null");
+				notNull(sm.keys(), "Shell method key must not be null");
 				for (String k : sm.keys()) {
 					register0(k, new TargetMethodWrapper(sm, m, bean));
 				}
@@ -85,7 +87,7 @@ public abstract class ShellBeanRegistry implements Serializable {
 	 * @param tm
 	 */
 	private void register0(String mainOpt, TargetMethodWrapper tm) {
-		Assert.state(registry.putIfAbsent(mainOpt, tm) == null, String.format("Repeatedly defined shell method: '%s'", mainOpt));
+		state(registry.putIfAbsent(mainOpt, tm) == null, String.format("Repeatedly defined shell method: '%s'", mainOpt));
 	}
 
 }

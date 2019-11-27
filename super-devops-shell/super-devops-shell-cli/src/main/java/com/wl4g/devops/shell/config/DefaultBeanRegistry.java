@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.shell.config;
 
+import static org.springframework.util.Assert.state;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
-import com.wl4g.devops.shell.utils.Assert;
 
 /**
  * Default bean registry
@@ -53,20 +54,19 @@ public class DefaultBeanRegistry extends ShellBeanRegistry {
 	 * @return
 	 */
 	public DefaultBeanRegistry merge(Map<String, TargetMethodWrapper> registed) {
-		Assert.state(helpOptions.isEmpty(), "Remote server registed target methods is null");
+		state(helpOptions.isEmpty(), "Remote server registed target methods is null");
 
 		// Registion from local.
 		getTargetMethods().forEach((argname, tm) -> {
-			Assert.state(helpOptions.putIfAbsent(argname, tm.getOptions()) == null,
+			state(helpOptions.putIfAbsent(argname, tm.getOptions()) == null,
 					String.format("Already local registed commands: '%s'", argname));
 		});
 
 		// Registion from remote registed.
 		registed.forEach((argname, tm) -> {
-			Assert.state(helpOptions.putIfAbsent(argname, tm.getOptions()) == null,
-					String.format(
-							"Already remote registed commands: '%s', It is recommended to replace the shell definition @ShellMethod(name=xx)",
-							argname));
+			state(helpOptions.putIfAbsent(argname, tm.getOptions()) == null, String.format(
+					"Already remote registed commands: '%s', It is recommended to replace the shell definition @ShellMethod(name=xx)",
+					argname));
 		});
 
 		return this;

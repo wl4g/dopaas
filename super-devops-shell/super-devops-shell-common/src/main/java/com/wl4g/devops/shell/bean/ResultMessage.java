@@ -16,7 +16,7 @@
 package com.wl4g.devops.shell.bean;
 
 import static com.wl4g.devops.shell.bean.RunState.*;
-import com.wl4g.devops.shell.utils.Assert;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Result transform message
@@ -37,7 +37,7 @@ public class ResultMessage extends Message {
 	}
 
 	public ResultMessage(RunState state, String content) {
-		Assert.notNull(state, "State must not be empty");
+		notNull(state, "State must not be empty");
 		this.state = state;
 		this.content = content;
 	}
