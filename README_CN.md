@@ -23,7 +23,19 @@ English version goes [here](README.md)
 - 基础环境依赖（必须）：JDK8+、Maven3.5+、MySQL5.6+
 - 其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
 
-### 文档
+### 快速开始（为简单起见，首先部署一个伪测试集群）
+- step1，首先需要一台CentOS6.5+主机和一个MySQL5.6+的实例，新建一个名为devops的库，然后使用 [初始sql脚本](db/) 初始化它。（注：此脚本需与代码版本对应，我们会定期更新，请按命名后缀日期使用最新的即可）
+- step2，增加本地hosts虚拟域名解析（C:\Windows\System32\drivers\etc  或  vim /etc/hosts）：
+```
+10.0.0.160    ci.wl4g.test
+10.0.0.160    iam.wl4g.test
+10.0.0.160    scm.wl4g.test
+10.0.0.160    share.wl4g.test
+10.0.0.160    srm.wl4g.test
+10.0.0.160    umc.wl4g.test
+```
+
+### 更多子模块文档
 - [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等
 - [ESM](super-devops-esm/README_CN.md)          &nbsp;&nbsp;    弹性伸缩管理, 集成k8s、docker，基于CPU、网络流量自动或手动容器伸缩的管理
 - [SCM](super-devops-scm/README_CN.md)          &nbsp;&nbsp;    配置服务中心, 支持在线配置热更新如：DataSource、RedisClient等
