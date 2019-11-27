@@ -16,6 +16,7 @@
 package com.wl4g.devops.share.service;
 
 import com.wl4g.devops.common.bean.share.AppHost;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 
@@ -26,4 +27,6 @@ import java.util.List;
 public interface HostService {
 
 	List<AppHost> list(String name, String hostname, Integer idcId);
+
+	PageModel page(PageModel pm,String name, String hostname, Integer idcId);
 }

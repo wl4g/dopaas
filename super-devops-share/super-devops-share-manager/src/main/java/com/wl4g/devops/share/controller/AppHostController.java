@@ -18,6 +18,7 @@ package com.wl4g.devops.share.controller;
 import com.wl4g.devops.common.bean.share.AppHost;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,11 +40,18 @@ public class AppHostController extends BaseController {
 	@Autowired
 	private HostService hostService;
 
-	@RequestMapping(value = "/list")
+	@RequestMapping(value = "/allHost")
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
 		List<AppHost> list = hostService.list(null, null, null);
 		resp.setData(list);
+		return resp;
+	}
+
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(PageModel pm,String name,String hostname) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(hostService.page(pm,name,hostname,null));
 		return resp;
 	}
 
