@@ -23,8 +23,6 @@ import java.util.Objects;
 public class Role extends BaseBean {
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private Integer id;
-
 	private String roleCode;
 
 	private String displayName;
@@ -96,27 +94,17 @@ public class Role extends BaseBean {
 	}
 
 	@Override
-	public Integer getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
 		Role role = (Role) o;
-		return Objects.equals(id, role.id);
+		return Objects.equals(getId(), role.getId());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(getId());
 	}
 }

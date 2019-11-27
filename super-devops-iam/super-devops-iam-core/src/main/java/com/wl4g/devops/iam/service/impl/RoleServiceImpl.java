@@ -32,7 +32,6 @@ import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,10 +123,10 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	private List<Group> removeUnhad(List<Group> groups, Set<Group> groupsSet) {
-		if (CollectionUtils.isEmpty(groups)) {
+		if (isEmpty(groups)) {
 			return Collections.emptyList();
 		}
-		if (CollectionUtils.isEmpty(groupsSet)) {
+		if (isEmpty(groupsSet)) {
 			return Collections.emptyList();
 		}
 		for (int i = groups.size() - 1; i >= 0; i--) {
@@ -146,7 +145,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	private String groups2Str(List<Group> groups) {
-		if (CollectionUtils.isEmpty(groups)) {
+		if (isEmpty(groups)) {
 			return null;
 		}
 		StringBuilder stringBuilder = new StringBuilder();
@@ -187,7 +186,7 @@ public class RoleServiceImpl implements RoleService {
 			roleMenu.setRoleId(role.getId());
 			roleMenus.add(roleMenu);
 		}
-		if (CollectionUtils.isEmpty(roleMenus)) {
+		if (!isEmpty(roleMenus)) {
 			roleMenuDao.insertBatch(roleMenus);
 		}
 		// group
@@ -199,7 +198,7 @@ public class RoleServiceImpl implements RoleService {
 			groupRole.setRoleId(role.getId());
 			groupRoles.add(groupRole);
 		}
-		if (CollectionUtils.isEmpty(groupRoles)) {
+		if (!isEmpty(groupRoles)) {
 			groupRoleDao.insertBatch(groupRoles);
 		}
 	}
@@ -219,7 +218,7 @@ public class RoleServiceImpl implements RoleService {
 			roleMenu.setRoleId(role.getId());
 			roleMenus.add(roleMenu);
 		}
-		if (CollectionUtils.isEmpty(roleMenus)) {
+		if (!isEmpty(roleMenus)) {
 			roleMenuDao.insertBatch(roleMenus);
 		}
 		// group
@@ -231,7 +230,7 @@ public class RoleServiceImpl implements RoleService {
 			groupRole.setRoleId(role.getId());
 			groupRoles.add(groupRole);
 		}
-		if (CollectionUtils.isEmpty(groupRoles)) {
+		if (!isEmpty(groupRoles)) {
 			groupRoleDao.insertBatch(groupRoles);
 		}
 	}
