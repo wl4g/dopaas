@@ -15,24 +15,16 @@
  */
 package com.wl4g.devops.common.utils.bean;
 
+import static com.wl4g.devops.common.utils.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.copyFullProperties;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static java.lang.reflect.Modifier.isFinal;
-import static java.lang.reflect.Modifier.isNative;
-import static java.lang.reflect.Modifier.isStatic;
-import static java.lang.reflect.Modifier.isSynchronized;
-import static java.lang.reflect.Modifier.isTransient;
-import static java.lang.reflect.Modifier.isVolatile;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
-
-import java.lang.reflect.Field;
-
-import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
 
 public class BeanUtils2Tests {
 
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
-
+	public static void main(String[] args) throws Exception {
+		test1();
+		// test2();
 	}
 
 	public static void test1() throws Exception {
@@ -40,11 +32,8 @@ public class BeanUtils2Tests {
 		r.setId(1);
 		r.setName("tom");
 
-		copyFullProperties(r, r, (ff, sourceProperty) -> {
-			Class<?> clazz = ff.getType();
-			int mod = ff.getModifiers();
-			return String.class.isAssignableFrom(clazz) && !isFinal(mod) && !isStatic(mod) && !isTransient(mod) && !isNative(mod)
-					&& !isVolatile(mod) && !isSynchronized(mod);
+		copyFullProperties(r, r, (targetField) -> {
+			return String.class.isAssignableFrom(targetField.getType()) && DEFAULT_FIELD_FILTER.match(targetField);
 		}, (target, tf, sf, sourcePropertyValue) -> {
 			if (sourcePropertyValue != null) {
 				makeAccessible(tf);
@@ -70,7 +59,7 @@ public class BeanUtils2Tests {
 
 		System.out.println(a1);
 
-		copyFullProperties(a1, a2, (ff, sourcePropertyValue) -> {
+		copyFullProperties(a1, a2, (targetField) -> {
 			return true;
 		});
 
@@ -89,11 +78,8 @@ public class BeanUtils2Tests {
 
 		System.out.println(a3);
 
-		copyFullProperties(a3, c3, new FieldFilter() {
-			@Override
-			public boolean match(Field f, Object sourcePropertyValue) {
-				return true;
-			}
+		copyFullProperties(a3, c3, (targetField) -> {
+			return true;
 		});
 
 		System.out.println(a3);

@@ -126,12 +126,12 @@ public abstract class ReflectionUtils2 extends ReflectionUtils {
 	}
 
 	/**
-	 * Check for generic security identifiers
+	 * Check for accessible general security modifiers.
 	 * 
 	 * @param mod
 	 * @return
 	 */
-	public static boolean isSafetyModifier(int mod) {
+	public static boolean isGenericAccessibleModifier(int mod) {
 		return !(isFinal(mod) || isStatic(mod) || isTransient(mod) || isNative(mod) || isVolatile(mod) || isSynchronized(mod));
 	}
 

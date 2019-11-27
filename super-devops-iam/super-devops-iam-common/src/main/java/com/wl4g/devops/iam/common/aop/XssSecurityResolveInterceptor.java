@@ -50,7 +50,6 @@ import com.wl4g.devops.iam.common.config.XssProperties;
  */
 @Aspect
 public class XssSecurityResolveInterceptor implements MethodInterceptor {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -150,8 +149,8 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 				|| ServletResponse.class.isAssignableFrom(argument.getClass()))
 			return;
 
-		copyFullProperties(argument, argument, (f, sourcePropertyValue) -> {
-			return String.class.isAssignableFrom(f.getType()) && DEFAULT_FIELD_FILTER.match(f, sourcePropertyValue);
+		copyFullProperties(argument, argument, (targetField) -> {
+			return String.class.isAssignableFrom(targetField.getType()) && DEFAULT_FIELD_FILTER.match(targetField);
 		}, (target, tf, sf, sourcePropertyValue) -> {
 			if (sourcePropertyValue != null) {
 				makeAccessible(tf);
