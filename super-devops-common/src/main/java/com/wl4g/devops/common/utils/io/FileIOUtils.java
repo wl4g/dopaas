@@ -144,6 +144,37 @@ public abstract class FileIOUtils extends FileUtils {
 		}
 	}
 
+	/**
+	 * Write bytes array to file.
+	 * 
+	 * @param file
+	 * @param data
+	 * @param append
+	 */
+	public static void writeFile(File file, byte[] data, boolean append) {
+		notNull(file, "Write file must not be null");
+		notNull(data, "Write data must not be null");
+
+		File parent = file.getParentFile();
+		if (!parent.exists() || !parent.isDirectory()) {
+			state(parent.mkdirs(), String.format("Failed to creating parent directory for [%s]", parent.getAbsolutePath()));
+		}
+		if (!file.exists()) {
+			try {
+				state(file.createNewFile(), String.format("Failed to creating file for [%s]", file.getAbsolutePath()));
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
+		try (OutputStream w = new FileOutputStream(file, append)) {
+			w.write(data);
+			w.flush();
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 	// --- Reader. ---
 
 	/**
