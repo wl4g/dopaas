@@ -15,12 +15,6 @@
  */
 package com.wl4g.devops.common.utils.bean;
 
-import static java.lang.reflect.Modifier.isFinal;
-import static java.lang.reflect.Modifier.isNative;
-import static java.lang.reflect.Modifier.isStatic;
-import static java.lang.reflect.Modifier.isSynchronized;
-import static java.lang.reflect.Modifier.isTransient;
-import static java.lang.reflect.Modifier.isVolatile;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -152,7 +146,7 @@ public abstract class BeanUtils2 {
 			// Base or general collection type?
 			else if (isBaseType(tf.getType()) || isGeneralSetType(tf.getType())) {
 				// [MARK2] Filter matching property
-				if (sourcePropertyValue != null && ff.match(tf, sourcePropertyValue)) {
+				if (sourcePropertyValue != null && ff.match(tf)) {
 					if (fc != null) {
 						fc.doCopy(target, tf, sf, sourcePropertyValue);
 					}
@@ -177,13 +171,11 @@ public abstract class BeanUtils2 {
 		/**
 		 * Filter operations using the given field.
 		 * 
-		 * @param f
-		 * @param sourcePropertyValue
-		 *            The value of the attributes of the source bean. </br>
-		 *            See:[MARK1|MARK2]
+		 * @param targetField
+		 *            Target object field.
 		 * @return
 		 */
-		boolean match(Field f, Object sourcePropertyValue);
+		boolean match(Field targetField);
 	}
 
 	/**
@@ -212,10 +204,10 @@ public abstract class BeanUtils2 {
 
 	/**
 	 * Default field filter.
+	 * @see:{@link com.wl4g.devops.common.utils.reflect.ReflectionUtils2#isGenericAccessibleModifier(int)}
 	 */
-	final public static FieldFilter DEFAULT_FIELD_FILTER = (tf, sourcePropertyValue) -> {
-		int mod = tf.getModifiers();
-		return !isFinal(mod) && !isStatic(mod) && !isTransient(mod) && !isNative(mod) && !isVolatile(mod) && !isSynchronized(mod);
+	final public static FieldFilter DEFAULT_FIELD_FILTER = (targetField) -> {
+		return isGenericAccessibleModifier(targetField.getModifiers());
 	};
 
 	/**

@@ -40,7 +40,7 @@ import com.wl4g.devops.shell.cli.HelpOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isSafetyModifier;
+import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isGenericAccessibleModifier;
 import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
 import static com.wl4g.devops.common.utils.reflect.Types.isGeneralSetType;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
@@ -391,7 +391,7 @@ public class TargetMethodWrapper implements Serializable {
 						// Filter unsafe field.
 						if (opt != null) {
 							// [MARK1],See:[AbstractActuator.MARK4]
-							if (isSafetyModifier(f.getModifiers())) {
+							if (isGenericAccessibleModifier(f.getModifiers())) {
 								HelpOption option = new HelpOption(ftype, opt.opt(), opt.lopt(), opt.defaultValue(),
 										opt.required(), opt.help());
 								parameter.addAttribute(option, fname);
