@@ -66,13 +66,14 @@
     select
     <include refid="Base_Column_List_r" />
     from sys_role r
-    left join sys_group_role gr on r.id=gr.role_id
     where r.del_flag!=1
     <if test="groupIds != null and groupIds.size() > 0">
+      and exists (select 1 from sys_group_role gr where r.id=gr.role_id
       and gr.group_id in
       <foreach collection="groupIds" item="groupId" index="index" open="(" close=")" separator=",">
         #{groupId}
       </foreach>
+      )
     </if>
     <if test="roleCode != null and roleCode !='' ">
       AND r.role_code LIKE CONCAT('%','${roleCode}','%')
@@ -88,12 +89,16 @@
     from sys_role r
     left join sys_group_role gr on r.id=gr.role_id
     where r.del_flag!=1
+
     <if test="groupIds != null and groupIds.size() > 0">
+      and exists (select 1 from sys_group_role gr where r.id=gr.role_id
       and gr.group_id in
       <foreach collection="groupIds" item="groupId" index="index" open="(" close=")" separator=",">
         #{groupId}
       </foreach>
+      )
     </if>
+
     <if test="roleCode != null and roleCode !='' ">
       AND r.role_code LIKE CONCAT('%','${roleCode}','%')
     </if>
