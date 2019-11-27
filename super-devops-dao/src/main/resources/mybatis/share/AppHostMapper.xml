@@ -37,7 +37,7 @@
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.AppHost" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.AppHost" useGeneratedKeys="true" keyProperty="id">
     insert into app_host
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

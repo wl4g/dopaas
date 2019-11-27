@@ -51,7 +51,7 @@
       #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.ClusterConfig" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.ClusterConfig" useGeneratedKeys="true" keyProperty="id">
     insert into app_cluster_config
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
