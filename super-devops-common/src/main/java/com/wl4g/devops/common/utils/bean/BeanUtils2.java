@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.common.utils.bean;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import java.lang.reflect.Field;
 
 import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
-import static com.wl4g.devops.common.utils.reflect.Types.*;
+import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
+import static com.wl4g.devops.common.utils.reflect.Types.isGeneralSetType;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * Enhanced static convenience methods for JavaBeans: for instantiating beans,
@@ -52,6 +52,26 @@ public abstract class BeanUtils2 {
 	public static void copyFullProperties(Object target, Object source, FieldFilter ff)
 			throws IllegalArgumentException, IllegalAccessException {
 		copyFullProperties(target, source, ff, DEFAULT_FIELD_COPYER);
+	}
+
+	/**
+	 * Calls the given callback on all fields of the target class, recursively
+	 * running the class hierarchy up to copy all declared fields.</br>
+	 * It will contain all the fields defined by all parent or superclasses. At
+	 * the same time, the target and the source object must be compatible.
+	 *
+	 * @param target
+	 *            The target object to copy to
+	 * @param source
+	 *            Source object
+	 * @param ff
+	 *            Field filter
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 */
+	public static void copyFullProperties(Object target, Object source, FieldCopyer fc)
+			throws IllegalArgumentException, IllegalAccessException {
+		copyFullProperties(target, source, DEFAULT_FIELD_FILTER, fc);
 	}
 
 	/**
