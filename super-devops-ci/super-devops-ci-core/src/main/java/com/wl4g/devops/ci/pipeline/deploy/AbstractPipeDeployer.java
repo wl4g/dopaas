@@ -22,20 +22,25 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.utils.cli.SSH2Utils;
+import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
-import static com.wl4g.devops.ci.utils.LogHolder.getDefault;
+import static com.wl4g.devops.ci.utils.LogHolder.*;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
 
 /**
@@ -70,6 +75,8 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
+	File jobDeployerLog;
+
 	public AbstractPipeDeployer(P provider, AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
 		notNull(provider, "Pipeline provider must not be null.");
 		notNull(instance, "Pipeline job instance must not be null.");
@@ -82,6 +89,8 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
 		isTrue(taskHisyDetail.isPresent(), "Not found taskDetailId by details.");
 		this.taskDetailId = taskHisyDetail.get().getId();
+
+		jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 	}
 
 	@Override
@@ -101,7 +110,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 			// Call PRE commands.
 			if(StringUtils.isNotBlank(taskHisy.getPreCommand())){
-				provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
 						instance.getSshKey());
 			}
 
@@ -110,7 +119,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 			// Call post remote commands (e.g. restart)
 			if(StringUtils.isNotBlank(taskHisy.getPostCommand())){
-				provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
 						instance.getSshKey());
 			}
 
@@ -166,6 +175,53 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 			message.append(getStackTraceAsString(ex));
 		}
 		return message.toString();
+	}
+
+	/**
+	 * Execution remote commands
+	 *
+	 * @param remoteHost
+	 * @param user
+	 * @param command
+	 * @param sshkey
+	 * @return
+	 * @throws Exception
+	 */
+	protected void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
+		hasText(command, "Commands must not be empty.");
+
+		// Remote timeout(Ms)
+		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
+		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command));
+		// Execution command.
+		SSH2Utils.CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
+
+		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("\n%s@%s -> [stdout]\n", user, remoteHost));
+		if (!isBlank(result.getMessage())) {
+			FileIOUtils.writeBLineFile(jobDeployerLog,result.getMessage());
+		}
+		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("\n%s@%s -> [stderr]\n", user, remoteHost));
+		if (!isBlank(result.getErrmsg())) {
+			FileIOUtils.writeBLineFile(jobDeployerLog,result.getErrmsg());
+		}
+	}
+
+	/**
+	 * Deciphering usable cipher SSH2 key.
+	 *
+	 * @param sshkey
+	 * @return
+	 * @throws Exception
+	 */
+	protected char[] getUsableCipherSshKey(String sshkey) throws Exception {
+		// Obtain text-plain privateKey(RSA)
+		String cipherKey = config.getDeploy().getCipherKey();
+		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
+		if (log.isInfoEnabled()) {
+			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
+		}
+		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
+		return sshkeyPlain;
 	}
 
 }

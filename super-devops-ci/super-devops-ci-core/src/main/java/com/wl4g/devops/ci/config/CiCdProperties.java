@@ -170,6 +170,20 @@ public class CiCdProperties implements InitializingBean {
 
 	/**
 	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/deploy.234.out.log
+	 *
+	 * @param taskHisyId
+	 * @param instanceId
+	 * @return
+	 */
+	public File getJobDeployerLog(Integer taskHisyId, Integer instanceId) {
+		Assert.notNull(taskHisyId, "Task history ID must not be null.");
+		Assert.notNull(instanceId, "Task history instanceId ID must not be null.");
+		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/deploy." + instanceId + ".out.log");
+	}
+
+	/**
+	 * e.g. </br>
 	 * ~/.ci-workspace/jobs/job.11/{PROJECT_NAME}
 	 * 
 	 * @param taskHisId
