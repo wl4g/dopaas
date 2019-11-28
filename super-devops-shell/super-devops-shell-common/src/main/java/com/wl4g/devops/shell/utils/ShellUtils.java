@@ -67,15 +67,15 @@ public abstract class ShellUtils extends BeanUtils2 {
 	 *            target the target bean
 	 * @param source
 	 *            the source bean
-	 * @param fc
+	 * @param fp
 	 *            Customizable copyer
 	 */
-	public static <T> void copyOptionsProperties(T target, T source, FieldCopyer fc) {
+	public static <T> void copyOptionsProperties(T target, T source, FieldProcessor fp) {
 		try {
-			copyFullProperties(target, source, (targetField) -> {
+			doWithDeepFields(target, source, targetField -> {
 				// [MARK0], See:[AbstractActuator.MARK4]
-				return nonNull(targetField.getAnnotation(ShellOption.class)) && DEFAULT_FIELD_FILTER.match(targetField);
-			}, fc);
+				return nonNull(targetField.getAnnotation(ShellOption.class)) && DEFAULT_FIELD_FILTER.matches(targetField);
+			}, fp);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new IllegalStateException(e);
 		}

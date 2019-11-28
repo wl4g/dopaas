@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.utils.bean;
 
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.copyFullProperties;
+import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
 import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
@@ -32,12 +32,12 @@ public class BeanUtils2Tests {
 		r.setId(1);
 		r.setName("tom");
 
-		copyFullProperties(r, r, (targetField) -> {
-			return String.class.isAssignableFrom(targetField.getType()) && DEFAULT_FIELD_FILTER.match(targetField);
+		doWithDeepFields(r, r, (targetField) -> {
+			return String.class.isAssignableFrom(targetField.getType()) && DEFAULT_FIELD_FILTER.matches(targetField);
 		}, (target, tf, sf, sourcePropertyValue) -> {
 			if (sourcePropertyValue != null) {
 				makeAccessible(tf);
-				tf.set(target, sourcePropertyValue);
+				tf.set(target, (String) sourcePropertyValue);
 			}
 		});
 
@@ -59,7 +59,7 @@ public class BeanUtils2Tests {
 
 		System.out.println(a1);
 
-		copyFullProperties(a1, a2, (targetField) -> {
+		doWithDeepFields(a1, a2, (targetField) -> {
 			return true;
 		});
 
@@ -78,7 +78,7 @@ public class BeanUtils2Tests {
 
 		System.out.println(a3);
 
-		copyFullProperties(a3, c3, (targetField) -> {
+		doWithDeepFields(a3, c3, (targetField) -> {
 			return true;
 		});
 
