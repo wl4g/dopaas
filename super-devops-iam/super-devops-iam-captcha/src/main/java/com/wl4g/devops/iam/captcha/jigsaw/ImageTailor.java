@@ -46,6 +46,7 @@ import static org.springframework.util.Assert.isTrue;
  * @since
  */
 public class ImageTailor {
+	final public static int DEFAULT_BORDER_WEIGHT = 3;
 
 	/** Material source drawing requires maximum width(:PX) */
 	final protected int sourceMaxWidth;
@@ -63,6 +64,24 @@ public class ImageTailor {
 	final protected int circleR;
 	/** Watermark string drawn. */
 	final protected String watermark;
+
+	// --- Block borders position. ---
+	private int borderTopXMin; // Top
+	private int borderTopXMax;
+	private int borderTopYMin;
+	private int borderTopYMax;
+	private int borderRightXMin; // Right
+	private int borderRightXMax;
+	private int borderRightYMin;
+	private int borderRightYMax;
+	private int borderBottomXMin; // Bottom
+	private int borderBottomXMax;
+	private int borderBottomYMin;
+	private int borderBottomYMax;
+	private int borderLeftXMin; // Left
+	private int borderLeftXMax;
+	private int borderLeftYMin;
+	private int borderLeftYMax;
 
 	public ImageTailor() {
 		this(46, 46, 10, "wanglsir@gmail.com");
@@ -154,8 +173,11 @@ public class ImageTailor {
 		// 随机截取的坐标
 		int lx = width - blockWidth;
 		int ly = height - blockHeight;
-		int blockX0 = current().nextInt((int) (lx * 0.3), lx); // *0.3防止x坐标太靠左
-		int blockY0 = current().nextInt(0, ly);
+		int blockX0 = current().nextInt((int) (lx * 0.25), lx); // *0.25防止x坐标太靠左
+		int blockY0 = current().nextInt(circleR, ly); // 从circleR开始是为了防止上边的耳朵显示不全
+		// Setup block borders position.
+		setBorderPositions(blockX0, blockY0, blockWidth, blockHeight);
+
 		// 绘制生成新图(图片大小是固定，位置是随机)
 		drawing(sourceImg, blockImg, primaryImg, blockX0, blockY0, blockWidth, blockHeight);
 		// 截取可用区
@@ -197,95 +219,50 @@ public class ImageTailor {
 	private void drawing(BufferedImage sourceImg, BufferedImage blockImg, BufferedImage primaryImg, int blockX0, int blockY0,
 			int blockWidth, int blockHeight) {
 		double rr = Math.pow(circleR, 2);// r平方
-		// 第一个圆心的位置
+		// R1圆心坐标（顶部的圆）
 		int c1_x0 = current().nextInt(blockWidth - 2 * circleR) + (blockX0 + circleR); // x+c_r+10;//圆心x坐标必须在(x+r,x+with-r)范围内
 		int c1_y0 = blockY0;
-		// 第二个圆（排除圆内的点）
+		// R2圆心坐标（左边的圆）
 		int c2_x0 = blockX0;
-		// y+circleR+50 圆心y坐标必须在(y+r,y+height-r)范围内
+		// y+circleR+50圆心y坐标必须在(y+r,y+height-r)范围内
 		int c2_y0 = current().nextInt(blockHeight - 2 * circleR) + (blockY0 + circleR);
 
 		for (int x = 0; x < sourceImg.getWidth(); x++) {
 			for (int y = 0; y < sourceImg.getHeight(); y++) {
+				int rgb = sourceImg.getRGB(x, y);
 				// (x-a)²+(y-b)²=r²中，有三个参数a、b、r，即圆心坐标为(a，b)，半径r。
 				double rr1 = Math.pow((x - c1_x0), 2) + Math.pow((y - c1_y0), 2);
 				double rr2 = Math.pow((x - c2_x0), 2) + Math.pow((y - c2_y0), 2);
 
-				int rgb = sourceImg.getRGB(x, y);
-				if (x >= blockX0 && x < (blockX0 + blockWidth) && y >= blockY0 && y < (blockY0 + blockHeight) && rr2 >= rr) { // 在矩形块内
-					// 设置块范围内的RGB
-					setInternal(blockImg, primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb);
-				} else if (rr1 <= rr) { // 在圆内
-					// 设置块范围内的RGB
-					setInternal(blockImg, primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb);
+				// 在矩形块区域内?
+				boolean withInBlock = x >= blockX0 && x < (blockX0 + blockWidth) && y >= blockY0 && y < (blockY0 + blockHeight);
+				// Primary image
+				if (rr >= rr1) { // 在R1区域内
+					primaryImg.setRGB(x, y, getGrayTransparentRGB(rgb));
 				} else {
-					// 剩余位置设置成透明
-					setExternal(blockImg, primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb);
+					if (withInBlock) { // 在矩形块区域内
+						if (rr >= rr2) { // 在R2区域内
+							primaryImg.setRGB(x, y, rgb);
+						} else {
+							if (!gaussainGradientIfNecessary(primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb)) { // 已设置高斯模糊渐变
+																																	// ?
+								primaryImg.setRGB(x, y, getGrayTransparentRGB(rgb));
+							}
+						}
+					} else {
+						primaryImg.setRGB(x, y, rgb);
+					}
 				}
+
+				// Block image
+				if (withInBlock || rr >= rr1) { // 在区块或R1内
+					if (rr <= rr2) { // 不在R2内
+						blockImg.setRGB(x, y, rgb);
+					}
+				}
+
 			}
 		}
-	}
-
-	/**
-	 * Set circle internal image RGB.
-	 * 
-	 * @param blockImg
-	 * @param primaryImg
-	 * @param blockX0
-	 * @param blockY0
-	 * @param blockWidth
-	 * @param blockHeight
-	 * @param x
-	 * @param y
-	 * @param rgb
-	 */
-	private void setInternal(BufferedImage blockImg, BufferedImage primaryImg, int blockX0, int blockY0, int blockWidth,
-			int blockHeight, int x, int y, int rgb) {
-		blockImg.setRGB(x, y, rgb);
-
-		// 原图设置变灰
-		int r = (0xff & rgb);
-		int g = (0xff & (rgb >> 8));
-		int b = (0xff & (rgb >> 16));
-		rgb = r + (g << 8) + (b << 16) + (100 << 24);
-		// rgb = r + (g << 8) + (b << 16); // 亮一些
-		if (!isFuzzyBorder(blockImg, primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb)) {
-			primaryImg.setRGB(x, y, rgb);
-		}
-	}
-
-	/**
-	 * Set circle external image RGB.
-	 * 
-	 * @param blockImg
-	 * @param primaryImg
-	 * @param blockX0
-	 * @param blockY0
-	 * @param blockWidth
-	 * @param blockHeight
-	 * @param x
-	 * @param y
-	 * @param rgb
-	 */
-	private void setExternal(BufferedImage blockImg, BufferedImage primaryImg, int blockX0, int blockY0, int blockWidth,
-			int blockHeight, int x, int y, int rgb) {
-		blockImg.setRGB(x, y, 0x00ffffff);
-
-		// 检查是否边界(需高斯模糊)
-		if (isFuzzyBorder(blockImg, primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb)) {
-			// 抠图区域高斯模糊
-			// int[][] martrix = new int[3][3];
-			// int[] pixels = new int[9];
-			// readPixel(primaryImg, x, y, pixels);
-			// fillMatrix(martrix, pixels);
-			// int rgb0 = avgMatrix(martrix);
-			// primaryImg.setRGB( x, y, rgb0);
-//			primaryImg.setRGB(x, y, Color.white.getRGB());
-		} else {
-//			primaryImg.setRGB(x, y, rgb);
-		}
-		primaryImg.setRGB(x, y, rgb);
-
 	}
 
 	/**
@@ -315,10 +292,55 @@ public class ImageTailor {
 	}
 
 	/**
-	 * 检查是否带像素和无像素的界点，判断该点是不是临界轮廓点, 若是则需设置该坐标像素是白色
+	 * Setup border positions.
 	 * 
-	 * @param blockImg
-	 * @param primaryImg
+	 * @param blockX0
+	 * @param blockY0
+	 * @param blockWidth
+	 * @param blockHeight
+	 */
+	private void setBorderPositions(int blockX0, int blockY0, int blockWidth, int blockHeight) {
+		// Top
+		borderTopXMin = blockX0;
+		borderTopXMax = blockX0 + blockWidth;
+		borderTopYMin = blockY0;
+		borderTopYMax = blockY0 + DEFAULT_BORDER_WEIGHT;
+		// Right
+		borderRightXMin = blockX0 + blockWidth - DEFAULT_BORDER_WEIGHT;
+		borderRightXMax = blockX0 + blockWidth;
+		borderRightYMin = blockY0;
+		borderRightYMax = blockY0 + blockHeight;
+		// Bottom
+		borderBottomXMin = blockX0;
+		borderBottomXMax = blockX0 + blockWidth;
+		borderBottomYMin = blockY0 + blockHeight - DEFAULT_BORDER_WEIGHT;
+		borderBottomYMax = blockY0 + blockHeight;
+		// Left
+		borderLeftXMin = blockX0;
+		borderLeftXMax = blockX0 + DEFAULT_BORDER_WEIGHT;
+		borderLeftYMin = blockY0;
+		borderLeftYMax = blockY0 + blockHeight;
+	}
+
+	/**
+	 * 获取灰色半透明RGB
+	 * 
+	 * @param rgb
+	 * @return
+	 */
+	private int getGrayTransparentRGB(int rgb) {
+		int r = (0xff & rgb);
+		int g = (0xff & (rgb >> 8));
+		int b = (0xff & (rgb >> 16));
+		rgb = r + (g << 8) + (b << 16) + (100 << 24);
+		// rgb = r + (g << 8) + (b << 16); // 亮一些
+		return rgb;
+	}
+
+	/**
+	 * 设置高斯模糊渐变RGB（仅当是边界区域时）
+	 * 
+	 * @param img
 	 * @param blockX0
 	 * @param blockY0
 	 * @param blockWidth
@@ -326,134 +348,60 @@ public class ImageTailor {
 	 * @param x
 	 * @param y
 	 * @param rgb
-	 * @return
+	 * @return 当成功设置返回TRUE，否则返回FALSE
 	 */
-	private boolean isFuzzyBorder(BufferedImage blockImg, BufferedImage primaryImg, int blockX0, int blockY0, int blockWidth,
-			int blockHeight, int x, int y, int rgb) {
-		int offset = 3;
+	private boolean gaussainGradientIfNecessary(BufferedImage img, int blockX0, int blockY0, int blockWidth, int blockHeight,
+			int x, int y, int rgb) {
+		// Top
+		if (x >= borderTopXMin && x <= borderTopXMax && y >= borderTopYMin && y <= borderTopYMax) {
+			return true;
+		}
 		// Right
-		if (x >= (blockX0 + blockWidth - offset) && x <= (blockX0 + blockWidth) && y >= blockY0 && y <= (blockY0 + blockHeight)) {
+		if (x >= borderRightXMin && x <= borderRightXMax && y >= borderRightYMin && y <= borderRightYMax) {
+			setGaussainRGB(img, x, y, DEFAULT_BORDER_WEIGHT, blockHeight, rgb);
 			return true;
 		}
 		// Bottom
-		if (y >= (blockY0 + blockHeight - offset) && y <= (blockY0 + blockHeight) && x >= blockX0
-				&& x <= (blockX0 + blockWidth)) {
-			return true;
-		}
-		// Top
-		if (y <= (blockY0 + offset) && y >= blockY0 && x >= blockX0 && x <= (blockX0 + blockWidth)) {
+		if (x >= borderBottomXMin && x <= borderBottomXMax && y >= borderBottomYMin && y <= borderBottomYMax) {
 			return true;
 		}
 		// Left
-		if (x <= (blockX0 + offset) && x >= blockX0 && y >= blockY0 && y <= (blockY0 + blockHeight)) {
+		if (x >= borderLeftXMin && x <= borderLeftXMax && y >= borderLeftYMin && y <= borderLeftYMax) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * @param primaryImg
-	 *            原图
-	 * @param soruceImg
-	 *            模板图
-	 * @param blockImg
-	 *            新抠出的小图
-	 * @param blockX0
-	 *            随机扣取坐标X
-	 * @param blockY0
-	 *            随机扣取坐标y
-	 * @throws Exception
+	 * 设置高斯模糊渐变RGB.
+	 * 
+	 * @param img
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param rgb
 	 */
-	private void cutByTemplate(BufferedImage primaryImg, BufferedImage soruceImg, BufferedImage blockImg, int blockX0,
-			int blockY0) {
-		// 临时数组遍历用于高斯模糊存周边像素值
-		int[][] martrix = new int[3][3];
-		int[] pixels = new int[9];
+	private void setGaussainRGB(BufferedImage img, int x, int y, int width, int height, int rgb) {
+		// int[] inPixels = new int[width * height];
+		// int[] outPixels = new int[width * height];
+		// Kernel kernel = GaussianFilter.makeKernel(0.667f);
+		// GaussianFilter.convolveAndTranspose(kernel, inPixels, outPixels,
+		// width, height, true, GaussianFilter.CLAMP_EDGES);
+		// GaussianFilter.convolveAndTranspose(kernel, outPixels, inPixels,
+		// height, width, true, GaussianFilter.CLAMP_EDGES);
+		// img.setRGB(x, y, width, height, inPixels, 0, width);
 
-		int width = soruceImg.getWidth();
-		int height = soruceImg.getHeight();
-		// 模板图像宽度
-		for (int x = 0; x < width; x++) {
-			// 模板图片高度
-			for (int y = 0; y < height; y++) {
-				// 结束边界
-				if (x == (width - 1) || y == (height - 1)) {
-					continue;
-				}
+		// NormalDistribution nd = new NormalDistribution(0, 256);
+		// double rgb0 = nd.cumulativeProbability(rgb);
+		// rgb = (int) rgb0;
+		// img.setRGB(x, y, (int) rgb0);
 
-				// 如果模板图像当前像素点不是透明色 copy源文件信息到目标图片中
-				int rgb = soruceImg.getRGB(x, y);
-				if (rgb < 0) {
-					blockImg.setRGB(x, y, primaryImg.getRGB(blockX0 + x, blockY0 + y));
-					// 抠图区域高斯模糊
-					readPixel(primaryImg, blockX0 + x, blockY0 + y, pixels);
-					fillMatrix(martrix, pixels);
-					primaryImg.setRGB(blockX0 + x, blockY0 + y, avgMatrix(martrix));
-				}
-
-				int rightRgb = soruceImg.getRGB(x + 1, y);
-				int downRgb = soruceImg.getRGB(x, y + 1);
-				// 描边处理，,取带像素和无像素的界点，判断该点是不是临界轮廓点,如果是设置该坐标像素是白色
-				if ((rgb >= 0 && rightRgb < 0) || (rgb < 0 && rightRgb >= 0) || (rgb >= 0 && downRgb < 0)
-						|| (rgb < 0 && downRgb >= 0)) {
-					blockImg.setRGB(x, y, Color.white.getRGB());
-					primaryImg.setRGB(blockX0 + x, blockY0 + y, Color.white.getRGB());
-				}
-			}
-		}
-	}
-
-	private void readPixel(BufferedImage img, int x, int y, int[] pixels) {
-		int xStart = x - 1;
-		int yStart = y - 1;
-		int current = 0;
-		for (int i = xStart; i < 3 + xStart; i++) {
-			for (int j = yStart; j < 3 + yStart; j++) {
-				int tx = i;
-				if (tx < 0) {
-					tx = -tx;
-
-				} else if (tx >= img.getWidth()) {
-					tx = x;
-				}
-				int ty = j;
-				if (ty < 0) {
-					ty = -ty;
-				} else if (ty >= img.getHeight()) {
-					ty = y;
-				}
-				pixels[current++] = img.getRGB(tx, ty);
-			}
-		}
-	}
-
-	private void fillMatrix(int[][] matrix, int[] values) {
-		int filled = 0;
-		for (int i = 0; i < matrix.length; i++) {
-			int[] x = matrix[i];
-			for (int j = 0; j < x.length; j++) {
-				x[j] = values[filled++];
-			}
-		}
-	}
-
-	private int avgMatrix(int[][] matrix) {
-		int r = 0;
-		int g = 0;
-		int b = 0;
-		for (int i = 0; i < matrix.length; i++) {
-			int[] x = matrix[i];
-			for (int j = 0; j < x.length; j++) {
-				if (j == 1) {
-					continue;
-				}
-				Color c = new Color(x[j]);
-				r += c.getRed();
-				g += c.getGreen();
-				b += c.getBlue();
-			}
-		}
-		return new Color(r / 8, g / 8, b / 8).getRGB();
+		// int r = (0xff & rgb);
+		// int g = (0xff & (rgb >> 8));
+		// int b = (0xff & (rgb >> 16));
+		// rgb = r + (g << 8) + (b << 4) + (100 << 24);
+		img.setRGB(x, y, new Color(220, 220, 220, 0.8f).getRGB());
 	}
 
 	/**
