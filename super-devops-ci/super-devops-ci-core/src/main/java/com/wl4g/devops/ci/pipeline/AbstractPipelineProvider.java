@@ -28,30 +28,32 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
+import java.util.List;
+
 import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
+import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.contains;
-import static org.apache.commons.lang3.StringUtils.containsAny;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.replace;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * Abstract basic developments pipeline provider.
@@ -230,7 +232,21 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected void doTransferRemoteDeploying() {
 		// Creating transfer instances jobs.
-		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> newDeployer(i)).collect(toList());
+		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
+			return (Runnable) () -> {
+				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
+				try {
+					FileIOUtils.writeBLineFile(jobDeployerLog,LOG_FILE_START);
+					newDeployer(i);
+					FileIOUtils.writeFile(jobDeployerLog,"Deploy Success");
+				}catch (Exception e){
+					log.error(e.getMessage()+ getStackTraceAsString(e));
+					writeBLineFile(jobDeployerLog,e.getMessage()+ getStackTraceAsString(e));
+				}finally {
+					FileIOUtils.writeALineFile(jobDeployerLog,LOG_FILE_END);
+				}
+			};
+		}).collect(toList());
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
