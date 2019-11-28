@@ -15,31 +15,26 @@
  */
 package com.wl4g.devops.iam.common.aop;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import com.wl4g.devops.iam.common.annotation.UnsafeXss;
+import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
+import com.wl4g.devops.iam.common.config.XssProperties;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.aspectj.lang.annotation.Aspect;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.ReflectionUtils.*;
-
-import org.springframework.util.Assert;
-
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.*;
-
-import com.wl4g.devops.iam.common.annotation.UnsafeXss;
-import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
-import com.wl4g.devops.iam.common.config.XssProperties;
+import static com.wl4g.devops.common.utils.bean.BeanUtils2.copyFullProperties;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 /**
  * XSS security resolve aspect intercept handle
@@ -149,15 +144,24 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 				|| ServletResponse.class.isAssignableFrom(argument.getClass()))
 			return;
 
-		copyFullProperties(argument, argument, (targetField) -> {
-			return String.class.isAssignableFrom(targetField.getType()) && DEFAULT_FIELD_FILTER.match(targetField);
-		}, (target, tf, sf, sourcePropertyValue) -> {
+		copyFullProperties(argument, argument, (target, tf, sf, sourcePropertyValue) -> {
 			if (sourcePropertyValue != null) {
-				makeAccessible(tf);
-				tf.set(target, resolver.doResolve(controller, method, index, (String) sourcePropertyValue));
+				if (CharSequence.class.isAssignableFrom(tf.getType())) {
+					makeAccessible(tf);
+					try {
+						tf.set(target, resolver.doResolve(controller, method, index, sourcePropertyValue.toString()));
+					} catch (Exception e) {
+						System.out.println(target);
+						System.out.println(tf);
+						System.out.println(sf);
+						System.out.println(sourcePropertyValue);
+						throw e;
+					}
+				} else {
+					tf.set(target, sourcePropertyValue);
+				}
 			}
 		});
-
 	}
 
 	/**
