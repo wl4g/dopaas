@@ -73,8 +73,13 @@
     <if test="displayName != null and displayName !='' ">
       AND u.display_name LIKE CONCAT('%','${displayName}','%')
     </if>
-    <if test="userId != null">
-      and exists(select 1 from sys_group_user gu inner join sys_group_user sgu on gu.group_id = sgu.group_id where u.id=gu.user_id and sgu.user_id=#{userId,jdbcType=INTEGER})
+    <if test="groupIds != null and groupIds.size() > 0">
+      and exists (select 1 from sys_group_user gu where gu.user_id = u.id
+      and gu.group_id in
+      <foreach collection="groupIds" item="groupId" index="index" open="(" close=")" separator=",">
+        #{groupId}
+      </foreach>
+      )
     </if>
   </select>
 

@@ -65,6 +65,9 @@ public class GroupServiceImpl implements GroupService {
 	@Autowired
 	private DepartmentDao departmentDao;
 
+	@Autowired
+	private GroupUserDao groupUserDao;
+
 	@Override
 	public List<Group> getGroupsTree() {
 		Set<Group> groupsSet = getGroupsSet();
@@ -173,11 +176,8 @@ public class GroupServiceImpl implements GroupService {
 		if (!CollectionUtils.isEmpty(groupMenus)) {
 			groupMenuDao.insertBatch(groupMenus);
 		}
-		if (Objects.nonNull(group.getGroupExt())) {
-
-		}
 		// role
-		List<GroupRole> groupRoles = new ArrayList<>();
+		/*List<GroupRole> groupRoles = new ArrayList<>();
 		for (Integer roleId : group.getRoleIds()) {
 			GroupRole groupRole = new GroupRole();
 			groupRole.preInsert();
@@ -187,8 +187,19 @@ public class GroupServiceImpl implements GroupService {
 		}
 		if (!CollectionUtils.isEmpty(groupRoles)) {
 			groupRoleDao.insertBatch(groupRoles);
-		}
+		}*/
+
 		insertOrUpdateGroupExt(group);
+
+		// add user-group
+		IamPrincipalInfo info = getPrincipalInfo();
+		if (!DEFAULT_USER_ROOT.equals(info.getPrincipal()) && Objects.nonNull(info) && Objects.nonNull(info.getPrincipalId())) {
+			GroupUser groupUser = new GroupUser();
+			groupUser.setGroupId(group.getId());
+			groupUser.setUserId(parseIntOrNull(info.getPrincipalId()));
+			groupUserDao.insertSelective(groupUser);
+		}
+
 	}
 
 	private void update(Group group) {
@@ -210,7 +221,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 
 		// role
-		List<GroupRole> groupRoles = new ArrayList<>();
+		/*List<GroupRole> groupRoles = new ArrayList<>();
 		for (Integer roleId : group.getRoleIds()) {
 			GroupRole groupRole = new GroupRole();
 			groupRole.preInsert();
@@ -220,7 +231,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 		if (!CollectionUtils.isEmpty(groupRoles)) {
 			groupRoleDao.insertBatch(groupRoles);
-		}
+		}*/
 		insertOrUpdateGroupExt(group);
 	}
 

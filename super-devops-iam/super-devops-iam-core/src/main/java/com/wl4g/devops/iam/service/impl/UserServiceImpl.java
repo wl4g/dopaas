@@ -23,6 +23,7 @@ import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.UserService;
 import com.wl4g.devops.page.PageModel;
 import org.apache.commons.lang3.StringUtils;
@@ -31,10 +32,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
-import static com.wl4g.devops.common.utils.lang.TypeConverts.parseIntOrNull;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 
 /**
@@ -71,16 +74,26 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	protected IamSessionDAO sessionDAO;
 
+	@Autowired
+	private GroupService groupService;
+
 	@Override
 	public PageModel list(PageModel pm, String userName, String displayName) {
 		IamPrincipalInfo info = getPrincipalInfo();
 
 		List<User> list = null;
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			list = userDao.list(null, userName, displayName);
 		} else {
-			list = userDao.list(parseIntOrNull(info.getPrincipalId()), userName, displayName);
+
+			Set<Group> groups = groupService.getGroupsSet();
+			List<Integer> groupIds = new ArrayList<>();
+			for (Group group : groups) {
+				groupIds.add(group.getId());
+			}
+			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+			list = userDao.list(groupIds, userName, displayName);
 		}
 
 		for (User user : list) {
