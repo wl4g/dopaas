@@ -21,11 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.Optional;
 
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.doWithFullFields;
+import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
 import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isGenericAccessibleModifier;
 import static com.wl4g.devops.common.utils.reflect.Types.convertToBaseOrSimpleSet;
 import static java.lang.System.*;
@@ -166,25 +167,25 @@ public abstract class AbstractActuator implements Actuator {
 				Object paramBean = parameter.getParamType().newInstance();
 
 				// Recursive full traversal De-serialization.
-				doWithFullFields(paramBean, (attach, f, property) -> {
+				doWithDeepFields(paramBean, paramBean, (targetField) -> {
 					// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
-					return isGenericAccessibleModifier(f.getModifiers());
-				}, (attach, f, property) -> {
-					ShellOption shOpt = f.getDeclaredAnnotation(ShellOption.class);
+					return isGenericAccessibleModifier(targetField.getModifiers());
+				}, (target, tf, sf, sourcePropertyValue) -> {
+					ShellOption shOpt = tf.getDeclaredAnnotation(ShellOption.class);
 					notNull(shOpt, "Error, Should shellOption not be null?");
-					Object value = beanMap.get(f.getName());
-					if (value == null) {
+					Object value = beanMap.get(tf.getName());
+					if (Objects.isNull(value)) {
 						value = shOpt.defaultValue();
 					}
 
 					// Validate argument(if required)
-					if (shOpt.required() && !beanMap.containsKey(f.getName()) && isBlank(shOpt.defaultValue())) {
+					if (shOpt.required() && !beanMap.containsKey(tf.getName()) && isBlank(shOpt.defaultValue())) {
 						throw new IllegalArgumentException(
 								String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
 					}
-					value = convertToBaseOrSimpleSet((String) value, f.getType());
-					f.setAccessible(true);
-					f.set(attach, value);
+					value = convertToBaseOrSimpleSet((String) value, tf.getType());
+					tf.setAccessible(true);
+					tf.set(target, value);
 				});
 
 				args.add(paramBean);

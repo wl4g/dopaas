@@ -32,7 +32,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.copyFullProperties;
+import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
+import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isCompatibleType;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
@@ -140,23 +143,17 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 	 */
 	private void objectXssEnode(final Object controller, final Method method, final int index, final Object argument)
 			throws IllegalArgumentException, IllegalAccessException {
-		if (argument == null || ServletRequest.class.isAssignableFrom(argument.getClass())
-				|| ServletResponse.class.isAssignableFrom(argument.getClass()))
+		if (isNull(argument) || isCompatibleType(ServletRequest.class, argument.getClass())
+				|| isCompatibleType(ServletResponse.class, argument.getClass())) {
 			return;
+		}
 
-		copyFullProperties(argument, argument, (target, tf, sf, sourcePropertyValue) -> {
-			if (sourcePropertyValue != null) {
+		// Recursive traversal and XSS encoding.
+		doWithDeepFields(argument, argument, (target, tf, sf, sourcePropertyValue) -> {
+			if (nonNull(sourcePropertyValue)) {
 				if (CharSequence.class.isAssignableFrom(tf.getType())) {
 					makeAccessible(tf);
-					try {
-						tf.set(target, resolver.doResolve(controller, method, index, sourcePropertyValue.toString()));
-					} catch (Exception e) {
-						System.out.println(target);
-						System.out.println(tf);
-						System.out.println(sf);
-						System.out.println(sourcePropertyValue);
-						throw e;
-					}
+					tf.set(target, resolver.doResolve(controller, method, index, sourcePropertyValue.toString()));
 				} else {
 					tf.set(target, sourcePropertyValue);
 				}

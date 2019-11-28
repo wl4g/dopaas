@@ -49,9 +49,9 @@ public abstract class BeanUtils2 {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void copyFullProperties(Object target, Object source, FieldFilter ff)
+	public static void doWithDeepFields(Object target, Object source, FieldFilter ff)
 			throws IllegalArgumentException, IllegalAccessException {
-		copyFullProperties(target, source, ff, DEFAULT_FIELD_COPYER);
+		doWithDeepFields(target, source, ff, DEFAULT_FIELD_COPYER);
 	}
 
 	/**
@@ -64,14 +64,14 @@ public abstract class BeanUtils2 {
 	 *            The target object to copy to
 	 * @param source
 	 *            Source object
-	 * @param ff
-	 *            Field filter
+	 * @param fc
+	 *            Field copyer
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void copyFullProperties(Object target, Object source, FieldCopyer fc)
+	public static void doWithDeepFields(Object target, Object source, FieldProcessor fc)
 			throws IllegalArgumentException, IllegalAccessException {
-		copyFullProperties(target, source, DEFAULT_FIELD_FILTER, fc);
+		doWithDeepFields(target, source, DEFAULT_FIELD_FILTER, fc);
 	}
 
 	/**
@@ -86,15 +86,15 @@ public abstract class BeanUtils2 {
 	 *            Source object
 	 * @param ff
 	 *            Field filter
-	 * @param fc
+	 * @param fp
 	 *            Customizable copyer
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void copyFullProperties(Object target, Object source, FieldFilter ff, FieldCopyer fc)
+	public static void doWithDeepFields(Object target, Object source, FieldFilter ff, FieldProcessor fp)
 			throws IllegalArgumentException, IllegalAccessException {
-		if (!(target != null && source != null && ff != null && fc != null)) {
-			throw new IllegalArgumentException("Target and source field filter, field copyer must not be null");
+		if (!(target != null && source != null && ff != null && fp != null)) {
+			throw new IllegalArgumentException("Target and source FieldFilter and FieldProcessor must not be null");
 		}
 
 		// Check if the target is compatible with the source object
@@ -106,7 +106,7 @@ public abstract class BeanUtils2 {
 
 		Class<?> targetCls = target.getClass(); // [MARK0]
 		do {
-			copyDeepProperties(targetCls, target, source, ff, fc);
+			doWithDeepFields(targetCls, target, source, ff, fp);
 		} while ((targetCls = targetCls.getSuperclass()) != Object.class);
 	}
 
@@ -126,19 +126,18 @@ public abstract class BeanUtils2 {
 	 *            Source object
 	 * @param ff
 	 *            Field filter
-	 * @param fc
+	 * @param fp
 	 *            Customizable copyer
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void copyDeepProperties(Class<?> hierarchyTargetClass, Object target, Object source, FieldFilter ff,
-			FieldCopyer fc) throws IllegalArgumentException, IllegalAccessException {
-		if (hierarchyTargetClass == null || ff == null || fc == null) {
-			throw new IllegalArgumentException(
-					"Hierarchy class and target or source field filter, field copyer must not be null");
+	private static void doWithDeepFields(Class<?> hierarchyTargetClass, Object target, Object source, FieldFilter ff,
+			FieldProcessor fp) throws IllegalArgumentException, IllegalAccessException {
+		if (isNull(hierarchyTargetClass) || isNull(ff) || isNull(fp)) {
+			throw new IllegalArgumentException("Hierarchy target class or source FieldFilter and FieldProcessor can't null");
 		}
 
-		// If the source is empty, skip the current level copy.
+		// Skip the current level copy.
 		if (isNull(source) || isNull(target)) {
 			return;
 		}
@@ -156,46 +155,17 @@ public abstract class BeanUtils2 {
 				sourcePropertyValue = sf.get(source);
 			}
 
-			// If the source is not null and the target is null, the source can
-			// be assigned directly to the target.
-			if (isNull(targetPropertyValue)) { // [MARK1]
-				if (fc != null) {
-					fc.doCopy(target, tf, sf, sourcePropertyValue);
-				}
-			}
 			// Base or general collection type?
-			else if (isBaseType(tf.getType()) || isGeneralSetType(tf.getType())) {
+			if (isBaseType(tf.getType()) || isGeneralSetType(tf.getType())) {
 				// [MARK2] Filter matching property
-				if (sourcePropertyValue != null && ff.match(tf)) {
-					if (fc != null) {
-						fc.doCopy(target, tf, sf, sourcePropertyValue);
-					}
+				if (nonNull(fp) && ff.matches(tf) && nonNull(sourcePropertyValue)) {
+					fp.doProcess(target, tf, sf, sourcePropertyValue);
 				}
 			} else {
-				copyDeepProperties(tf.getType(), targetPropertyValue, sourcePropertyValue, ff, fc);
+				doWithDeepFields(tf.getType(), targetPropertyValue, sourcePropertyValue, ff, fp);
 			}
 		}
 
-	}
-
-	/**
-	 * Enhanced callback optionally used to filter fields to be operated on by a
-	 * field callback.
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年5月11日
-	 * @since
-	 */
-	public static interface FieldFilter {
-
-		/**
-		 * Filter operations using the given field.
-		 * 
-		 * @param targetField
-		 *            Target object field.
-		 * @return
-		 */
-		boolean match(Field targetField);
 	}
 
 	/**
@@ -205,12 +175,12 @@ public abstract class BeanUtils2 {
 	 * @version v1.0 2019年5月11日
 	 * @since
 	 */
-	public static interface FieldCopyer {
+	public static interface FieldProcessor {
 
 		/**
-		 * Use the given field copy operation.
+		 * Use the given field processing(for example: copying).
 		 * 
-		 * @param targetAttach
+		 * @param target
 		 * @param tf
 		 * @param sf
 		 * @param sourcePropertyValue
@@ -218,7 +188,7 @@ public abstract class BeanUtils2 {
 		 * @throws IllegalAccessException
 		 * @throws IllegalArgumentException
 		 */
-		void doCopy(Object targetAttach, Field tf, Field sf, Object sourcePropertyValue)
+		void doProcess(Object target, Field tf, Field sf, Object sourcePropertyValue)
 				throws IllegalArgumentException, IllegalAccessException;
 	}
 
@@ -229,12 +199,12 @@ public abstract class BeanUtils2 {
 	final public static FieldFilter DEFAULT_FIELD_FILTER = targetField -> isGenericAccessibleModifier(targetField.getModifiers());
 
 	/**
-	 * Default copyer of {@link FieldCopyer}.
+	 * Default copyer of {@link FieldProcessor}.
 	 */
-	final public static FieldCopyer DEFAULT_FIELD_COPYER = (targetAttach, tf, sf, sourcePropertyValue) -> {
+	final public static FieldProcessor DEFAULT_FIELD_COPYER = (target, tf, sf, sourcePropertyValue) -> {
 		if (sourcePropertyValue != null) {
 			tf.setAccessible(true);
-			tf.set(targetAttach, sourcePropertyValue);
+			tf.set(target, sourcePropertyValue);
 		}
 	};
 
