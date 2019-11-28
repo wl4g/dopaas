@@ -16,15 +16,12 @@
 package com.wl4g.devops.iam.service.impl;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.iam.Group;
-import com.wl4g.devops.common.bean.iam.GroupMenu;
 import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.dao.iam.GroupMenuDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.MenuService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -35,7 +32,7 @@ import java.util.*;
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.common.utils.lang.TypeConverts.parseIntOrNull;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Menu service implements.
@@ -114,7 +111,7 @@ public class MenuServiceImpl implements MenuService {
 		menuDao.insertSelective(menu);
 
 		// Add group , default add the first group to group_menu
-		Set<Group> groupsSet = groupService.getGroupsSet();
+		/*Set<Group> groupsSet = groupService.getGroupsSet();
 		List<Group> top = new ArrayList<>();
 		for (Group group : groupsSet) {
 			Group parent = groupService.getParent(new ArrayList<>(groupsSet), group.getParentId());
@@ -128,7 +125,7 @@ public class MenuServiceImpl implements MenuService {
 		groupMenu.preInsert();
 		groupMenu.setGroupId(group.getId());
 		groupMenu.setMenuId(menu.getId());
-		groupMenuDao.insertSelective(groupMenu);
+		groupMenuDao.insertSelective(groupMenu);*/
 	}
 
 	private void update(Menu menu) {
@@ -144,7 +141,7 @@ public class MenuServiceImpl implements MenuService {
 			menus = menuDao.selectByRoot();
 		} else {
 			Integer userId = null;
-			if (isBlank(info.getPrincipalId())) {
+			if (isNotBlank(info.getPrincipalId())) {
 				userId = Integer.parseInt(info.getPrincipalId());
 			}
 			menus = menuDao.selectByUserIdAccessGroup(userId);
