@@ -75,8 +75,6 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
-	File jobDeployerLog;
-
 	public AbstractPipeDeployer(P provider, AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
 		notNull(provider, "Pipeline provider must not be null.");
 		notNull(instance, "Pipeline job instance must not be null.");
@@ -89,8 +87,6 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
 		isTrue(taskHisyDetail.isPresent(), "Not found taskDetailId by details.");
 		this.taskDetailId = taskHisyDetail.get().getId();
-
-		jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 	}
 
 	@Override
@@ -189,6 +185,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	 */
 	protected void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
 		hasText(command, "Commands must not be empty.");
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
@@ -220,6 +217,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		if (log.isInfoEnabled()) {
 			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
 		}
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;
 	}

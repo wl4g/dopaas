@@ -401,7 +401,8 @@ public class ImageTailor {
 		// int g = (0xff & (rgb >> 8));
 		// int b = (0xff & (rgb >> 16));
 		// rgb = r + (g << 8) + (b << 4) + (100 << 24);
-		img.setRGB(x, y, new Color(220, 220, 220, 0.8f).getRGB());
+		//TODO 设置220报错，临时设置以下
+		img.setRGB(x, y, new Color(0.8f, 0.8f, 0.8f, 0.8f).getRGB());
 	}
 
 	/**
