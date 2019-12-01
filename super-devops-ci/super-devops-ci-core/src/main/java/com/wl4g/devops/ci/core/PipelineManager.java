@@ -60,4 +60,15 @@ public abstract interface PipelineManager {
 	 */
 	ReadResult logfile(Integer taskHisId, Long startPos, Integer size);
 
+	/**
+	 * Reader pipeline task job logs.
+	 *
+	 * @param taskHisId
+	 * @param taskHisDetailId
+	 * @param startPos
+	 * @param size
+	 * @return
+	 */
+	ReadResult logDetailFile(Integer taskHisId,Integer instanceId, Long startPos, Integer size);
+
 }

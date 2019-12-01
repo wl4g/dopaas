@@ -18,16 +18,8 @@ package com.wl4g.devops.common.utils.io;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-
-import static com.google.common.base.Charsets.ISO_8859_1;
-import static com.google.common.base.Charsets.UTF_8;
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -35,6 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
+
+import static com.google.common.base.Charsets.ISO_8859_1;
+import static com.google.common.base.Charsets.UTF_8;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+import static org.springframework.util.Assert.*;
 
 /**
  * Enhanced files IO operation implements.</br>
@@ -235,7 +233,10 @@ public abstract class FileIOUtils extends FileUtils {
 			boolean hasNext = true; // Has next line?
 			long c = 0, lastPos = -1, endPos = (startPos + aboutLimit);
 			while (raf.getFilePointer() > lastPos && (lastPos = raf.getFilePointer()) < endPos && ++c < DEFAULT_SAFE_READ_COUNT) {
-				String line = new String(raf.readLine().getBytes(ISO_8859_1), UTF_8);
+				String line = raf.readLine();
+				if(StringUtils.isNotBlank(line)){
+					line = new String(line.getBytes(ISO_8859_1), UTF_8);
+				}
 				if (nonNull(line)) {
 					lines.add(line);
 					if (stopper.apply(line)) {
