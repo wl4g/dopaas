@@ -1,11 +1,15 @@
 /*
 ** Copyright 2005 Huxtable.com. All rights reserved.
 */
-
 package com.wl4g.devops.common.utils.image;
 
 /**
  * A class containing static math methods useful for image processing.
+ * 
+ * @author Jerry Huxtable
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0.0 2019-12-01
+ * @since
  */
 public class ImageMath {
 

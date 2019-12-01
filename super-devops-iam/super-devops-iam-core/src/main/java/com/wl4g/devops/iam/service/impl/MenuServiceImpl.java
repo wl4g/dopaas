@@ -45,13 +45,11 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class MenuServiceImpl implements MenuService {
 
 	@Autowired
-	private MenuDao menuDao;
-
+	protected MenuDao menuDao;
 	@Autowired
-	private GroupService groupService;
-
+	protected GroupService groupService;
 	@Autowired
-	private GroupMenuDao groupMenuDao;
+	protected GroupMenuDao groupMenuDao;
 
 	@Override
 	public Map<String, Object> getMenuTree() {
@@ -110,22 +108,26 @@ public class MenuServiceImpl implements MenuService {
 		menu.preInsert();
 		menuDao.insertSelective(menu);
 
-		// Add group , default add the first group to group_menu
-		/*Set<Group> groupsSet = groupService.getGroupsSet();
-		List<Group> top = new ArrayList<>();
-		for (Group group : groupsSet) {
-			Group parent = groupService.getParent(new ArrayList<>(groupsSet), group.getParentId());
-			if (parent == null) {
-				top.add(group);
-			}
-		}
-		Assert.isTrue(CollectionUtils.isEmpty(groupsSet), "not found top group");
-		Group group = top.get(0);
-		GroupMenu groupMenu = new GroupMenu();
-		groupMenu.preInsert();
-		groupMenu.setGroupId(group.getId());
-		groupMenu.setMenuId(menu.getId());
-		groupMenuDao.insertSelective(groupMenu);*/
+		// Add group , default add the first group to group_menu.
+		//
+		// Set<Group> groupsSet = groupService.getGroupsSet();
+		// List<Group> top = new ArrayList<>();
+		// for (Group group : groupsSet) {
+		// Group parent = groupService.getParent(new ArrayList<>(groupsSet),
+		// group.getParentId());
+		// if (parent == null) {
+		// top.add(group);
+		// }
+		// }
+		// Assert.isTrue(CollectionUtils.isEmpty(groupsSet), "not found top
+		// group");
+		// Group group = top.get(0);
+		// GroupMenu groupMenu = new GroupMenu();
+		// groupMenu.preInsert();
+		// groupMenu.setGroupId(group.getId());
+		// groupMenu.setMenuId(menu.getId());
+		// groupMenuDao.insertSelective(groupMenu);
+
 	}
 
 	private void update(Menu menu) {
