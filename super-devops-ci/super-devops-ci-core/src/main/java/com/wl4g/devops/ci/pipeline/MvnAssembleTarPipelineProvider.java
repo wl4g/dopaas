@@ -19,10 +19,10 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
+import java.io.File;
+
 import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
 import static org.springframework.util.StringUtils.getFilename;
-
-import java.io.File;
 
 /**
  * Pipeline provider for deployment MAVEN assemble tar project.
@@ -78,7 +78,9 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	private void doMvnBuildInternal() throws Exception {
 		// Setup assets file fingerprint.
 		File file = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
-		setupAssetsFingerprint(getMd5Fingerprint(file));
+		if(file.exists()){
+			setupAssetsFingerprint(getMd5Fingerprint(file));
+		}
 
 		// backup in local
 		handleBackupAssets();

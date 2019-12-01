@@ -236,14 +236,14 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			return (Runnable) () -> {
 				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
 				try {
-					FileIOUtils.writeBLineFile(jobDeployerLog,LOG_FILE_START);
-					newDeployer(i);
+					FileIOUtils.writeALineFile(jobDeployerLog,LOG_FILE_START);
+					newDeployer(i).run();
 					FileIOUtils.writeFile(jobDeployerLog,"Deploy Success");
 				}catch (Exception e){
 					log.error(e.getMessage()+ getStackTraceAsString(e));
 					writeBLineFile(jobDeployerLog,e.getMessage()+ getStackTraceAsString(e));
 				}finally {
-					FileIOUtils.writeALineFile(jobDeployerLog,LOG_FILE_END);
+					FileIOUtils.writeBLineFile(jobDeployerLog,LOG_FILE_END);
 				}
 			};
 		}).collect(toList());

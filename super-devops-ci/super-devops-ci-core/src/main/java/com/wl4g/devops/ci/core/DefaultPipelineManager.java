@@ -224,6 +224,18 @@ public class DefaultPipelineManager implements PipelineManager {
 		return seekReadLines(logPath, startPos, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
 	}
 
+	public ReadResult logDetailFile(Integer taskHisId,Integer instanceId, Long startPos, Integer size) {
+		if (isNull(startPos)) {
+			startPos = 0l;
+		}
+		if (isNull(size)) {
+			size = 100;
+		}
+		String logPath = config.getJobDeployerLog(taskHisId,instanceId).getAbsolutePath();
+		// End if 'EOF'
+		return seekReadLines(logPath, startPos, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
+	}
+
 	/**
 	 * Execution new pipeline job.
 	 *

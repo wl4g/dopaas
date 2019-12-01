@@ -84,6 +84,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 			throws Exception {
 		hasText(remoteDir, "Creating remote directory path must not be empty.");
 		String command = "mkdir -p " + remoteDir;
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Creating replace remote directory for %s@%s -> [%s]", user, remoteHost, command));
 		// Directory creating.
 		doRemoteCommand(remoteHost, user, command, sshkey);
@@ -99,6 +100,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
 		String localFile = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Transfer to remote tmpdir for %s@%s -> [%s]", user, remoteHost, localFile));
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		transferFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), new File(localFile), remoteTmpDir);
@@ -114,6 +116,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey) throws Exception {
 		String command = "tar -xvf " + getRemoteTmpFilePath() + " -C " + config.getDeploy().getRemoteHomeTmpDir();
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Decompress remote program for %s@%s -> [%s]", user, remoteHost, command));
 		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
@@ -128,6 +131,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected void unInstallRemoteOlderProgram(String remoteHost, String user, String sshkey) throws Exception {
 		String command = "rm -Rf " + getProgramInstallDir() + "/" + getPrgramInstallFileName();
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("UnInstall remote older program for %s@%s -> [%s]", user, remoteHost, command));
 		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
@@ -143,6 +147,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	protected void installRemoteNewerProgram(String remoteHost, String user, String sshkey) throws Exception {
 		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir()+"/" + getPrgramInstallFileName();
 		String command = "mv " + decompressedTmpFile + " " + getProgramInstallDir();
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Install remote newer program for %s@%s -> [%s]", user, remoteHost, command));
 		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
@@ -157,6 +162,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected void cleanupRemoteProgramTmpFile(String remoteHost, String user, String sshkey) throws Exception {
 		String command = "rm -Rf " + getRemoteTmpFilePath();
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Cleanup remote temporary program file for %s@%s -> [%s]", user, remoteHost, command));
 		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
