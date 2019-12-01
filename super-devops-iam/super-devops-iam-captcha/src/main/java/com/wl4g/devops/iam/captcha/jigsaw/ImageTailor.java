@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
-import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
-
 import javax.imageio.ImageIO;
 
 import java.awt.AlphaComposite;
@@ -29,12 +27,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 
-import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
+import static com.wl4g.devops.common.utils.codec.Compresss.snappyCompress;
+import static com.wl4g.devops.common.utils.codec.Compresss.snappyUnCompress;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
@@ -46,7 +45,34 @@ import static org.springframework.util.Assert.isTrue;
  * @since
  */
 public class ImageTailor {
+
+	/**
+	 * The width pixel of the area where the edge of the slider needs to be
+	 * Gaussian blurred.
+	 */
 	final public static int DEFAULT_BORDER_WEIGHT = 3;
+
+	/**
+	 * The distance from the center of the circle is offset in radians. </br>
+	 * 
+	 * <pre>
+	 * public class Test {
+	 * 	public static void main(String args[]) {
+	 * 		double degrees = 45.0;
+	 * 		double radians = Math.toRadians(degrees);
+	 * 		System.out.format("pi 的值为 %.4f%n", Math.PI);
+	 * 		System.out.format("%.4f 的反正弦值为 %.4f 度 %n", Math.sin(radians), Math.toDegrees(Math.asin(Math.sin(radians))));
+	 * 	}
+	 * }
+	 * <hr>
+	 * Output:
+	 *   pi 的值为 3.1416
+	 *   0.7071 的反正弦值为 45.0000 度
+	 * </pre>
+	 * 
+	 * @see {@link ImageTailor#circleOffset}
+	 */
+	final public static double DEFAULT_CIRCLE_OFFSET_RATIO = StrictMath.sin(StrictMath.toRadians(30));
 
 	/** Material source drawing requires maximum width(:PX) */
 	final protected int sourceMaxWidth;
@@ -64,6 +90,10 @@ public class ImageTailor {
 	final protected int circleR;
 	/** Watermark string drawn. */
 	final protected String watermark;
+	/**
+	 * For beautification, the offset distance from the center of the circle.
+	 */
+	final protected int circleOffset;
 
 	// --- Block borders position. ---
 	private int borderTopXMin; // Top
@@ -84,11 +114,11 @@ public class ImageTailor {
 	private int borderLeftYMax;
 
 	public ImageTailor() {
-		this(46, 46, 10, "wanglsir@gmail.com");
+		this(46, 46, 8, "wanglsir@gmail.com");
 	}
 
 	public ImageTailor(String watermark) {
-		this(46, 46, 10, watermark);
+		this(46, 46, 8, watermark);
 	}
 
 	public ImageTailor(int blockWidth, int blockHeight, int circleR, String watermark) {
@@ -112,51 +142,52 @@ public class ImageTailor {
 		this.blockWidth = blockWidth;
 		this.blockHeight = blockHeight;
 		this.circleR = circleR;
+		this.circleOffset = (int) (circleR * DEFAULT_CIRCLE_OFFSET_RATIO);
 		this.watermark = watermark;
 	}
 
 	/**
-	 * Get jigsaw cut image from local file
+	 * Get cut image from local file
 	 * 
 	 * @param filepath
 	 * @return
 	 * @throws IOException
 	 */
-	public JigsawImgCode getJigsawImageFile(String filepath) throws IOException {
+	public TailoredImage getImageFile(String filepath) throws IOException {
 		BufferedImage source = ImageIO.read(new File(filepath));
-		return doImageProcess(source);
+		return doProcess(source);
 	}
 
 	/**
-	 * Get jigsaw cut image from URL
+	 * Get cut image from URL
 	 * 
 	 * @param url
 	 * @return
 	 * @throws IOException
 	 */
-	public JigsawImgCode getJigsawImageUrl(String url) throws IOException {
-		return doImageProcess(ImageIO.read(new URL(url)));
+	public TailoredImage getImageUrl(String url) throws IOException {
+		return doProcess(ImageIO.read(new URL(url)));
 	}
 
 	/**
-	 * Get jigsaw cut image from input stream
+	 * Get cut image from input stream
 	 * 
 	 * @param url
 	 * @return
 	 * @throws IOException
 	 */
-	public JigsawImgCode getJigsawImageInputStream(InputStream in) throws IOException {
-		return doImageProcess(ImageIO.read(in));
+	public TailoredImage getImageInputStream(InputStream in) throws IOException {
+		return doProcess(ImageIO.read(in));
 	}
 
 	/**
-	 * Do processing cut jigsaw image.
+	 * Do processing cut image.
 	 * 
 	 * @param sourceImg
 	 * @return
 	 * @throws IOException
 	 */
-	private JigsawImgCode doImageProcess(BufferedImage sourceImg) throws IOException {
+	private TailoredImage doProcess(BufferedImage sourceImg) throws IOException {
 		int width = sourceImg.getWidth();
 		int height = sourceImg.getHeight();
 		// Check maximum effective width height
@@ -176,19 +207,22 @@ public class ImageTailor {
 		int blockX0 = current().nextInt((int) (lx * 0.25), lx); // *0.25防止x坐标太靠左
 		int blockY0 = current().nextInt(circleR, ly); // 从circleR开始是为了防止上边的耳朵显示不全
 		// Setup block borders position.
-		setBorderPositions(blockX0, blockY0, blockWidth, blockHeight);
+		initBorderPositions(blockX0, blockY0, blockWidth, blockHeight);
 
 		// 绘制生成新图(图片大小是固定，位置是随机)
 		drawing(sourceImg, blockImg, primaryImg, blockX0, blockY0, blockWidth, blockHeight);
-		// 截取可用区
-		blockImg = blockImg.getSubimage(blockX0, (blockY0 - circleR) >= 0 ? (blockY0 - circleR) : 0, blockWidth,
-				blockHeight + circleR);
+		// 裁剪可用区
+		int cutX0 = blockX0;
+		int cutY0 = Math.max((blockY0 - circleR - circleOffset), 0);
+		int cutWidth = blockWidth + circleR + circleOffset;
+		int cutHeight = blockHeight + circleR + circleOffset;
+		blockImg = blockImg.getSubimage(cutX0, cutY0, cutWidth, cutHeight);
 
 		// Add watermark string.
 		addWatermarkIfNecessary(primaryImg);
 
 		// 输出图像数据
-		JigsawImgCode img = new JigsawImgCode();
+		TailoredImage img = new TailoredImage();
 		// Primary image.
 		ByteArrayOutputStream primaryData = new ByteArrayOutputStream();
 		ImageIO.write(primaryImg, "PNG", primaryData);
@@ -221,11 +255,13 @@ public class ImageTailor {
 		double rr = Math.pow(circleR, 2);// r平方
 		// R1圆心坐标（顶部的圆）
 		int c1_x0 = current().nextInt(blockWidth - 2 * circleR) + (blockX0 + circleR); // x+c_r+10;//圆心x坐标必须在(x+r,x+with-r)范围内
-		int c1_y0 = blockY0;
+		int c1_y0 = blockY0 - circleOffset;
 		// R2圆心坐标（左边的圆）
-		int c2_x0 = blockX0;
-		// y+circleR+50圆心y坐标必须在(y+r,y+height-r)范围内
+		int c2_x0 = blockX0 + circleOffset;
 		int c2_y0 = current().nextInt(blockHeight - 2 * circleR) + (blockY0 + circleR);
+		// R3圆心坐标（右边的圆）
+		int c3_x0 = blockX0 + blockWidth + circleOffset;
+		int c3_y0 = current().nextInt(blockHeight - 2 * circleR) + (blockY0 + circleR);
 
 		for (int x = 0; x < sourceImg.getWidth(); x++) {
 			for (int y = 0; y < sourceImg.getHeight(); y++) {
@@ -233,31 +269,35 @@ public class ImageTailor {
 				// (x-a)²+(y-b)²=r²中，有三个参数a、b、r，即圆心坐标为(a，b)，半径r。
 				double rr1 = Math.pow((x - c1_x0), 2) + Math.pow((y - c1_y0), 2);
 				double rr2 = Math.pow((x - c2_x0), 2) + Math.pow((y - c2_y0), 2);
-
+				double rr3 = Math.pow((x - c3_x0), 2) + Math.pow((y - c3_y0), 2);
 				// 在矩形块区域内?
 				boolean withInBlock = x >= blockX0 && x < (blockX0 + blockWidth) && y >= blockY0 && y < (blockY0 + blockHeight);
+
 				// Primary image
-				if (rr >= rr1) { // 在R1区域内
-					primaryImg.setRGB(x, y, getGrayTransparentRGB(rgb));
-				} else {
-					if (withInBlock) { // 在矩形块区域内
-						if (rr >= rr2) { // 在R2区域内
-							primaryImg.setRGB(x, y, rgb);
-						} else {
-							if (!gaussainGradientIfNecessary(primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb)) { // 已设置高斯模糊渐变
-																																	// ?
-								primaryImg.setRGB(x, y, getGrayTransparentRGB(rgb));
-							}
-						}
-					} else {
+				if (rr >= rr1 || rr >= rr3) { // 在R1或R3区域内
+					primaryImg.setRGB(x, y, getGrayTranslucentRGB(rgb));
+				} else if (withInBlock) { // 在矩形块区域内
+					if (rr >= rr2) { // 在R2区域内
 						primaryImg.setRGB(x, y, rgb);
+					} else if (!handleGaussainBlurIfNecessary(primaryImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb)) { // 已设置高斯模糊?
+						primaryImg.setRGB(x, y, getGrayTranslucentRGB(rgb));
 					}
+				} else {
+					primaryImg.setRGB(x, y, rgb);
 				}
 
 				// Block image
-				if (withInBlock || rr >= rr1) { // 在区块或R1内
-					if (rr <= rr2) { // 不在R2内
-						blockImg.setRGB(x, y, rgb);
+				if (rr >= rr3) { // 在区块或R3内
+					blockImg.setRGB(x, y, rgb);
+				} else if (withInBlock || rr >= rr1) { // 在区块或R1内
+					if (rr < rr2) { // 不在R2内
+						if (rr >= rr1) { // 在R1内
+							blockImg.setRGB(x, y, rgb);
+						} else {
+							if (!handleGaussainBlurIfNecessary(blockImg, blockX0, blockY0, blockWidth, blockHeight, x, y, rgb)) { // 已设置高斯模糊?
+								blockImg.setRGB(x, y, rgb);
+							}
+						}
 					}
 				}
 
@@ -292,14 +332,14 @@ public class ImageTailor {
 	}
 
 	/**
-	 * Setup border positions.
+	 * Initialize setup border positions.
 	 * 
 	 * @param blockX0
 	 * @param blockY0
 	 * @param blockWidth
 	 * @param blockHeight
 	 */
-	private void setBorderPositions(int blockX0, int blockY0, int blockWidth, int blockHeight) {
+	private void initBorderPositions(int blockX0, int blockY0, int blockWidth, int blockHeight) {
 		// Top
 		borderTopXMin = blockX0;
 		borderTopXMax = blockX0 + blockWidth;
@@ -323,22 +363,7 @@ public class ImageTailor {
 	}
 
 	/**
-	 * 获取灰色半透明RGB
-	 * 
-	 * @param rgb
-	 * @return
-	 */
-	private int getGrayTransparentRGB(int rgb) {
-		int r = (0xff & rgb);
-		int g = (0xff & (rgb >> 8));
-		int b = (0xff & (rgb >> 16));
-		rgb = r + (g << 8) + (b << 16) + (100 << 24);
-		// rgb = r + (g << 8) + (b << 16); // 亮一些
-		return rgb;
-	}
-
-	/**
-	 * 设置高斯模糊渐变RGB（仅当是边界区域时）
+	 * Handle gaussian blur RGB. (borders region only)
 	 * 
 	 * @param img
 	 * @param blockX0
@@ -347,61 +372,96 @@ public class ImageTailor {
 	 * @param blockHeight
 	 * @param x
 	 * @param y
-	 * @param rgb
+	 * @param srcRgb
 	 * @return 当成功设置返回TRUE，否则返回FALSE
 	 */
-	private boolean gaussainGradientIfNecessary(BufferedImage img, int blockX0, int blockY0, int blockWidth, int blockHeight,
-			int x, int y, int rgb) {
+	private boolean handleGaussainBlurIfNecessary(BufferedImage img, int blockX0, int blockY0, int blockWidth, int blockHeight,
+			int x, int y, int srcRgb) {
 		// Top
 		if (x >= borderTopXMin && x <= borderTopXMax && y >= borderTopYMin && y <= borderTopYMax) {
+			doGaussainBlurRGB(img, borderTopXMin, borderTopXMax, borderTopYMin, borderTopYMax, x, y, blockWidth, blockHeight,
+					srcRgb);
 			return true;
 		}
 		// Right
 		if (x >= borderRightXMin && x <= borderRightXMax && y >= borderRightYMin && y <= borderRightYMax) {
-			setGaussainRGB(img, x, y, DEFAULT_BORDER_WEIGHT, blockHeight, rgb);
+			doGaussainBlurRGB(img, borderRightXMin, borderRightXMax, borderRightYMin, borderRightYMax, x, y,
+					DEFAULT_BORDER_WEIGHT, blockHeight, srcRgb);
 			return true;
 		}
 		// Bottom
 		if (x >= borderBottomXMin && x <= borderBottomXMax && y >= borderBottomYMin && y <= borderBottomYMax) {
+			doGaussainBlurRGB(img, borderBottomXMin, borderBottomXMax, borderBottomYMin, borderBottomYMax, x, y, blockWidth,
+					blockHeight, srcRgb);
 			return true;
 		}
 		// Left
 		if (x >= borderLeftXMin && x <= borderLeftXMax && y >= borderLeftYMin && y <= borderLeftYMax) {
+			doGaussainBlurRGB(img, borderLeftXMin, borderLeftXMax, borderLeftYMin, borderLeftYMax, x, y, DEFAULT_BORDER_WEIGHT,
+					blockHeight, srcRgb);
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * 设置高斯模糊渐变RGB.
+	 * Set Gaussian blur RGB.
 	 * 
 	 * @param img
+	 * @param minBlurX
+	 * @param maxBlurX
+	 * @param minBlurY
+	 * @param maxBlurY
 	 * @param x
 	 * @param y
-	 * @param width
-	 * @param height
-	 * @param rgb
+	 * @param blurWidth
+	 * @param blurHeight
+	 * @param srcRgb
 	 */
-	private void setGaussainRGB(BufferedImage img, int x, int y, int width, int height, int rgb) {
-		// int[] inPixels = new int[width * height];
-		// int[] outPixels = new int[width * height];
-		// Kernel kernel = GaussianFilter.makeKernel(0.667f);
+	private void doGaussainBlurRGB(BufferedImage img, int minBlurX, int maxBlurX, int minBlurY, int maxBlurY, int x, int y,
+			int blurWidth, int blurHeight, int srcRgb) {
+		img.setRGB(x, y, srcRgb); // Nothing blur
+
+		// int[] inPixels = new int[blurWidth * blurHeight];
+		// int[] outPixels = new int[blurWidth * blurHeight];
+		// java.awt.image.Kernel kernel = GaussianFilter.makeKernel(0.667f);
 		// GaussianFilter.convolveAndTranspose(kernel, inPixels, outPixels,
-		// width, height, true, GaussianFilter.CLAMP_EDGES);
+		// blurWidth, blurHeight, true, GaussianFilter.CLAMP_EDGES);
 		// GaussianFilter.convolveAndTranspose(kernel, outPixels, inPixels,
-		// height, width, true, GaussianFilter.CLAMP_EDGES);
-		// img.setRGB(x, y, width, height, inPixels, 0, width);
+		// blurHeight, blurWidth, true, GaussianFilter.CLAMP_EDGES);
+		// img.setRGB(x, y, blurWidth, blurHeight, inPixels, 0, blurWidth);
 
-		// NormalDistribution nd = new NormalDistribution(0, 256);
-		// double rgb0 = nd.cumulativeProbability(rgb);
-		// rgb = (int) rgb0;
-		// img.setRGB(x, y, (int) rgb0);
+		// int v = 0;
+		// if ((maxBlurY - minBlurY) > (maxBlurX - minBlurX)) { // Left/Right?
+		// v = (int) (Math.abs(240 - Math.abs(x - minBlurX) * 20));
+		// } else {
+		// v = (int) (Math.abs(240 - Math.abs(y - minBlurY) * 20));
+		// }
+		// img.setRGB(x, y, new Color(v, v, v).getRGB());
 
-		// int r = (0xff & rgb);
-		// int g = (0xff & (rgb >> 8));
-		// int b = (0xff & (rgb >> 16));
-		// rgb = r + (g << 8) + (b << 4) + (100 << 24);
-		img.setRGB(x, y, new Color(220, 220, 220, 0.8f).getRGB());
+		// NormalDistribution nd = new NormalDistribution(0, 1.44);
+
+		// int r = (0xff & srcRgb);
+		// int g = (0xff & (srcRgb >> 8));
+		// int b = (0xff & (srcRgb >> 16));
+		// srcRgb = r + (g << 8) + (b << 4) + (100 << 24);
+		// img.setRGB(x, y, Color.white.getRGB());
+		// img.setRGB(x, y, new Color(220, 220, 220).getRGB());
+	}
+
+	/**
+	 * Get the gray translucent RGB value.
+	 * 
+	 * @param rgb
+	 * @return
+	 */
+	private static int getGrayTranslucentRGB(int rgb) {
+		int r = (0xff & rgb);
+		int g = (0xff & (rgb >> 8));
+		int b = (0xff & (rgb >> 16));
+		rgb = r + (g << 8) + (b << 16) + (100 << 24);
+		// rgb = r + (g << 8) + (b << 16); // 亮一些
+		return rgb;
 	}
 
 	/**
@@ -416,16 +476,80 @@ public class ImageTailor {
 		ImageIO.write(img, "PNG", new File(filepath));
 	}
 
-	public static void main(String[] args) throws Exception {
-		ImageTailor tailor = new ImageTailor();
-		JigsawImgCode img = tailor.getJigsawImageFile(USER_DIR + "/src/main/resources/static/jigsaw/jigsaw_default1.jpg");
+	/**
+	 * Tailored image model.
+	 * 
+	 * @author Wangl.sir
+	 * @version v1.0 2019年8月30日
+	 * @since
+	 */
+	public static class TailoredImage implements Serializable {
+		private static final long serialVersionUID = 4975604362812626949L;
 
-		// JigsawImgCode img =
-		// tailor.getJigsawImageUrl("http://vps.vjay.pw/1.jpg");
+		private int x;
+		private int y;
+		private byte[] primaryImg; // Base64
+		private byte[] blockImg;
 
-		System.out.println(img);
-		writeFile(new File("f:\\a.png"), img.getPrimaryImg(), false);
-		writeFile(new File("f:\\b.png"), img.getBlockImg(), false);
+		public int getX() {
+			return x;
+		}
+
+		public void setX(int x) {
+			this.x = x;
+		}
+
+		public int getY() {
+			return y;
+		}
+
+		public void setY(int y) {
+			this.y = y;
+		}
+
+		public byte[] getPrimaryImg() {
+			return primaryImg;
+		}
+
+		public void setPrimaryImg(byte[] primaryImg) {
+			this.primaryImg = primaryImg;
+		}
+
+		public byte[] getBlockImg() {
+			return blockImg;
+		}
+
+		public void setBlockImg(byte[] blockImg) {
+			this.blockImg = blockImg;
+		}
+
+		@Override
+		public String toString() {
+			return "JigsawImgCode [x=" + x + ", y=" + y + ", primaryImg=" + primaryImg + ", blockImg=" + blockImg + "]";
+		}
+
+		/**
+		 * Compression primary and block image.
+		 * 
+		 * @return
+		 */
+		public TailoredImage compress() {
+			setPrimaryImg(snappyCompress(getPrimaryImg()));
+			setBlockImg(snappyCompress(getBlockImg()));
+			return this;
+		}
+
+		/**
+		 * Compression primary and block image.
+		 * 
+		 * @return
+		 */
+		public TailoredImage uncompress() {
+			setPrimaryImg(snappyUnCompress(getPrimaryImg()));
+			setBlockImg(snappyUnCompress(getBlockImg()));
+			return this;
+		}
+
 	}
 
 }

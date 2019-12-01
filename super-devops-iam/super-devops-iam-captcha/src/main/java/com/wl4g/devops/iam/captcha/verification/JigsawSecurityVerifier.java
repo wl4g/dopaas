@@ -17,15 +17,14 @@ package com.wl4g.devops.iam.captcha.verification;
 
 import com.wl4g.devops.common.utils.codec.CheckSums;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
+import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgModel;
-import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgModel;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
@@ -33,6 +32,8 @@ import javax.validation.constraints.NotNull;
 
 import static java.util.stream.Collectors.summarizingDouble;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
 
 import java.util.List;
 import java.util.Objects;
@@ -75,7 +76,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) {
-		JigsawImgCode code = codeWrap.getCode();
+		TailoredImage code = codeWrap.getCode();
 		// Build model
 		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getAlias());
 		model.setY(code.getY());
@@ -99,7 +100,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	final protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
-		JigsawImgCode code = (JigsawImgCode) storedCode.getCode();
+		TailoredImage code = (TailoredImage) storedCode.getCode();
 		JigsawVerifyImgModel model = (JigsawVerifyImgModel) submitCode;
 
 		// Analyze & verification JIGSAW image.
@@ -117,7 +118,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * @param model
 	 * @return
 	 */
-	final private boolean doAnalyzingJigsawGraph(JigsawImgCode code, JigsawVerifyImgModel model) {
+	final private boolean doAnalyzingJigsawGraph(TailoredImage code, JigsawVerifyImgModel model) {
 		if (Objects.isNull(model.getX())) {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;
@@ -126,13 +127,13 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		// DECRYPT slider block x-position.
 		RSAKeySpecWrapper keySpec = getBindValue(model.getApplyToken(), true);
 		String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
-		Assert.hasText(plainX, "Invalid x-position, unable to resolve.");
+		hasText(plainX, "Invalid x-position, unable to resolve.");
+		// Parsing additional algorithmic salt.
+		isTrue(plainX.length() > 66, String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
 		if (log.isDebugEnabled()) {
 			log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 		}
-		// Parsing additional algorithmic salt.
-		Assert.isTrue(plainX.length() > 66,
-				String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
+
 		// Reduction analysis.
 		final int prototypeX = parseAdditionalWithAlgorithmicSalt(plainX, model);
 
