@@ -20,12 +20,12 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
-import com.wl4g.devops.tool.opencv.library.OpenCvNativeLibraryLoader;
+import com.wl4g.devops.tool.opencv.library.NativeLibraryLoader;
 
 public class SimpleSampleTests {
 
 	static {
-		OpenCvNativeLibraryLoader.loadLibrarys();
+		NativeLibraryLoader.loadLibrarys();
 	}
 
 	public static void main(String[] args) {
