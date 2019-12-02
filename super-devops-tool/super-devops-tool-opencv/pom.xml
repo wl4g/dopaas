@@ -27,7 +27,7 @@
 			<artifactId>opencv</artifactId>
 			<version>4.1.1</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/libs/opencv-411.jar</systemPath>
+			<systemPath>${project.basedir}/libs/opencv-411.jar</systemPath>
 		</dependency>
 	</dependencies>
 	<build>
@@ -38,16 +38,6 @@
 					<include>**/*.dll</include>
 					<include>**/*.so</include>
 					<include>**/*.properties</include>
-				</includes>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.*</include>
 				</includes>
 				<filtering>false</filtering>
 			</resource>
@@ -78,41 +68,22 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
-				<configuration>
-					<filters>
-						<filter>
-							<artifact>opencv</artifact>
-							<includes>
-								<include>org/opencv/**</include>
-							</includes>
-						</filter>
-					</filters>
-					<transformers>
-						<transformer
-							implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-							<resource>libs/opecv*.jar</resource>
-						</transformer>
-					</transformers>
-					<relocations>
-						<relocation>
-							<pattern>org.opencv.*</pattern>
-							<shadedPattern>org.opencv</shadedPattern>
-						</relocation>
-					</relocations>
-					<!-- <shadedArtifactAttached>true</shadedArtifactAttached> -->
-					<!-- shade构建的jar后缀 -->
-					<!-- <shadedClassifierName>jackofall</shadedClassifierName> -->
-				</configuration>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.1</version>
 				<executions>
 					<execution>
-						<phase>package</phase>
+						<id>unpack</id>
+						<phase>prepare-package</phase>
 						<goals>
-							<goal>shade</goal>
+							<!-- <goal>copy-dependencies</goal> -->
+							<goal>unpack-dependencies</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<includeScope>system</includeScope>
+					<outputDirectory>${project.build.directory}/classes</outputDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
