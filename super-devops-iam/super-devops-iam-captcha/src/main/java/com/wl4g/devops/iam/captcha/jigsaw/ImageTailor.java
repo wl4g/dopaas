@@ -127,12 +127,14 @@ public class ImageTailor {
 
 	public ImageTailor(int sourceMaxWidth, int sourceMaxHeight, int sourceMinWidth, int sourceMinHeight, int blockWidth,
 			int blockHeight, int circleR, String watermark) {
-		isTrue(sourceMaxWidth != 0, "sourceMaxWith cannot be less than 0");
-		isTrue(sourceMaxHeight != 0, "sourceMaxHeight cannot be less than 0");
 		isTrue(sourceMinWidth != 0, "sourceMinWidth cannot be less than 0");
+		isTrue(sourceMaxWidth != 0, "sourceMaxWith cannot be less than 0");
 		isTrue(sourceMinHeight != 0, "sourceMinHeight cannot be less than 0");
+		isTrue(sourceMaxHeight != 0, "sourceMaxHeight cannot be less than 0");
 		isTrue(blockWidth != 0, "blockWidth cannot be less than 0");
+		isTrue(blockWidth < sourceMinWidth / 2, "blockWidth cannot be less than sourceMinWidth/2");
 		isTrue(blockHeight != 0, "blockHeight cannot be less than 0");
+		isTrue(blockHeight < sourceMinHeight / 2, "blockWidth cannot be less than sourceMinHeight/2");
 		isTrue(circleR != 0, "circleR cannot be less than 0");
 		// hasText(watermark, "watermark cannot be empty");
 		this.sourceMaxWidth = sourceMaxWidth;
@@ -200,12 +202,11 @@ public class ImageTailor {
 		BufferedImage primaryImg = new BufferedImage(sourceImg.getWidth(), sourceImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 		// 创建滑块图
 		BufferedImage blockImg = new BufferedImage(sourceImg.getWidth(), sourceImg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-
 		// 随机截取的坐标
-		int lx = width - blockWidth;
-		int ly = height - blockHeight;
-		int blockX0 = current().nextInt((int) (lx * 0.25), lx); // *0.25防止x坐标太靠左
-		int blockY0 = current().nextInt(circleR, ly); // 从circleR开始是为了防止上边的耳朵显示不全
+		int maxX0 = width - blockWidth - (circleR + circleOffset);
+		int maxY0 = height - blockHeight;
+		int blockX0 = current().nextInt((int) (maxX0 * 0.25), maxX0); // *0.25防止x坐标太靠左
+		int blockY0 = current().nextInt(circleR, maxY0); // 从circleR开始是为了防止上边的耳朵显示不全
 		// Setup block borders position.
 		initBorderPositions(blockX0, blockY0, blockWidth, blockHeight);
 
