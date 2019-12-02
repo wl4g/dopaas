@@ -17,8 +17,10 @@ package com.wl4g.devops.tool.opencv.library;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.OS_ARCH;
+import static org.apache.commons.lang3.SystemUtils.OS_NAME;
 
 import java.awt.IllegalComponentStateException;
 import java.io.File;
@@ -55,8 +57,11 @@ public final class NativeLibraryLoader {
 			try {
 				if (IS_OS_WINDOWS) {
 					registerLibrarys0(BASE_PATH + "/windows/" + getArchPath());
-				} else {
+				} else if (IS_OS_LINUX) {
 					registerLibrarys0(BASE_PATH + "/linux/" + getArchPath());
+				} else {
+					throw new IllegalComponentStateException(
+							String.format("The native library of platform %s is not supported temporarily", OS_NAME));
 				}
 			} catch (Exception e) {
 				throw new IllegalStateException(
