@@ -48,7 +48,7 @@ public final class NativeLibraryLoader {
 	private final static AtomicBoolean LOADED = new AtomicBoolean(false);
 
 	/**
-	 * Loading openCv librarys.
+	 * Loading OpenCv native librarys.
 	 */
 	public final synchronized static void loadLibrarys() {
 		if (LOADED.compareAndSet(false, true)) {
