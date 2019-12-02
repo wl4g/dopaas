@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.opencv.library;
 
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
@@ -81,7 +82,7 @@ public final class NativeLibraryLoader {
 		if (isNull(baseUrl)) {
 			throw new IllegalComponentStateException(String.format("Not found native library for path(%s)", path));
 		}
-		String[] files = new File(baseUrl.toURI()).list();
+		String[] files = new File(baseUrl.toURI()).list((dir, name) -> endsWithAny(name.toLowerCase(), ".dll", ".so", ".a"));
 		if (isNull(files) || files.length <= 0) {
 			throw new IllegalComponentStateException(String.format("Unsupported Current OS arch(%s) of OpenCv-java", OS_ARCH));
 		}
@@ -96,7 +97,7 @@ public final class NativeLibraryLoader {
 	 * @return
 	 */
 	private final static String getArchPath() {
-		if (equalsAnyIgnoreCase(OS_ARCH, "x64", "amd64", "x86_64", "ppc64")) {
+		if (equalsAnyIgnoreCase(OS_ARCH, "x64", "amd64", "x86_64", "ppc64", "ppc64le", "aarch64")) {
 			return "x64";
 		}
 		return "x86";
