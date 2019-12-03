@@ -10,20 +10,13 @@
     <!-- ohter -->
     <result column="remark" property="instanceName" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" extends="BaseResultMap" >
-    <result column="result" property="result" jdbcType="LONGVARCHAR" />
-  </resultMap>
+
   <sql id="Base_Column_List" >
     id, task_id, instance_id, status, create_date
   </sql>
-  <sql id="Blob_Column_List" >
-    result
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from ci_task_history_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -35,8 +28,7 @@
     insert into ci_task_history_instance (id, task_id, instance_id,
       status, create_date)
     values (#{id,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
-      #{result,jdbcType=LONGVARCHAR})
+      #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
     insert into ci_task_history_instance
@@ -56,9 +48,6 @@
       <if test="createDate != null" >
         create_date,
       </if>
-      <if test="result != null" >
-        result,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -75,9 +64,6 @@
       </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="result != null" >
-        #{result,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -96,9 +82,6 @@
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="result != null" >
-        result = #{result,jdbcType=LONGVARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -108,7 +91,6 @@
       instance_id = #{instanceId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      result = #{result,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
@@ -120,7 +102,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="getDetailByTaskId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="getDetailByTaskId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     d.*,i.remark
     from ci_task_history_instance d
