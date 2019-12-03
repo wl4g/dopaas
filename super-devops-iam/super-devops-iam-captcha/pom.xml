@@ -23,6 +23,11 @@
 			<artifactId>super-devops-iam-security</artifactId>
 			<version>master</version>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-tool-opencv</artifactId>
+			<version>master</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
