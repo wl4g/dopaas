@@ -18,7 +18,6 @@ package com.wl4g.devops.common.utils.io;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
@@ -234,7 +233,7 @@ public abstract class FileIOUtils extends FileUtils {
 			long c = 0, lastPos = -1, endPos = (startPos + aboutLimit);
 			while (raf.getFilePointer() > lastPos && (lastPos = raf.getFilePointer()) < endPos && ++c < DEFAULT_SAFE_READ_COUNT) {
 				String line = raf.readLine();
-				if(StringUtils.isNotBlank(line)){
+				if (nonNull(line)) {
 					line = new String(line.getBytes(ISO_8859_1), UTF_8);
 				}
 				if (nonNull(line)) {
