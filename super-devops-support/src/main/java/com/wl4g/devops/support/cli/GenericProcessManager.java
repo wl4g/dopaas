@@ -123,7 +123,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				String errmsg = EMPTY;
 				// Obtain process error message.
 				try {
-					errmsg = unsafeReadFullyToString(ps.getErrorStream());
+					errmsg = readFullyToString(ps.getErrorStream());
 				} catch (Exception e) {
 					errmsg = getRootCausesString(e);
 				}

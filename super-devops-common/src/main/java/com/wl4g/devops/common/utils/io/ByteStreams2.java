@@ -40,8 +40,8 @@ public abstract class ByteStreams2 {
 	 * @param in
 	 * @return
 	 */
-	public static String unsafeReadFullyToString(InputStream in) {
-		return unsafeReadFullyToString(in, "UTF-8");
+	public static String readFullyToString(InputStream in) {
+		return readFullyToString(in, "UTF-8");
 	}
 
 	/**
@@ -56,7 +56,7 @@ public abstract class ByteStreams2 {
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	public static String unsafeReadFullyToString(InputStream in, String charset) throws IllegalStateException {
+	public static String readFullyToString(InputStream in, String charset) throws IllegalStateException {
 		try {
 			byte[] buf = new byte[in.available()];
 			ByteStreams.readFully(in, buf);

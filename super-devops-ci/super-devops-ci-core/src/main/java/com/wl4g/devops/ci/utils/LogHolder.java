@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.utils;
 
 import com.google.common.annotations.Beta;
+import com.wl4g.devops.common.annotation.Unused;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,7 @@ import static org.springframework.util.Assert.*;
  * @since
  */
 @Beta
+@Unused
 public abstract class LogHolder {
 
 	/** Current default logs appender ID. */
