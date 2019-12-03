@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface VcsService {
 
-	PageModel list(PageModel pm);
+	PageModel list(PageModel pm,String name,Integer provider,Integer authType);
 
 	void save(Vcs vcs);
 

@@ -29,8 +29,6 @@ public class TaskHistoryInstance extends BaseBean implements Serializable {
 
 	private Integer status;
 
-	private String result;
-
 	private String instanceName;
 
 	public Integer getTaskId() {
@@ -55,14 +53,6 @@ public class TaskHistoryInstance extends BaseBean implements Serializable {
 
 	public void setStatus(Integer status) {
 		this.status = status;
-	}
-
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
 	}
 
 	public String getInstanceName() {
