@@ -235,15 +235,12 @@ public abstract class FileIOUtils extends FileUtils {
 				String line = raf.readLine();
 				if (nonNull(line)) {
 					line = new String(line.getBytes(ISO_8859_1), UTF_8);
-				}
-				if (nonNull(line)) {
 					lines.add(line);
 					if (stopper.apply(line)) {
 						hasNext = false;
 						break;
 					}
 				} else {
-					hasNext = false;
 					break;
 				}
 			}
@@ -353,8 +350,9 @@ public abstract class FileIOUtils extends FileUtils {
 		private long length;
 		private List<String> lines;
 
+		/** Is there a next line? */
 		@JsonProperty
-		private boolean hasNext;
+		private Boolean hasNext;
 
 		public ReadResult(long startPos, long endPos, long length, List<String> lines, boolean hasNext) {
 			this.startPos = startPos;
