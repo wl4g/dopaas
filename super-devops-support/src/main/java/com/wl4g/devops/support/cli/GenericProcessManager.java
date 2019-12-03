@@ -225,8 +225,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * Destroy process streams(IN/ERR {@link InputStream} and
-	 * {@link OutputStream}).
+	 * Destroy process streams(IN/ERR {@link InputStream} and {@link OutputStream}).
 	 * 
 	 * @param processId
 	 * @param ps
@@ -251,10 +250,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			}
 
 			// Destroy force.
-			for (long i = 0, c = (timeoutMs / DEFAULT_DESTROY_ROUND_MS); (ps.isAlive() || i < c); i++) {
+			for (long i = 0, c = (timeoutMs / DEFAULT_DESTROY_ROUND_MS); (ps.isAlive() && i < c); i++) {
 				try {
 					ps.destroyForcibly();
-					if (!ps.isAlive()) { // Failed destroy?
+					if (ps.isAlive()) { // Failed destroy?
 						sleep(DEFAULT_DESTROY_ROUND_MS);
 					}
 				} catch (Exception e) {

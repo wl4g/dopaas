@@ -101,7 +101,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		try {
 			TaskHistory taskHisy = provider.getContext().getTaskHistory();
 			// Update status to running.
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
+			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_RUNNING);
 			if (log.isInfoEnabled()) {
 				log.info("[PRE] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
 						TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
@@ -121,7 +121,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 			}
 
 			// Update status to success.
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, null); // TODO
+			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_SUCCESS);
 			if (log.isInfoEnabled()) {
 				log.info("[SUCCESS] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 						TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), projectId, projectName);
@@ -131,7 +131,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 				log.info("[FAILED] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 						TASK_STATUS_FAIL, taskDetailId, instance.getId(), projectId, projectName);
 			}
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, null); // TODO
+			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_FAIL);
 			throw new PipelineDeployingException(
 					String.format("Failed to deploying for taskDetailId:%s, instance:%s, projectId:%s, projectName:%s",
 							instance.getId(), projectId, projectName),
