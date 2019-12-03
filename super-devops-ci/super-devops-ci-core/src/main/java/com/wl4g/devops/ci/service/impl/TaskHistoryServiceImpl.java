@@ -173,12 +173,11 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	}
 
 	@Override
-	public void updateDetailStatusAndResult(int taskDetailId, int status, String result) {
+	public void updateDetailStatus(int taskDetailId, int status) {
 		TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();
 		taskHistoryInstance.preUpdate();
 		taskHistoryInstance.setId(taskDetailId);
 		taskHistoryInstance.setStatus(status);
-		taskHistoryInstance.setResult(result);
 		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryInstance);
 	}
 

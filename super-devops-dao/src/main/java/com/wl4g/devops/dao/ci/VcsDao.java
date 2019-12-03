@@ -17,6 +17,7 @@ package com.wl4g.devops.dao.ci;
 
 import com.github.pagehelper.Page;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import org.apache.ibatis.annotations.Param;
 
 public interface VcsDao {
 	int deleteByPrimaryKey(Integer id);
@@ -31,6 +32,6 @@ public interface VcsDao {
 
 	int updateByPrimaryKey(Vcs record);
 
-	Page<Vcs> list();
+	Page<Vcs> list(@Param("name")String name,@Param("provider")Integer provider,@Param("authType")Integer authType);
 
 }

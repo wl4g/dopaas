@@ -38,9 +38,9 @@ public class VcsServcieImpl implements VcsService {
 	private VcsDao vcsDao;
 
 	@Override
-	public PageModel list(PageModel pm) {
+	public PageModel list(PageModel pm, String name, Integer provider, Integer authType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(vcsDao.list());
+		pm.setRecords(vcsDao.list(name, provider, authType));
 		return pm;
 	}
 
@@ -78,7 +78,7 @@ public class VcsServcieImpl implements VcsService {
 
 	@Override
 	public List<Vcs> all() {
-		return vcsDao.list();
+		return vcsDao.list(null,null,null);
 	}
 
 }

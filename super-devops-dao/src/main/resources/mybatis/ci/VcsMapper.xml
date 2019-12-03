@@ -36,6 +36,15 @@
     <include refid="Base_Column_List" />
     from ci_vcs
     where del_flag != 1
+    <if test="name != null and name != '' " >
+      AND name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="provider != null" >
+      AND provider = #{provider,jdbcType=INTEGER}
+    </if>
+    <if test="authType != null" >
+      AND auth_type = #{authType,jdbcType=INTEGER}
+    </if>
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

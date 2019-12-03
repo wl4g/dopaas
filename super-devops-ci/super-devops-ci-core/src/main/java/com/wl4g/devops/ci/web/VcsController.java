@@ -37,9 +37,9 @@ public class VcsController extends BaseController {
 	private VcsService vcsService;
 
 	@RequestMapping("/list")
-	public RespBase<?> list(PageModel pm) {
+	public RespBase<?> list(PageModel pm, String name, Integer provider, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(vcsService.list(pm));
+		resp.setData(vcsService.list(pm, name, provider, authType));
 		return resp;
 	}
 
