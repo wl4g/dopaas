@@ -17,8 +17,8 @@ package com.wl4g.devops.support.cli;
 
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
-import com.wl4g.devops.common.task.GenericTaskRunner;
-import com.wl4g.devops.common.task.RunnerProperties;
+import com.wl4g.devops.common.utils.task.GenericTaskRunner;
+import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;

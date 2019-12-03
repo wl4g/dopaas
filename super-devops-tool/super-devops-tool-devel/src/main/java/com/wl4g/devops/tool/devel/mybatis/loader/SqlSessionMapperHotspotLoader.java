@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import com.wl4g.devops.common.task.GenericTaskRunner;
-import com.wl4g.devops.common.task.RunnerProperties;
+import com.wl4g.devops.common.utils.task.GenericTaskRunner;
+import com.wl4g.devops.common.utils.task.RunnerProperties;
 
 /**
  * Mybatis {@link SqlSessionFactory} developments hotspot mapper re-loader.

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.task;
+package com.wl4g.devops.common.utils.task.quartz;
 
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static com.wl4g.devops.common.utils.lang.DateUtils2.formatDate;
