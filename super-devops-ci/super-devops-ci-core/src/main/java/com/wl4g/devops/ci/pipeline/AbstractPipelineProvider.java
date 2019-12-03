@@ -191,15 +191,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		writeLogFile("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
+		writeBuildLog("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
 
 		// Execution command.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
-			writeLogFile(result.getMessage());
+			writeBuildLog(result.getMessage());
 		}
 		if (!isBlank(result.getErrmsg())) {
-			writeLogFile(result.getErrmsg());
+			writeBuildLog(result.getErrmsg());
 		}
 
 	}
@@ -219,14 +219,14 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		if (log.isInfoEnabled()) {
 			log.info("Decryption plain sshkey: {} => {}", cipherKey, "******");
 		}
-		writeLogFile("Decryption plain sshkey: %s => %s", cipherKey, "******");
+		writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******");
 		return sshkeyPlain;
 	}
 
 	/**
 	 * Execution distribution transfer to remote instances for deployments.
 	 */
-	protected void doTransferRemoteDeploying() {
+	protected final void executeRemoteDeploying() {
 		// Creating transfer instances jobs.
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
 			return (Runnable) () -> {
@@ -235,10 +235,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					writeALineFile(jobDeployerLog, LOG_FILE_START);
 					// Do deploying.
 					newDeployer(i).run();
-					writeLogFile("Deployed successful on instance(%s)", i);
+					writeBuildLog("Deployed successfully on instance(%s)", i);
 				} catch (Exception e) {
 					log.error(e.getMessage() + getStackTraceAsString(e));
-					writeLogFile(e.getMessage() + getStackTraceAsString(e));
+					writeBuildLog(e.getMessage() + getStackTraceAsString(e));
 				} finally {
 					writeBLineFile(jobDeployerLog, LOG_FILE_END);
 				}
@@ -248,8 +248,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
 			if (log.isInfoEnabled()) {
-				log.info("Transfer jobs starting...  for instances({}), {}", jobs.size(), getContext().getInstances());
+				log.info("Starting deploying...  for instances.size: {}, {}", jobs.size(), getContext().getInstances());
 			}
+			writeBuildLog("Starting deploying...  for instances.size: %s, %s", jobs.size(), getContext().getInstances());
 			jobExecutor.submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
 		}
 
@@ -264,12 +265,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected abstract Runnable newDeployer(AppInstance instance);
 
 	/**
-	 * Write provider log to file.
+	 * Write provider building log to file.
 	 * 
 	 * @param format
 	 * @param args
 	 */
-	protected void writeLogFile(String format, Object... args) {
+	protected void writeBuildLog(String format, Object... args) {
 		// Job logfile.
 		File jobLogFile = config.getJobLog(context.getTaskHistory().getId());
 		writeBLineFile(jobLogFile, String.format(format, args));

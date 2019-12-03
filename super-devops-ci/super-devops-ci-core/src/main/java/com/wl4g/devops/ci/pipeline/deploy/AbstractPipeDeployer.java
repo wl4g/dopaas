@@ -37,6 +37,7 @@ import java.util.Optional;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
@@ -212,6 +213,18 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog, String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;
+	}
+
+	/**
+	 * Write deploying log to file.
+	 * 
+	 * @param format
+	 * @param args
+	 */
+	protected void writeDeployLog(String format, Object... args) {
+		// Job deploying logfile.
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
+		writeBLineFile(jobDeployerLog, String.format(format, args));
 	}
 
 }
