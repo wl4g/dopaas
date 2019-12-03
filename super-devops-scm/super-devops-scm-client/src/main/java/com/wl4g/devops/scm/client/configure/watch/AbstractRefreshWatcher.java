@@ -16,9 +16,9 @@
 package com.wl4g.devops.scm.client.configure.watch;
 
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.task.GenericTaskRunner;
-import com.wl4g.devops.common.task.RunnerProperties;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
+import com.wl4g.devops.common.utils.task.GenericTaskRunner;
+import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;

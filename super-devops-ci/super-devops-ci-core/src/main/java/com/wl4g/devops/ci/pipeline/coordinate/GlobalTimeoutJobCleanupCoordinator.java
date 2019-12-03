@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.pipeline.coordinate;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.common.task.GenericTaskRunner;
-import com.wl4g.devops.common.task.RunnerProperties;
+import com.wl4g.devops.common.utils.task.GenericTaskRunner;
+import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
