@@ -86,7 +86,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		handleBackupAssets();
 
 		// Do transfer to remote jobs.
-		doTransferRemoteDeploying();
+		executeRemoteDeploying();
 
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
