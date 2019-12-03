@@ -28,7 +28,6 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
-import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -46,6 +45,7 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
@@ -232,14 +232,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			return (Runnable) () -> {
 				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
 				try {
-					FileIOUtils.writeALineFile(jobDeployerLog, LOG_FILE_START);
+					writeALineFile(jobDeployerLog, LOG_FILE_START);
+					// Do deploying.
 					newDeployer(i).run();
-					FileIOUtils.writeFile(jobDeployerLog, "Deploy Success");
+					writeLogFile("Deployed successful on instance(%s)", i);
 				} catch (Exception e) {
 					log.error(e.getMessage() + getStackTraceAsString(e));
-					writeBLineFile(jobDeployerLog, e.getMessage() + getStackTraceAsString(e));
+					writeLogFile(e.getMessage() + getStackTraceAsString(e));
 				} finally {
-					FileIOUtils.writeBLineFile(jobDeployerLog, LOG_FILE_END);
+					writeBLineFile(jobDeployerLog, LOG_FILE_END);
 				}
 			};
 		}).collect(toList());
