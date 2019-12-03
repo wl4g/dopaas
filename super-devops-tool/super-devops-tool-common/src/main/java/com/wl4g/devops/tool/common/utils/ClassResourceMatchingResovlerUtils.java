@@ -18,12 +18,9 @@ package com.wl4g.devops.tool.common.utils;
 import static java.util.Objects.isNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -38,89 +35,60 @@ import java.util.jar.JarFile;
 public abstract class ClassResourceMatchingResovlerUtils {
 
 	/**
-	 * Matching resolve scanner.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年12月3日
-	 * @since
-	 */
-	static interface Scan {
-
-		String CLASS_SUFFIX = ".class";
-
-		Set<Class<?>> doSearch(String packageName, Predicate<Class<?>> predicate);
-
-		default Set<Class<?>> doSearch(String packageName) {
-			return doSearch(packageName, null);
-		}
-
-	}
-
-	/**
 	 * JAR matching resolve scanner.
 	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年12月3日
-	 * @since
+	 * @param packageName
+	 * @param classLoader
+	 * @param processor
+	 * @param predicate
 	 */
-	static class JarScanner implements Scan {
+	public static void doSearch(String packageName, ClassLoader classLoader, ResolveProcessor processor,
+			Predicate<String> predicate) {
+		try {
+			Assert.hasText(packageName, "Matching package name can't empty.");
+			Assert.notNull(processor, "ResolveProcessor can't null");
 
-		@Override
-		public Set<Class<?>> doSearch(String packageName, Predicate<Class<?>> predicate) {
-			Set<Class<?>> classes = new HashSet<>();
-
-			try {
-				// 通过当前线程得到类加载器从而得到URL的枚举
-				Enumeration<URL> urlEnu = Thread.currentThread().getContextClassLoader()
-						.getResources(packageName.replace(".", "/"));
-				while (urlEnu.hasMoreElements()) {
-					/**
-					 * For example:
-					 * jar:file:/C:/Users/ibm/.m2/repository/junit/junit/4.12/junit-4.12.jar!/org/junit
-					 */
-					URL url = urlEnu.nextElement();
-					String protocol = url.getProtocol();
-					if ("jar".equalsIgnoreCase(protocol)) {
-						JarURLConnection conn = (JarURLConnection) url.openConnection();
-						if (isNull(conn)) {
-							continue;
-						}
-						JarFile jarFile = conn.getJarFile();
-						if (isNull(jarFile)) {
-							continue;
-						}
-						// 得到该jar文件下面的类实体
-						Enumeration<JarEntry> jarEntryEnu = jarFile.entries();
-						while (jarEntryEnu.hasMoreElements()) {
-							// For example:
-							// org/
-							// org/junit/
-							// org/junit/rules/
-							JarEntry entry = jarEntryEnu.nextElement();
-							String jarEntryName = entry.getName();
-							// 过滤不是class文件和不在basePack包名下的类
-							// TODO
-							if (jarEntryName.contains(".class") && jarEntryName.replaceAll("/", ".").startsWith(packageName)) {
-								String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replace("/", ".");
-								Class<?> cls = Class.forName(className);
-								if (isNull(predicate) || predicate.test(cls)) {
-									classes.add(cls);
-								}
+			classLoader = isNull(classLoader) ? Thread.currentThread().getContextClassLoader() : classLoader;
+			Enumeration<URL> urlEn = classLoader.getResources(packageName.replace(".", "/"));
+			while (urlEn.hasMoreElements()) {
+				// Example:[jar:file:/C:/Users/ibm/.m2/repository/junit/junit/4.12/junit-4.12.jar!/org/junit]
+				URL url = urlEn.nextElement();
+				String protocol = url.getProtocol();
+				if ("jar".equalsIgnoreCase(protocol)) {
+					JarURLConnection conn = (JarURLConnection) url.openConnection();
+					if (isNull(conn)) {
+						continue;
+					}
+					JarFile jarFile = conn.getJarFile();
+					if (isNull(jarFile)) {
+						continue;
+					}
+					// Obtain jar entity files.
+					Enumeration<JarEntry> jarEntryEn = jarFile.entries();
+					while (jarEntryEn.hasMoreElements()) {
+						// Example:[org/, org/junit/, org/junit/rules/]
+						JarEntry entry = jarEntryEn.nextElement();
+						String jarEntryName = entry.getName();
+						if (jarEntryName.replaceAll("/", ".").startsWith(packageName)) {
+							// if(jarEntryName.endsWith(".class"))
+							// String className = jarEntryName.substring(0,
+							// jarEntryName.lastIndexOf(".")).replace("/", ".");
+							if (isNull(predicate) || predicate.test(jarEntryName)) {
+								processor.doResolve(ResourceType.JAR, classLoader, jarEntryName);
 							}
 						}
-					} else if ("file".equalsIgnoreCase(protocol)) {
-						// 从maven子项目中扫描
-						FileScanner fileScanner = new FileScanner();
-						fileScanner.setDefaultClassPath(url.getPath().replace(packageName.replace(".", "/"), ""));
-						classes.addAll(fileScanner.doSearch(packageName, predicate));
 					}
+				} else if ("file".equalsIgnoreCase(protocol)) {
+					String basePackPath = packageName.replace(".", File.separator);
+					// 将包名转换为路径名
+					String classPath = url.getPath().replace(packageName.replace(".", "/"), "");
+					String searchPath = classPath + basePackPath;
+					doFindHierarchyPath(new File(searchPath), packageName, classLoader, processor, predicate, true);
 				}
-			} catch (ClassNotFoundException | IOException e) {
-				throw new IllegalStateException(e.getMessage(), e);
 			}
-			return classes;
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getMessage(), e);
 		}
-
 	}
 
 	/**
@@ -130,96 +98,37 @@ public abstract class ClassResourceMatchingResovlerUtils {
 	 * @version v1.0 2019年12月3日
 	 * @since
 	 */
-	static class FileScanner implements Scan {
-
-		private String defaultClassPath = FileScanner.class.getResource("/").getPath();
-
-		public String getDefaultClassPath() {
-			return defaultClassPath;
-		}
-
-		public void setDefaultClassPath(String defaultClassPath) {
-			this.defaultClassPath = defaultClassPath;
-		}
-
-		public FileScanner(String defaultClassPath) {
-			this.defaultClassPath = defaultClassPath;
-		}
-
-		public FileScanner() {
-		}
-
-		private static class ClassSearcher {
-
-			private Set<Class<?>> classPaths = new HashSet<>();
-
-			private Set<Class<?>> doPath(File file, String packageName, Predicate<Class<?>> predicate, boolean flag) {
-
-				if (file.isDirectory()) {
-					// 文件夹我们就递归
-					File[] files = file.listFiles();
-					if (!flag) {
-						packageName = packageName + "." + file.getName();
-					}
-					for (File f1 : files) {
-						doPath(f1, packageName, predicate, false);
-					}
-				} else { // 标准文件
-					// 标准文件我们就判断是否是class文件
-					if (file.getName().endsWith(CLASS_SUFFIX)) {
-						// 如果是class文件我们就放入我们的集合中。
-						try {
-							Class<?> clazz = Class
-									.forName(packageName + "." + file.getName().substring(0, file.getName().lastIndexOf(".")));
-							if (predicate == null || predicate.test(clazz)) {
-								classPaths.add(clazz);
-							}
-						} catch (ClassNotFoundException e) {
-							throw new IllegalStateException(e.getMessage(), e);
-						}
-					}
-				}
-				return classPaths;
+	private final static void doFindHierarchyPath(File file, String packageName, ClassLoader classLoader,
+			ResolveProcessor processor, Predicate<String> predicate, boolean flag) {
+		if (file.isDirectory()) {
+			File[] files = file.listFiles();
+			if (!flag) {
+				packageName = packageName + "." + file.getName();
 			}
-
+			for (File f : files) {
+				doFindHierarchyPath(f, packageName, classLoader, processor, predicate, false);
+			}
+		} else {
+			try {
+				// if (file.getName().endsWith(".class"))
+				// Class<?> clazz = Class
+				// .forName(packageName + "." + file.getName().substring(0,
+				// file.getName().lastIndexOf(".")));
+				if (isNull(predicate) || predicate.test(file.getName())) {
+					processor.doResolve(ResourceType.JAR, classLoader, file.getName());
+				}
+			} catch (Exception e) {
+				throw new IllegalStateException(e.getMessage(), e);
+			}
 		}
-
-		@Override
-		public Set<Class<?>> doSearch(String packageName, Predicate<Class<?>> predicate) {
-			// 先把包名转换为路径,首先得到项目的classpath
-			String classpath = defaultClassPath;
-			// 然后把我们的包名basPack转换为路径名
-			String basePackPath = packageName.replace(".", File.separator);
-			String searchPath = classpath + basePackPath;
-			return new ClassSearcher().doPath(new File(searchPath), packageName, predicate, true);
-		}
-
 	}
 
-	/**
-	 * Search scan classes of package name.
-	 * 
-	 * @param packageName
-	 * @return
-	 */
-	public static Set<Class<?>> searchClasses(String packageName) {
-		return searchClasses(packageName, null);
+	public static enum ResourceType {
+		JAR, FILE;
 	}
 
-	/**
-	 * Search scan classes of package name.
-	 * 
-	 * @param packageName
-	 * @param predicate
-	 * @return
-	 */
-	public static Set<Class<?>> searchClasses(String packageName, Predicate<Class<?>> predicate) {
-		Scan fScan = new FileScanner();
-		Set<Class<?>> fSearchs = fScan.doSearch(packageName, predicate);
-		Scan jarScan = new JarScanner();
-		Set<Class<?>> jarSearchs = jarScan.doSearch(packageName, predicate);
-		fSearchs.addAll(jarSearchs);
-		return fSearchs;
+	public static interface ResolveProcessor {
+		void doResolve(ResourceType type, ClassLoader classLoader, String pathname);
 	}
 
 }
