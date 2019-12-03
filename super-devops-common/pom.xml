@@ -16,21 +16,9 @@
 		<java.version>1.8</java.version>
 		<spring-boot.version>1.5.13.RELEASE</spring-boot.version>
 		<netty.version>4.1.42.Final</netty.version>
-		<jline.version>3.9.0</jline.version>
-		<commons-lang3.version>3.5</commons-lang3.version>
-		<commons-math3.version>3.6.1</commons-math3.version>
-		<commons-cli.version>1.4</commons-cli.version>
-		<commons-io.version>2.6</commons-io.version>
-		<commons-fileupload.version>1.4</commons-fileupload.version>
-		<commons-csv.version>1.0</commons-csv.version>
-		<ganymed-ssh2.version>262</ganymed-ssh2.version>
-		<protobuf.version>3.8.0</protobuf.version>
-		<protostuff.version>1.6.0</protostuff.version>
-		<user-agent.version>1.2.4</user-agent.version>
 		<hibernate-validator.version>6.0.16.Final</hibernate-validator.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<quartz.version>2.2.2</quartz.version>
-		<snappy.version>1.1.7.3</snappy.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -51,6 +39,11 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-tool-common</artifactId>
+			<version>master</version>
+		</dependency>
 		<!-- Spring based -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -133,12 +126,6 @@
 			<version>${validation-api.version}</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
-			<groupId>org.jline</groupId>
-			<artifactId>jline</artifactId>
-			<version>${jline.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
 			<scope>compile</scope>
@@ -153,104 +140,6 @@
 			<artifactId>netty-all</artifactId>
 			<version>${netty.version}</version>
 			<scope>compile</scope>
-		</dependency>
-		<!-- Commons utility -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${commons-lang3.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math3</artifactId>
-			<version>${commons-math3.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>${commons-cli.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>${commons-fileupload.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<version>${commons-csv.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- SSH2 -->
-		<dependency>
-			<groupId>ch.ethz.ganymed</groupId>
-			<artifactId>ganymed-ssh2</artifactId>
-			<version>${ganymed-ssh2.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- UnCompression -->
-		<dependency>
-			<groupId>org.xerial.snappy</groupId>
-			<artifactId>snappy-java</artifactId>
-			<version>${snappy.version}</version>
-		</dependency>
-		<!-- Protobuf -->
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>${protobuf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-core</artifactId>
-			<version>${protostuff.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-runtime</artifactId>
-			<version>${protostuff.version}</version>
-		</dependency>
-		<!-- User Agent -->
-		<dependency>
-			<groupId>nl.bitwalker</groupId>
-			<artifactId>UserAgentUtils</artifactId>
-			<version>${user-agent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jdk.tools</groupId>
-			<artifactId>jdk.tools</artifactId>
-			<version>${java.version}</version>
-			<scope>system</scope>
-			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>

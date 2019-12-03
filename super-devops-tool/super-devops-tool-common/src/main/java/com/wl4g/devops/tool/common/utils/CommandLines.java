@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * @version v1.0.0 2019-09-08
  * @since
  */
+@SuppressWarnings("deprecation")
 public abstract class CommandLines {
 
 	/**

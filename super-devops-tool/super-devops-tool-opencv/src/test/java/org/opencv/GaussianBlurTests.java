@@ -17,12 +17,12 @@ package org.opencv;
 
 import org.opencv.core.Core;
 
-import com.wl4g.devops.tool.opencv.library.NativeLibraryLoader;
+import com.wl4g.devops.tool.opencv.library.OpenCvNativeLibraryLoader;
 
 public class GaussianBlurTests {
 
 	static {
-		NativeLibraryLoader.loadLibrarys();
+		OpenCvNativeLibraryLoader.loadLibrarys();
 	}
 
 	public static void main(String[] args) {
