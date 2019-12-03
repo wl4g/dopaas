@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 
 import static ch.ethz.ssh2.ChannelCondition.*;
-import static com.wl4g.devops.common.utils.io.ByteStreams2.unsafeReadFullyToString;
+import static com.wl4g.devops.common.utils.io.ByteStreams2.readFullyToString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.springframework.util.Assert.*;
@@ -169,10 +169,10 @@ public abstract class SSH2Utils {
 		return executeWithCommand(host, user, pemPrivateKey, command, (s) -> {
 			String message = null, errmsg = null;
 			if (nonNull(s.getStdout())) {
-				message = unsafeReadFullyToString(s.getStdout());
+				message = readFullyToString(s.getStdout());
 			}
 			if (nonNull(s.getStderr())) {
-				errmsg = unsafeReadFullyToString(s.getStderr());
+				errmsg = readFullyToString(s.getStderr());
 			}
 			return new CommandResult(s.getExitSignal(), s.getExitStatus(), message, errmsg);
 		}, timeoutMs);

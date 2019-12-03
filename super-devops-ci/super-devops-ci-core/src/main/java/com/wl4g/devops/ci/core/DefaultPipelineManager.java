@@ -23,7 +23,6 @@ import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.ci.utils.LogHolder;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.common.utils.io.FileIOUtils.*;
@@ -224,14 +222,14 @@ public class DefaultPipelineManager implements PipelineManager {
 		return seekReadLines(logPath, startPos, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
 	}
 
-	public ReadResult logDetailFile(Integer taskHisId,Integer instanceId, Long startPos, Integer size) {
+	public ReadResult logDetailFile(Integer taskHisId, Integer instanceId, Long startPos, Integer size) {
 		if (isNull(startPos)) {
 			startPos = 0l;
 		}
 		if (isNull(size)) {
 			size = 100;
 		}
-		String logPath = config.getJobDeployerLog(taskHisId,instanceId).getAbsolutePath();
+		String logPath = config.getJobDeployerLog(taskHisId, instanceId).getAbsolutePath();
 		// End if 'EOF'
 		return seekReadLines(logPath, startPos, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
 	}
@@ -256,7 +254,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Starting pipeline job.
 		jobExecutor.getWorker().execute(() -> {
 			try {
-				//Pre Pileline Execute
+				// Pre Pileline Execute
 				prePipelineExecuteSuccess(taskId);
 
 				// Execution pipeline.
@@ -278,8 +276,8 @@ public class DefaultPipelineManager implements PipelineManager {
 			} catch (Throwable e) {
 				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
-				//TODO
-				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(),e.getMessage()+ getStackTraceAsString(e));
+				// TODO
+				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
 
 				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
@@ -290,8 +288,6 @@ public class DefaultPipelineManager implements PipelineManager {
 						provider.getClass().getSimpleName());
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
-				cleanupDefault(); // Help GC
-
 				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
@@ -321,9 +317,9 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Log file start EOF.
 		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
 
-		//remove log file if exist
+		// remove log file if exist
 		File file = config.getJobLog(taskId).getAbsoluteFile();
-		if(file.exists()){
+		if (file.exists()) {
 			file.delete();
 		}
 	}
@@ -435,8 +431,6 @@ public class DefaultPipelineManager implements PipelineManager {
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_FAIL, taskId);
 			} finally {
-				LogHolder.cleanupDefault(); // Help GC
-
 				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for rollback pipeline taskId: {}", taskId);

@@ -42,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
@@ -192,17 +191,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		logDefault("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
+		writeLogFile("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
+
 		// Execution command.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
-
-		logDefault("\n%s@%s -> [stdout]\n", user, remoteHost);
 		if (!isBlank(result.getMessage())) {
-			logDefault(result.getMessage());
+			writeLogFile(result.getMessage());
 		}
-		logDefault("\n%s@%s -> [stderr]\n", user, remoteHost);
 		if (!isBlank(result.getErrmsg())) {
-			logDefault(result.getErrmsg());
+			writeLogFile(result.getErrmsg());
 		}
 
 	}
@@ -220,10 +217,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		String cipherKey = config.getDeploy().getCipherKey();
 		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
 		if (log.isInfoEnabled()) {
-			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
+			log.info("Decryption plain sshkey: {} => {}", cipherKey, "******");
 		}
-
-		logDefault("Transfer plain sshkey: %s => %s", cipherKey, "******");
+		writeLogFile("Decryption plain sshkey: %s => %s", cipherKey, "******");
 		return sshkeyPlain;
 	}
 
@@ -236,14 +232,14 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			return (Runnable) () -> {
 				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
 				try {
-					FileIOUtils.writeALineFile(jobDeployerLog,LOG_FILE_START);
+					FileIOUtils.writeALineFile(jobDeployerLog, LOG_FILE_START);
 					newDeployer(i).run();
-					FileIOUtils.writeFile(jobDeployerLog,"Deploy Success");
-				}catch (Exception e){
-					log.error(e.getMessage()+ getStackTraceAsString(e));
-					writeBLineFile(jobDeployerLog,e.getMessage()+ getStackTraceAsString(e));
-				}finally {
-					FileIOUtils.writeBLineFile(jobDeployerLog,LOG_FILE_END);
+					FileIOUtils.writeFile(jobDeployerLog, "Deploy Success");
+				} catch (Exception e) {
+					log.error(e.getMessage() + getStackTraceAsString(e));
+					writeBLineFile(jobDeployerLog, e.getMessage() + getStackTraceAsString(e));
+				} finally {
+					FileIOUtils.writeBLineFile(jobDeployerLog, LOG_FILE_END);
 				}
 			};
 		}).collect(toList());
@@ -265,6 +261,18 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 */
 	protected abstract Runnable newDeployer(AppInstance instance);
+
+	/**
+	 * Write provider log to file.
+	 * 
+	 * @param format
+	 * @param args
+	 */
+	protected void writeLogFile(String format, Object... args) {
+		// Job logfile.
+		File jobLogFile = config.getJobLog(context.getTaskHistory().getId());
+		writeBLineFile(jobLogFile, String.format(format, args));
+	}
 
 	/**
 	 * Resolve commands placeholder variables.

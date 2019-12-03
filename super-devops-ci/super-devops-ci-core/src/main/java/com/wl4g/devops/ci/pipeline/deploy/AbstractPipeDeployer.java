@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.cli.SSH2Utils;
+import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.common.utils.codec.AES;
 import com.wl4g.devops.common.utils.io.FileIOUtils;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
@@ -39,6 +39,7 @@ import static com.wl4g.devops.ci.utils.LogHolder.*;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.common.utils.io.FileIOUtils.writeFile;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
@@ -105,18 +106,16 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
 
 			// Call PRE commands.
-			if(StringUtils.isNotBlank(taskHisy.getPreCommand())){
-				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
-						instance.getSshKey());
+			if (StringUtils.isNotBlank(taskHisy.getPreCommand())) {
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(), instance.getSshKey());
 			}
 
 			// Distributed deploying to remote.
 			doRemoteDeploying(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
 
 			// Call post remote commands (e.g. restart)
-			if(StringUtils.isNotBlank(taskHisy.getPostCommand())){
-				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
-						instance.getSshKey());
+			if (StringUtils.isNotBlank(taskHisy.getPostCommand())) {
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(), instance.getSshKey());
 			}
 
 			// Update status to success.
@@ -189,18 +188,20 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command));
-		// Execution command.
-		SSH2Utils.CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
+		writeFile(jobDeployerLog,
+				String.format("Deploying to remote %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command));
 
-		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("\n%s@%s -> [stdout]\n", user, remoteHost));
+		// Do execution.
+		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
-			FileIOUtils.writeBLineFile(jobDeployerLog,result.getMessage());
+			writeFile(jobDeployerLog, String.format("\n%s@%s -> [stdout]\n", user, remoteHost));
+			writeFile(jobDeployerLog, result.getMessage());
 		}
-		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("\n%s@%s -> [stderr]\n", user, remoteHost));
 		if (!isBlank(result.getErrmsg())) {
-			FileIOUtils.writeBLineFile(jobDeployerLog,result.getErrmsg());
+			writeFile(jobDeployerLog, String.format("\n%s@%s -> [stderr]\n", user, remoteHost));
+			writeFile(jobDeployerLog, result.getErrmsg());
 		}
+
 	}
 
 	/**
@@ -218,7 +219,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
 		}
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
-		FileIOUtils.writeBLineFile(jobDeployerLog,String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
+		FileIOUtils.writeBLineFile(jobDeployerLog, String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;
 	}
 
