@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.common.utils;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 
 import java.io.*;
@@ -39,35 +40,24 @@ import java.nio.file.StandardCopyOption;
 public abstract class NativeLoaderUtils {
 
 	/**
-	 * The minimum length a prefix for a file has to have according to
-	 * {@link File#createTempFile(String, String)}}.
-	 */
-	private static final int MIN_PREFIX_LENGTH = 3;
-	public static final String NATIVE_TMP_DIR = "native_libraries";
-
-	/**
-	 * Temporary directory which will contain the DLLs.
-	 */
-	private static File tmpDir;
-
-	/**
-	 * The file from JAR is copied into system temporary directory and then
-	 * loaded. The temporary file is deleted after exiting. Method uses String
-	 * as filename because the pathname is "abstract", not system-dependent.
+	 * The file from JAR(CLASSPATH) is copied into system temporary directory
+	 * and then loaded. The temporary file is deleted after exiting. Method uses
+	 * String as filename because the pathname is "abstract", not
+	 * system-dependent.
 	 * 
 	 * @param pathname
 	 *            To load the path of a dynamic library, you must start with
 	 *            '/', such as / lib / mylib.so, and you must start with '/'
-	 * @param loadClass
-	 *            The class used to provide {@link ClassLoader} to load the
-	 *            dynamic library. If it is null, use nativutils class
+	 * @param classLoader
+	 *            The classLoader used to provide {@link ClassLoader} to load
+	 *            the dynamic library. If it is null, use nativutils class
 	 * @throws IOException
 	 *             Dynamic library read write error
 	 * @throws FileNotFoundException
 	 *             The specified file was not found in the jar package
 	 */
-	public final synchronized static void loadLibraryFromJar(String pathname, Class<?> loadClass) throws IOException {
-		if (null == pathname || !pathname.startsWith("/")) {
+	public final synchronized static void loadLibraryWithClassPath(String pathname, ClassLoader classLoader) throws IOException {
+		if (isNull(pathname) || !pathname.startsWith("/")) {
 			throw new IllegalArgumentException("The path has to be absolute (start with '/').");
 		}
 		// Obtain filename from path
@@ -75,21 +65,16 @@ public abstract class NativeLoaderUtils {
 		String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
 
 		// Check if the filename is okay
-		if (filename == null || filename.length() < MIN_PREFIX_LENGTH) {
-			throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
-		}
-		// Create temporary folder
-		if (isNull(tmpDir)) {
-			tmpDir = createNativeTmpDirectory(NATIVE_TMP_DIR);
-			tmpDir.deleteOnExit();
+		if (isNull(filename) || filename.length() < NATIVE_LIBS_PATH_LEN) {
+			throw new IllegalArgumentException("The filename has to be at least " + NATIVE_LIBS_PATH_LEN + " characters long.");
 		}
 
 		// Dynamic library name under temporary folder
-		File tmpFile = new File(tmpDir, filename);
-		Class<?> clazz = isNull(loadClass) ? NativeLoaderUtils.class : loadClass;
+		File tmpFile = new File(nativeLibsTmpDir, filename);
+		classLoader = isNull(classLoader) ? NativeLoaderUtils.class.getClassLoader() : classLoader;
 
 		// Copy files from jar package to system temporary folder
-		try (InputStream in = clazz.getResourceAsStream(pathname)) {
+		try (InputStream in = classLoader.getResourceAsStream(pathname)) {
 			Files.copy(in, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			tmpFile.delete();
@@ -108,18 +93,41 @@ public abstract class NativeLoaderUtils {
 	}
 
 	/**
-	 * Create a temporary folder under the system temporary folder
+	 * Get or create a temporary folder under the system temporary folder
 	 * 
 	 * @param basePath
 	 * @return
 	 * @throws IOException
 	 */
-	private static File createNativeTmpDirectory(String basePath) throws IOException {
-		File nativeTmpDir = new File(JAVA_IO_TMPDIR, basePath + System.nanoTime());
-		if (!nativeTmpDir.mkdir()) {
-			throw new IOException("Failed to create temp directory " + nativeTmpDir.getName());
+	private final synchronized static File libsTmpDirectory0(String basePath) {
+		File libsTmpDir = null;
+		try {
+			libsTmpDir = new File(JAVA_IO_TMPDIR, basePath + "." + System.nanoTime());
+			if (!libsTmpDir.exists()) {
+				Assert.state(libsTmpDir.mkdir(), "Failed to create temp directory [" + libsTmpDir.getName() + "]");
+			}
+			return libsTmpDir;
+		} finally {
+			if (nonNull(libsTmpDir)) {
+				libsTmpDir.deleteOnExit();
+			}
 		}
-		return nativeTmpDir;
 	}
+
+	/**
+	 * The minimum length a prefix for a file has to have according to
+	 * {@link File#createTempFile(String, String)}}.
+	 */
+	final private static int NATIVE_LIBS_PATH_LEN = 3;
+
+	/**
+	 * Java dynamic link native libraries temporary base directory path.
+	 */
+	final private static String NATIVE_LIBS_TMP_DIR = "java_tmp_native_libraries";
+
+	/**
+	 * Temporary directory which will contain the DLLs.
+	 */
+	final private static File nativeLibsTmpDir = libsTmpDirectory0(NATIVE_LIBS_TMP_DIR);
 
 }
