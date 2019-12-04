@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
-import com.wl4g.devops.tool.common.utils.web.WebUtils2;
+import com.wl4g.devops.tool.common.web.WebUtils2;
 
 import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 

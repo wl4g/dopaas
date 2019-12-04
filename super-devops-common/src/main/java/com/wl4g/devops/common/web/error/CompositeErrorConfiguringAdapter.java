@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.web.error;
 
 import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.tool.common.utils.collection.OnceModifiableList;
+import com.wl4g.devops.tool.common.collection.OnceModifiableList;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;

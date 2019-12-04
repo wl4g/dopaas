@@ -30,7 +30,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
-import com.wl4g.devops.tool.common.utils.lang.Exceptions;
+import com.wl4g.devops.tool.common.lang.Exceptions;
 
 /**
  * IAM client authenticator controller

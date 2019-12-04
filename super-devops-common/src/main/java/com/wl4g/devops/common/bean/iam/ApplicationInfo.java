@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.iam;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 import java.io.Serializable;
 

@@ -41,9 +41,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
-import static com.wl4g.devops.common.utils.codec.Encodes.toBytes;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.deserialize;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
+import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;

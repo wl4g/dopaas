@@ -24,8 +24,8 @@ import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_I
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
-import static com.wl4g.devops.tool.common.utils.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
 
 import java.io.Serializable;
@@ -57,7 +57,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
-import com.wl4g.devops.tool.common.utils.lang.StringUtils2;
+import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
  * Abstract custom WEB session management

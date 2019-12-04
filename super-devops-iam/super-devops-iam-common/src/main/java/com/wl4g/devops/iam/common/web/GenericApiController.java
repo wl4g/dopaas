@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.wl4g.devops.support.cache.ScanCursor.CursorWrapper.*;
-import static com.wl4g.devops.tool.common.utils.lang.DateUtils2.formatDate;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.formatDate;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;

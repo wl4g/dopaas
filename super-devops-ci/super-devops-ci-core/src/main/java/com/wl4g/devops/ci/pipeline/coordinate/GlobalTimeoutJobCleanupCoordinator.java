@@ -29,7 +29,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
-import static com.wl4g.devops.tool.common.utils.lang.ThreadUtils.sleepRandom;
+import static com.wl4g.devops.tool.common.lang.ThreadUtils.sleepRandom;
 import static java.util.Objects.nonNull;
 
 import java.util.concurrent.locks.Lock;

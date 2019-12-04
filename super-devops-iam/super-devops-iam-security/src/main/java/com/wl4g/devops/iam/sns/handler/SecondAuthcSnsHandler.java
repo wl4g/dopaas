@@ -33,7 +33,6 @@ import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.
 import com.google.common.base.Splitter;
 import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
 import com.wl4g.devops.common.exception.iam.SecondAuthenticationException;
-import com.wl4g.devops.common.utils.id.RandomIds;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
@@ -45,7 +44,8 @@ import com.wl4g.devops.iam.sns.BindConnection;
 import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
-import com.wl4g.devops.tool.common.utils.web.WebUtils2;
+import com.wl4g.devops.tool.common.id.IdGenerators;
+import com.wl4g.devops.tool.common.web.WebUtils2;
 
 /**
  * Secondary authentication SNS handler
@@ -203,7 +203,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 	 * @return
 	 */
 	private String generateSecondAuthcCode(String application) {
-		return RandomIds.genVariableMeaningUUID("sac_", 32);
+		return IdGenerators.genVariableMeaningUUID("sac_", 32);
 	}
 
 }

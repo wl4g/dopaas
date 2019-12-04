@@ -21,7 +21,7 @@ import com.wl4g.devops.common.bean.srm.Querycriteria;
 import com.wl4g.devops.common.constants.SRMDevOpsConstants;
 import com.wl4g.devops.srm.handler.LogHandler;
 import com.wl4g.devops.srm.service.LogConsoleService;
-import com.wl4g.devops.tool.common.utils.lang.DateUtils2;
+import com.wl4g.devops.tool.common.lang.DateUtils2;
 
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;

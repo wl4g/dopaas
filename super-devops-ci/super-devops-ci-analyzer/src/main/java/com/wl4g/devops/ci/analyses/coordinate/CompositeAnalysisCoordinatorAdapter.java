@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.analyses.coordinate;
 import com.wl4g.devops.ci.analyses.model.AnalysingModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
-import com.wl4g.devops.tool.common.utils.collection.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.OnceModifiableMap;
 
 import org.springframework.util.Assert;
 

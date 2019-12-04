@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.vcs;
 
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.tool.common.utils.collection.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.OnceModifiableMap;
 
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.lib.Ref;

@@ -30,7 +30,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.tool.common.utils.io.FileSizeUtil;
+import com.wl4g.devops.tool.common.io.FileSizeUtil;
 import com.wl4g.devops.umc.client.utils.PlatformOSUtil;
 import com.wl4g.devops.umc.client.utils.PlatformOSUtil.MemInfo;
 

@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
-import static com.wl4g.devops.tool.common.utils.collection.Collections2.ensureList;
+import static com.wl4g.devops.tool.common.collection.Collections2.ensureList;
 import static java.lang.Math.abs;
 import static java.util.Collections.emptyList;
 

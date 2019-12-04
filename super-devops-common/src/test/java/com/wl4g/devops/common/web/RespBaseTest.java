@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.common.web;
 
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
 import java.util.ArrayList;
 import java.util.HashMap;

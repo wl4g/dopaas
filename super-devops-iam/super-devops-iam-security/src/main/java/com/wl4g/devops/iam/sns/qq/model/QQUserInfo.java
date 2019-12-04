@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.sns.qq.model;
 
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
-import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 public class QQUserInfo implements Oauth2UserProfile {
 	private static final long serialVersionUID = 843944424065492261L;

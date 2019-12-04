@@ -32,8 +32,8 @@ import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
-import static com.wl4g.devops.tool.common.utils.collection.Collections2.disDupCollection;
-import static com.wl4g.devops.tool.common.utils.lang.TypeConverts.parseIntOrNull;
+import static com.wl4g.devops.tool.common.collection.Collections2.disDupCollection;
+import static com.wl4g.devops.tool.common.lang.TypeConverts.parseIntOrNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 

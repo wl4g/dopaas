@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.realm;
 
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
