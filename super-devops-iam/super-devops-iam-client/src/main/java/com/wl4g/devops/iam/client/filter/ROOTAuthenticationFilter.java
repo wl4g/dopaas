@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.iam.client.filter;
 
-import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getAvaliableRequestRememberUrl;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.isXHRRequest;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.devops.tool.common.utils.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getAvaliableRequestRememberUrl;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.isXHRRequest;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 

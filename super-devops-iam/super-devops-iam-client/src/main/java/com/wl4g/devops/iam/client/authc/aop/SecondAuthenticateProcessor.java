@@ -20,11 +20,11 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
-import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
-import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.web.RespBase.RetCode.SECOND_UNAUTH;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.writeJson;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import java.util.HashMap;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.web;
+package com.wl4g.devops.tool.common.utils.web;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

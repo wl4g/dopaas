@@ -43,11 +43,12 @@ import static org.springframework.http.MediaType.*;
 import static com.google.common.base.Charsets.UTF_8;
 
 import static com.wl4g.devops.common.constants.DevOpsConstants.PARAM_STACK_TRACE;
-import static com.wl4g.devops.common.utils.web.WebUtils2.write;
-import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
-import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
 import static com.wl4g.devops.tool.common.utils.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.*;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.isTrue;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.write;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.writeJson;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.ResponseType.*;
 
 import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.config.ErrorControllerAutoConfiguration.ErrorControllerProperties;
@@ -204,12 +205,11 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 		if (log.isDebugEnabled()) {
 			return true;
 		}
-
 		String parameter = request.getParameter(PARAM_STACK_TRACE);
 		if (parameter == null) {
 			return false;
 		}
-		return Boolean.valueOf(parameter.toLowerCase(ENGLISH));
+		return isTrue(parameter.toLowerCase(ENGLISH), false);
 	}
 
 	/**

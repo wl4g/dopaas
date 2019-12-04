@@ -41,10 +41,10 @@ import com.wl4g.devops.tool.common.utils.lang.Exceptions;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.isTrue;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;

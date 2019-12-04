@@ -26,8 +26,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
 import com.wl4g.devops.common.exception.iam.IllegalRequestException;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.tool.common.utils.web.WebUtils2;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_WECHAT_MP_RECEIVE;
 
