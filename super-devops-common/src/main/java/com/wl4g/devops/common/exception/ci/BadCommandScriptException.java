@@ -17,7 +17,7 @@ package com.wl4g.devops.common.exception.ci;
 
 import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
 
-public class InvalidCommandScriptException extends CiException implements BizInvalidArgRestfulException {
+public class BadCommandScriptException extends CiException implements BizInvalidArgRestfulException {
 	private static final long serialVersionUID = -7034899390745766939L;
 
 	/**
@@ -25,7 +25,7 @@ public class InvalidCommandScriptException extends CiException implements BizInv
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public InvalidCommandScriptException() {
+	public BadCommandScriptException() {
 		super();
 	}
 
@@ -38,7 +38,7 @@ public class InvalidCommandScriptException extends CiException implements BizInv
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public InvalidCommandScriptException(String message) {
+	public BadCommandScriptException(String message) {
 		super(message);
 	}
 
@@ -59,7 +59,7 @@ public class InvalidCommandScriptException extends CiException implements BizInv
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidCommandScriptException(String message, Throwable cause) {
+	public BadCommandScriptException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -77,7 +77,7 @@ public class InvalidCommandScriptException extends CiException implements BizInv
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidCommandScriptException(Throwable cause) {
+	public BadCommandScriptException(Throwable cause) {
 		super(cause);
 	}
 

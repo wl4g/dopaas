@@ -25,7 +25,7 @@ import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
+import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
@@ -48,6 +48,7 @@ import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.getDateTime;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -236,10 +237,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					writeALineFile(jobDeployerLog, LOG_FILE_START);
 					// Do deploying.
 					newDeployer(i).run();
-					writeBuildLog("Deployed successfully on instance(%s)", i);
+
+					writeBuildLog("Successful deployed cluster:%s to remote instance:%s@%s",
+							getContext().getAppCluster().getName(), i.getSshUser(), i.getHostname());
 				} catch (Exception e) {
-					log.error(e.getMessage() + getStackTraceAsString(e));
-					writeBuildLog(e.getMessage() + getStackTraceAsString(e));
+					String logmsg = writeBuildLog("Failed to deployed to remote\nCaused by:\n", getStackTraceAsString(e));
+					log.error(logmsg);
 				} finally {
 					writeBLineFile(jobDeployerLog, LOG_FILE_END);
 				}
@@ -248,10 +251,11 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
+			String logmsg = writeBuildLog("Start to deploying cluster:%s to remote instance(size=%s)... ", jobs.size(),
+					getContext().getAppCluster().getName(), getContext().getInstances().size());
 			if (log.isInfoEnabled()) {
-				log.info("Starting deploying...  for instances.size: {}, {}", jobs.size(), getContext().getInstances());
+				log.info(logmsg);
 			}
-			writeBuildLog("Starting deploying...  for instances.size: %s, %s", jobs.size(), getContext().getInstances());
 			jobExecutor.submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
 		}
 
@@ -270,11 +274,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * 
 	 * @param format
 	 * @param args
+	 * @return Returns the actual log content, excluding time prefixes such as
+	 *         append.
 	 */
-	protected void writeBuildLog(String format, Object... args) {
-		// Job logfile.
+	protected String writeBuildLog(String format, Object... args) {
+		String content = String.format(format, args);
+		String message = String.format("%s - pipe(%s) : %s", getDateTime(), getContext().getTaskHistory().getId(), content);
 		File jobLogFile = config.getJobLog(context.getTaskHistory().getId());
-		writeBLineFile(jobLogFile, String.format(format, args));
+		writeBLineFile(jobLogFile, message);
+		return content;
 	}
 
 	/**
@@ -367,11 +375,11 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			if (containsAny(commands, "{", "}")) {
 				if (contains(commands, "{") && contains(commands, "}")) {
 					String invalidVar = commands.substring(commands.indexOf("{"), commands.indexOf("}") + 1);
-					throw new InvalidCommandScriptException(String.format(
-							"Invalid placeholder '%s' in commands script. See:https://github.com/wl4g/super-devops/blob/master/super-devops-ci/README.md",
+					throw new BadCommandScriptException(String.format(
+							"Bad placeholder '%s' in commands script. See:https://github.com/wl4g/super-devops/blob/master/super-devops-ci/README.md",
 							invalidVar));
 				} else {
-					throw new InvalidCommandScriptException(String.format("Invalid commands script for: %s", commands));
+					throw new BadCommandScriptException(String.format("Bad commands script for: %s", commands));
 				}
 			}
 
