@@ -32,7 +32,7 @@ import java.util.jar.JarFile;
  * @version v1.0 2019年12月3日
  * @since
  */
-public abstract class ClassResourceMatchingResovlerUtils {
+public abstract class ClassResourceMatchResovlerUtils {
 
 	/**
 	 * JAR matching resolve scanner.

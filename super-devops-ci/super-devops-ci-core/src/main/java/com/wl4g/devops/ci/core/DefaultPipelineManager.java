@@ -27,12 +27,12 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
+import com.wl4g.devops.common.framework.context.DelegatePrototypeBeanFactory;
 import com.wl4g.devops.common.utils.io.FileIOUtils.*;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
-import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBeanFactory;
 import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected CiCdProperties config;
 	@Autowired
-	protected DelegateAliasPrototypeBeanFactory beanFactory;
+	protected DelegatePrototypeBeanFactory beanFactory;
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
