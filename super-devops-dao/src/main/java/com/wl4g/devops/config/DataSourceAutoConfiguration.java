@@ -19,7 +19,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.tool.common.crypto.AES;
 
 import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -60,7 +60,7 @@ import java.util.Properties;
  */
 @Configuration
 public class DataSourceAutoConfiguration {
-	final private static Logger log = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Value("${mybatis.typeAliasesPackage}")
 	private String typeAliasesPackage;

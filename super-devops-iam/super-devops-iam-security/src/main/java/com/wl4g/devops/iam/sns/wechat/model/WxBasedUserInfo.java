@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.sns.wechat.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
-import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 public class WxBasedUserInfo extends WxBasedResponse implements Oauth2UserProfile {
 	private static final long serialVersionUID = 843944424065492261L;

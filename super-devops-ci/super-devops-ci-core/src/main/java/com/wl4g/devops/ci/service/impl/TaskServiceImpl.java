@@ -26,7 +26,7 @@ import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.tool.common.utils.lang.DateUtils2;
+import com.wl4g.devops.tool.common.lang.DateUtils2;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

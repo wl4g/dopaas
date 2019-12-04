@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.wl4g.devops.common.utils.codec.Encodes.toBytes;
+import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 

@@ -30,19 +30,19 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
-import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
-import com.wl4g.devops.tool.common.utils.web.WebUtils2;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.web.WebUtils2;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getFullRequestURI;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.safeDecodeURL;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.toQueryParams;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURI;
+import static com.wl4g.devops.tool.common.web.WebUtils2.safeDecodeURL;
+import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CALLBACK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 

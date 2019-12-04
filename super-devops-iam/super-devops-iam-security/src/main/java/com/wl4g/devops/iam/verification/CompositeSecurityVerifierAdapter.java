@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.tool.common.utils.collection.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.OnceModifiableMap;
 
 /**
  * Composite verification adapter.

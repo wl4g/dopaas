@@ -21,7 +21,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.cleanURI;
+import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;

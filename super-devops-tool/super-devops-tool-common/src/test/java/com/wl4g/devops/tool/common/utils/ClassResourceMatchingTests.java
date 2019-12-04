@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.utils;
 
+import com.wl4g.devops.tool.common.resources.ClassResourceMatchResovlerUtils;
+
 public class ClassResourceMatchingTests {
 
 	public static void main(String[] args) {

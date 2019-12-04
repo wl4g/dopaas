@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.sns.qq.model;
 import org.apache.shiro.util.Assert;
 
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
-import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 public class QQOpenId implements Oauth2OpenId {
 

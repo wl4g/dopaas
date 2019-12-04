@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

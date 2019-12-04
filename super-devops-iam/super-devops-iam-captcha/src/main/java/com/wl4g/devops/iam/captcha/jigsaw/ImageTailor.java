@@ -30,8 +30,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 
-import static com.wl4g.devops.common.utils.codec.Compresss.snappyCompress;
-import static com.wl4g.devops.common.utils.codec.Compresss.snappyUnCompress;
+import static com.wl4g.devops.tool.common.codec.Compresss.snappyCompress;
+import static com.wl4g.devops.tool.common.codec.Compresss.snappyUnCompress;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;

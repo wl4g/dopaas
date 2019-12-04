@@ -19,7 +19,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
-import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 public class WxBasedAccessToken extends WxBasedResponse implements Oauth2AccessToken {
 	private static final long serialVersionUID = 6525294825751214763L;

@@ -57,7 +57,7 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.isEqualWithDomain;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;

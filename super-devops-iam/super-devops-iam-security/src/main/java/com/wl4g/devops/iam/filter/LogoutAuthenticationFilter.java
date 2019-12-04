@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.filter;
 
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.isTrue;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;

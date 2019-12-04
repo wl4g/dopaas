@@ -21,7 +21,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.io.File;
 
-import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
+import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
 import static org.springframework.util.StringUtils.getFilename;
 
 /**

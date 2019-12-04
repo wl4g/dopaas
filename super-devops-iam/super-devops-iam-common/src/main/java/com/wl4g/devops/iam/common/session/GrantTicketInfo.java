@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.session;
 
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notEmpty;
 

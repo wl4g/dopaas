@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.wl4g.devops.common.bean.BaseBean.*;
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**

@@ -39,7 +39,7 @@ import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.sessi
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.TEXT_SMS;
 import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
 import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
-import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;

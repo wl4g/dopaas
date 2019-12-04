@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 public class WxUserInfo extends WxBasedUserInfo {
 	private static final long serialVersionUID = 843944424065492261L;

@@ -39,8 +39,8 @@ import javax.servlet.ServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.devops.tool.common.utils.collection.Collections2.isEmptyArray;
-import static com.wl4g.devops.tool.common.utils.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsAny;

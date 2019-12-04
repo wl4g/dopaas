@@ -17,7 +17,7 @@ package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.common.utils.bean.BeanUtils2;
 import com.wl4g.devops.shell.annotation.ShellOption;
-import com.wl4g.devops.tool.common.utils.reflect.TypeUtils;
+import com.wl4g.devops.tool.common.reflect.TypeUtils;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
