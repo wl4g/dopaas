@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.serialize;
+package com.wl4g.devops.tool.common.utils.serialize;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
  * @time 2017年4月13日
  * @since
  */
-public abstract class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
+public abstract class SerializeUtils {
 
 	/**
 	 * Annotate to object copying, only copy the methods that match.

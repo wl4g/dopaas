@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.common.web.model;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.support.cache.ScanCursor.CursorWrapper.parse;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

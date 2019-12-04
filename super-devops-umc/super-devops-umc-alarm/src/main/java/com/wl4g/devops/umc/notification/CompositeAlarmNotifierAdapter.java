@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
+import com.wl4g.devops.tool.common.utils.collection.OnceModifiableMap;
 
 /**
  * Alarm notifier adapter.

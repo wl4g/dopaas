@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 
 import static ch.ethz.ssh2.ChannelCondition.*;
-import static com.wl4g.devops.common.utils.io.ByteStreams2.readFullyToString;
+import static com.wl4g.devops.tool.common.utils.io.ByteStreams2.readFullyToString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.springframework.util.Assert.*;

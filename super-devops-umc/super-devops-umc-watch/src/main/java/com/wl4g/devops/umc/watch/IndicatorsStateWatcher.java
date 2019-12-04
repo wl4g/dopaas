@@ -16,7 +16,7 @@
 package com.wl4g.devops.umc.watch;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_FETCH_META;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;

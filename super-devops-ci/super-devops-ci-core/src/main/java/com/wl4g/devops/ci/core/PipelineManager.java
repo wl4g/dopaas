@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.core;
 import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
-import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
+import com.wl4g.devops.tool.common.utils.io.FileIOUtils.ReadResult;
 
 /**
  * CICD pipeline entry management.

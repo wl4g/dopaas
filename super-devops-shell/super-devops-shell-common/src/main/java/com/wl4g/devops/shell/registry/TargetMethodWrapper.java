@@ -41,10 +41,10 @@ import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 
 import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isGenericAccessibleModifier;
-import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
-import static com.wl4g.devops.common.utils.reflect.Types.isGeneralSetType;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
 import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
+import static com.wl4g.devops.tool.common.utils.reflect.TypeUtils.isBaseType;
+import static com.wl4g.devops.tool.common.utils.reflect.TypeUtils.isGeneralSetType;
 
 /**
  * Shell component target method wrapper

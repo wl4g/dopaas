@@ -15,13 +15,17 @@
  */
 package com.wl4g.devops.tool.common.utils;
 
+import static com.wl4g.devops.tool.common.utils.lang.SystemUtils2.LOCAL_PROCESS_ID;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
+import static org.apache.commons.lang3.SystemUtils.USER_NAME;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+
+import com.wl4g.devops.tool.common.utils.lang.Assert;
 
 /**
  * * A simple library class which helps with loading dynamic libraries stored in
@@ -123,7 +127,7 @@ public abstract class NativeLoaderUtils {
 	/**
 	 * Java dynamic link native libraries temporary base directory path.
 	 */
-	final private static String NATIVE_LIBS_TMP_DIR = "java_tmp_native_libraries";
+	final private static String NATIVE_LIBS_TMP_DIR = "/javanativelibs_" + USER_NAME + "/" + LOCAL_PROCESS_ID + "/";
 
 	/**
 	 * Temporary directory which will contain the DLLs.

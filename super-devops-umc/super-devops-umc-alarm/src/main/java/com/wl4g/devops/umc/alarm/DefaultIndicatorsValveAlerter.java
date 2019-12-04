@@ -36,8 +36,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;

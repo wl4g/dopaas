@@ -28,7 +28,7 @@ import java.util.Optional;
 
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
 import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isGenericAccessibleModifier;
-import static com.wl4g.devops.common.utils.reflect.Types.convertToBaseOrSimpleSet;
+import static com.wl4g.devops.tool.common.utils.reflect.TypeUtils.convertToBaseOrSimpleSet;
 import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;

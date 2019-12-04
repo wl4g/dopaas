@@ -30,8 +30,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
-import static com.wl4g.devops.common.utils.lang.TypeConverts.parseIntOrNull;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.tool.common.utils.lang.TypeConverts.parseIntOrNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**

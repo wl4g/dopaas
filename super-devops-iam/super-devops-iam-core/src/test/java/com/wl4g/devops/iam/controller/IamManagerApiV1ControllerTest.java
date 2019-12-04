@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.web.RespBase;

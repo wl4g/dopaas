@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.lang;
+package com.wl4g.devops.tool.common.utils.lang;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.utils.lang.Assert.notNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.cache;
 
+import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -45,8 +46,6 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Charsets;
-
-import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;

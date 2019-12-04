@@ -52,12 +52,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
+import com.wl4g.devops.tool.common.utils.lang.StringUtils2;
 
 /**
  * Abstract custom WEB session management

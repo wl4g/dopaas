@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.io;
+package com.wl4g.devops.tool.common.utils.io;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.FileUtils;
@@ -29,9 +29,9 @@ import java.util.function.Function;
 
 import static com.google.common.base.Charsets.ISO_8859_1;
 import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.tool.common.utils.lang.Assert.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
-import static org.springframework.util.Assert.*;
 
 /**
  * Enhanced files IO operation implements.</br>

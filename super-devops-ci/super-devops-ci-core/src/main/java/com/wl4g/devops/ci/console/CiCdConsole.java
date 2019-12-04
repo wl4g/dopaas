@@ -25,9 +25,9 @@ import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.common.utils.lang.TableFormatters.*;
-import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.shell.processor.ShellHolder.printf;
+import static com.wl4g.devops.tool.common.utils.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.tool.common.utils.lang.TableFormatters.*;
 
 /**
  * CI/CD console point

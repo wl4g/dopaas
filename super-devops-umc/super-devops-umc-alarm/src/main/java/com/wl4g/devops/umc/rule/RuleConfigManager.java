@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
+import static com.wl4g.devops.tool.common.utils.collection.Collections2.safeList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
