@@ -99,8 +99,8 @@ public class DelegatePrototypeBeanFactory {
 				BeanDefinition bd = registry.getBeanDefinition(beanName);
 				if (nonNull(beanName) && bd.isPrototype()) {
 					if (bd instanceof AnnotatedBeanDefinition) {
-						if (log.isInfoEnabled()) {
-							log.info("Register prototype beanClass with AnnotatedBeanDefinition ... - {}", bd);
+						if (log.isDebugEnabled()) {
+							log.debug("Register prototype bean with AnnotatedBeanDefinition... - {}", bd);
 						}
 
 						AnnotatedBeanDefinition abd = (AnnotatedBeanDefinition) bd;
@@ -125,11 +125,11 @@ public class DelegatePrototypeBeanFactory {
 								beanAliass = getAnnotationDelegateAliasValue(metadata);
 							}
 						}
-						if (!isBlank(prototypeBeanClassName)) {
+						if (!isBlank(prototypeBeanClassName) && nonNull(beanAliass)) {
 							try {
 								Class<?> beanClass = forName(prototypeBeanClassName, getDefaultClassLoader());
 								if (DelegatePrototypeBean.class.isAssignableFrom(beanClass)) {
-									putPrototypeBeanClassAlias((Class<DelegatePrototypeBean>) beanClass,
+									registerPrototypeBean((Class<DelegatePrototypeBean>) beanClass,
 											ArrayUtils.add(beanAliass, beanName));
 								}
 							} catch (LinkageError | ClassNotFoundException e) {
@@ -174,12 +174,12 @@ public class DelegatePrototypeBeanFactory {
 		 * @param beanAliass
 		 */
 		@SuppressWarnings("unchecked")
-		private void putPrototypeBeanClassAlias(Class<? extends DelegatePrototypeBean> beanClass, String... beanAliass) {
+		private void registerPrototypeBean(Class<? extends DelegatePrototypeBean> beanClass, String... beanAliass) {
 			if (nonNull(beanAliass)) {
 				for (String alias : beanAliass) {
 					if (isNull(globalAliasRegistry.putIfAbsent(alias, (Class<DelegatePrototypeBean>) beanClass))) {
 						if (log.isInfoEnabled()) {
-							log.info("Registered prototype beanClass of - {}", beanClass);
+							log.info("Registered prototype bean for alias: {}, class: {}", alias, beanClass);
 						}
 					}
 				}
