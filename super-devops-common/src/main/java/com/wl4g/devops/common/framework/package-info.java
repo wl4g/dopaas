@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.utils;
-
-public class ClassResourceMatchingTests {
-
-	public static void main(String[] args) {
-		ClassResourceMatchResovlerUtils.doSearch("org.xerial.snappy", null, (type, classLoader, pathname) -> {
-			try {
-				System.out.println(pathname);
-				// InputStream in = classLoader.getResourceAsStream(pathname);
-				// System.out.println(in.available());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}, null);
-	}
-
-}
+/**
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年12月4日
+ * @since
+ */
+package com.wl4g.devops.common.framework;
