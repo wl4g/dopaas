@@ -18,9 +18,10 @@ package com.wl4g.devops.support.cache;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.wl4g.devops.common.utils.lang.StringUtils2;
-import com.wl4g.devops.common.utils.serialize.ObjectUtils;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
+import com.wl4g.devops.tool.common.utils.lang.StringUtils2;
+import com.wl4g.devops.tool.common.utils.serialize.SerializeUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -31,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
+import static com.wl4g.devops.tool.common.utils.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -672,16 +673,16 @@ public class JedisService {
 		if (object instanceof String) {
 			return StringUtils2.getBytes((String) object);
 		} else {
-			return ObjectUtils.serialize(object);
+			return SerializeUtils.serialize(object);
 		}
 	}
 
 	public byte[] toBytes(Object object) {
-		return ObjectUtils.serialize(object);
+		return SerializeUtils.serialize(object);
 	}
 
 	public Object toObject(byte[] bytes) {
-		return ObjectUtils.unserialize(bytes);
+		return SerializeUtils.unserialize(bytes);
 	}
 
 	private Object doExecuteWithRedis(Callback callback) {

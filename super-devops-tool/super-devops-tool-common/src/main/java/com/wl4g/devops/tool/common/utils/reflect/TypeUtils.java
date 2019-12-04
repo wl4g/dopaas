@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.reflect;
+package com.wl4g.devops.tool.common.utils.reflect;
 
 import static java.lang.reflect.Modifier.*;
 import static java.util.Objects.isNull;
@@ -35,13 +35,13 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * Java class type processing tool.</br>
- * See: {@link com.wl4g.devops.common.utils.reflect.Types}
+ * See: {@link com.wl4g.devops.tool.common.utils.reflect.TypeUtils}
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年11月10日
  * @since
  */
-public abstract class Types {
+public abstract class TypeUtils {
 
 	/**
 	 * Local base non-customized wrap classes.

@@ -44,8 +44,8 @@ import org.springframework.util.CollectionUtils;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 
-import static com.wl4g.devops.common.utils.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.common.utils.web.UserAgentUtils.*;
+import static com.wl4g.devops.tool.common.utils.lang.StringUtils2.isDomain;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;

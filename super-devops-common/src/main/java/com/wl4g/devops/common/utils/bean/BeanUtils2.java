@@ -18,8 +18,8 @@ package com.wl4g.devops.common.utils.bean;
 import java.lang.reflect.Field;
 
 import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
-import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
-import static com.wl4g.devops.common.utils.reflect.Types.isGeneralSetType;
+import static com.wl4g.devops.tool.common.utils.reflect.TypeUtils.isBaseType;
+import static com.wl4g.devops.tool.common.utils.reflect.TypeUtils.isGeneralSetType;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 

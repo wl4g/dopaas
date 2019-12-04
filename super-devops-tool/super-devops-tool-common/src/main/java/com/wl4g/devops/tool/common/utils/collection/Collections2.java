@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.lang;
+package com.wl4g.devops.tool.common.utils.collection;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+import static com.wl4g.devops.tool.common.utils.collection.CollectionUtils2.isEmpty;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +90,7 @@ public abstract class Collections2 {
 	 * @return
 	 */
 	public static <T> List<T> safeList(List<T> list) {
-		return isEmpty(list) ? Collections.emptyList() : list;
+		return isEmpty(list) ? emptyList() : list;
 	}
 
 	/**
@@ -108,7 +110,7 @@ public abstract class Collections2 {
 	 * @return
 	 */
 	public static <T> Set<T> safeSet(Set<T> set) {
-		return isEmpty(set) ? Collections.emptySet() : set;
+		return isEmpty(set) ? emptySet() : set;
 	}
 
 	/**
@@ -118,7 +120,7 @@ public abstract class Collections2 {
 	 * @return
 	 */
 	public static <K, V> Map<K, V> safeMap(Map<K, V> map) {
-		return isEmpty(map) ? Collections.emptyMap() : map;
+		return CollectionUtils2.isEmpty(map) ? emptyMap() : map;
 	}
 
 	/**

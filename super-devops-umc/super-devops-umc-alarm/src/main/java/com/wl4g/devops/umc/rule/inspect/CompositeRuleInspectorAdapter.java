@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
+import com.wl4g.devops.tool.common.utils.collection.OnceModifiableMap;
 import com.wl4g.devops.umc.rule.Aggregator;
 
 /**

@@ -25,9 +25,9 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
-import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.common.web.error.ErrorConfiguring;
+import com.wl4g.devops.tool.common.utils.lang.Exceptions;
 
 /**
  * IAM authorization error configuring.

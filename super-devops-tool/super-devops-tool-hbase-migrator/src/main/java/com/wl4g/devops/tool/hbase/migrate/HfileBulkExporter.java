@@ -19,8 +19,8 @@ import static com.google.common.io.Resources.*;
 import static com.wl4g.devops.tool.hbase.migrate.mapred.AbstractTransformHfileMapper.*;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.wl4g.devops.tool.common.utils.Assert;
-import com.wl4g.devops.tool.common.utils.CommandLines.Builder;
+import com.wl4g.devops.tool.common.utils.cli.CommandLines.Builder;
+import com.wl4g.devops.tool.common.utils.lang.Assert;
 import com.wl4g.devops.tool.hbase.migrate.mapred.NothingTransformMapper;
 
 import org.apache.commons.cli.CommandLine;

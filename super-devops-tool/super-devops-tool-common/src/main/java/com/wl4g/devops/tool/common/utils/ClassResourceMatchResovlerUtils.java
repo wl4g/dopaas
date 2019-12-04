@@ -25,6 +25,8 @@ import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.wl4g.devops.tool.common.utils.lang.Assert;
+
 /**
  * Based on CLASSPATH matching resolve scanner utility tools.
  * 

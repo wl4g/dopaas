@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import com.google.common.annotations.Beta;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**

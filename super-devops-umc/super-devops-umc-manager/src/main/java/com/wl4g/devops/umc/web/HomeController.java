@@ -16,9 +16,9 @@
 package com.wl4g.devops.umc.web;
 
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
+import com.wl4g.devops.tool.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.umc.handle.DashboardHandle;
 import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;

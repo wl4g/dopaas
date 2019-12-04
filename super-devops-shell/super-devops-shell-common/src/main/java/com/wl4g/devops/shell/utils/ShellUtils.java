@@ -16,8 +16,8 @@
 package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.common.utils.bean.BeanUtils2;
-import com.wl4g.devops.common.utils.reflect.Types;
 import com.wl4g.devops.shell.annotation.ShellOption;
+import com.wl4g.devops.tool.common.utils.reflect.TypeUtils;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -49,7 +49,7 @@ public abstract class ShellUtils extends BeanUtils2 {
 			if (value == null) { // Using default-value
 				ShellOption spt = sf.getAnnotation(ShellOption.class);
 				if (spt != null && !isBlank(spt.defaultValue())) {
-					value = Types.convertToBaseOrSimpleSet(spt.defaultValue(), tf.getType());
+					value = TypeUtils.convertToBaseOrSimpleSet(spt.defaultValue(), tf.getType());
 				}
 			}
 			if (obj != null && value != null) {

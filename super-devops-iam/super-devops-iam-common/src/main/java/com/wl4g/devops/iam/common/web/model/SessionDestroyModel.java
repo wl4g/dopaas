@@ -17,9 +17,9 @@ package com.wl4g.devops.iam.common.web.model;
 
 import com.google.common.annotations.Beta;
 
-import java.io.Serializable;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import java.io.Serializable;
 
 /**
  * Sessions destroy model.

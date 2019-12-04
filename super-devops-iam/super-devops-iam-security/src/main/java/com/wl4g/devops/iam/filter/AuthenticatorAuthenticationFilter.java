@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCausesString;
+import static com.wl4g.devops.tool.common.utils.lang.Exceptions.getRootCausesString;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;

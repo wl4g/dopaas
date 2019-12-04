@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.lang;
+package com.wl4g.devops.tool.common.utils.lang;
 
 import org.apache.commons.lang3.SystemUtils;
 
@@ -27,12 +27,12 @@ import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
+import static com.wl4g.devops.tool.common.utils.lang.Assert.hasText;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 import static java.util.Collections.list;
 import static java.util.Collections.sort;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasText;
 
 /**
  * System utility tools

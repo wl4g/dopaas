@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.wl4g.devops.common.utils.codec.Encodes.encodeBase64;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * JIGSAW slider CAPTCHA verification handler.

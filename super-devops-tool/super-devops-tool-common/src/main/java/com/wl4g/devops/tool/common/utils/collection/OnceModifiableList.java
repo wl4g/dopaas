@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.lang;
+package com.wl4g.devops.tool.common.utils.collection;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.springframework.util.Assert;
+import com.wl4g.devops.tool.common.utils.lang.Assert;
 
 /**
  * Once modifiable list.

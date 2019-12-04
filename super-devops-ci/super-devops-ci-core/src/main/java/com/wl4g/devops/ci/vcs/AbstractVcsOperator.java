@@ -33,7 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.Assert.*;
 
 /**

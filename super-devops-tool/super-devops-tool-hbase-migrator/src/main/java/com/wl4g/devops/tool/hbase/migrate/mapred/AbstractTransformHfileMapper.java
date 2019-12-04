@@ -22,7 +22,7 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import com.wl4g.devops.tool.common.utils.Assert;
+import com.wl4g.devops.tool.common.utils.lang.Assert;
 
 import java.io.IOException;
 import java.util.Optional;

@@ -25,10 +25,11 @@ import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.parseJSON;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * GIF CAPTCHA verification handler.

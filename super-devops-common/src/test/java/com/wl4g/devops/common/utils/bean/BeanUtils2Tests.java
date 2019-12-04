@@ -17,7 +17,7 @@ package com.wl4g.devops.common.utils.bean;
 
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
 import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 public class BeanUtils2Tests {

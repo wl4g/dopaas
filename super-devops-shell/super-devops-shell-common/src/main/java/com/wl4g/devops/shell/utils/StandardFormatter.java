@@ -26,7 +26,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
+import static com.wl4g.devops.tool.common.utils.reflect.TypeUtils.isBaseType;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
