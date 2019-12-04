@@ -30,7 +30,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
@@ -55,6 +54,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
+import com.wl4g.devops.tool.common.utils.web.WebUtils2;
 
 /**
  * Abstract based social networking services handler

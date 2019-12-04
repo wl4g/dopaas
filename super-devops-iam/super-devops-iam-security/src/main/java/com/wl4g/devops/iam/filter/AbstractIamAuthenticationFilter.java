@@ -20,14 +20,6 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSIO
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMSERVER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
-import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getBaseURIForDefault;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.devops.common.utils.web.WebUtils2.safeEncodeURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.toQueryParams;
-import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.SESSION_STATUS_AUTHC;
@@ -39,6 +31,14 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.extParameterVal
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
 import static com.wl4g.devops.tool.common.utils.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.applyQueryURL;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.cleanURI;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getBaseURIForDefault;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.safeEncodeURL;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.toQueryParams;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.writeJson;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -52,8 +52,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.utils.web.WebUtils2;
-import com.wl4g.devops.common.utils.web.WebUtils2.ResponseType;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
@@ -64,6 +62,8 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
+import com.wl4g.devops.tool.common.utils.web.WebUtils2;
+import com.wl4g.devops.tool.common.utils.web.WebUtils2.ResponseType;
 
 import java.io.IOException;
 import java.net.URI;

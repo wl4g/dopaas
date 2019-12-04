@@ -15,11 +15,13 @@
  */
 package com.wl4g.devops.tool.common.utils.lang;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static org.apache.commons.lang3.RandomUtils.nextInt;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,10 +39,7 @@ import com.google.common.collect.Lists;
  * @since
  */
 public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils {
-
 	private final static char SEPARATOR = '_';
-	private final static String CHARSET_NAME = "UTF-8";
-	private final static Random random = new Random();
 
 	/**
 	 * Mail regular expression
@@ -71,6 +70,9 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	final public static String REGEX_URL = "^((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&amp;%_\\./-~-]*)?$";
 
 	private final static String CHINESE_REGEX = "[\u4e00-\u9fa5]+";
+	private static final String FOLDER_SEPARATOR = "/";
+	private static final char EXTENSION_SEPARATOR = '.';
+
 	private final static Pattern patternChinese = Pattern.compile(CHINESE_REGEX);
 	private final static Pattern patternLetter = Pattern.compile("[A-Za-z]");
 
@@ -81,15 +83,7 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 * @return
 	 */
 	public static byte[] getBytes(String str) {
-		if (str != null) {
-			try {
-				return str.getBytes(CHARSET_NAME);
-			} catch (UnsupportedEncodingException e) {
-				return null;
-			}
-		} else {
-			return null;
-		}
+		return !isBlank(str) ? str.getBytes(UTF_8) : null;
 	}
 
 	/**
@@ -99,11 +93,7 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 * @return
 	 */
 	public static String toString(byte[] bytes) {
-		try {
-			return new String(bytes, CHARSET_NAME);
-		} catch (UnsupportedEncodingException e) {
-			return EMPTY;
-		}
+		return new String(bytes, UTF_8);
 	}
 
 	/**
@@ -667,14 +657,14 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 		Integer result = null;
 		boolean flag = true;
 		while (flag) {
-			num1 = createRandomStr(min, max);
-			num2 = createRandomStr(min, max);
+			num1 = nextInt(min, max);
+			num2 = nextInt(min, max);
 			if (num1 < num2) {
 				num1 += num2;
 				num2 = num1 - num2;
 				num1 = num1 - num2;
 			}
-			switch (createRandomStr(0, 3)) {
+			switch (nextInt(0, 3)) {
 			case 0:
 				result = (num1 + num2);
 				expression = new StringBuffer().append(num1.intValue()).append(" + ").append(num2.intValue()).append(" = ?")
@@ -716,49 +706,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	}
 
 	/**
-	 * 随机字符串
-	 * 
-	 * @param len
-	 *            生成随机字符串的位数
-	 * @return len位随机字符串
-	 * @throws Exception
-	 */
-	public static String createRandomStr(Integer len) {
-		StringBuffer buff = new StringBuffer();
-
-		for (int i = 0; i < len; i++) {
-
-			// 随机控制是生成数字、大写、小写字母
-			int controlType = random.nextInt(3);
-			Character ch = 'W'; // 默认字符
-			if (controlType == 0) { // 生成简单数字
-				buff.append(random.nextInt(10));
-				continue;
-			} else if (controlType == 1) { // 生成大写字母
-				Integer simpleNumCharUpper = random.nextInt(25);
-				ch = (char) (simpleNumCharUpper + 65);
-			} else if (controlType == 2) { // 生成小写字母
-				Integer simpleNumCharLower = random.nextInt(25);
-				ch = (char) (simpleNumCharLower + 97);
-			}
-			buff.append(ch);
-		}
-		return buff.toString();
-	}
-
-	/**
-	 * 获取指定区间(参数数组中最大和最小, 包含两端)的一个随机自然数.
-	 * 
-	 * @param min
-	 * @param max
-	 * @return 从min 到 max 的随机自然数
-	 */
-	public static int createRandomStr(int min, int max) {
-
-		return random.nextInt(max - min + 1) + min;
-	}
-
-	/**
 	 * 校验是否非数字
 	 * 
 	 * @param str
@@ -766,7 +713,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 * @return 是否数字
 	 */
 	public static boolean isNaN(String str) {
-
 		return str.matches(REGEX_IS_NUMBER);
 	}
 
@@ -778,7 +724,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 * @return 是否是小数
 	 */
 	public static boolean isDecimal(String str) {
-
 		return str.matches(REGEX_IS_DECIMALS);
 	}
 
@@ -790,7 +735,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 * @return 是否是合法邮箱格式
 	 */
 	public static boolean isMail(String str) {
-
 		return str.matches(REGEX_IS_MAIL);
 	}
 
@@ -802,7 +746,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 * @return 是否是合法IP 格式
 	 */
 	public static boolean isIP(String str) {
-
 		return str.matches(REGEX_IS_IP);
 	}
 
@@ -909,6 +852,49 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	}
 
 	/**
+	 * Extract the filename from the given Java resource path, e.g.
+	 * {@code "mypath/myfile.txt" -> "myfile.txt"}.
+	 * 
+	 * @param path
+	 *            the file path (may be {@code null})
+	 * @return the extracted filename, or {@code null} if none
+	 */
+	public static String getFilename(String path) {
+		if (path == null) {
+			return null;
+		}
+
+		int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+		return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
+	}
+
+	/**
+	 * Extract the filename extension from the given Java resource path, e.g.
+	 * "mypath/myfile.txt" -> "txt".
+	 * 
+	 * @param path
+	 *            the file path (may be {@code null})
+	 * @return the extracted filename extension, or {@code null} if none
+	 */
+	public static String getFilenameExtension(String path) {
+		if (path == null) {
+			return null;
+		}
+
+		int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
+		if (extIndex == -1) {
+			return null;
+		}
+
+		int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+		if (folderIndex > extIndex) {
+			return null;
+		}
+
+		return path.substring(extIndex + 1);
+	}
+
+	/**
 	 * 根据数字表达式计算出对应表达式的值
 	 * 
 	 * @author His father is wangl.sir
@@ -916,7 +902,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	 * @sine
 	 */
 	static class Expression {
-
 		private final static String CHAE_L = "(";
 		private final static String CHAE_R = ")";
 		private final static String ADD = "+";
@@ -1689,7 +1674,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 	}
 
 	public static void main(String[] args) {
-		System.out.println(createRandomStr(5));
 		ExpressVo vo = createRandomExpres(1, 10);
 		System.out.println(vo.getExpression());
 		System.out.println(vo.getResult());

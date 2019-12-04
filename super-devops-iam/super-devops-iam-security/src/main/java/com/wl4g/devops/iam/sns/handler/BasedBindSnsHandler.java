@@ -25,7 +25,6 @@ import org.springframework.cglib.beans.BeanMap;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
@@ -35,6 +34,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
+import com.wl4g.devops.tool.common.utils.web.WebUtils2;
 
 import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 

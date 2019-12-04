@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.web;
+package com.wl4g.devops.tool.common.utils.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,15 +37,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.springframework.http.MediaType;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
+import com.google.common.net.MediaType;
+import com.wl4g.devops.tool.common.utils.collection.CollectionUtils2;
+import com.wl4g.devops.tool.common.utils.lang.Assert;
+import com.wl4g.devops.tool.common.utils.lang.StringUtils2;
 
-import static com.wl4g.devops.common.utils.web.UserAgentUtils.*;
 import static com.wl4g.devops.tool.common.utils.lang.StringUtils2.isDomain;
+import static com.wl4g.devops.tool.common.utils.web.UserAgentUtils.*;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
@@ -67,7 +67,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * @since
  */
 @Beta
-public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
+public abstract class WebUtils2 {
 
 	/**
 	 * URL scheme(HTTPS)
@@ -152,7 +152,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * @throws IOException
 	 */
 	public static void writeJson(HttpServletResponse response, String json) throws IOException {
-		write(response, HttpServletResponse.SC_OK, MediaType.APPLICATION_JSON_UTF8_VALUE, json.getBytes(Charsets.UTF_8));
+		write(response, HttpServletResponse.SC_OK, MediaType.JSON_UTF_8.toString(), json.getBytes(Charsets.UTF_8));
 	}
 
 	/**
@@ -200,7 +200,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * @return
 	 */
 	public static boolean isMediaRequest(String path) {
-		String ext = org.springframework.util.StringUtils.getFilenameExtension(path);
+		String ext = StringUtils2.getFilenameExtension(path);
 		for (String media : MEDIA_BASE) {
 			if (equalsIgnoreCase(ext, media)) {
 				return true;
@@ -239,7 +239,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 * @return Return TRUE with true/t/y/yes/on/1/enabled
 	 */
 	public static boolean isTrue(String value, boolean defaultValue) {
-		if (StringUtils.isEmpty(value)) {
+		if (isBlank(value)) {
 			return defaultValue;
 		}
 		return (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("1")
@@ -288,7 +288,7 @@ public abstract class WebUtils2 extends org.springframework.web.util.WebUtils {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static String applyQueryURL(String uri, Map queryParams) {
-		if (CollectionUtils.isEmpty(queryParams)) {
+		if (CollectionUtils2.isEmpty(queryParams)) {
 			return uri;
 		}
 

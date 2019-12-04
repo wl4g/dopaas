@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.attacks.csrf;
 
-import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getFullRequestURL;
 
 import java.io.IOException;
 

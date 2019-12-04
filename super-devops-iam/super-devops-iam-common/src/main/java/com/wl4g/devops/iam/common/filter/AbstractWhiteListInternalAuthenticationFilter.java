@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.filter;
 
-import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.getFullRequestURL;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
@@ -26,9 +26,9 @@ import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.util.WebUtils;
 
 import com.wl4g.devops.common.kit.access.IPAccessControl;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.tool.common.utils.web.WebUtils2;
 
 /**
  * Interactive authentication processing filter for internal and application

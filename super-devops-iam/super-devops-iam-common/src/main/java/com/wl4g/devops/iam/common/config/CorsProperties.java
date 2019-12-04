@@ -32,7 +32,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import com.wl4g.devops.tool.common.utils.collection.Collections2;
 
-import static com.wl4g.devops.common.utils.web.WebUtils2.isSameWithOrigin;
+import static com.wl4g.devops.tool.common.utils.web.WebUtils2.isSameWithOrigin;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
