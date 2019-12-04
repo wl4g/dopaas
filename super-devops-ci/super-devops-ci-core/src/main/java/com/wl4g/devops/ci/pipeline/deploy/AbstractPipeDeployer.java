@@ -39,7 +39,7 @@ import java.util.Optional;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeFile;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.getDateTime;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
 
@@ -177,22 +177,28 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	 */
 	protected void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
 		hasText(command, "Commands must not be empty.");
-		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		writeFile(jobDeployerLog,
-				String.format("Deploying to remote %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command));
+		writeDeployLog("Execute to remote %s@%s, timeout:%s, command:[%s]", user, remoteHost, timeoutMs, command);
 
 		// Do execution.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
-			writeFile(jobDeployerLog, String.format("\n%s@%s -> [stdout]\n", user, remoteHost));
-			writeFile(jobDeployerLog, result.getMessage());
+			String logmsg = writeDeployLog("%s@%s, command:[%s], Stdout:\n%s", user, remoteHost, command, result.getMessage());
+			if (log.isInfoEnabled()) {
+				log.info(logmsg);
+			}
 		}
 		if (!isBlank(result.getErrmsg())) {
-			writeFile(jobDeployerLog, String.format("\n%s@%s -> [stderr]\n", user, remoteHost));
-			writeFile(jobDeployerLog, result.getErrmsg());
+			String logmsg = writeDeployLog("%s@%s, command:[%s], Stderr:\n%s", user, remoteHost, command, result.getErrmsg());
+			if (log.isInfoEnabled()) {
+				log.info(logmsg);
+			}
+
+			// Strictly handle, as long as there is error message in remote
+			// command execution, throw error.
+			throw new PipelineDeployingException(logmsg);
 		}
 
 	}
@@ -222,10 +228,13 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	 * @param format
 	 * @param args
 	 */
-	protected void writeDeployLog(String format, Object... args) {
-		// Job deploying logfile.
+	protected String writeDeployLog(String format, Object... args) {
+		String content = String.format(format, args);
+		String message = String.format("%s - pipe(%s), c(%s), i(%s) : %s", getDateTime(), getContext().getTaskHistory().getId(),
+				instance.getClusterId(), instance.getId(), content);
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
-		writeBLineFile(jobDeployerLog, String.format(format, args));
+		writeBLineFile(jobDeployerLog, message);
+		return content;
 	}
 
 }
