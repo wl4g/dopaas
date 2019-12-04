@@ -41,7 +41,7 @@ import com.wl4g.devops.tool.common.lang.Assert;
  * @version v1.0 2019年12月3日
  * @since
  */
-public abstract class ClassPathNativeLoaderUtils {
+public abstract class ClassPathNativeLoader {
 
 	/**
 	 * The file from JAR(CLASSPATH) is copied into system temporary directory
@@ -75,7 +75,7 @@ public abstract class ClassPathNativeLoaderUtils {
 
 		// Dynamic library name under temporary folder
 		File tmpFile = new File(nativeLibsTmpDir, filename);
-		classLoader = isNull(classLoader) ? ClassPathNativeLoaderUtils.class.getClassLoader() : classLoader;
+		classLoader = isNull(classLoader) ? ClassPathNativeLoader.class.getClassLoader() : classLoader;
 
 		// Copy files from jar package to system temporary folder
 		try (InputStream in = classLoader.getResourceAsStream(pathname)) {
