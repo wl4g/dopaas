@@ -42,7 +42,7 @@ spring:
         store:
           derby:
           opentsdb:
-            host: http://10.0.0.160
+            host: http://10.0.0.161
             port: 4242
         receiver:
           http:
@@ -56,6 +56,12 @@ spring:
         watch:
           zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
           fetch-cache-sec: 1800
+  mail:
+    host: smtp.exmail.qq.com
+    port: 465
+    username: syslog@7782.co
+    password: Sm#1234
+    protocol: smtp
 
 # Spring-security config.
 security.user:
