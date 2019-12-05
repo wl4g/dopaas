@@ -21,18 +21,17 @@ import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import java.util.concurrent.locks.Lock;
+
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
 import static com.wl4g.devops.tool.common.lang.ThreadUtils.sleepRandom;
 import static java.util.Objects.nonNull;
-
-import java.util.concurrent.locks.Lock;
 
 /**
  * Global timeout job handler finalizer.
@@ -94,14 +93,15 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 				// Cleanup timeout jobs on this node, nodes that do not
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
-					taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutMs());
-					if (log.isDebugEnabled()) {
-						log.debug("Updated pipeline timeout jobs, with jobTimeoutMs:{}, global jobCleanMaxIntervalMs:{}",
-								config.getBuild().getJobTimeoutMs(), maxIntervalMs);
+					int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
+					if (log.isInfoEnabled() && count > 0) {
+						log.info(
+								"Updated pipeline timeout jobs, with jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}, count:{}",
+								config.getBuild().getJobTimeoutSec(), maxIntervalMs, count);
 					}
 				} else if (log.isDebugEnabled()) {
-					log.debug("Skip cleanup jobs ... jobTimeoutMs:{}, global jobCleanMaxIntervalMs:{}",
-							config.getBuild().getJobTimeoutMs(), maxIntervalMs);
+					log.debug("Skip cleanup jobs ... jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}",
+							config.getBuild().getJobTimeoutSec(), maxIntervalMs);
 				}
 			} catch (Throwable ex) {
 				log.error("Failed to timeout jobs cleanup", ex);
