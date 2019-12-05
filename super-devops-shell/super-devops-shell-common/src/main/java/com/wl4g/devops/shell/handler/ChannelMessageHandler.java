@@ -25,7 +25,7 @@ import java.util.function.Function;
 
 import static java.lang.System.err;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Shell message handler

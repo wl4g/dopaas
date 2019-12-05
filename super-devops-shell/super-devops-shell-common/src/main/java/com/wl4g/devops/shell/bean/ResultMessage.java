@@ -16,7 +16,7 @@
 package com.wl4g.devops.shell.bean;
 
 import static com.wl4g.devops.shell.bean.RunState.*;
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Result transform message

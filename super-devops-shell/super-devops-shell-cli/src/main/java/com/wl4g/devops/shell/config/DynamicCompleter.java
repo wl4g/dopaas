@@ -26,7 +26,7 @@ import org.jline.reader.ParsedLine;
 import org.jline.reader.impl.completer.StringsCompleter;
 
 import static com.wl4g.devops.shell.annotation.ShellOption.*;
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.utils.LineUtils;

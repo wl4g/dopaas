@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.config;
 
-import static org.springframework.util.Assert.state;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.config;
 
-import static org.springframework.util.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 import java.net.URL;
 

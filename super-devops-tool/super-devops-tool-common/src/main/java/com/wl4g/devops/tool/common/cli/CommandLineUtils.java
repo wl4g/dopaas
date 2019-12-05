@@ -39,7 +39,7 @@ import com.wl4g.devops.tool.common.lang.Assert;
  * @since
  */
 @SuppressWarnings("deprecation")
-public abstract class CommandLines {
+public abstract class CommandLineUtils {
 
 	/**
 	 * Command line builder tool.

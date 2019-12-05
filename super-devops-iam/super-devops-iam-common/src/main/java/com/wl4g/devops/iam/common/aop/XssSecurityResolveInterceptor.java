@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isCompatibleType;
+import static com.wl4g.devops.tool.common.bean.BeanUtils2.doWithDeepFields;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isCompatibleType;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;

@@ -26,12 +26,12 @@ import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
-import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.tool.common.cli.SSH2Utils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AES;
 
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
-import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.tool.common.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.shell.command;
 
+import static com.wl4g.devops.tool.common.cli.StandardFormatter.getHelpFormat;
 import static java.lang.System.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -41,8 +42,7 @@ import com.wl4g.devops.shell.config.DefaultBeanRegistry;
 import com.wl4g.devops.shell.runner.AbstractRunner;
 import com.wl4g.devops.shell.utils.LineUtils;
 
-import static org.springframework.util.Assert.*;
-import static com.wl4g.devops.shell.utils.StandardFormatter.getHelpFormat;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Default internal command.

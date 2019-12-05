@@ -41,6 +41,8 @@ import org.apache.commons.lang3.StringUtils;
  * @see ClassUtils
  * @see CollectionUtils
  * @see StringUtils
+ * @see {@link org.apache.commons.lang3.ObjectUtils}
+ * @see {@link org.springframework.util.ObjectUtils}
  */
 public abstract class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
 

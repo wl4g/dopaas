@@ -18,8 +18,7 @@ package com.wl4g.devops.shell.registry;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import static java.lang.reflect.Modifier.*;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

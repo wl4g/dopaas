@@ -19,8 +19,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 import com.wl4g.devops.shell.config.Configuration;
 
