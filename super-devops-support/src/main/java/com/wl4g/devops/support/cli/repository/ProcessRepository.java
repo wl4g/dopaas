@@ -46,6 +46,18 @@ public interface ProcessRepository {
 	void register(String processId, ProcessInfo process);
 
 	/**
+	 * Set whether the current process is allowed to interrupt, for example:
+	 * when processing a lengthy task, when some key steps are executed, it can
+	 * be set as not to interrupt, which is very useful to ensure the security
+	 * of the task.
+	 * 
+	 * @param processId
+	 * @param interruptible
+	 * @throws NoSuchProcessException
+	 */
+	void setInterruptible(String processId, boolean interruptible) throws NoSuchProcessException;
+
+	/**
 	 * Get command-line process information.
 	 * 
 	 * @param processId
@@ -81,14 +93,22 @@ public interface ProcessRepository {
 		/** Process ID */
 		final private String processId;
 
-		/** Process context directory */
-		final private File pwdDir;
-
 		/** Process commands */
 		final private List<String> commands;
 
+		/** Process context directory */
+		final private File pwdDir;
+
 		/** Process commands standard output file */
 		final private File stdout;
+
+		/**
+		 * Set whether the current process is allowed to interrupt, for example:
+		 * when processing a lengthy task, when some key steps are executed, it
+		 * can be set as not to interrupt, which is very useful to ensure the
+		 * security of the task.
+		 */
+		private boolean interruptible = false;
 
 		/** Process object */
 		@JsonIgnore
@@ -119,6 +139,14 @@ public interface ProcessRepository {
 
 		public File getStdout() {
 			return stdout;
+		}
+
+		public boolean isInterruptible() {
+			return interruptible;
+		}
+
+		public void setInterruptible(boolean interruptible) {
+			this.interruptible = interruptible;
 		}
 
 		public Process getProcess() {

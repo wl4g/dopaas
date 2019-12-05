@@ -43,6 +43,11 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
+	public void setInterruptible(String processId, boolean interruptible) throws NoSuchProcessException {
+		get(processId).setInterruptible(interruptible);
+	}
+
+	@Override
 	public ProcessInfo get(String processId) throws NoSuchProcessException {
 		ProcessInfo process = registry.get(processId);
 		if (isNull(process)) {
