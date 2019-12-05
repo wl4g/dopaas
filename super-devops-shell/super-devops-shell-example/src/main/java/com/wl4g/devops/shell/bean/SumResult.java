@@ -17,7 +17,7 @@ package com.wl4g.devops.shell.bean;
 
 import java.io.Serializable;
 
-import com.wl4g.devops.shell.annotation.PropertyDescription;
+import com.wl4g.devops.tool.common.cli.annotation.PropertyDescription;
 
 public class SumResult implements Serializable {
 

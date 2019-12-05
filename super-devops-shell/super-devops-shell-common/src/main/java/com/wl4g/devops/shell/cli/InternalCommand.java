@@ -22,7 +22,7 @@ import java.util.List;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import static com.wl4g.devops.shell.utils.LineUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Internal commands

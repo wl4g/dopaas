@@ -167,8 +167,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		// Stderr/Stdout stream process.
 		CountDownLatch latch = new CountDownLatch(2);
 		try {
-			submitProcessStream(ps, ps.getErrorStream(), executor, latch, callback, true);
-			submitProcessStream(ps, ps.getInputStream(), executor, latch, callback, false);
+			processStream(ps, ps.getErrorStream(), executor, latch, callback, true);
+			processStream(ps, ps.getInputStream(), executor, latch, callback, false);
 			latch.await(timeoutMs, TimeUnit.MILLISECONDS); // Await done
 		} finally {
 			// Destroy process.
@@ -225,7 +225,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * Destroy process streams(IN/ERR {@link InputStream} and {@link OutputStream}).
+	 * Destroy process streams(IN/ERR {@link InputStream} and
+	 * {@link OutputStream}).
 	 * 
 	 * @param processId
 	 * @param ps
@@ -279,8 +280,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @param callback
 	 * @throws IOException
 	 */
-	private void submitProcessStream(Process ps, InputStream in, Executor executor, CountDownLatch latch,
-			ProcessCallback callback, boolean err) {
+	private void processStream(Process ps, InputStream in, Executor executor, CountDownLatch latch, ProcessCallback callback,
+			boolean err) {
 		notNull(ps, "null Process");
 		notNull(in, "null InputStream");
 		notNull(callback, "null ProcessCallback");

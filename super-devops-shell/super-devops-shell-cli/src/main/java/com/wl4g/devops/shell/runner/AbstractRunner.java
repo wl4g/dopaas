@@ -52,9 +52,7 @@ import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.jline.reader.LineReader.HISTORY_FILE;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Abstract shell component runner

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.cli;
+package com.wl4g.devops.tool.common.cli;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
@@ -28,7 +28,7 @@ import static ch.ethz.ssh2.ChannelCondition.*;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
-import static org.springframework.util.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * SSH connection utility tools.
@@ -111,7 +111,6 @@ public abstract class SSH2Utils {
 
 			// Transfer send file.
 			SCPClient scp = new SCPClient(conn);
-
 			sos = scp.put(localFile.getName(), localFile.length(), remoteDir, "0744");
 
 			fis = new FileInputStream(localFile);

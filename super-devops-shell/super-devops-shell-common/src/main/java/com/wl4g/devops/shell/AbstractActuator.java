@@ -26,17 +26,13 @@ import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.Optional;
 
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isGenericAccessibleModifier;
+import static com.wl4g.devops.tool.common.bean.BeanUtils2.doWithDeepFields;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericAccessibleModifier;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.convertToBaseOrSimpleSet;
 import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasLength;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.config.AbstractConfiguration;

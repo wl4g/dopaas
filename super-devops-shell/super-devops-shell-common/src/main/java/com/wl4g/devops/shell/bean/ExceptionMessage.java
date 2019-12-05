@@ -16,7 +16,7 @@
 package com.wl4g.devops.shell.bean;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Exception result message

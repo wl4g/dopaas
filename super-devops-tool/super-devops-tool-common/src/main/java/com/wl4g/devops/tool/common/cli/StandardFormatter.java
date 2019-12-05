@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.utils;
+package com.wl4g.devops.tool.common.cli;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -25,13 +25,12 @@ import java.util.List;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
+import com.wl4g.devops.tool.common.cli.annotation.PropertyDescription;
+
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.isBaseType;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
-
-import com.wl4g.devops.shell.annotation.PropertyDescription;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Standard formatter
@@ -40,7 +39,7 @@ import com.wl4g.devops.shell.annotation.PropertyDescription;
  * @version v1.0 2019年5月2日
  * @since
  */
-public class StandardFormatter {
+public class StandardFormatter extends HelpFormatter {
 	private Object object;
 	private boolean hasAttribute;
 	private int cellRow;

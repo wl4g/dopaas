@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.bean;
+package com.wl4g.devops.tool.common.bean;
 
 import java.lang.reflect.Field;
 
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.*;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.isBaseType;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.isGeneralSetType;
 import static java.util.Objects.isNull;

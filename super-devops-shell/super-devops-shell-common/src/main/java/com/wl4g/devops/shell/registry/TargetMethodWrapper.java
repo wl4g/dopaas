@@ -29,10 +29,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
@@ -40,7 +37,7 @@ import com.wl4g.devops.shell.cli.HelpOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 
-import static com.wl4g.devops.common.utils.reflect.ReflectionUtils2.isGenericAccessibleModifier;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericAccessibleModifier;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
 import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.isBaseType;
@@ -96,9 +93,10 @@ public class TargetMethodWrapper implements Serializable {
 
 		// Check whether there is a keyword.(if not an internal command)
 		if (!(target instanceof InternalCommand)) {
-			isTrue(!contains(sm.keys()), String.format(
-					"The shell method: '%s' definition exists in conflict with the keywords: '%s' and is recommended to be renamed.",
-					method, asCmdsString()));
+			isTrue(!contains(sm.keys()),
+					String.format(
+							"The shell method: '%s' definition exists in conflict with the keywords: '%s' and is recommended to be renamed.",
+							method, asCmdsString()));
 		}
 
 		// Initialization

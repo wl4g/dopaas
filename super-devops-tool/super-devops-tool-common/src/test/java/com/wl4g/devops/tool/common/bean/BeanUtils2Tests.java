@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.bean;
+package com.wl4g.devops.tool.common.bean;
 
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.doWithDeepFields;
+import static com.wl4g.devops.tool.common.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
+import static com.wl4g.devops.tool.common.bean.BeanUtils2.doWithDeepFields;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static org.springframework.util.ReflectionUtils.makeAccessible;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.makeAccessible;
 
 public class BeanUtils2Tests {
 
