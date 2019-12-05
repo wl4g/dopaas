@@ -26,6 +26,7 @@ import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
+import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -48,7 +49,7 @@ import static com.wl4g.devops.tool.common.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
-import static com.wl4g.devops.tool.common.lang.DateUtils2.getDateTime;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.getDate;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -198,10 +199,21 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		// Execution command.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
-			writeBuildLog(result.getMessage());
+			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t\t----- Stdout: -----\n%s", user, remoteHost, command,
+					result.getMessage());
+			if (log.isInfoEnabled()) {
+				log.info(logmsg);
+			}
 		}
 		if (!isBlank(result.getErrmsg())) {
-			writeBuildLog(result.getErrmsg());
+			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t\t----- Stderr: -----\n%s", user, remoteHost, command,
+					result.getErrmsg());
+			if (log.isInfoEnabled()) {
+				log.info(logmsg);
+			}
+			// Strictly handle, as long as there is error message in remote
+			// command execution, throw error.
+			throw new PipelineIntegrationBuildingException(logmsg);
 		}
 
 	}
@@ -279,9 +291,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected String writeBuildLog(String format, Object... args) {
 		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s) : %s", getDateTime(), getContext().getTaskHistory().getId(), content);
-		File jobLogFile = config.getJobLog(context.getTaskHistory().getId());
-		writeBLineFile(jobLogFile, message);
+		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getTaskHistory().getId(),
+				content);
+		writeBLineFile(config.getJobLog(context.getTaskHistory().getId()), message);
 		return content;
 	}
 

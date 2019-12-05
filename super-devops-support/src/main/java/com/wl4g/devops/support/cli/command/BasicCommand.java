@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.concurrent.Executor;
 
 /**
- * Basic command's wrapper.
+ * Basic destroable command's wrapper.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年12月5日
