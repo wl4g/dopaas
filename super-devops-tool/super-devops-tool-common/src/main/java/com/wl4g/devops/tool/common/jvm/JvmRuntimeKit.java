@@ -33,7 +33,7 @@ public abstract class JvmRuntimeKit {
 	/**
 	 * Current runtime in debugging.
 	 */
-	final public static boolean isJVMDebugging = checkJVMDebugging();
+	final public static boolean isJVMDebugging = isJvmDebugg0();
 
 	/**
 	 * Check current JVM runtime debug status. See: <a href=
@@ -42,7 +42,7 @@ public abstract class JvmRuntimeKit {
 	 * 
 	 * @return
 	 */
-	private static boolean checkJVMDebugging() {
+	private static boolean isJvmDebugg0() {
 		List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
 		for (String str : arguments) {
 			if (startsWithAny(str.toLowerCase(Locale.US), "-agentlib", "-Xrunjdwp", "-Xdebug")) {

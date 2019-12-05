@@ -15,8 +15,13 @@
  */
 package com.wl4g.devops.tool.common.cli;
 
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wl4g.devops.tool.common.lang.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Command line utility.
@@ -40,6 +46,93 @@ import com.wl4g.devops.tool.common.lang.Assert;
  */
 @SuppressWarnings("deprecation")
 public abstract class CommandLineUtils {
+
+	/**
+	 * Execution command-line.
+	 * 
+	 * @param commands
+	 *            commands string.
+	 * @param pwdDir
+	 *            execute context directory.
+	 * @return
+	 * @throws IOException
+	 */
+	public final static Process doExec(final String[] commands, final File pwdDir) throws IOException {
+		Process ps = null;
+		if (nonNull(pwdDir)) {
+			state(pwdDir.exists(), String.format("No such directory for pwdDir:[%s]", pwdDir));
+			ps = Runtime.getRuntime().exec(commands, null, pwdDir);
+		} else {
+			ps = Runtime.getRuntime().exec(commands);
+		}
+		return ps;
+	}
+
+	/**
+	 * Build cross platform wide fully qualified command line.
+	 * 
+	 * @param cmd
+	 *            Execution command string.
+	 * @return
+	 */
+	public final static String[] buildCrossCommands(final String cmd) {
+		return buildCrossCommands(cmd, null, null);
+	}
+
+	/**
+	 * Build cross platform wide fully qualified command line.
+	 * 
+	 * @param cmd
+	 *            Execution command string.
+	 * @param stdout
+	 *            Standard output file.
+	 * @param stderr
+	 *            Standard error output file.
+	 * @return
+	 */
+	public final static String[] buildCrossCommands(final String cmd, final File stdout, final File stderr) {
+		hasText(cmd, "Execute command can't empty.");
+
+		String command = cmd;
+		List<String> commands = new ArrayList<>(8);
+		if (IS_OS_WINDOWS) {
+			commands.add("C:\\Windows\\System32\\cmd.exe");
+			commands.add("/c");
+
+			// Stdout/Stderr
+			boolean output = false;
+			if (nonNull(stdout)) {
+				command = command + " 1> " + stdout.getAbsolutePath();
+				output = true;
+			}
+			if (nonNull(stderr)) {
+				command = command + " 2> " + stderr.getAbsolutePath();
+				output = true;
+			}
+			if (!output) {
+				command = command + " > C:\\nul"; // To use in poweshell: $null
+			}
+		} else {
+			commands.add("/bin/bash");
+			commands.add("-c");
+
+			// Stdout/Stderr
+			boolean output = false;
+			if (nonNull(stdout)) {
+				command = command + " 1> " + stdout.getAbsolutePath();
+				output = true;
+			}
+			if (nonNull(stderr)) {
+				command = command + " 2> " + stderr.getAbsolutePath();
+				output = true;
+			}
+			if (!output) {
+				command = command + " > /dev/null";
+			}
+		}
+		commands.add(command);
+		return commands.toArray(new String[] {});
+	}
 
 	/**
 	 * Command line builder tool.

@@ -77,7 +77,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<generateUniqueDependencyReducedPom>false</generateUniqueDependencyReducedPom>
+							<dependencyReducedPomLocation>${basedir}/target/dependency-reduced-pom.xml</dependencyReducedPomLocation>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">

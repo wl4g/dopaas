@@ -39,7 +39,7 @@ import java.util.Optional;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.cli.SSH2Utils.executeWithCommand;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
-import static com.wl4g.devops.tool.common.lang.DateUtils2.getDateTime;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
 
@@ -185,17 +185,18 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		// Do execution.
 		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
-			String logmsg = writeDeployLog("%s@%s, command:[%s], Stdout:\n%s", user, remoteHost, command, result.getMessage());
+			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t\t----- Stdout: -----\n%s", user, remoteHost, command,
+					result.getMessage());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
 			}
 		}
 		if (!isBlank(result.getErrmsg())) {
-			String logmsg = writeDeployLog("%s@%s, command:[%s], Stderr:\n%s", user, remoteHost, command, result.getErrmsg());
+			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t\t----- Stderr: -----\n%s", user, remoteHost, command,
+					result.getErrmsg());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
 			}
-
 			// Strictly handle, as long as there is error message in remote
 			// command execution, throw error.
 			throw new PipelineDeployingException(logmsg);
@@ -230,8 +231,9 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	 */
 	protected String writeDeployLog(String format, Object... args) {
 		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s), c(%s), i(%s) : %s", getDateTime(), getContext().getTaskHistory().getId(),
-				instance.getClusterId(), instance.getId(), content);
+		String message = String.format("%s - pipe(%s), c(%s), i(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
+				getContext().getTaskHistory().getId(), instance.getClusterId(), instance.getId(), content);
+
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		writeBLineFile(jobDeployerLog, message);
 		return content;

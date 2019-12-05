@@ -37,13 +37,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import static com.wl4g.devops.tool.common.cli.CommandLineUtils.*;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeFile;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static java.lang.System.arraycopy;
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -59,7 +59,7 @@ import static org.springframework.util.Assert.*;
 public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
 	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
 	final public static long DEFAULT_DESTROY_TIMEOUTMS = 30 * 1000L;
-	final public static int DEFAULT_BUFFER_SIZE = 1024;
+	final public static int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -89,24 +89,22 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	@Override
 	public void execSync(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, IOException, InterruptedException {
+		execSyncLocalCommand(processId, cmd, pwdDir, stdout, timeoutMs);
+	}
+
+	protected void execSyncLocalCommand(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, IOException, InterruptedException {
 		hasText(cmd, "Execution commands must not be empty");
 		isTrue(timeoutMs > 0, "Command-line timeoutMs must greater than 0");
 
-		// Use input (stdout/stderr)
-		if (!isNull(stdout)) {
-			cmd = cmd + " 2>&1 | tee -a " + stdout.getAbsolutePath();
-		} else { // Append to stdout file.
-			cmd = cmd + " > /dev/null 2>&1";
-		}
-
 		// Execution.
-		final String[] commands = { "/bin/bash", "-c", cmd };
+		final String[] commands = buildCrossCommands(cmd, stdout, stdout);
 		if (log.isInfoEnabled()) {
-			log.info("Execution commands: [{}]", asList(commands));
+			log.info("Execution: [{}]", asList(commands));
 		}
 
 		// Exec process.
-		Process ps = exec0(processId, commands, pwdDir);
+		Process ps = doExec(commands, pwdDir);
 
 		// Register process if necessary.
 		if (!isBlank(processId)) {
@@ -143,6 +141,11 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 	}
 
+	protected void execSyncRemoteCommand(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
+			throws IllegalProcessStateException, IOException, InterruptedException {
+
+	}
+
 	@Override
 	public void execAsync(String processId, String cmd, File pwdDir, Executor executor, ProcessCallback callback, long timeoutMs)
 			throws IOException, InterruptedException {
@@ -151,13 +154,13 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		isTrue(timeoutMs >= 0, "TimeoutMs must > 0");
 
 		// Execution.
-		final String[] commands = { "/bin/bash", "-c", cmd };
+		final String[] commands = buildCrossCommands(cmd, null, null);
 		if (log.isInfoEnabled()) {
-			log.info("Execution commands: [{}]", asList(commands));
+			log.info("Execution: [{}]", asList(commands));
 		}
 
 		// Exec process.
-		Process ps = exec0(processId, commands, pwdDir);
+		Process ps = doExec(commands, pwdDir);
 
 		// Register process if necessary.
 		if (!isBlank(processId)) {
@@ -167,38 +170,19 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		// Stderr/Stdout stream process.
 		CountDownLatch latch = new CountDownLatch(2);
 		try {
-			processStream(ps, ps.getErrorStream(), executor, latch, callback, true);
-			processStream(ps, ps.getInputStream(), executor, latch, callback, false);
+			doProcessStream0(ps, ps.getErrorStream(), executor, latch, callback, true);
+			doProcessStream0(ps, ps.getInputStream(), executor, latch, callback, false);
 			latch.await(timeoutMs, TimeUnit.MILLISECONDS); // Await done
 		} finally {
 			// Destroy process.
 			destroy0(processId, ps, DEFAULT_DESTROY_TIMEOUTMS);
+
 			// Cleanup if necessary.
 			if (!isBlank(processId)) {
 				repository.cleanup(processId);
 			}
 		}
 
-	}
-
-	/**
-	 * Do execution command.
-	 * 
-	 * @param processId
-	 * @param commands
-	 * @param pwdDir
-	 * @return
-	 * @throws IOException
-	 */
-	protected Process exec0(final String processId, final String[] commands, final File pwdDir) throws IOException {
-		Process ps = null;
-		if (nonNull(pwdDir)) {
-			state(pwdDir.exists(), String.format("No such directory for processId(%s), pwdDir:[%s]", processId, pwdDir));
-			ps = Runtime.getRuntime().exec(commands, null, pwdDir);
-		} else {
-			ps = Runtime.getRuntime().exec(commands);
-		}
-		return ps;
 	}
 
 	/**
@@ -280,7 +264,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @param callback
 	 * @throws IOException
 	 */
-	private void processStream(Process ps, InputStream in, Executor executor, CountDownLatch latch, ProcessCallback callback,
+	private void doProcessStream0(Process ps, InputStream in, Executor executor, CountDownLatch latch, ProcessCallback callback,
 			boolean err) {
 		notNull(ps, "null Process");
 		notNull(in, "null InputStream");
