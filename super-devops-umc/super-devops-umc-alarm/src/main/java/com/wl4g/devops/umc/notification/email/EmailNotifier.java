@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.umc.notification.email;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+
+import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
 import com.wl4g.devops.umc.notification.AbstractAlarmNotifier;
 import com.wl4g.devops.umc.notification.AlarmType;
 
@@ -24,6 +28,10 @@ import com.wl4g.devops.umc.notification.AlarmType;
  */
 public class EmailNotifier extends AbstractAlarmNotifier {
 
+
+	@Autowired
+	private MailSenderTemplate mailHandle;
+
 	@Override
 	public AlarmType alarmType() {
 		return AlarmType.EMAIL;
@@ -32,6 +40,13 @@ public class EmailNotifier extends AbstractAlarmNotifier {
 	@Override
 	public void simpleNotify(SimpleAlarmMessage message) {
 		// TODO Auto-generated method stub
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setFrom("safec7782@sina.com"); // 设置显示的账号名(最终发送格式为: from显示名<from账号名>)
+		msg.setSubject("UMC-Alarm");
+		msg.setTo("1154635107@qq.com");
+		msg.setText(message.getMessage());
+		//msg.setSentDate(new Date());
+		//this.mailHandle.send(msg);
 
 	}
 
