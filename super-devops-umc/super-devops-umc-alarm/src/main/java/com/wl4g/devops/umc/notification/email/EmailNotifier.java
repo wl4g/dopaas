@@ -46,7 +46,7 @@ public class EmailNotifier extends AbstractAlarmNotifier {
 		msg.setTo("1154635107@qq.com");
 		msg.setText(message.getMessage());
 		//msg.setSentDate(new Date());
-		//this.mailHandle.send(msg);
+		this.mailHandle.send(msg);
 
 	}
 
