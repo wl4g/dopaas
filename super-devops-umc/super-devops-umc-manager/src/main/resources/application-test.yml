@@ -57,11 +57,10 @@ spring:
       filters: stat,wall
       log-slow-sql: true
   mail:
-    host: smtp.163.com
+    host: smtp.sina.com
     port: 465
-    username: babaa1f4@163.com
-    password: XBurnerAir00
-    protocol: smtp
+    username: safec7782@sina.com
+    password: safec7782
 
 # Spring-security config.
 security.user:
