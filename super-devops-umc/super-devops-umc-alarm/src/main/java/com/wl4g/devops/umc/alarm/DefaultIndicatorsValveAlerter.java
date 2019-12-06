@@ -127,12 +127,16 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	protected Optional<AlarmResult> doGetAlarmResultWithMatchRule(MetricAggregateWrapper agwrap, MetricWrapper mwrap,
 			AlarmConfig alarmConfig, long now) {
 		// Match tags
-		Map<String, String> matchedTag = matchTag(mwrap.getTags(), alarmConfig.getAlarmTemplate().getTagsMap());
-		if (isEmpty(matchedTag)) {
-			log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", mwrap.getMetric(),
-					alarmConfig.getAlarmTemplate().getId(), mwrap.getTags());
-			return Optional.empty();
+		Map<String, String> matchedTag = emptyMap();
+		if(!isEmpty(alarmConfig.getAlarmTemplate().getTagsMap())){
+			matchedTag = matchTag(mwrap.getTags(), alarmConfig.getAlarmTemplate().getTagsMap());
+			if (isEmpty(matchedTag)) {
+				log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", mwrap.getMetric(),
+						alarmConfig.getAlarmTemplate().getId(), mwrap.getTags());
+				return Optional.empty();
+			}
 		}
+
 
 		// Maximum metric keep time window of rules.
 		long maxWindowTime = extractMaxRuleWindowTime(alarmConfig.getAlarmTemplate().getRules());
@@ -167,7 +171,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		// If no tag is configured, the matching tag does not need to be
 		// executed.
 		if (isEmpty(tplTagMap)) {
-			return emptyMap();
+			return metricTagMap;
 		}
 		Map<String, String> matchedTags = new HashMap<>();
 		for (Entry<String, String> ent : tplTagMap.entrySet()) {
@@ -335,6 +339,9 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "alarmContacts = {} , alarmNote = {} ",
 				alarmContacts, alarmRecord.getAlarmNote());
 
+		// TODO just for test
+		notifier.simpleNotify(new SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.BARK.getValue(), ""));
+
 		for (AlarmContact alarmContact : alarmContacts) {
 			// save notification
 			AlarmNotificationContact alarmNotificationContact = new AlarmNotificationContact();
@@ -342,9 +349,6 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			alarmNotificationContact.setContactId(alarmContact.getId());
 			alarmNotificationContact.setStatus(ALARM_SATUS_SEND);
 			configurer.saveNotificationContact(alarmNotificationContact);
-
-			// TODO just for test
-			notifier.simpleNotify(new SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.BARK.getValue(), ""));
 
 			// email
 			if (alarmContact.getEmailEnable() == 1) {

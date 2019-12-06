@@ -93,7 +93,7 @@ public class RuleConfigManager implements ApplicationRunner {
 		if (isEmpty(alarmTpls)) {
 			alarmTpls = ruleConfigurer.findAlarmConfigByEndpoint(host, endpoint);
 			if (!isEmpty(alarmTpls)) {
-				jedisService.setObjectList(key, alarmTpls, 0);
+				jedisService.setObjectList(key, alarmTpls, 5);
 			}
 		}
 		return safeList(alarmTpls);

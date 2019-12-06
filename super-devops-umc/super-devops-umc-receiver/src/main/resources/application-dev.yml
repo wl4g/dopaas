@@ -62,11 +62,10 @@ spring:
         alarm:
           concurrency: 2
   mail:
-    host: smtp.exmail.qq.com
+    host: smtp.sina.com
     port: 465
-    username: syslog@7782.co
-    password: Sm#1234
-    protocol: smtp
+    username: safec7782@sina.com
+    password: safec7782
 
 # Spring-security config.
 security.user:
