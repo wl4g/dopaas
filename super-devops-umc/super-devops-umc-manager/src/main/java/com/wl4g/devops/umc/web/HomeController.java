@@ -24,15 +24,14 @@ import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
-import java.util.Date;
 
-@Controller
+@RestController
 @RequestMapping(UMCDevOpsConstants.URI_ADMIN_HOME)
 public class HomeController extends BaseController {
 
@@ -63,17 +62,18 @@ public class HomeController extends BaseController {
 		return "ok";
 	}
 
-	// @RequestMapping("mailSend")
+	@RequestMapping("mailSend")
 	public String mailSendTest() {
 		SimpleMailMessage msg = new SimpleMailMessage();
-		msg.setFrom("XXX"); // 设置显示的账号名(最终发送格式为: from显示名<from账号名>)
+		msg.setFrom("safec7782@sina.com"); // 设置显示的账号名(最终发送格式为: from显示名<from账号名>)
 		msg.setSubject("测试主题");
-		msg.setTo("983708408@qq.com");
-		msg.setText("http://127.0.0.1:64/s/1245");
-		msg.setSentDate(new Date());
+		msg.setTo("1154635107@qq.com");
+		msg.setText("test");
+		//msg.setSentDate(new Date());
 		this.mailHandle.send(msg);
 		System.out.println("ok..");
 		return "ok";
 	}
+
 
 }

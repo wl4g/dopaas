@@ -80,6 +80,8 @@ public class TemplateServiceImpl implements TemplateService {
 		List<Map<String, String>> tagMap = tpl.getTagMap();
 		if (!CollectionUtils.isEmpty(tagMap)) {
 			tpl.setTags(toJSONString(tagMap));
+		}else{
+			tpl.setTags("");
 		}
 
 		if (tpl.getId() != null) {// update

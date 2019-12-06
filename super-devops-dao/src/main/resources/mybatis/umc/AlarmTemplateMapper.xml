@@ -156,9 +156,9 @@
       <if test="metricId != null" >
         metric_id = #{metricId,jdbcType=INTEGER},
       </if>
-      <if test="tags != null" >
-        tags = #{tags,jdbcType=VARCHAR},
-      </if>
+
+      tags = #{tags,jdbcType=VARCHAR},
+
       <if test="notifyLevel != null" >
         notify_level = #{notifyLevel,jdbcType=INTEGER},
       </if>

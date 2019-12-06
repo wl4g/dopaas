@@ -117,7 +117,7 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public synchronized Map<String, String> getTagsMap() {
-		if (isEmpty(tagMap)) {
+		if (isEmpty(tagMap) && StringUtils.isNotBlank(getTags())) {
 			tagMap = parseJSON(getTags(), List.class);
 		}
 
