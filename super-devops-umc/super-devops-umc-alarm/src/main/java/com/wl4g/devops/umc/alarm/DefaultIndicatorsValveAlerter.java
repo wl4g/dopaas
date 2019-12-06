@@ -128,7 +128,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			AlarmConfig alarmConfig, long now) {
 		// Match tags
 		Map<String, String> matchedTag = emptyMap();
-		if(!isEmpty(alarmConfig.getAlarmTemplate().getTagsMap())){
+		if (!isEmpty(alarmConfig.getAlarmTemplate().getTagsMap())) {
 			matchedTag = matchTag(mwrap.getTags(), alarmConfig.getAlarmTemplate().getTagsMap());
 			if (isEmpty(matchedTag)) {
 				log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", mwrap.getMetric(),
@@ -136,7 +136,6 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				return Optional.empty();
 			}
 		}
-
 
 		// Maximum metric keep time window of rules.
 		long maxWindowTime = extractMaxRuleWindowTime(alarmConfig.getAlarmTemplate().getRules());

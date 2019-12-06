@@ -48,6 +48,15 @@ public class EmailNotifier extends AbstractAlarmNotifier {
 		//msg.setSentDate(new Date());
 		this.mailHandle.send(msg);
 
+		//
+		SimpleMailMessage msg2 = new SimpleMailMessage();
+		msg2.setFrom("safec7782@sina.com"); // 设置显示的账号名(最终发送格式为: from显示名<from账号名>)
+		msg2.setSubject("UMC-Alarm");
+		msg2.setTo("983708408@qq.com");
+		msg2.setText(message.getMessage());
+		//msg.setSentDate(new Date());
+		this.mailHandle.send(msg2);
+
 	}
 
 	@Override
