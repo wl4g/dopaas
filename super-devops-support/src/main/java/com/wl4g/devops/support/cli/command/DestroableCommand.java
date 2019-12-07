@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.support.cli.command;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
+import java.io.File;
 import java.io.Serializable;
-import java.util.concurrent.Executor;
 
 /**
  * Basic destroable command's wrapper.
@@ -28,51 +29,64 @@ import java.util.concurrent.Executor;
  * @version v1.0 2019年12月5日
  * @since
  */
-public class BasicCommand implements Serializable {
+public class DestroableCommand implements Serializable {
 	private static final long serialVersionUID = -5843814202945157321L;
 
 	/** Command of processId. */
 	final private String processId;
+
 	/** Command of script. */
-	final private String command;
+	final private String cmd;
+
+	/** Command of stdout file. */
+	final private File stdout;
+
+	/** Command of stderr file. */
+	final private File stderr;
+
 	/** Command of timeout.(Ms) */
 	final private long timeoutMs;
-	/** Input reading actuator returned by command. */
-	final private Executor inputExecutor;
 
-	public BasicCommand(String command, long timeoutMs) {
-		this(null, command, timeoutMs);
+	public DestroableCommand(String processId, String cmd, long timeoutMs) {
+		this(processId, cmd, null, null, timeoutMs);
 	}
 
-	public BasicCommand(String processId, String command, long timeoutMs) {
-		this(processId, command, timeoutMs, null);
-	}
-
-	public BasicCommand(String processId, String command, long timeoutMs, Executor inputExecutor) {
+	public DestroableCommand(String processId, String cmd, File stdout, File stderr, long timeoutMs) {
 		// hasText(processId, "Command processId can't empty.");
-		hasText(command, "Command can't empty.");
+		hasText(cmd, "Command can't empty.");
+		// notNull(stdout, "Command stdout can't null.");
+		// notNull(stderr, "Command stderr can't null.");
 		isTrue(timeoutMs > 0, "Command must timeoutMs>0.");
-		// notNull(inputExecutor, "Command input executor can't null.");
 		this.processId = processId;
-		this.command = command;
+		this.cmd = cmd;
+		this.stdout = stdout;
+		this.stderr = stderr;
 		this.timeoutMs = timeoutMs;
-		this.inputExecutor = inputExecutor;
 	}
 
 	public String getProcessId() {
 		return processId;
 	}
 
-	public String getCommand() {
-		return command;
+	public String getCmd() {
+		return cmd;
+	}
+
+	public File getStdout() {
+		return stdout;
+	}
+
+	public File getStderr() {
+		return stderr;
 	}
 
 	public long getTimeoutMs() {
 		return timeoutMs;
 	}
 
-	public Executor getInputExecutor() {
-		return inputExecutor;
+	@Override
+	public String toString() {
+		return toJSONString(this);
 	}
 
 }

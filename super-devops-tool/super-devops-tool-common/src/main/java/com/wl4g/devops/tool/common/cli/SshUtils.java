@@ -37,8 +37,8 @@ import static com.wl4g.devops.tool.common.lang.Assert.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public abstract class SSH2Utils {
-	final protected static Logger log = LoggerFactory.getLogger(SSH2Utils.class);
+public abstract class SshUtils {
+	final protected static Logger log = LoggerFactory.getLogger(SshUtils.class);
 
 	final public static int DEFAULT_TRANSFER_BUF = 1024 * 8;
 
@@ -163,17 +163,17 @@ public abstract class SSH2Utils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static CommandResult executeWithCommand(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	public static CommandResult execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws IOException {
-		return executeWithCommand(host, user, pemPrivateKey, command, (s) -> {
+		return execWaitForWithSsh2(host, user, pemPrivateKey, command, session -> {
 			String message = null, errmsg = null;
-			if (nonNull(s.getStdout())) {
-				message = readFullyToString(s.getStdout());
+			if (nonNull(session.getStdout())) {
+				message = readFullyToString(session.getStdout());
 			}
-			if (nonNull(s.getStderr())) {
-				errmsg = readFullyToString(s.getStderr());
+			if (nonNull(session.getStderr())) {
+				errmsg = readFullyToString(session.getStderr());
 			}
-			return new CommandResult(s.getExitSignal(), s.getExitStatus(), message, errmsg);
+			return new CommandResult(session.getExitSignal(), session.getExitStatus(), message, errmsg);
 		}, timeoutMs);
 	}
 
@@ -190,8 +190,30 @@ public abstract class SSH2Utils {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T executeWithCommand(String host, String user, char[] pemPrivateKey, String command,
+	public static <T> T execWaitForWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			CommandProcessor processor, long timeoutMs) throws IOException {
+		return execWithSsh2(host, user, pemPrivateKey, command, session -> {
+			// Wait for completed by condition.
+			session.waitForCondition((CLOSED | EOF | TIMEOUT), timeoutMs);
+			return (T) processor.process(session);
+		}, timeoutMs);
+	}
+
+	/**
+	 * Execution commands with SSH2
+	 * 
+	 * @param host
+	 * @param user
+	 * @param pemPrivateKey
+	 * @param command
+	 * @param processor
+	 * @param timeoutMs
+	 * @return
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T execWithSsh2(String host, String user, char[] pemPrivateKey, String command, CommandProcessor processor,
+			long timeoutMs) throws IOException {
 		hasText(host, "SSH2 command host must not be empty.");
 		hasText(user, "SSH2 command user must not be empty.");
 		notNull(pemPrivateKey, "SSH2 command pemPrivateKey must not be null.");
@@ -218,9 +240,6 @@ public abstract class SSH2Utils {
 			}
 			session.execCommand(command, "UTF-8");
 
-			// Wait for completed by condition.
-			session.waitForCondition((CLOSED | EOF | TIMEOUT), timeoutMs);
-
 			// Customize process.
 			return (T) processor.process(session);
 		} catch (IOException e) {
@@ -241,7 +260,6 @@ public abstract class SSH2Utils {
 				log.error("", e2);
 			}
 		}
-
 	}
 
 	/**
@@ -252,7 +270,16 @@ public abstract class SSH2Utils {
 	 * @since
 	 */
 	public static interface CommandProcessor {
-		Object process(Session session);
+
+		/**
+		 * SSH command process.
+		 * 
+		 * @param session
+		 * @return
+		 * @throws IOException
+		 */
+		Object process(Session session) throws IOException;
+
 	}
 
 	/**

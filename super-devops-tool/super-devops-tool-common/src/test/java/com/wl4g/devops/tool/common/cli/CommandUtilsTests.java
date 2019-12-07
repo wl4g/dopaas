@@ -15,13 +15,15 @@
  */
 package com.wl4g.devops.tool.common.cli;
 
+import static com.wl4g.devops.tool.common.cli.ProcessUtils.buildCrossSingleCommands;
+
 import java.io.File;
-import java.io.IOException;
 
-public class CommandLineUtilsTests {
+public class CommandUtilsTests {
 
-	public static void main(String[] args) throws IOException {
-		Runtime.getRuntime().exec(CommandLineUtils.buildCrossCommands("mvn -version", new File("c:\\out"), new File("c:\\err")));
+	public static void main(String[] args) throws Exception {
+		String[] cmdarray = buildCrossSingleCommands("mvn -version", new File("c:\\out"), new File("c:\\err"), false, false);
+		Runtime.getRuntime().exec(cmdarray).waitFor();
 	}
 
 }

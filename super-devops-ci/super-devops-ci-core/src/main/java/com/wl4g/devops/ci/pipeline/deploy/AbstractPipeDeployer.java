@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
-import com.wl4g.devops.tool.common.cli.SSH2Utils.CommandResult;
+import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AES;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
 
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -183,7 +183,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		writeDeployLog("Execute to remote %s@%s, timeout:%s, command:[%s]", user, remoteHost, timeoutMs, command);
 
 		// Do execution.
-		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
+		CommandResult result = execWithSsh2(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
 			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t\t----- Stdout: -----\n%s", user, remoteHost, command,
 					result.getMessage());

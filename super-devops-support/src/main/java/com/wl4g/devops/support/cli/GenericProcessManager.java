@@ -19,31 +19,32 @@ import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.common.utils.task.GenericTaskRunner;
 import com.wl4g.devops.common.utils.task.RunnerProperties;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
+import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper;
+import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper.*;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
-import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-import static com.wl4g.devops.tool.common.cli.CommandLineUtils.*;
+import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
+import static com.wl4g.devops.tool.common.cli.SshUtils.execWaitForWithSsh2;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeFile;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static java.lang.System.arraycopy;
 import static java.lang.Thread.sleep;
-import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -56,8 +57,8 @@ import static org.springframework.util.Assert.*;
  * @version v1.0.0 2019-10-20
  * @since
  */
-public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
-	final public static long DEFAULT_DESTROY_ROUND_MS = 300L;
+public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
+	final public static long DEFAULT_DESTROY_INTERVALMS = 200L;
 	final public static long DEFAULT_DESTROY_TIMEOUTMS = 30 * 1000L;
 	final public static int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
@@ -67,122 +68,126 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	@Autowired
 	protected ProcessRepository repository;
 
-	/** JEDIS service. */
-	@Autowired
-	protected JedisService jedisService;
-
-	/** JEDIS locks manager. */
-	@Autowired
-	protected JedisLockManager lockManager;
-
 	public GenericProcessManager() {
 		super(new RunnerProperties(true));
 	}
 
 	@Override
-	public void execFileSync(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, InterruptedException, IOException {
-		writeFile(execFile, multiCommands, false);
-		execSync(processId, "sh " + execFile.getAbsolutePath(), stdout, timeoutMs);
-	}
+	public void execWaitFor(DestroableCommand cmd) throws IllegalProcessStateException, IOException, InterruptedException {
+		notNull(cmd, "Execution command can't null.");
 
-	@Override
-	public void execSync(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException, InterruptedException {
-		execSyncLocalCommand(processId, cmd, pwdDir, stdout, timeoutMs);
-	}
-
-	protected void execSyncLocalCommand(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException, InterruptedException {
-		hasText(cmd, "Execution commands must not be empty");
-		isTrue(timeoutMs > 0, "Command-line timeoutMs must greater than 0");
-
-		// Execution.
-		final String[] commands = buildCrossCommands(cmd, stdout, stdout);
-		if (log.isInfoEnabled()) {
-			log.info("Execution: [{}]", asList(commands));
+		DestroableProcessWrapper dpw = null;
+		if (cmd instanceof DestroableCommand) {
+			dpw = doExecLocal((LocalDestroableCommand) cmd);
+		} else if (cmd instanceof RemoteDestroableCommand) {
+			dpw = doExecRemote((RemoteDestroableCommand) cmd);
+		} else {
+			throw new UnsupportedOperationException(String.format("Unsupported DestroableCommand[%s]", cmd));
 		}
-
-		// Exec process.
-		Process ps = doExec(commands, pwdDir);
+		notNull(dpw, "Process not created? An unexpected error!");
 
 		// Register process if necessary.
-		if (!isBlank(processId)) {
-			repository.register(processId, new ProcessInfo(processId, pwdDir, asList(commands), stdout, ps));
+		if (!isBlank(cmd.getProcessId())) {
+			repository.register(cmd.getProcessId(), dpw);
 		}
 
 		// Check exited?
 		try {
 			// Wait for completed.
-			ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
+			dpw.waitFor(cmd.getTimeoutMs(), TimeUnit.MILLISECONDS);
 
-			int exitCode = ps.exitValue();
-			if (exitCode != 0) { // e.g. destroy() was called.
+			Integer exitCode = dpw.exitValue();
+			// e.g. destroy() was called.
+			if (Objects.isNull(exitCode) || (Objects.nonNull(exitCode) && exitCode != 0)) {
 				String errmsg = EMPTY;
 				// Obtain process error message.
 				try {
-					errmsg = readFullyToString(ps.getErrorStream());
+					errmsg = readFullyToString(dpw.getStderr());
 				} catch (Exception e) {
 					errmsg = getRootCausesString(e);
 				}
 				throw new IllegalProcessStateException(exitCode, errmsg);
 			}
 		} catch (IllegalProcessStateException ex) {
-			throw new IllegalProcessStateException(ex.getExitValue(), String.format(
-					"Failed to process(%s), commands:[%s], cause: %s", processId, asList(commands), getRootCausesString(ex)));
+			throw new IllegalProcessStateException(ex.getExitValue(),
+					String.format("Failed to process(%s), commands:[%s], cause: %s", cmd.getProcessId(),
+							dpw.getCommand().getCmd(), getRootCausesString(ex)));
 		} finally {
 			// Destroy process.
-			destroy0(processId, ps, DEFAULT_DESTROY_TIMEOUTMS);
+			destroy0(dpw, DEFAULT_DESTROY_TIMEOUTMS);
 			// Cleanup if necessary.
-			if (!isBlank(processId)) {
-				repository.cleanup(processId);
+			if (!isBlank(cmd.getProcessId())) {
+				repository.cleanup(cmd.getProcessId());
 			}
 		}
-
-	}
-
-	protected void execSyncRemoteCommand(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException, InterruptedException {
-
 	}
 
 	@Override
-	public void execAsync(String processId, String cmd, File pwdDir, Executor executor, ProcessCallback callback, long timeoutMs)
+	public void exec(DestroableCommand cmd, Executor executor, ProcessCallback callback)
 			throws IOException, InterruptedException {
-		hasText(cmd, "Execution commands must not be empty");
-		notNull(callback, "null ProcessCallback");
-		isTrue(timeoutMs >= 0, "TimeoutMs must > 0");
+		notNull(cmd, "Execution command can't null.");
+		notNull(executor, "Process excutor can't null.");
+		notNull(callback, "Process callback can't null.");
 
-		// Execution.
-		final String[] commands = buildCrossCommands(cmd, null, null);
-		if (log.isInfoEnabled()) {
-			log.info("Execution: [{}]", asList(commands));
+		DestroableProcessWrapper dpw = null;
+		if (cmd instanceof DestroableCommand) {
+			dpw = doExecLocal((LocalDestroableCommand) cmd);
+		} else if (cmd instanceof RemoteDestroableCommand) {
+			dpw = doExecRemote((RemoteDestroableCommand) cmd);
+		} else {
+			throw new UnsupportedOperationException(String.format("Unsupported DestroableCommand[%s]", cmd));
 		}
-
-		// Exec process.
-		Process ps = doExec(commands, pwdDir);
+		notNull(dpw, "Process not created? An unexpected error!");
 
 		// Register process if necessary.
-		if (!isBlank(processId)) {
-			repository.register(processId, new ProcessInfo(processId, pwdDir, asList(commands), null, ps));
+		if (!isBlank(cmd.getProcessId())) {
+			repository.register(cmd.getProcessId(), dpw);
 		}
 
 		// Stderr/Stdout stream process.
 		CountDownLatch latch = new CountDownLatch(2);
 		try {
-			doProcessStream0(ps, ps.getErrorStream(), executor, latch, callback, true);
-			doProcessStream0(ps, ps.getInputStream(), executor, latch, callback, false);
-			latch.await(timeoutMs, TimeUnit.MILLISECONDS); // Await done
+			inputStreamRead0(dpw.getStderr(), executor, latch, callback, dpw, true);
+			inputStreamRead0(dpw.getStdout(), executor, latch, callback, dpw, false);
+			latch.await(cmd.getTimeoutMs(), TimeUnit.MILLISECONDS); // Await-done
 		} finally {
 			// Destroy process.
-			destroy0(processId, ps, DEFAULT_DESTROY_TIMEOUTMS);
-
+			destroy0(dpw, DEFAULT_DESTROY_TIMEOUTMS);
 			// Cleanup if necessary.
-			if (!isBlank(processId)) {
-				repository.cleanup(processId);
+			if (!isBlank(cmd.getProcessId())) {
+				repository.cleanup(cmd.getProcessId());
 			}
 		}
+	}
 
+	/**
+	 * Execution local command line, callback standard or exception output
+	 * 
+	 * @param cmd
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	protected DestroableProcessWrapper doExecLocal(LocalDestroableCommand cmd) throws IOException, InterruptedException {
+		if (log.isInfoEnabled()) {
+			log.info("Exec local command: {}", cmd.getCmd());
+		}
+		DelegateProcess ps = doExecMulti(cmd.getCmd(), cmd.getPwdDir(), cmd.getStdout(), cmd.getStderr(), false, false);
+		return new LocalDestroableProcess(cmd.getProcessId(), cmd, ps);
+	}
+
+	/**
+	 * Execution remote command line, callback standard or exception output
+	 * 
+	 * @param cmd
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	protected DestroableProcessWrapper doExecRemote(RemoteDestroableCommand cmd) throws IOException, InterruptedException {
+		if (log.isInfoEnabled()) {
+			log.info("Exec remote command: {}", cmd.getCmd());
+		}
+		return execWaitForWithSsh2(cmd.getHost(), cmd.getUser(), cmd.getPemPrivateKey(), cmd.getCmd(),
+				s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s), cmd.getTimeoutMs());
 	}
 
 	/**
@@ -192,19 +197,21 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @param signal
 	 *            Destruction process signal.
 	 * @throws TimeoutDestroyProcessException
+	 * @see {@link ch.ethz.ssh2.Session#close()}
+	 * @see {@link ch.ethz.ssh2.channel.ChannelManager#closeChannel(Channel,String,boolean)}
 	 */
-	protected void destroy(DestroySignal signal) throws TimeoutDestroyProcessException {
+	public void destroy(DestroySignal signal) throws TimeoutDestroyProcessException {
 		notNull(signal, "Destroy signal must not be null.");
-		isTrue(signal.getTimeoutMs() >= DEFAULT_DESTROY_ROUND_MS,
-				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
+		isTrue(signal.getTimeoutMs() >= DEFAULT_DESTROY_INTERVALMS,
+				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_INTERVALMS));
 
-		Process process = repository.get(signal.getProcessId()).getProcess();
-		if (nonNull(process)) {
+		DestroableProcessWrapper dpw = repository.get(signal.getProcessId());
+		if (nonNull(dpw)) {
 			// Destroy process.
-			destroy0(signal.getProcessId(), process, signal.getTimeoutMs());
-
-			// Cleanup
-			repository.cleanup(signal.getProcessId());
+			destroy0(dpw, signal.getTimeoutMs());
+			repository.cleanup(signal.getProcessId()); // Cleanup
+		} else {
+			log.warn("Failed to destroy because processId:{} does not exist or has been destroyed", signal.getProcessId());
 		}
 	}
 
@@ -212,72 +219,71 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * Destroy process streams(IN/ERR {@link InputStream} and
 	 * {@link OutputStream}).
 	 * 
-	 * @param processId
-	 * @param ps
 	 * @param timeoutMs
 	 */
-	private void destroy0(String processId, Process ps, long timeoutMs) {
-		if (nonNull(ps)) {
-			try {
-				ps.getOutputStream().close();
-			} catch (IOException e) {
-				log.error("Failed to outstream close", e);
-			}
-			try {
-				ps.getInputStream().close();
-			} catch (IOException e) {
-				log.error("Failed to instream close", e);
-			}
-			try {
-				ps.getErrorStream().close();
-			} catch (IOException e) {
-				log.error("Failed to errstream close", e);
-			}
+	private void destroy0(DestroableProcessWrapper dpw, long timeoutMs) {
+		notNull(dpw, "Destroable process can't null.");
+		try {
+			dpw.getStdin().close();
+		} catch (IOException e) {
+			log.error("Failed to stdin stream close", e);
+		}
+		try {
+			dpw.getStdout().close();
+		} catch (IOException e) {
+			log.error("Failed to stdout stream close", e);
+		}
+		try {
+			dpw.getStderr().close();
+		} catch (IOException e) {
+			log.error("Failed to stderr stream close", e);
+		}
 
-			// Destroy force.
-			for (long i = 0, c = (timeoutMs / DEFAULT_DESTROY_ROUND_MS); (ps.isAlive() && i < c); i++) {
-				try {
-					ps.destroyForcibly();
-					if (ps.isAlive()) { // Failed destroy?
-						sleep(DEFAULT_DESTROY_ROUND_MS);
-					}
-				} catch (Exception e) {
-					log.error("Failed to destory process.", e);
-					break;
+		// Destroy force.
+		for (long i = 0, c = (timeoutMs / DEFAULT_DESTROY_INTERVALMS); (dpw.isAlive() && i < c); i++) {
+			try {
+				dpw.destoryForcibly();
+				if (dpw.isAlive()) { // Failed destroy?
+					sleep(DEFAULT_DESTROY_INTERVALMS);
 				}
+			} catch (Exception e) {
+				log.error("Failed to destory process.", e);
+				break;
 			}
+		}
 
-			// Assertion destroyed?
-			if (ps.isAlive()) {
-				throw new TimeoutDestroyProcessException(String.format("Still not destroyed '%s', handling timeout", processId));
-			}
+		// Assertion destroyed?
+		if (dpw.isAlive()) {
+			throw new TimeoutDestroyProcessException(
+					String.format("Still not destroyed '%s', handling timeout", dpw.getCommand().getProcessId()));
 		}
 	}
 
 	/**
 	 * Submit read {@link InputStream} process task.
 	 * 
-	 * @param ps
 	 * @param in
 	 * @param executor
 	 * @param latch
 	 * @param callback
+	 * @param dpw
+	 * @param iserr
 	 * @throws IOException
 	 */
-	private void doProcessStream0(Process ps, InputStream in, Executor executor, CountDownLatch latch, ProcessCallback callback,
-			boolean err) {
-		notNull(ps, "null Process");
-		notNull(in, "null InputStream");
-		notNull(callback, "null ProcessCallback");
+	private void inputStreamRead0(InputStream in, Executor executor, CountDownLatch latch, ProcessCallback callback,
+			DestroableProcessWrapper dpw, boolean iserr) {
+		notNull(dpw, "DestroableProcess can't null.");
+		notNull(in, "Process inputStream can't null");
+		notNull(callback, "Process callback can't null");
 
 		executor.execute(() -> {
 			try {
 				int len = 0;
 				byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
-				while (ps.isAlive() && ((len = in.read(buf)) != -1)) {
+				while (dpw.isAlive() && ((len = in.read(buf)) != -1)) {
 					byte[] data = new byte[len];
 					arraycopy(buf, 0, data, 0, len);
-					if (err) {
+					if (iserr) {
 						callback.onStderr(data);
 					} else {
 						callback.onStdout(data);

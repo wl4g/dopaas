@@ -127,11 +127,6 @@ public abstract class ClassPathNativeLoader {
 	/**
 	 * Java dynamic link native libraries temporary base directory path.
 	 */
-	final private static String NATIVE_LIBS_TMP_DIR = "/javanativelibs_" + USER_NAME + "/" + LOCAL_PROCESS_ID + "/";
-
-	/**
-	 * Temporary directory which will contain the DLLs.
-	 */
-	final private static File nativeLibsTmpDir = libsTmpDirectory0(NATIVE_LIBS_TMP_DIR);
+	final private static File nativeLibsTmpDir = libsTmpDirectory0("/javanativelibs_" + USER_NAME + "/" + LOCAL_PROCESS_ID + "/");
 
 }

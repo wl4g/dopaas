@@ -16,8 +16,9 @@
 package com.wl4g.devops.support.cli.destroy;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
-import org.springframework.util.Assert;
+import static org.springframework.util.Assert.notNull;
 
 import java.io.Serializable;
 
@@ -44,10 +45,7 @@ public class DestroySignal implements Serializable {
 	}
 
 	public DestroySignal(String processId, Long timeoutMs) {
-		Assert.notNull(processId, "Destroy processId must not be null.");
-		Assert.notNull(timeoutMs, "Destroy timeoutMs must not be null.");
-		isTrue(timeoutMs >= DEFAULT_DESTROY_ROUND_MS,
-				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
+
 		this.processId = processId;
 		this.timeoutMs = timeoutMs;
 	}
@@ -57,6 +55,7 @@ public class DestroySignal implements Serializable {
 	}
 
 	public void setProcessId(String processId) {
+		hasText(processId, "Destroy processId must not be null.");
 		this.processId = processId;
 	}
 
@@ -65,6 +64,9 @@ public class DestroySignal implements Serializable {
 	}
 
 	public void setTimeoutMs(Long timeoutMs) {
+		notNull(timeoutMs, "Destroy timeoutMs must not be null.");
+		isTrue(timeoutMs >= DEFAULT_DESTROY_INTERVALMS,
+				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_INTERVALMS));
 		this.timeoutMs = timeoutMs;
 	}
 
