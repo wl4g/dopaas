@@ -24,6 +24,8 @@ import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
 import com.wl4g.devops.support.cli.DestroableProcessManager.ProcessCallback;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 /**
  * SPOTBUGS analyzer coordinator. </br>
@@ -59,17 +61,17 @@ public class SpotbugsAnalysisCoordinator extends AbstractAnalysisCoordinator<Spo
 	protected void doAnalyze(SpotbugsAnalysingModel model) throws Exception {
 		String command = buildSpotbugsEngineCommand(model);
 		try {
-			processManager.execAsync(model.getProjectName(), command, getWorker(), new ProcessCallback() {
+			DestroableCommand cmd = new LocalDestroableCommand(model.getProjectName(), command, 30 * 60 * 1000);
+			processManager.exec(cmd, getWorker(), new ProcessCallback() {
 				@Override
 				public void onStdout(byte[] data) {
-
 				}
 
 				@Override
 				public void onStderr(byte[] err) {
 					throw new IllegalStateException(new String(err));
 				}
-			}, 30 * 60 * 1000);
+			});
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.List;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.getUnExtensionFilename;
-import static com.wl4g.devops.tool.common.cli.SSH2Utils.transferFile;
+import static com.wl4g.devops.tool.common.cli.SshUtils.transferFile;
 import static org.springframework.util.Assert.hasText;
 
 /**

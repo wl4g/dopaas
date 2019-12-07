@@ -20,6 +20,7 @@ import java.io.File;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 /**
  * Pipeline provider for deployment GOLANG project.
@@ -51,9 +52,11 @@ public class GolangStandardPipelineProvider extends BasedPhysicalBackupPipelineP
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
-		String defaultCommand = "cd " + projectDir + " && go build";
-		processManager.execSync(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
+	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+		String defaultCommand = "cd " + projectDir + " && npm install";
+		// Execution command.
+		// TODO timeoutMs/pwdDir?
+		pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, jobLogFile, jobLogFile, 300000L));
 	}
 
 }

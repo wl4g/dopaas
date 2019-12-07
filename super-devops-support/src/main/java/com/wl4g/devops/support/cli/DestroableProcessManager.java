@@ -15,12 +15,14 @@
  */
 package com.wl4g.devops.support.cli;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
+import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.destroy.DestroySignal;
 
 /**
  * Supports destroable(Interruptible) execution command line process manager.
@@ -33,184 +35,34 @@ import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 public interface DestroableProcessManager {
 
 	/**
-	 * Sync blocking execution multiple-commands, Save to temporary file before
-	 * execution.
+	 * Execution command line and blocking wait results.
 	 * 
-	 * @param multiCommands
-	 * @param execFile
-	 * @param stdout
-	 * @param timeoutMs
-	 * @throws IllegalProcessStateException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	default void execFileSync(String multiCommands, File execFile, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, InterruptedException, IOException {
-		execFileSync(null, multiCommands, execFile, stdout, timeoutMs);
-	}
-
-	/**
-	 * Sync blocking execution command-line to process.
-	 * 
-	 * @param cmd
-	 *            commands
-	 * @param stdout
-	 *            standard output stream file.
-	 * @param timeoutMs
-	 *            timeout Ms.
+	 * @param command
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	default void execSync(String cmd, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException, InterruptedException {
-		execSync(null, cmd, null, stdout, timeoutMs);
-	}
+	void execWaitFor(DestroableCommand command) throws IllegalProcessStateException, IOException, InterruptedException;
 
 	/**
-	 * Sync blocking execution command-line to process.
+	 * Non-blocking command line, callback standard or exception output
 	 * 
-	 * @param cmd
-	 *            commands
-	 * @param pwdDir
-	 *            process command-line context directory
-	 * @param stdout
-	 *            standard output stream file.
-	 * @param timeoutMs
-	 *            timeout Ms.
-	 * @throws IllegalProcessStateException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	default void exec(String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException, InterruptedException {
-		execSync(null, cmd, pwdDir, stdout, timeoutMs);
-	}
-
-	/**
-	 * Sync blocking execution command-line to process.
-	 * 
-	 * @param processId
-	 *            command-line process ID, If it is not empty, the process
-	 *            reference will be saved, which can be used to interrupt the
-	 *            execution of commands in a timely manner.
-	 * @param cmd
-	 *            commands
-	 * @param timeoutMs
-	 *            timeout Ms.
-	 * @throws InterruptedException
-	 * @throws IllegalProcessStateException
-	 * @throws IOException
-	 */
-	default void execSync(String processId, String cmd, long timeoutMs)
-			throws InterruptedException, IllegalProcessStateException, IOException {
-		execSync(processId, cmd, null, null, timeoutMs);
-	}
-
-	/**
-	 * Sync blocking execution command-line to process.
-	 * 
-	 * @param processId
-	 *            command-line process ID, If it is not empty, the process
-	 *            reference will be saved, which can be used to interrupt the
-	 *            execution of commands in a timely manner.
-	 * @param cmd
-	 *            commands
-	 * @param stdout
-	 *            standard output stream file.
-	 * @param timeoutMs
-	 *            timeout Ms.
-	 * @throws InterruptedException
-	 * @throws IllegalProcessStateException
-	 * @throws IOException
-	 */
-	default void execSync(String processId, String cmd, File stdout, long timeoutMs)
-			throws InterruptedException, IllegalProcessStateException, IOException {
-		execSync(processId, cmd, null, stdout, timeoutMs);
-	}
-
-	/**
-	 * Sync blocking execution multiple-commands, Save to temporary file before
-	 * execution.
-	 * 
-	 * @param processId
-	 *            command-line process ID, If it is not empty, the process
-	 *            reference will be saved, which can be used to interrupt the
-	 *            execution of commands in a timely manner.
-	 * @param multiCommands
-	 * @param execFile
-	 * @param stdout
-	 * @param timeoutMs
-	 * @throws IllegalProcessStateException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	void execFileSync(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, InterruptedException, IOException;
-
-	/**
-	 * Sync blocking execution command-line to process.
-	 * 
-	 * @param processId
-	 *            command-line process ID, If it is not empty, the process
-	 *            reference will be saved, which can be used to interrupt the
-	 *            execution of commands in a timely manner.
-	 * @param cmd
-	 *            commands
-	 * @param pwdDir
-	 *            process command-line context directory
-	 * @param stdout
-	 *            standard output stream file.
-	 * @param timeoutMs
-	 *            timeout Ms.
-	 * @throws IllegalProcessStateException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	void execSync(String processId, String cmd, File pwdDir, File stdout, long timeoutMs)
-			throws IllegalProcessStateException, IOException, InterruptedException;
-
-	/**
-	 * Async execution command.
-	 * 
-	 * @param processId
-	 * @param cmd
+	 * @param command
 	 * @param executor
 	 * @param callback
-	 * @param timeoutMs
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	default void execAsync(String processId, String cmd, Executor executor, ProcessCallback callback, long timeoutMs)
-			throws IOException, InterruptedException {
-		execAsync(processId, cmd, null, executor, callback, timeoutMs);
-	}
-
-	/**
-	 * Async execution command.
-	 * 
-	 * @param processId
-	 * @param cmd
-	 * @param pwdDir
-	 * @param executor
-	 * @param callback
-	 * @param timeoutMs
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	void execAsync(String processId, String cmd, File pwdDir, Executor executor, ProcessCallback callback, long timeoutMs)
-			throws IOException, InterruptedException;
+	void exec(DestroableCommand command, Executor executor, ProcessCallback callback) throws IOException, InterruptedException;
 
 	/**
 	 * Destroy command process.</br>
 	 * <font color=red>There's no guarantee that it will be killed.</font>
 	 * 
-	 * @param processId
-	 *            Created command-line process ID, must not be empty.
-	 * @param timeoutMs
-	 *            Destroy process timeout Ms.
+	 * @param signal
+	 * @throws TimeoutDestroyProcessException
 	 */
-	void destroy(String processId, long timeoutMs);
+	void destroy(DestroySignal signal) throws TimeoutDestroyProcessException;
 
 	/**
 	 * Async execution command process callback.

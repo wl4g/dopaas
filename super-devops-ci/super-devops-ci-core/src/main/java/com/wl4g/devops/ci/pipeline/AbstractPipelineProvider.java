@@ -32,7 +32,7 @@ import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.cli.SSH2Utils.CommandResult;
+import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AES;
 
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
-import static com.wl4g.devops.tool.common.cli.SSH2Utils.executeWithCommand;
+import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
@@ -79,7 +79,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
-	protected DestroableProcessManager processManager;
+	protected DestroableProcessManager pm;
 	@Autowired
 	protected CompositeVcsOperateAdapter vcsAdapter;
 
@@ -197,7 +197,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		writeBuildLog("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
 
 		// Execution command.
-		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
+		CommandResult result = execWithSsh2(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
 			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t\t----- Stdout: -----\n%s", user, remoteHost, command,
 					result.getMessage());
