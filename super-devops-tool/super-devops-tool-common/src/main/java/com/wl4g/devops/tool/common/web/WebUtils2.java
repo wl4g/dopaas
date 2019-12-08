@@ -101,21 +101,53 @@ public abstract class WebUtils2 {
 	final public static String URL_SEPAR_PROTO = URL_SEPAR_COLON + URL_SEPAR_SLASH + URL_SEPAR_SLASH;
 
 	/**
-	 * Request the header key name of real client IP
+	 * Request the header key name of real client IP. </br>
+	 * 
+	 * <pre>
+	 *	一、没有使用代理服务器的情况：
+	 *	      REMOTE_ADDR = 您的 IP
+	 *	      HTTP_VIA = 没数值或不显示
+	 *	      HTTP_X_FORWARDED_FOR = 没数值或不显示
+	 *	二、使用透明代理服务器的情况：Transparent Proxies
+	 *	      REMOTE_ADDR = 最后一个代理服务器 IP 
+	 *	      HTTP_VIA = 代理服务器 IP
+	 *	      HTTP_X_FORWARDED_FOR = 您的真实 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *	   这类代理服务器还是将您的信息转发给您的访问对象，无法达到隐藏真实身份的目的。
+	 *	三、使用普通匿名代理服务器的情况：Anonymous Proxies
+	 *	      REMOTE_ADDR = 最后一个代理服务器 IP 
+	 *	      HTTP_VIA = 代理服务器 IP
+	 *	      HTTP_X_FORWARDED_FOR = 代理服务器 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *	   隐藏了您的真实IP，但是向访问对象透露了您是使用代理服务器访问他们的。
+	 *	四、使用欺骗性代理服务器的情况：Distorting Proxies
+	 *	      REMOTE_ADDR = 代理服务器 IP 
+	 *	      HTTP_VIA = 代理服务器 IP 
+	 *	      HTTP_X_FORWARDED_FOR = 随机的 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *	   告诉了访问对象您使用了代理服务器，但编造了一个虚假的随机IP代替您的真实IP欺骗它。
+	 *	五、使用高匿名代理服务器的情况：High Anonymity Proxies (Elite proxies)
+	 *	      REMOTE_ADDR = 代理服务器 IP
+	 *	      HTTP_VIA = 没数值或不显示
+	 *	      HTTP_X_FORWARDED_FOR = 没数值或不显示 ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 * </pre>
 	 */
-	final public static String[] HEADER_REAL_IP = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP",
-			"HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED", "HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR",
-			"HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR" };
+	final public static String[] HEADER_REAL_IP = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "X-Real-IP",
+			"REMOTE_ADDR", "Remote-Addr", "RemoteAddr", // RemoteAddr
+			"REMOTE_IP", "Remote-Ip", "RemoteIp", // RemoteIp: Aliyun-SLB
+			"HTTP_X_FORWARDED_FOR", "Http-X-Forwarded-For", "HttpXForwardedFor", // HttpXForwardedFor
+			"HTTP_X_FORWARDED", "Http-X-Forwarded", "HttpXForwarded", // HttpXForwarded
+			"HTTP_Client_IP", "Http-Client-Ip", "HttpClientIp", // HttpClientIp
+			"HTTP_X_CLUSTER_CLIENT_IP", "Http-X-Cluster-Client-Ip", "HttpXClusterClientIp", // HttpXClusterClientIp
+			"HTTP_FORWARDED_FOR", "Http-Forwarded-For", "HttpForwardedFor", // HttpForwardedFor
+			"HTTP_VIA ", "Http-Via", "HttpVia" }; // HttpVia
 
 	/**
-	 * Request the header key name of real protocol
+	 * Request the header key name of real protocol scheme.
 	 */
-	final public static String[] HEADER_REAL_PROTOCOL = { "x-forwarded-proto" };
+	final public static String[] HEADER_REAL_PROTOCOL = { "X-Forwarded-Proto" };
 
 	/**
 	 * Request the header key name of real host
 	 */
-	final public static String[] HEADER_REAL_HOST = { "host" };
+	final public static String[] HEADER_REAL_HOST = { "Host" };
 
 	/**
 	 * Common media file suffix definitions
@@ -612,24 +644,33 @@ public abstract class WebUtils2 {
 		String scheme = request.getScheme();
 		for (String schemeKey : HEADER_REAL_PROTOCOL) {
 			String scheme0 = request.getHeader(schemeKey);
-			if (!StringUtils.isEmpty(scheme0)) {
+			if (!isBlank(scheme0)) {
 				scheme = scheme0;
 				break;
 			}
 		}
-		// Host
+		// Host & Port
 		String serverName = request.getServerName();
+		int port = request.getServerPort();
 		for (String hostKey : HEADER_REAL_HOST) {
 			String host = request.getHeader(hostKey);
-			if (!StringUtils.isEmpty(host)) {
-				// my.domain.com:8080
-				serverName = (host.contains(":") ? host.split("\\:")[0] : host);
+			if (!isBlank(host)) {
+				// me.domain.com:8080
+				serverName = host;
+				if (host.contains(":")) {
+					String[] part = split(host, ":");
+					serverName = part[0];
+					if (!isBlank(part[1])) {
+						port = Integer.parseInt(part[1]);
+					} else if (equalsIgnoreCase(part[1], "HTTP")) {
+						port = 80;
+					} else if (equalsIgnoreCase(part[1], "HTTPS")) {
+						port = 443;
+					}
+				}
 				break;
 			}
 		}
-		// Port
-		int port = request.getServerPort();
-
 		return getBaseURIForDefault(scheme, serverName, port) + ctxPath;
 	}
 
@@ -650,7 +691,6 @@ public abstract class WebUtils2 {
 	public static String getBaseURIForDefault(String scheme, String serverName, int port) {
 		Assert.notNull(scheme, "Http request scheme must not be empty");
 		Assert.notNull(serverName, "Http request serverName must not be empty");
-
 		StringBuffer baseUri = new StringBuffer(scheme).append("://").append(serverName);
 		if (port > 0) {
 			Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
