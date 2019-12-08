@@ -42,7 +42,7 @@ public interface DestroableProcessManager {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	void execWaitFor(DestroableCommand command) throws IllegalProcessStateException, IOException, InterruptedException;
+	void execWaitForComplete(DestroableCommand command) throws IllegalProcessStateException, IOException, InterruptedException;
 
 	/**
 	 * Non-blocking command line, callback standard or exception output

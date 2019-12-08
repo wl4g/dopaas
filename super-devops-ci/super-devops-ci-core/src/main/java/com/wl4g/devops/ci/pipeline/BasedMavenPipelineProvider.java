@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
@@ -36,9 +37,10 @@ public abstract class BasedMavenPipelineProvider extends BasedPhysicalBackupPipe
 	@Override
 	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
 		String defaultCommand = "cd " + projectDir + " && npm install";
-		// Execution command.
 		// TODO timeoutMs/pwdDir?
-		pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, jobLogFile, jobLogFile, 300000L));
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 }

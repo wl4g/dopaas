@@ -29,7 +29,6 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,15 +39,15 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
-import static com.wl4g.devops.tool.common.cli.SshUtils.execWaitForWithSsh2;
+import static com.wl4g.devops.tool.common.cli.SshUtils.execWaitForCompleteWithSsh2;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 import static java.lang.System.arraycopy;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.*;
 
 /**
  * Abstract generic command-line process management implements.
@@ -65,15 +64,16 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Command-line process repository */
-	@Autowired
-	protected ProcessRepository repository;
+	final protected ProcessRepository repository;
 
-	public GenericProcessManager() {
+	public GenericProcessManager(ProcessRepository repository) {
 		super(new RunnerProperties(true));
+		notNull(repository, "Process repository can't null");
+		this.repository = repository;
 	}
 
 	@Override
-	public void execWaitFor(DestroableCommand cmd) throws IllegalProcessStateException, IOException, InterruptedException {
+	public void execWaitForComplete(DestroableCommand cmd) throws IllegalProcessStateException, IOException, InterruptedException {
 		notNull(cmd, "Execution command can't null.");
 
 		DestroableProcessWrapper dpw = null;
@@ -171,7 +171,7 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 		if (log.isInfoEnabled()) {
 			log.info("Exec local command: {}", cmd.getCmd());
 		}
-		DelegateProcess ps = doExecMulti(cmd.getCmd(), cmd.getPwdDir(), cmd.getStdout(), cmd.getStderr(), false, false);
+		DelegateProcess ps = execMulti(cmd.getCmd(), cmd.getPwdDir(), cmd.getStdout(), cmd.getStderr(), false, false);
 		return new LocalDestroableProcess(cmd.getProcessId(), cmd, ps);
 	}
 
@@ -186,7 +186,7 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 		if (log.isInfoEnabled()) {
 			log.info("Exec remote command: {}", cmd.getCmd());
 		}
-		return execWaitForWithSsh2(cmd.getHost(), cmd.getUser(), cmd.getPemPrivateKey(), cmd.getCmd(),
+		return execWaitForCompleteWithSsh2(cmd.getHost(), cmd.getUser(), cmd.getPemPrivateKey(), cmd.getCmd(),
 				s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s), cmd.getTimeoutMs());
 	}
 

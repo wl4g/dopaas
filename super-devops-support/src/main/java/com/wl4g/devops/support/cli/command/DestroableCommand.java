@@ -19,8 +19,9 @@ import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
-import java.io.File;
 import java.io.Serializable;
+
+import com.wl4g.devops.support.cli.GenericProcessManager;
 
 /**
  * Basic destroable command's wrapper.
@@ -35,32 +36,41 @@ public class DestroableCommand implements Serializable {
 	/** Command of processId. */
 	final private String processId;
 
-	/** Command of script. */
+	/**
+	 * Command of script.</br>
+	 * Note: please use the "|" channel symbol and redirection carefully, for
+	 * example:
+	 * 
+	 * <pre>
+	 * mvn install | tee -a /mvn.out
+	 * </pre>
+	 * 
+	 * or
+	 * 
+	 * <pre>
+	 * mvn install > /mvn.out 2>&1
+	 * </pre>
+	 * 
+	 * , which will cause the exit code and stdout / stderr of command execution
+	 * to behave abnormally, that is, whether the execution result is abnormal
+	 * or not is uncertain. Please refer to:
+	 * {@link GenericProcessManager#inputStreamRead0()}
+	 */
 	final private String cmd;
-
-	/** Command of stdout file. */
-	final private File stdout;
-
-	/** Command of stderr file. */
-	final private File stderr;
 
 	/** Command of timeout.(Ms) */
 	final private long timeoutMs;
 
-	public DestroableCommand(String processId, String cmd, long timeoutMs) {
-		this(processId, cmd, null, null, timeoutMs);
+	public DestroableCommand(String cmd, long timeoutMs) {
+		this(null, cmd, timeoutMs);
 	}
 
-	public DestroableCommand(String processId, String cmd, File stdout, File stderr, long timeoutMs) {
+	public DestroableCommand(String processId, String cmd, long timeoutMs) {
 		// hasText(processId, "Command processId can't empty.");
 		hasText(cmd, "Command can't empty.");
-		// notNull(stdout, "Command stdout can't null.");
-		// notNull(stderr, "Command stderr can't null.");
 		isTrue(timeoutMs > 0, "Command must timeoutMs>0.");
 		this.processId = processId;
 		this.cmd = cmd;
-		this.stdout = stdout;
-		this.stderr = stderr;
 		this.timeoutMs = timeoutMs;
 	}
 
@@ -70,14 +80,6 @@ public class DestroableCommand implements Serializable {
 
 	public String getCmd() {
 		return cmd;
-	}
-
-	public File getStdout() {
-		return stdout;
-	}
-
-	public File getStderr() {
-		return stderr;
 	}
 
 	public long getTimeoutMs() {

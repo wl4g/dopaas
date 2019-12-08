@@ -24,6 +24,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -65,6 +66,30 @@ public abstract class FileIOUtils extends FileUtils {
 	 * Default read/write buffer size.
 	 */
 	final public static int DEFAULT_RW_BUF_SIZE = 4096;
+
+	// -- Files. ---
+
+	/**
+	 * Ensure file exist.
+	 * 
+	 * @param file
+	 */
+	public static void ensureFile(File file) {
+		state(Objects.nonNull(file), "Ensure file can't null");
+		if (file.exists()) {
+			return;
+		}
+
+		File parent = file.getParentFile();
+		if (!parent.exists() || !parent.isDirectory()) {
+			state(parent.mkdirs(), String.format("Failed to mkdirs for %s", parent));
+		}
+		try {
+			state(file.createNewFile(), String.format("Failed to create new file for %s", file));
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
 	// -- Writer. ---
 
@@ -121,18 +146,7 @@ public abstract class FileIOUtils extends FileUtils {
 		hasText(data, "Write data must not be empty");
 		notNull(charset, "Write charset must not be null");
 
-		File parent = file.getParentFile();
-		if (!parent.exists() || !parent.isDirectory()) {
-			state(parent.mkdirs(), String.format("Failed to creating parent directory for [%s]", parent.getAbsolutePath()));
-		}
-		if (!file.exists()) {
-			try {
-				state(file.createNewFile(), String.format("Failed to creating file for [%s]", file.getAbsolutePath()));
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-
+		ensureFile(file);
 		try (Writer w = new FileWriterWithEncoding(file, charset, append)) {
 			w.write(data);
 			w.flush();
@@ -152,18 +166,7 @@ public abstract class FileIOUtils extends FileUtils {
 		notNull(file, "Write file must not be null");
 		notNull(data, "Write data must not be null");
 
-		File parent = file.getParentFile();
-		if (!parent.exists() || !parent.isDirectory()) {
-			state(parent.mkdirs(), String.format("Failed to creating parent directory for [%s]", parent.getAbsolutePath()));
-		}
-		if (!file.exists()) {
-			try {
-				state(file.createNewFile(), String.format("Failed to creating file for [%s]", file.getAbsolutePath()));
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-
+		ensureFile(file);
 		try (OutputStream w = new FileOutputStream(file, append)) {
 			w.write(data);
 			w.flush();
@@ -175,14 +178,15 @@ public abstract class FileIOUtils extends FileUtils {
 	// --- Reader. ---
 
 	/**
-	 * Reading lines for page.
+	 * Reading lines for page. Based on the implementation of pure Java normal
+	 * flow, it is recommended to use optimized function method:
+	 * {@link #seekReadString(String, long, int)}
 	 * 
 	 * @param filename
 	 * @param startLine
 	 * @param limit
 	 * @return
 	 */
-	@Deprecated
 	public static List<String> readLines(String filename, int startLine, int limit) {
 		List<String> lines = new ArrayList<>();
 		try (FileInputStream in = new FileInputStream(filename); Scanner sc = new Scanner(in);) {
@@ -205,10 +209,10 @@ public abstract class FileIOUtils extends FileUtils {
 	}
 
 	/**
-	 * Seek reading file to batch string buffer. Note: Each element of the
-	 * returned list string does not correspond to a line of the physical file
-	 * content. The result you want to read corresponds to a line of the
-	 * physical file
+	 * Seek reading file to batch string buffer. High performance implementation
+	 * based on {@link RandomAccessFile} Note: Each element of the returned list
+	 * string does not correspond to a line of the physical file content. The
+	 * result you want to read corresponds to a line of the physical file
 	 * 
 	 * @param filename
 	 *            the system-dependent filename
@@ -384,17 +388,6 @@ public abstract class FileIOUtils extends FileUtils {
 					+ ", hasNext=" + hasNext + "]";
 		}
 
-	}
-
-	public static void main(String[] args) {
-		System.out.println(SystemUtils.LINE_SEPARATOR);
-		System.out.println(readLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 2, 12));
-		System.out.println("--------------------");
-		System.out.println(seekReadString("C:\\Users\\Administrator\\Desktop\\aaa.txt", 3L, 12));
-		System.out.println("--------------------");
-		System.out.println(seekReadLines("C:\\Users\\Administrator\\Desktop\\aaa.txt", 13L, 6, line -> {
-			return line.equalsIgnoreCase("EOF"); // End if 'EOF'
-		}));
 	}
 
 }

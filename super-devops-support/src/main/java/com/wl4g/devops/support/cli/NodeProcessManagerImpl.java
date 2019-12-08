@@ -31,6 +31,7 @@ import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper;
+import com.wl4g.devops.support.cli.repository.ProcessRepository;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
@@ -42,6 +43,7 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
  * @since
  */
 public class NodeProcessManagerImpl extends GenericProcessManager {
+
 	final public static long DEFAULT_MIN_WATCH_MS = 2_00L;
 	final public static long DEFAULT_MAX_WATCH_MS = 2_000L;
 	/** Default destruction signal expired seconds. */
@@ -59,6 +61,10 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	/** Jedis locks manager. */
 	@Autowired
 	protected JedisLockManager lockManager;
+
+	public NodeProcessManagerImpl(ProcessRepository repository) {
+		super(repository);
+	}
 
 	/**
 	 * Send signal for destroy command-line process.</br>

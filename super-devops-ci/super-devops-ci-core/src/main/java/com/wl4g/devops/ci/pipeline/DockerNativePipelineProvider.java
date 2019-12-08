@@ -15,11 +15,10 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import java.io.File;
-
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 
 /**
@@ -37,13 +36,17 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 
 	@Override
 	public void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
-		String cmd = "mvn -f " + projectDir + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
+		String command = "mvn -f " + projectDir
+				+ "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getDeploy().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getDeploy().getDockerNative().getDockerPushPasswd();
-		File jogLogFile = config.getJobLog(getContext().getTaskHistory().getId());
+		// File jogLogFile =
+		// config.getJobLog(getContext().getTaskHistory().getId());
+
 		// TODO timeoutMs?
-		pm.execWaitFor(
-				new RemoteDestroableCommand(cmd, jogLogFile, jogLogFile, 180_000L, user, remoteHost, sshkey.toCharArray()));
+		DestroableCommand cmd = new RemoteDestroableCommand(String.valueOf(getContext().getTaskHistory().getId()), command,
+				180_000L, user, remoteHost, sshkey.toCharArray());
+		pm.execWaitForComplete(cmd);
 	}
 
 	@Override
