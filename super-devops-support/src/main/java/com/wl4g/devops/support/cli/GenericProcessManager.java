@@ -73,7 +73,8 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 	}
 
 	@Override
-	public void execWaitForComplete(DestroableCommand cmd) throws IllegalProcessStateException, IOException, InterruptedException {
+	public void execWaitForComplete(DestroableCommand cmd)
+			throws IllegalProcessStateException, IOException, InterruptedException {
 		notNull(cmd, "Execution command can't null.");
 
 		DestroableProcessWrapper dpw = null;
@@ -102,7 +103,13 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 				String errmsg = EMPTY;
 				// Obtain process error message.
 				try {
-					errmsg = readFullyToString(dpw.getStderr());
+					// stderr redirected? (e.g: mvn install >/mvn.out 2>&1)
+					// and will not get the message.
+					if ((cmd instanceof LocalDestroableCommand) && ((LocalDestroableCommand) cmd).hasStderr()) {
+						errmsg = "Failed to exec command, error message refer to: " + ((LocalDestroableCommand) cmd).getStderr();
+					} else {
+						errmsg = readFullyToString(dpw.getStderr());
+					}
 				} catch (Exception e) {
 					errmsg = getRootCausesString(e);
 				}
