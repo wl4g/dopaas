@@ -662,11 +662,11 @@ public abstract class WebUtils2 {
 					serverName = part[0];
 					if (!isBlank(part[1])) {
 						port = Integer.parseInt(part[1]);
-					} else if (equalsIgnoreCase(part[1], "HTTP")) {
-						port = 80;
-					} else if (equalsIgnoreCase(part[1], "HTTPS")) {
-						port = 443;
 					}
+				} else if (equalsIgnoreCase(scheme, "HTTP")) {
+					port = 80;
+				} else if (equalsIgnoreCase(scheme, "HTTPS")) {
+					port = 443;
 				}
 				break;
 			}
