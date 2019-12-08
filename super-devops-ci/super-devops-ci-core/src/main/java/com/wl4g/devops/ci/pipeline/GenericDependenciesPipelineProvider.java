@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
@@ -230,9 +231,11 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
 			// Resolve placeholder variables.
 			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
-			// Execute shell file. TODO timeoutMs?
-			pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, jobLogFile,
-					jobLogFile, 300_000L));
+			// Execute shell file.
+			// TODO timeoutMs?
+			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile,
+					300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+			pm.execWaitForComplete(cmd);
 		}
 
 	}

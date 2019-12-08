@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.support.cli.command;
 
+import static java.util.Objects.nonNull;
 import java.io.File;
+
+import com.wl4g.devops.support.cli.GenericProcessManager;
 
 /**
  * Generic(local) command's wrapper.
@@ -30,26 +33,74 @@ public class LocalDestroableCommand extends DestroableCommand {
 	/** Command of context directory. */
 	final private File pwdDir;
 
-	public LocalDestroableCommand(String command, File stdout, File stderr, long timeoutMs) {
-		this(null, command, null, stdout, stderr, timeoutMs);
+	/** Command of stdout local file. */
+	private File stdout;
+
+	/** Command of stderr local file. */
+	private File stderr;
+
+	public LocalDestroableCommand(String command, File pwdDir, long timeoutMs) {
+		this(null, command, pwdDir, timeoutMs);
 	}
 
-	public LocalDestroableCommand(String command, File pwdDir, File stdout, File stderr, long timeoutMs) {
-		this(null, command, pwdDir, stdout, stderr, timeoutMs);
-	}
-
-	public LocalDestroableCommand(String processId, String command, long timeoutMs) {
-		this(processId, command, null, null, null, timeoutMs);
-	}
-
-	public LocalDestroableCommand(String processId, String command, File pwdDir, File stdout, File stderr, long timeoutMs) {
-		super(processId, command, stdout, stderr, timeoutMs);
+	public LocalDestroableCommand(String processId, String command, File pwdDir, long timeoutMs) {
+		super(processId, command, timeoutMs);
 		// notNull(pwdDir, "Command pwdDir can't null.");
 		this.pwdDir = pwdDir;
 	}
 
 	public File getPwdDir() {
 		return pwdDir;
+	}
+
+	public File getStdout() {
+		return stdout;
+	}
+
+	public boolean hasStdout() {
+		return nonNull(stdout);
+	}
+
+	/**
+	 * Execute local command, standard stream output to local file.</br>
+	 * Note: if the standard output is set to flow to a file,
+	 * {@link Process#getInputStream()} cannot get the data.
+	 * 
+	 * @param stdout
+	 * @return
+	 * @see {@link GenericProcessManager#inputStreamRead0()}
+	 */
+	public LocalDestroableCommand setStdout(File stdout) {
+		// notNull(stdout, "Command stdout can't null.");
+		if (nonNull(stdout)) {
+			this.stdout = stdout;
+		}
+		return this;
+	}
+
+	public File getStderr() {
+		return stderr;
+	}
+
+	public boolean hasStderr() {
+		return nonNull(stderr);
+	}
+
+	/**
+	 * Execute local command, error stream output to local file.</br>
+	 * Note: if the standard output is set to flow to a file,
+	 * {@link Process#getErrorStream()} cannot get the data.
+	 * 
+	 * @param stderr
+	 * @return
+	 * @see {@link GenericProcessManager#inputStreamRead0()}
+	 */
+	public LocalDestroableCommand setStderr(File stderr) {
+		// notNull(stderr, "Command stderr can't null.");
+		if (nonNull(stderr)) {
+			this.stderr = stderr;
+		}
+		return this;
 	}
 
 }

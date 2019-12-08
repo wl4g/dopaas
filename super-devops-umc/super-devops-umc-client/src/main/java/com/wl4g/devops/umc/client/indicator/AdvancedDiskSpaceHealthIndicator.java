@@ -31,7 +31,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.tool.common.io.FileSizeUtil;
+import com.wl4g.devops.tool.common.io.FileSizeUtils;
 
 /**
  * Custom operation system disk space performance indicator.<br/>
@@ -60,7 +60,7 @@ public class AdvancedDiskSpaceHealthIndicator extends AbstractAdvancedHealthIndi
 
 	@Override
 	protected String formatValue(long value) {
-		return FileSizeUtil.getHumanReadable(value);
+		return FileSizeUtils.getHumanReadable(value);
 	}
 
 	@Override

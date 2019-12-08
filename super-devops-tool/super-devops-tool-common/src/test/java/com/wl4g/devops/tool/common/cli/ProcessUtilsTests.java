@@ -16,14 +16,25 @@
 package com.wl4g.devops.tool.common.cli;
 
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.buildCrossSingleCommands;
+import static com.wl4g.devops.tool.common.cli.ProcessUtils.execMulti;
 
 import java.io.File;
 
-public class CommandUtilsTests {
+public class ProcessUtilsTests {
 
 	public static void main(String[] args) throws Exception {
+		// buildCrossSingleCommandsTest1();
+		execMultiTest2();
+	}
+
+	public static void buildCrossSingleCommandsTest1() throws Exception {
 		String[] cmdarray = buildCrossSingleCommands("mvn -version", new File("c:\\out"), new File("c:\\err"), false, false);
 		Runtime.getRuntime().exec(cmdarray).waitFor();
+	}
+
+	public static void execMultiTest2() throws Exception {
+		execMulti("echo \"start...\"\njps \necho \"end\"", new File("d:\\"), new File("c:\\out"), new File("c:\\err"),
+				true, false);
 	}
 
 }

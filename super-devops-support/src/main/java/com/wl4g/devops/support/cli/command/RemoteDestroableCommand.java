@@ -18,8 +18,6 @@ package com.wl4g.devops.support.cli.command;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
-import java.io.File;
-
 /**
  * SSH remote command's wrapper.
  * 
@@ -40,22 +38,12 @@ public class RemoteDestroableCommand extends DestroableCommand {
 	final private char[] pemPrivateKey;
 
 	public RemoteDestroableCommand(String command, long timeoutMs, String user, String host, char[] pemPrivateKey) {
-		this(command, null, null, null, timeoutMs, user, host, pemPrivateKey);
-	}
-
-	public RemoteDestroableCommand(String command, File stdout, File stderr, long timeoutMs, String user, String host,
-			char[] pemPrivateKey) {
-		this(null, command, stdout, stderr, timeoutMs, user, host, pemPrivateKey);
+		this(null, command, timeoutMs, user, host, pemPrivateKey);
 	}
 
 	public RemoteDestroableCommand(String processId, String command, long timeoutMs, String user, String host,
 			char[] pemPrivateKey) {
-		this(processId, command, null, null, timeoutMs, user, host, pemPrivateKey);
-	}
-
-	public RemoteDestroableCommand(String processId, String command, File stdout, File stderr, long timeoutMs, String user,
-			String host, char[] pemPrivateKey) {
-		super(processId, command, stdout, stderr, timeoutMs);
+		super(processId, command, timeoutMs);
 		hasText(user, "Command remote user can't empty.");
 		hasText(host, "Command remote host can't empty.");
 		notNull(pemPrivateKey, "Command remote ssh pubkey can't empty.");

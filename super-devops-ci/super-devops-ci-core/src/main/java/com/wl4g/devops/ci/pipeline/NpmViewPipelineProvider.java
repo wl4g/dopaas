@@ -20,6 +20,7 @@ import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
@@ -120,8 +121,9 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 			String buildCommand = resolveCmdPlaceholderVariables(taskHistory.getBuildCommand());
 			// Execution command.
 			// TODO timeoutMs?
-			pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, jobLogFile,
-					jobLogFile, 300000L));
+			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile,
+					300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+			pm.execWaitForComplete(cmd);
 		}
 	}
 
@@ -130,11 +132,11 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
-
 		// Execution command.
 		// TODO timeoutMs?
-		pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, jobLogFile,
-				jobLogFile, 300000L));
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	/**
@@ -149,11 +151,11 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		// tar
 		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
 				+ config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
-
 		// Execution command.
 		// TODO timeoutMs?
-		pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, jobLogFile,
-				jobLogFile, 300000L));
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	@Override
@@ -161,7 +163,9 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		String defaultCommand = "cd " + projectDir + " && npm install";
 		// Execution command.
 		// TODO timeoutMs/pwdDir?
-		pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, jobLogFile, jobLogFile, 300000L));
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 }

@@ -34,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wl4g.devops.tool.common.lang.Assert;
 
+import static com.wl4g.devops.tool.common.io.FileIOUtils.ensureFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeFile;
 import static com.wl4g.devops.tool.common.lang.Assert.*;
 import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
@@ -72,13 +72,14 @@ public abstract class ProcessUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public final static DelegateProcess doExecMulti(final String multiCmd, File pwdDir, final File stdout, final File stderr,
+	public final static DelegateProcess execMulti(final String multiCmd, File pwdDir, final File stdout, final File stderr,
 			final boolean append, final boolean redirectToNullIfNecessary) throws IOException {
-		if (isNull(pwdDir)) {
-			pwdDir = execScriptTmpDir;
-		}
-		writeFile(pwdDir, multiCmd, false);
-		return doExecSingle(pwdDir.getAbsolutePath(), pwdDir, stdout, stderr, append, redirectToNullIfNecessary);
+		pwdDir = isNull(pwdDir) ? execScriptTmpDir : pwdDir;
+		File tmpFile = new File(pwdDir.getAbsoluteFile(),
+				String.valueOf(System.nanoTime()) + ".tmpscript" + "." + (IS_OS_WINDOWS ? "bat" : "sh"));
+
+		writeFile(tmpFile, multiCmd, false);
+		return execSingle(tmpFile.getAbsolutePath(), null, stdout, stderr, append, redirectToNullIfNecessary);
 	}
 
 	/**
@@ -102,7 +103,7 @@ public abstract class ProcessUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public final static DelegateProcess doExecSingle(final String singleCmd, final File pwdDir, final File stdout,
+	public final static DelegateProcess execSingle(final String singleCmd, final File pwdDir, final File stdout,
 			final File stderr, final boolean append, final boolean redirectToNullIfNecessary) throws IOException {
 		Process ps = null;
 		String[] cmdarray = buildCrossSingleCommands(singleCmd, stdout, stderr, append, redirectToNullIfNecessary);
@@ -159,19 +160,23 @@ public abstract class ProcessUtils {
 
 			// Stdout/Stderr
 			if (nonNull(stdout)) {
+				ensureFile(stdout);
+				stdout.getParentFile().mkdirs();
+
 				// e.g: echo "hello" 1>out.log
-				cmdStr.append(String.format("1%s%s", mode, stdout.getAbsolutePath()));
+				cmdStr.append(String.format(" 1%s%s", mode, stdout.getAbsolutePath()));
 				redirectToNullIfNecessary = false;
 			}
 			if (nonNull(stderr)) {
+				ensureFile(stderr);
 				// e.g: echo "hello" 2>err.log
-				cmdStr.append(String.format("2%s%s", mode, stderr.getAbsolutePath()));
+				cmdStr.append(String.format(" 2%s%s", mode, stderr.getAbsolutePath()));
 				redirectToNullIfNecessary = false;
 			}
 			if (redirectToNullIfNecessary) {
 				// e.g: echo "hello" >>/dev/null
 				// To use in poweshell: $null
-				cmdStr.append(String.format("%s C:\\nul", mode));
+				cmdStr.append(String.format(" %s C:\\nul", mode));
 			}
 		} else {
 			cmdarray.add("/bin/bash");
@@ -179,18 +184,20 @@ public abstract class ProcessUtils {
 
 			// Stdout/Stderr
 			if (nonNull(stdout)) {
+				ensureFile(stdout);
 				// e.g: echo "hello" 1>out.log
-				cmdStr.append(String.format("1%s%s", mode, stdout.getAbsolutePath()));
+				cmdStr.append(String.format(" 1%s%s", mode, stdout.getAbsolutePath()));
 				redirectToNullIfNecessary = false;
 			}
 			if (nonNull(stderr)) {
+				ensureFile(stderr);
 				// e.g: echo "hello" 2>err.log
-				cmdStr.append(String.format("2%s%s", mode, stderr.getAbsolutePath()));
+				cmdStr.append(String.format(" 2%s%s", mode, stderr.getAbsolutePath()));
 				redirectToNullIfNecessary = false;
 			}
 			if (redirectToNullIfNecessary) {
 				// e.g: echo "hello" >>/dev/null
-				cmdStr.append(String.format("%s /dev/null", mode));
+				cmdStr.append(String.format(" %s /dev/null", mode));
 			}
 		}
 		cmdarray.add(cmdStr.toString());
@@ -287,16 +294,16 @@ public abstract class ProcessUtils {
 	/**
 	 * Get or create a Java command line execution temporary parent directory.
 	 * 
-	 * @param basePath
+	 * @param path
 	 * @return
 	 * @throws IOException
 	 */
-	private final synchronized static File execScriptTmpDirectory0(String basePath) {
+	private final synchronized static File execScriptTmpDirectory0(String path) {
 		File scriptTmpDir = null;
 		try {
-			scriptTmpDir = new File(JAVA_IO_TMPDIR, basePath + "." + System.nanoTime());
+			scriptTmpDir = new File(JAVA_IO_TMPDIR, path);
 			if (!scriptTmpDir.exists()) {
-				Assert.state(scriptTmpDir.mkdir(), "Failed to create temp directory [" + scriptTmpDir.getName() + "]");
+				state(scriptTmpDir.mkdirs(), "Failed to create temp directory [" + scriptTmpDir.getName() + "]");
 			}
 			return scriptTmpDir;
 		} finally {
@@ -310,6 +317,6 @@ public abstract class ProcessUtils {
 	 * Java command line execution temporary directory.
 	 */
 	final private static File execScriptTmpDir = execScriptTmpDirectory0(
-			"/javaexectmpscript_" + USER_NAME + "/" + LOCAL_PROCESS_ID + "/");
+			"java_exec_tmpscript_" + USER_NAME + "/" + LOCAL_PROCESS_ID + "." + System.nanoTime());
 
 }

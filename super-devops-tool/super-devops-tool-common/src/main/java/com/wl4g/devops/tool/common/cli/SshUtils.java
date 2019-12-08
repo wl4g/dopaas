@@ -165,7 +165,7 @@ public abstract class SshUtils {
 	 */
 	public static CommandResult execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws IOException {
-		return execWaitForWithSsh2(host, user, pemPrivateKey, command, session -> {
+		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, session -> {
 			String message = null, errmsg = null;
 			if (nonNull(session.getStdout())) {
 				message = readFullyToString(session.getStdout());
@@ -178,7 +178,7 @@ public abstract class SshUtils {
 	}
 
 	/**
-	 * Execution commands with SSH2
+	 * Execution commands wait for complete with SSH2
 	 * 
 	 * @param host
 	 * @param user
@@ -190,7 +190,7 @@ public abstract class SshUtils {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T execWaitForWithSsh2(String host, String user, char[] pemPrivateKey, String command,
+	public static <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			CommandProcessor processor, long timeoutMs) throws IOException {
 		return execWithSsh2(host, user, pemPrivateKey, command, session -> {
 			// Wait for completed by condition.

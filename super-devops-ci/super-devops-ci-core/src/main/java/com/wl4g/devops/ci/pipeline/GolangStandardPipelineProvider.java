@@ -20,6 +20,7 @@ import java.io.File;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 /**
@@ -56,7 +57,9 @@ public class GolangStandardPipelineProvider extends BasedPhysicalBackupPipelineP
 		String defaultCommand = "cd " + projectDir + " && npm install";
 		// Execution command.
 		// TODO timeoutMs/pwdDir?
-		pm.execWaitFor(new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, jobLogFile, jobLogFile, 300000L));
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 }

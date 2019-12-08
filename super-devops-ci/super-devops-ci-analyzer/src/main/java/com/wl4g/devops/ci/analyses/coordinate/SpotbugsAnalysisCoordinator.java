@@ -61,7 +61,7 @@ public class SpotbugsAnalysisCoordinator extends AbstractAnalysisCoordinator<Spo
 	protected void doAnalyze(SpotbugsAnalysingModel model) throws Exception {
 		String command = buildSpotbugsEngineCommand(model);
 		try {
-			DestroableCommand cmd = new LocalDestroableCommand(model.getProjectName(), command, 30 * 60 * 1000);
+			DestroableCommand cmd = new LocalDestroableCommand(model.getProjectName(), command, null, 30 * 60 * 1000);
 			processManager.exec(cmd, getWorker(), new ProcessCallback() {
 				@Override
 				public void onStdout(byte[] data) {
