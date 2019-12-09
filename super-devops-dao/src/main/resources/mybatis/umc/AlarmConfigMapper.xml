@@ -138,7 +138,7 @@
     select 
     <include refid="Base_Column_List" />
     from umc_alarm_config
-    where id = #{id,jdbcType=INTEGER}
+    where del_flag!=1 and id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from umc_alarm_config
@@ -291,7 +291,7 @@
     select
     <include refid="Base_Column_List" />
     from umc_alarm_config
-    where template_id = #{templateId,jdbcType=INTEGER}
+    where del_flag!=1 and template_id = #{templateId,jdbcType=INTEGER}
   </select>
 
   <select id="getByCollectAddrAndTemplateId" resultMap="BaseResultMap" parameterType="java.util.Map">
@@ -299,13 +299,13 @@
     left join umc_alarm_template t on t.id=c.template_id
     left join umc_alarm_config_collect cc on cc.config_id=c.id
     left join app_instance i on i.id=cc.collect_id
-    where c.template_id=#{templateId,jdbcType=INTEGER} and i.endpoint=#{collectAddr,jdbcType=VARCHAR}
+    where c.template_id=#{templateId,jdbcType=INTEGER} and i.endpoint=#{collectAddr,jdbcType=VARCHAR} and c.del_flag!=1 and t.del_flag!=1
 </select>
 
   <select id="getByClusterIdAndTemplateId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select * from umc_alarm_config c
     left join umc_alarm_template t on t.id=c.template_id
-    where c.template_id=#{templateId,jdbcType=INTEGER} and c.cluster_id=#{appClusterId,jdbcType=INTEGER}
+    where c.del_flag!=1 and t.del_flag!=1 and c.template_id=#{templateId,jdbcType=INTEGER} and c.cluster_id=#{appClusterId,jdbcType=INTEGER}
 </select>
 
 
