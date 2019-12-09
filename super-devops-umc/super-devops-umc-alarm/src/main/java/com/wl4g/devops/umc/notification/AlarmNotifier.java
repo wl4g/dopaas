@@ -73,6 +73,10 @@ public interface AlarmNotifier {
 			return alarmType;
 		}
 
+		public String[] getOwners() {
+			return owners;
+		}
+
 		@Override
 		public String toString() {
 			return "AlarmMessage [owners=" + Arrays.toString(owners) + ", message=" + message + ", alarmType=" + alarmType + "]";
