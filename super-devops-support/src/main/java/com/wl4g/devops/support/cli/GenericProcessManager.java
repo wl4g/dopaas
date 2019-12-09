@@ -82,7 +82,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	@Override
 	public void execFileSync(String processId, String multiCommands, File execFile, File stdout, long timeoutMs)
 			throws IllegalProcessStateException, InterruptedException, IOException {
-		writeFile(execFile, multiCommands, false);
+		writeFile(execFile, multiCommands, true);
 		execSync(processId, "sh " + execFile.getAbsolutePath(), stdout, timeoutMs);
 	}
 

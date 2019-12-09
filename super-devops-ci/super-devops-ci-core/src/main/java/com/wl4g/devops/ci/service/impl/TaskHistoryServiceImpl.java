@@ -61,9 +61,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	protected DestroableProcessManager processManager;
 
 	@Override
-	public PageModel list(PageModel pm, String groupName, String projectName, String branchName) {
+	public PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName));
+		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName, startDate, endDate));
 		return pm;
 	}
 
@@ -170,6 +170,15 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		// CommandUtils.killByTaskId(taskHisId);
 		processManager.destroy(String.valueOf(taskHisId), 5000);
 
+	}
+
+	@Override
+	public void updateCostTime(int taskId, long costTime) {
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preUpdate();
+		taskHistory.setId(taskId);
+		taskHistory.setCostTime(costTime);
+		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
 	}
 
 	@Override
