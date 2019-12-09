@@ -32,7 +32,7 @@ import java.util.List;
 @Component
 public interface TaskHistoryService {
 
-	PageModel list(PageModel pm, String groupName, String projectName, String branchName);
+	PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate);
 
 	List<TaskHistoryInstance> getDetailByTaskId(Integer id);
 
@@ -51,5 +51,7 @@ public interface TaskHistoryService {
 	void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
 
 	void stopByTaskHisId(Integer taskHisId);
+
+	void updateCostTime(int taskId, long costTime);
 
 }

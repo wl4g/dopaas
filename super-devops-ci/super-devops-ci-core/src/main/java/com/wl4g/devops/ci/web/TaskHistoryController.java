@@ -58,11 +58,11 @@ public class TaskHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(String groupName, String projectName, String branchName, PageModel pm) {
+	public RespBase<?> list(PageModel pm,String groupName, String projectName, String branchName,String startDate, String endDate) {
 		log.info("into TaskHistoryController.list prarms::" + "groupName = {} , projectName = {} , branchName = {} , pm = {} ",
 				groupName, projectName, branchName, pm);
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = taskHistoryService.list(pm, groupName, projectName, branchName);
+		PageModel list = taskHistoryService.list(pm, groupName, projectName, branchName, startDate, endDate);
 		resp.setData(list);
 		return resp;
 	}

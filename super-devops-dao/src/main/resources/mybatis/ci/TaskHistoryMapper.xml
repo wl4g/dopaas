@@ -24,6 +24,7 @@
     <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
     <result column="track_id" property="trackId" jdbcType="INTEGER" />
     <result column="track_type" property="trackType" jdbcType="INTEGER" />
+    <result column="cost_time" property="costTime" jdbcType="BIGINT" />
 
     <!-- other  -->
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
@@ -34,11 +35,11 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,provider_kind,build_command,pre_command,post_command, remark, del_flag, create_date,
-    create_by, update_date, update_by,result,contact_group_id,track_id,track_type
+    create_by, update_date, update_by,result,contact_group_id,track_id,track_type,cost_time
   </sql>
   <sql id="Base_Column_List_t" >
     t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.provider_kind,t.build_command,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
-    t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id,t.track_id,t.track_type
+    t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id,t.track_id,t.track_type,t.cost_time
   </sql>
   <sql id="Blob_Column_List" >
     result
@@ -60,13 +61,13 @@
       status, branch_name, sha_git,sha_local,
       ref_id, provider_kind,build_command,pre_command,post_command,remark, del_flag,
       create_date, create_by, update_date, 
-      update_by, result,contact_group_id,track_id,track_type)
+      update_by, result,contact_group_id,track_id,track_type,cost_time)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
       #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contactGroupId,jdbcType=INTEGER},
-      #{trackId,jdbcType=INTEGER},#{trackType,jdbcType=INTEGER})
+      #{trackId,jdbcType=INTEGER},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" useGeneratedKeys="true" keyProperty="id">
     insert into ci_task_history
@@ -135,6 +136,9 @@
       <if test="trackType != null" >
         track_type,
       </if>
+      <if test="costTime != null" >
+        cost_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
 
@@ -200,6 +204,9 @@
       </if>
       <if test="trackType != null" >
         #{trackType,jdbcType=INTEGER},
+      </if>
+      <if test="costTime != null" >
+        #{costTime,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -269,6 +276,9 @@
       <if test="trackType != null" >
         track_type = #{trackType,jdbcType=INTEGER},
       </if>
+      <if test="costTime != null" >
+        cost_time = #{costTime,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -294,7 +304,8 @@
       result = #{result,jdbcType=LONGVARCHAR},
       contact_group_id = #{contactGroupId,jdbcType=INTEGER},
       track_id = #{trackId,jdbcType=INTEGER},
-      track_type = #{trackType,jdbcType=INTEGER}
+      track_type = #{trackType,jdbcType=INTEGER},
+      cost_time = #{costTime,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
@@ -319,7 +330,8 @@
       result = #{result,jdbcType=LONGVARCHAR},
       contact_group_id = #{contactGroupId,jdbcType=INTEGER},
       track_id = #{trackId,jdbcType=INTEGER},
-      track_type = #{trackType,jdbcType=INTEGER}
+      track_type = #{trackType,jdbcType=INTEGER},
+      cost_time = #{costTime,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -339,6 +351,10 @@
     </if>
     <if test="branchName != null and branchName != ''" >
       AND t.branch_name LIKE CONCAT('%','${branchName}','%')
+    </if>
+    <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
+      AND DATE_FORMAT(t.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(t.create_date,'%Y-%m-%d %H:%i') &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
     </if>
     order by t.create_date desc
   </select>

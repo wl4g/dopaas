@@ -54,6 +54,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;
 
@@ -95,6 +96,8 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected AlarmContactDao alarmContactDao;
 	@Autowired
 	protected TaskBuildCommandDao taskBuildCmdDao;
+	@Autowired
+	protected TaskHistoryDetailDao taskHistoryDetailDao;
 
 	@Override
 	public void newPipeline(NewParameter param) {
@@ -144,6 +147,8 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Task
 		TaskHistory bakTaskHisy = taskHistoryService.getById(param.getTaskId());
 		notNull(bakTaskHisy, String.format("Not found pipeline task history for taskId:%s", param.getTaskId()));
+
+		isTrue(bakTaskHisy.getStatus()== 2, "If taskHis is not success, Unnecessary to rollback");
 
 		// Details
 		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryService.getDetailByTaskId(param.getTaskId());
@@ -254,6 +259,7 @@ public class DefaultPipelineManager implements PipelineManager {
 
 		// Starting pipeline job.
 		jobExecutor.getWorker().execute(() -> {
+			long startTime = System.currentTimeMillis();
 			try {
 				// Pre Pileline Execute
 				prePipelineExecuteSuccess(taskId);
@@ -264,11 +270,6 @@ public class DefaultPipelineManager implements PipelineManager {
 				// Pipeline success.
 				log.info(String.format("Pipeline job successful for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()));
-
-				// Setup status to success.
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getSourceFingerprint(),
-						provider.getAssetsFingerprint());
-				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 
 				// Successful process.
 				log.info("Process pipeline job success properties for taskId: {}, provider: {}", taskId,
@@ -292,6 +293,8 @@ public class DefaultPipelineManager implements PipelineManager {
 				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
+				long endTime = System.currentTimeMillis();
+				taskHistoryService.updateCostTime(taskId,endTime-startTime);
 			}
 		});
 	}
@@ -303,6 +306,27 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param provider
 	 */
 	protected void postPipelineExecuteSuccess(Integer taskId, PipelineProvider provider) {
+		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryDetailDao.getDetailByTaskId(taskId);
+		boolean hasFail = false;
+		for (TaskHistoryInstance taskHistoryInstance : taskHistoryInstances) {
+			if (taskHistoryInstance.getStatus() != TASK_STATUS_SUCCESS) {
+				hasFail = true;
+				break;
+			}
+		}
+		if(hasFail){
+			// Setup status to success.
+			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_PART_SUCCESS, null, provider.getSourceFingerprint(),
+					provider.getAssetsFingerprint());
+			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_PART_SUCCESS, taskId);
+		}else{
+			// Setup status to success.
+			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getSourceFingerprint(),
+					provider.getAssetsFingerprint());
+			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
+		}
+
+
 		// Successful execute job notification.
 		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Success taskId=" + taskId
 				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()));
@@ -315,14 +339,14 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param provider
 	 */
 	protected void prePipelineExecuteSuccess(Integer taskId) {
-		// Log file start EOF.
-		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
-
 		// remove log file if exist
 		File file = config.getJobLog(taskId).getAbsoluteFile();
 		if (file.exists()) {
 			file.delete();
 		}
+
+		// Log file start EOF.
+		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
 	}
 
 	/**
@@ -412,8 +436,8 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Submit roll-back job.
 		jobExecutor.getWorker().execute(() -> {
 			try {
-				// Log file start EOF.
-				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
+				// Pre Pileline Execute
+				prePipelineExecuteSuccess(taskId);
 
 				// Execution roll-back pipeline.
 				provider.rollback();
@@ -422,15 +446,15 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.info(String.format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()));
 
-				taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getSourceFingerprint(),
-						provider.getAssetsFingerprint());
+				postPipelineExecuteSuccess(taskId, provider);
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
 				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
-
+				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_FAIL, taskId);
+				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);

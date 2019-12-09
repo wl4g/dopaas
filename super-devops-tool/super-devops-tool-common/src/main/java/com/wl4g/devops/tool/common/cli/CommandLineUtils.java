@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.tool.common.cli;
 
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import com.wl4g.devops.tool.common.lang.Assert;
+import org.apache.commons.cli.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,17 +26,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.wl4g.devops.tool.common.lang.Assert;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert.state;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 /**
  * Command line utility.
@@ -102,11 +97,11 @@ public abstract class CommandLineUtils {
 			// Stdout/Stderr
 			boolean output = false;
 			if (nonNull(stdout)) {
-				command = command + " 1> " + stdout.getAbsolutePath();
+				command = command + " 1>> " + stdout.getAbsolutePath();
 				output = true;
 			}
 			if (nonNull(stderr)) {
-				command = command + " 2> " + stderr.getAbsolutePath();
+				command = command + " 2>> " + stderr.getAbsolutePath();
 				output = true;
 			}
 			if (!output) {
@@ -119,11 +114,11 @@ public abstract class CommandLineUtils {
 			// Stdout/Stderr
 			boolean output = false;
 			if (nonNull(stdout)) {
-				command = command + " 1> " + stdout.getAbsolutePath();
+				command = command + " 1>> " + stdout.getAbsolutePath();
 				output = true;
 			}
 			if (nonNull(stderr)) {
-				command = command + " 2> " + stderr.getAbsolutePath();
+				command = command + " 2>> " + stderr.getAbsolutePath();
 				output = true;
 			}
 			if (!output) {
