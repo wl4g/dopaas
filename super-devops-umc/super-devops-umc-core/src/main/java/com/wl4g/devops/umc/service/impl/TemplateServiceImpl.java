@@ -17,11 +17,16 @@ package com.wl4g.devops.umc.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.dao.share.AppInstanceDao;
+import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.service.TemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +38,10 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.wl4g.devops.common.bean.BaseBean.*;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -51,6 +58,15 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Autowired
 	private AlarmRuleDao alarmRuleDao;
+
+	@Autowired
+	private AlarmConfigDao alarmConfigDao;
+
+	@Autowired
+	private JedisService jedisService;
+
+	@Autowired
+	private AppInstanceDao appInstanceDao;
 
 	@Override
 	public PageModel list(PageModel pm, String name, Integer metricId, String classify) {
@@ -124,6 +140,15 @@ public class TemplateServiceImpl implements TemplateService {
 				_rule.preInsert();
 				_rule.setTemplateId(tpl.getId());
 				alarmRuleDao.insertSelective(_rule);
+			}
+		}
+
+		//del redis
+		List<AlarmConfig> alarmConfigs = alarmConfigDao.selectByTemplateId(tpl.getId());
+		for(AlarmConfig alarmConfig : alarmConfigs){
+			AppInstance appInstance = appInstanceDao.selectByPrimaryKey(alarmConfig.getCollectId());
+			if(Objects.nonNull(appInstance)){
+				jedisService.del(KEY_CACHE_ALARM_TPLS+appInstance.getHostname()+appInstance.getEndpoint());
 			}
 		}
 	}
