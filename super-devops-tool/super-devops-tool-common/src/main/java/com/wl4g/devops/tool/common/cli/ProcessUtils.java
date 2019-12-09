@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.lang.Runtime.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 import static org.apache.commons.lang3.SystemUtils.USER_NAME;
@@ -77,9 +78,15 @@ public abstract class ProcessUtils {
 		pwdDir = isNull(pwdDir) ? execScriptTmpDir : pwdDir;
 		File tmpFile = new File(pwdDir.getAbsoluteFile(),
 				String.valueOf(System.nanoTime()) + ".tmpscript" + "." + (IS_OS_WINDOWS ? "bat" : "sh"));
-
+		// Write temporary script.
 		writeFile(tmpFile, multiCmd, false);
-		return execSingle(tmpFile.getAbsolutePath(), null, stdout, stderr, append, redirectToNullIfNecessary);
+
+		// Processing windows permission is not implemented yet!!
+		String tmpScriptCmd = EMPTY;
+		if (!IS_OS_WINDOWS) {
+			tmpScriptCmd = "chmod 700 " + tmpFile.getAbsolutePath() + " && ";
+		}
+		return execSingle(tmpScriptCmd, null, stdout, stderr, append, redirectToNullIfNecessary);
 	}
 
 	/**
