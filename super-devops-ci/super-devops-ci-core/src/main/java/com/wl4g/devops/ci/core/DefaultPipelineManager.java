@@ -38,6 +38,7 @@ import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 
 import java.io.File;
@@ -98,6 +99,9 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected TaskBuildCommandDao taskBuildCmdDao;
 	@Autowired
 	protected TaskHistoryDetailDao taskHistoryDetailDao;
+
+	@Value("${spring.mail.username}")
+	private String mailFrom;
 
 	@Override
 	public void newPipeline(NewParameter param) {
@@ -307,23 +311,30 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void postPipelineExecuteSuccess(Integer taskId, PipelineProvider provider) {
 		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryDetailDao.getDetailByTaskId(taskId);
-		boolean hasFail = false;
+		boolean allSuccess = true;
+		boolean allFail = true;
 		for (TaskHistoryInstance taskHistoryInstance : taskHistoryInstances) {
 			if (taskHistoryInstance.getStatus() != TASK_STATUS_SUCCESS) {
-				hasFail = true;
-				break;
+				allSuccess = false;
+			}else{
+				allFail = false;
 			}
 		}
-		if(hasFail){
-			// Setup status to success.
-			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_PART_SUCCESS, null, provider.getSourceFingerprint(),
-					provider.getAssetsFingerprint());
-			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_PART_SUCCESS, taskId);
-		}else{
+		if(allSuccess){
 			// Setup status to success.
 			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getSourceFingerprint(),
 					provider.getAssetsFingerprint());
 			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
+		}else if(allFail){
+			// Setup status to success.
+			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_STOP, null, provider.getSourceFingerprint(),
+					provider.getAssetsFingerprint());
+			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_STOP, taskId);
+		}else{
+			// Setup status to success.
+			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_PART_SUCCESS, null, provider.getSourceFingerprint(),
+					provider.getAssetsFingerprint());
+			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_PART_SUCCESS, taskId);
 		}
 
 
@@ -372,6 +383,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<AlarmContact> contactByGroupIds = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
 		for (AlarmContact contact : contactByGroupIds) {
 			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setFrom(mailFrom);
 			msg.setSubject("CI Build Report");
 			msg.setTo(contact.getEmail());
 			msg.setText(message);
