@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.lang.Runtime.*;
+import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
@@ -76,17 +77,17 @@ public abstract class ProcessUtils {
 	public final static DelegateProcess execMulti(final String multiCmd, File pwdDir, final File stdout, final File stderr,
 			final boolean append, final boolean redirectToNullIfNecessary) throws IOException {
 		pwdDir = isNull(pwdDir) ? execScriptTmpDir : pwdDir;
-		File tmpFile = new File(pwdDir.getAbsoluteFile(),
-				String.valueOf(System.nanoTime()) + ".tmpscript" + "." + (IS_OS_WINDOWS ? "bat" : "sh"));
+		File tmpScript = new File(pwdDir.getAbsoluteFile(),
+				currentTimeMillis() + ".tmpscript" + "." + (IS_OS_WINDOWS ? "bat" : "sh"));
 		// Write temporary script.
-		writeFile(tmpFile, multiCmd, false);
+		writeFile(tmpScript, multiCmd, false);
 
-		// Processing windows permission is not implemented yet!!
-		String tmpScriptCmd = EMPTY;
+		// Processing windows permission is not implemented yet!!!
+		String callTmpScriptCmd = EMPTY;
 		if (!IS_OS_WINDOWS) {
-			tmpScriptCmd = "chmod 700 " + tmpFile.getAbsolutePath() + " && ";
+			callTmpScriptCmd = String.format("chmod 700 %s && %s", tmpScript.getAbsolutePath(), tmpScript.getAbsolutePath());
 		}
-		return execSingle(tmpScriptCmd, null, stdout, stderr, append, redirectToNullIfNecessary);
+		return execSingle(callTmpScriptCmd, null, stdout, stderr, append, redirectToNullIfNecessary);
 	}
 
 	/**
