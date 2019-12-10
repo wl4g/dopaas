@@ -50,7 +50,7 @@
     <include refid="Base_Column_List_t" />,mt.metric,mt.classify
     from umc_alarm_template t
     left join umc_metric_template mt on mt.id=t.metric_id
-    where and mt.del_flag!=1 and t.del_flag!=1 t.id = #{id,jdbcType=INTEGER}
+    where mt.del_flag!=1 and t.del_flag!=1 and t.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from umc_alarm_template
