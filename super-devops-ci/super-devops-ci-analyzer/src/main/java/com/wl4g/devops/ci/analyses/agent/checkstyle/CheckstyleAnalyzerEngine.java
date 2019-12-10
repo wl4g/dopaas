@@ -13,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年11月21日
- * @since
- */
-package com.wl4g.devops.ci.analyses.agent.pwd;
+package com.wl4g.devops.ci.analyses.agent.checkstyle;
+
+import com.wl4g.devops.ci.analyses.agent.AnalyzerEngine;
+
+public class CheckstyleAnalyzerEngine extends AnalyzerEngine {
+
+	@Override
+	protected void startAnalysis(String[] args) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+}

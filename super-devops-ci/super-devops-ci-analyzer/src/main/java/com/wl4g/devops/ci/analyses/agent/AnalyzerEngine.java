@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019年11月21日
- * @since
- */
-package com.wl4g.devops.ci.analyses.agent.checkstyle;
+package com.wl4g.devops.ci.analyses.agent;
+
+public abstract class AnalyzerEngine {
+
+	public static void main(String[] args) {
+
+	}
+
+	/**
+	 * Startup to analysis.
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
+	protected abstract void startAnalysis(String[] args) throws Exception;
+
+}
