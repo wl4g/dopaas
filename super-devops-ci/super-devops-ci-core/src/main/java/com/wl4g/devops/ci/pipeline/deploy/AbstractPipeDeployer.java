@@ -180,19 +180,19 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		writeDeployLog("Execute to remote %s@%s, timeout:%s, command:[%s]", user, remoteHost, timeoutMs, command);
+		writeDeployLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
 
 		// Do execution.
 		CommandResult result = execWithSsh2(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
-			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t\t----- Stdout: -----\n%s", user, remoteHost, command,
+			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command,
 					result.getMessage());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
 			}
 		}
 		if (!isBlank(result.getErrmsg())) {
-			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t\t----- Stderr: -----\n%s", user, remoteHost, command,
+			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
 					result.getErrmsg());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
