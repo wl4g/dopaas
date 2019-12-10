@@ -24,7 +24,7 @@ import java.text.DecimalFormat;
  * @version 1.0 2013-01-02 12:50 PM
  * @since JDK 1.5
  */
-public abstract class FileSizeUtil {
+public abstract class FileSizeUtils {
 	public static long ONE_KB = 1024;
 	public static long ONE_MB = ONE_KB * 1024;
 	public static long ONE_GB = ONE_MB * 1024;

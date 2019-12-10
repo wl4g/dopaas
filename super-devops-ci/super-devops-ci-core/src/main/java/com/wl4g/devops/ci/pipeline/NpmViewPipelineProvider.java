@@ -20,6 +20,8 @@ import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -106,26 +108,35 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 	private void npmBuild() throws Exception {
 		Project project = getContext().getProject();
 		TaskHistory taskHistory = getContext().getTaskHistory();
-		File logPath = config.getJobLog(getContext().getTaskHistory().getId());
+		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+
 		// Building.
 		if (isBlank(taskHistory.getBuildCommand())) {
-			doBuildWithDefaultCommand(projectDir, logPath, taskHistory.getId());
+			doBuildWithDefaultCommand(projectDir, jobLogFile, taskHistory.getId());
 		} else {
 			// Obtain temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 			// Resolve placeholder variables.
 			String buildCommand = resolveCmdPlaceholderVariables(taskHistory.getBuildCommand());
-			processManager.execFileSync(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
+			// Execution command.
+			// TODO timeoutMs?
+			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile,
+					300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+			pm.execWaitForComplete(cmd);
 		}
 	}
 
-	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
+	private void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
 		Project project = getContext().getProject();
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
-		processManager.execFileSync(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
+		// Execution command.
+		// TODO timeoutMs?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	/**
@@ -135,18 +146,26 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		Project project = getContext().getProject();
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
+		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
 		// tar
 		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
 				+ config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
-		processManager.execFileSync(String.valueOf(taskHistory.getId()), tarCommand,
-				config.getJobTmpCommandFile(taskHistory.getId(), -1), config.getJobLog(getContext().getTaskHistory().getId()),
-				300000);
+		// Execution command.
+		// TODO timeoutMs?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
+	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
 		String defaultCommand = "cd " + projectDir + " && npm install";
-		processManager.execSync(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
+		// Execution command.
+		// TODO timeoutMs/pwdDir?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 }

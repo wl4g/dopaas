@@ -18,8 +18,6 @@ package com.wl4g.devops.support.cli;
 import static com.wl4g.devops.common.constants.DevOpsConstants.LOCK_PROCESS_DESTROY_PREFIX;
 import static com.wl4g.devops.tool.common.lang.ThreadUtils.sleepRandom;
 import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -30,17 +28,22 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
+import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
-import com.wl4g.devops.support.cli.repository.ProcessRepository.ProcessInfo;
+import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper;
+import com.wl4g.devops.support.cli.repository.ProcessRepository;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
- * Default cluster node command-line process management implements.
+ * Implementation of distributed destroable command process based on jedis
+ * cluster.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-20
  * @since
  */
 public class NodeProcessManagerImpl extends GenericProcessManager {
+
 	final public static long DEFAULT_MIN_WATCH_MS = 2_00L;
 	final public static long DEFAULT_MAX_WATCH_MS = 2_000L;
 	/** Default destruction signal expired seconds. */
@@ -50,6 +53,18 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 
 	@Autowired
 	protected ConfigurableEnvironment environment;
+
+	/** Jedis service. */
+	@Autowired
+	protected JedisService jedisService;
+
+	/** Jedis locks manager. */
+	@Autowired
+	protected JedisLockManager lockManager;
+
+	public NodeProcessManagerImpl(ProcessRepository repository) {
+		super(repository);
+	}
 
 	/**
 	 * Send signal for destroy command-line process.</br>
@@ -61,17 +76,13 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * @throws TimeoutDestroyProcessException
 	 */
 	@Override
-	public void destroy(String processId, long timeoutMs) {
-		hasText(processId, "ProcessId must not be empty.");
-		isTrue(timeoutMs >= DEFAULT_DESTROY_ROUND_MS,
-				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_ROUND_MS));
-
+	public void destroy(DestroySignal signal) {
 		// Send destruction signal.
-		String signalKey = getDestroySignalKey(processId);
+		String signalKey = getDestroySignalKey(signal.getProcessId());
 		if (log.isInfoEnabled()) {
-			log.info("Send destruction signal:{} for processId:{}", signalKey, processId);
+			log.info("Send destruction signal:{} for processId:{}", signalKey, signal.getProcessId());
 		}
-		jedisService.setObjectAsJson(signalKey, new DestroySignal(processId, timeoutMs), DEFAULT_SIGNAL_EXPIRED_SEC); // MARK1
+		jedisService.setObjectAsJson(signalKey, signal, DEFAULT_SIGNAL_EXPIRED_SEC); // MARK1
 	}
 
 	@Override
@@ -99,11 +110,11 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 				// Let cluster this node process destroy, nodes that do not
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
-					Collection<ProcessInfo> processes = repository.getProcesses();
+					Collection<DestroableProcessWrapper> pss = repository.getProcesses();
 					if (log.isDebugEnabled()) {
-						log.debug("Destruction processes: {}", processes);
+						log.debug("Destroable processes: {}", pss);
 					}
-					processes.stream().forEach(ps -> {
+					pss.stream().forEach(ps -> {
 						String signalKey = getDestroySignalKey(ps.getProcessId());
 						try {
 							// Match & destroy process. See:[MARK1]

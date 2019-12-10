@@ -25,7 +25,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * * A simple library class which helps with loading dynamic libraries stored in
@@ -99,16 +99,16 @@ public abstract class ClassPathNativeLoader {
 	/**
 	 * Get or create a temporary folder under the system temporary folder
 	 * 
-	 * @param basePath
+	 * @param path
 	 * @return
 	 * @throws IOException
 	 */
-	private final synchronized static File libsTmpDirectory0(String basePath) {
+	private final synchronized static File libsTmpDirectory0(String path) {
 		File libsTmpDir = null;
 		try {
-			libsTmpDir = new File(JAVA_IO_TMPDIR, basePath + "." + System.nanoTime());
+			libsTmpDir = new File(JAVA_IO_TMPDIR, path);
 			if (!libsTmpDir.exists()) {
-				Assert.state(libsTmpDir.mkdir(), "Failed to create temp directory [" + libsTmpDir.getName() + "]");
+				state(libsTmpDir.mkdirs(), "Failed to create temp directory [" + libsTmpDir.getName() + "]");
 			}
 			return libsTmpDir;
 		} finally {
@@ -127,11 +127,7 @@ public abstract class ClassPathNativeLoader {
 	/**
 	 * Java dynamic link native libraries temporary base directory path.
 	 */
-	final private static String NATIVE_LIBS_TMP_DIR = "/javanativelibs_" + USER_NAME + "/" + LOCAL_PROCESS_ID + "/";
-
-	/**
-	 * Temporary directory which will contain the DLLs.
-	 */
-	final private static File nativeLibsTmpDir = libsTmpDirectory0(NATIVE_LIBS_TMP_DIR);
+	final private static File nativeLibsTmpDir = libsTmpDirectory0(
+			"/javanativelibs_" + USER_NAME + "/" + LOCAL_PROCESS_ID + "." + System.nanoTime());
 
 }

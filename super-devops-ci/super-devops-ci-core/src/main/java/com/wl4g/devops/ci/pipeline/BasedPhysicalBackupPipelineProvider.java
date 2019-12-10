@@ -16,9 +16,13 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static org.springframework.util.StringUtils.getFilename;
+
+import java.io.File;
 
 /**
  * Based physical disk backups pipeline provider.
@@ -45,7 +49,10 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 
 		String target = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
 		String command = "cp -Rf " + backupPath + " " + target;
-		processManager.execSync(command, config.getJobLog(taskHisRefId), 300000);
+		// TODO timeoutMs/jobLogFile?
+		File jobLogFile = config.getJobLog(taskHisRefId);
+		DestroableCommand cmd = new LocalDestroableCommand(command, null, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	/**
@@ -61,12 +68,14 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 		String targetPath = getContext().getProjectSourceDir() + "/" + getContext().getProject().getAssetsPath();
 		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
 				+ getFilename(getContext().getProject().getAssetsPath());
-
 		// Ensure backup directory.
 		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
 
 		String command = "cp -Rf " + targetPath + " " + backupPath;
-		processManager.execSync(command, config.getJobLog(taskHisId), 300000);
+		File jobLogFile = config.getJobLog(taskHisId);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisId), command, null, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 }

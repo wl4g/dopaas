@@ -15,11 +15,13 @@
  */
 package com.wl4g.devops.support.cli.command;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
 
 import java.io.Serializable;
-import java.util.concurrent.Executor;
+
+import com.wl4g.devops.support.cli.GenericProcessManager;
 
 /**
  * Basic destroable command's wrapper.
@@ -28,51 +30,65 @@ import java.util.concurrent.Executor;
  * @version v1.0 2019年12月5日
  * @since
  */
-public class BasicCommand implements Serializable {
+public class DestroableCommand implements Serializable {
 	private static final long serialVersionUID = -5843814202945157321L;
 
 	/** Command of processId. */
 	final private String processId;
-	/** Command of script. */
-	final private String command;
+
+	/**
+	 * Command of script.</br>
+	 * Note: please use the "|" channel symbol and redirection carefully, for
+	 * example:
+	 * 
+	 * <pre>
+	 * mvn install | tee -a /mvn.out
+	 * </pre>
+	 * 
+	 * or
+	 * 
+	 * <pre>
+	 * mvn install > /mvn.out 2>&1
+	 * </pre>
+	 * 
+	 * , which will cause the exit code and stdout / stderr of command execution
+	 * to behave abnormally, that is, whether the execution result is abnormal
+	 * or not is uncertain. Please refer to:
+	 * {@link GenericProcessManager#inputStreamRead0()}
+	 */
+	final private String cmd;
+
 	/** Command of timeout.(Ms) */
 	final private long timeoutMs;
-	/** Input reading actuator returned by command. */
-	final private Executor inputExecutor;
 
-	public BasicCommand(String command, long timeoutMs) {
-		this(null, command, timeoutMs);
+	public DestroableCommand(String cmd, long timeoutMs) {
+		this(null, cmd, timeoutMs);
 	}
 
-	public BasicCommand(String processId, String command, long timeoutMs) {
-		this(processId, command, timeoutMs, null);
-	}
-
-	public BasicCommand(String processId, String command, long timeoutMs, Executor inputExecutor) {
+	public DestroableCommand(String processId, String cmd, long timeoutMs) {
 		// hasText(processId, "Command processId can't empty.");
-		hasText(command, "Command can't empty.");
+		hasText(cmd, "Command can't empty.");
 		isTrue(timeoutMs > 0, "Command must timeoutMs>0.");
-		// notNull(inputExecutor, "Command input executor can't null.");
 		this.processId = processId;
-		this.command = command;
+		this.cmd = cmd;
 		this.timeoutMs = timeoutMs;
-		this.inputExecutor = inputExecutor;
 	}
 
 	public String getProcessId() {
 		return processId;
 	}
 
-	public String getCommand() {
-		return command;
+	public String getCmd() {
+		return cmd;
 	}
 
 	public long getTimeoutMs() {
 		return timeoutMs;
 	}
 
-	public Executor getInputExecutor() {
-		return inputExecutor;
+	@Override
+	public String toString() {
+		return toJSONString(this);
 	}
 
 }

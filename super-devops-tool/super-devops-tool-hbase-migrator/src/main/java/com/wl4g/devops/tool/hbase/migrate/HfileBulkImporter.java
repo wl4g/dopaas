@@ -28,7 +28,7 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 
-import com.wl4g.devops.tool.common.cli.CommandLineUtils.Builder;
+import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 
 /**
  * HASE hfile bulk importer.
