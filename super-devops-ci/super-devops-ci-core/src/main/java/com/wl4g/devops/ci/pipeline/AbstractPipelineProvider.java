@@ -194,19 +194,19 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		writeBuildLog("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
+		writeBuildLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
 
 		// Execution command.
 		CommandResult result = execWithSsh2(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
 		if (!isBlank(result.getMessage())) {
-			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t\t----- Stdout: -----\n%s", user, remoteHost, command,
+			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command,
 					result.getMessage());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
 			}
 		}
 		if (!isBlank(result.getErrmsg())) {
-			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t\t----- Stderr: -----\n%s", user, remoteHost, command,
+			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
 					result.getErrmsg());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
@@ -249,11 +249,11 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					writeALineFile(jobDeployerLog, LOG_FILE_START);
 					// Do deploying.
 					newDeployer(i).run();
-
-					writeBuildLog("Successful deployed cluster:%s to remote instance:%s@%s",
+					// Print successful.
+					writeBuildLog("Deployed cluster: %s to remote instance: %s@%s successfully!",
 							getContext().getAppCluster().getName(), i.getSshUser(), i.getHostname());
 				} catch (Exception e) {
-					String logmsg = writeBuildLog("Failed to deployed to remote\nCaused by:\n", getStackTraceAsString(e));
+					String logmsg = writeBuildLog("Failed to deployed to remote!\nCaused by: \n", getStackTraceAsString(e));
 					log.error(logmsg);
 				} finally {
 					writeBLineFile(jobDeployerLog, LOG_FILE_END);
