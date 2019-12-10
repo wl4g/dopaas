@@ -41,8 +41,8 @@ public class CommandLineAutoConfiguration {
 	}
 
 	@Bean
-	public DestroableProcessManager nodeProcessManagerImpl() {
-		return new NodeProcessManagerImpl();
+	public DestroableProcessManager nodeProcessManagerImpl(ProcessRepository repository) {
+		return new NodeProcessManagerImpl(repository);
 	}
 
 }

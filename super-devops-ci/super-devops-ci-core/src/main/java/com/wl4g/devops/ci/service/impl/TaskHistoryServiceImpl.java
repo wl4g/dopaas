@@ -31,6 +31,8 @@ import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.destroy.DestroySignal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,8 +59,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	private AppClusterDao appClusterDao;
 	@Autowired
 	private TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
+
 	@Autowired
-	protected DestroableProcessManager processManager;
+	protected DestroableProcessManager pm;
 
 	@Override
 	public PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate) {
@@ -167,9 +170,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setId(taskHisId);
 		taskHistory.setStatus(TASK_STATUS_STOP);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
-		// CommandUtils.killByTaskId(taskHisId);
-		processManager.destroy(String.valueOf(taskHisId), 5000);
 
+		// TODO timeoutMs?
+		pm.destroy(new DestroySignal(String.valueOf(taskHisId), 5000L));
 	}
 
 	@Override

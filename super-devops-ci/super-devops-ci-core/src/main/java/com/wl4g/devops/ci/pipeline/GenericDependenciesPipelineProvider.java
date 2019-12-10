@@ -18,6 +18,8 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
 import java.util.LinkedHashSet;
@@ -118,7 +120,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		if (lock.tryLock()) { // Dependency build idle?
 			try {
 				updatingSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
-			}catch (Exception e){
+			} catch (Exception e) {
 				throw e;
 			} finally {
 				lock.unlock();
@@ -219,18 +221,21 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 */
 	private void doResolvedBuildCommands(Project project, String projectDir, String buildCommand) throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
-		File logFile = config.getJobLog(taskHisy.getId());
+		File jobLogFile = config.getJobLog(taskHisy.getId());
 
 		// Building.
 		if (isBlank(buildCommand)) {
-			doBuildWithDefaultCommands(projectDir, logFile, taskHisy.getId());
+			doBuildWithDefaultCommands(projectDir, jobLogFile, taskHisy.getId());
 		} else {
 			// Temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
 			// Resolve placeholder variables.
 			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
 			// Execute shell file.
-			processManager.execFileSync(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile, logFile, 300000);
+			// TODO timeoutMs?
+			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile,
+					300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+			pm.execWaitForComplete(cmd);
 		}
 
 	}
@@ -239,9 +244,9 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * Execution default commands build.
 	 * 
 	 * @param projectDir
-	 * @param logPath
+	 * @param jobLogFile
 	 * @throws Exception
 	 */
-	protected abstract void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception;
+	protected abstract void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception;
 
 }

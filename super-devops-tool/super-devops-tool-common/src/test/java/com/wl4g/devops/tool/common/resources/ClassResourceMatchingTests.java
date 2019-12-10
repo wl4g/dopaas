@@ -20,7 +20,9 @@ import com.wl4g.devops.tool.common.resources.ClassResourceMatchResovlerUtils;
 public class ClassResourceMatchingTests {
 
 	public static void main(String[] args) {
-		ClassResourceMatchResovlerUtils.doSearch("org.xerial.snappy", null, (type, classLoader, pathname) -> {
+		// String locationPattern = "org.xerial.snappy";
+		String locationPattern = "com.wl4g.devops.tool.common";
+		ClassResourceMatchResovlerUtils.doSearch(locationPattern, null, (type, classLoader, pathname) -> {
 			try {
 				System.out.println(pathname);
 				// InputStream in = classLoader.getResourceAsStream(pathname);

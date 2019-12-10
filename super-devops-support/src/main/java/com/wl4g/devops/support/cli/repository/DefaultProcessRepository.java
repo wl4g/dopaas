@@ -34,22 +34,24 @@ import com.wl4g.devops.common.exception.support.NoSuchProcessException;
  */
 public class DefaultProcessRepository implements ProcessRepository {
 
-	/** Command-line process registration repository. */
-	final protected ConcurrentMap<String, ProcessInfo> registry = new ConcurrentHashMap<>();
+	/**
+	 * Command-line process registration repository.
+	 */
+	final protected ConcurrentMap<String, DestroableProcessWrapper> registry = new ConcurrentHashMap<>();
 
 	@Override
-	public void register(String processId, ProcessInfo process) {
-		Assert.state(isNull(registry.putIfAbsent(processId, process)), "Already command-line process");
+	public void register(String processId, DestroableProcessWrapper dpw) {
+		Assert.state(isNull(registry.putIfAbsent(processId, dpw)), "Already command line process");
 	}
 
 	@Override
 	public void setInterruptible(String processId, boolean interruptible) throws NoSuchProcessException {
-		get(processId).setInterruptible(interruptible);
+		get(processId).setDestroable(interruptible);
 	}
 
 	@Override
-	public ProcessInfo get(String processId) throws NoSuchProcessException {
-		ProcessInfo process = registry.get(processId);
+	public DestroableProcessWrapper get(String processId) throws NoSuchProcessException {
+		DestroableProcessWrapper process = registry.get(processId);
 		if (isNull(process)) {
 			throw new NoSuchProcessException(String.format("No such command-line process of '%s'", processId));
 		}
@@ -57,12 +59,12 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
-	public Collection<ProcessInfo> getProcesses() {
+	public Collection<DestroableProcessWrapper> getProcesses() {
 		return registry.values();
 	}
 
 	@Override
-	public ProcessInfo cleanup(String processId) {
+	public DestroableProcessWrapper cleanup(String processId) {
 		return registry.remove(processId);
 	}
 

@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert.*;
 
 /**
  * Based on CLASSPATH matching resolve scanner utility tools.
@@ -37,21 +37,26 @@ import com.wl4g.devops.tool.common.lang.Assert;
 public abstract class ClassResourceMatchResovlerUtils {
 
 	/**
+	 * {@link AntPathMatcher} cache.
+	 */
+	final private static ThreadLocal<AntPathMatcher> matcherCache = ThreadLocal.withInitial(() -> new AntPathMatcher("/"));
+
+	/**
 	 * JAR matching resolve scanner.
 	 * 
-	 * @param packageName
+	 * @param locationPattern
+	 *            the location pattern to resolve
 	 * @param classLoader
 	 * @param processor
 	 * @param predicate
 	 */
-	public static void doSearch(String packageName, ClassLoader classLoader, ResolveProcessor processor,
+	public static void doSearch(String locationPattern, ClassLoader classLoader, ResolveProcessor processor,
 			Predicate<String> predicate) {
+		hasText(locationPattern, "Matching locationPattern can't empty.");
+		notNull(processor, "ResolveProcessor can't null");
 		try {
-			Assert.hasText(packageName, "Matching package name can't empty.");
-			Assert.notNull(processor, "ResolveProcessor can't null");
-
 			classLoader = isNull(classLoader) ? Thread.currentThread().getContextClassLoader() : classLoader;
-			Enumeration<URL> urlEn = classLoader.getResources(packageName.replace(".", "/"));
+			Enumeration<URL> urlEn = classLoader.getResources(locationPattern.replace(".", "/"));
 			while (urlEn.hasMoreElements()) {
 				// Example:[jar:file:/C:/Users/ibm/.m2/repository/junit/junit/4.12/junit-4.12.jar!/org/junit]
 				URL url = urlEn.nextElement();
@@ -69,23 +74,22 @@ public abstract class ClassResourceMatchResovlerUtils {
 					Enumeration<JarEntry> jarEntryEn = jarFile.entries();
 					while (jarEntryEn.hasMoreElements()) {
 						// Example:[org/, org/junit/, org/junit/rules/]
-						JarEntry entry = jarEntryEn.nextElement();
-						String jarEntryName = entry.getName();
-						if (jarEntryName.replaceAll("/", ".").startsWith(packageName)) {
+						JarEntry jarEntry = jarEntryEn.nextElement();
+						String pathname = jarEntry.getName();
+						if (pathname.replaceAll("/", ".").startsWith(locationPattern)) {
 							// if(jarEntryName.endsWith(".class"))
 							// String className = jarEntryName.substring(0,
 							// jarEntryName.lastIndexOf(".")).replace("/", ".");
-							if (isNull(predicate) || predicate.test(jarEntryName)) {
-								processor.doResolve(ResourceType.JAR, classLoader, jarEntryName);
+							if (isNull(predicate) || predicate.test(pathname)) {
+								processor.doResolve(ResourceType.JAR, classLoader, pathname);
 							}
 						}
 					}
 				} else if ("file".equalsIgnoreCase(protocol)) {
-					String basePackPath = packageName.replace(".", File.separator);
-					// 将包名转换为路径名
-					String classPath = url.getPath().replace(packageName.replace(".", "/"), "");
-					String searchPath = classPath + basePackPath;
-					doFindHierarchyPath(new File(searchPath), packageName, classLoader, processor, predicate, true);
+					String baseFilePath = locationPattern.replace(".", File.separator);
+					String classPath = url.getPath().replace(locationPattern.replace(".", "/"), "");
+					String rootFile = classPath + baseFilePath;
+					doFindHierarchyPath(new File(rootFile), locationPattern, classLoader, processor, predicate, true);
 				}
 			}
 		} catch (Exception e) {
@@ -94,30 +98,31 @@ public abstract class ClassResourceMatchResovlerUtils {
 	}
 
 	/**
-	 * File matching resolve scanner.
+	 * Do find hierarchy matching of path.
 	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年12月3日
-	 * @since
+	 * @param rootFile
+	 * @param locationPattern
+	 * @param classLoader
+	 * @param processor
+	 * @param predicate
+	 * @param flag
 	 */
-	private final static void doFindHierarchyPath(File file, String packageName, ClassLoader classLoader,
+	private final static void doFindHierarchyPath(File rootFile, String locationPattern, ClassLoader classLoader,
 			ResolveProcessor processor, Predicate<String> predicate, boolean flag) {
-		if (file.isDirectory()) {
-			File[] files = file.listFiles();
+		if (rootFile.isDirectory()) {
+			File[] files = rootFile.listFiles();
 			if (!flag) {
-				packageName = packageName + "." + file.getName();
+				locationPattern = locationPattern + "." + rootFile.getName();
 			}
 			for (File f : files) {
-				doFindHierarchyPath(f, packageName, classLoader, processor, predicate, false);
+				doFindHierarchyPath(f, locationPattern, classLoader, processor, predicate, false);
 			}
 		} else {
 			try {
-				// if (file.getName().endsWith(".class"))
-				// Class<?> clazz = Class
-				// .forName(packageName + "." + file.getName().substring(0,
-				// file.getName().lastIndexOf(".")));
-				if (isNull(predicate) || predicate.test(file.getName())) {
-					processor.doResolve(ResourceType.JAR, classLoader, file.getName());
+				if (matcherCache.get().match(locationPattern, rootFile.getName())) {
+					if (isNull(predicate) || predicate.test(rootFile.getName())) {
+						processor.doResolve(ResourceType.JAR, classLoader, rootFile.getName());
+					}
 				}
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getMessage(), e);

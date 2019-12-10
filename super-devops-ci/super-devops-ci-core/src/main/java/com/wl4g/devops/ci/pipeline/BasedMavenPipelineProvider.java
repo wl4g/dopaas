@@ -16,6 +16,8 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
 
@@ -33,9 +35,12 @@ public abstract class BasedMavenPipelineProvider extends BasedPhysicalBackupPipe
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
+	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
 		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
-		processManager.execSync(String.valueOf(taskId), defaultCommand, null, logPath, 300000);
+		// TODO timeoutMs/pwdDir?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 }
