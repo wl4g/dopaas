@@ -178,7 +178,7 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 		if (log.isInfoEnabled()) {
 			log.info("Exec local command: {}", cmd.getCmd());
 		}
-		DelegateProcess ps = execMulti(cmd.getCmd(), cmd.getPwdDir(), cmd.getStdout(), cmd.getStderr(), false, false);
+		DelegateProcess ps = execMulti(cmd.getCmd(), cmd.getPwdDir(), cmd.getStdout(), cmd.getStderr(), cmd.isAppend(), false);
 		return new LocalDestroableProcess(cmd.getProcessId(), cmd, ps);
 	}
 

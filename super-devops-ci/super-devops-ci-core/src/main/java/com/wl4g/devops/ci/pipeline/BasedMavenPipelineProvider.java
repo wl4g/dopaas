@@ -36,7 +36,7 @@ public abstract class BasedMavenPipelineProvider extends BasedPhysicalBackupPipe
 
 	@Override
 	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		String defaultCommand = "cd " + projectDir + " && npm install";
+		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
 		// TODO timeoutMs/pwdDir?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);

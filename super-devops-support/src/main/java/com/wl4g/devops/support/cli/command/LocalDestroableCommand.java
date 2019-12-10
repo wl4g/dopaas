@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.support.cli.command;
 
-import static java.util.Objects.nonNull;
+import com.wl4g.devops.support.cli.GenericProcessManager;
+
 import java.io.File;
 
-import com.wl4g.devops.support.cli.GenericProcessManager;
+import static java.util.Objects.nonNull;
 
 /**
  * Generic(local) command's wrapper.
@@ -39,14 +40,21 @@ public class LocalDestroableCommand extends DestroableCommand {
 	/** Command of stderr local file. */
 	private File stderr;
 
+	private boolean append;
+
 	public LocalDestroableCommand(String command, File pwdDir, long timeoutMs) {
 		this(null, command, pwdDir, timeoutMs);
 	}
 
 	public LocalDestroableCommand(String processId, String command, File pwdDir, long timeoutMs) {
+		this(processId,command,pwdDir,timeoutMs,true);
+	}
+
+	public LocalDestroableCommand(String processId, String command, File pwdDir, long timeoutMs, boolean append) {
 		super(processId, command, timeoutMs);
 		// notNull(pwdDir, "Command pwdDir can't null.");
 		this.pwdDir = pwdDir;
+		this.append = append;
 	}
 
 	public File getPwdDir() {
@@ -59,6 +67,14 @@ public class LocalDestroableCommand extends DestroableCommand {
 
 	public boolean hasStdout() {
 		return nonNull(stdout);
+	}
+
+	public boolean isAppend() {
+		return append;
+	}
+
+	public void setAppend(boolean append) {
+		this.append = append;
 	}
 
 	/**

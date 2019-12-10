@@ -178,8 +178,8 @@ public abstract class FileIOUtils extends FileUtils {
 	// --- Reader. ---
 
 	/**
-	 * Reading lines for page. Based on the implementation of pure Java normal
-	 * flow, it is recommended to use optimized function method:
+	 * Reading lines for page. Based on the implementation of pure Java normal flow,
+	 * it is recommended to use optimized function method:
 	 * {@link #seekReadString(String, long, int)}
 	 * 
 	 * @param filename
@@ -211,8 +211,8 @@ public abstract class FileIOUtils extends FileUtils {
 	/**
 	 * Seek reading file to batch string buffer. High performance implementation
 	 * based on {@link RandomAccessFile} Note: Each element of the returned list
-	 * string does not correspond to a line of the physical file content. The
-	 * result you want to read corresponds to a line of the physical file
+	 * string does not correspond to a line of the physical file content. The result
+	 * you want to read corresponds to a line of the physical file
 	 * 
 	 * @param filename
 	 *            the system-dependent filename
@@ -221,8 +221,8 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param aboutLimit
 	 *            seek page size, Note: that it will contain line breaks.
 	 * @param stopper
-	 *            Seek reader stopper, When {@link Function#apply()} returns
-	 *            true, the read ends.
+	 *            Seek reader stopper, When {@link Function#apply()} returns true,
+	 *            the read ends.
 	 * @return
 	 */
 	public static ReadResult seekReadLines(String filename, long startPos, int aboutLimit, Function<String, Boolean> stopper) {
@@ -239,6 +239,7 @@ public abstract class FileIOUtils extends FileUtils {
 				String line = raf.readLine();
 				if (nonNull(line)) {
 					line = new String(line.getBytes(ISO_8859_1), UTF_8);
+					// System.out.println("==="+raf.length()+"--"+startPos+"==="+line);
 					lines.add(line);
 					if (stopper.apply(line)) {
 						hasNext = false;
@@ -248,17 +249,18 @@ public abstract class FileIOUtils extends FileUtils {
 					break;
 				}
 			}
-			return new ReadResult(startPos, raf.getFilePointer(), raf.length(), lines, hasNext);
+			long filePointer = raf.getFilePointer();
+			long fileBytes = raf.length();
+			return new ReadResult(startPos, (filePointer > fileBytes ? fileBytes : filePointer), fileBytes, lines, hasNext);
 		} catch (Throwable ex) {
 			throw new IllegalStateException(ex);
 		}
 	}
 
 	/**
-	 * Seek reading file to batch string buffer. Note: Each element of the
-	 * returned list string does not correspond to a line of the physical file
-	 * content. The result you want to read corresponds to a line of the
-	 * physical file
+	 * Seek reading file to batch string buffer. Note: Each element of the returned
+	 * list string does not correspond to a line of the physical file content. The
+	 * result you want to read corresponds to a line of the physical file
 	 * 
 	 * @param filename
 	 *            the system-dependent filename
