@@ -78,11 +78,10 @@ spring:
       filters: stat,wall
       log-slow-sql: true
   mail:
-    host: smtp.exmail.qq.com
+    host: smtp.sina.com
     port: 465
-    username: syslog@7782.co
-    password: Sm#1234
-    protocol: smtp
+    username: safec7782@sina.com
+    password: safec7782
 
 # Redis configuration.
 redis:

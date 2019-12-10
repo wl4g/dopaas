@@ -531,7 +531,7 @@
 	var _InitAccountAuthenticator = function(){
 		$(function(){
 			// Init bind key-enter login submit.
-			$(document).keydown(function(event){
+			$(document).bind("keydown",function(event){
 				if(event.keyCode == 13){
 					$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
 				}
@@ -600,6 +600,7 @@
 								resetCaptcha(); // 刷新验证码
 								settings.account.onError(resp.message); // 登录失败回调
 							} else { // 登录成功，直接重定向
+                                $(document).unbind("keydown");
 								var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.account.onSuccess(principal, redirectUrl)){
 									window.location.href = redirectUrl;
