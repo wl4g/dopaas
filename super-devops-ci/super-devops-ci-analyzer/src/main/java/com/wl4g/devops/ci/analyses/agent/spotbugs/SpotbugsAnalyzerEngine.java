@@ -22,6 +22,7 @@ import java.io.StringWriter;
 
 import javax.annotation.Nonnull;
 
+import com.wl4g.devops.ci.analyses.agent.AnalyzerEngine;
 import com.wl4g.devops.ci.analyses.agent.spotbugs.exporter.DefaultHtmlBugExporter;
 import com.wl4g.devops.ci.analyses.agent.spotbugs.progress.PrintAnalyzingProgress;
 
@@ -56,9 +57,10 @@ import edu.umd.cs.findbugs.gui2.Driver;
  * @version v1.0 2019年11月20日
  * @since
  */
-public class SpotbugsAnalyzerEngine {
+public class SpotbugsAnalyzerEngine extends AnalyzerEngine {
 
-	public static void main(String[] args) throws Exception {
+	@Override
+	public void startAnalysis(String[] args) throws Exception {
 		Project project = new Project();
 		File targetDir = new File("C:\\Users\\Administrator\\Desktop\\iam-server-master-bin\\libs");
 		for (File assetFile : targetDir.listFiles()) {
@@ -91,7 +93,7 @@ public class SpotbugsAnalyzerEngine {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	private final <R extends TextUIBugReporter> R doAnalysis(@Nonnull Project project, @Nonnull StringWriter warnWriter,
+	private <R extends TextUIBugReporter> R doAnalysis(@Nonnull Project project, @Nonnull StringWriter warnWriter,
 			@Nonnull FindBugsProgress progress) throws IOException, InterruptedException {
 		BugCollectionBugReporter reporter = new BugCollectionBugReporter(project, new PrintWriter(warnWriter, true));
 		reporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
@@ -112,7 +114,7 @@ public class SpotbugsAnalyzerEngine {
 	 *            the PrintCallBack
 	 * @return the IFindBugsEngine
 	 */
-	private final IFindBugsEngine createEngine0(@Nonnull Project p, BugReporter reporter) {
+	private IFindBugsEngine createEngine0(@Nonnull Project p, BugReporter reporter) {
 		FindBugs2 engine = new FindBugs2();
 		engine.setBugReporter(reporter);
 		engine.setProject(p);
