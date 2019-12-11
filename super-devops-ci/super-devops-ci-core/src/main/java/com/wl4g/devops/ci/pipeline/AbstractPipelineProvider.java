@@ -263,8 +263,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			String logmsg = writeBuildLog("Start to deploying cluster:%s to remote instance(size=%s)... ", jobs.size(),
-					getContext().getAppCluster().getName(), getContext().getInstances().size());
+			String logmsg = writeBuildLog("Start to deploying cluster: %s to remote instances: %s ... ",
+					getContext().getAppCluster().getName(), jobs.size());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
 			}

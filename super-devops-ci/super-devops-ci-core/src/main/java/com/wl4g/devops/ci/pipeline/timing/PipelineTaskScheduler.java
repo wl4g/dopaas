@@ -36,23 +36,20 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.util.Assert;
+import static org.springframework.util.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 /**
- * Timing pipeline schedule manager
+ * Pipeline timing scheduler manager
  *
  * @author vjay
  * @date 2019-07-19 09:50:00
  */
-public class TimingPipelineManager implements ApplicationRunner {
+public class PipelineTaskScheduler implements ApplicationRunner {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	private ThreadPoolTaskScheduler scheduler;
 
 	private static ConcurrentHashMap<String, ScheduledFuture<?>> map = new ConcurrentHashMap<String, ScheduledFuture<?>>();
 
@@ -62,6 +59,8 @@ public class TimingPipelineManager implements ApplicationRunner {
 	protected PipelineManager pipeline;
 	@Autowired
 	protected BeanFactory beanFactory;
+	@Autowired
+	private ThreadPoolTaskScheduler scheduler;
 
 	@Autowired
 	protected TriggerDao triggerDao;
@@ -76,44 +75,48 @@ public class TimingPipelineManager implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) {
-		// start all after app start
-		resumePipelineJobAll();
+		refreshTimingPipelineAll();
 	}
 
 	/**
-	 * Refresh and resume pipeline job all.
+	 * Refresh timing pipeline job all.
 	 */
-	private void resumePipelineJobAll() {
+	private void refreshTimingPipelineAll() {
 		List<Trigger> triggers = triggerDao.selectByType(TASK_TYPE_TIMMING);
 		for (Trigger trigger : triggers) {
-			refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
+			refreshTimingPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 		}
 	}
 
 	/**
-	 * Refresh and resume pipeline job.
+	 * Refresh pipeline job.
 	 * 
 	 * @param key
 	 * @param expression
 	 * @param trigger
 	 */
-	public void refreshPipeline(String key, String expression, Trigger trigger) {
-		log.info("into DynamicTask.restartCron prarms::" + "key = {} , expression = {} , trigger = {} ", key, expression,
-				trigger);
-		stopPipeline(key);
+	public void refreshTimingPipeline(String key, String expression, Trigger trigger) {
+		if (log.isInfoEnabled()) {
+			log.info("Refresh timing pipeline for key:'{}', expression: '{}', trigger: {}", key, expression, trigger);
+		}
+		// Check stopped?
+		if (!stopTimingPipeline(key)) {
+			throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
+		}
 
 		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
-		List<TaskInstance> taskInstances = taskDetailDao.selectByTaskId(trigger.getTaskId());
-		Assert.notNull(task, "task not found");
-		Assert.notEmpty(taskInstances, "taskInstances is empty");
+		notNull(task, String.format("Timing pipeline not found for taskId:{}", trigger.getTaskId()));
+		List<TaskInstance> instances = taskDetailDao.selectByTaskId(trigger.getTaskId());
+		notEmpty(instances, String.format("Timing pipeline instances is empty for taskId:{}", trigger.getTaskId()));
 		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
-		Assert.notNull(project, "project not found");
+		notNull(project, String.format("Timing pipeline project:(%s) not found", task.getProjectId()));
 
-		startPipeline(key, expression, trigger, project, task, taskInstances);
+		// Startup to pipeline.
+		startupTimingPipeline(key, expression, trigger, project, task, instances);
 	}
 
 	/**
-	 * Starting pipeline job.
+	 * Startup pipeline job.
 	 * 
 	 * @param key
 	 * @param expression
@@ -122,37 +125,43 @@ public class TimingPipelineManager implements ApplicationRunner {
 	 * @param task
 	 * @param taskInstances
 	 */
-	public void startPipeline(String key, String expression, Trigger trigger, Project project, Task task,
+	private void startupTimingPipeline(String key, String expression, Trigger trigger, Project project, Task task,
 			List<TaskInstance> taskInstances) {
-		log.info(
-				"into DynamicTask.startCron prarms::"
-						+ "triggerId = {} , expression = {} , trigger = {} , project = {} , task = {} , taskInstances = {} ",
-				key, expression, trigger, project, task, taskInstances);
+		if (log.isInfoEnabled()) {
+			log.info(
+					"Startup timing pipeline: triggerId = {} , expression = {} , trigger = {} , project = {} , task = {} , taskInstances = {} ",
+					key, expression, trigger, project, task, taskInstances);
+		}
+
 		if (map.containsKey(key)) {
-			stopPipeline(key);
+			stopTimingPipeline(key);
 		}
 		if (trigger.getEnable() != 1) {
 			return;
 		}
 
-		TimingPipelineProvider handler = beanFactory.getBean(TimingPipelineProvider.class,
-				new Object[] { trigger, project, task, taskInstances});
-		ScheduledFuture<?> future = scheduler.schedule(handler, new CronTrigger(expression));
+		TimingPipelineProvider provider = beanFactory.getBean(TimingPipelineProvider.class,
+				new Object[] { trigger, project, task, taskInstances });
+		ScheduledFuture<?> future = scheduler.schedule(provider, new CronTrigger(expression));
 		// TODO distributed cluster??
-		TimingPipelineManager.map.put(key, future);
+		PipelineTaskScheduler.map.put(key, future);
 	}
 
 	/**
-	 * Stopping pipeline job.
+	 * Stop pipeline job.
 	 * 
 	 * @param key
+	 * @return
 	 */
-	public void stopPipeline(String key) {
-		log.info("into DynamicTask.stopCron prarms::" + "triggerId = {} ", key);
-		ScheduledFuture<?> future = TimingPipelineManager.map.get(key);
-		if (future != null) {
-			future.cancel(true);
+	public boolean stopTimingPipeline(String key) {
+		if (log.isInfoEnabled()) {
+			log.info("into DynamicTask.stopCron prarms::" + "triggerId = {} ", key);
 		}
+		ScheduledFuture<?> future = PipelineTaskScheduler.map.get(key);
+		if (future != null) {
+			return future.cancel(true);
+		}
+		return false;
 	}
 
 }

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.common.exception.support;
 
-import com.wl4g.devops.common.exception.ci.CiException;
+import com.wl4g.devops.common.exception.DevOpsException;
 
-public class IllegalProcessStateException extends CiException {
+public class IllegalProcessStateException extends DevOpsException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	final private Integer exitValue;

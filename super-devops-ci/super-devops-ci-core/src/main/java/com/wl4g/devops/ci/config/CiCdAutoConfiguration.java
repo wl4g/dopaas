@@ -29,7 +29,7 @@ import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
+import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
@@ -246,8 +246,8 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public TimingPipelineManager timingPipelineManager() {
-		return new TimingPipelineManager();
+	public PipelineTaskScheduler timingPipelineManager() {
+		return new PipelineTaskScheduler();
 	}
 
 }

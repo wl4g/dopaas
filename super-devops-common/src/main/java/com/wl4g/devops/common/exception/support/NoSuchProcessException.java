@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.common.exception.support;
 
-import com.wl4g.devops.common.exception.ci.CiException;
+import com.wl4g.devops.common.exception.DevOpsException;
 
-public class NoSuchProcessException extends CiException {
+public class NoSuchProcessException extends DevOpsException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
