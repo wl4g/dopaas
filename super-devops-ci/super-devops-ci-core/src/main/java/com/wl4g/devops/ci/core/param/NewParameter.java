@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.ci.core.param;
 
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-
 import javax.validation.constraints.NotNull;
+
+import static org.springframework.util.Assert.notNull;
 
 /**
  * New create pipeline handle parameter.
@@ -36,7 +35,7 @@ public class NewParameter extends GenericParameter {
 	 * (e.g. task ID of external project or business docs management system).
 	 */
 	@NotNull
-	private Integer taskTraceId;
+	private String taskTraceId;
 
 	/**
 	 * External task tracking type.
@@ -50,19 +49,18 @@ public class NewParameter extends GenericParameter {
 		super();
 	}
 
-	public NewParameter(Integer taskId, String remark, @NotNull Integer taskTraceId, @NotNull Integer taskTraceType) {
+	public NewParameter(Integer taskId, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType) {
 		super(taskId, remark);
 		setTaskTraceId(taskTraceId);
 		setTaskTraceType(taskTraceType);
 	}
 
-	public Integer getTaskTraceId() {
+	public String getTaskTraceId() {
 		return taskTraceId;
 	}
 
-	public void setTaskTraceId(Integer taskTraceId) {
+	public void setTaskTraceId(String taskTraceId) {
 		notNull(taskTraceId, "Pipeline taskTraceId can't be null.");
-		isTrue(taskTraceId >= 0, "Pipeline taskTraceId must be >=0.");
 		this.taskTraceId = taskTraceId;
 	}
 

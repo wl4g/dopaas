@@ -52,7 +52,7 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private Integer contactGroupId;
 
-	private Integer trackId;
+	private String trackId;
 
 	private Integer trackType;
 
@@ -178,11 +178,11 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.buildCommand = buildCommand;
 	}
 
-	public Integer getTrackId() {
+	public String getTrackId() {
 		return trackId;
 	}
 
-	public void setTrackId(Integer trackId) {
+	public void setTrackId(String trackId) {
 		this.trackId = trackId;
 	}
 
