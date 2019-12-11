@@ -26,7 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * @version v1.0.0 2019-12-11
  * @since
  */
-public class LogPipelineCleaner extends AbstractOperateTool {
+public class LogPipelineCleaner extends AbstractOperatorTool {
 
 	@Override
 	protected void doStartup(ScheduledExecutorService scheduler) {
