@@ -68,12 +68,12 @@ public abstract class ReflectionUtils2 {
 	}
 
 	/**
-	 * Check for accessible general security modifiers.
+	 * Check for common security accessible modifiers.
 	 * 
 	 * @param modifer
 	 * @return
 	 */
-	public static boolean isGenericAccessibleModifier(int modifer) {
+	public static boolean isGenericModifier(int modifer) {
 		return !(isFinal(modifer) || isStatic(modifer) || isTransient(modifer) || isNative(modifer) || isVolatile(modifer)
 				|| isSynchronized(modifer));
 	}

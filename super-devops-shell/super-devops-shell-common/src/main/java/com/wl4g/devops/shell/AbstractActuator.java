@@ -27,7 +27,7 @@ import java.util.zip.CRC32;
 import java.util.Optional;
 
 import static com.wl4g.devops.tool.common.bean.BeanUtils2.doWithDeepFields;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericAccessibleModifier;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModifier;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.convertToBaseOrSimpleSet;
 import static java.lang.System.*;
 
@@ -165,7 +165,7 @@ public abstract class AbstractActuator implements Actuator {
 				// Recursive full traversal De-serialization.
 				doWithDeepFields(paramBean, paramBean, (targetField) -> {
 					// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
-					return isGenericAccessibleModifier(targetField.getModifiers());
+					return isGenericModifier(targetField.getModifiers());
 				}, (target, tf, sf, sourcePropertyValue) -> {
 					ShellOption shOpt = tf.getDeclaredAnnotation(ShellOption.class);
 					notNull(shOpt, "Error, Should shellOption not be null?");
