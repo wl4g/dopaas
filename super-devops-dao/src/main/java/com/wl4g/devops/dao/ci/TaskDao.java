@@ -37,7 +37,7 @@ public interface TaskDao {
 
 	List<Task> list(@Param("id") Integer id, @Param("taskName") String taskName, @Param("groupName") String groupName,
 			@Param("branchName") String branchName, @Param("providerKind") String providerKind, @Param("startDate") String startDate,
-			@Param("endDate") String endDate);
+			@Param("endDate") String endDate,@Param("envType") String envType);
 
 	List<Task> selectByAppClusterId(Integer appClusterId);
 

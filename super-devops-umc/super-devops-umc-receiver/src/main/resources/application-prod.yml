@@ -50,7 +50,7 @@ spring:
           kafka:
             enabled: false
             concurrency: 3
-            queue-depth: 4092
+            queue-depth: 2
             properties:
               bootstrap.servers: ${KAFKA_NODES:owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092}
         watch:

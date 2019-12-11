@@ -29,6 +29,7 @@ import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
@@ -37,8 +38,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOP;
 
@@ -64,9 +67,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	protected DestroableProcessManager pm;
 
 	@Override
-	public PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate) {
+	public PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate, String envType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName, startDate, endDate));
+		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName, startDate, endDate,envType));
 		return pm;
 	}
 
@@ -93,10 +96,14 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
 			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,
-			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, Integer trackId, Integer trackType, String remark) {
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark, String envType) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
+		if(Objects.nonNull(IamSecurityHolder.getPrincipalInfo())&& StringUtils.hasText(IamSecurityHolder.getPrincipalInfo().getPrincipalId())){
+			Integer principalId = Integer.valueOf(IamSecurityHolder.getPrincipalInfo().getPrincipalId());
+			taskHistory.setCreateBy(principalId);
+		}
 		taskHistory.setType(type);
 		taskHistory.setProjectId(project.getId());
 		taskHistory.setStatus(status);
@@ -113,6 +120,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setTrackId(trackId);
 		taskHistory.setTrackType(trackType);
 		taskHistory.setRemark(remark);
+		taskHistory.setEnvType(envType);
 		taskHistoryDao.insertSelective(taskHistory);
 		for (AppInstance instance : instances) {
 			TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();

@@ -45,6 +45,8 @@ public class Task extends BaseBean implements Serializable {
 
 	private Integer contactGroupId;
 
+	private String envType;
+
 	private List<AppInstance> instances;
 
 	private List<TaskInstance> taskInstances;
@@ -174,6 +176,14 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setInstance(Integer[] instance) {
 		this.instance = instance;
+	}
+
+	public String getEnvType() {
+		return envType;
+	}
+
+	public void setEnvType(String envType) {
+		this.envType = envType;
 	}
 
 	@Override

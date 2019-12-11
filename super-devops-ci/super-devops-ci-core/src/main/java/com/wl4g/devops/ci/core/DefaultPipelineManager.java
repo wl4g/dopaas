@@ -136,7 +136,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
 				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
-				param.getRemark());
+				param.getRemark(),task.getEnvType());
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -174,7 +174,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
 				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), null, param.getTaskId(), bakTaskHisy.getBuildCommand(),
 				bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(), bakTaskHisy.getProviderKind(),
-				bakTaskHisy.getContactGroupId(), commands, null, null, null);
+				bakTaskHisy.getContactGroupId(), commands, null, null, null,bakTaskHisy.getEnvType());
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
@@ -213,7 +213,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null);
+				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null,task.getEnvType());
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));

@@ -63,12 +63,12 @@ public class TaskController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
-			String startDate, String endDate) {
+			String startDate, String endDate, String envType) {
 		log.info("into TaskController.list prarms::"
 				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , providerKind = {} , startDate = {} , endDate = {} ",
 				pm, id, taskName, groupName, branchName, providerKind, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, providerKind, startDate, endDate);
+		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, providerKind, startDate, endDate,envType);
 		resp.setData(list);
 		return resp;
 	}
@@ -152,7 +152,7 @@ public class TaskController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	public RespBase<?> create(Integer taskId, Integer trackId, Integer trackType, String remark) {
+	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark) {
 		RespBase<Object> resp = RespBase.create();
 		pipeliner.newPipeline(new NewParameter(taskId, remark, trackId, trackType));
 		return resp;

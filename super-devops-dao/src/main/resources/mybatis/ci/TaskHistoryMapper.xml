@@ -22,24 +22,26 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
     <result column="result" property="result" jdbcType="VARCHAR" />
     <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
-    <result column="track_id" property="trackId" jdbcType="INTEGER" />
+    <result column="track_id" property="trackId" jdbcType="VARCHAR" />
     <result column="track_type" property="trackType" jdbcType="INTEGER" />
     <result column="cost_time" property="costTime" jdbcType="BIGINT" />
+    <result column="env_type" property="envType" jdbcType="VARCHAR" />
 
     <!-- other  -->
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
     <result column="name" property="groupName" jdbcType="VARCHAR" />
+    <result column="create_by_name" property="createByName" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskHistory" extends="BaseResultMap" >
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,provider_kind,build_command,pre_command,post_command, remark, del_flag, create_date,
-    create_by, update_date, update_by,result,contact_group_id,track_id,track_type,cost_time
+    create_by, update_date, update_by,result,contact_group_id,track_id,track_type,cost_time,env_type
   </sql>
   <sql id="Base_Column_List_t" >
     t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.provider_kind,t.build_command,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
-    t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id,t.track_id,t.track_type,t.cost_time
+    t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id,t.track_id,t.track_type,t.cost_time,t.env_type
   </sql>
   <sql id="Blob_Column_List" >
     result
@@ -61,13 +63,13 @@
       status, branch_name, sha_git,sha_local,
       ref_id, provider_kind,build_command,pre_command,post_command,remark, del_flag,
       create_date, create_by, update_date, 
-      update_by, result,contact_group_id,track_id,track_type,cost_time)
+      update_by, result,contact_group_id,track_id,track_type,cost_time,env_type)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
       #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contactGroupId,jdbcType=INTEGER},
-      #{trackId,jdbcType=INTEGER},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT})
+      #{trackId,jdbcType=VARCHAR},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT},#{envType,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" useGeneratedKeys="true" keyProperty="id">
     insert into ci_task_history
@@ -139,6 +141,9 @@
       <if test="costTime != null" >
         cost_time,
       </if>
+      <if test="envType != null" >
+        env_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
 
@@ -200,13 +205,16 @@
         #{contactGroupId,jdbcType=INTEGER},
       </if>
       <if test="trackId != null" >
-        #{trackId,jdbcType=INTEGER},
+        #{trackId,jdbcType=VARCHAR},
       </if>
       <if test="trackType != null" >
         #{trackType,jdbcType=INTEGER},
       </if>
       <if test="costTime != null" >
         #{costTime,jdbcType=BIGINT},
+      </if>
+      <if test="envType != null" >
+        #{envType,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -271,13 +279,16 @@
         contact_group_id = #{contactGroupId,jdbcType=INTEGER},
       </if>
       <if test="trackId != null" >
-        track_id = #{trackId,jdbcType=INTEGER},
+        track_id = #{trackId,jdbcType=VARCHAR},
       </if>
       <if test="trackType != null" >
         track_type = #{trackType,jdbcType=INTEGER},
       </if>
       <if test="costTime != null" >
         cost_time = #{costTime,jdbcType=BIGINT},
+      </if>
+      <if test="envType != null" >
+        env_type = #{envType,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -303,9 +314,10 @@
       update_by = #{updateBy,jdbcType=VARCHAR},
       result = #{result,jdbcType=LONGVARCHAR},
       contact_group_id = #{contactGroupId,jdbcType=INTEGER},
-      track_id = #{trackId,jdbcType=INTEGER},
+      track_id = #{trackId,jdbcType=VARCHAR},
       track_type = #{trackType,jdbcType=INTEGER},
-      cost_time = #{costTime,jdbcType=INTEGER}
+      cost_time = #{costTime,jdbcType=INTEGER},
+      env_type = #{envType,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
@@ -329,22 +341,27 @@
       update_by = #{updateBy,jdbcType=VARCHAR},
       result = #{result,jdbcType=LONGVARCHAR},
       contact_group_id = #{contactGroupId,jdbcType=INTEGER},
-      track_id = #{trackId,jdbcType=INTEGER},
+      track_id = #{trackId,jdbcType=VARCHAR},
       track_type = #{trackType,jdbcType=INTEGER},
-      cost_time = #{costTime,jdbcType=INTEGER}
+      cost_time = #{costTime,jdbcType=INTEGER},
+      env_type = #{envType,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
   </update>
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_t" />
-    ,p.project_name,g.name
+    ,p.project_name,g.name,u.user_name create_by_name
     from ci_task_history t
     left join ci_project p on t.project_id=p.id
     left join app_cluster g on p.app_cluster_id=g.id
+    left join sys_user u on u.id = t.create_by
     where t.del_flag!=1
     <if test="groupName != null and groupName != ''" >
       AND g.name LIKE CONCAT('%','${groupName}','%')
+    </if>
+    <if test="envType != null and envType != ''" >
+      AND t.env_type = #{envType,jdbcType=INTEGER}
     </if>
     <if test="projectName != null and projectName != ''" >
       AND p.project_name LIKE CONCAT('%','${projectName}','%')
