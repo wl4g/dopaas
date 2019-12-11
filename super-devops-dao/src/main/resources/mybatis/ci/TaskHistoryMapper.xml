@@ -30,6 +30,7 @@
     <!-- other  -->
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
     <result column="name" property="groupName" jdbcType="VARCHAR" />
+    <result column="create_by_name" property="createByName" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskHistory" extends="BaseResultMap" >
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
@@ -350,10 +351,11 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_t" />
-    ,p.project_name,g.name
+    ,p.project_name,g.name,u.user_name create_by_name
     from ci_task_history t
     left join ci_project p on t.project_id=p.id
     left join app_cluster g on p.app_cluster_id=g.id
+    left join sys_user u on u.id = t.create_by
     where t.del_flag!=1
     <if test="groupName != null and groupName != ''" >
       AND g.name LIKE CONCAT('%','${groupName}','%')

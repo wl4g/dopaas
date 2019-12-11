@@ -60,6 +60,8 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String envType;
 
+	private String createByName;
+
 	public Integer getType() {
 		return type;
 	}
@@ -210,5 +212,13 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setEnvType(String envType) {
 		this.envType = envType;
+	}
+
+	public String getCreateByName() {
+		return createByName;
+	}
+
+	public void setCreateByName(String createByName) {
+		this.createByName = createByName;
 	}
 }
