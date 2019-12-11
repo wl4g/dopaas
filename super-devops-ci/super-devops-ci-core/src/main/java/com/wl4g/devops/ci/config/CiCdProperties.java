@@ -67,6 +67,11 @@ public class CiCdProperties implements InitializingBean {
 	 */
 	private DeployProperties deploy = new DeployProperties();
 
+	/**
+	 * Pipeline log records cleaner configuration.
+	 */
+	private LogCleanerProperties logCleaner = new LogCleanerProperties();
+
 	public void setWorkspace(String workspace) {
 		if (!isBlank(workspace)) {
 			// Clean invalid suffix separator.
@@ -116,6 +121,14 @@ public class CiCdProperties implements InitializingBean {
 		if (Objects.nonNull(deploy)) {
 			this.deploy = deploy;
 		}
+	}
+
+	public LogCleanerProperties getLogCleaner() {
+		return logCleaner;
+	}
+
+	public void setLogCleaner(LogCleanerProperties logCleaner) {
+		this.logCleaner = logCleaner;
 	}
 
 	@Override
