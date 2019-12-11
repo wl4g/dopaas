@@ -20,6 +20,7 @@
     <result column="pre_command" property="preCommand" jdbcType="LONGVARCHAR" />
     <result column="post_command" property="postCommand" jdbcType="LONGVARCHAR" />
     <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
+    <result column="env_type" property="envType" jdbcType="VARCHAR" />
 
     <!-- other -->
     <result column="group_name" property="groupName" jdbcType="LONGVARCHAR" />
@@ -35,7 +36,7 @@
 
   <sql id="Base_Column_List" >
     id, task_name, app_cluster_id, project_id, branch_name, provider_kind, branch_type, remark,
-    enable, del_flag, create_date, create_by, update_date, update_by,build_command,pre_command, post_command,contact_group_id
+    enable, del_flag, create_date, create_by, update_date, update_by,build_command,pre_command, post_command,contact_group_id,env_type
   </sql>
 
   <sql id="InstanceColumn">
@@ -46,7 +47,7 @@
 
   <sql id="Base_Column_List_t" >
     t.id, t.task_name, t.app_cluster_id, t.project_id, t.branch_name, t.provider_kind, t.branch_type, t.remark,
-    t.enable, t.del_flag, t.create_date, t.create_by, t.update_date, t.update_by,t.build_command,t.pre_command, t.post_command,t.contact_group_id
+    t.enable, t.del_flag, t.create_date, t.create_by, t.update_date, t.update_by,t.build_command,t.pre_command, t.post_command,t.contact_group_id,t.env_type
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -65,13 +66,13 @@
       branch_type, remark, enable,
       del_flag, create_date, create_by,
       update_date, update_by, build_command,pre_command,
-      post_command,contact_group_id)
+      post_command,contact_group_id,env_type)
     values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
       #{projectId,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{providerKind,jdbcType=VARCHAR},
       #{branchType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER},
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{buildCommand,jdbcType=LONGVARCHAR},#{preCommand,jdbcType=LONGVARCHAR},
-      #{postCommand,jdbcType=LONGVARCHAR},#{contactGroupId,jdbcType=INTEGER})
+      #{postCommand,jdbcType=LONGVARCHAR},#{contactGroupId,jdbcType=INTEGER},#{envType,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Task" useGeneratedKeys="true" keyProperty="id" >
     insert into ci_task
@@ -130,6 +131,9 @@
       <if test="contactGroupId != null" >
         contact_group_id,
       </if>
+      <if test="envType != null" >
+        env_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -185,6 +189,9 @@
       </if>
       <if test="contactGroupId != null" >
         #{contactGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="envType != null" >
+        #{envType,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -242,6 +249,9 @@
       <if test="contactGroupId != null" >
         contact_group_id = #{contactGroupId,jdbcType=INTEGER},
       </if>
+      <if test="envType != null" >
+        env_type = #{envType,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -263,7 +273,8 @@
       build_command = #{buildCommand,jdbcType=LONGVARCHAR},
       pre_command = #{preCommand,jdbcType=LONGVARCHAR},
       post_command = #{postCommand,jdbcType=LONGVARCHAR},
-      contact_group_id = #{contactGroupId,jdbcType=INTEGER}
+      contact_group_id = #{contactGroupId,jdbcType=INTEGER},
+      env_type = #{envType,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Task" >
@@ -281,7 +292,8 @@
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
-      contact_group_id = #{contactGroupId,jdbcType=INTEGER}
+      contact_group_id = #{contactGroupId,jdbcType=INTEGER},
+      env_type = #{envType,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -299,6 +311,9 @@
     where t.del_flag!=1
     <if test="id != null and id != ''" >
       AND t.id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="envType != null and envType != ''" >
+      AND t.env_type = #{envType,jdbcType=INTEGER}
     </if>
     <if test="taskName != null and taskName != ''" >
       AND t.task_name LIKE CONCAT('%','${taskName}','%')

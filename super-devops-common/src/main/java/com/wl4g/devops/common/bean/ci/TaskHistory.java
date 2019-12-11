@@ -58,6 +58,8 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private Long costTime;
 
+	private String envType;
+
 	public Integer getType() {
 		return type;
 	}
@@ -200,5 +202,13 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setCostTime(Long costTime) {
 		this.costTime = costTime;
+	}
+
+	public String getEnvType() {
+		return envType;
+	}
+
+	public void setEnvType(String envType) {
+		this.envType = envType;
 	}
 }
