@@ -22,7 +22,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
     <result column="result" property="result" jdbcType="VARCHAR" />
     <result column="contact_group_id" property="contactGroupId" jdbcType="INTEGER" />
-    <result column="track_id" property="trackId" jdbcType="INTEGER" />
+    <result column="track_id" property="trackId" jdbcType="VARCHAR" />
     <result column="track_type" property="trackType" jdbcType="INTEGER" />
     <result column="cost_time" property="costTime" jdbcType="BIGINT" />
 
@@ -67,7 +67,7 @@
       #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contactGroupId,jdbcType=INTEGER},
-      #{trackId,jdbcType=INTEGER},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT})
+      #{trackId,jdbcType=VARCHAR},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" useGeneratedKeys="true" keyProperty="id">
     insert into ci_task_history
@@ -200,7 +200,7 @@
         #{contactGroupId,jdbcType=INTEGER},
       </if>
       <if test="trackId != null" >
-        #{trackId,jdbcType=INTEGER},
+        #{trackId,jdbcType=VARCHAR},
       </if>
       <if test="trackType != null" >
         #{trackType,jdbcType=INTEGER},
@@ -271,7 +271,7 @@
         contact_group_id = #{contactGroupId,jdbcType=INTEGER},
       </if>
       <if test="trackId != null" >
-        track_id = #{trackId,jdbcType=INTEGER},
+        track_id = #{trackId,jdbcType=VARCHAR},
       </if>
       <if test="trackType != null" >
         track_type = #{trackType,jdbcType=INTEGER},
@@ -303,7 +303,7 @@
       update_by = #{updateBy,jdbcType=VARCHAR},
       result = #{result,jdbcType=LONGVARCHAR},
       contact_group_id = #{contactGroupId,jdbcType=INTEGER},
-      track_id = #{trackId,jdbcType=INTEGER},
+      track_id = #{trackId,jdbcType=VARCHAR},
       track_type = #{trackType,jdbcType=INTEGER},
       cost_time = #{costTime,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
@@ -329,7 +329,7 @@
       update_by = #{updateBy,jdbcType=VARCHAR},
       result = #{result,jdbcType=LONGVARCHAR},
       contact_group_id = #{contactGroupId,jdbcType=INTEGER},
-      track_id = #{trackId,jdbcType=INTEGER},
+      track_id = #{trackId,jdbcType=VARCHAR},
       track_type = #{trackType,jdbcType=INTEGER},
       cost_time = #{costTime,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}

@@ -93,7 +93,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
 			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,
-			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, Integer trackId, Integer trackType, String remark) {
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();

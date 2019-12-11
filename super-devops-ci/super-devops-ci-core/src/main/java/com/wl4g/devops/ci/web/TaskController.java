@@ -152,7 +152,7 @@ public class TaskController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	public RespBase<?> create(Integer taskId, Integer trackId, Integer trackType, String remark) {
+	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark) {
 		RespBase<Object> resp = RespBase.create();
 		pipeliner.newPipeline(new NewParameter(taskId, remark, trackId, trackType));
 		return resp;
