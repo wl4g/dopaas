@@ -26,13 +26,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import com.wl4g.devops.ci.config.CiCdProperties;
 
 /**
- * Abstract generic operation tools.
+ * Abstract generic basic operator tools.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-12-11
  * @since
  */
-public abstract class AbstractOperateTool implements ApplicationRunner, Runnable {
+public abstract class AbstractOperatorTool implements ApplicationRunner, Runnable {
 
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
