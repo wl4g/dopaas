@@ -85,7 +85,7 @@ public class CiCdConsole {
 			// Find tasks.
 			PageModel pm = new PageModel(arg.getPageNum(), arg.getPageSize());
 			taskService.list(pm, arg.getId(), arg.getTaskName(), arg.getGroupName(), arg.getBranchName(), arg.getTarType(),
-					arg.getStartDate(), arg.getEndDate());
+					arg.getStartDate(), arg.getEndDate(),null);
 
 			// Print write to console.
 			printf(build(pm.getRecords()).setH('=').setV('!').getTableString());

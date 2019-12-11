@@ -64,9 +64,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	protected DestroableProcessManager pm;
 
 	@Override
-	public PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate) {
+	public PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate, String envType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName, startDate, endDate));
+		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName, startDate, endDate,envType));
 		return pm;
 	}
 
@@ -93,7 +93,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
 			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,
-			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark) {
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark, String envType) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
@@ -113,6 +113,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setTrackId(trackId);
 		taskHistory.setTrackType(trackType);
 		taskHistory.setRemark(remark);
+		taskHistory.setEnvType(envType);
 		taskHistoryDao.insertSelective(taskHistory);
 		for (AppInstance instance : instances) {
 			TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();

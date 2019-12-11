@@ -86,13 +86,13 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
-			String startDate, String endDate) {
+			String startDate, String endDate, String envType) {
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
 		}
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(taskDao.list(id, taskName, groupName, branchName, providerKind, startDate, endDateStr));
+		pm.setRecords(taskDao.list(id, taskName, groupName, branchName, providerKind, startDate, endDateStr,envType));
 		return pm;
 	}
 
