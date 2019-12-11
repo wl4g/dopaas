@@ -15,16 +15,18 @@
  */
 package com.wl4g.devops.share.controller;
 
-import com.wl4g.devops.common.bean.umc.AlarmContact;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.share.service.ContactService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.wl4g.devops.common.bean.umc.AlarmContact;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.share.service.ContactService;
 
 /**
  * @author vjay
@@ -38,6 +40,7 @@ public class ContactController extends BaseController {
 	private ContactService contactService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> list(String name, String email, String phone, PageModel pm) {
 		log.info("into ContactController.list prarms::" + "name = {} , email = {} , phone = {} , pm = {} ", name, email, phone,
 				pm);
@@ -48,6 +51,7 @@ public class ContactController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> save(@RequestBody AlarmContact alarmContact) {
 		log.info("into ProjectController.save prarms::" + "alarmContact = {} ", alarmContact);
 		RespBase<Object> resp = RespBase.create();
@@ -60,6 +64,7 @@ public class ContactController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> detail(Integer id) {
 		log.info("into ContactController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -69,6 +74,7 @@ public class ContactController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> del(Integer id) {
 		log.info("into ContactController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

@@ -39,6 +39,7 @@ import javax.servlet.ServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.Collections.emptyList;
@@ -211,7 +212,12 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	private String getRoles(String principal) {
 		User user = userDao.selectByUserName(principal);
 		// TODO cache
-		List<Role> list = roleDao.selectByUserId(user.getId());
+		List<Role> list;
+		if(DEFAULT_USER_ROOT.equals(principal)){
+			list = roleDao.selectWithRoot(null,null);
+		}else{
+			list = roleDao.selectByUserId(user.getId());
+		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
 			Role role = list.get(i);
@@ -233,7 +239,12 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	private String getPermissions(String principal) {
 		User user = userDao.selectByUserName(principal);
 		// TODO cache
-		List<Menu> list = menuDao.selectByUserId(user.getId());
+		List<Menu> list;
+		if (DEFAULT_USER_ROOT.equals(principal)) {
+			list = menuDao.selectWithRoot();
+		}else{
+			list = menuDao.selectByUserId(user.getId());
+		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
 			Menu menu = list.get(i);

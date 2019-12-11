@@ -29,7 +29,7 @@ public interface RoleDao {
 
     Role selectByPrimaryKey(Integer id);
 
-    List<Role> selectByRoot(@Param("roleCode") String roleCode,@Param("displayName") String displayName);
+    List<Role> selectWithRoot(@Param("roleCode") String roleCode, @Param("displayName") String displayName);
 
     int updateByPrimaryKeySelective(Role record);
 

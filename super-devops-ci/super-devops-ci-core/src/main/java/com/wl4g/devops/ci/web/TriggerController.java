@@ -22,12 +22,15 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * CI/CD controller
@@ -56,6 +59,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"ci","ci:trigger"},logical = AND)
 	public RespBase<?> list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate,
 			String endDate) {
 		log.info(
@@ -75,6 +79,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"ci","ci:trigger"},logical = AND)
 	public RespBase<?> save(Trigger trigger) {
 		log.info("into TriggerController.save prarms::" + "trigger = {} ", trigger);
 		RespBase<Object> resp = RespBase.create();
@@ -89,6 +94,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"ci","ci:trigger"},logical = AND)
 	public RespBase<?> detail(Integer id) {
 		log.info("into TriggerController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -105,6 +111,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"ci","ci:trigger"},logical = AND)
 	public RespBase<?> del(Integer id) {
 		log.info("into TriggerController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

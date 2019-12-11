@@ -18,6 +18,7 @@ package com.wl4g.devops.srm.admin;
 import com.wl4g.devops.common.bean.srm.QueryLogModel;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.srm.service.LogConsoleService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class LogConsoleController {
 
     @RequestMapping("/consoleLog")
     @ResponseBody
+    @RequiresPermissions(value = {"srm:console"})
     public RespBase<?> consoleLog(@Validated @RequestBody QueryLogModel model) throws Exception {
         RespBase<Object> resp = RespBase.create();
         try {

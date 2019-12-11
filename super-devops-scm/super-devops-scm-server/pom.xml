@@ -22,11 +22,7 @@
 			<artifactId>super-devops-scm-core</artifactId>
 			<version>master</version>
 		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-iam-client</artifactId>
-			<version>master</version>
-		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>

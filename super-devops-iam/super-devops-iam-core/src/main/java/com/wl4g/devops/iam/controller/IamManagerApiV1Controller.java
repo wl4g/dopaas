@@ -23,7 +23,7 @@ import com.wl4g.devops.dao.share.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.controller.model.SessionDestroyClientModel;
 import com.wl4g.devops.iam.controller.model.SessionQueryClientModel;
-
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -66,6 +66,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping(path = "findIamServers")
+	@RequiresPermissions(value = {"iam:online"})
 	public RespBase<?> findIamServers() throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(clusterConfigDao.getIamServer());
@@ -80,6 +81,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping(path = "getSessions")
+	@RequiresPermissions(value = {"iam:online"})
 	public RespBase<?> getRemoteSessions(@Validated SessionQueryClientModel query) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Get remote sessions for <= {} ...", query);
@@ -112,6 +114,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@PostMapping(path = "destroySessions")
+	@RequiresPermissions(value = {"iam:online"})
 	public RespBase<?> destroyRemoteSessions(@Validated SessionDestroyClientModel destroy) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Destroy remote sessions by <= {}", destroy);

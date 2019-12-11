@@ -39,6 +39,6 @@ public interface MenuDao {
 
     List<Menu> selectByUserIdAccessGroup(Integer userId);
 
-    List<Menu> selectByRoot();
+    List<Menu> selectWithRoot();
 
 }

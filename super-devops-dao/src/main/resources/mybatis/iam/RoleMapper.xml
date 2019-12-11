@@ -33,7 +33,7 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
-  <select id="selectByRoot" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  <select id="selectWithRoot" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
     from sys_role
