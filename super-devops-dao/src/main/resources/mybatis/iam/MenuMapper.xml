@@ -50,7 +50,7 @@
     where m.del_flag!=1 and  exists(select 1 from sys_group_menu mg inner join sys_group_user gu on mg.group_id=gu.group_id where m.id=mg.menu_id and gu.user_id=#{userId,jdbcType=INTEGER} );
   </select>
 
-  <select id="selectByRoot" resultMap="BaseResultMap" >
+  <select id="selectWithRoot" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List_m" />
     from sys_menu m

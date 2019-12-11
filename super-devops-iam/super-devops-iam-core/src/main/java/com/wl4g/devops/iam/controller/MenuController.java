@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.controller;
 import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.MenuService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +57,7 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> save(@RequestBody Menu menu) {
 		RespBase<Object> resp = RespBase.create();
 		menuService.save(menu);
@@ -63,6 +65,7 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		menuService.del(id);
@@ -70,6 +73,7 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Menu menu = menuService.detail(id);

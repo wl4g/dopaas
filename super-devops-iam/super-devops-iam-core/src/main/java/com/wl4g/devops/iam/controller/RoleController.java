@@ -19,6 +19,7 @@ import com.wl4g.devops.common.bean.iam.Role;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.RoleService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,7 @@ public class RoleController {
 	private RoleService roleService;
 
 	@RequestMapping(value = "/getRolesByUserGroups")
+	@RequiresPermissions(value = {"iam:role"})
 	public RespBase<?> getRolesByUserGroups() {
 		RespBase<Object> resp = RespBase.create();
 		List<Role> roles = roleService.getRolesByUserGroups();
@@ -46,6 +48,7 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"iam:role"})
 	public RespBase<?> list(PageModel pm, String roleCode, String displayName) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel re = roleService.list(pm, roleCode, displayName);
@@ -54,6 +57,7 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"iam:role"})
 	public RespBase<?> save(@RequestBody Role role) {
 		RespBase<Object> resp = RespBase.create();
 		roleService.save(role);
@@ -61,6 +65,7 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"iam:role"})
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		roleService.del(id);
@@ -68,6 +73,7 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"iam:role"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Role role = roleService.detail(id);
