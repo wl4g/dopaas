@@ -1,51 +1,56 @@
-/*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.wl4g.devops.djob.core.config;
 
-import com.wl4g.devops.common.utils.task.RunnerProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/**
- * Scheduler job properties .
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年11月16日
- * @since
- */
-public class SchedulerProperties extends RunnerProperties {
-	private static final long serialVersionUID = 5508561234067054195L;
+@ConfigurationProperties(prefix = "elastic.job.zk")
+public class SchedulerProperties {
 
+	/**
+	 * 连接Zookeeper服务器的列表. 包括IP地址和端口号. 多个地址用逗号分隔. 如: host1:2181,host2:2181
+	 */
 	private String zkServers = "localhost:2181";
 
+	/**
+	 * 命名空间.
+	 */
 	private String namespace = "devops-djob-ns";
 
-	private String cron = "0/30 * * * * ?";
+	/**
+	 * 等待重试的间隔时间的初始值. 单位毫秒.
+	 */
+	private int baseSleepTimeMilliseconds = 1000;
 
-	private int totalCount = 1;
+	/**
+	 * 等待重试的间隔时间的最大值. 单位毫秒.
+	 */
+	private int maxSleepTimeMilliseconds = 3000;
 
-	private String itemParams;
+	/**
+	 * 最大重试次数.
+	 */
+	private int maxRetries = 3;
 
-	private int fetchCacheSec = -1;
+	/**
+	 * 会话超时时间. 单位毫秒.
+	 */
+	private int sessionTimeoutMilliseconds;
+
+	/**
+	 * 连接超时时间. 单位毫秒.
+	 */
+	private int connectionTimeoutMilliseconds;
+
+	/**
+	 * 连接Zookeeper的权限令牌. 缺省为不需要权限验证.
+	 */
+	private String digest;
 
 	public String getZkServers() {
 		return zkServers;
 	}
 
-	public void setZkServers(String zkServers) {
-		this.zkServers = zkServers;
+	public void setZkServers(String serverLists) {
+		this.zkServers = serverLists;
 	}
 
 	public String getNamespace() {
@@ -56,49 +61,52 @@ public class SchedulerProperties extends RunnerProperties {
 		this.namespace = namespace;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public int getBaseSleepTimeMilliseconds() {
+		return baseSleepTimeMilliseconds;
 	}
 
-	public String getCron() {
-		return cron;
+	public void setBaseSleepTimeMilliseconds(int baseSleepTimeMilliseconds) {
+		this.baseSleepTimeMilliseconds = baseSleepTimeMilliseconds;
 	}
 
-	public void setCron(String cron) {
-		this.cron = cron;
+	public int getMaxSleepTimeMilliseconds() {
+		return maxSleepTimeMilliseconds;
 	}
 
-	public int getTotalCount() {
-		return totalCount;
+	public void setMaxSleepTimeMilliseconds(int maxSleepTimeMilliseconds) {
+		this.maxSleepTimeMilliseconds = maxSleepTimeMilliseconds;
 	}
 
-	public void setTotalCount(int totalCount) {
-		this.totalCount = totalCount;
+	public int getMaxRetries() {
+		return maxRetries;
 	}
 
-	public String getItemParams() {
-		return itemParams;
+	public void setMaxRetries(int maxRetries) {
+		this.maxRetries = maxRetries;
 	}
 
-	public void setItemParams(String itemParams) {
-		this.itemParams = itemParams;
+	public int getSessionTimeoutMilliseconds() {
+		return sessionTimeoutMilliseconds;
 	}
 
-	/**
-	 * Note: <font color=red>Note: Can't use caching? Because data changes in
-	 * real time, it is not possible to cache data through fragmented indexing,
-	 * Therefore, it may lead to dirty reading and hallucination of data. It is
-	 * suggested that the cache time should not be set too long.</font> </br>
-	 * {@link com.wl4g.devops.umc.watch.IndicatorsStateWatcher#fetchShardingCache}
-	 * 
-	 * @return
-	 */
-	public int getFetchCacheSec() {
-		return fetchCacheSec;
+	public void setSessionTimeoutMilliseconds(int sessionTimeoutMilliseconds) {
+		this.sessionTimeoutMilliseconds = sessionTimeoutMilliseconds;
 	}
 
-	public void setFetchCacheSec(int fetchCacheTime) {
-		this.fetchCacheSec = fetchCacheTime;
+	public int getConnectionTimeoutMilliseconds() {
+		return connectionTimeoutMilliseconds;
+	}
+
+	public void setConnectionTimeoutMilliseconds(int connectionTimeoutMilliseconds) {
+		this.connectionTimeoutMilliseconds = connectionTimeoutMilliseconds;
+	}
+
+	public String getDigest() {
+		return digest;
+	}
+
+	public void setDigest(String digest) {
+		this.digest = digest;
 	}
 
 }

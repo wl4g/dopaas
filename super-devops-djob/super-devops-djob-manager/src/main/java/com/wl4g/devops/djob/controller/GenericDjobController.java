@@ -15,13 +15,15 @@
  */
 package com.wl4g.devops.djob.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.wl4g.devops.common.web.BaseController;
 
-@RestController
-@RequestMapping("/manager")
-public class ManagerController extends BaseController {
+/**
+ * Generic distributed job manager controller.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年12月12日
+ * @since
+ */
+public abstract class GenericDjobController extends BaseController {
 
 }
