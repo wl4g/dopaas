@@ -43,7 +43,7 @@ import com.wl4g.devops.ci.tool.LogPipelineCleaner;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.framework.context.DelegateAlias;
+import com.wl4g.devops.common.context.DelegateAlias;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;

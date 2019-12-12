@@ -27,7 +27,7 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmContact;
-import com.wl4g.devops.common.framework.context.DelegatePrototypeBeanFactory;
+import com.wl4g.devops.common.context.DelegatePrototypeBeanFactory;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
