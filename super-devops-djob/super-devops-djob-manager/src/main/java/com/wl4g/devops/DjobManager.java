@@ -26,14 +26,14 @@ import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
 @EnableIamClient
 @MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
-public class JobManager {
+public class DjobManager {
 
 	static {
 		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(JobManager.class, args);
+		SpringApplication.run(DjobManager.class, args);
 	}
 
 }

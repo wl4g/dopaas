@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
+			<artifactId>super-devops-djob-core</artifactId>
 			<version>master</version>
 		</dependency>
 	</dependencies>

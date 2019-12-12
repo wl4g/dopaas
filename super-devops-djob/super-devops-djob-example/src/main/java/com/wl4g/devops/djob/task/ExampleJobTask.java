@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.job.controller;
+package com.wl4g.devops.djob.task;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.common.web.BaseController;
+@Service
+public class ExampleJobTask implements ApplicationRunner {
 
-@RestController
-@RequestMapping("/manager")
-public class ManagerController extends BaseController {
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		// TODO
+	}
 
 }
