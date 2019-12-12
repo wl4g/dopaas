@@ -61,7 +61,7 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 	@Autowired
 	protected BeanFactory beanFactory;
 	@Autowired
-	private ThreadPoolTaskScheduler scheduler;
+	private ThreadPoolTaskScheduler taskScheduler;
 
 	@Autowired
 	protected TriggerDao triggerDao;
@@ -76,13 +76,13 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) {
-		refreshTimingPipelineAll();
+		refreshAll();
 	}
 
 	/**
 	 * Refresh timing pipeline job all.
 	 */
-	private void refreshTimingPipelineAll() {
+	private void refreshAll() {
 		List<Trigger> triggers = triggerDao.selectByType(TASK_TYPE_TIMMING);
 		for (Trigger trigger : triggers) {
 			refreshTimingPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
@@ -98,10 +98,10 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 	 */
 	public void refreshTimingPipeline(String key, String expression, Trigger trigger) {
 		if (log.isInfoEnabled()) {
-			log.info("Refresh timing pipeline for key:'{}', expression: '{}', trigger: {}", key, expression, trigger);
+			log.info("Refresh timing pipeline for key:'{}', expression: '{}', triggerId: {}", key, expression, trigger.getId());
 		}
 		// Check stopped?
-		stopTimingPipeline(key);
+		stopTimingPipeline(trigger);
 
 		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
 		notNull(task, String.format("Timing pipeline not found for taskId:{}", trigger.getTaskId()));
@@ -111,57 +111,63 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 		notNull(project, String.format("Timing pipeline project:(%s) not found", task.getProjectId()));
 
 		// Startup to pipeline.
-		startupTimingPipeline(key, expression, trigger, project, task, instances);
+		startupTimingPipeline(trigger, project, task, instances);
 	}
 
 	/**
 	 * Startup pipeline job.
 	 * 
-	 * @param key
-	 * @param expression
 	 * @param trigger
 	 * @param project
 	 * @param task
 	 * @param taskInstances
 	 */
-	private void startupTimingPipeline(String key, String expression, Trigger trigger, Project project, Task task,
-			List<TaskInstance> taskInstances) {
+	private void startupTimingPipeline(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
 		if (log.isInfoEnabled()) {
-			log.info(
-					"Startup timing pipeline: triggerId = {} , expression = {} , trigger = {} , project = {} , task = {} , taskInstances = {} ",
-					key, expression, trigger, project, task, taskInstances);
+			log.info("Startup timing pipeline for triggerId: {}, expression: '{}', instances: {} ", trigger.getId(),
+					trigger.getCron(), taskInstances);
 		}
+		stopTimingPipeline(trigger);
 
-		if (map.containsKey(key)) {
-			stopTimingPipeline(key);
-		}
 		if (trigger.getEnable() != 1) {
 			return;
 		}
 
 		TimingPipelineProvider provider = beanFactory.getBean(TimingPipelineProvider.class,
 				new Object[] { trigger, project, task, taskInstances });
-		ScheduledFuture<?> future = scheduler.schedule(provider, new CronTrigger(expression));
+		ScheduledFuture<?> future = taskScheduler.schedule(provider, new CronTrigger(trigger.getCron()));
 		// TODO distributed cluster??
-		PipelineTaskScheduler.map.put(key, future);
+		PipelineTaskScheduler.map.put(getTimingPipelineKey(trigger), future);
 	}
 
 	/**
-	 * Stop pipeline job.
+	 * Stopping pipeline job.
 	 * 
-	 * @param key
+	 * @param trigger
 	 */
-	public void stopTimingPipeline(String key) {
+	public void stopTimingPipeline(Trigger trigger) {
 		if (log.isInfoEnabled()) {
-			log.info("into DynamicTask.stopCron prarms::" + "triggerId = {} ", key);
+			log.info("Stopping timing pipeline for triggerId: {}, taskId: {}, expression: '{}'", trigger.getId(),
+					trigger.getTaskId(), trigger.getCron());
 		}
 
+		String key = getTimingPipelineKey(trigger);
 		ScheduledFuture<?> future = PipelineTaskScheduler.map.get(key);
 		if (nonNull(future)) {
 			if (!future.cancel(true)) {
 				throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
 			}
 		}
+	}
+
+	/**
+	 * Get timing pipeline key.
+	 * 
+	 * @param trigger
+	 * @return
+	 */
+	private String getTimingPipelineKey(Trigger trigger) {
+		return trigger.getId() + "";
 	}
 
 }
