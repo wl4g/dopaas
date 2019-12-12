@@ -32,12 +32,13 @@ import com.wl4g.devops.ci.config.CiCdProperties;
  * @version v1.0.0 2019-12-11
  * @since
  */
-public abstract class AbstractOperatorTool implements ApplicationRunner, Runnable {
+public abstract class GenericOperatorTool implements ApplicationRunner, Runnable {
 
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	@Autowired
 	protected CiCdProperties config;
+
 	@Autowired
 	protected ThreadPoolTaskScheduler taskScheduler;
 

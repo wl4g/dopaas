@@ -20,13 +20,13 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * Pipeline running record logs cleaner.
+ * Pipeline running record logs cleaner tool.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-12-11
  * @since
  */
-public class LogPipelineCleaner extends AbstractOperatorTool {
+public class LogPipelineCleaner extends GenericOperatorTool {
 
 	@Override
 	protected void doStartup(ScheduledExecutorService scheduler) {

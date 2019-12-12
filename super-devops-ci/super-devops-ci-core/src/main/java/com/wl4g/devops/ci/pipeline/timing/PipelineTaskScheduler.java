@@ -27,6 +27,7 @@ import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static java.util.Objects.nonNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,9 +101,7 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 			log.info("Refresh timing pipeline for key:'{}', expression: '{}', trigger: {}", key, expression, trigger);
 		}
 		// Check stopped?
-		if (!stopTimingPipeline(key)) {
-			throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
-		}
+		stopTimingPipeline(key);
 
 		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
 		notNull(task, String.format("Timing pipeline not found for taskId:{}", trigger.getTaskId()));
@@ -151,17 +150,18 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 	 * Stop pipeline job.
 	 * 
 	 * @param key
-	 * @return
 	 */
-	public boolean stopTimingPipeline(String key) {
+	public void stopTimingPipeline(String key) {
 		if (log.isInfoEnabled()) {
 			log.info("into DynamicTask.stopCron prarms::" + "triggerId = {} ", key);
 		}
+
 		ScheduledFuture<?> future = PipelineTaskScheduler.map.get(key);
-		if (future != null) {
-			return future.cancel(true);
+		if (nonNull(future)) {
+			if (!future.cancel(true)) {
+				throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
+			}
 		}
-		return false;
 	}
 
 }
