@@ -247,10 +247,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
 				try {
 					writeALineFile(jobDeployerLog, LOG_FILE_START);
+
 					// Do deploying.
 					newDeployer(i).run();
+
 					// Print successful.
-					writeBuildLog("Deployed cluster: %s to remote instance: %s@%s successfully!",
+					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
 							getContext().getAppCluster().getName(), i.getSshUser(), i.getHostname());
 				} catch (Exception e) {
 					String logmsg = writeBuildLog("Failed to deployed to remote!\nCaused by: \n", getStackTraceAsString(e));
@@ -263,7 +265,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			String logmsg = writeBuildLog("Start to deploying cluster: %s to remote instances: %s ... ",
+			String logmsg = writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s@%s' ... ",
 					getContext().getAppCluster().getName(), jobs.size());
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);

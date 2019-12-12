@@ -13,4 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.share;
+package com.wl4g.devops;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class JobExample {
+
+	public static void main(String[] args) {
+		SpringApplication.run(JobExample.class, args);
+	}
+
+}

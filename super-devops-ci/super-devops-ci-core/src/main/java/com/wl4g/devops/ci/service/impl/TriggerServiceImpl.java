@@ -91,7 +91,7 @@ public class TriggerServiceImpl implements TriggerService {
 	@Override
 	@Transactional
 	public int delete(Integer id) {
-		timingManager.stopTimingPipeline(id.toString());
+		timingManager.stopTimingPipeline(triggerDao.selectByPrimaryKey(id));
 		return triggerDao.deleteByPrimaryKey(id);
 	}
 
