@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.djob.core.scheduler;
 
+/**
+ * Distributed job scheduler
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年12月12日
+ * @since
+ */
 public interface DistributedJobScheduler {
 
 }
