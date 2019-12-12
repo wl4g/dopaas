@@ -39,6 +39,7 @@ import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
+import com.wl4g.devops.ci.tool.LogPipelineCleaner;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
@@ -237,17 +238,25 @@ public class CiCdAutoConfiguration {
 		return new RktNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
-	// --- TIMING SCHEDULE ---
+	// --- TIMING SCHEDULE. ---
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
+	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task,
+			List<TaskInstance> taskInstances) {
 		return new TimingPipelineProvider(trigger, project, task, taskInstances);
 	}
 
 	@Bean
 	public PipelineTaskScheduler timingPipelineManager() {
 		return new PipelineTaskScheduler();
+	}
+
+	// --- OPERATOR TOOL's. ---
+
+	@Bean
+	public LogPipelineCleaner logPipelineCleaner() {
+		return new LogPipelineCleaner();
 	}
 
 }
