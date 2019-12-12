@@ -126,9 +126,13 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 				lock.unlock();
 			}
 		} else {
+			String buildWaitMsg = writeBuildLog(
+					"Waiting to build dependency, for timeout: %ssec, dependencyId: %s, projectId: %s ...",
+					config.getBuild().getJobTimeoutMs());
 			if (log.isInfoEnabled()) {
-				log.info("Waiting to build dependency, timeout for {}sec ...", config.getBuild().getJobTimeoutMs());
+				log.info(buildWaitMsg);
 			}
+
 			try {
 				long begin = System.currentTimeMillis();
 				// Waiting for other job builds to completed.

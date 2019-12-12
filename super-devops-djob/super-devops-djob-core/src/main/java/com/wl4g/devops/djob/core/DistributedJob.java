@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.job.core.scheduler;
+package com.wl4g.devops.djob.core;
 
-public class DefaultElasticDistributedJobScheduler implements DistributedJobScheduler {
+/**
+ * Distributed job
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年11月12日
+ * @since
+ */
+public interface DistributedJob {
 
 }

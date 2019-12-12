@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: job-manager
+  application.name: djob-manager
   profiles:
     include: common,support,util
     active: dev

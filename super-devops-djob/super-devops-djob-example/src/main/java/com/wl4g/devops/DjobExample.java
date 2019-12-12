@@ -18,11 +18,14 @@ package com.wl4g.devops;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.devops.djob.core.annotation.EnableDjobScheduling;
+
+@EnableDjobScheduling
 @SpringBootApplication
-public class JobExample {
+public class DjobExample {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JobExample.class, args);
+		SpringApplication.run(DjobExample.class, args);
 	}
 
 }
