@@ -127,11 +127,11 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			}
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
-			PrincipalCollection principalCollection = super.newPermitPrincipalCollection(info);
+			PrincipalCollection principals = newPermitPrincipalCollection(info);
 
 			// You should always use token credentials because the default
 			// SimpleCredentialsMatcher checks.
-			return new FastAuthenticationInfo(info, principalCollection, fcToken.getCredentials(), getName());
+			return new FastAuthenticationInfo(info, principals, fcToken.getCredentials());
 		} catch (Exception e) {
 			throw new CredentialsException(String.format("Unable to validate ticket [%s]", granticket), e);
 		}
