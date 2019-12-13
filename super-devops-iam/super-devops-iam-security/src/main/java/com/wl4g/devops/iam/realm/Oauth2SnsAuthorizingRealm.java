@@ -82,7 +82,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 
 		if (nonNull(info) && !isBlank(info.getPrincipal())) {
 			// Authenticate attributes.(roles/permissions/rememberMe)
-			PrincipalCollection principals = newPermitPrincipalCollection(info);
+			PrincipalCollection principals = createPermitPrincipalCollection(info);
 			return new Oauth2SnsAuthenticationInfo(info, principals, getName());
 		}
 		return EmptyOauth2AuthorizationInfo.EMPTY;

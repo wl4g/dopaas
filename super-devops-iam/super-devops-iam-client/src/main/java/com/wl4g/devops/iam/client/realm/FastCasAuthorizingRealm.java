@@ -127,7 +127,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			}
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
-			PrincipalCollection principals = newPermitPrincipalCollection(info);
+			PrincipalCollection principals = createPermitPrincipalCollection(info);
 
 			// You should always use token credentials because the default
 			// SimpleCredentialsMatcher checks.
