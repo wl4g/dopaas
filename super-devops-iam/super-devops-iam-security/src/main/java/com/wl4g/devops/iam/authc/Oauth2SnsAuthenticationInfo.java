@@ -15,36 +15,22 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
-public class Oauth2SnsAuthenticationInfo extends SimpleAuthenticationInfo implements IamAuthenticationInfo {
+public class Oauth2SnsAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	/**
-	 * IAM account information.
-	 */
-	final private IamPrincipalInfo accountInfo;
-
 	public Oauth2SnsAuthenticationInfo(IamPrincipalInfo accountInfo, Object principal, Object credentials, String realmName) {
-		this(accountInfo, principal, credentials, null, realmName);
+		super(accountInfo, principal, credentials, realmName);
 	}
 
-	public Oauth2SnsAuthenticationInfo(IamPrincipalInfo accountInfo, Object principal, Object credentials,
-			ByteSource credentialsSalt, String realmName) {
-		this.accountInfo = accountInfo;
-		this.principals = new SimplePrincipalCollection(principal, realmName);
-		this.credentials = credentials;
-		this.credentialsSalt = credentialsSalt;
-	}
-
-	@Override
-	public IamPrincipalInfo getAccountInfo() {
-		return accountInfo;
+	public Oauth2SnsAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+			Object credentials) {
+		super(accountInfo, principals, credentialsSalt, credentials);
 	}
 
 }
