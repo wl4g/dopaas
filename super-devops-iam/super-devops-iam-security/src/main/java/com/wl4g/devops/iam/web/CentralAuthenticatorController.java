@@ -31,8 +31,6 @@ import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
-import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
@@ -77,24 +75,8 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 		}
 
 		RespBase<TicketAssertion<IamPrincipalInfo>> resp = new RespBase<>();
-		try {
-			// Ticket assertion.
-			resp.setData(authHandler.validate(param));
-		} catch (Throwable ex) {
-			resp.setCode(RetCode.SYS_ERR);
-			resp.handleError(ex);
-			if (ex instanceof UnauthenticatedException) {
-				// Only if the error is not authenticated, can it be redirected
-				// to the IAM server login page, otherwise the client will
-				// display the error page directly (to prevent unlimited
-				// redirection). See:com.wl4g.devops.iam.client.validation.
-				// AbstractBasedTicketValidator#getRemoteValidation()
-				resp.setCode(RetCode.UNAUTHC);
-			} else if (ex instanceof UnauthorizedException) {
-				resp.setCode(RetCode.UNAUTHZ);
-			}
-			log.warn("Failed to ticket validate.", ex);
-		}
+		// Ticket assertion.
+		resp.setData(authHandler.validate(param));
 
 		if (log.isInfoEnabled()) {
 			log.info("Ticket validate => {}", resp);
