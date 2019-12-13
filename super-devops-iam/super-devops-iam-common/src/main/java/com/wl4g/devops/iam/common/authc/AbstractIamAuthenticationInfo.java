@@ -40,8 +40,12 @@ public abstract class AbstractIamAuthenticationInfo extends SimpleAuthentication
 	 */
 	final private IamPrincipalInfo accountInfo;
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, Object principal, Object credentials, String realmName) {
+	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, String principal, Object credentials, String realmName) {
 		this(accountInfo, new SimplePrincipalCollection(principal, realmName), null, credentials);
+	}
+
+	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, Object credentials) {
+		this(accountInfo, principals, null, credentials);
 	}
 
 	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
