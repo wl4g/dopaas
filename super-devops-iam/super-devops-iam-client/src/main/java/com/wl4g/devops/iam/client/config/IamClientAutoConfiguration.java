@@ -31,7 +31,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.common.kit.access.IPAccessControl;
 import com.wl4g.devops.iam.client.filter.ROOTAuthenticationFilter;
-import com.wl4g.devops.iam.client.realm.AbstractAuthorizingRealm;
+import com.wl4g.devops.iam.client.realm.AbstractClientAuthorizingRealm;
 import com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm;
 import com.wl4g.devops.iam.client.validation.ExpiredSessionIamValidator;
 import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
@@ -81,7 +81,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
 		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream().collect(Collectors.toList());
+		List<Realm> realms = actx.getBeansOfType(AbstractClientAuthorizingRealm.class).values().stream().collect(Collectors.toList());
 		securityManager.setRealms(realms);
 		securityManager.setSubjectFactory(subjectFactory);
 		return securityManager;

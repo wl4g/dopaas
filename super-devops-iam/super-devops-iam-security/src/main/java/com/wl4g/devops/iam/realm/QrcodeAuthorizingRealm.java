@@ -48,7 +48,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
  *
  * @since 1.2
  */
-public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAuthenticationToken> {
+public class QrcodeAuthorizingRealm extends AbstractAuthorizingRealm<QrcodeAuthenticationToken> {
 
 	public QrcodeAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);

@@ -75,7 +75,7 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
-import com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm;
+import com.wl4g.devops.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
 import com.wl4g.devops.iam.realm.QrcodeAuthorizingRealm;
@@ -135,7 +135,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
 		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream().collect(toList());
+		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream().collect(toList());
 		securityManager.setRealms(realms);
 		securityManager.setSubjectFactory(subjectFactory);
 		// Multiple realm authenticator controller
@@ -147,7 +147,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	public ExceptionModularRealmAuthenticator modularRealmAuthenticator(AuthenticationStrategy authenticationStrategy) {
 		ExceptionModularRealmAuthenticator authenticator = new ExceptionModularRealmAuthenticator();
 		authenticator.setAuthenticationStrategy(authenticationStrategy);
-		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream()
+		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream()
 				.collect(Collectors.toList());
 		authenticator.setRealms(realms);
 		return authenticator;

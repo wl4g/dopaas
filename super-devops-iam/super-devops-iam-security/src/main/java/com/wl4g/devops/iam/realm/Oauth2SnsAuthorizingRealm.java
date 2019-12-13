@@ -44,7 +44,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
  * @date 2019年1月8日
  * @since
  */
-public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticationToken> extends AbstractIamAuthorizingRealm<T> {
+public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticationToken> extends AbstractAuthorizingRealm<T> {
 
 	/**
 	 * IAM Social connection factory

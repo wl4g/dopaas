@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.common.subject;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.shiro.util.Assert.hasText;
+import static org.apache.shiro.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.HashMap;
@@ -139,6 +140,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 */
 	@Override
 	public final Map<String, String> getAttributes() {
+		notNull(attributes, "Principal attributes can't null");
 		return attributes;
 	}
 

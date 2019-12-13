@@ -57,7 +57,7 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
  *
  * @since 1.2
  */
-public class SmsAuthorizingRealm extends AbstractIamAuthorizingRealm<SmsAuthenticationToken> {
+public class SmsAuthorizingRealm extends AbstractAuthorizingRealm<SmsAuthenticationToken> {
 
 	public SmsAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);
