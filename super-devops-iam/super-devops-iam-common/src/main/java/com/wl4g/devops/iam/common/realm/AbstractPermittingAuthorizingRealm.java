@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
+import static org.apache.shiro.util.Assert.notNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,14 +45,34 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 	final public static String KEY_ROLES_ATTRIBUTE_NAME = "rolesAttributeName";
 	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttributeName";
 
+	/**
+	 * New create and merge {@link PrincipalCollection}
+	 * 
+	 * @param info
+	 * @return
+	 */
 	protected PrincipalCollection newPermitPrincipalCollection(IamPrincipalInfo info) {
+		return newPermitPrincipalCollection(info.getPrincipal(), info);
+	}
+
+	/**
+	 * New create and merge {@link PrincipalCollection}
+	 * 
+	 * @param principal
+	 * @param info
+	 * @return
+	 */
+	protected PrincipalCollection newPermitPrincipalCollection(String principal, IamPrincipalInfo info) {
+		notNull(principal, "Principal can't null");
+		notNull(info, "IamPrincipalInfo can't null");
+
 		// Authenticate attributes.(roles/permissions/rememberMe)
 		Map<String, String> principalMap = info.getAttributes();
 		principalMap.put(KEY_ROLES_ATTRIBUTE_NAME, info.getRoles());
 		principalMap.put(KEY_PERMITS_ATTRIBUTE_NAME, info.getPermissions());
 
 		// Create simple-authentication info
-		List<Object> principals = CollectionUtils.asList(info.getPrincipal(), principalMap);
+		List<Object> principals = CollectionUtils.asList(principal, principalMap);
 		return new SimplePrincipalCollection(principals, getName());
 	}
 

@@ -74,13 +74,12 @@ public class SmsAuthorizingRealm extends AbstractAuthorizingRealm<SmsAuthenticat
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(SmsAuthenticationToken token) throws AuthenticationException {
 		// Get account by mobile phone
-		IamPrincipalInfo acc = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
+		IamPrincipalInfo info = configurer.getIamAccount(new SmsParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
-			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
+			log.debug("Get IamAccountInfo:{} by token:{}", info, token);
 		}
 
 		String principal = null; // Current login principal
-
 		// If the operation is not logged-in, Princial is the currently
 		// logged-in subject.
 		if (LOGIN != token.getAction()) {
@@ -89,15 +88,13 @@ public class SmsAuthorizingRealm extends AbstractAuthorizingRealm<SmsAuthenticat
 
 		// Actions are unbind or login, account information is required.
 		if (BIND != token.getAction()) {
-			assertAccountInfo(acc, token);
-			principal = acc.getPrincipal();
+			assertAccountInfo(info, token);
+			principal = info.getPrincipal();
 		}
 
-		/*
-		 * Password is a string that may be set to empty.
-		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
-		 */
-		return new SmsAuthenticationInfo(acc, principal, token.getCredentials(), getName());
+		// Authenticate attributes.(roles/permissions/rememberMe)
+		PrincipalCollection principals = newPermitPrincipalCollection(principal, info);
+		return new SmsAuthenticationInfo(info, principals, getName());
 	}
 
 	/**

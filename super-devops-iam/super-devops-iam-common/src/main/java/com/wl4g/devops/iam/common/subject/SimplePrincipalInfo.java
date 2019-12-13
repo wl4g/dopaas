@@ -59,6 +59,11 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		super();
 	}
 
+	public SimplePrincipalInfo(@NotBlank IamPrincipalInfo info) {
+		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getRoles(), info.getPermissions(),
+				info.getAttributes());
+	}
+
 	public SimplePrincipalInfo(@NotBlank String principalId, @NotBlank String principal) {
 		this(principalId, principal, null, null, null);
 	}

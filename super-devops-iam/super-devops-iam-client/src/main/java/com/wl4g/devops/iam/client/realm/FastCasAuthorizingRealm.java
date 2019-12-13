@@ -131,7 +131,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 			// You should always use token credentials because the default
 			// SimpleCredentialsMatcher checks.
-			return new FastAuthenticationInfo(info, principals, fcToken.getCredentials());
+			return new FastAuthenticationInfo(info, principals, getName());
 		} catch (Exception e) {
 			throw new CredentialsException(String.format("Unable to validate ticket [%s]", granticket), e);
 		}

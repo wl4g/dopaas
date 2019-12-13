@@ -16,8 +16,6 @@
 package com.wl4g.devops.iam.realm;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.shiro.authc.AuthenticationException;
@@ -84,12 +82,9 @@ public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAut
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}
 
-		/*
-		 * Password is a string that may be set to empty.
-		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
-		 */
-		String storedCredentials = nonNull(info) ? info.getStoredCredentials() : EMPTY;
-		return new GeneralAuthenticationInfo(info, info.getPrincipal(), storedCredentials, getName());
+		// Authenticate attributes.(roles/permissions/rememberMe)
+		PrincipalCollection principals = newPermitPrincipalCollection(info);
+		return new GeneralAuthenticationInfo(info, principals, getName());
 	}
 
 	/**
