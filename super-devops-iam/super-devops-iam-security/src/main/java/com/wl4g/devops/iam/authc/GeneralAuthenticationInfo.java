@@ -24,17 +24,13 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 public class GeneralAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	public GeneralAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, Object credentials) {
-		super(accountInfo, principals, credentials);
-	}
-
-	public GeneralAuthenticationInfo(IamPrincipalInfo accountInfo, String principal, Object credentials, String realmName) {
-		super(accountInfo, principal, credentials, realmName);
+	public GeneralAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
+		this(accountInfo, principals, null, realmName);
 	}
 
 	public GeneralAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
-			Object credentials) {
-		super(accountInfo, principals, credentialsSalt, credentials);
+			String realmName) {
+		super(accountInfo, principals, credentialsSalt, realmName);
 	}
 
 }
