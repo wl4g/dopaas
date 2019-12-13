@@ -18,8 +18,8 @@ package com.wl4g.devops.iam.common.authz.permission;
 public class GenericWildcardPermissionTests {
 
 	public static void main(String[] args) {
-		GenericWildcardPermission define1 = new GenericWildcardPermission("ci,ci:task,ci:schedule");
-		GenericWildcardPermission own1 = new GenericWildcardPermission("ci,ci:task,iam,iam:online,umc,umc:alarm");
+		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:task,ci:schedule");
+		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci,ci:task,iam,iam:online,umc,umc:alarm");
 		System.out.println(define1.implies(own1));
 	}
 }

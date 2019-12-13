@@ -21,7 +21,6 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
@@ -42,6 +41,7 @@ import com.wl4g.devops.iam.authc.credential.SmsCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.secure.DefaultCredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.authc.pam.ExceptionModularRealmAuthenticator;
+import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
@@ -131,7 +131,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamServerSessionManager sessionManager,
-			ModularRealmAuthenticator authenticator) {
+			ModularRealmAuthenticator authenticator, EnhancedModularRealmAuthorizer authorizer) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
 		// Register define realm.
@@ -140,6 +140,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 		securityManager.setSubjectFactory(subjectFactory);
 		// Multiple realm authenticator controller
 		securityManager.setAuthenticator(authenticator);
+		securityManager.setAuthorizer(authorizer);
 		return securityManager;
 	}
 
@@ -147,8 +148,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	public ExceptionModularRealmAuthenticator modularRealmAuthenticator(AuthenticationStrategy authenticationStrategy) {
 		ExceptionModularRealmAuthenticator authenticator = new ExceptionModularRealmAuthenticator();
 		authenticator.setAuthenticationStrategy(authenticationStrategy);
-		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream()
-				.collect(Collectors.toList());
+		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream().collect(toList());
 		authenticator.setRealms(realms);
 		return authenticator;
 	}

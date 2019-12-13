@@ -29,13 +29,13 @@ import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 
 /**
- * {@link GenericWildcardPermission}
+ * {@link EnhancedWildcardPermission}
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年12月13日
  * @since
  */
-public class GenericWildcardPermission implements Permission, Serializable {
+public class EnhancedWildcardPermission implements Permission, Serializable {
 	private static final long serialVersionUID = 7804887804507086263L;
 	protected static final String WILDCARD_TOKEN = "*";
 	protected static final String PERMIT_DIVIDER_TOKEN = ",";
@@ -43,11 +43,11 @@ public class GenericWildcardPermission implements Permission, Serializable {
 
 	private List<Set<String>> permitParts = emptyList();
 
-	public GenericWildcardPermission(String wildcardString) {
+	public EnhancedWildcardPermission(String wildcardString) {
 		this(wildcardString, true);
 	}
 
-	public GenericWildcardPermission(String wildcardString, boolean caseSensitive) {
+	public EnhancedWildcardPermission(String wildcardString, boolean caseSensitive) {
 		initWildcardString(wildcardString, caseSensitive);
 	}
 
@@ -98,11 +98,11 @@ public class GenericWildcardPermission implements Permission, Serializable {
 	@Override
 	public boolean implies(Permission p) {
 		// By default only supports comparisons with other WildcardPermissions
-		if (!(p instanceof GenericWildcardPermission)) {
+		if (!(p instanceof EnhancedWildcardPermission)) {
 			return false;
 		}
 
-		GenericWildcardPermission gwp = (GenericWildcardPermission) p;
+		EnhancedWildcardPermission gwp = (EnhancedWildcardPermission) p;
 		List<Set<String>> otherParts = gwp.getPermitParts();
 		int i = 0;
 		for (Set<String> otherPart : otherParts) {
@@ -152,8 +152,8 @@ public class GenericWildcardPermission implements Permission, Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof GenericWildcardPermission) {
-			GenericWildcardPermission wp = (GenericWildcardPermission) o;
+		if (o instanceof EnhancedWildcardPermission) {
+			EnhancedWildcardPermission wp = (EnhancedWildcardPermission) o;
 			return permitParts.equals(wp.permitParts);
 		}
 		return false;
