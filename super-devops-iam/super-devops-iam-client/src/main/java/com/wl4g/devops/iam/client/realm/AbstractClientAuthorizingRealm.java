@@ -18,9 +18,6 @@ package com.wl4g.devops.iam.client.realm;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +26,11 @@ import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract authorizing realm.
@@ -44,7 +39,7 @@ import java.util.List;
  * @version v1.0.0 2018-11-23
  * @since
  */
-public abstract class AbstractAuthorizingRealm extends AuthorizingRealm {
+public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingAuthorizingRealm {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -57,7 +52,7 @@ public abstract class AbstractAuthorizingRealm extends AuthorizingRealm {
 	 */
 	final protected IamValidator<TicketValidationModel, TicketAssertion<IamPrincipalInfo>> ticketValidator;
 
-	public AbstractAuthorizingRealm(IamClientProperties config,
+	public AbstractClientAuthorizingRealm(IamClientProperties config,
 			IamValidator<TicketValidationModel, TicketAssertion<IamPrincipalInfo>> ticketValidator) {
 		this.config = config;
 		this.ticketValidator = ticketValidator;
@@ -68,9 +63,7 @@ public abstract class AbstractAuthorizingRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		IamAuthenticationInfo info = doAuthenticationInfo(token);
-		bind(KEY_AUTHC_ACCOUNT_INFO, info.getAccountInfo());
-		return info;
+		return (AuthenticationInfo) bind(KEY_AUTHC_ACCOUNT_INFO, doAuthenticationInfo(token).getAccountInfo());
 	}
 
 	/**
@@ -81,52 +74,5 @@ public abstract class AbstractAuthorizingRealm extends AuthorizingRealm {
 	 * @throws AuthenticationException
 	 */
 	protected abstract IamAuthenticationInfo doAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
-
-	/**
-	 * Split a string into a list of not empty and trimmed strings, delimiter is
-	 * a comma.
-	 * 
-	 * @param s
-	 *            the input string
-	 * @return the list of not empty and trimmed strings
-	 */
-	protected List<String> split(String s) {
-		List<String> list = new ArrayList<String>();
-		String[] elements = StringUtils.split(s, ',');
-		if (elements != null && elements.length > 0) {
-			for (String element : elements) {
-				if (StringUtils.hasText(element)) {
-					list.add(element.trim());
-				}
-			}
-		}
-		return list;
-	}
-
-	/**
-	 * Add roles to the simple authorization info.
-	 * 
-	 * @param simpleAuthorizationInfo
-	 * @param roles
-	 *            the list of roles to add
-	 */
-	protected void addRoles(SimpleAuthorizationInfo simpleAuthorizationInfo, List<String> roles) {
-		for (String role : roles) {
-			simpleAuthorizationInfo.addRole(role);
-		}
-	}
-
-	/**
-	 * Add permissions to the simple authorization info.
-	 * 
-	 * @param simpleAuthorizationInfo
-	 * @param permissions
-	 *            the list of permissions to add
-	 */
-	protected void addPermissions(SimpleAuthorizationInfo simpleAuthorizationInfo, List<String> permissions) {
-		for (String permission : permissions) {
-			simpleAuthorizationInfo.addStringPermission(permission);
-		}
-	}
 
 }

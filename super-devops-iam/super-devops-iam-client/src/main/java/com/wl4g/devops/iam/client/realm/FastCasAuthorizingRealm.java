@@ -22,8 +22,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.apache.shiro.util.CollectionUtils;
 
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
@@ -47,8 +45,6 @@ import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -73,9 +69,7 @@ import java.util.Map;
  *
  * @since 1.2
  */
-public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
-	final public static String KEY_ROLES_ATTRIBUTE_NAME = "rolesAttributeName";
-	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttributeName";
+public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 	public FastCasAuthorizingRealm(IamClientProperties config,
 			IamValidator<TicketValidationModel, TicketAssertion<IamPrincipalInfo>> validator) {
@@ -126,24 +120,18 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 			IamPrincipalInfo info = assertion.getPrincipalInfo();
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
 			String principalName = assertion.getPrincipalInfo().getPrincipal();
+			fcToken.setPrincipal(principalName);
+			fcToken.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
 			if (log.isInfoEnabled()) {
 				log.info("Validated grantTicket[{}], principalName[{}]", granticket, principalName);
 			}
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
-			Map<String, String> principalMap = info.getAttributes();
-			principalMap.put(KEY_ROLES_ATTRIBUTE_NAME, info.getRoles());
-			principalMap.put(KEY_PERMITS_ATTRIBUTE_NAME, info.getPermissions());
-			fcToken.setPrincipal(principalName);
-			fcToken.setRememberMe(parseBoolean(principalMap.get(KEY_REMEMBERME_NAME)));
-
-			// Create simple-authentication info
-			List<Object> principals = CollectionUtils.asList(principalName, principalMap);
-			PrincipalCollection principalCollection = new SimplePrincipalCollection(principals, super.getName());
+			PrincipalCollection principalCollection = super.newPermitPrincipalCollection(info);
 
 			// You should always use token credentials because the default
 			// SimpleCredentialsMatcher checks.
-			return new FastAuthenticationInfo(info, principalCollection, fcToken.getCredentials());
+			return new FastAuthenticationInfo(info, principalCollection, fcToken.getCredentials(), getName());
 		} catch (Exception e) {
 			throw new CredentialsException(String.format("Unable to validate ticket [%s]", granticket), e);
 		}
@@ -158,24 +146,12 @@ public class FastCasAuthorizingRealm extends AbstractAuthorizingRealm {
 	 *            that should be retrieved.
 	 * @return the AuthorizationInfo associated with this principals.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		// retrieve user information
-		SimplePrincipalCollection principals0 = (SimplePrincipalCollection) principals;
-		Map<String, String> principalMap = (Map<String, String>) principals0.asList().get(1);
-
 		// Create simple authorization info
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-
-		// Principal roles.
-		String roles = principalMap.get(KEY_ROLES_ATTRIBUTE_NAME);
-		super.addRoles(info, super.split(roles));
-
-		// Principal permissions.
-		String permissions = principalMap.get(KEY_PERMITS_ATTRIBUTE_NAME);
-		super.addPermissions(info, super.split(permissions));
-
+		// Merge authorized string(roles/permission)
+		mergeAuthorizedString(principals, info);
 		return info;
 	}
 

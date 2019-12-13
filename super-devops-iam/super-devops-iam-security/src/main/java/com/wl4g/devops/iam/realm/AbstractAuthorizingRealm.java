@@ -25,7 +25,6 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +47,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
@@ -63,7 +63,7 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
  * @date 2018年11月27日
  * @since
  */
-public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken> extends AuthorizingRealm {
+public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> extends AbstractPermittingAuthorizingRealm {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -114,7 +114,7 @@ public abstract class AbstractIamAuthorizingRealm<T extends AuthenticationToken>
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
-	public AbstractIamAuthorizingRealm(IamBasedMatcher matcher) {
+	public AbstractAuthorizingRealm(IamBasedMatcher matcher) {
 		Assert.notNull(matcher, "'matcher' must not be null");
 		this.matcher = matcher;
 	}
