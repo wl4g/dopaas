@@ -46,23 +46,25 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttributeName";
 
 	/**
-	 * New create and merge {@link PrincipalCollection}
+	 * New create and merge {@link IamPrincipalInfo} to
+	 * {@link PrincipalCollection}
 	 * 
 	 * @param info
 	 * @return
 	 */
-	protected PrincipalCollection newPermitPrincipalCollection(IamPrincipalInfo info) {
-		return newPermitPrincipalCollection(info.getPrincipal(), info);
+	protected PrincipalCollection createPermitPrincipalCollection(IamPrincipalInfo info) {
+		return createPermitPrincipalCollection(info.getPrincipal(), info);
 	}
 
 	/**
-	 * New create and merge {@link PrincipalCollection}
+	 * New create and merge {@link IamPrincipalInfo} to
+	 * {@link PrincipalCollection}
 	 * 
 	 * @param principal
 	 * @param info
 	 * @return
 	 */
-	protected PrincipalCollection newPermitPrincipalCollection(String principal, IamPrincipalInfo info) {
+	protected PrincipalCollection createPermitPrincipalCollection(String principal, IamPrincipalInfo info) {
 		notNull(principal, "Principal can't null");
 		notNull(info, "IamPrincipalInfo can't null");
 
