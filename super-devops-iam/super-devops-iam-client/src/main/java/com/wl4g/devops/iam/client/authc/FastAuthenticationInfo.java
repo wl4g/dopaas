@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.client.authc;
 
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
@@ -23,8 +24,13 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 public class FastAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = -2294251445038637917L;
 
-	public FastAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, Object credentials) {
-		super(accountInfo, principals, credentials);
+	public FastAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
+		this(accountInfo, principals, null, realmName);
+	}
+
+	public FastAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+			String realmName) {
+		super(accountInfo, principals, credentialsSalt, realmName);
 	}
 
 }

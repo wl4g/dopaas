@@ -75,12 +75,15 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		 */
 		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
 				token.getSocial().getUnionId());
-		IamPrincipalInfo acc = configurer.getIamAccount(parameter);
+		IamPrincipalInfo info = configurer.getIamAccount(parameter);
 		if (log.isInfoEnabled()) {
-			log.info("The accountInfo obtained through {} -> {}", toJSONString(parameter), toJSONString(acc));
+			log.info("The accountInfo obtained through {} -> {}", toJSONString(parameter), toJSONString(info));
 		}
-		if (nonNull(acc) && !isBlank(acc.getPrincipal())) {
-			return new Oauth2SnsAuthenticationInfo(acc, acc.getPrincipal(), null, this.getName());
+
+		if (nonNull(info) && !isBlank(info.getPrincipal())) {
+			// Authenticate attributes.(roles/permissions/rememberMe)
+			PrincipalCollection principals = newPermitPrincipalCollection(info);
+			return new Oauth2SnsAuthenticationInfo(info, principals, getName());
 		}
 		return EmptyOauth2AuthorizationInfo.EMPTY;
 	}

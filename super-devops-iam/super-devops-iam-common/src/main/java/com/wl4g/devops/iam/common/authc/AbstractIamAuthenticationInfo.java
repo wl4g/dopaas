@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.util.Assert.notNull;
 
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
@@ -40,17 +41,17 @@ public abstract class AbstractIamAuthenticationInfo extends SimpleAuthentication
 	 */
 	final private IamPrincipalInfo accountInfo;
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, String principal, Object credentials, String realmName) {
-		this(accountInfo, new SimplePrincipalCollection(principal, realmName), null, credentials);
-	}
-
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, Object credentials) {
-		this(accountInfo, principals, null, credentials);
+	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
+		this(accountInfo, principals, null, realmName);
 	}
 
 	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
-			Object credentials) {
-		super(principals, credentials);
+			String realmName) {
+		/*
+		 * Password is a string that may be set to empty.
+		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
+		 */
+		super(principals, (nonNull(accountInfo) ? accountInfo.getStoredCredentials() : EMPTY));
 		notNull(accountInfo, "Authenticate accountInfo can't null.");
 		this.accountInfo = accountInfo;
 		setCredentialsSalt(credentialsSalt);
