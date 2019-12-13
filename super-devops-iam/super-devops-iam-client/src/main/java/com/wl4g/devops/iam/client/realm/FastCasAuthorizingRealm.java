@@ -119,11 +119,11 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			// Principal attribute info.
 			IamPrincipalInfo info = assertion.getPrincipalInfo();
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
-			String principalName = assertion.getPrincipalInfo().getPrincipal();
-			fcToken.setPrincipal(principalName);
+			String principal = assertion.getPrincipalInfo().getPrincipal();
+			fcToken.setPrincipal(principal);
 			fcToken.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
 			if (log.isInfoEnabled()) {
-				log.info("Validated grantTicket[{}], principalName[{}]", granticket, principalName);
+				log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 			}
 
 			// Authenticate attributes.(roles/permissions/rememberMe)

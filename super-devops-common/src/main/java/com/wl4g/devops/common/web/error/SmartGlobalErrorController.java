@@ -219,8 +219,11 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @return
 	 */
 	private Map<String, Object> getErrorAttributes(HttpServletRequest request, HttpServletResponse response, Exception ex) {
-		Map<String, Object> model = super.getErrorAttributes(request, isStackTrace(request));
-		log.error("Origin Errors - {}", model);
+		boolean _stacktrace = isStackTrace(request);
+		Map<String, Object> model = super.getErrorAttributes(request, _stacktrace);
+		if (_stacktrace) {
+			log.error("Origin Errors - {}", model);
+		}
 
 		// Replace the exception message that appears to be meaningful.
 		model.put("message", adapter.getRootCause(request, response, model, ex));
