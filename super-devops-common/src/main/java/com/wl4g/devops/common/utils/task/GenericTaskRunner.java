@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.Assert;
 
 import java.io.Closeable;
@@ -31,7 +32,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,16 +39,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * Generic scheduler & task runner.
+ * Generic local scheduler & task runner.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月2日
  * @since
+ * @see {@link ThreadPoolTaskScheduler}
  */
 public abstract class GenericTaskRunner<C extends RunnerProperties>
 		implements DisposableBean, ApplicationRunner, Closeable, Runnable {
@@ -221,13 +224,13 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		if (!isEmpty(jobs)) {
 			int total = jobs.size();
 			// Future jobs.
-			Map<Future<?>, Runnable> futureJob = new HashMap<Future<?>, Runnable>(total);
+			Map<Future<?>, Runnable> fjobs = new HashMap<Future<?>, Runnable>(total);
 			try {
 				CountDownLatch latch = new CountDownLatch(total); // Submit.
-				jobs.stream().forEach(job -> futureJob.put(getWorker().submit(new FutureDoneTask(latch, job)), job));
+				jobs.stream().forEach(job -> fjobs.put(getWorker().submit(new FutureDoneTask(latch, job)), job));
 
-				if (!latch.await(timeoutMs, TimeUnit.MILLISECONDS)) { // Timeout?
-					Iterator<Entry<Future<?>, Runnable>> it = futureJob.entrySet().iterator();
+				if (!latch.await(timeoutMs, MILLISECONDS)) { // Timeout?
+					Iterator<Entry<Future<?>, Runnable>> it = fjobs.entrySet().iterator();
 					while (it.hasNext()) {
 						Entry<Future<?>, Runnable> entry = it.next();
 						if (!entry.getKey().isCancelled() && !entry.getKey().isDone()) {
@@ -240,8 +243,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 					TimeoutException ex = new TimeoutException(
 							String.format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
 									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
-
-					listener.onComplete(ex, (total - latch.getCount()), futureJob.values());
+					listener.onComplete(ex, (total - latch.getCount()), fjobs.values());
 				} else {
 					listener.onComplete(null, total, emptyList());
 				}
@@ -252,12 +254,12 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	/**
-	 * Thread executor worker.
+	 * Thread pool executor worker.
 	 * 
 	 * @return
 	 */
 	protected ThreadPoolExecutor getWorker() {
-		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency > 0");
+		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}
 

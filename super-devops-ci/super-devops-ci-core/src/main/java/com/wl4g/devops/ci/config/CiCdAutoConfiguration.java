@@ -29,7 +29,7 @@ import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
+import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
@@ -39,10 +39,11 @@ import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
+import com.wl4g.devops.ci.tool.LogPipelineCleaner;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.framework.context.DelegateAlias;
+import com.wl4g.devops.common.context.DelegateAlias;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -237,17 +238,25 @@ public class CiCdAutoConfiguration {
 		return new RktNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
-	// --- TIMING SCHEDULE ---
+	// --- TIMING SCHEDULE. ---
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
+	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task,
+			List<TaskInstance> taskInstances) {
 		return new TimingPipelineProvider(trigger, project, task, taskInstances);
 	}
 
 	@Bean
-	public TimingPipelineManager timingPipelineManager() {
-		return new TimingPipelineManager();
+	public PipelineTaskScheduler timingPipelineManager() {
+		return new PipelineTaskScheduler();
+	}
+
+	// --- OPERATOR TOOL's. ---
+
+	@Bean
+	public LogPipelineCleaner logPipelineCleaner() {
+		return new LogPipelineCleaner();
 	}
 
 }

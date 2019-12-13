@@ -77,10 +77,9 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	@Override
 	public void run() {
 		if (log.isInfoEnabled()) {
-			log.info("Timing pipeline tasks ... project:{}, task:{}, trigger:{}", project, task, trigger);
+			log.info("Timing pipeline... project:{}, task:{}, trigger:{}", project, task, trigger);
 		}
 
-		// for update sha from db
 		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
 
 		try {

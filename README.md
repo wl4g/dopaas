@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## A lightweight and comprehensive microservice DevSecOps solution, CICD、MonitorCenter、AuthenticationCenter、ConfigCenter、LogAnalyze、ElasticScaler、Shell CLI、HBaseOperationTool、DOCS、VCS etc.
+## One stop micro service-oriented lightweight DevSecOps solution, supports CI/CD, unified monitoring, unified authentication, unified configuration, log analysis, elastic scaling, scheduling center, command-line services, HBase operation and maintenance tools, document management, version control, etc
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
