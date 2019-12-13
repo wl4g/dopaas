@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.client.authc;
+package com.wl4g.devops.djob.core.scheduler;
 
-import org.apache.shiro.subject.PrincipalCollection;
-
-import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationInfo;
-import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
-
-public class FastAuthenticationInfo extends AbstractIamAuthenticationInfo {
-	private static final long serialVersionUID = -2294251445038637917L;
-
-	public FastAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, Object credentials,
-			String realmName) {
-		super(accountInfo, principals, credentials, realmName);
-	}
+/**
+ * Distributed job scheduler
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年12月12日
+ * @since
+ */
+public interface DistributedJobScheduler {
 
 }

@@ -57,7 +57,7 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
  *
  * @since 1.2
  */
-public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<GeneralAuthenticationToken> {
+public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAuthenticationToken> {
 
 	public GeneralAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);
@@ -74,13 +74,13 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
 		// Get account by loginId(user-name)
-		IamPrincipalInfo acc = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+		IamPrincipalInfo info = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
-			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
+			log.debug("Get IamPrincipalInfo:{} by token:{}", info, token);
 		}
 
 		// To authenticationInfo
-		if (isNull(acc) || isBlank(acc.getPrincipal())) {
+		if (isNull(info) || isBlank(info.getPrincipal())) {
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}
 
@@ -88,8 +88,8 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 		 * Password is a string that may be set to empty.
 		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
 		 */
-		String storedCredentials = nonNull(acc) ? acc.getStoredCredentials() : EMPTY;
-		return new GeneralAuthenticationInfo(acc, acc.getPrincipal(), storedCredentials, getName());
+		String storedCredentials = nonNull(info) ? info.getStoredCredentials() : EMPTY;
+		return new GeneralAuthenticationInfo(info, info.getPrincipal(), storedCredentials, getName());
 	}
 
 	/**
@@ -103,7 +103,11 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		return new GeneralAuthorizationInfo();
+		// Create simple authorization info
+		GeneralAuthorizationInfo info = new GeneralAuthorizationInfo();
+		// Merge authorized string(roles/permission)
+		mergeAuthorizedString(principals, info);
+		return info;
 	}
 
 }
