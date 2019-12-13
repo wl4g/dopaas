@@ -63,7 +63,9 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	 */
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		return (AuthenticationInfo) bind(KEY_AUTHC_ACCOUNT_INFO, doAuthenticationInfo(token).getAccountInfo());
+		IamAuthenticationInfo info = doAuthenticationInfo(token);
+		bind(KEY_AUTHC_ACCOUNT_INFO, info.getAccountInfo());
+		return info;
 	}
 
 	/**
