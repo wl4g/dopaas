@@ -110,7 +110,7 @@ public class HfileBulkExporter {
 
 		// Check directory.
 		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
-		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), "root");
+		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), "root"); // TODO user???
 		Assert.state(!fs.exists(new Path(outputDir)),
 				String.format("HDFS temporary directory already has data, path: '%s'", outputDir));
 
