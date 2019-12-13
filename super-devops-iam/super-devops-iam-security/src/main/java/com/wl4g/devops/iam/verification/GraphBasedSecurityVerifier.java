@@ -37,6 +37,7 @@ import java.util.Objects;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newCumulator;
 import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newSessionCumulator;
 import static com.wl4g.devops.tool.common.codec.Encodes.encodeBase64;
@@ -122,22 +123,25 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		// Cumulative number of matches based on cache, If the number of
 		// failures exceeds the upper limit, verification is enabled
 		Long matchCount = matchCumulator.getCumulatives(factors);
-		if (log.isInfoEnabled()) {
-			log.info("Logon match count: {}, factors: {}", matchCount, factors);
+		String msg1 = String.format("Logon match count: %s, factors: %s", matchCount, factors);
+		if (log.isDebugEnabled()) {
+			log.debug(msg1);
 		}
 		// Login matching failures exceed the upper limit.
 		if (matchCount >= enabledCaptchaMaxAttempts) {
+			log.warn(msg1);
 			return true;
 		}
 
 		// Cumulative number of matches based on session.
 		long sessionMatchCount = sessionMatchCumulator.getCumulatives(factors);
-		if (log.isInfoEnabled()) {
-			log.info("Logon session match count: {}, factors: {}", sessionMatchCount, factors);
+		String msg2 = String.format("Logon session match count: %s, factors: %s", matchCount, factors);
+		if (log.isDebugEnabled()) {
+			log.debug(msg2);
 		}
-
 		// Graphic verify-code apply over the upper limit.
 		if (sessionMatchCount >= enabledCaptchaMaxAttempts) {
+			log.warn(msg2);
 			return true;
 		}
 
@@ -167,8 +171,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of applications based on caching.
 		long applyCaptchaCount = applyCaptchaCumulator.accumulate(factors, 1);
-		if (log.isInfoEnabled()) {
-			log.info("Check graph verify-code apply, for apply count : {}", applyCaptchaCount);
+		if (log.isDebugEnabled()) {
+			log.debug("Check graph verifyCode apply, for apply count: {}", applyCaptchaCount);
 		}
 		if (applyCaptchaCount >= failFastCaptchaMaxAttempts) {
 			log.warn("Too many times to apply for graph verify-code, actual: {}, maximum: {}, factors: {}", applyCaptchaCount,
@@ -178,8 +182,9 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of applications based on session
 		long sessionApplyCaptchaCount = sessionApplyCaptchaCumulator.accumulate(factors, 1);
-		if (log.isInfoEnabled()) {
-			log.info("Check graph verify-code apply, for session apply count : {}", sessionApplyCaptchaCount);
+		if (log.isDebugEnabled()) {
+			log.debug("Check graph verifyCode apply, for session apply count: {}, sessionId: {}", sessionApplyCaptchaCount,
+					getSessionId());
 		}
 		// Exceeding the limit
 		if (sessionApplyCaptchaCount >= failFastCaptchaMaxAttempts) {

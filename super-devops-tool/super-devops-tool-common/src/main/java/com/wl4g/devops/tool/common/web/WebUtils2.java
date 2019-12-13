@@ -905,36 +905,4 @@ public abstract class WebUtils2 {
 
 	}
 
-	public static void main(String[] args) {
-		// URI s =
-		// URI.create("http://portal.wl4g.com/portal/authenticator?fragment=eleIndex/elecReport#/eleIndex/index");
-		URI s = URI.create(
-				"http://portal.wl4g.com/portal/authenticator?redirect_url=http://portal.wl4g.com/?fragment=eleIndex/elecReport#/authLogin");
-		System.out.println(s.getScheme());
-		System.out.println(s.getHost());
-		System.out.println(s.getPort());
-		System.out.println(s.getPath());
-		System.out.println(s.getQuery());
-		System.out.println(s.getFragment());
-		System.out.println("-----------------");
-
-		System.out.println(getBaseURIForDefault("http", "my.com", 8080));
-		System.out.println(getBaseURIForDefault("http", "my.com", 80));
-		System.out.println(getBaseURIForDefault("https", "my.com", 443));
-		System.out.println(getBaseURIForDefault("http", "my.com", -1));
-
-		System.out.println(URI.create("http://my.com/index/#/me").getQuery());
-		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index"));
-		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index/#/me"));
-
-		System.out.println(extractDomainString("http://*.aaa.anjiancloud.test/API/v2"));
-
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "http://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "https://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com", false));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080/", true));
-	}
-
 }
