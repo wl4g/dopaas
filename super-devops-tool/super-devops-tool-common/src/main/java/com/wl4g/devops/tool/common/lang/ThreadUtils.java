@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
+import static java.lang.Thread.sleep;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
@@ -37,7 +38,7 @@ public abstract class ThreadUtils {
 	 */
 	public static void sleepRandom(long least, long bound) throws IllegalStateException {
 		try {
-			Thread.sleep(current().nextLong(least, bound));
+			sleep(current().nextLong(least, bound));
 		} catch (InterruptedException e) {
 			throw new IllegalStateException(e);
 		}

@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
+import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Trigger;
@@ -44,7 +44,7 @@ public class TriggerServiceImpl implements TriggerService {
 	private TriggerDao triggerDao;
 
 	@Autowired
-	private TimingPipelineManager timingManager;
+	private PipelineTaskScheduler timingManager;
 
 	@Override
 	public PageModel list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate,
@@ -91,7 +91,7 @@ public class TriggerServiceImpl implements TriggerService {
 	@Override
 	@Transactional
 	public int delete(Integer id) {
-		timingManager.stopPipeline(id.toString());
+		timingManager.stopTimingPipeline(triggerDao.selectByPrimaryKey(id));
 		return triggerDao.deleteByPrimaryKey(id);
 	}
 
@@ -148,7 +148,7 @@ public class TriggerServiceImpl implements TriggerService {
 	 */
 	private void restart(Integer triggerId) {
 		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-		timingManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
+		timingManager.refreshTimingPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 	}
 
 }

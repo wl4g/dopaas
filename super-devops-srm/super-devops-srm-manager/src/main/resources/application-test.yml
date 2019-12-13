@@ -18,10 +18,10 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
-           - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
-           - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-           - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+          - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
+          - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
+          - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+          - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
         allowsHeaders: '*'
         allowsMethods: GET,POST
   cloud:
@@ -56,11 +56,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-
-# Spring-security config.
-security.user:
-  name: sba_user
-  password: 123456
 
 # Redis configuration.
 redis:
