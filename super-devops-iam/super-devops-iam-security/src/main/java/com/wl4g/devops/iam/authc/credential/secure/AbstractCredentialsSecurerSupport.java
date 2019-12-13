@@ -55,7 +55,6 @@ import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
  * @since
  */
 abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements IamCredentialsSecurer {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -149,7 +148,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
 		if (log.isDebugEnabled()) {
-			log.debug("Apply secret for index: {}", index);
+			log.debug("Apply secretkey of indx: {}", index);
 		}
 
 		RSAKeySpecWrapper keyPair = rsaCryptoService.borrow(index);
@@ -157,8 +156,8 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
 		if (log.isInfoEnabled()) {
-			log.info("Apply secret key is sessionId:{}, index:{}, publicKeyHexString:{}, privateKeyHexString:{}", getSessionId(),
-					index, keyPair.getPubHexString(), keyPair.getHexString());
+			log.info("Apply secretkey of sessionId: {}, index: {}, publicKeyHexString: {}, privateKeyHexString: {}",
+					getSessionId(), index, keyPair.getPubHexString(), keyPair.getHexString());
 		}
 		return keyPair.getPubHexString();
 	}
@@ -227,13 +226,11 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		if (log.isInfoEnabled()) {
 			String publicBase64String = keySpec.getPubHexString();
 
-			String pattern = "The determined key pair is principal:[{}], publicKey:[{}], privateKey:[{}]";
-			String privateBase64String = "Not output";
+			String pattern = "Determined keypair is principal: {}, publicKey: {}, privateKey: {}";
+			String privateBase64String = "******";
 			if (log.isDebugEnabled()) {
 				privateBase64String = keySpec.getBase64String();
 				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
-			} else {
-				log.info(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			}
 		}
 

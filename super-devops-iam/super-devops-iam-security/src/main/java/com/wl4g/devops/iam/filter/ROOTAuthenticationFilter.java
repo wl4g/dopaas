@@ -53,7 +53,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		if (log.isInfoEnabled()) {
 			String url = getFullRequestURL(toHttp(request));
-			log.info("Root request URL: {}", url);
+			log.info("Request of: {}", url);
 		}
 
 		// Logged-in or login page request passed

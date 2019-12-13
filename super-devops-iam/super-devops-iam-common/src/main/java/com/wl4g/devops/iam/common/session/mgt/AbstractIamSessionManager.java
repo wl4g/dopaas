@@ -69,7 +69,6 @@ import com.wl4g.devops.tool.common.lang.StringUtils2;
  */
 public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<? extends ParamProperties>>
 		extends DefaultWebSessionManager {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -172,7 +171,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			if (checkAvailable(sessionId)) {
 				return sessionId;
 			} else {
-				log.warn("Cannot got sid via grantTicket: '{}'", grantTicket);
+				log.warn("Cannot get sid with grantTicket: '{}'", grantTicket);
 			}
 		}
 
