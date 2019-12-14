@@ -17,10 +17,11 @@ package com.wl4g.devops.iam.verification;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
+import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
 import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
 import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
-import com.wl4g.devops.iam.verification.cumulation.Cumulator;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -38,8 +39,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
-import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newCumulator;
-import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.newSessionCumulator;
+import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newCumulator;
+import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newSessionCumulator;
 import static com.wl4g.devops.tool.common.codec.Encodes.encodeBase64;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 

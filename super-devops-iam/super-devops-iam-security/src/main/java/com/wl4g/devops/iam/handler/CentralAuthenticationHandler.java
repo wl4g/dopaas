@@ -27,6 +27,7 @@ import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.support.cache.ScanCursor;
@@ -163,10 +164,10 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Get current grant ticket session.
 		Session session = subject.getSession();
 
-		// Grant attributes settings
-		//
-		// Principal
-		assertion.setPrincipalInfo(getPrincipalInfo());
+		// --- Grant attributes setup. ---
+
+		// Principal info.(No need of StoredCredenticals)
+		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(null));
 
 		// Grant validated start date.
 		long now = System.currentTimeMillis();
@@ -193,7 +194,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/*
 		 * Re-bind granting session => applications
 		 */
-		savedGrantTicket(session, fromAppName, newGrantTicket);
+		saveGrantTicket(session, fromAppName, newGrantTicket);
 
 		// Authorized roles and permission information.
 		assertion.getPrincipalInfo().getAttributes().put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
@@ -215,7 +216,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 
 			// Initial bind granting session => applications
-			savedGrantTicket(session, fromAppName, initGrantTicket);
+			saveGrantTicket(session, fromAppName, initGrantTicket);
 
 			// Return redirection information
 			return new LoggedModel(initGrantTicket);
@@ -326,7 +327,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param grantTicket
 	 *            grant ticket
 	 */
-	private void savedGrantTicket(Session session, String grantApp, String grantTicket) {
+	private void saveGrantTicket(Session session, String grantApp, String grantTicket) {
 		notNull(session, "'session' must not be null");
 		hasText(grantApp, "'grantApp' must not be empty");
 		isTrue(StringUtils.hasText(grantTicket), "'grantTicket' must not be null");

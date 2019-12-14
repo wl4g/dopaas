@@ -39,8 +39,8 @@ public class WebUtils2Tests {
 		System.out.println(getBaseURIForDefault("http", "my.com", -1));
 
 		System.out.println(URI.create("http://my.com/index/#/me").getQuery());
-		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index"));
-		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index/#/me"));
+		System.out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index"));
+		System.out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index/#/me"));
 
 		System.out.println(extractDomainString("http://*.aaa.anjiancloud.test/API/v2"));
 

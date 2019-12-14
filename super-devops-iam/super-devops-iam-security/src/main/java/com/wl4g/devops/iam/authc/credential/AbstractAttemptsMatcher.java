@@ -18,9 +18,9 @@ package com.wl4g.devops.iam.authc.credential;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder;
+import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
-import com.wl4g.devops.iam.verification.cumulation.CumulateHolder;
-import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
 import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

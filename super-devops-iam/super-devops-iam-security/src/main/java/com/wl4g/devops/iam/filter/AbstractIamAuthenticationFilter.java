@@ -219,7 +219,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 			// Get redirection.
 			RedirectInfo redirect = getRedirectInfo(request, true);
-			if (isBlank(redirect.getFromAppName())) { // Use default?
+			if (!redirect.isValidity()) { // Unvalidity using to default?
 				redirect.setFromAppName(config.getSuccessService());
 				redirect.setRedirectUrl(getSuccessUrl());
 			}

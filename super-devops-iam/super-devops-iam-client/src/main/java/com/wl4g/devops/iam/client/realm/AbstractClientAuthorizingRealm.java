@@ -18,8 +18,6 @@ package com.wl4g.devops.iam.client.realm;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
 import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
@@ -40,7 +38,6 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
  * @since
  */
 public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingAuthorizingRealm {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Ticket validation properties.
