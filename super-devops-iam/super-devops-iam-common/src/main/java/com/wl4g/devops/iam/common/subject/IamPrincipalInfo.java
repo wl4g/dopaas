@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public interface IamPrincipalInfo extends Serializable {
+public interface IamPrincipalInfo extends Cloneable, Serializable {
 
 	/**
 	 * Get account principal Id.

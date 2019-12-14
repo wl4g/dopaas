@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.support.config.JedisAutoConfiguration.JedisProperties;
@@ -39,7 +38,6 @@ import redis.clients.jedis.JedisCluster;
  * @date 2018年11月13日
  * @since
  */
-@ConfigurationProperties(prefix = "redis")
 public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, InitializingBean {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
