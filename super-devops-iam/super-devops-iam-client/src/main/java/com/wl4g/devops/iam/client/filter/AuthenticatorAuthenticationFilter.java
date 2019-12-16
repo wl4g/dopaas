@@ -54,7 +54,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		if (log.isInfoEnabled()) {
 			String url = getFullRequestURL(toHttp(request));
-			log.info("Authenticating request URL: {}", url);
+			log.info("Request of: {}", url);
 		}
 
 		return false;

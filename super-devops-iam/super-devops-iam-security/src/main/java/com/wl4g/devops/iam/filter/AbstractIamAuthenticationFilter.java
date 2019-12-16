@@ -219,17 +219,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 			// Get redirection.
 			RedirectInfo redirect = getRedirectInfo(request, true);
-			if (isBlank(redirect.getFromAppName())) { // Use default?
+			if (!redirect.isValidity()) { // Unvalidity using to default?
 				redirect.setFromAppName(config.getSuccessService());
 				redirect.setRedirectUrl(getSuccessUrl());
 			}
 
 			// Determine redirectUrl(authenticator URL).
-			String successRedirectUrl = correctAuthenticaitorURI(
-					determineSuccessUrl(tk, subject, request, response, redirect.getRedirectUrl()));
-			redirect.setRedirectUrl(successRedirectUrl);
-			hasText(redirect.getFromAppName(), "Successful redirect application must not be empty.");
-			hasText(redirect.getRedirectUrl(), "Successful redirect URL must not be empty.");
+			String successRedirectUrl = determineSuccessUrl(tk, subject, request, response, redirect.getRedirectUrl());
+			redirect.setRedirectUrl(correctAuthenticaitorURI(successRedirectUrl));
+			hasText(redirect.getFromAppName(), "Successful redirect application can't empty.");
+			hasText(redirect.getRedirectUrl(), "Successful redirect URL can't empty.");
 
 			// Granting ticket.
 			String grantTicket = authHandler.loggedin(redirect.getFromAppName(), subject).getGrantTicket();
@@ -297,11 +296,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		String errmsg = getRootCausesString(ae);
 		if (isNotBlank(errmsg)) {
-			log.error("Failed to authentication.", ae);
+			String tip = String.format("Failed to authentication of token: %s", token);
 			if (log.isDebugEnabled()) {
-				log.debug("Failed to authentication.", ae);
+				log.debug(tip, ae);
 			} else {
-				log.warn("Failed to authentication. caused by: ", errmsg);
+				log.warn(tip + ", caused by: {}", errmsg);
 			}
 			/**
 			 * {@link LoginAuthenticatorController#errReads()}
@@ -325,11 +324,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			try {
 				String failed = makeFailedResponse(failRedirectUrl, request, params, errmsg);
 				if (log.isInfoEnabled()) {
-					log.info("Response unauthentication. {}", failed);
+					log.info("Resp unauth: {}", failed);
 				}
 				writeJson(toHttp(response), failed);
 			} catch (IOException e) {
-				log.error("Response unauthentication json error", e);
+				log.error("Error resp unauth", e);
 			}
 		}
 		// Redirects the login page directly.
@@ -371,13 +370,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
 	 *
 	 * @param request
-	 * @param bindOnly
+	 * @param useBindOnly
 	 *            Whether to get only the redirection information of the binding
 	 * @return
 	 */
-	protected RedirectInfo getRedirectInfo(ServletRequest request, boolean bindOnly) {
+	protected RedirectInfo getRedirectInfo(ServletRequest request, boolean useBindOnly) {
 		RedirectInfo redirect = null;
-		if (bindOnly) {
+		if (useBindOnly) {
 			redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 		} else {
 			redirect = new RedirectInfo(getCleanParam(request, config.getParam().getApplication()),

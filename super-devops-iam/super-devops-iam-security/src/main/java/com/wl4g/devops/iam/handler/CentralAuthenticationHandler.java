@@ -27,6 +27,7 @@ import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.support.cache.ScanCursor;
@@ -35,7 +36,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -62,7 +62,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.*;
 
 /**
  * Default authentication handler implements
@@ -104,7 +104,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			if (Objects.isNull(app)) {
 				throw new IllegalCallbackDomainException("Illegal redirect application URL parameters.");
 			}
-			Assert.state(!isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
+			state(!isAnyBlank(app.getAppName(), app.getExtranetBaseUri()),
 					String.format("Invalid redirection domain configure, application[%s]", fromAppName));
 			if (log.isDebugEnabled()) {
 				log.debug("Check authentication requests application [{}]", app);
@@ -164,10 +164,10 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Get current grant ticket session.
 		Session session = subject.getSession();
 
-		// Grant attributes settings
-		//
-		// Principal
-		assertion.setPrincipalInfo(getPrincipalInfo());
+		// --- Grant attributes setup. ---
+
+		// Principal info.(No need of StoredCredenticals)
+		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(null));
 
 		// Grant validated start date.
 		long now = System.currentTimeMillis();
@@ -194,7 +194,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/*
 		 * Re-bind granting session => applications
 		 */
-		savedGrantTicket(session, fromAppName, newGrantTicket);
+		saveGrantTicket(session, fromAppName, newGrantTicket);
 
 		// Authorized roles and permission information.
 		assertion.getPrincipalInfo().getAttributes().put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
@@ -203,7 +203,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public LoggedModel loggedin(String fromAppName, Subject subject) {
-		Assert.hasText(fromAppName, "'fromAppName' must not be empty");
+		hasText(fromAppName, "'fromAppName' must not be empty");
 
 		// Check authentication.
 		if (nonNull(subject) && subject.isAuthenticated() && !isBlank((String) subject.getPrincipal())) {
@@ -216,7 +216,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 
 			// Initial bind granting session => applications
-			savedGrantTicket(session, fromAppName, initGrantTicket);
+			saveGrantTicket(session, fromAppName, initGrantTicket);
 
 			// Return redirection information
 			return new LoggedModel(initGrantTicket);
@@ -327,10 +327,10 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param grantTicket
 	 *            grant ticket
 	 */
-	private void savedGrantTicket(Session session, String grantApp, String grantTicket) {
-		Assert.notNull(session, "'session' must not be null");
-		Assert.hasText(grantApp, "'grantApp' must not be empty");
-		Assert.isTrue(StringUtils.hasText(grantTicket), "'grantTicket' must not be null");
+	private void saveGrantTicket(Session session, String grantApp, String grantTicket) {
+		notNull(session, "'session' must not be null");
+		hasText(grantApp, "'grantApp' must not be empty");
+		isTrue(StringUtils.hasText(grantTicket), "'grantTicket' must not be null");
 
 		/*
 		 * See:CentralAuthenticationHandler#validate()
@@ -341,7 +341,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 		if (info.getApplications().keySet().contains(grantApp)) {
 			if (log.isDebugEnabled()) {
-				log.debug("Rebinding the session:[{}] application:[{}]", session.toString(), grantApp);
+				log.debug("Save grantTicket of sessionId: {} application: {}", session.getId(), grantApp);
 			}
 		}
 		// Update grantTicket info and saved.
@@ -379,8 +379,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 */
 	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
-			log.warn("Invalid grantTicket has empty, appName: '{}', sessionId: '{}'", model.getTicket(), model.getApplication(),
-					subject.getSession().getId());
+			log.warn("Invalid grantTicket has empty, grantTicket: {}, application: '{}', sessionId: '{}'", model.getTicket(),
+					model.getApplication(), subject.getSession().getId());
 			throw new InvalidGrantTicketException("Invalid grantTicket has empty");
 		}
 
@@ -430,12 +430,10 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * Notification all logged-in applications to logout
 		 */
 		for (ApplicationInfo app : apps) {
-			Assert.hasText(app.getIntranetBaseUri(),
+			hasText(app.getIntranetBaseUri(),
 					String.format("Application[%s] 'internalBaseUri' must not be empty", app.getAppName()));
-
 			// GrantTicket by application name
 			String grantTicket = grantInfo.getApplications().get(app.getAppName());
-
 			// Application logout URL
 			String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE).append("/").append(URI_C_LOGOUT)
 					.append("?").append(config.getParam().getGrantTicket()).append("=").append(grantTicket).toString();

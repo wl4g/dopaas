@@ -70,94 +70,6 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public abstract class WebUtils2 {
 
 	/**
-	 * URL scheme(HTTPS)
-	 */
-	final public static String URL_SCHEME_HTTPS = "https";
-
-	/**
-	 * URL scheme(HTTP)
-	 */
-	final public static String URL_SCHEME_HTTP = "http";
-
-	/**
-	 * URL separator(/)
-	 */
-	final public static String URL_SEPAR_SLASH = "%2f";
-
-	/**
-	 * URL separator(?)
-	 */
-	final public static String URL_SEPAR_QUEST = "%3f";
-
-	/**
-	 * URL colon separator(:)
-	 */
-	final public static String URL_SEPAR_COLON = "%3a";
-
-	/**
-	 * Protocol separators, such as
-	 * https://my.domain.com=>https%3A%2F%2Fmy.domain.com
-	 */
-	final public static String URL_SEPAR_PROTO = URL_SEPAR_COLON + URL_SEPAR_SLASH + URL_SEPAR_SLASH;
-
-	/**
-	 * Request the header key name of real client IP. </br>
-	 * 
-	 * <pre>
-	 *	一、没有使用代理服务器的情况：
-	 *	      REMOTE_ADDR = 您的 IP
-	 *	      HTTP_VIA = 没数值或不显示
-	 *	      HTTP_X_FORWARDED_FOR = 没数值或不显示
-	 *	二、使用透明代理服务器的情况：Transparent Proxies
-	 *	      REMOTE_ADDR = 最后一个代理服务器 IP 
-	 *	      HTTP_VIA = 代理服务器 IP
-	 *	      HTTP_X_FORWARDED_FOR = 您的真实 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
-	 *	   这类代理服务器还是将您的信息转发给您的访问对象，无法达到隐藏真实身份的目的。
-	 *	三、使用普通匿名代理服务器的情况：Anonymous Proxies
-	 *	      REMOTE_ADDR = 最后一个代理服务器 IP 
-	 *	      HTTP_VIA = 代理服务器 IP
-	 *	      HTTP_X_FORWARDED_FOR = 代理服务器 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
-	 *	   隐藏了您的真实IP，但是向访问对象透露了您是使用代理服务器访问他们的。
-	 *	四、使用欺骗性代理服务器的情况：Distorting Proxies
-	 *	      REMOTE_ADDR = 代理服务器 IP 
-	 *	      HTTP_VIA = 代理服务器 IP 
-	 *	      HTTP_X_FORWARDED_FOR = 随机的 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
-	 *	   告诉了访问对象您使用了代理服务器，但编造了一个虚假的随机IP代替您的真实IP欺骗它。
-	 *	五、使用高匿名代理服务器的情况：High Anonymity Proxies (Elite proxies)
-	 *	      REMOTE_ADDR = 代理服务器 IP
-	 *	      HTTP_VIA = 没数值或不显示
-	 *	      HTTP_X_FORWARDED_FOR = 没数值或不显示 ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
-	 * </pre>
-	 */
-	final public static String[] HEADER_REAL_IP = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "X-Real-IP",
-			"REMOTE_ADDR", "Remote-Addr", "RemoteAddr", // RemoteAddr
-			"REMOTE_IP", "Remote-Ip", "RemoteIp", // RemoteIp: Aliyun-SLB
-			"HTTP_X_FORWARDED_FOR", "Http-X-Forwarded-For", "HttpXForwardedFor", // HttpXForwardedFor
-			"HTTP_X_FORWARDED", "Http-X-Forwarded", "HttpXForwarded", // HttpXForwarded
-			"HTTP_Client_IP", "Http-Client-Ip", "HttpClientIp", // HttpClientIp
-			"HTTP_X_CLUSTER_CLIENT_IP", "Http-X-Cluster-Client-Ip", "HttpXClusterClientIp", // HttpXClusterClientIp
-			"HTTP_FORWARDED_FOR", "Http-Forwarded-For", "HttpForwardedFor", // HttpForwardedFor
-			"HTTP_VIA ", "Http-Via", "HttpVia" }; // HttpVia
-
-	/**
-	 * Request the header key name of real protocol scheme.
-	 */
-	final public static String[] HEADER_REAL_PROTOCOL = { "X-Forwarded-Proto" };
-
-	/**
-	 * Request the header key name of real host
-	 */
-	final public static String[] HEADER_REAL_HOST = { "Host" };
-
-	/**
-	 * Common media file suffix definitions
-	 */
-	final public static String[] MEDIA_BASE = new String[] { "ico", "icon", "css", "js", "html", "shtml", "htm", "jsp", "jspx",
-			"jsf", "aspx", "asp", "php", "jpeg", "jpg", "png", "bmp", "gif", "tif", "pic", "swf", "svg", "ttf", "eot", "eot@",
-			"woff", "woff2", "wd3", "txt", "doc", "docx", "wps", "ppt", "pptx", "pdf", "excel", "xls", "xlsx", "avi", "wav",
-			"mp3", "amr", "mp4", "aiff", "rar", "tar.gz", "tar", "zip", "gzip", "ipa", "plist", "apk", "7-zip" };
-
-	/**
 	 * Get HTTP remote IP address <br/>
 	 * Warning: Be careful if you are implementing security, as all of these
 	 * headers are easy to fake.
@@ -298,11 +210,9 @@ public abstract class WebUtils2 {
 			String[] paramPairs = urlQuery.split("&");
 			Map<String, String> paramsMap = new LinkedHashMap<>();
 			for (int i = 0; i < paramPairs.length; i++) {
-				int len = paramPairs[i].indexOf("=");
-				if (len > 2) {
-					String key = paramPairs[i].substring(0, len);
-					String value = paramPairs[i].substring(len + 1);
-					paramsMap.put(key, value);
+				String[] parts = trimToEmpty(paramPairs[i]).split("=");
+				if (parts.length >= 2) {
+					paramsMap.put(parts[0], parts[1]);
 				}
 			}
 			return paramsMap;
@@ -905,36 +815,92 @@ public abstract class WebUtils2 {
 
 	}
 
-	public static void main(String[] args) {
-		// URI s =
-		// URI.create("http://portal.wl4g.com/portal/authenticator?fragment=eleIndex/elecReport#/eleIndex/index");
-		URI s = URI.create(
-				"http://portal.wl4g.com/portal/authenticator?redirect_url=http://portal.wl4g.com/?fragment=eleIndex/elecReport#/authLogin");
-		System.out.println(s.getScheme());
-		System.out.println(s.getHost());
-		System.out.println(s.getPort());
-		System.out.println(s.getPath());
-		System.out.println(s.getQuery());
-		System.out.println(s.getFragment());
-		System.out.println("-----------------");
+	/**
+	 * URL scheme(HTTPS)
+	 */
+	final public static String URL_SCHEME_HTTPS = "https";
 
-		System.out.println(getBaseURIForDefault("http", "my.com", 8080));
-		System.out.println(getBaseURIForDefault("http", "my.com", 80));
-		System.out.println(getBaseURIForDefault("https", "my.com", 443));
-		System.out.println(getBaseURIForDefault("http", "my.com", -1));
+	/**
+	 * URL scheme(HTTP)
+	 */
+	final public static String URL_SCHEME_HTTP = "http";
 
-		System.out.println(URI.create("http://my.com/index/#/me").getQuery());
-		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index"));
-		System.out.println(toQueryParams("application=iam-example&redirect_url=http://my.com/index/#/me"));
+	/**
+	 * URL separator(/)
+	 */
+	final public static String URL_SEPAR_SLASH = "%2f";
 
-		System.out.println(extractDomainString("http://*.aaa.anjiancloud.test/API/v2"));
+	/**
+	 * URL separator(?)
+	 */
+	final public static String URL_SEPAR_QUEST = "%3f";
 
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "http://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "https://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com", false));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080/", true));
-	}
+	/**
+	 * URL colon separator(:)
+	 */
+	final public static String URL_SEPAR_COLON = "%3a";
+
+	/**
+	 * Protocol separators, such as
+	 * https://my.domain.com=>https%3A%2F%2Fmy.domain.com
+	 */
+	final public static String URL_SEPAR_PROTO = URL_SEPAR_COLON + URL_SEPAR_SLASH + URL_SEPAR_SLASH;
+
+	/**
+	 * Request the header key name of real client IP. </br>
+	 * 
+	 * <pre>
+	 *	一、没有使用代理服务器的情况：
+	 *	      REMOTE_ADDR = 您的 IP
+	 *	      HTTP_VIA = 没数值或不显示
+	 *	      HTTP_X_FORWARDED_FOR = 没数值或不显示
+	 *	二、使用透明代理服务器的情况：Transparent Proxies
+	 *	      REMOTE_ADDR = 最后一个代理服务器 IP 
+	 *	      HTTP_VIA = 代理服务器 IP
+	 *	      HTTP_X_FORWARDED_FOR = 您的真实 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *	   这类代理服务器还是将您的信息转发给您的访问对象，无法达到隐藏真实身份的目的。
+	 *	三、使用普通匿名代理服务器的情况：Anonymous Proxies
+	 *	      REMOTE_ADDR = 最后一个代理服务器 IP 
+	 *	      HTTP_VIA = 代理服务器 IP
+	 *	      HTTP_X_FORWARDED_FOR = 代理服务器 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *	   隐藏了您的真实IP，但是向访问对象透露了您是使用代理服务器访问他们的。
+	 *	四、使用欺骗性代理服务器的情况：Distorting Proxies
+	 *	      REMOTE_ADDR = 代理服务器 IP 
+	 *	      HTTP_VIA = 代理服务器 IP 
+	 *	      HTTP_X_FORWARDED_FOR = 随机的 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *	   告诉了访问对象您使用了代理服务器，但编造了一个虚假的随机IP代替您的真实IP欺骗它。
+	 *	五、使用高匿名代理服务器的情况：High Anonymity Proxies (Elite proxies)
+	 *	      REMOTE_ADDR = 代理服务器 IP
+	 *	      HTTP_VIA = 没数值或不显示
+	 *	      HTTP_X_FORWARDED_FOR = 没数值或不显示 ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 * </pre>
+	 */
+	final public static String[] HEADER_REAL_IP = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "X-Real-IP",
+			"REMOTE_ADDR", "Remote-Addr", "RemoteAddr", // RemoteAddr
+			"REMOTE_IP", "Remote-Ip", "RemoteIp", // RemoteIp: Aliyun-SLB
+			"HTTP_X_FORWARDED_FOR", "Http-X-Forwarded-For", "HttpXForwardedFor", // HttpXForwardedFor
+			"HTTP_X_FORWARDED", "Http-X-Forwarded", "HttpXForwarded", // HttpXForwarded
+			"HTTP_Client_IP", "Http-Client-Ip", "HttpClientIp", // HttpClientIp
+			"HTTP_X_CLUSTER_CLIENT_IP", "Http-X-Cluster-Client-Ip", "HttpXClusterClientIp", // HttpXClusterClientIp
+			"HTTP_FORWARDED_FOR", "Http-Forwarded-For", "HttpForwardedFor", // HttpForwardedFor
+			"HTTP_VIA ", "Http-Via", "HttpVia" }; // HttpVia
+
+	/**
+	 * Request the header key name of real protocol scheme.
+	 */
+	final public static String[] HEADER_REAL_PROTOCOL = { "X-Forwarded-Proto" };
+
+	/**
+	 * Request the header key name of real host
+	 */
+	final public static String[] HEADER_REAL_HOST = { "Host" };
+
+	/**
+	 * Common media file suffix definitions
+	 */
+	final public static String[] MEDIA_BASE = new String[] { "ico", "icon", "css", "js", "html", "shtml", "htm", "jsp", "jspx",
+			"jsf", "aspx", "asp", "php", "jpeg", "jpg", "png", "bmp", "gif", "tif", "pic", "swf", "svg", "ttf", "eot", "eot@",
+			"woff", "woff2", "wd3", "txt", "doc", "docx", "wps", "ppt", "pptx", "pdf", "excel", "xls", "xlsx", "avi", "wav",
+			"mp3", "amr", "mp4", "aiff", "rar", "tar.gz", "tar", "zip", "gzip", "ipa", "plist", "apk", "7-zip" };
 
 }

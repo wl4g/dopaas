@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.realm;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.PostConstruct; 
 import javax.annotation.Resource;
 import javax.validation.Validator;
 
@@ -26,8 +26,6 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.util.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.web.client.RestTemplate;
@@ -64,8 +62,6 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
  * @since
  */
 public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> extends AbstractPermittingAuthorizingRealm {
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Credential matcher

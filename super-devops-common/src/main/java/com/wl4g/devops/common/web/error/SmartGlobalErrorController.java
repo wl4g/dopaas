@@ -172,20 +172,20 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 					resp.forMap().put(DEFAULT_REDIRECT_KEY, uriOrTpl);
 				}
 				String errJson = toJSONString(resp);
-				log.error("Resp Errors Json => {}", errJson);
+				log.error("Resp err => {}", errJson);
 				writeJson(response, errJson);
 			}
 			// Rendering errors view
 			else {
 				if (uriOrTpl instanceof Template) {
-					log.error("Redirect Errors View => httpStatus[{}]", status);
+					log.error("Redirect err view => http({})", status);
 					// Merge configuration to model.
 					model.putAll(config.asMap());
 					// Rendering
 					String renderString = processTemplateIntoString((Template) uriOrTpl, model);
 					write(response, status, TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
 				} else {
-					log.error("Redirect Errors View => [{}]", uriOrTpl);
+					log.error("Redirect err view => [{}]", uriOrTpl);
 					response.sendRedirect((String) uriOrTpl);
 				}
 			}
@@ -219,8 +219,11 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @return
 	 */
 	private Map<String, Object> getErrorAttributes(HttpServletRequest request, HttpServletResponse response, Exception ex) {
-		Map<String, Object> model = super.getErrorAttributes(request, isStackTrace(request));
-		log.error("Origin Errors - {}", model);
+		boolean _stacktrace = isStackTrace(request);
+		Map<String, Object> model = super.getErrorAttributes(request, _stacktrace);
+		if (_stacktrace) {
+			log.error("Origin Errors - {}", model);
+		}
 
 		// Replace the exception message that appears to be meaningful.
 		model.put("message", adapter.getRootCause(request, response, model, ex));

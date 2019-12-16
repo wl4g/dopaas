@@ -116,18 +116,20 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 							validUntilDate, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
-			// Principal attribute info.
+			// Attribute of lang
 			IamPrincipalInfo info = assertion.getPrincipalInfo();
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
-			String principalName = assertion.getPrincipalInfo().getPrincipal();
-			fcToken.setPrincipal(principalName);
+
+			// Attribute of remember
+			String principal = assertion.getPrincipalInfo().getPrincipal();
+			fcToken.setPrincipal(principal);
 			fcToken.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
 			if (log.isInfoEnabled()) {
-				log.info("Validated grantTicket[{}], principalName[{}]", granticket, principalName);
+				log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 			}
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
-			PrincipalCollection principals = newPermitPrincipalCollection(info);
+			PrincipalCollection principals = createPermitPrincipalCollection(info);
 
 			// You should always use token credentials because the default
 			// SimpleCredentialsMatcher checks.
@@ -148,11 +150,8 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		// Create simple authorization info
-		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		// Merge authorized string(roles/permission)
-		mergeAuthorizedString(principals, info);
-		return info;
+		return mergeAuthorizedString(principals, new SimpleAuthorizationInfo());
 	}
 
 	/**

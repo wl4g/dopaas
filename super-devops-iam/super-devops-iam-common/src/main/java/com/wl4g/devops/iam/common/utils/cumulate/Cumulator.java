@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.verification.cumulation;
+package com.wl4g.devops.iam.common.utils.cumulate;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * Verification limiter accumulator
+ * Cumulative counter for security restrictions.
  *
  * @author wangl.sir
  * @version v1.0 2019年4月19日
@@ -62,8 +62,9 @@ public interface Cumulator {
 	 * Gets the cumulative number of failures for the specified condition
 	 *
 	 * @param factors
-	 *            Safety limiting factor(e.g. Client remote IP and login
-	 *            user-name)
+	 *            Cumulative scene factors or objects. (e.g. When used for
+	 *            safety authenticating, factors can represent: remote user
+	 *            IP/login account name)
 	 * @return returns the maximum number of times under all constraint
 	 *         factors.(e.g: max attempts failed count)
 	 */

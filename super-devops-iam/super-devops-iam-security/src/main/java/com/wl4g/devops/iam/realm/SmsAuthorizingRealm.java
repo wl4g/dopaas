@@ -93,7 +93,7 @@ public class SmsAuthorizingRealm extends AbstractAuthorizingRealm<SmsAuthenticat
 		}
 
 		// Authenticate attributes.(roles/permissions/rememberMe)
-		PrincipalCollection principals = newPermitPrincipalCollection(principal, info);
+		PrincipalCollection principals = createPermitPrincipalCollection(principal, info);
 		return new SmsAuthenticationInfo(info, principals, getName());
 	}
 

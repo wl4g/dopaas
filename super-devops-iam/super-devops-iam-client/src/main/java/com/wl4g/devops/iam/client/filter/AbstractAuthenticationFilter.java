@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.client.filter;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
@@ -36,26 +35,28 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
-import static org.apache.shiro.util.Assert.hasText;
+import static org.apache.shiro.util.Assert.*;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
-import static org.springframework.util.Assert.notNull;
 
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
+import com.wl4g.devops.common.exception.iam.TooManyRequestAuthentcationException;
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
@@ -68,9 +69,14 @@ import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder;
+import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.tool.common.lang.Exceptions;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
@@ -133,10 +139,15 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final protected ClientSecurityCoprocessor coprocessor;
 
 	/**
-	 * Using Distributed Cache to Ensure Concurrency Control under
+	 * Using distributedc ache to Ensure Concurrency Control under
 	 * Mutilate-Node.
 	 */
 	final protected EnhancedCache cache;
+
+	/**
+	 * Accumulator used to restrict redirection authentication.
+	 */
+	final protected Cumulator failCumulator;
 
 	/**
 	 * Delegate message source.
@@ -146,14 +157,15 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
-		Assert.notNull(config, "'config' must not be null");
-		Assert.notNull(context, "'context' must not be null");
-		Assert.notNull(coprocessor, "'interceptor' must not be null");
-		Assert.notNull(cacheManager, "'cacheManager' must not be null");
+		notNull(config, "'config' must not be null");
+		notNull(context, "'context' must not be null");
+		notNull(coprocessor, "'interceptor' must not be null");
+		notNull(cacheManager, "'cacheManager' must not be null");
 		this.config = config;
 		this.configurer = context;
 		this.coprocessor = coprocessor;
 		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
+		this.failCumulator = CumulateHolder.newSessionCumulator("TryRedirectAuthenticating", 10_000L);
 	}
 
 	@Override
@@ -241,7 +253,12 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 
 		// Failure redirect URL
-		String failRedirectUrl = makeFailureRedirectUrl(cause, toHttp(request));
+		String failRedirectUrl = null;
+		try {
+			failRedirectUrl = makeFailureRedirectUrl(token, cause, toHttp(request));
+		} catch (TooManyRequestAuthentcationException ex) {
+			cause = ex;
+		}
 
 		// Post handle of authenticate failure.
 		coprocessor.postAuthenticatingFailure(token, ae, request, response);
@@ -275,8 +292,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		else {
 			try {
 				String errmsg = String.format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
-						getMessage(cause));
-				/** See:{@link SmartSuperErrorsController#doHandleErrors()} */
+						getRootCausesString(cause));
+				/** See:{@link SmartGlobalErrorController#doAnyHandleError()} */
 				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
 			} catch (IOException e) {
 				log.error("Failed to response error", e);
@@ -292,37 +309,38 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Make failure redirect URL
 	 * 
+	 * @param token
 	 * @param cause
 	 * @param request
 	 * @return
 	 */
-	protected String makeFailureRedirectUrl(Throwable cause, HttpServletRequest request) {
-		// Redirect URL with callback.
-		StringBuffer failRedirectUrl = new StringBuffer();
-
-		if (cause instanceof UnauthorizedException) { // Unauthorized?
-			failRedirectUrl.append(config.getUnauthorizedUri());
-		} else { // UnauthenticatedException?
-			// When the IAM server is authenticated successfully, the
-			// callback redirects to the URL of the IAM client.
-			String clientRedirectUrl = new StringBuffer(getRFCBaseURI(request, true)).append(URI_AUTHENTICATOR).toString();
-			failRedirectUrl.append(getLoginUrl());
-			failRedirectUrl.append("?").append(config.getParam().getApplication());
-			failRedirectUrl.append("=").append(config.getServiceName());
-			failRedirectUrl.append("&").append(config.getParam().getRedirectUrl());
-			// Add custom parameters.
-			String clientQueryStr = request.getQueryString();
-			if (!isBlank(clientQueryStr)) {
-				if (endsWith(clientRedirectUrl, "?")) {
-					clientRedirectUrl += "&" + clientQueryStr;
-				} else {
-					clientRedirectUrl += "?" + clientQueryStr;
-				}
+	protected String makeFailureRedirectUrl(AuthenticationToken token, Throwable cause, HttpServletRequest request) {
+		if (cause instanceof UnauthorizedException) { // Unauthorized error?
+			return config.getUnauthorizedUri();
+		} else { // Unauthenticated or other error.
+			List<String> factors = singletonList(String.valueOf(token.getPrincipal()));
+			// When the IamServer redirects the request, but the
+			// grantTicket validate failed, infinite redirect needs to
+			// be prevented.
+			if ((cause instanceof InvalidGrantTicketException) && failCumulator.accumulate(factors, 1) > 5) {
+				throw new TooManyRequestAuthentcationException(String.format("Too many redirect request authenticating"));
 			}
-			failRedirectUrl.append("=").append(safeEncodeURL(clientRedirectUrl));
-		}
 
-		return failRedirectUrl.toString();
+			// Redirect parameters.
+			Map<String, String> params = new HashMap<>();
+			params.put(config.getParam().getApplication(), config.getServiceName());
+
+			// URL to redirect when IamServer authenticated is successful.
+			String clientRedirectUrl = getRFCBaseURI(request, true) + URI_AUTHENTICATOR;
+			String clientParamStr = request.getQueryString();
+			if (!isBlank(clientParamStr)) {
+				// When accessing client1 to client2, it may have parameters,
+				// which need to be kept in the redirection parameters.
+				clientRedirectUrl += "?" + clientParamStr;
+			}
+			params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
+			return applyQueryURL(getLoginUrl(), params);
+		}
 	}
 
 	/**
@@ -349,7 +367,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 		// Determine successUrl.
 		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
-		Assert.notNull(successUrl, "'successUrl' must not be null");
+		notNull(successUrl, "'successUrl' must not be null");
 		return cleanURI(successUrl); // Check & cleanup.
 	}
 
