@@ -19,38 +19,38 @@ import com.wl4g.devops.common.bean.srm.QueryLogModel;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.srm.service.LogConsoleService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/console")
 public class LogConsoleController extends BaseController {
 
-	@Autowired
-	protected LogConsoleService logConsoleService;
+    @Autowired
+    protected LogConsoleService logConsoleService;
 
-	@RequestMapping("/consoleLog")
-	@ResponseBody
-	public RespBase<?> logfile(@Validated @RequestBody QueryLogModel model) throws Exception {
-		if (log.isInfoEnabled()) {
-			log.info("Reading logfile... {}", model);
-		}
+    @RequestMapping("/consoleLog")
+    @ResponseBody
+    @RequiresPermissions(value = {"srm:console"})
+    public RespBase<?> logfile(@Validated @RequestBody QueryLogModel model) throws Exception {
+        if (log.isInfoEnabled()) {
+            log.info("Reading logfile... {}", model);
+        }
 
-		RespBase<Object> resp = RespBase.create();
-		try {
-			List<String> result = logConsoleService.console(model);
-			resp.forMap().put("data", result);
-		} catch (Exception e) {
-			log.info("Failed to reading logfile.", e);
-			resp.setThrowable(e);
-		}
-		return resp;
-	}
-
+        RespBase<Object> resp = RespBase.create();
+        try {
+            List<String> result = logConsoleService.console(model);
+            resp.forMap().put("data", result);
+        } catch (Exception e) {
+            log.info("Failed to reading logfile.", e);
+            resp.setThrowable(e);
+        }
+        return resp;
+    }
 }

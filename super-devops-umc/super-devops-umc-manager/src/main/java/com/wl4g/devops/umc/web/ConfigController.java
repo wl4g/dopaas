@@ -15,16 +15,18 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.umc.service.ConfigService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.umc.service.ConfigService;
 
 /**
  * @author vjay
@@ -38,6 +40,7 @@ public class ConfigController extends BaseController {
 	private ConfigService configService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"umc:config"})
 	public RespBase<?> list(Integer templateId, Integer contactGroupId, PageModel pm) {
 		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
 				contactGroupId, pm);
@@ -48,6 +51,7 @@ public class ConfigController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"umc:config"})
 	public RespBase<?> save(@RequestBody AlarmConfig alarmConfig) {
 		Assert.notNull(alarmConfig, "config is null");
 		Assert.notNull(alarmConfig.getCollectId(), "instance is null");
@@ -59,6 +63,7 @@ public class ConfigController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"umc:config"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		AlarmConfig alarmConfig = configService.detail(id);
@@ -67,6 +72,7 @@ public class ConfigController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"umc:config"})
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		configService.del(id);

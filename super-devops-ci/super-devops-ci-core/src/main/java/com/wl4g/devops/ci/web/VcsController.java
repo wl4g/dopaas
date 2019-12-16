@@ -17,13 +17,15 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.devops.ci.service.VcsService;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.page.PageModel;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -37,6 +39,7 @@ public class VcsController extends BaseController {
 	private VcsService vcsService;
 
 	@RequestMapping("/list")
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
 	public RespBase<?> list(PageModel pm, String name, Integer provider, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(vcsService.list(pm, name, provider, authType));
@@ -44,6 +47,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/save")
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
 	public RespBase<?> save(Vcs vcs) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.save(vcs);
@@ -51,6 +55,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/del")
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.del(id);
@@ -58,6 +63,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Vcs vcs = vcsService.detail(id);

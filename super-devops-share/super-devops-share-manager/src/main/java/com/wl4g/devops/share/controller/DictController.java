@@ -21,6 +21,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.DictService;
 import com.wl4g.devops.support.cache.JedisService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +48,7 @@ public class DictController extends BaseController {
 	private JedisService jedisService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"share:dict"})
 	public RespBase<?> list(PageModel pm, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dictService.list(pm,key,label,type,description));
@@ -54,6 +56,7 @@ public class DictController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"share:dict"})
 	public RespBase<?> save(Dict dict, Boolean isEdit) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.save(dict,isEdit);
@@ -61,6 +64,7 @@ public class DictController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"share:dict"})
 	public RespBase<?> detail(String key) {
 		RespBase<Object> resp = RespBase.create();
 		Dict dict = dictService.detail(key);
@@ -69,6 +73,7 @@ public class DictController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"share:dict"})
 	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.del(key);

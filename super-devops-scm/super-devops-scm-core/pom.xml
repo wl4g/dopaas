@@ -36,6 +36,11 @@
 			<artifactId>super-devops-dao</artifactId>
 			<version>master</version>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-iam-client</artifactId>
+			<version>master</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
