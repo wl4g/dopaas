@@ -192,8 +192,8 @@ public class ClientRemoteAutoConfiguration {
 	@ConfigurationProperties(prefix = "spring.web.remote")
 	public static class RemoteProperties {
 
-		private Integer readTimeout = 10000;
-		private Integer connectTimeout = 6000;
+		private Integer readTimeout = 60_000;
+		private Integer connectTimeout = 10_000;
 		private Integer maxResponseSize = 1024 * 1024 * 10;
 		private SslProperties sslProperties = new SslProperties();
 

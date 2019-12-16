@@ -42,27 +42,29 @@ import java.util.Map;
 public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingRealm {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	final public static String KEY_ROLES_ATTRIBUTE_NAME = "rolesAttributeName";
-	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttributeName";
+	final public static String KEY_ROLES_ATTRIBUTE_NAME = "rolesAttribute";
+	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttribute";
 
 	/**
-	 * New create and merge {@link PrincipalCollection}
+	 * New create and merge {@link IamPrincipalInfo} to
+	 * {@link PrincipalCollection}
 	 * 
 	 * @param info
 	 * @return
 	 */
-	protected PrincipalCollection newPermitPrincipalCollection(IamPrincipalInfo info) {
-		return newPermitPrincipalCollection(info.getPrincipal(), info);
+	protected PrincipalCollection createPermitPrincipalCollection(IamPrincipalInfo info) {
+		return createPermitPrincipalCollection(info.getPrincipal(), info);
 	}
 
 	/**
-	 * New create and merge {@link PrincipalCollection}
+	 * New create and merge {@link IamPrincipalInfo} to
+	 * {@link PrincipalCollection}
 	 * 
 	 * @param principal
 	 * @param info
 	 * @return
 	 */
-	protected PrincipalCollection newPermitPrincipalCollection(String principal, IamPrincipalInfo info) {
+	protected PrincipalCollection createPermitPrincipalCollection(String principal, IamPrincipalInfo info) {
 		notNull(principal, "Principal can't null");
 		notNull(info, "IamPrincipalInfo can't null");
 
@@ -80,9 +82,10 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 	 * Setup merge authorized roles and permission string.
 	 * 
 	 * @param authzInfo
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected void mergeAuthorizedString(PrincipalCollection principals, SimpleAuthorizationInfo authzInfo) {
+	protected SimpleAuthorizationInfo mergeAuthorizedString(PrincipalCollection principals, SimpleAuthorizationInfo authzInfo) {
 		// Retrieve principal account info.
 		SimplePrincipalCollection principals0 = (SimplePrincipalCollection) principals;
 		Map<String, String> principalMap = (Map<String, String>) principals0.asList().get(1);
@@ -93,7 +96,7 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 
 		// Principal permissions.
 		String permissions = principalMap.get(KEY_PERMITS_ATTRIBUTE_NAME);
-		mergePermissions(authzInfo, splitPermitString(permissions));
+		return mergePermissions(authzInfo, splitPermitString(permissions));
 	}
 
 	/**
@@ -123,11 +126,13 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 	 * @param authzInfo
 	 * @param roles
 	 *            the list of roles to add
+	 * @return
 	 */
-	protected void mergeRoles(SimpleAuthorizationInfo authzInfo, List<String> roles) {
+	protected SimpleAuthorizationInfo mergeRoles(SimpleAuthorizationInfo authzInfo, List<String> roles) {
 		for (String role : roles) {
 			authzInfo.addRole(role);
 		}
+		return authzInfo;
 	}
 
 	/**
@@ -136,11 +141,13 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 	 * @param authzInfo
 	 * @param permissions
 	 *            the list of permissions to add
+	 * @return
 	 */
-	protected void mergePermissions(SimpleAuthorizationInfo authzInfo, List<String> permissions) {
+	protected SimpleAuthorizationInfo mergePermissions(SimpleAuthorizationInfo authzInfo, List<String> permissions) {
 		for (String permission : permissions) {
 			authzInfo.addStringPermission(permission);
 		}
+		return authzInfo;
 	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.verification.cumulation;
+package com.wl4g.devops.iam.common.utils.cumulate;
 
 import java.util.List;
 
@@ -29,14 +29,14 @@ import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 
 /**
- * Default verification limiter accumulator
+ * Default security limit accumulation counter based on distributed
+ * {@link EnhancedCache} implementation
  *
  * @author wangl.sir
  * @version v1.0 2019年4月19日
  * @since
  */
 public class DefaultCumulator implements Cumulator {
-
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	/**

@@ -24,6 +24,7 @@ import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static org.springframework.util.Assert.notNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,7 +42,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -52,6 +52,7 @@ import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
 import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter;
 import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter.AdvancedCorsProcessor;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
+import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
@@ -101,6 +102,11 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
+	public EnhancedModularRealmAuthorizer enhancedModularRealmAuthorizer() {
+		return new EnhancedModularRealmAuthorizer();
+	}
+
+	@Bean
 	public ShiroFilterFactoryBean shiroFilter(AbstractIamProperties<? extends ParamProperties> config,
 			DefaultWebSecurityManager securityManager, FilterChainManager chainManager) {
 		/*
@@ -135,8 +141,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 			if (filter instanceof IamAuthenticationFilter) {
 				uriPertten = ((IamAuthenticationFilter) filter).getUriMapping();
 			}
-			Assert.notNull(filterName, "'filterName' must not be null");
-			Assert.notNull(uriPertten, "'uriPertten' must not be null");
+			notNull(filterName, "'filterName' must not be null");
+			notNull(uriPertten, "'uriPertten' must not be null");
 
 			if (filters.putIfAbsent(filterName, (Filter) filter) != null) {
 				throw new IllegalStateException(String.format("Already filter. [%s]", filterName));

@@ -25,11 +25,11 @@ import org.apache.shiro.authz.permission.PermissionResolver;
  * @version v1.0 2019年12月13日
  * @since
  */
-public class GenericWildcardPermissionResovler implements PermissionResolver {
+public class EnhancedWildcardPermissionResovler implements PermissionResolver {
 
 	@Override
 	public Permission resolvePermission(String permissionString) {
-		return new GenericWildcardPermission(permissionString);
+		return new EnhancedWildcardPermission(permissionString);
 	}
 
 }

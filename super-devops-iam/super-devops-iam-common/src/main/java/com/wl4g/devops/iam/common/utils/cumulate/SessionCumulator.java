@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.verification.cumulation;
+package com.wl4g.devops.iam.common.utils.cumulate;
 
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
+import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,36 +28,35 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.apache.shiro.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 /**
- * Session verification limiter accumulator
+ * Security limit accumulation counter based on {@link Session} implementation.
  *
  * @author wangl.sir
  * @version v1.0 2019年4月19日
  * @since
  */
 public class SessionCumulator implements Cumulator {
-
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * Cache to session key.
+	 * Save to session key prefix.
 	 */
-	final private String sessionKey;
+	final private String sessionKeyPrefix;
 
 	/**
 	 * Expired milliseconds
 	 */
 	final private long expireMs;
 
-	public SessionCumulator(@NotBlank String sessionKey, long expireMs) {
-		Assert.hasText(sessionKey, "SessionKey must not be empty");
-		Assert.isTrue(expireMs > 0, "expireMs must be greater than 0");
-		this.sessionKey = sessionKey;
+	public SessionCumulator(@NotBlank String name, long expireMs) {
+		hasText(name, "Name of sessionKey prefix must not be empty");
+		isTrue(expireMs > 0, "expireMs must be greater than 0");
+		this.sessionKeyPrefix = name;
 		this.expireMs = expireMs;
 	}
 
@@ -66,11 +67,11 @@ public class SessionCumulator implements Cumulator {
 		for (String factor : factors) {
 			SessionLimitCounter counter = getBindValue(getActualSessionKey(factor));
 			// Non-exist or expired?
-			if (counter == null || isExpired(counter.getCreate())) {
+			if (isNull(counter) || isExpired(counter.getCreate())) {
 				bind(getActualSessionKey(factor), (counter = new SessionLimitCounter(0L))); // Initialize
 			}
 			// Positive or negative growth
-			cumulatedMax = Math.max(cumulatedMax, counter.getCumulator().addAndGet(incrBy));
+			cumulatedMax = Math.max(cumulatedMax, counter.getValue().addAndGet(incrBy));
 		}
 		return cumulatedMax;
 	}
@@ -80,16 +81,15 @@ public class SessionCumulator implements Cumulator {
 		SessionLimitCounter counter = getBindValue(getActualSessionKey(factor));
 		if (counter != null) {
 			if (!isExpired(counter.getCreate())) { // Expired?
-				return counter.getCumulator().get();
+				return counter.getValue().get();
 			}
 		}
-
 		return 0L;
 	}
 
 	@Override
 	public long getCumulatives(@NotNull List<String> factors) {
-		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
+		isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
 
 		// Accumulated maximum number of failures
 		long cumulatedMax = 0L;
@@ -102,7 +102,7 @@ public class SessionCumulator implements Cumulator {
 
 	@Override
 	public void destroy(@NotNull List<String> factors) {
-		Assert.notEmpty(factors, "factors must not be empty");
+		notEmpty(factors, "factors must not be empty");
 
 		factors.forEach(factor -> {
 			try {
@@ -120,7 +120,7 @@ public class SessionCumulator implements Cumulator {
 	 * @return
 	 */
 	private String getActualSessionKey(@NotBlank String factor) {
-		return sessionKey + "_" + factor;
+		return sessionKeyPrefix + "_" + factor;
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class SessionCumulator implements Cumulator {
 		/**
 		 * Accumulated number of failed counter
 		 */
-		final private AtomicLong cumulated;
+		final private AtomicLong value;
 
 		/**
 		 * Failure counter creation timestamp
@@ -161,14 +161,14 @@ public class SessionCumulator implements Cumulator {
 		}
 
 		public SessionLimitCounter(Long count, Long create) {
-			Assert.notNull(count, "fail count is null, please check configure");
-			Assert.notNull(create, "Create time is null, please check configure");
-			this.cumulated = new AtomicLong(count);
+			notNull(count, "fail count is null, please check configure");
+			notNull(create, "Create time is null, please check configure");
+			this.value = new AtomicLong(count);
 			this.create = create;
 		}
 
-		public AtomicLong getCumulator() {
-			return cumulated;
+		public AtomicLong getValue() {
+			return value;
 		}
 
 		public Long getCreate() {
@@ -177,7 +177,7 @@ public class SessionCumulator implements Cumulator {
 
 		@Override
 		public String toString() {
-			return "SessionFailCounter [count=" + cumulated.get() + ", create=" + create + "]";
+			return "SessionFailCounter [count=" + value.get() + ", create=" + create + "]";
 		}
 
 	}

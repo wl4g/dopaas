@@ -69,7 +69,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	public static IamPrincipalInfo getPrincipalInfo() {
 		IamPrincipalInfo info = getBindValue(KEY_AUTHC_ACCOUNT_INFO);
 		notNull(info,
-				"The authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+				"Authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		return info;
 	}
 

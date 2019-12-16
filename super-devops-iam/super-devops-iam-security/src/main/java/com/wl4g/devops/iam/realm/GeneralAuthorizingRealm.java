@@ -83,7 +83,7 @@ public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAut
 		}
 
 		// Authenticate attributes.(roles/permissions/rememberMe)
-		PrincipalCollection principals = newPermitPrincipalCollection(info);
+		PrincipalCollection principals = createPermitPrincipalCollection(info);
 		return new GeneralAuthenticationInfo(info, principals, getName());
 	}
 

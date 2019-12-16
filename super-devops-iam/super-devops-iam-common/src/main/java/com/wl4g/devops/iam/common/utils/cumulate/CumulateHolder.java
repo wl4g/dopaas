@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.verification.cumulation;
+package com.wl4g.devops.iam.common.utils.cumulate;
 
 import org.springframework.util.Assert;
 
@@ -42,15 +42,16 @@ public abstract class CumulateHolder {
 	}
 
 	/**
-	 * New create session cache accumulator
+	 * New create session cache accumulator.
 	 *
-	 * @param sessionKey
+	 * @param name
+	 *            cululator name of sessionKey prefix
 	 * @param expireMs
 	 *            Expired milliseconds
 	 * @return
 	 */
-	public static Cumulator newSessionCumulator(String sessionKey, long expireMs) {
-		return new SessionCumulator(sessionKey, expireMs);
+	public static Cumulator newSessionCumulator(String name, long expireMs) {
+		return new SessionCumulator(name, expireMs);
 	}
 
 }

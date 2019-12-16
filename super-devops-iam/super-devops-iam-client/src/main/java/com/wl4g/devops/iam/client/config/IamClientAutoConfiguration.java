@@ -47,6 +47,7 @@ import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.InternalWhiteListClientAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter;
+import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
@@ -77,13 +78,16 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamClientSessionManager sessionManager) {
+	public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamClientSessionManager sessionManager,
+			EnhancedModularRealmAuthorizer authorizer) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
 		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractClientAuthorizingRealm.class).values().stream().collect(Collectors.toList());
+		List<Realm> realms = actx.getBeansOfType(AbstractClientAuthorizingRealm.class).values().stream()
+				.collect(Collectors.toList());
 		securityManager.setRealms(realms);
 		securityManager.setSubjectFactory(subjectFactory);
+		securityManager.setAuthorizer(authorizer);
 		return securityManager;
 	}
 
