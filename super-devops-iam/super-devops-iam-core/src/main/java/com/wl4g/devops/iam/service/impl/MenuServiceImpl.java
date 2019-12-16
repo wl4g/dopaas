@@ -75,7 +75,7 @@ public class MenuServiceImpl implements MenuService {
 	public List<Menu> getMenuList() {
 		IamPrincipalInfo info = getPrincipalInfo();
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
-			return menuDao.selectByRoot();// root
+			return menuDao.selectWithRoot();// root
 		} else {
 			return menuDao.selectByUserId(parseIntOrNull(info.getPrincipalId()));
 		}
@@ -140,7 +140,7 @@ public class MenuServiceImpl implements MenuService {
 
 		List<Menu> menus = null;
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
-			menus = menuDao.selectByRoot();
+			menus = menuDao.selectWithRoot();
 		} else {
 			Integer userId = null;
 			if (isNotBlank(info.getPrincipalId())) {

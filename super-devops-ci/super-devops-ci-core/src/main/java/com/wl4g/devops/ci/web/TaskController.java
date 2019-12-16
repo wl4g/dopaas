@@ -23,6 +23,7 @@ import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * Task controller
@@ -62,6 +65,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
 			String startDate, String endDate, String envType) {
 		log.info("into TaskController.list prarms::"
@@ -81,6 +85,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> save(@RequestBody Task task) {
 		log.info("into TaskController.save prarms::" + "task = {} ", task);
 		Assert.notNull(task, "task can not be null");
@@ -98,6 +103,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> detail(Integer id) {
 		log.info("into TaskController.detail prarms::" + "id = {} ", id);
 		Assert.notNull(id, "id can not be null");
@@ -113,6 +119,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> del(Integer id) {
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -138,6 +145,7 @@ public class TaskController extends BaseController {
 	 * @param appClusterId
 	 */
 	@RequestMapping(value = "/getListByAppClusterId")
+	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> getListByAppClusterId(Integer appClusterId) {
 		Assert.notNull(appClusterId, "appClusterId can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -152,6 +160,7 @@ public class TaskController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
+	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark) {
 		RespBase<Object> resp = RespBase.create();
 		pipeliner.newPipeline(new NewParameter(taskId, remark, trackId, trackType));
@@ -159,6 +168,7 @@ public class TaskController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getDependencys")
+	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> getDependencys(Integer appClusterId) {
 		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();

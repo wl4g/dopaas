@@ -75,7 +75,7 @@ public class RoleServiceImpl implements RoleService {
 		IamPrincipalInfo info = getPrincipalInfo();
 
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
-			return roleDao.selectByRoot(null, null);
+			return roleDao.selectWithRoot(null, null);
 		} else {
 			// Groups of userId.
 			Set<Group> groups = groupService.getGroupsSet();
@@ -96,7 +96,7 @@ public class RoleServiceImpl implements RoleService {
 		Set<Group> groupSet = groupService.getGroupsSet();
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-			List<Role> roles = roleDao.selectByRoot(roleCode, displayName);
+			List<Role> roles = roleDao.selectWithRoot(roleCode, displayName);
 			for (Role role : roles) {
 				List<Group> groups = groupDao.selectByRoleId(role.getId());
 				groups = removeUnhad(groups, groupSet); // remove unhad

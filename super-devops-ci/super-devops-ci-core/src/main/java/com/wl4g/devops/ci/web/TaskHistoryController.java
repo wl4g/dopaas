@@ -24,12 +24,14 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
-
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * Task History controller
@@ -58,6 +60,7 @@ public class TaskHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> list(PageModel pm,String groupName, String projectName, String branchName,String startDate, String endDate, String envType) {
 		log.info("into TaskHistoryController.list prarms::" + "groupName = {} , projectName = {} , branchName = {} , pm = {} ",
 				groupName, projectName, branchName, pm);
@@ -74,6 +77,7 @@ public class TaskHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> detail(Integer taskId) {
 		log.info("into TaskHistoryController.detail prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
@@ -93,6 +97,7 @@ public class TaskHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/rollback")
+	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> rollback(Integer taskId) {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
@@ -102,6 +107,7 @@ public class TaskHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/readLog")
+	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> readLog(Integer taskHisId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
 		FileIOUtils.ReadResult readResult = pipeliner.logfile(taskHisId, startPos, size);
@@ -110,6 +116,7 @@ public class TaskHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/readDetailLog")
+	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> readDetailLog(Integer taskHisId,Integer instanceId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
 		FileIOUtils.ReadResult readResult = pipeliner.logDetailFile(taskHisId,instanceId, startPos, size);
@@ -118,6 +125,7 @@ public class TaskHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/stopTask")
+	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> create(Integer taskHisId) {
 		RespBase<Object> resp = RespBase.create();
 		taskHistoryService.stopByTaskHisId(taskHisId);

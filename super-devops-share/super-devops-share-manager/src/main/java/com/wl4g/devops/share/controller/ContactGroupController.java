@@ -20,6 +20,7 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.ContactGroupService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,7 @@ public class ContactGroupController extends BaseController {
 	private ContactGroupService contactGroupService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> list(String name, PageModel pm) {
 		log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
 		RespBase<Object> resp = RespBase.create();
@@ -47,6 +49,7 @@ public class ContactGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> save(AlarmContactGroup alarmContactGroup) {
 		log.info("into ContactGroupController.save prarms::" + "alarmContactGroup = {} ", alarmContactGroup);
 		Assert.notNull(alarmContactGroup, "group is null");
@@ -57,6 +60,7 @@ public class ContactGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> del(Integer id) {
 		log.info("into ContactController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -65,6 +69,7 @@ public class ContactGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/groupList")
+	@RequiresPermissions(value = {"share:contact"})
 	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
 		List<AlarmContactGroup> alarmContactGroups = contactGroupService.contactGroups(null);

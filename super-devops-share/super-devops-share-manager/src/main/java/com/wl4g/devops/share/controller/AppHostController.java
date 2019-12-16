@@ -20,6 +20,7 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.HostService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,6 +50,7 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"share:host"})
 	public RespBase<?> list(PageModel pm,String name,String hostname) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.page(pm,name,hostname,null));
@@ -57,6 +59,7 @@ public class AppHostController extends BaseController {
 
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"share:host"})
 	public RespBase<?> save(AppHost host) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.save(host);
@@ -64,6 +67,7 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"share:host"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.detail(id));
@@ -72,6 +76,7 @@ public class AppHostController extends BaseController {
 
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"share:host"})
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.del(id);

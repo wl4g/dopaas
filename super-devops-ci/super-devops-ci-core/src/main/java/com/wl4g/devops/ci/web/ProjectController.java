@@ -21,6 +21,7 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * CICD projects controller
@@ -54,6 +56,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
 	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
@@ -71,6 +74,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
 	public RespBase<?> save(@RequestBody Project project) {
 		log.info("into ProjectController.save prarms::" + "project = {} ", project);
 		RespBase<Object> resp = RespBase.create();
@@ -85,6 +89,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
 	public RespBase<?> detail(Integer id) {
 		log.info("into ProjectController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -101,6 +106,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
 	public RespBase<?> del(Integer id) {
 		log.info("into ProjectController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -140,6 +146,7 @@ public class ProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/vcsProjects")
+	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
 	public RespBase<?> searchVcsProjects(Integer vcsId, String projectName) {
 		RespBase<Object> resp = RespBase.create();
 		List<CompositeBasicVcsProjectModel> remoteProjects = projectService.vcsProjects(vcsId, projectName);
@@ -156,6 +163,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getBranchs")
+	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
 	public RespBase<?> getBranchs(Integer appClusterId, Integer tarOrBranch) {
 		RespBase<Object> resp = RespBase.create();
 		List<String> branchs = projectService.getBranchs(appClusterId, tarOrBranch);
