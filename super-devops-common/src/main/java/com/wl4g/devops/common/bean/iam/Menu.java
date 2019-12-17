@@ -34,6 +34,8 @@ public class Menu extends BaseBean implements Serializable {
 
 	private Integer status;
 
+	private Integer level;
+
 	private Integer parentId;
 
 	private String parentIds;
@@ -144,6 +146,14 @@ public class Menu extends BaseBean implements Serializable {
 
 	public void setChildren(List<Menu> children) {
 		this.children = children;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	@Override
