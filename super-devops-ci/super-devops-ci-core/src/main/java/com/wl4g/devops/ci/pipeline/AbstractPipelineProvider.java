@@ -34,7 +34,6 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AES;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -265,8 +264,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			String logmsg = writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s@%s' ... ",
-					getContext().getAppCluster().getName(), jobs.size());
+			List<String> instanceStrs = getContext().getInstances().stream().map(i -> i.getHostname() + ":" + i.getEndpoint())
+					.collect(toList());
+			String logmsg = writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
+					getContext().getAppCluster().getName(), instanceStrs);
 			if (log.isInfoEnabled()) {
 				log.info(logmsg);
 			}
