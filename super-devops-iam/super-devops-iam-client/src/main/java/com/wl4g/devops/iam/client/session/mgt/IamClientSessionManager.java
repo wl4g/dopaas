@@ -28,9 +28,9 @@ import org.apache.shiro.session.Session;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
 
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;
+import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
 import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
@@ -54,10 +54,10 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 	/**
 	 * Expire session validator
 	 */
-	final protected IamValidator<SessionValidationAssertion, SessionValidationAssertion> validator;
+	final protected IamValidator<SessionValidityAssertModel, SessionValidityAssertModel> validator;
 
 	public IamClientSessionManager(IamClientProperties config,
-			IamValidator<SessionValidationAssertion, SessionValidationAssertion> validator) {
+			IamValidator<SessionValidityAssertModel, SessionValidityAssertModel> validator) {
 		super(config, CACHE_TICKET_C);
 		this.validator = validator;
 	}
@@ -82,7 +82,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 				Map<String, Session> tmp = new HashMap<>(activeSessions.size());
 
 				// Wrap to validation assertion
-				SessionValidationAssertion request = new SessionValidationAssertion(config.getServiceName());
+				SessionValidityAssertModel request = new SessionValidityAssertModel(config.getServiceName());
 				for (IamSession session : activeSessions) {
 					String grantTicket = (String) session.getAttribute(SAVE_GRANT_TICKET);
 					request.getTickets().add(grantTicket);
@@ -90,7 +90,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 				}
 
 				// Validation execution
-				SessionValidationAssertion assertion = validator.validate(request);
+				SessionValidityAssertModel assertion = validator.validate(request);
 				for (String expiredTicket : assertion.getTickets()) {
 					Session session = tmp.get(expiredTicket);
 					try {

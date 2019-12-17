@@ -13,43 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.iam.model;
+package com.wl4g.devops.iam.common.authc.model;
 
-import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
+
+import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 /**
- * Application grant ticket wrap
+ * Session validation assertion.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
- * @date 2018年11月22日
- * @since ServiceTicket
+ * @Long 2018年11月22日
+ * @since
  */
-public final class LoggedModel {
+public final class SessionValidityAssertModel extends BaseAssertModel {
 
-	/**
-	 * Temporary authorization code(Used for fast-CAS login successfully
-	 * returned to application), only single use of work is effective.
-	 */
-	@NotBlank
-	private String grantTicket;
+	private static final long serialVersionUID = 5483716885382988025L;
 
-	public LoggedModel() {
-		super();
+	@NotEmpty
+	private List<String> tickets = new ArrayList<>();
+
+	public SessionValidityAssertModel() {
 	}
 
-	public LoggedModel(String grantTicket) {
-		this.setGrantTicket(grantTicket);
+	public SessionValidityAssertModel(String application) {
+		super(application);
 	}
 
-	public final String getGrantTicket() {
-		return grantTicket;
+	public List<String> getTickets() {
+		return tickets;
 	}
 
-	public final void setGrantTicket(String serviceTicket) {
-		this.grantTicket = serviceTicket;
+	public void setTickets(List<String> tickets) {
+		if (!CollectionUtils.isEmpty(tickets)) {
+			this.tickets.addAll(tickets);
+		}
 	}
 
 	@Override

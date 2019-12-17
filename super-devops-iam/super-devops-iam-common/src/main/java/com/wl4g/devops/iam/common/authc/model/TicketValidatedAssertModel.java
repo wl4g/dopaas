@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.iam.model;
+package com.wl4g.devops.iam.common.authc.model;
 
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+
 /**
- * Concrete Implementation of the {@link TicketAssertion}.
+ * Concrete Implementation of the {@link TicketValidatedAssertModel}.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @Long 2018年11月22日
  * @since
  */
-public final class TicketAssertion<T> {
+public final class TicketValidatedAssertModel<T extends IamPrincipalInfo> {
 
 	/** The Long from which the assertion is valid(start Long). */
 	@NotNull
@@ -43,18 +43,11 @@ public final class TicketAssertion<T> {
 	@NotNull
 	private Date validUntilDate;
 
-	/**
-	 * Map of key/value pairs associated with this assertion. I.e.
-	 * authentication type.
-	 */
-	@NotBlank
-	private String grantTicket = EMPTY;
-
 	/** The principal for which this assertion is valid for. */
 	@NotNull
 	private T principalInfo;
 
-	public TicketAssertion() {
+	public TicketValidatedAssertModel() {
 		super();
 	}
 
@@ -71,8 +64,8 @@ public final class TicketAssertion<T> {
 	 * @param attributes
 	 *            the key/value pairs for this attribute.
 	 */
-	public TicketAssertion(final String principal, final Date validFromTime, final Date validUntilTime, final String grantTicket,
-			final T principalInfo) {
+	public TicketValidatedAssertModel(final String principal, final Date validFromTime, final Date validUntilTime,
+			final String grantTicket, final T principalInfo) {
 		hasText(principal, "Authenticate principal cannot be null.");
 		notNull(validFromTime, "Authenticate validFromTime cannot be null.");
 		notNull(validUntilTime, "Authenticate validUntilTime cannot be null.");
@@ -100,14 +93,6 @@ public final class TicketAssertion<T> {
 		if (this.validUntilDate == null && validUntilLong != null) {
 			this.validUntilDate = validUntilLong;
 		}
-	}
-
-	public String getGrantTicket() {
-		return grantTicket;
-	}
-
-	public void setGrantTicket(String grantTicket) {
-		this.grantTicket = grantTicket;
 	}
 
 	@NotNull

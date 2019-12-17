@@ -23,14 +23,14 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.TicketValidateException;
 import com.wl4g.devops.iam.client.authc.FastAuthenticationInfo;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
@@ -72,7 +72,7 @@ import java.util.Date;
 public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 	public FastCasAuthorizingRealm(IamClientProperties config,
-			IamValidator<TicketValidationModel, TicketAssertion<IamPrincipalInfo>> validator) {
+			IamValidator<TicketValidateModel, TicketValidatedAssertModel<IamPrincipalInfo>> validator) {
 		super(config, validator);
 		super.setAuthenticationTokenClass(FastCasAuthenticationToken.class);
 	}
@@ -96,14 +96,10 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			granticket = (String) fcToken.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketAssertion<IamPrincipalInfo> assertion = doRequestRemoteTicketValidation(granticket);
+			TicketValidatedAssertModel<IamPrincipalInfo> assertion = doRequestRemoteTicketValidation(granticket);
 
 			// Assertion ticket.
 			assertTicketValidation(assertion);
-
-			// Update settings grant ticket
-			String newGrantTicket = String.valueOf(assertion.getGrantTicket());
-			fcToken.setCredentials(newGrantTicket);
 
 			/**
 			 * {@link JedisIamSessionDAO#update()} </br>
@@ -116,9 +112,13 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 							validUntilDate, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
-			// Attribute of lang
 			IamPrincipalInfo info = assertion.getPrincipalInfo();
+			// Attribute of lang
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
+
+			// Update settings grant ticket
+			String newGrantTicket = String.valueOf(info.getStoredCredentials());
+			fcToken.setCredentials(newGrantTicket);
 
 			// Attribute of remember
 			String principal = assertion.getPrincipalInfo().getPrincipal();
@@ -160,8 +160,8 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @param ticket
 	 * @return
 	 */
-	private TicketAssertion<IamPrincipalInfo> doRequestRemoteTicketValidation(String ticket) {
-		return ticketValidator.validate(new TicketValidationModel(ticket, config.getServiceName()));
+	private TicketValidatedAssertModel<IamPrincipalInfo> doRequestRemoteTicketValidation(String ticket) {
+		return ticketValidator.validate(new TicketValidateModel(ticket, config.getServiceName()));
 	}
 
 	/**
@@ -170,16 +170,16 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @param assertion
 	 * @throws TicketValidateException
 	 */
-	private void assertTicketValidation(TicketAssertion<IamPrincipalInfo> assertion) throws TicketValidateException {
+	private void assertTicketValidation(TicketValidatedAssertModel<IamPrincipalInfo> assertion) throws TicketValidateException {
 		if (isNull(assertion)) {
 			throw new TicketValidateException("ticket assertion must not be null");
 		}
-		if (isNull(assertion.getGrantTicket())) {
-			throw new TicketValidateException("grant ticket must not be null");
-		}
 		IamPrincipalInfo info = assertion.getPrincipalInfo();
 		if (isNull(info)) {
-			throw new TicketValidateException("'principal' must not be null");
+			throw new TicketValidateException("Principal info must not be null");
+		}
+		if (isNull(info.getStoredCredentials())) {
+			throw new TicketValidateException("grant ticket must not be null");
 		}
 		if (isNull(info.getAttributes()) || info.getAttributes().isEmpty()) {
 			throw new TicketValidateException("'principal.attributes' must not be empty");

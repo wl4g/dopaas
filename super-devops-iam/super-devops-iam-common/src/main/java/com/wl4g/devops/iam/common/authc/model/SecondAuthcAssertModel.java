@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.iam.model;
+package com.wl4g.devops.iam.common.authc.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -30,7 +30,7 @@ import com.wl4g.devops.tool.common.serialize.JacksonUtils;
  * @Long 2018年11月22日
  * @since
  */
-public final class SecondAuthcAssertion implements Serializable {
+public final class SecondAuthcAssertModel implements Serializable {
 
 	private static final long serialVersionUID = 5483716885382988025L;
 
@@ -65,20 +65,20 @@ public final class SecondAuthcAssertion implements Serializable {
 	 */
 	private String errdesc = "Second authenticated";
 
-	public SecondAuthcAssertion() {
+	public SecondAuthcAssertModel() {
 		super();
 	}
 
-	public SecondAuthcAssertion(Status status) {
+	public SecondAuthcAssertModel(Status status) {
 		super();
 		this.status = status;
 	}
 
-	public SecondAuthcAssertion(String application, String provider, String functionId) {
+	public SecondAuthcAssertModel(String application, String provider, String functionId) {
 		this(application, provider, null, functionId, null);
 	}
 
-	public SecondAuthcAssertion(String application, String provider, String principal, String functionId, Date validFromDate) {
+	public SecondAuthcAssertModel(String application, String provider, String principal, String functionId, Date validFromDate) {
 		this.application = application;
 		this.provider = provider;
 		this.principal = principal;

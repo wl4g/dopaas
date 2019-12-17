@@ -16,12 +16,17 @@
 package com.wl4g.devops.iam.handler;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.model.*;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.authc.model.LoggedModel;
+import com.wl4g.devops.iam.common.authc.model.LogoutModel;
+import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
+import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
@@ -50,9 +55,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.ExpiredAuthorized;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
@@ -131,8 +136,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public TicketAssertion<IamPrincipalInfo> validate(TicketValidationModel model) {
-		TicketAssertion<IamPrincipalInfo> assertion = new TicketAssertion<>();
+	public TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model) {
+		TicketValidatedAssertModel<IamPrincipalInfo> assertion = new TicketValidatedAssertModel<>();
 		String fromAppName = model.getApplication();
 		hasText(fromAppName, "'fromAppName' must not be empty.");
 
@@ -166,9 +171,6 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 		// --- Grant attributes setup. ---
 
-		// Principal info.(No need of StoredCredenticals)
-		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(null));
-
 		// Grant validated start date.
 		long now = System.currentTimeMillis();
 		assertion.setValidFromDate(new Date(now));
@@ -187,10 +189,14 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
 		String newGrantTicket = generateGrantTicket();
-		assertion.setGrantTicket(newGrantTicket);
+		/**
+		 * {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)}
+		 */
+		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(newGrantTicket));
 		if (log.isInfoEnabled()) {
 			log.info("New validate grantTicket[{}], sessionId[{}]", newGrantTicket, getSessionId());
 		}
+
 		/*
 		 * Re-bind granting session => applications
 		 */
@@ -274,17 +280,18 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public SecondAuthcAssertion secondValidate(String secondAuthCode, String fromAppName) {
-		EnhancedKey ekey = new EnhancedKey(secondAuthCode, SecondAuthcAssertion.class);
+	public SecondAuthcAssertModel secondValidate(String secondAuthCode, String fromAppName) {
+		EnhancedKey ekey = new EnhancedKey(secondAuthCode, SecondAuthcAssertModel.class);
 		try {
 			/*
 			 * Save authorized info to cache. See:
 			 * xx.iam.sns.handler.SecondAuthcSnsHandler#afterCallbackSet()
 			 */
-			SecondAuthcAssertion assertion = (SecondAuthcAssertion) cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).get(ekey);
+			SecondAuthcAssertModel assertion = (SecondAuthcAssertModel) cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE)
+					.get(ekey);
 			// Check assertion expired
 			if (assertion == null) {
-				assertion = new SecondAuthcAssertion(ExpiredAuthorized);
+				assertion = new SecondAuthcAssertModel(ExpiredAuthorized);
 				assertion.setErrdesc("Authorization expires, please re-authorize.");
 			}
 			return assertion;
@@ -297,7 +304,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public SessionValidationAssertion sessionValidate(SessionValidationAssertion assertion) {
+	public SessionValidityAssertModel sessionValidate(SessionValidityAssertModel assertion) {
 		hasText(assertion.getApplication(), "'application' cannot not be empty");
 
 		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
@@ -377,7 +384,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @throws InvalidGrantTicketException
 	 * @see {@link com.wl4g.devops.iam.handler.CentralAuthenticationHandler#loggedin}
 	 */
-	private void assertGrantTicketValidity(Subject subject, TicketValidationModel model) throws InvalidGrantTicketException {
+	private void assertGrantTicketValidity(Subject subject, TicketValidateModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
 			log.warn("Invalid grantTicket has empty, grantTicket: {}, application: '{}', sessionId: '{}'", model.getTicket(),
 					model.getApplication(), subject.getSession().getId());

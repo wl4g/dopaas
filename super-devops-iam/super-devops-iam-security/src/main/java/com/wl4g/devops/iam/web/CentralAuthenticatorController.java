@@ -25,15 +25,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.devops.common.bean.iam.model.LogoutModel;
-import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
+import com.wl4g.devops.iam.common.authc.model.LogoutModel;
+import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
+import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.tool.common.lang.Exceptions;
 
@@ -68,13 +68,13 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
-	public RespBase<TicketAssertion<IamPrincipalInfo>> validate(HttpServletRequest request,
-			@NotNull @RequestBody TicketValidationModel param) {
+	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(HttpServletRequest request,
+			@NotNull @RequestBody TicketValidateModel param) {
 		if (log.isInfoEnabled()) {
 			log.info("Ticket validate sessionId[{}] <= {}", getSessionId(), toJSONString(param));
 		}
 
-		RespBase<TicketAssertion<IamPrincipalInfo>> resp = new RespBase<>();
+		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 
@@ -130,12 +130,12 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_SECOND_VALIDATE)
 	@ResponseBody
-	public RespBase<SecondAuthcAssertion> seondValidate(HttpServletRequest request) {
+	public RespBase<SecondAuthcAssertModel> seondValidate(HttpServletRequest request) {
 		if (log.isInfoEnabled()) {
 			log.info("Second authentication validate <= {}", getFullRequestURL(request));
 		}
 
-		RespBase<SecondAuthcAssertion> resp = new RespBase<>();
+		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
 		try {
 			// Required parameters
 			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondAuthCode());
@@ -162,12 +162,12 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_SESSION_VALIDATE)
 	@ResponseBody
-	public RespBase<SessionValidationAssertion> sessionValidate(@NotNull @RequestBody SessionValidationAssertion param) {
+	public RespBase<SessionValidityAssertModel> sessionValidate(@NotNull @RequestBody SessionValidityAssertModel param) {
 		if (log.isInfoEnabled()) {
 			log.info("Sessions expire validate <= {}", toJSONString(param));
 		}
 
-		RespBase<SessionValidationAssertion> resp = new RespBase<>();
+		RespBase<SessionValidityAssertModel> resp = new RespBase<>();
 		try {
 			// Session expire validate assertion.
 			resp.setData(authHandler.sessionValidate(param));

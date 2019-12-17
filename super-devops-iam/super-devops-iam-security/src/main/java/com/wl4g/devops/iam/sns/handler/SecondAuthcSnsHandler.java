@@ -27,12 +27,12 @@ import org.springframework.util.StringUtils;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
-import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.InvalidAuthorizer;
-import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.IllegalAuthorizer;
+import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.IllegalAuthorizer;
+import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.InvalidAuthorizer;
 
 import com.google.common.base.Splitter;
-import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
-import com.wl4g.devops.common.exception.iam.SecondAuthenticationException;
+import com.wl4g.devops.iam.common.authc.SecondAuthenticationException;
+import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
@@ -129,7 +129,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 				.getIamAccount(new SnsAuthorizingParameter(provider, openId.openId(), openId.unionId()));
 
 		// Second authentication assertion
-		SecondAuthcAssertion assertion = new SecondAuthcAssertion(sourceApp, provider,
+		SecondAuthcAssertModel assertion = new SecondAuthcAssertModel(sourceApp, provider,
 				connectParams.get(config.getParam().getFuncId()));
 		try {
 			// Assertion
