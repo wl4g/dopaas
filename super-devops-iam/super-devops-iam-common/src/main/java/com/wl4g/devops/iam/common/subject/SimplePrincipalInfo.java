@@ -113,7 +113,6 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	public final SimplePrincipalInfo setStoredCredentials(String storedCredentials) {
 		// hasText(storedCredentials, "Authenticate storedCredentials can't
 		// empty");
-		notNull(storedCredentials, "Authenticate storedCredentials can't empty");
 		this.storedCredentials = storedCredentials;
 		return this;
 	}

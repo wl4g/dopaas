@@ -49,6 +49,7 @@ import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.apache.shiro.util.Assert.*;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
@@ -71,7 +72,6 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
-import com.wl4g.devops.tool.common.lang.Exceptions;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -243,7 +243,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	@Override
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
-		Throwable cause = Exceptions.getRootCause(ae);
+		Throwable cause = getRootCause(ae);
 		if (cause != null) {
 			if (cause instanceof IamException) {
 				log.error("Failed to caused by: {}", getMessage(cause));

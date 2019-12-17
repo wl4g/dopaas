@@ -32,10 +32,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
-import com.wl4g.devops.common.bean.iam.model.BasedModel;
+
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
+import com.wl4g.devops.iam.common.authc.model.BaseAssertModel;
 
 /**
  * Abstract validator implementation for tickets that must be validated against
@@ -46,7 +47,7 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
  * @date 2018年11月19日
  * @since
  */
-public abstract class AbstractBasedIamValidator<R extends BasedModel, A> implements IamValidator<R, A> {
+public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> implements IamValidator<R, A> {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**

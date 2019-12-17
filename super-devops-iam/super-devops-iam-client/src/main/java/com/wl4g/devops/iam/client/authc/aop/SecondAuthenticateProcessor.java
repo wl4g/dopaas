@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.iam.client.authc.aop;
 
-import static com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion.Status.Authenticated;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
 import static com.wl4g.devops.common.web.RespBase.RetCode.SECOND_UNAUTH;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
+import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.Authenticated;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
@@ -45,13 +45,13 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.exception.iam.SecondAuthenticationException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.annotation.SecondAuthenticate;
 import com.wl4g.devops.iam.common.aop.AdviceProcessor;
+import com.wl4g.devops.iam.common.authc.SecondAuthenticationException;
+import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
@@ -237,13 +237,13 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		// Validation URL
 		String validateUrl = buildValidateUrl(authCode);
 		// Request remote
-		RespBase<SecondAuthcAssertion> resp = restTemplate.exchange(validateUrl.toString(), HttpMethod.GET, null,
-				new ParameterizedTypeReference<RespBase<SecondAuthcAssertion>>() {
+		RespBase<SecondAuthcAssertModel> resp = restTemplate.exchange(validateUrl.toString(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<RespBase<SecondAuthcAssertModel>>() {
 				}).getBody();
 
 		// Check successful
 		if (RespBase.isSuccess(resp)) {
-			SecondAuthcAssertion assertion = resp.getData();
+			SecondAuthcAssertModel assertion = resp.getData();
 			if (!(assertion != null && assertion.getStatus() != null && assertion.getStatus() == Authenticated
 					&& String.valueOf(assertion.getFunctionId()).equals(annotation.funcId()))) {
 				throw new SecondAuthenticationException(assertion.getErrdesc());

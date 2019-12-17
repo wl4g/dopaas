@@ -13,36 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.iam.model;
+package com.wl4g.devops.iam.common.authc.model;
 
-import com.wl4g.devops.tool.common.lang.StringUtils2;
-
-public final class TicketValidationModel extends BasedModel {
+public final class LogoutModel extends BaseAssertModel {
 	private static final long serialVersionUID = 1383145313778896117L;
 
-	/**
-	 * Ticket may be empty when the first access is not logged-in<br/>
-	 * {@link com.wl4g.devops.iam.web.IamServerController#validate}
-	 */
-	private String ticket;
-
-	public TicketValidationModel() {
+	public LogoutModel() {
 		super();
 	}
 
-	public TicketValidationModel(String ticket, String application) {
+	public LogoutModel(String application) {
 		super(application);
-		this.ticket = ticket;
-	}
-
-	public final String getTicket() {
-		return ticket;
-	}
-
-	public final void setTicket(String ticket) {
-		if (!StringUtils2.isEmpty(ticket) && !"NULL".equalsIgnoreCase(ticket)) {
-			this.ticket = ticket;
-		}
 	}
 
 }

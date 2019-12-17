@@ -18,12 +18,12 @@ package com.wl4g.devops.iam.client.validation;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.SessionValidateException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
+import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
 
@@ -38,20 +38,20 @@ import java.util.Map;
  * @since
  */
 public class ExpiredSessionIamValidator
-		extends AbstractBasedIamValidator<SessionValidationAssertion, SessionValidationAssertion> {
+		extends AbstractBasedIamValidator<SessionValidityAssertModel, SessionValidityAssertModel> {
 
 	public ExpiredSessionIamValidator(IamClientProperties config, RestTemplate restTemplate) {
 		super(config, restTemplate);
 	}
 
 	@Override
-	protected void postQueryParameterSet(SessionValidationAssertion req, Map<String, Object> queryParams) {
+	protected void postQueryParameterSet(SessionValidityAssertModel req, Map<String, Object> queryParams) {
 
 	}
 
 	@Override
-	public SessionValidationAssertion validate(SessionValidationAssertion request) throws SessionValidateException {
-		final RespBase<SessionValidationAssertion> resp = this.doGetRemoteValidate(URI_S_SESSION_VALIDATE, request);
+	public SessionValidityAssertModel validate(SessionValidityAssertModel request) throws SessionValidateException {
+		final RespBase<SessionValidityAssertModel> resp = this.doGetRemoteValidate(URI_S_SESSION_VALIDATE, request);
 		if (!RespBase.isSuccess(resp)) {
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
 				throw new InvalidGrantTicketException(String.format("Remote validate error, %s", resp.getMessage()));
@@ -62,8 +62,8 @@ public class ExpiredSessionIamValidator
 	}
 
 	@Override
-	protected ParameterizedTypeReference<RespBase<SessionValidationAssertion>> getTypeReference() {
-		return new ParameterizedTypeReference<RespBase<SessionValidationAssertion>>() {
+	protected ParameterizedTypeReference<RespBase<SessionValidityAssertModel>> getTypeReference() {
+		return new ParameterizedTypeReference<RespBase<SessionValidityAssertModel>>() {
 		};
 	}
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.iam.model;
+package com.wl4g.devops.iam.common.authc.model;
 
 import java.io.Serializable;
 
@@ -23,17 +23,17 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
-public class BasedModel implements Serializable {
+public class BaseAssertModel implements Serializable {
 	private static final long serialVersionUID = 151897009229689455L;
 
 	@NotBlank
 	private String application;
 
-	public BasedModel() {
+	public BaseAssertModel() {
 		super();
 	}
 
-	public BasedModel(String application) {
+	public BaseAssertModel(String application) {
 		setApplication(application);
 	}
 
