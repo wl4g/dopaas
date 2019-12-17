@@ -18,10 +18,6 @@ package com.wl4g.devops.iam.client.config;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.common.kit.access.IPAccessControl;
 import com.wl4g.devops.iam.client.filter.ROOTAuthenticationFilter;
-import com.wl4g.devops.iam.client.realm.AbstractClientAuthorizingRealm;
 import com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm;
 import com.wl4g.devops.iam.client.validation.ExpiredSessionIamValidator;
 import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
@@ -67,7 +62,6 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
  * @since
  */
 public class IamClientAutoConfiguration extends AbstractIamConfiguration {
-
 	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
 	final private static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
 	final private static String BEAN_TICKET_VALIDATOR = "fastCasTicketValidator";
@@ -82,10 +76,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 			EnhancedModularRealmAuthorizer authorizer) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
-		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractClientAuthorizingRealm.class).values().stream()
-				.collect(Collectors.toList());
-		securityManager.setRealms(realms);
+		securityManager.setRealms(authorizer.getRealms());
 		securityManager.setSubjectFactory(subjectFactory);
 		securityManager.setAuthorizer(authorizer);
 		return securityManager;
