@@ -172,9 +172,9 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Roll-back.
 		List<TaskBuildCommand> commands = taskBuildCmdDao.selectByTaskId(param.getTaskId());
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
-				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), null, param.getTaskId(), bakTaskHisy.getBuildCommand(),
+				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), bakTaskHisy.getShaGit(), param.getTaskId(), bakTaskHisy.getBuildCommand(),
 				bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(), bakTaskHisy.getProviderKind(),
-				bakTaskHisy.getContactGroupId(), commands, null, null, null,bakTaskHisy.getEnvType());
+				bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(), bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(),bakTaskHisy.getEnvType());
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
