@@ -102,7 +102,7 @@ public class TaskHistoryController extends BaseController {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
 		// TODO remark???
-		pipeliner.rollbackPipeline(new RollbackParameter(taskId, ""));
+		pipeliner.rollbackPipeline(new RollbackParameter(taskId, "rollback"));
 		return resp;
 	}
 
