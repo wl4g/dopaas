@@ -27,15 +27,14 @@ import com.wl4g.devops.common.bean.ci.TaskInstance;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.dao.ci.TriggerDao;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.springframework.util.Assert.hasText;
-
-import java.util.List;
 
 /**
  * Timing scheduling composite pipeline provider.
@@ -81,6 +80,8 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 		}
 
 		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
+
+		vcsAdapter.forAdapt(project.getVcsId());
 
 		try {
 			if (!checkCommittedChanged()) { // Changed?
