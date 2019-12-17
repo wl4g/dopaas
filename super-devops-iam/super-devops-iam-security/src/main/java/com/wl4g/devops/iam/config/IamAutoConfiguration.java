@@ -106,7 +106,6 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
  * @since
  */
 public class IamAutoConfiguration extends AbstractIamConfiguration {
-
 	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
 	final public static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
 	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
@@ -134,9 +133,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 			ModularRealmAuthenticator authenticator, EnhancedModularRealmAuthorizer authorizer) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
-		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream().collect(toList());
-		securityManager.setRealms(realms);
+		securityManager.setRealms(authorizer.getRealms());
 		securityManager.setSubjectFactory(subjectFactory);
 		// Multiple realm authenticator controller
 		securityManager.setAuthenticator(authenticator);
@@ -145,7 +142,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public ExceptionModularRealmAuthenticator modularRealmAuthenticator(AuthenticationStrategy authenticationStrategy) {
+	public ExceptionModularRealmAuthenticator exceptionModularRealmAuthenticator(AuthenticationStrategy authenticationStrategy) {
 		ExceptionModularRealmAuthenticator authenticator = new ExceptionModularRealmAuthenticator();
 		authenticator.setAuthenticationStrategy(authenticationStrategy);
 		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream().collect(toList());

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -24,9 +25,11 @@ import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.notNull;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -60,6 +63,7 @@ import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
+import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
@@ -103,7 +107,9 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 
 	@Bean
 	public EnhancedModularRealmAuthorizer enhancedModularRealmAuthorizer() {
-		return new EnhancedModularRealmAuthorizer();
+		// Register define realm.
+		List<Realm> realms = actx.getBeansOfType(AbstractPermittingAuthorizingRealm.class).values().stream().collect(toList());
+		return new EnhancedModularRealmAuthorizer(realms);
 	}
 
 	@Bean

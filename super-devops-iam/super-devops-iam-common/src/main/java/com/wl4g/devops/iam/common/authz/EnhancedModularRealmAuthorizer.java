@@ -17,7 +17,10 @@ package com.wl4g.devops.iam.common.authz;
 
 import com.wl4g.devops.iam.common.authz.permission.EnhancedWildcardPermissionResovler;
 
+import java.util.Collection;
+
 import org.apache.shiro.authz.ModularRealmAuthorizer;
+import org.apache.shiro.realm.Realm;
 
 //import org.apache.shiro.authz.Authorizer;
 //import org.apache.shiro.realm.Realm;
@@ -33,12 +36,13 @@ import org.apache.shiro.authz.ModularRealmAuthorizer;
  */
 public class EnhancedModularRealmAuthorizer extends ModularRealmAuthorizer {
 
-	public EnhancedModularRealmAuthorizer() {
+	public EnhancedModularRealmAuthorizer(Collection<Realm> realms) {
+		super(realms);
 		setPermissionResolver(new EnhancedWildcardPermissionResovler());
 	}
 
 	/**
-	 * Only after all realms are certified successfully can they be considered
+	 * successfully Only after all realms are certified can they be considered
 	 * as passed.
 	 */
 	// @Override
