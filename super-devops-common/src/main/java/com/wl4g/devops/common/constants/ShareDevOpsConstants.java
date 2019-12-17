@@ -32,6 +32,6 @@ public abstract class ShareDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Config dict cache time(second)
 	 */
-	public static final int CONFIG_DICT_CACHE_TIME_SECOND = 600;
+	public static final int CONFIG_DICT_CACHE_TIME_SECOND = 60;
 
 }

@@ -106,28 +106,20 @@ public class MenuServiceImpl implements MenuService {
 
 	private void insert(Menu menu) {
 		menu.preInsert();
+		Integer parentId = menu.getParentId();
+		if(Objects.nonNull(menu.getType()) && menu.getType().intValue()==3){// if menu type is button
+			menu.setLevel(0);
+		}else{
+			if(Objects.nonNull(parentId) && 0 != parentId){// if has parent menu , set level = parent's level + 1
+				Menu parentMenu = menuDao.selectByPrimaryKey(parentId);
+				Assert.notNull(parentMenu,"parentMenu is null");
+				Assert.notNull(parentMenu.getLevel(),"parentMenu's level is null");
+				menu.setLevel(parentMenu.getLevel()+1);
+			}else{// if is parent menu , set level = 1
+				menu.setLevel(1);
+			}
+		}
 		menuDao.insertSelective(menu);
-
-		// Add group , default add the first group to group_menu.
-		//
-		// Set<Group> groupsSet = groupService.getGroupsSet();
-		// List<Group> top = new ArrayList<>();
-		// for (Group group : groupsSet) {
-		// Group parent = groupService.getParent(new ArrayList<>(groupsSet),
-		// group.getParentId());
-		// if (parent == null) {
-		// top.add(group);
-		// }
-		// }
-		// Assert.isTrue(CollectionUtils.isEmpty(groupsSet), "not found top
-		// group");
-		// Group group = top.get(0);
-		// GroupMenu groupMenu = new GroupMenu();
-		// groupMenu.preInsert();
-		// groupMenu.setGroupId(group.getId());
-		// groupMenu.setMenuId(menu.getId());
-		// groupMenuDao.insertSelective(groupMenu);
-
 	}
 
 	private void update(Menu menu) {
