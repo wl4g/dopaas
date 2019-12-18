@@ -22,7 +22,6 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import java.io.File;
 
 import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
-import static org.springframework.util.StringUtils.getFilename;
 
 /**
  * Pipeline provider for deployment MAVEN assemble tar project.
@@ -77,7 +76,8 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	private void doMvnBuildInternal() throws Exception {
 		// Setup assets file fingerprint.
-		File file = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
+		String assetsPathTotal = config.getAssetsPathTotal(getContext().getProject().getAssetsPath(), getContext().getAppCluster().getName());
+		File file = new File(getContext().getProjectSourceDir() + assetsPathTotal);
 		if(file.exists()){
 			setupAssetsFingerprint(getMd5Fingerprint(file));
 		}
@@ -91,12 +91,11 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
 		}
-
 	}
 
 	private File getBackupFile() {
 		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
-				+ getFilename(getContext().getProject().getAssetsPath());
+				+ config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		return new File(oldFilePath);
 	}
 

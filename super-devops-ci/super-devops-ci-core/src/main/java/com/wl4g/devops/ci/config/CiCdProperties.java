@@ -40,6 +40,9 @@ public class CiCdProperties implements InitializingBean {
 	final public static String DEFUALT_JOB_BASEDIR = "jobs";
 	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
 
+	final public static String DEFUALT_VERSION = "master";
+	final public static String DEFUALT_TAR_TYPE = "bin";
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -272,6 +275,18 @@ public class CiCdProperties implements InitializingBean {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(suffix, "Transfer project file suffix must not be empty.");
 		return getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix;
+	}
+
+	public String getTarFileName(String clusterName) {
+		return String.format("%s-%s-%s", clusterName, DEFUALT_VERSION, DEFUALT_TAR_TYPE);
+	}
+
+	public String getTarFileNameWithTar(String clusterName) {
+		return String.format("%s-%s-%s.tar", clusterName, DEFUALT_VERSION, DEFUALT_TAR_TYPE);
+	}
+
+	public String getAssetsPathTotal(String assetsPath, String clusterName) {
+		return assetsPath + "/" + getTarFileName(clusterName)+".tar";
 	}
 
 }
