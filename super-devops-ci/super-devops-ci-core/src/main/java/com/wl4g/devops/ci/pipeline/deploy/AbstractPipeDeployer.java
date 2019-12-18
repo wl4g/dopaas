@@ -40,6 +40,7 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
 
@@ -134,9 +135,8 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 			}
 			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_FAIL);
 			throw new PipelineDeployingException(
-					String.format("Failed to deploying for taskDetailId:%s, instance:%s, projectId:%s, projectName:%s",
-							instance.getId(), projectId, projectName),
-					e);
+					String.format("Failed to deploying for taskDetailId: %s, instance: %s, projectName: %s, \nCaused by:\n%s",
+							taskDetailId, instance.getId(), projectName, getStackTraceAsString(e)));
 		}
 
 		if (log.isInfoEnabled()) {
