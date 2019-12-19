@@ -146,15 +146,19 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 	private void pkg() throws Exception {
 		Project project = getContext().getProject();
 		String appClusterName = getContext().getAppCluster().getName();
-		String prgramInstallFileName = getPrgramInstallFileName();
+		String prgramInstallFileName = config.getPrgramInstallFileName(getContext().getAppCluster().getName());
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
-		// tar
-		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *"
-				,projectDir,prgramInstallFileName,prgramInstallFileName,prgramInstallFileName
-				,config.getJobBackup(getContext().getTaskHistory().getId()),prgramInstallFileName);
+		
+		// cd /root/.ci-workspace/sources/super-devops-view/dist
+		// mkdir super-devops-view-master-bin
+		// mv `ls -A|grep -v super-devops-view-master-bin` super-devops-view-master-bin/
+		// tar -cvf /root/.ci-workspace/jobs/job.936/super-devops-view-master-bin.tar *
+		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *", projectDir,
+				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName,
+				config.getJobBackup(getContext().getTaskHistory().getId()), prgramInstallFileName);
 		// Execution command.
 		// TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
@@ -170,12 +174,6 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
-	}
-
-	protected String getPrgramInstallFileName() {
-		//String distFilePath = getContext().getProject().getAssetsPath();
-		//return getUnExtensionFilename(distFilePath);
-		return config.getTarFileName(getContext().getAppCluster().getName());
 	}
 
 }
