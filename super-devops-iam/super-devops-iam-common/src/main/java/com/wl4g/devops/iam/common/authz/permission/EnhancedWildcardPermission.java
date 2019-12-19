@@ -15,8 +15,9 @@
  */
 package com.wl4g.devops.iam.common.authz.permission;
 
-import static java.util.Collections.emptyList;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,9 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.shiro.authz.Permission;
-import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StringUtils;
+import static java.util.Collections.emptyList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link EnhancedWildcardPermission}
@@ -129,6 +129,57 @@ public class EnhancedWildcardPermission implements Permission, Serializable {
 			}
 		}
 
+		return true;
+	}
+
+	//TODO unused
+	private boolean cmpair(Permission p){
+		if (!(p instanceof EnhancedWildcardPermission)) {
+			return false;
+		}
+		EnhancedWildcardPermission gwp = (EnhancedWildcardPermission) p;
+		List<Set<String>> otherParts = gwp.getPermitParts();//own = ci,ci:list
+		List<Set<String>> defines = getPermitParts();//define = ci,ci:list
+		boolean result = true;
+		for(Set<String> defineSet : defines){// must all true
+			boolean match = false;
+			for(Set<String> ownSet : otherParts){// one true
+				boolean compair = compair(defineSet, ownSet);
+				if(compair){
+					match = true;
+					break;
+				}
+			}
+			if(!match){// not one match
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	//e.g define = ci:list ; own = ci:list ; true
+	//e.g define = ci ; own = ci:list ; true
+	//e.g define = ci:list ; own = ci ; false
+	//e.g define = ci:* ; own = ci:list ; true
+	private boolean compair(Set<String> defineSet,Set<String> ownSet){
+		if(defineSet.size()<=0){
+			return true;
+		}
+		Iterator<String> define = defineSet.iterator();
+		Iterator<String> own = ownSet.iterator();
+		while (define.hasNext() && own.hasNext()) {
+			String defineStr = define.next();
+			String ownStr = own.next();
+			if(defineStr.equals(WILDCARD_TOKEN)){
+				continue;
+			}else if(!defineStr.equals(ownStr)){
+				return false;
+			}
+		}
+		if(define.hasNext()||own.hasNext() ){
+			return false;
+		}
 		return true;
 	}
 
