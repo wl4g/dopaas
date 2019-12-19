@@ -107,7 +107,7 @@ public class IamServerApiV1Controller extends GenericApiController {
 		SessionAttribute sa = super.wrapSessionAttribute(session);
 
 		// Authentication grant applications.
-		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
+		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.KEY_GRANTTICKET_INFO);
 		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
 			sa.setGrants(grantInfo.getApplications().keySet());
 		}
