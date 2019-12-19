@@ -45,6 +45,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -121,6 +122,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	final public static String KEY_REMEMBER_URL = AbstractAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
 
+	/**
+	 * Redirection authentication failure retry upper limit key.
+	 */
+	final public static String KEY_TRY_REDIRECT_AUTHC = "TryRedirectAuthenticating";
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -165,7 +171,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		this.configurer = context;
 		this.coprocessor = coprocessor;
 		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
-		this.failCumulator = CumulateHolder.newSessionCumulator("TryRedirectAuthenticating", 10_000L);
+		this.failCumulator = CumulateHolder.newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
 	}
 
 	@Override
@@ -318,12 +324,17 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		if (cause instanceof UnauthorizedException) { // Unauthorized error?
 			return config.getUnauthorizedUri();
 		} else { // Unauthenticated or other error.
-			List<String> factors = singletonList(String.valueOf(token.getPrincipal()));
-			// When the IamServer redirects the request, but the
-			// grantTicket validate failed, infinite redirect needs to
-			// be prevented.
-			if ((cause instanceof InvalidGrantTicketException) && failCumulator.accumulate(factors, 1) > 5) {
-				throw new TooManyRequestAuthentcationException(String.format("Too many redirect request authenticating"));
+			/**
+			 * @see {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)#MARK1}
+			 */
+			if (nonNull(token.getPrincipal())) {
+				List<String> factors = singletonList(String.valueOf(token.getPrincipal()));
+				// When the IamServer redirects the request, but the
+				// grantTicket validate failed, infinite redirect needs to
+				// be prevented.
+				if ((cause instanceof InvalidGrantTicketException) && failCumulator.accumulate(factors, 1) > 5) {
+					throw new TooManyRequestAuthentcationException(String.format("Too many redirect request authenticating"));
+				}
 			}
 
 			// Redirect parameters.

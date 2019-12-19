@@ -33,7 +33,6 @@ import com.wl4g.devops.tool.common.serialize.JacksonUtils;
  * @since
  */
 public final class SessionValidityAssertModel extends BaseAssertModel {
-
 	private static final long serialVersionUID = 5483716885382988025L;
 
 	@NotEmpty

@@ -33,7 +33,6 @@ import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
-import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.support.cache.ScanCursor;
 
 /**
@@ -78,29 +77,28 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 			while (cursor.hasNext()) {
 				List<IamSession> activeSessions = cursor.readValues();
 
-				// GrantTicket and session
-				Map<String, Session> tmp = new HashMap<>(activeSessions.size());
+				// Grant ticket of local sessions.
+				Map<String, Session> localSessions = new HashMap<>(activeSessions.size());
 
 				// Wrap to validation assertion
 				SessionValidityAssertModel request = new SessionValidityAssertModel(config.getServiceName());
 				for (IamSession session : activeSessions) {
 					String grantTicket = (String) session.getAttribute(SAVE_GRANT_TICKET);
 					request.getTickets().add(grantTicket);
-					tmp.put(grantTicket, session);
+					localSessions.put(grantTicket, session);
 				}
 
-				// Validation execution
+				// Validation sessions.
 				SessionValidityAssertModel assertion = validator.validate(request);
-				for (String expiredTicket : assertion.getTickets()) {
-					Session session = tmp.get(expiredTicket);
+				for (String deadTicket : assertion.getTickets()) {
+					Session session = localSessions.get(deadTicket);
 					try {
 						sessionDAO.delete(session);
+						if (log.isInfoEnabled()) {
+							log.info("Cleaup expired session on: {}", session.getId());
+						}
 					} catch (Exception e) {
-						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", IamSecurityHolder.getSessionId(session),
-								expiredTicket);
-					}
-					if (log.isInfoEnabled()) {
-						log.info("Cleaup expired session on: {}", IamSecurityHolder.getSessionId(session));
+						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", session.getId(), deadTicket);
 					}
 				}
 			}
