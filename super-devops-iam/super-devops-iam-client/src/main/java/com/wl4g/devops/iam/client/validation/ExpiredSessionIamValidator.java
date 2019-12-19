@@ -51,7 +51,7 @@ public class ExpiredSessionIamValidator
 
 	@Override
 	public SessionValidityAssertModel validate(SessionValidityAssertModel request) throws SessionValidateException {
-		final RespBase<SessionValidityAssertModel> resp = this.doGetRemoteValidate(URI_S_SESSION_VALIDATE, request);
+		final RespBase<SessionValidityAssertModel> resp = doGetRemoteValidate(URI_S_SESSION_VALIDATE, request);
 		if (!RespBase.isSuccess(resp)) {
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
 				throw new InvalidGrantTicketException(String.format("Remote validate error, %s", resp.getMessage()));

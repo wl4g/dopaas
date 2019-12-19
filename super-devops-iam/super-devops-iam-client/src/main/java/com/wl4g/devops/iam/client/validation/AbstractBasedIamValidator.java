@@ -91,7 +91,7 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 		url.append(URI_S_BASE).append("/").append(endpoint).append("?");
 
 		// To request query parameters
-		Map<String, Object> queryParams = new LinkedHashMap<String, Object>() {
+		Map<String, Object> params = new LinkedHashMap<String, Object>() {
 			private static final long serialVersionUID = -7635430767361691087L;
 			{
 				put(config.getParam().getApplication(), req.getApplication());
@@ -99,10 +99,10 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 		};
 
 		// Process URL query parameters
-		postQueryParameterSet(req, queryParams);
+		postQueryParameterSet(req, params);
 
 		// Append parameters to URL
-		url.append(BeanMapConvert.toUriParmaters(queryParams));
+		url.append(BeanMapConvert.toUriParmaters(params));
 		if (log.isInfoEnabled()) {
 			log.info("Ticket validating to: {}", url);
 		}
