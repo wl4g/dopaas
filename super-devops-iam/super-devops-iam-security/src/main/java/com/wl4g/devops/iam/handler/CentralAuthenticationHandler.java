@@ -305,7 +305,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public SessionValidityAssertModel sessionValidate(SessionValidityAssertModel assertion) {
-		hasText(assertion.getApplication(), "'application' cannot not be empty");
+		hasText(assertion.getApplication(), "Validate session params: application can't empty");
 
 		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
 		while (cursor.hasNext()) {
@@ -313,7 +313,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			// GrantTicket by session.
 			GrantTicketInfo info = getGrantTicket(session);
 
-			if (info != null && info.hasApplications()) {
+			if (nonNull(info) && info.hasApplications()) {
 				String savedGrantTicket = info.getApplications().get(assertion.getApplication());
 				// If exist grantTicket with application.
 				if (nonNull(savedGrantTicket)) {

@@ -104,11 +104,9 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 					}
 				}
 			}
-
 		} catch (Exception e) {
 			log.error("Validating expire sessions failed", e);
 		}
-
 	}
 
 }
