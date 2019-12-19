@@ -78,7 +78,7 @@ import static org.springframework.util.Assert.*;
  * @since
  */
 public class CentralAuthenticationHandler extends AbstractAuthenticationHandler {
-	final public static String GRANT_APP_INFO_KEY = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
+	final public static String KEY_GRANTTICKET_INFO = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
 	final public static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
 
 	/**
@@ -243,7 +243,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Represents all logged-out Tags
 		boolean logoutAll = true;
 		// Get bind session grant information
-		GrantTicketInfo grantInfo = getGrantTicket(subject.getSession());
+		GrantTicketInfo grantInfo = getGrantTicketInfo(subject.getSession());
 		if (log.isDebugEnabled()) {
 			log.debug("Get grant information bound the session is [{}]", grantInfo);
 		}
@@ -310,13 +310,13 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
 		while (cursor.hasNext()) {
 			Session session = cursor.next();
-			// GrantTicket by session.
-			GrantTicketInfo info = getGrantTicket(session);
+			// GrantTicket of session.
+			GrantTicketInfo info = getGrantTicketInfo(session);
 
 			if (nonNull(info) && info.hasApplications()) {
 				String savedGrantTicket = info.getApplications().get(assertion.getApplication());
 				// If exist grantTicket with application.
-				if (nonNull(savedGrantTicket)) {
+				if (!isBlank(savedGrantTicket)) {
 					assertion.getTickets().remove(savedGrantTicket);
 				}
 			}
@@ -342,7 +342,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/*
 		 * See:CentralAuthenticationHandler#validate()
 		 */
-		GrantTicketInfo info = getGrantTicket(session);
+		GrantTicketInfo info = getGrantTicketInfo(session);
 		if (Objects.isNull(info)) {
 			info = new GrantTicketInfo();
 		}
@@ -352,7 +352,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			}
 		}
 		// Update grantTicket info and saved.
-		session.setAttribute(GRANT_APP_INFO_KEY, info.addApplications(grantApp, grantTicket));
+		session.setAttribute(KEY_GRANTTICKET_INFO, info.addApplications(grantApp, grantTicket));
 		if (log.isDebugEnabled()) {
 			log.debug("Update grantTicket info to session. {}", info);
 		}
@@ -392,7 +392,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		// Get grant information
-		GrantTicketInfo info = getGrantTicket(subject.getSession());
+		GrantTicketInfo info = getGrantTicketInfo(subject.getSession());
 		if (log.isDebugEnabled()) {
 			log.debug("Got grantTicket info:{} by sessionId:{}", info, getSessionId());
 		}
@@ -418,8 +418,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param session
 	 * @return
 	 */
-	private GrantTicketInfo getGrantTicket(Session session) {
-		return (GrantTicketInfo) session.getAttribute(GRANT_APP_INFO_KEY);
+	private GrantTicketInfo getGrantTicketInfo(Session session) {
+		return (GrantTicketInfo) session.getAttribute(KEY_GRANTTICKET_INFO);
 	}
 
 	/**

@@ -90,15 +90,15 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 		String granticket = EMPTY;
 		try {
 			notNull(token, "'authenticationToken' must not be null");
-			FastCasAuthenticationToken fcToken = (FastCasAuthenticationToken) token;
+			FastCasAuthenticationToken fctk = (FastCasAuthenticationToken) token;
 
 			// Get request flash grant ticket(May be empty)
-			granticket = (String) fcToken.getCredentials();
+			granticket = (String) fctk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
 			TicketValidatedAssertModel<IamPrincipalInfo> assertion = doRequestRemoteTicketValidation(granticket);
 
-			// Assertion ticket.
+			// Grant ticket assertion .
 			assertTicketValidation(assertion);
 
 			/**
@@ -108,7 +108,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			Date validUntilDate = assertion.getValidUntilDate();
 			long maxIdleTimeMs = validUntilDate.getTime() - System.currentTimeMillis();
 			state(maxIdleTimeMs > 0,
-					String.format("Remote authenticated response session expired time:[%s] invalid, maxIdleTimeMs:[%s]",
+					String.format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
 							validUntilDate, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
@@ -118,12 +118,12 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 			// Update settings grant ticket
 			String newGrantTicket = String.valueOf(info.getStoredCredentials());
-			fcToken.setCredentials(newGrantTicket);
+			fctk.setCredentials(newGrantTicket);
 
 			// Attribute of remember
 			String principal = assertion.getPrincipalInfo().getPrincipal();
-			fcToken.setPrincipal(principal);
-			fcToken.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
+			fctk.setPrincipal(principal); // MARK1
+			fctk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
 			if (log.isInfoEnabled()) {
 				log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 			}
