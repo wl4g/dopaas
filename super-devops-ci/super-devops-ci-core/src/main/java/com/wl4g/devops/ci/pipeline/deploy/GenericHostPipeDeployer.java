@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.devops.ci.utils.PipelineUtils.getUnExtensionFilename;
 import static com.wl4g.devops.tool.common.cli.SshUtils.transferFile;
 import static org.springframework.util.Assert.hasText;
 
@@ -57,11 +56,11 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 		// Ensure remote app install dir(parent appHome).
 		createReplaceRemoteDirectory(remoteHost, user, sshkey, getProgramInstallDir());
 
-		// Uncompress remote program.
-		decompressRemoteProgram(remoteHost, user, sshkey);
-
 		// UnInstall older remote executable program.
 		unInstallRemoteOlderProgram(remoteHost, user, sshkey);
+
+		// Uncompress remote program.
+		decompressRemoteProgram(remoteHost, user, sshkey);
 
 		// Install newer executable program.
 		installRemoteNewerProgram(remoteHost, user, sshkey);
@@ -98,7 +97,10 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
-		String localFile = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
+		//String localFile = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
+		//String localFile = config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + getContext().getProject().getProjectName() + ".tar";
+		String localFile = config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + getPrgramInstallFileName() + "." + DEFAULT_FILE_SUFFIX;
+
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, localFile));
 
@@ -181,8 +183,9 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @return
 	 */
 	protected String getPrgramInstallFileName() {
-		String distFilePath = getContext().getProject().getAssetsPath();
-		return getUnExtensionFilename(distFilePath);
+		//String distFilePath = getContext().getProject().getAssetsPath();
+		//return getUnExtensionFilename(distFilePath);
+		return config.getTarFileName(getContext().getAppCluster().getName());
 	}
 
 	/**

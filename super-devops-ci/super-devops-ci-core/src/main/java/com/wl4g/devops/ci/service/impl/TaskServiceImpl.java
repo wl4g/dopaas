@@ -19,7 +19,6 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskDao;
@@ -27,7 +26,6 @@ import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -146,15 +144,6 @@ public class TaskServiceImpl implements TaskService {
 		Map data = new HashMap();
 		Task task = getTaskDetailById(id);
 		data.put("task", task);
-		// Environment.
-		for (TaskInstance taskInstance : task.getTaskInstances()) {
-			Integer instanceId = taskInstance.getInstanceId();
-			AppInstance instance = appInstanceDao.selectByPrimaryKey(instanceId);
-			if (instance != null && instance.getEnvType() != null) {
-				data.put("envId", instance.getEnvType());
-				break;
-			}
-		}
 		// Instances.
 		Integer[] instances = new Integer[task.getTaskInstances().size()];
 		for (int i = 0; i < task.getTaskInstances().size(); i++) {

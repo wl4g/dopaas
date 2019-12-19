@@ -19,10 +19,9 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
-import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
-import static org.springframework.util.StringUtils.getFilename;
-
 import java.io.File;
+
+import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 
 /**
  * Based physical disk backups pipeline provider.
@@ -44,10 +43,10 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 	 */
 	protected void rollbackBackupAssets() throws Exception {
 		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
-		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath()
-				+ getFilename(getContext().getProject().getAssetsPath());
-
-		String target = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
+		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
+		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath() + tarFileName;
+		String assetsPathTotal = config.getAssetsPathTotal(getContext().getProject().getAssetsPath(), getContext().getAppCluster().getName());
+		String target = getContext().getProjectSourceDir() + assetsPathTotal;
 		String command = "cp -Rf " + backupPath + " " + target;
 		// TODO timeoutMs/jobLogFile?
 		File jobLogFile = config.getJobLog(taskHisRefId);
@@ -65,9 +64,10 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 	 */
 	protected void handleBackupAssets() throws Exception {
 		Integer taskHisId = getContext().getTaskHistory().getId();
-		String targetPath = getContext().getProjectSourceDir() + "/" + getContext().getProject().getAssetsPath();
-		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/"
-				+ getFilename(getContext().getProject().getAssetsPath());
+		String assetsPathTotal = config.getAssetsPathTotal(getContext().getProject().getAssetsPath(), getContext().getAppCluster().getName());
+		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
+		String targetPath = getContext().getProjectSourceDir() + assetsPathTotal;
+		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/" + tarFileName;
 		// Ensure backup directory.
 		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
 
