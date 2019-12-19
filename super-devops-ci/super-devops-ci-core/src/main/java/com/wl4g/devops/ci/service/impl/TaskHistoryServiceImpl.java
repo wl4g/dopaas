@@ -100,9 +100,13 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
-		if(Objects.nonNull(IamSecurityHolder.getPrincipalInfo())&& StringUtils.hasText(IamSecurityHolder.getPrincipalInfo().getPrincipalId())){
-			Integer principalId = Integer.valueOf(IamSecurityHolder.getPrincipalInfo().getPrincipalId());
-			taskHistory.setCreateBy(principalId);
+		try{
+			if(Objects.nonNull(IamSecurityHolder.getPrincipalInfo())&& StringUtils.hasText(IamSecurityHolder.getPrincipalInfo().getPrincipalId())){
+				Integer principalId = Integer.valueOf(IamSecurityHolder.getPrincipalInfo().getPrincipalId());
+				taskHistory.setCreateBy(principalId);
+			}
+		}catch (Exception e){
+
 		}
 		taskHistory.setType(type);
 		taskHistory.setProjectId(project.getId());
