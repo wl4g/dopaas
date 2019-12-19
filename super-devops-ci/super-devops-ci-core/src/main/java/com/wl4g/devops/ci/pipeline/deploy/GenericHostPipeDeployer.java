@@ -179,13 +179,11 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 
 	/**
 	 * Get project program install file name.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getPrgramInstallFileName() {
-		//String distFilePath = getContext().getProject().getAssetsPath();
-		//return getUnExtensionFilename(distFilePath);
-		return config.getTarFileName(getContext().getAppCluster().getName());
+		return config.getPrgramInstallFileName(getContext().getAppCluster().getName());
 	}
 
 	/**
