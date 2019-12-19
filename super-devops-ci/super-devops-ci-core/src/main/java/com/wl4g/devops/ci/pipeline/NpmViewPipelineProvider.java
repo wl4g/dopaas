@@ -24,6 +24,7 @@ import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 
@@ -131,7 +132,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		Project project = getContext().getProject();
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
+		String buildCommand = "cd " + projectDir + "\nrm -Rf dist\nnpm install\nnpm run build\n";
 		// Execution command.
 		// TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, 300000L)
@@ -144,13 +145,16 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 	 */
 	private void pkg() throws Exception {
 		Project project = getContext().getProject();
+		String appClusterName = getContext().getAppCluster().getName();
+		String prgramInstallFileName = getPrgramInstallFileName();
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
 		// tar
-		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
-				+ config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
+		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *"
+				,projectDir,prgramInstallFileName,prgramInstallFileName,prgramInstallFileName
+				,config.getJobBackup(getContext().getTaskHistory().getId()),prgramInstallFileName);
 		// Execution command.
 		// TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
@@ -166,6 +170,12 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
+	}
+
+	protected String getPrgramInstallFileName() {
+		//String distFilePath = getContext().getProject().getAssetsPath();
+		//return getUnExtensionFilename(distFilePath);
+		return config.getTarFileName(getContext().getAppCluster().getName());
 	}
 
 }
