@@ -184,7 +184,7 @@ public class IamSession implements ValidatingSession, Serializable {
 
 	@Override
 	public Date getLastAccessTime() {
-		return isNull(lastAccessTime)? getStartTimestamp():lastAccessTime;
+		return isNull(lastAccessTime) ? getStartTimestamp() : lastAccessTime;
 	}
 
 	public void setLastAccessTime(Date lastAccessTime) {
@@ -451,7 +451,7 @@ public class IamSession implements ValidatingSession, Serializable {
 		return (getStartTimestamp() != null ? getStartTimestamp().equals(ss.getStartTimestamp()) : ss.getStartTimestamp() == null)
 				&& (getStopTimestamp() != null ? getStopTimestamp().equals(ss.getStopTimestamp()) : ss.getStopTimestamp() == null)
 				&& (getLastAccessTime() != null ? getLastAccessTime().equals(ss.getLastAccessTime())
-				: ss.getLastAccessTime() == null)
+						: ss.getLastAccessTime() == null)
 				&& (getTimeout() == ss.getTimeout()) && (isExpired() == ss.isExpired())
 				&& (getHost() != null ? getHost().equals(ss.getHost()) : ss.getHost() == null)
 				&& (getAttributes() != null ? getAttributes().equals(ss.getAttributes()) : ss.getAttributes() == null);
