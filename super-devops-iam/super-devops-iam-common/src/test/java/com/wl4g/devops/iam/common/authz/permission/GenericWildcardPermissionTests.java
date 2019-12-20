@@ -26,55 +26,68 @@ public class GenericWildcardPermissionTests {
 		test6();
 		test7();
 		test8();
+		test9();
+		test10();
 	}
 
 	public static void test1(){
 		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:list");
 		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci");
-		System.out.println("test1="+define1.implies(own1));//false
+		System.out.println("test1="+own1.implies(define1));//false
 	}
 
 	public static void test2(){
 		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:task");
 		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci:task");
-		System.out.println("test2="+define1.implies(own1));//false
+		System.out.println("test2="+own1.implies(define1));//false
 	}
 
 	public static void test3(){
 		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci");
 		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci,ci:task");
-		System.out.println("test3="+define1.implies(own1));//true
+		System.out.println("test3="+own1.implies(define1));//true
 	}
 
 	public static void test4(){
 		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci:task");
 		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci");
-		System.out.println("test4="+define1.implies(own1));//false
+		System.out.println("test4="+own1.implies(define1));//false
 	}
 
 	public static void test5(){
 		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:*");
 		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci,ci:task");
-		System.out.println("test5="+define1.implies(own1));//true
+		System.out.println("test5="+own1.implies(define1));//true
 	}
 
 	public static void test6(){
-		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci*");//TODO check
+		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci*");//TODO unsuppost can not contain *
 		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci");
-		System.out.println("test6="+define1.implies(own1));//false
+		System.out.println("test6="+own1.implies(define1));//false
 	}
 
 	public static void test7(){
-		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:**");//TODO supper
+		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:**");
 		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci,ci:task:list");
-		System.out.println("test7="+define1.implies(own1));//false
-		//TODO s=nosuppost ci:**:list , ci:*:list
+		System.out.println("test7="+own1.implies(define1));//true
 	}
 
 	public static void test8(){
-		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:task2");
-		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci,ci:task");
-		System.out.println("test8="+define1.implies(own1));//false
+		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:*:*");//TODO unsuppost ,  just one *
+		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci,ci:task:list");
+		System.out.println("test8="+own1.implies(define1));//false
+	}
+
+	public static void test9(){
+		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,ci:*");
+		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci");
+		System.out.println("test9="+own1.implies(define1));//false
+	}
+
+	public static void test10(){
+		EnhancedWildcardPermission define1 = new EnhancedWildcardPermission("ci,**:ci");//TODO unsuppost ,  just suppost at last
+		EnhancedWildcardPermission own1 = new EnhancedWildcardPermission("ci,ci:task:list");
+		System.out.println("test10="+own1.implies(define1));//false
 	}
 
 
