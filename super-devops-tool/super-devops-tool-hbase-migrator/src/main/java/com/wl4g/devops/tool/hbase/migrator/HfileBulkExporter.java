@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.hbase.migrate;
+package com.wl4g.devops.tool.hbase.migrator;
 
-import static com.google.common.io.Resources.*;
-import static com.wl4g.devops.tool.hbase.migrate.mapred.AbstractTransformHfileMapper.*;
+import static com.wl4g.devops.tool.hbase.migrator.mapred.AbstractTransformHfileMapper.*;
+
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 import com.wl4g.devops.tool.common.lang.Assert;
-import com.wl4g.devops.tool.hbase.migrate.mapred.NothingTransformMapper;
+import com.wl4g.devops.tool.common.resources.resolver.PatternMatchingResourceResolver;
+import com.wl4g.devops.tool.hbase.migrator.mapred.NothingTransformMapper;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.ClassUtils;
@@ -65,6 +66,7 @@ public class HfileBulkExporter {
 	final public static String DEFAULT_HBASE_MR_TMPDIR = "/tmp-devops/tmpdir";
 	final public static String DEFAULT_HFILE_OUTPUT_DIR = "/tmp-devops/outputdir";
 	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
+	final public static String DEFAULT_USER = "hbase";
 	final public static String DEFAULT_MAPPER_CLASS = NothingTransformMapper.class.getName();
 
 	/**
@@ -84,7 +86,8 @@ public class HfileBulkExporter {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
-		System.out.println(Resources.toString(getResource(HfileBulkExporter.class, "banner.txt"), Charsets.UTF_8));
+		System.out.println(Resources.toString(new PatternMatchingResourceResolver().getResource("classpath:banner.txt").getURL(),
+				Charsets.UTF_8));
 
 		Builder builder = new Builder();
 		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
@@ -98,10 +101,12 @@ public class HfileBulkExporter {
 		builder.option("e", "endRow", false, "Scan end rowkey.");
 		builder.option("S", "startTime", false, "Scan start timestamp.");
 		builder.option("E", "endTime", false, "Scan end timestamp.");
+		builder.option("u", "user", false, "User name used for scan check (default: hbase)");
 		CommandLine line = builder.build(args);
 
 		// Configuration.
 		String tabname = line.getOptionValue("tabname");
+		String user = line.getOptionValue("user");
 		Configuration conf = new Configuration();
 		conf.set("hbase.zookeeper.quorum", line.getOptionValue("zkaddr"));
 		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR));
@@ -110,7 +115,7 @@ public class HfileBulkExporter {
 
 		// Check directory.
 		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
-		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), "root"); // TODO user???
+		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), user);
 		Assert.state(!fs.exists(new Path(outputDir)),
 				String.format("HDFS temporary directory already has data, path: '%s'", outputDir));
 

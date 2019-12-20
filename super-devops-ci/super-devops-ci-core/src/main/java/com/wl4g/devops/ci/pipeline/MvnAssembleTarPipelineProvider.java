@@ -38,7 +38,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	public void execute() throws Exception {
-		// Building maven(dependencies)
+		// Building maven of modules dependencies.
 		buildModular(false);
 
 		// Setup Vcs source fingerprint.
@@ -76,9 +76,10 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	 */
 	private void doMvnBuildInternal() throws Exception {
 		// Setup assets file fingerprint.
-		String assetsPathTotal = config.getAssetsPathTotal(getContext().getProject().getAssetsPath(), getContext().getAppCluster().getName());
+		String assetsPathTotal = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
+				getContext().getAppCluster().getName());
 		File file = new File(getContext().getProjectSourceDir() + assetsPathTotal);
-		if(file.exists()){
+		if (file.exists()) {
 			setupAssetsFingerprint(getMd5Fingerprint(file));
 		}
 

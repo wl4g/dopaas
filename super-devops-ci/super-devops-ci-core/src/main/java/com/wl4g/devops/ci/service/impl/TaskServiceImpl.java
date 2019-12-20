@@ -23,7 +23,6 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
-import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
 import org.apache.commons.lang3.StringUtils;
@@ -57,22 +56,17 @@ public class TaskServiceImpl implements TaskService {
 	private DependencyService dependencyService;
 	@Autowired
 	private TaskBuildCommandDao taskBuildCommandDao;
-	@Autowired
-	private AppInstanceDao appInstanceDao;
 
 	@Override
 	@Transactional
 	public Task save(Task task) {
-		// check task repeat
-		// Assert.state(!isRepeat(task, task.getInstance()), "trigger deploy
-		// this instance is Repeat,please check");
 		Assert.notEmpty(task.getInstance(), "instance can not be null");
 		Assert.notNull(task, "task can not be null");
 		Project project = projectDao.getByAppClusterId(task.getAppClusterId());
 		Assert.notNull(project, "Not found project , Please check you project config");
+		task.setProjectId(project.getId());
 		// TODO filter command
 
-		task.setProjectId(project.getId());
 		if (null != task.getId() && task.getId() > 0) {
 			task.preUpdate();
 			task = update(task, task.getInstance(), task.getTaskBuildCommands());
@@ -90,7 +84,7 @@ public class TaskServiceImpl implements TaskService {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
 		}
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(taskDao.list(id, taskName, groupName, branchName, providerKind, startDate, endDateStr,envType));
+		pm.setRecords(taskDao.list(id, taskName, groupName, branchName, providerKind, startDate, endDateStr, envType));
 		return pm;
 	}
 

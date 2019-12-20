@@ -45,8 +45,10 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String backupPath = config.getJobBackup(taskHisRefId).getAbsolutePath() + tarFileName;
-		String assetsPathTotal = config.getAssetsPathTotal(getContext().getProject().getAssetsPath(), getContext().getAppCluster().getName());
+		String assetsPathTotal = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
+				getContext().getAppCluster().getName());
 		String target = getContext().getProjectSourceDir() + assetsPathTotal;
+
 		String command = "cp -Rf " + backupPath + " " + target;
 		// TODO timeoutMs/jobLogFile?
 		File jobLogFile = config.getJobLog(taskHisRefId);
@@ -64,7 +66,8 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 	 */
 	protected void handleBackupAssets() throws Exception {
 		Integer taskHisId = getContext().getTaskHistory().getId();
-		String assetsPathTotal = config.getAssetsPathTotal(getContext().getProject().getAssetsPath(), getContext().getAppCluster().getName());
+		String assetsPathTotal = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
+				getContext().getAppCluster().getName());
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String targetPath = getContext().getProjectSourceDir() + assetsPathTotal;
 		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/" + tarFileName;

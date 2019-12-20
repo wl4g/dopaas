@@ -13,24 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.resources;
+package com.wl4g.devops.tool.hbase.migrator;
 
-import com.wl4g.devops.tool.common.resources.ClassResourceMatchResovlerUtils;
-
-public class ClassResourceMatchingTests {
+public class HfileBulkExporterTests {
 
 	public static void main(String[] args) {
-		// String locationPattern = "org.xerial.snappy";
-		String locationPattern = "com.wl4g.devops.tool.common";
-		ClassResourceMatchResovlerUtils.doSearch(locationPattern, null, (type, classLoader, pathname) -> {
-			try {
-				System.out.println(pathname);
-				// InputStream in = classLoader.getResourceAsStream(pathname);
-				// System.out.println(in.available());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}, null);
+
 	}
 
 }

@@ -106,7 +106,8 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 					// stderr redirected? (e.g: mvn install >/mvn.out 2>&1)
 					// and will not get the message.
 					if ((cmd instanceof LocalDestroableCommand) && ((LocalDestroableCommand) cmd).hasStderr()) {
-						errmsg = "Failed to exec command, error message refer to: " + ((LocalDestroableCommand) cmd).getStderr();
+						errmsg = String.format("Failed to exec command, more error info refer to: '%s'",
+								((LocalDestroableCommand) cmd).getStderr());
 					} else {
 						errmsg = readFullyToString(dpw.getStderr());
 					}

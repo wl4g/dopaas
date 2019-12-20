@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.client.session.mgt;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -93,9 +95,11 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 				for (String deadTicket : assertion.getTickets()) {
 					Session session = localSessions.get(deadTicket);
 					try {
-						sessionDAO.delete(session);
-						if (log.isInfoEnabled()) {
-							log.info("Cleaup expired session on: {}", session.getId());
+						if (nonNull(session)) {
+							sessionDAO.delete(session);
+							if (log.isInfoEnabled()) {
+								log.info("Cleaup expired session on: {}", session.getId());
+							}
 						}
 					} catch (Exception e) {
 						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", session.getId(), deadTicket);

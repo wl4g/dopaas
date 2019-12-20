@@ -8,6 +8,6 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface AnalysisHistoryService {
 
-    PageModel list(PageModel pm);
+	PageModel list(PageModel pm);
 
 }
