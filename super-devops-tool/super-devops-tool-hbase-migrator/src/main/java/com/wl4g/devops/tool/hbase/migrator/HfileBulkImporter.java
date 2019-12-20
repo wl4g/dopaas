@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.hbase.migrate;
+package com.wl4g.devops.tool.hbase.migrator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.logging.Log;
@@ -28,7 +28,10 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
+import com.wl4g.devops.tool.common.resources.resolver.PatternMatchingResourceResolver;
 
 /**
  * HASE hfile bulk importer.
@@ -55,6 +58,9 @@ public class HfileBulkImporter {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
+		System.out.println(Resources.toString(new PatternMatchingResourceResolver().getResource("classpath:banner.txt").getURL(),
+				Charsets.UTF_8));
+
 		CommandLine line = new Builder().option("z", "zkaddr", true, "Zookeeper address.")
 				.option("t", "tabname", true, "Hbase table name.")
 				.option("p", "path", true, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air")

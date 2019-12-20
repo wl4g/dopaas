@@ -385,8 +385,8 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		 * When a browser request or display specifies that cookies need to
 		 * saved.
 		 */
-		boolean sidSaved = isTrue(request, config.getParam().getSidSaveCookie());
-		if (isBrowser(toHttp(request)) || sidSaved || !isJSONResponse(toHttp(request))) {
+		boolean isSidSave = isTrue(request, config.getParam().getSidSaveCookie());
+		if (isSidSave || isBrowser(toHttp(request)) || !isJSONResponse(toHttp(request))) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
 			cookie.setValue(String.valueOf(sessionId));
 

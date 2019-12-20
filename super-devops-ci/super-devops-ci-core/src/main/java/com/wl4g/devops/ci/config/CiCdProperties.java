@@ -40,7 +40,16 @@ public class CiCdProperties implements InitializingBean {
 	final public static String DEFUALT_JOB_BASEDIR = "jobs";
 	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
 
+	/**
+	 * The default version number(alias), which is used for pipeline
+	 * construction of production installation package
+	 */
 	final public static String DEFUALT_VERSION = "master";
+
+	/**
+	 * Default pipeline build production installation package type.(e.g.
+	 * portal-master-bin.tar)
+	 */
 	final public static String DEFUALT_ASSETS_TYPE = "bin";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
@@ -277,6 +286,13 @@ public class CiCdProperties implements InitializingBean {
 		return getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix;
 	}
 
+	/**
+	 * e.g. </br>
+	 * portal-master-bin
+	 * 
+	 * @param clusterName
+	 * @return
+	 */
 	public String getPrgramInstallFileName(String clusterName) {
 		return String.format("%s-%s-%s", clusterName, DEFUALT_VERSION, DEFUALT_ASSETS_TYPE);
 	}
@@ -285,8 +301,8 @@ public class CiCdProperties implements InitializingBean {
 		return String.format("%s-%s-%s.tar", clusterName, DEFUALT_VERSION, DEFUALT_ASSETS_TYPE);
 	}
 
-	public String getAssetsPathTotal(String assetsPath, String clusterName) {
-		return assetsPath + "/" + getPrgramInstallFileName(clusterName)+".tar";
+	public String getAssetsFullFilename(String assetsPath, String clusterName) {
+		return assetsPath + "/" + getPrgramInstallFileName(clusterName) + ".tar";
 	}
 
 }

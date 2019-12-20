@@ -43,7 +43,6 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
  * @since
  */
 public class NodeProcessManagerImpl extends GenericProcessManager {
-
 	final public static long DEFAULT_MIN_WATCH_MS = 2_00L;
 	final public static long DEFAULT_MAX_WATCH_MS = 2_000L;
 	/** Default destruction signal expired seconds. */

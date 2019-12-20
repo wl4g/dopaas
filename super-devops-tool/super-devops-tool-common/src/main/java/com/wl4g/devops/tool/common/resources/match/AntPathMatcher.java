@@ -1,4 +1,12 @@
-/*
+package com.wl4g.devops.tool.common.resources.match;
+
+/**
+ * Retention of upstream license agreement statement:</br>
+ * Thank you very much spring framework, We fully comply with and support the open license
+ * agreement of spring. The purpose of migration is to solve the problem
+ * that these elegant API programs can still be easily used without running
+ * in the spring environment.
+ * </br>
  * Copyright 2002-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +21,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.resources;
-
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Comparator;
@@ -80,7 +86,7 @@ import com.wl4g.devops.tool.common.lang.StringUtils2;
  * @since 16.07.2003
  * @see {@link org.springframework.util.AntPathMatcher}
  */
-public class AntPathMatcher {
+public class AntPathMatcher implements PathMatcher {
 
 	/** Default path separator: "/" */
 	public static final String DEFAULT_PATH_SEPARATOR = "/";

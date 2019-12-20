@@ -74,18 +74,19 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Build of dependencies sub-modules.
 		for (Dependency depd : dependencies) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback, depCmd);
+			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
+					depCmd);
 		}
 
 		// Build for primary(self).
-		doBuildModuleInDependencies(taskHisy.getProjectId(), null, taskHisy.getBranchName(), false, isRollback,
+		doMutexBuildModuleInDependencies(taskHisy.getProjectId(), null, taskHisy.getBranchName(), false, isRollback,
 				taskHisy.getBuildCommand());
 	}
 
 	// --- Dependencies. ---
 
 	/**
-	 * Extract dependency project custom command.
+	 * Extract dependencies project customzation command.
 	 * 
 	 * @param buildCommands
 	 * @param projectId
@@ -103,7 +104,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	}
 
 	/**
-	 * Building module in dependencies.
+	 * Building module in dependencies with mutex.
 	 * 
 	 * @param projectId
 	 * @param dependencyId
@@ -113,11 +114,11 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+	private void doMutexBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
-		if (lock.tryLock()) { // Dependency build idle?
+		if (lock.tryLock()) { // Dependency build wait?
 			try {
 				updatingSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} catch (Exception e) {
@@ -235,8 +236,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
 			// Resolve placeholder variables.
 			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
-			// Execute shell file.
-			// TODO timeoutMs?
+
+			// Execute shell file. TODO timeoutMs?
 			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile,
 					300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 			pm.execWaitForComplete(cmd);

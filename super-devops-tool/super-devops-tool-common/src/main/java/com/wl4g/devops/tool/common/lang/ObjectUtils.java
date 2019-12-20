@@ -38,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Chris Beams
  * @author Sam Brannen
  * @since 19.03.2004
- * @see ClassUtils
+ * @see ClassUtils2
  * @see CollectionUtils
  * @see StringUtils
  * @see {@link org.apache.commons.lang3.ObjectUtils}
