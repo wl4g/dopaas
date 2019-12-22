@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2050 the original author or authors <Wanglsir@gmail.com, 983708408@qq.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,16 +57,16 @@ public final class OpenCvNativeLibraryLoader {
 		if (isLoaded.compareAndSet(false, true)) {
 			try {
 				if (IS_OS_WINDOWS) {
-					loadLibrarys0(BASE_PATH + "/windows/" + getArchPath());
+					loadLibrarys0(BASE_PATH + "/windows/" + getArchSpec());
 				} else if (IS_OS_LINUX) {
-					loadLibrarys0(BASE_PATH + "/linux/" + getArchPath());
+					loadLibrarys0(BASE_PATH + "/linux/" + getArchSpec());
 				} else {
 					throw new IllegalComponentStateException(
 							String.format("The native library of platform %s is not supported temporarily", OS_NAME));
 				}
 			} catch (Exception e) {
 				throw new IllegalStateException(
-						String.format("Failed to load OpenCv native library. \nCaused by:%s", e.getMessage()), e);
+						String.format("Failed to load OpenCv native library. \nCaused by: %s", e.getMessage()), e);
 			}
 		}
 	}
@@ -86,7 +86,8 @@ public final class OpenCvNativeLibraryLoader {
 		String[] files = new File(baseUrl.toURI())
 				.list((dir, name) -> endsWithAny(name.toLowerCase(), ".dll", ".so", ".a", ".jnilib"));
 		if (isNull(files) || files.length <= 0) {
-			throw new IllegalComponentStateException(String.format("Unsupported Current OS arch(%s) of OpenCv-java", OS_ARCH));
+			throw new IllegalComponentStateException(
+					String.format("Unsupported Current OS arch(%s) of OpenCv-java", OS_ARCH));
 		}
 		for (String fname : files) {
 			System.load(new URL(baseUrl.toString() + "/" + fname).getFile());
@@ -97,11 +98,11 @@ public final class OpenCvNativeLibraryLoader {
 	}
 
 	/**
-	 * Get OS is arch name as path spec.
+	 * Get OS is arch name as path specification.
 	 * 
 	 * @return
 	 */
-	private final static String getArchPath() {
+	private final static String getArchSpec() {
 		if (equalsAnyIgnoreCase(OS_ARCH, "x64", "amd64", "x86_64", "ppc64", "ppc64le", "aarch64")) {
 			return "x64";
 		}
