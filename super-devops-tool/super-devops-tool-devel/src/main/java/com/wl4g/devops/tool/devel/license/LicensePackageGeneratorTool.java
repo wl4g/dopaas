@@ -120,7 +120,7 @@ public final class LicensePackageGeneratorTool {
 		pathPane.add(txtPath, BorderLayout.CENTER);
 		JButton btnSelectPath = new JButton("Browser...");
 		btnSelectPath.addActionListener(e -> {
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser(SystemUtils.USER_DIR);
 			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			int returnVal = chooser.showOpenDialog(frame);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
