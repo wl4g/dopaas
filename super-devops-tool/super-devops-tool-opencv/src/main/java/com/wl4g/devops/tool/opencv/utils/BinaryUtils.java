@@ -38,7 +38,8 @@ public class BinaryUtils {
 	/**
 	 * 图像二值化 阀值自适应确定
 	 *
-	 * @param src Mat矩阵图像
+	 * @param src
+	 *            Mat矩阵图像
 	 * @return
 	 */
 	public static Mat binaryzation(Mat src) {
@@ -52,8 +53,10 @@ public class BinaryUtils {
 	/**
 	 * 图像二值化
 	 *
-	 * @param src Mat矩阵图像
-	 * @param b   [true/false] true：表示白底黑字，false表示黑底白字
+	 * @param src
+	 *            Mat矩阵图像
+	 * @param b
+	 *            [true/false] true：表示白底黑字，false表示黑底白字
 	 * @return
 	 */
 	public static Mat binaryzation(Mat src, boolean b) {
@@ -67,8 +70,10 @@ public class BinaryUtils {
 	/**
 	 * 图像二值化
 	 *
-	 * @param src       Mat矩阵图像
-	 * @param threshold 阀值
+	 * @param src
+	 *            Mat矩阵图像
+	 * @param threshold
+	 *            阀值
 	 * @return
 	 */
 	public static Mat binaryzation(Mat src, int threshold) {
@@ -81,9 +86,12 @@ public class BinaryUtils {
 	/**
 	 * 图像二值化
 	 *
-	 * @param src       Mat矩阵图像
-	 * @param threshold 阀值
-	 * @param b         [true/false] true：表示白底黑字，false表示黑底白字
+	 * @param src
+	 *            Mat矩阵图像
+	 * @param threshold
+	 *            阀值
+	 * @param b
+	 *            [true/false] true：表示白底黑字，false表示黑底白字
 	 * @return
 	 */
 	public static Mat binaryzation(Mat src, int threshold, boolean b) {
@@ -125,7 +133,8 @@ public class BinaryUtils {
 	/**
 	 * 作用：自适应选取阀值
 	 *
-	 * @param src Mat矩阵图像
+	 * @param src
+	 *            Mat矩阵图像
 	 * @return
 	 */
 	public static int getAdapThreshold(Mat src) {
@@ -180,20 +189,15 @@ public class BinaryUtils {
 		for (int i = 0; i < width; i++) {
 			Mat partMat = src.col(i);
 			int thresold = getAdapThreshold(partMat);
-			int black_num = 0, white_num = 0;
-
 			for (int j = 0; j < height; j++) {
 				value = GeneralUtils.getPixel(src, j, i);
 				if (value > thresold) {
 					GeneralUtils.setPixel(src, j, i, GeneralUtils.getWHITE());
-					white_num++;
 				} else {
 					GeneralUtils.setPixel(src, j, i, GeneralUtils.getBLACK());
-					black_num++;
 				}
 			}
 		}
-
 		return src;
 	}
 

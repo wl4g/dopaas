@@ -33,7 +33,8 @@ public class ResizeUtils {
 	/**
 	 * 把图片归一化到相同的大小
 	 *
-	 * @param src Mat矩阵对象
+	 * @param src
+	 *            Mat矩阵对象
 	 * @return
 	 */
 	public static Mat resize(Mat src) {
@@ -212,8 +213,8 @@ public class ResizeUtils {
 			return true;
 		}
 
-//        //大矩形的面积
-//        double maxArea = maxRect.boundingRect().area();
+		// //大矩形的面积
+		// double maxArea = maxRect.boundingRect().area();
 		// 小矩形的面积
 		double area = rect.boundingRect().area();
 

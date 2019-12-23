@@ -43,8 +43,8 @@ public class WarpPerspectiveUtils {
 		List<Point> listSrcs = Arrays.asList(points[0], points[1], points[2], points[3]);
 		Mat srcPoints = Converters.vector_Point_to_Mat(listSrcs, CvType.CV_32F);
 
-		List<Point> listDsts = Arrays.asList(new Point(0, 0), new Point(src.width(), 0),
-				new Point(src.width(), src.height()), new Point(0, src.height()));
+		List<Point> listDsts = Arrays.asList(new Point(0, 0), new Point(src.width(), 0), new Point(src.width(), src.height()),
+				new Point(0, src.height()));
 
 		Mat dstPoints = Converters.vector_Point_to_Mat(listDsts, CvType.CV_32F);
 

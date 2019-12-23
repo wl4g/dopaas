@@ -1,6 +1,5 @@
 package com.wl4g.devops.tool.opencv;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
@@ -11,20 +10,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
+import com.google.common.io.Resources;
 import com.wl4g.devops.tool.opencv.library.OpenCvNativeLibraryLoader;
 
-/**
- * 
- * @Title: Image.java
- * @Description: OpenCV-4.0.0 测试文件
- * @Package com.xu.test
- * @author: xuhyacinth
- * @date: 2019年5月7日12:13:13
- * @version: V-1.0.0
- * @Copyright: 2019 xuhyacinth
- *
- */
-public class Image {
+public class VideoFaceTests {
 
 	static {
 		OpenCvNativeLibraryLoader.loadLibrarys();
@@ -61,14 +50,15 @@ public class Image {
 	 * OpenCV-4.0.0 人脸识别
 	 * 
 	 * @date: 2019年5月7日12:16:55
-	 * @param image 待处理Mat图片(视频中的某一帧)
+	 * @param image
+	 *            待处理Mat图片(视频中的某一帧)
 	 * @return 处理后的图片
 	 * 
 	 */
 	public static Mat getFace(Mat image) {
 		// 1 读取OpenCV自带的人脸识别特征XML文件
 		CascadeClassifier facebook = new CascadeClassifier(
-				"E:\\OpenCV-4.0.0\\sources\\data\\haarcascades\\haarcascade_frontalface_alt.xml");
+				Resources.getResource("com/wl4g/devops/tool/opencv/haarcascade_frontalface_alt.xml").getPath());
 		// 2 特征匹配类
 		MatOfRect face = new MatOfRect();
 		// 3 特征匹配

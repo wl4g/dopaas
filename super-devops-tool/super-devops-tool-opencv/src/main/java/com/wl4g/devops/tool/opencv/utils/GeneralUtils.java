@@ -35,7 +35,8 @@ public class GeneralUtils {
 	/**
 	 * 作用：输入图像路径，返回mat矩阵
 	 *
-	 * @param imgPath 图像路径
+	 * @param imgPath
+	 *            图像路径
 	 * @return
 	 */
 	public static Mat matFactory(String imgPath) {
@@ -45,7 +46,8 @@ public class GeneralUtils {
 	/**
 	 * 作用：输入图像Mat矩阵对象，返回图像的宽度
 	 *
-	 * @param src Mat矩阵图像
+	 * @param src
+	 *            Mat矩阵图像
 	 * @return
 	 */
 	public static int getImgWidth(Mat src) {
@@ -55,7 +57,8 @@ public class GeneralUtils {
 	/**
 	 * 作用：输入图像Mat矩阵，返回图像的高度
 	 *
-	 * @param src Mat矩阵图像
+	 * @param src
+	 *            Mat矩阵图像
 	 * @return
 	 */
 	public static int getImgHeight(Mat src) {
@@ -65,9 +68,12 @@ public class GeneralUtils {
 	/**
 	 * 作用：获取图像(y,x)点的像素，我们只针对单通道(灰度图)
 	 *
-	 * @param src Mat矩阵图像
-	 * @param y   y坐标轴
-	 * @param x   x坐标轴
+	 * @param src
+	 *            Mat矩阵图像
+	 * @param y
+	 *            y坐标轴
+	 * @param x
+	 *            x坐标轴
 	 * @return
 	 */
 	public static int getPixel(Mat src, int y, int x) {
@@ -77,10 +83,14 @@ public class GeneralUtils {
 	/**
 	 * 作用：设置图像(y,x)点的像素，我们只针对单通道(灰度图)
 	 *
-	 * @param src   Mat矩阵图像
-	 * @param y     y坐标轴
-	 * @param x     x坐标轴
-	 * @param color 颜色值[0-255]
+	 * @param src
+	 *            Mat矩阵图像
+	 * @param y
+	 *            y坐标轴
+	 * @param x
+	 *            x坐标轴
+	 * @param color
+	 *            颜色值[0-255]
 	 */
 	public static void setPixel(Mat src, int y, int x, int color) {
 		src.put(y, x, color);
@@ -89,8 +99,10 @@ public class GeneralUtils {
 	/**
 	 * 作用：保存图像
 	 *
-	 * @param src      Mat矩阵图像
-	 * @param filePath 要保存图像的路径及名字
+	 * @param src
+	 *            Mat矩阵图像
+	 * @param filePath
+	 *            要保存图像的路径及名字
 	 * @return
 	 */
 	public static boolean saveImg(Mat src, String filePath) {
@@ -101,7 +113,8 @@ public class GeneralUtils {
 	 * 确保白底黑字或者黑底白字
 	 * 
 	 * @param src
-	 * @param b   true：表示白底黑字 ， false相反
+	 * @param b
+	 *            true：表示白底黑字 ， false相反
 	 * @return
 	 */
 	public static Mat turnPixel(Mat src, boolean b) {
@@ -137,7 +150,8 @@ public class GeneralUtils {
 	/**
 	 * 作用：翻转图像像素
 	 *
-	 * @param src Mat矩阵图像
+	 * @param src
+	 *            Mat矩阵图像
 	 * @return
 	 */
 	public static Mat turnPixel(Mat src) {
@@ -169,15 +183,15 @@ public class GeneralUtils {
 		Mat structImage = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2));
 
 		/**
-		 * 图像腐蚀 腐蚀说明： 图像的一部分区域与指定的核进行卷积， 求核的最`小`值并赋值给指定区域。 腐蚀可以理解为图像中`高亮区域`的'领域缩小'。
-		 * 意思是高亮部分会被不是高亮部分的像素侵蚀掉，使高亮部分越来越少。
+		 * 图像腐蚀 腐蚀说明： 图像的一部分区域与指定的核进行卷积， 求核的最`小`值并赋值给指定区域。
+		 * 腐蚀可以理解为图像中`高亮区域`的'领域缩小'。 意思是高亮部分会被不是高亮部分的像素侵蚀掉，使高亮部分越来越少。
 		 */
 		Imgproc.erode(src, outImage, structImage, new Point(-1, -1), 2);
 		src = outImage;
 
 		/**
-		 * 膨胀 膨胀说明： 图像的一部分区域与指定的核进行卷积， 求核的最`大`值并赋值给指定区域。 膨胀可以理解为图像中`高亮区域`的'领域扩大'。
-		 * 意思是高亮部分会侵蚀不是高亮的部分，使高亮部分越来越多。
+		 * 膨胀 膨胀说明： 图像的一部分区域与指定的核进行卷积， 求核的最`大`值并赋值给指定区域。
+		 * 膨胀可以理解为图像中`高亮区域`的'领域扩大'。 意思是高亮部分会侵蚀不是高亮的部分，使高亮部分越来越多。
 		 */
 		Imgproc.dilate(src, outImage, structImage, new Point(-1, -1), 1);
 		src = outImage;
@@ -198,8 +212,8 @@ public class GeneralUtils {
 		Mat structImage = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2, 2));
 
 		/**
-		 * 图像腐蚀 腐蚀说明： 图像的一部分区域与指定的核进行卷积， 求核的最`小`值并赋值给指定区域。 腐蚀可以理解为图像中`高亮区域`的'领域缩小'。
-		 * 意思是高亮部分会被不是高亮部分的像素侵蚀掉，使高亮部分越来越少。
+		 * 图像腐蚀 腐蚀说明： 图像的一部分区域与指定的核进行卷积， 求核的最`小`值并赋值给指定区域。
+		 * 腐蚀可以理解为图像中`高亮区域`的'领域缩小'。 意思是高亮部分会被不是高亮部分的像素侵蚀掉，使高亮部分越来越少。
 		 */
 		Imgproc.erode(src, outImage, structImage, new Point(-1, -1), 1);
 		src = outImage;

@@ -43,8 +43,7 @@ public class ContoursUtils {
 		Mat hierarchy = new Mat();
 
 		// 寻找轮廓
-		Imgproc.findContours(cannyMat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE,
-				new Point(0, 0));
+		Imgproc.findContours(cannyMat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE, new Point(0, 0));
 
 		if (contours.size() <= 0) {
 			// throw new RuntimeException("未找到图像轮廓");
@@ -72,7 +71,8 @@ public class ContoursUtils {
 	/**
 	 * 作用：返回边缘检测之后的最大轮廓
 	 *
-	 * @param cannyMat Canny之后的Mat矩阵
+	 * @param cannyMat
+	 *            Canny之后的Mat矩阵
 	 * @return
 	 */
 	public static MatOfPoint findMaxContour(Mat cannyMat) {
@@ -83,7 +83,8 @@ public class ContoursUtils {
 	/**
 	 * 返回边缘检测之后的最大矩形
 	 *
-	 * @param cannyMat Canny之后的mat矩阵
+	 * @param cannyMat
+	 *            Canny之后的mat矩阵
 	 * @return
 	 */
 	public static RotatedRect findMaxRect(Mat cannyMat) {
@@ -109,7 +110,8 @@ public class ContoursUtils {
 	 * 利用函数approxPolyDP来对指定的点集进行逼近 精确度设置好，效果还是比较好的
 	 *
 	 * @param cannyMat
-	 * @param threshold 阀值(精确度)
+	 * @param threshold
+	 *            阀值(精确度)
 	 * @return
 	 */
 	public static Point[] useApproxPolyDPFindPoints(Mat cannyMat, double threshold) {

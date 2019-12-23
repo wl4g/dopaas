@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.tool.opencv.utils;
 
+import org.junit.Test;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;

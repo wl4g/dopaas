@@ -28,8 +28,10 @@ public class RemoveNoiseUtils {
 	/**
 	 * 8邻域降噪，又有点像9宫格降噪;即如果9宫格中心被异色包围，则同化 作用：降噪(默认白底黑字)
 	 *
-	 * @param src  Mat矩阵对象
-	 * @param pNum 阀值 默认取1即可
+	 * @param src
+	 *            Mat矩阵对象
+	 * @param pNum
+	 *            阀值 默认取1即可
 	 * @return
 	 */
 	public static Mat eghitRemoveNoise(Mat src, int pNum) {
@@ -77,17 +79,17 @@ public class RemoveNoiseUtils {
 	/**
 	 * 连通域降噪 作用：降噪(默认白底黑字)
 	 *
-	 * @param src   Mat矩阵对象
-	 * @param pArea 阀值 默认取1即可
+	 * @param src
+	 *            Mat矩阵对象
+	 * @param pArea
+	 *            阀值 默认取1即可
 	 * @return
 	 */
 	public static Mat connectedRemoveNoise(Mat src, double pArea) {
-		int i, j, color = 1;
+		int i, j;
 		int width = GeneralUtils.getImgWidth(src), height = GeneralUtils.getImgHeight(src);
-
 		Result result = floodFill(new Result(src), pArea);
 		src = result.mat;
-
 		// 二值化
 		for (i = 0; i < width; i++) {
 			for (j = 0; j < height; j++) {
@@ -96,11 +98,9 @@ public class RemoveNoiseUtils {
 				}
 			}
 		}
-
 		if (result.status == false && result.count <= 100) {
 			connectedRemoveNoise(src, pArea);
 		}
-
 		return src;
 	}
 
@@ -110,7 +110,7 @@ public class RemoveNoiseUtils {
 	 * @param result
 	 * @return
 	 */
-	public static Result floodFill(Result result, double pArea) {
+	private static Result floodFill(Result result, double pArea) {
 		Mat src = result.mat;
 		if (src == null) {
 			return null;
@@ -147,7 +147,8 @@ public class RemoveNoiseUtils {
 	 * 连通域填充颜色
 	 * 
 	 * @param src
-	 * @param type [true,false] true表示把小于阀值的填充为白色，false相反
+	 * @param type
+	 *            [true,false] true表示把小于阀值的填充为白色，false相反
 	 * @return
 	 */
 	public static Mat floodFill(Mat src, double pArea, boolean type) {
@@ -200,11 +201,13 @@ public class RemoveNoiseUtils {
 					if (maxI != -1 && maxJ != -1) {
 						if (area > maxArea) {
 							maxArea = area;
-//                            Imgproc.floodFill(src, new Mat(), new Point(maxI, maxJ), new Scalar(255));
+							// Imgproc.floodFill(src, new Mat(), new Point(maxI,
+							// maxJ), new Scalar(255));
 							maxI = i;
 							maxJ = j;
 						} else {
-//                            Imgproc.floodFill(src, new Mat(), new Point(i, j), new Scalar(255));
+							// Imgproc.floodFill(src, new Mat(), new Point(i,
+							// j), new Scalar(255));
 						}
 					} else {
 						maxI = i;
@@ -230,11 +233,6 @@ public class RemoveNoiseUtils {
 		Mat mat;// Mat对象
 		boolean status;// 是否填充完毕
 		int count;// 记录填充的次数
-		int height;// 记录上一次填充的height位置
-		int width;// 记录上一次填充的width位置
-
-		public Result() {
-		}
 
 		public Result(Mat src) {
 			this.mat = src;

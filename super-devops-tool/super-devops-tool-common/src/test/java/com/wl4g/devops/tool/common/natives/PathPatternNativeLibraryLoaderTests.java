@@ -3,8 +3,6 @@ package com.wl4g.devops.tool.common.natives;
 import static org.apache.commons.lang3.SystemUtils.OS_ARCH;
 import static org.apache.commons.lang3.SystemUtils.OS_NAME;
 
-import java.io.IOException;
-
 public class PathPatternNativeLibraryLoaderTests {
 
 	public static void main(String[] args) throws Exception {
@@ -18,8 +16,11 @@ public class PathPatternNativeLibraryLoaderTests {
 		System.out.println(OS_ARCH);
 	}
 
-	public static void test2() throws IOException {
+	public static void test2() throws Exception {
 		new PathPatternNativeLibraryLoader("/org/xerial/snappy/native/**/*.*").loadLibrarys();
+		System.out.println(
+				"Simulation waits for execution to complete... For debugging exit and cleanup temporary native library files");
+		Thread.sleep(3000L);
 	}
 
 }
