@@ -33,7 +33,8 @@ public final class OpenCvNativeLibraryLoader {
 	/**
 	 * Opencv native librarys loader.
 	 */
-	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader("/opencv/natives/**/*.*");
+	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader(
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.*");
 
 	/**
 	 * Loading OpenCv native librarys.
