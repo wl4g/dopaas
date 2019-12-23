@@ -42,7 +42,8 @@ public class MathUtils {
 	 * 把opencv的灰度图Mat转化为List<List<Double>> , 即数组对象
 	 * 
 	 * @param gray
-	 * @param b    true 表示List<Double>是每一列的灰度值，否则List<Double>是每一行的灰度值
+	 * @param b
+	 *            true 表示List<Double>是每一列的灰度值，否则List<Double>是每一行的灰度值
 	 * @return
 	 */
 	public static List<List<Double>> MatPixelToList(Mat gray, boolean b) {
@@ -316,8 +317,10 @@ public class MathUtils {
 	/**
 	 * 返回切割片段中最小的片段的起始下标
 	 * 
-	 * @param cutPoint 图像上的切割点
-	 * @param width    图像宽度
+	 * @param cutPoint
+	 *            图像上的切割点
+	 * @param width
+	 *            图像宽度
 	 * @return
 	 */
 	public static int minChoicedPart(List<Integer> cutPoint, int width) {
@@ -346,8 +349,10 @@ public class MathUtils {
 	/**
 	 * 返回切割片段中最大的片段的起始下标
 	 * 
-	 * @param cutPoint 图像上的切割点
-	 * @param width    图像的宽度
+	 * @param cutPoint
+	 *            图像上的切割点
+	 * @param width
+	 *            图像的宽度
 	 * @return
 	 */
 	public static int maxChoicedPart(List<Integer> cutPoint, int width) {

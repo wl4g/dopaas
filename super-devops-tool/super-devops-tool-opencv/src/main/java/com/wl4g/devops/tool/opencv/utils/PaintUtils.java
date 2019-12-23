@@ -109,10 +109,14 @@ public class PaintUtils {
 	 * 画实心圆
 	 *
 	 * @param src
-	 * @param point  点
-	 * @param size   点的尺寸
-	 * @param scalar 颜色
-	 * @param path   保存路径
+	 * @param point
+	 *            点
+	 * @param size
+	 *            点的尺寸
+	 * @param scalar
+	 *            颜色
+	 * @param path
+	 *            保存路径
 	 */
 	public static Mat paintCircle(Mat src, Point[] point, int size, Scalar scalar, String path) {
 		if (src == null || point == null) {
@@ -133,9 +137,12 @@ public class PaintUtils {
 	 * 画实心圆
 	 *
 	 * @param src
-	 * @param point  点
-	 * @param size   点的尺寸
-	 * @param scalar 颜色
+	 * @param point
+	 *            点
+	 * @param size
+	 *            点的尺寸
+	 * @param scalar
+	 *            颜色
 	 */
 	public static Mat paintCircle(Mat src, Point[] point, int size, Scalar scalar) {
 		if (src == null || point == null) {

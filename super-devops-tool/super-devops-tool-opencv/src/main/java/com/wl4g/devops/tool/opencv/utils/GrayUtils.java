@@ -61,7 +61,8 @@ public class GrayUtils {
 	/**
 	 * 根据灰度化后的图像每一列的像素值的平均值作为阀值，把大于阀值的像素都改为255
 	 * 
-	 * @param data List<Double>中存储图像灰度化后的每一列的像素值
+	 * @param data
+	 *            List<Double>中存储图像灰度化后的每一列的像素值
 	 * @return
 	 */
 	public static Mat grayColByMidle(Mat src, List<List<Double>> data) {
@@ -82,15 +83,12 @@ public class GrayUtils {
 					src.put(index, j, 255);
 					count--;
 				}
-				if (count == count) {
-					time++;
-				}
+				time++;
 				// 避免程序进入死循环
 				if (time == list.size() / 2) {
 					break;
 				}
 			}
-
 		}
 		return src;
 	}
@@ -113,7 +111,8 @@ public class GrayUtils {
 	 * 根据灰度化后的图像每一列的像素值的第k大值作为阀值，把大于阀值的像素都改为255
 	 * 
 	 * @param src
-	 * @param k   分母
+	 * @param k
+	 *            分母
 	 * @return
 	 */
 	public static Mat grayColByKLargest(Mat src, int k) {
@@ -155,24 +154,17 @@ public class GrayUtils {
 			int count = 3 * doubles.length / 4;
 			int time = 0;
 			while (count > 0) {
-
 				int index = new Random().nextInt(list.size());
-
 				if (list.get(index) >= d) {
 					src.put(index, j, 255);
 					count--;
 				}
-
-				if (count == count) {
-					time++;
-				}
+				time++;
 				// 避免程序进入死循环
 				if (time == list.size() / 2) {
 					break;
 				}
-
 			}
-
 		}
 		return src;
 	}
@@ -180,7 +172,8 @@ public class GrayUtils {
 	/**
 	 * 作用：自适应选取阀值
 	 *
-	 * @param src Mat矩阵图像
+	 * @param src
+	 *            Mat矩阵图像
 	 * @return
 	 */
 	public static int getAdapThreshold(Mat src) {

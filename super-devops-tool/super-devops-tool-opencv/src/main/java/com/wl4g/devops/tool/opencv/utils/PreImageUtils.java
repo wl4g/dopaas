@@ -27,7 +27,8 @@ public class PreImageUtils {
 	/**
 	 * 把矫正后的图像切割出来
 	 *
-	 * @param src 图像矫正后的Mat矩阵
+	 * @param src
+	 *            图像矫正后的Mat矩阵
 	 */
 	public static Mat cutRect(Mat src, RotatedRect rect) {
 		Rect r = rect.boundingRect();

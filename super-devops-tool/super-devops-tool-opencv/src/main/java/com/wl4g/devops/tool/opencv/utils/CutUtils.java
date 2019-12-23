@@ -152,7 +152,6 @@ public class CutUtils {
 				}
 			}
 		}
-
 		int yThreshold = getThreshold(yNum);
 
 		yNum = updateArray(yNum, yThreshold);
@@ -170,8 +169,8 @@ public class CutUtils {
 				cutBack.add(cutY.get(1));
 			} else {
 				int distance = cutY.get(i) - cutBack.get(cutBack.size() - 1);
-//                System.out.println("extend * 0.65: " + extend * 0.65);
-//                System.out.println("distance: " + distance);
+				// System.out.println("extend * 0.65: " + extend * 0.65);
+				// System.out.println("distance: " + distance);
 				if (distance > extend * 0.65) {
 					cutBack.add(cutY.get(i));
 				}

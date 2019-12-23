@@ -31,8 +31,10 @@ public class RotationUtils {
 	/**
 	 * 旋转矩形 返回旋转后的Mat
 	 * 
-	 * @param mat  mat矩阵
-	 * @param rect 矩形
+	 * @param mat
+	 *            mat矩阵
+	 * @param rect
+	 *            矩形
 	 * @return
 	 */
 	public static Mat rotation(Mat mat, RotatedRect rect) {
@@ -63,8 +65,7 @@ public class RotationUtils {
 		// 得到旋转矩阵算子
 		Mat matrix = Imgproc.getRotationMatrix2D(center, angle, 0.8);
 
-		Imgproc.warpAffine(CorrectImg, CorrectImg, matrix, CorrectImg.size(), Imgproc.INTER_LINEAR, 0,
-				new Scalar(0, 0, 0));
+		Imgproc.warpAffine(CorrectImg, CorrectImg, matrix, CorrectImg.size(), Imgproc.INTER_LINEAR, 0, new Scalar(0, 0, 0));
 
 		return CorrectImg;
 	}

@@ -1,5 +1,6 @@
 package com.wl4g.devops.tool.opencv.utils;
 
+import org.junit.Test;
 import org.opencv.core.Mat;
 
 public class RemoveNOiseUtilsTests extends OpencvBasedTests {
