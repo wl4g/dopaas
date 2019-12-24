@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.cli.Option;
 
+import static com.wl4g.devops.tool.common.lang.Assert.isTrue;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -45,6 +46,8 @@ public class HelpOption extends Option {
 	public HelpOption(Class<?> paramType, String opt, String longOpt, String defaultValue, boolean required, String description)
 			throws IllegalArgumentException {
 		super(opt, longOpt, true, null);
+		isTrue(opt.length() == 1,
+				String.format("Short option: '%s' (%s), non GNU specification, name length must be 1", opt, description));
 		this.defaultValue = defaultValue;
 		setRequired(required);
 		if (!isRequired()) {

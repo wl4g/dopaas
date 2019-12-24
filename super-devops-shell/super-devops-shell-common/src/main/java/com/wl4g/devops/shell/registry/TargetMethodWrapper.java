@@ -174,7 +174,6 @@ public class TargetMethodWrapper implements Serializable {
 			}
 
 			ShellOption shOpt = findShellOption(paramAnnos[i]);
-
 			// Wrap target method parameter
 			TargetParameter parameter = new TargetParameter(getMethod(), paramType, shOpt, i);
 
@@ -186,21 +185,19 @@ public class TargetMethodWrapper implements Serializable {
 				// See:[com.wl4g.devops.shell.command.DefaultInternalCommand.MARK0]
 				HelpOption option = new HelpOption(paramType, shOpt.opt(), shOpt.lopt(), shOpt.defaultValue(), shOpt.required(),
 						shOpt.help());
-
 				// [MARK0] Native type parameter field name is null
 				// See:[AbstractActuator.MARK3]
 				parameter.addAttribute(option, null);
 			}
 			// Java bean parameter?
 			else {
-				populateDeepFields(paramType, parameter);
+				populateArgumentDeepOptions(paramType, parameter);
 			}
 
 			// Check parameters(options) repeat register.
 			for (TargetParameter p : parameters) {
 				parameter.getAttributes().keySet().forEach(option -> p.validateOption(option));
 			}
-
 			parameters.add(parameter);
 		}
 
@@ -229,12 +226,10 @@ public class TargetMethodWrapper implements Serializable {
 	 * @param index
 	 */
 	private void validateShellOption(ShellOption opt, Method m, int index) {
-		state(opt != null, String
+		state(nonNull(opt), String
 				.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", m, index));
-		hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", m));
-		hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", m));
-		isTrue(opt.opt().length() == 1, String.format(
-				"Short option: '%s' for shell methods: '%s', non GNU specification, name length must be 1", opt.opt(), m));
+		hasText(opt.opt(), String.format("Option of the shell method: '%s' cannot be empty", m));
+		hasText(opt.lopt(), String.format("Option of the shell method: '%s' cannot be empty", m));
 		isTrue(isAlpha(opt.opt().substring(0, 1)),
 				String.format("Option: '%s' for shell methods: '%s', must start with a letter", opt.opt(), m));
 		isTrue(isAlpha(opt.lopt().substring(0, 1)),
@@ -360,7 +355,7 @@ public class TargetMethodWrapper implements Serializable {
 		 * @param clazz
 		 * @param attributes
 		 */
-		public static void populateDeepFields(Class<?> clazz, TargetParameter parameter) {
+		public static void populateArgumentDeepOptions(Class<?> clazz, TargetParameter parameter) {
 			Class<?> cls = clazz;
 			do {
 				extractHierarchyFields(cls, parameter);
@@ -385,16 +380,13 @@ public class TargetMethodWrapper implements Serializable {
 					}
 
 					String fname = f.getName();
-
 					if (simpleType(ftype)) {
-						ShellOption opt = f.getAnnotation(ShellOption.class);
-
-						// Filter unsafe field.
-						if (opt != null) {
+						ShellOption shOpt = f.getAnnotation(ShellOption.class);
+						if (nonNull(shOpt)) { // Filter unsafe field.
 							// [MARK1],See:[AbstractActuator.MARK4]
 							if (isGenericModifier(f.getModifiers())) {
-								HelpOption option = new HelpOption(ftype, opt.opt(), opt.lopt(), opt.defaultValue(),
-										opt.required(), opt.help());
+								HelpOption option = new HelpOption(ftype, shOpt.opt(), shOpt.lopt(), shOpt.defaultValue(),
+										shOpt.required(), shOpt.help());
 								parameter.addAttribute(option, fname);
 							} else {
 								System.err.println(String.format(
