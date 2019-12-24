@@ -21,6 +21,8 @@ import static java.lang.reflect.Modifier.isStatic;
 import static java.lang.reflect.Modifier.isSynchronized;
 import static java.lang.reflect.Modifier.isTransient;
 import static java.lang.reflect.Modifier.isVolatile;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -37,6 +39,8 @@ import java.util.Map;
 
 import com.wl4g.devops.tool.common.collection.ConcurrentReferenceHashMap;
 import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleCollectionType;
 
 /**
  * Enhanced utility class for working with the reflection API and handling
@@ -76,6 +80,46 @@ public abstract class ReflectionUtils2 {
 	public static boolean isGenericModifier(int modifer) {
 		return !(isFinal(modifer) || isStatic(modifer) || isTransient(modifer) || isNative(modifer) || isVolatile(modifer)
 				|| isSynchronized(modifer));
+	}
+
+	/**
+	 * Invoke the given callback on all fields in the target class, going up the
+	 * class hierarchy to get all declared fields.
+	 * 
+	 * @param clazz
+	 *            the target class to analyze
+	 * @param ff
+	 *            the filter that determines the fields to apply the callback to
+	 * @param fc
+	 *            the callback to invoke for each field
+	 */
+	public static void doFullWithFields(final Object obj, FieldFilter ff, FieldCallback2 fc) {
+		if (isNull(obj) || isNull(fc) || isNull(ff)) {
+			throw new IllegalArgumentException("Hierarchy object or FieldFilter and FieldCallback can't null");
+		}
+
+		// Keep backing up the inheritance hierarchy.
+		Class<?> cls = obj.getClass();
+		do {
+			for (Field field : getDeclaredFields(cls)) {
+				if (ff != null && !ff.matches(field)) {
+					continue;
+				}
+				try {
+					makeAccessible(field);
+					Class<?> fieldCls = field.getType();
+					if (isSimpleType(fieldCls) || isSimpleCollectionType(fieldCls)) {
+						fc.doWith(field, obj);
+					}
+					// Recursive traversal matching and processing
+					else {
+						doFullWithFields(getField(field, obj), ff, fc);
+					}
+				} catch (IllegalAccessException ex) {
+					throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
+				}
+			}
+		} while (nonNull(cls = cls.getSuperclass()) && cls != Object.class);
 	}
 
 	//
@@ -925,6 +969,22 @@ public abstract class ReflectionUtils2 {
 		 *            the field to operate on
 		 */
 		void doWith(Field field) throws IllegalArgumentException, IllegalAccessException;
+	}
+
+	/**
+	 * Callback interface invoked on each field in the hierarchy.
+	 */
+	public interface FieldCallback2 {
+
+		/**
+		 * Perform an operation using the given field.
+		 * 
+		 * @param field
+		 *            The field to operate on
+		 * @param objOfField
+		 *            Value of class field.
+		 */
+		void doWith(final Field field, final Object objOfField) throws IllegalArgumentException, IllegalAccessException;
 	}
 
 	/**

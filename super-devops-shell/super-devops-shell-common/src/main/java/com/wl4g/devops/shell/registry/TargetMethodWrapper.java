@@ -40,8 +40,8 @@ import com.wl4g.devops.shell.cli.InternalCommand;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModifier;
 import static com.wl4g.devops.shell.cli.InternalCommand.*;
 import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils.isBaseType;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils.isGeneralSetType;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleCollectionType;
 import static java.util.Objects.nonNull;
 
 /**
@@ -351,7 +351,7 @@ public class TargetMethodWrapper implements Serializable {
 		}
 
 		public static boolean simpleType(Class<?> paramType) {
-			return isBaseType(paramType) || isGeneralSetType(paramType);
+			return isSimpleType(paramType) || isSimpleCollectionType(paramType);
 		}
 
 		/**

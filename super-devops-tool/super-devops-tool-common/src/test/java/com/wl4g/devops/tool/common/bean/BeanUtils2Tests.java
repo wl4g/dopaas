@@ -16,7 +16,7 @@
 package com.wl4g.devops.tool.common.bean;
 
 import static com.wl4g.devops.tool.common.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
-import static com.wl4g.devops.tool.common.bean.BeanUtils2.doWithDeepFields;
+import static com.wl4g.devops.tool.common.bean.BeanUtils2.deepCopyFieldState;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.makeAccessible;
 
@@ -32,7 +32,7 @@ public class BeanUtils2Tests {
 		r.setId(1);
 		r.setName("tom");
 
-		doWithDeepFields(r, r, (targetField) -> {
+		deepCopyFieldState(r, r, (targetField) -> {
 			return String.class.isAssignableFrom(targetField.getType()) && DEFAULT_FIELD_FILTER.matches(targetField);
 		}, (target, tf, sf, sourcePropertyValue) -> {
 			if (sourcePropertyValue != null) {
@@ -59,7 +59,7 @@ public class BeanUtils2Tests {
 
 		System.out.println(a1);
 
-		doWithDeepFields(a1, a2, (targetField) -> {
+		deepCopyFieldState(a1, a2, (targetField) -> {
 			return true;
 		});
 
@@ -78,7 +78,7 @@ public class BeanUtils2Tests {
 
 		System.out.println(a3);
 
-		doWithDeepFields(a3, c3, (targetField) -> {
+		deepCopyFieldState(a3, c3, (targetField) -> {
 			return true;
 		});
 

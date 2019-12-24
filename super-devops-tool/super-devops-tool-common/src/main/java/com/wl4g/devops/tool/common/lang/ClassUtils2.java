@@ -45,7 +45,7 @@ import com.wl4g.devops.tool.common.reflect.ReflectionUtils2;
  * @author Rob Harrop
  * @author Sam Brannen
  * @since 1.1
- * @see TypeUtils
+ * @see TypeUtils2
  * @see ReflectionUtils
  */
 public abstract class ClassUtils2 {
@@ -492,7 +492,7 @@ public abstract class ClassUtils2 {
 	 * @param rhsType
 	 *            the value type that should be assigned to the target type
 	 * @return if the target type is assignable from the value type
-	 * @see TypeUtils#isAssignable
+	 * @see TypeUtils2#isAssignable
 	 */
 	public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
 		Assert.notNull(lhsType, "Left-hand side type must not be null");
