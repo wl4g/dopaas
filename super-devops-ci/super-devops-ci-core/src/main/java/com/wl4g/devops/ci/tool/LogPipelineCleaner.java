@@ -48,6 +48,9 @@ public class LogPipelineCleaner extends GenericOperatorTool {
 	public void run() {
 		// TODO e.g. Do ci_task_history cleanup...
 		cleanJobStatusTraceLog();
+		cleanJobExecutionLog();
+		cleanUmcAlarmRecord();
+		cleanCiTaskHistory();
 	}
 
 
@@ -55,6 +58,35 @@ public class LogPipelineCleaner extends GenericOperatorTool {
 		Date currentTimeBySecound = beforeTimeSec(beforeSec);
 		try {
 			logPipelineCleanerDao.cleanJobStatusTraceLog(currentTimeBySecound);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void cleanJobExecutionLog(){
+		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+		try {
+			logPipelineCleanerDao.cleanJobExecutionLog(currentTimeBySecound);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void cleanUmcAlarmRecord(){
+		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+		try {
+			logPipelineCleanerDao.cleanUmcAlarmRecordSublist(currentTimeBySecound);
+			logPipelineCleanerDao.cleanUmcAlarmRecord(currentTimeBySecound);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void cleanCiTaskHistory(){
+		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+		try {
+			logPipelineCleanerDao.cleanCiTaskHistorySublist(currentTimeBySecound);
+			logPipelineCleanerDao.cleanCiTaskHistory(currentTimeBySecound);
 		}catch (Exception e){
 			e.printStackTrace();
 		}

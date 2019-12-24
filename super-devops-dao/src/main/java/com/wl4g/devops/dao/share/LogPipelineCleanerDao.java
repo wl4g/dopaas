@@ -10,10 +10,16 @@ import java.util.Date;
  */
 public interface LogPipelineCleanerDao {
 
+    int cleanJobStatusTraceLog(@Param("creationTime") Date creationTime);
 
-    void cleanJobStatusTraceLog(@Param("creationTime") Date creationTime);
+    int cleanJobExecutionLog(@Param("startTime") Date startTime);
 
-    void cleanJobExecutionLog(@Param("startTime") Date startTime);
+    int cleanUmcAlarmRecordSublist(@Param("createTime") Date createTime);
 
+    int cleanUmcAlarmRecord(@Param("createTime") Date createTime);
+
+    int cleanCiTaskHistorySublist(@Param("createDate") Date createDate);
+
+    int cleanCiTaskHistory(@Param("createDate") Date createDate);
 
 }
