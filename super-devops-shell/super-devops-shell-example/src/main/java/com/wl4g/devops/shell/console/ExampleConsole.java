@@ -29,9 +29,9 @@ import org.springframework.stereotype.Service;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
-import com.wl4g.devops.shell.bean.MixedArgument;
-import com.wl4g.devops.shell.bean.SumArgument;
-import com.wl4g.devops.shell.bean.SumResult;
+import com.wl4g.devops.shell.console.args.MixedArgument;
+import com.wl4g.devops.shell.console.args.SumArgument;
+import com.wl4g.devops.shell.console.args.SumResult;
 import com.wl4g.devops.shell.processor.ShellHolder;
 import com.wl4g.devops.shell.service.ExampleService;
 
@@ -57,7 +57,7 @@ public class ExampleConsole {
 	private ExampleService exampleService;
 
 	/**
-	 * $> sum -a 1 -b 123
+	 * For example: $> sum -a 1 -b 123
 	 */
 	@ShellMethod(keys = "sum", group = GROUP_NAME, help = "This is an example method of summation. The parameter list is not the base type.")
 	public SumResult sum(SumArgument arg) {
@@ -65,7 +65,7 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * $> sum2 -a 1 -b 123
+	 * For example: $> sum2 -a 1 -b 123
 	 */
 	@ShellMethod(keys = "sum2", group = GROUP_NAME, help = "This is an example method of summation. The parameter list is the basic type.")
 	public SumResult sum2(@ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
@@ -74,7 +74,7 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * $> set -l 1,2 -s x3,x4
+	 * For example: $> set -l 1,2 -s x3,x4
 	 */
 	@ShellMethod(keys = "set", group = GROUP_NAME, help = "Direct set parameter injection testing")
 	public String set(@ShellOption(opt = "s", lopt = "set", help = "Set<String> type argument field") Set<String> set1,
@@ -83,7 +83,7 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * $> mixed -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4
+	 * For example: $> mixed -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4 -e false -E true
 	 */
 	@ShellMethod(keys = "mixed", group = GROUP_NAME, help = "Mixed set type parameter injection testing")
 	public String mixed(MixedArgument arg) {
@@ -91,7 +91,7 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * $> logs -n 100
+	 * For example: $> logs -n 100
 	 */
 	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is not supported)")
 	public String logs(
@@ -123,7 +123,7 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * $> logs2 -n 100
+	 * For example: $> logs2 -n 100
 	 */
 	@ShellMethod(keys = "logs2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
 	public String logs2(

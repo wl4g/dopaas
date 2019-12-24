@@ -19,8 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.shell.bean.SumArgument;
-import com.wl4g.devops.shell.bean.SumResult;
+import com.wl4g.devops.shell.console.args.SumArgument;
+import com.wl4g.devops.shell.console.args.SumResult;
 
 @Service
 public class ExampleServiceImpl implements ExampleService {

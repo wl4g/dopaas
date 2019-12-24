@@ -31,6 +31,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import com.wl4g.devops.tool.common.lang.Assert;
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -122,19 +124,21 @@ public abstract class TypeUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T convertToBase(String value, Class<T> clazz) {
+		Assert.isTrue(isBaseType(clazz), String.format("Cannot convert %s[%s] to basic or primitive type.", value, clazz));
+
 		Object object = null;
-		if (isBaseType(clazz)) {
-			if (clazz == int.class || clazz == Integer.class) {
-				object = Integer.valueOf(value);
-			} else if (clazz == long.class || clazz == Long.class) {
-				object = Long.valueOf(value);
-			} else if (clazz == double.class || clazz == Double.class) {
-				object = Double.valueOf(value);
-			} else if (clazz == byte.class || clazz == Byte.class) {
-				object = Byte.valueOf(value);
-			} else if (clazz == String.class) {
-				object = new String(value);
-			}
+		if (clazz == int.class || clazz == Integer.class) {
+			object = Integer.valueOf(value);
+		} else if (clazz == long.class || clazz == Long.class) {
+			object = Long.valueOf(value);
+		} else if (clazz == double.class || clazz == Double.class) {
+			object = Double.valueOf(value);
+		} else if (clazz == byte.class || clazz == Byte.class) {
+			object = Byte.valueOf(value);
+		} else if (clazz == boolean.class || clazz == Boolean.class) {
+			object = Boolean.valueOf(value);
+		} else if (clazz == String.class) {
+			object = new String(value);
 		}
 		return (T) object;
 	}

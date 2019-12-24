@@ -157,37 +157,8 @@ public abstract class AbstractActuator implements Actuator {
 		List<Object> args = new ArrayList<>();
 
 		for (TargetParameter parameter : tm.getParameters()) {
-			// See: TargetMethodWrapper#initialize
-			// To javaBean parameter
-			if (!parameter.simpleType()) {
-				Object paramBean = parameter.getParamType().newInstance();
-
-				// Recursive full traversal De-serialization.
-				doWithDeepFields(paramBean, paramBean, (targetField) -> {
-					// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
-					return isGenericModifier(targetField.getModifiers());
-				}, (target, tf, sf, sourcePropertyValue) -> {
-					ShellOption shOpt = tf.getDeclaredAnnotation(ShellOption.class);
-					notNull(shOpt, "Error, Should shellOption not be null?");
-					Object value = beanMap.get(tf.getName());
-					if (Objects.isNull(value)) {
-						value = shOpt.defaultValue();
-					}
-
-					// Validate argument(if required)
-					if (shOpt.required() && !beanMap.containsKey(tf.getName()) && isBlank(shOpt.defaultValue())) {
-						throw new IllegalArgumentException(
-								String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
-					}
-					value = convertToBaseOrSimpleSet((String) value, tf.getType());
-					tf.setAccessible(true);
-					tf.set(target, value);
-				});
-
-				args.add(paramBean);
-			}
 			// [MARK1]: To native parameter, See:[TargetParameter.MARK7]
-			else {
+			if (parameter.simpleType()) {
 				ShellOption shOpt = parameter.getShellOption();
 				// Matching argument value
 				Optional<Entry<String, String>> val = beanMap.entrySet().stream()
@@ -206,6 +177,34 @@ public abstract class AbstractActuator implements Actuator {
 							String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
 				}
 				args.add(convertToBaseOrSimpleSet(value, parameter.getParamType()));
+			}
+			// See: TargetMethodWrapper#initialize
+			// To javaBean parameter
+			else {
+				Object paramBean = parameter.getParamType().newInstance();
+
+				// Recursive full traversal De-serialization.
+				doWithDeepFields(paramBean, paramBean, (targetField) -> {
+					// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
+					return isGenericModifier(targetField.getModifiers());
+				}, (target, tf, sf, sourcePropertyValue) -> {
+					ShellOption shOpt = tf.getDeclaredAnnotation(ShellOption.class);
+					notNull(shOpt, "Error, Should shellOption not be null?");
+					Object value = beanMap.get(tf.getName());
+					if (Objects.isNull(value)) {
+						value = shOpt.defaultValue();
+					}
+					// Validate argument(if required)
+					if (shOpt.required() && !beanMap.containsKey(tf.getName()) && isBlank(shOpt.defaultValue())) {
+						throw new IllegalArgumentException(
+								String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
+					}
+
+					value = convertToBaseOrSimpleSet((String) value, tf.getType());
+					tf.setAccessible(true);
+					tf.set(target, value);
+				});
+				args.add(paramBean);
 			}
 
 		}

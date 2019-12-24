@@ -27,14 +27,14 @@ import java.lang.annotation.Target;
 public @interface ShellOption {
 
 	/**
-	 * GNU commands long option prefix.
-	 */
-	final public static String GNU_CMD_LONG = "--";
-
-	/**
 	 * GNU commands short option prefix.
 	 */
 	final public static String GNU_CMD_SHORT = "-";
+
+	/**
+	 * GNU commands long option prefix.
+	 */
+	final public static String GNU_CMD_LONG = "--";
 
 	/**
 	 * Commands short option.
