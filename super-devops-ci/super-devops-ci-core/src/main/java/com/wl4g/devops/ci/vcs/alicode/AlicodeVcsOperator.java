@@ -84,8 +84,8 @@ public class AlicodeVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public boolean ensureRepository(String projecDir) {
-		super.ensureRepository(projecDir);
+	public boolean hasLocalRepository(String projecDir) {
+		super.hasLocalRepository(projecDir);
 		throw new UnsupportedOperationException();
 	}
 

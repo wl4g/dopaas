@@ -129,9 +129,8 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public boolean ensureRepository(String projecDir) {
-		super.ensureRepository(projecDir);
-
+	public boolean hasLocalRepository(String projecDir) {
+		super.hasLocalRepository(projecDir);
 		File file = new File(projecDir + "/.git");
 		return file.exists();
 	}
@@ -162,8 +161,8 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	public Ref rollback(Vcs credentials, String projecDir, String sign) {
 		super.rollback(credentials, projecDir, sign);
 
-		String metaPath = projecDir + "/.git";
-		try (Git git = Git.open(new File(metaPath))) {
+		String metaDir = projecDir + "/.git";
+		try (Git git = Git.open(new File(metaDir))) {
 			setupCredentials(credentials, git.fetch()).call();
 			Ref ref = git.checkout().setName(sign).call();
 

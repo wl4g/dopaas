@@ -18,21 +18,19 @@ package com.wl4g.devops.ci.pipeline;
 import java.io.File;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.Python3PipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 /**
- * Pipeline provider for deployment GOLANG project.
+ * Pipeline provider for deployment python3 standard project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
-public class GolangStandardPipelineProvider extends BasedPhysicalBackupPipelineProvider {
+public class Python3PipelineProvider extends BasedPhysicalBackupPipelineProvider {
 
-	public GolangStandardPipelineProvider(PipelineContext context) {
+	public Python3PipelineProvider(PipelineContext context) {
 		super(context);
 	}
 
@@ -49,17 +47,12 @@ public class GolangStandardPipelineProvider extends BasedPhysicalBackupPipelineP
 	@Override
 	protected Runnable newDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
-		return beanFactory.getBean(GolangStandardPipeDeployer.class, args);
+		return beanFactory.getBean(Python3PipeDeployer.class, args);
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		String defaultCommand = "cd " + projectDir + " && npm install";
-		// Execution command.
-		// TODO timeoutMs/pwdDir?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
-				.setStdout(jobLogFile).setStderr(jobLogFile);
-		pm.execWaitForComplete(cmd);
+	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
+		// Dynamic interpretation language, no execution to build command.
 	}
 
 }

@@ -148,8 +148,8 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	}
 
 	@Override
-	public boolean ensureRepository(String projecDir) {
-		return getAdapted().ensureRepository(projecDir);
+	public boolean hasLocalRepository(String projecDir) {
+		return getAdapted().hasLocalRepository(projecDir);
 	}
 
 	@Override
