@@ -20,6 +20,8 @@ import com.wl4g.devops.shell.bean.RunState;
 import com.wl4g.devops.shell.bean.Message;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
+import com.wl4g.devops.shell.processor.event.EventListener;
+import com.wl4g.devops.shell.processor.event.InterruptEventListener;
 import com.wl4g.devops.shell.registry.InternalInjectable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +29,12 @@ import org.springframework.util.Assert;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.wl4g.devops.shell.handler.ChannelMessageHandler.*;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static com.wl4g.devops.shell.bean.RunState.*;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
@@ -49,7 +53,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	/**
 	 * Event listeners
 	 */
-	final private List<EventListener> eventListeners = new LinkedList<>();
+	final private List<EventListener> eventListeners = new ArrayList<>(4);
 
 	/**
 	 * Shell handler client.
@@ -59,7 +63,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	/**
 	 * Line result message state.
 	 */
-	private RunState state;
+	private volatile RunState state;
 
 	public ShellContext(ShellHandler client) {
 		this(client, NONCE);
@@ -71,7 +75,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		this.state = state;
 
 		// Register default listener.
-		addEventListener(() -> this.state = INTERRUPTED);
+		addEventListener((InterruptEventListener) () -> this.state = INTERRUPTED);
 	}
 
 	RunState getState() {
@@ -107,8 +111,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		Assert.notNull(message, "Printf message must not be null.");
 		Assert.isTrue((message instanceof Message || message instanceof CharSequence || message instanceof Throwable),
 				String.format("Unsupported print message types: %s", message.getClass()));
-
-		// Channel state check
+		// Check channel state.
 		if (getState() != RUNNING_WAIT && !equalsAny(message.toString(), BOF, EOF)) {
 			throw new IllegalStateException("The shell is not printable in the afternoon, has it not been opened or closed?");
 		}
@@ -140,7 +143,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * @return
 	 */
 	public boolean isInterruptIfNecessary() {
-		return state != null ? (state == INTERRUPTED) : false;
+		return nonNull(state) ? (state == INTERRUPTED) : false;
 	}
 
 	/**
@@ -148,8 +151,9 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * 
 	 * @return
 	 */
-	public List<EventListener> getEventListeners() {
-		return eventListeners;
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getEventListeners(Class<? extends EventListener> clazz) {
+		return (List<T>) eventListeners.stream().filter(l -> l.getClass() == clazz).collect(toList());
 	}
 
 	/**
@@ -160,17 +164,6 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	public void addEventListener(EventListener eventListener) {
 		Assert.notNull(eventListener, "eventListener must not be null");
 		this.eventListeners.add(eventListener);
-	}
-
-	/**
-	 * Event listener
-	 * 
-	 * @author Wangl.sir <983708408@qq.com>
-	 * @version v1.0 2019年5月25日
-	 * @since
-	 */
-	static interface EventListener {
-		void onInterrupt();
 	}
 
 }

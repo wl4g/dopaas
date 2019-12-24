@@ -51,6 +51,8 @@ import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.processor.event.CommandEventListener;
+import com.wl4g.devops.shell.processor.event.InterruptEventListener;
 import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
@@ -270,12 +272,18 @@ public class EmbeddedServerProcessor extends BasicShellProcessor implements Appl
 					}
 					// Interrupt message
 					else if (input instanceof InterruptMessage) {
-						// Execution events.
-						context.getEventListeners().forEach(listener -> listener.onInterrupt());
+						// Call interrupt events.
+						context.getEventListeners(InterruptEventListener.class)
+								.forEach(l -> ((InterruptEventListener) l).onInterrupt());
 					}
 					// Commands message
 					else if (input instanceof LineMessage) {
 						LineMessage line = (LineMessage) input;
+
+						// Call command events.
+						context.getEventListeners(CommandEventListener.class)
+								.forEach(l -> ((CommandEventListener) l).onCommand(line.getLine()));
+
 						// Resolve that client input cannot be received during
 						// blocking execution.
 						worker.execute(() -> {

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.shell.processor;
 
+import static java.util.Objects.isNull;
+
 /**
  * Shell console utility tools.
  * 
@@ -56,7 +58,7 @@ public abstract class ShellHolder {
 	 */
 	public static ShellContext getContext(boolean assertion) {
 		ShellContext context = contextCache.get();
-		if (assertion && context == null) {
+		if (assertion && isNull(context)) {
 			throw new IllegalStateException("The context object was not retrieved. first use bind()");
 		}
 		return context;

@@ -92,7 +92,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		if (log.isInfoEnabled()) {
 			log.info("Maven assemble deploy done!");
 		}
-	}
+	} 
 
 	private File getBackupFile() {
 		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
