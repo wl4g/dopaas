@@ -15,9 +15,14 @@
  */
 package com.wl4g.devops.ci.tool;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
+import com.wl4g.devops.dao.share.LogPipelineCleanerDao;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Pipeline running record logs cleaner tool.
@@ -28,6 +33,11 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class LogPipelineCleaner extends GenericOperatorTool {
 
+	public static final int beforeSec = 30*24*60*60;// 30 day
+
+	@Autowired
+	private LogPipelineCleanerDao logPipelineCleanerDao;
+
 	@Override
 	protected void doStartup(ScheduledExecutorService scheduler) {
 		scheduler.scheduleAtFixedRate(this, config.getLogCleaner().getInitialDelaySec(), config.getLogCleaner().getPeriodSec(),
@@ -37,6 +47,56 @@ public class LogPipelineCleaner extends GenericOperatorTool {
 	@Override
 	public void run() {
 		// TODO e.g. Do ci_task_history cleanup...
+		cleanJobStatusTraceLog();
+		cleanJobExecutionLog();
+		cleanUmcAlarmRecord();
+		cleanCiTaskHistory();
 	}
 
+
+	private void cleanJobStatusTraceLog(){
+		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+		try {
+			logPipelineCleanerDao.cleanJobStatusTraceLog(currentTimeBySecound);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void cleanJobExecutionLog(){
+		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+		try {
+			logPipelineCleanerDao.cleanJobExecutionLog(currentTimeBySecound);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void cleanUmcAlarmRecord(){
+		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+		try {
+			logPipelineCleanerDao.cleanUmcAlarmRecordSublist(currentTimeBySecound);
+			logPipelineCleanerDao.cleanUmcAlarmRecord(currentTimeBySecound);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void cleanCiTaskHistory(){
+		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+		try {
+			logPipelineCleanerDao.cleanCiTaskHistorySublist(currentTimeBySecound);
+			logPipelineCleanerDao.cleanCiTaskHistory(currentTimeBySecound);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private static Date beforeTimeSec(int stuff){
+		stuff = - stuff;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.SECOND, stuff);
+		Date beforeDate = calendar.getTime();
+		return beforeDate;
+	}
 }
