@@ -42,6 +42,7 @@ import static com.wl4g.devops.shell.cli.InternalCommand.*;
 import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.isBaseType;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils.isGeneralSetType;
+import static java.util.Objects.nonNull;
 
 /**
  * Shell component target method wrapper
@@ -232,10 +233,12 @@ public class TargetMethodWrapper implements Serializable {
 				.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption", m, index));
 		hasText(opt.opt(), String.format("Options of the shell method: '%s' cannot be empty", m));
 		hasText(opt.lopt(), String.format("Options of the shell method: '%s' cannot be empty", m));
+		isTrue(opt.opt().length() == 1, String.format(
+				"Short option: '%s' for shell methods: '%s', non GNU specification, name length must be 1", opt.opt(), m));
 		isTrue(isAlpha(opt.opt().substring(0, 1)),
-				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.opt(), m));
+				String.format("Option: '%s' for shell methods: '%s', must start with a letter", opt.opt(), m));
 		isTrue(isAlpha(opt.lopt().substring(0, 1)),
-				String.format("Options: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), m));
+				String.format("Option: '%s' for shell methods: '%s', must start with a letter", opt.lopt(), m));
 	}
 
 	/**
@@ -289,7 +292,7 @@ public class TargetMethodWrapper implements Serializable {
 
 			// Assertion shell option.
 			if (simpleType()) { // [MARK7]
-				state(shOpt != null,
+				state(nonNull(shOpt),
 						String.format("Declared as a shell method: %s, the parameter index: %s must be annotated by @ShellOption",
 								getMethod(), getIndex()));
 			}
