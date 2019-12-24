@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.runner;
 
-import org.jline.reader.LineReader;
+import org.jline.reader.LineReader; 
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
@@ -45,7 +45,6 @@ import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HELP;
 import static com.wl4g.devops.shell.config.DefaultBeanRegistry.*;
 import static com.wl4g.devops.shell.utils.LineUtils.clean;
 import static com.wl4g.devops.shell.utils.LineUtils.parse;
-import static com.wl4g.devops.shell.bean.RunState.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
@@ -225,10 +224,8 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 
 			// Submission remote commands line
 			client.writeAndFlush(new LineMessage(line));
-			client.state = RUNNING;
 		} else {
 			client.writeAndFlush(message);
-			client.state = RUNNING;
 		}
 
 	}
@@ -392,17 +389,11 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		 */
 		private Thread boss;
 
-		/**
-		 * Mark the current request processing status
-		 */
-		private RunState state = READY;
-
 		public ClientHandler(AbstractRunner runner, Socket client, Function<String, Object> function) {
 			super(runner.getRegistry(), client, function);
 			this.runner = runner;
 		}
 
-		@Override
 		public ClientHandler starting() {
 			this.boss = new Thread(this);
 			this.boss.start();
@@ -431,14 +422,6 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 					runner.printErr(EMPTY, e);
 				}
 			}
-		}
-
-		public RunState getState() {
-			return state;
-		}
-
-		public void setState(RunState state) {
-			this.state = state;
 		}
 
 	}

@@ -107,15 +107,6 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	}
 
 	/**
-	 * On starting
-	 * 
-	 * @return
-	 */
-	public ChannelMessageHandler starting() {
-		return this;
-	}
-
-	/**
 	 * Is connect active
 	 * 
 	 * @return
