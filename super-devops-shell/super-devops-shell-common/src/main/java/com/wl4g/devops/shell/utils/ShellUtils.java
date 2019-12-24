@@ -17,10 +17,14 @@ package com.wl4g.devops.shell.utils;
 
 import com.wl4g.devops.tool.common.bean.BeanUtils2;
 import com.wl4g.devops.shell.annotation.ShellOption;
-import com.wl4g.devops.tool.common.reflect.TypeUtils;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.*;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Shell CLI server support utility tools
@@ -36,20 +40,20 @@ public abstract class ShellUtils extends BeanUtils2 {
 	 * will deeply recurse all parent or superclass and application property
 	 * fields, and only contain fields annotated with {@link ShellOption}
 	 * 
-	 * @param target
+	 * @param dest
 	 *            target the target bean
-	 * @param source
+	 * @param src
 	 *            the source bean
 	 */
-	public static <T> void copyOptionsProperties(T target, T source) {
-		copyOptionsProperties(target, source, (targetAttach, tf, sf, sourcePropertyValue) -> {
+	public static <T> void copyOptionsProperties(T dest, T src) {
+		copyOptionsProperties(dest, src, (destAttach, tf, sf, srcPropertyValue) -> {
 			tf.setAccessible(true);
-			Object obj = targetAttach;
-			Object value = sourcePropertyValue;
+			Object obj = destAttach;
+			Object value = srcPropertyValue;
 			if (value == null) { // Using default-value
 				ShellOption spt = sf.getAnnotation(ShellOption.class);
 				if (spt != null && !isBlank(spt.defaultValue())) {
-					value = TypeUtils.convertToBaseOrSimpleSet(spt.defaultValue(), tf.getType());
+					value = instantiateWithInitOptionValue(spt.defaultValue(), tf.getType());
 				}
 			}
 			if (obj != null && value != null) {
@@ -63,16 +67,16 @@ public abstract class ShellUtils extends BeanUtils2 {
 	 * will deeply recurse all parent or superclass and application property
 	 * fields, and only contain fields annotated with {@link ShellOption}
 	 * 
-	 * @param target
+	 * @param dest
 	 *            target the target bean
-	 * @param source
+	 * @param src
 	 *            the source bean
 	 * @param fp
 	 *            Customizable copyer
 	 */
-	public static <T> void copyOptionsProperties(T target, T source, FieldProcessor fp) {
+	public static <T> void copyOptionsProperties(T dest, T src, FieldProcessor fp) {
 		try {
-			doWithDeepFields(target, source, targetField -> {
+			deepCopyFieldState(dest, src, targetField -> {
 				// [MARK0], See:[AbstractActuator.MARK4]
 				return nonNull(targetField.getAnnotation(ShellOption.class)) && DEFAULT_FIELD_FILTER.matches(targetField);
 			}, fp);
@@ -80,6 +84,80 @@ public abstract class ShellUtils extends BeanUtils2 {
 			throw new IllegalStateException(e);
 		}
 
+	}
+
+	/**
+	 * Java base and general collection type conversion
+	 * 
+	 * @param value
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T instantiateWithInitOptionValue(String value, Class<T> clazz) {
+		if (isSimpleType(clazz)) {
+			return instantiateSimpleType(value, clazz);
+		} else if (isSimpleCollectionType(clazz)) {
+			return instantiateCollectionWithInitOptionValue(value, clazz);
+		}
+		return null;
+	}
+
+	/**
+	 * Java general collection type conversion
+	 * 
+	 * @param initialValue
+	 * @param clazz
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static <T> T instantiateCollectionWithInitOptionValue(String initialValue, Class<T> clazz) {
+		// Instantiate with non default value.
+		Object obj = instantiateCollectionType(null, clazz);
+		if (isNull(obj)) {
+			return null;
+		}
+
+		try {
+			if (obj instanceof Map) {
+				Map map = (Map) obj;
+
+				// Initialize.
+				// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
+				for (String ele : split(trimToEmpty(initialValue), ",")) {
+					if (isNotBlank(ele)) {
+						String[] kv = split(trimToEmpty(ele), "=");
+						if (kv.length >= 2) {
+							map.put(kv[0], kv[1]);
+						}
+					}
+				}
+			} else {
+				if (obj.getClass().isArray()) {
+
+				}
+				if (obj instanceof Collection) {
+					Collection set = (Collection) obj;
+
+					// Initialize.
+					// See:[com.wl4g.devops.shell.cli.HelpOption.HelpOption.MARK0]
+					for (String ele : split(trimToEmpty(initialValue), ",")) {
+						if (isNotBlank(ele)) {
+							set.add(ele);
+						}
+					}
+
+					if (clazz.isArray()) {
+						obj = set.toArray();
+					} else {
+						obj = set;
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+
+		return (T) obj;
 	}
 
 }

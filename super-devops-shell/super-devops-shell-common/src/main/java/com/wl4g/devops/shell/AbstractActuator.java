@@ -26,9 +26,8 @@ import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.Optional;
 
-import static com.wl4g.devops.tool.common.bean.BeanUtils2.doWithDeepFields;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.doFullWithFields;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModifier;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils.convertToBaseOrSimpleSet;
 import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -40,6 +39,8 @@ import com.wl4g.devops.shell.registry.ShellBeanRegistry;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
 import com.wl4g.devops.shell.utils.LineUtils;
+import com.wl4g.devops.tool.common.reflect.TypeUtils2;
+import static com.wl4g.devops.shell.utils.ShellUtils.*;
 
 /**
  * Abstract shell component actuator
@@ -153,9 +154,8 @@ public abstract class AbstractActuator implements Actuator {
 			}
 		}
 
-		// Method arguments
-		List<Object> args = new ArrayList<>();
-
+		// Method arguments.
+		final List<Object> args = new ArrayList<>();
 		for (TargetParameter parameter : tm.getParameters()) {
 			// [MARK1]: To native parameter, See:[TargetParameter.MARK7]
 			if (parameter.simpleType()) {
@@ -176,37 +176,40 @@ public abstract class AbstractActuator implements Actuator {
 					throw new IllegalArgumentException(
 							String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
 				}
-				args.add(convertToBaseOrSimpleSet(value, parameter.getParamType()));
+				args.add(TypeUtils2.instantiate(value, parameter.getParamType()));
 			}
+			// Convert javaBean parameter.
 			// See: TargetMethodWrapper#initialize
-			// To javaBean parameter
 			else {
 				Object paramBean = parameter.getParamType().newInstance();
 
 				// Recursive full traversal De-serialization.
-				doWithDeepFields(paramBean, paramBean, (targetField) -> {
+				doFullWithFields(paramBean, field -> {
 					// [MARK4],See:[ShellUtils.MARK0][TargetParameter.MARK1]
-					return isGenericModifier(targetField.getModifiers());
-				}, (target, tf, sf, sourcePropertyValue) -> {
-					ShellOption shOpt = tf.getDeclaredAnnotation(ShellOption.class);
+					return isGenericModifier(field.getModifiers());
+				}, (field, objOfField) -> {
+					if (Objects.isNull(objOfField)) {
+						objOfField = TypeUtils2.instantiate(null, field.getType());
+					}
+
+					ShellOption shOpt = field.getDeclaredAnnotation(ShellOption.class);
 					notNull(shOpt, "Error, Should shellOption not be null?");
-					Object value = beanMap.get(tf.getName());
+					Object value = beanMap.get(field.getName());
 					if (Objects.isNull(value)) {
 						value = shOpt.defaultValue();
 					}
 					// Validate argument(if required)
-					if (shOpt.required() && !beanMap.containsKey(tf.getName()) && isBlank(shOpt.defaultValue())) {
+					if (shOpt.required() && !beanMap.containsKey(field.getName()) && isBlank(shOpt.defaultValue())) {
 						throw new IllegalArgumentException(
 								String.format("option: '-%s', '--%s' is required", shOpt.opt(), shOpt.lopt()));
 					}
 
-					value = convertToBaseOrSimpleSet((String) value, tf.getType());
-					tf.setAccessible(true);
-					tf.set(target, value);
+					value = instantiateWithInitOptionValue((String) value, field.getType());
+					field.setAccessible(true);
+					field.set(objOfField, value);
 				});
 				args.add(paramBean);
 			}
-
 		}
 
 		return args;

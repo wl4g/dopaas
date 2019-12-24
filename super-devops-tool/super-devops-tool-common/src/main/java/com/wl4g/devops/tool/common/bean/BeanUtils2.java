@@ -18,8 +18,8 @@ package com.wl4g.devops.tool.common.bean;
 import java.lang.reflect.Field;
 
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils.isBaseType;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils.isGeneralSetType;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleCollectionType;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -40,18 +40,18 @@ public abstract class BeanUtils2 {
 	 * It will contain all the fields defined by all parent or superclasses. At
 	 * the same time, the target and the source object must be compatible.
 	 * 
-	 * @param target
+	 * @param dest
 	 *            The target object to copy to
-	 * @param source
+	 * @param src
 	 *            Source object
 	 * @param ff
 	 *            Field filter
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void doWithDeepFields(Object target, Object source, FieldFilter ff)
+	public static void deepCopyFieldState(Object dest, Object src, FieldFilter ff)
 			throws IllegalArgumentException, IllegalAccessException {
-		doWithDeepFields(target, source, ff, DEFAULT_FIELD_COPYER);
+		deepCopyFieldState(dest, src, ff, DEFAULT_FIELD_COPYER);
 	}
 
 	/**
@@ -60,18 +60,18 @@ public abstract class BeanUtils2 {
 	 * It will contain all the fields defined by all parent or superclasses. At
 	 * the same time, the target and the source object must be compatible.
 	 *
-	 * @param target
+	 * @param dest
 	 *            The target object to copy to
-	 * @param source
+	 * @param src
 	 *            Source object
 	 * @param fc
 	 *            Field copyer
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void doWithDeepFields(Object target, Object source, FieldProcessor fc)
+	public static void deepCopyFieldState(Object dest, Object src, FieldProcessor fc)
 			throws IllegalArgumentException, IllegalAccessException {
-		doWithDeepFields(target, source, DEFAULT_FIELD_FILTER, fc);
+		deepCopyFieldState(dest, src, DEFAULT_FIELD_FILTER, fc);
 	}
 
 	/**
@@ -80,9 +80,9 @@ public abstract class BeanUtils2 {
 	 * It will contain all the fields defined by all parent or superclasses. At
 	 * the same time, the target and the source object must be compatible.
 	 * 
-	 * @param target
+	 * @param dest
 	 *            The target object to copy to
-	 * @param source
+	 * @param src
 	 *            Source object
 	 * @param ff
 	 *            Field filter
@@ -91,22 +91,22 @@ public abstract class BeanUtils2 {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void doWithDeepFields(Object target, Object source, FieldFilter ff, FieldProcessor fp)
+	public static void deepCopyFieldState(Object dest, Object src, FieldFilter ff, FieldProcessor fp)
 			throws IllegalArgumentException, IllegalAccessException {
-		if (!(target != null && source != null && ff != null && fp != null)) {
+		if (!(dest != null && src != null && ff != null && fp != null)) {
 			throw new IllegalArgumentException("Target and source FieldFilter and FieldProcessor must not be null");
 		}
 
 		// Check if the target is compatible with the source object
-		Class<?> targetClass = target.getClass(), sourceClass = source.getClass();
-		if (!isCompatibleType(target.getClass(), source.getClass())) {
+		Class<?> targetClass = dest.getClass(), sourceClass = src.getClass();
+		if (!isCompatibleType(dest.getClass(), src.getClass())) {
 			throw new IllegalArgumentException(
 					String.format("Incompatible two objects, target class: %s, source class: %s", targetClass, sourceClass));
 		}
 
-		Class<?> targetCls = target.getClass(); // [MARK0]
+		Class<?> targetCls = dest.getClass(); // [MARK0]
 		do {
-			doWithDeepFields(targetCls, target, source, ff, fp);
+			doDeepCopyFields(targetCls, dest, src, ff, fp);
 		} while ((targetCls = targetCls.getSuperclass()) != Object.class);
 	}
 
@@ -118,11 +118,11 @@ public abstract class BeanUtils2 {
 	 * compatible.</br>
 	 * Note: Attribute fields of parent and superclass are not included
 	 * 
-	 * @param hierarchyTargetClass
+	 * @param hierarchyDestClass
 	 *            The level of the class currently copied to (upward recursion)
-	 * @param target
+	 * @param dest
 	 *            The target object to copy to
-	 * @param source
+	 * @param src
 	 *            Source object
 	 * @param ff
 	 *            Field filter
@@ -131,38 +131,38 @@ public abstract class BeanUtils2 {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	private static void doWithDeepFields(Class<?> hierarchyTargetClass, Object target, Object source, FieldFilter ff,
-			FieldProcessor fp) throws IllegalArgumentException, IllegalAccessException {
-		if (isNull(hierarchyTargetClass) || isNull(ff) || isNull(fp)) {
+	private static void doDeepCopyFields(Class<?> hierarchyDestClass, Object dest, Object src, FieldFilter ff, FieldProcessor fp)
+			throws IllegalArgumentException, IllegalAccessException {
+		if (isNull(hierarchyDestClass) || isNull(ff) || isNull(fp)) {
 			throw new IllegalArgumentException("Hierarchy target class or source FieldFilter and FieldProcessor can't null");
 		}
 
 		// Skip the current level copy.
-		if (isNull(source) || isNull(target)) {
+		if (isNull(src) || isNull(dest)) {
 			return;
 		}
 
 		// Recursive traversal matching and processing
-		Class<?> sourceClass = source.getClass();
-		for (Field tf : hierarchyTargetClass.getDeclaredFields()) {
+		Class<?> sourceClass = src.getClass();
+		for (Field tf : hierarchyDestClass.getDeclaredFields()) {
 			makeAccessible(tf);
-			Object targetPropertyValue = tf.get(target); // See:[MARK0]
+			Object targetPropertyValue = tf.get(dest); // See:[MARK0]
 
 			Object sourcePropertyValue = null;
 			Field sf = findField(sourceClass, tf.getName());
 			if (nonNull(sf)) {
 				makeAccessible(sf);
-				sourcePropertyValue = sf.get(source);
+				sourcePropertyValue = sf.get(src);
 			}
 
 			// Base or general collection type?
-			if (isBaseType(tf.getType()) || isGeneralSetType(tf.getType())) {
+			if (isSimpleType(tf.getType()) || isSimpleCollectionType(tf.getType())) {
 				// [MARK2] Filter matching property
 				if (nonNull(fp) && ff.matches(tf) && nonNull(sourcePropertyValue)) {
-					fp.doProcess(target, tf, sf, sourcePropertyValue);
+					fp.doProcess(dest, tf, sf, sourcePropertyValue);
 				}
 			} else {
-				doWithDeepFields(tf.getType(), targetPropertyValue, sourcePropertyValue, ff, fp);
+				doDeepCopyFields(tf.getType(), targetPropertyValue, sourcePropertyValue, ff, fp);
 			}
 		}
 

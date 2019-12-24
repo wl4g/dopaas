@@ -28,7 +28,7 @@ import org.apache.commons.cli.Options;
 import com.wl4g.devops.tool.common.cli.annotation.PropertyDescription;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils.isBaseType;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
 import static org.apache.commons.lang3.StringUtils.*;
 import static com.wl4g.devops.tool.common.lang.Assert.*;
 
@@ -99,7 +99,7 @@ public class StandardFormatter extends HelpFormatter {
 				Object value = f.get(object);
 				PropertyDescription desc = f.getAnnotation(PropertyDescription.class);
 				if (desc != null) { // Filter property
-					if (isBaseType(f.getType())) {
+					if (isSimpleType(f.getType())) {
 						resultSet.add(new ValueWrap(fname, value, desc.value()));
 					} else
 						extractFlatBean(f.getType(), resultSet);
