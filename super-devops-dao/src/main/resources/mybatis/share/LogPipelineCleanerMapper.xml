@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.share.LogPipelineCleanerDao" >
+
+  <delete id="cleanJobStatusTraceLog" parameterType="java.util.Map" >
+    delete from job_status_trace_log
+    where
+    <![CDATA[ creation_time <= #{creationTime} ]]>
+  </delete>
+
+  <delete id="cleanJobExecutionLog" parameterType="java.util.Map" >
+    delete from job_execution_log
+    where
+    <![CDATA[ start_time <= #{startTime} ]]>
+  </delete>
+
+
+
+
+
+</mapper>
