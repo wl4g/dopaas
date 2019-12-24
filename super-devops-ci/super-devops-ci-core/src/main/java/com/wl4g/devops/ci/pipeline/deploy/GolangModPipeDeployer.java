@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.pipeline.deploy;
 
 import java.util.List;
 
-import com.wl4g.devops.ci.pipeline.Python3StandardPipelineProvider;
+import com.wl4g.devops.ci.pipeline.Python3PipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
@@ -28,9 +28,9 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  * @version v1.0 2019年10月25日
  * @since
  */
-public class GolangStandardPipeDeployer extends GenericHostPipeDeployer<Python3StandardPipelineProvider> {
+public class GolangModPipeDeployer extends GenericHostPipeDeployer<Python3PipelineProvider> {
 
-	public GolangStandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
+	public GolangModPipeDeployer(Python3PipelineProvider provider, AppInstance instance,
 			List<TaskHistoryInstance> taskHistoryInstances) {
 		super(provider, instance, taskHistoryInstances);
 	}

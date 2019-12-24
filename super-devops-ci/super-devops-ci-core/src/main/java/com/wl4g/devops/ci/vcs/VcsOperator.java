@@ -83,7 +83,7 @@ public interface VcsOperator {
 				return null;
 			}
 			for (VcsProvider t : values()) {
-				if (vcsProvider.intValue()==t.getValue()) {
+				if (vcsProvider.intValue() == t.getValue()) {
 					return t;
 				}
 			}
@@ -227,13 +227,13 @@ public interface VcsOperator {
 	List<String> delLocalBranch(String projecDir, String branchName, boolean force);
 
 	/**
-	 * Check VCS project local repository exist, created when not present.
+	 * Check VCS project have local repository exist.
 	 * 
 	 * @param projecDir
 	 *            project local VCS repository directory absolute path.
 	 * @return
 	 */
-	boolean ensureRepository(String projecDir);
+	boolean hasLocalRepository(String projecDir);
 
 	/**
 	 * Get (local) latest committed ID.

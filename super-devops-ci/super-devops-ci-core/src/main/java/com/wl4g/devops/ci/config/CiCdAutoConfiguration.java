@@ -22,10 +22,10 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
-import com.wl4g.devops.ci.pipeline.deploy.Python3StandardPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.Python3PipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.RktNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.GolangStandardPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.GolangModPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
@@ -162,15 +162,15 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@DelegateAlias({ PipelineType.PYTHON3_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public Python3StandardPipelineProvider python3StandardPipelineProvider(PipelineContext context) {
-		return new Python3StandardPipelineProvider(context);
+	public Python3PipelineProvider python3StandardPipelineProvider(PipelineContext context) {
+		return new Python3PipelineProvider(context);
 	}
 
 	@Bean
 	@DelegateAlias({ PipelineType.GOLANG_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangStandardPipelineProvider golangStandardPipelineProvider(PipelineContext context) {
-		return new GolangStandardPipelineProvider(context);
+	public GolangModPipelineProvider golangStandardPipelineProvider(PipelineContext context) {
+		return new GolangModPipelineProvider(context);
 	}
 
 	@Bean
@@ -212,16 +212,16 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public Python3StandardPipeDeployer python3StandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
+	public Python3PipeDeployer python3PipeDeployer(Python3PipelineProvider provider, AppInstance instance,
 			List<TaskHistoryInstance> taskHistoryInstances) {
-		return new Python3StandardPipeDeployer(provider, instance, taskHistoryInstances);
+		return new Python3PipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangStandardPipeDeployer golangStandardPipeDeployer(Python3StandardPipelineProvider provider, AppInstance instance,
+	public GolangModPipeDeployer golangModPipeDeployer(Python3PipelineProvider provider, AppInstance instance,
 			List<TaskHistoryInstance> taskHistoryInstances) {
-		return new GolangStandardPipeDeployer(provider, instance, taskHistoryInstances);
+		return new GolangModPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean

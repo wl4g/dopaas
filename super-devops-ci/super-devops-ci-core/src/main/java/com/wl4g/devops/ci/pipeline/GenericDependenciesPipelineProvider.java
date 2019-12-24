@@ -120,7 +120,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build wait?
 			try {
-				updatingSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				pullSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
 			} catch (Exception e) {
 				throw e;
 			} finally {
@@ -165,7 +165,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void updatingSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+	private void pullSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Pipeline building for projectId: {}", projectId);
@@ -187,14 +187,14 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			} else {
 				sign = taskHisy.getShaGit();
 			}
-			if (getVcsOperator(project).ensureRepository(projectDir)) {
+			if (getVcsOperator(project).hasLocalRepository(projectDir)) {
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
 			} else {
 				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
 				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
 			}
 		} else {
-			if (getVcsOperator(project).ensureRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
+			if (getVcsOperator(project).hasLocalRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
 				getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
 				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
@@ -203,11 +203,11 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 
 		// Save the SHA of the dependency project.
 		if (isDependency) {
-			TaskSign taskSign = new TaskSign();
-			taskSign.setTaskId(taskHisy.getId());
-			taskSign.setDependenvyId(dependencyId);
-			taskSign.setShaGit(getVcsOperator(project).getLatestCommitted(projectDir));
-			taskSignDao.insertSelective(taskSign);
+			TaskSign sign = new TaskSign();
+			sign.setTaskId(taskHisy.getId());
+			sign.setDependenvyId(dependencyId);
+			sign.setShaGit(getVcsOperator(project).getLatestCommitted(projectDir));
+			taskSignDao.insertSelective(sign);
 		}
 
 		// Resolving placeholder & execution.
