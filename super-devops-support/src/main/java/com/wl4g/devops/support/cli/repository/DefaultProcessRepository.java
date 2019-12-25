@@ -45,8 +45,8 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
-	public void setInterruptible(String processId, boolean interruptible) throws NoSuchProcessException {
-		get(processId).setDestroable(interruptible);
+	public void setDestroable(String processId, boolean destroable) throws NoSuchProcessException {
+		get(processId).setDestroable(destroable);
 	}
 
 	@Override
@@ -59,7 +59,12 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
-	public Collection<DestroableProcessWrapper> getProcesses() {
+	public boolean hasProcess(String processId) {
+		return registry.containsKey(processId);
+	}
+
+	@Override
+	public Collection<DestroableProcessWrapper> getProcessRegistry() {
 		return registry.values();
 	}
 

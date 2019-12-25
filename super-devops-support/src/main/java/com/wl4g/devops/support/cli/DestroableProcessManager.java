@@ -20,6 +20,7 @@ import java.util.concurrent.Executor;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
+import com.wl4g.devops.common.exception.support.NoSuchProcessException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
@@ -56,13 +57,26 @@ public interface DestroableProcessManager {
 	void exec(DestroableCommand command, Executor executor, ProcessCallback callback) throws IOException, InterruptedException;
 
 	/**
-	 * Destroy command process.</br>
+	 *Destroy command processing process guidance complete (success or failure).</br>
 	 * <font color=red>There's no guarantee that it will be killed.</font>
 	 * 
 	 * @param signal
 	 * @throws TimeoutDestroyProcessException
+	 * @throws IllegalStateException
 	 */
-	void destroy(DestroySignal signal) throws TimeoutDestroyProcessException;
+	void destroyForComplete(DestroySignal signal) throws TimeoutDestroyProcessException, IllegalStateException;
+
+	/**
+	 * Set whether the current process is allowed to interrupt, for example:
+	 * when processing a lengthy task, when some key steps are executed, it can
+	 * be set as not to interrupt, which is very useful to ensure the security
+	 * of the task.
+	 * 
+	 * @param processId
+	 * @param destroable
+	 * @throws NoSuchProcessException
+	 */
+	void setDestroable(String processId, boolean destroable) throws NoSuchProcessException;
 
 	/**
 	 * Async execution command process callback.

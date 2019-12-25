@@ -184,7 +184,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
 
 		// TODO timeoutMs?
-		pm.destroy(new DestroySignal(String.valueOf(taskHisId), 5000L));
+		pm.destroyForComplete(new DestroySignal(String.valueOf(taskHisId), 5000L));
 	}
 
 	@Override

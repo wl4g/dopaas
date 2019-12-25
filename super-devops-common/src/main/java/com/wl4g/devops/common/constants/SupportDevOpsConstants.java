@@ -15,24 +15,25 @@
  */
 package com.wl4g.devops.common.constants;
 
-import java.util.Collections;
-import java.util.Map;
-
 /**
- * DevOps constants definitions.
+ * Support constants
  * 
- * @author wangl.sir
- * @version v1.0 2019年7月5日
- * @since
+ * @author Wangl.sir <983708408@qq.com>
+ * @date 2019-12-20 09:21:00
  */
-public abstract class DevOpsConstants {
+public abstract class SupportDevOpsConstants extends DevOpsConstants {
 
-	/** OS environment map cache. */
-	final protected static Map<String, String> ENV = Collections.unmodifiableMap(System.getenv());
+	/** Command-line process watcher locker. */
+	final public static String LOCK_CLI_PROCESS_DESTROY = "cli.process.destroy";
 
 	/**
-	 * Controlling Spring-enabled Unified Exception Handling Stack Information
+	 * Command-line process destroy signal.
 	 */
-	final public static String PARAM_STACK_TRACE = ENV.getOrDefault("spring.error.stack.trace", "_stacktrace");
+	final public static String SIGNAL_PROCESS_DESTROY = "cli.process.destroy_";
+
+	/**
+	 * Command-line process destroy signal result.
+	 */
+	final public static String SIGNAL_PROCESS_DESTROY_RET = "cli.process.destroy.ret_";
 
 }
