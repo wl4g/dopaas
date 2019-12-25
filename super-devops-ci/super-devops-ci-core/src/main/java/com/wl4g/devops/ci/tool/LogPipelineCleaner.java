@@ -47,9 +47,9 @@ public class LogPipelineCleaner extends GenericOperatorTool {
 	@Override
 	public void run() {
 		// TODO e.g. Do ci_task_history cleanup...
-		cleanJobStatusTraceLog();
-		cleanJobExecutionLog();
-		cleanUmcAlarmRecord();
+//		cleanJobStatusTraceLog();
+//		cleanJobExecutionLog();
+//		cleanUmcAlarmRecord();
 		cleanCiTaskHistory();
 	}
 
