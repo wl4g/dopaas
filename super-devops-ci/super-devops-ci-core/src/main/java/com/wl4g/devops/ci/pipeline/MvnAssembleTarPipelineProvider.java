@@ -21,8 +21,6 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 
 import java.io.File;
 
-import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
-
 /**
  * Pipeline provider for deployment MAVEN assemble tar project.
  *
@@ -40,12 +38,6 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 	public void execute() throws Exception {
 		// Building maven of modules dependencies.
 		buildModular(false);
-
-		// Setup Vcs source fingerprint.
-		setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
-
-		// MVN build.
-		doMvnBuildInternal();
 	}
 
 	/**
@@ -58,41 +50,17 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		if (backupFile.exists()) {
 			// Direct using backup file.
 			rollbackBackupAssets();
+
+			// TODO move??
 			// Setup vcs source fingerprint.
-			setupSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
+			setSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
 		} else {
 			// New building and include dependencies.
 			buildModular(true);
-			// Setup vcs source fingerprint.
-			setupSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 		}
 
-		// MVN build.
-		doMvnBuildInternal();
 	}
-
-	/**
-	 * Invoke internal MVN build.
-	 */
-	private void doMvnBuildInternal() throws Exception {
-		// Setup assets file fingerprint.
-		String assetsPathTotal = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
-				getContext().getAppCluster().getName());
-		File file = new File(getContext().getProjectSourceDir() + assetsPathTotal);
-		if (file.exists()) {
-			setupAssetsFingerprint(getMd5Fingerprint(file));
-		}
-
-		// backup in local
-		handleBackupAssets();
-
-		// Do transfer to remote jobs.
-		executeRemoteDeploying();
-
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	} 
+ 
 
 	private File getBackupFile() {
 		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"

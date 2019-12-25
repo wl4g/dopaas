@@ -160,7 +160,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * 
 	 * @param sourceFingerprint
 	 */
-	protected void setupSourceFingerprint(String sourceFingerprint) {
+	protected void setSourceFingerprint(String sourceFingerprint) {
 		hasText(sourceFingerprint, "sourceFingerprint must not be empty.");
 		this.sourceFingerprint = sourceFingerprint;
 	}
@@ -170,7 +170,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * 
 	 * @param assetsFingerprint
 	 */
-	protected void setupAssetsFingerprint(String assetsFingerprint) {
+	protected void setAssetsFingerprint(String assetsFingerprint) {
 		hasText(assetsFingerprint, "assetsFingerprint must not be empty.");
 		this.assetsFingerprint = assetsFingerprint;
 	}
@@ -239,7 +239,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Execution distribution transfer to remote instances for deployments.
 	 */
-	protected final void executeRemoteDeploying() {
+	protected final void startupExecuteRemoteDeploying() {
 		// Creating transfer instances jobs.
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
 			return (Runnable) () -> {
@@ -254,7 +254,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
 							getContext().getAppCluster().getName(), i.getSshUser(), i.getHostname());
 				} catch (Exception e) {
-					String logmsg = writeBuildLog("Failed to deployed to remote!\nCaused by: \n%s", getStackTraceAsString(e));
+					String logmsg = writeBuildLog("Failed to deployed to remote!\nCaused by: \n%s",
+							getStackTraceAsString(e));
 					log.error(logmsg);
 				} finally {
 					writeBLineFile(jobDeployerLog, LOG_FILE_END);
@@ -264,8 +265,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			List<String> instanceStrs = getContext().getInstances().stream().map(i -> i.getHostname() + ":" + i.getEndpoint())
-					.collect(toList());
+			List<String> instanceStrs = getContext().getInstances().stream()
+					.map(i -> i.getHostname() + ":" + i.getEndpoint()).collect(toList());
 			String logmsg = writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
 					getContext().getAppCluster().getName(), instanceStrs);
 			if (log.isInfoEnabled()) {
@@ -277,14 +278,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Create pipeline transfer job.
-	 * 
-	 * @param instance
-	 * @return
-	 */
-	protected abstract Runnable newDeployer(AppInstance instance);
-
-	/**
 	 * Write provider building log to file.
 	 * 
 	 * @param format
@@ -294,8 +287,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected String writeBuildLog(String format, Object... args) {
 		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getTaskHistory().getId(),
-				content);
+		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
+				getContext().getTaskHistory().getId(), content);
 		writeBLineFile(config.getJobLog(context.getTaskHistory().getId()), message);
 		return content;
 	}
@@ -309,6 +302,14 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected String resolveCmdPlaceholderVariables(String commands) {
 		return new PlaceholderVariableResolver(commands).resolve().get();
 	}
+
+	/**
+	 * Create pipeline transfer job.
+	 * 
+	 * @param instance
+	 * @return
+	 */
+	protected abstract Runnable newDeployer(AppInstance instance);
 
 	/**
 	 * Placeholder variables resolver.
@@ -357,7 +358,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			commands = replace(commands, PH_WORKSPACE_DIR, config.getWorkspace());
 
 			// Replace for projectDir.
-			String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName()).getAbsolutePath();
+			String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName())
+					.getAbsolutePath();
 			commands = replace(commands, PH_PROJECT_DIR, projectDir);
 
 			// Replace for backupDir.

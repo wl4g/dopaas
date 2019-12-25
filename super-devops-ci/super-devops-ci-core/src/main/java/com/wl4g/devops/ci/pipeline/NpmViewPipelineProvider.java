@@ -65,7 +65,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		// step4 scp ==> tar -x
 
 		// Startup pipeline jobs.
-		executeRemoteDeploying();
+		startupExecuteRemoteDeploying();
 
 		if (log.isInfoEnabled()) {
 			log.info("Npm pipeline execution successful!");
