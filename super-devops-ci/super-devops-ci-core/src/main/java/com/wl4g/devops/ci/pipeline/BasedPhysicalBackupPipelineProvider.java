@@ -49,6 +49,7 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 				getContext().getAppCluster().getName());
 		String target = getContext().getProjectSourceDir() + assetsPathTotal;
 
+		// Copy backup assets to build dir.
 		String command = "cp -Rf " + backupPath + " " + target;
 		// TODO timeoutMs/jobLogFile?
 		File jobLogFile = config.getJobLog(taskHisRefId);
@@ -71,11 +72,14 @@ public abstract class BasedPhysicalBackupPipelineProvider extends GenericDepende
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String targetPath = getContext().getProjectSourceDir() + assetsPathTotal;
 		String backupPath = config.getJobBackup(taskHisId).getAbsolutePath() + "/" + tarFileName;
+
 		// Ensure backup directory.
 		ensureDirectory(config.getJobBackup(taskHisId).getAbsolutePath());
 
+		// Copy assets files to backup dir.
 		String command = "cp -Rf " + targetPath + " " + backupPath;
 		File jobLogFile = config.getJobLog(taskHisId);
+		// TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisId), command, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);

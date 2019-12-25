@@ -15,8 +15,9 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
-import static java.lang.Thread.sleep;
 import static java.util.concurrent.ThreadLocalRandom.current;
+
+import org.apache.commons.lang3.ThreadUtils;
 
 /**
  * Java thread utility tools.
@@ -25,7 +26,7 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  * @version v1.0 2019年10月22日
  * @since
  */
-public abstract class ThreadUtils {
+public abstract class ThreadUtils2 extends ThreadUtils {
 
 	/**
 	 * Random sleep current thread.
@@ -36,12 +37,28 @@ public abstract class ThreadUtils {
 	 *            the upper bound (exclusive)
 	 * @throws IllegalStateException
 	 */
-	public static void sleepRandom(long least, long bound) throws IllegalStateException {
+	public static void sleep(long sleepMillis) throws IllegalStateException {
 		try {
-			sleep(current().nextLong(least, bound));
+			Thread.sleep(sleepMillis);
 		} catch (InterruptedException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	/**
+	 * Random sleep current thread.
+	 * 
+	 * @param least
+	 *            the least value returned
+	 * @param bound
+	 *            the upper bound (exclusive)
+	 * @return Returns the duration of the previous sleep(ms)
+	 * @throws IllegalStateException
+	 */
+	public static long sleepRandom(long least, long bound) throws IllegalStateException {
+		long sleepMillis = current().nextLong(least, bound);
+		sleep(sleepMillis);
+		return sleepMillis;
 	}
 
 }

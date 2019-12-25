@@ -45,10 +45,10 @@ public interface ProcessRepository {
 	 * of the task.
 	 * 
 	 * @param processId
-	 * @param interruptible
+	 * @param destroable
 	 * @throws NoSuchProcessException
 	 */
-	void setInterruptible(String processId, boolean interruptible) throws NoSuchProcessException;
+	void setDestroable(String processId, boolean destroable) throws NoSuchProcessException;
 
 	/**
 	 * Get command-line process information.
@@ -57,6 +57,14 @@ public interface ProcessRepository {
 	 * @return
 	 */
 	DestroableProcessWrapper get(String processId) throws NoSuchProcessException;
+
+	/**
+	 * Check local has command-line process.
+	 * 
+	 * @param processId
+	 * @return
+	 */
+	boolean hasProcess(String processId);
 
 	/**
 	 * Remove cleanup command-line process information.
@@ -71,6 +79,6 @@ public interface ProcessRepository {
 	 * 
 	 * @return
 	 */
-	Collection<DestroableProcessWrapper> getProcesses();
+	Collection<DestroableProcessWrapper> getProcessRegistry();
 
 }

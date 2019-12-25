@@ -23,6 +23,7 @@ import static org.springframework.util.Assert.notNull;
 import java.io.Serializable;
 
 import static com.wl4g.devops.support.cli.GenericProcessManager.*;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
 /**
  * Command-line process signal model.
@@ -72,7 +73,7 @@ public class DestroySignal implements Serializable {
 
 	@Override
 	public String toString() {
-		return "DestroySignal [processId=" + processId + ", timeoutMs=" + timeoutMs + "]";
+		return getClass().getSimpleName() + " [" + toJSONString(this) + "]";
 	}
 
 }

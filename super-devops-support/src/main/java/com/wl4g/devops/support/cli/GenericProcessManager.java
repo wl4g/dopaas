@@ -16,6 +16,7 @@
 package com.wl4g.devops.support.cli;
 
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
+import com.wl4g.devops.common.exception.support.NoSuchProcessException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.common.utils.task.GenericTaskRunner;
 import com.wl4g.devops.common.utils.task.RunnerProperties;
@@ -56,7 +57,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0.0 2019-10-20
  * @since
  */
-public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
+public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
 	final public static long DEFAULT_DESTROY_INTERVALMS = 200L;
 	final public static long DEFAULT_DESTROY_TIMEOUTMS = 30 * 1000L;
 	final public static int DEFAULT_BUFFER_SIZE = 1024 * 4;
@@ -198,6 +199,11 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 				s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s), cmd.getTimeoutMs());
 	}
 
+	@Override
+	public void setDestroable(String processId, boolean destroable) throws NoSuchProcessException {
+		repository.setDestroable(processId, destroable);
+	}
+
 	/**
 	 * Destroy command-line process.</br>
 	 * <font color=red>There's no guarantee that it will be killed.</font>
@@ -208,19 +214,26 @@ public class GenericProcessManager extends GenericTaskRunner<RunnerProperties> i
 	 * @see {@link ch.ethz.ssh2.Session#close()}
 	 * @see {@link ch.ethz.ssh2.channel.ChannelManager#closeChannel(Channel,String,boolean)}
 	 */
-	public void destroy(DestroySignal signal) throws TimeoutDestroyProcessException {
+	protected void doDestroy(DestroySignal signal) throws TimeoutDestroyProcessException {
 		notNull(signal, "Destroy signal must not be null.");
 		isTrue(signal.getTimeoutMs() >= DEFAULT_DESTROY_INTERVALMS,
 				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_INTERVALMS));
 
+		// Process wrapper.
 		DestroableProcessWrapper dpw = repository.get(signal.getProcessId());
+		// Check destroable.
+		state(dpw.isDestroable(),
+				String.format("Failed to destroy command process: (%s), because the current destroable state: %s",
+						signal.getProcessId(), dpw.isDestroable()));
+
+		// Destroy process.
 		if (nonNull(dpw)) {
-			// Destroy process.
 			destroy0(dpw, signal.getTimeoutMs());
 			repository.cleanup(signal.getProcessId()); // Cleanup
 		} else {
-			log.warn("Failed to destroy because processId:{} does not exist or has been destroyed", signal.getProcessId());
+			log.warn("Failed to destroy because processId: {} does not exist or has been destroyed!", signal.getProcessId());
 		}
+
 	}
 
 	/**
