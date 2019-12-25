@@ -133,10 +133,10 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(param.getTaskId());
 
 		// Obtain task history.
-		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
-				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
-				param.getRemark(),task.getEnvType());
+		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL,
+				TASK_STATUS_CREATE, task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(),
+				task.getPostCommand(), task.getProviderKind(), task.getContactGroupId(), taskBuildCmds,
+				param.getTaskTraceId(), param.getTaskTraceType(), param.getRemark(), task.getEnvType());
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -152,7 +152,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory bakTaskHisy = taskHistoryService.getById(param.getTaskId());
 		notNull(bakTaskHisy, String.format("Not found pipeline task history for taskId:%s", param.getTaskId()));
 
-		isTrue(bakTaskHisy.getStatus()== 2, "If taskHis is not success, Unnecessary to rollback");
+		isTrue(bakTaskHisy.getStatus() == 2, "If taskHis is not success, Unnecessary to rollback");
 
 		// Details
 		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryService.getDetailByTaskId(param.getTaskId());
@@ -172,9 +172,10 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Roll-back.
 		List<TaskBuildCommand> commands = taskBuildCmdDao.selectByTaskId(param.getTaskId());
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
-				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), bakTaskHisy.getShaGit(), param.getTaskId(), bakTaskHisy.getBuildCommand(),
-				bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(), bakTaskHisy.getProviderKind(),
-				bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(), bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(),bakTaskHisy.getEnvType());
+				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), bakTaskHisy.getShaGit(), param.getTaskId(),
+				bakTaskHisy.getBuildCommand(), bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(),
+				bakTaskHisy.getProviderKind(), bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(),
+				bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(), bakTaskHisy.getEnvType());
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
@@ -189,12 +190,13 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Obtain project.
 		Project project = projectDao.getByProjectName(param.getProjectName());
 		if (isNull(project)) {
-			log.info("Skip hook pipeline job, becuase project not exist, project:{}, branch:{}, url:{}", param.getProjectName(),
-					param.getBranchName());
+			log.info("Skip hook pipeline job, becuase project not exist, project:{}, branch:{}, url:{}",
+					param.getProjectName(), param.getBranchName());
 			return;
 		}
 		// Obtain hook triggers.
-		Trigger trigger = triggerDao.getTriggerByAppClusterIdAndBranch(project.getAppClusterId(), param.getBranchName());
+		Trigger trigger = triggerDao.getTriggerByAppClusterIdAndBranch(project.getAppClusterId(),
+				param.getBranchName());
 		if (isNull(trigger)) {
 			log.info("Skip hook pipeline job, becuase trigger not exist, project:{}, clusterId:{}, branch:{}",
 					param.getProjectName(), project.getAppClusterId(), param.getBranchName());
@@ -211,9 +213,10 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Create task history(NEW).
 		String sha = null;
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
-		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
-				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null,task.getEnvType());
+		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER,
+				TASK_STATUS_CREATE, param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(),
+				task.getPostCommand(), task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null,
+				null, task.getEnvType());
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -298,7 +301,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
 				long endTime = System.currentTimeMillis();
-				taskHistoryService.updateCostTime(taskId,endTime-startTime);
+				taskHistoryService.updateCostTime(taskId, endTime - startTime);
 			}
 		});
 	}
@@ -316,31 +319,31 @@ public class DefaultPipelineManager implements PipelineManager {
 		for (TaskHistoryInstance taskHistoryInstance : taskHistoryInstances) {
 			if (taskHistoryInstance.getStatus() != TASK_STATUS_SUCCESS) {
 				allSuccess = false;
-			}else{
+			} else {
 				allFail = false;
 			}
 		}
-		if(allSuccess){
+		if (allSuccess) {
 			// Setup status to success.
-			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null, provider.getSourceFingerprint(),
-					provider.getAssetsFingerprint());
+			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_SUCCESS, null,
+					provider.getSourceFingerprint(), provider.getAssetsFingerprint());
 			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
-		}else if(allFail){
+		} else if (allFail) {
 			// Setup status to success.
-			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_STOP, null, provider.getSourceFingerprint(),
-					provider.getAssetsFingerprint());
+			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_STOP, null,
+					provider.getSourceFingerprint(), provider.getAssetsFingerprint());
 			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_STOP, taskId);
-		}else{
+		} else {
 			// Setup status to success.
-			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_PART_SUCCESS, null, provider.getSourceFingerprint(),
-					provider.getAssetsFingerprint());
+			taskHistoryService.updateStatusAndResultAndSha(taskId, TASK_STATUS_PART_SUCCESS, null,
+					provider.getSourceFingerprint(), provider.getAssetsFingerprint());
 			log.info("Updated pipeline job status to {} for {}", TASK_STATUS_PART_SUCCESS, taskId);
 		}
 
-
 		// Successful execute job notification.
-		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Success taskId=" + taskId
-				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()));
+		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(),
+				"Task Build Success taskId=" + taskId + " projectName="
+						+ provider.getContext().getProject().getProjectName() + " time=" + (new Date()));
 	}
 
 	/**
@@ -369,8 +372,9 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void postPipelineExecuteFailure(Integer taskId, PipelineProvider provider, Throwable e) {
 		// Failure execute job notification.
-		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
-				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()) + "\n");
+		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(),
+				"Task Build Fail taskId=" + taskId + " projectName="
+						+ provider.getContext().getProject().getProjectName() + " time=" + (new Date()) + "\n");
 	}
 
 	/**
@@ -438,7 +442,8 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected void doRollbackPipeline(Integer taskId, PipelineProvider provider) {
 		notNull(taskId, "TaskId must not be null.");
 		if (log.isInfoEnabled()) {
-			log.info("Starting rollback pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
+			log.info("Starting rollback pipeline job for taskId: {}, provider: {}", taskId,
+					provider.getClass().getSimpleName());
 		}
 
 		// Update status to running.
