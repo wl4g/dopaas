@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
@@ -29,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
@@ -66,11 +66,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		}
 
 		// Resolve project dependencies.
-		LinkedHashSet<Dependency> dependencies = dependencyService.getHierarchyDependencys(taskHisy.getProjectId(),
-				null);
-		if (log.isInfoEnabled()) {
-			log.info("Resolved hierarchy dependencies: {}", dependencies);
-		}
+		LinkedHashSet<Dependency> dependencies = dependencyService.getHierarchyDependencys(taskHisy.getProjectId(), null);
+		log.info("Resolved hierarchy dependencies: {}", dependencies);
 
 		// Custom dependency commands.
 		List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(taskHisy.getId());
@@ -78,8 +75,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Build of dependencies sub-modules.
 		for (Dependency depd : dependencies) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true,
-					isRollback, depCmd);
+			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
+					depCmd);
 		}
 
 		// Build for primary(self).
@@ -91,31 +88,14 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	}
 
 	/**
-	 * Convergence and other operations after building all dependent project
+	 * Convergence and other operations after establishing all relevant project
 	 * modules. For example, set the fingerprint of the source code or asset
-	 * installation package file.
+	 * installation file, publish the installation package to remote, deploy
+	 * rollback and so on.
 	 * 
 	 * @throws Exception
 	 */
-	protected void postBuiltDependencies() throws Exception {
-		// Setup source code fingerprint.
-		setSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
-
-		// Setup assets file fingerprint.
-		String assetsPathTotal = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
-				getContext().getAppCluster().getName());
-		File file = new File(getContext().getProjectSourceDir() + assetsPathTotal);
-		if (file.exists()) {
-			setAssetsFingerprint(getMd5Fingerprint(file));
-		}
-
-		// backup in local
-		// TODO ???
-//		handleBackupAssets();
-
-		// Do transfer to remote jobs.
-		startupExecuteRemoteDeploying();
-	}
+	protected abstract void postBuiltDependencies() throws Exception;
 
 	/**
 	 * Extract dependencies project custom command.
@@ -136,7 +116,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	}
 
 	/**
-	 * Do building module in dependencies with mutually.
+	 * Building module in dependencies with mutually.
 	 * 
 	 * @param projectId
 	 * @param dependencyId
@@ -146,10 +126,10 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doMutexBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch,
-			boolean isDependency, boolean isRollback, String buildCommand) throws Exception {
-		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId,
-				config.getBuild().getSharedDependencyTryTimeoutMs(), TimeUnit.MILLISECONDS);
+	private void doMutexBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+			boolean isRollback, String buildCommand) throws Exception {
+		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
+				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build wait?
 			try {
 				pullSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
@@ -160,23 +140,20 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			}
 		} else {
 			String buildWaitMsg = writeBuildLog(
-					"Waiting to build dependency, for timeout: %ssec, dependencyId: %s, projectId: %s ...",
-					config.getBuild().getJobTimeoutMs());
-			if (log.isInfoEnabled()) {
-				log.info(buildWaitMsg);
-			}
+					"Waiting to build dependency, for timeout: %sms, dependencyId: %s, projectId: %s ...",
+					config.getBuild().getJobTimeoutMs(), dependencyId, projectId);
+			log.info(buildWaitMsg);
 
 			try {
 				long begin = System.currentTimeMillis();
 				// Waiting for other job builds to completed.
 				if (lock.tryLock(config.getBuild().getSharedDependencyTryTimeoutMs(), TimeUnit.MILLISECONDS)) {
-					if (log.isInfoEnabled()) {
-						long cost = System.currentTimeMillis() - begin;
-						log.info("Wait for dependency build to be skipped successful! cost: {}ms", cost);
-					}
+					long cost = System.currentTimeMillis() - begin;
+					String waitCostMsg = writeBuildLog("Wait for dependency build to be skipped successful! cost: %sms", cost);
+					log.info(waitCostMsg);
 				} else {
-					throw new DependencyCurrentlyInBuildingException(
-							"Failed to build, timeout waiting for dependency building.");
+					throw new DependencyCurrentlyInBuildingException(String
+							.format("Failed to build, timeout waiting for dependency building, for projectId: %s", projectId));
 				}
 			} finally {
 				lock.unlock();
@@ -200,13 +177,14 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 */
 	private void pullSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
 			boolean isRollback, String buildCommand) throws Exception {
-		if (log.isInfoEnabled()) {
-			log.info("Pipeline building for projectId: {}", projectId);
-		}
+		log.info("Pipeline building for projectId: {}", projectId);
 
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		notNull(project, String.format("Not found project by %s", projectId));
+
+		// VCS operator.
+		VcsOperator oper = getVcsOperator(project);
 
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
@@ -214,23 +192,23 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			String sign;
 			if (isDependency) {
 				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependencyId, taskHisy.getRefId());
-				notNull(taskSign, String.format("Not found taskSign for dependencyId:%s, taskHistoryRefId:%s",
-						dependencyId, taskHisy.getRefId()));
+				notNull(taskSign, String.format("Not found taskSign for dependencyId:%s, taskHistoryRefId:%s", dependencyId,
+						taskHisy.getRefId()));
 				sign = taskSign.getShaGit();
 			} else {
 				sign = taskHisy.getShaGit();
 			}
-			if (getVcsOperator(project).hasLocalRepository(projectDir)) {
-				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
+			if (oper.hasLocalRepository(projectDir)) {
+				oper.rollback(project.getVcs(), projectDir, sign);
 			} else {
-				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
-				getVcsOperator(project).rollback(project.getVcs(), projectDir, sign);
+				oper.clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
+				oper.rollback(project.getVcs(), projectDir, sign);
 			}
 		} else {
-			if (getVcsOperator(project).hasLocalRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
-				getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch);
+			if (oper.hasLocalRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
+				oper.checkoutAndPull(project.getVcs(), projectDir, branch);
 			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
+				oper.clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
 			}
 		}
 
@@ -239,12 +217,12 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			TaskSign sign = new TaskSign();
 			sign.setTaskId(taskHisy.getId());
 			sign.setDependenvyId(dependencyId);
-			sign.setShaGit(getVcsOperator(project).getLatestCommitted(projectDir));
+			sign.setShaGit(oper.getLatestCommitted(projectDir));
 			taskSignDao.insertSelective(sign);
 		}
 
 		// Resolving placeholder & execution.
-		doResolvedBuildCommands(project, projectDir, buildCommand);
+		doResolvedBuildCommand(project, projectDir, buildCommand);
 	}
 
 	// --- Building's. ---
@@ -257,7 +235,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doResolvedBuildCommands(Project project, String projectDir, String buildCommand) throws Exception {
+	private void doResolvedBuildCommand(Project project, String projectDir, String buildCommand) throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		File jobLogFile = config.getJobLog(taskHisy.getId());
 
@@ -271,8 +249,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
 
 			// Execute shell file. TODO timeoutMs?
-			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand,
-					tmpCmdFile, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile,
+					300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 			pm.execWaitForComplete(cmd);
 		}
 
@@ -285,7 +263,6 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param jobLogFile
 	 * @throws Exception
 	 */
-	protected abstract void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId)
-			throws Exception;
+	protected abstract void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception;
 
 }

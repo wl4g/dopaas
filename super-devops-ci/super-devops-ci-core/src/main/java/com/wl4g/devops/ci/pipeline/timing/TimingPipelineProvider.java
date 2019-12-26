@@ -69,7 +69,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
+	protected Runnable newPipeDeployer(AppInstance instance) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -28,7 +28,7 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class Python3PipelineProvider extends BasedPhysicalBackupPipelineProvider {
+public class Python3PipelineProvider extends RestorableDeployPipelineProvider {
 
 	public Python3PipelineProvider(PipelineContext context) {
 		super(context);
@@ -45,7 +45,7 @@ public class Python3PipelineProvider extends BasedPhysicalBackupPipelineProvider
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
+	protected Runnable newPipeDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(Python3PipeDeployer.class, args);
 	}

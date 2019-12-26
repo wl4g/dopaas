@@ -169,7 +169,7 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@DelegateAlias({ PipelineType.GOLANG_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangModPipelineProvider golangStandardPipelineProvider(PipelineContext context) {
+	public GolangModPipelineProvider golangModPipelineProvider(PipelineContext context) {
 		return new GolangModPipelineProvider(context);
 	}
 

@@ -20,7 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * More intelligent/dynamic/humanized logger factory.
+ * Enhanced logger factory for intelligent/dynamic/humanized wrapper.
+ * {@link SmartLogger}
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-12-13

@@ -57,7 +57,7 @@ public class RktNativePipelineProvider extends AbstractPipelineProvider implemen
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
+	protected Runnable newPipeDeployer(AppInstance instance) {
 		throw new UnsupportedOperationException();
 	}
 

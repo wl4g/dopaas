@@ -27,6 +27,7 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.devops.common.log.SmartLoggerFactory;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -35,7 +36,6 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AES;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,7 +64,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2019-08-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
 
 	/** Pipeline context. */
 	final protected PipelineContext context;
@@ -200,16 +200,13 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		if (!isBlank(result.getMessage())) {
 			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command,
 					result.getMessage());
-			if (log.isInfoEnabled()) {
-				log.info(logmsg);
-			}
+			log.info(logmsg);
 		}
 		if (!isBlank(result.getErrmsg())) {
 			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
 					result.getErrmsg());
-			if (log.isInfoEnabled()) {
-				log.info(logmsg);
-			}
+			log.info(logmsg);
+
 			// Strictly handle, as long as there is error message in remote
 			// command execution, throw error.
 			throw new PipelineIntegrationBuildingException(logmsg);
@@ -229,10 +226,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		// Obtain text-plain privateKey(RSA)
 		String cipherKey = config.getDeploy().getCipherKey();
 		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
-		if (log.isInfoEnabled()) {
-			log.info("Decryption plain sshkey: {} => {}", cipherKey, "******");
-		}
-		writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******");
+
+		log.info(writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;
 	}
 
@@ -248,14 +243,13 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					writeALineFile(jobDeployerLog, LOG_FILE_START);
 
 					// Do deploying.
-					newDeployer(i).run();
+					newPipeDeployer(i).run();
 
 					// Print successful.
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
 							getContext().getAppCluster().getName(), i.getSshUser(), i.getHostname());
 				} catch (Exception e) {
-					String logmsg = writeBuildLog("Failed to deployed to remote!\nCaused by: \n%s",
-							getStackTraceAsString(e));
+					String logmsg = writeBuildLog("Failed to deployed to remote!\nCaused by: \n%s", getStackTraceAsString(e));
 					log.error(logmsg);
 				} finally {
 					writeBLineFile(jobDeployerLog, LOG_FILE_END);
@@ -265,13 +259,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			List<String> instanceStrs = getContext().getInstances().stream()
-					.map(i -> i.getHostname() + ":" + i.getEndpoint()).collect(toList());
-			String logmsg = writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
-					getContext().getAppCluster().getName(), instanceStrs);
-			if (log.isInfoEnabled()) {
-				log.info(logmsg);
-			}
+			List<String> instanceStrs = getContext().getInstances().stream().map(i -> i.getHostname() + ":" + i.getEndpoint())
+					.collect(toList());
+
+			log.info(writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
+					getContext().getAppCluster().getName(), instanceStrs));
+
 			jobExecutor.submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
 		}
 
@@ -287,8 +280,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected String writeBuildLog(String format, Object... args) {
 		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
-				getContext().getTaskHistory().getId(), content);
+		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getTaskHistory().getId(),
+				content);
 		writeBLineFile(config.getJobLog(context.getTaskHistory().getId()), message);
 		return content;
 	}
@@ -304,12 +297,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Create pipeline transfer job.
+	 * Create pipeline task deployer.
 	 * 
 	 * @param instance
 	 * @return
 	 */
-	protected abstract Runnable newDeployer(AppInstance instance);
+	protected abstract Runnable newPipeDeployer(AppInstance instance);
 
 	/**
 	 * Placeholder variables resolver.
@@ -358,8 +351,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			commands = replace(commands, PH_WORKSPACE_DIR, config.getWorkspace());
 
 			// Replace for projectDir.
-			String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName())
-					.getAbsolutePath();
+			String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName()).getAbsolutePath();
 			commands = replace(commands, PH_PROJECT_DIR, projectDir);
 
 			// Replace for backupDir.
@@ -368,7 +360,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			commands = replace(commands, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
 
 			// Replace for backupDir.
-			File backupDir = config.getJobBackup(getContext().getTaskHistory().getId());
+			File backupDir = config.getJobBackupDir(getContext().getTaskHistory().getId());
 			commands = replace(commands, PH_BACKUP_DIR, backupDir.getAbsolutePath());
 
 			// Replace for logPath.

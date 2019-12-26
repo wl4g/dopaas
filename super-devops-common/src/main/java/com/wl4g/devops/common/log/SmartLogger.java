@@ -18,19 +18,20 @@ package com.wl4g.devops.common.log;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
-import com.wl4g.devops.common.annotation.Unused;
 import com.wl4g.devops.tool.common.lang.Assert;
 
 /**
- * More intelligent/dynamic/humanized logger wrapper.
+ * Enhanced logger for intelligent/dynamic/humanized wrapper.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-12-13
  * @since
  */
-@Unused
 public class SmartLogger implements Logger {
 
+	/**
+	 * Origin logger. {@link Logger}
+	 */
 	final private Logger orig;
 
 	public SmartLogger(Logger orig) {
@@ -54,27 +55,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void trace(String msg) {
-		orig.trace(msg);
+		if (orig.isTraceEnabled()) {
+			orig.trace(msg);
+		}
 	}
 
 	@Override
 	public void trace(String format, Object arg) {
-		orig.trace(format, arg);
+		if (orig.isTraceEnabled()) {
+			orig.trace(format, arg);
+		}
 	}
 
 	@Override
 	public void trace(String format, Object arg1, Object arg2) {
-		orig.trace(format, arg1, arg2);
+		if (orig.isTraceEnabled()) {
+			orig.trace(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void trace(String format, Object... arguments) {
-		orig.trace(format, arguments);
+		if (orig.isTraceEnabled()) {
+			orig.trace(format, arguments);
+		}
 	}
 
 	@Override
 	public void trace(String msg, Throwable t) {
-		orig.trace(msg, t);
+		if (orig.isTraceEnabled()) {
+			orig.trace(msg, t);
+		}
 	}
 
 	@Override
@@ -84,27 +95,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void trace(Marker marker, String msg) {
-		orig.trace(marker, msg);
+		if (orig.isTraceEnabled()) {
+			orig.trace(marker, msg);
+		}
 	}
 
 	@Override
 	public void trace(Marker marker, String format, Object arg) {
-		orig.trace(marker, format, arg);
+		if (orig.isTraceEnabled()) {
+			orig.trace(marker, format, arg);
+		}
 	}
 
 	@Override
 	public void trace(Marker marker, String format, Object arg1, Object arg2) {
-		orig.trace(format, arg1, arg2);
+		if (orig.isTraceEnabled()) {
+			orig.trace(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void trace(Marker marker, String format, Object... argArray) {
-		orig.trace(marker, format, argArray);
+		if (orig.isTraceEnabled()) {
+			orig.trace(marker, format, argArray);
+		}
 	}
 
 	@Override
 	public void trace(Marker marker, String msg, Throwable t) {
-		orig.trace(marker, msg, t);
+		if (orig.isTraceEnabled()) {
+			orig.trace(marker, msg, t);
+		}
 	}
 
 	@Override
@@ -114,27 +135,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void debug(String msg) {
-		orig.debug(msg);
+		if (orig.isDebugEnabled()) {
+			orig.debug(msg);
+		}
 	}
 
 	@Override
 	public void debug(String format, Object arg) {
-		orig.debug(format, arg);
+		if (orig.isDebugEnabled()) {
+			orig.debug(format, arg);
+		}
 	}
 
 	@Override
 	public void debug(String format, Object arg1, Object arg2) {
-		orig.debug(format, arg1, arg2);
+		if (orig.isDebugEnabled()) {
+			orig.debug(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void debug(String format, Object... arguments) {
-		orig.debug(format, arguments);
+		if (orig.isDebugEnabled()) {
+			orig.debug(format, arguments);
+		}
 	}
 
 	@Override
 	public void debug(String msg, Throwable t) {
-		orig.debug(msg, t);
+		if (orig.isDebugEnabled()) {
+			orig.debug(msg, t);
+		}
 	}
 
 	@Override
@@ -144,27 +175,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void debug(Marker marker, String msg) {
-		orig.debug(marker, msg);
+		if (orig.isDebugEnabled()) {
+			orig.debug(marker, msg);
+		}
 	}
 
 	@Override
 	public void debug(Marker marker, String format, Object arg) {
-		orig.debug(marker, format, arg);
+		if (orig.isDebugEnabled()) {
+			orig.debug(marker, format, arg);
+		}
 	}
 
 	@Override
 	public void debug(Marker marker, String format, Object arg1, Object arg2) {
-		orig.debug(format, arg1, arg2);
+		if (orig.isDebugEnabled()) {
+			orig.debug(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void debug(Marker marker, String format, Object... argArray) {
-		orig.debug(marker, format, argArray);
+		if (orig.isDebugEnabled()) {
+			orig.debug(marker, format, argArray);
+		}
 	}
 
 	@Override
 	public void debug(Marker marker, String msg, Throwable t) {
-		orig.debug(marker, msg, t);
+		if (orig.isDebugEnabled()) {
+			orig.debug(marker, msg, t);
+		}
 	}
 
 	@Override
@@ -174,27 +215,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void info(String msg) {
-		orig.info(msg);
+		if (orig.isInfoEnabled()) {
+			orig.info(msg);
+		}
 	}
 
 	@Override
 	public void info(String format, Object arg) {
-		orig.info(format, arg);
+		if (orig.isInfoEnabled()) {
+			orig.info(format, arg);
+		}
 	}
 
 	@Override
 	public void info(String format, Object arg1, Object arg2) {
-		orig.info(format, arg1, arg2);
+		if (orig.isInfoEnabled()) {
+			orig.info(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void info(String format, Object... arguments) {
-		orig.info(format, arguments);
+		if (orig.isInfoEnabled()) {
+			orig.info(format, arguments);
+		}
 	}
 
 	@Override
 	public void info(String msg, Throwable t) {
-		orig.info(msg, t);
+		if (orig.isInfoEnabled()) {
+			orig.info(msg, t);
+		}
 	}
 
 	@Override
@@ -204,27 +255,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void info(Marker marker, String msg) {
-		orig.info(marker, msg);
+		if (orig.isInfoEnabled()) {
+			orig.info(marker, msg);
+		}
 	}
 
 	@Override
 	public void info(Marker marker, String format, Object arg) {
-		orig.info(marker, format, arg);
+		if (orig.isInfoEnabled()) {
+			orig.info(marker, format, arg);
+		}
 	}
 
 	@Override
 	public void info(Marker marker, String format, Object arg1, Object arg2) {
-		orig.info(format, arg1, arg2);
+		if (orig.isInfoEnabled()) {
+			orig.info(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void info(Marker marker, String format, Object... argArray) {
-		orig.info(marker, format, argArray);
+		if (orig.isInfoEnabled()) {
+			orig.info(marker, format, argArray);
+		}
 	}
 
 	@Override
 	public void info(Marker marker, String msg, Throwable t) {
-		orig.info(marker, msg, t);
+		if (orig.isInfoEnabled()) {
+			orig.info(marker, msg, t);
+		}
 	}
 
 	@Override
@@ -234,27 +295,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void warn(String msg) {
-		orig.warn(msg);
+		if (orig.isWarnEnabled()) {
+			orig.warn(msg);
+		}
 	}
 
 	@Override
 	public void warn(String format, Object arg) {
-		orig.warn(format, arg);
+		if (orig.isWarnEnabled()) {
+			orig.warn(format, arg);
+		}
 	}
 
 	@Override
 	public void warn(String format, Object arg1, Object arg2) {
-		orig.warn(format, arg1, arg2);
+		if (orig.isWarnEnabled()) {
+			orig.warn(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void warn(String format, Object... arguments) {
-		orig.warn(format, arguments);
+		if (orig.isWarnEnabled()) {
+			orig.warn(format, arguments);
+		}
 	}
 
 	@Override
 	public void warn(String msg, Throwable t) {
-		orig.warn(msg, t);
+		if (orig.isWarnEnabled()) {
+			orig.warn(msg, t);
+		}
 	}
 
 	@Override
@@ -264,27 +335,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void warn(Marker marker, String msg) {
-		orig.warn(marker, msg);
+		if (orig.isWarnEnabled()) {
+			orig.warn(marker, msg);
+		}
 	}
 
 	@Override
 	public void warn(Marker marker, String format, Object arg) {
-		orig.warn(marker, format, arg);
+		if (orig.isWarnEnabled()) {
+			orig.warn(marker, format, arg);
+		}
 	}
 
 	@Override
 	public void warn(Marker marker, String format, Object arg1, Object arg2) {
-		orig.warn(format, arg1, arg2);
+		if (orig.isWarnEnabled()) {
+			orig.warn(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void warn(Marker marker, String format, Object... argArray) {
-		orig.warn(marker, format, argArray);
+		if (orig.isWarnEnabled()) {
+			orig.warn(marker, format, argArray);
+		}
 	}
 
 	@Override
 	public void warn(Marker marker, String msg, Throwable t) {
-		orig.warn(marker, msg, t);
+		if (orig.isWarnEnabled()) {
+			orig.warn(marker, msg, t);
+		}
 	}
 
 	@Override
@@ -294,27 +375,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void error(String msg) {
-		orig.error(msg);
+		if (orig.isErrorEnabled()) {
+			orig.error(msg);
+		}
 	}
 
 	@Override
 	public void error(String format, Object arg) {
-		orig.error(format, arg);
+		if (orig.isErrorEnabled()) {
+			orig.error(format, arg);
+		}
 	}
 
 	@Override
 	public void error(String format, Object arg1, Object arg2) {
-		orig.error(format, arg1, arg2);
+		if (orig.isErrorEnabled()) {
+			orig.error(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void error(String format, Object... arguments) {
-		orig.error(format, arguments);
+		if (orig.isErrorEnabled()) {
+			orig.error(format, arguments);
+		}
 	}
 
 	@Override
 	public void error(String msg, Throwable t) {
-		orig.error(msg, t);
+		if (orig.isErrorEnabled()) {
+			orig.error(msg, t);
+		}
 	}
 
 	@Override
@@ -324,27 +415,37 @@ public class SmartLogger implements Logger {
 
 	@Override
 	public void error(Marker marker, String msg) {
-		orig.error(marker, msg);
+		if (orig.isErrorEnabled()) {
+			orig.error(marker, msg);
+		}
 	}
 
 	@Override
 	public void error(Marker marker, String format, Object arg) {
-		orig.error(marker, format, arg);
+		if (orig.isErrorEnabled()) {
+			orig.error(marker, format, arg);
+		}
 	}
 
 	@Override
 	public void error(Marker marker, String format, Object arg1, Object arg2) {
-		orig.error(format, arg1, arg2);
+		if (orig.isErrorEnabled()) {
+			orig.error(format, arg1, arg2);
+		}
 	}
 
 	@Override
 	public void error(Marker marker, String format, Object... argArray) {
-		orig.error(marker, format, argArray);
+		if (orig.isErrorEnabled()) {
+			orig.error(marker, format, argArray);
+		}
 	}
 
 	@Override
 	public void error(Marker marker, String msg, Throwable t) {
-		orig.error(marker, msg, t);
+		if (orig.isErrorEnabled()) {
+			orig.error(marker, msg, t);
+		}
 	}
 
 }

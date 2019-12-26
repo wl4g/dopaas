@@ -73,18 +73,53 @@ public abstract interface PipelineContext {
 		}
 	};
 
+	/**
+	 * Get current pipeline build project.
+	 * 
+	 * @return
+	 */
 	Project getProject();
 
+	/**
+	 * Get current pipeline build project.
+	 * 
+	 * @return
+	 */
 	String getProjectSourceDir();
 
+	/**
+	 * Get current pipeline build application cluster.
+	 * 
+	 * @return
+	 */
 	AppCluster getAppCluster();
 
+	/**
+	 * Get current pipeline build to remote instances.
+	 * 
+	 * @return
+	 */
 	List<AppInstance> getInstances();
 
+	/**
+	 * Get current pipeline build task history.
+	 * 
+	 * @return
+	 */
 	TaskHistory getTaskHistory();
 
+	/**
+	 * Get current pipeline reference last task history.
+	 * 
+	 * @return
+	 */
 	TaskHistory getRefTaskHistory();
 
+	/**
+	 * Get current pipeline task record instance.
+	 * 
+	 * @return
+	 */
 	List<TaskHistoryInstance> getTaskHistoryInstances();
 
 }

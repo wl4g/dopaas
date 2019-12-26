@@ -60,16 +60,15 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 		}
 
 	}
- 
 
 	private File getBackupFile() {
-		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
+		String lastFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
 				+ config.getTarFileNameWithTar(getContext().getAppCluster().getName());
-		return new File(oldFilePath);
+		return new File(lastFilePath);
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
+	protected Runnable newPipeDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(MvnAssembleTarPipeDeployer.class, args);
 	}
