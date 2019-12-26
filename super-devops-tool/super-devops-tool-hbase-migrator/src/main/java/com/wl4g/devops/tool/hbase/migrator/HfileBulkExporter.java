@@ -21,7 +21,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 import com.wl4g.devops.tool.common.lang.Assert;
-import com.wl4g.devops.tool.common.resource.resolver.PathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 import com.wl4g.devops.tool.hbase.migrator.mapred.NothingTransformMapper;
 
 import org.apache.commons.cli.CommandLine;
@@ -86,7 +86,8 @@ public class HfileBulkExporter {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
-		System.out.println(Resources.toString(new PathPatternResourceMatchingResolver().getResource("classpath:banner.txt").getURL(),
+		System.out.println(Resources.toString(
+				new GenericPathPatternResourceMatchingResolver().getResource("classpath:banner.txt").getURL(),
 				Charsets.UTF_8));
 
 		Builder builder = new Builder();
@@ -96,7 +97,8 @@ public class HfileBulkExporter {
 		builder.option("o", "output", false,
 				"Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}");
 		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
-		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS);
+		builder.option("M", "mapperClass", false,
+				"Transfrom migration mapper class name. default:" + DEFAULT_MAPPER_CLASS);
 		builder.option("s", "startRow", false, "Scan start rowkey.");
 		builder.option("e", "endRow", false, "Scan end rowkey.");
 		builder.option("S", "startTime", false, "Scan start timestamp.");
@@ -181,7 +183,8 @@ public class HfileBulkExporter {
 				scan.setTimeRange(stime.getTime(), etime.getTime());
 				enabledScan = true;
 			} catch (Exception e) {
-				throw new IllegalArgumentException(String.format("Illegal startTime(%s) and endTime(%s)", startTime, endTime), e);
+				throw new IllegalArgumentException(
+						String.format("Illegal startTime(%s) and endTime(%s)", startTime, endTime), e);
 			}
 		}
 
