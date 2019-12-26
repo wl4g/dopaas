@@ -43,6 +43,8 @@
 				<includes>
 					<include>**/*.dll</include>
 					<include>**/*.so</include>
+					<include>**/*.dylib</include>
+					<include>**/*.lib</include>
 					<include>**/*.properties</include>
 				</includes>
 				<filtering>false</filtering>
