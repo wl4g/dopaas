@@ -48,7 +48,7 @@ public class TaskHistoryController extends BaseController {
 	private TaskHistoryService taskHistoryService;
 
 	@Autowired
-	private PipelineManager pipeliner;
+	private PipelineManager pipe;
 
 	/**
 	 * List
@@ -102,7 +102,7 @@ public class TaskHistoryController extends BaseController {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
 		// TODO remark???
-		pipeliner.rollbackPipeline(new RollbackParameter(taskId, "rollback"));
+		pipe.rollbackPipeline(new RollbackParameter(taskId, "rollback"));
 		return resp;
 	}
 
@@ -110,7 +110,7 @@ public class TaskHistoryController extends BaseController {
 	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> readLog(Integer taskHisId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipeliner.logfile(taskHisId, startPos, size);
+		FileIOUtils.ReadResult readResult = pipe.logfile(taskHisId, startPos, size);
 		resp.forMap().put("data", readResult);
 		return resp;
 	}
@@ -119,7 +119,7 @@ public class TaskHistoryController extends BaseController {
 	@RequiresPermissions(value = {"ci","ci:taskhis"},logical = AND)
 	public RespBase<?> readDetailLog(Integer taskHisId,Integer instanceId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipeliner.logDetailFile(taskHisId,instanceId, startPos, size);
+		FileIOUtils.ReadResult readResult = pipe.logDetailFile(taskHisId,instanceId, startPos, size);
 		resp.forMap().put("data", readResult);
 		return resp;
 	}

@@ -20,8 +20,6 @@ import java.io.File;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.GolangModPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 /**
  * Pipeline provider for deployment GOLANG project.
@@ -53,13 +51,8 @@ public class GolangModPipelineProvider extends RestorableDeployPipelineProvider 
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		String defaultCommand = "cd " + projectDir + " && npm install";
-		// Execution command.
-		// TODO timeoutMs/pwdDir?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
-				.setStdout(jobLogFile).setStderr(jobLogFile);
-		pm.execWaitForComplete(cmd);
+	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+		throw new UnsupportedOperationException();
 	}
 
 }

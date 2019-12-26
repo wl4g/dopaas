@@ -19,8 +19,6 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.common.bean.share.AppInstance;
 
-import java.io.File;
-
 /**
  * Pipeline provider for deployment MAVEN assemble tar project.
  *
@@ -32,39 +30,6 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	public MvnAssembleTarPipelineProvider(PipelineContext context) {
 		super(context);
-	}
-
-	@Override
-	public void execute() throws Exception {
-		// Building maven of modules dependencies.
-		buildModular(false);
-	}
-
-	/**
-	 * Roll-back
-	 */
-	@Override
-	public void rollback() throws Exception {
-		// Older file
-		File backupFile = getBackupFile();
-		if (backupFile.exists()) {
-			// Direct using backup file.
-			rollbackBackupAssets();
-
-			// TODO move??
-			// Setup vcs source fingerprint.
-			setSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
-		} else {
-			// New building and include dependencies.
-			buildModular(true);
-		}
-
-	}
-
-	private File getBackupFile() {
-		String lastFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
-				+ config.getTarFileNameWithTar(getContext().getAppCluster().getName());
-		return new File(lastFilePath);
 	}
 
 	@Override

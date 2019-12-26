@@ -51,8 +51,8 @@ public class Python3PipelineProvider extends RestorableDeployPipelineProvider {
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File logPath, Integer taskId) throws Exception {
-		// Dynamic interpretation language, no execution to build command.
+	protected void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
+		// Dynamic interpretation language, ignore build command.
 	}
 
 }

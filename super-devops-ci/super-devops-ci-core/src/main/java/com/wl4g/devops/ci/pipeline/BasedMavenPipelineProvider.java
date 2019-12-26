@@ -35,10 +35,11 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		String defaultMvnCommand = String.format("mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests", projectDir);
+	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+		String defaultMvnBuildCmd = String.format("mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests",
+				projectDir);
 		// TODO timeoutMs/pwdDir?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultMvnCommand, null, 300000L)
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultMvnBuildCmd, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}

@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.common.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
@@ -39,7 +40,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	}
 
 	@Override
-	protected void postBuiltDependencies() throws Exception {
+	protected void postBuiltModulesDependencies() throws Exception {
 		// Source code fingerprint.
 		setSourceFingerprint(vcsAdapter.getLatestCommitted(getContext().getProjectSourceDir()));
 
@@ -52,21 +53,41 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		}
 
 		// Handling backup
-		handleBackupAssets();
+		handleDiskBackupAssets();
 
 		// Deploying to remote instances.
 		startupExecuteRemoteDeploying();
 	}
 
 	/**
-	 * Handling assets backup. The default implements is to copy the asset files
-	 * to the local shared disk. </br>
+	 * Roll-back
+	 */
+	@Override
+	public void rollback() throws Exception {
+		// Obtain backup assets file.
+		File backAssetsFile = new File(config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
+				+ config.getTarFileNameWithTar(getContext().getAppCluster().getName()));
+		// Check backup assets file.
+		if (!backAssetsFile.exists()) {
+			throw new NotFoundBackupAssetsFileException(String.format("Not found backup assets file: %s", backAssetsFile));
+		}
+
+		// Direct using backup disk.
+		rollbackBackupAssets();
+
+		// Deploying to remote instances.
+		startupExecuteRemoteDeploying();
+	}
+
+	/**
+	 * Handling assets backup to disk, The default implements is to copy the
+	 * asset files to the local shared disk. </br>
 	 * For example, the docker based deployment should be backed up to the
 	 * docker server image repository.
 	 * 
 	 * @throws Exception
 	 */
-	protected void handleBackupAssets() throws Exception {
+	protected void handleDiskBackupAssets() throws Exception {
 		Integer taskHisId = getContext().getTaskHistory().getId();
 		String assetsFilename = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
 				getContext().getAppCluster().getName());
@@ -95,9 +116,9 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String backupPath = config.getJobBackupDir(taskHisRefId).getAbsolutePath() + tarFileName;
-		String assetsPathTotal = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
+		String assetsFilename = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
 				getContext().getAppCluster().getName());
-		String target = getContext().getProjectSourceDir() + assetsPathTotal;
+		String target = getContext().getProjectSourceDir() + assetsFilename;
 
 		// Copy backup assets to build dir.
 		String command = String.format("cp -Rf %s %s", backupPath, target);
