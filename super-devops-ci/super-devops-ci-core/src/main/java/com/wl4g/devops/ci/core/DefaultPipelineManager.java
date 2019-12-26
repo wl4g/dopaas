@@ -456,8 +456,10 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
 				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
+	
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_FAIL, taskId);
+				
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.

@@ -42,40 +42,37 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 	// --- NPM building. ---
 
 	@Override
-	public void execute() throws Exception {
-		// Building maven of modules dependencies.
-		buildModular(false);
-	}
-
-	@Override
-	public void rollback() throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
 	}
 
-	private void build() throws Exception {
-		// TODO
-		// step3: tar -c
-		pkg();
-		// step4 scp ==> tar -x
+	@Override
+	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+		Project project = getContext().getProject();
+		TaskHistory taskHistory = getContext().getTaskHistory();
+		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 
-		// Startup pipeline jobs.
-		startupExecuteRemoteDeploying();
-
-		if (log.isInfoEnabled()) {
-			log.info("Npm pipeline execution successful!");
-		}
+		// Execution command. TODO timeoutMs?
+		String defaultNpmBuildCmd = String.format("cd %s\nrm -Rf dist\nnpm install\nnpm run build\n", projectDir);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd, tmpCmdFile,
+				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	/**
-	 * tar -cvf ***.tar -C /home/ci/view * tar -xvf ***.tar -C /opt/apps/view
+	 * For example:
+	 * 
+	 * <pre>
+	 * $ cd /root/.ci-workspace/sources/super-devops-view/dist
+	 * $ mkdir super-devops-view-master-bin
+	 * $ mv `ls -A|grep -v super-devops-view-master-bin`
+	 * $ super-devops-view-master-bin/
+	 * $ tar -cvf /root/.ci-workspace/jobs/job.936/super-devops-view-master-bin.tar *
+	 * </pre>
 	 */
-	private void pkg() throws Exception {
+	@Override
+	protected void postModuleBuiltCommand() throws Exception {
 		Project project = getContext().getProject();
 		String prgramInstallFileName = config.getPrgramInstallFileName(getContext().getAppCluster().getName());
 		TaskHistory taskHistory = getContext().getTaskHistory();
@@ -83,36 +80,13 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
 
-		/**
-		 * For example:
-		 * 
-		 * <pre>
-		 * $ cd /root/.ci-workspace/sources/super-devops-view/dist
-		 * $ mkdir super-devops-view-master-bin
-		 * $ mv `ls -A|grep -v super-devops-view-master-bin`
-		 * $ super-devops-view-master-bin/
-		 * $ tar -cvf /root/.ci-workspace/jobs/job.936/super-devops-view-master-bin.tar *
-		 * </pre>
-		 */
 		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *", projectDir,
 				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName,
 				config.getJobBackupDir(getContext().getTaskHistory().getId()), prgramInstallFileName);
+
 		// Execution command. TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
-		pm.execWaitForComplete(cmd);
-	}
-
-	@Override
-	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		Project project = getContext().getProject();
-		TaskHistory taskHistory = getContext().getTaskHistory();
-		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-
-		String defaultBuildCommand = String.format("cd %s\nrm -Rf dist\nnpm install\nnpm run build\n", projectDir);
-		// Execution command. TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultBuildCommand, tmpCmdFile,
-				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 

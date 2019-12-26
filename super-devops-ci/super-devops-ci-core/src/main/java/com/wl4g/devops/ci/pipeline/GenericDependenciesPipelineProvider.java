@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
@@ -52,13 +51,18 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 
 	// --- Build & dependencies. ---
 
+	@Override
+	public void execute() throws Exception {
+		// Building of generic module dependencies.
+		buildModular();
+	}
+
 	/**
 	 * The building of generic modularization.
 	 * 
-	 * @param isRollback
 	 * @throws Exception
 	 */
-	protected void buildModular(boolean isRollback) throws Exception {
+	protected void buildModular() throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		File jobLog = config.getJobLog(taskHisy.getId());
 		if (log.isInfoEnabled()) {
@@ -75,27 +79,25 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Build of dependencies sub-modules.
 		for (Dependency depd : dependencies) {
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, isRollback,
-					depCmd);
+			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, depCmd);
 		}
 
 		// Build for primary(self).
-		doMutexBuildModuleInDependencies(taskHisy.getProjectId(), null, taskHisy.getBranchName(), false, isRollback,
+		doMutexBuildModuleInDependencies(taskHisy.getProjectId(), null, taskHisy.getBranchName(), false,
 				taskHisy.getBuildCommand());
 
-		// After built handle.
-		postBuiltDependencies();
+		// Call after all built dependencies completed handling.
+		postBuiltModulesDependencies();
 	}
 
 	/**
-	 * Convergence and other operations after establishing all relevant project
-	 * modules. For example, set the fingerprint of the source code or asset
-	 * installation file, publish the installation package to remote, deploy
-	 * rollback and so on.
+	 * Handing after all dependency modules are built, For example, set the
+	 * fingerprint of the source code or asset installation file, publish the
+	 * installation package to remote, deploy rollback and so on.
 	 * 
 	 * @throws Exception
 	 */
-	protected abstract void postBuiltDependencies() throws Exception;
+	protected abstract void postBuiltModulesDependencies() throws Exception;
 
 	/**
 	 * Extract dependencies project custom command.
@@ -122,17 +124,16 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param dependencyId
 	 * @param branch
 	 * @param isDependency
-	 * @param isRollback
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doMutexBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
-			boolean isRollback, String buildCommand) throws Exception {
+	private final void doMutexBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch,
+			boolean isDependency, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build wait?
 			try {
-				pullSourceAndBuild(projectId, dependencyId, branch, isDependency, isRollback, buildCommand);
+				pullSourceAndBuild(projectId, dependencyId, branch, isDependency, buildCommand);
 			} catch (Exception e) {
 				throw e;
 			} finally {
@@ -171,53 +172,26 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param dependencyId
 	 * @param branch
 	 * @param isDependency
-	 * @param isRollback
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void pullSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
-			boolean isRollback, String buildCommand) throws Exception {
+	private final void pullSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
+			String buildCommand) throws Exception {
 		log.info("Pipeline building for projectId: {}", projectId);
 
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		notNull(project, String.format("Not found project by %s", projectId));
 
-		// VCS operator.
-		VcsOperator oper = getVcsOperator(project);
-
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		if (isRollback) {
-			String sign;
-			if (isDependency) {
-				TaskSign taskSign = taskSignDao.selectByDependencyIdAndTaskId(dependencyId, taskHisy.getRefId());
-				notNull(taskSign, String.format("Not found taskSign for dependencyId:%s, taskHistoryRefId:%s", dependencyId,
-						taskHisy.getRefId()));
-				sign = taskSign.getShaGit();
-			} else {
-				sign = taskHisy.getShaGit();
-			}
-			if (oper.hasLocalRepository(projectDir)) {
-				oper.rollback(project.getVcs(), projectDir, sign);
-			} else {
-				oper.clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
-				oper.rollback(project.getVcs(), projectDir, sign);
-			}
-		} else {
-			if (oper.hasLocalRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
-				oper.checkoutAndPull(project.getVcs(), projectDir, branch);
-			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				oper.clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
-			}
-		}
 
 		// Save the SHA of the dependency project.
 		if (isDependency) {
 			TaskSign sign = new TaskSign();
 			sign.setTaskId(taskHisy.getId());
 			sign.setDependenvyId(dependencyId);
-			sign.setShaGit(oper.getLatestCommitted(projectDir));
+			sign.setShaGit(getVcsOperator(project).getLatestCommitted(projectDir));
 			taskSignDao.insertSelective(sign);
 		}
 
@@ -228,20 +202,20 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	// --- Building's. ---
 
 	/**
-	 * Execution resolves commands build.
+	 * Execution resolves commands & build.
 	 * 
 	 * @param project
 	 * @param projectDir
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void doResolvedBuildCommand(Project project, String projectDir, String buildCommand) throws Exception {
+	private final void doResolvedBuildCommand(Project project, String projectDir, String buildCommand) throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		File jobLogFile = config.getJobLog(taskHisy.getId());
 
 		// Building.
 		if (isBlank(buildCommand)) {
-			doBuildWithDefaultCommands(projectDir, jobLogFile, taskHisy.getId());
+			doBuildWithDefaultCommand(projectDir, jobLogFile, taskHisy.getId());
 		} else {
 			// Temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
@@ -254,15 +228,26 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			pm.execWaitForComplete(cmd);
 		}
 
+		// Call after built command.
+		postModuleBuiltCommand();
 	}
 
 	/**
-	 * Execution default commands build.
+	 * Execution default build commands.
 	 * 
 	 * @param projectDir
 	 * @param jobLogFile
 	 * @throws Exception
 	 */
-	protected abstract void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception;
+	protected abstract void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception;
+
+	/**
+	 * Customized handing after building the module.
+	 * 
+	 * @throws Exception
+	 */
+	protected void postModuleBuiltCommand() throws Exception {
+		// Nothing do
+	}
 
 }
