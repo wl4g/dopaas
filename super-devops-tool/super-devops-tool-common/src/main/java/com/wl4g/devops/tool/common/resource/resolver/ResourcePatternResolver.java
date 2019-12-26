@@ -22,6 +22,7 @@ package com.wl4g.devops.tool.common.resource.resolver;
  * limitations under the License.
  */
 import java.io.IOException;
+import java.util.Set;
 
 import com.wl4g.devops.tool.common.resource.Resource;
 
@@ -38,8 +39,8 @@ import com.wl4g.devops.tool.common.resource.Resource;
  * context) can be checked whether it implements this extended interface too.
  *
  * <p>
- * {@link PathPatternResourceMatchingResolver} is a standalone implementation that
- * is usable outside an ApplicationContext, also used by
+ * {@link PathPatternResourceMatchingResolver} is a standalone implementation
+ * that is usable outside an ApplicationContext, also used by
  * {@link ResourceArrayPropertyEditor} for populating Resource array bean
  * properties.
  *
@@ -84,6 +85,6 @@ public interface ResourcePatternResolver extends ResourceLoader {
 	 * @return the corresponding Resource objects
 	 * @throws IOException in case of I/O errors
 	 */
-	Resource[] getResources(String locationPattern) throws IOException;
+	Set<Resource> getResources(String locationPattern) throws IOException;
 
 }

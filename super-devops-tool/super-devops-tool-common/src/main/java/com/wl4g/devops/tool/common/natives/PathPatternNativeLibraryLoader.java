@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -42,11 +43,11 @@ import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
 
-import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.resource.Resource;
-import com.wl4g.devops.tool.common.resource.resolver.PathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 
 import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.ClassUtils2.getDefaultClassLoader;
 
 /**
  * The native class library auto-loader is based on the class path or file path,
@@ -78,7 +79,7 @@ public class PathPatternNativeLibraryLoader {
 	/**
 	 * Native library loader classPath location pattern.
 	 */
-	final private String libLocationPattern;
+	final private String[] libLocationPatterns;
 
 	/**
 	 * OS arch share supports mapping.
@@ -90,12 +91,12 @@ public class PathPatternNativeLibraryLoader {
 	 */
 	final private List<File> loadLibFiles = new ArrayList<>(4);
 
-	public PathPatternNativeLibraryLoader(String libLocationPattern) {
-		this(ClassUtils2.getDefaultClassLoader(), libLocationPattern);
+	public PathPatternNativeLibraryLoader(String... libLocationPatterns) {
+		this(getDefaultClassLoader(), libLocationPatterns);
 	}
 
-	public PathPatternNativeLibraryLoader(ClassLoader classLoader, String libLocationPattern) {
-		this(classLoader, libLocationPattern, new ArrayList<OSArchSupport>(32) {
+	public PathPatternNativeLibraryLoader(ClassLoader classLoader, String... libLocationPattern) {
+		this(classLoader, new ArrayList<OSArchSupport>(32) {
 			private static final long serialVersionUID = 5148648284597551860L;
 			{
 				add(new OSArchSupport("AIX", "ppc"));
@@ -120,7 +121,7 @@ public class PathPatternNativeLibraryLoader {
 				add(new OSArchSupport("Windows", "x86"));
 				add(new OSArchSupport("Windows", "x86_64", "amd64", "x64"));
 			}
-		});
+		}, libLocationPattern);
 	}
 
 	/**
@@ -130,42 +131,42 @@ public class PathPatternNativeLibraryLoader {
 	 * new PathPatternNativeLibraryLoader("/org/xerial/snappy/native/××/×.×");
 	 * </pre>
 	 * 
-	 * <font color=red>Note: Because of the Java multiline annotation problem,
-	 * the "*" is replaced by "×"</font>
+	 * <font color=red>Note: Because of the Java multiline annotation problem, the
+	 * "*" is replaced by "×"</font>
 	 * 
 	 * @param classLoader,
-	 * @param libLocationPattern
 	 * @param osArchShareSupports
+	 * @param libLocationPattern
 	 */
-	public PathPatternNativeLibraryLoader(ClassLoader classLoader, String libLocationPattern,
-			List<OSArchSupport> osArchShareSupports) {
+	public PathPatternNativeLibraryLoader(ClassLoader classLoader, List<OSArchSupport> osArchShareSupports,
+			String... libLocationPatterns) {
 		notNull(classLoader, "Native library classLoader can't null.");
-		hasText(libLocationPattern, "Native library location pattern can't empty.");
 		notNull(osArchShareSupports, "OS name and arch support mapping can't null.");
-		isTrue(libLocationPattern.startsWith("/"), "The path has to be absolute (start with '/').");
-		// Check filename deep hierarchy is okay?
-		int libPathDeep = libLocationPattern.split("/").length;
-		if (libPathDeep < NATIVE_LIBS_PATH_LEN_MIN) {
-			throw new IllegalArgumentException(
-					"The filename has to be at least " + NATIVE_LIBS_PATH_LEN_MIN + " characters long.");
+		// Check location pattern.
+		notNull(libLocationPatterns, "Native library location pattern can't null.");
+		for (String pattern : libLocationPatterns) {
+			isTrue(pattern.startsWith("/"), "The path has to be absolute (start with '/').");
+			// Check filename deep hierarchy is okay?
+			int libPathDeep = pattern.split("/").length;
+			if (libPathDeep < NATIVE_LIBS_PATH_LEN_MIN) {
+				throw new IllegalArgumentException(
+						"The filename has to be at least " + NATIVE_LIBS_PATH_LEN_MIN + " characters long.");
+			}
 		}
 		this.classLoader = classLoader;
-		this.libLocationPattern = libLocationPattern;
+		this.libLocationPatterns = libLocationPatterns;
 		this.osArchDefineSupports = osArchShareSupports;
 	}
 
 	/**
-	 * The file from JAR(CLASSPATH) is copied into system temporary directory
-	 * and then loaded. The temporary file is deleted after exiting. Method uses
-	 * String as filename because the pathname is "abstract", not
-	 * system-dependent.
+	 * The file from JAR(CLASSPATH) is copied into system temporary directory and
+	 * then loaded. The temporary file is deleted after exiting. Method uses String
+	 * as filename because the pathname is "abstract", not system-dependent.
 	 * 
-	 * @param classLoader
-	 *            {@link ClassLoader} for loading native class library
-	 * @throws IOException
-	 *             Dynamic library read write error
-	 * @throws FileNotFoundException
-	 *             The specified file was not found in the jar package.
+	 * @param classLoader {@link ClassLoader} for loading native class library
+	 * @throws IOException           Dynamic library read write error
+	 * @throws FileNotFoundException The specified file was not found in the jar
+	 *                               package.
 	 */
 	public final synchronized void loadLibrarys() throws IOException {
 		if (!loadedState.compareAndSet(false, true)) { // Loaded?
@@ -173,8 +174,9 @@ public class PathPatternNativeLibraryLoader {
 		}
 
 		// Copy files from jar package to system temporary folder.
-		PathPatternResourceMatchingResolver resolver = new PathPatternResourceMatchingResolver(classLoader);
-		Resource[] resoruces = resolver.getResources(libLocationPattern);
+		GenericPathPatternResourceMatchingResolver resolver = new GenericPathPatternResourceMatchingResolver(
+				classLoader);
+		Set<Resource> resoruces = resolver.getResources(libLocationPatterns);
 		for (Resource r : resoruces) {
 			if (!r.exists() || r.isOpen() || !r.isReadable()) {
 				log.warn("Unable to load native class library file: {}", r.getURL().toString());
@@ -209,23 +211,24 @@ public class PathPatternNativeLibraryLoader {
 		}
 
 		// Check any loaded library?
-		state(!loadLibFiles.isEmpty(), String.format("Failed to load native library, of os: %s arch: %s, was found resources: %s",
-				OS_NAME, OS_ARCH, Arrays.asList(loadLibFiles)));
+		state(!loadLibFiles.isEmpty(),
+				String.format("Failed to load native library, of os: %s arch: %s, was found resources: %s", OS_NAME,
+						OS_ARCH, Arrays.asList(loadLibFiles)));
 
 		// Cleanup temporary lib files.
 		/*
-		 * It has been proved that when the tmpFile.deleteOnExit() method is
-		 * called, the dynamic library file cannot be deleted after the system
-		 * exits, because the program is occupied, so if you want to unload the
-		 * dynamic library file when the program exits, you can only use hook
-		 * (calling private properties and private methods through reflection)
+		 * It has been proved that when the tmpFile.deleteOnExit() method is called, the
+		 * dynamic library file cannot be deleted after the system exits, because the
+		 * program is occupied, so if you want to unload the dynamic library file when
+		 * the program exits, you can only use hook (calling private properties and
+		 * private methods through reflection)
 		 */
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
 				for (File loadFile : loadLibFiles) {
 					try {
-						unloadNativeLib(loadFile);
+						unloadNativeLibrary(loadFile);
 					} catch (Throwable th) {
 						log.warn(String.format("Failed to unload native library tmp libfile: %", loadFile), th);
 					}
@@ -281,7 +284,7 @@ public class PathPatternNativeLibraryLoader {
 	 *      local library file reference</a>
 	 */
 	@SuppressWarnings("unchecked")
-	private final synchronized void unloadNativeLib(File tmpLibFile) throws Exception {
+	private final synchronized void unloadNativeLibrary(File tmpLibFile) throws Exception {
 		Field field = ClassLoader.class.getDeclaredField("nativeLibraries");
 		field.setAccessible(true);
 		Vector<Object> libs = (Vector<Object>) field.get(classLoader);
@@ -337,15 +340,15 @@ public class PathPatternNativeLibraryLoader {
 	/**
 	 * Java dynamic link native libraries temporary base directory path.
 	 */
-	final public static File libNativeTmpDir = libsTmpDirectory0(File.separator + "javanativelibs_" + USER_NAME + File.separator
-			+ LOCAL_PROCESS_ID + "-" + System.currentTimeMillis());
+	final public static File libNativeTmpDir = libsTmpDirectory0(File.separator + "javanativelibs_" + USER_NAME
+			+ File.separator + LOCAL_PROCESS_ID + "-" + System.currentTimeMillis());
 
 	/**
 	 * Defined operating system architecture share mapping, for example:
 	 * (<b>Linux</b> = > <b>amd64</b>, <b>x86_64</b>) means that if the current
-	 * system is <b>amd64</b>, However, when there is no native library file in
-	 * the <b>amd64</b> directory, it will match in order, and finally
-	 * <b>x86_64</b> will be matched successful. </br>
+	 * system is <b>amd64</b>, However, when there is no native library file in the
+	 * <b>amd64</b> directory, it will match in order, and finally <b>x86_64</b>
+	 * will be matched successful. </br>
 	 * 
 	 * For example definitions reference:
 	 * 

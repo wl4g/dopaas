@@ -31,10 +31,19 @@ import com.wl4g.devops.tool.common.natives.PathPatternNativeLibraryLoader;
 public final class OpenCvNativeLibraryLoader {
 
 	/**
+	 * Opencv native librarys location patterns.
+	 */
+	final private static String[] OPENCV_LIBS_PATTERN = { //
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dll",
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.so",
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dylib",
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.jnilib" };
+
+	/**
 	 * Opencv native librarys loader.
 	 */
 	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader(
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.*");
+			OPENCV_LIBS_PATTERN);
 
 	/**
 	 * Loading OpenCv native librarys.
