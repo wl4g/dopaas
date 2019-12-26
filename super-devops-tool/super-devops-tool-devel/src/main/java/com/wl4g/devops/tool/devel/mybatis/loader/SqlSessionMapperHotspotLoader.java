@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.devel.mybatis.loader;
 
+import static java.lang.Math.abs;
+import static java.lang.System.out;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -42,10 +44,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import com.wl4g.devops.common.log.SmartLoggerFactory;
 import com.wl4g.devops.common.utils.task.GenericTaskRunner;
 import com.wl4g.devops.common.utils.task.RunnerProperties;
 
@@ -60,7 +62,7 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	final public static String TARGET_PART_PATH = "target" + File.separator + "classes";
 	final public static String SRC_PART_PATH = "src" + File.separator + "main" + File.separator + "resources";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
 
 	/** Refresh configuration properties. */
 	final protected MapperHotspotLoaderProperties config;
@@ -86,9 +88,7 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 			throw new IllegalStateException(e);
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("\n\n>> Initialized mappers hotspot loader for: {}\n", sessionFactory.toString());
-		}
+		log.info("\n\n>> Initialized mappers hotspot loader for: {}\n", sessionFactory.toString());
 	}
 
 	/**
@@ -98,16 +98,14 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	 */
 	@Override
 	public void run() {
-		if (log.isInfoEnabled()) {
-			log.info("Starting to SqlSession mappers hotspot loader...");
-		}
+		log.info("Starting to SqlSession mappers hotspot loader...");
 
 		boolean stop = false;
 		while (!stop && isActive()) {
 			try {
 				sleep(config.getMonitorLoaderIntervalMs());
 				if (isChanged()) {
-					refresh(configuration);
+					doRefresh(configuration);
 					stop = false;
 				}
 			} catch (Exception e) {
@@ -147,25 +145,27 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	 * @param configuration
 	 * @throws Exception
 	 */
-	private synchronized void refresh(Configuration configuration) throws Exception {
+	private synchronized void doRefresh(Configuration configuration) throws Exception {
 		// 清理Mybatis的所有映射文件缓存, 目前由于未找到清空被修改文件的缓存的key值, 暂时仅支持全部清理, 然后全部加载
 		doCleanupOlderCacheConfig(configuration);
 
 		for (Resource rs : mapperLocations) {
 			try {
+				// Reload.
 				XMLMapperBuilder builder = new XMLMapperBuilder(rs.getInputStream(), configuration, rs.toString(),
-						configuration.getSqlFragments()); // Reload.
+						configuration.getSqlFragments());
 				builder.parse();
-				if (log.isInfoEnabled()) {
-					log.info("Refreshed for: {}", rs);
-				}
+				log.debug("Refreshed for: {}", rs);
 			} catch (IOException e) {
 				log.error(String.format("Failed to refresh mapper for: %s", rs), e);
 			}
 		}
 
 		// Update refresh time.
-		lastRefreshTime.set(System.currentTimeMillis());
+		long now = System.currentTimeMillis();
+		out.print(String.format("Refreshed mybatis mappers total: %s, cost: %sms\n", mapperLocations.length,
+				abs(now - lastRefreshTime.get())));
+		lastRefreshTime.set(now);
 	}
 
 	/**
